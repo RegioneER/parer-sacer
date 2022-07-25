@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione Unità Documentarie" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema">
+    
+    <Section Name="ChiaveSection" Description="" Legend="Unità documentaria" ShowButton="false" LoadOpened="true"/>
+    <Section Name="UnitaDocumentaria" Description="" Legend="Chiave unità documentaria" ShowButton="true" LoadOpened="true"/>
+    <Section Name="Documento" Description="" Legend="Documento" ShowButton="true"/>
+    <Section Name="CompRiferito" Description="" Legend="Componente riferito" ShowButton="false" LoadOpened="true"/>
+    <Section Name="Componente" Description="" Legend="Componente" ShowButton="true"/>
+    <Section Name="ProfiloDoc" Description="" Legend="Documento" ShowButton="true" LoadOpened="true"/>
+    <Section Name="ProfiloComponente" Description="" Legend="Componente" ShowButton="true"/>
+    
+    <!-- Nuove sezioni ricerca componenti -->
+    <Section Name="ComponenteRicerca" Description="" Legend="Componente" ShowButton="true" LoadOpened="true"/>
+    <Section Name="File" Description="" Legend="File" ShowButton="true"/>
+    <Section Name="Formato" Description="" Legend="Formato" ShowButton="true"/>
+    <Section Name="Firma" Description="" Legend="Firma" ShowButton="true" LoadOpened="true"/>
+    <Section Name="Marca" Description="" Legend="Marca" ShowButton="true" LoadOpened="true"/>
+    
+    <Section Name="UnitaDocSection" Description="" Legend="Unità documentaria" ShowButton="true" LoadOpened="true"/>
+    <Section Name="VersatoreSection" Description="" Legend="Versatore" ShowButton="true" LoadOpened="false"/>
+    <Section Name="VersamentoAnnullatoUDSection" Description="" Legend="Versamento annullato" ShowButton="false" LoadOpened="true"/>
+    <Section Name="VersamentoAnnullatoDocSection" Description="" Legend="Versamento annullato" ShowButton="false" LoadOpened="true"/>
+
+    <!-- Section in dettaglio firma -->
+    <Section Name="FirmaVersamento" Description="" Legend="Controllo firma al versamento" ShowButton="true" LoadOpened="true"/>
+    <Section Name="FirmaDataVersamento" Description="" Legend="Controllo firma alla data di versamento" ShowButton="true" LoadOpened="true"/>
+    <Section Name="FirmaChiusuraVolume" Description="" Legend="Controllo firma alla chiusura del volume di conservazione" ShowButton="true" LoadOpened="true"/>
+
+    <Fields Name="RicComponentiFiltri" Description="Ricerca componenti" >
+        <ComboBox Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/> 
+        <Input Type="DATE" Description="Data acquisizione componente da" Name="dt_creazione_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_creazione_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_creazione_da" MaxLength="2"/>
+        <Input Type="DATE" Description="Data acquisizione componente a" Name="dt_creazione_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_creazione_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_creazione_a" MaxLength="2"/>
+        <ComboBox Type="INTEGER"  Trigger="true" Description="Tipo struttura documento" Name="nm_tipo_strut_doc" />
+        <ComboBox Type="INTEGER" Description="Tipo componente" Name="nm_tipo_comp_doc" />
+        <ComboBox Type="STRING" Description="Formato versato" Name="nm_formato_file_vers" />
+        <Input Type="INTEGER" Description="Dimensione in bytes da" Name="ni_size_file_da"  GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Dimensione in bytes a" Name="ni_size_file_a"  GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="Firmato" Name="fl_comp_firmato" />
+        <ComboBox Type="STRING" Description="Conformità firme" Name="ti_esito_contr_conforme"/> 
+        <ComboBox Type="STRING" Description="Esito firme versamento" Name="ti_esito_verif_firme"/>         
+        <Input Type="DATE" Description="Data validità firme da" Name="dt_scad_firma_comp_da"/>
+        <Input Type="DATE" Description="Data validità firme a" Name="dt_scad_firma_comp_a"/>
+        <ComboBox Description="Riferimento temporale" Name="fl_rif_temp_vers" Type="STRING"/>
+        <Input Description="Descrizione riferimento temporale" Name="ds_rif_temp_vers" Type="STRING"/>
+
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+        
+        <Input Type="STRING" Description="Nome componente" Name="ds_nome_comp_vers" />
+        <Input Type="STRING" Description="Hash versato" Name="ds_hash_file_vers"/>
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file"/>
+        
+        <Input Type="STRING" Description="Urn versato" Name="dl_urn_comp_vers"/>
+        <Input Type="STRING" Description="Formato di rappresentazione" Format="" Name="ds_formato_rappr_calc"/>
+        <Input Type="STRING" Description="Formato di rappresentazione esteso" Format="" Name="ds_formato_rappr_esteso_calc"/>
+        
+        <ComboBox Type="STRING" Description="Forzatura accettazione" Name="fl_forza_accettazione" />
+        <ComboBox Type="STRING" Description="Forzatura conservazione" Name="fl_forza_conservazione" />
+        
+        <ComboBox Type="STRING" Description="Esito verifica formato" Name="ti_esito_contr_formato_file"/> 
+        <ComboBox Type="STRING" Description="Presenza hash versato" Name="fl_hash_vers" />
+        <Input Type="STRING" Description="Hash" Name="ds_hash_file_calc"/>
+        <ComboBox Type="STRING" Description="Algoritmo hash calcolato" Name="ds_algo_hash_file_calc"/>
+        <ComboBox Type="STRING" Description="Encoding hash calcolato" Name="cd_encoding_hash_file_calc"/>
+        <Input Type="STRING" Description="Urn calcolato" Name="ds_urn_comp_calc"/>
+        <!-- /Nuovi campi da analisi 2.0-->
+        <!-- Nuovi campi da analisi 2.2-->
+        <ComboBox Type="STRING" Description="Tipo supporto" Name="ti_supporto_comp"/>
+        <ComboBox Type="STRING" Description="Tipo rappresentazione" Name="nm_tipo_rappr_comp"/>
+        <Input Type="STRING" Description="ID componente versato" Name="ds_id_comp_vers"/>
+        <!--<ComboBox Type="STRING" Description="Versamento annullato" Name="fl_doc_annul" />-->
+<!--         /Nuovi campi da analisi 2.3
+        <Input Type="STRING" Description="Versamento annullato" Name="fl_doc_annul" Hidden="true" />-->
+        <!-- Nuovi campi sotto strutture-->
+        <MultiSelect Type="INTEGER" Description="Sotto-struttura" Name="nm_sub_strut" Required="true" />
+        <!-- /Nuovi campi sotto strutture-->
+        <Button Name="ricerca" Description="Ricerca" Type="STRING" />
+        <Button Name="pulisci" Description="Pulisci" Type="STRING" /> 
+    </Fields>
+    
+    <List Name="ComponentiList"  Description="Componenti" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Link Name="unitaDoc"  Tooltip="Dettaglio unità documentaria" Description="" Type="STRING" Target="UnitaDocumentariaList" />
+        
+        <Input Type="STRING" Description="URN calcolato" Name="ds_urn_comp_calc" />
+        <Input Type="STRING" Description="Nome componente" Name="ds_nome_comp_vers" />
+        <ComboBox Type="STRING" Description="Supporto" Name="ti_supporto_comp" />
+        <Input Type="STRING" Description="Tipo componente" Name="nm_tipo_comp_doc" />        
+        <Input Type="STRING" Description="Formato versato" Name="nm_formato_file_doc_vers" />
+        <Input Type="DATETIME" Description="Data versamento componente" Name="dt_creazione_doc" />
+        <Input Type="INTEGER" Description="Dimensione in bytes" Name="ni_size_file_calc" GroupingDecimal="true" />
+        <CheckBox Type="STRING"  Description="Firmato" Name="fl_comp_firmato" Readonly="true"/>
+        <ComboBox Type="STRING" Description="Esito firme versamento" Name="ti_esito_verif_firme_vers"/>
+<!--        <Input Type="STRING" Description="Formato rappresentazione" Name="ds_formato_rappr_calc" />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file"/>-->
+        <Input Type="STRING" Description="Stato generazione indice AIP" Name="ti_stato_elenco_vers"/>
+        <Input Type="STRING" Description="Stato di conservazione" Name="ti_stato_conservazione"/>
+        <!--<ComboBox Type="STRING" Description="Esito firme chiusura volume / elenco" Name="ti_esito_verif_firme_chius"/>-->
+    </List>
+    
+    <!-- Lista fittizia di Componenti List creata per eseguire la redirectToAction 
+    a UnitaDocumentaria utilizzando la ListAction -->
+    <List Name="UnitaDocumentariaList" Description="Unità documentaria">
+        <Input Type="STRING" Description="" Name="id_ud"/>
+    </List>
+
+    <!-- PAGINA componente -->
+    <Fields Name="ComponentiDetail" Description="Componente" >
+        <!-- Info principali -->
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente"/>
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Id unità documentaria" Name="id_unita_doc" Hidden="true"/>
+        <Input Type="INTEGER" Description="Id struttura unità documentaria" Name="id_strut_unita_doc" Hidden="true"/>
+        <Input Type="INTEGER" Description="Tipologia unità documentaria" Name="id_tipo_unita_doc" Hidden="true"/>
+        <Input Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Button Name="dettaglio_ud" Description="Dettaglio unità documentaria" Type="STRING"/>
+        <Input Type="INTEGER" Description="Id documento" Name="id_doc" Hidden="true"/>
+        <Input Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers"/>
+        <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <Input Type="STRING" Description="Elemento" Name="ti_doc"/>
+        <Button Name="dettaglio_doc" Description="Dettaglio documento" Type="STRING"/>
+        <Input Type="INTEGER" Description="Elemento" Name="pg_doc"/>
+        <Input Type="STRING" Description="Descrizione" Name="dl_doc"/>
+        <Input Type="STRING" Description="Autore" Name="ds_autore_doc"/>       
+        
+        <Input Type="STRING" Description="URN" Name="ds_urn_originale"/>
+        <Input Type="STRING" Description="URN normalizzato" Name="ds_urn_normalizzato"/>
+        
+        <Input Type="INTEGER" Description="Ordine presentazione" Name="ni_ord_comp_doc" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Tipo componente" Name="nm_tipo_comp_doc"/>
+        <Input Type="STRING" Description="Tipo supporto" Name="ti_supporto_comp"/>
+        
+        <Input Type="STRING" Description="Componente riferito" Name="comp_rif"/>
+        <Input Type="STRING" Description="Trasformatore" Name="trasformatore"/>
+        <!--<Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc_rif"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc_rif"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc_rif"/>        -->
+        
+        <Input Type="STRING" Description="Nome componente" Name="ds_nome_comp_vers"/>
+        <Input Type="STRING" Description="URN versato" Name="dl_urn_comp_vers"/>
+        <Input Type="STRING" Description="Id componente" Name="ds_id_comp_vers"/>
+        <Input Type="STRING" Description="Formato versato" Name="nm_formato_vers"/>
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file"/>
+        <Input Type="STRING" Description="Hash versato" Name="ds_hash_file_vers"/>
+        <Input Type="STRING" Description="Tipo rappresentazione" Name="nm_tipo_rappr_comp"/>
+        <Input Type="DATETIME" Description="Riferimento temporale" Name="tm_rif_temp_vers" Format="dd/MM/yyyy HH:mm:ss"/>
+        <Input Type="STRING" Description="Descrizione riferimento temporale" Name="ds_rif_temp_vers"/>
+        <Input Type="STRING" Description="Sistema di verifica firme" Name="ds_sistema_verif_firme"/>
+        <CheckBox Type="STRING" Description="Utilizzo data di firma per riferimento temporale" Name="fl_rif_temp_data_firma_vers" Readonly="true"/>
+        <Input Type="INTEGER" Description="Numero componente padre" Name="ni_ord_comp_padre" GroupingDecimal="true" />
+        <!-- Info calcolate -->
+        <CheckBox Type="STRING" Description="Svolto controllo formato e verifica firme" Format="" Name="fl_no_calc_fmt_verif_firme"/>
+        <CheckBox Type="STRING" Description="Svolto calcolo hash" Format="" Name="fl_no_calc_hash_file"/>
+        <Input Type="STRING" Description="Esito controllo formato" Format="" Name="ti_esito_contr_formato_file"/>
+        <Input Type="STRING" Description="Messaggio esito controllo formato" Format="" Name="ds_msg_esito_contr_formato"/>
+        <Input Type="STRING" Description="Formato del componente sbustato" Format="" Name="nm_formato_calc"/>
+        <Input Type="STRING" Description="Formato di rappresentazione esteso" Format="" Name="ds_formato_rappr_esteso_calc"/>
+        <Input Type="STRING" Description="Formato di rappresentazione" Format="" Name="ds_formato_rappr_calc"/>
+        <Input Type="STRING" Description="Descrizione formato" Format="" Name="ds_formato_rappr_file_doc"/>
+        <Input Type="INTEGER" Description="Dimensione in bytes" Format="" Name="ni_size_file_calc" GroupingDecimal="true" />
+        
+        <Input Type="STRING" Description="Hash" Name="hash_calc_personalizzato"/>
+        <Input Type="STRING" Description="Hash" Name="hash_personalizzato"/>
+        <Input Type="STRING" Description="Hash" Name="ds_hash_file_calc"/>
+        <Input Type="STRING" Description="Algoritmo" Name="ds_algo_hash_file_calc"/>
+        <Input Type="STRING" Description="Encoding" Name="cd_encoding_hash_file_calc"/>
+        
+        <CheckBox Type="STRING" Description="Firmato" Name="fl_comp_firmato" Readonly="true"/>
+        <Input Type="STRING" Description="Esito verifica firme" Name="ti_esito_verif_firme"/>
+        <Input Type="STRING" Description="Messaggio esito verifica firme" Name="ds_msg_esito_verif_firme"/>
+        <!-- Info volume conserv. -->
+        <Input Type="INTEGER" Description="Volume" Name="id_volume_conserv"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato_volume_conserv" Alias="ti_stato_volume_conserv"/>
+        <Input Type="DATETIME" Description="Chiuso il" Name="dt_chius_volume" />
+        <Input Type="STRING" Description="Esito verifica firme volume" Name="ti_esito_verif_firme_chius"/>
+        <Input Type="STRING" Description="Messaggio di esito verifica firme volume" Name="ds_esito_verif_firme_chius"/>
+        <!--Info elenco di versamento 
+        <Input Type="INTEGER" Description="Elenco di versamento" Name="id_elenco_vers"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato_elenco_vers" />
+        <Input Type="DATETIME" Description="Chiuso il" Name="dt_chius_elenco_vers" />
+        <Input Type="STRING" Description="Esito verifica firme alla data di versamento" Name="ti_esito_verif_firme_dt_vers"/>
+        <Input Type="STRING" Description="Messaggio di esito verifica firme alla data di versamento" Name="ds_esito_verif_firme_dt_vers"/>
+        -->
+        
+        <!-- Informazioni sull'archiviazione -->
+        <Input Type="STRING" Description="Sistema di archiviazione" Name="tipo_archiviazione" />
+        <Input Type="STRING" Description="Nome tenant" Name="nm_tenant"/>
+        <Input Type="STRING" Description="Nome bucket" Name="nm_bucket"/>
+        <Input Type="STRING" Description="ID file" Name="cd_key_file"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato_dt_vers"/>
+        <Input Type="STRING" Description="ID file" Name="ds_nome_file_ark"/>
+        <Input Type="STRING" Description="Partizione" Name="cd_sub_partition"/>
+        <Input Type="INTEGER" Description="ID file" Name="id_file_oracle"/>
+
+        <!-- Versioni XSD dati spec standard e di migrazione -->
+        <Input Type="STRING" Description="Versione XSD" Name="versione_xsd_dati_spec_comp"/>
+        <Input Type="STRING" Description="Versione XSD" Name="versione_xsd_dati_spec_migr_comp"/>
+        <!-- campo necessario per scaricare i componenti di tipo file -->
+        <Input Type="STRING" Description="URN precedente" Name="ds_urn_comp_calc"/>
+        <!-- Bottone scarica componente di tipo FILE -->
+        <Button Name="scarica_comp_file" Description="Scarica file componente" Type="STRING"/>
+        <!-- Bottone Scarica DIP esibizione comp doc -->
+        <Button Description="Scarica DIP per esibizione" Name="scarica_dip_esibizione_comp_doc" Type="STRING"/>
+        <!-- Bottone scarica report verifica firma di tipo FILE -->
+        <Button Name="scarica_report_firma" Description="Scarica report verifica firma" Type="STRING"/>
+        <!-- NUOVI CAMPI SU RICHIESTA CASAGNI-->
+        <!-- UNITA DOC -->
+        <Input Type="STRING" Description="Oggetto" Name="dl_oggetto_unita_doc"/>
+        <Input Type="DATE" Description="Data unità documentaria" Name="dt_reg_unita_doc"/>
+        <Input Type="DATETIME" Description="Data versamento unità documentaria" Name="dt_creazione_ud"/>
+        <Input Type="DATE" Description="Data annullamento unità documentaria" Name="dt_annul_unita_doc"/>
+        <Input Type="STRING" Description="Motivo annullamento unità documentaria" Name="nt_annul_unita_doc"/>
+        <!-- DOC -->
+        <Input Type="DATETIME" Description="Data versamento documento" Name="dt_creazione_doc"/>
+        <Input Type="STRING" Description="Stato conservazione" Name="ti_stato_doc"/>
+        <Input Type="INTEGER" Description="Numero d'ordine" Name="ni_ord_doc" />
+        <Input Type="STRING" Description="Urn documento" Name="urn_doc"/>
+        <Input Type="STRING" Description="Tipo struttura documento" Name="nm_tipo_strut_doc" />
+        <Input Type="DATE" Description="Data annullamento documento" Name="dt_annul_doc"/>
+        <Input Type="STRING" Description="Motivo annullamento documento" Name="nt_annul_doc"/>
+        <!-- Bottone scarica DIP componente -->
+        <Button Name="scarica_dip_comp" Description="Scarica DIP" Type="STRING"/>
+    </Fields>
+    
+    <!--     Lista dati del componente 
+    <List Name="DatiList"  Description="Lista Dati" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_tipo_comp"/>
+        <Input Type="STRING" Description="Valore" Name="dl_valore"/>
+    </List>-->
+
+    <!-- Lista firme del componente -->
+    <List Name="FirmeList"  Description="Lista Firme" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" >
+        <Input Type="INTEGER" Description="Progressivo firma" Name="pg_firma"/>
+        <Input Type="STRING" Description="Nome firmatario" Name="nm_firmatario"/>
+        <Input Type="STRING" Description="Cognome firmatario" Name="nm_cognome_firmatario"/>
+        <Input Type="STRING" Description="CD firmatario" Name="cd_firmatario"/>
+        <Input Type="STRING" Description="Formato" Name="ti_formato_firma"/>
+        <Input Type="DATETIME" Description="Riferimento temporale usato" Name="tm_rif_temp_usato" Format="dd/MM/yyyy HH:mm:ss"/>
+        <Input Type="STRING" Description="Tipo riferimento temporale usato" Name="ti_rif_temp_usato"/>
+        <Input Type="STRING" Description="Esito verifica versamento" Name="ti_esito_verif_firma"/>
+        <Input Type="STRING" Description="Esito verifica alla data di versamento" Name="ti_esito_verif_firma_dt_vers"/>
+    </List>
+
+    <!-- Lista marche del componente -->
+    <List Name="MarcheList"  Description="Lista Marche" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" >
+        <Input Type="INTEGER" Description="Progressivo marca" Name="pg_marca"/>
+        <Input Type="STRING" Description="TSA" Name="issuer_certif_tsa"/>
+        <Input Type="DATETIME" Description="Timestamp" Name="tm_marca_temp" Format="dd/MM/yyyy HH:mm:ss"/>
+        <Input Type="STRING" Description="Formato" Name="ti_formato_marca"/>
+        <Input Type="STRING" Description="Esito controllo conformità" Name="ti_esito_contr_conforme"/>
+        <Input Type="STRING" Description="Esito verifica" Name="ti_esito_verif_marca"/>
+    </List>
+    
+    <!-- Lista dati specifici del componente -->
+    <List Name="DatiSpecificiCompList"  Description="Dati specifici componente" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_dati_spec"/>
+        <Input Type="STRING" Description="Valore" Name="dl_valore"/>
+    </List>    
+        
+    <!-- Lista dati specifici di migrazione del componente -->
+    <List Name="DatiSpecificiMigrazioneCompList"  Description="Dati specifici migrazione componente" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_dati_spec"/>
+        <Input Type="STRING" Description="Valore" Name="dl_valore"/>
+    </List>
+    
+    <Tab Name="ComponentiDettaglioTabs" Description="Dettaglio Componente Unità Documentaria">
+        <TabElement Name="InfoPrincipaliComp" Description="Informazioni principali" />   
+        <TabElement Name="InfoVersateComp" Description="Informazioni versate" />    
+        <TabElement Name="InfoVolumeConservComp" Description="Informazioni volume" />
+        <!--<TabElement Name="InfoElencoVersComp" Description="Informazioni elenco di versamento" />    -->
+    </Tab>
+    
+    <Tab Name="ComponentiDettaglioListsTabs" Description="Dettaglio Componenti">
+        <TabElement Name="ListaFirmeComp" Description="Firme componente" />     
+        <TabElement Name="ListaMarcheComp" Description="Marche componente" />    
+        <!--<TabElement Name="ListaDatiComp" Description="Dati componente" />-->
+        <TabElement Name="ListaDatiSpecificiComp" Description="Dati specifici componente" />
+        <TabElement Name="ListaDatiSpecificiMigrazioneComp" Description="Dati specifici migrazione componente" />
+    </Tab>
+    
+    <!-- PAGINA marca -->
+    <Fields Name="MarcheUnitaDocumentarieDetail" Description="Marca" >
+        <!-- Info principali marca -->
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente"/>
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers"/>
+        <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <Input Type="STRING" Description="Definizione" Name="ti_doc"/>
+        <Input Type="INTEGER" Description="Definizione" Name="pg_doc"/>
+        <Input Type="INTEGER" Description="Numero componente" Name="ni_ord_comp_doc" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Tipo componente" Name="nm_tipo_comp_doc"/>
+        <Input Type="STRING" Description="Formato del componente sbustato" Name="nm_formato_calc"/>        
+        <Input Type="INTEGER" Description="Progressivo marca" Name="pg_marca"/>
+        <Input Type="STRING" Description="TSA" Name="issuer_certif_tsa"/>
+        <Input Type="INTEGER" Description="Serial number" Name="serial_tsa"/>
+        <Input Type="DATETIME" Description="Validità certificato TSA da" Name="dt_ini_val_certif_tsa"/>
+        <Input Type="DATETIME" Description="Validità certificato TSA a" Name="dt_fin_val_certif_tsa"/>
+        <Input Type="DATETIME" Description="Timestamp" Name="tm_marca_temp"/>
+        <Input Type="STRING" Description="Formato" Name="ti_formato_marca"/>
+        <Input Type="STRING" Description="Esito controllo conformità" Name="ti_esito_contr_conforme"/>
+        <Input Type="STRING" Description="Descrizione esito controllo conformità" Name="ds_msg_esito_contr_conforme"/>
+        <Input Type="STRING" Description="Esito verifica" Name="ti_esito_verif_marca"/>
+        <Input Type="STRING" Description="Descrizione esito verifica" Name="ds_msg_esito_verif_marca"/>
+        <Input Type="STRING" Description="Tipo" Name="ti_marca_temp"/>
+        <TextArea Type="STRING" Description="Marca Base64" Name="ds_marca_base64" Rows="500" Cols="500" MaxLength="1000000000" />
+        <Input Type="STRING" Description="Algoritmo calcolo hash" Name="ds_algo_marca"/>
+        <TextArea Type="STRING" Description="Note" Name="ds_note" Rows="50" Cols="500" MaxLength="4000"/>
+        <Input Type="DATETIME" Description="Scadenza" Name="dt_scad_marca"/>
+        <Input Type="INTEGER" Description="Progressivo busta" Name="pg_busta"/>
+        <!-- Controllo marca -->
+        <Input Type="STRING" Description="Crittografico" Name="esito_crittografico"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crittografico"/>
+        <Input Type="STRING" Description="Catena trusted" Name="esito_catena"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_catena"/>
+        <Input Type="STRING" Description="Certificato" Name="esito_certificato"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_certificato"/>
+        <Input Type="STRING" Description="Controllo CRL" Name="esito_crl"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl"/>
+        <Input Type="STRING" Description="Issuer CRL" Name="issuer_crl"/>
+        <Input Type="INTEGER" Description="Serial number certificato" Name="serial_ca_crl"/>
+        <Input Type="INTEGER" Description="CRL usata" Name="serial_crl"/>
+        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl"/>
+        <Input Type="STRING" Description="Controllo OCSP" Name="esito_ocsp"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_ocsp"/>
+        <Input Type="STRING" Description="Responder OCSP" Name="issuer_certif_ocsp"/>
+        <Input Type="STRING" Description="Numero seriale responder OCSP" Name="serial_certif_ocsp"/>
+    </Fields>    
+
+    <!-- Lista certificati CA usati per controllo CATENA_TRUSTED della marca -->	
+    <List Name="CertificatiCAList"  Description="Lista Certificati CA per controllo CATENA_TRUSTED" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="STRING" Description="Issuer" Name="dl_dn_issuer_certif_ca"/>
+        <Input Type="INTEGER" Description="Serial number" Name="ni_serial_certif_ca" GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Validità da" Name="dt_ini_val_certif_ca"/>
+        <Input Type="DATETIME" Description="Validità a" Name="dt_fin_val_certif_ca"/>
+        <Input Type="INTEGER" Description="CRL usata" Name="ni_serial_crl" GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Data scadenza CRL" Name="dt_scad_crl"/>
+        <Input Type="STRING" Description="OCSP responder usato" Name="dl_dn_issuer_certif_ocsp" />
+        <Input Type="INTEGER" Description="OCSP responder serial number" Name="ni_serial_certif_ocsp" GroupingDecimal="true"  />
+    </List>
+    
+    <!-- Lista certificati CA usati per controllo OCSP della marca -->	
+    <List Name="CertificatiCAOCSPList"  Description="Lista Certificati CA per controllo OCSP" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="STRING" Description="Issuer" Name="dl_dn_issuer_certif_ca"/>
+        <Input Type="INTEGER" Description="Serial number" Name="ni_serial_certif_ca" GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Validità da" Name="dt_ini_val_certif_ca"/>
+        <Input Type="DATETIME" Description="Validità a" Name="dt_fin_val_certif_ca"/>
+        <Input Type="STRING" Description="OCSP responder usato" Name="dl_dn_issuer_certif_ocsp" />
+        <Input Type="INTEGER" Description="OCSP responder serial number" Name="ni_serial_certif_ocsp" GroupingDecimal="true"  />
+        <Input Type="DATETIME" Description="Certificato OCSP responder valido da" Name="dt_ini_val_certif_ocsp"/>
+        <Input Type="DATETIME" Description="Certificato OCSP responder valido a" Name="dt_fin_val_certif_ocsp"/>
+    </List>
+	
+    <Tab Name="MarcheDettaglioTabs" Description="Dettaglio Marche">
+        <TabElement Name="InfoPrincipaliMarche" Description="Informazioni principali" />
+        <TabElement Name="ControlloMarca" Description="Controllo marca" />    
+    </Tab>
+    
+    <Tab Name="MarcheDettaglioListsTabs" Description="Dettaglio marche">
+        <TabElement Name="ListaCertificatiCAMarche" Description="Certificati CA per controllo CATENA_TRUSTED" />    
+        <TabElement Name="ListaCertificatiCAOCSPMarche" Description="Certificati CA per controllo OCSP" />            
+    </Tab>
+	
+    <!-- PAGINA firma -->
+    <Fields Name="FirmeUnitaDocumentarieDetail" Description="Pagina Firma" >
+        <!-- Info principali firma -->
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente"/>
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers"/>
+        <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <Input Type="STRING" Description="Tipologia documento" Name="ti_doc"/>
+        <Input Type="INTEGER" Description="Definizione" Name="pg_doc"/>
+        <Input Type="INTEGER" Description="Numero componente" Name="ni_ord_comp_doc" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Tipo componente" Name="nm_tipo_comp_doc"/>
+        <Input Type="STRING" Description="Formato del componente sbustato" Name="nm_formato_calc"/>
+        <Input Type="INTEGER" Description="Progressivo firma" Name="pg_firma"/>
+        <Input Type="STRING" Description="Firmatario" Name="nm_firmatario"/>
+        <Input Type="STRING" Description="Firmatario" Name="nm_cognome_firmatario"/>
+        <Input Type="STRING" Description="CD firmatario" Name="cd_firmatario"/>
+        <Input Type="STRING" Description="Formato" Name="ti_formato_firma"/>
+        <Input Type="DATETIME" Description="Data firma" Name="dt_firma"/>
+        <Input Type="STRING" Description="Esito controllo conformità" Name="ti_esito_contr_conforme"/>
+        <Input Type="STRING" Description="Descrizione esito controllo conformità" Name="ds_msg_esito_contr_conforme"/>
+        <Input Type="DATETIME" Description="Riferimento temporale usato" Name="tm_rif_temp_usato" Format="dd/MM/yyyy HH:mm:ss"/>
+        <Input Type="STRING" Description="Tipo riferimento temporale usato" Name="ti_rif_temp_usato"/>
+        <Input Type="STRING" Description="Esito verifica versamento" Name="ti_esito_verif_firma"/>
+        <Input Type="STRING" Description="Esito verifica alla data di versamento" Name="ti_esito_verif_firma_dt_vers"/>
+        <Input Type="STRING" Description="Tipo" Name="ti_firma"/>
+        <TextArea Type="STRING" Description="Firma Base64" Name="bl_firma_base64" Rows="500" Cols="500" MaxLength="1000000000" />
+        <Input Type="STRING" Description="Algoritmo calcolo hash" Name="ds_algo_firma"/>
+        <TextArea Type="STRING" Description="Note" Name="ds_note" Rows="50" Cols="500" MaxLength="4000"/>
+        <Input Type="INTEGER" Description="Progressivo busta" Name="pg_busta"/>
+        <Input Type="STRING" Description="Controfirma di" Name="nm_firmatario_padre"/>
+        <Input Type="STRING" Description="Controfirma di" Name="nm_cognome_firmatario_padre"/>
+        <Input Type="INTEGER" Description="Id componente" Name="id_comp_doc"/>
+        <!-- Certificato firmatario -->
+        <Input Type="STRING" Description="CA" Name="issuer_certif_firmatario"/>
+        <Input Type="INTEGER" Description="Serial number" Name="ni_serial_certif_ca" GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Serial number certificato" Name="ni_serial_certif_firmatario" GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Validità da" Name="dt_ini_val_certif_firmatario"/>
+        <Input Type="DATETIME" Description="Validità a" Name="dt_fin_val_certif_firmatario"/>
+        <!-- Controllo firma al vers. -->
+        <Input Type="STRING" Description="Crittografico" Name="esito_crittografico"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crittografico"/>
+        <Input Type="STRING" Description="Catena trusted" Name="esito_catena"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_catena"/>
+        <Input Type="STRING" Description="Certificato" Name="esito_certificato"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_certificato"/>
+        <Input Type="STRING" Description="Controllo CRL" Name="esito_crl"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl"/>
+        <Input Type="STRING" Description="CRL usata" Name="issuer_crl"/>
+        <Input Type="INTEGER" Description="Numero seriale certificato" Name="serial_ca_crl"/>
+        <Input Type="INTEGER" Description="Numero seriale CRL" Name="serial_crl"/>
+        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl"/>
+        <Input Type="STRING" Description="Controllo OCSP" Name="esito_ocsp"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_ocsp"/>
+        <Input Type="STRING" Description="Responder OCSP" Name="issuer_certif_ocsp"/>
+        <Input Type="STRING" Description="Numero seriale responder OCSP" Name="serial_certif_ocsp"/>
+        <!-- Controllo firma alla data di vers. -->
+        <Input Type="STRING" Description="Crittografico" Name="esito_crittog_dt_vers"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crittog_dt_vers"/>
+        <Input Type="STRING" Description="Catena trusted" Name="esito_catena_dt_vers"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_catena_dt_vers"/>
+        <Input Type="STRING" Description="Certificato" Name="esito_certificato_dt_vers"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_certificato_dt_vers"/>
+        <Input Type="STRING" Description="Controllo CRL" Name="esito_crl_dt_vers"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl_dt_vers"/>
+        <Input Type="STRING" Description="CRL usata" Name="issuer_crl_dt_vers"/>
+        <Input Type="INTEGER" Description="Numero seriale certificato" Name="serial_ca_crl_dt_vers"/>
+        <Input Type="INTEGER" Description="Numero seriale CRL" Name="serial_crl_dt_vers"/>
+        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl_dt_vers"/>
+        <Input Type="STRING" Description="Controllo OCSP" Name="esito_ocsp_dt_vers"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_ocsp_dt_vers"/>
+        <Input Type="STRING" Description="Responder OCSP" Name="issuer_certif_ocsp_dt_vers"/>
+        <Input Type="STRING" Description="Numero seriale responder OCSP" Name="serial_certif_ocsp_dt_vers"/>
+        <!-- Controllo firma chiusura vol. -->
+        <Input Type="STRING" Description="Crittografico" Name="esito_crittografico_vol"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crittografico_vol"/>
+        <Input Type="STRING" Description="Catena trusted" Name="esito_catena_vol"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_catena_vol"/>
+        <Input Type="STRING" Description="Certificato" Name="esito_certificato_vol"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_certificato_vol"/>
+        <Input Type="STRING" Description="Controllo CRL" Name="esito_crl_vol"/>
+        <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl_vol"/>
+        <Input Type="INTEGER" Description="CRL usata" Name="serial_crl_vol"/>
+        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl_vol"/>
+    </Fields>    
+    
+    <!-- Lista certificati CA usati per controllo CATENA_TRUSTED della firma -->		
+    <List Name="ControfirmatariList"  Description="Lista Controfirmatari" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="STRING" Description="Cognome" Name="nm_cognome_firmatario"/>
+        <Input Type="STRING" Description="Nome" Name="nm_firmatario"/>
+        <Input Type="STRING" Description="Codice" Name="cd_firmatario"/>
+    </List>
+	
+    <Tab Name="FirmeDettaglioTabs" Description="Dettaglio Firme">
+        <TabElement Name="InfoPrincipaliFirme" Description="Informazioni principali" />
+        <TabElement Name="CertificatoFirmatario" Description="Certificato firmatario" />    
+        <!--        <TabElement Name="ControlloFirmaVers" Description="Controllo firma al vers." />    
+        <TabElement Name="ControlloFirmaChiusVol" Description="Controllo firma chiusura vol." />    -->
+        <TabElement Name="ControlliFirma" Description="Controlli sulla firma" />
+    </Tab>
+	
+    <Tab Name="FirmeDettaglioListsTabs" Description="Liste Dettaglio Firme">
+        <TabElement Name="ListaCertificatiCAFirme" Description="Certificati CA per controllo CATENA_TRUSTED" />    
+        <TabElement Name="ListaCertificatiCAOCSPFirme" Description="Certificati CA per controllo OCSP" />    
+        <TabElement Name="ListaControfirmatari" Description="Controfirmatari" />
+    </Tab>
+    
+    <List Name="ComponentiDipList" Description="Lista componenti DIP"  hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="Componente" Name="nm_comp_doc"/>
+        <Input Type="STRING" Description="Formato di rappresentazione" Name="nm_formato_rappr"/>
+        <Input Type="STRING" Description="Tipo algoritmo" Name="ds_algo"/>
+        <Input Type="STRING" Description="Trasformatore" Name="nm_conv"/>
+        <Input Type="STRING" Description="Versione" Name="vrs_conv"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato_conv"/>
+        <Input Type="DATETIME" Description="Data" Name="dt_comp"/>
+        <Input Type="STRING" Description="Condizione di errore" Name="cd_err"/>
+        <Input Type="STRING" Description="Messaggio di errore" Name="msg_err"/>
+        <Link Name="scaricaDip" Description="" Type="STRING" Target="scaricaDip" Tooltip="Scarica DIP" isTargetList="false"/>
+    </List>
+    
+    <ButtonList Name="ScaricaDipBL" Description="">
+        <Button Name="scaricaZip" Description="Scarica zip" Type="STRING"/>
+    </ButtonList>
+</Form>

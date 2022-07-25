@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Strutture" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" 
+      xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd" >
+
+    <!-- section -->
+    <Section Name="strutFlags" Description="" Legend="Parametri"  ShowButton="true" LoadOpened="false" />
+    <Section Name="parametriUnitaDoc" Description="" Legend="Parametri sull'unità documentaria"  ShowButton="true" LoadOpened="false" />
+    <Section Name="parametriFascicolo" Description="" Legend="Parametri sul fascicolo"  ShowButton="true" LoadOpened="false" />    
+    <Section Name="descrizione" Description="" Legend="Informazioni sulla struttura"  ShowButton="false" LoadOpened="true"  />
+    <Section Name="parametriCriteriRaggr" Description="" Legend="Parametri criteri di raggruppamento" ShowButton="false" LoadOpened="true" />
+    <Section Name="scadenzaChiusura" Description="" Legend="Scadenza chiusura" ShowButton="false" LoadOpened="true"/>
+    <Section Name="controlliFirma" Description="" Legend="Controlli sulla firma abilitati al versamento" ShowButton="false" LoadOpened="true"/>
+    <Section Name="tipoAmbitoTerritoriale" Description="" Legend="Tipo ambito territoriale" ShowButton="false" LoadOpened="true"/>
+    <Section Name="categoriaStruttura" Description="" Legend="Categoria struttura" ShowButton="false" LoadOpened="true"/>
+    <Section Name="parametriAccettazioneFirme" Description="" Legend="Parametri di accettazione firme" ShowButton="false" LoadOpened="true"/>
+    <Section Name="parametriAccettazioneFormati" Description="" Legend="Parametri di accettazione formati" ShowButton="false" LoadOpened="true"/>
+    <Section Name="parametriAccettazioneHashVersato" Description="" Legend="Parametri di accettazione hash versato" ShowButton="false" LoadOpened="true"/>
+    <Section Name="parametriControlloConformitaRegistro" Description="" Legend="Parametri di controllo sulla conformità del registro" ShowButton="false" LoadOpened="true"/>
+    <Section Name="parametriAccettazioneClassificazione" Description="" Legend="Parametri di accettazione classificazione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="parametriControlloConformitaNumero" Description="" Legend="Parametri di controllo sulla conformità del numero" ShowButton="false" LoadOpened="true"/>
+    <Section Name="parametriAccettazioneCollegamenti" Description="" Legend="Parametri di accettazione collegamenti" ShowButton="false" LoadOpened="true"/>    
+    <Section Name="parametriCriteriFascicolo" Description="" Legend="Parametri criteri di raggruppamento" ShowButton="false" LoadOpened="true"/>
+    <Section Name="obbligatorietaDatiProfilo" Description="" Legend="Obbligatorietà dati di profilo dell'unità documentaria" ShowButton="false" LoadOpened="true"/>
+    <Section Name="anteprimaFormatiFileDoc" Description="" Legend="Anteprima"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="struttura" Description="" Legend="Struttura"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sTipoRapprComp" Description="" Legend="Tipo rappresentazione componente"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sTipoStrutDoc" Description="" Legend="Tipo struttura documento"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sTipoComp" Description="" Legend="Tipo componente ammessa"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="struttureTemplateSection" Description="" Legend="Strutture template"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="enteConvenzionatoSection" Description="" Legend="Ente convenzionato"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="noteSection" Description="" Legend="Note"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="strutturaSection" Description="" Legend="Struttura"  ShowButton="false" LoadOpened="true"/>
+   
+    <!-- section verticali per le liste (sostituiscono le tab orizzontali) -->
+    <Section Name="registriTab" Description="" Legend="Registri"  ShowButton="true" LoadOpened="true"/>
+    <Section Name="tipoUdTab" Description="" Legend="Tipologie unità documentarie" ShowButton="true" LoadOpened="true"/>
+    <Section Name="tipoDocTab" Description="" Legend="Tipi documenti"  ShowButton="true" LoadOpened="true"/>
+    <Section Name="tipoFascicoloTab" Description="" Legend="Tipi fascicolo"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="formatoFileTab" Description="" Legend="Formati ammessi"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="tipoStrutTab" Description="" Legend="Tipi struttura documento"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="tipoRapprTab" Description="" Legend="Tipi rappresentazione componente"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="criteriRaggruppamentoTab" Description="" Legend="Criteri di raggruppamento"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="titolariTab" Description="" Legend="Titolari di classificazione"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="subStrutTab" Description="" Legend="Sotto strutture"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="serieTab" Description="" Legend="Tipologie di serie di unità documentarie"  ShowButton="true" LoadOpened="false"/>
+    <Section Name="sysMigrTab" Description="" Legend="Sistemi di migrazione" ShowButton="true" LoadOpened="false"/>
+    <Section Name="entiConvenzionatiTab" Description="" Legend="Enti convenzionati" ShowButton="true" LoadOpened="true"/>
+    
+    <Section Name="parametriAmministrazioneSection" Description="" Legend="Parametri di amministrazione" ShowButton="true" LoadOpened="false"/>
+    <Section Name="parametriConservazioneSection" Description="" Legend="Parametri di conservazione" ShowButton="true" LoadOpened="false"/>
+    <Section Name="parametriGestioneSection" Description="" Legend="Parametri di gestione" ShowButton="true" LoadOpened="false"/>
+   
+    <!-- STRUTTURA --> 
+    <!-- Qui tutti i campi della tabella tranne l'id che viene assegnato di default-->
+    <Fields Name="InsStruttura" Description="Inserimento Struttura" >
+        <Input Type="STRING" Description="Nome struttura" Name="nm_strut" MaxLength="100" Trigger="true" />                        
+        <Input Type="STRING" Description="Nome normalizzato" Name="cd_strut_normaliz" MaxLength="100" Readonly="true" />                 
+        <Input Type="STRING" Description="Descrizione struttura" Name="ds_strut" MaxLength="254" />
+        <Input Type="STRING" Description="Struttura" Name="struttura" />
+        <Input Type="STRING" Description="Struttura" Name="view_nm_strut" MaxLength="100"  />
+        <Input Type="STRING" Description="Ente" Name="view_nm_ente" MaxLength="100" />
+        <Input Type="STRING" Description="Ambiente" Name="view_nm_amb" MaxLength="100" />
+        <ComboBox Name="id_ambiente_rif" Description="Ambiente" Type="INTEGER" Trigger="true" />
+        <ComboBox Name="id_ente_rif" Description="Ente" Type="INTEGER" Trigger="true"/>
+        <ComboBox Name="id_ente" Description="Ente" Type="INTEGER" />
+        <TextArea Type="STRING" Description="Note" Name="dl_note_strut" Rows="4" Cols="100" MaxLength="1024" />
+        <!--<Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING" Readonly="true" />-->
+        <!-- Parametri sull'unità documentaria -->
+        <!--        <ComboBox Type="STRING" Description="*Tipo scadenza chiusura volume / elenco" Name="ti_scad_chius_volume" Trigger="true"/>
+        <ComboBox Type="STRING" Description="*Tipo tempo scadenza chiusura" Name="ti_tempo_scad_chius" />
+        <Input Type="INTEGER" Description="*Tempo scadenza chiusura" Name="ni_tempo_scad_chius"  GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="*Tipo tempo scadenza chiusura firme" Name="ti_tempo_scad_chius_firme" />
+        <Input Type="INTEGER" Description="*Tempo scadenza chiusura firme" Name="ni_tempo_scad_chius_firme" GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="*Numero massimo componenti" Name="num_max_comp_criterio_raggr" GroupingDecimal="true" />
+        <CheckBox  Type="STRING" Description="Controllo crittografico " Name="fl_abilita_contr_crittog_vers" />
+        <CheckBox Type="STRING" Description="Controllo catena trusted" Name="fl_abilita_contr_trust_vers" />
+        <CheckBox Type="STRING" Description="Controllo certificato" Name="fl_abilita_contr_certif_vers" />
+        <CheckBox Type="STRING" Description="Controllo crl" Name="fl_abilita_contr_crl_vers" />
+        <CheckBox Type="STRING" Description="Firma sconosciuta" Name="fl_accetta_firma_noconos" />
+        <CheckBox Type="STRING" Description="Firma non conforme" Name="fl_accetta_firma_noconf" />
+        <CheckBox Type="STRING" Description="Firma no delibera 45" Name="fl_accetta_firma_giugno_2011" />
+        <CheckBox Type="STRING" Description="Controllo crittografico negativo" Name="fl_accetta_contr_crittog_neg" />
+        <CheckBox Type="STRING" Description="Controllo catena trusted negativo" Name="fl_accetta_contr_trust_neg" />
+        <CheckBox Type="STRING" Description="Controllo certificato scaduto" Name="fl_accetta_contr_certif_scad" />
+        <CheckBox Type="STRING" Description="Controllo certificato non valido" Name="fl_accetta_contr_certif_noval" />
+        <CheckBox Type="STRING" Description="Controllo certificato no cert." Name="fl_accetta_contr_certif_nocert" />
+        <CheckBox Type="STRING" Description="Controllo crl negativo" Name="fl_accetta_contr_crl_neg" />
+        <CheckBox Type="STRING" Description="Controllo crl scaduta" Name="fl_accetta_contr_crl_scad" />
+        <CheckBox Type="STRING" Description="Controllo crl non valida" Name="fl_accetta_contr_crl_noval" />
+        <CheckBox Type="STRING" Description="Controllo crl non scaricabile" Name="fl_accetta_contr_crl_noscar" />
+        <CheckBox Type="STRING" Description="Abilita controllo formato numero" Name="fl_abilita_contr_fmt_num" Readonly="true" defaultValue="1" />
+        <CheckBox Type="STRING" Description="Accetta controllo formato numero negativo" Name="fl_accetta_fmt_num_neg" />
+        <CheckBox Type="STRING" Description="Forza formato numero" Name="fl_forza_fmt_num" />
+        <CheckBox Type="STRING" Description="Oggetto" Name="fl_obbl_oggetto" />
+        <CheckBox Type="STRING" Description="Data" Name="fl_obbl_data" />
+        <CheckBox Type="STRING" Description="Abilita controllo formato" Name="fl_abilita_contr_fmt" />
+        <CheckBox Type="STRING" Description="Marca sconosciuta" Name="fl_accetta_marca_noconos" />
+        <CheckBox Type="STRING" Description="Accetta controllo formato negativo" Name="fl_accetta_contr_fmt_neg" />
+        <CheckBox Type="STRING" Description="Forza formato" Name="fl_forza_fmt" />
+        <CheckBox Type="STRING" Description="Abilita controllo hash" Name="fl_abilita_contr_hash_vers" />
+        <CheckBox Type="STRING" Description="Accetta controllo hash negativo" Name="fl_accetta_contr_hash_neg" />
+        <CheckBox Type="STRING" Description="Forza hash" Name="fl_forza_hash_vers" />
+        <CheckBox Type="STRING" Description="Gestione fascicoli" Name="fl_gest_fascicoli" Trigger="true"/>        
+         Parametri sul fascicolo 
+        <CheckBox Type="STRING" Description="Abilita controllo classificazione" Name="fl_abilita_contr_classif" />
+        <CheckBox Type="STRING" Description="Accetta controllo classificazione negativo" Name="fl_accetta_contr_classif_neg" />
+        <CheckBox Type="STRING" Description="Forza classificazione" Name="fl_forza_contr_classif" />
+        <CheckBox Type="STRING" Description="Abilita controllo numero" Name="fl_abilita_contr_numero" />
+        <CheckBox Type="STRING" Description="Accetta controllo numero negativo" Name="fl_accetta_contr_numero_neg" />
+        <CheckBox Type="STRING" Description="Forza numero" Name="fl_forza_contr_numero" />
+        <CheckBox Type="STRING" Description="Abilita controllo collegamenti" Name="fl_abilita_contr_colleg" />
+        <CheckBox Type="STRING" Description="Accetta controllo collegamenti negativo" Name="fl_accetta_contr_colleg_neg" />
+        <CheckBox Type="STRING" Description="Forza collegamenti" Name="fl_forza_contr_colleg" />-->
+        <!-- Parametri criteri di raggruppamento -->
+        <Input Type="INTEGER" Description="Tempo scadenza chiusura" Name="ni_gg_scad_criterio" />
+        <Input Type="INTEGER" Description="Numero massimo fascicoli" Name="ni_max_fascicoli_criterio" />
+        <!-- -->
+        <CheckBox Type="STRING" Description="Struttura template" Name="fl_template" />
+        <Input Type="STRING" Description="Codice IPA" Name="cd_ipa" />
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val_strut" Required="true"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_fine_val_strut" Required="true"/>
+        <!--<CheckBox Type="STRING" Description="Archivio restituito" Name="fl_archivio_restituito" defaultValue="0" Readonly="true" />-->
+        <ComboBox Type="STRING" Description="Archivio restituito" Name="fl_archivio_restituito" />
+        <CheckBox Type="STRING" Description="Cessata" Name="fl_cessato" defaultValue="0" Readonly="true" />
+        <CheckBox Type="STRING" Description="Partizionamenti completati" Name="partiz_complet" Readonly="true" />
+        <CheckBox Type="STRING" Description="Partizionamenti aggiornamenti metadati completati" Name="partiz_upd_complet" Readonly="true" />
+        <CheckBox Type="STRING" Description="Partizionamenti fascicoli completati" Name="partiz_fascic_complet" Readonly="true" />
+        
+        <ComboBox Type="INTEGER" Description="Ambiente ente convenzionato" Name="id_ambiente_ente_convenz" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente convenzionato" Name="id_ente_convenz" Trigger="true" />
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_fine_val" />
+        <Input Type="INTEGER" Description="" Name="uuid_imp" />
+        <Button Name="insStrutButton" Description="Inserisci struttura" Type="STRING"/>
+        <Button Name="scaricaStruttura" Description="Esporta" Type="STRING"/>
+        <Button Name="importaStruttura" Description="Importa" Type="STRING"/>        
+        <Button Name="cessaStruttura" Description="Cessazione struttura" Type="STRING" />
+        <Button Name="confermaImportaStruttura" Description="Importa" Type="STRING"/>
+        <Button Name="creaStruttureTemplate" Description="Crea Strutture Template" Type="STRING"/>                
+        <Button Name="logEventi" Description="Log eventi" Type="STRING"/>
+        <Input Name="bl_xml_strut" Description="File Xml" Type="FILE" />
+        <ComboBox Type="INTEGER" Description="Categoria struttura" Name="id_categ_strut" />
+        <CheckBox Type="STRING" Description="Crea nuova struttura non standard (avvisare Supporto tecnico)" Name="check_dup_strut" />
+        <CheckBox Type="STRING" Description="Crea nuova struttura standard" Name="check_sost_strut" />
+        <CheckBox Type="STRING" Description="Includi criteri di raggruppamento" Name="check_includi_criteri" />
+        <CheckBox Type="STRING" Description="Includi formati" Name="check_includi_formati" />
+        <CheckBox Type="STRING" Description="Includi tipi fascicolo" Name="check_includi_tipi_fascicolo" />
+        <CheckBox Type="STRING" Description="Includi elementi disattivi" Name="check_includi_elementi_disattivi" />
+        <CheckBox Type="STRING" Description="Mantieni le date di fine validità della struttura di partenza" Name="check_mantieni_date_fine_validita" />
+    </Fields>
+    
+    <Fields Name="GestioneXsdMigrazione" Description="Gestione Xsd Migrazione" >
+        <Input Type="INTEGER" Description="Id struttura" Name="id_strut" Hidden="true" Readonly="true"/>
+        <!-- Combo per pagina di aggiunta Xsd Migrazione-->
+        <ComboBox Type="INTEGER" Description="Sistema migrazione" Name="nm_sistema_migraz" Required="true" />
+    </Fields>
+    
+    <Fields Name="CheckDuplicaStruttura" Description="Scelta duplica struttura" >
+        <CheckBox Type="STRING" Description="Crea nuova struttura non standard (avvisare Supporto tecnico)" Name="check_dup_strut" />
+        <CheckBox Type="STRING" Description="Crea nuova struttura standard" Name="check_sost_strut" />
+        <Button Name="confermaSceltaDup" Description="Conferma" Type="STRING"/>
+    </Fields>
+    
+    <Fields Name="StruttureTemplateCreator" Description="Finestrella creazione strutture template" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente_strutture_template" />
+        <Button Secure="false" Name="ricaricaAmbiente" Description="Ricarica" Type="STRING" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente_strutture_template" />
+        <Button Secure="false" Name="confermaCreazioneStruttureTemplate" Description="Salva" Type="STRING" />
+        <Button Secure="false" Name="annullaCreazioneStruttureTemplate" Description="Annulla" Type="STRING" />
+    </Fields>
+    
+    <ButtonList Name="SalvaStrutturaCustomMessageButtonList" Description="MessageBox" >        
+        <Button Secure="false" Name="confermaSalvataggioStruttura" Description="Si" Type="STRING"  />
+        <Button Secure="false" Name="annullaSalvataggioStruttura" Description="No" Type="STRING"  />
+    </ButtonList>
+    
+    <Wizard Name="InserimentoWizard" Description="Importa parametri di configurazione">
+        <Step Name="Passo1" Description="Inserisci file xml"/>
+        <Step Name="Passo2" Description="Selezionare i valori" />
+        <!--<EndPage Name="EndPage" Description="Riepilogo" />-->
+    </Wizard>
+    
+    <Fields Name="ImportaParametri" Description="Importa parametri di configurazione" >
+        <Button Name="importaParametriButton" Description="Importa parametri di configurazione" Type="STRING"/>
+        <Button Name="importaParametriDaRicercaButton" Description="Importa parametri di configurazione" Type="STRING"/>        
+        <MultiSelect Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Trigger="true" />
+        <ComboBox Type="STRING" Description="Tipologia struttura unità documentaria" Name="nm_tipo_strut_unita_doc" />
+        <CheckBox Type="STRING" Description="Includi registri collegati" Name="check_includi_registri" />
+        <CheckBox Type="STRING" Description="Includi criteri di raggruppamento" Name="check_includi_criteri" />
+        <Input Name="xml_parametri" Description="File per importazione parametri" Type="FILE" />
+    </Fields>
+    
+    <!-- Lista per visualizzazione -->
+    <List Name="StruttureList" Description="Strutture">
+        <CheckBox Name="fl_strutture_sel" Description="" Type="STRING" Readonly="false" />        
+        <Input Type="STRING" Description="Nome" Name="nm_strut" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_strut" />
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Ambito territoriale" Name="ds_tree_cd_ambito_territ" />
+        <Input Type="STRING" Description="Categoria ente" Name="cd_categ_ente" />
+        <CheckBox Type="STRING" Description="Partizionata" Name="fl_part_ok" Readonly="true" />
+        <Link Name="dupStruttura" Description="" Type="STRING" Target="duplicaStrutturaOperation" Tooltip="Duplica struttura selezionata" isTargetList="false" VisibilityProperty="!fl_template"/>
+        <Link Name="sostStruttura" Description="" Type="STRING" Target="sostituisciStrutturaOperation" Tooltip="Sostituisci struttura selezionata" isTargetList="false"/>
+    </List> 
+    
+    <!-- Lista per visualizzazione "SACER";"/struttura/duplicaStruttura";"detail/StruttureForm#DuplicaStruttureList/duplicaStrutturaOperation";"Duplica struttura" -->
+    <List Name="DuplicaStruttureList" Description="Strutture">
+        <Input Type="STRING" Description="Nome" Name="nm_strut" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_strut" />
+        <Input Type="STRING" Description="Ente riferimento" Name="nm_ente" />
+        <Input Type="STRING" Description="Tempo scadenza chiusura" Name="ti_scad" />
+        <Input Type="STRING" Description="Tempo scadenza chiusura firme" Name="ti_scad_firme" />
+        <Link Name="dupStruttura" Description="" Type="STRING" Target="duplicaStrutturaOperation" Tooltip="Duplica struttura selezionata" isTargetList="false"/>
+    </List> 
+    
+    <!-- Visualizzazione -->
+    <Fields Name="VisStrutture" Description="Visualizza strutture" >
+        <Input Type="STRING" Description="Nome" Name="nm_strut" />        
+        <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
+        <ComboBox Name="id_ente" Description="Ente" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
+        <ComboBox Type="STRING" Description="Struttura Template" Name="fl_template" />
+        <ComboBox Type="STRING" Description="Struttura partizionata" Name="fl_partiz" />
+        <Input Type="STRING" Description="Sistema versante" Name="nm_sistema_versante" />
+        <ComboBox Type="INTEGER" Description="Regione" Name="id_regione_stato"  Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Provincia" Name="id_provincia"  Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Forma Associata" Name="id_forma_associata" />
+        <ComboBox Type="INTEGER" Description="Categoria Ente" Name="id_categ_ente" />        
+        <ComboBox Type="INTEGER" Description="Ambiente ente convenzionato" Name="id_ambiente_ente_convenz" Trigger="true" WithSearchComp="true" />
+        <ComboBox Type="INTEGER" Description="Ente convenzionato" Name="id_ente_convenz" WithSearchComp="true"/>        
+        <Button Name="ricercaStrutturaButton" Description="Ricerca struttura" Type="STRING"/>
+    </Fields>
+    
+    <!-- Visualizzazione -->
+    <Fields Name="StruttureTemplate" Description="Visualizza numero strutture template" >
+        <Input Type="STRING" Description="Numero strutture template disponibili" Name="num_strut_templ_disp" />
+        <Input Type="STRING" Description="Numero strutture template partizionate" Name="num_strut_templ_part" />
+    </Fields>
+    
+    <Fields Name="TipoRapprComp" Description="Tipo rappresentazione componente" >
+        <Input Type="INTEGER" Description="Tipo rappresentazione" Name="id_tipo_rappr_comp" Hidden="true"/>
+        <Input Type="STRING" Description="Tipo rappresentazione" Name="nm_tipo_rappr_comp" MaxLength="100" Required="true"/>
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_rappr_comp" MaxLength="254" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Formato del file contenuto" Name="id_formato_contenuto" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Formato del convertitore" Name="id_formato_convertit"/>
+        <ComboBox Type="STRING" Description="Algoritmo di rappresentazione" Name="ti_algo_rappr" Required="true"/>
+        <ComboBox Type="STRING" Description="Tipo di output" Name="ti_output_rappr" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Formato di output" Name="id_formato_output_rappr" Required="true"/>
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+        <Button Name="logEventiTipoRapprComp" Description="Log eventi" Type="STRING"/>
+    </Fields>
+    
+    <Fields Name="AmbitoTerritoriale" Description="Ambito territoriale" >
+        <Input Type="STRING" Description="Codice ambito" Name="cd_ambito_territ" MaxLength="100"/>
+        <ComboBox Type="STRING" Description="Tipo ambito" Name="ti_ambito_territ" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Nodo padre" Name="id_ambito_territ_padre" />
+        <Input Type="INTEGER" Description="Id to update" Name="id_to_update" />
+    </Fields>
+    
+    <Fields Name="CategorieTipoUd" Description="Categorie tipo unità documentarie" >
+        <Input Type="STRING" Description="*Codice categoria" Name="cd_categ_tipo_unita_doc" MaxLength="100"/>
+        <Input Type="STRING" Description="*Descrizione categoria" Name="ds_categ_tipo_unita_doc" MaxLength="254"/>
+        <ComboBox Name="id_categ_tipo_unita_doc_padre" Description="Nodo padre" Type="INTEGER" />
+        <Button Name="salvaCategorieTipoUd" Description="Salva" Type="STRING" />
+        <Input Type="INTEGER" Description="Id to update" Name="id_to_update" />
+    </Fields>
+    
+    <Fields Name="CategorieStrutture" Description="Categorie strutture" >
+        <Input Type="STRING" Description="Codice" Name="cd_categ_strut" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione" Name="ds_categ_strut" MaxLength="254"/>
+        <Button Name="ricercaCategorieStrutButton" Description="Ricerca categoria" Type="STRING" />
+    </Fields>
+    
+    <!-- Liste per visualizzazione  -->
+    <List Name="RegistroUnitaDocList" Description="Registro unità documentaria" filterValidRecords="true">
+        <Input Type="STRING" Description="Tipo registro" Name="cd_registro_unita_doc" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_registro_unita_doc" />
+        <Input Type="STRING" Description="Tipologie unità documentarie ammesse" Name="nm_tipo_unita_doc" />
+        <Input Type="STRING" Description="Periodi di validità" Name="periodi" />
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_registro_fisc" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Criterio standard" Name="flag_criterio_standard" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Esito controllo numero" Name="controllo_formato" Readonly="true" />
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
+        <Link Name="duplicaRegistro" Description="" Type="STRING" Target="duplicaRegistroOperation" Tooltip="Duplica registro selezionato" isTargetList="false" /> <!--VisibilityProperty="!fl_template"-->
+    </List>
+    
+    <List Name="TipoUnitaDocList" Description="Tipo unità documentaria" filterValidRecords="true">       
+        <Input Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_unita_doc" />
+        <Input Type="STRING" Description="Registri ammessi" Name="registri_ammessi" />
+        <Link Name="cd_versione_xsd" Description="Versione XSD" Type="STRING" Target="loadXsdTipoUd" Tooltip="Visualizza Xsd" isTargetList="false"/>
+        <Input Type="STRING" Description="Profili XSD ammessi" Name="xsd_modelli_ammessi" />
+        <Input Type="STRING" Description="Tipi struttura unità documentarie" Name="Nm_tipo_strut_unita_doc" />
+        <CheckBox Type="STRING" Description="Forza collegamento" Name="fl_forza_collegamento"  Readonly="true"/>
+        <CheckBox Type="STRING" Description="Criterio standard" Name="flag_criterio_standard" Readonly="true"/>
+        <Input Type="STRING" Description="Sistemi versanti" Name="nm_sistema_versante" />
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" /> 
+        <Input Type="DATE" Description="Data primo versamento" Name="dt_first_vers" /> 
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" /> 
+    </List>
+    
+    <List Name="TipoDocList" Description="Tipi documento" filterValidRecords="true">     
+        <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_doc"  />
+        <CheckBox Type="STRING" Description="Principale" Name="fl_tipo_doc_principale" Readonly="true"/>
+        <Link Name="cd_versione_xsd" Description="Versione XSD" Type="STRING" Target="loadXsdTipoDoc" Tooltip="Visualizza XSD" isTargetList="false"/>
+        <CheckBox Type="STRING" Description="Criterio standard" Name="flag_criterio_standard" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" /> 
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />        
+    </List>
+    
+    <List Name="TipoFascicoloList" Description="Tipi fascicolo" filterValidRecords="true">     
+        <Input Type="STRING" Description="Tipo fascicolo" Name="nm_tipo_fascicolo" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_fascicolo"  />
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" /> 
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />        
+    </List>
+    
+    <List Name="FormatoFileDocList" Description="Formati ammessi"  filterValidRecords="true" >
+        <Input Type="STRING" Description="Formato versato ammesso" Name="nm_formato_file_doc"  />
+        <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />                
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
+        <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+        <Input Type="INTEGER" Description="Punteggio  interoperabilità" Name="ni_punteggio_totale" />
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>       
+        <Link Name="dupFormato" Description="" Type="STRING" Target="duplicaFormatoOperation" Tooltip="Crea formato concatenato" isTargetList="false"/>
+    </List>
+    
+    <ButtonList Name="FormatoFileDocButtonList" Description="Bottoni formati ammessi" >
+        <Button Name="eliminaTuttiFormatiFileDoc" Description="Elimina tutti" Type="STRING"/>
+    </ButtonList>
+    
+    <List Name="TipoStrutDocList" Description="Tipo struttura documento" filterValidRecords="true">
+        <Input Type="STRING" Description="Tipo struttura documento" Name="nm_tipo_strut_doc"  />
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_strut_doc"/>
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" /> 
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" /> 
+    </List>
+    
+    <List Name="TipoRapprCompList" Description="Tipo rappresentazione componente" filterValidRecords="true">
+        <Input Type="STRING" Description="Tipo rappresentazione componente" Name="nm_tipo_rappr_comp" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_rappr_comp"/>
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" /> 
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" /> 
+    </List>
+    
+    <List Name="CriteriRaggruppamentoList" Description="Criteri di raggruppamento" filterValidRecords="true">
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr" />
+        <CheckBox Type="STRING" Description="Standard" Name="fl_criterio_raggr_standard" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_criterio_raggr_fisc" Readonly="true"/>
+        <Input Type="STRING" Description="Tipo registro" Name="cd_registro_unita_doc" /> 
+        <Input Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" /> 
+        <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc" /> 
+        <Input Type="STRING" Description="Anno" Name="aa_unita_doc" />
+        <Input Type="DATE" Description="Data istituzione" Name="dt_istituz" /> 
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />  
+    </List>
+  
+    <List Name="CategorieStruttureList" Description="Categorie strutture" >
+        <Input Type="STRING" Description="Nome categoria" Name="cd_categ_strut" />
+        <Input Type="STRING" Description="Descrizione categoria" Name="ds_categ_strut"/>
+    </List>
+  
+    <List Name="TitolariList" Description="Titolari di classificazione" hideDeleteButton="true" filterValidRecords="true">
+        <Input Type="STRING" Description="Denominazione" Name="nm_titol" />
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+        <Input Type="STRING" Description="Validato" Name="ti_stato_titol" />
+    </List>
+    
+    <List Name="TipoUnitaDocAmmessoList" Description="Lista tipo unità documentaria ammesso">
+        <!-- invece dei due id, inserisco il nome, da popolare -->
+        <Input Type="STRING" Description="Codice registro unita documentaria collegata" Name="cd_registro_unita_doc" />
+    </List>
+    
+    <List Name="RegistroTipoUnitaDocAmmessoList" Description="Lista registro tipo unità documentia ammesso" >
+        <!-- invece dei due id, inserisco il nome, da popolare -->
+        <Input Type="STRING" Description="Nome tipo unita documentaria collegata" Name="nm_tipo_unita_doc" />
+    </List>
+    
+    <List Name="SistemiMigrazioneList" Description="Lista sistemi di migrazione" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="INTEGER" Description="id sistema migrazione" Name="id_sistema_migraz" Hidden="true" />
+        <Input Type="STRING" Description="Nome" Name="nm_sistema_migraz" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_sistema_migraz" />
+    </List>
+    
+    <List Name="IdList" Description="Lista id"  >
+        <Input Type="INTEGER" Description="Id struttura" Name="id_strut" />
+        <Input Type="INTEGER" Description="Id tipo documento" Name="id_tipo_doc" />
+        <Input Type="INTEGER" Description="Id tipo unità documentaria" Name="id_tipo_unita_doc" />
+        <Input Type="INTEGER" Description="Id tipo componente documento" Name="id_tipo_comp_doc" />
+        <Input Type="STRING" Description="Nome sistema migrazione" Name="nm_sys_migraz" />
+        <Input Type="STRING" Description="Nome tipo" Name="nm_sacer_type" />
+    </List>
+    
+    <!-- Maschere 2o livello -->
+    <Fields Name="FormatoFileDoc" Description="Formato file documento" >
+        <Input Type="STRING" Description="Nome formato versabile" Name="nm_formato_file_doc" MaxLength="100" />
+        <Input Type="STRING" Description="Descrizione formato versabile" Name="ds_formato_file_doc" MaxLength="254" />
+        <Input Type="STRING" Description="Codice versione" Name="cd_versione" MaxLength="100" />
+        <Input Type="DATE" Description="*Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+    </Fields>
+    
+    <!-- Tab pagina migrazione -->
+    <!-- uso di un'unica lista e field da ricaricare ogni volta -->
+    <Tab Name="XsdMigrStrutTab" Description="Tab XSD migrazioni">
+        <TabElement Name="XsdMigrTipoUnitaDoc" Description="XSD migrazione unità documentaria" /> 
+        <TabElement Name="XsdMigrTipoDoc" Description="XSD migrazione tipo documento" /> 
+        <TabElement Name="XsdMigrTipoCompDoc" Description="XSD migrazione tipo componente" /> 
+    </Tab>
+  
+    <List Name="XsdDatiSpecList" Description="Lista XSD dati specifici"  >
+        <!-- id_tipo_unita_doc non necessario -->
+        <Input Type="STRING" Description="Codice versione" Name="cd_versione_xsd" />
+        <Input Type="DATE" Description="Date" Name="dt_versione_xsd" Alias="dt_istituz"/>
+    </List>
+    
+    <Fields Name="XsdDatiSpec" Description="Dettaglio XSD dati specifici"  >
+        <Input Type="STRING" Description="*Codice versione" Name="cd_versione_xsd" MaxLength="100"/>
+        <Input Type="DATE" Description="Data versione XSD" Name="dt_versione_xsd" />
+        <Input Type="STRING" Description="Ultimo file inserito" Name="file_xsd" />
+        <TextArea Name="bl_xsd" Description="Dettaglio XSD"  Type="STRING" Rows="20" Cols="100" MaxLength="10000" />
+    </Fields>
+    
+    <!-- Tree -->
+    <Tree Description="Albero gestione ambiti territoriali" Name="gestAmbTree" editable="false" checkable="false" draggable="true" 
+          useDefaultCreateNodeButton="false" useDefaultDeleteNodeButton="false"  useDefaultRenameNodeButton="false" dataType="HTML" > 
+        <TreeElement Name="id_ambito_territ" Type="ID" Description="id" /> 
+        <TreeElement Name="cd_ambito_territ" Type="NAME" Description="nome" /> 
+        <TreeElement Name="id_ambito_territ_padre" Type="ID_PARENT" Description="padre" /> 
+    </Tree> 
+    
+    <Tree Description="Albero gestione categorie tipo Ud" Name="gestCatTiUdTree" editable="true" checkable="false"  draggable="true" 
+          useDefaultCreateNodeButton="false" useDefaultDeleteNodeButton="false"  useDefaultRenameNodeButton="false" dataType="HTML" > 
+        <TreeElement Name="id_categ_tipo_unita_doc" Type="ID" Description="id" /> 
+        <TreeElement Name="cd_categ_tipo_unita_doc" Type="NAME" Description="nome" /> 
+        <TreeElement Name="id_categ_tipo_unita_doc_padre" Type="ID_PARENT" Description="padre" /> 
+    </Tree> 
+
+    <!-- Categorie Enti -->
+    <Fields Name="CategorieEnti" Description="Dettaglio categorie enti" >
+        <Input Type="STRING" Description="Codice categoria ente" Name="cd_categ_ente" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione categoria ente" Name="ds_categ_ente" MaxLength="254"/>
+        <Button Name="ricercaCategorieEnteButton" Description="Ricerca categoria" Type="STRING" />
+    </Fields>
+        
+    <List Name="CategorieEntiList" Description="Lista categorie enti" >
+        <Input Type="STRING" Description="Nome categoria" Name="cd_categ_ente" />
+        <Input Type="STRING" Description="Descrizione categoria" Name="ds_categ_ente"/>
+    </List>
+
+    <!-- Gestione inserimento titolario tramite importazione o inserimento manuale -->
+    <ButtonList Name="TitolarioCustomMessageButtonList" Description="MessageBox" >        
+        <Button Secure="false"   Name="importazioneTitolario"  Description="Importazione" Type="STRING"  />
+        <Button Secure="false" Name="inserimentoManualeTitolario"  Description="Inserimento manuale" Type="STRING"  />
+        <Button Secure="false" Name="annulla"  Description="Annulla" Type="STRING"  />
+    </ButtonList>
+
+    <List Name="TrasformTipoRapprList" Description="Trasformatori tipologia rappresentazione" >     
+        <Input Type="STRING" Description="Nome" Name="nm_trasform" />
+        <Input Type="STRING" Description="Versione" Name="cd_versione_trasform"  />
+        <Input Type="STRING" Description="Stato" Name="ti_stato_file_trasform"/>
+        <Input Type="DATE" Description="Data inserimento" Name="dt_ins_trasform" /> 
+        <Input Type="DATE" Description="Data ultima modifica" Name="dt_last_mod_trasform" />        
+    </List>
+    
+    <!-- Gestione sottostrutture -->
+    <List Name="SubStrutList" Description="Sottostrutture" >
+        <Input Type="STRING" Description="Nome" Name="nm_sub_strut" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_sub_strut"  />
+    </List>
+    
+    <!-- Gestione tipologie serie -->
+    <List Name="TipologieSerieList" Description="Tipologie di Serie" filterValidRecords="true">
+        <Input Type="STRING" Description="Nome" Name="nm_tipo_serie" />
+        <Input Type="INTEGER" Description="Anni di conservazione" Name="ni_anni_conserv" GroupingDecimal="true" />
+        <CheckBox Type="STRING" Description="Controllo consistenza" Name="fl_controllo_consist_obblig" Readonly="true" />
+        <CheckBox Type="STRING" Description="Abilita creazione in automatico" Name="fl_crea_autom" Readonly="true" />
+    </List>
+    
+    <List Name="TipoCompAmmessoDaTipoRapprCompList" Description="Lista tipo componente ammessa" >
+        <Input Name="id_tipo_comp_doc" Description="Tipo componente ammessa" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_tipo_strut_doc" Description="Id Tipo struttura documento" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_tipo_strut_doc" Description="Tipo struttura documento" Type="STRING"/>
+        <Link Name="nm_tipo_comp_doc" Description="Nome componente" Type="STRING" Target="loadDettaglioTipoCompDoc" Tooltip="Visualizza Tipo Componente" isTargetList="false"/>
+        <Input Name="ds_tipo_comp_doc" Description="Descrizione componente" Type="STRING"/>
+    </List>     
+    
+    <Fields Name="TipoCompAmmessoDaTipoRapprComp" Description="Tipo componente ammessa" >
+        <ComboBox Name="id_tipo_strut_doc" Description="Tipo struttura documento" Type="INTEGER" Trigger="true"/>
+        <ComboBox Name="id_tipo_comp_doc" Description="Tipo componente ammessa" Type="INTEGER" />
+    </Fields>
+    
+    <!-- Gestione associazione enti convenzionati -->
+    <List Name="EnteConvenzOrgList" Description="Lista associazione enti convenzionati">
+        <Input Name="id_ente_convenz_org" Description="ID" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_ambiente_ente_convenz" Description="Ambiente" Type="STRING"/>
+        <Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING"/>
+        <Input Name="ds_tree_cd_ambito_territ" Description="Ambito territoriale" Type="STRING"/>
+        <Input Name="dt_ini_val" Description="Data inizio validità" Type="DATE"/>
+        <Input Name="dt_fine_val" Description="Data fine validità" Type="DATE"/>
+    </List>
+    
+    <List Name="ParametriAmministrazioneStrutturaList" Description="Parametri di amministrazione" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
+        <!--<Input Name="ti_gestione_param" Description="Gestione" Type="STRING" />-->
+        <Input Name="nm_param_applic" Description="Codice parametro" Type="STRING" />
+        <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
+        <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
+        <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />        
+        <Input Name="ds_valore_param_applic_strut_amm" Description="Valore su struttura" Type="STRING" MaxLength="4000"/>        
+    </List>
+    
+    <List Name="ParametriConservazioneStrutturaList" Description="Parametri di conservazione" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
+        <!--<Input Name="ti_gestione_param" Description="Gestione" Type="STRING" />-->
+        <Input Name="nm_param_applic" Description="Codice parametro" Type="STRING" />
+        <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
+        <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
+        <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />        
+        <Input Name="ds_valore_param_applic_strut_cons" Description="Valore su struttura" Type="STRING" MaxLength="4000"/>        
+    </List>
+    
+    <List Name="ParametriGestioneStrutturaList" Description="Parametri di gestione" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
+        <!--<Input Name="ti_gestione_param" Description="Gestione" Type="STRING" />-->
+        <Input Name="nm_param_applic" Description="Codice parametro" Type="STRING" />
+        <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
+        <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
+        <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />                
+        <Input Name="ds_valore_param_applic_strut_gest" Description="Valore su struttura" Type="STRING" MaxLength="4000"/>                
+    </List>
+    
+    <ButtonList Name="ParametriStrutturaButtonList" Description="">
+        <Button Name="parametriAmministrazioneStrutturaButton" Description="Parametri di amministrazione" Type="STRING" />
+        <Button Name="parametriConservazioneStrutturaButton" Description="Parametri di conservazione" Type="STRING" />
+        <Button Name="parametriGestioneStrutturaButton" Description="Parametri di gestione" Type="STRING" />
+    </ButtonList>
+    
+    <Fields Name="RicercaParametriStruttura" Description="RicercaParametri" >
+        <MultiSelect Type="STRING" Description="Funzione" Name="funzione" />    
+        <Button Name="ricercaParametriStrutturaButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+    
+</Form>

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione monitoraggio fascicoli" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Fields Name="RiepilogoVersamentiFascicoli" Description="Riepilogo versamenti fascicolo" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Tipo fascicolo" Name="id_tipo_fascicolo" Trigger="false" />
+        <Button Name="generaRiepilogoVersFascicoliButton" Description="Genera riepilogo versamenti" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="FascicoliVersati" Description="Riepilogo fascicoli versati" >
+        <CheckBox Name="fl_fasc_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_b30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <CheckBox Name="fl_fasc_attesa_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_attesa_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_attesa_sched30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_attesa_sched30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_attesa_sched_b30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_attesa_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+
+        <CheckBox Name="fl_fasc_nosel_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_nosel_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_nosel_sched30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_nosel_sched30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_nosel_sched_b30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_nosel_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="VersamentiFalliti" Description="Riepilogo versamenti falliti" >
+        <CheckBox Name="fl_fasc_ko_fall_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_fall_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_fall30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_fall30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_fallB30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_fallB30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <CheckBox Name="fl_fasc_ko_non_risolub_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_non_risolub_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_non_risolub30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_non_risolub30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_non_risolubB30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_non_risolubB30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <CheckBox Name="fl_fasc_ko_verif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_verif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_verif30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_verif30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_verifB30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_verifB30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <CheckBox Name="fl_fasc_ko_non_verif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_non_verif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_non_verif30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_non_verif30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_fasc_ko_non_verifB30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_fasc_ko_non_verifB30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <ButtonList Name="CalcolaTotaliButtonList" Description="">
+        <Button Name="calcTotFascicoliVersatiButton" Description="Calcola totali fascicoli versati" Type="STRING" />
+        <Button Name="calcTotFascicoliVersFallitiButton" Description="Calcola totali fascicoli derivanti da versamenti falliti" Type="STRING" />
+    </ButtonList>
+    
+    <!-- Filtri fascicoli-->
+    <Fields Name="FiltriFascicoli" Description="Filtri Fascicoli" >
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Tipo fascicolo" Name="id_tipo_fascicolo" Trigger="false" />
+        
+        <Input Type="INTEGER" Description="Anno" Name="aa_fascicolo" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_fascicolo"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_fascicolo_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_fascicolo_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_fascicolo_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_fascicolo_a"/>
+
+        <Input  Type="DATE" Description="Data di versamento da" Name="giorno_vers_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento a" Name="giorno_vers_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_a" MaxLength="2"/>
+        
+        <ComboBox  Type="STRING" Description="Stato di generazione indice AIP" Name="ti_stato_fasc_elenco_vers"  />
+        <MultiSelect Type="STRING" Description="Stato di conservazione" Name="ti_stato_conservazione"  />
+        <ComboBox  Type="STRING" Description="Versamenti falliti risolti" Name="fl_ses_fascicolo_ko"  />
+
+        <ComboBox  Type="STRING" Description="Stato" Name="ti_stato_ses"  />
+        <ComboBox  Type="STRING" Description="Classe errore" Name="cd_classe_err" Trigger="true" />
+        <ComboBox  Type="STRING" Description="Errore" Name="cd_err"  />
+        
+        <Button Name="ricercaFascicoliButton" Description="Ricerca" Type="STRING" />
+        <Button Name="ricercaFascicoliKoButton" Description="Ricerca" Type="STRING" />
+<!--        <Button Name="verificaVersFallitiButton" Description="Verifica versamenti falliti" Type="STRING" /> -->
+    </Fields>
+
+    <List Name="FascicoliList" Description="Lista Fascicoli" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Id fascicolo" Name="id_fascicolo" Hidden="true"/>
+        <Input  Type="STRING" Description="Ente/Struttura" Name="nm_ente_struttura"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" Hidden="true"/>
+        <Input  Type="STRING" Description="Struttura" Name="nm_struttura" Hidden="true"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_fascicolo"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_fascicolo"/>
+        <Input  Type="STRING" Description="Tipo fascicolo" Name="nm_tipo_fascicolo"/>
+        <CheckBox  Type="STRING" Description="Versamenti falliti risolti" Name="fl_ses_fascicolo_ko" Readonly="true" />
+        <Input  Type="DATETIME" Description="Data versamento" Name="ts_vers_fascicolo"/>
+        <Input  Type="STRING" Description="Stato di generazione indice AIP" Name="ti_stato_fasc_elenco_vers"/>
+        <Input  Type="STRING" Description="Stato di conservazione" Name="ti_stato_conservazione"/>
+    </List>
+            
+    <List Name="FascicoliKoList" Description="Lista Fascicoli" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="STRING" Description="Ente/Struttura" Name="nm_ente_struttura"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" Hidden="true"/>
+        <Input  Type="STRING" Description="Struttura" Name="nm_struttura" Hidden="true"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_fascicolo"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_fascicolo"/>
+        <Input  Type="STRING" Description="Tipo fascicolo" Name="nm_tipo_fascicolo"/>
+        <Input  Type="DATETIME" Description="Data primo versamento" Name="ts_ini_first_ses"/>
+        <Input  Type="DATETIME" Description="Data ultimo versamento" Name="ts_ini_last_ses"/>
+        <Input  Type="STRING" Description="Codice errore principale" Name="cd_err_princ"/>
+        <Input  Type="STRING" Description="Descrizione errore principale" Name="ds_err_princ"/>
+        <Input  Type="STRING" Description="Stato" Name="ti_stato_fascicolo_ko"/>
+    </List>
+            
+    <Section Name="ChiaveFascicoloSection" Description="Chiave Fascicolo" Legend="Chiave Fascicolo" LoadOpened="true"/>
+
+    
+    <Fields Name="DettaglioFascVersKo" Description="Dettaglio fascicolo derivante da versamenti falliti">
+        <Input  Type="STRING" Description="Ambiente / Ente / Struttura" Name="nm_ambiente_ente_struttura"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_fascicolo"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_fascicolo"/>
+        <Input  Type="STRING" Description="Tipo fascicolo" Name="nm_tipo_fascicolo"/>
+        <Input  Type="INTEGER" Description="Identificatore del primo versamento" Name="id_ses_ko_first"/>
+        <Input  Type="DATETIME" Description="Data primo versamento" Name="ts_ini_first_ses"/>
+        <Input  Type="INTEGER" Description="Identificatore dell'ultimo versamento" Name="id_ses_ko_last"/>
+        <Input  Type="DATETIME" Description="Data ultimo versamento" Name="ts_ini_last_ses"/>
+        <Input  Type="STRING" Description="Codice errore principale" Name="cd_err_princ"/>
+        <Input  Type="STRING" Description="Descrizione errore principale" Name="ds_err_princ"/>
+        <Input  Type="STRING" Description="Stato" Name="ti_stato_fascicolo_ko"/>
+<!--
+        <Button Name="verificaVersFallitiDettButton" Description="Verifica versamenti falliti" Type="STRING" />
+        <Button Name="modStatoFascKoButton" Description="Modifica stato fascicolo derivante da versamenti falliti" Type="STRING" />
+        <Button Name="assegnaNonRisolubileAFascKoButton" Description="Assegna non risolubile a versamenti falliti" Type="STRING" />
+        <Button Name="assegnaNonVerifAFascKoButton" Description="Assegna non verificato a versamenti falliti" Type="STRING" />
+        <Button Name="assegnaVerifAFascKoButton" Description="Assegna verificato a versamenti falliti" Type="STRING" />
+-->        
+    </Fields>
+    
+    <List Name="VersamentiFascicoliKoList" Description="Lista Fascicoli" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Identificatore del versamento" Name="id_ses_fascicolo_ko"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="ts_ini_ses"/>
+        <Input  Type="STRING" Description="Codice errore principale" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore principale" Name="ds_err_princ"/>
+        <Input  Type="STRING" Description="Stato" Name="ti_stato_ses"/>
+    </List>
+
+    <Fields Name="DettaglioVersamentoKo" Description="Dettaglio versamento fascicolo fallito">
+        <Input  Type="STRING" Description="Ambiente / Ente / Struttura" Name="nm_ambiente_ente_struttura"/>
+        <Input  Type="STRING" Description="Utente versatore" Name="nm_utente"/>
+        <Input  Type="INTEGER" Description="Identificatore versamento" Name="id_ses_fascicolo_ko"/>
+        <Input  Type="DATETIME" Description="Data inizio versamento" Name="ts_ini_ses"/>
+        <Input  Type="DATETIME" Description="Data fine versamento" Name="ts_fine_ses"/>
+        <Input  Type="INTEGER" Description="Anno fascicolo" Name="aa_fascicolo"/>
+        <Input  Type="STRING" Description="Numero fascicolo" Name="cd_key_fascicolo"/>
+        <Input  Type="STRING" Description="Tipo fascicolo" Name="nm_tipo_fascicolo"/>
+        <Input  Type="STRING" Description="Codice errore principale" Name="cd_err_princ"/>
+        <Input  Type="STRING" Description="Descrizione errore principale" Name="ds_err_princ"/>
+        <Input  Type="STRING" Description="Stato" Name="ti_stato_ses"/>
+        <TextArea Type="STRING" Description="XML di richiesta del versamento" Name="bl_xml_sip" Rows="500" Cols="500" MaxLength="1000000000" />        
+        <TextArea Type="STRING" Description="XML di risposta al versamento" Name="bl_xml_rapp_vers" Rows="500" Cols="500" MaxLength="1000000000" />        
+        <Button Name="scaricaXmlVersButton" Description="Scarica XML di versamento" Type="STRING" />
+    </Fields>
+    
+    <Tab Description="Dettaglio Versamento Ko" Name="DettaglioVersamentoKoTabs">
+        <TabElement Description="Indice SIP" Name="IndiceSip"/>
+        <TabElement Description="Esito negativo di versamento" Name="RapportoVersamento"/>
+        <TabElement Description="Lista errori" Name="ListaErrori"/>
+    </Tab>
+        
+    <List Name="ErroriVersList" Description="Lista Errori" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input  Type="INTEGER" Description="Progressivo errore" Name="pg_err"/>
+        <Input  Type="STRING" Description="Tipo errore" Name="ti_err"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+    </List>
+
+    <!-- SESSIONI FASCICOLI ERRATE -->
+    <!-- Filtri sessioni fascicoli-->
+    <Fields Name="FiltriSessioniFascicoli" Description="Filtri Sessioni Fascicoli errate" >
+        <Input  Type="DATE" Description="Data di versamento da" Name="giorno_vers_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento a" Name="giorno_vers_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_a" MaxLength="2"/>
+        <ComboBox  Type="STRING" Description="Stato" Name="ti_stato_ses" />
+        <ComboBox  Type="STRING" Description="Classe errore principale" Name="cd_classe_err" Trigger="true" />
+        <ComboBox  Type="STRING" Description="Errore principale" Name="cd_err"  />
+        <Button Name="ricercaSessFascicoliErrateButton" Description="Ricerca" Type="STRING" />
+<!--        <Button Name="trasfSessErrateInVersFallitiButton" Description="Trasforma sessioni errate in versamenti falliti" Type="STRING" /> -->
+    </Fields>
+
+    <List Name="SesFascicoliErrList" Description="Lista sessioni fascicolo errate" hideInsertButton="true" hideDeleteButton="true" >
+        <Input  Type="INTEGER" Description="Identificatore versamento" Name="id_ses_fascicolo_err"/>
+        <Input  Type="DATETIME" Description="Data inizio versamento" Name="ts_ini_ses"/>
+        <Input  Type="STRING" Description="Utente versatore" Name="nm_userid_ws"/>
+        <Input  Type="STRING" Description="Ambiente" Name="calc_ambiente"/>
+        <Input  Type="STRING" Description="Ambiente" Name="nm_ambiente" Hidden="true"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" Hidden="true"/>
+        <Input  Type="STRING" Description="Struttura" Name="nm_struttura" Hidden="true"/>
+        <Input  Type="STRING" Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Hidden="true"/>
+
+        <Input  Type="INTEGER" Description="Anno fascicolo" Name="aa_fascicolo" Hidden="true"/>
+        <Input  Type="STRING" Description="Numero fascicolo" Name="cd_key_fascicolo" Hidden="true"/>
+        <Input  Type="STRING" Description="Anno - Numero fascicolo" Name="calc_fascicolo"/>
+        
+        <Input  Type="INTEGER" Description="Id Errore" Name="id_err_sacer" Hidden="true"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+        <Input  Type="STRING" Description="Stato" Name="ti_stato_ses"/>
+    </List>
+
+    <!-- Dettaglio sessione fascicolo errate -->
+
+    <Fields Name="DettaglioSessFascKo" Description="Dettaglio versamento fascicolo fallito">
+        <Input  Type="INTEGER" Description="Identificatore versamento" Name="id_ses_fascicolo_err"/>
+        <Input  Type="DATETIME" Description="Data inizio versamento" Name="ts_ini_ses"/>
+        <Input  Type="DATETIME" Description="Data fine versamento" Name="ts_fine_ses"/>
+        <Input  Type="STRING" Description="Utente versatore" Name="nm_userid_ws"/>
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <CheckBox Name="fl_esiste_struttura" Description="Esiste struttura" Type="STRING" Required="true" Readonly="true"/>
+        <Input  Type="INTEGER" Description="Anno fascicolo" Name="aa_fascicolo" />
+        <Input  Type="STRING" Description="Numero fascicolo" Name="cd_key_fascicolo" />
+        <ComboBox Type="INTEGER" Description="Tipo fascicolo" Name="id_tipo_fascicolo" Trigger="false" />
+        <CheckBox Name="fl_esiste_tipo_fascicolo" Description="Esiste tipo fascicolo" Type="STRING" Required="true" Readonly="true"/>
+        <Input  Type="INTEGER" Description="Id Errore" Name="id_err_sacer" Hidden="true"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+        <Input  Type="STRING" Description="Stato" Name="ti_stato_ses"/>
+        <TextArea Type="STRING" Description="XML di richiesta del versamento" Name="bl_xml_sip" Rows="500" Cols="500" MaxLength="1000000000" />        
+        <TextArea Type="STRING" Description="XML di risposta al versamento" Name="bl_xml_rapp_vers" Rows="500" Cols="500" MaxLength="1000000000" />        
+        <Button Name="scaricaXmlVersSessKoButton" Description="Scarica XML di versamento" Type="STRING" />
+    </Fields>
+        
+    <Tab Description="Dettaglio Sessione Fascicolo Ko" Name="DettaglioSessFascKoTabs">
+        <TabElement Description="Indice SIP" Name="IndiceSipDettSessFascKo"/>
+        <TabElement Description="Esito negativo di versamento" Name="RapportoVersamentoDettSessFascKo"/>
+    </Tab>
+    
+</Form>

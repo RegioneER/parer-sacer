@@ -1,0 +1,205 @@
+<slf:section name="<%=SerieUDForm.InfoSerieSection.NAME%>" styleClass="importantContainer w100">
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_AMBIENTE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_ENTE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_STRUT%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_COMPOSITO_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.AA_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_TIPO_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_VER_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_UPD_ANNUL_UNITA_DOC%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_UPD_MODIF_UNITA_DOC%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_INIZIO_SEL_SERIE%>" width="w40" controlWidth="w20" labelWidth="w50"/>
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_FINE_SEL_SERIE%>" width="w40" controlWidth="w20" labelWidth="w50"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NI_ANNI_CONSERV%>" width="w100" controlWidth="w10" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CONSERV_UNLIMITED%>" width="w100" controlWidth="w10" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_REG_UNITA_DOC_DA%>" width="w40" controlWidth="w20" labelWidth="w50"/>
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_REG_UNITA_DOC_A%>" width="w40" controlWidth="w20" labelWidth="w50"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_CREAZIONE_UNITA_DOC_DA%>" width="w40" controlWidth="w20" labelWidth="w50"/>
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_CREAZIONE_UNITA_DOC_A%>" width="w40" controlWidth="w20" labelWidth="w50"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_LISTA_ANNI_SEL_SERIE%>" width="w100" controlWidth="w10" labelWidth="w20"/>
+    <sl:newLine />
+</slf:section>
+<sl:newLine />
+<div id="container1" class="w100">
+    <slf:section name="<%=SerieUDForm.StatoCorrenteSection.NAME%>" styleClass="importantContainer containerLeft w50">
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.TI_STATO_VER_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_REG_STATO_VER_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_AZIONE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_NOTA_AZIONE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_USERID_STATO%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_VAL_BLOCCATO%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DL_MSG_JOB_BLOCCATO_VAL%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.RIAVVIA_VALIDAZIONE_SERIE%>" width="w30" position="right"/>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine skipLine="true"/>
+    </slf:section>
+    <slf:section name="<%=SerieUDForm.StatoConservazioneSection.NAME%>" styleClass="importantContainer containerRight w50">
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.TI_STATO_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_REG_STATO_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_AZIONE_STATO_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_NOTA_AZIONE_STATO_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_USERID_STATO_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <sl:newLine skipLine="true"/>
+    </slf:section>
+</div>
+<sl:newLine />
+<slf:section name="<%=SerieUDForm.ConsistenzaSection.NAME%>" styleClass="importantContainer w100">
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NI_UNITA_DOC_ATTESE%>" width="w50" controlWidth="w40" labelWidth="w60"/>
+    <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.VISUALIZZA_CONSISTENZA_ATTESA%>" width="w20" position="right" />
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.TI_MOD_CONSIST_FIRST_LAST%>" width="w100" controlWidth="w40" labelWidth="w30"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_FIRST_UNITA_DOC_ATTESA%>" width="w100" controlWidth="w40" labelWidth="w30"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_LAST_UNITA_DOC_ATTESA%>" width="w100" controlWidth="w40" labelWidth="w30"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_PRESENZA_LACUNE%>" width="w100" controlWidth="w10" labelWidth="w30"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_DOC_CONSIST_VER_SERIE%>" width="w100" controlWidth="w40" labelWidth="w30"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_DOC_CONSIST_VER_SERIE%>" width="w100" controlWidth="w40" labelWidth="w30"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_USERID_CONSIST%>" width="w100" controlWidth="w40" labelWidth="w30"/>
+    <sl:newLine skipLine="true"/>
+</slf:section>
+<sl:newLine />
+<div id="container1" class="w100">
+    <sl:newLine />
+    <slf:section name="<%=SerieUDForm.ContenutoCalcolatoSection.NAME%>" styleClass="importantContainer containerLeft w50">
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.TI_STATO_CONTENUTO_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_ERR_CONTENUTO_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.NI_UNITA_DOC_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_FIRST_UNITA_DOC_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_FIRST_UNITA_DOC_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_LAST_UNITA_DOC_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_LAST_UNITA_DOC_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_CALC_BLOCCATO%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DL_MSG_JOB_BLOCCATO_CALC%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine />
+        <span>&nbsp;</span>
+        <sl:newLine skipLine="true"/>
+        <sl:pulsantiera>
+            <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.CALCOLA_CONTENUTO%>" width="w30"/>
+            <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.RIAVVIA_CALCOLO_CONTENUTO%>" width="w30"/>
+            <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.VISUALIZZA_CONTENUTO_CALCOLATO%>" width="w30"/>
+        </sl:pulsantiera>
+    </slf:section>
+    <slf:section name="<%=SerieUDForm.ContenutoAcquisitoSection.NAME%>" styleClass="importantContainer containerRight w50">
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.TI_STATO_CONTENUTO_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_ERR_CONTENUTO_FILE%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_ERR_CONTENUTO_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.NI_UNITA_DOC_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_FIRST_UNITA_DOC_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_FIRST_UNITA_DOC_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_LAST_UNITA_DOC_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_LAST_UNITA_DOC_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_DOC_FILE_INPUT_VER_SERIE%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DS_DOC_FILE_INPUT_VER_SERIE%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.NM_USERID_FILE%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_FORNITO_ENTE%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_ACQ_BLOCCATO%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine />
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.DL_MSG_JOB_BLOCCATO_ACQ%>" width="w100" controlWidth="w60" labelWidth="w40"/>
+        <sl:newLine skipLine="true"/>
+        <sl:pulsantiera>
+            <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.ACQUISISCI_CONTENUTO%>" width="w30"/>
+            <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.RIAVVIA_ACQUISIZIONE_CONTENUTO%>" width="w30"/>
+            <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.VISUALIZZA_CONTENUTO_ACQUISITO%>" width="w30"/>
+        </sl:pulsantiera>
+    </slf:section>
+</div>
+<sl:newLine />
+<slf:section name="<%=SerieUDForm.ContenutoEffettivoSection.NAME%>" styleClass="importantContainer w100">
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.TI_STATO_CONTENUTO_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_ERR_CONTENUTO_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NI_UNITA_DOC_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_FIRST_UNITA_DOC_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_FIRST_UNITA_DOC_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.CD_LAST_UNITA_DOC_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_LAST_UNITA_DOC_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.NI_VOL_VER_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.FL_EFF_BLOCCATO%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine />
+    <slf:lblField name="<%=SerieUDForm.SerieDetail.DL_MSG_JOB_BLOCCATO_EFF%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+    <sl:newLine skipLine="true"/>
+    <sl:pulsantiera>
+        <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.GENERA_CONTENUTO_EFFETTIVO%>" width="w30"/>
+        <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.RIAVVIA_GENERAZIONE_CONTENUTO%>" width="w30"/>
+        <slf:lblField name="<%=SerieUDForm.SerieDetailButtonList.VISUALIZZA_CONTENUTO_EFFETTIVO%>" width="w30"/>
+    </sl:pulsantiera>
+</slf:section>

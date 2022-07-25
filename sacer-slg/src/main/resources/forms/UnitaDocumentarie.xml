@@ -1,0 +1,882 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione Unità Documentarie" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Section Description="" Legend="Volume / elenco conservazione" LoadOpened="true" Name="InfoVolumeConserv" ShowButton="false"/>
+    <Section Description="" Legend="Volume / elenco corrente" LoadOpened="true" Name="VolumeCorrente" ShowButton="false"/>
+    <Section Description="" Legend="Documento" Name="ProfiloDoc" ShowButton="true"/>
+    <Section Description="" Legend="Aggiornamento" Name="ProfiloUpd" ShowButton="true"/>
+    <Section Description="" Legend="Dati fiscali" Name="DatiFiscali" ShowButton="true"/>
+    <Section Description="" Legend="Fascicoli" LoadOpened="false" Name="FiltriFascicoli" ShowButton="true"/>
+    <Section Description="" Legend="Profilo archivistico" LoadOpened="false" Name="ProfiloArchivistico" ShowButton="true"/>
+    <Section Description="" Legend="Composizione" LoadOpened="false" Name="Composizione" ShowButton="true"/>
+    <Section Description="" Legend="Collegamenti" Name="FiltriCollegamenti" ShowButton="true"/>
+    <Section Description="" Legend="Componenti" Name="FiltriComponenti" ShowButton="true"/>
+    <Section Description="" Legend="Unità documentaria collegata" Name="UnitaDocCollegata"/>
+    <Section Description="" Legend="Unità documentaria e documento" LoadOpened="true" Name="UDRicercaSection" ShowButton="true"/>
+    <Section Description="" Legend="Parametri di versamento" LoadOpened="true" Name="ParamVersRicercaSection" ShowButton="true"/>
+    <Section Description="" Legend="Controlli e conservazione" LoadOpened="true" Name="ContrConservRicercaSection" ShowButton="true"/>
+    <Section Description="" Legend="Informazioni principali" LoadOpened="true" Name="InfoPrincipaliSection" ShowButton="false"/>
+    <Section Description="" Legend="Versatore" LoadOpened="false" Name="VersatoreSection" ShowButton="true"/>
+    <Section Description="" Legend="Unità documentaria" LoadOpened="true" Name="UnitaDocSection" ShowButton="true"/>
+    <Section Description="" Legend="Versamento annullato" LoadOpened="true" Name="VersamentoAnnullatoUDSection" ShowButton="false"/>
+    <Section Description="" Legend="Versamento annullato" LoadOpened="true" Name="VersamentoAnnullatoDocSection" ShowButton="false"/>
+    <Section Description="" Legend="Unità documentarie selezionate per la serie" LoadOpened="true" Name="UnitaDocumentarieToSerieSection" ShowButton="true"/>
+    <Section Description="" Legend="Unità documentarie selezionate per l'annullamento" LoadOpened="true" Name="UnitaDocumentarieToRichAnnulVersSection" ShowButton="true"/>
+    <!-- Filtri di ricerca Unità Documentarie Semplice -->
+    <Fields Description="Filtri unità documentaria ricerca semplice" Name="FiltriUnitaDocumentarieSemplice">
+        <ComboBox Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Type="INTEGER" Trigger="true"/>
+        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_ud" Type="STRING"/>
+        <ComboBox Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <ComboBox Description="Presenza firme" Name="fl_unita_doc_firmato" Type="STRING"/>
+        <ComboBox Description="Esito firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+        <ComboBox Description="Presenza hash versato" Name="fl_hash_vers" Type="STRING"/>
+        <Input Description="Data versamento da" Name="dt_acquisizione_unita_doc_da" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_acquisizione_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_acquisizione_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Data versamento a" Name="dt_acquisizione_unita_doc_a" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_acquisizione_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_acquisizione_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_key_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_key_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Numero da" Name="cd_key_unita_doc_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_unita_doc_a" Type="STRING"/>
+        <Input Description="Numero contiene" Name="cd_key_unita_doc_contiene" Type="STRING"/>
+        <Input Description="Data unità documentaria da" Name="dt_reg_unita_doc_da" Type="DATE"/>
+        <Input Description="Data unità documentaria a" Name="dt_reg_unita_doc_a" Type="DATE"/>
+        <Input Description="Oggetto unità documentaria" Name="dl_oggetto_unita_doc" Type="STRING"/>
+        <Input Description="ID documento" Name="cd_key_doc_vers" Type="STRING"/>
+        <Input Description="Autore documento" Name="ds_autore_doc" Type="STRING"/>
+        <Input Description="Descrizione documento" Name="dl_doc" Type="STRING"/>
+        <ComboBox Description="Tipo conservazione" Name="ti_conservazione" Type="STRING"/>
+        <ComboBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Type="STRING"/>
+        <ComboBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Type="STRING"/>
+        <ComboBox Description="Forzatura collegamenti" Name="fl_forza_collegamento" Type="STRING"/>
+        <Input Description="Versamento annullato documenti" Hidden="true" Name="fl_doc_annul" Type="STRING"/>
+        <Input Description="Versamento annullato unità documentarie" Hidden="true" Name="fl_unita_doc_annul" Type="STRING"/>
+        <ComboBox Description="Elemento" Name="ti_doc" Type="STRING"/>
+        <ComboBox Description="Documenti aggiunti" Name="fl_doc_aggiunti" Type="STRING"/>
+        <ComboBox Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+        <ComboBox Description="Tipo documento" Name="nm_tipo_doc" Type="INTEGER" Trigger="true" />
+        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>
+        <ComboBox Description="Stato generazione Indice AIP" Name="ti_stato_ud_elenco_vers" Type="STRING"/>
+        <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="true" Type="INTEGER"/>
+    </Fields>
+    <!-- Filtri di ricerca Unità Documentarie Avanzata -->
+    <Fields Description="Filtri unità documentaria ricerca avanzata" Name="FiltriUnitaDocumentarieAvanzata">
+        <MultiSelect Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Trigger="true" Type="INTEGER"/>
+        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_ud" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_ud" Type="STRING"/>
+        <MultiSelect Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <ComboBox Description="Presenza firme" Name="fl_unita_doc_firmato" Type="STRING"/>
+        <MultiSelect Description="Esito firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+        <ComboBox Description="Presenza hash versato" Name="fl_hash_vers" Type="STRING"/>
+        <Input Description="Data acquisizione da" Name="dt_acquisizione_unita_doc_da" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_acquisizione_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_acquisizione_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Data acquisizione a" Name="dt_acquisizione_unita_doc_a" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_acquisizione_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_acquisizione_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_key_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_key_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Numero da" Name="cd_key_unita_doc_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_unita_doc_a" Type="STRING"/>
+        <Input Description="Numero contiene" Name="cd_key_unita_doc_contiene" Type="STRING"/>
+        <Input Description="Data unità documentaria da" Name="dt_reg_unita_doc_da" Type="DATE"/>
+        <Input Description="Data unità documentaria a" Name="dt_reg_unita_doc_a" Type="DATE"/>
+        <Input Description="Oggetto unità documentaria" Name="dl_oggetto_unita_doc" Type="STRING"/>
+        <Input Description="ID documento" Name="cd_key_doc_vers" Type="STRING"/>
+        <Input Description="Autore documento" Name="ds_autore_doc" Type="STRING"/>
+        <Input Description="Descrizione documento" Name="dl_doc" Type="STRING"/>
+        <ComboBox Description="Tipo conservazione" Name="ti_conservazione" Type="STRING"/>
+        <ComboBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Type="STRING"/>
+        <ComboBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Type="STRING"/>
+        <ComboBox Description="Forzatura collegamenti" Name="fl_forza_collegamento" Type="STRING"/>
+        <Input Description="Documenti annullati" Hidden="true" Name="fl_doc_annul" Type="STRING"/>
+        <Input Description="Versamenti unità documentarie annullate" Hidden="true" Name="fl_unita_doc_annul" Type="STRING"/>
+        <ComboBox Description="Elemento" Name="ti_doc" Type="STRING"/>
+        <ComboBox Description="Documenti aggiunti" Name="fl_doc_aggiunti" Type="STRING"/>
+        <MultiSelect Description="Sistemi di migrazione" Name="nm_sistema_migraz" Trigger="true" Type="STRING"/>
+        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_sm" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+        <ComboBox Description="Stato generazione Indice AIP" Name="ti_stato_ud_elenco_vers" Type="STRING"/>
+        <MultiSelect Description="Tipo documento" Name="nm_tipo_doc" Trigger="true" Type="INTEGER"/>
+        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_doc" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>
+        <Input Description="Volume / elenco corrente" Name="vol_curr" Readonly="true" Type="STRING"/>
+        <Input Description="Stato volume / elenco" Name="stato_vol" Readonly="true" Type="STRING"/>
+        <TextArea Cols="5" Description="Filtri valorizzati sui dati specifici" MaxLength="100000" Name="filtri_dati_spec" Readonly="true" Rows="5" Type="STRING"/>
+        <Input Description="Classifica" Name="ds_classif" Type="STRING"/>
+        <Input Description="Fascicolo" Name="cd_fascic" Type="STRING"/>
+        <Input Description="Oggetto fascicolo" Name="ds_oggetto_fascic" Type="STRING"/>
+        <Input Description="Sotto-fascicolo" Name="cd_sottofascic" Type="STRING"/>
+        <Input Description="Oggetto sotto-fascicolo" Name="ds_oggetto_sottofascic" Type="STRING"/>
+        <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="true" Type="INTEGER"/>
+    </Fields>
+    <!-- Filtri Dati Specifici di ricerca Unità Documetaria -->
+    <List Description="Filtri Dati Specifici Unità Documentarie" Name="FiltriDatiSpecUnitaDocumentarieList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true" masterList="true">
+        <Input Description="Chiave" Name="nm_attrib_dati_spec" Type="STRING"/>
+        <ComboBox Description="Operatore" Name="ti_oper" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
+    </List>
+    <!-- Filtri Fascicoli di ricerca Unità Documetaria -->
+    <Fields Description="Filtri Fascicoli Unità Documentarie" Name="FiltriFascicoliUnitaDocumentarie">
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo" Type="INTEGER"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_fascicolo_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_fascicolo_a" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
+        <Input Description="Numero da" Name="cd_key_fascicolo_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_fascicolo_a" Type="STRING"/>
+        <ComboBox Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="INTEGER"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascicolo" Type="STRING"/>
+        <Input Description="Data apertura da" Name="dt_ape_fascicolo_da" Type="DATE"/>
+        <Input Description="Data apertura a" Name="dt_ape_fascicolo_a" Type="DATE"/>
+        <Input Description="Data chiusura da" Name="dt_chiu_fascicolo_da" Type="DATE"/>
+        <Input Description="Data chiusura a" Name="dt_chiu_fascicolo_a" Type="DATE"/>
+        <Input Description="Indice classificazione" Name="cd_composito_voce_titol" Type="STRING"/>
+    </Fields>
+    <!-- Filtri su collegamenti di ricerca Unità Documentarie -->
+    <Fields Description="Filtri Collegamenti Unità Documentarie" Name="FiltriCollegamentiUnitaDocumentarie">
+        <ComboBox Description="Con collegamento" Name="con_collegamento" Trigger="true" Type="STRING"/>
+        <ComboBox Description="Collegamento risolto" Name="collegamento_risolto" Type="STRING"/>
+        <Input Description="Descrizione collegamento" Name="ds_link_unita_doc" Type="STRING"/>
+        <ComboBox Description="Registro" Name="cd_registro_key_unita_doc_link" Type="INTEGER"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc_link" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc_link" Type="STRING"/>
+        <ComboBox Description="E' oggetto di collegamento" Name="is_oggetto_collegamento" Trigger="true" Type="STRING"/>
+        <Input Description="Descrizione collegamento oggetto" Name="ds_link_unita_doc_oggetto" Type="STRING"/>
+    </Fields>
+    <!-- Filtri su componenti di ricerca Unità Documentarie avanzata -->
+    <Fields Description="Filtri componenti unità documentarie" Name="FiltriComponentiUnitaDocumentarie">
+        <ComboBox Description="Tipo struttura documento" Name="nm_tipo_strut_doc" Trigger="true" Type="INTEGER"/>
+        <ComboBox Description="Tipo componente" Name="nm_tipo_comp_doc" Type="INTEGER"/>
+        <ComboBox Description="Formato versato" Name="nm_formato_file_vers" Type="INTEGER"/>
+        <Input Description="Data acquisizione componente da" Name="dt_creazione_da" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_creazione_da" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_creazione_da" Type="INTEGER"/>
+        <Input Description="Data acquisizione componente a" Name="dt_creazione_a" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_creazione_a" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_creazione_a" Type="INTEGER"/>
+        <Input Description="Dimensione in bytes da" GroupingDecimal="true" Name="ni_size_file_da" Type="INTEGER"/>
+        <Input Description="Dimensione in bytes a" GroupingDecimal="true" Name="ni_size_file_a" Type="INTEGER"/>
+        <ComboBox Description="Firmato" Name="fl_comp_firmato" Type="STRING"/>
+        <ComboBox Description="Conformità firme" Name="ti_esito_contr_conforme" Type="STRING"/>
+        <ComboBox Description="Esito firme versamento" Name="ti_esito_verif_firma" Type="STRING"/>
+        <ComboBox Description="Esito verifica firme chiusura volume / elenco" Name="ti_esito_verif_firme_chius" Type="STRING"/>
+        <Input Description="Data validità firme da" Name="dt_scad_firma_comp_da" Type="DATE"/>
+        <Input Description="Data validità firme a" Name="dt_scad_firma_comp_a" Type="DATE"/>
+        <ComboBox Description="Riferimento temporale" Name="fl_rif_temp_vers" Type="STRING"/>
+        <Input Description="Descrizione riferimento temporale" Name="ds_rif_temp_vers" Type="STRING"/>
+        <Input Description="Nome componente" Name="ds_nome_comp_vers" Type="STRING"/>
+        <Input Description="Hash versato" Name="ds_hash_file_vers" Type="STRING"/>
+        <Input Description="Mimetype" Name="nm_mimetype_file" Type="STRING"/>
+        <Input Description="Urn versato" Name="dl_urn_comp_vers" Type="STRING"/>
+        <Input Description="Formato di rappresentazione" Name="ds_formato_rappr_calc" Type="STRING"/>
+        <Input Description="Formato di rappresentazione esteso" Name="ds_formato_rappr_esteso_calc" Type="STRING"/>
+        <ComboBox Description="Forzatura accettazione" Name="fl_forza_accettazione_comp" Type="STRING"/>
+        <ComboBox Description="Forzatura conservazione" Name="fl_forza_conservazione_comp" Type="STRING"/>
+        <ComboBox Description="Esito verifica formato" Name="ti_esito_contr_formato_file" Type="STRING"/>
+        <Input Description="Hash" Name="ds_hash_file_calc" Type="STRING"/>
+        <ComboBox Description="Algoritmo hash calcolato" Name="ds_algo_hash_file_calc" Type="STRING"/>
+        <ComboBox Description="Encoding hash calcolato" Name="cd_encoding_hash_file_calc" Type="STRING"/>
+        <Input Description="Urn calcolato" Name="ds_urn_comp_calc" Type="STRING"/>
+        <ComboBox Description="Tipo supporto" Name="ti_supporto_comp" Type="STRING"/>
+        <ComboBox Description="Tipo rappresentazione" Name="nm_tipo_rappr_comp" Type="INTEGER"/>
+        <Input Description="ID componente versato" Name="ds_id_comp_vers" Type="STRING"/>
+    </Fields>
+    <List Description="Lista definito da dati specifici" Name="TotaleDefinitoDaList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Tipo entità Sacer" Name="ti_entita_sacer" Type="STRING"/>
+        <Input Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Tipo documento" Name="nm_tipo_doc" Type="STRING"/>
+        <Input Description="Sistema di migrazione" Name="nm_sistema_migraz" Type="STRING"/>
+        <Input Description="Elenco versioni XSD" Name="ds_lista_versioni_xsd" Type="STRING"/>
+        <Input Description="Identificatore dato specifico" Name="id_attrib_dati_spec" Type="INTEGER"/>
+        <Input Description="Nome dato specifico" Name="nm_attrib_dati_spec" Type="STRING"/>
+    </List>
+    <List Description="Lista definito da dati specifici" Name="DefinitoDaList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Versione xsd metadati specifici" Name="definito_da_record" Type="STRING"/>
+    </List>
+    <!-- Bottoni utilizzati nella ricerca Unità Documetaria semplice ed avanzata -->
+    <ButtonList Description="Bottoni della ricerca unità documentaria" Name="UnitaDocumentarieRicercaButtonList">
+        <Button Description="Ricerca" Name="ricercaUD" Type="STRING"/>
+        <!--<Button Name="visualizzaVolume" Description="Visualizza" Type="STRING" />-->
+        <Button Description="Crea criterio di raggruppamento" Name="creaCriterioRaggr" Type="STRING"/>
+        <Button Description="Scarica contenuto" Name="downloadContenuto" Type="STRING"/>
+        <Button Description="Scarica contenuto" Name="downloadContenutoAnnullate" Type="STRING"/>
+        <Button Description="Pulisci" Name="pulisciUD" Type="STRING"/>
+        <Button Description="Aggiungi alla serie" Name="addToSerie" Type="STRING"/>
+        <Button Description="Aggiungi alla richiesta di annullamento" Name="addToRichAnnul" Type="STRING"/>
+        <Button Description="Ricerca" Name="ricercaUDAnnullate" Type="STRING"/>
+    </ButtonList>
+    <!-- Lista delle unità documentarie trovate in base ai parametri di ricerca -->
+    <List Description="Unità documentarie" Name="UnitaDocumentarieList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" visibilityProperty="addSerie">
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <ComboBox Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Data unità documentaria" Name="dt_reg_unita_doc" Type="DATE"/>
+        <Input Description="Tipo documento principale" Name="nm_tipo_doc_princ" Type="STRING"/>
+        <Input Description="Numero allegati" GroupingDecimal="true" Name="ni_alleg" Type="INTEGER"/>
+        <Input Description="Numero annessi" GroupingDecimal="true" Name="ni_annessi" Type="INTEGER"/>
+        <Input Description="Numero annotazioni" GroupingDecimal="true" Name="ni_annot" Type="INTEGER"/>
+        <CheckBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Readonly="true" Type="STRING"/>
+        <Input Description="Data versamento" Name="dt_creazione" Type="DATETIME"/>
+        <CheckBox Description="Firmato" Name="fl_unita_doc_firmato" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Esito verifica firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+        <Input Description="Descrizione esito verifica firme" Name="ds_msg_esito_verif_firme" Type="STRING"/>
+        <Input Description="Stati generazione Indice AIP" Name="ds_lista_stati_elenco_vers" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+    </List>
+    <!-- Lista delle unità documentarie annullate trovate in base ai parametri di ricerca -->
+    <List Description="Unità documentarie annullate" Name="UnitaDocumentarieAnnullateList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" visibilityProperty="addSerie">
+        <Input Description="id rich annul vers" Name="id_rich_annul_vers" Type="INTEGER" Hidden="true" />
+        <Input Description="ti creazione rich annul vers" Name="ti_creazione_rich_annul_vers" Type="STRING" Hidden="true" />
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <ComboBox Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Tipo documento principale" Name="nm_tipo_doc_princ" Type="STRING"/>
+        <Input Description="Numero allegati" GroupingDecimal="true" Name="ni_alleg" Type="INTEGER"/>
+        <Input Description="Numero annessi" GroupingDecimal="true" Name="ni_annessi" Type="INTEGER"/>
+        <Input Description="Numero annotazioni" GroupingDecimal="true" Name="ni_annot" Type="INTEGER"/>
+        <Input Description="Data versamento" Name="dt_creazione" Type="DATETIME"/>
+        <Input Description="Data annullamento" Name="dt_annul" Type="DATETIME"/>
+        <Input Description="Motivazione" Name="nt_annul" Type="STRING"/>
+        <Input Description="Richiesta annullamento" Name="scarica_xml_rich" Type="STRING" />
+        <Input Description="Esito annullamento" Name="scarica_xml_risp" Type="STRING" />
+        <Input Description="Stati generazione Indice AIP" Name="ds_lista_stati_elenco_vers" Type="STRING"/>
+        <Input Description="Rapporti di versamento" Name="scarica_rv" Type="STRING" />
+    </List>
+    <Fields Description="" Name="UnitaDocumentariePerSerie">
+        <Input Description="ID_CONTENUTO_SERIE" Hidden="true" Name="id_contenuto_serie" Type="INTEGER"/>
+        <MultiSelect Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>
+        <MultiSelect Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Type="INTEGER"/>
+    </Fields>
+    <Fields Description="" Name="UnitaDocumentariePerRichAnnulVers">
+        <Input Description="ID_RICH_ANNUL_VERS" Hidden="true" Name="id_rich_annul_vers" Type="INTEGER"/>
+    </Fields>
+    <List Description="Unità documentarie da aggiungere a una serie" Name="UnitaDocumentariePerSerieList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <ComboBox Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Data unità documentaria" Name="dt_reg_unita_doc" Type="DATE"/>
+        <Input Description="Tipo documento principale" Name="nm_tipo_doc_princ" Type="STRING"/>
+        <Input Description="Numero allegati" GroupingDecimal="true" Name="ni_alleg" Type="INTEGER"/>
+        <Input Description="Numero annessi" GroupingDecimal="true" Name="ni_annessi" Type="INTEGER"/>
+        <Input Description="Numero annotazioni" GroupingDecimal="true" Name="ni_annot" Type="INTEGER"/>
+        <CheckBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Readonly="true" Type="STRING"/>
+        <Input Description="Data versamento" Name="dt_creazione" Type="DATETIME"/>
+        <CheckBox Description="Firmato" Name="fl_unita_doc_firmato" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Esito verifica firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+        <Input Description="Descrizione esito verifica firme" Name="ds_msg_esito_verif_firme" Type="STRING"/>
+        <Input Description="Stati generazione Indice AIP" Name="ds_lista_stati_elenco_vers" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+    </List>
+    <List Description="Unità documentarie da aggiungere a una richiesta di annullamento" Name="UnitaDocumentariePerRichAnnulVersList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <ComboBox Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Data unità documentaria" Name="dt_reg_unita_doc" Type="DATE"/>
+        <Input Description="Tipo documento principale" Name="nm_tipo_doc_princ" Type="STRING"/>
+        <Input Description="Numero allegati" GroupingDecimal="true" Name="ni_alleg" Type="INTEGER"/>
+        <Input Description="Numero annessi" GroupingDecimal="true" Name="ni_annessi" Type="INTEGER"/>
+        <Input Description="Numero annotazioni" GroupingDecimal="true" Name="ni_annot" Type="INTEGER"/>
+        <CheckBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Readonly="true" Type="STRING"/>
+        <Input Description="Data versamento" Name="dt_creazione" Type="DATETIME"/>
+        <CheckBox Description="Firmato" Name="fl_unita_doc_firmato" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Esito verifica firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+        <Input Description="Descrizione esito verifica firme" Name="ds_msg_esito_verif_firme" Type="STRING"/>
+        <Input Description="Stati generazione Indice AIP" Name="ds_lista_stati_elenco_vers" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+    </List>
+    <Tab Description="Unità Documentaria" Name="UnitaDocumentarieTabs">
+        <TabElement Description="Filtri Ricerca Avanzata" Name="FiltriRicercaAvanzata"/>
+        <TabElement Description="Filtri Dati Specifici" Name="FiltriDatiSpec"/>
+    </Tab>
+    <!-- PAGINA unità documentarie -->
+    <Fields Description="Dettaglio Unità Documentarie" Name="UnitaDocumentarieDetail">
+        <!-- Info principali -->
+        <Input Description="Id unita doc" Hidden="true" Name="id_unita_doc" Type="INTEGER"/>
+        <Input Description="Ambiente" Name="nm_ambiente" Type="STRING"/>
+        <Input Description="Ente" Name="nm_ente" Type="STRING"/>
+        <Input Description="Struttura" Name="nm_strut" Type="STRING"/>
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Numero normalizzato" Name="cd_key_unita_doc_normaliz" Type="STRING"/>
+        <Input Description="Tipologia unità documentaria" Hidden="true" Name="id_tipo_unita_doc" Type="INTEGER"/>
+        <Input Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Oggetto" Name="dl_oggetto_unita_doc" Type="STRING"/>
+        <Input Description="Data unità documentaria" Name="dt_reg_unita_doc" Type="DATE"/>
+        <Input Description="Classificazione" Name="ds_classif_princ" Type="STRING"/>
+        <Input Description="Fascicolo" Name="cd_fascic_princ" Type="STRING"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascic_princ" Type="STRING"/>
+        <Input Description="Sottofascicolo" Name="cd_sottofascic_princ" Type="STRING"/>
+        <Input Description="Oggetto sottofascicolo" Name="ds_oggetto_sottofascic_princ" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+        <Input Description="Numero allegati" GroupingDecimal="true" Name="ni_alleg" Type="INTEGER"/>
+        <Input Description="Numero annessi" GroupingDecimal="true" Name="ni_annessi" Type="INTEGER"/>
+        <Input Description="Numero annotazioni" GroupingDecimal="true" Name="ni_annot" Type="INTEGER"/>
+        <!-- Info versamento -->
+        <CheckBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Forzatura collegamento" Name="fl_forza_collegamento" Readonly="true" Type="STRING"/>
+        <Input Description="Tipo conservazione" Name="ti_conservazione" Type="STRING"/>
+        <Input Description="Versione servizio di versamento" Name="cd_versione_xml" Type="STRING"/>
+        <Input Description="Userid" Name="utente_vers" Type="STRING"/>
+        <Input Description="Utente" Name="utente" Type="STRING"/>
+        <Input Description="Indirizzo IP versatore" Name="cd_ind_ip_client" Type="STRING"/>
+        <Input Description="Sistema Versante" Name="nm_sistema_versante" Type="STRING"/>
+        <Input Description="Data versamento" Name="dt_creazione" Type="DATETIME"/>
+        <CheckBox Description="Firmato" Name="fl_unita_doc_firmato" Readonly="true" Type="STRING"/>
+        <Input Description="Esito verifica firme versamento" Name="ti_esito_verif_firme_ud" Type="STRING"/>
+        <Input Description="Messaggio esito firme versamento" Name="ds_msg_esito_verif_firme_ud" Type="STRING"/>
+        <!-- Versioni XSD dati spec standard e di migrazione -->
+        <Input Description="Versione XSD" Name="versione_xsd_dati_spec_ud" Type="STRING"/>
+        <Input Description="Versione XSD" Name="versione_xsd_dati_spec_migr_ud" Type="STRING"/>
+        <!-- XML di richiesta, indice e risposta -->
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_rich_ud" Rows="500" Type="STRING"/>
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_index_ud" Rows="500" Type="STRING"/>
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_risp_ud" Rows="500" Type="STRING"/>
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_rapp_ud" Rows="500" Type="STRING"/>
+        <!-- Note -->
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="nt_unita_doc" Rows="500" Type="STRING"/>
+        <!-- Bottone Scarica Componenti FILE -->
+        <Button Description="Scarica file unità documentaria" Name="scarica_comp_file_ud" Type="STRING"/>
+        <!-- Bottone Scarica DIP esibizione ud -->
+        <Button Description="Scarica DIP per esibizione" Name="scarica_dip_esibizione_ud" Type="STRING"/>
+        <!-- Bottone Scarica XML richiesta e risposta -->
+        <Button Description="Scarica documenti di conservazione" Name="scarica_xml_ud" Type="STRING"/>
+        <Button Description="Scarica AIP" Name="scarica_xml_unisincro" Type="STRING"/>
+        <!-- Bottone scarica DIP ud -->
+        <Button Description="Scarica DIP" Name="scarica_dip_ud" Type="STRING"/>
+        <!-- Bottone scarica SIP ud -->
+        <Button Description="Scarica SIP unità documentaria" Name="scarica_sip_ud" Type="STRING"/>
+        <!-- Bottone scarica rapporto di versamento -->
+        <Button Description="Scarica rapporto di versamento" Name="scarica_rv" Type="STRING"/>
+        <!-- Bottone visualizza ud annullata -->
+        <Button Description="Visualizza ud annullata" Name="visualizza_ud_annul" Type="STRING"/>
+        <Input Description="idUnitaDocAnnullata" Name="id_unita_doc_annullata" Type="INTEGER"/>
+        <!-- Bottone visualizza ud versata -->
+        <Button Description="Visualizza nuovo versamento" Name="visualizza_ud_versata" Type="STRING"/>
+        <Input Description="idUnitaDocVersata" Name="id_unita_doc_versata" Type="INTEGER"/>
+        <Button Name="assegna_progressivo" Description="Assegna progressivo" Type="STRING"/>
+        <Input Description="Progressivo" Name="pg_unita_doc" Type="INTEGER"/>
+        <Button Secure="false" Name="confermaModificaAssegnaProgr" Description="Salva" Type="STRING" />
+        <Button Secure="false" Name="annullaModificaAssegnaProgr" Description="Annulla" Type="STRING" />
+        <!-- Nuovi campi da analisi accreditamento -->
+        <Input Description="Hash SIP" Name="ds_hash_xml_rich_ud" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_rich_ud" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_rich_ud" Type="STRING"/>
+        <!--<Input Description="Urn indice SIP" Name="ds_urn_xml_rich_ud" Type="STRING"/>-->
+        <Input Description="Urn" Name="ds_urn_xml_rich_ud" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_xml_rich_ud_normaliz" Type="STRING"/>
+        <Input Description="Urn precedente" Name="ds_urn_xml_rich_ud_iniziale" Type="STRING"/>
+        <Input Description="Hash SIP" Name="ds_hash_xml_index_ud" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_index_ud" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_index_ud" Type="STRING"/>
+        <!--<Input Description="Urn PI SIP" Name="ds_urn_xml_index_ud" Type="STRING"/>-->
+        <Input Description="Urn" Name="ds_urn_xml_index_ud" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_xml_index_ud_normaliz" Type="STRING"/>
+        <Input Description="Urn precedente" Name="ds_urn_xml_index_ud_iniziale" Type="STRING"/>
+        <Input Description="Hash esito versamento SIP" Name="ds_hash_xml_risp_ud" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_risp_ud" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_risp_ud" Type="STRING"/>
+        <!--<Input Description="Urn esito versamento SIP" Name="ds_urn_xml_risp_ud" Type="STRING"/>-->
+        <Input Description="Urn" Name="ds_urn_xml_risp_ud" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_xml_risp_ud_normaliz" Type="STRING"/>
+        <Input Description="Urn precedente" Name="ds_urn_xml_risp_ud_iniziale" Type="STRING"/>
+        <Input Description="Hash rapporto di versamento" Name="ds_hash_xml_rapp_ud" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_rapp_ud" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_rapp_ud" Type="STRING"/>
+        <!--<Input Description="Urn rapporto di versamento" Name="ds_urn_xml_rapp_ud" Type="STRING"/>-->
+        <Input Description="Urn" Name="ds_urn_xml_rapp_ud" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_xml_rapp_ud_normaliz" Type="STRING"/>
+        <Input Description="Urn precedente" Name="ds_urn_xml_rapp_ud_iniziale" Type="STRING"/>
+        <Input Description="Documento principale" Name="nm_tipo_doc" Type="STRING"/>
+        <Input Description="Sistema di migrazione" Name="nm_sistema_migraz" Type="STRING"/>
+        <Input Description="Urn" Name="urn_ud" Type="STRING"/>
+        <Input Description="Data annullamento" Name="dt_annul" Type="DATE"/>
+        <Input Description="Motivo annullamento" Name="nt_annul" Type="STRING"/>
+    </Fields>
+    <!-- Lista dei documenti dell'unità documentaria -->
+    <List Description="Lista documenti" Name="DocumentiUDList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Elemento" Name="ti_doc" Type="STRING"/>
+        <Input Description="Tipo documento" Name="nm_tipo_doc" Type="STRING"/>
+        <Input Description="Data acquisizione" Name="dt_creazione" Type="DATETIME"/>
+        <Input Description="Stato generazione Indice AIP" Name="ti_stato_elenco_vers" Type="STRING"/>
+        <Input Description="Esito verifica firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+    </List>
+    <!-- Lista dei collegamenti dell'unità documentaria -->
+    <List Description="Collegamenti" Name="CollegamentiList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Registro" Name="cd_registro_key_unita_doc_link" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc_link" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc_link" Type="STRING"/>
+        <Input Description="Descrizione" Name="ds_link_unita_doc" Type="STRING"/>
+        <CheckBox Description="Risolto" Name="fl_risolto" Readonly="true" Type="STRING"/>
+    </List>
+    <!-- Lista archiviazioni secondarie dell'unità documentaria -->
+    <List Description="Fascicoli secondari" Name="ArchiviazioniSecondarieList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Classificazione" Name="ds_classif" Type="STRING"/>
+        <Input Description="Fascicolo" Name="cd_fascic" Type="STRING"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascic" Type="STRING"/>
+        <Input Description="Sottofascicolo" Name="cd_sottofascic" Type="STRING"/>
+        <Input Description="Oggetto Sottofascicolo" Name="ds_oggetto_sottofascic" Type="STRING"/>
+    </List>
+    <!-- Lista dati specifici unità documentaria -->
+    <List Description="Dati specifici unità documentaria" Name="DatiSpecificiUDList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Chiave" Name="nm_attrib_dati_spec" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
+    </List>
+    <!-- Lista dati specifici di migrazione unità documentaria -->
+    <List Description="Dati specifici migrazione unità documentaria" Name="DatiSpecificiMigrazioneUDList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Chiave" Name="nm_attrib_dati_spec" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
+    </List>
+    <!-- Lista indici AIP dell'unità documentaria -->
+    <List Description="Lista indici AIP" Name="IndiciAIPList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Versione" Name="cd_ver_indice_aip" Type="STRING"/>
+        <Input Description="Data creazione" Name="dt_creazione" Type="DATETIME"/>
+        <Input Description="Urn AIP" Name="urn" Type="STRING"/>
+        <Input Description="Formato" Name="ti_formato_indice_aip" Type="STRING"/>
+        <Input Description="Motivo" Name="ds_causale" Type="STRING"/>
+        <Input Description="Elenco di versamento" Name="id_elenco_vers" Type="INTEGER"/>
+        <Input Description="Stato elenco di versamento" Name="ti_stato_elenco_vers" Type="STRING"/>
+    </List>
+    <!-- Lista volumi di conservazione dell'unità documentaria -->
+    <List Description="Lista volumi dell'unità documentaria" Name="VolumiList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Volume" Name="id_volume_conserv" Type="INTEGER"/>
+        <Input Description="Creato il" Name="dt_creazione" Type="DATETIME"/>
+        <Input Description="Stato" Name="ti_stato_volume_conserv" Type="STRING"/>
+    </List>
+    <!-- Lista elenchi di versamento dell'unità documentaria -->
+    <List Description="Lista elenchi di versamento dell'unità documentaria" Name="ElenchiVersamentoList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Elenco di versamento" Name="id_elenco_vers" Type="INTEGER"/>
+        <Input Description="Creato il" Name="dt_creazione_elenco" Type="DATETIME"/>
+        <Input Description="Stato" Name="ti_stato_elenco" Type="STRING"/>        
+        <Input Description="Data creazione elenco indici AIP" Name="dt_creazione_elenco_ix_AIP" Type="DATETIME"/>
+        <Input Description="Data firma elenco indici AIP" Name="dt_firma_elenco_ix_AIP" Type="DATETIME"/>
+        <Input Description="Data marca elenco indici AIP" Name="dt_marca_elenco_ix_AIP" Type="DATETIME"/>
+    </List>
+    <!-- Lista serie di appartenenza dell'unità documentaria -->
+    <List Description="Lista serie di appartenenza dell'unità documentaria" Name="SerieAppartenenzaList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Id ver serie" Name="id_ver_serie" Type="INTEGER" Hidden="true" />
+        <Input Description="Codice composito" Name="cd_composito_serie" Type="STRING"/>
+        <Input Description="Anno" Name="aa_serie" Type="INTEGER"/>
+        <Input Description="Descrizione" Name="ds_serie" Type="STRING"/>
+        <Input Description="Versione" Name="cd_ver_serie" Type="STRING"/>
+        <Input Description="Stato versione" Name="ti_stato_ver_serie" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_serie" Type="STRING"/>
+    </List>
+    <!-- Lista fascicoli di appartenenza dell'unità documentaria -->
+    <List Description="Lista fascicoli di appartenenza dell'unità documentaria" Name="FascicoliAppartenenzaList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Id fascicolo" Name="id_fascicolo" Type="INTEGER" Hidden="true" />
+        <Input Description="Anno" Name="aa_fascicolo" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
+        <Input Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="STRING"/>
+        <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>
+        <Input Description="Data chiusura" Name="dt_chiu_fascicolo" Type="DATE"/>
+        <Input Description="Classificazione" Name="cd_composito_voce_titol" Type="STRING"/>
+        <Input Description="Numero unità documentarie" Name="ni_unita_doc" Type="INTEGER"/>
+        <Input Description="Data versamento" Name="ts_ini_ses" Type="DATE"/>
+        <Input Description="Esito versamento" Name="ti_esito" Type="STRING"/>
+        <Input Description="Stato acquisizione" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+    </List>
+    <!-- Lista aggiornamenti metadati di appartenenza dell'unità documentaria -->
+    <List Description="Lista aggiornamenti metadati di appartenenza dell'unità documentaria" Name="AggiornamentiMetadatiList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Id aggiornamento" Name="id_upd_unita_doc" Type="INTEGER" Hidden="true" />
+        <Input Description="Progressivo" Name="pg_upd_unita_doc" Type="INTEGER"/>
+        <Input Description="Data" Name="ts_ini_ses" Type="DATETIME"/>
+        <CheckBox Description="Forzatura" Name="fl_forza_upd" Readonly="true" Type="STRING"/>
+        <Input Description="Note" Name="nt_upd" Type="STRING"/>
+        <Input Description="Stato di generazione indice AIP" Name="ti_stato_upd_elenco_vers" Type="STRING"/>
+        <Link Description="Elenco di versamento" Name="id_elenco_vers" Type="INTEGER" Target="loadDettaglioElencoVersamento" Tooltip="Visualizza elenco" isTargetList="false"/>
+        <CheckBox Description="Presenza aggiornamenti falliti e risolti" Name="fl_ses_upd_ko_risolti" Readonly="true" Type="STRING"/>
+    </List>
+    <!-- Lista note -->
+    <List Description="Lista note appartenenti all'unità documentaria" Name="NoteList">
+        <Input Description="Id" Name="id_nota_unita_doc" Type="INTEGER" Hidden="false"/>
+        <Input Description="Tipo nota" Name="ds_tipo_nota_unita_doc" Type="STRING" />
+        <!--<Input Description="Numero ordine" Name="ni_ord" Type="INTEGER"  GroupingDecimal="true" />-->
+        <Input Description="Progressivo" Name="pg_nota_unita_doc" Type="INTEGER" />
+        <Input Description="Nota" Name="ds_nota_unita_doc" Type="STRING" />
+        <Input Description="Data registrazione" Name="dt_nota_unita_doc" Type="DATETIME" />
+        <Input Description="Utente" Name="nm_userid" Type="STRING" />
+        <Link Description="Indice AIP" Name="id_ver_indice_aip" Type="INTEGER" Target="loadDettaglioVersioneIndiceAip" Tooltip="Visualizza versione indice aip" isTargetList="false"/>
+    </List>
+    <Tab Description="Dettaglio Unità Documentaria" Name="UnitaDocumentarieDettaglioTabs">
+        <TabElement Description="Informazioni principali" Name="InfoPrincipaliUD"/>
+        <TabElement Description="Informazioni versamento" Name="InfoVersamentoUD"/>
+        <TabElement Description="Indice SIP unità documentaria" Name="XMLRichiestaUD"/>
+        <TabElement Description="PI SIP unità documentaria" Name="XMLIndiceUD"/>
+        <TabElement Description="Esito versamento SIP" Name="XMLRispostaUD"/>
+        <TabElement Description="Rapporto di versamento" Name="XMLRapportoUD"/>
+        <TabElement Description="Note" Name="NoteUD"/>
+        <TabElement Description="Indice AIP" Name="UltimoIndiceAIP"/>
+    </Tab>
+    <Tab Description="Liste Dettaglio Unità Documentaria" Name="UnitaDocumentarieDettaglioListsTabs">
+        <TabElement Description="Documenti" Name="ListaDocumentiUD"/>
+        <TabElement Description="Collegamenti" Name="ListaCollegamentiUD"/>
+        <TabElement Description="Archiviazioni secondarie" Name="ListaArchiviazioniSecondarieUD"/>
+        <TabElement Description="Dati specifici unità documentaria" Name="ListaDatiSpecificiUD"/>
+        <TabElement Description="Dati specifici di migrazione unità documentaria" Name="ListaDatiSpecificiMigrazioneUD"/>
+        <TabElement Description="Precedenti indici AIP" Name="ListaIndiciAIP"/>
+        <TabElement Description="Volumi di conservazione" Name="ListaVolumiUD"/>
+        <TabElement Description="Elenchi di versamento" Name="ListaElenchiVersamentoUD"/>
+        <TabElement Description="Serie di appartenenza" Name="ListaSerieAppartenenzaUD"/>
+        <TabElement Description="Fascicoli di appartenenza" Name="ListaFascicoliAppartenenzaUD"/>
+        <TabElement Description="Aggiornamenti metadati" Name="ListaAggiornamentiMetadatiUD"/>
+        <TabElement Description="Note unità documentaria" Name="ListaNoteUD"/>
+    </Tab>
+    <!-- PAGINA documento -->
+    <Fields Description="Documento" Name="DocumentiUnitaDocumentarieDetail">
+        <!-- Informazioni principali -->
+        <Input Description="Ambiente" Name="nm_ambiente" Type="STRING"/>
+        <Input Description="Ente" Name="nm_ente" Type="STRING"/>
+        <Input Description="Struttura" Name="nm_strut" Type="STRING"/>
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Tipologia unità documentaria" Hidden="true" Name="id_tipo_unita_doc" Type="INTEGER"/>
+        <Input Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Oggetto" Name="dl_oggetto_unita_doc" Type="STRING"/>
+        <Input Description="Data unità documentaria" Name="dt_reg_unita_doc" Type="DATE"/>
+        <Input Description="ID documento" Name="cd_key_doc_vers" Type="STRING"/>
+        <Input Description="Tipo documento" Name="nm_tipo_doc" Type="STRING"/>
+        <Input Description="Elemento" Name="ti_doc" Type="STRING"/>
+        <Input Description="Elemento" Name="pg_doc" Type="INTEGER"/>
+        <Input Description="Data versamento documento" Name="dt_creazione" Type="DATETIME"/>
+        <Input Description="Data versamento unità documentaria" Name="dt_creazione_ud" Type="DATETIME"/>
+        <Input Description="Descrizione" Name="dl_doc" Type="STRING"/>
+        <Input Description="Autore" Name="ds_autore_doc" Type="STRING"/>                
+        <Input Description="Numero d'ordine" Name="ni_ord_doc" Type="INTEGER"/>
+        <Input Description="Tipo struttura documento" Name="nm_tipo_strut_doc" Type="STRING"/>
+        <Input Description="Denominazione soggetto" Name="ds_denom_soggetto" Type="STRING"/>
+        <Input Description="Cognome soggetto" Name="nm_cognome_soggetto" Type="STRING"/>
+        <Input Description="Nome soggetto" Name="nm_soggetto" Type="STRING"/>
+        <Input Description="Codice fiscale soggetto" Name="cd_fisc_soggetto" Type="STRING"/>
+        <Input Description="Codice partita iva soggetto" Name="cd_partita_iva_soggetto" Type="STRING"/>
+        <Input Description="Data emissione" Name="dt_emis" Type="DATE"/>
+        <Input Description="Periodo fiscale" Name="cd_periodo_fisc" Type="STRING"/>
+        <Input Description="Registro fiscale" Name="cd_registro_fisc" Type="STRING"/>
+        <Input Description="Numero progressivo" GroupingDecimal="true" Name="ni_progr_fisc" Type="INTEGER"/>
+        <Input Description="Data termine emissione" Name="dt_termine_emis" Type="DATE"/>
+        <!-- Informazioni versamento -->
+        <CheckBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Readonly="true" Type="STRING"/>
+        <Input Description="Tipo conservazione" Name="ti_conservazione" Type="STRING"/>
+        <Input Description="Sistema migrazione" Name="nm_sistema_migraz" Type="STRING"/>
+        <Input Description="Versione servizio di versamento" Name="cd_versione_xml" Type="STRING"/>
+        <Input Description="Userid" Name="utente_vers" Type="STRING"/>
+        <Input Description="Utente" Name="utente" Type="STRING"/>
+        <CheckBox Description="Firmato" Name="fl_doc_firmato" Readonly="true" Type="STRING"/>
+        <Input Description="Esito firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+        <Input Description="Messaggio esito firme versam." Name="ds_msg_esito_verif_firme" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+        <Input Description="Stato volume" Name="ti_stato_volume_conserv" Type="STRING"/>
+        <Input Description="Elenco di versamento" Name="id_elenco_vers" Type="INTEGER"/>
+        <Input Description="Stato generazione Indice AIP" Name="ti_stato_elenco_vers" Type="STRING"/>
+        <Input Description="Volume" Name="id_volume_conserv" Type="INTEGER"/>
+        <Input Description="Nome volume" Hidden="true" Name="nm_volume_conserv" Type="STRING"/>
+        <!--<Button Type="STRING" Description="Dettaglio Volume / elenco" Name="dettaglio_volume" />-->
+        <Input Description="Urn" Name="urn_doc" Type="STRING"/>
+        <!-- Versioni XSD dati spec standard e di migrazione -->
+        <Input Description="Versione XSD" Name="versione_xsd_dati_spec_doc" Type="STRING"/>
+        <Input Description="Versione XSD" Name="versione_xsd_dati_spec_migr_doc" Type="STRING"/>
+        <!-- XML di richiesta e risposta -->
+        <TextArea Cols="50" Description="" MaxLength="100000" Name="bl_xml_rich_doc" Rows="50" Type="STRING"/>
+        <TextArea Cols="50" Description="" MaxLength="100000" Name="bl_xml_risp_doc" Rows="50" Type="STRING"/>
+        <TextArea Cols="50" Description="" MaxLength="100000" Name="bl_xml_rapp_doc" Rows="50" Type="STRING"/>
+        <!-- Bottone scarica componenti documento -->
+        <Button Description="Scarica file documento" Name="scarica_comp_file_doc" Type="STRING"/>
+        <!-- Bottone Scarica DIP esibizione doc -->
+        <Button Description="Scarica DIP per esibizione" Name="scarica_dip_esibizione_doc" Type="STRING"/>
+        <!-- Bottone Scarica XML richiesta e risposta -->
+        <Button Description="Scarica documenti di conservazione" Name="scarica_xml_doc" Type="STRING"/>
+        <!-- Bottone scarica SIP doc -->
+        <Button Description="Scarica SIP documento" Name="scarica_sip_doc" Type="STRING"/>
+        <Input Description="Hash SIP" Name="ds_hash_xml_rich_doc" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_rich_doc" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_rich_doc" Type="STRING"/>
+        <!--<Input Description="Urn indice SIP" Name="ds_urn_xml_rich_doc" Type="STRING"/>-->
+        <Input Description="Urn" Name="ds_urn_xml_rich_doc" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_xml_rich_doc_normaliz" Type="STRING"/>
+        <Input Description="Urn precedente" Name="ds_urn_xml_rich_doc_iniziale" Type="STRING"/>
+        <Input Description="Hash SIP" Name="ds_hash_xml_risp_doc" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_risp_doc" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_risp_doc" Type="STRING"/>
+        <!--<Input Description="Urn esito versamento SIP" Name="ds_urn_xml_risp_doc" Type="STRING"/>-->
+        <Input Description="Urn" Name="ds_urn_xml_risp_doc" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_xml_risp_doc_normaliz" Type="STRING"/>
+        <Input Description="Urn precedente" Name="ds_urn_xml_risp_doc_iniziale" Type="STRING"/>
+        <Input Description="Hash SIP" Name="ds_hash_xml_rapp_doc" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_rapp_doc" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_rapp_doc" Type="STRING"/>
+        <!--<Input Description="Urn rapporto di versamento" Name="ds_urn_xml_rapp_doc" Type="STRING"/>-->
+        <Input Description="Urn" Name="ds_urn_xml_rapp_doc" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_xml_rapp_doc_normaliz" Type="STRING"/>
+        <Input Description="Urn precedente" Name="ds_urn_xml_rapp_doc_iniziale" Type="STRING"/>
+        <Input Description="Data annullamento unità documentaria" Name="dt_annul_unita_doc" Type="DATE"/>
+        <Input Description="Data annullamento documento" Name="dt_annul_doc" Type="DATE"/>
+        <Input Description="Motivo annullamento unità documentaria" Name="nt_annul_unita_doc" Type="STRING"/>
+        <Input Description="Motivo annullamento documento" Name="nt_annul_doc" Type="STRING"/>
+        <!-- Bottone scarica DIP documento -->
+        <Button Description="Scarica DIP" Name="scarica_dip_doc" Type="STRING"/>
+        <!-- Note -->
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="nt_doc" Rows="500" Type="STRING"/>
+    </Fields>
+    <!-- PAGINA versione indice AIP -->
+    <Fields Description="Dettaglio versione indice AIP" Name="VersioneIndiceAIPDetail">
+        <!-- Informazioni principali -->
+        <Input Description="Id Versione Indice AIP" Hidden="true" Name="id_ver_indice_aip" Type="INTEGER"/>
+        <Input Description="Ambiente" Name="nm_ambiente" Type="STRING"/>
+        <Input Description="Ente" Name="nm_ente" Type="STRING"/>
+        <Input Description="Struttura" Name="nm_strut" Type="STRING"/>
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Versione" Name="cd_ver_indice_aip" Type="STRING"/>
+        <Input Description="Data creazione" Name="dt_creazione" Type="DATETIME"/>
+        <!--<Input Description="Urn AIP" Name="ds_urn" Type="STRING"/>-->
+        <Input Description="Urn" Name="urn" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="urn_normalizzato" Type="STRING"/>
+        <Input Description="Urn preconversione" Name="urn_iniziale" Type="STRING"/>
+        <Input Description="Hash" Name="ds_hash_indice_aip" Type="STRING"/>
+        <Input Description="Formato" Name="ti_formato_indice_aip" Type="STRING"/>
+        <Input Description="Motivo" Name="ds_causale" Type="STRING"/>
+        <Input Description="Elenco di versamento" Name="id_elenco_vers" Type="INTEGER"/>
+        <Input Description="Stato elenco di versamento" Name="ti_stato_elenco_vers" Type="STRING"/>
+        <TextArea Cols="500" Description="Indice AIP" MaxLength="1000000000" Name="bl_file_ver_indice_aip" Rows="500" Type="STRING"/>
+        <Button Description="Scarica Indice AIP" Name="scarica_indice_aip_detail" Type="STRING"/>
+    </Fields>
+    <Fields Description="Dettaglio versione indice AIP" Name="VersioneIndiceAIPLast">
+        <!-- Informazioni principali -->
+        <Input Description="Id Versione Indice AIP" Hidden="true" Name="id_ver_indice_aip" Type="INTEGER"/>
+        <Input Description="Ambiente" Name="nm_ambiente" Type="STRING"/>
+        <Input Description="Ente" Name="nm_ente" Type="STRING"/>
+        <Input Description="Struttura" Name="nm_strut" Type="STRING"/>
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Versione" Name="cd_ver_indice_aip" Type="STRING"/>
+        <Input Description="Data creazione" Name="dt_creazione" Type="DATETIME"/>
+        <!--<Input Description="Urn AIP" Name="ds_urn" Type="STRING"/>-->
+        <Input Description="Urn" Name="urn" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="urn_normalizzato" Type="STRING"/>
+        <Input Description="Urn precedente" Name="urn_iniziale" Type="STRING"/>
+        <Input Description="Hash" Name="ds_hash_indice_aip" Type="STRING"/>
+        <Input Type="STRING" Description="Hash" Name="hash_personalizzato"/>
+        <!--<Input Description="Hash" Name="ds_hash_aip" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_aip" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_aip" Type="STRING"/>-->
+        <Input Description="Ente conservatore" Name="nm_ente_conserv" Type="STRING"/>
+        <Input Description="Formato" Name="ti_formato_indice_aip" Type="STRING"/>
+        <Input Description="Motivo" Name="ds_causale" Type="STRING"/>
+        <TextArea Cols="500" Description="Indice AIP" MaxLength="1000000000" Name="bl_file_ver_indice_aip" Rows="500" Type="STRING"/>
+        <Button Description="Scarica Indice AIP" Name="scarica_indice_aip_last" Type="STRING"/>
+    </Fields>
+    <List Description="Componenti" Name="ComponentiList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Ordine presentazione" GroupingDecimal="true" Name="ni_ord_comp_doc" Type="INTEGER"/>
+        <Input Description="Tipo componente" Name="nm_tipo_comp_doc" Type="STRING"/>
+        <Input Description="Supporto" Name="ti_supporto_comp" Type="STRING"/>
+        <Input Description="Nome componente" Name="ds_nome_comp_vers" Type="STRING"/>
+        <Input Description="Formato rappresentazione" Name="ds_formato_rappr_calc" Type="STRING"/>
+        <Input Description="Dimensione in bytes" GroupingDecimal="true" Name="ni_size_file_calc" Type="INTEGER"/>
+        <CheckBox Description="Firmato" Name="fl_comp_firmato" Readonly="true" Type="STRING"/>
+        <Input Description="Esito firme versamento" Name="ti_esito_verif_firme" Type="STRING"/>
+        <Input Description="Messaggio esito firme versamento" Name="ds_msg_esito_verif_firme" Type="STRING"/>
+        <Input Description="Numero componente padre" GroupingDecimal="true" Name="ni_ord_comp_padre" Type="INTEGER"/>
+    </List>
+    <List Description="Dati specifici documento" Name="DatiSpecificiDocList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Chiave" Name="nm_attrib_dati_spec" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
+    </List>
+    <List Description="Dati specifici migrazione documento" Name="DatiSpecificiMigrazioneDocList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Chiave" Name="nm_attrib_dati_spec" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
+    </List>
+    <Tab Description="Dettaglio Documenti" Name="DocumentiDettaglioTabs">
+        <TabElement Description="Informazioni principali" Name="InfoPrincipali"/>
+        <TabElement Description="Informazioni versamento" Name="InfoVersamento"/>
+        <TabElement Description="Indice SIP documento" Name="XMLRichiestaDoc"/>
+        <TabElement Description="Esito versamento SIP documento" Name="XMLRispostaDoc"/>
+        <TabElement Description="Rapporto di versamento" Name="XMLRapportoDoc"/>
+        <TabElement Description="Note" Name="NoteDoc"/>
+    </Tab>
+    <Tab Description="Liste Dettaglio Documenti" Name="DocumentiDettaglioListsTabs">
+        <TabElement Description="Componenti" Name="ListaComponenti"/>
+        <TabElement Description="Dati specifici documento" Name="ListaDatiSpecificiDoc"/>
+        <TabElement Description="Dati specifici migrazione documento" Name="ListaDatiSpecificiMigrazioneDoc"/>
+    </Tab>
+    <List Description="Lista componenti DIP" Name="ComponentiDipList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Componente" Name="nm_comp_doc" Type="STRING"/>
+        <Input Description="Formato di rappresentazione" Name="nm_formato_rappr" Type="STRING"/>
+        <Input Description="Tipo algoritmo" Name="ds_algo" Type="STRING"/>
+        <Input Description="Trasformatore" Name="nm_conv" Type="STRING"/>
+        <Input Description="Versione" Name="vrs_conv" Type="STRING"/>
+        <Input Description="Stato" Name="ti_stato_conv" Type="STRING"/>
+        <Input Description="Data" Name="dt_comp" Type="DATETIME"/>
+        <Input Description="Condizione di errore" Name="cd_err" Type="STRING"/>
+        <Input Description="Messaggio di errore" Name="msg_err" Type="STRING"/>
+        <Link Description="" Name="scaricaDip" Target="scaricaDip" Tooltip="Scarica DIP" Type="STRING" isTargetList="false"/>
+    </List>
+    <ButtonList Description="" Name="ScaricaDipBL">
+        <Button Description="Scarica zip" Name="scaricaZip" Type="STRING"/>
+    </ButtonList>
+    <List Description="Unità documentarie" Name="FakeUnitaDocumentarieList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <Input Description="Id unita doc" Hidden="true" Name="id_unita_doc" Type="INTEGER"/>
+    </List>
+    <!-- PAGINA aggiornamenti metadati -->
+    <Fields Description="Dettaglio Aggiornamenti Metadati" Name="AggiornamentiMetadatiUDDetail">
+        <!-- Info principali -->
+        <Input Description="Id aggiornamento" Hidden="true" Name="id_upd_unita_doc" Type="INTEGER"/>
+        <Input Description="Ambiente" Name="nm_ambiente" Type="STRING"/>
+        <Input Description="Ente" Name="nm_ente" Type="STRING"/>
+        <Input Description="Struttura" Name="nm_strut" Type="STRING"/>
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Tipologia unità documentaria" Hidden="true" Name="id_tipo_unita_doc" Type="INTEGER"/>
+        <Input Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Type="STRING"/>
+        <Input Description="Tipo documento principale" Name="nm_tipo_doc_princ" Type="STRING"/>
+        <Input Description="Progressivo" Name="pg_upd_unita_doc" Type="INTEGER"/>
+        <Input Description="Urn" Name="ds_urn_upd_unita_doc" Type="STRING"/>
+        <CheckBox Description="Aggiornamento profilo archivistico" Name="fl_upd_profilo_archiv" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento fascicolo principale" Name="fl_upd_fascicolo_princ" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento fascicoli secondari" Name="fl_upd_fascicoli_sec" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento profilo unità documentaria" Name="fl_upd_profilo_unita_doc" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento collegamenti" Name="fl_upd_link_unita_doc" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento dati specifici" Name="fl_upd_dati_spec" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento dati specifici di migrazione" Name="fl_upd_dati_spec_migraz" Readonly="true" Type="STRING"/>
+        <!-- Info versamento -->
+        <Input Description="Versione servizio di aggiornamento" Name="cd_versione_xml" Type="STRING"/>
+        <Input Description="Userid" Name="nm_userid" Type="STRING"/>
+        <Input Description="Data versamento" Name="ts_ini_ses" Type="DATETIME"/>
+        <Input Description="Tipo aggiornamento" Name="tipo_upd_unita_doc" Type="STRING"/>
+        <CheckBox Description="Forzatura aggiornamento" Name="fl_forza_upd" Readonly="true" Type="STRING"/>
+        <Input Description="Note" Name="nt_upd" Type="STRING"/>
+        <Input Description="Stato generazione indice AIP" Name="ti_stato_upd_elenco_vers" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+        <Input Description="Elenco di versamento" Name="id_elenco_vers" Type="INTEGER"/>
+        <!-- XML di richiesta e risposta -->
+        <Input Description="Hash SIP" Name="ds_hash_xml_rich" Type="STRING"/>
+        <Input Description="Algoritmo hash SIP" Name="ds_algo_hash_xml_rich" Type="STRING"/>
+        <Input Description="Encoding hash SIP" Name="cd_encoding_hash_xml_rich" Type="STRING"/>
+        <Input Description="Urn" Name="ds_urn_xml_rich" Type="STRING"/> 
+        <Input Description="Urn normalizzato" Name="ds_urn_normaliz_xml_rich" Type="STRING"/>
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_rich" Rows="500" Type="STRING"/>
+        <Input Description="Hash SIP" Name="ds_hash_xml_risp" Type="STRING"/>
+        <Input Description="Algoritmo hash SIP" Name="ds_algo_hash_xml_risp" Type="STRING"/>
+        <Input Description="Encoding hash SIP" Name="cd_encoding_hash_xml_risp" Type="STRING"/>
+        <Input Description="Urn" Name="ds_urn_xml_risp" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_normaliz_xml_risp" Type="STRING"/>
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_risp" Rows="500" Type="STRING"/>
+        <!-- Bottone scarica SIP upd -->
+        <Button Description="Scarica SIP aggiornamento" Name="scarica_xml_upd" Type="STRING"/>
+    </Fields>
+    <!-- Lista dei documenti dell'unità documentaria aggiornati -->
+    <List Description="Lista documenti aggiornati" Name="DocumentiUpdUDList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Elemento" Name="ds_elemento" Type="STRING"/>
+        <Input Description="Tipo documento" Name="nm_tipo_doc" Type="STRING"/>
+        <CheckBox Description="Aggiornamento profilo documento" Name="fl_upd_profilo_doc" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento dati specifici" Name="fl_upd_dati_spec" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento dati specifici di migrazione" Name="fl_upd_dati_spec_migraz" Readonly="true" Type="STRING"/>
+    </List>
+    <!-- Lista dei componenti dell'unità documentaria aggiornati -->
+    <List Description="Lista componenti aggiornati" Name="CompUpdUDList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Elemento" Name="ds_elemento" Type="STRING"/>
+        <Input Description="Tipo documento" Name="nm_tipo_doc" Type="STRING"/>
+        <Input Description="Numero ordine" Name="ni_ord_comp" Type="INTEGER"/>
+        <CheckBox Description="Aggiornamento info versate" Name="fl_upd_indo_vers" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento dati specifici" Name="fl_upd_dati_spec" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento dati specifici di migrazione" Name="fl_upd_dati_spec_migraz" Readonly="true" Type="STRING"/>
+    </List>
+    <!-- Lista degli aggiornamenti metadati dell'unità documentaria risolti -->
+    <List Description="Lista aggiornati metadati risolti" Name="UpdUDKoRisoltiList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Identificatore" Name="id_ses_upd_unita_doc_ko" Type="INTEGER"/>
+        <Input Description="Data versamento" Name="ts_ini_ses" Type="DATETIME"/>
+        <Input Description="Codice errore principale" Name="cd_err_princ" Type="STRING"/>
+        <Input Description="Errore principale" Name="ds_err_princ" Type="STRING"/>
+    </List>
+    <!-- Lista dei warning rilevati -->
+    <List Description="Lista warning rilevati" Name="UpdUDWarningList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Progressivo" Name="pg_warn" Type="INTEGER"/>
+        <Input Description="Codice warning" Name="cd_err" Type="STRING"/>
+        <Input Description="Warning" Name="ds_err" Type="STRING"/>
+    </List>
+    <Tab Description="Dettaglio Aggiornamenti" Name="AggiornamentiDettaglioTabs">
+        <TabElement Description="Informazioni principali" Name="InfoPrincipaliUpd"/>
+        <TabElement Description="Informazioni versamento" Name="InfoVersamentoUpd"/>
+        <TabElement Description="Indice SIP aggiornamento" Name="XMLRichiestaUpd"/>
+        <TabElement Description="Rapporto di versamento" Name="XMLRispostaUpd"/>
+    </Tab>
+    <Tab Description="Liste Dettaglio Aggiornamenti" Name="AggiornamentiDettaglioListsTabs">
+        <TabElement Description="Documenti" Name="ListaDocAggiornati"/>
+        <TabElement Description="Componenti" Name="ListaCompAggiornati"/>
+        <TabElement Description="Aggiornamenti risolti" Name="ListaUpdRisolti"/>
+        <TabElement Description="Warning rilevati" Name="ListaUpdWarning"/>
+    </Tab>
+    
+    <!-- DETTAGLIO NOTE -->
+    <Section Name="NotaSection" Description="Dettaglio nota" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="DatiUDDetail" Description="">
+        <Input Name="id_unita_doc" Description="id_unita_doc" Type="INTEGER" />
+        
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Name="cd_registro_key_unita_doc" Description="Registro" Type="STRING" />
+        <Input Name="aa_key_unita_doc" Description="Anno" Type="INTEGER" />
+        <Input Name="cd_key_unita_doc" Description="Numero" Type="STRING" />
+        <Input Name="nm_tipo_unita_doc" Description="Tipologia unità documentaria" Type="STRING" />
+        <Input Name="dl_oggetto_unita_doc" Description="Oggetto" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="NotaDetail" Description="Dettaglio nota">
+        <Input Name="id_nota_unita_doc" Description="Id" Type="INTEGER" Hidden="false"/>
+        <ComboBox Name="id_tipo_nota_unita_doc" Description="Tipo nota" Type="INTEGER" Required="true" Trigger="true"/>
+        <Input Name="pg_nota_unita_doc" Description="Progressivo" Type="INTEGER" Required="true"/>
+        <TextArea Name="ds_nota_unita_doc" Description="Nota" Type="STRING" Rows="10" Cols="100" MaxLength="1024" Required="true"/>
+        <Input Name="dt_nota_unita_doc" Description="Data registrazione" Type="DATETIME" Required="true"/>
+        <Input Name="nm_userid_nota" Description="Utente" Type="STRING" Required="true"/>
+        <!-- Info indice aip -->
+        <Input Name="id_ver_indice_aip" Description="Indice AIP" Type="INTEGER"/>
+        <Input Name="dt_creazione" Description="Data creazione" Type="DATETIME"/>
+    </Fields>
+    
+    <!-- Filtri di ricerca Unità Documentarie Annullate -->
+    <Fields Description="Filtri unità documentarie annullate" Name="FiltriUnitaDocumentarieAnnullate">        
+        <MultiSelect Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_key_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_key_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Numero da" Name="cd_key_unita_doc_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_unita_doc_a" Type="STRING"/>
+        <MultiSelect Description="Tipologia unità documentaria" Name="id_tipo_unita_doc" Type="INTEGER" />
+        <MultiSelect Description="Tipo documento" Name="id_tipo_doc" Type="INTEGER" />
+        <Input Description="Data acquisizione da" Name="dt_creazione_unita_doc_da" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_creazione_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_creazione_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Data acquisizione a" Name="dt_creazione_unita_doc_a" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_dt_creazione_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_dt_creazione_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Data unità documentaria da" Name="dt_reg_unita_doc_da" Type="DATE"/>
+        <Input Description="Data unità documentaria a" Name="dt_reg_unita_doc_a" Type="DATE"/>
+        <Input Description="Data annullamento da" Name="dt_annul_da" Type="DATE"/>
+        <Input Description="Data annullamento a" Name="dt_annul_a" Type="DATE"/>
+        <!--<Input Description="Unità documentarie annullate" Name="fl_unita_doc_annul" Type="STRING" Hidden="true" />
+        <Input Description="Con documenti annullati" Name="fl_doc_annul" Type="STRING" />-->
+    </Fields>
+</Form>

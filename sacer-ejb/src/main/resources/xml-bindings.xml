@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-bindings xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.eclipse.org/eclipselink/xsds/persistence/oxm  http://www.eclipse.org/eclipselink/xsds/eclipselink_oxm_2_3.xsd"
+              package-name="it.eng.parer.entity" xml-mapping-metadata-complete="true" version="2.3">
+
+    <!-- 
+        Mapping tramite file xml dell'entity AroCompDoc e delle sue 
+        componenti "figlie".
+        Aggiungendo le informazioni in questo file è possibile eseguire il 
+        marshaling dell'entity senza aggiungere annotazioni extra all'entità 
+        stessa.
+    -->
+    <java-types>
+        <java-type name="AroCompDoc">
+            <xml-root-element name="aroCompDoc" />
+            <java-attributes>
+                <xml-element java-attribute="aroFirmaComps" name="aroFirmaComps" />
+                <xml-element java-attribute="aroMarcaComps" name="aroMarcaComps" />
+                <xml-element java-attribute="aroBustaCrittogs" name="aroBustaCrittogs" />
+
+                <xml-transient java-attribute="aroCompDoc" />
+                <xml-transient java-attribute="aroCompDocs" />
+                <xml-transient java-attribute="aroStrutDoc" />
+                <xml-transient java-attribute="aroUnitaDoc" />
+                <xml-transient java-attribute="decFormatoFileDoc" />
+                <xml-transient java-attribute="decFormatoFileStandard" />
+                <xml-transient java-attribute="decTipoCompDoc" />
+                <xml-transient java-attribute="decTipoRapprComp" />
+                <xml-transient java-attribute="aroContenutoComps" />
+                <xml-transient java-attribute="aroFileComps" />
+                <xml-transient java-attribute="aroUsoXsdDatiSpecs" />
+                <xml-transient java-attribute="volAppartCompVolumes" />
+                <xml-transient java-attribute="recSessioneRecups" />
+                <xml-transient java-attribute="aroCompIndiceAipDaElabs" />
+                <xml-transient java-attribute="aroCompVerIndiceAipUds" />
+                <xml-transient java-attribute="firReportEidas" />
+      <!--
+    private List<AroBustaCrittog> aroBustaCrittogs;
+    private AroCompDoc aroCompDoc;
+    private List<AroCompDoc> aroCompDocs;
+    private AroStrutDoc aroStrutDoc;
+    private AroUnitaDoc aroUnitaDoc;
+    private DecFormatoFileDoc decFormatoFileDoc;
+    private DecFormatoFileStandard decFormatoFileStandard;
+    private DecTipoCompDoc decTipoCompDoc;
+    private DecTipoRapprComp decTipoRapprComp;
+    private List<AroContenutoComp> aroContenutoComps;
+    private List<AroFileComp> aroFileComps;
+    private List<AroFirmaComp> aroFirmaComps;
+    private List<AroMarcaComp> aroMarcaComps;
+    private List<AroUsoXsdDatiSpec> aroUsoXsdDatiSpecs;
+    private List<VolAppartCompVolume> volAppartCompVolumes;
+    private List<RecSessioneRecup> recSessioneRecups;
+    private List<AroCompIndiceAipDaElab> aroCompIndiceAipDaElabs;
+    private List<AroCompVerIndiceAipUd> aroCompVerIndiceAipUds;
+                -->
+            </java-attributes>
+        </java-type>
+        <java-type name="AroFirmaComp">
+            <xml-root-element name="aroFirmaComp" />
+            <java-attributes>
+                <xml-element java-attribute="aroContrFirmaComps" name="aroContrFirmaComps" />
+
+                <xml-transient java-attribute="aroControfirmaFirmaFiglios" />
+                <xml-transient java-attribute="aroControfirmaFirmaPadres" />
+                <xml-transient java-attribute="aroCompDoc" />
+                <xml-transient java-attribute="aroMarcaComp" />
+                <xml-transient java-attribute="firCertifFirmatario" />
+                <xml-transient java-attribute="volAppartFirmaVolumes" />
+                <xml-transient java-attribute="aroVerifFirmaDtVers" />
+
+            </java-attributes>
+
+            <!--
+                        private long idFirmaComp;
+              private String cdFirmatario;
+              private String dlDnFirmatario;
+              private String dsAlgoFirma;
+              private String dsFirmaBase64;
+              private String dsMsgEsitoContrConforme;
+              private String dsMsgEsitoVerifFirma;
+              private Date dtFirma;
+              private BigDecimal idStrut;
+              private String nmCognomeFirmatario;
+              private String nmFirmatario;
+              private BigDecimal pgBusta;
+              private BigDecimal pgFirma;
+              private String tiEsitoContrConforme;
+              private String tiEsitoVerifFirma;
+              private String tiFirma;
+              private String tiFormatoFirma;
+              private String tiRifTempUsato;
+              private Date tmRifTempUsato;
+              private List<AroControfirmaFirma> aroControfirmaFirmaFiglios;
+              private List<AroControfirmaFirma> aroControfirmaFirmaPadres;
+              private List<AroContrFirmaComp> aroContrFirmaComps;
+              private AroBustaCrittog aroBustaCrittog;
+              private AroCompDoc aroCompDoc;
+              private AroMarcaComp aroMarcaComp;
+              private FirCertifFirmatario firCertifFirmatario;
+              private List<VolAppartFirmaVolume> volAppartFirmaVolumes;
+              private List<AroVerifFirmaDtVer> aroVerifFirmaDtVers;
+            -->
+        </java-type>
+
+        <java-type name="AroMarcaComp">
+            <xml-root-element name="aroMarcaComp" />
+            <java-attributes>
+                <xml-element java-attribute="aroContrMarcaComps" name="aroContrMarcaComps" />
+
+                <xml-transient java-attribute="aroContrMarcaComps" />
+                <xml-transient java-attribute="aroFirmaComps" />
+                <xml-transient java-attribute="aroBustaCrittog" />
+                <xml-transient java-attribute="aroCompDoc" />
+                <xml-transient java-attribute="firCertifCa" />
+            </java-attributes>
+        </java-type>
+        <!--
+         private long idMarcaComp;
+                private String dsAlgoMarca;
+                private String dsMarcaBase64;
+                private String dsMsgEsitoContrConforme;
+                private String dsMsgEsitoVerifMarca;
+                private Date dtScadMarca;
+                private BigDecimal pgBusta;
+                private BigDecimal pgMarca;
+                private String tiEsitoContrConforme;
+                private String tiEsitoVerifMarca;
+                private String tiFormatoMarca;
+                private String tiMarcaTemp;
+                private Date tmMarcaTemp;
+                private List<AroContrMarcaComp> aroContrMarcaComps;
+                private List<AroFirmaComp> aroFirmaComps;
+                private AroBustaCrittog aroBustaCrittog;
+                private AroCompDoc aroCompDoc;
+                private FirCertifCa firCertifCa;
+        -->
+
+        <java-type name="AroContrFirmaComp">
+            <xml-root-element name="aroContrFirmaComp" />
+            <java-attributes>
+                <xml-transient java-attribute="aroFirmaComp" />
+                <xml-transient java-attribute="firCrl" />
+                <xml-transient java-attribute="aroUsoCertifCaContrComps" />
+            </java-attributes>
+        </java-type>
+        <!--
+                private long idContrFirmaComp;
+                private String dsMsgEsitoContrFirma;
+                private String tiContr;
+                private String tiEsitoContrFirma;
+                private AroFirmaComp aroFirmaComp;
+                private FirCrl firCrl;
+                private List<AroUsoCertifCaContrComp> aroUsoCertifCaContrComps;
+        -->
+        
+        <java-type name="AroContrMarcaComp">
+            <xml-root-element name="aroContrMarcaComp" />
+            <java-attributes>
+                <xml-transient java-attribute="aroMarcaComp" />
+                <xml-transient java-attribute="firCrl" />
+                <xml-transient java-attribute="aroUsoCertifCaContrMarcas" />
+            </java-attributes>
+        </java-type>
+        
+        <!--
+        private static final long serialVersionUID = 1L;
+        private long idContrMarcaComp;
+        private String dsMsgEsitoContrMarca;
+        private String tiContr;
+        private String tiEsitoContrMarca;
+        private AroMarcaComp aroMarcaComp;
+        private FirCrl firCrl;
+        private List<AroUsoCertifCaContrMarca> aroUsoCertifCaContrMarcas;
+        -->
+        <java-type name="AroBustaCrittog">
+            <xml-root-element name="aroBustaCrittog" />
+            <java-attributes>
+                <xml-transient java-attribute="aroCompDoc" />
+                <xml-transient java-attribute="decFormatoFileStandard" />
+                <xml-transient java-attribute="aroFirmaComps" />
+                <xml-transient java-attribute="aroMarcaComps" />
+            </java-attributes>
+        </java-type>
+        <!--
+private long idBustaCrittog;
+        private BigDecimal idStrut;
+        private BigDecimal pgBustaCrittog;
+        private AroCompDoc aroCompDoc;
+        private DecFormatoFileStandard decFormatoFileStandard;
+        private List<AroFirmaComp> aroFirmaComps;
+        private List<AroMarcaComp> aroMarcaComps;
+        -->
+    </java-types>
+</xml-bindings>

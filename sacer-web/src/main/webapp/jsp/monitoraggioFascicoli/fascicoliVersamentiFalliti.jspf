@@ -1,0 +1,58 @@
+<%@page import="it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm" pageEncoding="UTF-8"%>
+<div style="float:right">
+    <slf:lblField name="<%=MonitoraggioFascicoliForm.CalcolaTotaliButtonList.CALC_TOT_FASCICOLI_VERS_FALLITI_BUTTON%>" width="w100"/>
+</div>
+<p>&nbsp;</p>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO FASCICOLI DERIVANTI DA VERSAMENTI FALLITI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th colspan="2">&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th colspan="2">&nbsp;30gg antecedenti&nbsp;</th>
+            <th colspan="2">&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Falliti</b></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_FALL_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_FALL_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_FALL30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_FALL30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_FALL_B30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_FALL_B30GG %>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Non risolubili</b></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_NON_RISOLUB_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_NON_RISOLUB_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_NON_RISOLUB30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_NON_RISOLUB30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_NON_RISOLUB_B30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_NON_RISOLUB_B30GG %>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Verificati</b></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_VERIF_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_VERIF_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_VERIF30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_VERIF30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_VERIF_B30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_VERIF_B30GG %>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPari">
+            <td class="w50"><b>Non verificati</b></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_NON_VERIF_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_NON_VERIF_CORR %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_NON_VERIF30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_NON_VERIF30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.FL_FASC_KO_NON_VERIF_B30GG %>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioFascicoliForm.VersamentiFalliti.NI_FASC_KO_NON_VERIF_B30GG %>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione monitoraggio sintetico" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Fields Name="RiepilogoVersamentiSintetico" Description="Riepilogo versamenti sintetico" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" WithSearchComp="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" WithSearchComp="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" WithSearchComp="true"/>
+        <ComboBox Type="INTEGER" Description="Tipo unità documentarie" Name="id_tipo_unita_doc" />
+        <Button Name="generaRiepilogoVersSinteticoButton" Description="Genera riepilogo versamenti" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="UnitaDocVersate" Description="Riepilogo unità documentarie versate" >
+        <CheckBox Name="fl_ud_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_attesa_mem_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_attesa_mem_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_attesa_mem_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_attesa_mem_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_attesa_mem_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_attesa_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_attesa_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_attesa_sched_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_attesa_sched_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_attesa_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_nosel_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_nosel_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_nosel_sched_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_nosel_sched_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_nosel_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="DocAggiunti" Description="Riepilogo documenti aggiunti" >
+        <CheckBox Name="fl_doc_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_doc_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_attesa_mem_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_attesa_mem_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_attesa_mem_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_attesa_mem_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_doc_attesa_mem_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_attesa_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_attesa_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_attesa_sched_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_attesa_sched_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_doc_attesa_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_nosel_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_nosel_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_nosel_sched_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_nosel_sched_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_doc_nosel_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="VersamentiFalliti" Description="Riepilogo versamenti falliti" >
+        <CheckBox Name="fl_vers_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_vers_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_risolti_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_risolti_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_risolti_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_risolti_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_vers_risolti_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_norisolub_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_norisolub_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_norisolub_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_norisolub_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_vers_norisolub_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_verif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_verif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_verif_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_verif_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_vers_verif_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_noverif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_noverif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_vers_noverif_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_vers_noverif_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_vers_noverif_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="AggiunteDocumentiFallite" Description="Riepilogo aggiunte documenti fallite" >
+        <CheckBox Name="fl_agg_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_agg_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_risolti_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_risolti_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_risolti_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_risolti_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_agg_risolti_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_norisolub_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_norisolub_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_norisolub_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_norisolub_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_agg_norisolub_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_verif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_verif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_verif_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_verif_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_agg_verif_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_noverif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_noverif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_agg_noverif_30gg" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_agg_noverif_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_agg_noverif_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="UnitaDocDaVersFalliti" Description="Riepilogo unità documentarie derivanti da versamenti falliti" >
+        <CheckBox Name="fl_ud_nonvers" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_nonvers" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_nonvers_norisolub" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_nonvers_norisolub" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_nonvers_verif" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_nonvers_verif" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_nonvers_noverif" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_nonvers_noverif" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="DocDaVersFalliti" Description="Riepilogo documenti derivanti da versamenti falliti" >
+        <CheckBox Name="fl_doc_nonvers" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_nonvers" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_nonvers_norisolub" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_nonvers_norisolub" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_nonvers_verif" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_nonvers_verif" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_doc_nonvers_noverif" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_doc_nonvers_noverif" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="UnitaDocAnnul" Description="Riepilogo versamenti unità documentarie annullati" >
+        <CheckBox Name="fl_ud_annul_tot" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_annul_tot" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_annul_dafare_ping" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_annul_dafare_ping" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_annul_dafare_sacer" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_annul_dafare_sacer" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_annul" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_annul" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <ButtonList Name="CalcolaTotaliButtonList" Description="">
+        <Button Name="calcTotUdVersateButton" Description="Calcola totali unità documentarie versate" Type="STRING" />
+        <Button Name="calcTotUdVersateB30Button" Description="Calcola totali unità documentarie versate prima di 30 gg" Type="STRING" />
+        <Button Name="calcTotDocAggiuntiButton" Description="Calcola totali documenti aggiunti" Type="STRING" />
+        <Button Name="calcTotDocAggiuntiB30Button" Description="Calcola totali documenti aggiunti prima di 30 gg" Type="STRING" />
+        <Button Name="calcTotVersFallitiButton" Description="Calcola totali versamenti falliti" Type="STRING" />
+        <Button Name="calcTotVersFallitiB30Button" Description="Calcola totali versamenti falliti prima di 30 gg" Type="STRING" />
+        <Button Name="calcTotAggFallitiButton" Description="Calcola totali aggiunte documenti fallite" Type="STRING" />
+        <Button Name="calcTotAggFallitiB30Button" Description="Calcola totali aggiunte documenti fallite prima di 30 gg" Type="STRING" />
+        <Button Name="calcTotUdNonVersButton" Description="Calcola totali unità documentarie derivanti da versamenti falliti" Type="STRING" />
+        <Button Name="calcTotDocNonVersButton" Description="Calcola totali documenti derivanti da aggiunte fallite" Type="STRING" />
+        <Button Name="calcTotVersUdAnnulButton" Description="Calcola totali versamenti unità documentarie annullati" Type="STRING" />
+    </ButtonList>
+</Form>

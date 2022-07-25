@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Form Description="Dati Specifici" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd">
+
+     <Section Name="struttura" Description="" Legend="Struttura"  ShowButton="false" LoadOpened="true"/>
+     <Section Name="sTipoUnitaDoc" Description="" Legend="Tipo unità documentaria" ShowButton="false" LoadOpened="true"/>
+     <Section Name="sTipoCompDoc" Description="" Legend="Tipo componente" ShowButton="false" LoadOpened="true"/>
+     <Section Name="sTipoDoc" Description="" Legend="Tipo documento"  ShowButton="false" LoadOpened="true"/>
+     <Section Name="sTipoStrutDoc" Description="" Legend="Tipo struttura documento"  ShowButton="false" LoadOpened="true"/>
+     <Section Name="sXsdDatiSpec" Description="" Legend="Dettaglio XSD"  ShowButton="false" LoadOpened="true"/>
+     <Section Name="sAttribDatiSpec" Description="" Legend="Dettaglio attributo"  ShowButton="false" LoadOpened="true"/>
+
+   <!-- Struttura di riferimento nel dettaglio di una delle liste seguenti -->    
+    <Fields Name="StrutRif" Description="Struttura" >
+        <Input Type="STRING" Description="Nome struttura" Name="nm_strut" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione struttura" Name="ds_strut" MaxLength="254"/>
+        <Input Type="STRING" Description="Ente" Name="id_ente" />
+        <Input Type="STRING" Description="Struttura" Name="struttura" />
+    </Fields>
+    
+    <Fields Name="TipoUdRif" Description="Tipo Unita Doc" >
+        <Input Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione tipologia documentaria" Name="ds_tipo_unita_doc" MaxLength="100"/>
+    </Fields>
+    
+    <Fields Name="TipoDocRif" Description="Tipo Doc" >
+         <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc" MaxLength="100"/>
+         <Input Type="STRING" Description="Descrizione tipo documento" Name="ds_tipo_doc" MaxLength="100"/>
+    </Fields>
+    
+    <Fields Name="TipoCompDocRif" Description="Tipo Comp Doc" >
+        <Input Type="STRING" Description="Nome componente" Name="nm_tipo_comp_doc" MaxLength="100"/>
+    </Fields>
+    
+    <Fields Name="TipoStrutDocRif" Description="Tipo Strut Doc" >
+        <Input Type="STRING" Description="Tipo struttura" Name="nm_tipo_strut_doc" MaxLength="100"/>
+    </Fields>
+
+    <Fields Name="XsdDatiSpec" Description="Dettaglio XSD dati specifici"  >
+        <Input Type="STRING" Description="Codice versione" Name="cd_versione_xsd" MaxLength="100" Required="true"/>
+        <TextArea Type="STRING" Description="Descrizione versione XSD" Name="ds_versione_xsd" Rows="4" Cols="100" MaxLength="254" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+        <Input Type="STRING" Description="Ultimo file inserito" Name="file_xsd" />
+        <Button Name="scaricaXsdButton" Description="Scarica XSD" Type="STRING" />
+        <Button Name="caricaXsdButton" Description="Carica XSD" Type="STRING" />
+        <TextArea Name="bl_xsd" Description="Dettaglio XSD"  Type="STRING" Rows="20" Cols="100" MaxLength="10000" />
+    </Fields>
+      
+    <Fields Name="AttribDatiSpec" Description="Dettaglio attributo dati specifici" >
+        <Input Type="INTEGER" Description="Numero ordine" Name="ni_ord_attrib"  GroupingDecimal="true" />
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_dati_spec" MaxLength="100"/>
+        <TextArea Type="STRING" Description="Descrizione attributo" Name="ds_attrib_dati_spec" MaxLength="1024" Rows="4" Cols="100" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+    </Fields>
+
+    <List Name="XsdDatiSpecList" Description="Lista XSD dati specifici"  >
+        <!-- id_tipo_unita_doc non necessario -->
+        <Input Type="STRING" Description="Codice versione" Name="cd_versione_xsd" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+        <!-- <Input Type="CLOB" Description="Xsd Tipo Doc" Name="bl_xsd_tipo_doc" /> -->
+    </List>
+    
+    <List Name="IdList" Description="Lista Id"  >
+        <Input Type="INTEGER" Description="Id struttura" Name="id_strut" />
+        <Input Type="INTEGER" Description="Id tipo documento" Name="id_tipo_doc" />
+        <Input Type="INTEGER" Description="Id tipo unità documentaria" Name="id_tipo_unita_doc" />
+        <Input Type="INTEGER" Description="Id tipo componente documento" Name="id_tipo_comp_doc" />
+        <Input Type="STRING" Description="Nome sistema migrazione" Name="nm_sys_migraz" />
+        <Input Type="STRING" Description="Nome tipo" Name="nm_sacer_type" />
+        <!-- <Input Type="CLOB" Description="Xsd Tipo Doc" Name="bl_xsd_tipo_doc" /> -->
+    </List>
+    
+    <List Name="AttribDatiSpecList" Description="Lista attributi dati specifici" >
+        <!-- id_tipo_unita_doc non necessario -->
+        <Input Type="INTEGER" Description="Numero ordine attributo" Name="ni_ord_attrib"  GroupingDecimal="true" />
+        <Input Type="STRING" Description="Nome" Name="nm_attrib_dati_spec" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_attrib_dati_spec" />
+        <!-- <Input Type="DATETIME" Description="Data Attivazione" Name="dt_istituz" /> -->
+        <!-- <Input Type="DATETIME" Description="Data Soppressione" Name="dt_soppres" /> -->
+        <!-- <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/> -->
+        <!-- <Input Type="CLOB" Description="Xsd Tipo Doc" Name="bl_xsd_tipo_doc" /> -->
+    </List>
+    
+</Form>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar  xmlns = "http://java.sun.com/xml/ns/javaee" 
+          version = "3.1"
+          xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
+
+    <module-name>Parer-ejb-firma</module-name>
+    <assembly-descriptor>
+        <application-exception>
+            <exception-class>org.springframework.web.client.RestClientException</exception-class>
+            <rollback>false</rollback>
+        </application-exception>
+    </assembly-descriptor>
+</ejb-jar>

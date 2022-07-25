@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="StrutSerie" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd" >
+    <Section Name="tipoSerie" Description="" Legend="Tipologia di serie" ShowButton="false" LoadOpened="true"/>
+    <Section Name="infoPadre" Description="" Legend="Informazioni sulla serie padre" ShowButton="false" LoadOpened="true"/>
+    <Section Name="serieUniDoc" Description="" Legend="Tipo serie di unità documentarie" ShowButton="false" LoadOpened="true"/>
+    <Section Name="serieRegistroUniDoc" Description="" Legend="Associazione registro - tipologia di Unità documentarie" ShowButton="false" LoadOpened="true"/>
+    <Section Name="serieRegistroUniDocRegolaFiltraggio" Description="" Legend="Definizione delle regole di filtraggio" ShowButton="false" LoadOpened="true"/>
+    <Section Name="serieRegistroUniDocRegolaRappr" Description="" Legend="Definizione delle regole di rappresentazione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="struttura" Description="" Legend="Struttura" ShowButton="false" LoadOpened="true"/>
+    <Section Name="regolaAcquisizioneSection" Description="" Legend="Dettaglio regola di acquisizione file" ShowButton="false" LoadOpened="true"/>
+    <Section Name="notaSulTipoDiSerie" Description="" Legend="Dettaglio elemento di descrizione sul tipo di serie" ShowButton="false" LoadOpened="true"/>
+    <Section Name="datiProfiloSection" Description="" Legend="Dati di profilo" ShowButton="true" LoadOpened="true"/>    
+    <Section Name="datiSpecTipoUdSection" Description="" Legend="Dati specifici sul tipo unità documentaria" ShowButton="true" LoadOpened="true"/>
+    <Section Name="datiSpecTipoDocSection" Description="" Legend="Dati specifici sul tipo documento" ShowButton="true" LoadOpened="true"/>
+    
+    <Tab Name="RegolaDiFiltraggioTabs" Description="Regola di filtraggio">
+        <TabElement Name="Definizione" Description="Definizione" />
+        <TabElement Name="FiltriDatiSpec" Description="Filtri Dati Specifici" />    
+    </Tab>     
+    
+    <!--     Struttura di riferimento nel dettaglio di una delle liste seguenti     -->
+    <Fields Name="StrutRif" Description="Struttura" >
+        
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        
+        <Input Type="INTEGER" Description="Id" Name="id_strut"/>
+        <Input Type="STRING" Description="Descrizione struttura" Name="ds_strut" />
+        <Input Type="STRING" Description="Ente" Name="id_ente" />
+        <Input Type="STRING" Description="Struttura" Name="struttura" />
+        <Input Type="STRING" Description="id tipo serie" Name="id_tipo_serie" />
+        <Input Type="STRING" Description="Tipologia serie" Name="nm_tipo_serie" />
+        <Input Type="STRING" Description="Tipologia della serie padre" Name="nm_tipo_serie_padre" />
+        <Input Name="registro_unita_doc" Description="Registro" Type="STRING"/>
+        <Input Name="tipo_unita_doc" Description="Tipologia unità documentaria" Type="STRING"/>
+    </Fields>
+
+    <Fields Name="TipoSerieDetail" Description="Dettaglio tipologia di serie di unità documentarie" >
+        <Input Name="id_tipo_serie" Description="Id tipo serie" Type="INTEGER" Hidden="true"/>
+        
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" Required="true"/>
+        <Input Type="STRING" Description="Tipologia serie" Name="nm_tipo_serie" Required="true" />
+        <ComboBox Name="tipo_conten_serie" Description="Tipo contenuto" Type="STRING" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Nome della serie padre" Name="id_tipo_serie_padre" Trigger="true" />
+        <Input Type="STRING" Description="Tipologia della serie padre" Name="nm_tipo_serie_padre" />
+        <Input Type="INTEGER" Description="Anni di conservazione della serie padre" Name="ni_anni_conserv_padre" Readonly="true" GroupingDecimal="true" />
+        <ComboBox Name="fl_annuale" Description="Annuale" Type="STRING"/>
+        <ComboBox Name="conserv_unlimited" Description="Conservazione illimitata" Type="STRING" Trigger="true"/>
+        <ComboBox Name="fl_controllo_consist_obblig" Description="Controllo consistenza" Type="STRING" Required="true"/>
+        <ComboBox Name="fl_crea_autom" Description="Abilita creazione in automatico" Type="STRING" Required="true"/> 
+        <Input Type="INTEGER" Description="Anni di conservazione" Name="ni_anni_conserv" GroupingDecimal="true"  MaxLength="4"/>
+        <ComboBox Name="ti_conservazione_serie" Description="Tipo di conservazione" Type="STRING" Required="true"/> 
+        <Input Type="STRING" Description="Codice serie" Name="cd_serie_default"/>
+        <Input Type="STRING" Description="Descrizione serie" Name="ds_serie_default"/>
+        <Input Type="STRING" Description="Descrizione tipo serie" Name="ds_tipo_serie" Required="true" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
+        <Input Type="STRING" Description="Tipo creazione standard" Name="ti_crea_standard" />
+        <Input Type="STRING" Description="Modello di tipo serie" Name="nm_modello_tipo_serie" />
+        <Input Type="STRING" Description="Giorno di creazione in automatico della serie (gg/mm)" Name="gg_crea_autom" MaxLength="5"/>
+        <Input Type="INTEGER" Description="Anni di creazione in automatico della serie da" Name="aa_ini_crea_autom"/>
+        <Input Type="INTEGER" Description=" a" Name="aa_fin_crea_autom"/>
+        <ComboBox Type="STRING" Description="Frequenza di creazione automatica della serie" Name="ni_transcoded_mm_crea_autom"/>
+        <ComboBox Type="STRING" Description="Stato di creazione automatica della serie" Name="ti_stato_ver_serie_autom"/>
+        <ComboBox Name="ti_ord_serie" Description="Tipo di ordinamento" Type="STRING" />
+        <ComboBox Name="ti_sel_ud" Description="Tipo di selezione delle unità documentarie" Type="STRING" Required="true"/>
+        <Input Type="INTEGER" Description="Numero massimo unità documentarie per volume" Name="ni_unita_doc_volume" GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Numero di anni antecedenti da considerare" Name="ni_aa_sel_ud" GroupingDecimal="true" RegExp="[0-9]" MaxLength="1" />
+        <Input Type="INTEGER" Description="Numero di anni successivi da considerare"  Name="ni_aa_sel_ud_suc" GroupingDecimal="true" RegExp="[0-9]" MaxLength="1" />
+        <Button Type="STRING" Description="Dettaglio Serie Padre" Name="viewDettaglioSeriePadre" />               
+        <Button Type="STRING" Description="Log eventi" Name="logEventi" />               
+    </Fields>
+    
+    <!-- Vanno creati i bottoni la gestione in caso javascript sia disattivato -->
+    <ButtonList Name="TipoSerieCustomMessageButtonList" Description="MessageBox" >        
+        <Button Secure="false" Name="confermaSalvataggioTipoSerie" Description="Si" Type="STRING"  />
+        <Button Secure="false" Name="annullaSalvataggioTipoSerie" Description="No" Type="STRING"  />
+    </ButtonList>
+    
+    <List Name="TipologieSerieList" Description="Tipologie di Serie" filterValidRecords="true">
+        <Input Type="STRING" Description="Tipologia serie" Name="nm_tipo_serie" />
+        <Input Type="STRING" Description="Descrizione serie" Name="ds_tipo_serie"/>
+        <Input Type="INTEGER" Description="Anni di conservazione" Name="ni_anni_conserv" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Modello" Name="nm_modello_tipo_serie" />
+        <!--<CheckBox Type="STRING" Description="Attivo" Name="is_attivo" Readonly="true" />-->
+        <CheckBox Type="STRING" Description="Controllo consistenza" Name="fl_controllo_consist_obblig" Readonly="true" />
+        <CheckBox Type="STRING" Description="Abilita creazione in automatico" Name="fl_crea_autom" Readonly="true" />
+    </List>
+    
+    <Fields Name="FiltriTipologieSerie" Description="Filtri ricerca tipologie serie" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <ComboBox Type="STRING" Description="Attivo" Name="isAttivo" />
+        <CheckBox Type="STRING" Description="Tipi di serie non generati da modello" Name="tipi_serie_no_gen_modello" />
+        <ComboBox Type="INTEGER" Description="Modello di tipo serie" Name="id_modello_tipo_serie" />
+        <Button Name="ricercaTipologieSerieButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+    
+    <List Name="TipoSerieRegistriList" Description="Registri - Tipologie di Unità documentarie">
+        <Input Name="cd_registro_unita_doc" Description="Registro" Type="STRING"/>
+        <Input Name="ni_anni_conserv" Description="Anni di conservazione" Type="STRING" />
+        <Input Name="nm_tipo_unita_doc" Description="Tipologia unità documentaria" Type="STRING" /> 
+        <Input Name="id_tipo_unita_doc" Description="Tipologia unità documentaria" Type="INTEGER" Hidden="true"/> 
+    </List>    
+
+    <Fields Name="RegistroDetail" Description="Dettaglio registro">
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <ComboBox Name="id_registro_unita_doc" Description="Registro" Type="INTEGER" Trigger="true" Required="true"/>
+        <Input Name="ni_anni_conserv" Description="Anni di conservazione" Type="STRING"/>
+        <Input Name="tipo_unita_doc_vis" Description="Tipologia unità documentaria" Type="STRING"/>
+        <ComboBox Type="INTEGER" Description="Tipologia unità documentaria" Name="id_tipo_unita_doc" Required="true"/>
+        <ComboBox Name="fl_sel_unita_doc_annul" Description="Includi unità documentarie annullate" Type="STRING"/>                   
+    </Fields>
+
+    <List Name="RegistroRegoleFiltraggioList" Description="Regole di filtraggio sul documento principale">
+        <Input Name="ti_filtro" Description="Tipo di filtro" Type="STRING"/>
+        <Input Name="nm_tipo_doc_concatenati" Description="Tipo documento principale" Type="STRING"/>
+        <Input Name="id_tipo_doc_concatenati" Description="IdTipo documento principale" Type="STRING" Hidden="true"/>
+    </List>
+
+    <List Name="RegistroRegoleRapprList" Description="Regole di rappresentazione">
+        <Input Name="ti_out" Description="Tipo di rappresentazione" Type="STRING"/>
+        <CheckBox Name="ck_out" Description="Regola definita" Type="STRING"/>
+        <Input Name="dl_formato_out" Description="Formato di rappresentazione" Type="STRING"/>            
+    </List>
+
+    <Fields Name="RegolaDiFiltraggioDetail" Description="Dettaglio regola di filtraggio sul tipo documento principale">
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <ComboBox Name="ti_filtro" Description="Tipo di filtro" Type="STRING" Required="true" />
+        <MultiSelect Name="id_tipo_doc_princ" Description="Tipo documento principale" Type="INTEGER" Trigger="true" />
+        <!--<ComboBox Name="id_tipo_doc_princ" Description="Tipo documento principale" Type="INTEGER" Trigger="true" />-->
+        <CheckBox Type="STRING" Description="Dati specifici presenti" Name="flag_dati_spec_presenti_sm" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Dati specifici presenti" Name="flag_dati_spec_presenti_doc" Readonly="true"/>
+        <TextArea Name="filtri_dati_spec" Description="Filtri valorizzati sui dati spec." 
+                  Type="STRING" Rows="5" Cols="5" MaxLength="10000" Readonly="true" Hidden="true"/>
+    </Fields>
+
+    <!-- Filtri Dati Specifici di ricerca Unità Documetaria -->
+    <List Name="FiltriDatiSpecList" Description="Filtri Dati Specifici Associazione Registro Tipo Unità documentaria" hideDeleteButton="true"  hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true"  masterList="true">
+        <Input Type="INTEGER" Description="Id attributo" Name="id_filtro_sel_ud_attb" Hidden="true" />
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_dati_spec" />
+        <ComboBox Type="STRING" Description="Operatore" Name="ti_oper" />
+        <Input Type="STRING" Description="Valore" Name="dl_valore" />
+    </List>
+
+    <List Name="AssociazioneDatiSpecList" Description="Filtri Dati Specifici Associazione Registro Tipo Unità documentaria">
+        <Input Type="INTEGER" Description="Id attributo" Name="id_filtro_sel_ud_attb" Hidden="true" />
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_dati_spec" />
+        <Input Type="STRING" Description="Operatore" Name="ti_oper" />
+        <Input Type="STRING" Description="Valore" Name="dl_valore" />
+    </List>
+
+    <Fields Name="FiltriDatiSpec" Description="Filtri Dati Specifici Associazione Registro Tipo Unità documentaria">
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Button Name="salvaFiltriDatiSpec" Description="Salva filtri" Type="STRING" />
+    </Fields>
+    
+    <List Name="TotaleDefinitoDaList" Description="Lista definito da dati specifici"  hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="Tipo entità Sacer" Name="ti_entita_sacer" />
+        <Input Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" />
+        <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc" />
+        <Input Type="STRING" Description="Sistema di migrazione" Name="nm_sistema_migraz" />
+        <Input Type="STRING" Description="Elenco versioni XSD" Name="ds_lista_versioni_xsd" />
+        <Input Type="INTEGER" Description="Identificatore dato specifico" Name="id_attrib_dati_spec" />
+        <Input Type="STRING" Description="Nome dato specifico" Name="nm_attrib_dati_spec" />
+    </List>
+    
+    <List Name="DefinitoDaList" Description="Lista definito da dati specifici" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="Versione xsd metadati specifici" Name="definito_da_record" />
+    </List>
+
+    <Fields Name="RegoleRapprDetail" Description="Definizione delle regole di rappresentazione">
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <ComboBox Name="ti_out" Description="Nome campo" Type="STRING"/>
+        <TextArea Name="dl_formato_out" Description="Formato di rappresentazione" Type="STRING" Rows="5" Cols="5" MaxLength="100000" />
+    </Fields>
+
+    <List Name="RegoleDiRappresentazioneList" Description="Regole di rappresentazione">
+        <Input Type="STRING" Description="Tipo di Rappresentazione" Name="desc_ti_out" />
+        <Input Name="dl_formato_out" Description="Formato di output" Type="STRING"/>
+    </List>
+
+    <List Name="DatiProfiloList" Description="Dati di profilo" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <!--<CheckBox Name="fl_selezionato" Description="" Type="INTEGER" Readonly="true" />       -->
+        <CheckBox Name="fl_selezionato" Description="" Type="INTEGER" />
+        <Input Name="pg_ord_campo_dato_profilo" Description="Numero d'ordine del campo" Type="INTEGER" MaxLength="3" Alias="pg_ord_campo"/>
+        <Input Name="key_campo" Description="Tipo di Rappresentazione" Type="STRING" Readonly="true" />        
+        <!--<Input Name="nm_campo" Description="Tipo di Rappresentazione" Type="STRING" Hidden="true"/>        -->
+        <Input Name="nm_campo" Description="Tipo di Rappresentazione" Type="STRING" Readonly="true"/>
+    </List>
+
+    <List Name="AttributiTipoUnitaDocList" Description="Dati specifici sul tipo unità documentaria"  hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <CheckBox Name="tipo_unita_selezionato" Description="" Type="INTEGER" Readonly="true" />
+        <Input Name="pg_ord_campo_tipo_unita_doc" Description="Numero d'ordine del campo" Type="INTEGER" MaxLength="3" Alias="pg_ord_campo"/>        
+        <Input Name="key_campo" Description="Nome attributo" Type="STRING" Readonly="true" />        
+        <Input Type="INTEGER" Description="Id attributo" Name="id_attrib_dati_spec" Hidden="true" />
+        <Input Name="nm_campo" Description="Nome attributo" Type="STRING" Readonly="true" />
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_dati_spec" Hidden="true"/>        
+        <ComboBox Name="ti_trasform_campo_tipo_unita_doc" Description="Tipo di trasformazione" Type="STRING" Alias="ti_trasform_campo" />        
+    </List>
+
+    <List Name="AttributiTipoDocList" Description="Dati specifici sul tipo documento"  hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <CheckBox Name="tipo_doc_selezionato" Description="" Type="INTEGER" Readonly="true" />
+        <Input Name="pg_ord_campo_tipo_doc" Description="Numero d'ordine del campo" Type="INTEGER" MaxLength="3" Alias="pg_ord_campo" />
+        <Input Name="key_campo" Description="Nome attributo" Type="STRING" Readonly="true" />        
+        <Input Type="INTEGER" Description="Id attributo" Name="id_attrib_dati_spec" Hidden="true" />
+        <Input Name="nm_campo" Description="Nome attributo" Type="STRING" Readonly="true"/>
+        <Input Type="STRING" Description="Nome attributo" Name="nm_attrib_dati_spec" Hidden="true"/>
+        <ComboBox Name="ti_trasform_campo_tipo_doc" Description="Tipo di trasformazione" Type="STRING" Alias="ti_trasform_campo" />
+    </List>
+
+    <Wizard Name="InserimentoWizard" Description="Creazione regola di rappresentazione">
+        <Step Name="TipoRappr" Description="Definizione del tipo di rappresentazione"/>
+        <Step Name="CampiOut" Description="Definizione dell'output" Summary="true"/>
+        <EndPage Name="EndPage" Description="Riepilogo"  Summary="true"/> 
+    </Wizard>
+
+    <List Name="RegoleAcquisizioneList" Description="Regole di acquisizione file">
+        <Input Name="pg_ord_campo" Description="Numero d'ordine del campo" Type="INTEGER" />
+        <Input Name="nm_campo" Description="Nome campo" Type="STRING" />
+        <Input Name="ti_campo" Description="Tipo di campo" Type="STRING" />            
+        <Input Name="ti_trasform_campo" Description="Tipo di trasformazione" Type="STRING" />            
+    </List>  
+
+    <List Name="RegoleAcquisizioneListVW" Description="Regole di acquisizione file">
+        <Input Name="pg_ord_campo" Description="Numero d'ordine del campo" Type="INTEGER" />
+        <Input Name="nm_campo" Description="Nome campo" Type="STRING" />
+        <Input Name="ti_campo" Description="Tipo di campo" Type="STRING" />            
+        <Input Name="ti_trasform_campo" Description="Tipo di trasformazione" Type="STRING" />            
+    </List>  
+
+    <Fields Name="RegoleAcquisizioneDetail" Description="Dettaglio delle regole di acquisizione file">
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input Type="STRING" Description="Valore" Name="dl_valore" />
+    </Fields>
+
+    <List Name="NoteTipoSerieList" Description="Elementi di descrizione sulla tipologia di serie">
+        <Input Name="pg_nota_tipo_serie" Description="Progressivo" Type="INTEGER" />
+        <ComboBox Name="id_tipo_nota_serie" Description="Tipo elemento di descrizione" Type="INTEGER"/>
+        <Input Type="STRING" Description="Elemento di descrizione" Name="ds_nota_tipo_serie" />
+        <Input Type="DATE" Description="Data" Name="dt_nota_tipo_serie" />
+        <Input Type="STRING" Description="Autore" Name="nm_userid" />
+    </List>
+
+    <Fields Name="NoteTipoSerieDetail" Description="Definizione degli elementi di descrizione sulla tipologia di serie">
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input Name="pg_nota_tipo_serie" Description="Progressivo" Type="INTEGER" Readonly="true" />
+        <ComboBox Name="id_tipo_nota_serie" Description="Tipo elemento di descrizione" Type="INTEGER" Required="true"/>
+        <Input Type="DATETIME" Description="Data" Name="dt_nota_tipo_serie" Readonly="true" />
+        <TextArea Name="ds_nota_tipo_serie" Description="Elemento di descrizione" Type="STRING" Rows="5" Cols="5" MaxLength="100000" Required="true" />
+    </Fields>
+
+</Form>

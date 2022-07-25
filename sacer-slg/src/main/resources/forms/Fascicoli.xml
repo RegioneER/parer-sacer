@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Form Description="Fascicoli" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd">
+
+    <Tree Description="Descrizione" Name="treeClassif" dataType="HTML" useDefaultCreateNodeButton="false" >
+        <TreeElement Name="id_voce_titol" Type="ID" Description="id"/>
+        <TreeElement Name="ds_tot_voce_titol" Type="NAME" Description="nome"/>
+        <TreeElement Name="id_voce_titol_padre" Type="ID_PARENT" Description="padre"/>
+    </Tree>
+
+    <Section Description="" Legend="Fascicolo" LoadOpened="true" Name="FascicoloSection" ShowButton="false"/>
+    <Section Description="" Legend="Procedimento amministrativo" LoadOpened="true" Name="ProcedimentoSection" ShowButton="false" BorderHidden="true"/>
+    <Section Description="" Legend="Profilo archivistico" LoadOpened="true" Name="ProfiloArchivisticoSection" ShowButton="false"/>
+    <Section Description="" Legend="Fascicolo di appartenenza" LoadOpened="true" Name="FascicoloAppartSection" ShowButton="false" BorderHidden="true"/>
+    <Section Description="" Legend="Unità documentarie contenute nel fascicolo" LoadOpened="true" Name="UDContenuteNelFascSection" ShowButton="false"/>
+    <Section Description="" Legend="Parametri di versamento" LoadOpened="true" Name="ParametriSection" ShowButton="false"/>
+    <Section Description="" Legend="Controlli e conservazione" LoadOpened="true" Name="ControlliSection" ShowButton="false"/>
+    <Section Description="" Legend="Fascicoli selezionati per l'annullamento" LoadOpened="true" Name="FascicoliToRichAnnulVersSection" ShowButton="true"/>
+
+    <!-- Filtri di ricerca semplice dei Fascicoli -->
+    <Fields Description="Filtri fascicoli ricerca semplice" Name="FiltriFascicoliRicercaSemplice">
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo" Type="INTEGER"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_fascicolo_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_fascicolo_a" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
+        <Input Description="Numero da" Name="cd_key_fascicolo_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_fascicolo_a" Type="STRING"/>
+        <ComboBox Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="INTEGER"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascicolo" Type="STRING"/>
+        <Input Description="Data apertura da" Name="dt_ape_fasciolo_da" Type="DATE"/>
+        <Input Description="Data apertura a" Name="dt_ape_fasciolo_a" Type="DATE"/>
+        <Input Description="Data chiusura da" Name="dt_chiu_fasciolo_da" Type="DATE"/>
+        <Input Description="Data chiusura a" Name="dt_chiu_fasciolo_a" Type="DATE"/>
+        <Input Description="Codice" Name="cd_proc_ammin" Type="STRING"/>
+        <Input Description="Descrizione" Name="ds_proc_ammin" Type="STRING"/>
+        <Input Description="Tempo di conservazione" MaxLength="4" Name="ni_aa_conservazione" Type="INTEGER"/>
+        <Input Description="Livello di riservatezza" Name="cd_livello_riserv" Type="STRING"/>
+        <Input Description="Sistema versante" Name="nm_sistema_versante" Type="STRING"/>
+        <Input Description="Utente versatore" Name="nm_userid" Type="STRING"/>
+        <Input Description="Indice classificazione" Name="cd_composito_voce_titol" Type="STRING"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo_padre" Type="INTEGER"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_fascicolo_padre_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_fascicolo_padre_a" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo_padre" Type="STRING"/>
+        <Input Description="Numero da" Name="cd_key_fascicolo_padre_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_fascicolo_padre_a" Type="STRING"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascicolo_padre" Type="STRING"/>
+        <ComboBox Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_key_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_key_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Numero da" Name="cd_key_unita_doc_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_unita_doc_a" Type="STRING"/>
+        <ComboBox Description="Tipo di conservazione" Name="ti_conservazione" Type="STRING"/>
+        <ComboBox Description="Forza classificazione" Name="fl_forza_contr_classif" Type="STRING"/>
+        <ComboBox Description="Forza numero" Name="fl_forza_contr_numero" Type="STRING"/>
+        <ComboBox Description="Forza collegamento" Name="fl_forza_contr_colleg" Type="STRING"/>
+        <Input Description="Data acquisizione da" Name="ts_vers_fascicolo_da" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_ts_vers_fascicolo_da" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_ts_vers_fascicolo_da" Type="INTEGER"/>
+        <Input Description="Data acquisizione a" Name="ts_vers_fascicolo_a" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_ts_vers_fascicolo_a" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_ts_vers_fascicolo_a" Type="INTEGER"/>
+        <ComboBox Description="Esito versamento" Name="ti_esito" Type="STRING"/>
+        <ComboBox Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+        <ComboBox Description="Stato generazione indice AIP" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
+        <Button Name="ricercaFascicoli" Description="Ricerca fascicoli" Type="STRING"/>
+        <Button Name="pulisciFascicoli" Description="Pulisci ricerca" Type="STRING"/>
+    </Fields>
+
+    <!-- Risultati della ricerca semplice dei Fascicoli -->
+    <List Name="FascicoliList" Description="Lista Fascicoli">
+        <Input Name="id_fascicolo" Description="ID fascicolo" Type="INTEGER" Hidden="true"/>
+        <Input Name="aa_fascicolo" Description="Anno" Type="INTEGER"/>
+        <Input Name="cd_key_fascicolo" Description="Numero" Type="STRING"/>
+        <Input Name="cd_composito_voce_titol" Description="Indice di classifica" Type="STRING"/>
+        <Input Name="nm_tipo_fascicolo" Description="Tipo fascicolo" Type="STRING"/>
+        <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>
+        <Input Description="Data chiusura" Name="dt_chiu_fascicolo" Type="DATE"/>
+        <Input Description="Data versamento" Name="ts_vers_fascicolo" Type="DATETIME"/>
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"/>        
+        <Input Description="Tempo di conservazione" Name="ni_aa_conservazione" Type="INTEGER"/>
+        <Input Description="Livello di riservatezza" Name="cd_livello_riserv" Type="STRING"/>
+        <CheckBox Name="fl_forza_contr_classif" Description="Forzatura classificazione" Type="STRING" Readonly="true"/>
+        <CheckBox Name="fl_forza_contr_numero" Description="Forzatura numero" Type="STRING" Readonly="true"/>
+        <CheckBox Name="fl_forza_contr_colleg" Description="Forzatura collegamento" Type="STRING" Readonly="true"/>
+        <Input Description="Stato generazione Indice AIP" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+    </List>
+    
+    <Fields Description="" Name="FascicoliPerRichAnnulVers">
+        <Input Description="ID_RICH_ANNUL_VERS" Hidden="true" Name="id_rich_annul_vers" Type="INTEGER"/>
+        <Button Description="Aggiungi alla richiesta di annullamento" Name="addToRichAnnul" Type="STRING"/>
+    </Fields>
+    
+     <!-- Risultati della ricerca semplice dei Fascicoli -->
+    <List Description="Lista Fascicoli da aggiungere ad una richiesta di annullamento" Name="FascicoliPerRichAnnulVersList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Name="id_fascicolo" Description="ID fascicolo" Type="INTEGER" Hidden="true"/>
+        <Input Name="aa_fascicolo" Description="Anno" Type="INTEGER"/>
+        <Input Name="cd_key_fascicolo" Description="Numero" Type="STRING"/>
+        <Input Name="cd_composito_voce_titol" Description="Indice di classifica" Type="STRING"/>
+        <Input Name="nm_tipo_fascicolo" Description="Tipo fascicolo" Type="STRING"/>
+        <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>
+        <Input Description="Data chiusura" Name="dt_chiu_fascicolo" Type="DATE"/>
+        <Input Description="Data versamento" Name="ts_vers_fascicolo" Type="DATETIME"/>
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"/>        
+        <Input Description="Tempo di conservazione" Name="ni_aa_conservazione" Type="INTEGER"/>
+        <Input Description="Livello di riservatezza" Name="cd_livello_riserv" Type="STRING"/>
+        <CheckBox Name="fl_forza_contr_classif" Description="Forzatura classificazione" Type="STRING" Readonly="true"/>
+        <CheckBox Name="fl_forza_contr_numero" Description="Forzatura numero" Type="STRING" Readonly="true"/>
+        <CheckBox Name="fl_forza_contr_colleg" Description="Forzatura collegamento" Type="STRING" Readonly="true"/>
+        <Input Description="Stato generazione Indice AIP" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+    </List>
+
+    <!-- Dettaglio dei Fascicoli -->
+    <Tab Description="Dettaglio Fascicolo" Name="FascicoliDettaglioTabs">
+        <TabElement Description="Informazioni principali" Name="InfoPrincipaliFascicolo"/>
+        <TabElement Description="Informazioni versamento" Name="InfoVersamentoFascicolo"/>
+        <TabElement Description="Indice SIP" Name="XMLRichiestaFascicolo"/>
+        <TabElement Description="Rapporto di versamento" Name="XMLRapportoFascicolo"/>
+        <TabElement Description="File Fascicolo" Name="XMLMetaFileFascicolo"/>
+        <TabElement Description="Indice AIP" Name="XMLMetaIndiceAipFascicolo"/>
+    </Tab>
+    <Section Description="" Legend="Versatore" Name="VersatoreSection" LoadOpened="true" ShowButton="false"/>
+    <Section Description="" Legend="Soggetto Produttore" Name="SoggProduttoreSection" LoadOpened="false" ShowButton="true"/>
+    <Section Description="" Legend="Fascicolo" Name="FascicoloDettSection" LoadOpened="true" ShowButton="true"/>
+    <Section Description="" Legend="Segnatura archivistica" Name="SegnaturaArchivisticaSection" LoadOpened="true" ShowButton="true"/>
+    <Section Description="" Legend="Fascicolo di appartenenza" Name="FascicoloAppartenenzaDettSection" LoadOpened="true" ShowButton="false" BorderHidden="true"/>
+    <Section Description="" Legend="Composizione" Name="ComposizioneSection" LoadOpened="true" ShowButton="false"/>
+    <Section Description="" Legend="Note" Name="NoteSection" LoadOpened="false" ShowButton="true"/>
+    <Section Description="" Legend="Versatore" Name="InfoVersatoreSection" LoadOpened="true" ShowButton="false"/>
+    <Tab Description="Liste Dettaglio Fascicolo" Name="FascicoliDettaglioListsTabs">
+        <TabElement Description="Unità documentarie" Name="UnitaDocumentarie"/>
+        <TabElement Description="Amministrazioni partecipanti" Name="AmministrazioniPartecipanti"/>
+        <TabElement Description="Soggetti coinvolti" Name="SoggettiCoinvolti"/>
+        <TabElement Description="Responsabili" Name="Responsabili"/>
+        <TabElement Description="UO Responsabili" Name="UOResponsabili"/>
+        <TabElement Description="Collegamenti" Name="Collegamenti"/>
+        <TabElement Description="Elenchi di versamento" Name="ElvFascicoli"/>
+    </Tab>
+    <Fields Description="Dettaglio fascicolo" Name="FascicoloDetail">
+        <Input Description="Ambiente" Name="nm_ambiente" Type="STRING"/>
+        <Input Description="Ente" Name="nm_ente" Type="STRING"/>
+        <Input Description="Struttura" Name="nm_strut" Type="STRING"/>
+        <Input Description="Ambiente" Name="nm_ambiente_ente_convenz" Type="STRING"/>
+        <Input Description="Codice" Name="cd_ente_convenz" Type="STRING"/>
+        <Input Description="Denominazione" Name="nm_ente_convenz" Type="STRING"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
+        <Input Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="STRING"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascicolo" Type="STRING"/>
+        <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>
+        <Input Description="Data chiusura" Name="dt_chiu_fascicolo" Type="DATE"/>
+        <Input Description="Amministrazione titolare" Name="ammin_titol" Type="STRING"/>
+        <Input Description="Procedimento amministrativo" Name="proc_ammin" Type="STRING"/>
+        <Input Description="Tempo di conservazione" MaxLength="4" Name="ni_aa_conservazione" Type="INTEGER"/>
+        <Input Description="Livello di riservatezza" Name="cd_livello_riserv" Type="STRING"/>
+        <Input Description="Data versamento" Name="ts_ini_ses" Type="DATE"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
+        <Input Description="Stato generazione indice AIP" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
+        <Input Description="Indice classificazione" Name="cd_composito_voce_titol" Type="STRING"/>
+        <Input Description="Descrizione" Name="label_tree" Type="STRING" Readonly="true"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo_padre" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo_padre" Type="STRING"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascicolo_padre" Type="STRING"/>
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"/>
+        <CheckBox Name="fl_upd_annul_unita_doc" Description="Presenza di unità documentarie annullate" Type="STRING" />
+        <CheckBox Name="fl_upd_modif_unita_doc" Description="Presenza di unità documentarie aggiornate" Type="STRING" />
+        <Input Description="Prima unità documentaria" Name="unita_doc_first" Type="STRING"/>
+        <Input Description="Ultima unità documentaria" Name="unita_doc_last" Type="STRING"/>
+        <TextArea Description="Nota" Name="ds_nota"  Rows="100" Cols="100" MaxLength="4000" Type="STRING" Readonly="true"/>
+        <Input Description="Versione chiamata al servizio di versamento" Name="cd_versione_xml_sip" Type="STRING"/>
+        <Input Description="Versione risposta al servizio di versamento" Name="cd_versione_xml_rapp" Type="STRING"/>
+        <Input Description="Utente versatore" Name="nm_userid" Type="STRING"/>
+        <Input Description="Sistema versante" Name="nm_sistema_versante" Type="STRING"/>
+        <Input Description="IP client" Name="cd_ind_ip_client" Type="STRING"/>
+        <Input Description="IP server" Name="cd_ind_server" Type="STRING"/>
+        <Input Description="Tipo di conservazione" Name="ti_conservazione" Type="STRING"/>
+        <ComboBox Description="Forza classificazione" Name="fl_forza_contr_classif" Type="STRING"/>
+        <ComboBox Description="Forza numero" Name="fl_forza_contr_numero" Type="STRING"/>
+        <ComboBox Description="Forza collegamento" Name="fl_forza_contr_colleg" Type="STRING"/>
+        <Input Description="Versione profilo generale" Name="cd_xsd_profilo" Type="STRING"/>
+        <Input Description="Versione profilo archivistico" Name="cd_xsd_segnatura" Type="STRING"/>
+        <CheckBox Name="fl_default_profilo" Description="Standard" Type="STRING"/>
+        <CheckBox Name="fl_default_segnatura" Description="Standard" Type="STRING"/>
+        <Input Description="Urn indice SIP" Name="ds_urn_xml_sip" Type="STRING"/>
+        <Input Description="Hash SIP" Name="ds_hash_xml_sip" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_sip" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_sip" Type="STRING"/>
+        <TextArea Description="" Name="bl_xml_vers_sip" Rows="500" Cols="500" MaxLength="1000000000" Type="STRING"/>
+        <Input Description="Urn Rapporto versamento" Name="ds_urn_xml_rapp" Type="STRING"/>
+        <Input Description="Hash Rapporto versamento" Name="ds_hash_xml_rapp" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_xml_rapp" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_xml_rapp" Type="STRING"/>
+        <TextArea Description="" Name="bl_xml_vers_rapp" Rows="500" Cols="500" MaxLength="1000000000" Type="STRING"/>
+        <Input Name="ds_abilitazione_ud" Description="Messaggio abilitazioni" Type="STRING"/>
+    </Fields>
+    <Fields Description="Dettaglio File fascicolo" Name="MetaFileFascicoloDetail">
+        <Input Description="Urn originale" Name="ds_urn_file_fascicolo" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_normaliz_file_fascicolo" Type="STRING"/>
+        <Input Description="Hash file" Name="ds_hash_file" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_file" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_file" Type="STRING"/>
+        <TextArea Description="" Name="bl_file_ver_indice_aip" Rows="500" Cols="500" MaxLength="1000000000" Type="STRING"/>
+    </Fields>
+    <Fields Description="Dettaglio Indice AIP del fascicolo" Name="MetaIndiceAipFascicoloDetail">
+        <Input Description="Urn originale" Name="ds_urn_aip_fascicolo" Type="STRING"/>
+        <Input Description="Urn normalizzato" Name="ds_urn_normaliz_aip_fascicolo" Type="STRING"/>
+        <Input Description="Hash" Name="hash_personalizzato" Type="STRING"/>
+        <Input Description="Ente conservatore" Name="nm_ente_conserv" Type="STRING"/>
+<!--        <Input Description="Hash AIP" Name="ds_hash_file" Type="STRING"/>
+        <Input Description="Algoritmo" Name="ds_algo_hash_file" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_file" Type="STRING"/>-->
+        <TextArea Description="" Name="bl_file_ver_indice_aip" Rows="500" Cols="500" MaxLength="1000000000" Type="STRING"/>
+    </Fields>
+    <List Name="UnitaDocList" Description="Unita documentarie del fascicolo">
+        <Input Name="id_unita_doc" Description="ID Unita Documentaria" Type="INTEGER" Hidden="true"/>
+        <Input Name="cd_registro_key_unita_doc" Description="Registro" Type="STRING"/>
+        <Input Name="aa_key_unita_doc" Description="Anno" Type="INTEGER" MaxLength="4"/>
+        <Input Name="cd_key_unita_doc" Description="Numero" Type="STRING"/>
+        <Input Name="nm_tipo_unita_doc" Description="Tipo unità documentaria" Type="STRING"/>
+        <Input Name="nm_tipo_doc" Description="Tipo documento principale" Type="STRING"/>
+        <Input Name="dt_creazione" Description="Data versamento" Type="DATE"/>
+        <Input Name="ti_stato_conservazione" Description="Stato conservazione" Type="STRING"/>
+        <CheckBox Name="annullata" Description="Versamento annullato" Type="STRING" Readonly="true" />
+    </List>
+    <List Name="AmministrazioniPartecList" Description="Amministrazioni partecipanti del fascicolo">
+        <Input Name="ti_codice_ammin_partec" Description="Tipo codice" Type="STRING"/>
+        <Input Name="cd_ammin_partec" Description="Codice IPA" Type="STRING"/>
+        <Input Name="ds_ammin_partec" Description="Descrizione" Type="STRING"/>
+    </List>
+    <List Name="SoggettiCoinvoltiList" Description="Soggetti coinvolti del fascicolo">
+        <Input Name="ti_rapp" Description="Tipo rapporto" Type="STRING"/>
+        <Input Name="nm_nome_sog" Description="Nome" Type="STRING"/>
+        <Input Name="nm_cogn_sog" Description="Cognome" Type="STRING"/>
+        <Input Name="ds_denom_sog" Description="Denominazione" Type="STRING"/>
+        <Input Name="ti_cd_sog" Description="Tipo identificativo" Type="STRING"/>
+        <Input Name="cd_sog" Description="Identificativo" Type="STRING"/>
+    </List>
+    <List Name="ResponsabiliList" Description="Responsabili del fascicolo">
+        <Input Name="ti_resp" Description="Responsabilità" Type="STRING"/>
+        <Input Name="nm_nome_resp" Description="Nome" Type="STRING"/>
+        <Input Name="nm_cogn_resp" Description="Cognome" Type="STRING"/>
+        <Input Name="ti_cd_resp" Description="Tipo identificativo" Type="STRING"/>
+        <Input Name="cd_resp" Description="Identificativo" Type="STRING"/>
+    </List>
+    <List Name="UOResponsabiliList" Description="Responsabili UO del fascicolo">
+        <Input Name="cd_uni_org_resp" Description="Unità organizzativa responsabile" Type="STRING"/>
+    </List>
+    <List Name="CollegamentiList" Description="Collegamenti del fascicolo">
+        <Input Name="aa_fascicolo_link" Description="Anno" MaxLength="4" Type="INTEGER"/>
+        <Input Name="cd_key_fascicolo_link" Description="Numero" Type="STRING"/>
+        <Input Name="ds_link" Description="Descrizione" Type="STRING"/>
+        <CheckBox Name="fl_link" Description="Risolto" Type="STRING" Readonly="true"/>
+        <Input Name="id_fascicolo_link" Description="ID fascicolo link" Type="INTEGER" Hidden="true"/>
+    </List>
+    <!-- Lista elenchi di versamento del fascicolo -->
+    <List Name="ElvFascicoliList" Description="Lista elenchi di versamento del fascicolo">
+        <Input Name="id_elenco_vers_fasc"  Description="ID elenco" Type="INTEGER"/>
+        <Input Name="nm_criterio_raggr" Description="Criterio di raggruppamento" Type="STRING"/>
+        <CheckBox Name="fl_elenco_standard" Description="Elenco standard" Type="STRING" Readonly="true"/>
+        <Input Name="ti_stato" Description="Stato" Type="STRING"/>
+        <Input Name="aa_fascicolo_elenco" Description="Anno" Type="INTEGER" MaxLength="4"/>
+        <Input Name="cd_voce_titol" Description="Indice di classificazione" Type="STRING"/>
+        <Input Name="ts_creazione_elenco" Description="Creato il" Type="DATETIME"/>
+        <Input Name="dt_chiusura" Description="Chiuso il" Type="DATETIME"/>
+        <Input Name="dt_firma" Description="Firmato il" Type="DATETIME"/>
+    </List>
+    
+    <!-- Filtri di ricerca Fascicoli Annullati -->
+    <Fields Description="Filtri fascicoli annullati" Name="FiltriFascicoliAnnullati">        
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo" Type="INTEGER"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_fascicolo_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_fascicolo_a" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
+        <Input Description="Numero da" Name="cd_key_fascicolo_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_fascicolo_a" Type="STRING"/>
+        <ComboBox Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="INTEGER" />
+        <Input Description="Data annullamento da" Name="dt_annul_da" Type="DATE"/>
+        <Input Description="Data annullamento a" Name="dt_annul_a" Type="DATE"/>
+        <Input Description="Indice classificazione" Name="cd_composito_voce_titol" Type="STRING"/>
+        <Button Name="ricercaFascAnnullati" Description="Ricerca fascicoli" Type="STRING"/>
+        <Button Name="pulisciFascAnnullati" Description="Pulisci ricerca" Type="STRING"/>
+    </Fields>
+    
+    <!-- Lista dei fascicoli annullati trovati in base ai parametri di ricerca -->
+    <List Description="Fascicoli annullati" Name="FascicoliAnnullatiList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Name="id_rich_annul_vers" Description="id rich annul vers" Type="INTEGER" Hidden="true" />
+        <Input Name="ti_creazione_rich_annul_vers" Description="ti creazione rich annul vers" Type="STRING" Hidden="true" />
+        <Input Name="id_fascicolo" Description="ID fascicolo" Type="INTEGER" Hidden="true"/>
+        <Input Name="aa_fascicolo" Description="Anno" Type="INTEGER"/>
+        <Input Name="cd_key_fascicolo" Description="Numero" Type="STRING"/>
+        <Input Name="cd_composito_voce_titol" Description="Indice di classifica" Type="STRING"/>
+        <Input Name="nm_tipo_fascicolo" Description="Tipo fascicolo" Type="STRING"/>
+        <Input Name="scarica_rv_fasc" Description="Rapporto di versamento" Type="STRING" />
+        <Input Name="dt_annul" Description="Data annullamento" Type="DATETIME"/>
+        <Input Name="nt_annul" Description="Motivazione" Type="STRING"/>
+        <Input Name="scarica_xml_rich" Description="Richiesta annullamento" Type="STRING" />
+        <Input Name="scarica_xml_risp" Description="Esito annullamento" Type="STRING" />
+    </List>
+</Form>

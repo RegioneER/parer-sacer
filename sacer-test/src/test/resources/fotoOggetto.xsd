@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="fotoOggetto" type="fotoOggettoType" />
+
+	<!-- Root element -->
+	<xs:complexType name="fotoOggettoType">
+		<xs:sequence>
+			<!-- versione del xsd (es 1.0) -->
+			<xs:element name="versioneLogRecord" type="xs:token"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="recordMaster" type="recordMasterType"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="recordChild" type="recordChildType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Record Master -->
+	<xs:complexType name="recordMasterType">
+		<xs:sequence>
+			<xs:element name="tipoRecord" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="idRecord" type="xs:integer" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="keyRecord" type="keyRecordType"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="datoRecord" type="datoRecordType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Record Child -->
+	<xs:complexType name="recordChildType">
+		<xs:sequence>
+			<xs:element name="tipoRecord" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="child" type="recordType" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Child -->
+	<xs:complexType name="recordType">
+		<xs:sequence>
+			<xs:element name="idRecord" type="xs:integer" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="keyRecord" type="keyRecordType"
+				minOccurs="1" maxOccurs="1" />
+			<xs:element name="datoRecord" type="datoRecordType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="recordChild" type="recordChildType"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Chiave record del child -->
+	<xs:complexType name="keyRecordType">
+		<xs:sequence>
+			<xs:element name="datoKey" type="datoKeyType" minOccurs="1"
+				maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="datoKeyType">
+		<xs:sequence>
+			<xs:element name="colonnaKey" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="labelKey" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="valoreKey" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Colonna Dato di un Child -->
+	<xs:complexType name="datoRecordType">
+		<xs:sequence>
+			<xs:element name="colonnaDato" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="labelDato" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+			<xs:element name="valoreDato" type="xs:string" minOccurs="1"
+				maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	
+</xs:schema>

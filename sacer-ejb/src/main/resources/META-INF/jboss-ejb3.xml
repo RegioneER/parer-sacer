@@ -1,0 +1,167 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
+                  xmlns="http://java.sun.com/xml/ns/javaee"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:c="urn:clustering:1.0"
+                  xmlns:p="urn:ejb-pool:1.0"
+                  xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+                  version="3.1"
+                  impl-version="2.0">
+    
+    <assembly-descriptor>
+        <!-- MDB della verifica Firme Data Versamento -->
+        <p:pool>
+            <ejb-name>ConsumerCodaVerificaFirmeMdb</ejb-name>
+            <p:bean-instance-pool-ref>coda-verifica-firme-pool</p:bean-instance-pool-ref>
+        </p:pool>
+        <!-- MDB della Coda indici AIP unità documentarie da elaborare -->
+        <p:pool>
+            <ejb-name>ConsumerCodaIndiciAipDaElabMdb</ejb-name>
+            <p:bean-instance-pool-ref>coda-indici-aip-da-elab-pool</p:bean-instance-pool-ref>
+        </p:pool>
+        <!-- MDB della Creazione Indici AIP da elaborare -->
+        <p:pool>
+            <ejb-name>ConsumerCodaIndiceAipUnitaDocMdb</ejb-name>
+            <p:bean-instance-pool-ref>coda-indice-aip-ud-pool</p:bean-instance-pool-ref>
+        </p:pool>
+        <!-- MDB della coda oggetti Verificati -->
+        <p:pool>
+            <ejb-name>ConsumerCodaVerificatiMdb</ejb-name>
+            <p:bean-instance-pool-ref>coda-oggetti-verificati-pool</p:bean-instance-pool-ref>
+        </p:pool>
+        <!-- MDB della coda oggetti Errati -->
+        <p:pool>
+            <ejb-name>ConsumerCodaErratiMdb</ejb-name>
+            <p:bean-instance-pool-ref>coda-oggetti-errati-pool</p:bean-instance-pool-ref>
+        </p:pool>
+    </assembly-descriptor>
+    
+    <enterprise-beans>
+        <!-- Riferimenti alle code per l'ejb session di verifica firme -->
+        <session>
+            <ejb-name>ElaborazioneCodaDaMigrareEjb</ejb-name>
+            <ejb-class>it.eng.parer.migrazioneObjectStorage.ejb.ElaborazioneCodaDaMigrareEjb</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/OggettiDaMigrareQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/OggettiDaMigrareQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+        <!-- Riferimenti alle code per l'ejb session di verifica firme -->
+        <session>
+            <ejb-name>VerificaFirmeEjb</ejb-name>
+            <ejb-class>it.eng.parer.firma.crypto.verifica.VerificaFirmeEjb</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/VerificaFirmeDataVersQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/VerificaFirmeDataVersQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+        <!-- Riferimenti alle code per l'ejb session di coda indici aip da elaborare -->
+        <session>
+            <ejb-name>CodaIndiciAipUdDaElabEjb</ejb-name>
+            <ejb-class>it.eng.parer.job.codaIndiceAip.ejb.CodaIndiciAipUdDaElabEjb</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/IndiciAIPUDDaElabQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/IndiciAIPUDDaElabQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+        <!-- Riferimenti alle code per l'ejb session di verifica firme -->
+        <session>
+            <ejb-name>ElaborazioneRigaIndiceAipDaElab</ejb-name>
+            <ejb-class>it.eng.parer.job.indiceAip.ejb.ElaborazioneRigaIndiceAipDaElab</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/IndiceAipUnitaDocQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/IndiceAipUnitaDocQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+        <!-- Riferimenti alle code per l'ejb session di AggiornaStatoArchiviazioneHelper -->
+        <session>
+            <ejb-name>AggiornaStatoArchiviazioneHelper</ejb-name>
+            <ejb-class>it.eng.parer.job.tpi.helper.AggiornaStatoArchiviazioneHelper</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ElenchiDaElabInAttesaSchedQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/ElenchiDaElabInAttesaSchedQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+      
+        <session>
+            <ejb-name>ElaboraSessioniRecuperoHelper</ejb-name>
+            <ejb-class>it.eng.parer.job.tpi.helper.ElaboraSessioniRecuperoHelper</ejb-class>
+            <resource-ref>
+                <res-ref-name>jca/xadiskLocal</res-ref-name>
+                <lookup-name>java:/jca/xadiskLocal</lookup-name>
+            </resource-ref>
+        </session>
+        
+        <!--        <session>
+            <ejb-name>MigrazioneCartellaVersamentoHelper</ejb-name>
+            <ejb-class>it.eng.parer.job.tpi.helper.MigrazioneCartellaVersamentoHelper</ejb-class>
+            <resource-ref>
+                <res-ref-name>jca/xadiskLocal</res-ref-name>
+                <lookup-name>java:/jca/xadiskLocal</lookup-name>
+            </resource-ref>
+        </session>-->
+        
+        <session>
+            <ejb-name>RecuperoCompFS</ejb-name>
+            <ejb-class>it.eng.parer.ws.recuperoTpi.ejb.RecuperoCompFS</ejb-class>
+            <resource-ref>
+                <res-ref-name>jca/xadiskLocal</res-ref-name>
+                <lookup-name>java:/jca/xadiskLocal</lookup-name>
+            </resource-ref>
+        </session>
+        
+        <!--
+        <session>
+            <ejb-name>Invoker</ejb-name>  
+            <local-bean/>
+            <ejb-class>it.eng.paginator.ejb.Invoker</ejb-class>
+            <session-type>Stateless</session-type>             
+            <ejb-local-ref>                
+                <ejb-ref-name>java:app/paginator/Invoker</ejb-ref-name>         
+                <local>it.eng.paginator.ejb.InvokerLocal</local>                                    
+            </ejb-local-ref>      
+            <resource-env-ref>
+                <resource-env-ref-name>SessionContext</resource-env-ref-name>
+                <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
+                <injection-target>
+                    <injection-target-class>it.eng.paginator.ejb.Invoker</injection-target-class>
+                    <injection-target-name>context</injection-target-name>
+                </injection-target>
+            </resource-env-ref> 
+        </session>     
+        -->
+        <session>
+            <ejb-name>MonitorCoda</ejb-name>
+            <ejb-class>it.eng.parer.ws.monitoraggio.ejb.MonitorCoda</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+             <resource-env-ref>
+                <resource-env-ref-name>jms/dmq</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/DLQ</jndi-name>
+            </resource-env-ref>
+        </session>
+    </enterprise-beans>
+    
+</jboss:ejb-jar>

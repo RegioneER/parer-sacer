@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="StrutTipi" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd">
+
+    <Section Name="struttura" Description="" Legend="Struttura"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sTipoStrutDoc" Description="" Legend="Tipo struttura documento"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sTipoCompDoc" Description="" Legend="Tipo componente"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sTipoDocAmmesso" Description="" Legend="Tipo documento ammesso"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sFormatoFileAmmesso" Description="" Legend="Formato file ammesso"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="sTipoRapprComp" Description="" Legend="Tipo rappresentazione componente"  ShowButton="false" LoadOpened="true"/>
+
+         
+    <!-- section verticali per le liste (sostituiscono le tab orizzontali) -->
+    <Section Name="formatoFileAmmessoTab" Description="" Legend="Formati ammessi"  ShowButton="true" LoadOpened="true"/>
+    <Section Name="xsdDatiSpecTab" Description="" Legend="Versioni XSD"  ShowButton="true" LoadOpened="true"/>
+    <Section Name="STipoRapprCompTab" Description="" Legend="Tipi rappresentazione componente ammessi"  ShowButton="false" LoadOpened="true"/>
+    
+    <Section Name="formatiAmmissibiliTab" Description="" Legend="Formati ammissibili"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="formatiAmmessiTab" Description="" Legend="Formati ammessi"  ShowButton="false" LoadOpened="true"/>
+     
+    <!-- Struttura di riferimento nel dettaglio di una delle liste seguenti -->    
+    <Fields Name="StrutRif" Description="Struttura" >
+        <Input Type="STRING" Description="Nome struttura" Name="nm_strut" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione struttura" Name="ds_strut" MaxLength="254"/>
+        <Input Type="STRING" Description="Ente" Name="id_ente" />
+        <Input Type="STRING" Description="Struttura" Name="struttura" />
+    </Fields>
+
+    <!-- TIPOLOGIA STRUTTURA DOCUMENTO -->
+    <Fields Name="TipoStrutDoc" Description="Tipo struttura documento" >
+        <Input Type="INTEGER" Description="Tipo struttura documento" Name="id_tipo_strut_doc" Hidden="true" />
+        <Input Type="STRING" Description="Tipo struttura documento" Name="nm_tipo_strut_doc" MaxLength="100" />
+        <Input Type="STRING" Description="Descrizione tipo struttura documento" Name="ds_tipo_strut_doc" MaxLength="254" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
+        <Button Name="logEventiTipoStrutDoc" Description="Log eventi" Type="STRING"/>
+    </Fields>
+    
+    <!-- TIPO COMPONENTE DOCUMENTO -->
+    <Fields Name="TipoCompDoc" Description="Tipo componente documento">
+        <!-- id_tipo_unita_doc non necessario -->
+        <Input Type="INTEGER" Description="Id tipo componente" Name="id_tipo_comp_doc" Hidden="true"/>
+        <Input Type="STRING" Description="Nome componente" Name="nm_tipo_comp_doc" />
+        <Input Type="STRING" Description="Descrizione componente" Name="ds_tipo_comp_doc" />
+        <ComboBox Name="ti_uso_comp_doc" Description="Tipo uso" Type="STRING" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
+    </Fields>
+    
+    <Fields Name="FormatoFileAmmesso" Description="Formato file ammesso" >
+        <Input Type="STRING" Description="Nome tipo unità" Name="nm_tipo_comp_doc" />
+        <ComboBox Name="id_formato_file_doc" Description="Formato file Doc" Type="INTEGER" />
+    </Fields>
+    
+    <Fields Name="AttribTipoComp" Description="Attributo tipo componente" >
+        <Input Type="STRING" Description="Nome" Name="nm_attrib_tipo_comp" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione" Name="ds_attrib_tipo_comp" MaxLength="254"/>
+        <Input Type="INTEGER" Description="Numero " Name="ni_ord_attrib"  GroupingDecimal="true" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+    </Fields>
+    
+    <!-- LISTA TIPO COMPONENTE DOCUMENTO -->
+    <List Name="TipoCompDocList" Description="Lista attributi tipo componente documento" filterValidRecords="true">
+        <Input Type="STRING" Description="Tipo componente" Name="nm_tipo_comp_doc" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_comp_doc" />
+        <Input Type="STRING" Description="Tipo uso" Name="ti_uso_comp_doc" />
+        <Link Name="cd_versione_xsd" Description="Versione XSD" Type="STRING" Target="loadXsdTipoCompDoc" Tooltip="Visualizza Xsd" isTargetList="false"/>
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+    </List>
+
+    <List Name="TipoStrutDocList" Description="Lista tipo struttura documento" >
+        <Input Type="STRING" Description="Nome" Name="nm_tipo_strut_doc"  />
+        <Input Type="STRING" Description="Descrizione" Name="ds_tipo_strut_doc"/>
+        <Input Type="DATETIME" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATETIME" Description="Data fine validità" Name="dt_soppres" />
+    </List>
+    
+    <!-- LISTA FORMATI AMMESSI -->
+    <List Name="FormatoFileAmmessoList" Description="Lista formati file ammessi"  hideDetailButton="true" >
+        <Input Type="STRING" Description="Formato versato ammesso" Name="nm_formato_file_doc"  />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
+        <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />        
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>       
+    </List>
+    
+    <List Name="IdList" Description="Lista id"  >
+        <Input Type="INTEGER" Description="Id struttura" Name="id_strut" />
+        <Input Type="INTEGER" Description="Id tipo documento" Name="id_tipo_doc" />
+        <Input Type="INTEGER" Description="Id tipo unità documentaria" Name="id_tipo_unita_doc" />
+        <Input Type="INTEGER" Description="Id tipo componente documento" Name="id_tipo_comp_doc" />
+        <Input Type="STRING" Description="Nome sistema migrazione" Name="nm_sys_migraz" />
+        <Input Type="STRING" Description="Nome tipo" Name="nm_sacer_type" />
+    </List>
+    
+    <Tab Name="DecTipoCompDocTab" Description="Tab tipo componente documento">
+        <TabElement Name="DecFormatoFileAmmesso" Description="Formati ammessi" /> 
+        <TabElement Name="DecTipoCompDocXsdDatiSpec" Description="Versioni XSD" /> 
+    </Tab>
+    
+    <List Name="FormatoFileDocList" Description="Lista formati file documento" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammissibile" />
+        <!--        <Input Type="STRING" Description="Nome" Name="nm_formato_file_doc"  />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />-->
+        <Input Type="STRING" Description="Formato versato ammesso" Name="nm_formato_file_doc" />        
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
+        <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+    </List>
+    
+    <ButtonList Name="SelectButtonList" Description="">
+        <Button Name="selectAmmissibili" Description="Aggiungi" Type="STRING"/>
+        <Button Name="deselectAmmessi" Description="Rimuovi" Type="STRING"/>
+        <Button Name="select_all" Description="Aggiungi tutti" Type="STRING"/>
+        <Button Name="deselect_all" Description="Rimuovi tutti" Type="STRING"/>
+    </ButtonList>
+    
+    <List Name="SelectFormatoFileAmmessoList" Description="" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammesso" />
+        <!--        <Input Type="STRING" Description="Nome" Name="nm_formato_file_doc" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
+        <Input Type="STRING" Description="Versione" Name="cd_versione" />-->
+        <Input Type="STRING" Description="Formato versato ammesso" Name="nm_formato_file_doc" />
+        <Input Type="STRING" Description="Estensione busta" Name="cd_estensione_file_busta" />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
+        <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+    </List>
+        
+    <!-- LISTA VERSIONI XSD -->
+    <List Name="XsdDatiSpecList" Description="Lista XSD dati specifici"  >
+        <Input Type="STRING" Description="Versione" Name="cd_versione_xsd" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_versione_xsd" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+    </List>
+    
+    <List Name="AttribTipoCompList" Description="Lista attributi tipo componente" >
+        <!-- id_tipo_unita_doc non necessario -->
+        <Input Type="STRING" Description="Nome" Name="nm_attrib_tipo_comp" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_attrib_tipo_comp" />
+        <Input Type="INTEGER" Description="Numero" Name="ni_ord_attrib"  GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATETIME" Description="Data fine validità" Name="dt_soppres" />
+    </List>
+
+    <List Name="TipoDocAmmessoDaTipoStrutDocList" Description="Lista tipi documenti ammessi" hideUpdateButton="true">
+        <Input Name="id_tipo_doc" Description="Tipo documento ammesso" Type="INTEGER" Hidden="true"/>
+        <Link Name="nm_tipo_doc" Description="Nome" Type="STRING" Target="loadDettaglioTipoDoc" Tooltip="Visualizza Tipo Documento" isTargetList="false"/>
+        <Input Name="ds_tipo_doc" Description="Descrizione" Type="STRING"/>
+        <CheckBox Name="dt_soppres" Description="Attivo" Type="STRING" Readonly="true"/>
+    </List>
+    
+    <Fields Name="TipoDocAmmessoDaTipoStrutDoc" Description="Tipi documento ammesso" >
+        <ComboBox Name="id_tipo_doc_ammesso" Description="Tipo documento ammesso" Type="INTEGER" />
+    </Fields>
+    
+    <List Name="TipoRapprCompAmmessoDaTipoCompList" Description="Tipi rappresentazione componente ammesse">
+        <Input Name="id_tipo_rappr_comp" Description="Tipo rappresentazione componente" Type="INTEGER" Hidden="true"/>
+        <!--<Input Name="nm_tipo_rappr_comp" Description="Nome" Type="STRING"/>-->
+        <Link Name="nm_tipo_rappr_comp" Description="Nome" Type="STRING" Target="loadDettaglioTipoRapprComp" Tooltip="Visualizza Tipo Rappresentazione Componente" isTargetList="false"/>
+        <Input Name="ds_tipo_rappr_comp" Description="Descrizione" Type="STRING"/>
+        <CheckBox Name="dt_soppres" Description="Attivo" Type="STRING" Readonly="true"/>
+    </List>     
+    
+    <Fields Name="TipoRapprCompAmmessoDaTipoComp" Description="Tipo rappresentazione componente ammesso" >
+        <ComboBox Name="id_tipo_rappr_comp" Description="Tipo rappresentazione componente" Type="INTEGER" />
+    </Fields>
+
+</Form>

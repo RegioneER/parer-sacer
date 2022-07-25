@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-web xmlns="http://www.jboss.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="       http://www.jboss.com/xml/ns/javaee       http://www.jboss.org/j2ee/schema/jboss-web_5_1.xsd">
+  <!--
+    <resource-env-ref>
+        <resource-env-ref-name>java:app/paginator/Invoker</resource-env-ref-name>
+        <jndi-name>java:app/Parer-ejb/Invoker</jndi-name>
+    </resource-env-ref>      
+  -->
+  <context-root>/sacer</context-root>
+  <!--
+  <resource-env-ref>
+    <resource-env-ref-name>jdbc/parerDs</resource-env-ref-name>
+    <jndi-name>java:/jdbc/parerDs</jndi-name>
+    <resource-env-ref-name>jdbc/saceriamDs</resource-env-ref-name>
+    <jndi-name>java:/jdbc/saceriamDs</jndi-name>    
+  </resource-env-ref>
+  -->
+</jboss-web>

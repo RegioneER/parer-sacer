@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Serie" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd" >
+
+    <!-- CREAZIONE RICHIESTE -->
+    <Fields Name="CreazioneRichAnnulVers" Description="Creazione richiesta di annullamento versamenti">
+        <Input Name="ti_rich_annul_vers" Description="Tipo richiesta" Type="STRING" Hidden="true" />
+        <Input Name="cd_rich_annul_vers" Description="Richiesta" Type="STRING" Required="true" MaxLength="100"/>
+        <Input Name="ds_rich_annul_vers" Description="Descrizione" Type="STRING" Required="true" MaxLength="254"/>
+        <TextArea Name="nt_rich_annul_vers" Description="Motivazione" Type="STRING" Required="true" Rows="20" Cols="100" MaxLength="2000"/>
+        <CheckBox Name="fl_immediata" Description="Annullamento immediato" Type="STRING" Required="true" Readonly="true"/>
+        <ComboBox Name="fl_forza_annul" Description="Forza annullamento" Type="STRING" Required="true"/>
+        <Input Name="bl_file" Description="File con cui creare la richiesta" Type="FILE"/>
+        
+        <Button Name="creaRichAnnulVers" Description="Crea richiesta annullamento versamenti" Type="STRING"/>
+    </Fields>
+    
+    
+    <!-- RICERCA RICHIESTE -->
+    <Section Name="udSection" Description="" Legend="Sezione unità documentaria" ShowButton="false" LoadOpened="true"/>
+    <Section Name="fascSection" Description="" Legend="Sezione fascicolo" ShowButton="false" LoadOpened="true"/>
+    
+    <Section Name="listaRichiesteSection" Description="" Legend="Lista richieste di annullamento versamenti" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="FiltriRicercaRichAnnullVers" Description="Gestione richieste annullamento versamento">
+        <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER" Trigger="true" Required="true"/>
+        <ComboBox Name="id_ente" Description="Ente" Type="INTEGER" Trigger="true"/>
+        <ComboBox Name="id_strut" Description="Struttura" Type="INTEGER" Trigger="true"/>
+        
+        <Input Name="cd_rich_annul_vers" Description="Richiesta" Type="STRING"/>
+        <Input Name="ds_rich_annul_vers" Description="Descrizione" Type="STRING"/>
+        <Input Name="nt_rich_annul_vers" Description="Motivazione" Type="STRING"/>
+        <MultiSelect Name="ti_stato_rich_annul_vers_cor" Description="Stato corrente" Type="STRING"/>
+        <Input Name="dt_creazione_rich_annul_vers_da" Description="Data creazione da" Type="DATE"/>
+        <Input Name="dt_creazione_rich_annul_vers_a" Description="Data creazione a" Type="DATE"/>
+        <ComboBox Name="fl_immediata" Description="Annullamento immediato" Type="STRING"/>
+        <ComboBox Name="fl_annul_ping" Description="Annullamenti da fare in PreIngest" Type="STRING"/>
+        <ComboBox Name="fl_non_annul" Description="Annullamenti non fattibili" Type="STRING"/>
+        <ComboBox Name="cd_registro_key_unita_doc" Description="Registro" Type="STRING"/>
+        <Input Name="aa_key_unita_doc" Description="Anno" Type="INTEGER" MaxLength="4"/>
+        <Input Name="cd_key_unita_doc" Description="Numero" Type="STRING"/>
+
+        <Input Name="aa_fascicolo" Description="Anno" Type="INTEGER" MaxLength="4"/>
+        <Input Name="cd_key_fascicolo" Description="Numero" Type="STRING"/>
+                
+        <Input Name="ti_rich_annul_vers" Description="Tipo richiesta" Type="STRING" Hidden="true"/>
+        
+        <Button Name="ricercaRichAnnulVers" Description="Ricerca richieste" Type="STRING"/>
+        <Button Name="creaRichAnnulImmediata" Description="Crea richiesta immediata" Type="STRING"/>
+    </Fields>
+    
+    <List Name="RichAnnulVersList" Description="Richieste annullamento versamenti">
+        <Input Name="amb_ente_strut" Description="Ambiente - Ente - Struttura" Type="STRING" />
+        <Input Name="cd_rich_annul_vers" Description="Richiesta" Type="STRING"/>
+        <Input Name="ds_rich_annul_vers" Description="Descrizione" Type="STRING"/>
+        <Input Name="ti_stato_rich_annul_vers_cor" Description="Stato corrente" Type="STRING"/>
+        <Input Name="dt_creazione_rich_annul_vers" Description="Data creazione" Type="DATE"/>
+        <CheckBox Name="fl_immediata" Description="Annullamento immediato" Type="STRING" Readonly="true"/>
+        <Input Name="ni_item" Description="Numero annullamenti" Type="INTEGER" GroupingDecimal="true"/>
+        <Input Name="ni_item_ping" Description="Numero annullamenti da fare in PreIngest" Type="INTEGER" GroupingDecimal="true"/>
+        <Input Name="ni_item_non_annul" Description="Numero annullamenti non fattibili" Type="INTEGER" GroupingDecimal="true"/>
+    </List>
+    
+    <!-- DETTAGLIO RICHIESTE -->
+    <Section Name="infoSection" Description="" Legend="Informazioni principali" ShowButton="false" LoadOpened="true"/>
+    <Section Name="statoCorrenteSection" Description="" Legend="Stato corrente" ShowButton="false" LoadOpened="true"/>
+    <Section Name="statoSection" Description="" Legend="Stato" ShowButton="false" LoadOpened="true"/>
+    
+    <Tab Name="RichAnnulVersDetailSubTabs" Description="">
+        <TabElement Name="ListaItem" Description="Lista versamenti da annullare" />    
+        <TabElement Name="ListaStati" Description="Lista stati" />    
+    </Tab>
+    
+    <Fields Name="RichAnnulVersDetail" Description="Dettaglio richiesta di annullamento versamenti">
+        <Input Name="id_rich_annul_vers" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" Hidden="true"/>
+        <!-- Info principali -->
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        <Input Name="ti_rich_annul_vers" Description="Tipo richiesta" Type="STRING" />
+        <Input Name="cd_rich_annul_vers" Description="Richiesta" Type="STRING" MaxLength="100" Required="true"/>
+        <Input Name="ds_rich_annul_vers" Description="Descrizione" Type="STRING" MaxLength="254" Required="true"/>
+        <TextArea Name="nt_rich_annul_vers" Description="Motivazione" Type="STRING" Rows="20" Cols="100" MaxLength="2000" Required="true"/>
+        <Input Name="dt_creazione_rich_annul_vers" Description="Data creazione" Type="DATE" />
+        <CheckBox Name="fl_forza_annul" Description="Forza annullamento" Type="STRING" Readonly="true"/>
+        <ComboBox Name="fl_forza_annul_combo" Alias="fl_forza_annul" Description="Forza annullamento" Type="STRING" Required="true"/>
+        <CheckBox Name="fl_immediata" Description="Annullamento immediato" Type="STRING" Readonly="true"/>
+        <CheckBox Name="fl_rich_ping" Description="Richiesta proveniente da PreIngest" Type="STRING" Readonly="true"/>
+        <Input Name="ni_item" Description="Numero annullamenti" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_item_ping" Description="Numero annullamenti da fare in PreIngest" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_item_non_annul" Description="Numero annullamenti non fattibili" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ti_creazione_rich_annul_vers" Description="Modalità creazione richiesta" Type="STRING" />
+        <!-- Stato corrente -->
+        <Input Name="ti_stato_rich_annul_vers" Description="Stato corrente" Type="STRING" />
+        <Input Name="dt_reg_stato_rich_annul_vers" Description="Data" Type="DATETIME" />
+        <Input Name="ds_nota_rich_annul_vers" Description="Note" Type="STRING" />
+        <Input Name="nm_userid_stato" Description="Utente" Type="STRING" />
+        <Input Name="bl_file" Description="File con cui creare la richiesta" Type="FILE" />
+    </Fields>
+    
+    <List Name="ItemList" Description="" hideUpdateButton="true">
+        <Input Name="pg_item_rich_annul_vers" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ds_key_item" Description="Chiave" Type="STRING" />
+        <Input Name="dt_creazione" Description="Data versamento" Type="DATE" />
+        <Input Name="ti_stato_item" Description="Stato" Type="STRING" />
+        <Input Name="ds_lista_err" Description="Lista errori" Type="STRING" />
+    </List>
+    
+    <List Name="StatiList" Description="" hideDeleteButton="true" hideInsertButton="true">
+        <Input Name="id_stato_rich_annul_vers" Description="Id stato richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="pg_stato_rich_annul_vers" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_stato_rich_annul_vers" Description="Stato" Type="STRING" />
+        <Input Name="dt_reg_stato_rich_annul_vers" Description="Data registrazione" Type="DATE" />
+        <Input Name="ds_nota_rich_annul_vers" Description="Note" Type="STRING" />
+        <Input Name="nm_userid" Description="Utente" Type="STRING" />
+    </List>
+    
+    <ButtonList Name="RichAnnulVersDetailButtonList" Description="">
+        <Button Name="rifiutaRichiesta" Description="Rifiuta" Type="STRING"/>
+        <Button Name="controllaRichiesta" Description="Controlla" Type="STRING"/>
+        <Button Name="chiudiRichiesta" Description="Chiudi" Type="STRING"/>
+        <Button Name="uploadFile" Description="Carica file" Type="STRING"/>
+    </ButtonList>
+    
+    <!-- CAMBIO STATO RICHIESTA -->
+    <Section Name="cambioStatoSection" Description="" Legend="Stato da assumere" ShowButton="false" LoadOpened="true"/>
+    <Fields Name="CambioStatoRichiesta" Description="Cambio stato">
+        <Input Name="id_rich_annul_vers" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_stato_rich_annul_vers" Description="Stato da assumere" Type="STRING" Required="true"/>
+        <Input Name="ds_nota_rich_annul_vers" Description="Note" Type="STRING" />
+        <Button Name="confermaCambioStato" Description="Cambia stato" Type="STRING"/>
+    </Fields>
+    
+    <!-- DETTAGLIO STATO RICHIESTA -->
+    <Fields Name="StatoRichAnnulVersDetail" Description="Dettaglio stato richiesta di annullamento versamenti">
+        <Input Name="id_rich_annul_vers" Description="Id richiesta" Type="INTEGER" />
+        <Input Name="id_stato_rich_annul_vers" Description="Id stato richiesta" Type="INTEGER" />
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" />
+        <!-- Info principali -->
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        <Input Name="cd_rich_annul_vers" Description="Richiesta" Type="STRING" />
+        <Input Name="ds_rich_annul_vers" Description="Descrizione" Type="STRING" />
+        <Input Name="ti_stato_rich_annul_vers_cor" Description="Stato corrente" Type="STRING" />
+        
+        <!-- Stato corrente -->
+        <Input Name="pg_stato_rich_annul_vers" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_stato_rich_annul_vers" Description="Stato" Type="STRING" />
+        <Input Name="dt_reg_stato_rich_annul_vers" Description="Data registrazione" Type="DATE" />
+        <Input Name="ds_nota_rich_annul_vers" Description="Note" Type="STRING" />
+        <Input Name="nm_userid_stato" Description="Utente" Type="STRING" />
+    </Fields>
+</Form>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified">
+
+  <!--  -->
+  <xs:complexType name="TitolarioType">
+    <xs:sequence>
+      <xs:element name="Denominazione" type="xs:string" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="NumeroLivelliUtilizzati" type="xs:positiveInteger" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="SeparatoreVociTitolarioFascicoli" type="xs:string" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="NoteTitolario" type="xs:string" maxOccurs="1" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--  -->
+  <xs:complexType name="CreaVoceType">
+    <xs:sequence>
+      <xs:element name="CodiceVoceComposito" type="StringNonVuotoType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="NumeroOrdine" type="xs:positiveInteger" maxOccurs="1" minOccurs="0"/>
+      <xs:element name="DescrizioneVoce" type="StringNonVuotoType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="DataInizioValidita" type="xs:date" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="DataFineValidita" type="xs:date" maxOccurs="1" minOccurs="0"/>
+      <xs:element name="AttivoPerClassificazione" type="AttivoPerClassificazioneType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="TempoConservazione" type="xs:integer" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="NoteVoceTitolario" type="xs:string" maxOccurs="1" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--  -->
+  
+   <!--  -->
+  <xs:complexType name="ModificaVoceType">
+    <xs:sequence>
+      <xs:element name="CodiceVoceComposito" type="StringNonVuotoType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="DescrizioneVoce" type="StringNonVuotoType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="DataFineValidita" type="xs:date" maxOccurs="1" minOccurs="0"/>
+      <xs:element name="AttivoPerClassificazione" type="AttivoPerClassificazioneType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="TempoConservazione" type="xs:integer" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="NoteVoceTitolario" type="xs:string" maxOccurs="1" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--  -->
+  
+   <!--  -->
+  <xs:complexType name="ChiudiVoceType">
+    <xs:sequence>
+      <xs:element name="CodiceVoceComposito" type="StringNonVuotoType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="DataFineValidita" type="xs:date" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="NoteVoceTitolario" type="xs:string" maxOccurs="1" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--  -->
+
+  <!--  -->
+  <xs:complexType name="LivelloType">
+    <xs:sequence>
+      <xs:element name="NomeLivello" type="TokenNonVuotoType"/>
+      <xs:element name="TipoFormatoLivello" type="TipoFormatoLivelloType" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="CarattereSeparatoreLivello" type="xs:string" maxOccurs="1" minOccurs="1"/>
+      <xs:element name="NumeroLivello" type="xs:positiveInteger" maxOccurs="1" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!--  -->
+  <xs:complexType name="OperazioneType" abstract="true">
+    <xs:sequence/>
+  </xs:complexType>
+  <!--  -->
+  <xs:complexType name="OperazioneCreaType">
+    <xs:complexContent>
+      <xs:extension base="OperazioneType">
+        <xs:sequence>
+          <xs:element name="CreaVoce" type="CreaVoceType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!--  -->
+  <xs:complexType name="OperazioneModificaType">
+    <xs:complexContent>
+      <xs:extension base="OperazioneType">
+        <xs:sequence>
+          <xs:choice minOccurs="1" maxOccurs="1">
+            <xs:element name="CreaVoce" type="CreaVoceType"/>
+            <xs:element name="ModificaVoce" type="ModificaVoceType"/>
+            <xs:element name="ChiudiVoce" type="ChiudiVoceType"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <!--  -->
+  <xs:simpleType name="TipoFormatoLivelloType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="NUMERICO"/>
+      <xs:enumeration value="ROMANO"/>
+      <xs:enumeration value="ALFABETICO"/>
+      <xs:enumeration value="ALFANUMERICO"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="AttivoPerClassificazioneType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="SI"/>
+      <xs:enumeration value="NO"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+
+                                  <!-- TIPI DATO GENERICI -->
+  <!--  -->
+  <xs:simpleType name="TokenNonVuotoType">
+    <xs:restriction base="xs:token">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="TokenNVMax254Type">
+    <xs:restriction base="xs:token">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="254"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="TokenNVMax1024Type">
+    <xs:restriction base="xs:token">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="1024"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="StringNonVuotoType">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="StringNVMax100Type">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="StringNVMax254Type">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="254"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="StringNVMax1024Type">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="1024"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="StringMax100Type">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="StringMax254Type">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="254"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="StringMax1024Type">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="1024"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="IntMax4DgtType">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="9999"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="IntMax5DgtType">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="99999"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <xs:simpleType name="PosIntMax12DgtType">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="999999999999"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <!--  -->
+  <!--  -->
+                                  <!-- ELEMENTI -->
+
+  <!--  -->
+  <xs:element name="ModificaTitolario">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="ListaOperazioniVoce" maxOccurs="1" minOccurs="1">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="OperazioneVoce" type="OperazioneModificaType" maxOccurs="unbounded" minOccurs="1"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <!--  -->
+
+</xs:schema>

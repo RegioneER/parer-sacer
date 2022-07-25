@@ -1,0 +1,36 @@
+<div style="float:right"><slf:lblField name="<%=MonitoraggioSinteticoForm.CalcolaTotaliButtonList.CALC_TOT_VERS_UD_ANNUL_BUTTON%>" width="w100"/></div>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO VERSAMENTI ANNULLATI O IN CORSO DI ANNULLAMENTO</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w70"></th>
+            <th colspan="2">&nbsp;&nbsp;Totale&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w70"><b>Versamenti annullati o in corso di annullamento</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=TUTTI&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.FL_UD_ANNUL_TOT%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=TUTTI&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.NI_UD_ANNUL_TOT%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w70"><b>Versamenti in corso di annullamento in Ping</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=DA_FARE_PING&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.FL_UD_ANNUL_DAFARE_PING%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=DA_FARE_PING&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.NI_UD_ANNUL_DAFARE_PING%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w70"><b>Versamenti in corso di annullamento in Sacer</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=DA_FARE_SACER&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.FL_UD_ANNUL_DAFARE_SACER%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=DA_FARE_SACER&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.NI_UD_ANNUL_DAFARE_SACER%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w70"><b>Versamenti annullati</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=OK&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.FL_UD_ANNUL%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocAnnullati&amp;ti_stato=OK&amp;tipo=VERS_UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocAnnul.NI_UD_ANNUL%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

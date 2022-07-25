@@ -1,0 +1,32 @@
+<%@ page pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:if test="${!empty requestScope.customBoxStruttureTemplate}">
+    <div class="messages customBoxStruttureTemplate ">
+        <ul>
+            <li class="message info ">Seleziona l'ambiente in cui creare le strutture template:</li>
+            <br>
+            <div class="containerLeft w4ctr">
+                <slf:lblField name="<%=StruttureForm.StruttureTemplateCreator.ID_AMBIENTE_STRUTTURE_TEMPLATE%>" colSpan="2" controlWidth="w60"/>
+                <div class="pulsantieraStruttureTemplate">
+                    <slf:lblField  name="<%=StruttureForm.StruttureTemplateCreator.RICARICA_AMBIENTE%>" />
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <div style="text-align: left; margin-left: 1.5em; padding-left:1em;">
+                <label>Seleziona l’ente in cui creare le strutture template <br>(Se si desidera che le strutture di tale ente siano in una partizione specifica):</label>
+            </div>
+            <br>
+            <br>
+            <div class="containerLeft w4ctr">
+                <slf:lblField name="<%=StruttureForm.StruttureTemplateCreator.ID_ENTE_STRUTTURE_TEMPLATE%>" colSpan="4" controlWidth="w60"/>
+            </div>
+        </ul>                   
+    </div>
+    <br>
+    <div class="pulsantieraStruttureTemplate">
+        <slf:doubleLblField name="<%=StruttureForm.StruttureTemplateCreator.CONFERMA_CREAZIONE_STRUTTURE_TEMPLATE%>" name2="<%=StruttureForm.StruttureTemplateCreator.ANNULLA_CREAZIONE_STRUTTURE_TEMPLATE%>" controlWidth="w20" controlWidth2="w20" labelWidth="w5" colSpan="1" />
+    </div> 
+</c:if>

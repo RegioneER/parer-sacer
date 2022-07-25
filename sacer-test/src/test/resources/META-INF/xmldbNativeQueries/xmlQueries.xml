@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd ">
+    
+    <named-native-query name="xmldb.findRuoliUtenteAllaData">
+        <query>
+            <![CDATA[
+            
+                SELECT  NM_RUOLO
+                FROM    (
+                          SELECT  foto.BL_FOTO_OGGETTO BL_FOTO_OGGETTO, applic.NM_APPLIC NM_APPLIC
+                          FROM    SACER_IAM.APL_APPLIC applic, 
+                                  SACER_IAM.APL_TIPO_OGGETTO tipo,
+                                  SACER_LOG.LOG_EVENTO eve,
+                                  SACER_LOG.LOG_OGGETTO_EVENTO oeve,
+                                  SACER_LOG.LOG_FOTO_OGGETTO_EVENTO foto
+                          WHERE   applic.NM_APPLIC = ?
+                          AND     tipo.ID_APPLIC = applic.ID_APPLIC
+                          AND     eve.ID_APPLIC = applic.ID_APPLIC
+                          AND     eve.ID_EVENTO = oeve.ID_EVENTO
+                          AND     oeve.ID_TIPO_OGGETTO = tipo.ID_TIPO_OGGETTO
+                          AND     foto.ID_OGGETTO_EVENTO = oeve.ID_OGGETTO_EVENTO
+                          AND     tipo.NM_TIPO_OGGETTO = 'Utente'
+                          AND     oeve.DS_KEY_OGGETTO = 'Userid='||?
+                          AND     eve.DT_REG_EVENTO = ( SELECT  max(chiave.DT_REG_EVENTO)
+                                                        FROM    SACER_LOG.LOG_CHIAVE_ACCESSO_EVENTO chiave
+                                                        WHERE   chiave.ID_APPLIC = applic.ID_APPLIC
+                                                        AND     chiave.ID_TIPO_OGGETTO = tipo.ID_TIPO_OGGETTO
+                                                        AND     chiave.ID_OGGETTO = oeve.ID_OGGETTO
+                                                        AND     chiave.DT_REG_EVENTO <= ? ) ) foto,
+                          XMLTABLE('/fotoOggetto/recordChild[tipoRecord=''Applicazioni usate'']/child[keyRecord/datoKey/colonnaKey=''nm_applic'' 
+                                        and keyRecord/datoKey/valoreKey=$app]/recordChild[tipoRecord=''Ruoli'']/child/keyRecord/datoKey'
+                          PASSING BL_FOTO_OGGETTO, NM_APPLIC AS "app"
+                          COLUMNS 
+                             "NM_RUOLO" varchar2(100) PATH 'valoreKey'
+                             ) xml          
+            ]]>                                
+        </query>
+    </named-native-query>
+    
+</entity-mappings>

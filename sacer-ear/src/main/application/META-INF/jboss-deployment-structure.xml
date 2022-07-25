@@ -1,0 +1,36 @@
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <deployment>
+        <dependencies>
+            <module name="deployment.XADisk.rar" export="true" />
+            <module name="org.eclipse.persistence" export="true" />
+            <module name="javax.mail.api" export="true"/>
+            <module name="org.slf4j" export="true"/>
+            <module name="org.slf4j.jcl-over-slf4j" export="true"/>
+            <module name="org.apache.cxf" export="true" />
+            <module name="org.apache.cxf.impl" export="true" />
+            <module name="org.apache.ws.security" export="true" />
+        </dependencies>
+        <exclusions>
+            <module name="org.apache.xalan"/>
+            <module name="org.apache.commons.logging"/>
+            <module name="org.apache.juddi.uddi-ws"/>
+            <module name="org.joda.time"/>
+        </exclusions> 
+    </deployment>
+    <sub-deployment name="sacer-jboss-ejb-${project.version}.jar">
+        <exclusions>
+            <module name="org.apache.xalan"/>
+            <module name="org.apache.commons.logging"/>
+            <module name="org.apache.juddi.uddi-ws"/>
+            <module name="org.joda.time"/>
+        </exclusions> 
+    </sub-deployment>
+    <sub-deployment name="sacer-jboss-web-${project.version}.war">
+        <!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+        <exclusions>
+            <module name="org.apache.xalan"/>
+            <module name="org.apache.commons.logging"/>
+            <module name="org.apache.juddi.uddi-ws"/>
+        </exclusions>
+    </sub-deployment>
+</jboss-deployment-structure>

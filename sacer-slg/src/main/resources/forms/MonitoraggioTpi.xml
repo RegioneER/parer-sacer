@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This is Monitoraggio... the last frontier of the Sacer features! -->
+<Form Description="Sezione Monitoraggio Tpi" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <!-- RicercaDateVers -->
+    <Section Name="DataVersSection" Description="" Legend="Info date vers" ShowButton="true" LoadOpened="true"/>
+    <Section Name="PathVersSection" Description="" Legend="Info path" ShowButton="true" LoadOpened="true"/>
+
+    <Fields Name="FiltriRicercaDateVers" Description="Ricerca Date Versamento" >
+        <Input Type="DATE" Description="Data versamento da" Name="dt_vers_da"/>
+        <Input Type="DATE" Description="Data versamento a" Name="dt_vers_a"/>
+        <ComboBox Type="STRING" Description="Stato" Name="ti_stato_dt_vers"/>
+        <ComboBox Type="STRING" Description="Date di migrazione da blob a filesystem" Name="fl_migraz" />
+
+        <Button Name="ricercaDateVers" Description="Ricerca" Type="STRING"/>
+    </Fields>
+
+    <List Name="DateVersamentoList" Description="Lista Date Versamento" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input Type="DATE" Description="Data versamento" Name="dt_vers"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato_dt_vers"/>
+        <CheckBox Type="STRING" Description="Migrazione" Name="fl_migraz" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Presenza secondario" Name="fl_presenza_secondario" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Archiviata sito primario" Name="fl_ark" Readonly="true"/>
+        <CheckBox Type="STRING" Description="File non archiviati sito primario" Name="fl_file_no_ark" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Archiviata sito secondario" Name="fl_ark_secondario" Readonly="true"/>
+        <CheckBox Type="STRING" Description="File non archiviati nel sito secondario" Name="fl_file_no_ark_secondario" Readonly="true"/>
+    </List>
+
+    <Fields Name="DateVersamentoDetail" Description="Dettaglio Date Versamento" >
+        <Input Type="INTEGER" Description="Id" Name="id_dt_vers"/>
+        <Input Type="DATE" Description="Data versamento" Name="dt_vers"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato_dt_vers"/>
+        <CheckBox Type="STRING" Description="Migrazione" Name="fl_migraz"/>
+        <CheckBox Type="STRING" Description="Presenza secondario" Name="fl_presenza_secondario"/>
+        <ComboBox Type="STRING" Description="Archiviata sito primario" Name="fl_ark"/>
+        <ComboBox Type="STRING" Description="File non archiviati sito primario" Name="fl_file_no_ark"/>
+        <ComboBox Type="STRING" Description="Archiviata sito secondario" Name="fl_ark_secondario"/>
+        <ComboBox Type="STRING" Description="File non archiviati nel sito secondario" Name="fl_file_no_ark_secondario"/>
+
+        <Button Name="callRiArk" Description="Richiedi Ri-Archiviazione" Type="STRING"/>
+    </Fields>
+
+    <List Name="DateVersamentoDetailPathList" Description="Lista Path" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="Path" Name="dl_path"/>
+        <Input Type="INTEGER" Description="Num. file" Name="ni_file_path" GroupingDecimal="true" />
+        <CheckBox Type="STRING" Description="Archiviato sito primario" Name="fl_path_ark" Readonly="true"/>
+        <Input Type="INTEGER" Description="Num. file archiviati sito primario" Name="ni_file_path_ark" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Lista archiviazioni sito primario" Name="dl_ark"/>
+        <CheckBox Type="STRING" Description="File non archiviati nel sito primario" Name="fl_path_file_no_ark" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Archiviato sito secondario" Name="fl_path_ark_secondario" Readonly="true"/>
+        <Input Type="INTEGER" Description="Num. file archiviati sito secondario" Name="ni_file_path_ark_secondario" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Lista archiviazioni sito secondario" Name="dl_ark_secondario" Readonly="true"/>
+        <CheckBox Type="STRING" Description="File non archiviati nel sito secondario" Name="fl_path_file_no_ark_secondario" Readonly="true"/>
+    </List>
+
+    <Fields Name="PathVersamentoDetail" Description="Dettaglio Path" >
+        <Input Type="STRING" Description="Path" Name="dl_path"/>
+        <Input Type="INTEGER" Description="Num. file" Name="ni_file_path" GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="Archiviato sito primario" Name="fl_path_ark" Readonly="true"/>
+        <Input Type="STRING" Description="Lista archiviazioni sito primario" Name="dl_ark"/>
+        <ComboBox Type="STRING" Description="File non archiviati nel sito primario" Name="fl_path_file_no_ark" Readonly="true"/>
+        <ComboBox Type="STRING" Description="Archiviato sito secondario" Name="fl_path_ark_secondario" Readonly="true"/>
+        <Input Type="STRING" Description="Lista archiviazioni sito secondario" Name="dl_ark_secondario" Readonly="true"/>
+        <ComboBox Type="STRING" Description="File non archiviati nel sito secondario" Name="fl_path_file_no_ark_secondario" Readonly="true"/>
+        <Input Type="INTEGER" Description="Num. file Archiviati sito primario" Name="ni_file_path_ark" GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Num. file Archiviati sito secondario" Name="ni_file_path_ark_secondario" GroupingDecimal="true" />
+    </Fields>
+
+    <List Name="FileNoArkPrimarioList" Description="Lista file non archiviati primario" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="File" Name="ds_file_noark"/>
+    </List>
+
+    <List Name="FileNoArkSecondarioList" Description="Lista file non archiviati secondario" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="File" Name="ds_file_noark"/>
+    </List>
+    
+    <!-- GESTIONE MONITORAGGIO DATE SCHEDULAZIONI TPI-->
+
+    <Section Name="AnomalieVersPrimSection" Description="" Legend="Anomalie per file versati nel primario" ShowButton="true" LoadOpened="true"/>
+    <Section Name="AnomalieMigrazPrimSection" Description="" Legend="Anomalie per file migrati nel primario" ShowButton="true" LoadOpened="true"/>
+    <Section Name="AnomalieVersSecSection" Description="" Legend="Anomalie per file versati nel secondario" ShowButton="true" LoadOpened="true"/>
+    <Section Name="AnomalieMigrazSecSection" Description="" Legend="Anomalie per file migrati nel secondario" ShowButton="true" LoadOpened="true"/>
+    <Section Name="InfoDtSched" Description="" Legend="Info su data schedulazione" ShowButton="true" LoadOpened="true"/>
+    <Section Name="InfoJob" Description="" Legend="Info su job" ShowButton="true" LoadOpened="true"/>
+
+    <Fields Name="FiltriRicercaDateSchedJobTpi" Description="Ricerca date schedulazioni" >
+        <Input  Type="DATE" Description="Data schedulazione da" Name="dt_sched_da"/>
+        <Input  Type="DATE" Description="Data schedulazione a" Name="dt_sched_a"/>
+
+        <ComboBox Type="STRING" Description="Stato" Name="ti_stato_dt_sched"/>
+        <ComboBox Type="STRING" Description="Presenza anomalia" Name="fl_anomalia"/>
+
+        <Button Name="ricercaDateSchedJobTpi" Description="Ricerca" Type="STRING"/>
+    </Fields>
+
+    <List Name="DateSchedJobTpiList" Description="Lista date schedulazione" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" >
+        <Input Type="DATE" Description="Data schedulazione" Name="dt_sched" />
+        <Input Type="STRING" Description="Stato" Name="ti_stato_dt_sched" />
+        <CheckBox Type="STRING" Description="Presenza sito secondario" Name="fl_presenza_secondario" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Migrazione in corso" Name="fl_migraz_in_corso" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ark primario" Name="fl_anomalia_ark_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia copia primario" Name="fl_anomalia_copia_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia backup primario" Name="fl_anomalia_backup_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia migrate primario" Name="fl_anomalia_migrate_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ri-ark primario" Name="fl_anomalia_ri_ark_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ark secondario" Name="fl_anomalia_ark_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia copia secondario" Name="fl_anomalia_copia_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia backup secondario" Name="fl_anomalia_backup_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia migrate secondario" Name="fl_anomalia_migrate_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ri-ark secondario" Name="fl_anomalia_ri_ark_second" Readonly="true"/>
+    </List>
+
+    <Fields Name="DataSchedDetail" Description="Dettaglio data schedulazione job TPI" >
+        <Input Type="DATE" Description="Data schedulazione" Name="dt_sched" />
+        <Input Type="STRING" Description="Stato" Name="ti_stato_dt_sched" />
+        <CheckBox Type="STRING" Description="Presenza sito secondario" Name="fl_presenza_secondario" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Migrazione in corso" Name="fl_migraz_in_corso" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ark" Name="fl_anom_ark_vers_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia copia" Name="fl_anom_copia_vers_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia backup" Name="fl_anom_backup_vers_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia migrate" Name="fl_anom_migrate_vers_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ri-ark" Name="fl_anom_ri_ark_vers_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ark" Name="fl_anom_ark_migraz_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia copia" Name="fl_anom_copia_migraz_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia backup" Name="fl_anom_backup_migraz_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia migrate" Name="fl_anom_migrate_migraz_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ri-ark" Name="fl_anom_ri_ark_migraz_prim" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ark" Name="fl_anom_ark_vers_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia copia" Name="fl_anom_copia_vers_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia backup" Name="fl_anom_backup_vers_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia migrate" Name="fl_anom_migrate_vers_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ri-ark" Name="fl_anom_ri_ark_vers_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ark" Name="fl_anom_ark_migraz_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia copia" Name="fl_anom_copia_migraz_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia backup" Name="fl_anom_backup_migraz_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia migrate" Name="fl_anom_migrate_migraz_second" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Anomalia ri-ark" Name="fl_anom_ri_ark_migraz_second" Readonly="true"/>
+    </Fields>
+
+    <Fields Name="JobSchedDetail" Description="Dettaglio job schedulato TPI" >
+        <!-- Dettaglio Job -->
+        <Input Name="nm_job" Description="Job" Type="STRING" />
+        <Input Type="DATETIME" Description="Data schedulazione" Name="dt_sched_job" />
+        <CheckBox Name="fl_job_ok" Description="Terminato con successo" Type="STRING" Readonly="true"/>
+        <Input Name="ds_durata_job" Description="Durata (gg-hh:mm:ss)" Type="STRING" />
+        <Input Name="dl_err_job" Description="Errore" Type="STRING" />
+    </Fields>
+
+    <List Name="JobFileVersatiPrimarioList" Description="Lista job per file versati TPI primario" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Link Name="showErrArkList" Description="" Type="STRING" Target="showErrArkVersatiPrimarioList" Tooltip="Visualizza lista errori di archiviazione" isTargetList="false" VisibilityProperty="fl_err_ark" />
+        <Link Name="showPathElabList" Description="" Type="STRING" Target="showPathElabVersatiPrimarioList" Tooltip="Visualizza lista path elaborati" isTargetList="false" VisibilityProperty="fl_path_elab" />
+        <Input Name="nm_job" Description="Job" Type="STRING" />
+        <Input Type="DATETIME" Description="Data schedulazione" Name="dt_sched_job" />
+        <CheckBox Name="fl_job_ok" Description="Terminato con successo" Type="STRING" Readonly="true"/>
+        <Input Name="ds_durata_job" Description="Durata (gg-hh:mm:ss)" Type="STRING" />
+        <Input Name="dl_err_job" Description="Errore" Type="STRING" />
+    </List>
+
+    <List Name="JobFileMigratiPrimarioList" Description="Lista job per file migrati TPI primario" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Link Name="showErrArkList" Description="" Type="STRING" Target="showErrArkMigratiPrimarioList" Tooltip="Visualizza lista errori di archiviazione" isTargetList="false" VisibilityProperty="fl_err_ark" />
+        <Link Name="showPathElabList" Description="" Type="STRING" Target="showPathElabMigratiPrimarioList" Tooltip="Visualizza lista path elaborati" isTargetList="false" VisibilityProperty="fl_path_elab" />
+        <Input Name="nm_job" Description="Job" Type="STRING" />
+        <Input Type="DATETIME" Description="Data schedulazione" Name="dt_sched_job" />
+        <CheckBox Name="fl_job_ok" Description="Terminato con successo" Type="STRING" Readonly="true"/>
+        <Input Name="ds_durata_job" Description="Durata (gg-hh:mm:ss)" Type="STRING" />
+        <Input Name="dl_err_job" Description="Errore" Type="STRING" />
+        <CheckBox Name="fl_fine_sched" Description="Termina sched" Type="STRING" Readonly="true"/>
+    </List>
+
+    <List Name="JobFileVersatiSecondarioList" Description="Lista job per file versati TPI secondario" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Link Name="showErrArkList" Description="" Type="STRING" Target="showErrArkVersatiSecondarioList" Tooltip="Visualizza lista errori di archiviazione" isTargetList="false" VisibilityProperty="fl_err_ark" />
+        <Link Name="showPathElabList" Description="" Type="STRING" Target="showPathElabVersatiSecondarioList" Tooltip="Visualizza lista path elaborati" isTargetList="false" VisibilityProperty="fl_path_elab" />
+        <Input Name="nm_job" Description="Job" Type="STRING" />
+        <Input Type="DATETIME" Description="Data schedulazione" Name="dt_sched_job" />
+        <CheckBox Name="fl_job_ok" Description="Terminato con successo" Type="STRING" Readonly="true"/>
+        <Input Name="ds_durata_job" Description="Durata (gg-hh:mm:ss)" Type="STRING" />
+        <Input Name="dl_err_job" Description="Errore" Type="STRING" />
+    </List>
+
+    <List Name="JobFileMigratiSecondarioList" Description="Lista job per file migrati TPI secondario" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Link Name="showErrArkList" Description="" Type="STRING" Target="showErrArkMigratiSecondarioList" Tooltip="Visualizza lista errori di archiviazione" isTargetList="false" VisibilityProperty="fl_err_ark" />
+        <Link Name="showPathElabList" Description="" Type="STRING" Target="showPathElabMigratiSecondarioList" Tooltip="Visualizza lista path elaborati" isTargetList="false" VisibilityProperty="fl_path_elab" />
+        <Input Name="nm_job" Description="Job" Type="STRING" />
+        <Input Type="DATETIME" Description="Data schedulazione" Name="dt_sched_job" />
+        <CheckBox Name="fl_job_ok" Description="Terminato con successo" Type="STRING" Readonly="true" />
+        <Input Name="ds_durata_job" Description="Durata (gg-hh:mm:ss)" Type="STRING" />
+        <Input Name="dl_err_job" Description="Errore" Type="STRING" />
+        <CheckBox Name="fl_fine_sched" Description="Termina sched" Type="STRING" Readonly="true"/>
+    </List>
+
+    <List Name="DateSchedJobTpiDetailErrArkList" Description="Lista errori di archiviazione" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Name="ni_err_ark" Description="Num." Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ti_err_ark" Description="Tipo" Type="STRING" />
+        <Input Name="cd_err_ark" Description="Codice" Type="STRING" />
+        <Input Name="dl_err_ark" Description="Descrizione" Type="STRING" />
+    </List>
+    
+    <List Name="PathElabJobTpiDetailList" Description="Lista path elaborati" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="DATE" Description="Data vers" Name="dt_vers_elab" />
+        <Input Name="dl_path_elab" Description="Path" Type="STRING" />
+        <Input Name="ni_file_da_elab" Description="Num. file da elab" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ni_file_elab" Description="Num. file elab" Type="INTEGER"  GroupingDecimal="true" />
+        <CheckBox Name="fl_anomalia_file_elab" Description="Anomalia path elaborati" Type="STRING" Readonly="true"/>
+    </List>
+</Form>

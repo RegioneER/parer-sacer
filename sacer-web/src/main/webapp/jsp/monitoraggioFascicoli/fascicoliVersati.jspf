@@ -1,0 +1,49 @@
+<%@page import="it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm" pageEncoding="UTF-8"%>
+<div style="float:right">
+    <slf:lblField name="<%=MonitoraggioFascicoliForm.CalcolaTotaliButtonList.CALC_TOT_FASCICOLI_VERSATI_BUTTON%>" width="w100"/>
+</div>
+<p>&nbsp;</p>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO FASCICOLI VERSATI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th colspan="2">&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th colspan="2">&nbsp;30gg antecedenti&nbsp;</th>
+            <th colspan="2">&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Fascicoli versati</b></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI"><slf:field name="<%=MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_B30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Fascicoli in attesa schedulatore</b></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_ATTESA_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_ATTESA_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_ATTESA_SCHED30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_ATTESA_SCHED30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=B30gg&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_ATTESA_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=B30gg&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_ATTESA_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Fascicoli non selezionati da schedulatore</b></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_NOSEL_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_NOSEL_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_NOSEL_SCHED30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_NOSEL_SCHED30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=B30gg&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.FL_FASC_NOSEL_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioFascicoli.html?operation=listaFascicoliVersati&amp;ti_creazione=B30gg&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioFascicoliForm.FascicoliVersati.NI_FASC_NOSEL_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,90 @@
+
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:aop="http://www.springframework.org/schema/aop" 
+       xmlns:p="http://www.springframework.org/schema/p" 
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+     http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+         
+         
+    <context:annotation-config/>
+    <context:component-scan base-package="it.eng.parer.web.action"/>
+
+    <import resource="/sacerlog-web.xml" />
+        
+    <bean name="paginator" class="it.eng.paginator.ejb.PaginatorImpl"/>    
+    <bean name="sacerAuthenticator" class="it.eng.parer.web.security.SacerAuthenticator"/>
+    <bean name="/View.html" class="it.eng.spagoLite.actions.RedirectAction" scope="prototype"/>
+    <bean name="/Login.html" class="it.eng.spagoLite.actions.security.LoginAction" scope="prototype" /> 
+    <bean name="/Logout.html" class="it.eng.spagoLite.actions.security.LogoutAction" scope="prototype"/>
+    
+    <bean name="/Home.html" class="it.eng.parer.web.action.HomeAction" scope="prototype"/> 
+    <bean name="/Volumi.html" class="it.eng.parer.web.action.VolumiAction" scope="prototype"/>    
+    <bean name="/Componenti.html" class="it.eng.parer.web.action.ComponentiAction" scope="prototype"/>
+    <bean name="/UnitaDocumentarie.html" class="it.eng.parer.web.action.UnitaDocumentarieAction" scope="prototype"/>
+    <bean name="/CriteriRaggruppamento.html" class="it.eng.parer.web.action.CriteriRaggruppamentoAction" scope="prototype"/>
+    <bean name="/Strutture.html" class="it.eng.parer.web.action.StruttureAction" scope="prototype"/>
+    <bean name="/SceltaOrganizzazione.html" class="it.eng.parer.web.action.SceltaOrganizzazioneAction" scope="prototype"/>
+    <bean name="/StrutDatiSpec.html" class="it.eng.parer.web.action.StrutDatiSpecAction" scope="prototype"/>
+    <bean name="/StrutTipi.html" class="it.eng.parer.web.action.StrutTipiAction" scope="prototype"/>
+    <bean name="/Ambiente.html" class="it.eng.parer.web.action.AmbienteAction" scope="prototype"/>
+    <bean name="/Amministrazione.html" class="it.eng.parer.web.action.AmministrazioneAction" scope="prototype"/>   
+    <bean name="/Monitoraggio.html" class="it.eng.parer.web.action.MonitoraggioAction" scope="prototype"/>
+    <bean name="/MonitoraggioFascicoli.html" class="it.eng.parer.web.action.MonitoraggioFascicoliAction" scope="prototype"/>
+    <bean name="/ListaSessFascicoliErr.html" class="it.eng.parer.web.action.MonitoraggioFascicoliAction" scope="prototype"/>
+    <bean name="/MonitoraggioTpi.html" class="it.eng.parer.web.action.MonitoraggioTpiAction" scope="prototype"/>
+    <bean name="/GestioneJob.html" class="it.eng.parer.web.action.GestioneJobAction" scope="prototype"/>
+    <bean name="/Formati.html" class="it.eng.parer.web.action.FormatiAction" scope="prototype"/>
+    <bean name="/StrutFormatoFile.html" class="it.eng.parer.web.action.StrutFormatoFileAction" scope="prototype"/>
+    <bean name="/StrutTipoStrut.html" class="it.eng.parer.web.action.StrutTipoStrutAction" scope="prototype"/>
+    <bean name="/VerificaFirme" class="it.eng.parer.crypto.test.VerificaFirme" scope="prototype"/>
+    <bean name="/StrutTitolari.html" class="it.eng.parer.web.action.StrutTitolariAction" scope="prototype"/>
+    <bean name="/MonitoraggioSintetico.html" class="it.eng.parer.web.action.MonitoraggioSinteticoAction" scope="prototype"/>
+    <bean name="/MonitoraggioAggMeta.html" class="it.eng.parer.web.action.MonitoraggioAggMetaAction" scope="prototype"/>
+    <bean name="/MonitoraggioIndiceAIP.html" class="it.eng.parer.web.action.MonitoraggioIndiceAIPAction" scope="prototype"/>
+    <bean name="/Trasformatori.html" class="it.eng.parer.web.action.TrasformatoriAction" scope="prototype"/>
+    <bean name="/SubStrutture.html" class="it.eng.parer.web.action.SubStruttureAction" scope="prototype"/>
+    <bean name="/StrutSerie.html" class="it.eng.parer.web.action.StrutSerieAction" scope="prototype"/>
+    <bean name="/SerieUD.html" class="it.eng.parer.web.action.SerieUDAction" scope="prototype"/>
+    <bean name="/SerieUdPerUtentiExt.html" class="it.eng.parer.web.action.SerieUdPerUtentiExtAction" scope="prototype"/>
+    <bean name="/ElenchiVersamento.html" class="it.eng.parer.web.action.ElenchiVersamentoAction" scope="prototype"/>
+    <bean name="/AnnulVers.html" class="it.eng.parer.web.action.AnnulVersAction" scope="prototype"/>
+    <bean name="/ModelliSerie.html" class="it.eng.parer.web.action.ModelliSerieAction" scope="prototype"/>
+    <bean name="/EntiConvenzionati.html" class="it.eng.parer.web.action.EntiConvenzionatiAction" scope="prototype"/>
+    <bean name="/Fascicoli.html" class="it.eng.parer.web.action.FascicoliAction" scope="prototype"/>
+    <bean name="/CriteriRaggrFascicoli.html" class="it.eng.parer.web.action.CriteriRaggrFascicoliAction" scope="prototype"/>
+    <bean name="/StrutTipiFascicolo.html" class="it.eng.parer.web.action.StrutTipiFascicoloAction" scope="prototype"/>
+    <bean name="/ElenchiVersFascicoli.html" class="it.eng.parer.web.action.ElenchiVersFascicoliAction" scope="prototype"/>
+    <bean name="/ModelliFascicoli.html" class="it.eng.parer.web.action.ModelliFascicoliAction" scope="prototype"/>
+    <bean name="/NoteRilascio.html" class="it.eng.parer.web.action.NoteRilascioAction" scope="prototype"/>
+    <bean name="/RestituzioneArchivio.html" class="it.eng.parer.web.action.RestituzioneArchivioAction" scope="prototype"/>
+    <bean name="/ModelliUD.html" class="it.eng.parer.web.action.ModelliUDAction" scope="prototype"/>
+        
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/jsp/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+    <!-- Template per chiamate rest con impostazione del timeout -->
+    <bean class="org.springframework.web.client.RestTemplate">
+        <constructor-arg>
+            <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory"
+                  p:readTimeout="10000"
+                  p:connectTimeout="10000" />
+        </constructor-arg>
+    </bean>
+    <!-- Template da inserire nelle applicazioni che usano SpagoLite e che utilizzano -->
+    <!-- l' Help On line. Deve implementare l'interfaccia IApplicationBasePropertiesSevice -->
+    <bean class="it.eng.parer.web.util.ApplicationBasePropertiesSeviceImpl">
+    </bean>
+
+</beans>

@@ -1,0 +1,50 @@
+<%@page import="it.eng.parer.slite.gen.form.MonitoraggioAggMetaForm" pageEncoding="UTF-8"%>
+<div style="float:right">
+    <slf:lblField name="<%=MonitoraggioAggMetaForm.CalcolaTotaliButtonList.CALC_TOT_AGG_FALLITI_BUTTON%>" width="w100"/>
+</div>
+<p>&nbsp;</p>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO AGGIORNAMENTI METADATI FALLITI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th colspan="2">&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th>&nbsp;&nbsp;30gg antecedenti&nbsp;</th>
+            <th>&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Falliti e non risolti</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.FL_UPD_KO_TOTALI_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_TOTALI_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_TOTALI_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_TOTALI_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Non risolubili</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.FL_UPD_KO_NORISOLUB_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_NORISOLUB_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=30gg&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_NORISOLUB_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_NORISOLUB_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Verificati</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.FL_UPD_KO_VERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_VERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=30gg&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_VERIF_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=B30gg&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_VERIF_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Non verificati</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.FL_UPD_KO_NOVERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_NOVERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=30gg&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_NOVERIF_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMetaFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadatiFalliti.NI_UPD_KO_NOVERIF_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

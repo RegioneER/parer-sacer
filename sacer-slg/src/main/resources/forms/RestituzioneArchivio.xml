@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Serie" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd" >
+
+    <!-- CREAZIONE RICHIESTE -->
+    <Fields Name="CreazioneRichRestArch" Description="Creazione richiesta di restituzione archivio">
+        <Input Name="ti_rich_rest_arch" Description="Tipo richiesta" Type="STRING" Hidden="true" />
+    </Fields>
+    
+    <!-- RICERCA RICHIESTE -->
+    <Section Name="udSection" Description="" Legend="Sezione unità documentaria" ShowButton="false" LoadOpened="true"/>
+    <Section Name="serSection" Description="" Legend="Sezione serie" ShowButton="false" LoadOpened="true"/>
+    <Section Name="fascSection" Description="" Legend="Sezione fascicolo" ShowButton="false" LoadOpened="true"/>
+    
+    <Section Name="listaRichiesteSection" Description="" Legend="Lista strutture in fase di estrazione" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="FiltriRicercaRichRestArch" Description="Gestione richieste di restituzione archivio">
+        <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER" Trigger="true" Required="true" WithSearchComp="true"/>
+        <ComboBox Name="id_ente" Description="Ente" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
+        <ComboBox Name="id_strut" Description="Struttura" Type="INTEGER" WithSearchComp="true"/>
+
+        <MultiSelect Name="ti_stato_rich_rest_arch_cor" Description="Stato corrente" Type="STRING"/>
+
+        <Input Name="ti_rich_rest_arch" Description="Tipo richiesta" Type="STRING" Hidden="true"/>
+        
+        <Button Name="ricercaRichRestArch" Description="Ricerca richieste" Type="STRING"/>
+        <Button Name="creaRichRestArchBtn" Description="Crea richiesta restituzione archivio" Type="STRING"/>
+    </Fields>
+    
+    <List Name="RichRestArchList" Description="Richieste restituzione archivio">
+        <Input Name="id_richiesta_ra" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING" />
+        <Input Name="nm_ente_strut" Description="Ente - Struttura" Type="STRING" />
+        <Input Name="totali" Description="Aip da estrarre" Type="INTEGER" />
+        <Input Name="estratti" Description="Aip estratti" Type="INTEGER" />
+        <Input Name="errori" Description="Aip in errore" Type="INTEGER" />
+        <Input Name="estratti_totali" Description="% aip estratti" Type="INTEGER" />
+        <Input Name="sum_dim" Description="Dimesione aip estratti (MegaByte)" Type="INTEGER"/>
+        <Input Name="max_dt_estrazione" Description="Data ultima estrazione" Type="DATE"/>
+        <Input Name="ti_stato" Description="Stato corrente" Type="STRING"/>
+        <Input Name="priorita" Description="priorita" Type="INTEGER"/>
+    </List>
+    
+    <!-- DETTAGLIO RICHIESTE -->
+    <Section Name="infoSection" Description="" Legend="Informazioni principali" ShowButton="false" LoadOpened="true"/>
+    <Section Name="statoCorrenteSection" Description="" Legend="Stato corrente" ShowButton="false" LoadOpened="true"/>
+    <Section Name="statoSection" Description="" Legend="Stato" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="RichRestArchDetail" Description="Dettaglio richiesta di restituzione archivio">
+        <Input Name="id_richiesta_ra" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" Hidden="true"/>
+        <!-- Info principali -->
+        <Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING" />
+        <Input Name="nm_ente_strut" Description="Ente - Struttura" Type="STRING" />
+        <Input Name="ts_inizio" Description="Data inizio" Type="DATE" />
+        <Input Name="ts_fine" Description="Data fine" Type="DATE" />
+        <Input Name="priorita" Description="Priorita" Type="INTEGER" />
+        <ComboBox Name="priorita_combo" Description="Priorita" Type="STRING" Required="true"/>
+        <!-- Stato corrente -->
+        <Input Name="ti_stato" Description="Stato corrente" Type="STRING" />
+        <Input Name="nm_userid" Description="Utente" Type="STRING" />       
+    </Fields>
+    
+    <List Name="ItemList" Description="" hideUpdateButton="true">
+        <Input Name="id_richiesta_ra" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" Hidden="true"/>
+        <Input Name="anno" Description="Anno" Type="INTEGER" />
+        <Input Name="tot_ud" Description="Numero ud" Type="INTEGER" />
+        <Input Name="num_aip" Description="Numero aip" Type="INTEGER" />
+        <Input Name="dimensione" Description="Dimensione (MegaByte)" Type="INTEGER" />
+        <Input Name="num_docs" Description="Numero documenti" Type="INTEGER" />
+        <Input Name="num_errori" Description="Numero errori" Type="INTEGER" />
+        <Input Name="num_estratti" Description="Numero estratti" Type="INTEGER" />
+        <Input Name="avanzamento" Description="% avanzamento" Type="INTEGER" />
+    </List>
+    
+    <ButtonList Name="RichRestArchDetailButtonList" Description="">
+        <Button Name="annullaRichiesta" Description="Annulla" Type="STRING"/>
+        <Button Name="rielaboraRichiesta" Description="Rielabora errori" Type="STRING"/>
+        <Button Name="verificaRichiesta" Description="Verifica" Type="STRING"/>
+    </ButtonList>
+    
+    <!-- CAMBIO STATO RICHIESTA -->
+    <Section Name="cambioStatoSection" Description="" Legend="Stato da assumere" ShowButton="false" LoadOpened="true"/>
+    <Fields Name="CambioStatoRichiesta" Description="Cambio stato">
+        <Input Name="id_rich_rest_arch" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_stato_rich_rest_arch" Description="Stato da assumere" Type="STRING" Required="true"/>
+        <Input Name="ds_nota_rich_rest_arch" Description="Note" Type="STRING" MaxLength="300" />
+        <Button Name="confermaCambioStato" Description="Cambia stato" Type="STRING"/>
+    </Fields>
+</Form>

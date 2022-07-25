@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Form Description="Formati" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema">
+
+    <Fields Name="FormatoFileStandard" Description="Inserimento Formato File Standard">
+        <Input Type="STRING" Description="Nome formato" Name="nm_formato_file_standard" />
+        <Input Type="STRING" Description="Descrizione formato" Name="ds_formato_file_standard" />
+        <Input Type="STRING" Description="Codice Versione" Name="cd_versione" />
+        <Input Type="STRING" Description="Descrizione Copyright" Name="ds_copyright" />
+        <Input Type="STRING" Description="Nome Mimetype" Name="nm_mimetype_file" />
+        <Input Type="INTEGER" Description="Punteggio  interoperabilità" Name="ni_punteggio_totale" />
+        <CheckBox Type="STRING" Description="File Concatenabile" Name="fl_formato_concat" />
+        <ComboBox Name="ti_esito_contr_formato" Description="Tipo esito controllo formato" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="VisFormatoFileStandard" Description="Registro dei formati" >
+        <Input Type="STRING" Description="Nome o estensione formato" Name="nm_formato_file_standard" />
+        <ComboBox Type="STRING" Description="Mimetype" Name="nm_mimetype_file" WithSearchComp="true" />
+        <Button Name="visFormatoButton" Description="Ricerca Formato" Type="STRING"/>
+    </Fields>
+     
+    <Fields Name="EstensioneFile" Description="Estensione File" >
+        <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />
+    </Fields>
+    
+    <Fields Name="FormatoFileBusta" Description="Formato File Busta" >
+        <ComboBox Name="ti_formato_firma_marca" Description="Tipo Formato Firma" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="ParametroValutazione" Description="Valutazione formato" >
+        <Input Type="STRING" Description="Parametro" Name="nm_formato_gruppo_proprieta" />
+        <ComboBox Type="INTEGER"  Name="id_proprieta" Description="Valutazione" Trigger="true" />
+        <Input Type="INTEGER" Description="Punteggio" Name="ni_punteggio" />
+    </Fields>
+    
+     <!-- Liste per visualizzazione -->
+    <List Name="FormatoFileStandardList" Description="Formato File Standard List"  >
+        <Input Type="STRING" Description="Nome" Name="nm_formato_file_standard" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
+        <Input Type="STRING" Description="Codice Versione" Name="cd_versione" />
+        <Input Type="STRING" Description="Copyright" Name="ds_copyright" />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
+        <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+        <Input Type="INTEGER" Description="Punteggio  interoperabilità" Name="ni_punteggio_totale" />
+    </List> 
+    
+     <List Name="FormatoFileParametriValutazioneList" Description="Punteggi interoperabilità" hideDetailButton="true"   hideDeleteButton="true">
+        <Input Type="STRING" Description="Parametro" Name="nm_formato_gruppo_proprieta" />
+        <Input Type="STRING" Description="Valutazione" Name="nm_formato_proprieta" />
+        <Input Type="INTEGER" Description="Punteggio" Name="ni_punteggio" />
+    </List>
+    
+    <List Name="EstensioneFileList" Description="Formato"  >
+        <Input Type="STRING" Description="Codice" Name="cd_estensione_file" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
+    </List> 
+    
+    <List Name="FormatoFileBustaList" Description="Formato"  >
+        <Input Type="STRING" Description="Codice" Name="ti_formato_firma_marca" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
+    </List> 
+    
+    <Tab Name="DecFormatoFileStandardTab" Description="DecFormatoFileStandardTab">
+         <TabElement Name="DecFormatoFileValutazione" Description="Valutazione" />
+        <TabElement Name="DecEstensioneFile" Description="Estensione File" /> 
+        <TabElement Name="DecFormatoFileBusta" Description="Formati Firma Busta" /> 
+    </Tab>
+    
+</Form>

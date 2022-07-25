@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="ModelliUD" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+     xsi:noNamespaceSchemaLocation="Form.xsd"  >
+    
+    <Section Name="xsdSection" Description="" Legend="Dettaglio XSD"  ShowButton="false" LoadOpened="true"/>
+    
+    <!-- Filtri di ricerca per modelli XSD delle ud -->
+    <Fields Name="FiltriModelliXsdUd" Description="Filtri per modelli XSD delle unità documentarie" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente"/>
+        <ComboBox Type="STRING" Description="Tipo modello" Name="ti_modello_xsd"/>
+        <ComboBox Type="STRING" Description="Standard" Name="fl_default"/>     
+        <Input Type="STRING" Description="Codice versione" Name="cd_xsd"/>
+        <Input Type="STRING" Description="Descrizione versione XSD" Name="ds_xsd"/>
+        <Button Name="ricercaModelliButton" Description="Ricerca" Type="STRING"/>
+    </Fields>
+    
+    <!-- Gestione modelli xsd ud -->
+    <List Name="ModelliXsdUdList" Description="Modelli XSD delle unità documentarie" filterValidRecords="true">
+        <Input Name="id_modello_xsd_ud" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING"/>
+        <Input Name="ti_modello_xsd" Description="Tipo modello" Type="STRING"/>
+        <CheckBox Name="fl_default" Description="Standard" Type="STRING" Readonly="true"/>
+        <Input Name="cd_xsd" Description="Codice xsd" Type="STRING"/>
+        <Input Name="ds_xsd" Description="Descrizione xsd" Type="STRING"/>
+        <CheckBox Name="fl_attivo" Description="Attivo" Type="STRING" Readonly="true"/>
+        <Input Name="dt_istituz" Description="Data attivazione" Type="DATE"/>
+        <Input Name="dt_soppres" Description="Data disattivazione" Type="DATE"/>
+    </List>   
+    
+    <!-- Dettaglio modelli xsd ud -->
+    <Fields Name="ModelliXsdUdDetail" Description="Dettaglio modello xsd della unità documentaria">
+        <Input Name="id_modello_xsd_ud" Description="Id modello" Type="INTEGER" Hidden="true"/>
+        <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER" Required="true"/>
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" Readonly="true"/>
+        <ComboBox Name="ti_modello_xsd" Description="Tipo modello" Type="STRING" Required="true"/>
+        <ComboBox Name="fl_default" Description="Standard" Type="STRING" Required="true"/>
+        <Input Name="cd_xsd" Description="Codice xsd" Type="STRING" Required="true"/>
+        <Input Name="ds_xsd" Description="Descrizione xsd" Type="STRING" Required="true"/>
+        <Input Name="dt_istituz" Description="Data attivazione" Type="DATE" Required="true"/>
+        <Input Name="dt_soppres" Description="Data fine validità" Type="DATE" Required="true"/>
+        <TextArea Name="bl_xsd" Description="Dettaglio XSD" Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000"/>
+        <Button Name="logEventi" Description="Log eventi" Type="STRING"/>
+        <Button Name="scaricaXsdButton" Description="Scarica XSD" Type="STRING"/>
+    </Fields>
+</Form>

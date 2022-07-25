@@ -1,0 +1,43 @@
+<%@page import="it.eng.parer.slite.gen.form.MonitoraggioAggMetaForm" pageEncoding="UTF-8"%>
+<div style="float:right">
+    <slf:lblField name="<%=MonitoraggioAggMetaForm.CalcolaTotaliButtonList.CALC_NUM_AGG_DATA_CORRENTE_BUTTON%>" width="w100"/>
+</div>
+<p>&nbsp;</p>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO AGGIORNAMENTI METADATI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th colspan="2">&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th>&nbsp;&nbsp;30gg antecedenti&nbsp;</th>
+            <th>&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Aggiornamenti metadati</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=OGGI&amp;ti_stato=TOTALE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.FL_UPD_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=OGGI&amp;ti_stato=TOTALE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=30gg&amp;ti_stato=TOTALE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=B30gg&amp;ti_stato=TOTALE"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Aggiornamenti metadati in attesa di schedulatore</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.FL_UPD_ATTESA_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_ATTESA_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_ATTESA_SCHED_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=B30gg&amp;ti_stato=IN_ATTESA_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_ATTESA_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Aggiornamenti metadati non selezionati da schedulatore</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=OGGI&amp;ti_stato=NON_SELEZ_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.FL_UPD_NOSEL_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=OGGI&amp;ti_stato=NON_SELEZ_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_NOSEL_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=30gg&amp;ti_stato=NON_SELEZ_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_NOSEL_SCHED_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaAggMeta&amp;ti_creazione=B30gg&amp;ti_stato=NON_SELEZ_SCHED"><slf:field name="<%= MonitoraggioAggMetaForm.AggiornamentiMetadati.NI_UPD_NOSEL_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

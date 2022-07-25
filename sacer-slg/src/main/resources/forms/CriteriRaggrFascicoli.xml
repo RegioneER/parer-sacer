@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Criteri Fascicoli" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Section Name="InfoDescCriterioFasc" Description="" Legend="Informazioni descrittive del criterio di raggruppamento" ShowButton="false" LoadOpened="true"/>
+    <Section Name="InfoDescFascicolo" Description="" Legend="Fascicolo" ShowButton="false"/>
+    <Section Name="titolarioSection" Description="" Legend="Indice classificazione" ShowButton="false" LoadOpened="true"/>
+    
+    <!-- Filtri criteri di raggruppamento fascicoli -->
+    <Fields Name="FiltriCriteriRaggrFascicoli" Description="Filtri criteri di raggruppamento fascicoli" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <ComboBox Type="STRING" Description="Standard" Name="fl_criterio_raggr_standard" />
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr"/>
+        <ComboBox Type="INTEGER" Description="Tipo fascicolo" Name="id_tipo_fascicolo"/>
+        <Input Type="INTEGER" Description="Anno" MaxLength="4" Name="aa_fascicolo"/>
+        <Input Type="STRING" Description="Indice di classificazione" Name="cd_composito_voce_titol"/>
+        <ComboBox Type="STRING" Description="Attivo" Name="criterio_attivo"/>
+        <Button Name="ricercaCriteriRaggrFascicoliButton" Description="Ricerca criteri" Type="STRING" />
+    </Fields>
+    
+    <!-- Lista criteri di raggruppamento fascicoli -->
+    <List Name="CriterioRaggrFascicoliList"  Description="Criteri di raggruppamento fascicoli" filterValidRecords="true">
+        <Input Type="INTEGER" Description="Id criterio" Name="id_criterio_raggr_fasc" Hidden="true"/>
+        <Input Type="STRING" Description="Ente - Struttura" Name="nm_ente_nm_strut"/>
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr"/>
+        <CheckBox Type="STRING" Description="Standard" Name="fl_criterio_raggr_standard" Readonly="true"/>        
+        <Input Type="STRING" Description="Tipo fascicolo" Name="nm_tipo_fascicolo"/>
+        <Input Type="STRING" Description="Anno" Name="aa_fascicolo" />
+        <Input Type="STRING" Description="Indice di classificazione" Name="cd_composito_voce_titol"/>
+        <Input Type="INTEGER" Description="Numero massimo fascicoli" Name="ni_max_fasc" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Scadenza chiusura" Name="ti_scad_chius"/>
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+        <Input Type="DATE" Description="Data istituzione" Name="dt_istituz"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres"/>
+        <Link Name="duplicaCrit" Description="" Type="STRING" Target="duplicaCrit" Tooltip="Duplica criterio selezionato" isTargetList="false"/>
+    </List>
+    
+    <!-- Pagina di creazione criterio di raggruppamento fascicoli -->
+    <Fields Name="CreaCriterioRaggrFascicoli" Description="Crea criterio di raggruppamento fascicoli" >
+        <Button Name="duplicaCritButton" Description="Duplica criterio" Type="STRING"/>
+        <Button Name="logEventiCriteriRaggruppamento" Description="Log eventi" Type="STRING"/>
+        <Button Name="inserisciVoceClassificazione" Description="Inserisci voce di classificazione" Type="STRING"/>
+         <!--Criterio--> 
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" Required="true" />
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" Required="true" />
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente" Readonly="true"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" Readonly="true" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut" Readonly="true" />
+        <Input Type="INTEGER" Description="Id criterio" Name="id_criterio_raggr_fasc" Hidden="true"/>
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr" Required="true" MaxLength="100" />
+        <Input Type="STRING" Description="Descrizione criterio" Name="ds_criterio_raggr" Required="true" MaxLength="254" />
+        <CheckBox Type="STRING" Description="Standard" Name="fl_criterio_raggr_standard" Readonly="true"/>
+        <Input Type="INTEGER" Description="Numero massimo fascicoli" Name="ni_max_fasc" Required="true" GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="Tipo scadenza chiusura" Name="ti_scad_chius"/>
+        <Input Type="INTEGER" Description="Scadenza chiusura" Name="ni_tempo_scad_chius" GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="Scadenza chiusura" Name="ti_tempo_scad_chius"/>
+        <Input Type="DATE" Description="Data istituzione" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" Required="true"/>
+        <TextArea Type="STRING" Description="Note su criterio" Name="nt_criterio_raggr" Rows="5" Cols="5" MaxLength="2000" />
+         <!--Filtri per fascicoli--> 
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo" Type="INTEGER"/>
+        <Input Description="Anno da" MaxLength="4" Name="aa_fascicolo_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_fascicolo_a" Type="INTEGER"/>
+        <MultiSelect Type="INTEGER" Description="Tipo fascicolo" Name="nm_tipo_fascicolo" />
+        <!--<MultiSelect Type="STRING" Description="Sistemi di migrazione" Name="nm_sistema_migraz" />-->
+        <ComboBox Type="STRING" Description="Tipo conservazione" Name="ti_conservazione"/>
+    </Fields>
+    
+    <List Name="TitolariList" Description="Voci da aggiungere alla lista indice classificazione" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" filterValidRecords="false">
+        <Input Type="INTEGER" Description="Id voce titolario" Name="id_voce_titol" Hidden="true"/>
+        <Input Type="STRING" Description="Codice composito voce titolario" Name="cd_composito_voce_titol"/>
+        <Input Type="STRING" Description="Nome titolario" Name="nm_titol"/>
+        <Input Type="STRING" Description="Descrizione voce titolario" Name="ds_voce_titol"/>
+    </List>
+    
+    <Tree Name="TitolariTree" Description="Scelta indice classificazione" dataType="HTML" editable="false" checkable="false" draggable="false"
+          hideCreateNodeButton="true" hideRenameNodeButton="true" hideDeleteNodeButton="true" coloredIcons="true" activeContextMenu="true" > 
+        <TreeElement Name="id_voce_titol" Type="ID" Description="Id" /> 
+        <TreeElement Name="nome_composito" Type="NAME" Description="Nome composito" Icon="enum_icon" /> 
+        <TreeElement Name="id_voce_titol_padre" Type="ID_PARENT" Description="Padre" /> 
+    </Tree>   
+    
+    <Fields Name="TitolarioDetail" Description="Dettaglio titolario">
+        <ComboBox Type="INTEGER" Description="Titolario" Name="id_titol" Trigger="false" Required="true" />
+        <Input Type="INTEGER" Description="Id voce titolario" Name="id_voce_titol" />
+        <Input Type="STRING" Description="Indice classificazione" Name="cd_composito_voce_titol" />
+        <Input Type="INTEGER" Description="Id voce titolario padre" Name="id_voce_titol_padre" />
+        <Input Type="STRING" Description="Nome titolario" Name="nm_titol"/>
+        <Input Type="STRING" Description="Descrizione voce titolario" Name="ds_voce_titol"/>
+        
+        <Button Name="selezionaTitolario" Description="Seleziona" Type="STRING"/>
+    </Fields>
+    
+    <ButtonList Name="CriterioCustomMessageButtonList" Description="MessageBox" >        
+        <Button Secure="false" Name="confermaSalvataggioCriterio"  Description="Si" Type="STRING"  />
+        <Button Secure="false" Name="annullaSalvataggioCriterio"  Description="No" Type="STRING"  />
+    </ButtonList>
+    
+    <Fields Name="IdFields" Description="Elenco di id da utilizzare durante il passaggio tra action">
+        <Input Type="INTEGER" Description="Id Struttura" Name="id_strut" />
+    </Fields>
+    
+</Form>

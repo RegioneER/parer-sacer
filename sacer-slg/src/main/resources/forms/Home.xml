@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Home" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" >
+    
+    <!-- Contenuto Sacer Totali -->
+    <Fields Name="ContenutoSacerTotaliUdDocComp" Description="Totali contenuto Sacer" >
+        <Input  Type="STRING" Description="Contenuto dell'archivio" Name="titolo" />        
+        <Input Type="INTEGER" Description="Numero unità documentarie" Name="num_ud" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="INTEGER" Description="Numero documenti" Name="num_doc" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="INTEGER" Description="Numero componenti" Name="num_comp" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="INTEGER" Description="Dimensione in bytes" Name="dim_bytes" Readonly="true" GroupingDecimal="true"/>
+        <Button Name="scaricaDisciplinareButton" Description="Scarica disciplinare tecnico" Type="STRING" />
+    </Fields>
+
+    <!-- Contenuto Sacer Lista -->
+    <List Name="ContenutoSacerList" Description="Lista Contenuto Sacer" >
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_unita_doc" />
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" />
+        <Input  Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" />
+        <Input  Type="INTEGER" Description="Numero unità documentarie" Name="ni_unita_doc_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero documenti" Name="ni_doc_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero componenti" Name="ni_comp_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Dimensioni in bytes" Name="ni_size_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero documenti aggiunti" Name="ni_doc_a"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero componenti aggiunti" Name="ni_comp_a"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Dimensioni in bytes aggiunti" Name="ni_size_a"  GroupingDecimal="true" />
+        <Input  Type="STRING" Description="Categoria tipo unità documentaria" Name="cd_categ_tipo_unita_doc" />
+    </List>
+    
+</Form>

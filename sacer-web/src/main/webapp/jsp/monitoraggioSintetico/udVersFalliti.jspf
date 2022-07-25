@@ -1,0 +1,36 @@
+<div style="float: right"><slf:lblField name="<%=MonitoraggioSinteticoForm.CalcolaTotaliButtonList.CALC_TOT_UD_NON_VERS_BUTTON%>" width="w100"/></div>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO UNITÀ DOCUMENTARIE DERIVANTI DA VERSAMENTI FALLITI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w70"></th>
+            <th colspan="2">&nbsp;&nbsp;Totale&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w70"><b>Falliti</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=TUTTI&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.FL_UD_NONVERS%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=TUTTI&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.NI_UD_NONVERS%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w70"><b>Falliti e non risolubili</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=NO_RISOLUB&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.FL_UD_NONVERS_NORISOLUB%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=NO_RISOLUB&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.NI_UD_NONVERS_NORISOLUB%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w70"><b>Falliti e verificati</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=VERIF&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.FL_UD_NONVERS_VERIF%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=VERIF&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.NI_UD_NONVERS_VERIF%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w70"><b>Falliti e non verificati</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=NO_VERIF&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.FL_UD_NONVERS_NOVERIF%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocDaVersFalliti&amp;ti_stato=NO_VERIF&amp;tipo=UNITA_DOC"><slf:field name="<%= MonitoraggioSinteticoForm.UnitaDocDaVersFalliti.NI_UD_NONVERS_NOVERIF%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Form Description="Ambienti" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd" >
+    
+    <!-- Section generiche -->
+    <Section Name="AmbienteSection" Description="" Legend="Ricerca per nome" ShowButton="true"/>
+    <Section Name="NomeAmbienteSection" Description="" Legend="Ambiente" ShowButton="false" LoadOpened="true"/>
+    <Section Name="EnteSection" Description="" Legend="Criteri di ricerca" ShowButton="true"/>
+    <Section Name="StruttureSection" Description="" Legend="Criteri di ricerca" ShowButton="true"/>
+    <Section Name="parametriAmministrazioneSection" Description="" Legend="Parametri di amministrazione" ShowButton="true" LoadOpened="true"/>
+    <Section Name="parametriConservazioneSection" Description="" Legend="Parametri di conservazione" ShowButton="true" LoadOpened="true"/>
+    <Section Name="parametriGestioneSection" Description="" Legend="Parametri di gestione" ShowButton="true" LoadOpened="true"/>
+    <Section Name="parametriMultipliSection" Description="" Legend="Parametri multipli" ShowButton="true" LoadOpened="true"/>
+    
+     <!-- Filtri di ricerca ambiente -->
+    <Fields Name="VisAmbiente" Description="Visualizza Ambienti" >
+        <ComboBox Name="cm_ambiente" Description="ambiente" Type="INTEGER" />
+        <Input Type="STRING" Description="Nome" Name="nm_ambiente" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_ambiente" />
+        <Button Name="visAmbienteButton" Description="Ricerca" Type="STRING"/>
+    </Fields>
+    
+    <!-- Lista risultato ricerca Ambienti -->
+    <List Name="AmbientiList"  Description="Ambienti"  >
+        <Input Type="STRING" Description="Nome" Name="nm_ambiente" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_ambiente" />
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_fin_val" />
+        <ComboBox Name="nm_ente_conserv" Description="Ente conservatore" Type="STRING"  />
+        <ComboBox Name="nm_ente_gestore" Description="Ente gestore" Type="STRING"  />
+    </List>
+    
+    <!-- Dettaglio Ambiente -->
+    <Fields Name="InsAmbiente" Description="Inserimento Ambiente" >
+        <ComboBox Name="cm_ambiente" Description="ambiente" Type="INTEGER" />
+        <Input Type="STRING" Description="Nome" Name="nm_ambiente" MaxLength="100" Required="true"/>
+        <Input Type="STRING" Description="Descrizione" Name="ds_ambiente" MaxLength="254" Required="true"/>
+        <TextArea Name="ds_note" Description="Note" Type="STRING" Rows="10" Cols="10" MaxLength="254"/> 
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val" Required="true"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_fin_val" Required="true"/>
+        <ComboBox Name="id_ambiente_ente_convenz" Description="Ambiente ente gestore" Type="INTEGER" Trigger="true" Required="true"/>
+        <ComboBox Name="id_ente_gestore" Description="Ente gestore" Type="INTEGER" Trigger="true" Required="true"/>
+        <ComboBox Name="id_ente_conserv" Description="Ente conservatore" Type="INTEGER" Required="true"/>
+    </Fields>
+    
+    <!-- Parametri ambiente -->
+    <List Name="ParametriAmministrazioneAmbienteList" Description="Parametri di amministrazione" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
+        <!--<Input Name="ti_gestione_param" Description="Gestione" Type="STRING" />-->
+        <Input Name="nm_param_applic" Description="Parametro" Type="STRING" />
+        <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
+        <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
+        <Input Name="ds_valore_param_applic_ambiente_amm" Description="Valore su ambiente" Type="STRING" />        
+    </List>
+    
+    <List Name="ParametriConservazioneAmbienteList" Description="Parametri di conservazione" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
+        <!--<Input Name="ti_gestione_param" Description="Gestione" Type="STRING" />-->
+        <Input Name="nm_param_applic" Description="Parametro" Type="STRING" />
+        <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
+        <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
+        <Input Name="ds_valore_param_applic_ambiente_cons" Description="Valore su ambiente" Type="STRING" />        
+    </List>
+    
+    <List Name="ParametriGestioneAmbienteList" Description="Parametri di gestione" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
+        <!--<Input Name="ti_gestione_param" Description="Gestione" Type="STRING" />-->
+        <Input Name="nm_param_applic" Description="Parametro" Type="STRING" />
+        <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
+        <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
+        <Input Name="ds_valore_param_applic_ambiente_gest" Description="Valore su ambiente" Type="STRING" />                
+    </List>
+    
+    <List Name="ParametriMultipliAmbienteList" Description="Parametri multipli" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_val_param_applic_multi" Description="Id valore param applic multi" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_param_applic" Description="Parametro" Type="STRING" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="ds_valore_param_applic_multi" Description="Valori" Type="STRING" />                
+    </List>
+    
+    <ButtonList Name="ParametriAmbienteButtonList" Description="">
+        <Button Name="parametriMultipliAmbienteButton" Description="Parametri multipli" Type="STRING" />
+        <Button Name="parametriAmministrazioneAmbienteButton" Description="Parametri di amministrazione" Type="STRING" />
+        <Button Name="parametriConservazioneAmbienteButton" Description="Parametri di conservazione" Type="STRING" />
+        <Button Name="parametriGestioneAmbienteButton" Description="Parametri di gestione" Type="STRING" />
+    </ButtonList>
+    
+    <Fields Name="RicercaParametriAmbiente" Description="RicercaParametri" >
+        <MultiSelect Type="STRING" Description="Funzione" Name="funzione" />    
+        <Button Name="ricercaParametriAmbienteButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+    
+    <!-- Filtri di ricerca ente -->
+    <Fields Name="VisEnte" Description="Visualizza Ente" >
+        <Input Type="STRING" Description="Nome ente" Name="nm_ente" />
+        <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER" WithSearchComp="true" />
+        <ComboBox Type="STRING" Description="Tipologia di ente" Name="tipo_def_template_ente"/>
+        <Button Name="visEnteButton" Description="Ricerca" Type="STRING"/>
+    </Fields>    
+    
+     <!-- Lista risultato ricerca enti -->
+    <List Name="EntiList" Description="Enti">
+        <Input Type="STRING" Description="Nome" Name="nm_ente" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_ente" />
+        <Input Type="STRING" Description="Ambiente" Name="ds_ambiente" />
+        <Input Type="STRING" Description="Categoria ente" Name="categoriaente" />
+    </List>
+
+    <!-- Dettaglio ente -->
+    <Fields Name="InsEnte" Description="Inserimento Ente" >
+        <Input Name="id_ente" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Type="STRING" Description="Nome" Name="nm_ente" MaxLength="100" Required="true" Trigger="true" />
+        <Input Type="STRING" Description="Nome normalizzato" Name="cd_ente_normaliz" MaxLength="100" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_ente" MaxLength="254" Required="true"/>
+        <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER"  Required="true"/>
+        <Input Type="DATE" Description="Appartenenza dell'ambiente da" Name="dt_ini_val_appart_ambiente" Required="true"/>
+        <Input Type="DATE" Description="Appartenenza dell'ambiente a" Name="dt_fin_val_appart_ambiente" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Categoria Ente" Name="id_categ_ente"  Required="true" />        
+        <ComboBox Type="STRING" Description="Tipologia di ente" Name="tipo_def_template_ente" Required="true"/>
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val" Required="true"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_fine_val" Required="true"/>
+        <CheckBox Name="fl_cessato" Description="Cessato" Type="STRING" defaultValue="0" Readonly="true" />
+    </Fields>
+    
+    <List Name="StruttureList" Description="Strutture" hideInsertButton="true" >
+        <Input Type="STRING" Description="Nome" Name="nm_strut" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_strut" />
+    </List>
+    
+    <List Name="StoricoEnteAmbienteList" Description="Precedenti appartenenze ad ambiente" hideInsertButton="true" hideDetailButton="true" hideUpdateButton="true" >
+        <Input Type="STRING" Description="Nome" Name="nm_ambiente" />
+        <Input Type="DATE" Description="Data inizio appartenenza" Name="dt_ini_val" />
+        <Input Type="DATE" Description="Data fine appartenenza" Name="dt_fin_val" />
+    </List>
+    
+</Form>

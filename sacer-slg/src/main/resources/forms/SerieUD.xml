@@ -1,0 +1,844 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Serie" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd" >
+    
+    <Section Name="padreSection" Description="" Legend="Serie padre" ShowButton="false" LoadOpened="true"/>
+    <Section Name="fileSection" Description="" Legend="Trasmissione file" ShowButton="false" LoadOpened="true"/>
+    <Section Name="conservSection" Description="" Legend="Periodo di conservazione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="SerieSelSection" Description="" Legend="Serie selezionate per la firma" ShowButton="true"/>
+    <Section Name="SerieSelValidazioneSection" Description="" Legend="Serie selezionate per la validazione" ShowButton="true"/>
+    
+    <Fields Name="CreazioneSerie" Description="Creazione serie">
+        <ComboBox Name="ti_creazione" Description="Tipo creazione" Type="STRING" Required="true"/>
+        <ComboBox Name="nm_tipo_serie" Description="Tipologia serie" Type="INTEGER" Required="true" Trigger="true"/>
+        <Input Name="cd_serie" Description="Codice serie" Type="STRING" Required="true"/>
+        <Input Name="ds_serie" Description="Descrizione serie" Type="STRING" Required="true"/>
+        <Input Name="aa_serie" Description="Anno serie" Type="INTEGER" Required="true" MaxLength="4"/>
+        <Input Name="dt_inizio_serie" Description="Data inizio selezione unità documentarie" Type="DATE" />
+        <Input Name="dt_fine_serie" Description="Data fine selezione unità documentarie" Type="DATE" />
+        
+        <Input Name="ds_lista_anni_sel_serie" Description="Lista anni per selezione unità documentarie" Type="STRING" />
+        <Input Name="dt_reg_unita_doc_da" Description="Data unità documentarie da" Type="DATE" />
+        <Input Name="dt_reg_unita_doc_a" Description="Data unità documentarie a" Type="DATE" />
+        <Input Name="dt_creazione_unita_doc_da" Description="Data di versamento unità documentarie da" Type="DATE" />
+        <Input Name="dt_creazione_unita_doc_a" Description="Data di versamento unità documentarie a" Type="DATE" />
+        <Input Name="ds_nota_azione" Description="Note di creazione serie" Type="STRING" Required="true"/>
+        
+        <Input Name="cd_doc_file_input_ver_serie" Description="Codice documento" Type="STRING" />
+        <Input Name="ds_doc_file_input_ver_serie" Description="Descrizione documento" Type="STRING" />
+        <ComboBox Name="fl_fornito_ente" Description="File trasmesso dall'ente" Type="STRING" />
+        <Input Name="bl_file_input_serie" Description="File con cui creare la serie" Type="FILE" />
+        
+        <Input Name="cd_serie_padre" Description="Serie 'padre' da utilizzare" Type="STRING" Readonly="true"/>
+        <Input Name="ds_serie_padre" Description="Descrizione serie 'padre' da utilizzare" Type="STRING" Readonly="true"/>
+        <Input Name="cd_serie_padre_da_creare" Description="Codice serie 'padre' da creare" Type="STRING" />
+        <Input Name="ds_serie_padre_da_creare" Description="Descrizione serie 'padre' da creare" Type="STRING" />
+        
+        <Input Name="ni_anni_conserv" Description="Anni di conservazione tipologia serie" Type="INTEGER" MaxLength="4" GroupingDecimal="true" />
+        <ComboBox Name="conserv_unlimited" Description="Conservazione illimitata tipologia serie" Type="STRING" Trigger="true"/>
+        
+        <Input Name="disable_dates" Description="" Type="STRING" Readonly="true" Hidden="true"/>
+	
+        <Button Name="creaSerieUD" Description="Crea serie" Type="STRING"/>
+        <Button Name="acquisisciContenutoUD" Description="Acquisisci contenuto" Type="STRING"/>
+    </Fields>
+    
+    <!-- RICERCA SERIE -->
+    
+    <Fields Name="FiltriRicercaSerie" Description="Ricerca serie">
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <MultiSelect Name="ti_stato_cor_serie" Description="Stato versione" Type="STRING" />
+        <MultiSelect Name="ti_stato_conservazione" Description="Stato conservazione" Type="STRING" />
+        <ComboBox Name="nm_tipo_serie" Description="Tipologia serie" Type="INTEGER"/>
+        <Input Name="aa_serie_da" Description="Anno serie da" Type="INTEGER" MaxLength="4"/>
+        <Input Name="aa_serie_a" Description="Anno serie a" Type="INTEGER" MaxLength="4"/>
+        <Input Name="dt_inizio_serie" Description="Data inizio selezione unità documentarie" Type="DATE" />
+        <Input Name="dt_fine_serie" Description="Data fine selezione unità documentarie" Type="DATE" />
+        <ComboBox Name="fl_da_rigenera" Description="Tipo serie modificata" Type="STRING" />
+        
+        <!-- Modifiche analisi 1.7 -->
+        <ComboBox Name="ti_stato_contenuto_calc" Description="Stato contenuto CALCOLATO" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_calc" Description="Errori in contenuto CALCOLATO" Type="STRING" />
+        <ComboBox Name="ti_stato_contenuto_acq" Description="Stato contenuto ACQUISITO" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_file" Description="Errori nel file" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_acq" Description="Errori in contenuto ACQUISITO" Type="STRING" />
+        <ComboBox Name="ti_stato_contenuto_eff" Description="Stato contenuto EFFETTIVO" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_eff" Description="Errori in contenuto EFFETTIVO" Type="STRING" />
+        <ComboBox Name="fl_err_validazione" Description="Errori con origine VALIDAZIONE in contenuto EFFETTIVO" Type="STRING" />
+        <ComboBox Name="fl_elab_bloccata" Description="Elaborazione bloccata" Type="STRING" />
+        <ComboBox Name="ti_crea_standard" Description="Modalità creazione tipo serie standard" Type="STRING" Trigger="true"/>
+        <ComboBox Name="id_modello_tipo_serie" Description="Modello usato per tipo serie standard" Type="INTEGER" />
+        <ComboBox Name="fl_presenza_consist_attesa" Description="Consistenza definita" Type="STRING" />
+        
+        <Button Name="ricercaSerie" Description="Ricerca serie" Type="STRING"/>
+    </Fields>
+    
+    <List Name="SerieList" Description="">
+        <Input Name="amb_ente_strut" Description="Ambiente - Ente - Struttura" Type="STRING" />
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="nm_tipo_serie" Description="Tipologia serie" Type="STRING" />
+        <Input Name="ti_crea_nm_modello" Description="Tipo serie standard" Type="STRING" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="ti_stato_ver_serie" Description="Stato versione" Type="STRING" />
+        <Input Name="ti_stato_serie" Description="Stato conservazione" Type="STRING" />
+        <Input Name="ds_elab_bloccata" Description="Elaborazione bloccata" Type="STRING" />
+        <Input Name="ti_stato_contenuto_calc" Description="Stato contenuto calcolato" Type="STRING" />
+        <Input Name="ni_ud_contenuto_calc" Description="Numero unità documentarie contenuto calcolato" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_err_contenuto_calc" Description="Errori contenuto calcolato" Type="STRING" Readonly="true" />
+        <Input Name="ti_stato_contenuto_acq" Description="Stato contenuto acquisito" Type="STRING" />
+        <Input Name="ni_ud_contenuto_acq" Description="Numero unità documentarie contenuto acquisito" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_err_contenuto_file" Description="Errori file" Type="STRING" Readonly="true" />
+        <CheckBox Name="fl_err_contenuto_acq" Description="Errori contenuto acquisito" Type="STRING" Readonly="true" />
+        <Input Name="ti_stato_contenuto_eff" Description="Stato contenuto effettivo" Type="STRING" />
+        <Input Name="ni_ud_contenuto_eff" Description="Numero unità documentarie contenuto effettivo" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_err_contenuto_eff" Description="Errori contenuto effettivo" Type="STRING" Readonly="true" />
+        <CheckBox Name="fl_presenza_consist_attesa" Description="Consistenza definita" Type="STRING" Readonly="true"/>
+        <CheckBox Name="fl_da_rigenera" Description="Tipo serie modificata" Type="STRING" Readonly="true"/>
+    </List>
+    
+    <!-- DETTAGLIO SERIE -->
+    <Tab Name="SerieDetailTabs" Description="Serie">
+        <TabElement Name="InfoPrincipali" Description="Informazioni principali" />
+        <TabElement Name="IndiceAIP" Description="Indice AIP" />    
+    </Tab>
+    
+    <Tab Name="SerieDetailSubTabs" Description="Serie">
+        <TabElement Name="ListaNote" Description="Lista elementi di descrizione" />    
+        <TabElement Name="ListaVolumi" Description="Lista volumi" />    
+        <TabElement Name="ListaStati" Description="Lista stati" />    
+        <TabElement Name="ListaVersioniPrecedenti" Description="Lista versioni precedenti" />    
+    </Tab>
+    
+    <Section Name="strutturaSection" Description="" Legend="Struttura" ShowButton="false" LoadOpened="true"/>
+    <Section Name="infoSerieSection" Description="" Legend="Serie" ShowButton="false" LoadOpened="true"/>
+    <Section Name="statoCorrenteSection" Description="" Legend="Stato versione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="statoConservazioneSection" Description="" Legend="Stato conservazione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="consistenzaSection" Description="" Legend="Consistenza attesa" ShowButton="false" LoadOpened="true"/>
+    <Section Name="contenutoSection" Description="" Legend="Contenuto" ShowButton="false" LoadOpened="true"/>
+    <Section Name="filtriContenutoSection" Description="" Legend="Filtri su contenuto" ShowButton="false" LoadOpened="true"/>
+    <Section Name="contenutoCalcolatoSection" Description="" Legend="Contenuto calcolato" ShowButton="false" LoadOpened="true"/>
+    <Section Name="contenutoAcquisitoSection" Description="" Legend="Contenuto acquisito" ShowButton="false" LoadOpened="true"/>
+    <Section Name="contenutoEffettivoSection" Description="" Legend="Contenuto effettivo" ShowButton="false" LoadOpened="true"/>
+    <Section Name="cambioStatoSection" Description="" Legend="Stato da assumere" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="SerieDetail" Description="Dettaglio serie di unità documentarie">
+        <Input Name="id_serie" Description="Id serie" Type="INTEGER" />
+        <Input Name="id_tipo_serie" Description="Id tipo serie" Type="INTEGER" />
+        <Input Name="id_ver_serie" Description="Id versione serie" Type="INTEGER" />
+        <Input Name="id_ver_serie_corr" Description="Id versione serie corrente" Type="INTEGER" />
+        <Input Name="id_contenuto_calc" Description="Id contenuto calcolato" Type="INTEGER" />
+        <Input Name="id_contenuto_acq" Description="Id contenuto acquisito" Type="INTEGER" />
+        <Input Name="id_contenuto_eff" Description="Id contenuto effettivo" Type="INTEGER" />
+        <Input Name="id_consist_ver_serie" Description="Id consistenza" Type="INTEGER" />
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" />
+        <Input Name="level_ver_serie" Description="Livello di annidamento versione" Type="INTEGER" />
+        <!-- INFO PRINCIPALI -->
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <Link Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" Target="loadTipoSerieDetail" Tooltip="Visualizza tipo serie" isTargetList="false"/>
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <CheckBox Name="fl_upd_annul_unita_doc" Description="Presenza di unità documentarie annullate" Type="STRING" />
+        <CheckBox Name="fl_upd_modif_unita_doc" Description="Presenza di unità documentarie aggiornate" Type="STRING" />
+        <Input Name="dt_inizio_sel_serie" Description="Data inizio selezione" Type="DATE" />
+        <Input Name="dt_fine_sel_serie" Description="Data fine selezione" Type="DATE" />
+        <Input Name="ni_anni_conserv" Description="Anni di conservazione" Type="INTEGER" GroupingDecimal="true" />
+        <ComboBox Name="conserv_unlimited" Description="Conservazione illimitata" Type="STRING" Trigger="true"/>
+        <Input Name="dt_reg_unita_doc_da" Description="Data unità documentarie da" Type="DATE" />
+        <Input Name="dt_reg_unita_doc_a" Description="Data unità documentarie a" Type="DATE" />
+        <Input Name="dt_creazione_unita_doc_da" Description="Data di versamento unità documentarie da" Type="DATE" />
+        <Input Name="dt_creazione_unita_doc_a" Description="Data di versamento unità documentarie a" Type="DATE" />
+        <Input Name="ds_lista_anni_sel_serie" Description="Lista anni per selezione unità documentarie" Type="STRING" />
+        <!-- Stato versione-->
+        <Input Name="ti_stato_ver_serie" Description="Stato" Type="STRING" />
+        <Input Name="dt_reg_stato_ver_serie" Description="Data" Type="DATE" />
+        <Input Name="ds_azione" Description="Azione" Type="STRING" />
+        <Input Name="ds_nota_azione" Description="Note" Type="STRING" />
+        <Input Name="nm_userid_stato" Description="Utente" Type="STRING" />
+        <ComboBox Name="fl_val_bloccato" Description="Validazione bloccata" Type="STRING"/>
+        <Input Name="dl_msg_job_bloccato_val" Description="Causa blocco" Type="STRING" />
+        <!-- Stato conservazione-->
+        <Input Name="ti_stato_serie" Description="Stato" Type="STRING" />
+        <Input Name="dt_reg_stato_serie" Description="Data" Type="DATE" />
+        <Input Name="ds_azione_stato_serie" Description="Azione" Type="STRING" />
+        <Input Name="ds_nota_azione_stato_serie" Description="Note" Type="STRING" />
+        <Input Name="nm_userid_stato_serie" Description="Utente" Type="STRING" />
+        <!-- Consistenza attesa-->
+        <Input Name="ni_unita_doc_attese" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ti_mod_consist_first_last" Description="Modalità definizione prima ed ultima unità doc" Type="STRING" />
+        <Input Name="cd_first_unita_doc_attesa" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_attesa" Description="Ultima unità documentaria" Type="STRING" />
+        <ComboBox Name="fl_presenza_lacune" Description="Presenza lacune" Type="STRING"/>
+        <Input Name="cd_doc_consist_ver_serie" Description="Codice documento trasmissione" Type="STRING" />
+        <Input Name="ds_doc_consist_ver_serie" Description="Descrizione documento trasmissione" Type="STRING" />
+        <Input Name="nm_userid_consist" Description="Utente" Type="STRING" />
+        <!-- Contenuto calcolato -->
+        <Input Name="ti_stato_contenuto_calc" Description="Stato" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_calc" Description="Errori" Type="STRING"/>
+        <Input Name="ni_unita_doc_calc" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc_calc" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_calc" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="dt_first_unita_doc_calc" Description="Data prima unità documentaria" Type="DATE" />
+        <Input Name="dt_last_unita_doc_calc" Description="Data ultima unità documentaria" Type="DATE" />
+        <ComboBox Name="fl_calc_bloccato" Description="Calcolo bloccato" Type="STRING"/>
+        <Input Name="dl_msg_job_bloccato_calc" Description="Causa blocco" Type="STRING" />
+        <!-- Contenuto acquisito -->
+        <Input Name="ti_stato_contenuto_acq" Description="Stato" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_file" Description="Errori nel file in input" Type="STRING"/>
+        <ComboBox Name="fl_err_contenuto_acq" Description="Errori" Type="STRING"/>
+        <Input Name="ni_unita_doc_acq" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc_acq" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_acq" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="dt_first_unita_doc_acq" Description="Data prima unità documentaria" Type="DATE" />
+        <Input Name="dt_last_unita_doc_acq" Description="Data ultima unità documentaria" Type="DATE" />
+        <Input Name="cd_doc_file_input_ver_serie" Description="Codice documento" Type="STRING" />
+        <Input Name="ds_doc_file_input_ver_serie" Description="Descrizione documento" Type="STRING" />
+        <Input Name="nm_userid_file" Description="Utente" Type="STRING" />
+        <ComboBox Name="fl_fornito_ente" Description="File trasmesso dall'ente" Type="STRING"/>
+        <ComboBox Name="fl_acq_bloccato" Description="Acquisizione bloccata" Type="STRING"/>
+        <Input Name="dl_msg_job_bloccato_acq" Description="Causa blocco" Type="STRING" />
+        <!-- Contenuto effettivo -->
+        <Input Name="ti_stato_contenuto_eff" Description="Stato" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_eff" Description="Errori" Type="STRING"/>
+        <Input Name="ni_unita_doc_eff" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc_eff" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_eff" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="dt_first_unita_doc_eff" Description="Data prima unità documentaria" Type="DATE" />
+        <Input Name="dt_last_unita_doc_eff" Description="Data ultima unità documentaria" Type="DATE" />
+        <Input Name="ni_vol_ver_serie" Description="Numero volumi" Type="INTEGER"  GroupingDecimal="true" />
+        <ComboBox Name="fl_eff_bloccato" Description="Generazione bloccata" Type="STRING"/>
+        <Input Name="dl_msg_job_bloccato_eff" Description="Causa blocco" Type="STRING" />
+        <ComboBox Name="ti_contenuto_generazione" Description="Usa contenuto" Type="STRING"/>
+        <!-- Indice AIP -->
+        <Input Name="cd_ver_xsd_aip" Description="Versione XSD" Type="STRING" />
+        <Input Name="dt_creazione_ix_aip" Description="Data creazione" Type="DATE" />
+        <!--EVO#16486-->
+        <!--<Input Name="ds_urn_ix_aip" Description="Urn" Type="STRING" />-->
+        <Input Name="ds_urn_aip_serie" Description="Urn originale" Type="STRING"/>
+        <Input Name="ds_urn_normaliz_aip_serie" Description="Urn normalizzato" Type="STRING"/>
+        <!--end EVO#16486-->
+        <Input Type="STRING" Description="Hash" Name="hash_personalizzato"/>
+        <Input Type="STRING" Description="Ente conservatore" Name="nm_ente_conserv"/>
+<!--        <Input Name="ds_hash_ix_aip" Description="Hash" Type="STRING" />
+        <Input Name="ds_algo_hash_ix_aip" Description="Algoritmo calcolo hash" Type="STRING" />
+        <Input Name="cd_encoding_hash_ix_aip" Description="Encoding hash" Type="STRING" />-->
+        <TextArea Name="bl_file_ix_aip" Description="XML" Type="STRING" Rows="10" Cols="100" MaxLength="51200" />
+    </Fields>
+    
+    <ButtonList Name="SerieDetailButtonList" Description="">
+        <Button Name="calcolaContenuto" Description="Calcola contenuto" Type="STRING"/>
+        <Button Name="riavviaCalcoloContenuto" Description="Riavvia calcolo" Type="STRING"/>
+        <Button Name="acquisisciContenuto" Description="Acquisizione contenuto" Type="STRING"/>
+        <Button Name="riavviaAcquisizioneContenuto" Description="Riavvia acquisizione" Type="STRING"/>
+        <Button Name="generaContenutoEffettivo" Description="Genera contenuto effettivo" Type="STRING"/>
+        <Button Name="riavviaGenerazioneContenuto" Description="Riavvia generazione" Type="STRING"/>
+        <Button Name="visualizzaContenutoCalcolato" Description="Visualizza contenuto" Type="STRING"/>
+        <Button Name="visualizzaContenutoAcquisito" Description="Visualizza contenuto" Type="STRING"/>
+        <Button Name="visualizzaContenutoEffettivo" Description="Visualizza contenuto" Type="STRING"/>
+        <Button Name="visualizzaConsistenzaAttesa" Description="Dettaglio consistenza attesa" Type="STRING"/>
+        <Button Name="cambiaStatoAperta" Description="Riapri" Type="STRING"/>
+        <Button Name="cambiaStatoDaValidare" Description="Da validare" Type="STRING"/>
+        <Button Name="cambiaStatoDaControllare" Description="Ricontrolla" Type="STRING"/>
+        <Button Name="cambiaStatoValidazioneInCorso" Description="Valida" Type="STRING"/>
+        <Button Name="cambiaStatoForzaValidazione" Description="Forza validazione" Type="STRING"/>
+        <Button Name="cambiaStatoAnnullata" Description="Annulla" Type="STRING"/>
+        <Button Name="cambiaStatoAggiorna" Description="Aggiorna" Type="STRING"/>
+        <Button Name="riavviaValidazioneSerie" Description="Riavvia validazione" Type="STRING"/>
+        <Button Name="downloadAIP" Description="Scarica indice AIP" Type="STRING"/>
+        <Button Name="downloadPacchettoArk" Description="Scarica pacchetto archiviazione" Type="STRING"/>
+        <!-- I BOTTONI SEGUENTI SONO FITTIZI, GIUSTO UN PROMEMORIA PER IL FATTO CHE SIANO STATI PROFILATI DALL'APPLICAZIONE -->
+        <!--<Button Name="checkSerieFuture" Description="Controllo oggetto future di creazione serie" Type="STRING"/>-->
+        <!--<Button Name="reloadSerie" Description="Ricarica serie" Type="STRING"/>-->
+        <!--<Button Name="populateSeriePadre" Description="Trigger popolamento campi di creazione serie" Type="STRING"/>-->
+    </ButtonList>
+    
+    <ButtonList Name="ContenutoEffettivoButtonList" Description="Genera contenuto effettivo">
+        <Button Name="confermaGenerazioneEffettivo" Description="Genera contenuto effettivo" Type="STRING"/>
+    </ButtonList>
+    <!-- Indice AIP -->
+    <!-- Lista note -->
+    <List Name="NoteList" Description="">
+        <Input Name="id_nota_ver_serie" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="ds_tipo_nota_serie" Description="Tipo elemento di descrizione" Type="STRING" />
+        <Input Name="ni_ord" Description="Numero ordine" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="pg_nota_ver_serie" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ds_nota_ver_serie" Description="Elemento di descrizione" Type="STRING" />
+        <Input Name="dt_nota_ver_serie" Description="Data registrazione" Type="DATETIME" />
+        <Input Name="nm_userid" Description="Utente" Type="STRING" />
+    </List>
+    <!-- Lista volumi -->
+    <List Name="VolumiList" Description="" hideUpdateButton="true" hideInsertButton="true" hideDeleteButton="true">
+        <Input Name="pg_vol_ver_serie" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ni_unita_doc_vol" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc_vol" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_vol" Description="Ultima unità documentaria" Type="STRING" />
+    </List>
+    <!-- Lista stati -->
+    <List Name="StatiList" Description="" hideInsertButton="true" hideDeleteButton="true">
+        <Input Name="id_stato_ver_serie" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="pg_stato_ver_serie" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_stato_ver_serie" Description="Stato" Type="STRING" />
+        <Input Name="dt_reg_stato_ver_serie" Description="Data registrazione" Type="DATETIME" />
+        <Input Name="ds_azione" Description="Azione" Type="STRING" />
+        <Input Name="ds_nota_azione" Description="Note" Type="STRING" />
+        <Input Name="nm_userid" Description="Utente" Type="STRING" />
+    </List>
+    <!-- Lista versioni precedenti -->
+    <List Name="VersioniPrecedentiList" Description="" hideUpdateButton="true" hideInsertButton="true" hideDeleteButton="true">
+        <Input Name="pg_ver_serie" Description="Progressivo" Type="INTEGER" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="dt_firma_ver_serie" Description="Data firma" Type="DATE" />
+        <Input Name="ni_unita_doc_eff" Description="Numero unità documentarie" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc_eff" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_eff" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="dt_inizio_sel_serie" Description="Data inizio selezione unità documentarie" Type="DATE" />
+        <Input Name="dt_fine_sel_serie" Description="Data fine selezione unità documentarie" Type="DATE" />
+    </List>
+    
+    <List Name="VersioniPrecedentiDetailList" Description="" hideUpdateButton="true" hideInsertButton="true" hideDeleteButton="true">
+        <Input Name="pg_ver_serie" Description="Progressivo" Type="INTEGER" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="dt_firma_ver_serie" Description="Data firma" Type="DATE" />
+        <Input Name="ni_unita_doc_eff" Description="Numero unità documentarie" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc_eff" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_eff" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="dt_inizio_sel_serie" Description="Data inizio selezione unità documentarie" Type="DATE" />
+        <Input Name="dt_fine_sel_serie" Description="Data fine selezione unità documentarie" Type="DATE" />
+    </List>
+    
+    <!-- DETTAGLIO CONTENUTO SERIE -->
+    <Tab Name="ContenutoSerieDetailTabs" Description="Contenuto serie">
+        <TabElement Name="DettaglioContenuto" Description="Dettaglio contenuto" />    
+        <TabElement Name="FiltriContenuto" Description="Filtri su contenuto" />    
+    </Tab>
+    
+    <Tab Name="ContenutoSerieDetailSubTabs" Description="Liste contenuto serie">
+        <TabElement Name="ListaUnitaDocumentarie" Description="Lista unità documentarie" />
+        <TabElement Name="ListaErroriContenuto" Description="Lista errori contenuto" />    
+        <TabElement Name="ListaErroriFileInput" Description="Lista errori file in input" />    
+    </Tab>
+    
+    <Fields Name="ContenutoSerieDetail" Description="Dettaglio contenuto serie di unità documentarie">
+        <Input Name="id_serie" Description="id_serie" Type="INTEGER" />
+        <Input Name="id_ver_serie" Description="id_versione" Type="INTEGER" />
+        <Input Name="id_contenuto_ver_serie" Description="id_contenuto" Type="INTEGER" />
+        <Input Name="id_consist_ver_serie" Description="id_consistenza" Type="INTEGER" />
+        <Input Name="id_tipo_serie" Description="Id tipo serie" Type="INTEGER" />
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" />
+        
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <Input Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="dt_inizio_sel_serie" Description="Data selezione serie da" Type="DATE" />
+        <Input Name="dt_fine_sel_serie" Description="Data selezione serie a" Type="DATE" />
+        <Input Name="ti_stato_ver_serie" Description="Stato versione" Type="STRING" />
+        <Input Name="ti_stato_serie" Description="Stato conservazione" Type="STRING" />
+        <Input Name="ni_unita_doc_attese" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ti_mod_consist_first_last" Description="Modalità definizione prima ed ultima unità documentaria" Type="STRING" />
+        <Input Name="cd_first_unita_doc_attesa" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_attesa" Description="Ultima unità documentaria" Type="STRING" />
+        <ComboBox Name="fl_presenza_lacune" Description="Presenza lacune" Type="STRING" />
+        <Input Name="cd_doc_consist_ver_serie" Description="Codice documento trasmissione" Type="STRING" />
+        <Input Name="ds_doc_consist_ver_serie" Description="Descrizione documento trasmissione" Type="STRING" />
+        <Input Name="nm_userid_consist" Description="Utente" Type="STRING" />
+        <Input Name="ti_contenuto_ver_serie" Description="Tipo" Type="STRING" />
+        <Input Name="ti_stato_contenuto_ver_serie" Description="Stato" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto_file" Description="Errori nel file" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto" Description="Errori contenuto" Type="STRING" />
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="dt_first_unita_doc" Description="Data prima unità documentaria" Type="DATE" />
+        <Input Name="cd_last_unita_doc" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="dt_last_unita_doc" Description="Data ultima unità documentaria" Type="DATE" />
+        <Input Name="ni_vol_ver_serie" Description="Numero volumi" Type="INTEGER"  GroupingDecimal="true" />
+        <ComboBox Name="fl_job_bloccato" Description="Controllo contenuto bloccato" Type="STRING" />
+        <Input Name="dl_msg_job_bloccato" Description="Causa blocco" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="FiltriContenutoSerieDetail" Description="Filtri contenuto serie di unità documentarie">
+        <Input Name="cd_ud_serie" Description="Codice unità documentaria" Type="STRING" />
+        <Input Name="dt_ud_serie_da" Description="Data serie da" Type="DATE" />
+        <Input Name="dt_ud_serie_a" Description="Data serie a" Type="DATE" />
+        <Input Name="info_ud_serie" Description="Informazioni" Type="STRING" />
+        <Input Name="pg_ud_serie_da" Description="Numero delle unità documentarie da" Type="INTEGER" />
+        <Input Name="pg_ud_serie_a" Description="Numero delle unità documentarie a" Type="INTEGER" />
+        <ComboBox Name="ti_stato_conservazione" Description="Stato conservazione" Type="STRING" />
+        
+        <Button Name="ricercaContenuto" Description="Ricerca" Type="STRING"/>
+        <Button Name="ricercaContenutoSuVolume" Description="Ricerca" Type="STRING"/>
+    </Fields>
+    
+    <!-- Lista unità documentarie -->
+    <List Name="UdList" Description="" hideUpdateButton="true">
+        <Input Name="cd_ud_serie" Description="Codice unità documentaria" Type="STRING" />
+        <Input Name="cd_key_unita_doc" Description="Chiave unità documentaria" Type="STRING" />
+        <Input Name="dt_ud_serie" Description="Data" Type="DATE" />
+        <Input Name="info_ud_serie" Description="Informazioni" Type="STRING" />
+        <Input Name="pg_ud_serie" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_stato_conservazione" Description="Stato conservazione" Type="STRING" />
+        <CheckBox Name="fl_unita_doc_annul" Description="Annullata" Type="STRING" Readonly="true" />
+        <CheckBox Name="fl_presente_contenuto_1" Description="Presente in " Type="STRING" Readonly="true" />
+        <CheckBox Name="fl_presente_contenuto_2" Description="Presente in " Type="STRING" Readonly="true" />
+        <CheckBox Name="fl_presente_altra_serie" Description="Presente in altra serie" Type="STRING" Readonly="true" />
+    </List>
+    <!-- Lista errori contenuti -->
+    <List Name="ErroriContenutiList" Description="" hideUpdateButton="true" hideDeleteButton="true" hideInsertButton="true">
+        <Input Name="pg_err" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_gravita_err" Description="Gravità" Type="STRING" />
+        <Input Name="ti_err" Description="Tipo" Type="STRING" />
+        <Input Name="dl_err" Description="Descrizione" Type="STRING" />
+        <Input Name="ti_origine_err" Description="Origine" Type="STRING" />
+    </List>
+    <!-- Lista errori file in input -->
+    <List Name="ErroriFileInputList" Description="" hideUpdateButton="true" hideDeleteButton="true" hideInsertButton="true">
+        <Input Name="ni_rec_err" Description="Progressivo record" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ti_err_rec" Description="Tipo" Type="STRING" />
+        <Input Name="ds_rec_err" Description="Record in errore" Type="STRING" />
+    </List>
+    
+    <ButtonList Name="ContenutoButtonList" Description="">
+        <Button Name="downloadFile" Description="Scarica file" Type="STRING"/>
+        <Button Name="downloadContenuto" Description="Scarica contenuto" Type="STRING"/>
+        <Button Name="downloadErroriConsistenza" Description="Scarica errori di consistenza" Type="STRING"/>
+        <Button Name="downloadQuery" Description="Scarica query" Type="STRING"/>
+        <Button Name="downloadErroriFileInput" Description="Scarica errori" Type="STRING"/>
+        <Button Name="controllaContenuto" Description="Controlla contenuto" Type="STRING"/>
+        <Button Name="riavviaControlloContenuto" Description="Riavvia controllo" Type="STRING"/>
+    </ButtonList>
+    
+    <!-- DETTAGLIO CONSISTENZA ATTESA SERIE -->
+    <Fields Name="DatiSerieConsistenzaAttesaDetail" Description="">
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <Input Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="ti_stato_ver_serie" Description="Stato versione" Type="STRING" />
+        <Input Name="ti_stato_serie" Description="Stato conservazione" Type="STRING" />
+        
+        <Input Name="id_serie" Description="id_serie" Type="INTEGER" />
+        <Input Name="id_ver_serie" Description="id_versione" Type="INTEGER" />
+        <Input Name="id_contenuto_ver_serie" Description="id_contenuto" Type="INTEGER" />
+        <Input Name="id_consist_ver_serie" Description="id_consistenza" Type="INTEGER" />
+        <Input Name="id_tipo_serie" Description="Id tipo serie" Type="INTEGER" />
+        <Input Name="id_strut" Description="Id struttura" Type="INTEGER" />
+        
+        <Input Name="show_edit" Description="" Type="STRING" Hidden="true" />
+        <Input Name="show_delete" Description="" Type="STRING" Hidden="true" />
+    </Fields>
+
+    <Fields Name="ConsistenzaAttesaDetail" Description="Dettaglio consistenza attesa serie di unità documentarie">
+        <Input Name="ni_unita_doc_attese" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <ComboBox Name="ti_mod_consist_first_last" Description="Modalità definizione prima ed ultima unità documentaria" Type="STRING" />
+        <Input Name="cd_first_unita_doc_attesa" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_attesa" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="cd_doc_consist_ver_serie" Description="Codice documento trasmissione" Type="STRING" />
+        <Input Name="ds_doc_consist_ver_serie" Description="Descrizione documento trasmissione" Type="STRING" />
+        <Input Name="dt_comunic_consist_ver_serie" Description="Data comunicazione" Type="DATETIME" Readonly="true"/>
+        
+        <ComboBox Name="cd_registro_first" Description="Registro" Type="STRING" />
+        <Input Name="aa_unita_doc_first" Description="Anno" Type="INTEGER" />
+        <Input Name="cd_unita_doc_first" Description="Numero" Type="STRING" />
+        
+        <ComboBox Name="cd_registro_last" Description="Registro" Type="STRING" />
+        <Input Name="aa_unita_doc_last" Description="Anno" Type="INTEGER" />
+        <Input Name="cd_unita_doc_last" Description="Numero" Type="STRING" />
+        
+        <Input Name="nm_userid_consist" Description="Utente" Type="STRING" />
+    </Fields>
+    
+    <ButtonList Name="ConsistenzaButtonList" Description="">
+        <Button Name="controllaContenutoCalcConsistAttesa" Description="Controlla contenuto calcolato" Type="STRING"/>
+        <Button Name="controllaContenutoAcqConsistAttesa" Description="Controlla contenuto acquisito" Type="STRING"/>
+        <Button Name="controllaContenutoEffConsistAttesa" Description="Controlla contenuto effettivo" Type="STRING"/>
+    </ButtonList>
+    
+    <!-- Lista lacune -->
+    <List Name="LacuneList" Description="">
+        <Input Name="id_lacuna_consist_ver_serie" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="pg_lacuna" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_lacuna" Description="Tipo" Type="STRING" />
+        <Input Name="ti_mod_lacuna" Description="Modalità definizione lacuna" Type="STRING" />
+        <Input Name="ni_ini_lacuna" Description="Estremo iniziale lacuna" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ni_fin_lacuna" Description="Estremo finale lacuna" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="dl_lacuna" Description="Descrizione lacuna" Type="STRING" />
+    </List>
+    
+    <Fields Name="LacunaDetail" Description="Dettaglio lacuna">
+        <Input Name="id_lacuna_consist_ver_serie" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="pg_lacuna" Description="Progressivo" Type="INTEGER" Required="true" Readonly="true" />
+        <ComboBox Name="ti_lacuna" Description="Tipo" Type="STRING" Required="true" />
+        <ComboBox Name="ti_mod_lacuna" Description="Modalità definizione lacuna" Type="STRING" Required="true" />
+        <Input Name="ni_ini_lacuna" Description="Estremo iniziale lacuna" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ni_fin_lacuna" Description="Estremo finale lacuna" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="dl_lacuna" Description="Descrizione lacuna" Type="STRING" />
+        <TextArea Name="dl_nota_lacuna" Description="Note" Type="STRING" Rows="10" Cols="100" MaxLength="1024" />
+    </Fields>
+    
+    <!-- CAMBIO STATO SERIE -->
+    <Fields Name="CambioStatoSerie" Description="Cambio stato">
+        <Input Name="ds_azione" Description="Azione" Type="STRING" Required="true"/>
+        <Input Name="ti_stato_ver_serie" Description="Stato" Type="STRING" Required="true"/>
+        <Input Name="ds_nota_azione" Description="Note" Type="STRING" />
+        <Button Name="confermaCambioStato" Description="Cambia stato" Type="STRING"/>
+    </Fields>
+    
+    <!-- DETTAGLIO NOTE -->
+    <Section Name="notaSection" Description="" Legend="Elemento di descrizione" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="DatiSerieDetail" Description="">
+        <Input Name="id_serie" Description="id_serie" Type="INTEGER" />
+        <Input Name="id_ver_serie" Description="id_versione" Type="INTEGER" />
+        
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <Input Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="ti_stato_ver_serie" Description="Stato versione" Type="STRING" />
+        <Input Name="ti_stato_serie" Description="Stato conservazione" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="NotaDetail" Description="Dettaglio elemento di descrizione">
+        <Input Name="id_nota_ver_serie" Description="Id" Type="INTEGER" Hidden="true"/>
+        <ComboBox Name="id_tipo_nota_serie" Description="Tipo elemento di descrizione" Type="INTEGER" Required="true" Trigger="true"/>
+        <Input Name="pg_nota_ver_serie" Description="Progressivo" Type="INTEGER" Required="true"/>
+        <TextArea Type="STRING" Description="Elemento di descrizione" Name="ds_nota_ver_serie" Rows="10" Cols="100" MaxLength="1024" Required="true"/>
+        <Input Name="dt_nota_ver_serie" Description="Data registrazione" Type="DATETIME" Required="true"/>
+        <Input Name="nm_userid" Description="Utente" Type="STRING" Required="true"/>
+    </Fields>
+    
+    <!-- DETTAGLIO STATO -->
+    <Section Name="statoSection" Description="" Legend="Stato" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="StatoDetail" Description="Dettaglio stato">
+        <Input Name="id_stato_ver_serie" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="pg_stato_ver_serie" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_stato_ver_serie" Description="Stato" Type="STRING" />
+        <Input Name="dt_reg_stato_ver_serie" Description="Data registrazione" Type="DATE" />
+        <Input Name="ds_azione" Description="Azione" Type="STRING" />
+        <Input Name="ds_nota_azione" Description="Note" Type="STRING" />
+        <Input Name="nm_userid" Description="Utente" Type="STRING" Required="true"/>
+    </Fields>
+    
+    <!-- DETTAGLIO ERRORI FILE IN INPUT -->
+    <Section Name="erroreSection" Description="" Legend="Errore" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="ErroriFileInputDetail" Description="Dettaglio errore file in input">
+        <Input Name="id_serie" Description="id_serie" Type="INTEGER" />
+        <Input Name="id_ver_serie" Description="id_versione" Type="INTEGER" />
+        <Input Name="id_contenuto_ver_serie" Description="id_contenuto" Type="INTEGER" />
+        <Input Name="id_file_input_ver_serie" Description="id_errore" Type="INTEGER" />
+        
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <Input Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="ti_stato_ver_serie_cor" Description="Stato versione" Type="STRING" />
+        <Input Name="ti_stato_serie_cor" Description="Stato conservazione" Type="STRING" />
+        
+        <Input Name="ti_stato_contenuto_ver_serie" Description="Stato" Type="STRING" />
+        <ComboBox Name="fl_err_contenuto" Description="Errori contenuto" Type="STRING" />
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc" Description="Ultima unità documentaria" Type="STRING" />
+        <ComboBox Name="fl_job_bloccato" Description="Controllo contenuto bloccato" Type="STRING" />
+        
+        <Input Name="ni_rec_err" Description="Progressivo record" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="ti_err_rec" Description="Tipo" Type="STRING" />
+        <Input Name="ds_rec_err" Description="Record in errore" Type="STRING" />
+    </Fields>
+    
+    <List Name="ErroriFileInputUdList" Description="" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Name="cd_ud_serie" Description="Codice unità documentaria" Type="STRING" />
+        <Input Name="cd_key_unita_doc" Description="Chiave unità documentaria" Type="STRING" />
+        <Input Name="dt_ud_serie" Description="Data" Type="DATE" />
+        <Input Name="info_ud_serie" Description="Informazioni" Type="STRING" />
+        <Input Name="pg_ud_serie" Description="Progressivo" Type="INTEGER" />
+        <CheckBox Name="fl_unita_doc_annul" Description="Annullata" Type="STRING" Readonly="true" />
+    </List>
+    
+    <!-- DETTAGLIO ERRORI FILE IN INPUT -->
+    <Fields Name="ErroreContenutoDetail" Description="Dettaglio errore contenuto">
+        <Input Name="id_serie" Description="id_serie" Type="INTEGER" />
+        <Input Name="id_ver_serie" Description="id_versione" Type="INTEGER" />
+        <Input Name="id_contenuto_ver_serie" Description="id_contenuto" Type="INTEGER" />
+        <Input Name="id_file_input_ver_serie" Description="id_errore" Type="INTEGER" />
+        
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <Input Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" />
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="ti_stato_ver_serie_cor" Description="Stato versione" Type="STRING" />
+        <Input Name="ti_stato_serie_cor" Description="Stato conservazione" Type="STRING" />
+        
+        <Input Name="ti_stato_contenuto_ver_serie" Description="Stato" Type="STRING" />
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc" Description="Ultima unità documentaria" Type="STRING" />
+        <ComboBox Name="fl_job_bloccato" Description="Controllo contenuto bloccato" Type="STRING" />
+        
+        <Input Name="pg_err" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ti_gravita_err" Description="Gravità" Type="STRING" />
+        <Input Name="ti_err" Description="Tipo" Type="STRING" />
+        <Input Name="dl_err" Description="Descrizione" Type="STRING" />
+    </Fields>
+    
+    <List Name="ErroreContenutoUdList" Description="" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Name="cd_unita_doc" Description="Chiave unità documentaria" Type="STRING" />
+        <Input Name="dt_first_ses_err" Description="Data primo versamento" Type="DATE" />
+        <Input Name="dt_last_ses_err" Description="Data ultimo versamento" Type="DATE" />
+        <Input Name="ds_err_princ" Description="Codice errore" Type="STRING" />
+    </List>
+    
+    <!-- Filtri di ricerca per la lista serie da firmare o da validare-->
+    <Fields Name="FiltriSerieDaFirmare" Description="Filtri serie da firmare o validare" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
+        <!-- CAMPI POPUP  -->
+        <Input Type="STRING" Description="Utente: " Name="user"/>
+        <Input Type="STRING" Description="Password: " Name="passwd"/>
+        <Input Type="STRING" Description="OTP: " Name="otp"/>        
+        
+        <Button Name="ricercaSerieDaFirmareButton" Description="Ricerca" Type="STRING" />
+        <Button Name="ricercaSerieDaValidareButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+    
+    <!-- Lista serie da firmare -->
+    <List Name="SerieDaFirmareList" Description="Serie di unità documentarie da firmare" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="STRING"  Description="Ambiente - Ente - Struttura" Name="amb_ente_strut" />
+        <Input Type="STRING"  Description="Codice" Name="cd_composito_serie" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_serie" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_serie" />
+        <Input Type="STRING" Description="Tipo serie" Name="nm_tipo_serie" />
+        <Input Type="STRING" Description="Versione" Name="cd_ver_serie" />
+        <Input Type="STRING" Description="Range date selezione" Name="range_date" />
+        <Input Type="INTEGER" Description="Id versione serie" Name="id_ver_serie" />
+        <Input Type="INTEGER" Description="Id strut" Name="id_strut" Hidden="true"/>
+    </List>
+    
+    <!-- Lista serie selezionate -->
+    <List Name="SerieSelezionateList" Description="Serie di unità documentarie selezionate" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="STRING" Description="Ambiente - Ente - Struttura" Name="amb_ente_strut"/>
+        <Input Type="STRING"  Description="Codice" Name="cd_composito_serie" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_serie" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_serie" />
+        <Input Type="STRING" Description="Tipo serie" Name="nm_tipo_serie" />
+        <Input Type="STRING" Description="Versione" Name="cd_ver_serie" />
+        <Input Type="STRING" Description="Range date selezione" Name="range_date" />
+        <Input Type="INTEGER" Description="Id versione serie" Name="id_ver_serie" />
+        <Input Type="INTEGER" Description="Id strut" Name="id_strut" Hidden="true"/>
+    </List>
+    
+    <ButtonList Name="ListaSerieDaFirmareButtonList" Description="Operazioni sulle liste delle serie da firmare" >
+        <Button Name="selectAllSerieButton" Description="Aggiungi tutti" Type="STRING"/>
+        <Button Name="deselectAllSerieButton" Description="Rimuovi tutti" Type="STRING"/>
+        <Button Name="firmaIndiciAIPSerieHsmButton"  Description="Firma" Type="STRING" />
+        <Button Name="marcaturaIndiciAIPSerieButton"  Description="Marca serie firmate" Type="STRING" />
+    </ButtonList>
+    
+    <!-- Lista serie da validare -->
+    <List Name="SerieDaValidareList" Description="Serie di unità documentarie da validare" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="STRING"  Description="Ambiente - Ente - Struttura" Name="amb_ente_strut" />
+        <Input Type="STRING" Description="Codice" Name="cd_composito_serie" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_serie" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_serie" />
+        <Input Type="STRING" Description="Tipo serie" Name="nm_tipo_serie" />
+        <Input Type="STRING" Description="Versione" Name="cd_ver_serie" />
+        <Input Type="DATE" Description="Data selezione da" Name="dt_inizio_sel_serie" />
+        <Input Type="DATE" Description="Data selezione a" Name="dt_fine_sel_serie" />
+        <CheckBox Type="STRING" Description="Presenza errori" Name="fl_err_contenuto_eff" Readonly="true"/>
+        <Input Type="INTEGER" Description="Id versione serie" Name="id_ver_serie" Hidden="true"/>
+    </List>
+    
+    <!-- Lista serie da validare -->
+    <List Name="SerieSelezionateDaValidareList" Description="Serie di unità documentarie selezionate da validare" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="STRING"  Description="Ambiente - Ente - Struttura" Name="amb_ente_strut" />
+        <Input Type="STRING" Description="Codice" Name="cd_composito_serie" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_serie" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_serie" />
+        <Input Type="STRING" Description="Tipo serie" Name="nm_tipo_serie" />
+        <Input Type="STRING" Description="Versione" Name="cd_ver_serie" />
+        <Input Type="DATE" Description="Data selezione da" Name="dt_inizio_sel_serie" />
+        <Input Type="DATE" Description="Data selezione a" Name="dt_fine_sel_serie" />
+        <CheckBox Type="STRING" Description="Presenza errori" Name="fl_err_contenuto_eff" Readonly="true"/>
+        <Input Type="INTEGER" Description="Id versione serie" Name="id_ver_serie" Hidden="true"/>
+    </List>
+    
+    <ButtonList Name="ListaSerieDaValidareButtonList" Description="Operazioni sulle liste delle serie da validare" >
+        <Button Name="selectAllSerieDaValidareButton" Description="Aggiungi tutti" Type="STRING"/>
+        <Button Name="deselectAllSerieDaValidareButton" Description="Rimuovi tutti" Type="STRING"/>
+        <Button Name="validaSerie" Description="Valida" Type="STRING" />
+    </ButtonList>
+    
+    <!-- DETTAGLIO VOLUME -->
+    <Section Name="volumeSection" Description="" Legend="Volume" ShowButton="false" LoadOpened="true"/>
+    
+    <Tab Name="VolumeDetailTabs" Description="Volume">
+        <TabElement Name="InfoPrincipaliVolume" Description="Informazioni principali" />
+        <TabElement Name="IndiceVolume" Description="Indice volume" />    
+    </Tab>
+    
+    <Fields Name="VolumeDetail" Description="Dettaglio volume serie di unità documentarie">
+        <Input Name="id_serie" Description="id_serie" Type="INTEGER" />
+        <Input Name="id_ver_serie" Description="id_versione" Type="INTEGER" />
+        <Input Name="id_vol_ver_serie" Description="id_volume_versione" Type="INTEGER" />
+        
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" />
+        <Input Name="nm_ente" Description="Ente" Type="STRING" />
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" />
+        
+        <Input Type="STRING"  Description="Codice" Name="cd_composito_serie" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_serie" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_serie" />
+        <Input Type="STRING" Description="Tipo serie" Name="nm_tipo_serie" />
+        <Input Type="STRING" Description="Versione" Name="cd_ver_serie" />
+        <Input Name="dt_inizio_sel_serie" Description="Data inizio selezione" Type="DATE" />
+        <Input Name="dt_fine_sel_serie" Description="Data fine selezione" Type="DATE" />
+        <Input Name="ti_stato_ver_serie" Description="Stato versione" Type="STRING" />
+        
+        <Input Name="ni_unita_doc_vol" Description="Numero unità documentarie" Type="INTEGER"  GroupingDecimal="true" />
+        <Input Name="cd_first_unita_doc_vol" Description="Prima unità documentaria" Type="STRING" />
+        <Input Name="cd_last_unita_doc_vol" Description="Ultima unità documentaria" Type="STRING" />
+        <Input Name="dt_first_unita_doc_vol" Description="Data prima unità documentaria" Type="DATE" />
+        <Input Name="dt_last_unita_doc_vol" Description="Data ultima unità documentaria" Type="DATE" />
+        
+        <Input Name="cd_ver_xsd_ix_vol" Description="Versione XSD" Type="STRING" />
+        <Input Name="dt_creazione" Description="Data creazione" Type="DATE" />
+        <!--EVO#16486-->
+        <!--<Input Name="ds_urn_ix_vol" Description="Urn" Type="STRING" />-->
+        <Input Name="ds_urn_aip_vol" Description="Urn originale" Type="STRING"/>
+        <Input Name="ds_urn_normaliz_aip_vol" Description="Urn normalizzato" Type="STRING"/>
+        <!--end EVO#16486-->
+        <Input Name="ds_hash_ix_vol" Description="Hash" Type="STRING" />
+        <Input Name="ds_algo_hash_ix_vol" Description="Algoritmo calcolo hash" Type="STRING" />
+        <Input Name="cd_encoding_hash_ix_vol" Description="Encoding hash" Type="STRING" />
+        <TextArea Name="bl_ix_vol" Description="XML" Type="STRING" Rows="10" Cols="100" MaxLength="51200"/>
+        
+        <Button Name="downloadIxVol" Description="Scarica indice volume" Type="STRING"/>
+    </Fields>
+    
+    <List Name="UdVolumeList" Description="" hideDeleteButton="true" hideUpdateButton="true">
+        <Input Name="cd_ud_serie" Description="Codice unità documentaria" Type="STRING" />
+        <Input Name="cd_key_unita_doc" Description="Chiave unità documentaria" Type="STRING" />
+        <Input Name="dt_ud_serie" Description="Data" Type="DATE" />
+        <Input Name="info_ud_serie" Description="Informazioni" Type="STRING" />
+        <Input Name="pg_ud_serie" Description="Progressivo" Type="INTEGER" />
+        <CheckBox Name="fl_unita_doc_annul" Description="Annullata" Type="STRING" Readonly="true" />
+        <CheckBox Name="fl_presente_altra_serie" Description="Presente in altra serie" Type="STRING" Readonly="true" />
+    </List>
+    
+    <!-- COMUNICAZIONE CONSISTENZA SERIE -->
+    
+    <Section Name="primaUnitaDocAttesaSection" Description="" Legend="Prima unità documentaria" ShowButton="false" LoadOpened="true"/>
+    <Section Name="ultimaUnitaDocAttesaSection" Description="" Legend="Ultima unità documentaria" ShowButton="false" LoadOpened="true"/>
+    
+    <Fields Name="FiltriComunicazioneConsistenzaSerieUD" Description="Comunicazione consistenza serie">
+        <!-- Modifiche analisi 1.8 - Campi della comunicazione consistenza -->
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" Hidden="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" Required="true" Hidden="true" />
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Required="true" Hidden="true" />
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
+        <Input Name="aa_serie_da" Description="Anno serie da" Type="INTEGER" MaxLength="4"/>
+        <Input Name="aa_serie_a" Description="Anno serie a" Type="INTEGER" MaxLength="4"/>
+        <ComboBox Name="nm_tipo_serie" Description="Tipologia serie" Type="INTEGER"/>
+        <ComboBox Name="fl_presenza_consist_attesa" Description="Consistenza definita" Type="STRING"/>
+        <ComboBox Name="id_tipo_unita_doc" Description="Tipo unità documentaria" Type="INTEGER"/>
+        <ComboBox Name="id_registro_unita_doc" Description="Registro" Type="INTEGER"/>
+        
+        <Button Name="ricercaConsistenzaSerie" Description="Ricerca serie" Type="STRING"/>
+    </Fields>
+    
+    <List Name="ConsistenzaSerieList" Description="">
+        <Input Name="amb_ente_strut" Description="Ambiente - Ente - Struttura" Type="STRING" />
+        <Input Name="nm_tipo_serie" Description="Tipologia serie" Type="STRING" />
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" />
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" />
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_presenza_consist_attesa" Description="Consistenza attesa" Type="STRING" Readonly="true" />
+        <Input Name="dt_comunic_consist_ver_serie" Description="Data comunicazione" Type="DATE" />
+        <Input Name="ni_unita_doc_attese" Description="Numero unità documentarie attese" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_presenza_lacune" Description="Presenza lacune" Type="STRING" Readonly="true" />
+        <Link Name="showContenutoEffettivo" Description="" Type="STRING" Target="loadDettaglioContenutoEffDaComunicazioneConsistenza" Tooltip="Mostra contenuto effettivo" isTargetList="false" VisibilityProperty="fl_presenza_conten_eff"/>
+    </List>
+    
+    <Fields Name="ComunicazioneConsistenzaDetail" Description="Dettaglio comunicazione consistenza serie">
+        <Input Name="id_serie" Description="id_serie" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_ver_serie" Description="id_versione" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_consist_ver_serie" Description="id_consistenza" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_tipo_serie" Description="Id tipo serie" Type="INTEGER" Hidden="true"/>
+
+        <Input Name="nm_ambiente" Description="Ambiente" Type="STRING" Readonly="true"/>
+        <Input Name="nm_ente" Description="Ente" Type="STRING" Readonly="true"/>
+        <Input Name="nm_strut" Description="Struttura" Type="STRING" Readonly="true"/>
+        
+        <Input Name="cd_composito_serie" Description="Codice" Type="STRING" Readonly="true"/>
+        <Input Name="aa_serie" Description="Anno" Type="INTEGER" Readonly="true"/>
+        <Input Name="ds_serie" Description="Descrizione" Type="STRING" Readonly="true"/>
+        <Input Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" Readonly="true"/>
+        <Input Name="cd_ver_serie" Description="Versione" Type="STRING" Readonly="true"/>
+        <Input Name="ti_stato_ver_serie" Description="Stato versione" Type="STRING" Readonly="true"/>
+        <Input Name="ti_stato_serie" Description="Stato conservazione" Type="STRING" Readonly="true"/>
+        
+        <Input Name="ni_unita_doc_attese" Description="Numero unità documentarie" Type="INTEGER" GroupingDecimal="true" Required="true"/>
+        <Input Name="ti_mod_consist_first_last" Description="Modalità definizione prima ed ultima unità documentaria" Type="STRING" Readonly="true" Hidden="true"/>
+        
+        <ComboBox Name="cd_registro_first" Description="Registro" Type="STRING" />
+        <Input Name="aa_unita_doc_first" Description="Anno" Type="INTEGER" />
+        <Input Name="cd_unita_doc_first" Description="Numero" Type="STRING" />
+        
+        <ComboBox Name="cd_registro_last" Description="Registro" Type="STRING" />
+        <Input Name="aa_unita_doc_last" Description="Anno" Type="INTEGER" />
+        <Input Name="cd_unita_doc_last" Description="Numero" Type="STRING" />
+        
+        <Input Name="dt_comunic_consist_ver_serie" Description="Data comunicazione" Type="DATETIME" Readonly="true"/>
+        <Input Name="nm_userid_consist" Description="Utente" Type="STRING" Readonly="true"/>
+        
+        <Input Name="id_lacuna_non_prodotte" Description="Id lacuna non prodotte" Type="INTEGER" Hidden="true" />
+        <Input Name="dl_lacuna_non_prodotte" Description="Unità documentarie non prodotte" Type="STRING" />
+        <TextArea Type="STRING" Description="Note" Name="dl_nota_lacuna_non_prodotte" Rows="10" Cols="100" MaxLength="1024"/>
+        <Input Name="id_lacuna_mancanti" Description="Id lacuna mancanti" Type="INTEGER" Hidden="true" />
+        <Input Name="dl_lacuna_mancanti" Description="Unità documentarie non versate" Type="STRING" />
+        <TextArea Type="STRING" Description="Note" Name="dl_nota_lacuna_mancanti" Rows="10" Cols="100" MaxLength="1024"/>
+        
+        <Input Name="show_edit" Description="" Type="STRING" Hidden="true" Readonly="true"/>
+        <Input Name="show_delete" Description="" Type="STRING" Hidden="true" Readonly="true"/>
+    </Fields>
+</Form>

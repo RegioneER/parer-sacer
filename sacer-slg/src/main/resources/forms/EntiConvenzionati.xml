@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Enti convenzionati" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" 
+      xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd" >
+    
+    <!-- Struttura di riferimento nel dettaglio di una delle liste seguenti -->    
+    <Fields Name="StrutRif" Description="Struttura" >
+        <Input Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input Type="STRING" Description="Struttura" Name="struttura" />
+        <Input Type="INTEGER" Description="ID_STRUT" Name="id_strut" Hidden="true"/>
+    </Fields>
+    
+    <!-- Gestione associazione enti convenzionati -->
+    <List Name="EnteConvenzOrgList" Description="Lista associazione enti convenzionati">
+        <Input Name="id_ente_convenz_org" Description="ID" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_ambiente_ente_convenz" Description="Ambiente" Type="STRING"/>
+        <Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING"/>
+        <Input Name="dt_ini_val" Description="Data inizio validità" Type="DATE"/>
+        <Input Name="dt_fine_val" Description="Data fine validità" Type="DATE"/>
+    </List>
+    
+    <Fields Name="EnteConvenzOrg" Description="Associazione ente convenzionato">
+        <Input Name="id_ente_convenz_org" Description="ID" Type="INTEGER" Hidden="true"/>
+        <ComboBox Name="id_ambiente_ente_convenz" Description="Ambiente" Type="INTEGER" Trigger="true" Required="true"/>
+        <ComboBox Name="id_ente_convenz" Description="Ente convenzionato" Type="INTEGER" Trigger="true" Required="true"/>
+        <Input Name="dt_ini_val" Description="Data inizio validità" Type="DATE" Required="true"/>
+        <Input Name="dt_fine_val" Description="Data fine validità" Type="DATE" Required="true"/>
+    </Fields>
+</Form>

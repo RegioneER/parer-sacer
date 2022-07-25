@@ -1,0 +1,44 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<slf:section name="<%=StrutDatiSpecForm.Struttura.NAME%>" styleClass="importantContainer">  
+    <slf:lblField name="<%=StrutDatiSpecForm.StrutRif.STRUTTURA%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
+    <slf:lblField name="<%=StrutDatiSpecForm.StrutRif.ID_ENTE%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
+    <slf:lblField name="<%=StrutDatiSpecForm.IdList.NM_SYS_MIGRAZ%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
+<label for="Nm_ele_migraz" class="slLabel w20">Elemento XSD Migrazione:&nbsp;</label>
+
+<div class="containerLeft w2ctr">
+ <input type="hidden" name="Nm_ele_migraz" id="Nm_ele_migraz_hidden" value="" />
+ <div  id="elementoRif" class="slText w20" ><c:out value="${sessionScope.elementoRif}"></c:out></div>
+</div>
+<div class="newLine "></div>
+
+</slf:section>
+    
+<c:choose>
+    <c:when test="${sessionScope.lastPage=='tipoUnitaDoc'}">
+        <slf:section name="<%=StrutDatiSpecForm.STipoUnitaDoc.NAME%>" styleClass="importantContainer">  
+            <slf:lblField name="<%=StrutDatiSpecForm.TipoUdRif.NM_TIPO_UNITA_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/>
+            <sl:newLine />
+            <slf:lblField name="<%=StrutDatiSpecForm.TipoUdRif.DS_TIPO_UNITA_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/>
+        </slf:section>
+
+    </c:when>
+    <c:when test="${sessionScope.lastPage=='tipoDoc'}">
+        <slf:section name="<%=StrutDatiSpecForm.STipoDoc.NAME%>" styleClass="importantContainer">  
+            <slf:lblField name="<%=StrutDatiSpecForm.TipoDocRif.NM_TIPO_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/>
+            <sl:newLine />
+            <slf:lblField name="<%=StrutDatiSpecForm.TipoDocRif.DS_TIPO_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/>
+        </slf:section>
+
+    </c:when>
+    <c:when test="${sessionScope.lastPage=='tipoCompDoc'}">
+        <slf:section name="<%=StrutDatiSpecForm.STipoStrutDoc.NAME%>" styleClass="importantContainer">  
+            <slf:lblField name="<%=StrutDatiSpecForm.TipoStrutDocRif.NM_TIPO_STRUT_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/>
+        </slf:section>
+        <slf:section name="<%=StrutDatiSpecForm.STipoCompDoc.NAME%>" styleClass="importantContainer">  
+            <slf:lblField name="<%=StrutDatiSpecForm.TipoCompDocRif.NM_TIPO_COMP_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/>
+        </slf:section>
+    </c:when>
+    <c:otherwise>
+
+    </c:otherwise>
+</c:choose>

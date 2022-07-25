@@ -1,0 +1,37 @@
+<%@page import="it.eng.parer.slite.gen.form.MonitoraggioAggMetaForm" pageEncoding="UTF-8"%>
+<div style="float: right"><slf:lblField name="<%=MonitoraggioAggMetaForm.CalcolaTotaliButtonList.CALC_TOT_UD_AGG_FALLITI_BUTTON%>" width="w100"/></div>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO UNITÀ DOCUMENTARIE DERIVANTI DA AGGIORNAMENTI METADATI FALLITI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w70"></th>
+            <th colspan="2">&nbsp;&nbsp;Totale&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Falliti e non risolti</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.FL_UD_UPD_KO_TOTALI%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=TUTTI"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.NI_UD_UPD_KO_TOTALI%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Non risolubili</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.FL_UD_UPD_KO_NORISOLUB%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=NON_RISOLUBILE"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.NI_UD_UPD_KO_NORISOLUB%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Verificati</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.FL_UD_UPD_KO_VERIF%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.NI_UD_UPD_KO_VERIF%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Non verificati</b></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.FL_UD_UPD_KO_NOVERIF%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioAggMeta.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=NON_VERIFICATO"><slf:field name="<%= MonitoraggioAggMetaForm.UnitaDocAggiornamentiMetadatiFalliti.NI_UD_UPD_KO_NOVERIF%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

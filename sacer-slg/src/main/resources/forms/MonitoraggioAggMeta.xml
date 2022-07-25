@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione monitoraggio aggiornamento metadati" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Fields Name="FiltriRicercaMonitoraggioAggMeta" Description="Filtri di ricerca" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Tipologia unità documentaria" Name="id_tipo_unita_doc" />
+        <ComboBox Type="INTEGER" Description="Registro" Name="id_registro_unita_doc" />
+        <ComboBox Type="INTEGER" Description="Tipo documento principale" Name="id_tipo_doc" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Button Name="generaMonitoraggioAggMetaButton" Description="Genera riepilogo aggiornamento metadati" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="AggiornamentiMetadati" Description="Riepilogo aggiornamenti metadati" >
+        <CheckBox Name="fl_upd_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_upd_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_upd_attesa_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_upd_attesa_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_attesa_sched_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_attesa_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_upd_nosel_sched_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_upd_nosel_sched_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_nosel_sched_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_nosel_sched_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <Fields Name="AggiornamentiMetadatiFalliti" Description="Riepilogo aggiornamenti metadati falliti" >
+        <CheckBox Name="fl_upd_ko_totali_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_upd_ko_totali_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_totali_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_totali_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_upd_ko_norisolub_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_upd_ko_norisolub_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_norisolub_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_norisolub_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_upd_ko_verif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_upd_ko_verif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_verif_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_verif_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_upd_ko_noverif_corr" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_upd_ko_noverif_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_noverif_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_ko_noverif_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    
+    <!-- MEV#22438 -->
+    <Fields Name="UnitaDocAggiornamentiMetadatiFalliti" Description="Riepilogo unità documentarie derivanti da aggiornamenti metadati falliti" >
+        <CheckBox Name="fl_ud_upd_ko_totali" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_upd_ko_totali" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_upd_ko_norisolub" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_upd_ko_norisolub" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_upd_ko_verif" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_upd_ko_verif" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_ud_upd_ko_noverif" Description="" Type="STRING" Readonly="true"/>
+        <Input Name="ni_ud_upd_ko_noverif" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+    <!-- end MEV#22438 -->
+    
+    <ButtonList Name="CalcolaTotaliButtonList" Description="">
+        <Button Name="calcNumAggDataCorrenteButton" Description="Calcola numero aggiornamenti per data corrente" Type="STRING" />
+        <Button Name="calcTotAggFallitiButton" Description="Calcola totali aggiornamenti falliti" Type="STRING" />
+        <Button Name="calcTotUdAggFallitiButton" Description="Calcola totali unità documentarie derivanti da aggiornamenti falliti" Type="STRING" />
+    </ButtonList>
+    
+    <!-- Filtri aggiornamento metadati -->
+    <Fields Name="FiltriAggMeta" Description="Filtri aggiornamento metadati" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Tipologia unità documentaria" Name="id_tipo_unita_doc" />
+        <ComboBox Type="INTEGER" Description="Registro" Name="id_registro_unita_doc" />
+        <ComboBox Type="INTEGER" Description="Tipo documento principale" Name="id_tipo_doc" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+
+        <Input  Type="DATE" Description="Data da" Name="dt_ini_ses_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="hh_ini_ses_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="mm_ini_ses_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data a" Name="dt_ini_ses_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="hh_ini_ses_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="mm_ini_ses_a" MaxLength="2"/>
+        
+        <MultiSelect Type="STRING" Description="Stato di generazione indice AIP" Name="ti_stato_upd_elenco_vers"  />
+        <ComboBox  Type="STRING" Description="Presenza aggiornamenti falliti e risolti" Name="fl_ses_upd_ko_risolti"  />
+        
+        <MultiSelect Type="STRING" Description="Stato aggiornamento" Name="ti_stato_ses_upd_ko"  />
+        <ComboBox  Type="INTEGER" Description="Classe errore" Name="cd_classe_err" Trigger="true" />
+        <ComboBox  Type="INTEGER" Description="Errore" Name="cd_err"  />
+        
+        <Button Name="ricercaAggMetaButton" Description="Ricerca" Type="STRING" />
+        <Button Name="ricercaAggMetaFallitiButton" Description="Ricerca" Type="STRING" />
+        <Button Name="ricercaUnitaDocAggMetaFallitiButton" Description="Ricerca" Type="STRING" />
+        
+        <Button Name="verificaAggMetaFallitiButton" Description="Verifica aggiornamenti falliti" Type="STRING" />
+        <Button Name="assegnaNonRisolubAggMetaFallitiButton" Description="Assegna non risolubile ad aggiornamenti falliti" Type="STRING" />
+        <Button Name="assegnaNonVerifAggMetaFallitiButton" Description="Assegna non verificato ad aggiornamenti falliti" Type="STRING" />
+        <Button Name="assegnaVerifAggMetaFallitiButton" Description="Assegna verificato ad aggiornamenti falliti" Type="STRING" />
+    </Fields>
+    
+    <Section Name="ChiaveAggMetaSection" Description="Chiave unità documentaria" Legend="Chiave unità documentaria" LoadOpened="true"/>
+
+    <!-- AGGIORNAMENTI METADATI -->   
+    <List Name="AggMetaList" Description="Lista aggiornamenti metadati" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Id aggiornamento" Name="id_upd_unita_doc" Hidden="true"/>
+        <Input  Type="STRING" Description="Ente/Struttura" Name="nm_ente_struttura"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" Hidden="true"/>
+        <Input  Type="STRING" Description="Struttura" Name="nm_struttura" Hidden="true"/>
+        <Input  Type="STRING" Description="Unità documentaria" Name="ds_unita_doc"/>
+        <Input  Type="INTEGER" Description="Progressivo" Name="pg_upd_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input  Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc_princ"/>
+        <Input  Type="DATETIME" Description="Data" Name="ts_ini_ses"/>
+        <CheckBox Type="STRING" Description="Forzatura" Name="fl_forza_upd" Readonly="true"/>
+        <Input  Type="STRING" Description="Note" Name="nt_upd"/>
+        <Input  Type="STRING" Description="Stato di generazione indice AIP" Name="ti_stato_upd_elenco_vers"/>
+        <CheckBox Type="STRING" Description="Presenza aggiornamenti falliti e risolti" Name="fl_ses_upd_ko_risolti" Readonly="true"/>        
+    </List>
+    
+    <Fields Name="DettaglioAggMeta" Description="Dettaglio aggiornamento metadati" >
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_upd_unita_doc" Hidden="true"/>
+        <Input  Type="INTEGER" Description="Identificatore ud" Name="id_unita_doc" Hidden="true"/>
+        <Input  Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut" />
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input  Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc_princ"/>
+        <Input  Type="INTEGER" Description="Progressivo" Name="pg_upd_unita_doc"/>
+        <Input  Type="STRING" Description="Urn" Name="ds_urn_upd_unita_doc"/>
+        <CheckBox Type="STRING" Description="Aggiornamento profilo archivistico" Name="fl_upd_profilo_archiv" />
+        <CheckBox Type="STRING" Description="Aggiornamento fascicolo principale" Name="fl_upd_fascicolo_princ" />
+        <CheckBox Type="STRING" Description="Aggiornamento fascicoli secondari" Name="fl_upd_fascicoli_sec" />
+        <CheckBox Type="STRING" Description="Aggiornamento profilo unità documentaria" Name="fl_upd_profilo_unita_doc" />
+        <CheckBox Type="STRING" Description="Aggiornamento collegamenti" Name="fl_upd_lnk_unita_doc" />
+        <CheckBox Type="STRING" Description="Aggiornamento dati specifici" Name="fl_upd_dati_spec" />
+        <CheckBox Type="STRING" Description="Aggiornamento dati specifici di migrazione" Name="fl_upd_dati_spec_migraz" />
+        
+        <Input Type="STRING" Description="Versione servizio di aggiornamento" Name="cd_versione_xml"  />
+        <Input Type="STRING" Description="Utente versatore" Name="nm_userid"  />
+        <Input Type="DATETIME" Description="Data versamento" Name="ts_ini_ses"  />
+        <Input Type="STRING" Description="Tipo aggiornamento" Name="tipo_upd_unita_doc"  />
+        <CheckBox Type="STRING" Description="Forza aggiornamento" Name="fl_forza_upd" />
+        <Input Type="STRING" Description="Note" Name="nt_upd"  />
+        <Input Type="STRING" Description="Stato generazione indice AIP" Name="ti_stato_upd_elenco_vers"  />
+        <Input Type="STRING" Description="Stato conservazione" Name="ti_stato_conservazione"  />
+        <Input Type="INTEGER" Description="Elenco di versamento" Name="id_elenco_vers"  />
+        
+        <Input Type="STRING" Description="Hash SIP" Name="ds_hash_xml_rich"  />
+        <Input Type="STRING" Description="Algoritmo hash SIP" Name="ds_algo_hash_xml_rich"  />
+        <Input Type="STRING" Description="Encoding hash SIP" Name="cd_encoding_hash_xml_rich"  />
+        <TextArea Type="STRING" Description="" Name="bl_xml_rich" Rows="500" Cols="500" MaxLength="1000000000" />        
+        
+        <Input Type="STRING" Description="Hash SIP" Name="ds_hash_xml_risp"  />
+        <Input Type="STRING" Description="Algoritmo hash SIP" Name="ds_algo_hash_xml_risp"  />
+        <Input Type="STRING" Description="Encoding hash SIP" Name="cd_encoding_hash_xml_risp"  />
+        <TextArea Type="STRING" Description="" Name="bl_xml_risp" Rows="500" Cols="500" MaxLength="1000000000" />        
+        
+        <Button Name="scaricaXmlAggButton" Description="Scarica XML di aggiornamento" Type="STRING" />  
+    </Fields>
+    
+    <List Name="DocumentiAggiornatiList" Description="Lista documenti aggiornati" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="STRING" Description="Elemento" Name="ds_elemento"/>
+        <Input  Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <CheckBox Type="STRING" Description="Aggiornamento profilo documento" Name="fl_upd_profilo_doc" Readonly="true" />
+        <CheckBox Type="STRING" Description="Aggiornamento dati specifici" Name="fl_upd_dati_spec" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Aggiornamento dati specifici di migrazione" Name="fl_upd_dati_spec_migraz" Readonly="true"/>
+    </List>
+    
+    <List Name="ComponentiAggiornatiList" Description="Lista componenti aggiornati" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="STRING" Description="Elemento" Name="ds_elemento"/>
+        <Input  Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <Input  Type="INTEGER" Description="Numero ordine" Name="ni_ord_comp_doc"/>
+        <CheckBox Type="STRING" Description="Aggiornamento info versate" Name="fl_upd_info_vers" Readonly="true" />
+        <CheckBox Type="STRING" Description="Aggiornamento dati specifici" Name="fl_upd_dati_spec" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Aggiornamento dati specifici di migrazione" Name="fl_upd_dati_spec_migraz" Readonly="true"/>
+    </List>
+    
+     <List Name="AggMetaRisoltiList" Description="Lista aggiornamenti metadati risolti" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_ses_upd_unita_doc_ko"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="ts_ini_ses"/>
+        <Input  Type="STRING" Description="Codice errore principale" Name="cd_err_princ"/>
+        <Input  Type="STRING" Description="Errore principale" Name="ds_err_princ"/>
+    </List>
+    
+    <List Name="WarningRilevatiList" Description="Lista warning rilevati" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Progressivo" Name="cd_warn"/>
+        <Input  Type="STRING" Description="Codice warning" Name="cd_err"/>
+        <Input  Type="STRING" Description="Warning" Name="ds_err"/>
+    </List>
+    
+    <Section Name="VersatoreSection" Description="Versatore" Legend="Versatore" LoadOpened="true" ShowButton="false"/>
+    <Section Name="UnitaDocumentariaSection" Description="Unità documentaria" Legend="Unità documentaria" LoadOpened="true" ShowButton="false"/>
+    <Section Name="AggiornamentoSection" Description="Aggiornamento metadati" Legend="Aggiornamento metadati" LoadOpened="true" ShowButton="false"/>
+    
+    <Tab Name="AggMetaTabs" Description="Aggiornamenti metadati">
+        <TabElement Name="InformazioniPrincipaliAggMeta" Description="Informazioni principali" />
+        <TabElement Name="InformazioniVersamentoAggMeta" Description="Informazioni versamento" />
+        <TabElement Name="IndiceSipAggiornamentoAggMeta" Description="Indice SIP aggiornamento" />    
+        <TabElement Name="RapportoVersamentoAggMeta" Description="Rapporto versamento" />    
+    </Tab>
+    
+    <Tab Name="AggMetaListsTabs" Description="Aggiornamenti metadati">
+        <TabElement Name="ListaDocAggiornatiAggMeta" Description="Lista documenti aggiornati" />    
+        <TabElement Name="ListaCompAggiornatiAggMeta" Description="Lista componenti aggiornati" />    
+        <TabElement Name="ListaAggMetaRisoltiAggMeta" Description="Lista aggiornamenti metadati risolti" />    
+        <TabElement Name="ListaWarnRilevatiAggMeta" Description="Lista warning rilevati" />    
+    </Tab>
+            
+    <List Name="AggMetaFallitiList" Description="Lista aggiornamenti metadati falliti" hideInsertButton="true" hideDeleteButton="true" >
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_ses_upd_unita_doc_ko"/>
+        <Input  Type="STRING" Description="Ente/Struttura" Name="ds_ente_strut"/>
+        <Input  Type="STRING" Description="Unità documentaria" Name="ds_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input  Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc_princ"/>
+        <Input  Type="DATETIME" Description="Data" Name="ts_ini_ses"/>
+        <Input  Type="STRING" Description="Errore principale" Name="cd_ds_err_princ"/>
+        <Input  Type="STRING" Description="Controllo errore principale" Name="cd_controllo_ws_princ"/>
+        <Input  Type="STRING" Description="Stato aggiornamento" Name="ti_stato_ses_upd_ko"/>
+        <CheckBox Type="STRING" Description="Scelto" Name="scelto" />
+    </List>
+    
+    <Fields Name="DettaglioAggMetaFallito" Description="Dettaglio aggiornamento metadati fallito">
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_ses_upd_unita_doc_ko"/>
+        <Input  Type="STRING" Description="Ente / Struttura" Name="ds_ente_strut"/>
+        <Input  Type="STRING" Description="Unità documentaria" Name="ds_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input  Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc_princ"/>
+        <Input  Type="STRING" Description="Versione ws" Name="cd_versione_ws"/>
+        <Input  Type="STRING" Description="Errore principale" Name="cd_ds_err_princ"/>
+        <Input  Type="STRING" Description="Controllo errore principale" Name="cd_controllo_ws_princ"/>        
+        <ComboBox Type="STRING" Description="Stato aggiornamento" Name="ti_stato_ses_upd_ko"/>
+        <Input  Type="STRING" Description="Utente versatore" Name="nm_userid"/>
+        <Input  Type="STRING" Description="Data inizio versamento" Name="ds_ts_ini_ses"/>
+        <Input  Type="STRING" Description="Data fine versamento" Name="ds_ts_fine_ses"/>
+        <TextArea Type="STRING" Rows="500" Cols="500" MaxLength="1000000000" Description="" Name="bl_xml_rich"/>
+        <TextArea Type="STRING" Rows="500" Cols="500" MaxLength="1000000000" Description="" Name="bl_xml_risp"/>
+        <Button Name="scaricaXmlAggFallitoButton" Description="Scarica XML di aggiornamento" Type="STRING" />
+<!--
+        <Button Name="verificaVersFallitiDettButton" Description="Verifica versamenti falliti" Type="STRING" />
+        <Button Name="modStatoFascKoButton" Description="Modifica stato fascicolo derivante da versamenti falliti" Type="STRING" />
+        <Button Name="assegnaNonRisolubileAFascKoButton" Description="Assegna non risolubile a versamenti falliti" Type="STRING" />
+        <Button Name="assegnaNonVerifAFascKoButton" Description="Assegna non verificato a versamenti falliti" Type="STRING" />
+        <Button Name="assegnaVerifAFascKoButton" Description="Assegna verificato a versamenti falliti" Type="STRING" />
+-->        
+    </Fields>
+    
+    <List Name="UlterioriErroriList" Description="Lista ulteriori errori" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Progressivo" Name="pg_err"/>
+        <Input  Type="STRING" Description="Tipo" Name="ti_err"/>
+        <Input  Type="STRING" Description="Errore" Name="cd_ds_err"/>
+        <Input  Type="STRING" Description="Controllo in errore" Name="cd_controllo_ws"/>
+    </List>
+    
+    <Tab Name="AggMetaFallitiTabs" Description="Aggiornamenti metadati">
+        <TabElement Name="InformazioniPrincipaliFalliti" Description="Informazioni principali" />
+        <TabElement Name="IndiceSipAggiornamentoFalliti" Description="Indice SIP aggiornamento" />
+        <TabElement Name="EsitoNegativoVersamentoFalliti" Description="Esito negativo versamento" />    
+        <TabElement Name="ListaUlterioriErroriFalliti" Description="Lista ulteriori errori" />
+    </Tab>
+    
+    <!-- Filtri aggiornamento metadati errati -->
+    <Fields Name="FiltriAggMetaErrati" Description="Filtri aggiornamento metadati errati" >
+        <Input  Type="DATE" Description="Data da" Name="dt_ini_ses_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="hh_ini_ses_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="mm_ini_ses_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data a" Name="dt_ini_ses_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="hh_ini_ses_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="mm_ini_ses_a" MaxLength="2"/>
+        <MultiSelect Type="STRING" Description="Stato aggiornamento" Name="ti_stato_ses"  />
+        <ComboBox  Type="INTEGER" Description="Classe errore" Name="id_classe_err_sacer" Trigger="true" />
+        <ComboBox  Type="INTEGER" Description="Errore" Name="id_err_sacer"  />
+        <Button Name="ricercaAggMetaErratiButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+    
+    <List Name="AggMetaErratiList" Description="Lista aggiornamenti metadati errati" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_ses_upd_unita_doc_err"/>
+        <Input  Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut" />
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input  Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc_princ"/>
+        <Input  Type="STRING" Description="Data" Name="ds_ts_ini_ses"/>
+        <Input  Type="STRING" Description="Codice errore principale" Name="cd_err_princ"/>
+        <Input  Type="STRING" Description="Errore principale" Name="ds_err_princ"/>
+        <Input  Type="STRING" Description="Controllo errore principale" Name="cd_controllo_ws_princ"/>
+        <Input  Type="STRING" Description="Stato aggiornamento" Name="ti_stato_ses"  />
+    </List>
+    
+    <Fields Name="DettaglioAggMetaErrato" Description="Dettaglio aggiornamento metadati errato" >
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_ses_upd_unita_doc_err"/>
+        <Input  Type="STRING" Description="Data inizio versamento" Name="ds_ts_ini_ses"/>
+        <Input  Type="STRING" Description="Data fine versamento" Name="ds_ts_fine_ses"/>
+        <Input Type="STRING" Description="Utente versatore" Name="nm_userid"  />
+        <Input  Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut" />
+        <CheckBox Type="STRING" Description="Esiste struttura" Name="fl_esiste_strut" />
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <CheckBox Type="STRING" Description="Esiste registro" Name="fl_esiste_reg" />
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <CheckBox Type="STRING" Description="Esiste tipologia unita doc." Name="fl_esiste_tipo_unita_doc" />
+        <Input  Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc_princ"/>
+        <CheckBox Type="STRING" Description="Esiste tipo documento principale" Name="fl_esiste_tipo_doc_princ" />
+        <Input  Type="STRING" Description="Errore principale" Name="cd_ds_err_princ"/>
+        <Input  Type="STRING" Description="Controllo errore principale" Name="cd_controllo_ws_princ"/>
+        <ComboBox Type="STRING" Description="Stato aggiornamento" Name="ti_stato_ses"  />
+        <TextArea Type="STRING" Description="Indice SIP aggiornamento" Name="bl_xml_rich" Rows="500" Cols="500" MaxLength="1000000000" />        
+        <TextArea Type="STRING" Description="Esito negativo versamento" Name="bl_xml_risp" Rows="500" Cols="500" MaxLength="1000000000" />      
+        <Button Name="scaricaXmlAggErratoButton" Description="Scarica XML di aggiornamento" Type="STRING" />  
+    </Fields>
+    
+    <List Name="UlterioriErroriErratiList" Description="Lista ulteriori errori" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Progressivo" Name="pg_err"/>
+        <Input  Type="STRING" Description="Tipo" Name="ti_err"/>
+        <Input  Type="STRING" Description="Errore" Name="cd_ds_err"/>
+        <Input  Type="STRING" Description="Controllo in errore" Name="cd_controllo_ws"/>
+    </List>
+    
+    <Tab Name="AggMetaErratiTabs" Description="Aggiornamenti metadati">
+        <TabElement Name="InformazioniPrincipaliErrati" Description="Informazioni principali" />
+        <TabElement Name="IndiceSipAggiornamentoErrati" Description="Indice SIP aggiornamento" />
+        <TabElement Name="EsitoNegativoVersamentoErrati" Description="Esito negativo versamento" />    
+        <TabElement Name="ListaUlterioriErroriErrati" Description="Lista ulteriori errori" />
+    </Tab>
+    
+    <List Name="UnitaDocAggMetaFallitiList" Description="Lista unità documentarie derivanti da aggiornamenti metadati falliti" hideInsertButton="true" hideDeleteButton="true" >
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_upd_unita_doc_ko"/>
+        <Input  Type="STRING" Description="Ente/Struttura" Name="ds_ente_strut"/>
+        <Input  Type="STRING" Description="Unità documentaria" Name="ds_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria ultimo aggiornamento" Name="nm_tipo_unita_doc_last"/>
+        <Input  Type="STRING" Description="Tipo documento principale ultimo aggiornamento" Name="nm_tipo_doc_princ_last"/>
+        <Input  Type="DATETIME" Description="Data ultimo aggiornamento" Name="ts_ini_last_ses"/>
+        <Input  Type="STRING" Description="Errore principale ultimo aggiornamento" Name="cd_ds_err_princ_last"/>
+        <Input  Type="STRING" Description="Controllo errore principale ultimo aggiornamento" Name="cd_controllo_ws_princ_last"/>
+        <Input  Type="STRING" Description="Stato aggiornamento unità documentaria derivante da aggiornamenti falliti" Name="ti_stato_upd_ud_ko"/>
+    </List>
+    
+    <Fields Name="DettaglioUnitaDocAggMetaFallito" Description="Dettaglio unità documentaria derivante da aggiornamenti metadati falliti">
+        <Input  Type="INTEGER" Description="Identificatore" Name="id_upd_unita_doc_ko"/>
+        <Input  Type="INTEGER" Description="Identificatore ultimo aggiornamento" Name="id_ses_upd_ud_ko_last"/>
+        <Input  Type="STRING" Description="Ente / Struttura" Name="ds_ente_strut"/>
+        <Input  Type="STRING" Description="Unità documentaria" Name="ds_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria ultimo aggiornamento" Name="nm_tipo_unita_doc_last"/>
+        <Input  Type="STRING" Description="Tipo documento principale ultimo aggiornamento" Name="nm_tipo_doc_princ_last"/>
+        <Input  Type="STRING" Description="Versione ws" Name="cd_versione_ws"/>
+        <Input  Type="STRING" Description="Errore principale" Name="cd_ds_err_princ"/>
+        <Input  Type="STRING" Description="Controllo errore principale" Name="cd_controllo_ws_princ"/>        
+        <ComboBox Type="STRING" Description="Stato aggiornamento unità documentaria derivante da aggiornamenti falliti" Name="ti_stato_upd_ud_ko"/>
+        <Input  Type="STRING" Description="Utente versatore" Name="nm_userid"/>
+        <Input  Type="STRING" Description="Data inizio versamento ultimo aggiornamento" Name="ds_ts_ini_last_ses"/>
+        <Input  Type="STRING" Description="Data fine versamento ultimo aggiornamento" Name="ds_ts_fine_last_ses"/>
+        <TextArea Type="STRING" Rows="500" Cols="500" MaxLength="1000000000" Description="Indice SIP aggiornamento" Name="bl_xml_rich_last"/>
+        <TextArea Type="STRING" Rows="500" Cols="500" MaxLength="1000000000" Description="Esito negativo versamento" Name="bl_xml_risp_last"/>
+        <Button Name="scaricaXmlAggFallitoLastButton" Description="Scarica XML ultimo aggiornamento" Type="STRING" />
+    </Fields>
+    
+    <List Name="UlterioriErroriUnitaDocAggMetaFallitiList" Description="Lista ulteriori errori" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Progressivo" Name="pg_err"/>
+        <Input  Type="STRING" Description="Tipo" Name="ti_err"/>
+        <Input  Type="STRING" Description="Errore" Name="cd_ds_err"/>
+        <Input  Type="STRING" Description="Controllo in errore" Name="cd_controllo_ws"/>
+    </List>
+    
+    <Tab Name="UnitaDocAggMetaFallitiTabs" Description="Aggiornamenti metadati">
+        <TabElement Name="InformazioniPrincipaliUnitaDocAggFalliti" Description="Informazioni principali" />
+        <TabElement Name="IndiceSipAggiornamentoUnitaDocAggFalliti" Description="Indice SIP aggiornamento" />
+        <TabElement Name="EsitoNegativoVersamentoUnitaDocAggFalliti" Description="Esito negativo versamento" />    
+        <TabElement Name="ListaUlterioriErroriUnitaDocAggFalliti" Description="Lista ulteriori errori" />
+    </Tab>
+   
+</Form>

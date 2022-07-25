@@ -1,0 +1,140 @@
+package it.eng.parer.web.util;
+
+import java.util.Date;
+import java.util.HashMap;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.parer.job.utils.JobConstants;
+import it.eng.parer.ws.dto.IRispostaWS;
+import it.eng.parer.ws.dto.IRispostaWS.SeverityEnum;
+import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.ejb.ControlliWS;
+import it.eng.parer.ws.recupero.dto.ParametriParser;
+import it.eng.parer.ws.recupero.dto.ParametriRecupero;
+import it.eng.parer.ws.recupero.dto.RecuperoExt;
+import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
+import it.eng.parer.ws.recupero.ejb.RecuperoSync;
+import it.eng.parer.ws.recupero.utils.RecuperoZipGen;
+import it.eng.parer.ws.recupero.utils.XmlDateUtility;
+import it.eng.parer.ws.utils.AvanzamentoWs;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
+import it.eng.parer.ws.xml.versRespStato.ECEsitoExtType;
+import it.eng.parer.ws.xml.versRespStato.ECEsitoPosNegType;
+import it.eng.parer.ws.xml.versRespStato.EsitoChiamataWSType;
+import it.eng.parer.ws.xml.versRespStato.EsitoGenericoType;
+import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
+
+@Stateless(mappedName = "DownloadReportFirma")
+@LocalBean
+public class DownloadReportFirma {
+
+    private static Logger logger = LoggerFactory.getLogger(DownloadReportFirma.class.getName());
+
+    RispostaWSRecupero rispostaWs;
+    RecuperoExt recuperoExt;
+    RecuperoSync recuperoSync;
+
+    @EJB
+    ControlliWS controlliWS;
+
+    public DownloadReportFirma() {
+    }
+
+    public void recuperaReportFirma(RispostaWSRecupero rispostaWs, RecuperoExt rec, String path) {
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        AvanzamentoWs tmpAvanzamentoWs = rispostaWs.getAvanzamento();
+
+        if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
+            try {
+                RecuperoZipGen tmpGen = new RecuperoZipGen(rispostaWs);
+                tmpGen.generaZipReportFirma(path, rec);
+                tmpAvanzamentoWs.resetFase();
+            } catch (Exception e) {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                        "Errore nella fase di generazione del report del EJB " + e.getMessage());
+                logger.error("Errore nella fase di generazione del report del EJB ", e);
+            }
+        }
+
+        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(rec.getDatiXml());
+        }
+    }
+
+    public void initRispostaWs(RispostaWSRecupero rispostaWs, AvanzamentoWs avanzamento, RecuperoExt rec) {
+
+        logger.debug("sono nel metodo init");
+        StatoConservazione myEsito = new StatoConservazione();
+
+        RispostaControlli rs = this.loadWsVersions(rec);
+
+        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.OK);
+        rispostaWs.setErrorCode("");
+        rispostaWs.setErrorMessage("");
+
+        // prepara la classe esito e la aggancia alla rispostaWS
+        myEsito.setEsitoGenerale(new EsitoGenericoType());
+        rispostaWs.setIstanzaEsito(myEsito);
+
+        // aggiunge l'istanza della classe parametri di recupero
+        rec.setParametriRecupero(new ParametriRecupero());
+        rec.getParametriRecupero().setTipoRichiedente(JobConstants.TipoSessioniRecupEnum.DOWNLOAD);
+
+        // aggiunge l'istanza della classe parametri del parser
+        rec.setParametriParser(new ParametriParser());
+
+        // aggancia alla rispostaWS
+        rispostaWs.setAvanzamento(avanzamento);
+
+        XMLGregorianCalendar d = XmlDateUtility.dateToXMLGregorianCalendar(new Date());
+        myEsito.setDataRichiestaStato(d);
+
+        if (!rs.isrBoolean()) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsError(rs.getCodErr(), rs.getDsErr());
+        } else {
+            myEsito.getEsitoGenerale().setCodiceEsito(ECEsitoExtType.POSITIVO);
+            myEsito.getEsitoGenerale().setCodiceErrore("");
+            myEsito.getEsitoGenerale().setMessaggioErrore("");
+
+            myEsito.setVersione(rec.getDescrizione().getVersione(rec.getWsVersions()));
+
+            myEsito.setEsitoChiamataWS(new EsitoChiamataWSType());
+            myEsito.getEsitoChiamataWS().setCredenzialiOperatore(ECEsitoPosNegType.POSITIVO);
+            myEsito.getEsitoChiamataWS().setVersioneWSCorretta(ECEsitoPosNegType.POSITIVO);
+        }
+    }
+
+    public RispostaWSRecupero getRispostaWs() {
+        return rispostaWs;
+    }
+
+    public void setRispostaWs(RispostaWSRecupero rispostaWs) {
+        this.rispostaWs = rispostaWs;
+    }
+
+    public RecuperoExt getRecuperoExt() {
+        return recuperoExt;
+    }
+
+    public void setRecuperoExt(RecuperoExt recuperoExt) {
+        this.recuperoExt = recuperoExt;
+    }
+
+    protected RispostaControlli loadWsVersions(RecuperoExt ext) {
+        RispostaControlli rs = controlliWS.loadWsVersions(ext.getDescrizione());
+        // if positive ...
+        if (rs.isrBoolean()) {
+            ext.setWsVersions((HashMap<String, String>) rs.getrObject());
+        }
+        return rs;
+    }
+}

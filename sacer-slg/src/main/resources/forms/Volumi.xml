@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione Volumi" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd">
+ 
+    <Section Name="ChiaveSection" Description="" Legend="Chiave Unità documentaria" ShowButton="true" LoadOpened="true"/>
+    <Section Name="VolumiSelSection" Description="" Legend="Volumi selezionati" ShowButton="true"/>
+    <Section Name="DsVolumeSection" Description="" Legend="Informazioni descrittive del volume / elenco" ShowButton="true" LoadOpened="true"/>
+    <Section Name="DsCriterioSection" Description="" Legend="Informazioni descrittive del criterio di raggruppamento" ShowButton="true" LoadOpened="true"/>
+ 
+    <!-- Filtri di ricerca volumi -->
+    <Fields Name="Filtri" Description="Ricerca volumi" >
+        <ComboBox Type="STRING" Description="Stato" Name="ti_stato_volume_conserv"  Alias="ti_stato_volume_conserv"/>
+        <Input Type="INTEGER"  Description="ID volume" Name="id_volume_conserv"/>
+        <Input Type="STRING"  Description="Nome" Name="nm_volume_conserv"/>
+        <Input Type="STRING"  Description="Descrizione" Name="ds_volume_conserv"/>
+        <ComboBox Type="STRING"  Description="Creato manualmente" Name="creato_man" />
+        <Input Type="DATE" Description="Data creazione da" Name="dt_creazione_da"/>
+        <Input Type="DATE" Description="Data creazione a" Name="dt_creazione_a"/>
+        <ComboBox  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+        <ComboBox Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr"/> 
+        <ComboBox Type="STRING" Description="Presenza firme" Name="ti_presenza_firme" />
+        <ComboBox Type="STRING" Description="Validità firme" Name="ti_val_firme"/>
+        <Input Type="STRING" Description="Note su volume chiuso" Name="nt_volume_chiuso"/>
+        <Input Type="STRING" Description="Note su indice volume" Name="nt_indice_volume"/>
+        <Button Name="ricerca" Description="Ricerca" Type="STRING" />
+        <Button Name="pulisci" Description="Pulisci" Type="STRING" />
+    </Fields>
+
+    <!-- Lista dei volumi trovati in base ai parametri di ricerca -->
+    <List Name="VolumiList" Description="Lista volumi elenchi" hideInsertButton="true">
+        <Input Type="INTEGER"  Description="ID volume" Name="id_volume_conserv"/>
+        <Input Type="STRING" Description="Nome volume" Name="nm_volume_conserv"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato_volume_conserv" Alias="ti_stato_volume_conserv"/>
+        <Input Type="DATETIME" Description="Creato il" Name="dt_creazione" />
+        <Input Type="INTEGER" Description="Dimensione in bytes" Name="ni_kb_size" GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Chiuso il" Name="dt_chius" />
+        <Input Type="STRING" Description="Presenza firme" Name="ti_presenza_firme"/>
+        <Input Type="STRING" Description="Validità firme" Name="ti_val_firme"/>
+        <Input Type="DATETIME" Description="Firmato il" Name="dt_firma_marca" />
+        <Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />  
+    </List>
+    
+    <Fields Name="Organizzazione" Description="Organizzazione" >
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente"/>
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+    </Fields>
+    
+    <!-- Campi della pagina di dettaglio Volume -->
+    <Fields Name="VolumiDetail" Description="Dettaglio volume">
+        <Input Type="STRING" Description="Informazioni descrittive del volume" Name="ds_volume_label"/>
+        <Input Type="STRING" Description="Informazioni descrittive del criterio di raggruppamento" Name="ds_criterio_label"/>
+        <Input Type="INTEGER" Description="Id struttura" Name="id_strut_volume" Hidden="true"/>
+        <Input Type="INTEGER" Description="ID Volume" Name="id_volume_conserv" />
+        <Input Type="STRING" Description="Nome" Name="nm_volume_conserv" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_volume_conserv" />
+        <Input Type="STRING" Description="Stato" Name="ti_stato_volume_conserv" />  
+        <Input Type="DATETIME" Description="Creato il" Name="dt_creazione" />
+        <Input Type="INTEGER" Description="Numero massimo unità documentarie" Name="ni_max_unita_doc" GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Numero massimo componenti" Name="ni_max_comp" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Tipo scadenza (chiusura)" Name="ti_scad_chius_volume"/>
+        <Input Type="INTEGER" Description="Scadenza chiusura" Name="ni_tempo_scad_chius" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Scadenza chiusura" Name="ti_tempo_scad_chius"/>
+        <Input Type="INTEGER" Description="Scadenza chiusura firme" Name="ni_tempo_scad_chius_firme" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Scadenza chiusura firme" Name="ti_tempo_scad_chius_firme"/>
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_criterio_raggr" />
+        <Input Type="INTEGER" Description="Numero unità documentarie" Name="ni_unita_doc_volume" GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Numero componenti" Name="ni_comp_volume"  GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Dimensione in bytes" Name="ni_kb_size"  GroupingDecimal="true" />
+        <Input Type="STRING" Description="Presenza firme" Name="ti_presenza_firme"/>
+        <Input Type="STRING" Description="Validità firme" Name="ti_val_firme"/>
+        <Input Type="DATETIME" Description="Scadenza chiusura" Name="dt_scad_chius" />
+        <TextArea Name="nt_indice_volume" Description="Note su indice volume" Type="STRING" Rows="5" Cols="5" MaxLength="2000" />
+        <Input Type="DATETIME" Description="Chiuso il" Name="dt_chius" />
+        <Input Type="STRING" Description="Motivo chiusura" Name="dl_motivo_chius"/>
+        <Input Type="STRING" Description="Versione indice volume" Name="cd_versione_indice"/>
+        <Input Type="DATETIME" Description="Firmato il" Name="dt_firma_marca"/>
+        <TextArea Name="nt_volume_chiuso" Description="Note su volume chiuso" Type="STRING" Rows="5" Cols="5" MaxLength="2000" />
+        <Button Name="ricercaUdSemplice" Description="Ricerca unità documentarie semplice" Type="STRING" />
+        <Button Name="ricercaUdAvanzata" Description="Ricerca unità documentarie avanzata" Type="STRING" />
+        <Button Name="listaOperazioniVolume" Description="Lista operazioni volume" Type="STRING" />
+        <Button Name="downloadProveConservazione" Description="Scarica prove di conservazione" Type="STRING" />
+    </Fields>
+       
+    <!-- Lista dei Componenti del Volume -->
+    <List Name="ComponentiList" Description="Componenti" hideDeleteButton="true" hideUpdateButton="true" hideInsertButton="true">
+        <Link Name="unitaDoc"  Description="" Type="STRING" Target="UnitaDocumentarieList" Tooltip="Dettaglio unità documentaria"/>
+        <Link Name="doc"  Description="" Type="STRING" Target="DocumentoList" Tooltip="Dettaglio documento"/>
+        <CheckBox Type="STRING" Description="" Name="select_comp" Hidden="true"/>
+        <Input Type="INTEGER" Description="Id componente" Name="id_comp_doc" Hidden="true"/>
+        <Input Type="STRING" Description="URN calcolato" Name="ds_urn_comp_calc_short" />
+        <Input Type="STRING" Description="Nome componente" Name="ds_nome_comp_vers" />
+        <ComboBox Type="STRING" Description="Supporto" Name="ti_supporto_comp" />
+        <Input Type="STRING" Description="Tipo componente" Name="nm_tipo_comp_doc" />
+        <Input Type="STRING" Description="Formato" Name="nm_formato_file_doc_vers" />
+        <Input Type="DATETIME" Description="Data acquisizione documento" Name="dt_creazione_doc" />
+        <Input Type="INTEGER" Description="Dimensione in bytes" Name="ni_size_file_calc" Hidden="true" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Dimensione in bytes" Name="ni_size_file_calc_format" />
+        <CheckBox Type="STRING"  Description="Firmato" Name="fl_comp_firmato" Readonly="true" />
+        <ComboBox Type="STRING" Description="Esito firme versamento" Name="ti_esito_verif_firme_vers"/>
+        <ComboBox Type="STRING" Description="Esito firme chiusura volume / elenco" Name="ti_esito_verif_firme_chius"/>
+    </List>
+    
+    <!-- Liste fittizie create per eseguire la redirectToAction a UnitaDocumentarie utilizzando la ListAction-->
+    <List Name="UnitaDocumentarieList" Description="Unità documentarie">
+        <Input Type="STRING" Description="" Name="id_ud"/>
+    </List>
+    
+    <List Name="DocumentoList" Description="Documento">
+        <Input Type="STRING" Description="" Name="id_doc"/>
+    </List>
+    
+    <!-- Filtri per i componenti del volume -->
+    <Fields Name="ComponentiFiltri" Description="Filtri" >
+        <ComboBox Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4" />
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/> 
+        <Input Type="DATE" Description="Data acquisizione documento da" Name="dt_creazione_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_creazione_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_creazione_da" MaxLength="2"/>
+        <Input Type="DATE" Description="Data acquisizione documento a" Name="dt_creazione_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_creazione_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_creazione_a" MaxLength="2"/>
+        <ComboBox Type="INTEGER" Trigger="true" Description="Tipo struttura documento" Name="nm_tipo_strut_doc" />
+        <ComboBox Type="INTEGER" Description="Tipo componente" Name="nm_tipo_comp_doc" />
+        <ComboBox Type="STRING" Description="Formato versato" Name="nm_formato_file_vers" />
+        <Input Type="INTEGER" Description="Dimensione in bytes da" Name="ni_size_file_da"  GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Dimensione in bytes a" Name="ni_size_file_a"  GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="Firmato" Name="fl_comp_firmato" />
+        <ComboBox Type="STRING" Description="Conformità firme" Name="ti_esito_contr_conforme"/> 
+        <ComboBox Type="STRING" Description="Esito firme versamento" Name="ti_esito_verif_firme_vers"/> 
+        <ComboBox Type="STRING" Description="Esito verifica firme chiusura volume / elenco" Name="ti_esito_verif_firme_chius"/> 
+        <Input Type="DATE" Description="Data validità firme da" Name="dt_scad_firma_comp_da"/>
+        <Input Type="DATE" Description="Data validità firme a" Name="dt_scad_firma_comp_a"/>        
+        
+        <!-- Nuovi campi da analisi 2.0-->
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+        
+        <Input Type="STRING" Description="Nome componente" Name="ds_nome_comp_vers" />
+        <Input Type="STRING" Description="Hash versato" Name="ds_hash_file_vers"/>
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file"/>
+        
+        <Input Type="STRING" Description="Urn versato" Name="dl_urn_comp_vers"/>
+        <Input Type="STRING" Description="Formato di rappresentazione" Format="" Name="ds_formato_rappr_calc"/>
+        <Input Type="STRING" Description="Formato di rappresentazione esteso" Format="" Name="ds_formato_rappr_esteso_calc"/>
+        
+        <ComboBox Type="STRING" Description="Forzatura accettazione" Name="fl_forza_accettazione" />
+        <ComboBox Type="STRING" Description="Forzatura conservazione" Name="fl_forza_conservazione" />
+        
+        <ComboBox Type="STRING" Description="Esito formato versamento" Name="ti_esito_contr_formato_file"/> 
+        <Input Type="STRING" Description="Hash calcolato" Name="ds_hash_file_calc"/>
+        <ComboBox Type="STRING" Description="Algoritmo hash calcolato" Name="ds_algo_hash_file_calc"/>
+        <ComboBox Type="STRING" Description="Encoding hash calcolato" Name="cd_encoding_hash_file_calc"/>
+        <Input Type="STRING" Description="Urn calcolato" Name="ds_urn_comp_calc"/>
+        <!-- /Nuovi campi da analisi 2.0-->      
+        <Button Name="ricercaComp" Description="Ricerca" Type="STRING" />        
+    </Fields>
+
+    <Tab Name="VolumiTabs" Description="Volumi">
+        <TabElement Name="DettaglioVol" Description="Dettaglio volume / elenco" />
+        <TabElement Name="FiltriComp" Description="Ricerca componenti"/>    
+    </Tab>
+    
+</Form>

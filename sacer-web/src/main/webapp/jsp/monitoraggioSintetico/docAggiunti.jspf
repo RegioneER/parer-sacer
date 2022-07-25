@@ -1,0 +1,56 @@
+<div style="float:right">
+    <slf:lblField name="<%=MonitoraggioSinteticoForm.CalcolaTotaliButtonList.CALC_TOT_DOC_AGGIUNTI_BUTTON%>" width="w100"/>
+</div>
+<p>&nbsp;</p>
+<div style="float: right;">
+    <slf:lblField name="<%=MonitoraggioSinteticoForm.CalcolaTotaliButtonList.CALC_TOT_DOC_AGGIUNTI_B30_BUTTON%>" width="w100"/>
+</div>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO DOCUMENTI AGGIUNTI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th colspan="2">&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th colspan="2">&nbsp;30gg antecedenti&nbsp;</th>
+            <th>&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Documenti aggiunti</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Documenti aggiunti in attesa memorizzazione</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_ATTESA_MEM_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_ATTESA_MEM_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_ATTESA_MEM_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_ATTESA_MEM_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=B30gg&amp;ti_stato=IN_ATTESA_MEMORIZZAZIONE&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_ATTESA_MEM_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Documenti aggiunti in attesa schedulatore</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_ATTESA_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=IN_ATTESA_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_ATTESA_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_ATTESA_SCHED_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=IN_ATTESA_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_ATTESA_SCHED_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=B30gg&amp;ti_stato=IN_ATTESA_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_ATTESA_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Documenti aggiunti non selezionati da schedulatore</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=NON_SELEZ_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_NOSEL_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=NON_SELEZ_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_NOSEL_SCHED_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=NON_SELEZ_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.FL_DOC_NOSEL_SCHED_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=NON_SELEZ_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_NOSEL_SCHED_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaDocumenti&amp;ti_creazione=B30gg&amp;ti_stato=NON_SELEZ_SCHED&amp;tipo=DOCUMENTI"><slf:field name="<%= MonitoraggioSinteticoForm.DocAggiunti.NI_DOC_NOSEL_SCHED_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

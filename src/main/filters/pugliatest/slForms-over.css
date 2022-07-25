@@ -1,0 +1,42 @@
+/*
+Overlay per il foglio di stile slForms.css per adeguare l'aspetto
+dell'applicativo ai vari ambienti.
+*/
+
+/* CSS per REGIONE PUGLIA, il colore dominate è blu (#2a62bc)*/
+
+.listToolBar span.activeRecords {
+	height: 27px;
+	background-color: #2a62bc; color: white;
+	font-weight: bold; font-size:10px; width: auto; border: 0px none; height: 20px;
+	padding-left: 6px; padding-right: 6px;
+	padding-bottom: 3px; cursor: pointer; margin-left: 3px;
+}
+
+#menu {background-color: #294A62; color: white; float: left; max-width: 270px; width: 18%; font-size: 10px; height: auto !important;}
+
+#menu h2 {background-color: #2a62bc; font-weight: bold; color: white; padding: 2px 2px 2px 10px; background-position: left center; background-repeat: no-repeat;}
+
+#menu .version{border-bottom: 1px solid white; padding-left: 4px; background-color: #2a62bc;}
+
+div#content fieldset span.legend { color: #2a62bc; font-weight: bold; font-size: 12px; text-align: left; display: block; padding: 0.5em;}
+
+.pulsantiera input{ background-color: #2a62bc; color: #FFFFFF; font-weight: bold; font-size:10px; width: auto; border: 0px none; height: 20px; padding-left: 6px; padding-right: 6px; padding-bottom: 3px;}
+
+div#content input.pulsante  { background-color: #2a62bc; color: white; font-weight: bold; font-size:10px; width: auto; border: 0px none; height: 20px; padding-left: 6px; padding-right: 6px; padding-bottom: 3px; cursor: pointer; margin-left: 3px;}
+
+a.linkButton{ background-color: #2a62bc; color: white; font-weight: bold; font-size:10px; width: auto; border: 0px none; height: 20px; padding-left: 6px; padding-right: 6px; padding-bottom: 5px; padding-top: 4px; cursor: pointer; margin-left: 3px; text-decoration: none; }
+
+.toolBar{background-color: #2a62bc; font-size: 10px; font-weight: bold; display: block; height: 28px; margin-bottom: 2px; width: 100%;}
+
+#loading{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5000;
+    background-color: #2a62bc;
+    font-size: 120%;
+    color: white;
+    padding: 2px;
+    display:none;
+}

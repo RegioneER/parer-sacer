@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Amministrazione Sistema" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema">
+    <Fields Name="Bottoni" Description="" >
+        <Button Name="applica_livelli" Description="Applica" Type="STRING"/>
+    </Fields>
+    
+    <!-- Registro parametri -->
+     <Fields Name="Configuration" Description="Registro dei parametri">
+        <ComboBox Name="ti_param_applic_combo" Description="Funzione" Type="STRING"/>
+        <ComboBox Name="ti_gestione_param_combo" Description="Tipo di gestione" Type="STRING"/>
+        <ComboBox Name="fl_appart_applic_combo" Description="Parametri di applicazione" Type="STRING"/>
+        <ComboBox Name="fl_appart_ambiente_combo" Description="Parametri di ambiente" Type="STRING"/>
+        <ComboBox Name="fl_appart_strut_combo" Description="Parametri di struttura" Type="STRING"/>
+        <ComboBox Name="fl_appart_tipo_unita_doc_combo" Description="Parametri sul tipo unità documentaria" Type="STRING"/>        
+        <ComboBox Name="fl_appart_aa_tipo_fascicolo_combo" Description="Parametri sul periodo di validità del tipo fascicolo" Type="STRING"/>        
+        <Button Name="load_config_list" Description="Carica Configurazione" Type="STRING" />
+        <Button Name="edit_config" Description="Modifica" Type="STRING" />
+        <Button Name="add_config" Description="Aggiungi Configurazione" Type="STRING" />
+        <Button Name="save_config" Description="Salva Configurazione" Type="STRING" />
+    </Fields>
+    
+    <List Name="ConfigurationList" Description="Configurazioni" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
+        <Input Name="ti_param_applic" Description="Funzione" Type="STRING" MaxLength="50"/>
+        <ComboBox Name="ti_gestione_param" Description="Gestione" Type="STRING" />
+        <Input Name="nm_param_applic" Description="Parametro" Type="STRING" MaxLength="100"/>
+        <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" MaxLength="100" />
+        <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" MaxLength="254"/>
+        <ComboBox Name="ti_valore_param_applic" Description="Tipo valore" Type="STRING" AddBlank="false"/>
+        <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" MaxLength="4000"/>
+        <Input Name="ds_valore_param_applic" Description="Valore applicativo" Type="STRING" MaxLength="4000"/>
+        <CheckBox Name="fl_multi" Description="Multiplo" Type="STRING" />
+        <CheckBox Name="fl_appart_applic" Description="Applic" Type="STRING" />
+        <CheckBox Name="fl_appart_ambiente" Description="Ambiente" Type="STRING" />
+        <CheckBox Name="fl_appart_strut" Description="Struttura" Type="STRING" />
+        <CheckBox Name="fl_appart_tipo_unita_doc" Description="Tipo ud" Type="STRING" />
+        <CheckBox Name="fl_appart_aa_tipo_fascicolo" Description="Tipo fascicolo" Type="STRING" />
+    </List>
+    
+    <!-- Gestione sistemi di migrazione -->
+    <Fields Name="FiltriRicercaSistemiMigrazione" Description="Filtri ricerca sistemi migrazione">
+        <Input Name="nm_sistema_migraz_ric" Description="Nome" Type="STRING" />
+        <Input Name="ds_sistema_migraz_ric" Description="Descrizione" Type="STRING" />
+        <Button Name="ricercaSistemiMigrazioneButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+    
+    <List Name="SistemiMigrazioneList" Description="Lista sistemi migrazione" >
+        <Input Name="id_sistema_migraz" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_sistema_migraz" Description="Nome" Type="STRING" />
+        <Input Name="ds_sistema_migraz" Description="Descrizione" Type="STRING" />
+    </List>
+    
+    <Fields Name="DettaglioSistemaMigrazione" Description="Dettaglio sistema migrazione">
+        <Input Name="id_sistema_migraz" Description="Id" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_sistema_migraz" Description="Nome" Type="STRING" Required="true" MaxLength="100"/>
+        <Input Name="ds_sistema_migraz" Description="Descrizione" Type="STRING" Required="true" MaxLength="254"/>
+    </Fields>
+    
+</Form>

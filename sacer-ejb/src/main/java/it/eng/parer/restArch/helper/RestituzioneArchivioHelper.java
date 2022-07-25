@@ -1,0 +1,274 @@
+package it.eng.parer.restArch.helper;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
+import it.eng.parer.async.utils.UdSerFascObj;
+import it.eng.parer.entity.AroAipRestituzioneArchivio;
+import it.eng.parer.entity.AroRichiestaRa;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa;
+import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.restArch.dto.RicercaRichRestArchBean;
+import it.eng.parer.viewEntity.AroVLisItemRa;
+import it.eng.parer.viewEntity.AroVRicRichRa;
+import it.eng.parer.web.util.Constants;
+
+/**
+ *
+ * @author DiLorenzo_F
+ */
+@Stateless
+@LocalBean
+public class RestituzioneArchivioHelper extends GenericHelper {
+
+    /**
+     * Verifica l'esistenza di una richiesta di restituzione archivio per l'ente convenzionato
+     * <code>idEnteConvenz</code>
+     *
+     * @param idEnteConvenz
+     *            id ente convenzionato
+     * 
+     * @return true se esiste
+     */
+    public boolean isRichRestArchExisting(BigDecimal idEnteConvenz) {
+        Query query = getEntityManager().createQuery(
+                "SELECT COUNT(r) FROM AroRichiestaRa r " + "WHERE r.orgStrut.idEnteConvenz = :idEnteConvenz "
+                        + "AND r.tsFine IS NOT NULL " + "AND r.tiStato != :tiStato");
+        query.setParameter("idEnteConvenz", idEnteConvenz);
+        query.setParameter("tiStato", AroRichiestaTiStato.ANNULLATO);
+        Long count = (Long) query.getSingleResult();
+        return count > 0L;
+    }
+
+    /**
+     * Verifica l'esistenza di una richiesta di restituzione archivio per l'ente convenzionato e per gli stati dati in
+     * input
+     *
+     * @param idEnteConvenz
+     *            id ente convenzionato
+     * @param tiStato
+     *            lista degli stati della richiesta di restituzione archivio
+     * 
+     * @return true se esiste
+     */
+    public boolean isRichRestArchByStatoExisting(BigDecimal idEnteConvenz, List<AroRichiestaTiStato> tiStato) {
+        Query query = getEntityManager().createQuery(
+                "SELECT COUNT(r) FROM AroRichiestaRa r " + "WHERE r.orgStrut.idEnteConvenz = :idEnteConvenz "
+                        + "AND r.tsFine IS NOT NULL " + "AND r.tiStato IN :tiStato");
+        query.setParameter("idEnteConvenz", idEnteConvenz);
+        query.setParameter("tiStato", tiStato);
+        Long count = (Long) query.getSingleResult();
+        return count > 0L;
+    }
+
+    public List<Long> retrieveRichRestArchExpiredToProcess(BigDecimal idEnteConvenz) {
+        Date systemDate = new Date();
+        Query query = getEntityManager()
+                .createQuery("SELECT r.idRichiestaRa FROM AroRichiestaRa r " + "WHERE (r.tiStato != :tiStato "
+                        + "AND r.tsInizio + 1 < :systemDate " + "AND r.orgStrut.idEnteConvenz = :idEnteConvenz)");
+        query.setParameter("tiStato", AroRichiestaTiStato.ANNULLATO);
+        query.setParameter("systemDate", systemDate);
+        query.setParameter("idEnteConvenz", idEnteConvenz);
+        List<Long> richieste = query.getResultList();
+        return richieste;
+    }
+
+    /**
+     * Seleziona le unità documentarie, le serie e i fascicoli appartenenti all'ente convenzionato passato come
+     * parametro ritornandole sotto forma di insieme UdSerFascObj
+     *
+     * @param struttura
+     *            entity OrgStrut
+     * 
+     * @return lista oggetti di tipo {@link UdSerFascObj}
+     */
+    public List<UdSerFascObj> retrieveUdSerFascToProcess(OrgStrut struttura) {
+        /*
+         * select * from ARO_V_SEL_UD_SER_FASC_BY_ENTE v where id_rootstrut = 3323 order by id_strut, id_unita_doc;
+         */
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT u.idUnitaDoc, u.idSerie, u.idFascicolo, u.tiEle "
+                + "FROM AroVSelUdSerFascByEnte u " + "WHERE u.idRootstrut = :idRootstrut ");
+
+        // TIP: fdilorenzo, DEFINISCE L'ORDINAMENTO CON CUI DEVONO ESSERE ELABORATI GLI OGGETTI (A SUPPORTO DELLA LOGICA
+        // DEFINITA IN ANALISI)
+        queryStr.append("ORDER BY u.tiEle");
+
+        Query q = getEntityManager().createQuery(queryStr.toString());
+        q.setParameter("idRootstrut", struttura.getIdStrut());
+
+        List<Object[]> udSerFascObjectList = (List<Object[]>) q.getResultList();
+        List<UdSerFascObj> udSerFascObjSet = new ArrayList<>();
+
+        for (Object[] udSerFascObject : udSerFascObjectList) {
+            Constants.TipoEntitaSacer tipoEntitaSacer = (udSerFascObject[3].equals("01_UNI_DOC"))
+                    ? Constants.TipoEntitaSacer.UNI_DOC : (udSerFascObject[3].equals("02_SERIE"))
+                            ? Constants.TipoEntitaSacer.SER : Constants.TipoEntitaSacer.FASC;
+            BigDecimal id = (udSerFascObject[3].equals("01_UNI_DOC")) ? (BigDecimal) udSerFascObject[0]
+                    : (udSerFascObject[3].equals("02_SERIE")) ? (BigDecimal) udSerFascObject[1]
+                            : (BigDecimal) udSerFascObject[2];
+            udSerFascObjSet.add(new UdSerFascObj(id, tipoEntitaSacer));
+        }
+
+        return udSerFascObjSet;
+    }
+
+    // <editor-fold defaultstate="expand" desc="Query per funzioni online">
+    public List<AroVRicRichRa> retrieveAroVRicRichRa(RicercaRichRestArchBean filtri, List<Long> idEnteConvenzList) {
+        String clause = " WHERE ";
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicRichRa ("
+                + "r.idRichiestaRa, r.nmEnteConvenz, r.nmEnteStrut, r.idEnte, r.idStrut, r.idEnteConvenz, r.totali, r.estratti, r.errori, "
+                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.priorita)" + " FROM AroVRicRichRa r ");
+        if (idEnteConvenzList != null && !idEnteConvenzList.isEmpty()) {
+            if (idEnteConvenzList.size() == 1) {
+                queryStr.append(clause).append("r.idEnteConvenz = :idEnteConvenz ");
+            } else {
+                queryStr.append(clause).append("r.idEnteConvenz IN :idEnteConvenz ");
+            }
+            clause = " AND ";
+        }
+        if (!filtri.getTi_stato_rich_rest_arch_cor().isEmpty()) {
+            if (filtri.getTi_stato_rich_rest_arch_cor().size() == 1) {
+                queryStr.append(clause).append("r.tiStato = :tiStatoRichRestArchCor ");
+            } else {
+                queryStr.append(clause).append("r.tiStato IN :tiStatoRichRestArchCor ");
+            }
+        }
+        queryStr.append("ORDER BY r.idRichiestaRa, r.maxDtEstrazione");
+
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        if (idEnteConvenzList != null && !idEnteConvenzList.isEmpty()) {
+            if (idEnteConvenzList.size() == 1) {
+                query.setParameter("idEnteConvenz", idEnteConvenzList.get(0));
+            } else {
+                query.setParameter("idEnteConvenz", idEnteConvenzList);
+            }
+        }
+        if (!filtri.getTi_stato_rich_rest_arch_cor().isEmpty()) {
+            if (filtri.getTi_stato_rich_rest_arch_cor().size() == 1) {
+                query.setParameter("tiStatoRichRestArchCor", filtri.getTi_stato_rich_rest_arch_cor().get(0));
+            } else {
+                query.setParameter("tiStatoRichRestArchCor", filtri.getTi_stato_rich_rest_arch_cor());
+            }
+        }
+
+        return (List<AroVRicRichRa>) query.getResultList();
+    }
+
+    public List<Long> retrieveOrgEnteSiamList(RicercaRichRestArchBean filtri) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT DISTINCT enteSiam.idEnteSiam FROM SIOrgEnteSiam enteSiam, OrgStrut strut "
+                        + "JOIN strut.orgEnte ente " + "JOIN ente.orgAmbiente ambiente "
+                        + "WHERE strut.idEnteConvenz = enteSiam.idEnteSiam ");
+        String andWord = "AND ";
+        if (filtri.getId_strut() != null) {
+            queryStr.append(andWord).append("strut.idStrut = :idStrut ");
+            andWord = "AND ";
+        }
+        if (filtri.getId_ente() != null) {
+            queryStr.append(andWord).append("ente.idEnte = :idEnte ");
+            andWord = "AND ";
+        }
+        if (filtri.getId_ambiente() != null) {
+            queryStr.append(andWord).append("ambiente.idAmbiente = :idAmbiente ");
+            andWord = "AND ";
+        }
+
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        if (filtri.getId_strut() != null) {
+            query.setParameter("idStrut", filtri.getId_strut());
+        }
+        if (filtri.getId_ente() != null) {
+            query.setParameter("idEnte", filtri.getId_ente());
+        }
+        if (filtri.getId_ambiente() != null) {
+            query.setParameter("idAmbiente", filtri.getId_ambiente());
+        }
+
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        List<Long> listaEnteConvenz = query.getResultList();
+        return listaEnteConvenz;
+    }
+
+    public List<AroVLisItemRa> getAroVLisItemRa(BigDecimal idRichRestArch, BigDecimal idStrut) {
+        Query query = getEntityManager().createQuery("SELECT DISTINCT new it.eng.parer.viewEntity.AroVLisItemRa ("
+                + "a.idRichiestaRa, a.idStrut, a.anno, a.totUd, a.numAip, a.dimensione, a.numDocs, a.numErrori, "
+                + "a.numEstratti, a.avanzamento)"
+                + " FROM AroVLisItemRa a WHERE a.idRichiestaRa = :idRichRestArch AND a.idStrut = :idStrut ORDER BY a.anno");
+        query.setParameter("idRichRestArch", idRichRestArch);
+        query.setParameter("idStrut", idStrut);
+        List<AroVLisItemRa> list = query.getResultList();
+        return list;
+    }
+
+    public Long countAroItemRichRestArch(BigDecimal idRichRestArch, TiStatoAroAipRa... tiStato) {
+        List<TiStatoAroAipRa> statiList = Arrays.asList(tiStato);
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT COUNT(i) FROM AroAipRestituzioneArchivio i WHERE i.aroRichiestaRa.idRichiestaRa = :idRichRestArch ");
+        if (!statiList.isEmpty()) {
+            if (statiList.size() == 1) {
+                queryStr.append("AND i.tiStato = :tiStatoItem ");
+            } else {
+                queryStr.append("AND i.tiStato IN :tiStatoItem ");
+            }
+        }
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idRichRestArch", idRichRestArch);
+        if (!statiList.isEmpty()) {
+            if (statiList.size() == 1) {
+                query.setParameter("tiStatoItem", statiList.get(0));
+            } else {
+                query.setParameter("tiStatoItem", statiList);
+            }
+        }
+        Long count = (Long) query.getSingleResult();
+        return count;
+    }
+    // </editor-fold>
+
+    /**
+     * Recupera tutti gli errori sugli item della richiesta
+     *
+     * @param idRichRestArch
+     *            l'id della richiesta
+     * 
+     * @return lista oggetti di tipo {@link AroAipRestituzioneArchivio}
+     */
+    public List<AroAipRestituzioneArchivio> retrieveAroErrItemRestArch(long idRichRestArch) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT errItemRestArch FROM AroAipRestituzioneArchivio errItemRestArch "
+                        + "WHERE errItemRestArch.aroRichiestaRa.idRichiestaRa = :idRichRestArch ");
+        queryStr.append("AND errItemRestArch.tiStato = :tiErrItemRestArch ");
+
+        Query q = getEntityManager().createQuery(queryStr.toString());
+        q.setParameter("idRichRestArch", idRichRestArch);
+        q.setParameter("tiErrItemRestArch", TiStatoAroAipRa.ERRORE);
+
+        List<AroAipRestituzioneArchivio> list = q.getResultList();
+        return list;
+    }
+
+    /**
+     * Ricavo la struttura che ha creato la richiesta, ovvero quella che ha definito il primo stato
+     *
+     * @param idRichRestArch
+     *            l'id della richiesta
+     * 
+     * @return l'id utente
+     */
+    public long getIdStrutFirstStateRich(BigDecimal idRichRestArch) {
+        Query q = getEntityManager().createQuery("SELECT richRestArch FROM AroRichiestaRa richRestArch "
+                + "WHERE richRestArch.idRichiestaRa = :idRichRestArch ");
+        q.setParameter("idRichRestArch", idRichRestArch.longValue());
+        List<AroRichiestaRa> list = (List<AroRichiestaRa>) q.getResultList();
+        return list.get(0).getOrgStrut().getIdStrut();
+    }
+}

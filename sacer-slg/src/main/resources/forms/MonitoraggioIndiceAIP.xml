@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione monitoraggio riepilogo processo generazione indice AIP" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Fields Name="FiltriMonitoraggioIndiceAIP" Description="Filtri di ricerca" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />       
+        <Input Type="INTEGER" Description="Numero di giorni di permanenza nello stato" Name="ni_gg_stato" />      
+        <Button Name="generaMonitoraggioIndiceAIPButton" Description="Genera riepilogo processo generazione indice AIP" Type="STRING" />
+    </Fields>
+    
+    <List Name="MonitoraggioIndiceAIPList" Description="Riepilogo processo generazione indice AIP" >
+        <Link Name="cd_ti_eve_stato_elenco_vers" Description="Fase processo" Type="STRING" Target="linkLoadListaStrutture" Tooltip="Visualizza lista strutture" isTargetList="false" />
+        <Link Name="ni_elenchi_fisc" Description="Numero elenchi fiscali" Type="INTEGER" Target="linkLoadListaElenchiFiscali" Tooltip="Visualizza lista elenchi" isTargetList="false" />
+        <Link Name="ni_elenchi_no_fisc" Description="Numero elenchi non fiscali" Type="INTEGER" Target="linkLoadListaElenchiNoFiscali" Tooltip="Visualizza lista elenchi" isTargetList="false" />
+        <Link Name="ni_elenchi_total" Description="Numero elenchi totali" Type="INTEGER" Target="linkLoadListaElenchiTotali" Tooltip="Visualizza lista elenchi" isTargetList="false" />       
+        <Link Name="unitaDoc" Description="Unità documentaria" Type="STRING" Target="linkLoadListaUd" Tooltip="Lista delle unità documentarie contenute negli elenchi" isTargetList="false"/>        
+    </List>
+    
+    <!-- STRUTTURE -->
+    <Fields Name="FiltriStruttureMonitoraggioIndiceAIP" Description="Filtri di ricerca strutture" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Hidden="true"/>
+        <Input Type="INTEGER" Description="Numero di giorni di permanenza nello stato" Name="ni_gg_stato" />  
+        <ComboBox Type="STRING" Description="Fase processo" Name="cd_ti_eve_stato_elenco_vers" />      
+        <Button Name="generaStrutMonIndiceAIPButton" Description="Genera riepilogo strutture processo generazione indice AIP" Type="STRING" />
+    </Fields>
+    
+    <List Name="StrutMonitoraggioIndiceAIPList" Description="Lista strutture processo generazione indice AIP" >
+        <Input Type="INTEGER" Description="Id Ambiente" Name="id_ambiente" Hidden="true"/>  
+        <Input Type="INTEGER" Description="Id Ente" Name="id_ente" Hidden="true"/>  
+        <Input Type="INTEGER" Description="Id Struttura" Name="id_strut" Hidden="true"/>  
+        <Input Type="STRING" Description="Struttura" Name="nm_strut" />  
+        <Link Name="ni_elenchi_fisc" Description="Numero elenchi fiscali" Type="INTEGER" Target="linkLoadListaElenchiFiscaliDaStrut" Tooltip="Visualizza lista elenchi" isTargetList="false" />
+        <Link Name="ni_elenchi_no_fisc" Description="Numero elenchi non fiscali" Type="INTEGER" Target="linkLoadListaElenchiNoFiscaliDaStrut" Tooltip="Visualizza lista elenchi" isTargetList="false" />
+        <Link Name="ni_elenchi_total" Description="Numero elenchi totali" Type="INTEGER" Target="linkLoadListaElenchiTotaliDaStrut" Tooltip="Visualizza lista elenchi" isTargetList="false" />       
+        <Link Name="unitaDoc"  Description="Unità documentaria" Type="STRING" Target="linkLoadListaUdDaStrut" Tooltip="Lista delle unità documentarie contenute negli elenchi delle strutture" isTargetList="false" />        
+    </List>
+    
+    <!-- ELENCHI -->
+    <Fields Name="FiltriElenchiMonitoraggioIndiceAIP" Description="Filtri di ricerca elenchi" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />      
+        <Input Type="INTEGER" Description="Numero di giorni di permanenza nello stato" Name="ni_gg_stato" />             
+        <ComboBox Type="STRING" Description="Fase processo" Name="cd_ti_eve_stato_elenco_vers" /> 
+        <ComboBox Type="STRING" Description="Fiscale" Name="fl_elenco_fisc" />      
+        <Button Name="generaElenchiMonIndiceAIPButton" Description="Genera riepilogo elenchi processo generazione indice AIP" Type="STRING" />
+    </Fields>
+    
+    <List Name="ElenchiMonitoraggioIndiceAIPList" Description="Lista elenchi processo generazione indice AIP" >
+        <Input Type="INTEGER" Description="Id Ambiente" Name="id_ambiente" Hidden="true"/>  
+        <Input Type="INTEGER" Description="Id Ente" Name="id_ente" Hidden="true"/>  
+        <Input Type="INTEGER" Description="Id Struttura" Name="id_strut" Hidden="true"/>  
+        <Input Type="STRING" Description="Struttura" Name="struttura" />  
+        <Input Type="INTEGER" Description="Id elenco" Name="id_elenco_vers" /> 
+        <Input Type="STRING" Description="Nome elenco" Name="nm_elenco" />  
+        <Input Type="STRING" Description="Descrizione elenco" Name="ds_elenco" />  
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_elenco_fisc" Readonly="true" />
+        <Input Type="INTEGER" Description="Numero ud contenute" Name="ni_unita_doc_tot" />
+        <Input Type="INTEGER" Description="Numero ud versate" Name="ni_unita_doc_vers_elenco" />
+        <Input Type="INTEGER" Description="Numero doc_aggiunti" Name="ni_doc_agg_elenco" />
+        <Input Type="INTEGER" Description="Numero modifiche metadati" Name="ni_upd_unita_doc" />
+        <Input Type="DATETIME" Description="Timestamp stato" Name="ts_stato_elenco_vers" />
+        <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
+        <Link Name="unitaDoc"  Description="Unità documentarie versate" Type="STRING" Target="linkLoadListaUdDaElenco" Tooltip="Lista delle unità documentarie contenute negli elenchi" isTargetList="false" />        
+    </List>
+    
+    <!-- UNITA' DOCUMENTARIE --> 
+     <Fields Name="FiltriUdMonitoraggioIndiceAIP" Description="Filtri di ricerca unità documentarie" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />   
+        <ComboBox Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>   
+        <Input Type="INTEGER" Description="Numero di giorni di permanenza nello stato" Name="ni_gg_stato" />             
+        <ComboBox Type="STRING" Description="Fase processo" Name="cd_ti_eve_stato_elenco_vers" /> 
+        <ComboBox Type="STRING" Description="Fiscale" Name="fl_elenco_fisc" />      
+        <Input Type="INTEGER" Description="Id elenco" Name="id_elenco_vers" /> 
+        <ComboBox Type="STRING" Description="Stato unità documentarie" Name="ti_stato_ud_elenco_vers" />   
+        <Button Name="generaUdMonIndiceAIPButton" Description="Genera riepilogo unità documentarie processo generazione indice AIP" Type="STRING" />
+        <Button Name="contaUdMonIndiceAIPButton" Description="Conta" Type="STRING" />
+    </Fields>
+    
+    <List Name="UdMonitoraggioIndiceAIPList" Description="Lista unità documentarie processo generazione indice AIP" >
+        <Input Type="INTEGER" Description="Id unita doc" Name="id_unita_doc" Hidden="true"/> 
+        <Input Type="STRING" Description="Struttura" Name="struttura" />  
+        <Input Type="INTEGER" Description="Id elenco" Name="id_elenco" /> 
+        <Input Type="STRING" Description="Nome elenco" Name="nm_elenco" />  
+        <Input Type="STRING" Description="Descrizione elenco" Name="ds_elenco" />  
+        <Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" />
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc" />
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_elenco_fisc" Readonly="true" />      
+        <Input Type="STRING" Description="Stato unità documentaria" Name="stato_ud" />
+        <Input Type="DATETIME" Description="Timestamp stato" Name="timestamp_stato" />
+        <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
+        <CheckBox Type="STRING" Description="Verifica firme a data versamento" Name="fl_verifica_firma_eseguita" Readonly="true" />
+        <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />
+        <!--<Link Name="unitaDoc"  Description="" Type="STRING" Target="UnitaDocumentarieList" Tooltip="Dettaglio unità documentaria" />        -->
+    </List>
+    
+    <List Name="ConteggioMonitoraggioIndiceAIPList" Description="Risultato conteggio" >
+        <Input Name="msg_coda" Description="Numero messaggi in coda" Type="INTEGER"  />
+        <Input Name="timestamp_min" Description="Timestamp minimo" Type="DATETIME"  />
+        <Input Name="timestamp_max" Description="Timestamp massimo" Type="DATETIME"  />
+    </List>
+        
+</Form>

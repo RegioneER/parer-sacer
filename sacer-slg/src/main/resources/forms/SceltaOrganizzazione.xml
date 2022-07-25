@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Scelta Struttura" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema">
+    
+    <Fields Name="Strutture" Description="SCEGLI STRUTTURA" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" WithSearchComp="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" Required="true" WithSearchComp="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Required="true" WithSearchComp="true"/>
+        <ComboBox Name="nm_strut" Description="Strutture" Type="INTEGER" />
+        <Button Secure="false" Name="selezionaStruttura" Description="Seleziona" Type="STRING"/>
+    </Fields>
+</Form>

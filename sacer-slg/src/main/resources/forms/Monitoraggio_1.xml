@@ -1,0 +1,813 @@
+<!-- This is Monitoraggio... the last frontier of the Sacer features! -->
+<Form Description="Sezione Monitoraggio" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Section Name="AmbitoTerritorialeSection" Description="" Legend="Ambito territoriale" LoadOpened="true" ShowButton="false"/>
+
+    <Fields Name="RiepilogoStruttura" Description="Riepilogo struttura" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Required="true"/>
+        <Button Name="ricercaRiepilogoStrutturaButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+
+    <!-- Lista riepilogo per struttura -->
+    <List Name="RiepilogoStrutturaList" Description="Riepilogo per struttura" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <CheckBox Type="STRING" Description="Versamenti falliti, non risolti e non verificati" Name="fl_sessioni_fallite_no_ris" Readonly="true"/>
+        <CheckBox Type="STRING" Description="SIP non selezionati dai criteri di raggruppamento" Name="fl_doc_senza_elenco" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Documenti appartenenti ad elenchi da firmare" Name="fl_elenco_chiuso" Readonly="true"/>
+        <Link Name="volumiFirma"  Tooltip="Lista elenchi di versamento da firmare" Description="Elenchi di versamento da firmare" Type="STRING" Target="getListaElenchiVersamentiFirma" isTargetList="false"/>
+        <CheckBox Type="STRING" Description="Errore sul formato del numero di un registro" Name="fl_err_fmt_numero" Readonly="true"/>
+        <CheckBox Type="STRING" Description="Richieste annullamento versamenti non evase" Name="fl_rich_annul_vers_aperta" Readonly="true"/>
+    </List>
+
+    <!-- Tabelle Riepilogo versamenti -->
+    <Fields Name="RiepilogoVersamenti" Description="Riepilogo versamenti" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Tipo unità documentarie" Name="id_tipo_unita_doc" />
+        <Button Name="riepilogoVersamentiButton" Description="Genera Riepilogo" Type="STRING" />
+        <!-- Versamenti svolti con successo -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_tot" GroupingDecimal="true" />
+        <!-- In attesa memorizzazione -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_in_attesa_mem_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_in_attesa_mem_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_in_attesa_mem_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_in_attesa_mem_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_in_attesa_mem_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_in_attesa_mem_tot" GroupingDecimal="true" />
+        <!-- In attesa schedulatore -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_in_attesa_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_in_attesa_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_in_attesa_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_in_attesa_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_in_attesa_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_in_attesa_tot" GroupingDecimal="true" />
+        <!-- Non selezionati da schedulatore -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_non_sel_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_non_sel_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_non_sel_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_non_sel_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_non_sel_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_non_sel_tot" GroupingDecimal="true" />
+        <!-- Volume aperto -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_vol_aperto_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_vol_aperto_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_vol_aperto_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_vol_aperto_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_vol_aperto_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_vol_aperto_tot" GroupingDecimal="true" />
+        <!-- Volume da chiudere -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_vol_da_chiudere_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_vol_da_chiudere_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_vol_da_chiudere_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_vol_da_chiudere_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_vol_da_chiudere_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_vol_da_chiudere_tot" GroupingDecimal="true" />
+        <!-- Volume da verificare -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_vol_da_verificare_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_vol_da_verificare_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_vol_da_verificare_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_vol_da_verificare_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_vol_da_verificare_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_vol_da_verificare_tot" GroupingDecimal="true" />
+        <!-- Volume chiuso -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_vol_chiuso_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_vol_chiuso_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_vol_chiuso_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_vol_chiuso_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_vol_chiuso_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_vol_chiuso_tot" GroupingDecimal="true" />
+        <!-- Volume firma -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_vol_firma_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_vol_firma_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_vol_firma_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_vol_firma_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_vol_firma_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_vol_firma_tot" GroupingDecimal="true" />
+        <!-- Volume in errore -->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_vol_in_err_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_vol_in_err_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_vol_in_err_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_vol_in_err_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_vol_in_err_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_vol_in_err_tot" GroupingDecimal="true" />
+        <!-- Volume firma senza marca-->
+        <Input  Type="INTEGER" Description="Unità documentarie versate oggi" Name="ni_ud_vol_firma_no_marca_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate negli ultimi 7 giorni" Name="ni_ud_vol_firma_no_marca_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Unità documentarie versate" Name="ni_ud_vol_firma_no_marca_tot" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati oggi" Name="ni_doc_vol_firma_no_marca_corr" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati negli ultimi 7 giorni" Name="ni_doc_vol_firma_no_marca_7" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Documenti versati" Name="ni_doc_vol_firma_no_marca_tot" GroupingDecimal="true" />
+        <!-- Sessioni versamento -->
+        <Input  Type="INTEGER" Description="Fatti oggi" Name="ses_vrs_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni" Name="ses_vrs_7"/>
+        <Input  Type="INTEGER" Description="In totale" Name="ses_vrs_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e risolti e verificati" Name="ses_vrs_ris_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e risolti e verificati" Name="ses_vrs_ris_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e risolti e verificati" Name="ses_vrs_ris_ver_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e risolti e non verificati" Name="ses_vrs_ris_no_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e risolti e non verificati" Name="ses_vrs_ris_no_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e risolti e non verificati" Name="ses_vrs_ris_no_ver_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e non risolubili" Name="ses_vrs_non_risolub_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e non risolubili" Name="ses_vrs_non_risolub_7"/>
+        <Input  Type="INTEGER" Description="In totale e non risolubili" Name="ses_vrs_non_risolub_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e non risolti e verificati" Name="ses_vrs_no_ris_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e non risolti e verificati" Name="ses_vrs_no_ris_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e non risolti e verificati" Name="ses_vrs_no_ris_ver_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e non risolti e non verificati" Name="ses_vrs_no_ris_no_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e non risolti e non verificati" Name="ses_vrs_no_ris_no_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e non risolti e non verificati" Name="ses_vrs_no_ris_no_ver_tot"/>
+        <!-- Sessioni aggiunta -->
+        <Input  Type="INTEGER" Description="Fatti oggi" Name="ses_agg_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni" Name="ses_agg_7"/>
+        <Input  Type="INTEGER" Description="In totale" Name="ses_agg_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e risolti e verificati" Name="ses_agg_ris_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e risolti e verificati" Name="ses_agg_ris_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e risolti e verificati" Name="ses_agg_ris_ver_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e risolti e non verificati" Name="ses_agg_ris_no_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e risolti e non verificati" Name="ses_agg_ris_no_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e risolti e non verificati" Name="ses_agg_ris_no_ver_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e non risolubili" Name="ses_agg_non_risolub_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e non risolubili" Name="ses_agg_non_risolub_7"/>
+        <Input  Type="INTEGER" Description="In totale e non risolubili" Name="ses_agg_non_risolub_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e non risolti e verificati" Name="ses_agg_no_ris_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e non risolti e verificati" Name="ses_agg_no_ris_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e non risolti e verificati" Name="ses_agg_no_ris_ver_tot"/>
+        <Input  Type="INTEGER" Description="Fatti oggi e non risolti e non verificati" Name="ses_agg_no_ris_no_ver_corr"/>
+        <Input  Type="INTEGER" Description="Fatti negli ultimi 7 giorni e non risolti e non verificati" Name="ses_agg_no_ris_no_ver_7"/>
+        <Input  Type="INTEGER" Description="In totale e non risolti e non verificati" Name="ses_agg_no_ris_no_ver_tot"/>
+        <!-- Versamenti falliti distinti per unità documentarie -->
+        <Input  Type="INTEGER" Description="Falliti" Name="vers_ud_falliti"/>
+        <Input  Type="INTEGER" Description="Falliti e non risolubili" Name="vers_ud_falliti_non_risolub"/>
+        <Input  Type="INTEGER" Description="Falliti e verificati" Name="vers_ud_falliti_verif"/>
+        <Input  Type="INTEGER" Description="Falliti e non verificati" Name="vers_ud_falliti_non_verif"/>
+        <!-- Versamenti falliti distinti per documenti aggiunti -->
+        <Input  Type="INTEGER" Description="Falliti" Name="vers_doc_falliti"/>
+        <Input  Type="INTEGER" Description="Falliti e non risolubili" Name="vers_doc_falliti_non_risolub"/>
+        <Input  Type="INTEGER" Description="Falliti e verificati" Name="vers_doc_falliti_verif"/>
+        <Input  Type="INTEGER" Description="Falliti e non verificati" Name="vers_doc_falliti_non_verif"/>
+    </Fields>
+
+    <!-- Filtri documenti -->
+    <Fields Name="FiltriDocumenti" Description="Filtri Documenti" >
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Tipologia unità documentarie" Name="id_tipo_unita_doc" />
+        <ComboBox  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+        <CheckBox  Type="STRING" Description="Solo documento principale" Name="fl_doc_principale" />
+        <ComboBox  Type="STRING" Description="Periodo di versamento" Name="periodo_vers" />
+        <Input  Type="DATE" Description="Data di versamento da" Name="giorno_vers_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento a" Name="giorno_vers_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_a" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento da validato" Name="giorno_vers_da_validato"/>
+        <Input  Type="DATE" Description="Data di versamento a validato" Name="giorno_vers_a_validato"/>
+        <ComboBox  Type="INTEGER" Description="Tipo documento" Name="id_tipo_doc" />
+        <ComboBox  Type="STRING" Description="Stato documento" Name="ti_stato_doc_elenco_vers"  />
+        <Button Name="ricercaDoc" Description="Ricerca" Type="STRING" />
+    </Fields>
+
+    <!-- Lista documenti -->
+    <List Name="DocumentiList" Description="Lista Documenti" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Link Name="unitaDoc"  Tooltip="Dettaglio unità documentaria" Description="" Type="STRING" Target="UnitaDocumentariaList" />
+        <!--Link Name="vol" Tooltip="Dettaglio volume / elenco" Description="" Type="STRING" Target="VolumeList" / -->
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input  Type="STRING" Description="Elemento" Name="ti_doc"/>
+        <Input  Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="dt_creazione"/>
+        <Input  Type="STRING" Description="Stato documento" Name="ti_stato_doc_elenco_vers"/>
+        <!--Input  Type="INTEGER" Description="Volume / elenco" Name="id_volume_conserv"/>
+        <Input  Type="STRING" Description="Stato volume / elenco" Name="ti_stato_volume_conserv"/ -->
+    </List>
+
+    <Section Name="ChiaveSection" Description="" Legend="Chiave Unità Documentaria" LoadOpened="true"/>
+    <Section Name="VersatoreSection" Description="" Legend="Versatore" LoadOpened="true"/>
+
+    <!-- Bottone per calcolo chiave unità documentaria da xml -->
+    <Fields Name="CalcolaChiaveUD" Description="Calcola chiave unità documentaria" >
+        <Button Name="calcolaChiaveUnitaDoc" Description="Calcola chiave unità documentaria e chiave documento" Type="STRING" />
+    </Fields>
+
+    <!-- Bottoni per confermare o annullare il calcolo della struttura versante -->
+    <ButtonList Name="VersamentiFallitiCustomMessageButtonList" Description="MessageBox" >
+        <Button Secure="false" Name="confermaCalcolaChiaveUD"  Description="OK" Type="STRING"  />
+        <Button Secure="false" Name="annullaCalcolaChiaveUD"  Description="Annulla" Type="STRING"  />
+    </ButtonList>
+
+    <!-- Filtri versamenti -->
+    <Fields Name="FiltriVersamenti" Description="Filtri Versamenti" >
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <ComboBox  Type="STRING" Description="Tipo sessione" Name="ti_sessione_vers" Required="true"/>
+        <ComboBox  Type="STRING" Description="Errore risolto" Name="fl_risolto" />
+        <ComboBox  Type="STRING" Description="Periodo di versamento" Name="periodo_vers" />
+        <Input  Type="DATE" Description="Data di versamento da" Name="giorno_vers_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento a" Name="giorno_vers_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_a" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento da validato" Name="giorno_vers_da_validato"/>
+        <Input  Type="DATE" Description="Data di versamento a validato" Name="giorno_vers_a_validato"/>
+        <ComboBox  Type="STRING" Description="Classe errore" Name="classe_errore" Trigger="true"/>
+        <ComboBox  Type="STRING" Description="Sottoclasse errore" Name="sottoclasse_errore" Trigger="true"/>
+        <ComboBox  Type="STRING" Description="Codice errore" Name="codice_errore" />
+        <ComboBox  Type="STRING" Description="Verificato" Name="versamento_ses_err_verif" Trigger="true" />
+        <ComboBox  Type="STRING" Description="Non risolubile" Name="versamento_ses_err_non_risolub" />
+        <Button Name="ricercaVers" Description="Ricerca" Type="STRING" />
+        <Button Name="verificaAutomatica" Description="Verifica automatica" Type="STRING" />
+    </Fields>
+    
+    <Fields Name="FiltriVerificaVersamenti" Description="Filtri Verifica Versamenti" >
+        <Input  Type="STRING" Description="Ambiente" Name="nm_ambiente" Readonly="true"/>
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" Readonly="true"/>
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut" Readonly="true"/>
+        <Input  Type="DATE" Description="Data ultima verifica versamenti falliti" Name="data_registrazione"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_registrazione" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_registrazione" MaxLength="2"/>
+        <Button Name="confermaVerificaAutomatica" Description="Conferma verifica automatica" Type="STRING" />
+        <Input Name="id_strut" Description="" Type="INTEGER" Hidden="true"/>
+    </Fields>
+
+    <Fields Name="FiltriVersamentiUlteriori" Description="Filtri Versamenti" >
+        <MultiSelect Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+        <ComboBox  Type="STRING" Description="Tipi unità documentaria" Name="tipi_ud" />
+    </Fields>
+    
+    <Section Name="FiltriVersamentiChiaveSection" Description="" Legend="Chiave Unità Documentaria" LoadOpened="true" ShowButton="true"/>
+
+    <!-- Lista versamenti falliti -->
+    <List Name="VersamentiFallitiList" Description="Lista Versamenti Falliti" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="ID" Name="id_sessione_vers"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="dt_apertura"/>
+        <Input  Type="DATETIME" Description="Data chiusura" Name="dt_chiusura"/>
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+        <CheckBox  Type="STRING" Description="Errore risolto" Name="fl_risolto" Readonly="true"/>
+        <CheckBox  Type="STRING" Description="Verificato" Name="fl_sessione_err_verif" Readonly="true"/>
+        <CheckBox  Type="STRING" Description="Non risolubile" Name="fl_sessione_err_non_risolub" Readonly="true"/>
+    </List>
+
+    <!-- Versamento fallito -->
+    <Fields Name="VersamentiFallitiDetail" Description="Versamento Fallito" >
+        <Input  Type="INTEGER" Description="ID" Name="id_sessione_vers"/>
+        <Input  Type="STRING" Description="Tipo sessione" Name="ti_sessione_vers"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="dt_apertura"/>
+        <Input  Type="DATETIME" Description="Data chiusura" Name="dt_chiusura"/>
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input  Type="INTEGER" Description="Id struttura" Name="id_strut" Hidden="true"/>
+        <Input  Type="STRING" Description="Utente" Name="nm_cognome_user"/>
+        <Input  Type="STRING" Description="Utente" Name="nm_nome_user"/>
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+        <CheckBox  Type="STRING" Description="Errore risolto" Name="fl_risolto"/>
+        <CheckBox  Type="STRING" Description="Verificato" Name="fl_sessione_err_verif"/>
+        <CheckBox  Type="STRING" Description="Non risolubile" Name="fl_sessione_err_non_risolub"/>
+        <TextArea Name="bl_xml_rich" Description=""  Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+        <TextArea Name="bl_xml_index" Description=""  Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+        <TextArea Name="bl_xml_risp" Description="" Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+    </Fields>
+
+    <!-- Liste fittizie di Documenti List create per eseguire la redirectToAction a UnitaDocumentaria e Volume utilizzando la ListAction -->
+    <List Name="UnitaDocumentariaList" Description="Unità documentaria">
+        <Input Type="STRING" Description="" Name="id_ud"/>
+    </List>
+
+    <List Name="VolumeList" Description="Volume">
+        <Input Type="STRING" Description="" Name="id_vol"/>
+    </List>
+
+    <Tab Name="FiltriRicercaVersamentiFallitiTabs" Description="Filtri ricerca versamenti falliti tabs">
+        <TabElement Name="FiltriGenerali" Description="Filtri generali" />
+        <TabElement Name="FiltriUlteriori" Description="Ulteriori filtri" />
+    </Tab>
+
+    <Tab Name="VersamentiFallitiTabs" Description="Versamento Fallito">
+        <TabElement Name="InfoVersamento" Description="Informazioni versamento" />
+        <TabElement Name="VersamentoXMLRich" Description="Indice SIP" />
+        <TabElement Name="VersamentoXMLIndex" Description="Indice PI_SIP" />
+        <TabElement Name="VersamentoXMLRisp" Description="Esito versamento" />
+    </Tab>
+
+    <!-- Lista file -->
+    <List Name="FileList" Description="Lista file" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Progressivo" Name="pg_file_sessione"/>
+        <Input  Type="STRING" Description="Id" Name="nm_file_sessione"/>
+        <Input  Type="STRING" Description="Nome file per download" Name="nm_file_vers"/>
+    </List>
+
+    <!-- Filtri unità documentarie / documenti derivanti da versamenti falliti -->
+    <Fields Name="FiltriUdDocDerivantiDaVersFalliti" Description="Filtri unità documentarie / documenti derivanti da versamenti falliti" >
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
+        <Input  Type="STRING" Description="Tipo lista" Name="tipo_lista" Required="true" Readonly="true"/>
+        <ComboBox  Type="STRING" Description="Classe errore" Name="classe_errore" Trigger="true"/>
+        <ComboBox  Type="STRING" Description="Sottoclasse errore" Name="sottoclasse_errore" Trigger="true"/>
+        <ComboBox  Type="STRING" Description="Codice errore" Name="codice_errore" />        
+        <ComboBox  Type="STRING" Description="Verificato" Name="fl_verif" />
+        <ComboBox  Type="STRING" Description="Non risolubile" Name="fl_non_risolub" />
+        <Button Name="ricercaDocumentiDerivantiDaVersFalliti" Description="Ricerca" Type="STRING" />
+        <Button Name="verificaVersamentiFalliti" Description="Verifica automatica" Type="STRING" />
+        
+    </Fields>
+
+    <Fields Name="FiltriUdDocDerivantiDaVersFallitiUlteriori" Description="Filtri unità documentarie / documenti derivanti da versamenti falliti ulteriori" >
+        <MultiSelect Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc_ult"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc_ult" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc_ult"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da_ult" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a_ult" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da_ult"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a_ult"/>
+    </Fields>
+
+    <Tab Name="FiltriListaDocumentiDerivantiVersFallitiTabs" Description="Filtri lista unità doc / documenti derivanti da versamenti falliti tabs">
+        <TabElement Name="FiltriGeneraliDerivanti" Description="Filtri generali" />
+        <TabElement Name="FiltriUlterioriDerivanti" Description="Ulteriori filtri" />
+    </Tab>
+
+    <!-- Lista unità documentarie / documenti derivanti da versamenti falliti -->
+    <List Name="DocumentiDerivantiDaVersFallitiList" Description="Lista unità documentarie / documenti derivanti da versamenti falliti" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="STRING" Description="Struttura" Name="struttura" Required="true"/>
+        <Input  Type="INTEGER" Description="Id struttura" Name="id_strut" Required="true" Hidden="true"/>
+        <Input  Type="STRING" Description="Chiave unità documentarie" Name="chiave_ud" Required="true"/>
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" Required="true" Hidden="true"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" Required="true" Hidden="true"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc" Required="true" Hidden="true"/>
+        <Input  Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers" />
+        <Input  Type="DATETIME" Description="Data primo versamento" Name="dt_first_ses_err"/>
+        <Input  Type="DATETIME" Description="Data ultimo versamento" Name="dt_last_ses_err"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <CheckBox  Type="STRING" Description="Verificato" Name="fl_verif" Required="true" Readonly="true"/>
+        <CheckBox  Type="STRING" Description="Non risolubile" Name="fl_non_risolub" Readonly="true"/>
+    </List>
+
+    <!-- Documento non versato -->
+    <Fields Name="DocumentiDerivantiDaVersFallitiDetail" Description="Unità documentarie / documento derivante da versamenti falliti" >
+        <!-- Informazioni principali -->
+        <Input Type="STRING" Description="Struttura" Name="struttura"/>
+        <Input  Type="INTEGER" Description="Id struttura" Name="id_strut" Required="true" Hidden="true"/>
+        <Input Type="STRING" Description="Chiave unità documentaria" Name="chiave_ud"/>
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" Required="true" Hidden="true"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" Required="true" Hidden="true"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc" Required="true" Hidden="true"/>
+        <Input Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers"/>
+        <CheckBox Type="STRING" Description="Verificato" Name="fl_verif"/>
+        <CheckBox Type="STRING" Description="Non risolubile" Name="fl_non_risolub"/>
+        <Input Type="DATETIME" Description="Data primo versamento" Name="dt_first_ses_err"/>
+        <Input Type="DATETIME" Description="Data ultimo versamento" Name="dt_last_ses_err"/>
+        <Input Type="STRING" Description="Tipo versamento" Name="tipo_versamento" Hidden="true" />
+    </Fields>
+
+    <!-- Lista sessioni (nel dettaglio dell'unità doc. / documento non versato) -->
+    <List Name="SessioniList" Description="Lista sessioni" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="Sessione" Name="id_sessione_vers"/>
+        <Input  Type="DATETIME" Description="Data di versamento" Name="dt_chiusura"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+        <CheckBox  Type="STRING" Description="Verificato" Name="fl_sessione_err_verif" />
+        <CheckBox  Type="STRING" Description="Non risolubile" Name="fl_sessione_err_non_risolub" />
+    </List>
+
+    <!-- Filtro sessione e bottone -->
+    <Fields Name="FiltriSessione" Description="Filtri Sessione" >
+        <ComboBox  Type="STRING" Description="Sessione errata verificata" Name="sessione_ses_err_verif"  />
+        <Button Name="cercaSessioniErrate" Description="Cerca" Type="STRING" />
+        <Button Name="calcolaStrutturaVersante" Description="Calcola struttura versante" Type="STRING" />
+    </Fields>
+
+    <!-- Lista sessioni errate -->
+    <List Name="SessioniErrateList" Description="Lista sessioni errate" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="INTEGER" Description="ID" Name="id_sessione_vers"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="dt_apertura"/>
+        <Input  Type="DATETIME" Description="Data chiusura" Name="dt_chiusura"/>
+        <Input  Type="STRING" Description="Tipo sessione" Name="ti_sessione_vers" />
+        <Input  Type="STRING" Description="Struttura" Name="struttura" />
+        <Input  Type="STRING" Description="Chiave unità documentaria" Name="chiave_ud" />
+        <Input  Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers" />
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+        <CheckBox  Type="STRING" Description="Verificato" Name="fl_sessione_err_verif"/>
+    </List>
+
+    <!-- Sessione errata -->
+    <Fields Name="SessioniErrateDetail" Description="Sessione errata" >
+        <Input  Type="INTEGER" Description="ID" Name="id_sessione_vers"/>
+        <Input  Type="STRING" Description="Tipo sessione" Name="ti_sessione_vers"/>
+        <Input  Type="STRING" Description="Versione ws" Name="cd_versione_ws"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="dt_apertura"/>
+        <Input  Type="DATETIME" Description="Data chiusura" Name="dt_chiusura"/>
+        <Input  Type="STRING" Description="Struttura" Name="struttura"/>
+        <Input  Type="STRING" Description="Utente ws" Name="nm_userid_ws"/>
+        <Input  Type="STRING" Description="Utente in xml" Name="nm_userid"/>
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut"/>
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Description="Chiave documento" Name="cd_key_doc_vers"/>
+        <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
+        <Input  Type="STRING" Description="Descrizione errore" Name="ds_err"/>
+        <CheckBox  Type="STRING" Description="Verificato" Name="fl_sessione_err_verif"/>
+        <TextArea Name="bl_xml_rich" Description=""  Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+        <TextArea Name="bl_xml_index" Description=""  Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+        <TextArea Name="bl_xml_risp" Description="" Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+    </Fields>
+
+    <!-- Bottoni per confermare o annullare il calcolo della struttura versante -->
+    <ButtonList Name="SessioniErrateCustomMessageButtonList" Description="MessageBox" >
+        <Button Secure="false"   Name="confermaCalcolo"  Description="OK" Type="STRING"  />
+        <Button Secure="false" Name="annullaCalcolo"  Description="Annulla" Type="STRING"  />
+    </ButtonList>
+
+    <Section Name="OrganizzazioneSection" Description="" Legend="Organizzazione" ShowButton="true" LoadOpened="true"/>
+
+    <Tab Name="SessioniErrateTabs" Description="Sessione Errata">
+        <TabElement Name="InfoSessione" Description="Informazioni sessione" />
+        <TabElement Name="SessioneXMLRich" Description="Indice SIP" />
+        <TabElement Name="SessioneXMLIndex" Description="Indice PI_SIP" />
+        <TabElement Name="SessioneXMLRisp" Description="Esito versamento" />
+    </Tab>
+
+    <!-- Bottoni per salvare i flag di verifica del versamento e della sessione -->
+    <ButtonList Name="salvaVerificaButtonList" Description="Bottoni Salva Verifica">
+        <Button Name="salvaVerificaVersamento" Description="Salva verifica versamento" Type="STRING" />
+        <Button Name="salvaVerificaVersamentoDaDocDerVersFalliti" Description="Salva verifica versamento" Type="STRING" />
+        <Button Name="salvaVerificaSessione" Description="Salva verifica sessione" Type="STRING" />
+    </ButtonList>
+
+    <!-- Bottoni per scaricare file e xml -->
+    <ButtonList Name="ScaricaFileXMLButtonList" Description="Bottoni Download File e XML">
+        <Button Name="scaricaFileXMLVersamento" Description="Scarica lista file e xml del versamento" Type="STRING" />
+        <Button Name="scaricaFileXMLSessione" Description="Scarica lista file e xml della sessione" Type="STRING" />
+    </ButtonList>
+
+    <!-- Filtri operazioni sui volumi -->
+    <Fields Name="FiltriOperazioniVolumi" Description="Filtri operazioni sui volumi">
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut"/>
+        <Input Type="INTEGER"  Description="Volume / elenco" Name="id_volume_conserv"/>
+        <Input  Type="DATE" Description="Data registrazione da" Name="dt_oper_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_oper_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_oper_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data registrazione a" Name="dt_oper_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_oper_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_oper_a" MaxLength="2"/>
+        <ComboBox  Type="STRING" Description="Modalità operazione" Name="ti_mod_oper"/>
+        <!-- Filtri flag -->
+        <CheckBox Type="STRING" Description="Crea volume / elenco" Name="fl_oper_crea_volume" />
+        <CheckBox Type="STRING" Description="Recupera volume / elenco aperto" Name="fl_oper_recupera_volume_aperto" />
+        <CheckBox Type="STRING" Description="Aggiungi documento a volume / elenco" Name="fl_oper_aggiungi_doc_volume" />
+        <CheckBox Type="STRING" Description="Recupera volume / elenco scaduto" Name="fl_oper_recupera_volume_scaduto" />
+        <CheckBox Type="STRING" Description="Set volume / elenco da chiudere" Name="fl_oper_set_volume_da_chiudere" />
+        <CheckBox Type="STRING" Description="Set volume / elenco aperto" Name="fl_oper_set_volume_aperto" />
+        <CheckBox Type="STRING" Description="Inizio crea indice" Name="fl_oper_inizio_crea_indice" />
+        <CheckBox Type="STRING" Description="Recupera volume / elenco in errore" Name="fl_oper_recupera_volume_in_errore" />
+        <CheckBox Type="STRING" Description="Crea indice volume / elenco" Name="fl_oper_crea_indice_volume" />
+        <CheckBox Type="STRING" Description="Marca indice volume / elenco" Name="fl_oper_marca_indice_volume" />
+        <CheckBox Type="STRING" Description="Set volume / elenco in errore" Name="fl_oper_set_volume_in_errore" />
+        <CheckBox Type="STRING" Description="Inizio verifica firme" Name="fl_oper_inizio_verif_firme" />
+        <CheckBox Type="STRING" Description="Chiusura volume / elenco" Name="fl_oper_chiusura_volume" />
+        <CheckBox Type="STRING" Description="Errore verifica firme" Name="fl_oper_err_verif_firme" />
+        <CheckBox Type="STRING" Description="Rimuovi documento da volume / elenco" Name="fl_oper_rimuovi_doc_volume" />
+        <CheckBox Type="STRING" Description="Elimina volume / elenco" Name="fl_oper_elimina_volume" />
+        <CheckBox Type="STRING" Description="Modifica volume / elenco" Name="fl_oper_modifica_volume" />
+        <CheckBox Type="STRING" Description="Firma no marca volume / elenco" Name="fl_oper_firma_no_marca_volume" />
+        <CheckBox Type="STRING" Description="Firma volume / elenco" Name="fl_oper_firma_volume" />
+        <!-- end Filtri flag -->
+        <ComboBox  Type="STRING" Description="Tipo output" Name="ti_output" Required="true"/>
+        <Button Name="ricercaOperazioniVolumi" Description="Ricerca" Type="STRING" />
+        <Button Name="pulisciOperazioniVolumi" Description="Pulisci" Type="STRING" />
+    </Fields>
+
+    <!-- Lista output analitico o cronologico -->
+    <List Name="OutputAnaliticoCronologicoList" Description="Output" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Link Name="unitaDoc" Tooltip="Dettaglio unità documentaria" Description="" Type="STRING" Target="UnitaDocumentariaOutputList" />
+        <Link Name="vol" Tooltip="Dettaglio volume / elenco" Description="" Type="STRING" Target="VolumeOutputList" />
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input  Type="STRING" Description="Tipo operazione" Name="ti_oper"/>
+        <Input  Type="DATETIME" Description="Data" Name="dt_oper"/>
+        <Input  Type="INTEGER" Description="ID" Name="id_volume_conserv"/>
+        <Input  Type="STRING" Description="Nome volume / elenco" Name="nm_volume_conserv"/>
+        <Input  Type="STRING" Description="Modalità" Name="ti_mod_oper"/>
+        <Input  Type="DATETIME" Description="Scadenza" Name="dt_scad_chius"/>
+        <Input  Type="INTEGER" Description="Numero massimo unità documentarie" Name="ni_max_unita_doc" GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero massimo componenti" Name="ni_max_comp" GroupingDecimal="true" />
+        <Input  Type="STRING" Description="Documento" Name="cd_doc"/>
+        <Input  Type="STRING" Description="Motivo chiusura" Name="dl_motivo_chius"/>
+        <Input  Type="STRING" Description="Cognome firmatario" Name="nm_cognome_firmatario" Hidden="true"/>
+        <Input  Type="STRING" Description="Nome firmatario" Name="nm_nome_firmatario" Hidden="true"/>
+        <Input  Type="STRING" Description="Firmatario" Name="firmatario" Hidden="true"/>
+    </List>
+
+    <!-- Lista output aggregato -->
+    <List Name="OutputAggregatoList" Description="Output aggregato" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="STRING" Description="Tipo operazione" Name="ti_oper"/>
+        <Input  Type="STRING" Description="Numero operazioni" Name="ni_oper"/>
+    </List>
+
+    <!-- Liste fittizie di Operazioni Volumi create per eseguire la redirectToAction a UnitaDocumentaria e Volume utilizzando la ListAction -->
+    <List Name="UnitaDocumentariaOutputList" Description="Unità documentaria">
+        <Input Type="STRING" Description="" Name="id_ud"/>
+    </List>
+
+    <List Name="VolumeOutputList" Description="Volume">
+        <Input Type="STRING" Description="" Name="id_vol"/>
+    </List>   
+    
+    <!-- Filtri operazioni su elenchi di versamento -->
+    <Fields Name="FiltriOperazioniElenchiVersamento" Description="Filtri operazioni sugli elenchi di versamento">
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut"/>
+        <Input Type="INTEGER"  Description="Elenco di versamento" Name="id_elenco_vers"/>
+        <Input  Type="DATE" Description="Data registrazione da" Name="tm_oper_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_tm_oper_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_tm_oper_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data registrazione a" Name="tm_oper_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_tm_oper_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_tm_oper_a" MaxLength="2"/>
+        <ComboBox  Type="STRING" Description="Modalità operazione" Name="ti_mod_oper"/>
+        <!-- Filtri flag -->        
+        <CheckBox Type="STRING" Description="Chiudi elenco" Name="fl_oper_chiusura_elenco" />
+        <CheckBox Type="STRING" Description="Crea elenco" Name="fl_oper_crea_elenco" />
+        <CheckBox Type="STRING" Description="Crea indice elenco" Name="fl_oper_crea_indice_elenco" />
+        <CheckBox Type="STRING" Description="Modifica note elenco chiuso" Name="fl_oper_def_note_elenco_chiuso" />
+        <CheckBox Type="STRING" Description="Modifica note indice elenco" Name="fl_oper_def_note_indice_elenco" />
+        <CheckBox Type="STRING" Description="Elimina elenco" Name="fl_oper_elimina_elenco" />
+        <CheckBox Type="STRING" Description="Validazione elenco" Name="fl_oper_firma_elenco" />
+        <CheckBox Type="STRING" Description="Modifica elenco" Name="fl_oper_mod_elenco" />
+        <CheckBox Type="STRING" Description="Recupera elenco aperto" Name="fl_oper_recupera_elenco_aperto" />
+        <CheckBox Type="STRING" Description="Recupera elenco scaduto" Name="fl_oper_recupera_elenco_scaduto" />
+        <CheckBox Type="STRING" Description="Rimuovi doc. elenco" Name="fl_oper_rimuovi_doc_elenco" />
+        <CheckBox Type="STRING" Description="Rimuovi ud elenco" Name="fl_oper_rimuovi_ud_elenco" />
+        <CheckBox Type="STRING" Description="Set elenco aperto" Name="fl_oper_set_elenco_aperto" />
+        <CheckBox Type="STRING" Description="Set elenco da chiudere" Name="fl_oper_set_elenco_da_chiudere" />
+        <!-- Nuove azioni su firma hsm e elenchi indici aip -->
+        <CheckBox Type="STRING" Description="Firma elenco in corso" Name="fl_oper_firma_in_corso" />
+        <CheckBox Type="STRING" Description="Firma elenco in corso fallita" Name="fl_oper_firma_in_corso_fallita" />
+        <CheckBox Type="STRING" Description="Inizio creazione elenco indici aip" Name="fl_oper_start_crea_elenco_indici_aip" />
+        <CheckBox Type="STRING" Description="Fine creazione elenco indici aip" Name="fl_oper_end_crea_elenco_indici_aip" />
+        <CheckBox Type="STRING" Description="Firma elenco indici aip" Name="fl_oper_firma_elenco_indici_aip" />
+        <CheckBox Type="STRING" Description="Firma elenco indici aip fallita" Name="fl_oper_firma_elenco_indici_aip_fallita" />
+        <CheckBox Type="STRING" Description="Firma elenco indici aip in corso" Name="fl_oper_firma_elenco_indici_aip_in_corso" />
+        <CheckBox Type="STRING" Description="Marca elenco indici aip" Name="fl_oper_marca_elenco_indici_aip" />
+        <CheckBox Type="STRING" Description="Marca elenco indici aip fallita" Name="fl_oper_marca_elenco_indici_aip_fallita" />
+        
+        <!-- end Filtri flag -->
+        <ComboBox  Type="STRING" Description="Tipo output" Name="ti_output" Required="true"/>
+        <Button Name="ricercaOperazioniElenchiVersamento" Description="Ricerca" Type="STRING" />
+        <Button Name="pulisciOperazioniElenchiVersamento" Description="Pulisci" Type="STRING" />
+    </Fields>
+    
+    <!-- Lista output analitico o cronologico elenchi di versamento -->
+    <List Name="OutputAnaliticoCronologicoListElenchi" Description="Output" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Link Name="elenco" Tooltip="Dettaglio elenco di versamento" Description="" Type="STRING" Target="ElencoVersamentoOutputList" />
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input  Type="STRING" Description="Tipo operazione" Name="ti_oper"/>
+        <Input  Type="DATETIME" Description="Data" Name="tm_oper"/>
+        <Input  Type="INTEGER" Description="ID" Name="id_elenco_vers"/>
+        <Input  Type="STRING" Description="Nome elenco" Name="nm_elenco"/>
+        <Input  Type="STRING" Description="Modalità" Name="ti_mod_oper"/>
+        <Input  Type="DATETIME" Description="Scadenza" Name="dt_scad_chius"/>
+        <Input  Type="INTEGER" Description="Numero massimo componenti" Name="ni_max_comp" GroupingDecimal="true" />
+        <Input  Type="STRING" Description="Motivo chiusura" Name="dl_motivo_chius"/>
+        <Input  Type="STRING" Description="Cognome validatore" Name="nm_cognome_firmatario" Hidden="true"/>
+        <Input  Type="STRING" Description="Nome validatore" Name="nm_nome_firmatario" Hidden="true"/>
+        <Input  Type="STRING" Description="Validatore" Name="validatore" Hidden="true"/>
+    </List>
+
+    <!-- Lista output aggregato -->
+    <List Name="OutputAggregatoListElenchi" Description="Output aggregato" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="STRING" Description="Tipo operazione" Name="ti_oper"/>
+        <Input  Type="STRING" Description="Numero operazioni" Name="ni_oper"/>
+    </List>
+    
+    <List Name="ElencoVersamentoOutputList" Description="Elenco di versamento">
+        <Input Type="STRING" Description="" Name="id_elenco"/>
+    </List>   
+
+    <!-- Filtri contenuto sacer -->
+    <Fields Name="FiltriContenutoSacer" Description="Filtri Contenuto Sacer" >
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        
+        <!-- Ambito territoriale -->
+        <MultiSelect Type="INTEGER" Description="Regione/stato" Name="id_ambito_territ_livello_1" Trigger="true" />
+        <MultiSelect Type="INTEGER" Description="Province" Name="id_ambito_territ_livello_2" Trigger="true" />
+        <MultiSelect Type="INTEGER" Description="Forme associate" Name="id_ambito_territ_livello_3" Trigger="true" />
+        
+        <MultiSelect Type="INTEGER" Description="Categorie enti" Name="id_categ_ente" Trigger="true"/>
+        <MultiSelect Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <MultiSelect Type="INTEGER" Description="Categorie strutture" Name="id_categ_strut" Trigger="true" />
+        <MultiSelect Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <MultiSelect Type="INTEGER" Description="Sotto struttura" Name="id_sub_strut" />
+        <MultiSelect Type="INTEGER" Description="Registro" Name="id_registro_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <ComboBox Type="INTEGER" Description="Categoria tipo unità documentaria" Name="id_categ_tipo_unita_doc" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Sottocategoria" Name="id_sottocateg_tipo_unita_doc" />
+        <MultiSelect Type="INTEGER" Description="Tipo unità documentaria" Name="id_tipo_unita_doc"/>
+        <MultiSelect Type="INTEGER" Description="Tipo documento principale" Name="id_tipo_doc"/>
+        <Input Type="DATE" Description="Data riferimento da" Name="dt_rif_da" Required="true"/>
+        <Input Type="DATE" Description="Data riferimento a" Name="dt_rif_a" Required="true"/>       
+        <Button Name="ricercaContenutoSacer" Description="Ricerca" Type="STRING" />
+        <Button Name="pulisciContenutoSacer" Description="Pulisci" Type="STRING" />
+    </Fields>
+    
+    <!-- Contenuto Sacer Totali -->
+    <Fields Name="ContenutoSacerTotaliUdDocComp" Description="Totali contenuto Sacer" >
+        <Input Type="INTEGER" Description="Numero unità documentarie" Name="num_ud" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="INTEGER" Description="Numero documenti" Name="num_doc" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="INTEGER" Description="Numero componenti" Name="num_comp" Readonly="true" GroupingDecimal="true"/>
+        <Input Type="INTEGER" Description="Dimensione in bytes" Name="dim_bytes" Readonly="true" GroupingDecimal="true"/>
+    </Fields>
+
+    <!-- Contenuto Sacer Lista -->
+    <List Name="ContenutoSacerList" Description="Lista Contenuto Sacer" >
+        <Input  Type="STRING" Description="Ente" Name="nm_ente" />
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut" />
+        <Input  Type="STRING" Description="Sottostruttura" Name="nm_sub_strut" />
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_unita_doc" />
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" />
+        <Input  Type="STRING" Description="Categoria tipo unità documentaria" Name="cd_categ_tipo_unita_doc" />
+        <Input  Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" />
+        <Input  Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc" />
+        <Input  Type="INTEGER" Description="Numero unità documentarie" Name="ni_unita_doc_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero documenti" Name="ni_doc_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero componenti" Name="ni_comp_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Dimensioni in bytes" Name="ni_size_s"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero documenti aggiunti" Name="ni_doc_a"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero componenti aggiunti" Name="ni_comp_a"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Dimensioni in bytes aggiunti" Name="ni_size_a"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero unità documentarie annullate" Name="ni_unita_doc_annull"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero documenti annullati" Name="ni_doc_annull_ud"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Numero componenti annullati" Name="ni_comp_annull_ud"  GroupingDecimal="true" />
+        <Input  Type="INTEGER" Description="Dimensioni in bytes annullati" Name="ni_size_annull_ud"  GroupingDecimal="true" />
+    </List>
+
+    <!-- Filtri schedulazioni job -->
+    <Fields Name="FiltriJobSchedulati" Description="Filtri Schedulazioni Job" >
+        <ComboBox  Type="STRING" Description="Job" Name="nm_job" Required="true" Trigger="true" />
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" />
+        <Input  Type="DATE" Description="Data schedulazione da" Name="dt_reg_log_job_da" />
+        <Input  Type="INTEGER" Description="Orario" Name="ore_dt_reg_log_job_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Orario" Name="minuti_dt_reg_log_job_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data schedulazione a" Name="dt_reg_log_job_a" />
+        <Input  Type="INTEGER" Description="Orario" Name="ore_dt_reg_log_job_a" />
+        <Input  Type="INTEGER" Description="Orario" Name="minuti_dt_reg_log_job_a" />
+        <Button Name="ricercaJobSchedulati" Description="Ricerca" Type="STRING" />
+        <Button Name="pulisciJobSchedulati" Description="Pulisci" Type="STRING" />
+    </Fields>
+
+    <!-- Stato job -->
+    <Fields Name="StatoJob" Description="Stato Job" >
+        <CheckBox  Type="STRING" Description="Attivo" Name="attivo" />
+        <Input  Type="DATETIME" Description="Da" Name="dt_reg_log_job_ini" />
+        <Input  Type="DATETIME" Description="Prossima attivazione" Name="dt_prossima_attivazione" />
+    </Fields>
+
+    <!-- Lista schedulazioni job -->
+    <List Name="JobSchedulatiList" Description="Lista Schedulazioni Job" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input  Type="DATETIME" Description="Data inizio" Name="dt_reg_log_job_ini"/>
+        <Input  Type="DATETIME" Description="Data fine" Name="dt_reg_log_job_fine"/>
+        <Input  Type="STRING" Description="Durata (gg-hh:mm:ss)" Name="durata"/>
+        <Input  Type="STRING" Description="Errore" Name="dl_msg_err"/>
+    </List>
+    
+    <!-- Filtri replica schedulazioni -->
+    <Fields Name="FiltriReplicaOrg" Description="Ricerca repliche organizzazioni" >
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" />
+        <ComboBox  Type="STRING" Description="Tipo operazione" Name="ti_oper_replic" />
+        <ComboBox  Type="STRING" Description="Stato replica" Name="ti_stato_replic" />
+        <Button Name="ricercaRepliche" Description="Ricerca repliche organizzazioni" Type="STRING" />
+        <Button Name="pulisciRepliche" Description="Pulisci filtri" Type="STRING" />
+    </Fields>
+
+    <!-- Lista replica utenti -->
+    <List Name="ReplicaOrgList" Description="Lista replica organizzazioni" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente"/>
+        <Input Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input Type="STRING" Description="Tipo operazione" Name="ti_oper_replic"/>
+        <Input Type="DATETIME" Description="Data" Name="dt_log_organiz_da_replic" />
+        <Input Type="STRING" Description="Stato replica" Name="ti_stato_replic"/>
+        <Input Type="STRING" Description="Errore" Name="errore"/>
+    </List>
+    
+    <Fields Name="FiltriRicercaSessioniRecupero" Description="Ricerca Sessioni recupero" >
+        <Input  Type="DATE" Description="Data apertura da" Name="dt_oper_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_oper_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_oper_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data apertura a" Name="dt_oper_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_oper_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_oper_a" MaxLength="2"/>
+
+        <ComboBox Type="STRING" Description="Stato sessione" Name="ti_stato"/>
+        <ComboBox Type="STRING" Description="Tipo sessione" Name="ti_sessione"/>
+
+        <MultiSelect Type="INTEGER" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+
+        <Button Name="ricercaSessioniRecup" Description="Ricerca" Type="STRING"/>
+    </Fields>
+
+    <List Name="MonitSessioniRecupList" Description="Lista Sessioni Recupero" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
+        <Input Type="INTEGER" Description="Id sessione" Name="id_sessione_recup"/>
+        <Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="STRING" Description="Tipo output recupero" Name="ti_output_recup"/>
+        <Input Type="STRING" Description="URN richiesto" Name="ds_urn_rich"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato"/>
+        <Input Type="STRING" Description="Descrizione errore" Name="ds_msg_err"/>
+        <Input Type="DATETIME" Description="Data apertura" Name="dt_apertura"/>
+        <Input Type="DATETIME" Description="Data chiusura" Name="dt_chiusura"/>
+        <Input Type="STRING" Description="Tipo sessione" Name="ti_sessione"/>
+        <Input Type="STRING" Description="Lista date vers" Name="ds_lista_dt_vers"/>
+        <Link Name="downloadFileSessione" Description="" Type="STRING" Target="downloadFileSessioneRecupList" Tooltip="Download file recuperati" isTargetList="false" VisibilityProperty="fl_downloadable"/>
+    </List>
+
+    <!-- LISTA VERSAMENTI DOCUMENTI ANNULLATI -->
+    <Fields Name="FiltriDocumentiAnnullati" Description="Lista versamenti documenti annullati" >
+        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <ComboBox  Type="INTEGER" Description="Tipologia unità documentarie" Name="id_tipo_unita_doc" />
+        <ComboBox  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+        <ComboBox  Type="STRING" Description="Tipo versamenti annullati" Name="ti_vers_annul" />
+        <Input  Type="DATE" Description="Data di versamento da" Name="giorno_vers_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento a" Name="giorno_vers_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_vers_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_a" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di versamento da validato" Name="giorno_vers_da_validato"/>
+        <Input  Type="DATE" Description="Data di versamento a validato" Name="giorno_vers_a_validato"/>
+        <ComboBox  Type="INTEGER" Description="Tipo documento" Name="id_tipo_doc" />
+        <ComboBox  Type="STRING" Description="Stato annullamento versamenti" Name="ti_stato_annul" />
+        <Button Name="ricercaDocAnnul" Description="Ricerca" Type="STRING" />
+    </Fields>
+    
+    <List Name="DocumentiAnnullatiList" Description="Lista Documenti" hideDetailButton="true" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+        <Link Name="unitaDoc"  Tooltip="Dettaglio unità documentaria" Description="" Type="STRING" Target="UnitaDocumentariaList" />
+        <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input  Type="STRING" Description="Elemento" Name="ti_doc"/>
+        <Input  Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <Input  Type="DATETIME" Description="Data versamento" Name="dt_creazione"/>
+        <Input  Type="STRING" Description="Stato annullamento" Name="ti_stato_annul"/>
+        <Input  Type="DATE" Description="Data annullamento" Name="dt_annul"/>
+        <CheckBox  Type="STRING" Description="Versato nuovamente" Name="fl_vers_nuovo" Readonly="true" />
+    </List>
+</Form>

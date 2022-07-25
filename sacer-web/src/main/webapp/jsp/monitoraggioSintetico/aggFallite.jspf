@@ -1,0 +1,64 @@
+<div style="float:right;">
+    <slf:lblField name="<%=MonitoraggioSinteticoForm.CalcolaTotaliButtonList.CALC_TOT_AGG_FALLITI_BUTTON%>" width="w100"/>
+</div>
+<p>&nbsp;</p>
+<div style="float: right;">
+    <slf:lblField name="<%=MonitoraggioSinteticoForm.CalcolaTotaliButtonList.CALC_TOT_AGG_FALLITI_B30_BUTTON%>" width="w100"/>
+</div>
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO AGGIUNTE DOCUMENTI FALLITE</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th colspan="2">&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th colspan="2">&nbsp;30gg antecedenti&nbsp;</th>
+            <th>&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Aggiunte fallite</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Aggiunte risolte</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=RISOLTO&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_RISOLTI_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=RISOLTO&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_RISOLTI_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=RISOLTO&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_RISOLTI_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=RISOLTO&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_RISOLTI_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=RISOLTO&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_RISOLTI_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Aggiunte non risolubili</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NO_RISOLUB&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_NORISOLUB_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NO_RISOLUB&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_NORISOLUB_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NO_RISOLUB&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_NORISOLUB_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NO_RISOLUB&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_NORISOLUB_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NO_RISOLUB&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_NORISOLUB_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Aggiunte non risolte e verificate</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_VERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_VERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_VERIF_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_VERIF_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_VERIF_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Aggiunte non risolte e non verificate</b></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NO_VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_NOVERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=OGGI&amp;ti_stato=NO_VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_NOVERIF_CORR%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NO_VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.FL_AGG_NOVERIF_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=30gg&amp;ti_stato=NO_VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_NOVERIF_30GG%>" controlWidth="w100"/></a></td>
+            <td class="w10"><a href="MonitoraggioSintetico.html?operation=listaVersamentiFalliti&amp;ti_creazione=B30gg&amp;ti_stato=NO_VERIF&amp;tipo=AGGIUNGI_DOCUMENTO"><slf:field name="<%= MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NI_AGG_NOVERIF_B30GG%>" controlWidth="w100"/></a></td>
+        </tr>
+    </tbody>
+</table>

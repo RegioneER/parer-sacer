@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="NoteRilascio" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd" >
+    
+    <List Name="ListaNoteRilascio" Description="Lista note di rilascio">
+        <Input Name="id_nota_rilascio" Description="Id nota rilascio" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_applic" Description="Id applicazione" Type="INTEGER" Hidden="true"/>
+        <Input Name="nm_applic" Description="Applicazione" Type="STRING" />
+        <Input Name="cd_versione" Description="Versione" Type="STRING" />
+        <Input Name="dt_versione" Description="Data versione" Type="DATE" /> 
+        <Input Name="dt_ini_val" Description="Data inizio validità" Type="DATE" />        
+        <Input Name="dt_fine_val" Description="Data fine validità" Type="DATE" />        
+    </List>
+    
+    <Fields Name="DettaglioNoteRilascio" Description="Dettaglio note di rilascio" >
+        <Input Type="INTEGER" Description="Id nota rilascio" Name="id_nota_rilascio" Hidden="true" />
+        <Input Type="STRING" Description="Applicazione" Name="nm_applic" />
+        <Input Type="STRING" Description="Versione" Name="cd_versione" MaxLength="100" />
+        <Input Type="DATE" Description="Data versione" Name="dt_versione" />
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_fine_val" />
+        <TextArea Type="STRING" Description="In evidenza" Name="ds_evidenza" Rows="10" Cols="100" MaxLength="4000" />
+        <TextArea Type="STRING" Description="Note di rilascio" Name="bl_nota" Rows="20" Cols="100" MaxLength="4000" />
+    </Fields>
+    
+    <!-- Lista note di rilascio precedenti -->
+    <Section Name="noteRilascioPrecSection" Description="" Legend="Note di rilascio precedenti" ShowButton="false" LoadOpened="true"/>
+    
+    <List Name="NoteRilascioPrecedentiList" Description="Lista note di rilascio precedenti" hideUpdateButton="true">
+        <Input Name="id_nota_rilascio" Description="Id nota rilascio" Type="INTEGER" Hidden="true" />
+        <Input Name="cd_versione" Description="Versione" Type="STRING"/>
+        <Input Name="dt_versione" Description="Data versione" Type="DATE"/>
+    </List>
+    
+</Form>

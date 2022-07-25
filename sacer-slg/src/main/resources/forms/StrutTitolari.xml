@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Titolari" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd" >
+    
+    <Section Name="struttura" Description="" Legend="Struttura" ShowButton="false" LoadOpened="true"/>
+    <Section Name="docTrasmSection" Description="" Legend="Estremi documento di trasmissione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="titolarioSection" Description="" Legend="Dettaglio titolario" ShowButton="false" LoadOpened="true"/>
+    <Section Name="voceSection" Description="" Legend="Voce di classificazione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="intestazioneSection" Description="" Legend="Intestazione" ShowButton="false" LoadOpened="true"/>
+    <Section Name="livelliSection" Description="" Legend="Livelli" ShowButton="false" LoadOpened="true"/>
+    
+    <!-- Struttura di riferimento nel dettaglio di una delle liste seguenti -->    
+    <Fields Name="StrutRif" Description="Struttura" >
+        <Input Type="INTEGER" Description="Id" Name="id_strut"/>
+        <Input Type="STRING" Description="Nome struttura" Name="nm_strut" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione struttura" Name="ds_strut" MaxLength="254"/>
+        <Input Type="STRING" Description="Ente" Name="id_ente" />
+        <Input Type="STRING" Description="Struttura" Name="struttura" />
+    </Fields>
+    
+    <Fields Name="ImportaTitolario" Description="Importazione titolario">
+        <ComboBox  Type="STRING" Description="Registro" Name="cd_registro_doc_invio"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_doc_invio" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_doc_invio"/>
+        
+        <Input Type="DATE" Description="Data di invio" Name="dt_doc_invio"/>
+        <Input Type="DATE" Description="Data di inizio validità" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data di fine validità" Name="dt_soppres" />
+        
+        <Input Type="STRING" Description="File titolario" Name="file_titolario" />
+        <Button Type="STRING" Description="Importa" Name="importaFileTitolario" />
+        
+    </Fields>
+    
+    <List Name="TitolariList" Description="Titolari di classificazione" hideDetailButton="true" hideDeleteButton="true" hideInsertButton="true">
+        <Input Type="STRING" Description="Denominazione" Name="nm_titol" />
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
+        <Input Type="STRING" Description="Validato" Name="ti_stato_validato" />
+    </List>
+    
+    <Tree Description="Dettaglio titolario" Name="TitolariTree" dataType="HTML" editable="false" checkable="false" draggable="false"
+          hideCreateNodeButton="true" hideRenameNodeButton="true" hideDeleteNodeButton="true" coloredIcons="true" activeContextMenu="true" > 
+        <TreeElement Name="id_voce_titol" Type="ID" Description="Id" /> 
+        <TreeElement Name="nome_composito" Type="NAME" Description="Nome composito" Icon="enum_icon" /> 
+        <TreeElement Name="id_voce_titol_padre" Type="ID_PARENT" Description="Padre" /> 
+    </Tree>
+    
+    <Fields Name="DocTrasm" Description="Documento di trasmissione">
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_doc_invio" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_doc_invio" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_doc_invio"/>
+        <Input Type="DATE" Description="Data di invio" Name="dt_doc_invio"/>
+    </Fields>
+    
+    <Fields Name="TitolarioDetail" Description="Dettaglio titolario">
+        <Input Type="STRING" Description="Denominazione" Name="nm_titol" />
+        <Input Type="DATE" Description="Data di inizio validità" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data di fine validità" Name="dt_soppres" />
+        <Input Type="DATE" Description="Data di visualizzazione" Name="dt_visualiz" />
+        <Input Type="STRING" Description="Note" Name="dl_note" />
+        
+        <Button Name="reloadTitolario" Description="Ricarica titolario" Type="STRING"/>
+        <Button Name="loadUd" Description="Visualizza unità documentaria" Type="STRING"/>
+        <Button Name="validaTitolario" Description="Valida" Type="STRING"/>
+        <Button Name="chiudiTitolario" Description="Chiudi" Type="STRING"/>
+        <Button Name="esportaTitolario" Description="Esporta" Type="STRING"/>
+    </Fields>
+    
+    <Fields Name="VoceTitolarioDetail" Description="Dettaglio voce di classificazione">
+        <Input Name="cd_voce_titol" Description="Codice" Type="STRING"/>
+        <Input Name="ds_voce_titol" Description="Descrizione" Type="STRING"/>
+        <Input Name="ni_anni_conserv" Description="Tempo di conservazione" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_uso_classif" Description="Attivo per conservazione" Type="STRING"/>
+        <Input Name="dl_note" Description="Note" Type="STRING"/>
+        <Input Name="dt_soppres" Description="Data soppressione" Type="DATE"/>
+    </Fields>
+    
+    <List Name="TracciaList" Description="Traccia" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <Input Name="ds_voce_titol" Description="Descrizione" Type="STRING"/>
+        <Input Name="ni_anni_conserv" Description="Tempo di conservazione" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_uso_classif" Description="Attivo per conservazione" Type="STRING" Readonly="true"/>
+        <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_fin_val" />
+        <Input Type="STRING" Description="Registro intervallo iniziale" Name="cd_registro_doc_invio_ini" />
+        <Input Type="INTEGER" Description="Anno intervallo iniziale" Name="aa_doc_invio_ini" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero intervallo iniziale" Name="cd_doc_invio_ini"/>
+        <Input Type="STRING" Description="Tipo operazione intervallo iniziale" Name="ti_oper_voce_titol_ini" />
+        <Input Type="STRING" Description="Registro intervallo finale" Name="cd_registro_doc_invio_fin" />
+        <Input Type="INTEGER" Description="Anno intervallo finale" Name="aa_doc_invio_fin" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero intervallo finale" Name="cd_doc_invio_fin"/>
+        <Input Type="STRING" Description="Tipo operazione intervallo finale" Name="ti_oper_voce_titol_fin" />
+    </List>
+    
+    <Wizard Name="InserimentoWizard" Description="Caricamento manuale del titolario">
+        <Step Name="DatiTitolario" Description="Inserisci dettaglio titolario"/>
+        <Step Name="LivelliTitolario" Description="Definisci livelli"/>
+        <Step Name="VociTitolario" Description="Definisci voci" />
+        <Step Name="AlberoTitolario" Description="Riepilogo" />
+    </Wizard>
+    
+    <Fields Name="DatiTitolarioInserimento" Description="Definizione titolario">
+        <ComboBox  Type="STRING" Description="Registro" Name="cd_registro_doc_invio"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_doc_invio" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_doc_invio" ForceTrim="TRIM"/>
+        <Input Type="DATE" Description="Data di invio" Name="dt_doc_invio"/>
+        
+        <Input Type="STRING" Description="Denominazione" Name="nm_titol" ForceTrim="TRIM" Required="true"/>
+        <Input Type="DATE" Description="Data di inizio validità" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data di fine validità" Name="dt_soppres" />
+        <Input Type="INTEGER" Description="Numero livelli" Name="ni_livelli" ForceTrim="TRIM" Required="true" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Carattere separatore fascicoli" Name="cd_sep_fascicolo" ForceTrim="TRIM" Required="true"/>
+        <Input Type="STRING" Description="Note" Name="dl_note" MaxLength="1024"/>
+    </Fields>
+    
+    <List Name="LivelliList" Description="Lista livelli" hideDetailButton="true" hideInsertButton="true">
+        <Input Name="nm_livello_titol" Description="Nome" Type="STRING"/>
+        <Input Name="ni_livello" Description="Numero" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ti_fmt_voce_titol" Description="Formato" Type="STRING"/>
+        <Input Name="cd_sep_livello" Description="Codice separatore" Type="STRING" MaxLength="1"/>
+    </List>
+    
+    <Fields Name="LivelliInserimento" Description="Definizione livelli">
+        <Input Name="nm_livello_titol" Description="Nome" Type="STRING" Required="true"/>
+        <Input Name="ni_livello" Description="Numero" Type="INTEGER" Required="true" GroupingDecimal="true" />
+        <ComboBox Name="ti_fmt_voce_titol" Description="Formato" Type="STRING" Required="true"/>
+        <Input Name="cd_sep_livello" Description="Codice separatore" Type="STRING" MaxLength="1"/>
+        <Button Name="addLivello" Description="Aggiungi livello" Type="STRING"/>
+        <Button Name="cleanLivello" Description="Pulisci" Type="STRING" Hidden="true"/>
+    </Fields>
+    
+    <List Name="VociList" Description="Lista voci" hideDetailButton="true" hideInsertButton="true" >
+        <Input Name="nm_livello_titol" Description="Livello" Type="STRING"/>
+        <Input Name="cd_composito_voce_titol" Description="Codice voce composito" Type="STRING"/>
+        <Input Name="ds_voce_titol" Description="Descrizione" Type="STRING"/>
+        <Input Name="ni_anni_conserv" Description="Anni di conservazione" Type="INTEGER" GroupingDecimal="true" />
+        <CheckBox Name="fl_uso_classif" Description="Attivo per classificazione" Type="STRING" Readonly="true"/>
+        <Input Type="STRING" Description="Note" Name="dl_note" />
+        <Input Type="DATE" Description="Data di inizio validità" Name="dt_istituz"/>
+        <Input Type="DATE" Description="Data di fine validità" Name="dt_soppres" />
+    </List>
+    
+    <Fields Name="VociInserimento" Description="Definizione voci">
+        <Input Name="id_voce_titol" Description="Id" Type="INTEGER" Hidden="true"/>
+        <ComboBox Name="ni_livello" Description="Livello" Type="INTEGER" Trigger="true" Required="true"/>
+        <ComboBox Name="cd_composito_voce_padre" Description="Voce padre" Type="STRING" Trigger="true"/>
+        <Input Name="cd_composito_voce_titol" Description="Codice voce composito" Type="STRING" Hidden="true"/>
+        <Input Name="cd_composito_visualizzato" Description="Codice voce composito" Type="STRING" />
+        <Input Name="cd_voce_titol" Description="Codice voce" Type="STRING" Required="true"/>
+        <Input Name="ni_ord_voce_titol" Description="Numero d'ordine" Type="INTEGER" Required="true" GroupingDecimal="true" />
+        <Input Name="ds_voce_titol" Description="Descrizione" Type="STRING" Required="true"/>
+        <Input Name="ni_anni_conserv" Description="Anni di conservazione" Type="INTEGER" MaxLength="4" GroupingDecimal="true" />
+        <ComboBox Name="conserv_unlimited" Description="Conservazione illimitata" Type="STRING" Trigger="true"/>
+        <ComboBox Name="fl_uso_classif" Description="Attivo per classificazione" Type="STRING" Required="true" />
+        <Input Type="STRING" Description="Note" Name="dl_note" MaxLength="1024"/>
+        <Input Type="DATE" Description="Data di inizio validità" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data di fine validità" Name="dt_soppres" />
+
+        <Input Name="cd_sep_livello" Description="Codice separatore" Type="STRING" MaxLength="1" Hidden="true"/>
+        <CheckBox Name="warning_shown" Description="" Type="STRING" Hidden="true" />
+        
+        <Button Name="addVoce" Description="Aggiungi voce" Type="STRING"/>
+        <Button Name="cleanVoce" Description="Pulisci" Type="STRING" Hidden="true"/>
+    </Fields>
+</Form>

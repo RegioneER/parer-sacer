@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione Volumi" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" 
+      xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd">
+ 
+    <Section Name="FascicoloSection" Description="" Legend="Fascicolo" ShowButton="true" LoadOpened="true"/>
+    <Section Name="ElenchiVersFascicoliSelSection" Description="" Legend="Elenchi di versamento fascicoli selezionati per la firma" ShowButton="true"/>
+    
+    <!-- TODO: da adeguare, attività relativa agli indici aip dei fascicoli -->
+    <Section Name="ElenchiIndiciAipFascSelSection" Description="" Legend="Elenchi indici AIP fascicoli selezionati per la firma" ShowButton="true"/>
+    <Section Name="DsElencoSection" Description="" Legend="Informazioni descrittive dell'elenco di versamento" ShowButton="true" LoadOpened="true"/>
+    <Section Name="DsCriterioSection" Description="" Legend="Informazioni descrittive del criterio di raggruppamento" ShowButton="true" LoadOpened="true"/>
+    <Section Name="UdVersateSection" Description="" Legend="Unità documentarie versate" ShowButton="true" LoadOpened="true"/>
+    <Section Name="DocAggiuntiSection" Description="" Legend="Documenti aggiunti" ShowButton="true" LoadOpened="true"/>
+    <Section Name="InfoElencoIndiciAipSection" Description="" Legend="Informazioni su elenco indici AIP" ShowButton="true" LoadOpened="true"/>
+     
+    <!-- Filtri di ricerca elenchi di versamento fascicoli -->
+    <Fields Name="FiltriElenchiVersFascicoli" Description="Filtri per elenchi di versamento fascicoli" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <Input Type="INTEGER"  Description="ID elenco" Name="id_elenco_vers_fasc" />
+        <ComboBox Type="STRING" Description="Stato" Name="ti_stato" />
+        <Input Type="DATE" Description="Data creazione da" Name="ts_creazione_elenco_da"/>
+        <Input Type="DATE" Description="Data creazione a" Name="ts_creazione_elenco_a"/>
+        <ComboBox Name="fl_elenco_standard" Description="Elenco standard" Type="STRING" />
+        <Input Type="STRING" Description="Note su elenco chiuso" Name="nt_elenco_chiuso"/>
+        <Input Type="STRING" Description="Note su indice elenco" Name="nt_indice_elenco"/>
+        <ComboBox Type="INTEGER" Description="Criterio di raggruppamento" Name="id_criterio_raggr_fasc"/>
+        <!--Filtri per fascicoli--> 
+        <ComboBox Type="INTEGER" Description="Tipo fascicolo" Name="id_tipo_fascicolo"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_fascicolo" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_fascicolo"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_fascicolo_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_fascicolo_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_fascicolo_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_fascicolo_a"/>
+        <Input Type="STRING" Description="Indice di classificazione" Name="cd_composito_voce_titol"/>
+
+        <Button Name="ricercaElenchiButton" Description="Ricerca" Type="STRING" />
+        <Button Name="pulisciFiltriRicercaElenchiButton" Description="Pulisci" Type="STRING" />
+    </Fields>
+
+    <!-- Lista elenchi di versamento fascicoli -->
+    <List Name="ElenchiVersFascicoliList" Description="Elenchi di versamento fascicoli" hideInsertButton="true">
+        <Input Type="STRING" Description="Ente - Struttura" Name="nm_ente_nm_strut"/>
+        <Input Type="INTEGER"  Description="ID elenco" Name="id_elenco_vers_fasc"/>
+        <Input Type="INTEGER" Description="Criterio di raggruppamento" Name="id_criterio_raggr_fasc" Hidden="true"/>
+        <!--<Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />-->
+        <Link Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" Target="loadDettaglioCritRaggrFasc" Tooltip="Visualizza criterio" isTargetList="false"/>
+        <CheckBox Type="STRING" Description="Elenco standard" Name="fl_elenco_standard" Readonly="true" />
+        <Input Type="STRING" Description="Stato" Name="ti_stato" />
+        <Input Type="INTEGER" Description="Numero fascicoli" Name="ni_fasc_vers_elenco" GroupingDecimal="true"/>
+        <Input Type="INTEGER" Description="Anno" MaxLength="4" Name="aa_fascicolo"/>
+        <Input Type="STRING" Description="Indice di classificazione" Name="cd_voce_titol"/>
+        <Input Type="STRING" Description="Tipo Fascicolo" Name="nm_tipo_fascicolo"/>
+        <Input Type="DATETIME" Description="Creato il" Name="ts_creazione_elenco" />
+        <Input Type="DATETIME" Description="Chiuso il" Name="dt_chiusura" />
+        <Input Type="STRING" Description="Motivo chiusura" Name="dl_motivo_chius" />
+        <Input Type="DATETIME" Description="Firmato il" Name="dt_firma" />
+    </List>
+    
+    <Fields Name="FiltriElenchiVersFascDaFirmare" Description="Filtri elenchi di versamento fascicoli da firmare" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
+        <Input Type="INTEGER" Description="ID Elenco" Name="id_elenco_vers_fasc" />
+        <ComboBox Type="STRING" Description="Elenchi con note" Name="elenchi_con_note" />
+        <Input Description="Data creazione da" Name="ts_creazione_elenco_da" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_ts_creazione_elenco_da" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_ts_creazione_elenco_da" Type="INTEGER"/>
+        <Input Description="Data creazione a" Name="ts_creazione_elenco_a" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_ts_creazione_elenco_a" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_ts_creazione_elenco_a" Type="INTEGER"/>
+        
+        <!-- CAMPI POPUP  -->
+        <Input Type="STRING" Description="Utente: " Name="user"/>
+        <Input Type="STRING" Description="Password: " Name="passwd"/>
+        <Input Type="STRING" Description="OTP: " Name="otp"/>
+        
+        <Button Name="ricercaElenchiVersFascDaFirmareButton" Description="Ricerca" Type="STRING" />
+    </Fields>
+
+    <!-- Lista degli elenchi di versamento fascicoli da firmare -->
+    <List Name="ElenchiVersFascicoliDaFirmareList" Description="Lista elenchi di versamento fascicoli da firmare" hideInsertButton="true" hideUpdateButton="true" >
+        <Input Type="INTEGER"  Description="Id elenco" Name="id_elenco_vers_fasc" />
+        <Input Type="STRING" Description="Struttura" Name="amb_ente_strut"/>
+        <CheckBox Type="STRING" Description="Elenco standard" Name="fl_elenco_standard" Readonly="true" />
+        <Input Type="INTEGER" Description="Numero fascicoli" Name="ni_fasc_vers_elenco"/>
+        <Input Type="INTEGER" Description="Anno" MaxLength="4" Name="aa_fascicolo"/>
+        <Input Type="STRING" Description="Indice di classificazione" Name="cd_voce_titol"/>
+        <Input Type="DATETIME" Description="Creato il" Name="ts_creazione_elenco" />
+        <Input Type="DATETIME" Description="Chiuso il" Name="dt_chiusura" />            
+        <Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />
+        <CheckBox Type="STRING" Description="Versamenti annullati" Name="vers_fascicoli_annull" Readonly="true"/>
+        <Input Type="STRING" Description="Note su indice elenco" Name="nt_indice_elenco" />
+        <Input Type="STRING" Description="Note su elenco chiuso" Name="nt_elenco_chiuso" />        
+    </List>
+    
+    <!-- Lista degli elenchi di versamento fascicoli selezionati -->
+    <List Name="ElenchiVersFascicoliSelezionatiList" Description="Elenchi di versamento fascicoli selezionati" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="INTEGER"  Description="Id elenco" Name="id_elenco_vers_fasc" />
+        <Input Type="STRING" Description="Struttura" Name="amb_ente_strut"/>
+        <CheckBox Type="STRING" Description="Elenco standard" Name="fl_elenco_standard" Readonly="true" />
+        <Input Type="INTEGER" Description="Numero fascicoli" Name="ni_fasc_vers_elenco"/>
+        <Input Type="INTEGER" Description="Anno" MaxLength="4" Name="aa_fascicolo"/>
+        <Input Type="STRING" Description="Indice di classificazione" Name="cd_voce_titol"/>
+        <Input Type="DATETIME" Description="Creato il" Name="ts_creazione_elenco" />
+        <Input Type="DATETIME" Description="Chiuso il" Name="dt_chiusura" />            
+        <Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />
+        <CheckBox Type="STRING" Description="Versamenti annullati" Name="vers_fascicoli_annull" Readonly="true"/>
+        <Input Type="STRING" Description="Note su indice elenco" Name="nt_indice_elenco" />
+        <Input Type="STRING" Description="Note su elenco chiuso" Name="nt_elenco_chiuso" />        
+    </List>
+    
+    <ButtonList Name="ListaElenchiVersFascDaFirmareButtonList" Description="Operazioni sulle liste degli elenchi di versamento fascicoli" >
+        <Button Name="selectAllElenchiButton" Description="Aggiungi tutti" Type="STRING"/>
+        <Button Name="deselectAllElenchiButton" Description="Rimuovi tutti" Type="STRING"/>
+        <Button Name="selectHundredElenchiButton" Description="Aggiungi 100" Type="STRING"/>
+        <Button Name="firmaElenchiHsmButton"  Description="Firma" Type="STRING" />
+    </ButtonList>
+    
+    <!-- Dettaglio elenco di versamento fascicoli -->
+    <Fields Name="ElenchiVersFascicoliDetail" Description="Dettaglio elenco di versamento fascicoli">
+        <Input Type="INTEGER" Description="ID elenco" Name="id_elenco_vers_fasc" Required="true"/>
+        <Input Type="STRING" Description="Urn originale" Name="ds_urn_elenco"/>
+        <Input Type="STRING" Description="Urn normalizzato" Name="ds_urn_normaliz_elenco"/>
+        <Input Type="INTEGER" Description="Criterio di raggruppamento" Name="id_criterio_raggr_fasc" Hidden="true"/>
+        <Input Type="INTEGER" Description="ID struttura" Name="id_strut" Hidden="true"/>
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente" Hidden="true"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" Hidden="true"/>
+        <Input Type="STRING" Description="Struttura" Name="nm_strut" Hidden="true"/>
+        <Input Type="STRING" Description="Struttura" Name="amb_ente_strut"/>
+        <Input Type="STRING" Description="Stato" Name="ti_stato" Required="true"/>
+        <Input Type="DATETIME" Description="Creato il" Name="ts_creazione_elenco" Required="true"/>
+        <Input Type="INTEGER" Description="Numero massimo fascicoli" Name="ni_max_fasc_crit" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Tipo scadenza (chiusura)" Name="ti_scad_chius_crit"/>
+        <Input Type="INTEGER" Description="Scadenza chiusura" Name="ni_tempo_scad_chius_crit" GroupingDecimal="true" />
+        <Input Type="STRING" Description="Scadenza chiusura" Name="ti_tempo_scad_chius_crit"/>
+        <!--<Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />-->
+        <Link Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" Target="loadCritRaggrFasc" Tooltip="Visualizza criterio" isTargetList="false"/>
+        <Input Type="STRING" Description="Descrizione" Name="ds_criterio_raggr" />
+        <Input Type="INTEGER" Description="Numero fascicoli versati" Name="ni_fasc_vers_elenco" Required="true" GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Scadenza chiusura" Name="dt_scad_chius" />
+        <Input Type="DATETIME" Description="Chiuso il" Name="ts_stato_chiuso" />
+        <Input Type="DATETIME" Description="Firmato il" Name="ts_stato_firmato" />
+        <Input Type="STRING" Description="Motivo chiusura" Name="dl_motivo_chius"/>
+        <Input Type="STRING" Description="Versione indice elenco" Name="cd_ver_xsd_file"/>
+        <TextArea Type="STRING" Description="Note su indice elenco" Name="nt_indice_elenco" Rows="5" Cols="5" MaxLength="2000" />
+        <TextArea Type="STRING" Description="Note su elenco chiuso" Name="nt_elenco_chiuso" Rows="5" Cols="5" MaxLength="2000" />
+        <CheckBox Type="STRING" Description="Elenco standard" Name="fl_elenco_standard" Readonly="true" />
+    </Fields>
+    
+    <!-- Lista stati elenco di versamento fascicoli -->
+    <List Name="StatiElencoVersFascicoliList" Description="Stati elenco di versamento fascicoli" hideInsertButton="true">
+        <Input Type="STRING" Description="Stato" Name="ti_stato"/>
+        <Input Type="DATETIME" Description="Data cambio stato" Name="ts_stato" />
+        <Input Type="STRING" Description="Utente" Name="nm_userid" />
+    </List>
+    
+    <!-- Tab presenti nella dettaglio elenco di versamento fascicoli -->
+    <Tab Name="DettaglioElencoTabs" Description="Tabs presenti nel dettaglio elenco di versamento fascicoli">
+        <TabElement Name="DettaglioElencoTab" Description="Dettaglio elenco" />
+        <TabElement Name="FiltriRicercaFascicoliTab" Description="Filtri ricerca fascicoli"/>
+    </Tab>
+    
+    <!-- Bottoni nel dettaglio elenco di versamento fascicoli -->
+    <ButtonList Name="DettaglioElenchiVersFascicoliButtonList" Description="Operazioni sugli elenchi di versamento fascicoli" >
+        <!--<Button Name="eliminaElencoButton"  Description="Elimina elenco di versamento" Type="STRING" />-->
+        <Button Name="chiudiElencoButton"  Description="Chiusura manuale elenco di versamento" Type="STRING" />
+        <!--<Button Name="listaOperazioniElencoButton"  Description="Lista operazioni sugli elenchi di versamento" Type="STRING" />-->
+        <Button Name="scaricaIndiceElencoButton"  Description="Scarica elenco di versamento" Type="STRING" />
+        <Button Name="scaricaElencoIdxAipFascBtn"  Description="Scarica elenco indici AIP fascicoli" Type="STRING" />
+    </ButtonList>
+    
+    <!-- Filtri per i fascicoli dell'elenco di versamento -->
+    <Fields Name="FascicoliFiltri" Description="Filtri" >
+        <ComboBox Type="INTEGER" Description="Tipo fascicolo" Name="id_tipo_fascicolo"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_fascicolo" MaxLength="4" />
+        <Input Type="STRING" Description="Numero" Name="cd_key_fascicolo"/> 
+        <Input Type="DATE" Description="Data versamento da" Name="ts_ini_ses_da"/>
+        <Input Type="DATE" Description="Data versamento a" Name="ts_ini_ses_a"/>
+        <Input Type="DATE" Description="Data apertura da" Name="dt_ape_fascicolo_da"/>
+        <Input Type="DATE" Description="Data apertura a" Name="dt_ape_fascicolo_a"/>
+        <Input Type="DATE" Description="Data chiusura da" Name="dt_chiu_fascicolo_da"/>
+        <Input Type="DATE" Description="Data chiusura a" Name="dt_chiu_fascicolo_a"/>
+        
+        <Input Type="INTEGER" Description="Anno da" Name="aa_fascicolo_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_fascicolo_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_fascicolo_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_fascicolo_a"/>
+        
+        <Input Type="STRING" Description="Indice di classificazione" Name="cd_composito_voce_titol"/>
+        <Button Name="ricercaFasc" Description="Ricerca" Type="STRING" />        
+    </Fields>
+    
+    <!-- Lista dei fascicoli dell'elenco di versamento fascicoli -->
+    <List Name="FascicoliList" Description="Fascicoli" hideDeleteButton="true" hideUpdateButton="true" hideInsertButton="true">
+        <CheckBox Type="STRING" Description="" Name="select_fasc" Hidden="true"/>
+        <Input Type="INTEGER" Description="Id fascicolo" Name="id_fascicolo" Hidden="true"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_fascicolo" />
+        <Input Type="STRING" Description="Numero" Name="cd_key_fascicolo" />
+        <Input Type="STRING" Description="Classificazione" Name="cd_indice_classif" />
+        <Input Type="STRING" Description="Tipo Fascicolo" Name="nm_tipo_fascicolo" />
+        <Input Type="DATE" Description="Data apertura" Name="dt_ape_fascicolo" />
+        <Input Type="DATE" Description="Data chiusura" Name="dt_chiu_fascicolo" />
+        <Input Type="DATETIME" Description="Data versamento" Name="ts_ini_ses" />
+        <Input Type="STRING" Description="Oggetto" Name="ds_oggetto_fascicolo" />
+        <Input Type="STRING" Description="Stato generazione Indice AIP" Name="ti_stato_fasc_elenco_vers" />
+        <Input Type="STRING" Description="Stato conservazione" Name="ti_stato_conservazione" />
+        <Input Type="INTEGER" Description="Id Tipo Fascicolo" Name="id_tipo_fascicolo" Hidden="true"/>
+    </List>
+    
+    <ButtonList Name="FascDaRimuovereCustomMessageButtonList" Description="MessageBox" >        
+        <Button Secure="false" Name="confermaRimozioneFascButton"  Description="Si" Type="STRING"  />
+        <Button Secure="false" Name="annullaRimozioneFascButton"  Description="No" Type="STRING"  />
+    </ButtonList>
+    
+    <ButtonList Name="ListaFascicoliButtonList" Description="Operazioni sulla lista fascicoli del dettaglio elenco di versamento" >
+        <Button Name="eliminaAppartenenzaFascDaElenco" Description="Rimuovi i fascicoli selezionati" Type="STRING"  />
+    </ButtonList>
+    
+    <Fields Name="FiltriElenchiIndiciAipFascDaFirmare" Description="Elenchi indici AIP fascicoli da firmare" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
+        <Input Type="INTEGER" Description="ID Elenco" Name="id_elenco_vers_fasc" />
+        <Input Description="Data creazione da" Name="ts_creazione_elenco_idx_aip_da" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_ts_creazione_elenco_idx_aip_da" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_ts_creazione_elenco_idx_aip_da" Type="INTEGER"/>
+        <Input Description="Data creazione a" Name="ts_creazione_elenco_idx_aip_a" Type="DATE"/>
+        <Input Description="Ora" MaxLength="2" Name="ore_ts_creazione_elenco_idx_aip_a" Type="INTEGER"/>
+        <Input Description="Ora" MaxLength="2" Name="minuti_ts_creazione_elenco_idx_aip_a" Type="INTEGER"/>
+        
+        <!-- CAMPI POPUP  -->
+        <Input Type="STRING" Description="Utente: " Name="user"/>
+        <Input Type="STRING" Description="Password: " Name="passwd"/>
+        <Input Type="STRING" Description="OTP: " Name="otp"/>
+    </Fields>
+    
+    <ButtonList Name="ElenchiIdxAipFascDaFirmareBtnList" Description="Operazioni sulle liste degli elenchi indici AIP fascicoli" >
+        <Button Name="ricercaElenchiIdxAipFascDaFirmare" Description="Ricerca" Type="STRING" />
+        <Button Name="selectAllElenchiIndiciAipFasc" Description="Aggiungi tutti" Type="STRING"/>
+        <Button Name="deselectAllElenchiIndiciAipFasc" Description="Rimuovi tutti" Type="STRING"/>
+        <Button Name="selectHundredElenchiIndiciAipFasc" Description="Aggiungi 100" Type="STRING"/>
+        <Button Name="firmaElenchiIndiciAipFascHsm"  Description="Firma" Type="STRING" />
+    </ButtonList>
+    
+    <List Name="ElenchiIndiciAipFascDaFirmareList" Description="Lista elenchi indici AIP fascicoli da firmare" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="INTEGER"  Description="Id elenco" Name="id_elenco_vers_fasc" />
+        <Input Type="STRING" Description="Struttura" Name="amb_ente_strut"/>
+        <Input Type="DATETIME" Description="Creato il" Name="dt_creazione_elenco_ix_aip" />
+        <Input Type="INTEGER" Description="Numero indici AIP" Name="ni_indici_aip" GroupingDecimal="true"/>
+        <Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />
+    </List>
+    
+    <List Name="ElenchiIndiciAipFascSelezionatiList" Description="Elenchi indici AIP fascicoli selezionati" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">
+        <Input Type="INTEGER"  Description="Id elenco" Name="id_elenco_vers_fasc" />
+        <Input Type="STRING" Description="Struttura" Name="amb_ente_strut"/>
+        <Input Type="DATETIME" Description="Creato il" Name="dt_creazione_elenco_ix_aip" />
+        <Input Type="INTEGER" Description="Numero indici AIP" Name="ni_indici_aip" GroupingDecimal="true"/>
+        <Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />  
+    </List>
+</Form>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sotto strutture" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
+      xsi:noNamespaceSchemaLocation="Form.xsd" >
+    
+    <Section Name="struttura" Description="" Legend="Struttura" ShowButton="false" LoadOpened="true"/>
+    <Section Name="subStrutturaSection" Description="" Legend="Sotto struttura" ShowButton="false" LoadOpened="true"/>
+    <Section Name="regoleSubStrutturaSection" Description="" Legend="Regole sulla sotto Struttura" ShowButton="false" LoadOpened="true"/>
+    
+    <!-- Struttura di riferimento nel dettaglio di una delle liste seguenti -->    
+    <Fields Name="StrutRif" Description="Struttura" >
+        <Input Type="STRING" Description="Nome struttura" Name="nm_strut" MaxLength="100"/>
+        <Input Type="STRING" Description="Descrizione struttura" Name="ds_strut" MaxLength="254"/>
+        <Input Type="STRING" Description="Ente" Name="id_ente" />
+        <Input Type="INTEGER" Description="Id struttura" Name="id_strut" />
+        <Input Type="STRING" Description="Struttura" Name="struttura" />
+        <Input Type="STRING" Description="Template" Name="fl_template" />
+    </Fields>
+    
+    <Fields Name="SubStrut" Description="Dettaglio sottostruttura" >
+        <Input Type="INTEGER" Description="Id" Name="id_sub_strut" />
+        <Input Type="STRING" Description="Nome" Name="nm_sub_strut" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_sub_strut"  />
+    </Fields>
+    
+    <!-- Gestione sottostrutture -->
+    <List Name="SubStrutList" Description="Sottostrutture" >
+        <Input Type="STRING" Description="Nome" Name="nm_sub_strut" Required="true" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_sub_strut" Required="true" />
+    </List>
+    
+     <!-- Regole sulla sottostruttura -->
+    <List Name="RegoleSubStrutList" Description="Regole sulla sotto struttura" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc" />
+        <Input Type="STRING" Description="Tipo documento principale" Name="nm_tipo_doc" />
+        <Input Type="STRING" Description="Campi" Name="regola_composita" />
+        <Input Type="DATE" Description="Data istituzione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
+    </List>
+    
+</Form>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="Sezione Unità Documentarie" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd">
+    
+    <Section Name="ChiaveInfoVersate" Description="" Legend="Filtri criterio di raggruppamento" ShowButton="false"/>
+    <Section Name="InfoDescCriterio" Description="" Legend="Informazioni descrittive del criterio di raggruppamento" ShowButton="false" LoadOpened="true"/>
+    <Section Name="GestElenchiVersamento" Description="" Legend="Gestione elenchi di versamento" ShowButton="false" LoadOpened="true"/>
+    <Section Name="GestElenchiIndiciAip" Description="" Legend="Gestione elenchi indici AIP" ShowButton="false" LoadOpened="true"/>         
+    
+    <!-- Filtri criteri di raggruppamento -->
+    <Fields Name="FiltriCriteriRaggr" Description="Filtri criteri di raggruppamento" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
+        <ComboBox Type="STRING" Description="Standard" Name="fl_criterio_raggr_standard" />
+        <ComboBox Type="STRING" Description="Fiscale" Name="fl_criterio_raggr_fisc" />
+        <ComboBox Type="STRING" Description="Tipo validazione elenco" Name="ti_valid_elenco" />
+        <ComboBox Type="STRING" Description="Modalità validazione elenco" Name="ti_mod_valid_elenco" />
+        <ComboBox Type="STRING" Description="Tipo gestione elenchi indici AIP" Name="ti_gest_elenco_criterio" />
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr"/>
+        <ComboBox Type="INTEGER" Description="Tipo registro" Name="id_registro_unita_doc"/>
+        <ComboBox Type="INTEGER" Description="Tipo unità documentaria" Name="id_tipo_unita_doc"/>
+        <ComboBox Type="INTEGER" Description="Tipo documento" Name="id_tipo_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <ComboBox Type="STRING" Description="Attivo" Name="criterio_attivo"/>
+        <Button Name="ricercaCriteriRaggrButton" Description="Ricerca criteri" Type="STRING" />
+    </Fields>
+    
+    <!-- Pagina di creazione criterio di raggruppamento -->
+    <Fields Name="CreaCriterioRaggr" Description="Crea criterio di raggruppamento" >
+        <Button Name="duplicaCritButton" Description="Duplica criterio" Type="STRING"/>
+        <Button Name="logEventiCriteriRaggruppamento" Description="Log eventi" Type="STRING"/>
+        <!-- Criterio -->
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" Required="true" />
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" Required="true" />
+        <Input Type="STRING" Description="Ambiente" Name="nm_ambiente" Readonly="true"/>
+        <Input Type="STRING" Description="Ente" Name="nm_ente" Readonly="true" />
+        <Input Type="STRING" Description="Struttura" Name="nm_strut" Readonly="true" />
+        <Input Type="INTEGER" Description="Id criterio" Name="id_criterio_raggr" Hidden="true"/>
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr" Required="true" MaxLength="70" />
+        <Input Type="STRING" Description="Descrizione criterio" Name="ds_criterio_raggr" Required="true"/>
+        <Input Type="STRING" Description="Elenchi creati con criteri standard e non fiscali" Name="ti_gest_elenco_std_nofisc" Required="true"/>
+        <Input Type="STRING" Description="Elenchi creati con criteri standard e fiscali" Name="ti_gest_elenco_std_fisc" Required="true"/>
+        <Input Type="STRING" Description="Elenchi creati con criteri non standard" Name="ti_gest_elenco_nostd" Required="true"/>
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_criterio_raggr_fisc" Readonly="true" />
+        <ComboBox Type="STRING" Description="Tipo validazione elenco" Name="ti_valid_elenco" Required="true" />
+        <ComboBox Type="STRING" Description="Modalità validazione elenco" Name="ti_mod_valid_elenco" Required="true" />
+        <ComboBox Type="STRING" Description="Tipo gestione elenchi indici AIP nel criterio di raggruppamento" Name="ti_gest_elenco_criterio"/>
+        <CheckBox Type="STRING" Description="Standard" Name="fl_criterio_raggr_standard" Readonly="true"/>
+        <Input Type="INTEGER" Description="Numero massimo componenti" Name="ni_max_comp" Required="true" GroupingDecimal="true" />
+        <Input Type="INTEGER" Description="Numero massimo elenchi giornaliero" Name="ni_max_elenchi_by_gg" GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="Tipo scadenza chiusura" Name="ti_scad_chius_volume"/>
+        <Input Type="INTEGER" Description="Scadenza chiusura" Name="ni_tempo_scad_chius" GroupingDecimal="true" />
+        <ComboBox Type="STRING" Description="Scadenza chiusura" Name="ti_tempo_scad_chius"/>
+        <Input Type="DATE" Description="Data istituzione" Name="dt_istituz" Required="true"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" Required="true"/>
+        <!-- Filtri per unità documentarie -->
+        <MultiSelect Type="INTEGER" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc"/>
+        <MultiSelect Type="INTEGER" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <ComboBox Type="STRING" Description="Presenza firme" Name="fl_unita_doc_firmato" />
+        <MultiSelect Type="STRING" Description="Esito firme versamento" Name="ti_esito_verif_firme"/>
+        <Input Type="DATE" Description="Data acquisizione da" Name="dt_creazione_unita_doc_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_creazione_unita_doc_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_creazione_unita_doc_da" MaxLength="2"/>
+        <Input Type="DATE" Description="Data acquisizione a" Name="dt_creazione_unita_doc_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_dt_creazione_unita_doc_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_dt_creazione_unita_doc_a" MaxLength="2"/>
+        <ComboBox Type="STRING" Description="Forzatura accettazione" Name="fl_forza_accettazione" />
+        <ComboBox Type="STRING" Description="Forzatura conservazione" Name="fl_forza_conservazione" />
+        <MultiSelect Type="INTEGER" Description="Tipo documento" Name="nm_tipo_doc" />
+        <MultiSelect Type="STRING" Description="Sistemi di migrazione" Name="nm_sistema_migraz" />
+        <!--<ComboBox Type="STRING" Description="Stato conservazione" Name="ti_stato_conservazione" />-->
+        <Input Type="DATE" Description="Data unità documentaria da" Name="dt_reg_unita_doc_da"/>
+        <Input Type="DATE" Description="Data unità documentaria a" Name="dt_reg_unita_doc_a"/>
+        <Input Type="STRING" Description="Oggetto unità documentaria" Name="dl_oggetto_unita_doc"/>
+        <Input Type="STRING" Description="Autore documento" Name="ds_autore_doc"/>
+        <Input Type="STRING" Description="Descrizione documento" Name="dl_doc"/>
+        <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
+        <Input Type="INTEGER" Description="Anno a" Name="aa_key_unita_doc_a" MaxLength="4"/>
+        <Input Type="STRING" Description="Numero da" Name="cd_key_unita_doc_da"/>
+        <Input Type="STRING" Description="Numero a" Name="cd_key_unita_doc_a"/>
+        <ComboBox Type="STRING" Description="Tipo conservazione" Name="ti_conservazione"/>
+        <TextArea Type="STRING" Description="Note su criterio" Name="nt_criterio_raggr" Rows="5" Cols="5" MaxLength="2000" />
+    </Fields>
+    
+    <!-- Lista criteri di raggruppamento -->
+    <List Name="CriterioRaggrList"  Description="Gestione criteri di raggruppamento unità documentarie" >
+        <Input Type="INTEGER" Description="Id criterio" Name="id_criterio_raggr" Hidden="true"/>
+        <Input Type="STRING" Description="Ente - Struttura" Name="nm_ente_nm_strut"/>
+        <Input Type="STRING" Description="Nome criterio" Name="nm_criterio_raggr"/>
+        <CheckBox Type="STRING" Description="Standard" Name="fl_criterio_raggr_standard" Readonly="true"/>        
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_criterio_raggr_fisc" Readonly="true"/>
+        <Input Type="STRING" Description="Tipo validazione" Name="ti_valid_elenco"/>
+        <Input Type="STRING" Description="Modalità validazione" Name="ti_mod_valid_elenco"/>
+        <Input Type="STRING" Description="Tipo gestione elenchi indici AIP" Name="ti_gest_elenco_criterio"/>
+        <Input Type="STRING" Description="Tipo registro" Name="cd_registro"/>
+        <Input Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc"/>
+        <Input Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
+        <Input Type="STRING" Description="Anno" Name="aa_unita_doc" />
+        <Input Type="INTEGER" Description="Numero massimo componenti" Name="ni_max_comp"  GroupingDecimal="true" />
+        <Input Type="STRING" Description="Scadenza chiusura" Name="ds_scad_chius"/>
+        <Input Type="DATE" Description="Data istituzione" Name="dt_istituz"/>
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres"/>
+        <Link Name="duplicaCrit" Description="" Type="STRING" Target="duplicaCrit" Tooltip="Duplica criterio selezionato" isTargetList="false"/>
+    </List>
+    
+    <ButtonList Name="CriterioCustomMessageButtonList" Description="MessageBox" >        
+        <Button Secure="false" Name="confermaSalvataggioCriterio"  Description="Si" Type="STRING"  />
+        <Button Secure="false" Name="annullaSalvataggioCriterio"  Description="No" Type="STRING"  />
+    </ButtonList>
+    
+    <Fields Name="IdFields" Description="Elenco di id da utilizzare durante il passaggio tra action">
+        <Input Type="INTEGER" Description="Id Struttura" Name="id_strut" />
+        <Input Type="INTEGER" Description="Id registro" Name="id_registro_unita_doc" />
+        <Input Type="INTEGER" Description="Id tipo unità documentaria" Name="id_tipo_unita_doc" />
+        <Input Type="INTEGER" Description="Id tipo doc" Name="id_tipo_doc" />
+    </Fields>
+</Form>
