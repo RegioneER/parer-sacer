@@ -382,11 +382,11 @@ public class AggiornaStatoArchiviazioneHelper {
         }
         //
         // MEV#27048
-        log.info(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name()
-                + " --- VERSAMENTO - Invio dei messaggi in coda per tutte le UD con data creazione "
-                + "inclusa nella data di versamento corrente, con stato = IN_ATTESA_SCHED");
-        for (ElvUdVersDaElabElenco elenco : tmpUdDaElabElencoList) {
-            if (CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name().equals(elenco.getTiStatoUdDaElab())) {
+        if (tmpUdDaElabElencoList != null && !tmpUdDaElabElencoList.isEmpty()) {
+            log.info(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name()
+                    + " --- VERSAMENTO - Invio dei messaggi in coda per tutte le UD con data creazione "
+                    + "inclusa nella data di versamento corrente, con stato = IN_ATTESA_SCHED");
+            for (ElvUdVersDaElabElenco elenco : tmpUdDaElabElencoList) {
                 PayLoad pl = new PayLoad();
                 pl.setTipoEntitaSacer("UNI_DOC");
                 pl.setStato(CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name());
@@ -395,15 +395,16 @@ public class AggiornaStatoArchiviazioneHelper {
                 pl.setAaKeyUnitaDoc(elenco.getAaKeyUnitaDoc().longValue());
                 pl.setDtCreazione(elenco.getDtCreazione().getTime());
 
-                jmsProducerUtilEjb.inviaMessaggioInFormatoJson(connectionFactory, queue, pl,
-                        "CodaElenchiDaElabInAttesaSched");
+                jmsProducerUtilEjb.manageMessageGroupingInFormatoJson(connectionFactory, queue, pl,
+                        "CodaElenchiDaElabInAttesaSched", String.valueOf(pl.getIdStrut()));
             }
         }
-        log.info(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name()
-                + " --- VERSAMENTO - Invio dei messaggi in coda per tutti i documenti con data creazione "
-                + "inclusa nella data di versamento corrente, con stato = IN_ATTESA_SCHED");
-        for (ElvDocAggDaElabElenco elenco : tmpDocDaElabElencoList) {
-            if (CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name().equals(elenco.getTiStatoDocDaElab())) {
+
+        if (tmpDocDaElabElencoList != null && !tmpDocDaElabElencoList.isEmpty()) {
+            log.info(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name()
+                    + " --- VERSAMENTO - Invio dei messaggi in coda per tutti i documenti con data creazione "
+                    + "inclusa nella data di versamento corrente, con stato = IN_ATTESA_SCHED");
+            for (ElvDocAggDaElabElenco elenco : tmpDocDaElabElencoList) {
                 PayLoad pl = new PayLoad();
                 pl.setTipoEntitaSacer("DOC");
                 pl.setStato(CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name());
@@ -412,8 +413,8 @@ public class AggiornaStatoArchiviazioneHelper {
                 pl.setAaKeyUnitaDoc(elenco.getAaKeyUnitaDoc().longValue());
                 pl.setDtCreazione(elenco.getDtCreazione().getTime());
 
-                jmsProducerUtilEjb.inviaMessaggioInFormatoJson(connectionFactory, queue, pl,
-                        "CodaElenchiDaElabInAttesaSched");
+                jmsProducerUtilEjb.manageMessageGroupingInFormatoJson(connectionFactory, queue, pl,
+                        "CodaElenchiDaElabInAttesaSched", String.valueOf(pl.getIdStrut()));
             }
         }
         // end MEV#27048
@@ -449,12 +450,13 @@ public class AggiornaStatoArchiviazioneHelper {
             q.setParameter("tiStato", CostantiDB.TipiStatoElementoVersato.IN_ATTESA_MEMORIZZAZIONE.name());
             q.setParameter("dtVersFrom", from);
             q.setParameter("dtVersTo", to);
-            tmpUdElabElencoList = q.getResultList();
-            for (ElvUdVersDaElabElenco elenco : tmpUdElabElencoList) {
+            List<ElvUdVersDaElabElenco> udVersDaElabElencoList = q.getResultList();
+            for (ElvUdVersDaElabElenco elenco : udVersDaElabElencoList) {
                 elenco.setTiStatoUdDaElab(CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name());
                 elenco.getAroUnitaDoc()
                         .setTiStatoUdElencoVers(CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name());
             }
+            tmpUdElabElencoList.addAll(udVersDaElabElencoList);
         }
         entityManager.flush();
 
@@ -472,11 +474,12 @@ public class AggiornaStatoArchiviazioneHelper {
             q.setParameter("tiStato", CostantiDB.TipiStatoElementoVersato.IN_ATTESA_MEMORIZZAZIONE.name());
             q.setParameter("dtVersFrom", from);
             q.setParameter("dtVersTo", to);
-            tmpDocElabElencoList = q.getResultList();
-            for (ElvDocAggDaElabElenco elenco : tmpDocElabElencoList) {
+            List<ElvDocAggDaElabElenco> docAggDaElabElencoList = q.getResultList();
+            for (ElvDocAggDaElabElenco elenco : docAggDaElabElencoList) {
                 elenco.setTiStatoDocDaElab(CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name());
                 elenco.getAroDoc().setTiStatoDocElencoVers(CostantiDB.TipiStatoElementoVersato.IN_ATTESA_SCHED.name());
             }
+            tmpDocElabElencoList.addAll(docAggDaElabElencoList);
         }
         entityManager.flush();
 

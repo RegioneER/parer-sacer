@@ -761,12 +761,16 @@ public class ElenchiVersamentoHelper extends GenericHelper {
     public void removeAppartenenzaUdElenco(Long idUnitaDoc) {
         AroUnitaDoc unitaDoc = findById(AroUnitaDoc.class, idUnitaDoc);
         unitaDoc.setElvElencoVer(null);
-        unitaDoc.setTiStatoUdElencoVers(UdDocStatusEnum.IN_ATTESA_SCHED.name());
+        // MC#27493
+        unitaDoc.setTiStatoUdElencoVers(UdDocStatusEnum.NON_SELEZ_SCHED.name());
+        // end MC#27493
     }
 
     public void removeAppartenenzaDocElenco(Long idDoc) {
         AroDoc doc = findById(AroDoc.class, idDoc);
         doc.setElvElencoVer(null);
-        doc.setTiStatoDocElencoVers(DocStatusEnum.IN_ATTESA_SCHED.name());
+        // MC#27493
+        doc.setTiStatoDocElencoVers(DocStatusEnum.NON_SELEZ_SCHED.name());
+        // end MC#27493
     }
 }

@@ -20,6 +20,7 @@
     </Fields>
      
     <Fields Name="EstensioneFile" Description="Estensione File" >
+        <Input Type="INTEGER" Description="ID estensione" Name="id_estensione_file" Hidden="true"/>
         <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />
     </Fields>
     
@@ -52,6 +53,7 @@
     </List>
     
     <List Name="EstensioneFileList" Description="Formato"  >
+        <Input Type="INTEGER" Description="ID estensione" Name="id_estensione_file" Hidden="true"/>
         <Input Type="STRING" Description="Codice" Name="cd_estensione_file" />
         <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
     </List> 

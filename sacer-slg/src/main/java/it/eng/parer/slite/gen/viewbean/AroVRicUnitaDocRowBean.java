@@ -136,6 +136,14 @@ public class AroVRicUnitaDocRowBean extends BaseRow implements BaseRowInterface,
         setObject("nm_tipo_unita_doc", nm_tipo_unita_doc);
     }
 
+    public String getFlEsisteProfiloNormativo() {
+        return getString("fl_esiste_profilo_normativo");
+    }
+
+    public void setFlEsisteProfiloNormativo(String fl_esiste_profilo_normativo) {
+        setObject("fl_esiste_profilo_normativo", fl_esiste_profilo_normativo);
+    }
+
     public String getFlForzaAccettazione() {
         return getString("fl_forza_accettazione");
     }
@@ -386,6 +394,7 @@ public class AroVRicUnitaDocRowBean extends BaseRow implements BaseRowInterface,
         this.setIdTipoUnitaDoc(entity.getIdTipoUnitaDoc());
         this.setIdStrutTipoUnitaDoc(entity.getIdStrutTipoUnitaDoc());
         this.setNmTipoUnitaDoc(entity.getNmTipoUnitaDoc());
+        this.setFlEsisteProfiloNormativo(entity.getFlEsisteProfiloNormativo());
         this.setFlForzaAccettazione(entity.getFlForzaAccettazione());
         this.setFlForzaConservazione(entity.getFlForzaConservazione());
         this.setDsKeyOrd(entity.getDsKeyOrd());
@@ -435,6 +444,7 @@ public class AroVRicUnitaDocRowBean extends BaseRow implements BaseRowInterface,
         entity.setIdTipoUnitaDoc(this.getIdTipoUnitaDoc());
         entity.setIdStrutTipoUnitaDoc(this.getIdStrutTipoUnitaDoc());
         entity.setNmTipoUnitaDoc(this.getNmTipoUnitaDoc());
+        entity.setFlEsisteProfiloNormativo(this.getFlEsisteProfiloNormativo());
         entity.setFlForzaAccettazione(this.getFlForzaAccettazione());
         entity.setFlForzaConservazione(this.getFlForzaConservazione());
         entity.setDsKeyOrd(this.getDsKeyOrd());

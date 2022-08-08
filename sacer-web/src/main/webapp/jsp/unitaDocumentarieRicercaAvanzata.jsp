@@ -152,6 +152,7 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.CD_VERSIONE_XSD_UD%>" colSpan="1"/>
                     <sl:newLine />
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.DL_OGGETTO_UNITA_DOC%>"  />
+                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_PROFILO_NORMATIVO%>" />
                     <sl:newLine />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.DT_REG_UNITA_DOC_DA%>" />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.DT_REG_UNITA_DOC_A%>" />

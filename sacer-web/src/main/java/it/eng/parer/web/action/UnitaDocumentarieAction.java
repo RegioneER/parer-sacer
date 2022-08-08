@@ -14,6 +14,7 @@ import it.eng.parer.annulVers.ejb.AnnulVersEjb;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.AroVerIndiceAipUd;
+import it.eng.parer.entity.constraint.DecModelloXsdUd;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
@@ -288,6 +289,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 ComboGetter.getMappaSortedGenericEnum("ti_conservazione", VolumeEnums.TipoConservazione.values()));
         getForm().getFiltriUnitaDocumentarieSemplice().getFl_hash_vers()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getFiltriUnitaDocumentarieSemplice().getFl_profilo_normativo()
+                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
 
         /* Filtro sottostrutture */
         OrgSubStrutTableBean tmpSubStrutsTableBean = subStrutEjb
@@ -407,6 +410,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getFiltriUnitaDocumentarieAvanzata().getTi_conservazione().setDecodeMap(
                 ComboGetter.getMappaSortedGenericEnum("ti_conservazione", VolumeEnums.TipoConservazione.values()));
         getForm().getFiltriUnitaDocumentarieAvanzata().getNm_sistema_migraz().setDecodeMap(mappaSisMig);
+        getForm().getFiltriUnitaDocumentarieAvanzata().getFl_profilo_normativo()
+                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper().setDecodeMap(
                 ComboGetter.getMappaSortedGenericEnum("operatore", CostantiDB.TipoOperatoreDatiSpec.values()));
         getForm().getFiltriCollegamentiUnitaDocumentarie().getCon_collegamento()
@@ -1894,12 +1899,15 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getUnitaDocumentarieDettaglioTabs().getXMLIndiceUD().setHidden(true);
         getForm().getUnitaDocumentarieDettaglioTabs().getXMLRispostaUD().setHidden(true);
         getForm().getUnitaDocumentarieDettaglioTabs().getXMLRapportoUD().setHidden(true);
+        getForm().getUnitaDocumentarieDettaglioTabs().getProfiloNormativoUD().setHidden(true);
 
         // Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line in versione "pretty-print"
         String xmlrich = udRB.getBlXmlRichUd();
         String xmlindex = udRB.getBlXmlIndexUd();
         String xmlrisp = udRB.getBlXmlRispUd();
         String xmlrapp = udRB.getBlXmlRappUd();
+        String profiloNormativo = udHelper.getProfiloNormativo(CostantiDB.TiUsoModelloXsd.VERS.name(),
+                DecModelloXsdUd.TiModelloXsdUd.PROFILO_NORMATIVO_UNITA_DOC, udRB.getIdUnitaDoc().longValue());
         XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
         if (xmlrich != null && xmlrisp != null) {
             xmlrich = formatter.prettyPrintWithDOM3LS(xmlrich);
@@ -1920,6 +1928,14 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 getForm().getUnitaDocumentarieDettaglioTabs().getXMLRapportoUD().setHidden(false);
             }
         }
+
+        if (profiloNormativo != null) {
+            // Ricavo il profilo normativo
+            profiloNormativo = formatter.prettyPrintWithDOM3LS(profiloNormativo);
+            getForm().getUnitaDocumentarieDetail().getProfilo_normativo().setValue(profiloNormativo);
+            getForm().getUnitaDocumentarieDettaglioTabs().getProfiloNormativoUD().setHidden(false);
+        }
+
         int docUDPageSize = 10;
         if (getForm().getDocumentiUDList().getTable() != null) {
             docUDPageSize = getForm().getDocumentiUDList().getTable().getPageSize();
@@ -2356,6 +2372,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     public void tabInfoPrincipaliUDOnClick() throws EMFError {
         getForm().getUnitaDocumentarieDettaglioTabs()
                 .setCurrentTab(getForm().getUnitaDocumentarieDettaglioTabs().getInfoPrincipaliUD());
+        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
+    }
+
+    @Override
+    public void tabProfiloNormativoUDOnClick() throws EMFError {
+        getForm().getUnitaDocumentarieDettaglioTabs()
+                .setCurrentTab(getForm().getUnitaDocumentarieDettaglioTabs().getProfiloNormativoUD());
         forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
     }
 

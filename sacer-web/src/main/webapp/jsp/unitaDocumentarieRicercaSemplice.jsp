@@ -58,7 +58,8 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.NM_TIPO_UNITA_DOC%>"  colSpan="2" />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_VERSIONE_XSD_UD%>" colSpan="2"/>
                     <sl:newLine />
-                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DL_OGGETTO_UNITA_DOC%>"  controlWidth="w100"/>
+                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DL_OGGETTO_UNITA_DOC%>" />
+                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_PROFILO_NORMATIVO%>" />
                     <sl:newLine />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DT_REG_UNITA_DOC_DA%>" />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.DT_REG_UNITA_DOC_A%>"  />

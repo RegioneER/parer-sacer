@@ -573,6 +573,7 @@ public class FormatiAction extends FormatiAbstractAction {
         getMessageBox().clear();
 
         EstensioneFile estensioneFile = getForm().getEstensioneFile();
+        String cdEstensioneFileOld = estensioneFile.getCd_estensione_file().parse();
         estensioneFile.post(getRequest());
         DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
         estensioneFile.copyToBean(estensioneFileRowBean);
@@ -582,34 +583,43 @@ public class FormatiAction extends FormatiAbstractAction {
         }
 
         if (getMessageBox().isEmpty()) {
-            BigDecimal idFormatoFileStandard = null;
-            idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList().getTable()
-                    .getCurrentRow()).getIdFormatoFileStandard();
-            if (getForm().getEstensioneFile().getStatus().equals(Status.insert)) {
-                try {
-                    estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+            try {
+                BigDecimal idFormatoFileStandard = null;
+                idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
+                        .getTable().getCurrentRow()).getIdFormatoFileStandard();
+                if (getForm().getEstensioneFile().getStatus().equals(Status.insert)) {
 
-                    formatiEjb.insertDecEstensioneFile(estensioneFileRowBean);
+                    estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+                    long idEstensioneFile = formatiEjb.insertDecEstensioneFile(estensioneFileRowBean);
+                    estensioneFileRowBean.setIdEstensioneFile(BigDecimal.valueOf(idEstensioneFile));
+
+                    getForm().getEstensioneFileList().getTable().last();
+                    getForm().getEstensioneFileList().getTable().add(estensioneFileRowBean);
+
                     getMessageBox().addMessage(new Message(MessageLevel.INF, "Estensione file salvato con successo"));
 
-                } catch (ParerUserError e) {
+                } else if (getForm().getEstensioneFile().getStatus().equals(Status.update)) {
 
-                    getMessageBox().addError(e.getDescription());
+                    estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+
+                    BigDecimal idEstensioneFile = getForm().getEstensioneFile().getId_estensione_file().parse();
+
+                    formatiEjb.updateDecEstensioneFile(idFormatoFileStandard, idEstensioneFile, cdEstensioneFileOld,
+                            estensioneFile.getCd_estensione_file().parse());
+
+                    getMessageBox()
+                            .addMessage(new Message(MessageLevel.INF, "Estensione file modificata con successo"));
                 }
+
+                if (!getMessageBox().hasError()) {
+                    getForm().getEstensioneFile().setStatus(Status.view);
+                    getForm().getEstensioneFile().setViewMode();
+                    getForm().getEstensioneFileList().setStatus(Status.view);
+                    loadDettaglio();
+                }
+            } catch (ParerUserError e) {
+                getMessageBox().addError(e.getDescription());
             }
-            DecEstensioneFileTableBean estensioneFileTable;
-
-            estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
-
-            estensioneFileTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
-
-            getForm().getEstensioneFileList().setTable(estensioneFileTable);
-            getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-            getForm().getEstensioneFileList().getTable().first();
-
-            getForm().getEstensioneFile().setStatus(Status.view);
-            getForm().getEstensioneFile().setViewMode();
-            getForm().getEstensioneFileList().setStatus(Status.view);
         }
         forwardToPublisher(Application.Publisher.ESTENSIONE_FILE_DETAIL);
     }

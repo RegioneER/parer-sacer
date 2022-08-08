@@ -1867,4 +1867,9 @@ public class TipoUnitaDocEjb {
         }
         return idXsdDatiSpecList;
     }
+
+    public boolean isAccordoPerCampiNuovaFatturazione(BigDecimal idEnteConvenz) {
+        return helper.isAccordoPerNuovaFatturazione(idEnteConvenz);
+    }
+
 }

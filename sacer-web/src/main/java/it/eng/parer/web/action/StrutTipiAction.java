@@ -1707,7 +1707,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
      * TipoUnitaDocAmmesso
      *
      * @param idStrut
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1811,12 +1811,6 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             getForm().getTipoUnitaDocCreazioneCriterio().getCreaCriterioRaggrStandardTipoUdButton().setHidden(true);
         }
 
-        // getForm().getParametriAmministrazioneTipoUdList().getDs_valore_param_applic_tipo_ud_amm().setEditMode();
-        // getForm().getParametriConservazioneTipoUdList().getDs_valore_param_applic_tipo_ud_cons().setEditMode();
-        // getForm().getParametriGestioneTipoUdList().getDs_valore_param_applic_tipo_ud_gest().setEditMode();
-        // getForm().getParametriAmministrazioneTipoUdList().setHideDeleteButton(true);
-        // getForm().getParametriConservazioneTipoUdList().setHideDeleteButton(true);
-        // getForm().getParametriGestioneTipoUdList().setHideDeleteButton(true);
         // Data primo versamento non editabile
         getForm().getTipoUnitaDoc().getDt_first_vers().setViewMode();
 
@@ -2651,9 +2645,6 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
      */
     private void salvaTipoUnitaDoc() throws EMFError {
 
-        // getForm().getParametriAmministrazioneTipoUdList().post(getRequest());
-        // getForm().getParametriConservazioneTipoUdList().post(getRequest());
-        // getForm().getParametriGestioneTipoUdList().post(getRequest());
         getMessageBox().clear();
 
         DecTipoUnitaDocRowBean tipoUnitaDocRowBean = new DecTipoUnitaDocRowBean();
@@ -2735,19 +2726,23 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                     }
                 }
 
-                // // Controllo valori possibili su tipo unità documentaria
-                // AplParamApplicTableBean parametriAmministrazione = (AplParamApplicTableBean)
-                // getForm().getParametriAmministrazioneTipoUdList().getTable();
-                // AplParamApplicTableBean parametriConservazione = (AplParamApplicTableBean)
-                // getForm().getParametriConservazioneTipoUdList().getTable();
-                // AplParamApplicTableBean parametriGestione = (AplParamApplicTableBean)
-                // getForm().getParametriGestioneTipoUdList().getTable();
-                // String error = amministrazioneEjb.checkParametriAmmessi("tipo_ud",
-                // parametriAmministrazione,
-                // parametriConservazione, parametriGestione);
-                // if (error != null) {
-                // getMessageBox().addError(error);
-                // }
+                // Controllo che se l'accordo è di tipo "Da fatturare" o "Accordi enti extra ER"
+                // i campi "Conservazione" e "Tipo servizio di attivazione su tipo ud" siano stati compilati
+                OrgStrutRowBean strutRB = struttureEjb.getOrgStrutRowBean(idStrut);
+                boolean campiTipoServizioObbligatori = tipoUnitaDocEjb
+                        .isAccordoPerCampiNuovaFatturazione(strutRB.getIdEnteConvenz());
+
+                if (campiTipoServizioObbligatori) {
+                    if (tipoUnitaDoc.getId_tipo_serv_conserv_tipo_ud().parse() == null) {
+                        getMessageBox().addError(
+                                "Errore di compilazione form: accordo di tipo 'Da fatturare' o 'Accordo enti extra ER', valorizzare il campo 'Conservazione'<br/>");
+                    }
+                    if (tipoUnitaDoc.getId_tipo_serv_attiv_tipo_ud().parse() == null) {
+                        getMessageBox().addError(
+                                "Errore di compilazione form: accordo di tipo 'Da fatturare' o 'Accordo enti extra ER', valorizzare il campo 'Tipo servizio di attivazione su tipo ud'<br/>");
+                    }
+                }
+
                 if (getMessageBox().isEmpty()) {
 
                     tipoUnitaDoc.copyToBean(tipoUnitaDocRowBean);
@@ -3703,14 +3698,17 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         AplParamApplicTableBean parametriGestione = (AplParamApplicTableBean) parametriObj[1];
         AplParamApplicTableBean parametriConservazione = (AplParamApplicTableBean) parametriObj[2];
 
-        if (!editModeAmministrazione)
+        if (!editModeAmministrazione) {
             parametriAmministrazione = obfuscatePasswordParamApplic(parametriAmministrazione);
+        }
 
-        if (!editModeGestione)
+        if (!editModeGestione) {
             parametriGestione = obfuscatePasswordParamApplic(parametriGestione);
+        }
 
-        if (!editModeConservazione)
+        if (!editModeConservazione) {
             parametriConservazione = obfuscatePasswordParamApplic(parametriConservazione);
+        }
 
         // getForm().getParametriAmministrazioneSection().setLoadOpened(true);
         // getForm().getParametriConservazioneSection().setLoadOpened(true);
@@ -6367,7 +6365,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             DecUsoModelloXsdUniDocRowBean row = (DecUsoModelloXsdUniDocRowBean) getForm().getXsdModelliUdList()
                     .getTable().getCurrentRow();
             modelloXsdUdRowBean.copyFromBaseRow(row);
-        } /* casistica doc */else if (isDoc) {
+        } /* casistica doc */ else if (isDoc) {
             DecUsoModelloXsdDocRowBean row = (DecUsoModelloXsdDocRowBean) getForm().getXsdModelliUdList().getTable()
                     .getCurrentRow();
             modelloXsdUdRowBean.copyFromBaseRow(row);
@@ -6533,23 +6531,29 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             if (rowBean.getTiValoreParamApplic().equals(Constants.ComboValueParamentersType.PASSWORD.name())) {
                 rowBean.setString("ds_valore_param_applic", Constants.OBFUSCATED_STRING);
 
-                if (rowBean.getString("ds_valore_param_applic_applic") != null)
+                if (rowBean.getString("ds_valore_param_applic_applic") != null) {
                     rowBean.setString("ds_valore_param_applic_applic", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_ambiente") != null)
+                if (rowBean.getString("ds_valore_param_applic_ambiente") != null) {
                     rowBean.setString("ds_valore_param_applic_ambiente", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_strut") != null)
+                if (rowBean.getString("ds_valore_param_applic_strut") != null) {
                     rowBean.setString("ds_valore_param_applic_strut", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_tipo_ud_amm") != null)
+                if (rowBean.getString("ds_valore_param_applic_tipo_ud_amm") != null) {
                     rowBean.setString("ds_valore_param_applic_tipo_ud_amm", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_tipo_ud_gest") != null)
+                if (rowBean.getString("ds_valore_param_applic_tipo_ud_gest") != null) {
                     rowBean.setString("ds_valore_param_applic_tipo_ud_gest", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_tipo_ud_cons") != null)
+                if (rowBean.getString("ds_valore_param_applic_tipo_ud_cons") != null) {
                     rowBean.setString("ds_valore_param_applic_tipo_ud_cons", Constants.OBFUSCATED_STRING);
+                }
 
             }
         }

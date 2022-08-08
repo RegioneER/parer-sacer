@@ -1836,7 +1836,7 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
     public void ricercaGestioneJob() throws EMFError {
         getForm().getGestioneJobRicercaFiltri().getRicercaGestioneJob().setDisableHourGlass(true);
         GestioneJobRicercaFiltri filtri = getForm().getGestioneJobRicercaFiltri();
-        if (getRequest().getAttribute("fromLink") == null) {
+        if (getRequest().getAttribute("fromLink") == null && (getRequest().getAttribute("fromListaPrinc") == null)) {
             filtri.post(getRequest());
         }
         popolaInformazioniJob();
@@ -1927,28 +1927,49 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
 
         if (tabella != null) {
             ArrayList<Object[]> listaSelezionati = new ArrayList<Object[]>();
+            ArrayList<Object[]> listaNonSelezionati = new ArrayList<Object[]>();
+            boolean almenoUnoSel = false;
             for (int i = 0; i < tabella.size(); i++) {
                 BaseRow riga = new BaseRow();
                 riga = tabella.getRow(i);
                 if (riga.getString("job_selezionati").equals("1")) {
-                    Object[] jobSelezionati = new Object[3];
-                    jobSelezionati[0] = i;
-                    jobSelezionati[1] = riga.getString("nm_job");
-                    jobSelezionati[2] = riga.getString("ds_job");
-                    listaSelezionati.add(jobSelezionati);
+                    almenoUnoSel = true;
+                    Object[] jobDaValutare = new Object[3];
+                    jobDaValutare[0] = i;
+                    jobDaValutare[1] = riga.getString("nm_job");
+                    jobDaValutare[2] = riga.getString("ds_job");
+                    if (riga.getString("stato_job").equals("DISATTIVO")) {
+                        listaSelezionati.add(jobDaValutare);
+                    } else {
+                        listaNonSelezionati.add(jobDaValutare);
+                    }
                 }
             }
 
-            if (!listaSelezionati.isEmpty()) {
+            if (almenoUnoSel) {// listaSelezionati
+
+                String message = "";
                 String jobSchedulatiString = "";
                 for (Object[] obj : listaSelezionati) {
                     startGestioneJobOperation((int) obj[0], (String) obj[1], (String) obj[2]);
                     jobSchedulatiString = jobSchedulatiString + (String) obj[1] + "<br>";
                 }
+                if (!jobSchedulatiString.equals("")) {
+                    message = "Sono stati schedulati i seguenti job: <br><br>" + jobSchedulatiString + "<br>";
+                }
 
+                String jobNonSchedulatiString = "";
+                for (Object[] obj : listaNonSelezionati) {
+                    jobNonSchedulatiString = jobNonSchedulatiString + (String) obj[1] + "<br>";
+                }
+                if (!jobNonSchedulatiString.equals("")) {
+                    message = message + "<br>Non sono stati schedulati i seguenti job: <br><br>"
+                            + jobNonSchedulatiString + "<br> in quanto in stato già ATTIVO o IN_ELABORAZIONE<br>";
+                }
                 getMessageBox().clear();
-                getMessageBox().addInfo("Sono stati schedulati i seguenti job: <br>" + jobSchedulatiString
-                        + "<br><br>L'operazione richiesta diventerà effettiva entro il prossimo minuto.");
+                getMessageBox().setViewMode(ViewMode.alert);
+                getMessageBox()
+                        .addInfo(message + "L'operazione richiesta diventerà effettiva entro il prossimo minuto.");
             } else {
                 getMessageBox().addInfo("Nessun job selezionato");
             }
@@ -1956,7 +1977,7 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
             getMessageBox().addInfo("Nessun job selezionato");
         }
         popolaInformazioniJob();
-        forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
+        ricercaGestioneJob();
     }
 
     @Override
@@ -1967,28 +1988,50 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
 
         if (tabella != null) {
             ArrayList<Object[]> listaSelezionati = new ArrayList<Object[]>();
+            ArrayList<Object[]> listaNonSelezionati = new ArrayList<Object[]>();
+            boolean almenoUnoSel = false;
             for (int i = 0; i < tabella.size(); i++) {
                 BaseRow riga = new BaseRow();
                 riga = tabella.getRow(i);
                 if (riga.getString("job_selezionati").equals("1")) {
-                    Object[] jobSelezionati = new Object[3];
-                    jobSelezionati[0] = i;
-                    jobSelezionati[1] = riga.getString("nm_job");
-                    jobSelezionati[2] = riga.getString("ds_job");
-                    listaSelezionati.add(jobSelezionati);
+                    almenoUnoSel = true;
+                    Object[] jobDaValutare = new Object[3];
+                    jobDaValutare[0] = i;
+                    jobDaValutare[1] = riga.getString("nm_job");
+                    jobDaValutare[2] = riga.getString("ds_job");
+                    if (riga.getString("stato_job").equals("ATTIVO")) {
+                        listaSelezionati.add(jobDaValutare);
+                    } else {
+                        listaNonSelezionati.add(jobDaValutare);
+                    }
                 }
             }
 
-            if (!listaSelezionati.isEmpty()) {
+            if (almenoUnoSel) {
                 String jobSchedulatiString = "";
+
+                String message = "";
                 for (Object[] obj : listaSelezionati) {
                     stopGestioneJobOperation((int) obj[0], (String) obj[1], (String) obj[2]);
                     jobSchedulatiString = jobSchedulatiString + (String) obj[1] + "<br>";
                 }
+                if (!jobSchedulatiString.equals("")) {
+                    message = "Sono stati stoppati i seguenti job: <br><br>" + jobSchedulatiString + "<br>";
+                }
+
+                String jobNonSchedulatiString = "";
+                for (Object[] obj : listaNonSelezionati) {
+                    jobNonSchedulatiString = jobNonSchedulatiString + (String) obj[1] + "<br>";
+                }
+                if (!jobNonSchedulatiString.equals("")) {
+                    message = message + "<br>Non sono stati stoppati i seguenti job: <br><br>" + jobNonSchedulatiString
+                            + "<br> in quanto in stato già DISATTIVO o IN_ESECUZIONE<br>";
+                }
 
                 getMessageBox().clear();
-                getMessageBox().addInfo("Sono stati stoppati i seguenti job: <br>" + jobSchedulatiString
-                        + "<br><br>L'operazione richiesta diventerà effettiva entro il prossimo minuto.");
+                getMessageBox().setViewMode(ViewMode.alert);
+                getMessageBox()
+                        .addInfo(message + "L'operazione richiesta diventerà effettiva entro il prossimo minuto.");
             } else {
                 getMessageBox().addInfo("Nessun job selezionato");
             }
@@ -1996,18 +2039,94 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
             getMessageBox().addInfo("Nessun job selezionato");
         }
         popolaInformazioniJob();
-        forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
+        ricercaGestioneJob();
+    }
+
+    @Override
+    public void esecuzioneSingolaMassivaGestioneJob() throws EMFError {
+        // Recupero i record selezionati
+        getForm().getGestioneJobRicercaList().post(getRequest());
+        BaseTable tabella = (BaseTable) getForm().getGestioneJobRicercaList().getTable();
+
+        if (tabella != null) {
+            ArrayList<Object[]> listaSelezionati = new ArrayList<Object[]>();
+            ArrayList<Object[]> listaNonSelezionati = new ArrayList<Object[]>();
+            boolean almenoUnoSel = false;
+            for (int i = 0; i < tabella.size(); i++) {
+                BaseRow riga = new BaseRow();
+                riga = tabella.getRow(i);
+                if (riga.getString("job_selezionati").equals("1")) {
+                    almenoUnoSel = true;
+                    Object[] jobDaValutare = new Object[3];
+                    jobDaValutare[0] = i;
+                    jobDaValutare[1] = riga.getString("nm_job");
+                    jobDaValutare[2] = riga.getString("ds_job");
+                    if (riga.getString("stato_job").equals("DISATTIVO")) {
+                        listaSelezionati.add(jobDaValutare);
+                    } else {
+                        listaNonSelezionati.add(jobDaValutare);
+                    }
+                }
+            }
+
+            if (almenoUnoSel) {
+                String jobSchedulatiString = "";
+
+                String message = "";
+                for (Object[] obj : listaSelezionati) {
+                    esecuzioneSingolaGestioneJobOperation((int) obj[0], (String) obj[1], (String) obj[2]);
+                    jobSchedulatiString = jobSchedulatiString + (String) obj[1] + "<br>";
+                }
+
+                if (!jobSchedulatiString.equals("")) {
+                    message = "Sono stati attivati in esecuzione singola i seguenti job: <br><br>" + jobSchedulatiString
+                            + "<br>";
+                }
+
+                String jobNonSchedulatiString = "";
+                for (Object[] obj : listaNonSelezionati) {
+                    jobNonSchedulatiString = jobNonSchedulatiString + (String) obj[1] + "<br>";
+                }
+                if (!jobNonSchedulatiString.equals("")) {
+                    message = message + "<br>Non sono stati attivati in esecuzione singola i seguenti job: <br><br>"
+                            + jobNonSchedulatiString + "<br> in quanto in stato già ATTIVO o IN_ESECUZIONE<br>";
+                }
+
+                getMessageBox().clear();
+                getMessageBox().setViewMode(ViewMode.alert);
+                getMessageBox()
+                        .addInfo(message + "L'operazione richiesta diventerà effettiva entro il prossimo minuto.");
+            } else {
+                getMessageBox().addInfo("Nessun job selezionato");
+            }
+        } else {
+            getMessageBox().addInfo("Nessun job selezionato");
+        }
+        popolaInformazioniJob();
+        ricercaGestioneJob();
     }
 
     @Override
     public void salvaFotoGestioneJob() throws EMFError {
-        // Eseguo il salvataggio foto
-        gestioneJobEjb.salvaFoto();
+        // Eseguo il salvataggio foto, solo se ho almeno 1 JOB attivo
+        BaseTable tabella = (BaseTable) getForm().getGestioneJobListPerAmm().getTable();
+        boolean trovatoAttivo = false;
+        for (BaseRow riga : tabella) {
+            if (riga.getString("stato_job").equals("ATTIVO")) {
+                trovatoAttivo = true;
+                break;
+            }
+        }
+        if (trovatoAttivo) {
+            gestioneJobEjb.salvaFoto();
+            getSession().setAttribute("fotoSalvata", true);
+            getMessageBox().addInfo("Foto JOB salvata con successo!");
+        } else {
+            getMessageBox().addInfo("Nessun JOB attivo trovato: non è stata salvata la foto!");
+        }
         tabAmmJobTabOnClick();
-        getSession().setAttribute("fotoSalvata", true);
         abilitaDisabilitaBottoniJob(!gestioneJobEjb.isDecJobFotoEmpty() && gestioneJobEjb.areAllJobsDisattivati(),
                 getSession().getAttribute("fotoSalvata") != null);
-        getMessageBox().addInfo("Foto JOB salvata con successo!");
     }
 
     @Override
@@ -2075,6 +2194,7 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         return form;
     }
 
+    // redirectToPage
     private void redirectToPage(final String action, BaseForm form, String listToPopulate, BaseTableInterface<?> table,
             String event) throws EMFError {
         ((it.eng.spagoLite.form.list.List<SingleValueField<?>>) form.getComponent(listToPopulate)).setTable(table);
@@ -2088,7 +2208,10 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         String nmJob = getForm().getGestioneJobRicercaList().getTable().getRow(riga).getString("nm_job");
         String dsJob = getForm().getGestioneJobRicercaList().getTable().getRow(riga).getString("ds_job");
         startGestioneJobOperation(riga, nmJob, dsJob);
-        forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
+        getRequest().setAttribute("fromListaPrinc", true);
+        ricercaGestioneJob();
+
+        // forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
     }
 
     public void startGestioneJobOperation(int riga, String nmJob, String dsJob) throws EMFError {
@@ -2104,7 +2227,9 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         String nmJob = getForm().getGestioneJobRicercaList().getTable().getRow(riga).getString("nm_job");
         String dsJob = getForm().getGestioneJobRicercaList().getTable().getRow(riga).getString("ds_job");
         stopGestioneJobOperation(riga, nmJob, dsJob);
-        forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
+        getRequest().setAttribute("fromListaPrinc", true);
+        ricercaGestioneJob();
+        // forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
     }
 
     public void stopGestioneJobOperation(int riga, String nmJob, String dsJob) throws EMFError {
@@ -2120,7 +2245,10 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         String nmJob = getForm().getGestioneJobRicercaList().getTable().getRow(riga).getString("nm_job");
         String dsJob = getForm().getGestioneJobRicercaList().getTable().getRow(riga).getString("ds_job");
         esecuzioneSingolaGestioneJobOperation(riga, nmJob, dsJob);
+        getRequest().setAttribute("fromListaPrinc", true);
         ricercaGestioneJob();
+
+        // forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
     }
 
     public void esecuzioneSingolaGestioneJobOperation(int riga, String nmJob, String dsJob) throws EMFError {

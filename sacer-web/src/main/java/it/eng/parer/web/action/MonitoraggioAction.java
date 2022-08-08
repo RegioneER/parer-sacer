@@ -115,6 +115,7 @@ import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.BaseTableInterface;
+import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.AbstractBaseTable;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.db.decodemap.DecodeMapIF;
@@ -143,15 +144,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.ejb.EJB;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -169,9 +173,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPageSz;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblLayoutType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
 
 /**
  *
@@ -6339,6 +6345,19 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             } else {
                 form.getFiltriConsistenzaSacer().getScaricaReport().setHidden(true);
             }
+
+            try {
+                if (form.getFiltriConsistenzaSacer().getId_ambiente().parse() == null
+                        && form.getConsistenzaSacerList().getTable() != null
+                        && form.getConsistenzaSacerList().getTable().size() > 0) {
+                    form.getFiltriConsistenzaSacer().getScaricaReportSintetico().setHidden(false);
+                } else {
+                    form.getFiltriConsistenzaSacer().getScaricaReportSintetico().setHidden(true);
+                }
+            } catch (EMFError ex) {
+                getMessageBox().addError("Errore inatteso nel caricamento della pagina di esame consistenza Sacer");
+            }
+
         }
 
         if (getRequest().getParameter("table") != null) {
@@ -7656,8 +7675,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             r1Titolo.setFontFamily("Verdana");
             Date dateDa = getForm().getFiltriConsistenzaSacer().getDt_rif_da().parse();
             Date dateA = getForm().getFiltriConsistenzaSacer().getDt_rif_a().parse();
-            String stringDateDa = new SimpleDateFormat("dd-MM-yyyy").format(dateDa);
-            String stringDateA = new SimpleDateFormat("dd-MM-yyyy").format(dateA);
+            String stringDateDa = new SimpleDateFormat("dd/MM/yyyy").format(dateDa);
+            String stringDateA = new SimpleDateFormat("dd/MM/yyyy").format(dateA);
             r1Titolo.setText("Controllo della consistenza dell’archivio");
             // Filtri utilizzati
             XWPFParagraph p0TitoloFiltri = doc.createParagraph();
@@ -7882,6 +7901,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 // Ricavo la tabella dal documento "template", in particolare prendo la tabella
                 // in posizione 0 (m'unica presente)
                 XWPFTable table = doc1.getTableArray(0);
+                // MAC #27233 - Fisso i margini del report word
+                CTTblLayoutType type = table.getCTTbl().getTblPr().addNewTblLayout();
+                type.setType(STTblLayoutType.FIXED);
 
                 // Ricavo la riga in posizione k, la inserisco in posizione k+1
                 // (saranno le righe dei record ricavati dalla ricerca)
@@ -7994,7 +8016,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         for (XWPFParagraph paragraph : cellToColor.getParagraphs()) {
                             if (i == 10) {
                                 // Cella col totale diverso da 0
-                                if (Integer.parseInt(paragraph.getText()) != 0) {
+                                String testoNumericoDaControllare = paragraph.getText().replace(".", "");
+                                if (Integer.parseInt(testoNumericoDaControllare) != 0) {
                                     toColor = true;
                                     differenzeDaZero = true;
                                 }
@@ -8074,6 +8097,495 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         forwardToPublisher(Application.Publisher.MONITORAGGIO_CONSISTENZA_SACER_RICERCA);
     }
 
+    public void eseguiScaricaReportSintetico() throws Throwable {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            // Creo il primo paragrafo
+            XWPFParagraph p1Titolo = doc.createParagraph();
+            p1Titolo.setAlignment(ParagraphAlignment.LEFT);
+            // set font
+            XWPFRun r1Titolo = p1Titolo.createRun();
+            r1Titolo.setBold(true);
+            r1Titolo.setFontSize(14);
+            r1Titolo.setFontFamily("Verdana");
+            Date dateDa = getForm().getFiltriConsistenzaSacer().getDt_rif_da().parse();
+            Date dateA = getForm().getFiltriConsistenzaSacer().getDt_rif_a().parse();
+            String stringDateDa = new SimpleDateFormat("dd/MM/yyyy").format(dateDa);
+            String stringDateA = new SimpleDateFormat("dd/MM/yyyy").format(dateA);
+            r1Titolo.setText("Controllo della consistenza dell’archivio");
+
+            // Filtri utilizzati
+            XWPFParagraph p0TitoloFiltri = doc.createParagraph();
+            XWPFRun r0TitoloFiltri = p0TitoloFiltri.createRun();
+            r0TitoloFiltri.setBold(true);
+            r0TitoloFiltri.setFontSize(12);
+            r0TitoloFiltri.setFontFamily("Verdana");
+            r0TitoloFiltri.setText("Filtri utilizzati: ");
+            //
+            // XSSFFont fontBold= r0TitoloFiltri.createFont();
+            // fontBold.setBold(true); //set bold
+            // fontBold.setFontHeight(12); //add font size
+            // fontBold.setFontName("Verdana");
+
+            XSSFRichTextString rts = new XSSFRichTextString();
+            String[] filtriArray = getForm().getConsistenzaSacerTotaliUdDocComp().getFiltri_utilizzati().getValue()
+                    .trim().split(";");
+
+            XWPFParagraph p0Descrizione = doc.createParagraph();
+            p0Descrizione.setAlignment(ParagraphAlignment.LEFT);
+            p0Descrizione.setIndentFromLeft(1000);
+
+            // Ambiente già settato
+            XWPFRun r0Descrizione = p0Descrizione.createRun();
+            r0Descrizione.setFontSize(10);
+            r0Descrizione.setFontFamily("Verdana");
+
+            XWPFRun r0Valore = p0Descrizione.createRun();
+            r0Valore.setFontSize(10);
+            r0Valore.setFontFamily("Verdana");
+            r0Valore.setBold(true);
+
+            r0Descrizione.setText("Ambiente: ");
+            r0Valore.setText("tutti;");
+            r0Valore.addBreak();
+
+            for (String filtri : filtriArray) {
+                String[] filtro = filtri.split(":");
+                // set font
+                r0Descrizione = p0Descrizione.createRun();
+                r0Descrizione.setFontSize(10);
+                r0Descrizione.setFontFamily("Verdana");
+
+                r0Valore = p0Descrizione.createRun();
+                r0Valore.setFontSize(10);
+                r0Valore.setFontFamily("Verdana");
+                r0Valore.setBold(true);
+
+                r0Descrizione.setText(filtro[0].trim() + ": ");
+                r0Valore.setText(filtro[1].trim() + ";");
+                r0Valore.addBreak();
+            }
+
+            XWPFParagraph p1Descrizione = doc.createParagraph();
+            p1Descrizione.setAlignment(ParagraphAlignment.LEFT);
+            // set font
+            XWPFRun r1Descrizione = p1Descrizione.createRun();
+            r1Descrizione.setFontSize(10);
+            r1Descrizione.setFontFamily("Verdana");
+
+            XWPFRun r1Valore = p1Descrizione.createRun();
+            r1Valore.setFontSize(10);
+            r1Valore.setFontFamily("Verdana");
+            r1Valore.setBold(true);
+
+            // set font
+            XWPFRun r1bisDescrizione = p1Descrizione.createRun();
+            r1bisDescrizione.setFontSize(10);
+            r1bisDescrizione.setFontFamily("Verdana");
+
+            String esito1 = "";
+            String esito2 = "";
+            // Ricavo l'info se tutte le differenze sono 0
+            boolean differenzeDaZero = new BigDecimal(
+                    getForm().getConsistenzaSacerTotaliUdDocComp().getTotale_ni_comp_delta().getValue())
+                            .compareTo(BigDecimal.ZERO) != 0;
+            if (differenzeDaZero) {
+                esito1 = "Il controllo della consistenza dell’archivio è stato svolto nell'intervallo di date ";
+
+                esito2 = " e ha avuto esito negativo, essendosi riscontrate differenze tra i componenti versati (al netto dei "
+                        + "componenti contenuti nei versamenti annullati) e i componenti elaborati o in corso di elaborazione nel "
+                        + "Sistema. "
+                        + "Nella tabella che segue è riportato il dettaglio del controllo suddiviso per Struttura versante.";
+            } else {
+                esito1 = "Il controllo della consistenza dell’archivio è stato svolto nell'intervallo di date ";
+
+                esito2 = " e ha avuto esito positivo, non essendosi riscontrate differenze tra i componenti versati (al netto "
+                        + "dei componenti contenuti nei versamenti annullati) e i componenti elaborati o in corso di elaborazione "
+                        + "nel Sistema. "
+                        + "Nella tabella che segue è riportato il dettaglio del controllo suddiviso per Struttura versante.";
+            }
+            r1Descrizione.setText(esito1);
+            r1Valore.setText(stringDateDa + " - " + stringDateA);
+            r1bisDescrizione.setText(esito2);
+            r1bisDescrizione.addBreak();
+
+            // Creo il secondo paragrafo, con la LEGENDA
+            // Titolo
+            XWPFParagraph p2TitoloLegenda = doc.createParagraph();
+            XWPFRun r2TitoloLegenda = p2TitoloLegenda.createRun();
+            r2TitoloLegenda.setBold(true);
+            r2TitoloLegenda.setFontSize(12);
+            r2TitoloLegenda.setFontFamily("Verdana");
+            r2TitoloLegenda.setText("Legenda");
+            r2TitoloLegenda.addBreak();
+
+            // Dal terzo paragrafo, le definizioni della legenda
+            XWPFParagraph p3 = doc.createParagraph();
+            XWPFRun r3 = p3.createRun();
+            r3.setBold(true);
+            r3.setFontSize(10);
+            r3.setFontFamily("Verdana");
+            r3.setText("Ambiente-Ente-Struttura: ");
+
+            XWPFRun r3Descrizione = p3.createRun();
+            r3Descrizione.setFontSize(10);
+            r3Descrizione.setFontFamily("Verdana");
+            r3Descrizione.setText("identificano la singola Struttura versante");
+            r3Descrizione.addBreak();
+            r3Descrizione.addBreak();
+
+            XWPFRun r4 = p3.createRun();
+            r4.setBold(true);
+            r4.setFontSize(10);
+            r4.setFontFamily("Verdana");
+            r4.setText("Numero componenti nei SIP: ");
+
+            XWPFRun r4Descrizione = p3.createRun();
+            r4Descrizione.setFontSize(10);
+            r4Descrizione.setFontFamily("Verdana");
+            r4Descrizione.setText(
+                    "numero dei componenti presenti nei SIP di versamento unità documentaria e aggiunta documento. Rappresenta il totale dei componenti ricevuti dal Sistema. ");
+            r4Descrizione.addBreak();
+            r4Descrizione.addBreak();
+
+            XWPFRun r5 = p3.createRun();
+            r5.setBold(true);
+            r5.setFontSize(10);
+            r5.setFontFamily("Verdana");
+            r5.setText("Numero dei componenti in SIP annullati: ");
+
+            XWPFRun r5Descrizione = p3.createRun();
+            r5Descrizione.setFontSize(10);
+            r5Descrizione.setFontFamily("Verdana");
+            r5Descrizione.setText(
+                    "numero dei componenti presenti nei SIP di cui è stato annullato il versamento. Vanno sottratti dai componenti presenti nei SIP versati. L’annullamento del versamento comporta la cancellazione logica degli oggetti versati. ");
+            r5Descrizione.addBreak();
+            r5Descrizione.addBreak();
+
+            XWPFRun r6 = p3.createRun();
+            r6.setBold(true);
+            r6.setFontSize(10);
+            r6.setFontFamily("Verdana");
+            r6.setText("Numero componenti presi in carico ancora da elaborare: ");
+
+            XWPFRun r6Descrizione = p3.createRun();
+            r6Descrizione.setFontSize(10);
+            r6Descrizione.setFontFamily("Verdana");
+            r6Descrizione.setText(
+                    "numero dei componenti presenti nei SIP di versamento unità documentaria per i quali ancora non è stato generato il relativo AIP (stato di conservazione: PRESO IN CARICO). ");
+            r6Descrizione.addBreak();
+            r6Descrizione.addBreak();
+
+            XWPFRun r7 = p3.createRun();
+            r7.setBold(true);
+            r7.setFontSize(10);
+            r7.setFontFamily("Verdana");
+            r7.setText("Numero componenti negli AIP in aggiornamento: ");
+
+            XWPFRun r7Descrizione = p3.createRun();
+            r7Descrizione.setFontSize(10);
+            r7Descrizione.setFontFamily("Verdana");
+            r7Descrizione.setText(
+                    "numero dei componenti presenti nei SIP di aggiunta documento per i quali ancora non è stato aggiornato il relativo AIP	(stato di conservazione: AIP IN AGGIORNAMENTO). ");
+            r7Descrizione.addBreak();
+            r7Descrizione.addBreak();
+
+            XWPFRun r8 = p3.createRun();
+            r8.setBold(true);
+            r8.setFontSize(10);
+            r8.setFontFamily("Verdana");
+            r8.setText("Numero componenti negli AIP: ");
+
+            XWPFRun r8Descrizione = p3.createRun();
+            r8Descrizione.setFontSize(10);
+            r8Descrizione.setFontFamily("Verdana");
+            r8Descrizione.setText(
+                    "numero dei componenti presenti negli AIP (stato di conservazione: AIP GENERATO, AIP FIRMATO, IN ARCHIVIO).");
+            r8Descrizione.addBreak();
+            r8Descrizione.addBreak();
+
+            XWPFRun r9 = p3.createRun();
+            r9.setBold(true);
+            r9.setFontSize(10);
+            r9.setFontFamily("Verdana");
+            r9.setText("Numero componenti nei Volumi di conservazione: ");
+
+            XWPFRun r9Descrizione = p3.createRun();
+            r9Descrizione.setFontSize(10);
+            r9Descrizione.setFontFamily("Verdana");
+            r9Descrizione.setText(
+                    "numero dei componenti presenti nei Volumi di conservazione (stato di conservazione: IN VOLUME DI CONSERVAZIONE).");
+            r9Descrizione.addBreak();
+            r9Descrizione.addBreak();
+
+            XWPFRun r10 = p3.createRun();
+            r10.setBold(true);
+            r10.setFontSize(10);
+            r10.setFontFamily("Verdana");
+            r10.setText("Differenza tra componenti ricevuti e componenti conservati: ");
+
+            XWPFRun r10Descrizione = p3.createRun();
+            r10Descrizione.setFontSize(10);
+            r10Descrizione.setFontFamily("Verdana");
+            r10Descrizione.setText(
+                    "i componenti ricevuti sono calcolati sottraendo i componenti nei versamenti annullati al totale dei componenti versati; i componenti conservati sono calcolati sommando i componenti non ancora elaborati a quelli presenti negli AIP o nei Volumi di conservazione. Un valore è diverso da zero indica una possibile perdita di dati.");
+
+            // // Interruzione di pagina
+            XWPFParagraph p20 = doc.createParagraph();
+
+            // Recupero il file del "template" della tabella già formattata in maniera tale
+            // da averla già personalizzata
+            InputStream is = this.getClass().getClassLoader().getResourceAsStream("report/Tabella_sintetica.docx");
+            try (XWPFDocument doc1 = new XWPFDocument(is)) {
+
+                // Cambio orientamento per la tabella passo in LANDSCAPE (orizzontale)
+                changeOrientation(doc, "landscape");
+
+                int totA = 0;
+                int totB = 0;
+                int totC = 0;
+                int totD = 0;
+                int totE = 0;
+                int totF = 0;
+                int totG = 0;
+
+                // Ricavo la tabella dal documento "template", in particolare prendo la tabella
+                // in posizione 0 (l'unica presente)
+                XWPFTable table = doc1.getTableArray(0);
+                // MAC #27233 - Fisso i margini del report word
+                CTTblLayoutType type = table.getCTTbl().getTblPr().addNewTblLayout();
+                type.setType(STTblLayoutType.FIXED);
+
+                // Ricavo la riga in posizione k, la inserisco in posizione k+1
+                // (saranno le righe dei record ricavati dalla ricerca)
+                // e me la faccio restituire come nuova riga su cui poi lavorarci su
+                // BaseTableInterface tabellaConsistenza =
+                // (BaseTableInterface)getForm().getConsistenzaSacerList().getTable();
+                AbstractBaseTable tabellaConsistenzaTmp = new BaseTable();
+
+                /* PRIMA DEVO RIELABORARE LA LISTA RISULTATO "RAGGRUPPANDO" PER AMBIENTI */
+                Map<String, BigDecimal[]> totaliAmbienti = new HashMap<>();
+                for (BaseRowInterface rigaConsistenza : getForm().getConsistenzaSacerList().getTable()) {
+                    if (totaliAmbienti.containsKey(rigaConsistenza.getString("nm_ambiente"))) {
+                        BigDecimal[] totali = totaliAmbienti.get(rigaConsistenza.getString("nm_ambiente"));
+                        totali[0] = totali[0].add(rigaConsistenza.getBigDecimal("ni_comp_vers"));
+                        totali[1] = totali[1].add(rigaConsistenza.getBigDecimal("ni_comp_annul"));
+                        totali[2] = totali[2].add(rigaConsistenza.getBigDecimal("ni_comp_presa_in_carico"));
+                        totali[3] = totali[3].add(rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn"));
+                        totali[4] = totali[4].add(rigaConsistenza.getBigDecimal("ni_comp_aip_generato"));
+                        totali[5] = totali[5].add(rigaConsistenza.getBigDecimal("ni_comp_in_volume"));
+                        totali[6] = totali[6].add(rigaConsistenza.getBigDecimal("ni_comp_delta"));
+                    } else {
+                        BigDecimal[] totali = new BigDecimal[7];
+                        totali[0] = rigaConsistenza.getBigDecimal("ni_comp_vers");
+                        totali[1] = rigaConsistenza.getBigDecimal("ni_comp_annul");
+                        totali[2] = rigaConsistenza.getBigDecimal("ni_comp_presa_in_carico");
+                        totali[3] = rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn");
+                        totali[4] = rigaConsistenza.getBigDecimal("ni_comp_aip_generato");
+                        totali[5] = rigaConsistenza.getBigDecimal("ni_comp_in_volume");
+                        totali[6] = rigaConsistenza.getBigDecimal("ni_comp_delta");
+                        totaliAmbienti.put(rigaConsistenza.getString("nm_ambiente"), totali);
+                    }
+                }
+
+                // tabellaConsistenza.clear();
+                for (Map.Entry<String, BigDecimal[]> entry : totaliAmbienti.entrySet()) {
+                    String chiave = entry.getKey();
+                    BigDecimal[] valore = entry.getValue();
+
+                    BaseRowInterface row = new BaseRow();
+                    row.setString("nm_ambiente", chiave);
+                    row.setBigDecimal("ni_comp_vers", valore[0]);
+                    row.setBigDecimal("ni_comp_annul", valore[1]);
+                    row.setBigDecimal("ni_comp_presa_in_carico", valore[2]);
+                    row.setBigDecimal("ni_comp_aip_in_aggiorn", valore[3]);
+                    row.setBigDecimal("ni_comp_aip_generato", valore[4]);
+                    row.setBigDecimal("ni_comp_in_volume", valore[5]);
+                    row.setBigDecimal("ni_comp_delta", valore[6]);
+
+                    tabellaConsistenzaTmp.add(row);
+                }
+
+                tabellaConsistenzaTmp.addSortingRule("nm_ambiente");
+                tabellaConsistenzaTmp.sort();
+
+                for (int k = 2; k < tabellaConsistenzaTmp.size() + 2; k++) {
+
+                    XWPFTableRow oldRow = table.getRow(k);
+                    table.insertNewTableRow(k + 1);
+                    XWPFTableRow newRow = table.getRow(k + 1);
+
+                    // Oggetto CELLA
+                    XWPFTableCell cell;
+
+                    // Scorro tutte le "celle" vecchie per copiarle con le stesse caratteristiche
+                    // in quelle "nuove" della nuova riga
+                    for (int i = 0; i < oldRow.getTableCells().size(); i++) {
+
+                        // Creo la cella e la gestisco come CTTc
+                        cell = newRow.createCell();
+
+                        // Credo di star aggiungendo proprietà width alla "nuova" cella, prendendole dalla "vecchia"
+                        CTTcPr ctTcPr = cell.getCTTc().addNewTcPr();
+
+                        CTTblWidth cellWidth = ctTcPr.addNewTcW();
+                        cellWidth.setType(oldRow.getCell(i).getCTTc().getTcPr().getTcW().getType()); // sets type of
+                        // width
+                        BigInteger width = (BigInteger) oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
+                        cellWidth.setW(width); // sets width
+
+                        // Se comincio ad elaborare le colonne "numeriche", i numeri devono essere allineati a destra
+                        if (i >= 1) {
+                            cell.getParagraphs().get(0).setAlignment(ParagraphAlignment.RIGHT);
+                        }
+
+                        // Se la vecchia riga era divisa in griglie con formato particolare, copiarla uguale
+                        if (oldRow.getCell(i).getCTTc().getTcPr().getGridSpan() != null) {
+                            ctTcPr.setGridSpan(oldRow.getCell(i).getCTTc().getTcPr().getGridSpan()); // sets grid span
+                            // if any
+                        }
+
+                        // Inserisco il singolo totale nella singola cella della singola struttura
+                        XWPFRun run = cell.getParagraphs().get(0).createRun();
+                        BaseRowInterface rigaConsistenza = tabellaConsistenzaTmp.getRow(k - 2);
+                        DecimalFormat df = new DecimalFormat("#,###.##");
+                        // switch
+                        // Devo partire dalla seconda cella (indice parte da 0) per inserire i vari totali
+                        switch (i) {
+                        case 0:
+                            run.setText(rigaConsistenza.getString("nm_ambiente"));
+                            break;
+                        case 1:
+                            run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_vers")));
+                            totA = totA + rigaConsistenza.getBigDecimal("ni_comp_vers").intValue();
+                            break;
+                        case 2:// aggB
+                            run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_annul")));
+                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_annul"));
+                            // Integer aggB = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
+                            totB = totB + rigaConsistenza.getBigDecimal("ni_comp_annul").intValue();
+                            break;
+                        case 3:
+                            run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_presa_in_carico")));
+                            totC = totC + rigaConsistenza.getBigDecimal("ni_comp_presa_in_carico").intValue();
+                            break;
+                        case 4:
+                            run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn")));
+                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn"));
+                            // Integer aggD = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
+                            totD = totD + rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn").intValue();
+                            break;
+                        case 5:
+                            run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_aip_generato")));
+                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_aip_generato"));
+                            // Integer aggE = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
+                            totE = totE + rigaConsistenza.getBigDecimal("ni_comp_aip_generato").intValue();
+                            break;
+                        case 6:
+                            run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_in_volume")));
+                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_in_volume"));
+                            // Integer aggF = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
+                            totF = totF + rigaConsistenza.getBigDecimal("ni_comp_in_volume").intValue();
+                            break;
+                        case 7:
+                            run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_delta")));
+                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_delta"));
+                            // Integer aggG = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
+                            totG = totG + rigaConsistenza.getBigDecimal("ni_comp_delta").intValue();
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+
+                    // Coloro le righe con totali diversi da 0
+                    String rgb = "FEF5C2";
+                    int i = 0;
+                    boolean toColor = false;
+                    for (XWPFTableCell cellToColor : newRow.getTableCells()) {
+                        i++;
+                        for (XWPFParagraph paragraph : cellToColor.getParagraphs()) {
+                            if (i == 8) {
+                                // Cella col totale diverso da 0
+                                String testoPerConfronto = paragraph.getText().replace(".", "");
+                                if (Integer.parseInt(testoPerConfronto) != 0) {
+                                    toColor = true;
+                                    differenzeDaZero = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (toColor) {
+                        for (XWPFTableCell cellToColor : newRow.getTableCells()) {
+                            cellToColor.getCTTc().addNewTcPr().addNewShd().setFill(rgb);
+                        }
+                    }
+
+                }
+
+                // ULTIMA RIGA: ASSEGNO I TOTALI
+                XWPFTableRow totaliRow = table.getRow(table.getNumberOfRows() - 1);
+                // Scorro le celle dell'utima riga, quella dei totali. La prima cella con
+                // la scritta TOTALE non la considero.
+                for (int m = 1; m < 8; m++) {
+                    // Prendo la cella in base alla posizione sulla riga
+                    XWPFTableCell cell = totaliRow.getCell(m);
+                    DecimalFormat df = new DecimalFormat("#,###.##");
+                    // Inserisco i totali calcolati in precedenza
+                    XWPFRun run = cell.getParagraphs().get(0).createRun();
+                    switch (m) {
+                    case 1:
+                        run.setText(df.format(totA));
+                        break;
+                    case 2:
+                        run.setText(df.format(totB));
+                        break;
+                    case 3:
+                        run.setText(df.format(totC));
+                        break;
+                    case 4:
+                        run.setText(df.format(totD));
+                        break;
+                    case 5:
+                        run.setText(df.format(totE));
+                        break;
+                    case 6:
+                        run.setText(df.format(totF));
+                        break;
+                    case 7:
+                        run.setText(df.format(totG));
+                        break;
+                    default:
+                        break;
+                    }
+                }
+
+                // CREO E SALVO LA TABELLA PER IL DOCUMENTO FINALE
+                doc.createTable();
+                doc.setTable(0, table);
+
+                try {
+                    getResponse()
+                            .setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                    getResponse().setHeader("Content-Disposition", "attachment; filename=reportSintetico.docx");
+
+                    OutputStream out = getServletOutputStream();
+                    doc.write(out);
+                    out.flush();
+                    out.close();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    freeze();
+                }
+
+            }
+
+        }
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_CONSISTENZA_SACER_RICERCA);
+    }
+
     private void changeOrientation(XWPFDocument document, String orientation) {
         CTDocument1 doc = document.getDocument();
         CTBody body = doc.getBody();
@@ -8086,12 +8598,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         CTPageSz pageSize = section.isSetPgSz() ? section.getPgSz() : section.addNewPgSz();
         if (orientation.equals("landscape")) {
             pageSize.setOrient(STPageOrientation.LANDSCAPE);
-            pageSize.setW(BigInteger.valueOf(842 * 20));
-            pageSize.setH(BigInteger.valueOf(595 * 20));
+            pageSize.setW(BigInteger.valueOf(16840));
+            pageSize.setH(BigInteger.valueOf(12240));
         } else {
             pageSize.setOrient(STPageOrientation.PORTRAIT);
-            pageSize.setH(BigInteger.valueOf(842 * 20));
-            pageSize.setW(BigInteger.valueOf(595 * 20));
+            pageSize.setH(BigInteger.valueOf(16840));
+            pageSize.setW(BigInteger.valueOf(12240));
         }
     }
 
@@ -8099,6 +8611,15 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public void scaricaReport() throws EMFError {
         try {
             eseguiScaricaReport();
+        } catch (Throwable ex) {
+            logger.error(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void scaricaReportSintetico() throws EMFError {
+        try {
+            eseguiScaricaReportSintetico();
         } catch (Throwable ex) {
             logger.error(ex.getMessage());
         }

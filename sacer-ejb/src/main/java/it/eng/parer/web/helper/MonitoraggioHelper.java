@@ -4789,10 +4789,12 @@ public class MonitoraggioHelper implements Serializable {
                 + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_annul "
                 + "    from org_strut strut " + " join sacer.org_ente entesub " + "on(entesub.id_ente = strut.id_ente) "
                 + "    join sacer.org_ambiente ambientesub " + "on(ambientesub.id_ambiente = entesub.id_ambiente) "
-                + "    where strut.fl_template = '0' AND ambientesub.id_ambiente = ?3 ";
+                + "    where strut.fl_template = '0'  ";
 
         confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " entesub.id_ente, " + parte2;
-
+        if (filtri.getId_ambiente().parse() != null) {
+            confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + "AND ambientesub.id_ambiente = ?3 ";
+        }
         if (filtri.getId_ente().parse() != null) {
             confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " AND entesub.id_ente = ?4 ";
         }
@@ -4827,7 +4829,9 @@ public class MonitoraggioHelper implements Serializable {
         query.setParameter(1, valDa);
         query.setParameter(2, valA);
 
-        query.setParameter(3, filtri.getId_ambiente().parse());
+        if (filtri.getId_ambiente().parse() != null) {
+            query.setParameter(3, filtri.getId_ambiente().parse());
+        }
         if (filtri.getId_ente().parse() != null) {
             query.setParameter(4, filtri.getId_ente().parse());
         }

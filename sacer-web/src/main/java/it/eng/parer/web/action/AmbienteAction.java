@@ -919,14 +919,6 @@ public class AmbienteAction extends AmbienteAbstractAction {
 
         getForm().getVisEnte().setStatus(null);
 
-        // Visualizzo il bottone di inserimento solo se l’ente convenzionato di appartenenza dell’utente ha
-        // ti_ente_convenz = AMMINISTRATORE o CONSERVATORE o GESTORE
-        if (ambienteEjb.showInsertButton(getUser().getIdUtente())) {
-            getForm().getEntiList().setHideInsertButton(false);
-        } else {
-            getForm().getEntiList().setHideInsertButton(true);
-        }
-
         forwardToPublisher(Application.Publisher.ENTE_RICERCA);
 
     }

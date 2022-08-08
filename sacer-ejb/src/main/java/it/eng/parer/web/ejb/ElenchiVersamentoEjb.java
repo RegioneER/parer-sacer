@@ -440,10 +440,12 @@ public class ElenchiVersamentoEjb {
             aroUnitaDoc.setElvElencoVer(null);
             /* Se l'unità doc non è annullata */
             if (aroUnitaDoc.getDtAnnul().getTime() == fineDelMondo.getTime().getTime()) {
-                /* Assegna stato IN_ATTESA_SCHED all'UD */
-                aroUnitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
+                // MAC#27493
+                /* Assegna stato NON_SELEZ_SCHED all'UD */
+                aroUnitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
                 /* Registra l'UD nella coda delle UD da elaborare */
-                evHelper.insertUdCodaUdDaElab(aroUnitaDoc.getIdUnitaDoc(), ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED);
+                evHelper.insertUdCodaUdDaElab(aroUnitaDoc.getIdUnitaDoc(), ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED);
+                // end MAC#27493
             } else {
                 /* Assegna stato di generazione indice AIP = nullo */
                 aroUnitaDoc.setTiStatoUdElencoVers(null);
@@ -456,10 +458,12 @@ public class ElenchiVersamentoEjb {
             aroDoc.setElvElencoVer(null);
             /* Se il documento appartiene ad una unità documentaria non annullata */
             if (aroDoc.getAroUnitaDoc().getDtAnnul().getTime() == fineDelMondo.getTime().getTime()) {
-                /* Assegna stato IN_ATTESA_SCHED al documento */
-                aroDoc.setTiStatoDocElencoVers(ElencoEnums.DocStatusEnum.IN_ATTESA_SCHED.name());
+                // MAC#27493
+                /* Assegna stato NON_SELEZ_SCHED al documento */
+                aroDoc.setTiStatoDocElencoVers(ElencoEnums.DocStatusEnum.NON_SELEZ_SCHED.name());
                 /* Registra il documento nella coda dei documenti da elaborare */
-                evHelper.insertDocCodaDocDaElab(aroDoc.getIdDoc(), ElencoEnums.DocStatusEnum.IN_ATTESA_SCHED);
+                evHelper.insertDocCodaDocDaElab(aroDoc.getIdDoc(), ElencoEnums.DocStatusEnum.NON_SELEZ_SCHED);
+                // end MAC#27493
             } else {
                 /* Assegna stato di generazione indice AIP = nullo */
                 aroDoc.setTiStatoDocElencoVers(null);
@@ -473,11 +477,13 @@ public class ElenchiVersamentoEjb {
             aroUpdUnitaDoc.setElvElencoVer(null);
             /* Se l'aggiornamento metadati appartiene ad una unità documentaria non annullata */
             if (aroUpdUnitaDoc.getAroUnitaDoc().getDtAnnul().getTime() == fineDelMondo.getTime().getTime()) {
-                /* Assegna stato IN_ATTESA_SCHED all'aggiornamento metadati */
-                aroUpdUnitaDoc.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED);
+                // MAC#27493
+                /* Assegna stato NON_SELEZ_SCHED all'aggiornamento metadati */
+                aroUpdUnitaDoc.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
                 /* Registra l'aggiornamento metadati nella coda degli aggiornamenti metadati da elaborare */
                 evHelper.insertUpdCodaUpdDaElab(aroUpdUnitaDoc.getIdUpdUnitaDoc(),
-                        ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
+                        ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+                // end MAC#27493
             } else {
                 /* Assegna stato di generazione indice AIP = nullo */
                 aroUpdUnitaDoc.setTiStatoUpdElencoVers(null);
@@ -933,11 +939,13 @@ public class ElenchiVersamentoEjb {
             /* Se il documento appartiene ad una unità documentaria non annullata */
             if (documentoPerAggiuntaDocumento.getAroUnitaDoc().getDtAnnul().getTime() == fineDelMondo.getTime()
                     .getTime()) {
-                /* Assegno stato IN_ATTESA_SCHED al documento */
-                documentoPerAggiuntaDocumento.setTiStatoDocElencoVers(ElencoEnums.DocStatusEnum.IN_ATTESA_SCHED.name());
+                // MAC#27493
+                /* Assegno stato NON_SELEZ_SCHED al documento */
+                documentoPerAggiuntaDocumento.setTiStatoDocElencoVers(ElencoEnums.DocStatusEnum.NON_SELEZ_SCHED.name());
                 /* Registro il documento nella coda dei documenti da elaborare */
                 evHelper.insertDocCodaDocDaElab(documentoPerAggiuntaDocumento.getIdDoc(),
-                        ElencoEnums.DocStatusEnum.IN_ATTESA_SCHED);
+                        ElencoEnums.DocStatusEnum.NON_SELEZ_SCHED);
+                // end MAC#27493
             }
 
             /* Aggiorno l'elenco di versamento */
@@ -983,11 +991,13 @@ public class ElenchiVersamentoEjb {
                 unitaDoc.setElvElencoVer(null);
                 /* Se l'unità documentaria non è annullata */
                 if (unitaDoc.getDtAnnul().getTime() == fineDelMondo.getTime().getTime()) {
-                    /* Assegno stato IN_ATTESA_SCHED all'unità documentaria */
-                    unitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
+                    // MAC#27493
+                    /* Assegno stato NON_SELEZ_SCHED all'unità documentaria */
+                    unitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
                     /* Registro l'unità documentaria nella coda delle unità documentarie da elaborare */
                     evHelper.insertUdCodaUdDaElab(unitaDoc.getIdUnitaDoc(),
-                            ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED);
+                            ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED);
+                    // end MAC#27493
                 }
 
                 /* Aggiorno l'elenco di versamento */
@@ -1074,11 +1084,13 @@ public class ElenchiVersamentoEjb {
             aggiornamentoMetadati.setElvElencoVer(null);
             /* Se l'aggiornamento appartiene ad una unità documentaria non annullata */
             if (aggiornamentoMetadati.getAroUnitaDoc().getDtAnnul().getTime() == fineDelMondo.getTime().getTime()) {
-                /* Assegno stato IN_ATTESA_SCHED all'aggiornamento */
-                aggiornamentoMetadati.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED);
+                // MAC#27493
+                /* Assegno stato NON_SELEZ_SCHED all'aggiornamento */
+                aggiornamentoMetadati.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
                 /* Registro l'aggiornamento nella coda degli aggiornamenti da elaborare */
                 evHelper.insertUpdCodaUpdDaElab(aggiornamentoMetadati.getIdUpdUnitaDoc(),
-                        ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
+                        ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+                // end MAC#27493
             } else {
                 /* Annullo lo stato di gestione dell’elenco sull’aggiornamento */
                 aggiornamentoMetadati.setTiStatoUpdElencoVers(null);
@@ -1694,11 +1706,13 @@ public class ElenchiVersamentoEjb {
             unitaDocElenco.setElvElencoVer(null);
             if (!unitaDocElenco.getTiStatoConservazione()
                     .equals(CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name())) {
-                // Assegno stato ud nell'elenco di vers uguale a IN_ATTESA_SCHED
-                unitaDocElenco.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
+                // MAC#27493
+                // Assegno stato ud nell'elenco di vers uguale a NON_SELEZ_SCHED
+                unitaDocElenco.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
                 // Registro l'ud nella coda delle ud da elaborare (tabella ELV_UD_VERS_DA_ELAB_ELENCO)
                 evHelper.insertUdCodaUdDaElab(unitaDocElenco.getIdUnitaDoc(),
-                        ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED);
+                        ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED);
+                // end MAC#27493
             } else {
                 // Assegno stato ud nell'elenco di vers uguale a null
                 unitaDocElenco.setTiStatoUdElencoVers(null);
@@ -1710,11 +1724,13 @@ public class ElenchiVersamentoEjb {
             docAggiuntoElenco.setElvElencoVer(null);
             if (!docAggiuntoElenco.getAroUnitaDoc().getTiStatoConservazione()
                     .equals(CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name())) {
-                // Assegno stato doc nell'elenco di vers uguale a IN_ATTESA_SCHED
-                docAggiuntoElenco.setTiStatoDocElencoVers(ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
+                // MAC#27493
+                // Assegno stato doc nell'elenco di vers uguale a NON_SELEZ_SCHED
+                docAggiuntoElenco.setTiStatoDocElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
                 // Registro il doc nella coda dei doc da elaborare (tabella ELV_DOC_AGG_DA_ELAB_ELENCO)
                 evHelper.insertDocCodaDocDaElab(docAggiuntoElenco.getIdDoc(),
-                        ElencoEnums.DocStatusEnum.IN_ATTESA_SCHED);
+                        ElencoEnums.DocStatusEnum.NON_SELEZ_SCHED);
+                // end MAC#27493
             } else {
                 // Assegno stato ud nell'elenco di vers uguale a null
                 docAggiuntoElenco.setTiStatoDocElencoVers(null);
@@ -1726,11 +1742,13 @@ public class ElenchiVersamentoEjb {
             updMetadatiElenco.setElvElencoVer(null);
             if (!updMetadatiElenco.getAroUnitaDoc().getTiStatoConservazione()
                     .equals(CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name())) {
-                // Assegno stato upd nell'elenco di vers uguale a IN_ATTESA_SCHED
-                updMetadatiElenco.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED);
+                // MAC#27493
+                // Assegno stato upd nell'elenco di vers uguale a NON_SELEZ_SCHED
+                updMetadatiElenco.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
                 // Registro la upd nella coda degli aggiornamenti da elaborare (tabella ELV_UPD_UD_DA_ELAB_ELENCO)
                 evHelper.insertUpdCodaUpdDaElab(updMetadatiElenco.getIdUpdUnitaDoc(),
-                        ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
+                        ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+                // end MAC#27493
             } else {
                 // Assegno stato ud nell'elenco di vers uguale a null
                 updMetadatiElenco.setTiStatoUpdElencoVers(null);

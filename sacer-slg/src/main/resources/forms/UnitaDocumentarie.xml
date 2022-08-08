@@ -62,6 +62,7 @@
         <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>
         <ComboBox Description="Stato generazione Indice AIP" Name="ti_stato_ud_elenco_vers" Type="STRING"/>
         <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="true" Type="INTEGER"/>
+        <ComboBox Description="Profilo normativo" Name="fl_profilo_normativo" Type="STRING"/>
     </Fields>
     <!-- Filtri di ricerca Unità Documentarie Avanzata -->
     <Fields Description="Filtri unità documentaria ricerca avanzata" Name="FiltriUnitaDocumentarieAvanzata">
@@ -115,6 +116,7 @@
         <Input Description="Sotto-fascicolo" Name="cd_sottofascic" Type="STRING"/>
         <Input Description="Oggetto sotto-fascicolo" Name="ds_oggetto_sottofascic" Type="STRING"/>
         <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="true" Type="INTEGER"/>
+        <ComboBox Description="Profilo normativo" Name="fl_profilo_normativo" Type="STRING"/>
     </Fields>
     <!-- Filtri Dati Specifici di ricerca Unità Documetaria -->
     <List Description="Filtri Dati Specifici Unità Documentarie" Name="FiltriDatiSpecUnitaDocumentarieList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true" masterList="true">
@@ -347,6 +349,8 @@
         <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_index_ud" Rows="500" Type="STRING"/>
         <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_risp_ud" Rows="500" Type="STRING"/>
         <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_rapp_ud" Rows="500" Type="STRING"/>
+        <!-- Profilo normativo -->
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="profilo_normativo" Rows="500" Type="STRING"/>
         <!-- Note -->
         <TextArea Cols="500" Description="" MaxLength="1000000000" Name="nt_unita_doc" Rows="500" Type="STRING"/>
         <!-- Bottone Scarica Componenti FILE -->
@@ -405,7 +409,7 @@
         <Input Description="Sistema di migrazione" Name="nm_sistema_migraz" Type="STRING"/>
         <Input Description="Urn" Name="urn_ud" Type="STRING"/>
         <Input Description="Data annullamento" Name="dt_annul" Type="DATE"/>
-        <Input Description="Motivo annullamento" Name="nt_annul" Type="STRING"/>
+        <Input Description="Motivo annullamento" Name="nt_annul" Type="STRING"/>        
     </Fields>
     <!-- Lista dei documenti dell'unità documentaria -->
     <List Description="Lista documenti" Name="DocumentiUDList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
@@ -520,8 +524,9 @@
         <TabElement Description="PI SIP unità documentaria" Name="XMLIndiceUD"/>
         <TabElement Description="Esito versamento SIP" Name="XMLRispostaUD"/>
         <TabElement Description="Rapporto di versamento" Name="XMLRapportoUD"/>
+        <TabElement Description="Profilo normativo" Name="ProfiloNormativoUD"/>
         <TabElement Description="Note" Name="NoteUD"/>
-        <TabElement Description="Indice AIP" Name="UltimoIndiceAIP"/>
+        <TabElement Description="Indice AIP" Name="UltimoIndiceAIP"/>        
     </Tab>
     <Tab Description="Liste Dettaglio Unità Documentaria" Name="UnitaDocumentarieDettaglioListsTabs">
         <TabElement Description="Documenti" Name="ListaDocumentiUD"/>

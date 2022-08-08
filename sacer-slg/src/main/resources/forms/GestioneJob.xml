@@ -444,6 +444,7 @@
         <Button Description="Ricerca" Name="ricercaGestioneJob" Type="STRING"/>
         <Button Description="Start massivo" Name="startMassivoGestioneJob" Type="STRING"/>
         <Button Description="Stop massivo" Name="stopMassivoGestioneJob" Type="STRING"/>        
+        <Button Description="Esecuzione singola massiva" Name="esecuzioneSingolaMassivaGestioneJob" Type="STRING"/>        
     </Fields>
     
      <List Name="GestioneJobRicercaList" Description="Lista Job" >

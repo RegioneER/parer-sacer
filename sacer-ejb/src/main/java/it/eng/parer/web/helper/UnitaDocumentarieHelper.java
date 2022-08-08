@@ -20,8 +20,10 @@ import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.VrsXmlModelloSessioneVers;
 import it.eng.parer.entity.constraint.AroCompUrnCalc.TiUrn;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
+import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
 import it.eng.parer.entity.constraint.SIOrgEnteSiam.TiEnteConvenz;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.grantedEntity.UsrUser;
@@ -319,7 +321,12 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             queryStr.append(whereWord).append("(u.dtCreazione >= :datada AND u.dtCreazione <= :dataa) ");
             whereWord = "AND ";
         }
-
+        // Inserimento nella query del filtro ESISTE PROFILO NORMATIVO
+        String profiloNorm = filtri.getFl_profilo_normativo().parse();
+        if (profiloNorm != null) {
+            queryStr.append(whereWord).append("u.flEsisteProfiloNormativo = :profiloNorm ");
+            whereWord = "AND ";
+        }
         // Inserimento nella query del filtro FORZA ACCETTAZIONE
         String forzaAcc = filtri.getFl_forza_accettazione().parse();
         if (forzaAcc != null) {
@@ -479,6 +486,10 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         if (data_da != null && data_a != null) {
             query.setParameter("datada", data_da, TemporalType.TIMESTAMP);
             query.setParameter("dataa", data_a, TemporalType.TIMESTAMP);
+        }
+
+        if (profiloNorm != null) {
+            query.setParameter("profiloNorm", profiloNorm);
         }
 
         if (forzaAcc != null) {
@@ -734,7 +745,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         if ((data_comp_da != null) && (data_comp_a != null)) {
             whereCompClause.append(" AND strutDoc.aroDoc.dtCreazione between :dataCompDaIn AND :dataCompAIn");
         }
-
+        //
         if (filtriComponenti.getFl_forza_accettazione_comp().parse() != null) {
             whereCompClause.append(" AND strutDoc.aroDoc.flForzaAccettazione = :flForzaAccIn");
         }
@@ -863,7 +874,12 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             queryStr.append(whereWord).append("(u.dtCreazione between :datada AND :dataa) ");
             whereWord = " AND ";
         }
-
+        // Inserimento nella query del filtro ESISTE PROFILO NORMATIVO
+        String profiloNorm = filtri.getFl_profilo_normativo().parse();
+        if (profiloNorm != null) {
+            queryStr.append(whereWord).append("u.flEsisteProfiloNormativo = :profiloNorm ");
+            whereWord = "AND ";
+        }
         // Inserimento nella query del filtro FORZA ACCETTAZIONE
         String forzaAcc = filtri.getFl_forza_accettazione().parse();
         if (forzaAcc != null) {
@@ -1254,7 +1270,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("datada", data_da, TemporalType.TIMESTAMP);
             query.setParameter("dataa", data_a, TemporalType.TIMESTAMP);
         }
-
+        if (profiloNorm != null) {
+            query.setParameter("profiloNorm", profiloNorm);
+        }
         if (forzaAcc != null) {
             query.setParameter("forzaaccin", forzaAcc);
         }
@@ -3519,6 +3537,37 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         List<AroVDtVersMaxByUnitaDoc> lista = (List<AroVDtVersMaxByUnitaDoc>) query.getResultList();
         if (!lista.isEmpty()) {
             return lista.get(0);
+        }
+        return null;
+    }
+
+    public String getProfiloNormativo(String tiUsoModelloXsd, TiModelloXsdUd tiModelloXsdUd, long idUnitaDoc) {
+
+        List<VrsXmlModelloSessioneVers> lstXmlModelloSessioneVers = null;
+
+        try {
+
+            String queryStr = "select xms from VrsXmlModelloSessioneVers xms "
+                    + "join xms.decUsoModelloXsdUniDoc.decModelloXsdUd modello_xsd "
+                    + "join xms.vrsDatiSessioneVers dati_ses " + "join dati_ses.vrsSessioneVers ses "
+                    + "where modello_xsd.tiUsoModelloXsd = :tiUsoModelloXsd "
+                    + "and modello_xsd.tiModelloXsd = :tiModelloXsdUd " + "and dati_ses.tiDatiSessioneVers = 'XML_DOC' "
+                    + "and ses.aroUnitaDoc.idUnitaDoc = :idUnitaDoc " + "and ses.aroDoc is null "
+                    + "and ses.tiStatoSessioneVers = 'CHIUSA_OK' " + "and ses.tiSessioneVers = 'VERSAMENTO' ";
+
+            javax.persistence.Query query = getEntityManager().createQuery(queryStr);
+            query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+            query.setParameter("tiModelloXsdUd", tiModelloXsdUd);
+            query.setParameter("idUnitaDoc", idUnitaDoc);
+
+            lstXmlModelloSessioneVers = query.getResultList();
+            if (lstXmlModelloSessioneVers != null && !lstXmlModelloSessioneVers.isEmpty()) {
+                return lstXmlModelloSessioneVers.get(0).getBlXml();
+            }
+
+        } catch (Exception e) {
+            // "Eccezione durante il recupero del profilo normativo ud " + e.getMessage()));
+            log.error("Eccezione durante il recupero del profilo normativo ud " + e.getMessage(), e);
         }
         return null;
     }

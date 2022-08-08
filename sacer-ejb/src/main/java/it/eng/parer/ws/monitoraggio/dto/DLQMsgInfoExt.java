@@ -5,6 +5,8 @@
  */
 package it.eng.parer.ws.monitoraggio.dto;
 
+import java.util.Objects;
+
 /**
  *
  * @author sinatti_s
@@ -24,32 +26,24 @@ public class DLQMsgInfoExt extends DLQMsgInfo {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((payloadType == null) ? 0 : payloadType.hashCode());
-        result = prime * result + ((state == null) ? 0 : state.hashCode());
+        int result = super.hashCode();
+        result = prime * result + Objects.hash(countMsg);
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!super.equals(obj)) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (!(obj instanceof DLQMsgInfoExt)) {
             return false;
-        DLQMsgInfo other = (DLQMsgInfo) obj;
-        if (payloadType == null) {
-            if (other.payloadType != null)
-                return false;
-        } else if (!payloadType.equals(other.payloadType))
-            return false;
-        if (state == null) {
-            if (other.state != null)
-                return false;
-        } else if (!state.equals(other.state))
-            return false;
-        return true;
+        }
+        DLQMsgInfoExt other = (DLQMsgInfoExt) obj;
+        return countMsg == other.countMsg;
     }
 
 }

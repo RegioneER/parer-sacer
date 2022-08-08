@@ -190,6 +190,12 @@
                     <slf:field name="<%=UnitaDocumentarieForm.UnitaDocumentarieDetail.BL_XML_RAPP_UD%>" colSpan="4" controlWidth="w100"/>
                 </slf:fieldSet>
             </slf:tab>
+                <slf:tab  name="<%= UnitaDocumentarieForm.UnitaDocumentarieDettaglioTabs.NAME%>" tabElement="ProfiloNormativoUD">
+                <slf:fieldSet  borderHidden="false">
+                    <sl:newLine skipLine="true"/>
+                    <slf:field name="<%=UnitaDocumentarieForm.UnitaDocumentarieDetail.PROFILO_NORMATIVO%>" colSpan="4" controlWidth="w100"/>
+                </slf:fieldSet>
+            </slf:tab>
             <slf:tab  name="<%= UnitaDocumentarieForm.UnitaDocumentarieDettaglioTabs.NAME%>" tabElement="UltimoIndiceAIP">
                 <slf:fieldSet  borderHidden="false">
                     <slf:lblField name="<%=UnitaDocumentarieForm.VersioneIndiceAIPLast.CD_VER_INDICE_AIP%>" colSpan="4" labelWidth="w10" controlWidth="w60"/>

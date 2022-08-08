@@ -26,6 +26,8 @@ import org.joda.time.DateTime;
 
 import it.eng.parer.entity.VrsDtVers;
 import it.eng.parer.entity.VrsPathDtVers;
+import it.eng.parer.exception.ParerErrorCategory.SacerErrorCategory;
+import it.eng.parer.exception.SacerRuntimeException;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.Constants;
@@ -58,7 +60,9 @@ public class AltriStatusMonitor {
     private static final Logger log = LoggerFactory.getLogger(AltriStatusMonitor.class);
 
     private static final String ERROR_SEPARATOR = ", ";
-    private static final String JMS_SELECTOR = Costanti.JMSMsgProperties.MSG_K_APP + " = '" + Constants.SACER + "'";
+    private static final String JMS_SELECTOR = Costanti.JMSMsgProperties.MSG_K_APP + " = '"
+            + Costanti.JMSMsgProperties.MSG_V_APP_SACER + "' OR " + Costanti.JMSMsgProperties.MSG_K_APP + " = '"
+            + Costanti.JMSMsgProperties.MSG_V_APP_SACERWS + "'";
 
     @EJB
     ControlliMonitor controlliMonitor;
@@ -91,8 +95,9 @@ public class AltriStatusMonitor {
             List<DLQMsgInfo> infoCodas = monitorCoda.retrieveMsgInQueue(NomeCoda.dmqQueue.name(), messageSelector);
             this.elabJmsMessage(tmpAltro, infoCodas);
         } catch (JMSException e) {
-            log.error("Errore nel recupero delle informazioni della DMQ", e);
-            throw new RuntimeException("Errore nel recupero delle informazioni della DMQ");
+            log.error("Errore nel recupero delle informazioni della DLQ", e);
+            throw new SacerRuntimeException("Errore nel recupero delle informazioni della DLQ",
+                    SacerErrorCategory.INTERNAL_ERROR);
         }
         listaMon.add(tmpAltro);
     }
@@ -106,11 +111,11 @@ public class AltriStatusMonitor {
      */
     private void elabJmsMessage(MonitorAltro tmpAltro, List<DLQMsgInfo> infoCodas) {
         // non esistono messaggi su DLQ
-        if (infoCodas.size() == 0) {
+        if (infoCodas.isEmpty()) {
             tmpAltro.setStato(MonitorSondeGenEsiti.OK.name());
         } else {
             // preparo messaggio da inviare di ERROR
-            StringBuffer koMsg = new StringBuffer();
+            StringBuilder koMsg = new StringBuilder();
             koMsg.append(MonitorSondeGenEsiti.ERROR.name() + "| messaggi rilevati in DLQ: ");
 
             // creazione messaggio raggruppando per payloadType/state
@@ -122,6 +127,9 @@ public class AltriStatusMonitor {
                 koMsg.append(tmpInfoCoda.getCountMsg() + " messaggi/o");
                 if (StringUtils.isNotBlank(tmpInfoCoda.getPayloadType())) {
                     koMsg.append(" di tipo " + tmpInfoCoda.getPayloadType());
+                }
+                if (StringUtils.isNotBlank(tmpInfoCoda.getFromApplication())) {
+                    koMsg.append(" da " + tmpInfoCoda.getFromApplication());
                 }
                 if (StringUtils.isNotBlank(tmpInfoCoda.getState())
                         && !tmpInfoCoda.getState().equals(MonitorCoda.PAYLOAD_NOSTATE)) {
@@ -150,6 +158,7 @@ public class AltriStatusMonitor {
                 // init
                 DLQMsgInfoExt tmpInfoCoda = new DLQMsgInfoExt();
                 tmpInfoCoda.setPayloadType(info.getPayloadType());
+                tmpInfoCoda.setFromApplication(info.getFromApplication());
                 tmpInfoCoda.setState(info.getState());
                 mapInfos.put(key, tmpInfoCoda);
             }

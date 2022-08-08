@@ -73,6 +73,49 @@ public class JmsProducerUtilEjb {
                 log.error("Errore (trappato) JMS durante la chiusura delle risorse", ex);
             }
         }
-
     }
+
+    // MAC#27499
+    public void manageMessageGroupingInFormatoJson(ConnectionFactory connectionFactory, Queue queue,
+            Object objectToSerializeInJson, String tipoPayload, String groupId) {
+        MessageProducer messageProducer = null;
+        TextMessage textMessage = null;
+        Connection connection = null;
+        Session session = null;
+        try {
+            connection = connectionFactory.createConnection();
+            session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+            messageProducer = session.createProducer(queue);
+            textMessage = session.createTextMessage();
+            textMessage.setStringProperty("JMSXGroupID", groupId);
+            // app selector
+            textMessage.setStringProperty(Costanti.JMSMsgProperties.MSG_K_APP, Constants.SACER);
+            textMessage.setStringProperty("tipoPayload", tipoPayload);
+            ObjectMapper jsonMapper = new ObjectMapper();
+            textMessage.setText(jsonMapper.writeValueAsString(objectToSerializeInJson));
+            log.debug(String.format("JmsProducer [JSON] %s", textMessage.getText()));
+            messageProducer.send(textMessage);
+            log.debug(String.format("JmsProducer messaggio inviato con groupId %s", groupId));
+        } catch (JMSException ex) {
+            throw new RuntimeException(String.format("Errore nell'invio del messaggio con groupId %s in coda", groupId),
+                    ex);
+        } catch (JsonProcessingException ex) {
+            throw new RuntimeException("Errore nella serializzazione in JSON del messaggio per la coda", ex);
+        } finally {
+            try {
+                if (messageProducer != null) {
+                    messageProducer.close();
+                }
+                if (session != null) {
+                    session.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (JMSException ex) {
+                log.error("Errore (trappato) JMS durante la chiusura delle risorse", ex);
+            }
+        }
+    }
+    // end MAC#27499
 }

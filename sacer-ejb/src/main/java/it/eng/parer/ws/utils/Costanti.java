@@ -308,11 +308,18 @@ public class Costanti {
     //
     public class JMSMsgProperties {
 
-        // msg properties
-        public final static String MSG_K_PAYLOADTYPE = "tipoPayload";
-        public final static String MSG_K_STATUS = "statoElenco";
-        public final static String MSG_K_APP = "fromApplication";
+        private JMSMsgProperties() {
+            throw new IllegalStateException("Utility class");
+        }
 
+        // msg properties
+        public static final String MSG_K_PAYLOADTYPE = "tipoPayload";
+        public static final String MSG_K_STATUS = "statoElenco";
+        public static final String MSG_K_APP = "fromApplication";
+
+        // msg values
+        public static final String MSG_V_APP_SACER = "SACER";
+        public static final String MSG_V_APP_SACERWS = "SACERWS";
     }
 
     //

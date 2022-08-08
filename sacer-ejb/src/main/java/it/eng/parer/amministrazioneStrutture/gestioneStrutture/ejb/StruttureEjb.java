@@ -3035,6 +3035,21 @@ public class StruttureEjb {
             tipoRapprComp.setDecFormatoFileStandard(formatoFileStandard);
         }
 
+        // Formato del file contenuto
+        DecFormatoFileDoc formatoFileContenuto = new DecFormatoFileDoc();
+        if (tipoRapprCompExp.getDecFormatoFileDocCont() != null) {
+            formatoFileContenuto = gestisciFormatoFileDoc(idStrutCorrente, tipoRapprCompExp.getDecFormatoFileDocCont());
+            tipoRapprComp.setDecFormatoFileDocCont(formatoFileContenuto);
+        }
+
+        // Formato del file convertitore
+        DecFormatoFileDoc formatoFileConvertitore = new DecFormatoFileDoc();
+        if (tipoRapprCompExp.getDecFormatoFileDocConv() != null) {
+            formatoFileConvertitore = gestisciFormatoFileDoc(idStrutCorrente,
+                    tipoRapprCompExp.getDecFormatoFileDocConv());
+            tipoRapprComp.setDecFormatoFileDocConv(formatoFileConvertitore);
+        }
+
         OrgStrut strutCorrente = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
         tipoRapprComp.setOrgStrut(strutCorrente);
         struttureHelper.insertEntity(tipoRapprComp, true);
@@ -3109,6 +3124,17 @@ public class StruttureEjb {
         }
         return formatoFileStandard;
     }
+
+    // public DecFormatoFileDoc gestisciFormatoFileDoc(BigDecimal idStrutCorrente,
+    // DecFormatoFileDoc formatoFileContenutoExp) {
+    // DecFormatoFileDoc formatoFileDoc = formatoFileStandardHelper
+    // .getDecFormatoFileDocByName(idStrutCorrente, formatoFileContenutoExp.getNmFormatoFileDoc());
+    // // Se il formatoFileDocnon esiste, allora lo inserisco
+    // if (formatoFileDoc == null) {
+    // formatoFileDoc = inserisciFormatoFileDoc(idStrutCorrente, formatoFileContenutoExp);
+    // }
+    // return formatoFileDoc;
+    // }
 
     public DecTipoRapprAmmesso inserisciTipoRapprAmmesso(DecTipoCompDoc tipoCompDoc, DecTipoRapprComp tipoRapprComp) {
         DecTipoRapprAmmesso tipoRapprAmmesso = new DecTipoRapprAmmesso();

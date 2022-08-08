@@ -131,7 +131,7 @@ public class TipoFascicoloEjb {
      *            id della struttura
      * @param isFilterValid
      *            true ricerca solo i tipi validi alla data odierna
-     * 
+     *
      * @return DecTipoFascicoloTableBean
      */
     public DecTipoFascicoloTableBean getDecTipoFascicoloTableBean(BigDecimal idStrut, boolean isFilterValid) {
@@ -166,7 +166,7 @@ public class TipoFascicoloEjb {
      *            id della struttura
      * @param isFilterValid
      *            true ricerca solo i tipi validi alla data odierna
-     * 
+     *
      * @return DecTipoFascicoloTableBean
      */
     public DecTipoFascicoloTableBean getTipiFascicoloAbilitati(long idUtente, BigDecimal idStrut,
@@ -198,7 +198,7 @@ public class TipoFascicoloEjb {
      *
      * @param idTipoFascicolo
      *            id del tipo fascicolo
-     * 
+     *
      * @return DecTipoFascicoloRowBean
      */
     public DecTipoFascicoloRowBean getDecTipoFascicoloRowBean(BigDecimal idTipoFascicolo) {
@@ -243,7 +243,7 @@ public class TipoFascicoloEjb {
      *
      * @param idTipoFascicolo
      *            id del tipo fascicolo
-     * 
+     *
      * @return DecAaTipoFascicoloRowBean
      */
     public DecAaTipoFascicoloRowBean getLastDecAaTipoFascicoloRowBean(BigDecimal idTipoFascicolo) {
@@ -267,7 +267,7 @@ public class TipoFascicoloEjb {
      *
      * @param idTipoFascicolo
      *            id del tipo fascicolo
-     * 
+     *
      * @return DecAaTipoFascicoloTableBean
      */
     public DecAaTipoFascicoloTableBean getDecAaTipoFascicoloTableBean(BigDecimal idTipoFascicolo) {
@@ -300,7 +300,7 @@ public class TipoFascicoloEjb {
      *
      * @param idTipoFascicolo
      *            id del tipo fascicolo
-     * 
+     *
      * @return DecCriterioRaggrFascTableBean
      */
     public DecCriterioRaggrFascTableBean getDecCriterioRaggrFascTableBean(BigDecimal idTipoFascicolo) {
@@ -326,7 +326,7 @@ public class TipoFascicoloEjb {
      *
      * @param idAaTipoFascicolo
      *            id del periodo tipo fascicolo
-     * 
+     *
      * @return DecAaTipoFascicoloRowBean
      */
     public DecAaTipoFascicoloRowBean getDecAaTipoFascicoloRowBean(BigDecimal idAaTipoFascicolo) {
@@ -350,7 +350,7 @@ public class TipoFascicoloEjb {
      *
      * @param idAaTipoFascicolo
      *            id periodo di validità del tipo fascicolo
-     * 
+     *
      * @return DecErrAaTipoFascicoloTableBean
      */
     public DecErrAaTipoFascicoloTableBean getDecErrAaTipoFascicoloTableBeanPerIntervallo(BigDecimal idAaTipoFascicolo) {
@@ -388,9 +388,9 @@ public class TipoFascicoloEjb {
      *            data istituzione
      * @param dtSoppres
      *            data soppressione
-     * 
+     *
      * @return Long pk fascicolo inserito
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -420,9 +420,9 @@ public class TipoFascicoloEjb {
      *            nome tipo fascicolo
      * @param idTipoFascicolo
      *            id tipo fascicolo
-     * 
+     *
      * @return Long pk fascicolo inserito
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      * @throws ParerWarningException
@@ -452,9 +452,9 @@ public class TipoFascicoloEjb {
      *            data istituzione
      * @param dtSoppres
      *            data soppressione
-     * 
+     *
      * @return id del nuovo tipo fascicolo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -596,9 +596,9 @@ public class TipoFascicoloEjb {
      *            id tipo fascicolo
      * @param nmTipoFascicolo
      *            nome tipo fascicolo
-     * 
+     *
      * @return id del nuovo criterio di raggruppamento fascicoli
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      * @throws ParerWarningException
@@ -719,7 +719,7 @@ public class TipoFascicoloEjb {
      *            descrizione tipo fascicolo
      * @param dtSoppres
      *            data soppressione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -751,9 +751,9 @@ public class TipoFascicoloEjb {
      *            data istituzione
      * @param dtSoppres
      *            data soppressione
-     * 
+     *
      * @return IamOrganizDaReplic entity
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -823,7 +823,7 @@ public class TipoFascicoloEjb {
      *            parametri per il logging
      * @param idTipoFascicolo
      *            id tipo fascicolo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -896,7 +896,7 @@ public class TipoFascicoloEjb {
      *            lista contenente tutti i criteri coinvolti a seguito dell'eliminazione del tipo fascicolo
      * @param listaBeforeDeletion,
      *            lista filtrata per contenere i criteri da eliminare a seguito dell'eliminazione del tipo fascicolo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1103,7 +1103,7 @@ public class TipoFascicoloEjb {
      *
      * @param idAaTipoFascicolo
      *            id anno tipo fascicolo
-     * 
+     *
      * @return DecParteNumeroFascicoloTableBean bean parte numero fascicolo
      */
     public DecParteNumeroFascicoloTableBean getDecParteNumeroFascicoloTableBean(BigDecimal idAaTipoFascicolo) {
@@ -1192,7 +1192,7 @@ public class TipoFascicoloEjb {
      *            parametri per il logging
      * @param idAaTipoFascicolo
      *            id anno tipo fascicolo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1223,7 +1223,7 @@ public class TipoFascicoloEjb {
      *            parametri per il logging
      * @param idCriterioRaggrFasc
      *            id criterio raggruppamente fascicolo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1265,7 +1265,7 @@ public class TipoFascicoloEjb {
      *            decodifica parte
      * @param idPartiEliminate
      *            id parte eliminata
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1459,9 +1459,9 @@ public class TipoFascicoloEjb {
      *            decodifica metadati profilo fascicolo
      * @param parti
      *            decodifica parti numero fascicolo
-     * 
+     *
      * @return BigDecimal pk anno tipo fascicolo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1857,9 +1857,9 @@ public class TipoFascicoloEjb {
      *
      * @param tiUsoModelloXsd
      * @param stringaFile
-     * 
+     *
      * @return List xsd attributes
-     * 
+     *
      * @throws ParerUserError
      */
     private List<String> parseStringaXsd(String tiUsoModelloXsd, String stringaFile) throws ParerUserError {
@@ -1944,12 +1944,12 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     * 
+     *
      * @param idXsdFascicolo
      *            id Xsd fascicolo
      * @param idAaTipoFascicolo
      *            id Aa tipo fascicolo
-     * 
+     *
      * @return DecAttribFascicoloTableBean
      */
     public DecAttribFascicoloTableBean getDecAttribFascicoloTableBeanFromXsd(BigDecimal idXsdFascicolo,
@@ -1972,12 +1972,12 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     * 
+     *
      * @param row
      *            DecAttribFascicolo rowbean
      * @param xsdFascicoloRowBean
      *            DecUsoModelloXsdFasc rowbean
-     * 
+     *
      * @return DecModelloXsdAttribFascicolo
      */
     public DecModelloXsdAttribFascicolo getDecModelloXsdAttribFascicolo(DecAttribFascicoloRowBean row,
@@ -1990,10 +1990,10 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     * 
+     *
      * @param idAttribFascicolo
      *            id Attributo fascicolo
-     * 
+     *
      * @return row bean DecAttribFascicolo
      */
     public DecAttribFascicoloRowBean getDecAttribFascRowBean(BigDecimal idAttribFascicolo) {
@@ -2016,7 +2016,7 @@ public class TipoFascicoloEjb {
      *
      * @param idAttribFascicolo
      *            id Attributo fascicolo
-     * 
+     *
      * @return DecModelloXsdAttribFascicoloRowBean
      */
     public DecModelloXsdAttribFascicoloRowBean getDecModelloXsdAttribFascicoloRowBeanByAttrib(
@@ -2036,12 +2036,12 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     * 
+     *
      * @param idAaTipoFascicolo
      *            id periodo validita fascicolo
      * @param idModelloXsdFascicolo
      *            id modello xsd fascicolo
-     * 
+     *
      * @return DecUsoModelloXsdFascRowBean
      */
     public DecUsoModelloXsdFascRowBean getDecUsoModelloXsdFascRowBeanByAttrib(BigDecimal idAaTipoFascicolo,

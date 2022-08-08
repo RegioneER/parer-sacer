@@ -99,11 +99,6 @@ public class FormatoFileStandardHelper extends GenericHelper {
             queryStr.append(" WHERE formato.flFormatoConcat = '1' ");
         }
         if (!formati.isEmpty()) {
-            // if (status.equals(BaseElements.Status.update)) {
-            // queryStr.append(" AND UPPER(ext.cdEstensioneFile) NOT IN :nmformati");
-            // } else {
-            // queryStr.append(" WHERE UPPER(ext.cdEstensioneFile) NOT IN :nmformati ");
-            // }
             if (status.equals(BaseElements.Status.update)) {
                 queryStr.append(" AND UPPER(formato.nmFormatoFileStandard) NOT IN :nmformati");
             } else {
@@ -119,19 +114,6 @@ public class FormatoFileStandardHelper extends GenericHelper {
         }
         return query.getResultList();
     }
-
-    // public BigDecimal getDecFormatoFileStandardIdFromEstensioneFile(String cdEstensioneFile) {
-    // Query query = getEntityManager().createQuery(
-    // "SELECT formatoFileStandard.idFormatoFileStandard FROM DecEstensioneFile estensioneFile JOIN"
-    // + " estensioneFile.decFormatoFileStandard formatoFileStandard WHERE UPPER(estensioneFile.cdEstensioneFile) =
-    // :cdEstensioneFile");
-    // query.setParameter("cdEstensioneFile", cdEstensioneFile.toUpperCase());
-    //
-    // List<Long> list = query.getResultList();
-    // Long id = list.get(0);
-    //
-    // return new BigDecimal(id);
-    // }
 
     public DecFormatoFileStandard getDecFormatoFileStandardByName(String nmFormato) {
         Query query = getEntityManager().createQuery(
@@ -204,7 +186,7 @@ public class FormatoFileStandardHelper extends GenericHelper {
 
     public List<DecEstensioneFile> retrieveDecEstensioneFileList(BigDecimal idFormatoFileStandard) {
         Query query = getEntityManager().createQuery(
-                "SELECT estensioneFile FROM DecEstensioneFile estensioneFile WHERE estensioneFile.decFormatoFileStandard.idFormatoFileStandard=:idFormatoFileStandard");
+                "SELECT estensioneFile FROM DecEstensioneFile estensioneFile WHERE estensioneFile.decFormatoFileStandard.idFormatoFileStandard=:idFormatoFileStandard ORDER BY estensioneFile.cdEstensioneFile");
         query.setParameter("idFormatoFileStandard", idFormatoFileStandard);
         List<DecEstensioneFile> list = query.getResultList();
         return list;

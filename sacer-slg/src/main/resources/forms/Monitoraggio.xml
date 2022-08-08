@@ -823,7 +823,7 @@
     
     <!-- Filtri consistenza sacer -->
     <Fields Name="FiltriConsistenzaSacer" Description="Filtri Consistenza Sacer" >
-        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
         <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" />
         <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
         <Input Type="DATE" Description="Data riferimento da" Name="dt_rif_da" Required="true"/>
@@ -831,7 +831,8 @@
         <ComboBox Type="STRING" Description="Diff. diversa da 0" Name="differenza_zero" />    
         <Button Name="ricercaConsistenzaSacer" Description="Ricerca" Type="STRING" />
         <Button Name="pulisciConsistenzaSacer" Description="Pulisci" Type="STRING" />
-        <Button Name="scaricaReport" Description="Scarica report" Type="STRING" />
+        <Button Name="scaricaReport" Description="Scarica report" Type="STRING" />        
+        <Button Name="scaricaReportSintetico" Description="Scarica report sintetico" Type="STRING" />        
     </Fields>
     
     <Section Name="TotaliConsistenzaSection" Description="Totali consistenza" Legend="Totali consistenza" LoadOpened="true" ShowButton="false"/>
@@ -851,7 +852,7 @@
 
     <!-- Consistenza Sacer Lista -->
     <List Name="ConsistenzaSacerList" Description="Lista Consistenza Sacer" >
-        <!--<Input  Type="STRING" Description="Ambiente" Name="nm_ambiente" />-->
+        <Input  Type="STRING" Description="Ambiente" Name="nm_ambiente" />
         <Input  Type="STRING" Description="Ente" Name="nm_ente" />
         <Input  Type="STRING" Description="Struttura" Name="nm_strut" />
         <Input  Type="INTEGER" Description="Id struttura" Name="id_strut" Hidden="true"/>

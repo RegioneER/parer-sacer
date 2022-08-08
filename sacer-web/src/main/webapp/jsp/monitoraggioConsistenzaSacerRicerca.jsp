@@ -5,16 +5,13 @@
     <sl:head  title="Monitoraggio - Esame consistenza SACER" >
         <script type="text/javascript">
             $(document).ready(function () {
-
-               
-
                 $('#ConsistenzaSacerList tr').each(
                         function (index) {
-                            var elemento = $(this).find('td:eq(3), td:eq(4)');
+                            var elemento = $(this).find('td:eq(4), td:eq(5)');
                             elemento.css({"background-color": "#AFE4FF", "text-align": "right"});
-                            var elemento2 = $(this).find('td:eq(5), td:eq(6),td:eq(7), td:eq(8)');
+                            var elemento2 = $(this).find('td:eq(6), td:eq(7),td:eq(8), td:eq(9)');
                             elemento2.css({"background-color": "#FEF5C2", "text-align": "right"});
-                            var elemento3 = $(this).find('td:eq(9) a');
+                            var elemento3 = $(this).find('td:eq(10) a');
                             elemento3.parent().css({"text-align": "right"});                            
                             if (elemento3.html() == 0) {
                                 elemento3.removeAttr("href");
@@ -32,7 +29,7 @@
                         });
 
             });
-            
+              
 //            $('input[name="operation__scaricaReport"]').click(
 //                        function (index) {
 //                            alert('ciao');
@@ -89,6 +86,7 @@
                 <slf:lblField name="<%=MonitoraggioForm.FiltriConsistenzaSacer.RICERCA_CONSISTENZA_SACER%>" width="w25" />
                 <slf:lblField name="<%=MonitoraggioForm.FiltriConsistenzaSacer.PULISCI_CONSISTENZA_SACER%>" width="w25" />
                 <slf:lblField name="<%=MonitoraggioForm.FiltriConsistenzaSacer.SCARICA_REPORT%>" width="w25" />
+                <slf:lblField name="<%=MonitoraggioForm.FiltriConsistenzaSacer.SCARICA_REPORT_SINTETICO%>" width="w25" />
             </sl:pulsantiera>
             <sl:newLine skipLine="true"/>
             <sl:newLine skipLine="true"/>

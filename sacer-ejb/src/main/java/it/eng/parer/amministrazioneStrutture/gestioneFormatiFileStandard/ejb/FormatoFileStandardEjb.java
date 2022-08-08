@@ -317,22 +317,46 @@ public class FormatoFileStandardEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void insertDecEstensioneFile(DecEstensioneFileRowBean estensioneFileRowBean) throws ParerUserError {
+    public long insertDecEstensioneFile(DecEstensioneFileRowBean estensioneFileRowBean) throws ParerUserError {
         DecFormatoFileStandard formatoFileStandard = helper.findById(DecFormatoFileStandard.class,
                 estensioneFileRowBean.getIdFormatoFileStandard());
         if (formatoFileStandard.getDecEstensioneFiles() == null) {
             formatoFileStandard.setDecEstensioneFiles(new ArrayList<>());
         }
 
-        if (helper.getDecEstensioneFileByName(estensioneFileRowBean.getCdEstensioneFile(),
-                estensioneFileRowBean.getIdFormatoFileStandard()) != null) {
+        if (helper.getDecEstensioneFileByName(estensioneFileRowBean.getCdEstensioneFile(), null) != null) {
             throw new ParerUserError("Estensione gi\u00E0 associata al formato specificato");
         }
+
         DecEstensioneFile estensioneFile = (DecEstensioneFile) Transform.rowBean2Entity(estensioneFileRowBean);
         estensioneFile.setDecFormatoFileStandard(formatoFileStandard);
 
         helper.insertEntity(estensioneFile, true);
         formatoFileStandard.getDecEstensioneFiles().add(estensioneFile);
+        return estensioneFile.getIdEstensioneFile();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void updateDecEstensioneFile(BigDecimal idFormatoFileStandard, BigDecimal idEstensioneFile,
+            String cdEstensioneFileOld, String cdEstensioneFile) throws ParerUserError {
+        DecFormatoFileStandard formatoFileStandard = helper.findById(DecFormatoFileStandard.class,
+                idFormatoFileStandard);
+        if (formatoFileStandard.getDecEstensioneFiles() == null) {
+            formatoFileStandard.setDecEstensioneFiles(new ArrayList<>());
+        }
+
+        DecEstensioneFile estensioneFileDB = helper.findById(DecEstensioneFile.class, idEstensioneFile);
+
+        DecEstensioneFile estensioneFileNewDB = helper.getDecEstensioneFileByName(cdEstensioneFile, null);
+
+        if (estensioneFileDB != null && estensioneFileNewDB != null
+                && estensioneFileDB.getIdEstensioneFile() != estensioneFileNewDB.getIdEstensioneFile()) {
+            throw new ParerUserError("Estensione gi\u00E0 associata ad un formato");
+        }
+
+        estensioneFileDB.setCdEstensioneFile(cdEstensioneFile);
+
+        formatoFileStandard.getDecEstensioneFiles().add(estensioneFileDB);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

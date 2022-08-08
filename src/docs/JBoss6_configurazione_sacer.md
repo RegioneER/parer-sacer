@@ -242,7 +242,6 @@ La configurazione del modulo di ActiveMQ/Artemis è definita nel file
 </module>
 ```
 
-
 ### Bean pool per gli MDB
 
 #### Configurazione tramite interfaccia web
@@ -274,6 +273,21 @@ Sostituire la keyword *{my-profile}* con la keyword adeguata.
 
 /profile={my-profile}/subsystem=ejb3/strict-max-bean-instance-pool=coda-indici-aip-da-elab-pool:add(max-pool-size=3, timeout=5, timeout-unit="MINUTES")
 ``` 
+
+### Impostazione del message grouping
+
+Questa impostazione è necessaria perché venga utilizzata il Group ID impostato dal producer.
+Bisogna impostare come "LOCAL" un nodo che si occuperà di decidere l'associazione Gruop ID <=> host, mentre gli altri saranno definiti "REMOTE". 
+
+#### Configurazione tramite CLI
+
+```bash
+/profile={my-profile}/subsystem=messaging/hornetq-server=default/grouping-handler=my-grouping-handler:add(group-timeout=5000,grouping-handler-address=jms,type="${grouping-handler.type}")
+/host={nome-host-1}/system-property=grouping-handler.type:add(value=LOCAL)
+/host={nome-host-2}/system-property=grouping-handler.type:add(value=REMOTE)
+/host={nome-host-n}/system-property=grouping-handler.type:add(value=REMOTE)
+``` 
+Sostiture {my-profile} con il profilo corretto.
 
 ## Key Store 
 

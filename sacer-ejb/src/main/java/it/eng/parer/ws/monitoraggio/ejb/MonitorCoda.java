@@ -61,7 +61,7 @@ public class MonitorCoda {
      *             errore generico
      */
     public List<DLQMsgInfo> retrieveMsgInQueue(String queue, String messageSelector) throws JMSException {
-        List<DLQMsgInfo> msgList = new ArrayList<DLQMsgInfo>();
+        List<DLQMsgInfo> msgList = new ArrayList<>();
         QueueConnection queueConn = null;
         QueueBrowser queueBrowser = null;
         QueueSession queueSession = null;
@@ -70,7 +70,6 @@ public class MonitorCoda {
             queueSession = queueConn.createQueueSession(true, Session.AUTO_ACKNOWLEDGE);
             if (queue.equals(NomeCoda.dmqQueue.name())) {
                 queueBrowser = queueSession.createBrowser(dmqQueue, messageSelector);
-                // queueBrowser = queueSession.createBrowser(dmqQueue);
             } else {
                 // coda non presente
             }
@@ -90,6 +89,9 @@ public class MonitorCoda {
                     // continue; // passa al messaggio successivo (Nota: avendo inserito un selettore, caso che non
                     // // dovrebbe mai verificarsi)
                     infoCoda.setPayloadType(PAYLOAD_NOTYPE);
+                }
+                if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP) != null) {
+                    infoCoda.setFromApplication(objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP));
                 }
                 if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS) != null) {
                     infoCoda.setState(objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS));

@@ -10,23 +10,23 @@ package it.eng.parer.web.util;
  */
 public class Constants {
 
-    public final static int PASSWORD_EXPIRATION_DAYS = 90;
-    public final static String SACER = "SACER";
+    public static final int PASSWORD_EXPIRATION_DAYS = 90;
+    public static final String SACER = "SACER";
     // Constants for Transformer
-    public final static String ENTITY_PACKAGE_NAME = "it.eng.parer.entity";
-    public final static String GRANTED_ENTITY_PACKAGE_NAME = "it.eng.parer.grantedEntity";
-    public final static String VIEWENTITY_PACKAGE_NAME = "it.eng.parer.viewEntity";
-    public final static String GRANTED_VIEWENTITY_PACKAGE_NAME = "it.eng.parer.grantedViewEntity";
-    public final static String ROWBEAN_PACKAGE_NAME = "it.eng.parer.slite.gen.tablebean";
-    public final static String VIEWROWBEAN_PACKAGE_NAME = "it.eng.parer.slite.gen.viewbean";
+    public static final String ENTITY_PACKAGE_NAME = "it.eng.parer.entity";
+    public static final String GRANTED_ENTITY_PACKAGE_NAME = "it.eng.parer.grantedEntity";
+    public static final String VIEWENTITY_PACKAGE_NAME = "it.eng.parer.viewEntity";
+    public static final String GRANTED_VIEWENTITY_PACKAGE_NAME = "it.eng.parer.grantedViewEntity";
+    public static final String ROWBEAN_PACKAGE_NAME = "it.eng.parer.slite.gen.tablebean";
+    public static final String VIEWROWBEAN_PACKAGE_NAME = "it.eng.parer.slite.gen.viewbean";
     // Costanti per lista "Totale Definito Da" nella gestione dei dati specifici
-    public final static String TI_UNI_DOC = "Tipo unità doc.";
-    public final static String TI_DOC = "Tipo doc.";
-    public final static String TI_SIS_MIGR_UD = "Migraz. unità doc.";
-    public final static String TI_SIS_MIGR_DOC = "Migraz. doc.";
+    public static final String TI_UNI_DOC = "Tipo unità doc.";
+    public static final String TI_DOC = "Tipo doc.";
+    public static final String TI_SIS_MIGR_UD = "Migraz. unità doc.";
+    public static final String TI_SIS_MIGR_DOC = "Migraz. doc.";
     // Costanti per dati specifici
-    public final static String TI_USO_XSD_VERS = "VERS";
-    public final static String TI_USO_XSD_MIGR = "MIGRAZ";
+    public static final String TI_USO_XSD_VERS = "VERS";
+    public static final String TI_USO_XSD_MIGR = "MIGRAZ";
 
     // Formato data/ora
     public static final String DATE_FORMAT_TIMESTAMP_TYPE = "dd/MM/yyyy HH:mm:ss";

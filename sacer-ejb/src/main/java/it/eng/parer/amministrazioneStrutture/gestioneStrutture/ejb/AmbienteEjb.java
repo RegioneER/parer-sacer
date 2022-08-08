@@ -1578,7 +1578,7 @@ public class AmbienteEjb {
             if (!struttureHelper.existsPeriodoValiditaAssociazioneEnteConvenzStrutVersAccordi(idEnteConvenz, dtIniVal,
                     dtFineVal)) {
                 throw new ParerUserError(
-                        "Gli accordi definiti sull’ente convenzionato hanno decorrenza successiva alla data di inizio validità dell’associazione");
+                        "L’intervallo di validità dell'associazione non rientra nell'intervallo compreso tra la data di decorrenza del primo accordo definito sull'ente e la data di fine validità dell'ente siam");
             }
             // MAC 26960
 

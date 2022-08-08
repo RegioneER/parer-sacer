@@ -25,6 +25,8 @@ import it.eng.parer.entity.DecTipoUnitaDoc;
 import it.eng.parer.entity.DecTipoUnitaDocAmmesso;
 import it.eng.parer.entity.DecXsdDatiSpec;
 import it.eng.parer.entity.OrgTipoServizio;
+import it.eng.parer.grantedEntity.SIOrgAccordoEnte;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsRowBean;
 import it.eng.parer.viewEntity.DecVCalcTiServOnTipoUd;
@@ -867,6 +869,24 @@ public class TipoUnitaDocHelper extends GenericHelper {
         }
 
         return tipoStrutUdSisVer;
+    }
+
+    public boolean isAccordoPerNuovaFatturazione(BigDecimal idEnteConvenz) {
+        String queryStr = "SELECT accordoEnte FROM SIOrgAccordoEnte accordoEnte "
+                + "WHERE accordoEnte.siOrgEnteConvenz.idEnteSiam = :idEnteConvenz " + "AND accordoEnte.dtDecAccordo = "
+                + "(SELECT MAX(accordo_max.dtDecAccordo) FROM SIOrgAccordoEnte accordo_max "
+                + "WHERE accordo_max.siOrgEnteConvenz.idEnteSiam = accordoEnte.siOrgEnteConvenz.idEnteSiam) ";
+
+        Query query = getEntityManager().createQuery(queryStr);
+
+        query.setParameter("idEnteConvenz", idEnteConvenz);
+        List<SIOrgAccordoEnte> lista = (List<SIOrgAccordoEnte>) query.getResultList();
+        if (lista != null && !lista.isEmpty()) {
+            String tipoAccordo = lista.get(0).getSIOrgTipoAccordo().getCdTipoAccordo();
+            return tipoAccordo.contains("Da fatturare") || tipoAccordo.equals("Accordo enti extra ER");
+        }
+
+        return false;
     }
 
     // public boolean existsRelationsWithServiziErogati(long idTipoServizio) {

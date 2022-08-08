@@ -5,6 +5,14 @@
     <sl:head title="RICERCA JOB">        
         <script type="text/javascript">
             $(document).ready(function () {
+                
+                $(document).bind('keypress', function(e) {
+                    if(e.keyCode==13){
+                        e.preventDefault();
+                        $("input[name='operation__ricercaGestioneJob']").trigger('click');
+                    }
+                });
+                
 
                 $('#Ni_tot_job_nuovi2').css({"text-decoration": "underline"});
                 $('#Ni_tot_job_solo_foto').css({"text-decoration": "underline"});
@@ -269,7 +277,7 @@
                 <sl:newLine skipLine="true"/>
                 <slf:lblField name="<%=GestioneJobForm.GestioneJobRicercaFiltri.START_MASSIVO_GESTIONE_JOB%>"  colSpan="3" controlWidth="w100"/>
                 <slf:lblField name="<%=GestioneJobForm.GestioneJobRicercaFiltri.STOP_MASSIVO_GESTIONE_JOB%>"  colSpan="3" controlWidth="w100"/>
-                <%--<slf:lblField name="<%=GestioneJobForm.GestioneJobRicercaFiltri.ESECUZIONE_SINGOLA_MASSIVA_GESTIONE_JOB%>"  colSpan="3" controlWidth="w100"/>--%>
+                <slf:lblField name="<%=GestioneJobForm.GestioneJobRicercaFiltri.ESECUZIONE_SINGOLA_MASSIVA_GESTIONE_JOB%>"  colSpan="3" controlWidth="w100"/>
             </slf:tab>
 
             <slf:tab  name="<%= GestioneJobForm.GestioneJobTabs.NAME%>" tabElement="AmmJobTab">

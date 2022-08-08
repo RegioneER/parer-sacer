@@ -36,6 +36,7 @@ public class AroVRicUnitaDocTableDescriptor extends TableDescriptor {
     public static final String COL_ID_TIPO_UNITA_DOC = "id_tipo_unita_doc";
     public static final String COL_ID_STRUT_TIPO_UNITA_DOC = "id_strut_tipo_unita_doc";
     public static final String COL_NM_TIPO_UNITA_DOC = "nm_tipo_unita_doc";
+    public static final String COL_FL_ESISTE_PROFILO_NORMATIVO = "fl_esiste_profilo_normativo";
     public static final String COL_FL_FORZA_ACCETTAZIONE = "fl_forza_accettazione";
     public static final String COL_FL_FORZA_CONSERVAZIONE = "fl_forza_conservazione";
     public static final String COL_DS_KEY_ORD = "ds_key_ord";
@@ -85,6 +86,8 @@ public class AroVRicUnitaDocTableDescriptor extends TableDescriptor {
         map.put(COL_ID_STRUT_TIPO_UNITA_DOC,
                 new ColumnDescriptor(COL_ID_STRUT_TIPO_UNITA_DOC, Types.DECIMAL, 22, true));
         map.put(COL_NM_TIPO_UNITA_DOC, new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_FL_ESISTE_PROFILO_NORMATIVO,
+                new ColumnDescriptor(COL_FL_ESISTE_PROFILO_NORMATIVO, Types.VARCHAR, 1, true));
         map.put(COL_FL_FORZA_ACCETTAZIONE, new ColumnDescriptor(COL_FL_FORZA_ACCETTAZIONE, Types.VARCHAR, 1, true));
         map.put(COL_FL_FORZA_CONSERVAZIONE, new ColumnDescriptor(COL_FL_FORZA_CONSERVAZIONE, Types.VARCHAR, 1, true));
         map.put(COL_DS_KEY_ORD, new ColumnDescriptor(COL_DS_KEY_ORD, Types.VARCHAR, 100, true));

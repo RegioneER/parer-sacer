@@ -56,6 +56,16 @@ public class UserHelper implements Serializable {
         return (List<UsrUser>) q.getResultList();
     }
 
+    /*
+     * Introdotto per l'itegrazione con SPID Puglia dove a fronte del codice fiscale arrivato da SPID andiamo a cercare
+     * sulla usruser un utente avente come username il codice fiscale ignorando il case.
+     */
+    public List<UsrUser> findUtentiPerUsernameCaseInsensitive(String username) {
+        Query q = em.createQuery("SELECT u FROM UsrUser u WHERE lower(u.nmUserid) = :username  AND u.flAttivo='1'");
+        q.setParameter("username", username);
+        return q.getResultList();
+    }
+
     public IamUser findIamUser(String username) {
         Query q = em.createQuery("SELECT u FROM IamUser u WHERE u.nmUserid = :username");
         q.setParameter("username", username);

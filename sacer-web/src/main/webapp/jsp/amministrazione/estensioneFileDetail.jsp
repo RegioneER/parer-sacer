@@ -12,7 +12,7 @@
         <sl:menu />
 
         <sl:content>
-
+<slf:messageBox/>
 
             <sl:contentTitle title="Dettaglio Estensione File"/>
 
@@ -31,6 +31,7 @@
                 <sl:newLine />   
                 <slf:lblField name="<%=FormatiForm.EstensioneFile.CD_ESTENSIONE_FILE%>" colSpan="4" controlWidth="w40"/>
                 <sl:newLine />
+                <slf:lblField name="<%=FormatiForm.EstensioneFile.ID_ESTENSIONE_FILE%>" colSpan="4" controlWidth="w40"/>
             </slf:fieldSet>
             
         </sl:content>
