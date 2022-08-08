@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.eng.parer</groupId>
     <artifactId>sacer-jboss</artifactId>
-    <version>7.3.1-SNAPSHOT</version>
+    <version>7.3.1</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -454,6 +454,6 @@
     </modules>
     <scm>
         <developerConnection>scm:git:https://github.com/RegioneER/parer.sacer.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>sacer-jboss-7.3.1</tag>
     </scm>
 </project>
