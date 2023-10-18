@@ -32,16 +32,12 @@
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/RegioneER/parer.sacer.parent/</url>           
+            <url>https://github.com/RegioneER/parer-framework-parerpom</url>           
         </repository>      
         <repository>
-			<id>redhatga</id>
-			<url>https://maven.repository.redhat.com/ga/</url>
-		</repository> 
-        <repository>
-			<id>pentaho</id>
-			<url>https://public.nexus.pentaho.org/content/groups/omni</url>
-		</repository>     
+			<id>alfresco</id>
+			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
+		</repository>            
      </repositories>
  
     <dependencyManagement>
