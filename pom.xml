@@ -54,11 +54,7 @@
         <repository>
             <id>github</id>
             <url>https://github.com/RegioneER/parer-framework-parerpom</url>           
-        </repository>      
-        <repository>
-			<id>alfresco</id>
-			<url>https://artifacts.alfresco.com/nexus/content/repositories/public/</url>
-		</repository>            
+        </repository>          
      </repositories>
  
     <dependencyManagement>
