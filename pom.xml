@@ -49,11 +49,11 @@
           <url>https://maven.pkg.github.com/RegioneER/parer-sacer</url>
         </repository>      
     </distributionManagement>
-    
+
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://github.com/RegioneER/parer-framework-parerpom</url>           
+            <url>https://maven.pkg.github.com/RegioneER/parer-framework-parerpom</url>           
         </repository>          
      </repositories>
  
