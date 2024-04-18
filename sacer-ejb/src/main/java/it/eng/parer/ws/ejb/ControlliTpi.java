@@ -1,26 +1,41 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.ejb;
 
-import it.eng.parer.entity.AplParamApplic;
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import org.apache.commons.io.IOUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
 
 /**
  *
@@ -35,63 +50,26 @@ public class ControlliTpi {
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
+    @EJB
+    private ConfigurationHelper configurationHelper;
+
     public RispostaControlli caricaRootPath() {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrLong(-1);
         rispostaControlli.setrBoolean(false);
 
-        Properties props = new Properties();
-        boolean useDb = false;
-        boolean prosegui = true;
-        InputStream tmpStream = null;
-        String rootftp = null;
-
         try {
-            tmpStream = this.getClass().getClassLoader().getResourceAsStream("/sacerEjb.properties");
-            props.load(tmpStream);
-            if (props.getProperty("tpiFs.overrideDbUrl").equals("true")) {
-                rootftp = props.getProperty("tpiFs.url." + CostantiDB.ParametroAppl.TPI_ROOT_SACER);
-                rispostaControlli.setrString(rootftp);
-                rispostaControlli.setrBoolean(true);
-            } else {
-                useDb = true;
-            }
-        } catch (IOException ex) {
-            prosegui = false;
+            rispostaControlli.setrString(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TPI_ROOT_SACER));
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "ControlliTpi.caricaRootPath - properties: " + ex.getMessage()));
-            log.error("Eccezione nella lettura del file di properties ", ex);
-        } finally {
-            IOUtils.closeQuietly(tmpStream);
+                    "ControlliTpi.caricaRootPath - AplParamApplic: " + e.getMessage()));
+            log.error("Eccezione nella lettura  della tabella AplParamApplic ", e);
         }
 
-        if (prosegui && useDb) {
-            try {
-                // carico i parametri applicativi
-                String queryStr = "select tpa " + "from AplParamApplic tpa " + "where "
-                        + "tpa.tiParamApplic = :tiParamApplicIn " + "and tpa.nmParamApplic = :nmParamAppliciN ";
-
-                javax.persistence.Query query = entityManager.createQuery(queryStr, AplParamApplic.class);
-                query.setParameter("tiParamApplicIn", CostantiDB.TipoParametroAppl.TPI);
-                query.setParameter("nmParamAppliciN", CostantiDB.ParametroAppl.TPI_ROOT_SACER);
-
-                AplParamApplic tud = (AplParamApplic) query.getSingleResult();
-                rispostaControlli.setrString(tud.getAplValoreParamApplics().get(0).getDsValoreParamApplic());
-                rispostaControlli.setrBoolean(true);
-            } catch (NoResultException e) {
-                rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli
-                        .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, "ControlliTpi.caricaRootPath - "
-                                + "Applicativo chiamante non correttamente configurato nella tabella AplParamApplic"));
-            } catch (Exception e) {
-                rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                        "ControlliTpi.caricaRootPath - AplParamApplic: " + e.getMessage()));
-                log.error("Eccezione nella lettura  della tabella AplParamApplic " + e);
-            }
-        }
         return rispostaControlli;
     }
 
@@ -106,25 +84,9 @@ public class ControlliTpi {
         rispostaControlli.setrLong(-1);
         rispostaControlli.setrBoolean(false);
 
-        Properties props = new Properties();
-        InputStream tmpStream = null;
-
-        try {
-            tmpStream = this.getClass().getClassLoader().getResourceAsStream("/sacerEjb.properties");
-            props.load(tmpStream);
-            if (props.getProperty("tpi.TPIAbilitato").equals("true")) {
-                rispostaControlli.setrBoolean(true);
-            } else {
-                rispostaControlli.setrBoolean(false);
-            }
-        } catch (IOException ex) {
-            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "ControlliTpi.verificaAbilitazioneTpi - properties: " + ex.getMessage()));
-            log.error("Eccezione nella lettura del file di properties ", ex);
-        } finally {
-            IOUtils.closeQuietly(tmpStream);
-        }
+        boolean isTpiEnable = Boolean
+                .parseBoolean(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TPI_ENABLE));
+        rispostaControlli.setrBoolean(isTpiEnable);
 
         return rispostaControlli;
     }

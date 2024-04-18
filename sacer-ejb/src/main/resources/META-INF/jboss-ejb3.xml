@@ -24,6 +24,11 @@
             <ejb-name>ConsumerCodaIndiceAipUnitaDocMdb</ejb-name>
             <p:bean-instance-pool-ref>coda-indice-aip-ud-pool</p:bean-instance-pool-ref>
         </p:pool>
+        <!-- MDB della Coda Elenchi da elaborare -->
+        <p:pool>
+            <ejb-name>ConsumerCodaElenchiDaElabMdb</ejb-name>
+            <p:bean-instance-pool-ref>coda-elenchi-da-elab-pool</p:bean-instance-pool-ref>
+        </p:pool>
         <!-- MDB della coda oggetti Verificati -->
         <p:pool>
             <ejb-name>ConsumerCodaVerificatiMdb</ejb-name>
@@ -46,7 +51,7 @@
                 <jndi-name>java:/SacerJmsXA</jndi-name>
             </resource-env-ref>
             <resource-env-ref>
-                <resource-env-ref-name>jms/OggettiDaMigrareQueue</resource-env-ref-name>
+                <resource-env-ref-name>jms/queue/OggettiDaMigrareQueue</resource-env-ref-name>
                 <jndi-name>java:/jms/queue/OggettiDaMigrareQueue</jndi-name>
             </resource-env-ref>
         </session>
@@ -59,7 +64,7 @@
                 <jndi-name>java:/SacerJmsXA</jndi-name>
             </resource-env-ref>
             <resource-env-ref>
-                <resource-env-ref-name>jms/VerificaFirmeDataVersQueue</resource-env-ref-name>
+                <resource-env-ref-name>jms/queue/VerificaFirmeDataVersQueue</resource-env-ref-name>
                 <jndi-name>java:/jms/queue/VerificaFirmeDataVersQueue</jndi-name>
             </resource-env-ref>
         </session>
@@ -72,7 +77,7 @@
                 <jndi-name>java:/SacerJmsXA</jndi-name>
             </resource-env-ref>
             <resource-env-ref>
-                <resource-env-ref-name>jms/IndiciAIPUDDaElabQueue</resource-env-ref-name>
+                <resource-env-ref-name>jms/queue/IndiciAIPUDDaElabQueue</resource-env-ref-name>
                 <jndi-name>java:/jms/queue/IndiciAIPUDDaElabQueue</jndi-name>
             </resource-env-ref>
         </session>
@@ -85,7 +90,7 @@
                 <jndi-name>java:/SacerJmsXA</jndi-name>
             </resource-env-ref>
             <resource-env-ref>
-                <resource-env-ref-name>jms/IndiceAipUnitaDocQueue</resource-env-ref-name>
+                <resource-env-ref-name>jms/queue/IndiceAipUnitaDocQueue</resource-env-ref-name>
                 <jndi-name>java:/jms/queue/IndiceAipUnitaDocQueue</jndi-name>
             </resource-env-ref>
         </session>
@@ -98,8 +103,29 @@
                 <jndi-name>java:/SacerJmsXA</jndi-name>
             </resource-env-ref>
             <resource-env-ref>
-                <resource-env-ref-name>jms/ElenchiDaElabInAttesaSchedQueue</resource-env-ref-name>
-                <jndi-name>java:/jms/queue/ElenchiDaElabInAttesaSchedQueue</jndi-name>
+                <resource-env-ref-name>jms/queue/ElenchiDaElabQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/ElenchiDaElabQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+        <!-- Riferimenti alle code per l'ejb session di ElencoVersamentoEjb -->
+        <session>
+            <ejb-name>ElencoVersamentoEjb</ejb-name>
+            <ejb-class>it.eng.parer.elencoVersamento.ejb.ElencoVersamentoEjb</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactoryNonXA</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsNonXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactoryUntransacted</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsUntransacted</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/queue/ElenchiDaElabQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/ElenchiDaElabQueue</jndi-name>
             </resource-env-ref>
         </session>
       
@@ -130,26 +156,7 @@
             </resource-ref>
         </session>
         
-        <!--
-        <session>
-            <ejb-name>Invoker</ejb-name>  
-            <local-bean/>
-            <ejb-class>it.eng.paginator.ejb.Invoker</ejb-class>
-            <session-type>Stateless</session-type>             
-            <ejb-local-ref>                
-                <ejb-ref-name>java:app/paginator/Invoker</ejb-ref-name>         
-                <local>it.eng.paginator.ejb.InvokerLocal</local>                                    
-            </ejb-local-ref>      
-            <resource-env-ref>
-                <resource-env-ref-name>SessionContext</resource-env-ref-name>
-                <resource-env-ref-type>javax.ejb.SessionContext</resource-env-ref-type>
-                <injection-target>
-                    <injection-target-class>it.eng.paginator.ejb.Invoker</injection-target-class>
-                    <injection-target-name>context</injection-target-name>
-                </injection-target>
-            </resource-env-ref> 
-        </session>     
-        -->
+
         <session>
             <ejb-name>MonitorCoda</ejb-name>
             <ejb-class>it.eng.parer.ws.monitoraggio.ejb.MonitorCoda</ejb-class>

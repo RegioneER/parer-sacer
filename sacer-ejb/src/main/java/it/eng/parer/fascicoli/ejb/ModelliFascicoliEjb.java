@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.fascicoli.ejb;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +30,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -232,14 +250,17 @@ public class ModelliFascicoliEjb {
         try {
             DecModelloXsdFascicolo modelloXsdFascicolo = (DecModelloXsdFascicolo) Transform
                     .rowBean2Entity(modelloXsdFascicoloRowBean);
-            helper.insertEntity(modelloXsdFascicolo, false);
+            helper.insertEntity(modelloXsdFascicolo, true);
 
             logger.info("Salvataggio del modello xsd di tipo fascicolo completato");
             idModelloXsdFascicolo = modelloXsdFascicolo.getIdModelloXsdFascicolo();
             // Inserito per loggare la foto del Modello xsd di tipo fascicolo
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_MODELLO_TIPO_FASCICOLO,
-                    new BigDecimal(idModelloXsdFascicolo), param.getNomePagina());
+            /*
+             * TODO: MEV#26576, verificare sacerLogEjb.log(param.getTransactionLogContext(),
+             * param.getNomeApplicazione(), param.getNomeUtente(), param.getNomeAzione(),
+             * SacerLogConstants.TIPO_OGGETTO_MODELLO_TIPO_FASCICOLO, new BigDecimal(idModelloXsdFascicolo),
+             * param.getNomePagina());
+             */
         } catch (Exception ex) {
             logger.error("Errore imprevisto durante il salvataggio del modello xsd di tipologia fascicolo : "
                     + ExceptionUtils.getRootCauseMessage(ex), ex);

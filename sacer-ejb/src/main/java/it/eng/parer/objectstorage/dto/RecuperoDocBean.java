@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -6,9 +23,8 @@ package it.eng.parer.objectstorage.dto;
 
 import java.io.OutputStream;
 
-import com.amazonaws.services.s3.model.S3Object;
-
 import it.eng.parer.web.util.Constants.TiEntitaSacerObjectStorage;
+import it.eng.parer.ws.recupero.ejb.oracleClb.RecClbOracle.TabellaClob;
 import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle.TabellaBlob;
 
 /**
@@ -18,7 +34,7 @@ import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle.TabellaBlob;
 public class RecuperoDocBean implements java.io.Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 2246844643029244989L;
 
@@ -27,8 +43,9 @@ public class RecuperoDocBean implements java.io.Serializable {
     //
     private transient OutputStream os;
     private TabellaBlob tabellaBlobDaLeggere;
-    // s3
-    private transient S3Object s3Object;
+    // MEV#30395
+    private TabellaClob tabellaClobDaLeggere;
+    // end MEV#30395
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
             TabellaBlob tabellaBlobDaLeggere) {
@@ -37,6 +54,15 @@ public class RecuperoDocBean implements java.io.Serializable {
         this.id = id;
         this.os = os;
         this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+    }
+
+    public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
+            TabellaClob tabellaClobDaLeggere) {
+        super();
+        this.tipo = tipo;
+        this.id = id;
+        this.os = os;
+        this.tabellaClobDaLeggere = tabellaClobDaLeggere;
     }
 
     /**
@@ -99,12 +125,19 @@ public class RecuperoDocBean implements java.io.Serializable {
         this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
     }
 
-    public S3Object getS3Object() {
-        return s3Object;
+    /**
+     * @return the tabellaClobDaLeggere
+     */
+    public TabellaClob getTabellaClobDaLeggere() {
+        return tabellaClobDaLeggere;
     }
 
-    public void setS3Object(S3Object s3Object) {
-        this.s3Object = s3Object;
+    /**
+     * @param tabellaClobDaLeggere
+     *            the tabellaClobDaLeggere to set
+     */
+    public void setTabellaClobDaLeggere(TabellaClob tabellaClobDaLeggere) {
+        this.tabellaClobDaLeggere = tabellaClobDaLeggere;
     }
 
     /*

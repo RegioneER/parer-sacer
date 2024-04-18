@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.replicaUtente.ejb;
 
 import java.util.List;
@@ -47,9 +64,7 @@ public class CancellaUtenteHelper {
                 IamUser u = entityManager.getReference(IamUser.class, cuExt.getIdUserIam().longValue());
                 u.setFlAttivo("0");
             } else {
-                Query q = entityManager.createQuery("DELETE FROM IamUser u WHERE u.idUserIam = :idUserIam ");
-                q.setParameter("idUserIam", cuExt.getIdUserIam().longValue());
-                q.executeUpdate();
+                deleteIamUser(cuExt.getIdUserIam().longValue());
             }
         } catch (Exception ex) {
             rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
@@ -61,10 +76,19 @@ public class CancellaUtenteHelper {
         }
     }
 
+    public void deleteIamUser(Long idUserIam) {
+        Query q = entityManager.createQuery("DELETE FROM IamUser u WHERE u.idUserIam = :idUserIam ");
+        q.setParameter("idUserIam", idUserIam);
+        q.executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
     public boolean isReferenced(Integer idUserIam) {
         String queryStr = "SELECT u FROM IamUser u " + "WHERE u.idUserIam = :idUserIam "
                 + "AND( EXISTS (SELECT s FROM VrsSessioneVers s "
                 + "            WHERE s.iamUser.idUserIam = :idUserIam ) "
+                + "OR EXISTS (SELECT s FROM VrsSessioneVersKo sk "
+                + "            WHERE s.iamUser.idUserIam = :idUserIam ) \" "
                 + "OR EXISTS (SELECT s2 FROM RecSessioneRecup s2 "
                 + "           WHERE s2.iamUser.idUserIam = :idUserIam ) " + "OR EXISTS (SELECT ud FROM AroUnitaDoc ud "
                 + "           WHERE ud.iamUser.idUserIam = :idUserIam ) "

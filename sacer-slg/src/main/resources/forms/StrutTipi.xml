@@ -57,6 +57,8 @@
         <TextArea Type="STRING" Description="Descrizione tipo registro" Name="ds_registro_unita_doc" MaxLength="1024" Rows="4" Cols="100" />
         <ComboBox Type="STRING" Description="Fiscale" Name="fl_registro_fisc"  Required="true"/>
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data primo versamento" Name="dt_first_vers" /><!-- -->
+        <Input Type="DATE" Description="Data ultimo versamento" Name="dt_last_vers" />
         <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
         <CheckBox Type="STRING" Description="Esito controllo numero" Name="controllo_formato" Readonly="true"/>
         <Input Type="STRING" Description="Lunghezza massima del numero" Name="max_len_numero" Readonly="true"/>
@@ -98,10 +100,14 @@
         <Input Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" MaxLength="100" Required="true"/>
         <Input Type="STRING" Description="Descrizione tipologia documentaria" Name="ds_tipo_unita_doc" MaxLength="254" Required="true"/>
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" Required="true" />
-        <Input Type="DATE" Description="Data primo versamento" Name="dt_first_vers" />
+        <Input Type="DATE" Description="Data primo versamento" Name="dt_first_vers" /><!-- -->
+        <Input Type="DATE" Description="Data ultimo versamento" Name="dt_last_vers" />
         <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
         <TextArea Type="STRING" Description="Note" Name="dl_note_tipo_ud" MaxLength="1024" Rows="4" Cols="100" />
         <ComboBox Name="ti_save_file" Description="Tipo salvataggio file" Type="STRING" />
+        <Input Name="storage_utilizzato_vers" Description="Storage utilizzato per i versamenti sincroni" Type="STRING" />
+        <Input Name="storage_utilizzato_vers_mm" Description="Storage utilizzato per i versamenti multimedia" Type="STRING" />
+        <Input Name="storage_utilizzato_agg_doc" Description="Storage utilizzato per aggiunta documenti" Type="STRING" />
         <ComboBox Type="INTEGER" Description="Tipo servizio di conservazione" Name="id_tipo_servizio" />
         <ComboBox Type="INTEGER" Description="Tipo servizio di attivazione su sistema versante" Name="id_tipo_servizio_attiv" />
         
@@ -300,10 +306,10 @@
     <!-- List per Modelli XSD UD -->
     <List Name="XsdModelliUdList" Description="Lista profili XSD Ammessi"  >
         <Input Type="INTEGER" Description="Id Ambiente" Name="id_ambiente" Hidden="true"/>
-       	<Input Type="INTEGER" Description="Id Modello xsd" Name="id_modello_xsd_ud" Hidden="true"/>
-    	<Input Type="INTEGER" Description="Id tipo documento" Name="id_tipo_doc" Hidden="true"/>
-    	<Input Type="INTEGER" Description="Id tipo unita doc" Name="id_tipo_uni_doc" Hidden="true"/>
-    	<Input Type="STRING" Description="Tipo uso modello" Name="ti_uso_modello_xsd" Hidden="true"/>
+        <Input Type="INTEGER" Description="Id Modello xsd" Name="id_modello_xsd_ud" Hidden="true"/>
+        <Input Type="INTEGER" Description="Id tipo documento" Name="id_tipo_doc" Hidden="true"/>
+        <Input Type="INTEGER" Description="Id tipo unita doc" Name="id_tipo_uni_doc" Hidden="true"/>
+        <Input Type="STRING" Description="Tipo uso modello" Name="ti_uso_modello_xsd" Hidden="true"/>
         <Input Type="STRING" Description="Tipo modello" Name="ti_modello_xsd" />
         <Input Type="STRING" Description="Versione" Name="cd_xsd" />
         <Input Type="STRING" Description="Descrizione" Name="ds_xsd" />
@@ -317,9 +323,9 @@
         <Input Type="INTEGER" Description="Id Ambiente" Name="id_ambiente" Hidden="true"/>
         <Input Type="INTEGER" Description="Id Modello xsd" Name="id_modello_xsd_ud" Hidden="true"/>
         <Input Type="INTEGER" Description="Id tipo documento" Name="id_tipo_doc" Hidden="true"/>
-    	<Input Type="INTEGER" Description="Id tipo unita doc" Name="id_tipo_uni_doc" Hidden="true"/>
-    	<Input Type="STRING" Description="Tipo uso modello" Name="ti_uso_modello_xsd" Hidden="true"/>
-    	<Input Type="DATE" Description="Data fine validità Modello" Name="dt_soppres" Hidden="true"/>    	    	
+        <Input Type="INTEGER" Description="Id tipo unita doc" Name="id_tipo_uni_doc" Hidden="true"/>
+        <Input Type="STRING" Description="Tipo uso modello" Name="ti_uso_modello_xsd" Hidden="true"/>
+        <Input Type="DATE" Description="Data fine validità Modello" Name="dt_soppres" Hidden="true"/>    	    	
         <ComboBox Name="ti_modello_xsd" Description="Tipo Modello" Trigger="true" Type="STRING" Required="true" />
         <ComboBox Name="cd_xsd" Description="Versione" Trigger="true" Type="STRING" Required="true" />
         <Input Name="ds_xsd" Description="Descrizione" Type="STRING" Readonly="true"/>

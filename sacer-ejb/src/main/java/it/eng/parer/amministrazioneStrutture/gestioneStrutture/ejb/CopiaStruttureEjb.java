@@ -1,67 +1,51 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.helper.FormatoFileDocHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard.helper.FormatoFileStandardHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.EntitaValida;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.SalvaStrutturaDto;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.helper.TipoStrutturaDocHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.helper.TipoUnitaDocHelper;
-import java.util.Date;
 import it.eng.parer.aop.TransactionInterceptor;
-import it.eng.parer.entity.AplParamApplic;
-import it.eng.parer.entity.AplSistemaVersante;
-import it.eng.parer.entity.AplValoreParamApplic;
-import it.eng.parer.entity.DecAaRegistroUnitaDoc;
-import it.eng.parer.entity.DecAaTipoFascicolo;
-import it.eng.parer.entity.DecAttribDatiSpec;
-import it.eng.parer.entity.DecCategTipoUnitaDoc;
-import it.eng.parer.entity.DecCriterioFiltroMultiplo;
-import it.eng.parer.entity.DecCriterioRaggr;
-import it.eng.parer.entity.DecCriterioRaggrFasc;
-import it.eng.parer.entity.DecEstensioneFile;
-import it.eng.parer.entity.DecFormatoFileAmmesso;
-import it.eng.parer.entity.DecFormatoFileBusta;
-import it.eng.parer.entity.DecFormatoFileDoc;
-import it.eng.parer.entity.DecFormatoFileStandard;
-import it.eng.parer.entity.DecModelloTipoSerie;
-import it.eng.parer.entity.DecParteNumeroFascicolo;
-import it.eng.parer.entity.DecParteNumeroRegistro;
-import it.eng.parer.entity.DecRegistroUnitaDoc;
-import it.eng.parer.entity.DecSelCriterioRaggrFasc;
-import it.eng.parer.entity.DecTipoCompDoc;
-import it.eng.parer.entity.DecTipoDoc;
-import it.eng.parer.entity.DecTipoDocAmmesso;
-import it.eng.parer.entity.DecTipoFascicolo;
-import it.eng.parer.entity.DecTipoRapprAmmesso;
-import it.eng.parer.entity.DecTipoRapprComp;
-import it.eng.parer.entity.DecTipoStrutDoc;
-import it.eng.parer.entity.DecTipoStrutDocAmmesso;
-import it.eng.parer.entity.DecTipoStrutUdReg;
-import it.eng.parer.entity.DecTipoStrutUdSisVer;
-import it.eng.parer.entity.DecTipoStrutUdXsd;
-import it.eng.parer.entity.DecTipoStrutUnitaDoc;
-import it.eng.parer.entity.DecTipoUnitaDoc;
-import it.eng.parer.entity.DecTipoUnitaDocAmmesso;
-import it.eng.parer.entity.DecUsoFormatoFileStandard;
-import it.eng.parer.entity.DecXsdAttribDatiSpec;
-import it.eng.parer.entity.DecXsdDatiSpec;
-import it.eng.parer.entity.IamOrganizDaReplic;
-import it.eng.parer.entity.OrgAmbiente;
-import it.eng.parer.entity.OrgCampoValSubStrut;
-import it.eng.parer.entity.OrgRegolaValSubStrut;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.OrgSubStrut;
-import it.eng.parer.entity.OrgTipoServizio;
+import it.eng.parer.entity.*;
+import it.eng.parer.entity.OrgUsoSistemaMigraz;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.serie.helper.ModelliSerieHelper;
 import it.eng.parer.viewEntity.DecVCalcTiServOnTipoUd;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.utils.CostantiDB;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -82,6 +66,10 @@ public class CopiaStruttureEjb {
     @EJB
     private FormatoFileStandardHelper formatoFileStandardHelper;
     @EJB
+    private FormatoFileDocHelper formatoFileDocHelper;
+    @EJB
+    private TipoStrutturaDocHelper tipoStrutDocHelper;
+    @EJB
     private StruttureHelper struttureHelper;
     @EJB
     private AmbientiHelper ambientiHelper;
@@ -91,6 +79,10 @@ public class CopiaStruttureEjb {
     private DatiSpecificiEjb datiSpecificiEjb;
     @EJB
     private ModelliSerieHelper modelliSerieHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/FormatoFileDocEjb")
+    private FormatoFileDocEjb formatoFileDocEjb;
+    @EJB
+    private DatiSpecificiHelper datiSpecificiHelper;
 
     private static final String ERRORE_MODELLO_TIPO_SEIRE = "Nella struttura duplicata esiste almeno un registro o un tipo unità documentaria associato ad un modello che non è definito nell'ambiente di destinazione. Prima di eseguire la duplicazione occorre definire il modello";
 
@@ -101,10 +93,28 @@ public class CopiaStruttureEjb {
         boolean includiTipiFascicolo = salva.isCheckIncludiTipiFascicolo();
         boolean includiElementiDisattivi = salva.isCheckIncludiElementiDisattivi();
         boolean mantieniDateFineValidita = salva.isCheckMantieniDateFineValidita();
+        boolean includiSistemiMigraz = salva.isCheckIncludiSistemiMigraz();
         // Inizia l'oggetto con i dati e messaggi di ritorno
         OrgStrutCopyResult result = new OrgStrutCopyResult();
         result.setOrgStrut(newStrut);
         Date dataAttuale = salva.getDataAttuale();
+
+        // EVO 27925: NUOVA GESTIONE FORMATI: IMPORTO TUTTI I FORMATI DEL REGISTRO DEI FORMATI (SINGOLI E CONCATENATI)
+        // COME NEL CASO DI UN "INSERISCI STRUTTURA"
+        // Aggiungo tutti i formati a livello di struttura
+        formatoFileDocHelper.insertDecFormatoFileDocStrutturaSpecificaNative(newStrut.getIdStrut());
+        // Detach della struttura per "vedere" i formati inseriti tramite query native
+        formatoFileDocHelper.getEntityManager().detach(newStrut);
+        newStrut = formatoFileDocHelper.findById(OrgStrut.class, BigDecimal.valueOf(newStrut.getIdStrut()));
+
+        // Se la struttura conteneva formati specifici, li inserisco a livello di struttura
+        for (DecFormatoFileDoc ffdo : oldStrut.getDecFormatoFileDocs()) {
+            if (ffdo.getNmFormatoFileDoc().split("\\.").length > 2
+                    && existsAllFormatiStandard(ffdo.getNmFormatoFileDoc())) {
+                DecFormatoFileDoc formatoSpecifico = createDecFormatoFileDocSpecifico(newStrut, ffdo);
+                newStrut.getDecFormatoFileDocs().add(formatoSpecifico);
+            }
+        }
 
         // Punto 41/b: TIPI UD
         newStrut.setDecTipoUnitaDocs(determinaDecTipoUnitaDocs(oldStrut, dataAttuale, includiElementiDisattivi,
@@ -112,11 +122,12 @@ public class CopiaStruttureEjb {
         // Punto 42: REGISTRI
         newStrut.setDecRegistroUnitaDocs(determinaDecRegistroUnitaDocs(oldStrut, dataAttuale, includiElementiDisattivi,
                 newStrut, mantieniDateFineValidita, result));
-        // Punto 43: FORMATI
-        if (includiFormati) {
-            newStrut.setDecFormatoFileDocs(determinaDecFormatoFileDocs(newStrut, oldStrut.getDecFormatoFileDocs(),
-                    dataAttuale, includiElementiDisattivi, mantieniDateFineValidita));
-        }
+        // Punto 43: FORMATI MEV #27930: i formati a livello di struttura vanno sempre inclusi, il flag verra invece
+        // utilizzato successivamente per i tipi componente
+        // if (includiFormati) {
+        // newStrut.setDecFormatoFileDocs(determinaDecFormatoFileDocs(newStrut, oldStrut.getDecFormatoFileDocs(),
+        // dataAttuale, includiElementiDisattivi, mantieniDateFineValidita));
+        // }
         // AGGIUNTO DA ME rispetto all'analisi carica i tipi rappresentazione componente
         newStrut.setDecTipoRapprComps(determinaDecTipoRapprComps(oldStrut.getDecTipoRapprComps(), dataAttuale,
                 includiElementiDisattivi, newStrut, mantieniDateFineValidita, includiFormati));
@@ -146,6 +157,118 @@ public class CopiaStruttureEjb {
         // Punto 51: SottoStrutture
         if (isStandard == false) {
             newStrut.setOrgSubStruts(determinaOrgSubStruts(oldStrut, newStrut));
+        }
+
+        // Punto 52: Sistemi di migrazione
+        if (includiSistemiMigraz) {
+            newStrut.setOrgUsoSistemaMigrazs(determinaOrgUsoSistemaMigrazs(oldStrut, newStrut, result));
+        }
+
+        // EVO 27925: Allineo nei tipi componente (flag gestiti, idonei, deprecati) eventualmente anche eventuali
+        // formati che non erano presenti nella struttura dell'XML di import
+        /* In base ai flag spuntati, inserisco i formati ammessi */
+        if (newStrut.getDecTipoStrutDocs() != null) {
+            for (DecTipoStrutDoc tipoStrutDoc : newStrut.getDecTipoStrutDocs()) {
+                if (tipoStrutDoc.getDecTipoCompDocs() != null) {
+                    for (DecTipoCompDoc tipoCompDoc : tipoStrutDoc.getDecTipoCompDocs()) {
+                        formatoFileDocEjb.gestisciFormatiAmmessi(BigDecimal.valueOf(tipoCompDoc.getIdTipoCompDoc()),
+                                tipoCompDoc.getFlGestiti(), tipoCompDoc.getFlIdonei(), tipoCompDoc.getFlDeprecati());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    // NB: Metodo quasi clone del precedente, in attesa di ottimizzare la gestione "detach" e la gestione dei flag
+    // template
+    public OrgStrutCopyResult getOrgStrutCopyFromStrutImpStd(OrgStrut oldStrut, OrgStrut newStrut,
+            SalvaStrutturaDto salva, boolean isStandard) throws ParerUserError {
+        boolean includiCriteriDiRaggruppamento = salva.isCheckIncludiCriteri();
+        boolean includiFormati = salva.isCheckIncludiFormati();
+        boolean includiTipiFascicolo = salva.isCheckIncludiTipiFascicolo();
+        boolean includiElementiDisattivi = salva.isCheckIncludiElementiDisattivi();
+        boolean mantieniDateFineValidita = salva.isCheckMantieniDateFineValidita();
+        boolean includiSistemiMigraz = salva.isCheckIncludiSistemiMigraz();
+        // Inizia l'oggetto con i dati e messaggi di ritorno
+        OrgStrutCopyResult result = new OrgStrutCopyResult();
+        result.setOrgStrut(newStrut);
+        Date dataAttuale = salva.getDataAttuale();
+
+        // EVO 27925: NUOVA GESTIONE FORMATI: IMPORTO TUTTI I FORMATI DEL REGISTRO DEI FORMATI (SINGOLI E CONCATENATI)
+        // COME NEL CASO DI UN "INSERISCI STRUTTURA"
+        // Aggiungo tutti i formati a livello di struttura
+        formatoFileDocHelper.insertDecFormatoFileDocStrutturaSpecificaNative(newStrut.getIdStrut());
+
+        // MAC #28573: Se la struttura conteneva formati specifici, li inserisco a livello di struttura
+        for (DecFormatoFileDoc ffdo : oldStrut.getDecFormatoFileDocs()) {
+            if (ffdo.getNmFormatoFileDoc().split("\\.").length > 2
+                    && existsAllFormatiStandard(ffdo.getNmFormatoFileDoc())) {
+                DecFormatoFileDoc formatoSpecifico = createDecFormatoFileDocSpecifico(newStrut, ffdo);
+                newStrut.getDecFormatoFileDocs().add(formatoSpecifico);
+            }
+        }
+
+        // Punto 41/b: TIPI UD
+        newStrut.setDecTipoUnitaDocs(determinaDecTipoUnitaDocs(oldStrut, dataAttuale, includiElementiDisattivi,
+                newStrut, mantieniDateFineValidita, result));
+        // Punto 42: REGISTRI
+        newStrut.setDecRegistroUnitaDocs(determinaDecRegistroUnitaDocs(oldStrut, dataAttuale, includiElementiDisattivi,
+                newStrut, mantieniDateFineValidita, result));
+        // Punto 43: FORMATI MEV #27930: i formati a livello di struttura vanno sempre inclusi, il flag verra invece
+        // utilizzato successivamente per i tipi componente
+        // if (includiFormati) {
+        // newStrut.setDecFormatoFileDocs(determinaDecFormatoFileDocs(newStrut, oldStrut.getDecFormatoFileDocs(),
+        // dataAttuale, includiElementiDisattivi, mantieniDateFineValidita));
+        // }
+        // AGGIUNTO DA ME rispetto all'analisi carica i tipi rappresentazione componente
+        newStrut.setDecTipoRapprComps(determinaDecTipoRapprComps(oldStrut.getDecTipoRapprComps(), dataAttuale,
+                includiElementiDisattivi, newStrut, mantieniDateFineValidita, includiFormati));
+        // Punto 44: Tipi Struttura Unita Doc
+        elaboraTipiStrutturaUnitaDoc(oldStrut, dataAttuale, includiElementiDisattivi, newStrut,
+                mantieniDateFineValidita, result);
+        // punto 45: DEC_TIPO_DOC
+        newStrut.setDecTipoDocs(determinaDecTipoDocs(oldStrut, dataAttuale, includiElementiDisattivi, newStrut,
+                mantieniDateFineValidita));
+        // punto 46 e 47: DEC_TIPO_STRUT_DOC e tipi comp doc
+        newStrut.setDecTipoStrutDocs(determinaDecTipoStrutDocs(oldStrut, dataAttuale, includiElementiDisattivi,
+                includiFormati, newStrut, mantieniDateFineValidita));
+        // Punto 48: tipi fascicolo
+        if (includiTipiFascicolo) {
+            newStrut.setDecTipoFascicolos(determinaDecTipoFascicolos(oldStrut, dataAttuale, includiElementiDisattivi,
+                    newStrut, mantieniDateFineValidita, includiCriteriDiRaggruppamento));
+        }
+        // Punto 49: Importa RegoleValSubStrut
+        determinaOrgRegoleValSubStruts(isStandard, oldStrut.getDecTipoUnitaDocs(), newStrut.getDecTipoUnitaDocs(),
+                newStrut.getDecTipoDocs(), dataAttuale, includiElementiDisattivi, mantieniDateFineValidita, newStrut);
+        // Punto 50: Criteri di raggruppamento
+        if (includiCriteriDiRaggruppamento) {
+            newStrut.setDecCriterioRaggrs(determinaDecCriterioRaggrs(newStrut, oldStrut.getDecCriterioRaggrs(),
+                    dataAttuale, includiElementiDisattivi, mantieniDateFineValidita));
+            // legati al registro, tipo ud, tipo doc e fascioli
+        }
+        // Punto 51: SottoStrutture
+        if (isStandard == false) {
+            newStrut.setOrgSubStruts(determinaOrgSubStruts(oldStrut, newStrut));
+        }
+
+        // Punto 52: Sistemi di migrazione
+        if (includiSistemiMigraz) {
+            newStrut.setOrgUsoSistemaMigrazs(determinaOrgUsoSistemaMigrazs(oldStrut, newStrut, result));
+        }
+
+        // EVO 27925: Allineo nei tipi componente (flag gestiti, idonei, deprecati) eventualmente anche eventuali
+        // formati che non erano presenti nella struttura dell'XML di import
+        /* In base ai flag spuntati, inserisco i formati ammessi */
+        if (newStrut.getDecTipoStrutDocs() != null) {
+            for (DecTipoStrutDoc tipoStrutDoc : newStrut.getDecTipoStrutDocs()) {
+                if (tipoStrutDoc.getDecTipoCompDocs() != null) {
+                    for (DecTipoCompDoc tipoCompDoc : tipoStrutDoc.getDecTipoCompDocs()) {
+                        formatoFileDocEjb.gestisciFormatiAmmessi(BigDecimal.valueOf(tipoCompDoc.getIdTipoCompDoc()),
+                                tipoCompDoc.getFlGestiti(), tipoCompDoc.getFlIdonei(), tipoCompDoc.getFlDeprecati());
+                    }
+                }
+            }
         }
 
         return result;
@@ -272,10 +395,167 @@ public class CopiaStruttureEjb {
         return al;
     }
 
+    private List<OrgUsoSistemaMigraz> determinaOrgUsoSistemaMigrazs(OrgStrut oldStrut, OrgStrut newStrut,
+            OrgStrutCopyResult result) {
+        ArrayList<OrgUsoSistemaMigraz> al = null;
+        ArrayList<String> nmSisMigrNoImp = new ArrayList<>();
+        if (oldStrut.getOrgUsoSistemaMigrazs() != null && (!oldStrut.getOrgUsoSistemaMigrazs().isEmpty())) {
+            al = new ArrayList();
+            for (OrgUsoSistemaMigraz usoOld : oldStrut.getOrgUsoSistemaMigrazs()) {
+                // 1) Controllo se c'è il sistema di migrazione, in caso contrario non proseguo
+                String nomeSis = usoOld.getAplSistemaMigraz().getNmSistemaMigraz();
+                AplSistemaMigraz sisMig = struttureHelper.getAplSistemaMigrazByName(nomeSis);
+                if (sisMig == null) {
+                    // sisMig = new AplSistemaMigraz();
+                    // sisMig.setNmSistemaMigraz(nomeSis);
+                    // sisMig.setDsSistemaMigraz(usoOld.getAplSistemaMigraz().getDsSistemaMigraz());
+                    // tipoUnitaDocHelper.getEntityManager().persist(sisMig);
+                    nmSisMigrNoImp.add(nomeSis);
+                } else {
+                    //
+                    OrgUsoSistemaMigraz usoSis = cercaOrgUsoSistemaMigraz(sisMig, newStrut);
+                    if (usoSis == null) {
+                        usoSis = new OrgUsoSistemaMigraz();
+                        usoSis.setAplSistemaMigraz(sisMig);
+                        usoSis.setOrgStrut(newStrut);
+                        tipoUnitaDocHelper.getEntityManager().persist(usoSis);
+
+                        // Se ho inserito un'associazione struttura-sistema di migrazione, inserisco i dati spec
+                        // UD
+                        List<DecXsdDatiSpec> listUd = datiSpecificiHelper.retrieveDecXsdDatiSpecList(
+                                BigDecimal.valueOf(oldStrut.getIdStrut()), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                                CostantiDB.TipiEntitaSacer.UNI_DOC.name(), sisMig.getNmSistemaMigraz());
+
+                        // DOC
+                        List<DecXsdDatiSpec> listDoc = datiSpecificiHelper.retrieveDecXsdDatiSpecList(
+                                BigDecimal.valueOf(oldStrut.getIdStrut()), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                                CostantiDB.TipiEntitaSacer.DOC.name(), sisMig.getNmSistemaMigraz());
+
+                        // COMP
+                        List<DecXsdDatiSpec> listComp = datiSpecificiHelper.retrieveDecXsdDatiSpecList(
+                                BigDecimal.valueOf(oldStrut.getIdStrut()), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                                CostantiDB.TipiEntitaSacer.COMP.name(), sisMig.getNmSistemaMigraz());
+
+                        for (DecXsdDatiSpec ds : listUd) {
+                            DecXsdDatiSpec dsNew = createDecXsdDatiSpec(ds, newStrut);
+                            tipoUnitaDocHelper.getEntityManager().persist(dsNew);
+                        }
+                        for (DecXsdDatiSpec ds : listDoc) {
+                            DecXsdDatiSpec dsNew = createDecXsdDatiSpec(ds, newStrut);
+                            tipoUnitaDocHelper.getEntityManager().persist(dsNew);
+                        }
+                        for (DecXsdDatiSpec ds : listComp) {
+                            DecXsdDatiSpec dsNew = createDecXsdDatiSpec(ds, newStrut);
+                            tipoUnitaDocHelper.getEntityManager().persist(dsNew);
+                        }
+
+                        tipoUnitaDocHelper.getEntityManager().flush();
+
+                        al.add(usoSis);
+                    }
+                }
+            }
+        }
+
+        if (!nmSisMigrNoImp.isEmpty()) {
+
+            ArrayList<String> listaMsg = result.getMex();
+            String msg = "Attenzione: i seguenti sistemi di migrazione non sono stati importati in quanto non presenti a sistema: ";
+            for (String sm : nmSisMigrNoImp) {
+                msg = msg + "<br> - " + sm + "; ";
+            }
+            msg = msg + "<br>";
+            listaMsg.add(msg);
+            result.setMex(listaMsg);
+        }
+
+        return al;
+    }// DecXsdDatiSpec
+
+    public DecXsdDatiSpec createDecXsdDatiSpec(DecXsdDatiSpec ds, OrgStrut newStrut) {
+        DecXsdDatiSpec dsNew = new DecXsdDatiSpec();
+        for (AroUsoXsdDatiSpec aroUso : ds.getAroUsoXsdDatiSpecs()) {
+            dsNew.addAroUsoXsdDatiSpec(aroUso);
+        }
+        dsNew.setBlXsd(ds.getBlXsd());
+        dsNew.setCdVersioneXsd(ds.getCdVersioneXsd());
+
+        dsNew.setDecTipoCompDoc(ds.getDecTipoCompDoc());
+        dsNew.setDecTipoDoc(ds.getDecTipoDoc());
+
+        for (DecTipoStrutUdXsd tipoStrut : ds.getDecTipoStrutUdXsds()) {
+            dsNew.addDecTipoStrutUdXsd(tipoStrut);
+        }
+
+        dsNew.setDecTipoUnitaDoc(ds.getDecTipoUnitaDoc());
+        for (DecXsdAttribDatiSpec xsdAttrib : ds.getDecXsdAttribDatiSpecs()) {
+            dsNew.addDecXsdAttribDatiSpec(xsdAttrib);
+        }
+        dsNew.setDsVersioneXsd(ds.getDsVersioneXsd());
+        dsNew.setDtIstituz(ds.getDtIstituz());
+        dsNew.setDtSoppres(ds.getDtSoppres());
+        dsNew.setNmSistemaMigraz(ds.getNmSistemaMigraz());
+        dsNew.setOrgStrut(newStrut);
+        dsNew.setTiEntitaSacer(ds.getTiEntitaSacer());
+        dsNew.setTiUsoXsd(ds.getTiUsoXsd());
+        return dsNew;
+    }
+
+    public OrgUsoSistemaMigraz cercaOrgUsoSistemaMigraz(AplSistemaMigraz sistemaMigraz, OrgStrut newStrut) {
+        OrgUsoSistemaMigraz ret = null;
+        for (OrgUsoSistemaMigraz usoSistemaMigraz : newStrut.getOrgUsoSistemaMigrazs()) {
+            if (sistemaMigraz.getNmSistemaMigraz()
+                    .equals(usoSistemaMigraz.getAplSistemaMigraz().getNmSistemaMigraz())) {
+                ret = usoSistemaMigraz;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    // /*
+    // * Crea una lista di associazioni OrgUsoSistemaMigraz da una lista tu OrgUsoSistemaMigraz di una struttura.
+    // * Se i sistemi versanti non esistono con lo stesso nome li crea e poi
+    // * crea le associazioni in OrgUsoSistemaMigraz
+    // */
+    // private List<AplSistemaMigraz> determinaAplSistemaMigraz(OrgUsoSistemaMigraz usoOld, OrgStrut newStrut) {
+    // ArrayList<AplSistemaMigraz> al = null;
+    // al = new ArrayList();
+    // AplSistemaMigraz sistemaMigrazOld = usoOld.getAplSistemaMigraz();
+    // AplSistemaMigraz sistemaMigrazNew =
+    // struttureHelper.getAplSistemaMigrazByName(sistemaMigrazOld.getNmSistemaMigraz(), newStrut);
+    // if (sistemaMigrazNew == null) {
+    // sistemaMigrazNew = new AplSistemaMigraz();
+    // al.add(sistemaMigrazNew);
+    // sistemaMigrazNew.setNmSistemaMigraz(sistemaMigrazOld.getNmSistemaMigraz());
+    // sistemaMigrazNew.setDsSistemaMigraz(sistemaMigrazOld.getDsSistemaMigraz());
+    // sistemaMigrazNew.setOrgUsoSistemaMigrazs(usoOld);
+    // tipoUnitaDocHelper.getEntityManager().persist(sistemaMigrazNew);
+    // al.add(sistemaMigrazNew);
+    // }
+    //
+    // return al;
+    // }
+    //
+    //
+    //
+    // private AplSistemaMigraz cercaAplSistemaMigrazPerNome(String nomeSis, List<OrgUsoSistemaMigraz> lista) {
+    // AplSistemaMigraz ret = null;
+    // if (lista != null) {
+    // for (OrgUsoSistemaMigraz usoSistemaMigraz : lista) {
+    // if (nomeSis.equals(usoSistemaMigraz.getAplSistemaMigraz().getNmSistemaMigraz())) {
+    // ret = usoSistemaMigraz.getAplSistemaMigraz();
+    // break;
+    // }
+    // }
+    // }
+    // return ret;
+    // }
+
     /*
      * Crea una lista di tipi ud da una lista tu tipi Ud di una struttura.
      */
-    private List<DecFormatoFileDoc> determinaDecFormatoFileDocs(OrgStrut newStrut, List<DecFormatoFileDoc> oldList,
+    public List<DecFormatoFileDoc> determinaDecFormatoFileDocs(OrgStrut newStrut, List<DecFormatoFileDoc> oldList,
             Date dataAttuale, boolean includiElementiDisattivi, boolean mantieniDateSoppOriginali) {
         ArrayList<DecFormatoFileDoc> al = null;
         if (oldList != null && (!oldList.isEmpty())) {
@@ -283,7 +563,12 @@ public class CopiaStruttureEjb {
             for (DecFormatoFileDoc crOld : oldList) {
                 EntitaValida entita = new EntitaValida(includiElementiDisattivi, mantieniDateSoppOriginali,
                         crOld.getDtIstituz(), crOld.getDtSoppres(), dataAttuale);
-                if (entita.isValida()) {
+
+                // Controllo che tutti i singoli formati file standard siano presenti nel sistema
+                boolean procedi = existsAllFormatiStandard(crOld.getNmFormatoFileDoc());
+
+                if (entita.isValida() && procedi) {
+                    // if (entita.isValida()) {
                     DecFormatoFileDoc fileNew = new DecFormatoFileDoc();
                     al.add(fileNew);
                     fileNew.setOrgStrut(newStrut);
@@ -296,56 +581,59 @@ public class CopiaStruttureEjb {
                     if (crOld.getDecUsoFormatoFileStandards() != null
                             && (!crOld.getDecUsoFormatoFileStandards().isEmpty())) {
                         ArrayList<DecUsoFormatoFileStandard> alUso = new ArrayList();
+
                         for (DecUsoFormatoFileStandard usoOld : crOld.getDecUsoFormatoFileStandards()) {
                             DecFormatoFileStandard stdOld = usoOld.getDecFormatoFileStandard();
                             DecFormatoFileStandard stdNew = formatoFileStandardHelper
                                     .getDecFormatoFileStandardByName(stdOld.getNmFormatoFileStandard());
-                            // Se non esiste giÃƒÂ  crea il formato file standard
-                            if (stdNew == null) {
-                                stdNew = new DecFormatoFileStandard();
-                                stdNew.setCdVersione(stdOld.getCdVersione());
-                                stdNew.setDsCopyright(stdOld.getDsCopyright());
-                                stdNew.setDsFormatoFileStandard(stdOld.getDsFormatoFileStandard());
-                                stdNew.setFlFormatoConcat(stdOld.getFlFormatoConcat());
-                                stdNew.setNmFormatoFileStandard(stdOld.getNmFormatoFileStandard());
-                                stdNew.setNmMimetypeFile(stdOld.getNmMimetypeFile());
-                                stdNew.setTiEsitoContrFormato(stdOld.getTiEsitoContrFormato());
-                                tipoUnitaDocHelper.getEntityManager().persist(stdNew);
-                                // copia formato file busta
-                                if (stdOld.getDecFormatoFileBustas() != null
-                                        && (!stdOld.getDecFormatoFileBustas().isEmpty())) {
-                                    ArrayList<DecFormatoFileBusta> alBusta = new ArrayList();
-                                    for (DecFormatoFileBusta bustaOld : stdOld.getDecFormatoFileBustas()) {
-                                        DecFormatoFileBusta bustaNew = new DecFormatoFileBusta();
-                                        bustaNew.setDecFormatoFileStandard(stdNew);
-                                        bustaNew.setTiFormatoFirmaMarca(bustaOld.getTiFormatoFirmaMarca());
-                                        tipoUnitaDocHelper.getEntityManager().persist(bustaNew);
-                                        alBusta.add(bustaNew);
-                                    }
-                                    stdNew.setDecFormatoFileBustas(alBusta);
-                                }
-                                // copia estensione file
-                                if (stdOld.getDecEstensioneFiles() != null
-                                        && (!stdOld.getDecEstensioneFiles().isEmpty())) {
-                                    ArrayList<DecEstensioneFile> alEst = new ArrayList();
-                                    for (DecEstensioneFile estOld : stdOld.getDecEstensioneFiles()) {
-                                        if (!tipoUnitaDocHelper.existsEstensione(estOld.getCdEstensioneFile())) {
-                                            // try {
-                                            DecEstensioneFile estNew = new DecEstensioneFile();
-                                            estNew.setDecFormatoFileStandard(stdNew);
-                                            estNew.setCdEstensioneFile(estOld.getCdEstensioneFile());
-                                            tipoUnitaDocHelper.getEntityManager().persist(estNew);
-                                            // tipoUnitaDocHelper.getEntityManager().flush();
-                                            alEst.add(estNew);
-                                        }
-                                        // } catch (Exception e) {
-                                        // logger.warn("Estensione file impossibile da inserire");
-                                        // }
-                                    }
-                                    stdNew.setDecEstensioneFiles(alEst);
-                                }
+                            // Se non esiste già crea il formato file standard
+                            // if (stdNew == null) {
+                            // stdNew = new DecFormatoFileStandard();
+                            // stdNew.setCdVersione(stdOld.getCdVersione());
+                            // stdNew.setDsCopyright(stdOld.getDsCopyright());
+                            // stdNew.setDsFormatoFileStandard(stdOld.getDsFormatoFileStandard());
+                            // stdNew.setFlFormatoConcat(stdOld.getFlFormatoConcat());
+                            // stdNew.setNmFormatoFileStandard(stdOld.getNmFormatoFileStandard());
+                            // stdNew.setNmMimetypeFile(stdOld.getNmMimetypeFile());
+                            // stdNew.setTiEsitoContrFormato(stdOld.getTiEsitoContrFormato());
+                            // tipoUnitaDocHelper.getEntityManager().persist(stdNew);
+                            // // copia formato file busta
+                            // if (stdOld.getDecFormatoFileBustas() != null
+                            // && (!stdOld.getDecFormatoFileBustas().isEmpty())) {
+                            // ArrayList<DecFormatoFileBusta> alBusta = new ArrayList();
+                            // for (DecFormatoFileBusta bustaOld : stdOld.getDecFormatoFileBustas()) {
+                            // DecFormatoFileBusta bustaNew = new DecFormatoFileBusta();
+                            // bustaNew.setDecFormatoFileStandard(stdNew);
+                            // bustaNew.setTiFormatoFirmaMarca(bustaOld.getTiFormatoFirmaMarca());
+                            // tipoUnitaDocHelper.getEntityManager().persist(bustaNew);
+                            // alBusta.add(bustaNew);
+                            // }
+                            // stdNew.setDecFormatoFileBustas(alBusta);
+                            // }
+                            // // copia estensione file
+                            // if (stdOld.getDecEstensioneFiles() != null
+                            // && (!stdOld.getDecEstensioneFiles().isEmpty())) {
+                            // ArrayList<DecEstensioneFile> alEst = new ArrayList();
+                            // for (DecEstensioneFile estOld : stdOld.getDecEstensioneFiles()) {
+                            // if (!tipoUnitaDocHelper.existsEstensione(estOld.getCdEstensioneFile())) {
+                            // // try {
+                            // DecEstensioneFile estNew = new DecEstensioneFile();
+                            // estNew.setDecFormatoFileStandard(stdNew);
+                            // estNew.setCdEstensioneFile(estOld.getCdEstensioneFile());
+                            // tipoUnitaDocHelper.getEntityManager().persist(estNew);
+                            // // tipoUnitaDocHelper.getEntityManager().flush();
+                            // alEst.add(estNew);
+                            // }
+                            // // } catch (Exception e) {
+                            // // logger.warn("Estensione file impossibile da inserire");
+                            // // }
+                            // }
+                            // stdNew.setDecEstensioneFiles(alEst);
+                            // }
+                            //
+                            // // Fine importazione formato file standard se non esiste in NESSUNA STRUTTURA
+                            // }
 
-                            }
                             DecUsoFormatoFileStandard usoNew = new DecUsoFormatoFileStandard();
                             usoNew.setDecFormatoFileDoc(fileNew);
                             usoNew.setDecFormatoFileStandard(stdNew);
@@ -357,9 +645,122 @@ public class CopiaStruttureEjb {
                     }
                 }
             }
+
         }
         return al;
     }
+
+    public boolean existsAllFormatiStandard(String nmFormatoFileDoc) {
+        List<String> formatiStandard = new ArrayList<>();
+        if (!nmFormatoFileDoc.contains(".")) {
+            formatiStandard.add(nmFormatoFileDoc);
+        } else {
+            String[] nmFormatoFileStandardArray = nmFormatoFileDoc.split("\\.");
+            formatiStandard.addAll(Arrays.asList(nmFormatoFileStandardArray));
+        }
+        return tipoUnitaDocHelper.existsAllFormatiStandard(formatiStandard);
+    }
+
+    // /*
+    // * Crea una lista di tipi ud da una lista tu tipi Ud di una struttura.
+    // */
+    // public List<DecFormatoFileDoc> determinaDecFormatoFileDocsPerImportaParametri(OrgStrut newStrut,
+    // List<DecFormatoFileDoc> oldList, Date dataAttuale, boolean includiElementiDisattivi,
+    // boolean mantieniDateSoppOriginali) {
+    // ArrayList<DecFormatoFileDoc> al = null;
+    // if (oldList != null && (!oldList.isEmpty())) {
+    // al = new ArrayList();
+    // for (DecFormatoFileDoc crOld : oldList) {
+    // EntitaValida entita = new EntitaValida(includiElementiDisattivi, mantieniDateSoppOriginali,
+    // crOld.getDtIstituz(), crOld.getDtSoppres(), dataAttuale);
+    //
+    // // Controllo che tutti i singoli formati file standard siano presenti nel sistema
+    // boolean procedi = existsAllFormatiStandard(crOld.getNmFormatoFileDoc());
+    //
+    // if (entita.isValida() && procedi) {
+    // DecFormatoFileDoc fileOld = formatoFileDocHelper.getDecFormatoFileDocByName(
+    // crOld.getNmFormatoFileDoc(), BigDecimal.valueOf(newStrut.getIdStrut()));
+    // if (fileOld == null) {
+    // DecFormatoFileDoc fileNew = new DecFormatoFileDoc();
+    // al.add(fileNew);
+    // fileNew.setOrgStrut(newStrut);
+    // fileNew.setCdVersione(crOld.getCdVersione());
+    // fileNew.setDsFormatoFileDoc(crOld.getDsFormatoFileDoc());
+    // fileNew.setNmFormatoFileDoc(crOld.getNmFormatoFileDoc());
+    // fileNew.setDtIstituz(entita.getDataInizio());
+    // fileNew.setDtSoppres(entita.getDataFine());
+    // tipoUnitaDocHelper.getEntityManager().persist(fileNew);
+    // if (crOld.getDecUsoFormatoFileStandards() != null
+    // && (!crOld.getDecUsoFormatoFileStandards().isEmpty())) {
+    // ArrayList<DecUsoFormatoFileStandard> alUso = new ArrayList();
+    // for (DecUsoFormatoFileStandard usoOld : crOld.getDecUsoFormatoFileStandards()) {
+    // DecFormatoFileStandard stdOld = usoOld.getDecFormatoFileStandard();
+    // DecFormatoFileStandard stdNew = formatoFileStandardHelper
+    // .getDecFormatoFileStandardByName(stdOld.getNmFormatoFileStandard());
+    // // // Se non esiste già crea il formato file standard
+    // // if (stdNew == null) {
+    // // stdNew = new DecFormatoFileStandard();
+    // // stdNew.setCdVersione(stdOld.getCdVersione());
+    // // stdNew.setDsCopyright(stdOld.getDsCopyright());
+    // // stdNew.setDsFormatoFileStandard(stdOld.getDsFormatoFileStandard());
+    // // stdNew.setFlFormatoConcat(stdOld.getFlFormatoConcat());
+    // // stdNew.setNmFormatoFileStandard(stdOld.getNmFormatoFileStandard());
+    // // stdNew.setNmMimetypeFile(stdOld.getNmMimetypeFile());
+    // // stdNew.setTiEsitoContrFormato(stdOld.getTiEsitoContrFormato());
+    // // tipoUnitaDocHelper.getEntityManager().persist(stdNew);
+    // // // copia formato file busta
+    // // if (stdOld.getDecFormatoFileBustas() != null
+    // // && (!stdOld.getDecFormatoFileBustas().isEmpty())) {
+    // // ArrayList<DecFormatoFileBusta> alBusta = new ArrayList();
+    // // for (DecFormatoFileBusta bustaOld : stdOld.getDecFormatoFileBustas()) {
+    // // DecFormatoFileBusta bustaNew = new DecFormatoFileBusta();
+    // // bustaNew.setDecFormatoFileStandard(stdNew);
+    // // bustaNew.setTiFormatoFirmaMarca(bustaOld.getTiFormatoFirmaMarca());
+    // // tipoUnitaDocHelper.getEntityManager().persist(bustaNew);
+    // // alBusta.add(bustaNew);
+    // // }
+    // // stdNew.setDecFormatoFileBustas(alBusta);
+    // // }
+    // // // copia estensione file
+    // // if (stdOld.getDecEstensioneFiles() != null
+    // // && (!stdOld.getDecEstensioneFiles().isEmpty())) {
+    // // ArrayList<DecEstensioneFile> alEst = new ArrayList();
+    // // for (DecEstensioneFile estOld : stdOld.getDecEstensioneFiles()) {
+    // // if (!tipoUnitaDocHelper.existsEstensione(estOld.getCdEstensioneFile())) {
+    // // // try {
+    // // DecEstensioneFile estNew = new DecEstensioneFile();
+    // // estNew.setDecFormatoFileStandard(stdNew);
+    // // estNew.setCdEstensioneFile(estOld.getCdEstensioneFile());
+    // // tipoUnitaDocHelper.getEntityManager().persist(estNew);
+    // // // tipoUnitaDocHelper.getEntityManager().flush();
+    // // alEst.add(estNew);
+    // // }
+    // // // } catch (Exception e) {
+    // // // logger.warn("Estensione file impossibile da inserire");
+    // // // }
+    // // }
+    // // stdNew.setDecEstensioneFiles(alEst);
+    // // }
+    // //
+    // // // Fine importazione formato file standard se non esiste in NESSUNA STRUTTURA
+    // // }
+    // DecUsoFormatoFileStandard usoNew = new DecUsoFormatoFileStandard();
+    // usoNew.setDecFormatoFileDoc(fileNew);
+    // usoNew.setDecFormatoFileStandard(stdNew);
+    // usoNew.setNiOrdUso(usoOld.getNiOrdUso());
+    // tipoUnitaDocHelper.getEntityManager().persist(usoNew);
+    // alUso.add(usoNew);
+    // }
+    // fileNew.setDecUsoFormatoFileStandards(alUso);
+    // }
+    // }
+    // }
+    // }
+    //
+    // }
+    // tipoUnitaDocHelper.getEntityManager().flush();
+    // return al;
+    // }
 
     /*
      * Crea una lista di tipi ud da una lista di tipi Ud di una struttura.
@@ -421,24 +822,11 @@ public class CopiaStruttureEjb {
                                     vistaNoClasseEnte.getIdTipoServizioAttiv()));
                         }
                     }
-                    // DecVCalcTiServOnTipoUd vista = tipoUnitaDocHelper.getDecVCalcTiServOnTipoUd(
-                    // new BigDecimal(newStrut.getIdStrut()),
-                    // new BigDecimal(ud.getDecCategTipoUnitaDoc().getIdCategTipoUnitaDoc()));
-                    // if (vista != null) {
-                    // ud.setOrgTipoServizio(
-                    // tipoUnitaDocHelper.findById(OrgTipoServizio.class, vista.getIdTipoServizioConserv()));
-                    // ud.setOrgTipoServizioAttiv(
-                    // tipoUnitaDocHelper.findById(OrgTipoServizio.class, vista.getIdTipoServizioAttiv()));
-                    // }
-                    // e)
                     ud.setDecAttribDatiSpecs(
                             determinaAttribDatiSpecs(udOld.getDecAttribDatiSpecs(), newStrut, ud, null, null));
                     ud.setDecXsdDatiSpecs(determinaXsdDatiSpecs(udOld.getDecXsdDatiSpecs(), newStrut, ud, null, null,
                             dataAttuale, includiElementiDisattivi, mantieniDateFineValidita));
                     tipoUnitaDocHelper.getEntityManager().flush();
-                    // Aggiunto io
-                    // creaAssociazioniXsdAttributiUD(udOld.getDecXsdDatiSpecs(), ud.getDecXsdDatiSpecs(),
-                    // ud.getDecAttribDatiSpecs());
                     ud.setAplValoreParamApplics(determinaAplValoreParamApplics(udOld.getAplValoreParamApplics(), ud));
                 }
             }
@@ -486,7 +874,7 @@ public class CopiaStruttureEjb {
     /*
      * Crea una lista di tipi ud da una lista di tipi Ud di una struttura.
      */
-    private List<DecTipoStrutDoc> determinaDecTipoStrutDocs(OrgStrut oldStrut, Date dataAttuale,
+    public List<DecTipoStrutDoc> determinaDecTipoStrutDocs(OrgStrut oldStrut, Date dataAttuale,
             boolean includiElementiDisattivi, boolean includiFormati, OrgStrut newStrut,
             boolean mantieniDateFineValidita) throws ParerUserError {
         ArrayList<DecTipoStrutDoc> al = null;
@@ -518,6 +906,27 @@ public class CopiaStruttureEjb {
                                 compDocNew.setDsTipoCompDoc(compDocOld.getDsTipoCompDoc());
                                 compDocNew.setNmTipoCompDoc(compDocOld.getNmTipoCompDoc());
                                 compDocNew.setTiUsoCompDoc(compDocOld.getTiUsoCompDoc());
+                                if (includiFormati) {
+                                    if (compDocOld.getFlGestiti() != null) {
+                                        compDocNew.setFlGestiti(compDocOld.getFlGestiti());
+                                    } else {
+                                        compDocNew.setFlGestiti("0");
+                                    }
+                                    if (compDocOld.getFlIdonei() != null) {
+                                        compDocNew.setFlIdonei(compDocOld.getFlIdonei());
+                                    } else {
+                                        compDocNew.setFlIdonei("0");
+                                    }
+                                    if (compDocOld.getFlDeprecati() != null) {
+                                        compDocNew.setFlDeprecati(compDocOld.getFlDeprecati());
+                                    } else {
+                                        compDocNew.setFlDeprecati("0");
+                                    }
+                                } else {
+                                    compDocNew.setFlGestiti("0");
+                                    compDocNew.setFlIdonei("0");
+                                    compDocNew.setFlDeprecati("0");
+                                }
                                 tipoUnitaDocHelper.getEntityManager().persist(compDocNew);
                                 // Gestisce associazioni XSD e attributi come per Tipo UD e tipo doc
                                 compDocNew.setDecAttribDatiSpecs(determinaAttribDatiSpecs(
@@ -525,8 +934,6 @@ public class CopiaStruttureEjb {
                                 compDocNew.setDecXsdDatiSpecs(determinaXsdDatiSpecs(compDocOld.getDecXsdDatiSpecs(),
                                         newStrut, null, null, compDocNew, dataAttuale, includiElementiDisattivi,
                                         mantieniDateFineValidita));
-                                // creaAssociazioniXsdAttributiUD(compDocOld.getDecXsdDatiSpecs(),
-                                // compDocNew.getDecXsdDatiSpecs(), compDocNew.getDecAttribDatiSpecs());
                                 // Gestione dei formati file, punto 47.i
                                 if (includiFormati) {
                                     if (compDocOld.getDecFormatoFileAmmessos() != null
@@ -544,6 +951,26 @@ public class CopiaStruttureEjb {
                                                 fileAmmNew.setDecFormatoFileDoc(dfd);
                                                 tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
                                             }
+                                            // MAC #28573: IL SEGUENTE CODICE E' COMMENTATO IN QUANTO I FORMATI
+                                            // SPECIFICI
+                                            // VENGONO EVENTUALMENTE INSERITI PRIMA DI CHIAMARE QUESTO METODO
+                                            // else {
+                                            // // Non esiste ma lo inserisco se è formato specifico se i
+                                            // // singoli formati esistono
+                                            // if (fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc()
+                                            // .split("\\.").length > 2
+                                            // && existsAllFormatiStandard(fileAmmOld.getDecFormatoFileDoc()
+                                            // .getNmFormatoFileDoc())) {
+                                            //
+                                            // DecFormatoFileDoc formatoSpecifico = createDecFormatoFileDocSpecifico(
+                                            // newStrut, fileAmmOld.getDecFormatoFileDoc());
+                                            // DecFormatoFileAmmesso fileAmmNew = new DecFormatoFileAmmesso();
+                                            // alAmessoNew.add(fileAmmNew);
+                                            // fileAmmNew.setDecTipoCompDoc(compDocNew);
+                                            // fileAmmNew.setDecFormatoFileDoc(formatoSpecifico);
+                                            // tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
+                                            // }
+                                            // }
                                         }
                                         compDocNew.setDecFormatoFileAmmessos(alAmessoNew);
                                     }
@@ -599,6 +1026,446 @@ public class CopiaStruttureEjb {
     }
 
     /*
+     * Crea una lista di tipi ud da una lista di tipi Ud di una struttura.
+     */
+    public List<DecTipoStrutDoc> determinaDecTipoStrutDocsPerImportaParametri(OrgStrut oldStrut, Date dataAttuale,
+            boolean includiElementiDisattivi, boolean includiFormati, OrgStrut newStrut,
+            boolean mantieniDateFineValidita) throws ParerUserError {
+        ArrayList<DecTipoStrutDoc> al = null;
+        Set<String> formatiSpecificiGiaInseritiDuranteImport = new HashSet<>();
+        if (oldStrut.getDecTipoStrutDocs() != null && (!oldStrut.getDecTipoStrutDocs().isEmpty())) {
+            al = new ArrayList();
+            for (DecTipoStrutDoc tipoOld : oldStrut.getDecTipoStrutDocs()) {
+                EntitaValida entita = new EntitaValida(includiElementiDisattivi, mantieniDateFineValidita,
+                        tipoOld.getDtIstituz(), tipoOld.getDtSoppres(), dataAttuale);
+                if (entita.isValida()) {
+                    DecTipoStrutDoc fileOld = tipoStrutDocHelper.getDecTipoStrutDocByName(tipoOld.getNmTipoStrutDoc(),
+                            BigDecimal.valueOf(newStrut.getIdStrut()));
+                    /*
+                     * SE ENTRO NELL'IF SIGNIFICA CHE GLI ELEMENTI VANNO TUTTI INSERITI E L'UNICO CONTROLLO DI ESISTENZA
+                     * VA FATTO SU: - DEC_FORMATO_FILE_DOC
+                     */
+                    if (fileOld == null) {
+                        DecTipoStrutDoc tipoStrutDocNew = new DecTipoStrutDoc();
+                        al.add(tipoStrutDocNew);
+                        tipoStrutDocNew.setOrgStrut(newStrut);
+                        tipoStrutDocNew.setDtIstituz(entita.getDataInizio());
+                        tipoStrutDocNew.setDtSoppres(entita.getDataFine());
+                        tipoStrutDocNew.setDsTipoStrutDoc(tipoOld.getDsTipoStrutDoc());
+                        tipoStrutDocNew.setNmTipoStrutDoc(tipoOld.getNmTipoStrutDoc());
+                        tipoUnitaDocHelper.getEntityManager().persist(tipoStrutDocNew);
+                        if (tipoOld.getDecTipoCompDocs() != null && (!tipoOld.getDecTipoCompDocs().isEmpty())) {
+                            ArrayList<DecTipoCompDoc> alCompNew = new ArrayList();
+                            for (DecTipoCompDoc compDocOld : tipoOld.getDecTipoCompDocs()) {
+                                EntitaValida entita2 = new EntitaValida(includiElementiDisattivi,
+                                        mantieniDateFineValidita, compDocOld.getDtIstituz(), compDocOld.getDtSoppres(),
+                                        dataAttuale);
+                                if (entita2.isValida()) {
+                                    DecTipoCompDoc compDocNew = new DecTipoCompDoc();
+                                    alCompNew.add(compDocNew);
+                                    compDocNew.setDecTipoStrutDoc(tipoStrutDocNew);
+                                    compDocNew.setDtIstituz(entita2.getDataInizio());
+                                    compDocNew.setDtSoppres(entita2.getDataFine());
+                                    compDocNew.setDsTipoCompDoc(compDocOld.getDsTipoCompDoc());
+                                    compDocNew.setNmTipoCompDoc(compDocOld.getNmTipoCompDoc());
+                                    compDocNew.setTiUsoCompDoc(compDocOld.getTiUsoCompDoc());
+                                    if (includiFormati) {
+                                        if (compDocOld.getFlGestiti() != null) {
+                                            compDocNew.setFlGestiti(compDocOld.getFlGestiti());
+                                        } else {
+                                            compDocNew.setFlGestiti("0");
+                                        }
+                                        if (compDocOld.getFlIdonei() != null) {
+                                            compDocNew.setFlIdonei(compDocOld.getFlIdonei());
+                                        } else {
+                                            compDocNew.setFlIdonei("0");
+                                        }
+                                        if (compDocOld.getFlDeprecati() != null) {
+                                            compDocNew.setFlDeprecati(compDocOld.getFlDeprecati());
+                                        } else {
+                                            compDocNew.setFlDeprecati("0");
+                                        }
+                                    } else {
+                                        compDocNew.setFlGestiti("0");
+                                        compDocNew.setFlIdonei("0");
+                                        compDocNew.setFlDeprecati("0");
+                                    }
+                                    tipoUnitaDocHelper.getEntityManager().persist(compDocNew);
+                                    // Gestisce associazioni XSD e attributi come per Tipo UD e tipo doc
+                                    compDocNew.setDecAttribDatiSpecs(determinaAttribDatiSpecs(
+                                            compDocOld.getDecAttribDatiSpecs(), newStrut, null, null, compDocNew));
+                                    compDocNew.setDecXsdDatiSpecs(determinaXsdDatiSpecs(compDocOld.getDecXsdDatiSpecs(),
+                                            newStrut, null, null, compDocNew, dataAttuale, includiElementiDisattivi,
+                                            mantieniDateFineValidita));
+                                    // Gestione dei formati file, punto 47.i
+                                    if (includiFormati) {
+                                        if (compDocOld.getDecFormatoFileAmmessos() != null
+                                                && (!compDocOld.getDecFormatoFileAmmessos().isEmpty())) {
+                                            ArrayList<DecFormatoFileAmmesso> alAmessoNew = new ArrayList();
+                                            for (DecFormatoFileAmmesso fileAmmOld : compDocOld
+                                                    .getDecFormatoFileAmmessos()) {
+                                                DecFormatoFileDoc dfd = cercaDecFormatoFileDocPerNome(
+                                                        fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc(),
+                                                        newStrut.getDecFormatoFileDocs());
+                                                if (dfd != null) {
+                                                    DecFormatoFileAmmesso fileAmmNew = new DecFormatoFileAmmesso();
+                                                    alAmessoNew.add(fileAmmNew);
+                                                    fileAmmNew.setDecTipoCompDoc(compDocNew);
+                                                    fileAmmNew.setDecFormatoFileDoc(dfd);
+                                                    tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
+                                                } else {
+                                                    // Non esiste ma lo inserisco se è formato specifico se i
+                                                    // singoli formati esistono
+                                                    if (fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc()
+                                                            .split("\\.").length > 2
+                                                            && existsAllFormatiStandard(fileAmmOld
+                                                                    .getDecFormatoFileDoc().getNmFormatoFileDoc())
+                                                            && !formatiSpecificiGiaInseritiDuranteImport
+                                                                    .contains(fileAmmOld.getDecFormatoFileDoc()
+                                                                            .getNmFormatoFileDoc())) {
+
+                                                        DecFormatoFileDoc formatoSpecifico = createDecFormatoFileDocSpecifico(
+                                                                newStrut, fileAmmOld.getDecFormatoFileDoc());
+                                                        formatiSpecificiGiaInseritiDuranteImport
+                                                                .add(formatoSpecifico.getNmFormatoFileDoc());
+                                                        DecFormatoFileAmmesso fileAmmNew = new DecFormatoFileAmmesso();
+                                                        alAmessoNew.add(fileAmmNew);
+                                                        fileAmmNew.setDecTipoCompDoc(compDocNew);
+                                                        fileAmmNew.setDecFormatoFileDoc(formatoSpecifico);
+                                                        tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
+                                                    }
+                                                }
+                                            }
+                                            compDocNew.setDecFormatoFileAmmessos(alAmessoNew);
+                                        }
+                                    }
+                                    // Gestione tipo rappresentazione componente punto 47.D
+                                    if (compDocOld.getDecTipoRapprAmmessos() != null
+                                            && (!compDocOld.getDecTipoRapprAmmessos().isEmpty())) {
+                                        ArrayList<DecTipoRapprAmmesso> alRapprAmmNew = new ArrayList();
+                                        for (DecTipoRapprAmmesso rapprAmmOld : compDocOld.getDecTipoRapprAmmessos()) {
+                                            DecTipoRapprComp decTipoRapprComp = cercaDecTipoRapprCompPerNome(
+                                                    rapprAmmOld.getDecTipoRapprComp().getNmTipoRapprComp(),
+                                                    newStrut.getDecTipoRapprComps());
+                                            if (decTipoRapprComp != null) {
+                                                DecTipoRapprAmmesso decTipoRapprAmmessoNew = new DecTipoRapprAmmesso();
+                                                alRapprAmmNew.add(decTipoRapprAmmessoNew);
+                                                decTipoRapprAmmessoNew.setDecTipoCompDoc(compDocNew);
+                                                decTipoRapprAmmessoNew.setDecTipoRapprComp(decTipoRapprComp);
+                                                tipoUnitaDocHelper.getEntityManager().persist(decTipoRapprAmmessoNew);
+                                            }
+                                        }
+                                        if (!alRapprAmmNew.isEmpty()) {
+                                            compDocNew.setDecTipoRapprAmmessos(alRapprAmmNew);
+                                        }
+                                    }
+                                }
+                            }
+                            if (!alCompNew.isEmpty()) {
+                                tipoStrutDocNew.setDecTipoCompDocs(alCompNew);
+                            }
+                        }
+                        /*
+                         * SE ENTRO NELL'ELSE SIGNIFICA CHE COMINCIANO GLI ELEMENTI CHE POTREBBERO ESSERE GIA' PRESENTI:
+                         * - TIPO STRUT DOC - TIPO COMP DOC - FORMATO FILE DOC - FORMATO AMMESSO
+                         */
+                    } else {
+                        if (tipoOld.getDecTipoCompDocs() != null && (!tipoOld.getDecTipoCompDocs().isEmpty())) {
+                            ArrayList<DecTipoCompDoc> alCompNew = new ArrayList();
+                            for (DecTipoCompDoc compDocOld : tipoOld.getDecTipoCompDocs()) {
+                                EntitaValida entita2 = new EntitaValida(includiElementiDisattivi,
+                                        mantieniDateFineValidita, compDocOld.getDtIstituz(), compDocOld.getDtSoppres(),
+                                        dataAttuale);
+                                if (entita2.isValida()) {
+                                    DecTipoCompDoc compDocOld2 = tipoStrutDocHelper.getDecTipoCompDocByName(
+                                            compDocOld.getNmTipoCompDoc(),
+                                            BigDecimal.valueOf(fileOld.getIdTipoStrutDoc()));
+                                    /*
+                                     * TIPO COMPONENTE NULLO: - INSERISCO SENZA CONTROLLI - TIPO COMP - FORMATO AMMESSO
+                                     * - INSERISCO EVENTUALI FORMATI DOC SPECIFICI SE NON ESISTONO GIA'
+                                     */
+                                    if (compDocOld2 == null) {
+                                        DecTipoCompDoc compDocNew = new DecTipoCompDoc();
+                                        alCompNew.add(compDocNew);
+                                        compDocNew.setDecTipoStrutDoc(fileOld);
+                                        compDocNew.setDtIstituz(entita2.getDataInizio());
+                                        compDocNew.setDtSoppres(entita2.getDataFine());
+                                        compDocNew.setDsTipoCompDoc(compDocOld.getDsTipoCompDoc());
+                                        compDocNew.setNmTipoCompDoc(compDocOld.getNmTipoCompDoc());
+                                        compDocNew.setTiUsoCompDoc(compDocOld.getTiUsoCompDoc());
+                                        if (includiFormati) {
+                                            if (compDocOld.getFlGestiti() != null) {
+                                                compDocNew.setFlGestiti(compDocOld.getFlGestiti());
+                                            } else {
+                                                compDocNew.setFlGestiti("0");
+                                            }
+                                            if (compDocOld.getFlIdonei() != null) {
+                                                compDocNew.setFlIdonei(compDocOld.getFlIdonei());
+                                            } else {
+                                                compDocNew.setFlIdonei("0");
+                                            }
+                                            if (compDocOld.getFlDeprecati() != null) {
+                                                compDocNew.setFlDeprecati(compDocOld.getFlDeprecati());
+                                            } else {
+                                                compDocNew.setFlDeprecati("0");
+                                            }
+                                        } else {
+                                            compDocNew.setFlGestiti("0");
+                                            compDocNew.setFlIdonei("0");
+                                            compDocNew.setFlDeprecati("0");
+                                        }
+                                        tipoUnitaDocHelper.getEntityManager().persist(compDocNew);
+                                        // Gestisce associazioni XSD e attributi come per Tipo UD e tipo doc
+                                        compDocNew.setDecAttribDatiSpecs(determinaAttribDatiSpecs(
+                                                compDocOld.getDecAttribDatiSpecs(), newStrut, null, null, compDocNew));
+                                        compDocNew.setDecXsdDatiSpecs(determinaXsdDatiSpecs(
+                                                compDocOld.getDecXsdDatiSpecs(), newStrut, null, null, compDocNew,
+                                                dataAttuale, includiElementiDisattivi, mantieniDateFineValidita));
+                                        // Gestione dei formati file, punto 47.i
+                                        if (includiFormati) {
+                                            if (compDocOld.getDecFormatoFileAmmessos() != null
+                                                    && (!compDocOld.getDecFormatoFileAmmessos().isEmpty())) {
+                                                ArrayList<DecFormatoFileAmmesso> alAmessoNew = new ArrayList();
+                                                for (DecFormatoFileAmmesso fileAmmOld : compDocOld
+                                                        .getDecFormatoFileAmmessos()) {
+                                                    DecFormatoFileDoc dfd = cercaDecFormatoFileDocPerNome(
+                                                            fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc(),
+                                                            newStrut.getDecFormatoFileDocs());
+                                                    if (dfd != null) {
+                                                        DecFormatoFileAmmesso fileAmmNew = new DecFormatoFileAmmesso();
+                                                        alAmessoNew.add(fileAmmNew);
+                                                        fileAmmNew.setDecTipoCompDoc(compDocNew);
+                                                        fileAmmNew.setDecFormatoFileDoc(dfd);
+                                                        tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
+                                                    } else {
+                                                        // Non esiste ma lo inserisco se è formato specifico se i
+                                                        // singoli formati esistono
+                                                        if (fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc()
+                                                                .split("\\.").length > 2
+                                                                && existsAllFormatiStandard(fileAmmOld
+                                                                        .getDecFormatoFileDoc().getNmFormatoFileDoc())
+                                                                && !formatiSpecificiGiaInseritiDuranteImport
+                                                                        .contains(fileAmmOld.getDecFormatoFileDoc()
+                                                                                .getNmFormatoFileDoc())) {
+
+                                                            DecFormatoFileDoc formatoSpecifico = createDecFormatoFileDocSpecifico(
+                                                                    newStrut, fileAmmOld.getDecFormatoFileDoc());
+                                                            formatiSpecificiGiaInseritiDuranteImport
+                                                                    .add(formatoSpecifico.getNmFormatoFileDoc());
+                                                            DecFormatoFileAmmesso fileAmmNew = new DecFormatoFileAmmesso();
+                                                            alAmessoNew.add(fileAmmNew);
+                                                            fileAmmNew.setDecTipoCompDoc(compDocNew);
+                                                            fileAmmNew.setDecFormatoFileDoc(formatoSpecifico);
+                                                            tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
+                                                        }
+                                                    }
+                                                }
+                                                compDocNew.setDecFormatoFileAmmessos(alAmessoNew);
+                                            }
+                                        }
+                                        // Gestione tipo rappresentazione componente punto 47.D
+                                        if (compDocOld.getDecTipoRapprAmmessos() != null
+                                                && (!compDocOld.getDecTipoRapprAmmessos().isEmpty())) {
+                                            ArrayList<DecTipoRapprAmmesso> alRapprAmmNew = new ArrayList();
+                                            for (DecTipoRapprAmmesso rapprAmmOld : compDocOld
+                                                    .getDecTipoRapprAmmessos()) {
+                                                DecTipoRapprComp decTipoRapprComp = cercaDecTipoRapprCompPerNome(
+                                                        rapprAmmOld.getDecTipoRapprComp().getNmTipoRapprComp(),
+                                                        newStrut.getDecTipoRapprComps());
+                                                if (decTipoRapprComp != null) {
+                                                    DecTipoRapprAmmesso decTipoRapprAmmessoNew = new DecTipoRapprAmmesso();
+                                                    alRapprAmmNew.add(decTipoRapprAmmessoNew);
+                                                    decTipoRapprAmmessoNew.setDecTipoCompDoc(compDocNew);
+                                                    decTipoRapprAmmessoNew.setDecTipoRapprComp(decTipoRapprComp);
+                                                    tipoUnitaDocHelper.getEntityManager()
+                                                            .persist(decTipoRapprAmmessoNew);
+                                                }
+                                            }
+                                            if (!alRapprAmmNew.isEmpty()) {
+                                                compDocNew.setDecTipoRapprAmmessos(alRapprAmmNew);
+                                            }
+                                        }
+                                    }
+
+                                    /*
+                                     * TIPO COMPONENTE PRESENTE: - INSERISCO EVENTUALI: - FORMATI DOC SPECIFICI SE NON
+                                     * ESISTONO GIA' - FORMATI AMMESSI SE NON ESISTONO GIA'
+                                     */
+                                    // Esiste il tipo componente del tipo struttura documento esistente
+                                    else {
+                                        if (includiFormati) {
+                                            if (compDocOld.getFlGestiti() != null) {
+                                                compDocOld2.setFlGestiti(compDocOld.getFlGestiti());
+                                            } else {
+                                                compDocOld2.setFlGestiti("0");
+                                            }
+                                            if (compDocOld.getFlIdonei() != null) {
+                                                compDocOld2.setFlIdonei(compDocOld.getFlIdonei());
+                                            } else {
+                                                compDocOld2.setFlIdonei("0");
+                                            }
+                                            if (compDocOld.getFlDeprecati() != null) {
+                                                compDocOld2.setFlDeprecati(compDocOld.getFlDeprecati());
+                                            } else {
+                                                compDocOld2.setFlDeprecati("0");
+                                            }
+                                            if (compDocOld.getDecFormatoFileAmmessos() != null
+                                                    && (!compDocOld.getDecFormatoFileAmmessos().isEmpty())) {
+                                                ArrayList<DecFormatoFileAmmesso> alAmessoNew = new ArrayList();
+                                                for (DecFormatoFileAmmesso fileAmmOld : compDocOld
+                                                        .getDecFormatoFileAmmessos()) {
+                                                    DecFormatoFileDoc dfd = cercaDecFormatoFileDocPerNome(
+                                                            fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc(),
+                                                            newStrut.getDecFormatoFileDocs());
+                                                    // ESISTE IL FORMATO FILE DOC
+                                                    if (dfd != null) {
+                                                        DecFormatoFileAmmesso fileAmmDaIns = tipoStrutDocHelper
+                                                                .getDecFormatoFileAmmesso(
+                                                                        BigDecimal.valueOf(
+                                                                                compDocOld2.getIdTipoCompDoc()),
+                                                                        BigDecimal.valueOf(dfd.getIdFormatoFileDoc()));
+
+                                                        // NON ESISTE IL FORMATO AMMESSO, QUINDI LO INSERISCO
+                                                        if (fileAmmDaIns == null) {
+                                                            DecFormatoFileAmmesso fileAmmNew = new DecFormatoFileAmmesso();
+                                                            alAmessoNew.add(fileAmmNew);
+                                                            fileAmmNew.setDecTipoCompDoc(compDocOld2);
+                                                            fileAmmNew.setDecFormatoFileDoc(dfd);
+                                                            tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
+                                                        }
+                                                        // else {
+                                                        // // Non esiste ma lo inserisco se è formato specifico se
+                                                        // // i singoli formati esistono
+                                                        // if (fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc()
+                                                        // .split("\\.").length > 2
+                                                        // && existsAllFormatiStandard(
+                                                        // fileAmmOld.getDecFormatoFileDoc()
+                                                        // .getNmFormatoFileDoc())
+                                                        // && !formatiSpecificiGiaInseritiDuranteImport
+                                                        // .contains(fileAmmOld.getDecFormatoFileDoc()
+                                                        // .getNmFormatoFileDoc())) {
+                                                        //
+                                                        //// DecFormatoFileDoc formatoSpecifico =
+                                                        // createDecFormatoFileDocSpecifico(
+                                                        //// newStrut, fileAmmOld.getDecFormatoFileDoc());
+                                                        // formatiSpecificiGiaInseritiDuranteImport
+                                                        // .add(dfd.getNmFormatoFileDoc());
+                                                        // DecFormatoFileAmmesso fileAmmNew = new
+                                                        // DecFormatoFileAmmesso();
+                                                        // alAmessoNew.add(fileAmmNew);
+                                                        // fileAmmNew.setDecTipoCompDoc(compDocOld2);
+                                                        // fileAmmNew.setDecFormatoFileDoc(dfd);
+                                                        // tipoUnitaDocHelper.getEntityManager()
+                                                        // .persist(fileAmmNew);
+                                                        // }
+                                                        // }
+                                                        // NON ESISTE IL FORMATO FILE DOC, DI CONSEGUENZA NON
+                                                        // PUO' ESSERCI NEANCHE GIA' IL FORMATO AMMESSO
+                                                    } else {
+                                                        // Non esiste ma lo inserisco se è formato specifico se i
+                                                        // singoli formati esistono
+                                                        if (fileAmmOld.getDecFormatoFileDoc().getNmFormatoFileDoc()
+                                                                .split("\\.").length > 2
+                                                                && existsAllFormatiStandard(fileAmmOld
+                                                                        .getDecFormatoFileDoc().getNmFormatoFileDoc())
+                                                                && !formatiSpecificiGiaInseritiDuranteImport
+                                                                        .contains(fileAmmOld.getDecFormatoFileDoc()
+                                                                                .getNmFormatoFileDoc())) {
+
+                                                            DecFormatoFileDoc formatoSpecifico = createDecFormatoFileDocSpecifico(
+                                                                    newStrut, fileAmmOld.getDecFormatoFileDoc());
+                                                            formatiSpecificiGiaInseritiDuranteImport
+                                                                    .add(formatoSpecifico.getNmFormatoFileDoc());
+                                                            DecFormatoFileAmmesso fileAmmNew = new DecFormatoFileAmmesso();
+                                                            alAmessoNew.add(fileAmmNew);
+                                                            fileAmmNew.setDecTipoCompDoc(compDocOld2);
+                                                            fileAmmNew.setDecFormatoFileDoc(formatoSpecifico);
+                                                            tipoUnitaDocHelper.getEntityManager().persist(fileAmmNew);
+                                                        }
+
+                                                    }
+
+                                                }
+                                                compDocOld2.setDecFormatoFileAmmessos(alAmessoNew);
+                                            }
+                                        }
+                                        // Gestione tipo rappresentazione componente punto 47.D
+                                        if (compDocOld.getDecTipoRapprAmmessos() != null
+                                                && (!compDocOld.getDecTipoRapprAmmessos().isEmpty())) {
+                                            ArrayList<DecTipoRapprAmmesso> alRapprAmmNew = new ArrayList();
+                                            for (DecTipoRapprAmmesso rapprAmmOld : compDocOld
+                                                    .getDecTipoRapprAmmessos()) {
+                                                DecTipoRapprComp decTipoRapprComp = cercaDecTipoRapprCompPerNome(
+                                                        rapprAmmOld.getDecTipoRapprComp().getNmTipoRapprComp(),
+                                                        newStrut.getDecTipoRapprComps());
+                                                if (decTipoRapprComp != null) {
+                                                    DecTipoRapprAmmesso tipoAmmDaIns = tipoStrutDocHelper
+                                                            .getDecTipoRapprAmmessoByParentId(
+                                                                    compDocOld2.getIdTipoCompDoc(),
+                                                                    decTipoRapprComp.getIdTipoRapprComp());
+                                                    if (tipoAmmDaIns == null) {
+                                                        DecTipoRapprAmmesso decTipoRapprAmmessoNew = new DecTipoRapprAmmesso();
+                                                        alRapprAmmNew.add(decTipoRapprAmmessoNew);
+                                                        decTipoRapprAmmessoNew.setDecTipoCompDoc(compDocOld2);
+                                                        decTipoRapprAmmessoNew.setDecTipoRapprComp(decTipoRapprComp);
+                                                        tipoUnitaDocHelper.getEntityManager()
+                                                                .persist(decTipoRapprAmmessoNew);
+                                                    }
+                                                }
+                                            }
+                                            if (!alRapprAmmNew.isEmpty()) {
+                                                compDocOld2.setDecTipoRapprAmmessos(alRapprAmmNew);
+                                            }
+                                        }
+
+                                    }
+                                }
+                            }
+                            if (!alCompNew.isEmpty()) {
+                                fileOld.setDecTipoCompDocs(alCompNew);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return al;
+    }
+
+    private DecFormatoFileDoc createDecFormatoFileDocSpecifico(OrgStrut newStrut, DecFormatoFileDoc crOld) {
+        DecFormatoFileDoc fileNew = new DecFormatoFileDoc();
+        // al.add(fileNew);
+        fileNew.setOrgStrut(newStrut);
+        fileNew.setCdVersione(crOld.getCdVersione());
+        fileNew.setDsFormatoFileDoc(crOld.getDsFormatoFileDoc());
+        fileNew.setNmFormatoFileDoc(crOld.getNmFormatoFileDoc());
+        Calendar cal = Calendar.getInstance();
+        cal.set(2011, Calendar.JANUARY, 1, 0, 0, 0);
+        fileNew.setDtIstituz(cal.getTime());
+        cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
+        fileNew.setDtSoppres(cal.getTime());
+        tipoUnitaDocHelper.getEntityManager().persist(fileNew);
+        if (crOld.getDecUsoFormatoFileStandards() != null && (!crOld.getDecUsoFormatoFileStandards().isEmpty())) {
+            ArrayList<DecUsoFormatoFileStandard> alUso = new ArrayList();
+
+            for (DecUsoFormatoFileStandard usoOld : crOld.getDecUsoFormatoFileStandards()) {
+                DecFormatoFileStandard stdOld = usoOld.getDecFormatoFileStandard();
+                DecFormatoFileStandard stdNew = formatoFileStandardHelper
+                        .getDecFormatoFileStandardByName(stdOld.getNmFormatoFileStandard());
+
+                DecUsoFormatoFileStandard usoNew = new DecUsoFormatoFileStandard();
+                usoNew.setDecFormatoFileDoc(fileNew);
+                usoNew.setDecFormatoFileStandard(stdNew);
+                usoNew.setNiOrdUso(usoOld.getNiOrdUso());
+                tipoUnitaDocHelper.getEntityManager().persist(usoNew);
+                alUso.add(usoNew);
+            }
+            fileNew.setDecUsoFormatoFileStandards(alUso);
+        }
+        return fileNew;
+    }
+
+    /*
      * Crea una lista di tipi doc da una lista di tipi doc di una struttura.
      */
     private List<DecTipoDoc> determinaDecTipoDocs(OrgStrut oldStrut, Date dataAttuale, boolean includiElementiDisattivi,
@@ -646,9 +1513,8 @@ public class CopiaStruttureEjb {
     private List<DecTipoRapprComp> determinaDecTipoRapprComps(List<DecTipoRapprComp> oldList, Date dataAttuale,
             boolean includiElementiDisattivi, OrgStrut newStrut, boolean mantieniDateFineValidita,
             boolean includiFormati) {
-        ArrayList<DecTipoRapprComp> al = null;
+        ArrayList<DecTipoRapprComp> al = new ArrayList();
         if (oldList != null && (!oldList.isEmpty())) {
-            al = new ArrayList();
             for (DecTipoRapprComp rappOld : oldList) {
                 EntitaValida entita = new EntitaValida(includiElementiDisattivi, mantieniDateFineValidita,
                         rappOld.getDtIstituz(), rappOld.getDtSoppres(), dataAttuale);
@@ -768,6 +1634,7 @@ public class CopiaStruttureEjb {
                     decXsdDatiSpecNew.setDsVersioneXsd(decXsdDatiSpecOld.getDsVersioneXsd());
                     decXsdDatiSpecNew.setDtIstituz(entita.getDataInizio());
                     decXsdDatiSpecNew.setDtSoppres(entita.getDataFine());
+                    struttureHelper.getEntityManager().persist(decXsdDatiSpecNew);
 
                     if (decXsdDatiSpecOld.getDecXsdAttribDatiSpecs() != null
                             && decXsdDatiSpecOld.getDecXsdAttribDatiSpecs().size() > 0) {
@@ -793,6 +1660,7 @@ public class CopiaStruttureEjb {
                             }
                         }
                         decXsdDatiSpecNew.setDecXsdAttribDatiSpecs(alAtt);
+                        struttureHelper.getEntityManager().merge(decXsdDatiSpecNew);
                     }
 
                     struttureHelper.getEntityManager().persist(decXsdDatiSpecNew);
@@ -1240,6 +2108,32 @@ public class CopiaStruttureEjb {
                         p.setTiPadParte(pOld.getTiPadParte());
                         p.setTiParte(pOld.getTiParte());
                         p.setTiCharSep(pOld.getTiCharSep());
+                        // tipoUnitaDocHelper.getEntityManager().persist(p);
+                    }
+                }
+                if (decAaTipoFascicoloOld.getDecUsoModelloXsdFascs() != null
+                        && (!decAaTipoFascicoloOld.getDecUsoModelloXsdFascs().isEmpty())) {
+                    ArrayList<DecUsoModelloXsdFasc> alUsoModelli = new ArrayList();
+                    aa.setDecUsoModelloXsdFascs(alUsoModelli);
+                    for (DecUsoModelloXsdFasc uOld : decAaTipoFascicoloOld.getDecUsoModelloXsdFascs()) {
+                        DecUsoModelloXsdFasc u = new DecUsoModelloXsdFasc();
+                        alUsoModelli.add(u);
+                        u.setDecAaTipoFascicolo(aa);
+                        u.setDecModelloXsdFascicolo(uOld.getDecModelloXsdFascicolo());
+                        u.setDtIstituz(uOld.getDtIstituz());
+                        u.setDtSoppres(uOld.getDtSoppres());
+                        u.setFlStandard(uOld.getFlStandard());
+                        //
+                        //
+                        // p.setDsParteNumero(pOld.getDsParteNumero());
+                        // p.setNiMaxCharParte(pOld.getNiMaxCharParte());
+                        // p.setNiMinCharParte(pOld.getNiMinCharParte());
+                        // p.setNiParteNumero(pOld.getNiParteNumero());
+                        // p.setNmParteNumero(pOld.getNmParteNumero());
+                        // p.setTiCharParte(pOld.getTiCharParte());
+                        // p.setTiPadParte(pOld.getTiPadParte());
+                        // p.setTiParte(pOld.getTiParte());
+                        // p.setTiCharSep(pOld.getTiCharSep());
                         // tipoUnitaDocHelper.getEntityManager().persist(p);
                     }
                 }

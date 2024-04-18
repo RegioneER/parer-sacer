@@ -1,7 +1,25 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.annulVers.dto;
 
 import it.eng.parer.slite.gen.form.AnnulVersForm;
 import it.eng.spagoCore.error.EMFError;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +48,10 @@ public class RicercaRichAnnulVersBean {
     private BigDecimal aa_fascicolo;
     private String cd_key_fascicolo;
     private String ti_rich_annul_vers;
+
+    public RicercaRichAnnulVersBean() {
+
+    }
 
     public RicercaRichAnnulVersBean(AnnulVersForm.FiltriRicercaRichAnnullVers filtri) throws EMFError {
         this.id_ambiente = filtri.getId_ambiente().parse();

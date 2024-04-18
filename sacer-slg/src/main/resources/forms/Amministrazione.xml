@@ -17,6 +17,7 @@
         <Button Name="edit_config" Description="Modifica" Type="STRING" />
         <Button Name="add_config" Description="Aggiungi Configurazione" Type="STRING" />
         <Button Name="save_config" Description="Salva Configurazione" Type="STRING" />
+        <Button Secure="false" Name="logEventiRegistroParametri" Description="Log eventi" Type="STRING"/>
     </Fields>
     
     <List Name="ConfigurationList" Description="Configurazioni" hideDetailButton="true" hideUpdateButton="true">

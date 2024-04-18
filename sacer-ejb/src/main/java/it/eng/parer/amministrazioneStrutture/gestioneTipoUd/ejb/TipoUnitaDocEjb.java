@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
@@ -7,7 +24,6 @@ import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.helper.TipoUnitaDocHelper;
 import it.eng.parer.aop.TransactionInterceptor;
-import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.AplSistemaVersante;
 import it.eng.parer.entity.AplValoreParamApplic;
 import it.eng.parer.entity.DecCategTipoUnitaDoc;
@@ -25,14 +41,16 @@ import it.eng.parer.entity.DecTipoStrutUnitaDoc;
 import it.eng.parer.entity.DecTipoUnitaDoc;
 import it.eng.parer.entity.DecTipoUnitaDocAmmesso;
 import it.eng.parer.entity.DecUsoModelloXsdUniDoc;
+import it.eng.parer.entity.DecVersioneWs;
 import it.eng.parer.entity.DecXsdDatiSpec;
 import it.eng.parer.entity.IamOrganizDaReplic;
-import it.eng.parer.entity.OrgAmbiente;
 import it.eng.parer.entity.OrgRegolaValSubStrut;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.OrgTipoServizio;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.exception.ParerWarningException;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.ejb.util.ObjectsToLogBefore;
@@ -50,11 +68,11 @@ import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoDocAmmessoRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoDocAmmessoTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoStrutUdSisVersTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoStrutUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocAmmessoRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
+import it.eng.parer.slite.gen.tablebean.DecVersioneWsTableBean;
 import it.eng.parer.slite.gen.tablebean.DecXsdDatiSpecRowBean;
 import it.eng.parer.slite.gen.tablebean.DecXsdDatiSpecTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgTipoServizioTableBean;
@@ -75,6 +93,9 @@ import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Constants.TipoDato;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.CostantiDB.ParametroAppl;
+import it.eng.spagoLite.db.base.table.BaseTable;
+
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -149,13 +170,15 @@ public class TipoUnitaDocEjb {
     private AmministrazioneEjb amministrazioneEjb;
     @EJB
     private AmministrazioneHelper amministrazioneHelper;
+    @EJB
+    private ObjectStorageService objectStorageService;
 
     /**
      * Verifica se almeno un registro associato al tipo ud ha “fl_crea_tipo_serie_standard” = SI
      *
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @return true se esiste un registro con flCreaTipoSerieStandard a TRUE
      */
     public boolean checkTipoSerieStandardForRegistriAmmessi(BigDecimal idTipoUnitaDoc) {
@@ -180,7 +203,7 @@ public class TipoUnitaDocEjb {
      *            bean contenente i dati del tipo ud
      * @param criterioAutomTipoUd
      *            flag relativo alla creazione automatica del criterio di raggruppamento
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -205,7 +228,7 @@ public class TipoUnitaDocEjb {
      *            bean contenente i dati del tipo ud
      * @param criterioAutomTipoUd
      *            flag relativo alla creazione automatica del criterio di raggruppamento
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -232,9 +255,9 @@ public class TipoUnitaDocEjb {
      *            tipo di operazione eseguita
      * @param criterioAutomTipoUd
      *            flag relativo alla creazione automatica del criterio di raggruppamento
-     * 
+     *
      * @return l'entity IamOrganizDaReplic con cui eseguire la replica su IAM
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -282,39 +305,6 @@ public class TipoUnitaDocEjb {
                         "Errore durante il calcolo dei servizi erogati a seguito di inserimento nuova tipo ud</br>");
             }
 
-            // // Gestione parametri
-            // for (AplParamApplicRowBean paramApplicRowBean :
-            // parametriAmministrazioneTipoUd) {
-            // if (paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_amm") !=
-            // null &&
-            // !paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_amm").equals(""))
-            // {
-            // amministrazioneEjb.insertAplValoreParamApplic(null, null, tipoUnitaDoc, null,
-            // paramApplicRowBean.getIdParamApplic(), "TIPO_UNITA_DOC",
-            // paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_amm"));
-            // }
-            // }
-            // for (AplParamApplicRowBean paramApplicRowBean : parametriConservazioneTipoUd)
-            // {
-            // if (paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_cons") !=
-            // null &&
-            // !paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_cons").equals(""))
-            // {
-            // amministrazioneEjb.insertAplValoreParamApplic(null, null, tipoUnitaDoc, null,
-            // paramApplicRowBean.getIdParamApplic(), "TIPO_UNITA_DOC",
-            // paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_cons"));
-            // }
-            // }
-            // for (AplParamApplicRowBean paramApplicRowBean : parametriGestioneTipoUd) {
-            // if (paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_gest") !=
-            // null &&
-            // !paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_gest").equals(""))
-            // {
-            // amministrazioneEjb.insertAplValoreParamApplic(null, null, tipoUnitaDoc, null,
-            // paramApplicRowBean.getIdParamApplic(), "TIPO_UNITA_DOC",
-            // paramApplicRowBean.getString("ds_valore_param_applic_tipo_ud_gest"));
-            // }
-            // }
             modificatiNomeDescrizione = true;
         } else if (tipoOper.name().equals((StruttureEjb.TipoOper.MOD.name()))) {
             /* MODIFICA TIPO UNITA' DOCUMENTARIA */
@@ -372,9 +362,7 @@ public class TipoUnitaDocEjb {
 
             // Se ho modificato il Tipo Servizio, allora controllo se la struttura è
             // riferita ad un ente convenzionato
-            // String nmApplic = configurationHelper.getValoreParamApplic("NM_APPLIC");
-            String nmApplic = configurationHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                    CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String nmApplic = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
             String nmEnteConvenz = ambienteEjb.getNmEnteConvenz(nmApplic, "STRUTTURA",
                     tipoUnitaDocRowBean.getIdStrut());
 
@@ -580,7 +568,7 @@ public class TipoUnitaDocEjb {
      *            id registro unita doc
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      * @throws ParerWarningException
@@ -629,8 +617,13 @@ public class TipoUnitaDocEjb {
                         // NOTA: verrà settato già il flag fiscale in quanto la vista adibita
                         // DEC_V_CREA_CRIT_RAGGR_TIPO_UD agisce sull'associazione, già creata pocanzi
                         param.setNomeAzione(azioneInsCriterio);
-                        creaCriterioSulTipoUnitaDoc(param, idTipoUnitaDoc);
-                        warningMessage = "Poiché per il tipo di unità documentaria associata al registro non è stato rilevato alcun criterio e neanche per il registro è stato rilevato alcun criterio, ed il registro è fiscale, si è provveduto a creare un criterio standard e fiscale per il tipo unità documentaria.";
+                        if (creaCriterioSulTipoUnitaDoc(param, idTipoUnitaDoc)) {
+                            warningMessage = "Poiché per il tipo di unità documentaria associata al registro non è stato rilevato alcun criterio e neanche per il registro è stato rilevato alcun criterio, ed il registro è fiscale, si è provveduto a creare un criterio standard e fiscale per il tipo unità documentaria.";
+                        } else {
+                            warningMessage = "Associazione registro-tipo unità documentaria creata con successo. Nella struttura è già presente un criterio di raggruppamento chiamato "
+                                    + tipoUnitaDoc.getNmTipoUnitaDoc()
+                                    + ", pertanto non è possibile procedere con la creazione automatica dello stesso.";
+                        }
                     }
                 }
             } // Se esiste
@@ -717,13 +710,18 @@ public class TipoUnitaDocEjb {
         return xsdDatiSpecTableBean;
     }
 
-    public void creaCriterioSulTipoUnitaDoc(LogParam param, BigDecimal idTipoUnitaDoc) {
+    public boolean creaCriterioSulTipoUnitaDoc(LogParam param, BigDecimal idTipoUnitaDoc) {
+        boolean creazioneOK = false;
         DecVCreaCritRaggrTipoUd creaCritTipoUD = crHelper.getDecVCreaCritRaggrTipoUd(idTipoUnitaDoc.longValue());
-        DecCriterioRaggr criterioCreato = critEjb
-                .salvataggioAutomaticoCriterioRaggrStdFiscNoAutomTipoUd(creaCritTipoUD);
-        sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGRUPPAMENTO,
-                new BigDecimal(criterioCreato.getIdCriterioRaggr()), param.getNomePagina());
+        if (!crHelper.existNomeCriterio(creaCritTipoUD.getNmCriterioRaggr(), creaCritTipoUD.getIdStrut())) {
+            DecCriterioRaggr criterioCreato = critEjb
+                    .salvataggioAutomaticoCriterioRaggrStdFiscNoAutomTipoUd(creaCritTipoUD);
+            creazioneOK = true;
+            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGRUPPAMENTO,
+                    new BigDecimal(criterioCreato.getIdCriterioRaggr()), param.getNomePagina());
+        }
+        return creazioneOK;
     }
 
     public DecTipoUnitaDocAmmessoRowBean getDecTipoUnitaDocAmmessoRowBean(BigDecimal idRegistroUnitaDoc,
@@ -759,7 +757,7 @@ public class TipoUnitaDocEjb {
      *            id registro unita doc
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -794,7 +792,7 @@ public class TipoUnitaDocEjb {
      *            numero pagina per criteri
      * @param idTipoUnitaDocAmmesso
      *            id tipo unita doc ammesso
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -850,7 +848,7 @@ public class TipoUnitaDocEjb {
      *            id utente
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @return il tableBean con la lista di tipi
      */
     public DecTipoUnitaDocTableBean getTipiUnitaDocAbilitati(long idUtente, BigDecimal idStruttura) {
@@ -1006,6 +1004,8 @@ public class TipoUnitaDocEjb {
                     if (rigaSistemaVersante != null && rigaSistemaVersante.getObject("dt_first_vers") != null) {
                         Date d = (Date) rigaSistemaVersante.getObject("dt_first_vers");
                         tipoUnitaRow.setObject("dt_first_vers", d);
+                        Date dLast = (Date) rigaSistemaVersante.getObject("dt_last_vers");
+                        tipoUnitaRow.setObject("dt_last_vers", dLast);
                     }
 
                     tipoUnitaTableBean.add(tipoUnitaRow);
@@ -1343,20 +1343,18 @@ public class TipoUnitaDocEjb {
      *
      * @param idTipoUnitaDoc
      * @param isFromDeleteStruttura
-     * 
+     *
      * @return il record dell'organizzazione da replicare
-     * 
+     *
      * @throws ParerUserError
      */
     private IamOrganizDaReplic eseguiDeleteTipoUnitaDoc(LogParam param, long idTipoUnitaDoc,
             boolean isFromDeleteStruttura) throws ParerUserError {
-        // FIXME
+
         DecTipoUnitaDoc tipoUnitaDoc = helper.findById(DecTipoUnitaDoc.class, idTipoUnitaDoc);
         String nmTipoUnitaDoc = tipoUnitaDoc.getNmTipoUnitaDoc();
         long idStrut = tipoUnitaDoc.getOrgStrut().getIdStrut();
 
-        // boolean existsRelationsWithTipiSerie =
-        // struttureHelper.existsRelationsWithTipiSerieForDecTipoUnitaDoc(tipoUnitaDoc.getIdTipoUnitaDoc());
         boolean existsRelationsWithTipiSerie = tipoSerieHelper
                 .existsRelationsWithTipiSerie(tipoUnitaDoc.getIdTipoUnitaDoc(), Constants.TipoDato.TIPO_UNITA_DOC);
         if (existsRelationsWithTipiSerie) {
@@ -1380,61 +1378,6 @@ public class TipoUnitaDocEjb {
                     "La tipologia di unità documentaria è definita come filtro su almeno un modello</br>");
         }
 
-        // // Il sistema controlla se per quel tipo ud esistono dei servizi erogati (in
-        // base alla data
-        // // di primo versamento del tipo ud
-        // boolean existsRelationsWithServiziErogatiServAttivTipoUd = false;
-        // boolean existsRelationsWithServiziErogatiServConservTipoUd = false;
-        // boolean existsRelationsWithServiziErogati = false;
-        // boolean existsRelationsWithServiziErogatiAttiv = false;
-        // List<Long> listaFatture = new ArrayList<Long>();
-        // if (dtFirstVers != null) {
-        // if (tipoUnitaDoc.getOrgTipoServAttivTipoUd() != null) {
-        // existsRelationsWithServiziErogatiServAttivTipoUd = helper
-        // .existsRelationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServAttivTipoUd().getIdTipoServizio());
-        // if (existsRelationsWithServiziErogatiServAttivTipoUd) {
-        // listaFatture.addAll(helper
-        // .relationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServAttivTipoUd().getIdTipoServizio()));
-        // }
-        // }
-        // if (tipoUnitaDoc.getOrgTipoServConservTipoUd() != null) {
-        // existsRelationsWithServiziErogatiServConservTipoUd = helper
-        // .existsRelationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServConservTipoUd().getIdTipoServizio());
-        // if (existsRelationsWithServiziErogatiServConservTipoUd) {
-        // listaFatture.addAll(helper
-        // .relationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServConservTipoUd().getIdTipoServizio()));
-        // }
-        //
-        // }
-        // if (tipoUnitaDoc.getOrgTipoServizio() != null) {
-        // existsRelationsWithServiziErogati = helper
-        // .existsRelationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServizio().getIdTipoServizio());
-        // if (existsRelationsWithServiziErogati) {
-        // listaFatture.addAll(
-        // helper.relationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServizio().getIdTipoServizio()));
-        // }
-        //
-        // }
-        // if (tipoUnitaDoc.getOrgTipoServizioAttiv() != null) {
-        // existsRelationsWithServiziErogatiAttiv = helper
-        // .existsRelationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServizioAttiv().getIdTipoServizio());
-        // if (existsRelationsWithServiziErogatiAttiv) {
-        // listaFatture.addAll(
-        // helper.relationsWithServiziErogati(tipoUnitaDoc.getOrgTipoServizioAttiv().getIdTipoServizio()));
-        // }
-        // }
-        // if (existsRelationsWithServiziErogatiServAttivTipoUd ||
-        // existsRelationsWithServiziErogatiServConservTipoUd
-        // || existsRelationsWithServiziErogati ||
-        // existsRelationsWithServiziErogatiAttiv) {
-        // throw new ParerUserError(
-        // "Impossibile eliminare il tipo UD: Esiste almeno un servizio fatturato
-        // associato al tipo di unità
-        // documentaria</br>"
-        // + "In particolare nelle seguenti fatture: " + listaFatture.toString());
-        // }
-        // }
-
         List<ObjectsToLogBefore> listaBefore = sacerLogEjb.logBefore(param.getTransactionLogContext(),
                 param.getNomeApplicazione(), param.getNomeUtente(), param.getNomeAzione(),
                 SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA, new BigDecimal(idTipoUnitaDoc),
@@ -1447,8 +1390,6 @@ public class TipoUnitaDocEjb {
         sacerLogEjb.logAfter(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), listaBeforeDeletion, param.getNomePagina());
 
-        // List<DecCriterioFiltroMultiplo> criteriAssociati =
-        // struttureHelper.getRelationsWithCriteriRaggruppamentoForDecTipoUnitaDoc(tipoUnitaDoc.getIdTipoUnitaDoc());
         List<DecCriterioFiltroMultiplo> criteriAssociati = struttureHelper.getRelationsWithCriteriRaggruppamento(
                 tipoUnitaDoc.getIdTipoUnitaDoc(), Constants.TipoDato.TIPO_UNITA_DOC);
         if (!criteriAssociati.isEmpty()) {
@@ -1467,6 +1408,10 @@ public class TipoUnitaDocEjb {
             // i criteri
             crHelper.bulkDeleteCriteriRaggr(criteriRaggrDaEliminare);
         }
+
+        // Rimuovo xsd profilo normativo
+        helper.deleteUsoModelloXsdUniDoc(tipoUnitaDoc.getIdTipoUnitaDoc());
+
         // Rimuovo il tipo unità documentarie ed in cascata le associazioni
         sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA,
@@ -1661,6 +1606,20 @@ public class TipoUnitaDocEjb {
         return tableBean;
     }
 
+    public DecCategTipoUnitaDocTableBean getDecCategTipoUnitaDocChildTableBean(List<BigDecimal> idCategStrut) {
+        DecCategTipoUnitaDocTableBean tableBean = new DecCategTipoUnitaDocTableBean();
+        List<DecCategTipoUnitaDoc> list = helper.getDecCategTipoUnitaDocChildList(idCategStrut);
+        if (list != null) {
+            try {
+                tableBean = (DecCategTipoUnitaDocTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return tableBean;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void insertDecCategTipoUnitaDoc(DecCategTipoUnitaDocRowBean categTipoUnitaDocRowBean) throws ParerUserError {
         if (categTipoUnitaDocRowBean != null) {
@@ -1813,11 +1772,15 @@ public class TipoUnitaDocEjb {
                  * java.sql.Timestamp.
                  */
                 Object dtFirstVers = obj[1];
+                Object dtLastVers = obj[2];
                 if (dtFirstVers != null && dtFirstVers instanceof java.util.Date) {
                     dtFirstVers = new Timestamp(((java.util.Date) dtFirstVers).getTime());
+                    // se c'è la dtFirstVers per forza ci sarà anche la dtLastVers
+                    dtLastVers = new Timestamp(((java.util.Date) dtLastVers).getTime());
                 }
 
                 sistemaVersanteRowBean.setObject("dt_first_vers", dtFirstVers);
+                sistemaVersanteRowBean.setObject("dt_last_vers", dtLastVers);
                 sistemaVersanteTableBean.add(sistemaVersanteRowBean);
             }
         } catch (Exception e) {
@@ -1870,6 +1833,73 @@ public class TipoUnitaDocEjb {
 
     public boolean isAccordoPerCampiNuovaFatturazione(BigDecimal idEnteConvenz) {
         return helper.isAccordoPerNuovaFatturazione(idEnteConvenz);
+    }
+
+    /**
+     * Ottiene la configurazione del backend utilizzato per la tipologia di ud rispetto al versamento sincrono.
+     *
+     * @param idTipoUnitaDoc
+     *            id tipo unita doc
+     * 
+     * @return configurazione del backend utilizzato
+     */
+    public String getStorageUtilizzatoVersamento(BigDecimal idTipoUnitaDoc) {
+        if (idTipoUnitaDoc == null) {
+            return StringUtils.EMPTY;
+        }
+
+        BackendStorage backend = objectStorageService.lookupBackend(idTipoUnitaDoc.longValue(),
+                ParametroAppl.BACKEND_VERSAMENTO_SYNC);
+        return backend.getBackendName();
+    }
+
+    /**
+     * Ottiene la configurazione del backend utilizzato per la tipologia di ud rispetto al versamento multimedia.
+     *
+     * @param idTipoUnitaDoc
+     *            id tipo unita doc
+     * 
+     * @return configurazione del backend utilizzato
+     */
+    public String getStorageUtilizzatoVersamentoMultimedia(BigDecimal idTipoUnitaDoc) {
+        if (idTipoUnitaDoc == null) {
+            return StringUtils.EMPTY;
+        }
+
+        BackendStorage backend = objectStorageService.lookupBackend(idTipoUnitaDoc.longValue(),
+                ParametroAppl.BACKEND_VERSAMENTO_MULTIMEDIA);
+        return backend.getBackendName();
+    }
+
+    /**
+     * Ottiene la configurazione del backend utilizzato per la tipologia di ud rispetto all'aggiunta documenti.
+     *
+     * @param idTipoUnitaDoc
+     *            id tipo unita doc
+     * 
+     * @return configurazione del backend utilizzato
+     */
+    public String getStorageUtilizzatoAggiuntaDocumenti(BigDecimal idTipoUnitaDoc) {
+        if (idTipoUnitaDoc == null) {
+            return StringUtils.EMPTY;
+        }
+        BackendStorage backend = objectStorageService.lookupBackend(idTipoUnitaDoc.longValue(),
+                ParametroAppl.BACKEND_AGGIUNTALLEGATI_SYNC);
+        return backend.getBackendName();
+    }
+
+    public DecVersioneWsTableBean getDecVersioneWsTableBean(String tiWs) {
+        DecVersioneWsTableBean versioneWsTableBean = new DecVersioneWsTableBean();
+        try {
+            List<DecVersioneWs> versioneWsList = unitaDocHelper.getDecVersioneWsList(tiWs);
+
+            if (!versioneWsList.isEmpty()) {
+                versioneWsTableBean = (DecVersioneWsTableBean) Transform.entities2TableBean(versioneWsList);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return versioneWsTableBean;
     }
 
 }

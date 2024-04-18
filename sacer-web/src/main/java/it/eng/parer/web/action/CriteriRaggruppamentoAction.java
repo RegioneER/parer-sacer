@@ -1,8 +1,44 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.EJB;
+
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.ejb.SistemaMigrazioneEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
@@ -25,22 +61,18 @@ import it.eng.parer.slite.gen.tablebean.DecCriterioRaggrRowBean;
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutTableDescriptor;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrTableBean;
 import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.dto.CriterioRaggrStandardBean;
 import it.eng.parer.web.ejb.CriteriRaggruppamentoEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
-import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableDescriptor;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.CriteriRaggrHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
@@ -51,7 +83,6 @@ import it.eng.parer.web.validator.CriteriRaggruppamentoValidator;
 import it.eng.parer.web.validator.UnitaDocumentarieValidator;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
-import static it.eng.spagoLite.actions.form.ListAction.NE_DETTAGLIO_DELETE;
 import it.eng.spagoLite.db.base.BaseTableInterface;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.decodemap.DecodeMapIF;
@@ -65,20 +96,6 @@ import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import javax.ejb.EJB;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.codehaus.jettison.json.JSONObject;
 
 /**
  *
@@ -142,6 +159,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
 
             // Popola i valori delle combo ambiente/ente/struttura
             initComboAmbienteEnteStrutCreaCriteriRaggr(critRB.getIdStrut());
+            caricaGestioneElencoCriterioByAmbiente(getForm().getCreaCriterioRaggr().getId_ambiente().parse());
 
             // Metto in viewMode anche lista e campi
             getForm().getCreaCriterioRaggr().setViewMode();
@@ -213,8 +231,25 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         getForm().getCreaCriterioRaggr().getTi_conservazione().setDecodeMap(
                 ComboGetter.getMappaSortedGenericEnum("ti_conservazione", VolumeEnums.TipoConservazione.values()));
         getForm().getCreaCriterioRaggr().getNm_sistema_migraz().setDecodeMap(mappaSisMig);
-        getForm().getCreaCriterioRaggr().getTi_gest_elenco_criterio().setDecodeMap(ComboGetter
-                .getMappaSortedGenericEnum("ti_gest_elenco_criterio", ElencoEnums.GestioneElencoEnum.values()));
+
+        // getForm().getCreaCriterioRaggr().getTi_gest_elenco_criterio().setDecodeMap(ComboGetter
+        // .getMappaSortedGenericEnum("ti_gest_elenco_criterio", ElencoEnums.GestioneElencoEnum.values()));
+
+        // boolean flSigilloAttivo = Boolean.parseBoolean(configurationHelper.getValoreParamApplic(
+        // CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO, getForm().getCreaCriterioRaggr().getId_ambiente().parse(),
+        // null, null, null, CostantiDB.TipoAplVGetValAppart.AMBIENTE));
+        //
+        // getForm().getCreaCriterioRaggr().getTi_gest_elenco_criterio()
+        // .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
+    }
+
+    private void caricaGestioneElencoCriterioByAmbiente(BigDecimal idAmbiente) {
+        if (idAmbiente != null) {
+            boolean flSigilloAttivo = Boolean.parseBoolean(configurationHelper
+                    .getValoreParamApplicByAmb(CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO, idAmbiente));
+            getForm().getCreaCriterioRaggr().getTi_gest_elenco_criterio()
+                    .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
+        }
     }
 
     /**
@@ -274,8 +309,13 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         getForm().getFiltriCriteriRaggr().getCriterio_attivo().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriCriteriRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
         getForm().getFiltriCriteriRaggr().getTi_mod_valid_elenco().setDecodeMap(ComboGetter.getMappaTiModValidElenco());
+        // Nella fase di ricerca i valori si mettono tutti indipendentemente dalla configurazione per ambiente
+        // boolean flSigilloAttivo = Boolean
+        // .parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO,
+        // idAmbiente, null, null, null, CostantiDB.TipoAplVGetValAppart.AMBIENTE));
+        boolean flSigilloAttivo = true;
         getForm().getFiltriCriteriRaggr().getTi_gest_elenco_criterio()
-                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio());
+                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
 
         // Imposto le combo di Tipo Registro, Tipo Unita Doc e Tipo Documento
         checkUniqueStrutInCombo(idStruttura, ActionEnums.SezioneCriteriRaggr.FILTRI_CRITERI_RAGGR);
@@ -297,7 +337,6 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         // Ricavo id struttura, ente ed ambiente attuali
         BigDecimal idEnte = monitoraggioHelper.getIdEnte(idStrut);
         BigDecimal idAmbiente = monitoraggioHelper.getIdAmbiente(idEnte);
-        OrgAmbienteRowBean ambienteRowBean = ambienteEjb.getOrgAmbienteRowBean(idAmbiente);
 
         // Inizializzo le combo settando la struttura corrente
         OrgAmbienteTableBean tmpTableBeanAmbiente = null;
@@ -345,25 +384,25 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
 
         // Popolo i campi riferiti all'ambiente
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_nostd().setViewMode();
-        String tiGestElencoNoStd = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_NOSTD", idAmbiente, idStrut,
-                null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+        String tiGestElencoNoStd = configurationHelper
+                .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD, idAmbiente, idStrut);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_nostd().setValue(tiGestElencoNoStd);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setViewMode();
-        String tiGestElencoStdFisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_FISC", idAmbiente,
-                idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+        String tiGestElencoStdFisc = configurationHelper
+                .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC, idAmbiente, idStrut);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setValue(tiGestElencoStdFisc);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setViewMode();
-        String tiGestElencoStdNoFisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_NOFISC", idAmbiente,
-                idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+        String tiGestElencoStdNoFisc = configurationHelper
+                .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC, idAmbiente, idStrut);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setValue(tiGestElencoStdNoFisc);
         getForm().getCreaCriterioRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
         getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().setDecodeMap(ComboGetter.getMappaTiModValidElenco());
         if (getForm().getCreaCriterioRaggr().getTi_valid_elenco().getValue() == null
                 || getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().getValue() == null) {
-            getForm().getCreaCriterioRaggr().getTi_valid_elenco().setValue(configurationHelper.getValoreParamApplic(
-                    "TI_VALID_ELENCO", idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT));
-            getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().setValue(configurationHelper.getValoreParamApplic(
-                    "TI_MOD_VALID_ELENCO", idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT));
+            getForm().getCreaCriterioRaggr().getTi_valid_elenco().setValue(configurationHelper
+                    .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.TI_VALID_ELENCO, idAmbiente, idStrut));
+            getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().setValue(configurationHelper
+                    .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.TI_MOD_VALID_ELENCO, idAmbiente, idStrut));
         }
 
     }
@@ -462,6 +501,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
     public void insertDettaglio() throws EMFError {
         // Richiamo il metodo per la creazione ex-novo di un criterio di raggruppamento
         creaCriterioRaggr();
+        caricaGestioneElencoCriterioByAmbiente(getForm().getCreaCriterioRaggr().getId_ambiente().parse());
     }
 
     @Override
@@ -645,36 +685,32 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         OrgAmbienteRowBean ambienteRowBean = ambienteEjb
                 .getOrgAmbienteRowBean(new BigDecimal(getForm().getFiltriCriteriRaggr().getId_ambiente().getValue()));
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_nostd().setViewMode();
-        String tiGestElencoNoStd = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_NOSTD",
-                ambienteRowBean.getIdAmbiente(),
-                new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()), null, null,
-                CostantiDB.TipoAplVGetValAppart.STRUT);
+        String tiGestElencoNoStd = configurationHelper.getValoreParamApplicByStrut(
+                CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD, ambienteRowBean.getIdAmbiente(),
+                new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()));
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_nostd().setValue(tiGestElencoNoStd);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setViewMode();
-        String tiGestElencoStdFisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_FISC",
-                ambienteRowBean.getIdAmbiente(),
-                new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()), null, null,
-                CostantiDB.TipoAplVGetValAppart.STRUT);
+        String tiGestElencoStdFisc = configurationHelper.getValoreParamApplicByStrut(
+                CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC, ambienteRowBean.getIdAmbiente(),
+                new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()));
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setValue(tiGestElencoStdFisc);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setViewMode();
-        String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_NOFISC",
-                ambienteRowBean.getIdAmbiente(),
-                new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()), null, null,
-                CostantiDB.TipoAplVGetValAppart.STRUT);
+        String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplicByStrut(
+                CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC, ambienteRowBean.getIdAmbiente(),
+                new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()));
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setValue(tiGestElencoStdNofisc);
         getForm().getCreaCriterioRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
         getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().setDecodeMap(ComboGetter.getMappaTiModValidElenco());
         if (getForm().getCreaCriterioRaggr().getTi_valid_elenco().getValue() == null
                 || getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().getValue() == null) {
-            getForm().getCreaCriterioRaggr().getTi_valid_elenco().setValue(
-                    configurationHelper.getValoreParamApplic("TI_VALID_ELENCO", ambienteRowBean.getIdAmbiente(),
-                            new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()), null, null,
-                            CostantiDB.TipoAplVGetValAppart.STRUT));
-            getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco()
-                    .setValue(configurationHelper.getValoreParamApplic("TI_MOD_VALID_ELENCO",
+            getForm().getCreaCriterioRaggr().getTi_valid_elenco()
+                    .setValue(configurationHelper.getValoreParamApplicByStrut(CostantiDB.ParametroAppl.TI_VALID_ELENCO,
                             ambienteRowBean.getIdAmbiente(),
-                            new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()), null, null,
-                            CostantiDB.TipoAplVGetValAppart.STRUT));
+                            new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue())));
+            getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco()
+                    .setValue(configurationHelper.getValoreParamApplicByStrut(
+                            CostantiDB.ParametroAppl.TI_MOD_VALID_ELENCO, ambienteRowBean.getIdAmbiente(),
+                            new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue())));
         }
 
         return StringUtils.isNotBlank(getForm().getFiltriCriteriRaggr().getId_strut().getValue())
@@ -697,8 +733,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.REGISTRO_UNITA_DOC_DETAIL)) {
@@ -760,13 +795,6 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         try {
             DecCriterioRaggrRowBean critRB = crHelper
                     .getDecCriterioRaggrById(getForm().getCreaCriterioRaggr().getId_criterio_raggr().parse());
-            // DA FINIRE !!!!!!!!!!!!
-            // DA FINIRE !!!!!!!!!!!!
-            // DA FINIRE !!!!!!!!!!!!
-            // DA FINIRE !!!!!!!!!!!!
-            // DA FINIRE !!!!!!!!!!!!
-            // DA FINIRE !!!!!!!!!!!!
-            // TOGLIERE IL NULL
             if (crHelper.deleteDecCriterioRaggr(null, critRB.getIdStrut(), critRB.getNmCriterioRaggr())) {
                 getMessageBox()
                         .addMessage(new Message(MessageLevel.INF, "Criterio di raggruppamento eliminato con successo"));
@@ -930,7 +958,6 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         if (status == CRITERIO_EDIT) {
             if (nomeCriterio != null) {
                 nome = nomeCriterio;
-                nomeCriterio = null;
             } else {
                 nome = ((DecCriterioRaggrRowBean) getForm().getCriterioRaggrList().getTable().getCurrentRow())
                         .getNmCriterioRaggr();
@@ -972,7 +999,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             } else if (status == CRITERIO_EDIT) {
                 // Controllo che non esista su db per quella struttura un criterio con lo stesso nome, escluso esso
                 // stesso naturalmente
-                if (!nome.equals(filtri.getNm_criterio_raggr().parse()) && crHelper
+                if (!StringUtils.equals(nome, filtri.getNm_criterio_raggr().parse()) && crHelper
                         .existNomeCriterio(filtri.getNm_criterio_raggr().parse(), filtri.getId_strut().parse())) {
                     getMessageBox().addMessage(new Message(MessageLevel.ERR,
                             "Nome criterio di raggruppamento già esistente per la struttura utilizzata <br>"));
@@ -1031,12 +1058,10 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             }
 
             if (!getMessageBox().hasError()) {
-                BigDecimal numMaxPerWarning = new BigDecimal(
-                        configurationHelper.getValoreParamApplic("NUM_MAX_COMP_CRITERIO_RAGGR_WARN", null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC));
-                BigDecimal numMaxPerErrore = new BigDecimal(
-                        configurationHelper.getValoreParamApplic("NUM_MAX_COMP_CRITERIO_RAGGR_ERR", null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+                BigDecimal numMaxPerWarning = new BigDecimal(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR_WARN));
+                BigDecimal numMaxPerErrore = new BigDecimal(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR_ERR));
                 BigDecimal niMaxComp = filtri.getNi_max_comp().parse();
                 niMaxComp = niMaxComp != null ? niMaxComp : new BigDecimal("0");
 
@@ -1108,8 +1133,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             if (status == CRITERIO_EDIT) {
@@ -1170,15 +1194,15 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                 // Popolo i campi riferiti all'ambiente
                 OrgAmbienteRowBean ambienteRowBean = ambienteEjb
                         .getOrgAmbienteRowBean(getForm().getCreaCriterioRaggr().getId_ambiente().parse());
-                String tiGestElencoNoStd = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_NOSTD",
-                        ambienteRowBean.getIdAmbiente(), getForm().getCreaCriterioRaggr().getId_strut().parse(), null,
-                        null, CostantiDB.TipoAplVGetValAppart.STRUT);
-                String tiGestElencoStdFisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_FISC",
-                        ambienteRowBean.getIdAmbiente(), getForm().getCreaCriterioRaggr().getId_strut().parse(), null,
-                        null, CostantiDB.TipoAplVGetValAppart.STRUT);
-                String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_NOFISC",
-                        ambienteRowBean.getIdAmbiente(), getForm().getCreaCriterioRaggr().getId_strut().parse(), null,
-                        null, CostantiDB.TipoAplVGetValAppart.STRUT);
+                String tiGestElencoNoStd = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD, ambienteRowBean.getIdAmbiente(),
+                        getForm().getCreaCriterioRaggr().getId_strut().parse());
+                String tiGestElencoStdFisc = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC, ambienteRowBean.getIdAmbiente(),
+                        getForm().getCreaCriterioRaggr().getId_strut().parse());
+                String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC, ambienteRowBean.getIdAmbiente(),
+                        getForm().getCreaCriterioRaggr().getId_strut().parse());
                 getForm().getCreaCriterioRaggr().getTi_gest_elenco_nostd().setValue(tiGestElencoNoStd);
                 getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setValue(tiGestElencoStdFisc);
                 getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setValue(tiGestElencoStdNofisc);
@@ -1226,12 +1250,12 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         }
         if (struttura != null) {
             OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(struttura.getIdEnte());
-            String tiScadChiusVolume = configurationHelper.getValoreParamApplic("TI_SCAD_CHIUS_VOLUME",
-                    ente.getIdAmbiente(), idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-            String niTempoScadChius = configurationHelper.getValoreParamApplic("NI_TEMPO_SCAD_CHIUS",
-                    ente.getIdAmbiente(), idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-            String tiTempoScadChius = configurationHelper.getValoreParamApplic("TI_TEMPO_SCAD_CHIUS",
-                    ente.getIdAmbiente(), idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+            String tiScadChiusVolume = configurationHelper.getValoreParamApplicByStrut(
+                    CostantiDB.ParametroAppl.TI_SCAD_CHIUS_VOLUME, ente.getIdAmbiente(), idStrut);
+            String niTempoScadChius = configurationHelper.getValoreParamApplicByStrut(
+                    CostantiDB.ParametroAppl.NI_TEMPO_SCAD_CHIUS, ente.getIdAmbiente(), idStrut);
+            String tiTempoScadChius = configurationHelper.getValoreParamApplicByStrut(
+                    CostantiDB.ParametroAppl.TI_TEMPO_SCAD_CHIUS, ente.getIdAmbiente(), idStrut);
 
             if (tiScadChiusVolume != null) {
                 getForm().getCreaCriterioRaggr().getTi_scad_chius_volume().setValue(tiScadChiusVolume);
@@ -1335,11 +1359,8 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             if (StringUtils.isNotBlank(tmpField = filtriSemplice.getTi_conservazione().getValue())) {
                 getForm().getCreaCriterioRaggr().getTi_conservazione().setValue(tmpField);
             }
-            // if (StringUtils.isNotBlank(tmpField = filtriSemplice.getTi_stato_conservazione().getValue())) {
-            // getForm().getCreaCriterioRaggr().getTi_stato_conservazione().setValue(tmpField);
-            // }
         } else if (filtriAvanzata != null) {
-            Set<String> tmpSet = new HashSet<String>();
+            Set<String> tmpSet = new HashSet<>();
             if ((tmpSet = filtriAvanzata.getNm_tipo_unita_doc().getValues()) != null) {
                 String[] set = new String[tmpSet.size()];
                 getForm().getCreaCriterioRaggr().getNm_tipo_unita_doc().setValues(tmpSet.toArray(set));
@@ -1385,9 +1406,6 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             if (StringUtils.isNotBlank(tmpField = filtriAvanzata.getFl_forza_conservazione().getValue())) {
                 getForm().getCreaCriterioRaggr().getFl_forza_conservazione().setValue(tmpField);
             }
-            // if (StringUtils.isNotBlank(tmpField = filtriAvanzata.getTi_stato_conservazione().getValue())) {
-            // getForm().getCreaCriterioRaggr().getTi_stato_conservazione().setValue(tmpField);
-            // }
             if ((tmpSet = filtriAvanzata.getNm_tipo_doc().getValues()) != null) {
                 String[] set = new String[tmpSet.size()];
                 getForm().getCreaCriterioRaggr().getNm_tipo_doc().setValues(tmpSet.toArray(set));
@@ -1502,8 +1520,14 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
             nome = ((DecVRicCriterioRaggrRowBean) getForm().getCriterioRaggrList().getTable().getCurrentRow())
                     .getNmCriterioRaggr();
         }
-        DecCriterioRaggrRowBean critRB = criteriRaggruppamentoEjb
-                .getDecCriterioRaggrRowBean(getForm().getCreaCriterioRaggr().getId_strut().parse(), nome);
+
+        BigDecimal idStrut = getForm().getCreaCriterioRaggr().getId_strut().parse();
+        if (idStrut == null) {
+            idStrut = ((DecVRicCriterioRaggrRowBean) getForm().getCriterioRaggrList().getTable().getCurrentRow())
+                    .getIdStrut();
+        }
+
+        DecCriterioRaggrRowBean critRB = criteriRaggruppamentoEjb.getDecCriterioRaggrRowBean(idStrut, nome);
 
         // Inizializza le combo della form
         initCriterioRaggrCombo(critRB.getIdStrut());
@@ -1646,6 +1670,8 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                     tipoDocCombo.setDecodeMap(new DecodeMap());
                 }
             }
+            // Ricarica il combo i base all'ambiente selezionato.
+            caricaGestioneElencoCriterioByAmbiente(idAmbiente);
         } else {
             enteCombo.setDecodeMap(new DecodeMap());
             strutCombo.setDecodeMap(new DecodeMap());
@@ -1859,8 +1885,8 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
     @Override
     public void logEventiCriteriRaggruppamento() throws EMFError {
         GestioneLogEventiForm form = new GestioneLogEventiForm();
-        form.getOggettoDetail().getNmApp().setValue(configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        form.getOggettoDetail().getNmApp()
+                .setValue(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         form.getOggettoDetail().getNm_tipo_oggetto().setValue(SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGRUPPAMENTO);
         DecVRicCriterioRaggrRowBean riga = (DecVRicCriterioRaggrRowBean) getForm().getCriterioRaggrList().getTable()
                 .getCurrentRow();
@@ -1868,23 +1894,4 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         redirectToAction(it.eng.parer.sacerlog.slite.gen.Application.Actions.GESTIONE_LOG_EVENTI,
                 "?operation=inizializzaLogEventi", form);
     }
-
-    // @Override
-    // protected void postLoad() {
-    // super.postLoad();
-    // Object ogg = getForm();
-    // if (ogg instanceof CriteriRaggruppamentoForm) {
-    // CriteriRaggruppamentoForm form = (CriteriRaggruppamentoForm) ogg;
-    // if (form.getCriterioRaggrList().getStatus().equals(Status.view)) {
-    // form.getCreaCriterioRaggr().getTi_gest_elenco_nostd().setHidden(false);
-    // form.getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setHidden(false);
-    // form.getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setHidden(false);
-    // } else {
-    // form.getCreaCriterioRaggr().getTi_gest_elenco_nostd().setHidden(true);
-    // form.getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setHidden(true);
-    // form.getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setHidden(true);
-    // }
-    // }
-    // }
-
 }

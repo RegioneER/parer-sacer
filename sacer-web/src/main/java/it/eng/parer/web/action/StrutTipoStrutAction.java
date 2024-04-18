@@ -1,7 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard.ejb.FormatoFileStandardEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.CopiaStruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.ejb.TipoRappresentazioneEjb;
@@ -23,6 +42,8 @@ import it.eng.parer.slite.gen.form.StruttureForm;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.DecFormatoFileStandardRowBean;
+import it.eng.parer.slite.gen.tablebean.DecFormatoFileStandardTableBean;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileStandardTableDescriptor;
 import it.eng.parer.slite.gen.tablebean.DecTipoCompDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoCompDocTableBean;
@@ -40,6 +61,7 @@ import it.eng.parer.slite.gen.tablebean.DecXsdDatiSpecRowBean;
 import it.eng.parer.slite.gen.tablebean.DecXsdDatiSpecTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
@@ -57,9 +79,11 @@ import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -90,6 +114,8 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
     private TipoRappresentazioneEjb tipoRapprEjb;
     @EJB(mappedName = "java:app/Parer-ejb/FormatoFileDocEjb")
     private FormatoFileDocEjb formatoFileDocEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/FormatoFileStandardEjb")
+    private FormatoFileStandardEjb formatoFileStandardEjb;
 
     @Override
     public void initOnClick() throws EMFError {
@@ -174,18 +200,26 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         if (lista.equals(getForm().getFormatoFileAmmessoList().getName())) {
             getForm().getFormatoFileAmmesso().setViewMode();
             if (getNavigationEvent().equals(NE_DETTAGLIO_INSERT)) {
-                Set<String> formatiSalvati = new HashSet<String>();
+                //
                 BigDecimal idStrut = ((DecTipoStrutDocRowBean) getForm().getTipoStrutDocList().getTable()
                         .getCurrentRow()).getIdStrut();
-                // Inserisco in un set i formati file doc che ho già tra gli ammessi
-                for (DecFormatoFileDocRowBean row : (DecFormatoFileDocTableBean) getForm().getFormatoFileAmmessoList()
-                        .getTable()) {
-                    formatiSalvati.add(row.getNmFormatoFileDoc().toUpperCase());
-                }
 
-                // Carico il tableBean dei formati file doc ancora da inserire
-                DecFormatoFileDocTableBean formatoTableBean = formatoFileDocEjb
-                        .getDecFormatoFileAmmessoNotInList(formatiSalvati, idStrut);
+                BigDecimal idTipoCompDoc = getForm().getTipoCompDoc().getId_tipo_comp_doc().parse();
+                String flGestiti = getForm().getTipoCompDoc().getFl_gestiti().parse();
+                String flIdonei = getForm().getTipoCompDoc().getFl_idonei().parse();
+                String flDeprecati = getForm().getTipoCompDoc().getFl_deprecati().parse();
+
+                getForm().getFiltriFormatoFileDoc().clear();
+                getForm().getFiltriFormatoFileDoc().setEditMode();
+                getForm().getFiltriFormatoFileDoc().getNm_mimetype_file().setDecodeMap(DecodeMap.Factory.newInstance(
+                        formatoFileStandardEjb.getMimetypeTableBean(), "nm_mimetype_file", "nm_mimetype_file"));
+
+                /*
+                 * Carico il tableBean dei formati file doc ancora da inserire in base ai flag GESTITI, IDONEI E ALTRI
+                 */
+                Set<String> recordDaControllare = new HashSet<>();
+                DecFormatoFileDocTableBean formatoTableBean = formatoFileDocEjb.getDecFormatoFileAmmessoNotInList(
+                        idTipoCompDoc, idStrut, flGestiti, flIdonei, flDeprecati, null, null, recordDaControllare);
                 getForm().getFormatoFileDocList().setTable(formatoTableBean);
                 getForm().getFormatoFileDocList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
                 getForm().getFormatoFileDocList().getTable()
@@ -195,11 +229,9 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
 
                 // Devo caricare nella lista dei selezionati tutti i formati doc già inseriti,
                 // ed escludere gli stessi dalla lista sopra
-                DecFormatoFileDocTableBean formatiSelTableBean = new DecFormatoFileDocTableBean();
-                for (DecFormatoFileDocRowBean row : (DecFormatoFileDocTableBean) getForm().getFormatoFileAmmessoList()
-                        .getTable()) {
-                    formatiSelTableBean.add(row);
-                }
+                DecFormatoFileDocTableBean formatiSelTableBean = formatoFileDocEjb
+                        .getDecFormatoFileAmmessoTableBean(getForm().getTipoCompDoc().getId_tipo_comp_doc().parse());
+                //
                 getForm().getSelectFormatoFileAmmessoList().setTable(formatiSelTableBean);
                 getForm().getSelectFormatoFileAmmessoList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
                 getForm().getSelectFormatoFileAmmessoList().getTable()
@@ -263,6 +295,10 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         } else if (publisher.equals(Application.Publisher.FORMATO_FILE_AMMESSO_DETAIL)
                 && getForm().getFormatoFileAmmesso().getStatus() != null
                 && getForm().getFormatoFileAmmesso().getStatus().toString().equals("insert")) {
+            goBack();
+        } else if (publisher.equals(Application.Publisher.FORMATI_CONCATENABILI_DETAIL)
+                && getForm().getFormatoFileAmmesso().getStatus() != null
+                && getForm().getFormatoFileAmmesso().getStatus().toString().equals("update")) {
             goBack();
         } else if (publisher.equals(Application.Publisher.ASSOCIAZIONE_TIPO_STRUT_DOC_TIPO_DOC)
                 && getForm().getTipoDocAmmessoDaTipoStrutDoc().getStatus() != null
@@ -350,6 +386,10 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         }
         if (publisher.equals(Application.Publisher.FORMATO_FILE_AMMESSO_DETAIL)) {
             salvaFormatoFileAmmesso();
+
+        }
+        if (publisher.equals(Application.Publisher.FORMATI_CONCATENABILI_DETAIL)) {
+            salvaFormatoFileAmmessoDup();
 
         }
         if (publisher.equals(Application.Publisher.ASSOCIAZIONE_TIPO_COMP_TIPO_RAPPR_COMP)) {
@@ -649,10 +689,18 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
     public void select_all() throws Throwable {
 
         if (getLastPublisher().equals(Application.Publisher.FORMATO_FILE_AMMESSO_DETAIL)) {
+            // Recupero i formati selezionati già salvati sul tipo componente, che avranno anche settato
+            // id_formato_file_ammesso
+            DecFormatoFileDocTableBean tb = new DecFormatoFileDocTableBean();
+            tb.addAll(getForm().getSelectFormatoFileAmmessoList().getTable());
 
-            BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
-            getForm().getSelectFormatoFileAmmessoList()
-                    .setTable(formatoFileDocEjb.getDecFormatoFileAmmessoNotInList(new HashSet<String>(), idStrut));
+            // Aggiungo tutti i formati "ammissibili", che avranno id_formato_file_ammesso a null
+            DecFormatoFileDocTableBean tbAmmissibili = (DecFormatoFileDocTableBean) getForm().getFormatoFileDocList()
+                    .getTable();
+            for (DecFormatoFileDocRowBean rbAmmissibili : tbAmmissibili) {
+                getForm().getSelectFormatoFileAmmessoList().getTable().add(rbAmmissibili);
+            }
+
             getForm().getSelectFormatoFileAmmessoList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
             getForm().getSelectFormatoFileAmmessoList().getTable()
                     .addSortingRule(DecFormatoFileDocTableDescriptor.COL_NM_FORMATO_FILE_DOC, SortingRule.ASC);
@@ -673,10 +721,11 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
     @Override
     public void deselect_all() throws Throwable {
         if (getLastPublisher().equals(Application.Publisher.FORMATO_FILE_AMMESSO_DETAIL)) {
+            BigDecimal idTipoCompDoc = getForm().getTipoCompDoc().getId_tipo_comp_doc().parse();
 
-            BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
-            getForm().getFormatoFileDocList()
-                    .setTable(formatoFileDocEjb.getDecFormatoFileAmmessoNotInList(new HashSet<String>(), idStrut));
+            DecFormatoFileDocTableBean formatoTableBean = formatoFileDocEjb
+                    .getDecFormatoFileAmmessoTableBean(idTipoCompDoc);
+            getForm().getFormatoFileDocList().setTable(formatoTableBean);
             getForm().getFormatoFileDocList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
             getForm().getFormatoFileDocList().getTable().addSortingRule(
                     DecFormatoFileStandardTableDescriptor.COL_NM_FORMATO_FILE_STANDARD, SortingRule.ASC);
@@ -720,8 +769,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         tipoCompDoc.post(getRequest());
         BigDecimal idTipoStrutDoc = ((DecTipoStrutDocRowBean) getForm().getTipoStrutDocList().getTable()
                 .getCurrentRow()).getIdTipoStrutDoc();
-        DecTipoCompDocTableBean tipoCompDocTableBean = new DecTipoCompDocTableBean();
-
+        //
         if (tipoCompDoc.validate(getMessageBox())) {
 
             if (tipoCompDoc.getNm_tipo_comp_doc().parse() == null) {
@@ -739,7 +787,6 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
             }
             if (tipoCompDoc.getDt_soppres().parse() == null) {
                 tipoCompDoc.getDt_soppres().setValue(getDefaultDate());
-                // getMessageBox().addError("Errore di compilazione form: data soppressione non inserito");
             }
             if (tipoCompDoc.getDt_istituz().parse() != null && tipoCompDoc.getDt_istituz().parse() != null
                     && tipoCompDoc.getDt_istituz().parse().after(tipoCompDoc.getDt_soppres().parse())) {
@@ -761,8 +808,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getTipoCompDoc().getStatus().equals(Status.insert)) {
@@ -773,19 +819,17 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
                                 new Message(MessageLevel.INF, "Nuovo tipo componente documento salvato con successo"));
                         getMessageBox().setViewMode(ViewMode.plain);
                         tipoCompDocRowBean.setIdTipoStrutDoc(idTipoStrutDoc);
-                        tipoCompDocTableBean.add(tipoCompDocRowBean);
-                        getForm().getTipoCompDoc().copyFromBean(tipoCompDocRowBean);
-                        getForm().getTipoCompDocList().setTable(tipoCompDocTableBean);
-                        getForm().getTipoCompDocList().getTable().setCurrentRowIndex(0);
+                        getForm().getTipoCompDocList().getTable().last();
+                        getForm().getTipoCompDocList().getTable().add(tipoCompDocRowBean);
+                        getForm().getTipoCompDoc().getId_tipo_comp_doc()
+                                .setValue("" + tipoCompDocRowBean.getIdTipoCompDoc());
                         loadTipoCompDoclists(true);
                     } else if (getForm().getTipoCompDoc().getStatus().equals(Status.update)) {
                         param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
                         BigDecimal idTipoCompDoc = ((DecTipoCompDocRowBean) getForm().getTipoCompDocList().getTable()
                                 .getCurrentRow()).getIdTipoCompDoc();
                         tipoStrutDocEjb.updateDecTipoCompDoc(param, idTipoCompDoc, tipoCompDocRowBean);
-                        tipoCompDocTableBean = tipoStrutDocEjb.getDecTipoCompDocTableBean(idTipoStrutDoc,
-                                getForm().getTipoCompDocList().isFilterValidRecords());
-                        getForm().getTipoCompDocList().setTable(tipoCompDocTableBean);
+                        loadTipoCompDoclists(true);
                     }
                     getForm().getTipoCompDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
                     getForm().getTipoCompDoc().setViewMode();
@@ -833,7 +877,6 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
             }
             if (tipoStrutDoc.getDt_soppres().parse() == null) {
                 tipoStrutDoc.getDt_soppres().setValue(getDefaultDate());
-                // getMessageBox().addError("Errore di compilazione form: data soppressione non inserito");
             }
             if (tipoStrutDoc.getDt_istituz().parse() != null && tipoStrutDoc.getDt_soppres().parse() != null
                     && tipoStrutDoc.getDt_istituz().parse().after(tipoStrutDoc.getDt_soppres().parse())) {
@@ -841,11 +884,6 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
                         "Errore di compilazione form: data disattivazione precedente a data istituzione</br>");
             }
 
-            /*
-             * if(struttureEjb.getDecTipoStrutDocRowBean(tipoStrutDoc.getNm_tipo_strut_doc().parse())!=null &&
-             * getForm().getTipoStrutDoc().getStatus().equals(Status.insert) ){ getMessageBox().
-             * addError("Errore di compilazione form: nome tipo struttura documento già presente nel database"); }
-             */
             try {
                 if (getMessageBox().isEmpty()) {
                     tipoStrutDoc.copyToBean(tipoStrutDocRowBean);
@@ -855,8 +893,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getTipoStrutDoc().getStatus().equals(Status.insert)) {
@@ -898,16 +935,10 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         }
     }
 
-    /**
-     * Metodo per il salvataggio o la modifica di un'entità DecFormatoFileAmmesso
-     *
-     * @throws EMFError
-     *             errore generico
-     */
     private void salvaFormatoFileAmmesso() throws EMFError {
-        List<BigDecimal> listaFormatiPreModifiche = new ArrayList<BigDecimal>();
-        List<BigDecimal> listaFormatiPresentiOraDaEliminare = new ArrayList<BigDecimal>();
-        List<BigDecimal> listaFormatiDaInserire = new ArrayList<BigDecimal>();
+        List<BigDecimal> listaFormatiPreModifiche = new ArrayList<>();
+        List<BigDecimal> listaFormatiPresentiOraDaEliminare = new ArrayList<>();
+        List<BigDecimal> listaFormatiDaInserire = new ArrayList<>();
 
         // Ricavo la lista dei formati file che erano già salvati su DB
         for (DecFormatoFileDocRowBean row : (DecFormatoFileDocTableBean) getForm().getFormatoFileAmmessoList()
@@ -923,8 +954,9 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
             for (DecFormatoFileDocRowBean row : (DecFormatoFileDocTableBean) getForm().getSelectFormatoFileAmmessoList()
                     .getTable()) {
                 // Controllo se il formato c'è ancora...
-                if (row.getBigDecimal("id_formato_file_ammesso") != null && idFormatoFileAmmessoPreModifiche
-                        .compareTo(row.getBigDecimal("id_formato_file_ammesso")) == 0) {
+                if (row.getBigDecimal("id_formato_file_ammesso") != null && idFormatoFileAmmessoPreModifiche != null
+                        && idFormatoFileAmmessoPreModifiche
+                                .compareTo(row.getBigDecimal("id_formato_file_ammesso")) == 0) {
                     presente = true;
                     break;
                 }
@@ -949,23 +981,25 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
             // Verifico che il row non sia già un formato salvato
             if (row.getBigDecimal("id_formato_file_ammesso") == null) {
                 listaFormatiDaInserire.add(row.getIdFormatoFileDoc());
-                // struttureEjb.insertDecFormatoFileAmmesso(idTipoCompDoc, row.getIdFormatoFileDoc());
             }
         }
+        // }
         /*
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this), SpagoliteLogUtil.getToolbarInsert());
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-        // BigDecimal idTipoStrutDoc = getForm().getTipoStrutDoc().getId_tipo_strut_doc().parse();
         DecTipoStrutDocRowBean bean = (DecTipoStrutDocRowBean) getForm().getTipoStrutDocList().getTable()
                 .getCurrentRow();
         BigDecimal idTipoStrutDoc = bean.getIdTipoStrutDoc();
         tipoStrutDocEjb.deleteAndInsertDecFormatoFileAmmesso(param, listaFormatiPresentiOraDaEliminare, idTipoStrutDoc,
                 idTipoCompDoc, listaFormatiDaInserire);
+        // /*
+        // * Aggiorno i flag (spuntati o no) nel dettaglio tipo componente in base al fatto che siano presenti o meno
+        // * tutti formati
+        // */
         getMessageBox().addMessage(new Message(MessageLevel.INF, "Formati file ammessi salvati con successo"));
         getMessageBox().setViewMode(ViewMode.plain);
         DecFormatoFileDocTableBean formatoFileAmmessoTableBean = formatoFileDocEjb
@@ -976,8 +1010,11 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         getForm().getFormatoFileAmmessoList().setTable(formatoFileAmmessoTableBean);
         getForm().getFormatoFileAmmessoList().getTable().first();
         getForm().getFormatoFileAmmessoList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+
+        // Ricarico il dettaglio
+        DecTipoCompDocRowBean tipoCompDocRowBean = tipoStrutDocEjb.getDecTipoCompDocRowBean(idTipoCompDoc);
+        getForm().getTipoCompDoc().copyFromBean(tipoCompDocRowBean);
         goBack();
-        // }
     }
 
     private String getDefaultDate() {
@@ -986,11 +1023,9 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
 
         Date dtSoppress = null;
         dtSoppress = calendar.getTime();
-        DateFormat formato = new SimpleDateFormat(WebConstants.DATE_FORMAT_TIMESTAMP_TYPE);
+        DateFormat formato = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
 
-        String dtSoppressString = new String("");
-        dtSoppressString = formato.format(dtSoppress);
-        return dtSoppressString;
+        return formato.format(dtSoppress);
     }
 
     @Override
@@ -998,28 +1033,46 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         DecFormatoFileDocRowBean formatoFileAmmessoRowBean = (DecFormatoFileDocRowBean) getForm()
                 .getFormatoFileAmmessoList().getTable().getCurrentRow();
         int index = getForm().getFormatoFileAmmessoList().getTable().getCurrentRowIndex();
+        BigDecimal idFormatoFileAmmesso = formatoFileAmmessoRowBean.getBigDecimal("id_formato_file_ammesso");
+        String tiEsitoContrFormato = formatoFileAmmessoRowBean.getString("ti_esito_contr_formato");
         try {
             /*
              * Codice aggiuntivo per il logging...
              */
             StrutTipoStrutForm form = (StrutTipoStrutForm) SpagoliteLogUtil.getForm(this);
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                     SpagoliteLogUtil.getDetailActionNameDelete(form, form.getFormatoFileAmmessoList()));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             BigDecimal idTipoStrutDoc = getForm().getTipoStrutDoc().getId_tipo_strut_doc().parse();
-            tipoStrutDocEjb.deleteDecFormatoFileAmmesso(param,
-                    formatoFileAmmessoRowBean.getBigDecimal("id_formato_file_ammesso"), idTipoStrutDoc);
+            String messaggio = tipoStrutDocEjb.deleteDecFormatoFileAmmesso(param, idFormatoFileAmmesso, idTipoStrutDoc,
+                    tiEsitoContrFormato);
+            getForm().getFormatoFileAmmessoList().getTable().remove(index);
+            getMessageBox().addInfo("Formato ammesso eliminato con successo! <br><br>");
+            if (messaggio != null) {
+                getMessageBox().addInfo(messaggio);
+            }
+            SessionManager.removeLastExecutionHistory(getSession());
+
+            /*
+             * TODO RICARICARE DETTAGLIO TIPO COMP DOC DOPO AVER CANCELLATO UN FORMATO AMMESSO PER VEDERE SE CAMBIANO I
+             * FLAG
+             */
+            BigDecimal idTipoCompDoc = ((DecTipoCompDocRowBean) getForm().getTipoCompDocList().getTable()
+                    .getCurrentRow()).getIdTipoCompDoc();
+            //
+            DecTipoCompDocRowBean tipoCompDocRowBean = tipoStrutDocEjb.getDecTipoCompDocRowBean(idTipoCompDoc);
+            getForm().getTipoCompDoc().copyFromBean(tipoCompDocRowBean);
         } catch (Exception e) {
             getMessageBox().addError("Errore durante l'eliminazione del formato");
         }
-        if (!getMessageBox().hasError()) {
-            getForm().getFormatoFileAmmessoList().getTable().remove(index);
+        if (!getMessageBox().hasError()
+                && getLastPublisher().equals(Application.Publisher.FORMATO_FILE_AMMESSO_DETAIL)) {
+            goBackTo(Application.Publisher.TIPO_COMP_DOC_DETAIL);
+        } else {
+            forwardToPublisher(getLastPublisher());
         }
-        getForm().getFormatoFileAmmessoList().getTable().sort();
-        getForm().getFormatoFileAmmessoList().getTable().first();
     }
 
     @Override
@@ -1034,8 +1087,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
              */
             StrutTipoStrutForm form = (StrutTipoStrutForm) SpagoliteLogUtil.getForm(this);
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             if (Application.Publisher.TIPO_COMP_DOC_DETAIL.equals(lastPublisher)) {
@@ -1093,8 +1145,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.CREA_STRUTTURA.equalsIgnoreCase(param.getNomePagina())) {
                 StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
@@ -1188,9 +1239,6 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
 
         DecFormatoFileDocTableBean formatoFileAmmessoTableBean = formatoFileDocEjb
                 .getDecFormatoFileAmmessoTableBean(idTipoCompDoc);
-        formatoFileAmmessoTableBean.addSortingRule(DecFormatoFileDocTableDescriptor.COL_NM_FORMATO_FILE_DOC,
-                SortingRule.ASC);
-        formatoFileAmmessoTableBean.sort();
 
         getForm().getFormatoFileAmmessoList().setTable(formatoFileAmmessoTableBean);
         getForm().getFormatoFileAmmessoList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
@@ -1310,8 +1358,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getTipoRapprCompAmmessoDaTipoComp().getStatus().equals(Status.insert)) {
@@ -1383,8 +1430,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             if (Application.Publisher.TIPO_COMP_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
@@ -1435,8 +1481,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getTipoDocAmmessoDaTipoStrutDoc().getStatus().equals(Status.insert)) {
@@ -1508,8 +1553,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.TIPO_STRUT_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 StrutTipoStrutForm form = (StrutTipoStrutForm) SpagoliteLogUtil.getForm(this);
@@ -1645,20 +1689,234 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
     public void logEventiTipoStrutDoc() throws EMFError {
         DecTipoStrutDocRowBean bean = (DecTipoStrutDocRowBean) getForm().getTipoStrutDocList().getTable()
                 .getCurrentRow();
-        // logEventiCommon(SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO,
-        // getForm().getTipoStrutDoc().getId_tipo_strut_doc().getValue());
         logEventiCommon(SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO, bean.getIdTipoStrutDoc());
     }
 
-    // private void logEventiCommon(String tipoOggetto, String idOggetto) throws EMFError {
     private void logEventiCommon(String tipoOggetto, BigDecimal idOggetto) throws EMFError {
         GestioneLogEventiForm form = new GestioneLogEventiForm();
-        form.getOggettoDetail().getNmApp().setValue(configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        form.getOggettoDetail().getNmApp()
+                .setValue(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         form.getOggettoDetail().getNm_tipo_oggetto().setValue(tipoOggetto);
         form.getOggettoDetail().getIdOggetto().setValue(idOggetto.toString());
         redirectToAction(it.eng.parer.sacerlog.slite.gen.Application.Actions.GESTIONE_LOG_EVENTI,
                 "?operation=inizializzaLogEventi", form);
+    }
+
+    //
+    public void duplicaFormatoTipoCompOperation() throws EMFError {
+        getForm().getFormatoFileAmmessoList().setStatus(Status.update);
+        getForm().getFormatoFileAmmesso().setStatus(Status.update);
+        getForm().getSelectConcatButtonList().setEditMode();
+
+        String riga = getRequest().getParameter("riga");
+        Integer nr = Integer.parseInt(riga);
+
+        getForm().getFormatoFileAmmessoList().getTable().setCurrentRowIndex(nr);
+
+        DecFormatoFileDocRowBean formatoAmmessoRB = (DecFormatoFileDocRowBean) getForm().getFormatoFileAmmessoList()
+                .getTable().getCurrentRow();
+        getForm().getFormatoFileDoc().copyFromBean(formatoAmmessoRB);
+
+        Set<String> formatiSalvati = new HashSet<>();
+
+        if (formatoAmmessoRB.getNmFormatoFileDoc().contains(".")) {
+
+            String[] formati = formatoAmmessoRB.getNmFormatoFileDoc().split("[.]");
+            formatiSalvati = new HashSet<>(Arrays.asList(formati));
+        }
+
+        // // Escludo anche i formati concatenabili non ammessi sulla struttura
+        // List<String> formatiContenabiliSullaStruttura = formatoFileDocEjb
+        // .getFormatiFileDocSingoliConcatenabili(getForm().getIdList().getId_strut().parse());
+        // List<String> formatiStandardConcatenabili = formatoFileStandardEjb.getFormatiFileStandardConcatenabili();
+        // formatiStandardConcatenabili.removeAll(formatiContenabiliSullaStruttura);
+        //
+        // formatiSalvati.addAll(formatiStandardConcatenabili);
+        //
+        DecFormatoFileStandardTableBean concatenazioniMancantiTableBean = formatoFileStandardEjb
+                .getDecFormatoFileStandardNotInList(formatiSalvati, Status.update);
+        getForm().getFormatoFileStandardToCompList().setTable(concatenazioniMancantiTableBean);
+        getForm().getFormatoFileStandardToCompList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
+        getForm().getFormatoFileStandardToCompList().getTable()
+                .addSortingRule(DecFormatoFileStandardTableDescriptor.COL_NM_FORMATO_FILE_STANDARD, SortingRule.ASC);
+        getForm().getFormatoFileStandardToCompList().getTable().sort();
+        getForm().getFormatoFileStandardToCompList().getTable().first();
+
+        getForm().getSelectFormatoFileStandardCompList().setTable(new DecFormatoFileStandardTableBean());
+        // Nascondo il campo cd_estensione_file e visualizzo il cd_entensione_file_busta
+        getForm().getSelectFormatoFileStandardCompList().getCd_estensione_file().setHidden(true);
+        getForm().getSelectFormatoFileStandardCompList().getCd_estensione_file_busta().setHidden(false);
+        getForm().getSelectFormatoFileStandardCompList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
+        getForm().getSelectFormatoFileStandardCompList().getTable()
+                .addSortingRule(DecFormatoFileStandardTableDescriptor.COL_NM_FORMATO_FILE_STANDARD, SortingRule.ASC);
+        getForm().getSelectFormatoFileStandardCompList().getTable().sort();
+
+        forwardToPublisher(Application.Publisher.FORMATI_CONCATENABILI_DETAIL);
+    }
+
+    @Override
+    public void selectConcatAmmissibili() throws Throwable {
+        String[] indiciAssolutiFormatiAmmissibili = getRequest().getParameterValues("Fl_formato_ammissibile");
+        if (indiciAssolutiFormatiAmmissibili != null && indiciAssolutiFormatiAmmissibili.length > 0) {
+            int indice = 0;
+            for (String comp : indiciAssolutiFormatiAmmissibili) {
+                if (StringUtils.isNotBlank(comp) && StringUtils.isNumeric(comp)) {
+                    DecFormatoFileStandardRowBean currentRow = (DecFormatoFileStandardRowBean) getForm()
+                            .getFormatoFileStandardToCompList().getTable().getRow((Integer.parseInt(comp) - indice));
+
+                    StringBuilder formato = new StringBuilder(
+                            getForm().getFormatoFileDoc().getNm_formato_file_doc().parse());
+                    formato.append(".").append(currentRow.getString("nm_formato_file_standard"));
+                    getForm().getFormatoFileDoc().getNm_formato_file_doc().setValue(formato.toString());
+
+                    getForm().getFormatoFileStandardToCompList().getTable().remove(Integer.parseInt(comp) - indice);
+
+                    getForm().getSelectFormatoFileStandardCompList().add(currentRow);
+                    reloadSelectFormatoFileStandardCompList();
+                    indice++;
+                }
+            }
+            getForm().getSelectFormatoFileStandardCompList().getTable().sort();
+            getForm().getFormatoFileStandardToCompList().getTable().sort();
+        }
+        forwardToPublisher(Application.Publisher.FORMATI_CONCATENABILI_DETAIL);
+    }
+
+    public void reloadSelectFormatoFileStandardCompList() throws EMFError {
+        int inizio = getForm().getSelectFormatoFileStandardCompList().getTable().getFirstRowPageIndex();
+        int pageSize = getForm().getSelectFormatoFileStandardCompList().getTable().getPageSize();
+        int paginaCorrente = getForm().getSelectFormatoFileStandardCompList().getTable().getCurrentPageIndex();
+        getForm().getSelectFormatoFileStandardCompList().getTable().sort();
+        getForm().getSelectFormatoFileStandardCompList().getTable().setPageSize(pageSize);
+        this.lazyLoadGoPage(getForm().getSelectFormatoFileStandardCompList(), paginaCorrente);
+        getForm().getSelectFormatoFileStandardCompList().getTable().setCurrentRowIndex(inizio);
+    }
+
+    @Override
+    public void deselectConcatAmmessi() throws Throwable {
+        /* Ottengo i record spuntati */
+        String[] indiciAssolutiFormatiAmmessi = getRequest().getParameterValues("Fl_formato_ammesso");
+
+        if (indiciAssolutiFormatiAmmessi != null && indiciAssolutiFormatiAmmessi.length > 0) {
+            int indice = 0;
+            for (String comp : indiciAssolutiFormatiAmmessi) {
+                if (StringUtils.isNotBlank(comp) && StringUtils.isNumeric(comp)) {
+                    DecFormatoFileStandardRowBean row = (DecFormatoFileStandardRowBean) getForm()
+                            .getSelectFormatoFileStandardCompList().getTable()
+                            .getRow((Integer.parseInt(comp) - indice));
+                    getForm().getSelectFormatoFileStandardCompList().getTable().remove(Integer.parseInt(comp) - indice);
+                    indice++;
+
+                    HashSet<String> hs = new HashSet<>();
+                    hs.add(row.getNmFormatoFileStandard());
+
+                    getForm().getFormatoFileStandardToCompList().add(row);
+                    String formato = getForm().getFormatoFileDoc().getNm_formato_file_doc().parse();
+                    List<String> list = new ArrayList<>(Arrays.asList(formato.split("[.]")));
+                    list.remove(row.getString("nm_formato_file_standard"));
+                    getForm().getFormatoFileDoc().getNm_formato_file_doc().setValue(StringUtils.join(list, "."));
+
+                }
+            }
+            getForm().getSelectFormatoFileStandardCompList().getTable().sort();
+            getForm().getFormatoFileStandardToCompList().getTable().sort();
+        }
+        forwardToPublisher(Application.Publisher.FORMATI_CONCATENABILI_DETAIL);
+    }
+
+    private void salvaFormatoFileAmmessoDup() throws EMFError {
+        getMessageBox().clear();
+        //
+        BigDecimal idTipoCompDoc = getForm().getTipoCompDoc().getId_tipo_comp_doc().parse();
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
+
+        DecFormatoFileDocRowBean formato = (DecFormatoFileDocRowBean) getForm().getFormatoFileAmmessoList().getTable()
+                .getCurrentRow();
+
+        Set<String> standard = new HashSet<>();
+        standard.add(formato.getNmFormatoFileDoc().toUpperCase());
+        DecFormatoFileStandardTableBean formatiStandard = new DecFormatoFileStandardTableBean();
+
+        // se voglio duplicareformatiNonEliminati
+        formato = new DecFormatoFileDocRowBean();
+        formato.setIdStrut(getForm().getIdList().getId_strut().parse());
+
+        formato.setNmFormatoFileDoc(getForm().getFormatoFileDoc().getNm_formato_file_doc().parse().toUpperCase());
+        formato.setDsFormatoFileDoc(getForm().getFormatoFileDoc().getDs_formato_file_doc().parse());
+        formato.setCdVersione(getForm().getFormatoFileDoc().getCd_versione().parse());
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2011, Calendar.JANUARY, 1, 0, 0, 0);
+        formato.setDtIstituz(new Timestamp(calendar.getTimeInMillis()));
+        calendar.set(2444, 11, 31, 0, 0, 0);
+        formato.setDtSoppres(new Timestamp(calendar.getTimeInMillis()));
+        // Devo ricreare tutti i record di usoFormatiStandard, perciò aggiungo alla lista anche il primo
+        // dovrebbe essere passato Status.update, ma usandolo non carica i record giusti
+        // FIXMEPLEASE: Per prendere un record, mi pare una roba terribile.
+        formatiStandard.add(formatoFileStandardEjb
+                .getDecFormatoFileStandardInList(standard, Status.insert, getForm().getIdList().getId_strut().parse())
+                .getRow(0));
+
+        for (DecFormatoFileStandardRowBean row : (DecFormatoFileStandardTableBean) getForm()
+                .getSelectFormatoFileStandardCompList().getTable()) {
+            formatiStandard.add(row);
+        }
+        try {
+            formatoFileDocEjb.addFormatoFileDocTipoComp(param, formato, formatiStandard, true, idTipoCompDoc);
+        } catch (ParerUserError ex) {
+            getMessageBox().addError(ex.getDescription());
+        }
+
+        if (!getMessageBox().hasError()) {
+            getForm().getFormatoFileDocList().setStatus(Status.view);
+            getForm().getFormatoFileDoc().setStatus(Status.view);
+            getMessageBox().addInfo("Formato salvato con successo!");
+            getMessageBox().setViewMode(ViewMode.plain);
+            goBack();
+        } else {
+            forwardToPublisher(getLastPublisher());
+        }
+    }
+
+    @Override
+    public void ricercaFormatoButton() throws EMFError {
+        getForm().getFiltriFormatoFileDoc().post(getRequest());
+        BigDecimal idStrut = ((DecTipoStrutDocRowBean) getForm().getTipoStrutDocList().getTable().getCurrentRow())
+                .getIdStrut();
+
+        BigDecimal idTipoCompDoc = getForm().getTipoCompDoc().getId_tipo_comp_doc().parse();
+        String flGestiti = getForm().getTipoCompDoc().getFl_gestiti().parse();
+        String flIdonei = getForm().getTipoCompDoc().getFl_idonei().parse();
+        String flDeprecati = getForm().getTipoCompDoc().getFl_deprecati().parse();
+
+        String nome = getForm().getFiltriFormatoFileDoc().getNm_formato_file_standard().parse();
+        String mimetype = getForm().getFiltriFormatoFileDoc().getNm_mimetype_file().parse();
+
+        Set<String> recordPresenti = new HashSet<>();
+
+        // Ricavo in un set l'insieme dei record già ammessi
+        for (DecFormatoFileDocRowBean row : (DecFormatoFileDocTableBean) getForm().getSelectFormatoFileAmmessoList()
+                .getTable()) {
+            recordPresenti.add(row.getNmFormatoFileDoc());
+        }
+
+        DecFormatoFileDocTableBean formatoTableBean = formatoFileDocEjb.getDecFormatoFileAmmessoNotInList(idTipoCompDoc,
+                idStrut, flGestiti, flIdonei, flDeprecati, nome, mimetype, recordPresenti);
+        getForm().getFormatoFileDocList().setTable(formatoTableBean);
+        getForm().getFormatoFileDocList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
+        getForm().getFormatoFileDocList().getTable()
+                .addSortingRule(DecFormatoFileDocTableDescriptor.COL_NM_FORMATO_FILE_DOC, SortingRule.ASC);
+        getForm().getFormatoFileDocList().getTable().sort();
+        getForm().getFormatoFileDocList().getTable().first();
+
+        forwardToPublisher(Application.Publisher.FORMATO_FILE_AMMESSO_DETAIL);
     }
 
 }

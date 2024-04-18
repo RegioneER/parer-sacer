@@ -1,10 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
-import it.eng.parer.entity.constraint.SerUrnFileVerSerie.TiUrnFileVerSerie;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.verifica.VerFormatiEnums;
 import it.eng.parer.serie.dto.RicercaSerieBean;
@@ -37,7 +53,10 @@ import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.ActionUtils;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.WebConstants;
+import it.eng.parer.ws.dto.CSChiaveSerie;
+import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.row.BaseRow;
@@ -74,7 +93,7 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction {
 
-    private static final Logger logger = LoggerFactory.getLogger(SerieUdPerUtentiExtAction.class);
+    private static final Logger log = LoggerFactory.getLogger(SerieUdPerUtentiExtAction.class);
 
     @EJB(mappedName = "java:app/Parer-ejb/SerieEjb")
     private SerieEjb serieEjb;
@@ -119,7 +138,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
         forwardToPublisher(Application.Publisher.RICERCA_SERIE_PER_UTENTE_EXT);
     }
 
-    private void initFiltriStrut(String fieldSetName) throws EMFError {
+    private void initFiltriStrut(String fieldSetName) {
         /* Ricavo Ambiente, Ente e Struttura CORRENTI */
         OrgStrutRowBean strutWithAmbienteEnte = evEjb
                 .getOrgStrutRowBeanWithAmbienteEnte(getUser().getIdOrganizzazioneFoglia());
@@ -144,7 +163,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore durante il recupero dei filtri Ambiente - Ente - Struttura", ex);
+            log.error("Errore durante il recupero dei filtri Ambiente - Ente - Struttura", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -338,7 +357,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
                     getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
                             VerFormatiEnums.XML_MIME);
                 } catch (IOException ex) {
-                    logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+                    log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
                     getMessageBox().addError("Errore inatteso nella preparazione del download");
                 }
             } else {
@@ -385,7 +404,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
             } catch (ParerUserError ex) {
                 getMessageBox().addError(ex.getDescription());
             } catch (IOException ex) {
-                logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+                log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
                 getMessageBox().addError("Errore inatteso nella preparazione del download");
             } finally {
                 IOUtils.closeQuietly(out);
@@ -411,8 +430,12 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
         File tmpFile = new File(System.getProperty("java.io.tmpdir"), filename);
 
         try {
-            ActionUtils.buildCsvString(getForm().getUdList(), getForm().getUdList().getTable(),
-                    SerVLisUdAppartSerieRowBean.TABLE_DESCRIPTOR, tmpFile, this);
+            SerVLisUdAppartSerieTableBean fullUDListTable = serieEjb.getSerVLisUdAppartSerieTableBeanForDownload(
+                    getForm().getSerieDetail().getId_contenuto_eff().parse(), new RicercaUdAppartBean());
+            // uso il Fields solo per sapere i nomi di colonna, ma poi estraggo la table completa, bypassando il lazy
+            // loading usato per l'interfaccia utente
+            ActionUtils.buildCsvString(getForm().getUdList(), fullUDListTable,
+                    SerVLisUdAppartSerieRowBean.TABLE_DESCRIPTOR, tmpFile);
             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(), tmpFile.getPath());
@@ -420,7 +443,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
                     VerFormatiEnums.CSV_MIME);
         } catch (IOException ex) {
-            logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+            log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
             getMessageBox().addError("Errore inatteso nella preparazione del download");
         }
 
@@ -459,9 +482,23 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
     private void loadDettaglioSerie(BigDecimal idVerSerie) throws EMFError {
         initSerieDetail();
         SerVVisSerieUdRowBean detailRow = serieEjb.getSerVVisSerieUdRowBean(idVerSerie);
-        BigDecimal idContenutoEff = detailRow.getIdContenutoEff();
         getForm().getSerieDetail().copyFromBean(detailRow);
-        logger.info("Carico le liste contenute nei vari tab di dettaglio");
+
+        CSVersatore tmpVers = new CSVersatore();
+        tmpVers.setAmbiente(detailRow.getNmAmbiente());
+        tmpVers.setEnte(detailRow.getNmEnte());
+        tmpVers.setStruttura(detailRow.getNmStrut());
+
+        CSChiaveSerie chiaveSerie = new CSChiaveSerie();
+        chiaveSerie.setAnno(detailRow.getAaSerie().intValue());
+        chiaveSerie.setNumero(detailRow.getCdCompositoSerie());
+
+        getForm().getSerieDetail().getUrn_serie()
+                .setValue(MessaggiWSFormat.formattaUrnDocUniDoc(
+                        MessaggiWSFormat.formattaBaseUrnSerie(MessaggiWSFormat.formattaUrnPartVersatore(tmpVers),
+                                MessaggiWSFormat.formattaUrnPartSerie(chiaveSerie))));
+
+        log.info("Carico le liste contenute nei vari tab di dettaglio");
         getForm().getSerieDetailTabs().setCurrentTab(getForm().getSerieDetailTabs().getInfoPrincipali());
         getForm().getSerieDetailSubTabs().setCurrentTab(getForm().getSerieDetailSubTabs().getListaUnitaDocumentarie());
         getForm().getSerieDetailButtonList().setEditMode();
@@ -497,18 +534,22 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
         }
         if (StringUtils.isNotBlank(detailRow.getBlFileIxAip())) {
             getForm().getSerieDetailButtonList().getDownloadAIP().setHidden(false);
+            getForm().getSerieDetailButtonList().getDownloadAIP().setDisableHourGlass(true);
         }
 
-        logger.info("Carico le liste contenute nei vari tab di dettaglio");
-        RicercaUdAppartBean parametri = new RicercaUdAppartBean();
-        SerVLisUdAppartSerieTableBean udTb = serieEjb.getSerVLisUdAppartSerieTableBean(idContenutoEff, parametri);
+        log.info("Carico le liste contenute nei vari tab di dettaglio");
+        BigDecimal idContenutoEff = detailRow.getIdContenutoEff();
+        SerVLisUdAppartSerieTableBean udTb = serieEjb.getSerVLisUdAppartSerieTableBean(idContenutoEff,
+                new RicercaUdAppartBean());
         if (!udTb.isEmpty()) {
             getForm().getSerieDetailButtonList().getDownloadContenuto().setHidden(false);
+            getForm().getSerieDetailButtonList().getDownloadContenuto().setDisableHourGlass(true);
         }
         if (detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())
                 || detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.IN_CUSTODIA.name())
                 || detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.ANNULLATA.name())) {
             getForm().getSerieDetailButtonList().getDownloadPacchettoArk().setHidden(false);
+            getForm().getSerieDetailButtonList().getDownloadPacchettoArk().setDisableHourGlass(true);
         }
         if (getForm().getUdList().getTable() != null) {
             // Ricarico le liste con paginazione
@@ -593,27 +634,10 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
                     }
                 }
             }
-            // else if (getTableName().equals(getForm().getVolumiList().getName())) {
-            // redirectToSerieUD();
-            // }
         }
     }
 
-    // private void redirectToSerieUD() throws EMFError {
-    // SerieUDForm form = new SerieUDForm();
-    // form.getVolumiList().setFilterValidRecords(getForm().getVolumiList().isFilterValidRecords());
-    // redirectToPage(Application.Actions.SERIE_UD, form, form.getVolumiList().getName(),
-    // getForm().getVolumiList().getTable(), getNavigationEvent());
-    // }
-    //
-    // private void redirectToPage(final String action, BaseForm form, String listToPopulate, BaseTableInterface<?>
-    // table, String event) throws EMFError {
-    // ((it.eng.spagoLite.form.list.List<SingleValueField<?>>) form.getComponent(listToPopulate)).setTable(table);
-    // redirectToAction(action, "?operation=listNavigationOnClick&navigationEvent=" + event + "&table=" + listToPopulate
-    // + "&riga=" + table.getCurrentRowIndex(), form);
-    // }
-
-    private void loadUdDetail(AbstractBaseTable tb) throws EMFError {
+    private void loadUdDetail(AbstractBaseTable tb) {
         UnitaDocumentarieForm form = new UnitaDocumentarieForm();
         form.getUnitaDocumentarieList().setTable(tb);
         redirectToAction(Application.Actions.UNITA_DOCUMENTARIE,
@@ -660,7 +684,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
                 }
             }
         } catch (EMFError e) {
-            logger.error("Errore nel ricaricamento della pagina " + publisherName, e);
+            log.error("Errore nel ricaricamento della pagina " + publisherName, e);
             getMessageBox().addError("Errore nel ricaricamento della pagina " + publisherName);
             getMessageBox().setViewMode(MessageBox.ViewMode.plain);
         }
@@ -700,7 +724,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
                     }
                     outUD.flush();
                 } catch (IOException e) {
-                    logger.error("Eccezione nel recupero del documento ", e);
+                    log.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
                     IOUtils.closeQuietly(inputStream);
@@ -710,7 +734,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
+                if (Boolean.TRUE.equals(deleteFile)) {
                     fileToDownload.delete();
                 }
             } else {
@@ -775,7 +799,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
             } catch (IOException e) {
                 getMessageBox().addMessage(new Message(Message.MessageLevel.ERR,
                         "Errore nel recupero del file XML relativo all'indice del volume "));
-                logger.error("Eccezione", e);
+                log.error("Eccezione", e);
             } finally {
                 IOUtils.closeQuietly(out);
                 out = null;
@@ -784,7 +808,7 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
                 }
             }
         } catch (ParerUserError ex) {
-            logger.error("Errore nel recupero del file XML relativo all'indice del volume:" + ex.getMessage());
+            log.error("Errore nel recupero del file XML relativo all'indice del volume:" + ex.getMessage());
             getMessageBox().addError("Errore nel recupero del file XML relativo all'indice del volume");
         }
 

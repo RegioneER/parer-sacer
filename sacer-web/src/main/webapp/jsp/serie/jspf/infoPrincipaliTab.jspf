@@ -38,6 +38,8 @@
 <sl:newLine />
 <div id="container1" class="w100">
     <slf:section name="<%=SerieUDForm.StatoCorrenteSection.NAME%>" styleClass="importantContainer containerLeft w50">
+        <slf:lblField name="<%=SerieUDForm.SerieDetail.URN_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
+        <sl:newLine />
         <slf:lblField name="<%=SerieUDForm.SerieDetail.TI_STATO_VER_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>
         <sl:newLine />
         <slf:lblField name="<%=SerieUDForm.SerieDetail.DT_REG_STATO_VER_SERIE%>" width="w100" controlWidth="w70" labelWidth="w30"/>

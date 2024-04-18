@@ -4,9 +4,9 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>7.3.2-SNAPSHOT</version>
+        <version>9.2.1-SNAPSHOT</version>
     </parent>
-    <groupId>it.eng.parer</groupId>
+    
     <artifactId>sacer-jboss-web</artifactId>
     <packaging>war</packaging>
     <name>sacer-web</name>
@@ -14,13 +14,15 @@
     <properties>
         <maven.build.timestamp.format>dd-MM-yyyy HH:mm</maven.build.timestamp.format>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- resource filter -->
+        <web.session-config.cookie-config.http-only>true</web.session-config.cookie-config.http-only>
+        <web.session-config.cookie-config.secure>true</web.session-config.cookie-config.secure>
     </properties>
     <dependencies>
         <dependency>  
             <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-javaee-6.0</artifactId>
+            <artifactId>jboss-jakartaee-8.0</artifactId>
             <type>pom</type>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
@@ -58,7 +60,7 @@
             <groupId>it.eng.parer</groupId>
             <artifactId>sacer-jboss-ejb</artifactId>
             <type>ejb</type>
-            <scope>provided</scope>
+            <scope>provided</scope>           
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
@@ -94,20 +96,16 @@
             <artifactId>client-hsm</artifactId>
             <scope>provided</scope>
         </dependency> 
-      
-        
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>verificafirma-crypto-beans</artifactId>
             <scope>provided</scope>
         </dependency>  
-        
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>ooxml-schemas</artifactId>
             <scope>provided</scope>
         </dependency>
-    
     </dependencies>
     <build>
         <resources>
@@ -159,12 +157,11 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <!-- DISABILITATO: Skinny WAR non supportato da NetBeans https://netbeans.org/bugzilla/show_bug.cgi?id=213960 ; tutte le dipendenze devono essere di tipo PROVIDED e dichiarate COMPILE nel pom dell'ear! -->
-                    <!--<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>-->
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                     <archive>
                         <manifestEntries>
-                            <App-Name>Sacer @application.xml_env@</App-Name>
+                            <App-Name>Sacer</App-Name>
                             <App-Version>${project.version}</App-Version>
                             <App-BuildDate>${maven.build.timestamp}</App-BuildDate>
                         </manifestEntries>
@@ -208,4 +205,15 @@
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <web.session-config.cookie-config.http-only>false</web.session-config.cookie-config.http-only>
+                <web.session-config.cookie-config.secure>false</web.session-config.cookie-config.secure>
+            </properties>
+        </profile>
+    </profiles>
+     
 </project>

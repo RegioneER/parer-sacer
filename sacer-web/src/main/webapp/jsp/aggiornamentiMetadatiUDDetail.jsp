@@ -59,6 +59,8 @@
                         <sl:newLine />
                         <slf:lblField name="<%=UnitaDocumentarieForm.AggiornamentiMetadatiUDDetail.FL_UPD_PROFILO_UNITA_DOC%>"  colSpan="2" controlWidth="w100" labelWidth="w20"/>
                         <sl:newLine />
+                        <slf:lblField name="<%=UnitaDocumentarieForm.AggiornamentiMetadatiUDDetail.FL_UPD_PROFILO_NORMATIVO%>" colSpan="2" controlWidth="w100" labelWidth="w20"/>
+                        <sl:newLine />
                         <slf:lblField name="<%=UnitaDocumentarieForm.AggiornamentiMetadatiUDDetail.FL_UPD_LINK_UNITA_DOC%>"  colSpan="2" controlWidth="w100" labelWidth="w20"/>
                         <sl:newLine />
                         <slf:lblField name="<%=UnitaDocumentarieForm.AggiornamentiMetadatiUDDetail.FL_UPD_DATI_SPEC%>" colSpan="2" controlWidth="w100" labelWidth="w20"/>

@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.async.ejb;
 
 import it.eng.parer.async.helper.CalcoloEstrazioneHelper;
@@ -57,8 +74,8 @@ public class CalcoloEstrazioneAsync {
     public boolean eseguiRichiestaAsync() {
         try {
             /* Determino la directory root $ROOT_FOLDER_EC_RA */
-            String rootFolderEcRaPath = configurationHelper.getValoreParamApplic("ROOT_FOLDER_EC_RA", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String rootFolderEcRaPath = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.ROOT_FOLDER_EC_RA);
             // String rootFolderEcRaPath = "/tmp";
 
             log.info("Creazione automatica richieste di estrazione...");
@@ -171,7 +188,7 @@ public class CalcoloEstrazioneAsync {
         boolean isTheFirst = true;
         try {
             // Itero l'insieme
-            Iterator i = udSerFascObjectList.iterator();
+            Iterator<UdSerFascObj> i = udSerFascObjectList.iterator();
             while (i.hasNext()) {
                 // Recupera l'elemento e sposta il cursore all'elemento successivo
                 UdSerFascObj o = (UdSerFascObj) i.next();

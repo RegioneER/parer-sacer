@@ -1,4 +1,33 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.firma.crypto.helper;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.HsmElencoSessioneFirma;
@@ -6,21 +35,13 @@ import it.eng.parer.entity.HsmSessioneFirma;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.constraint.HsmElencoSessioneFirma.TiEsitoFirmaElenco;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiSessioneFirma;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This helper read and store the informations about signature session of <code>Elenco Indici AIP</code>
  *
  * @author Bonora_L
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless(mappedName = "ElenchiIndiciAipSignatureHelper")
 @LocalBean
 public class ElenchiIndiciAipSignatureHelper extends SigningHelper {
@@ -97,10 +118,10 @@ public class ElenchiIndiciAipSignatureHelper extends SigningHelper {
     public List<HsmSessioneFirma> getBlockedSessionsByUser(long userId) {
         List<HsmSessioneFirma> result = new LinkedList<>();
 
-        Query query = getEntityManager().createQuery("SELECT e.hsmSessioneFirma, MAX(e.tsEsito) AS TsLastOperation "
+        Query query = getEntityManager().createQuery("SELECT se.idSessioneFirma, MAX(e.tsEsito) AS TsLastOperation "
                 + "FROM HsmSessioneFirma se INNER JOIN se.hsmElencoSessioneFirmas e " + "WHERE se.tsFine IS NULL "
                 + "AND se.iamUser.idUserIam = :userId " + "AND se.tiSessioneFirma = :type "
-                + "GROUP BY e.hsmSessioneFirma");
+                + "GROUP BY se.idSessioneFirma");
         query.setParameter("userId", userId);
         query.setParameter("type", TiSessioneFirma.ELENCO_INDICI_AIP);
 
@@ -110,7 +131,7 @@ public class ElenchiIndiciAipSignatureHelper extends SigningHelper {
                 Date TsLastOperation = (Date) obj[1];
                 Long diff = new Date().getTime() - TsLastOperation.getTime();
                 if (diff > getTimeSessionBlock()) {
-                    HsmSessioneFirma session = (HsmSessioneFirma) obj[0];
+                    HsmSessioneFirma session = findById(HsmSessioneFirma.class, (Long) obj[0]);
                     result.add(session);
                 }
             }

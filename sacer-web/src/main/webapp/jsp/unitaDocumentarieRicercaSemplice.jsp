@@ -81,7 +81,15 @@
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_CONSERVAZIONE%>" colSpan="1"/>
                     <sl:newLine />
-                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_COLLEGAMENTO%>" colSpan="1"/>
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_COLLEGAMENTO%>" colSpan="1"/>                    
+                    <sl:newLine />
+                    <%--<slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_HASH%>" colSpan="1"/>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_FMT_NUMERO%>" colSpan="1"/>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_FORZA_FMT_FILE%>" colSpan="1"/>
+                    <sl:newLine />--%>
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.CD_VERSIONE_WS%>" colSpan="1"/>
                 </slf:section>
                 <sl:newLine />
                 <slf:section name="<%=UnitaDocumentarieForm.ContrConservRicercaSection.NAME%>" styleClass="importantContainer">
@@ -93,6 +101,8 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_DOC_AGGIUNTI%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_DOC_ANNUL%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_UNITA_DOC_ANNUL%>" colSpan="1"/>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_AGG_META%>" colSpan="1"/>
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice.FL_UNITA_DOC_FIRMATO%>" colSpan="2"/>
                     <sl:newLine />

@@ -1,13 +1,30 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipFascicoli.helper;
 
 import it.eng.parer.entity.DecModelloXsdFascicolo;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
 import it.eng.parer.entity.FasContenVerAipFascicolo;
 import it.eng.parer.entity.FasMetaVerAipFascicolo;
 import it.eng.parer.entity.FasSipVerAipFascicolo;
 import it.eng.parer.entity.FasVerAipFascicolo;
 import it.eng.parer.entity.FasXmlVersFascicolo;
 import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import java.util.Calendar;
 import java.util.List;
@@ -24,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author DiLorenzo_F
  * 
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless(mappedName = "ControlliRecIndiceAipFascicoli")
 @LocalBean
 public class ControlliRecIndiceAipFascicoli {
@@ -87,7 +105,7 @@ public class ControlliRecIndiceAipFascicoli {
     public RispostaControlli getVersioneSacer() {
         RispostaControlli rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
-        String appVersion = it.eng.spagoCore.configuration.ConfigSingleton.get_appVersion();
+        String appVersion = it.eng.spagoCore.configuration.ConfigSingleton.getInstance().getAppVersion();
         rispostaControlli.setrString(appVersion);
         rispostaControlli.setrBoolean(true);
         return rispostaControlli;
@@ -227,7 +245,7 @@ public class ControlliRecIndiceAipFascicoli {
 
             Query query = entityManager.createQuery(queryStr);
             query.setParameter("idAmbiente", idAmbiente);
-            query.setParameter("tiModelloXsd", CostantiDB.TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO.name());
+            query.setParameter("tiModelloXsd", TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO);
             query.setParameter("filterDate", Calendar.getInstance().getTime());
             List<DecModelloXsdFascicolo> lstDati = query.getResultList();
             rispostaControlli.setrObject(lstDati);
@@ -242,4 +260,46 @@ public class ControlliRecIndiceAipFascicoli {
         }
         return rispostaControlli;
     }
+
+    // MEV#26576
+    /**
+     * Ricava il modello xsd attivo per l'ambiente di appartenenza della struttura a cui il fascicolo appartiene e per
+     * la versione del modello xsd corrispondente a quella del servizio di versamento fascicolo, con il tipo
+     * "AIP_SELF_DESCRIPTION_MORE_INFO"
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param cdVersioneXml
+     *            versione del servizio di versamento fascicolo
+     * 
+     * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
+     */
+    public RispostaControlli getDecModelloSelfDescMoreInfoV2(long idAmbiente, String cdVersioneXml) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            String queryStr = "SELECT m " + "FROM DecModelloXsdFascicolo m "
+                    + "WHERE m.orgAmbiente.idAmbiente = :idAmbiente " + "AND m.tiModelloXsd = :tiModelloXsd "
+                    + "AND m.dtIstituz <= :filterDate AND m.dtSoppres >= :filterDate " + "AND m.cdXsd = :cdVersioneXml";
+
+            Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("tiModelloXsd", TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO);
+            query.setParameter("filterDate", Calendar.getInstance().getTime());
+            query.setParameter("cdVersioneXml", cdVersioneXml);
+            List<DecModelloXsdFascicolo> lstDati = query.getResultList();
+            rispostaControlli.setrObject(lstDati);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecIndiceAipFascicoli.getDecModelloSelfDescMoreInfoV2 " + e.getMessage()));
+            log.error(
+                    "Eccezione nella lettura dei dati riguardanti il modello XSD di tipo AIP_SELF_DESCRIPTION_MORE_INFO durante i controlli per la creazione dell'indice AIP versione fascicoli v2",
+                    e);
+        }
+        return rispostaControlli;
+    }
+    // end MEV#26576
 }

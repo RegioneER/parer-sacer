@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -94,7 +111,7 @@ public class Constants {
     // Enum per tipo entità sacer su object storage
     public enum TiEntitaSacerObjectStorage {
 
-        COMP_DOC, REPORTVF
+        COMP_DOC, REPORTVF, XML_VERS, INDICE_AIP
     }
 
     // MEV26587
@@ -103,4 +120,23 @@ public class Constants {
     }
 
     public static final String OBFUSCATED_STRING = "********";
+
+    // MEV#27891
+    // Enum per tipo sessione jms
+    public enum TipoSessioneJMS {
+        XA_TRANSACTED, SESSION_TRANSACTED, UNTRANSACTED, DISABLED
+    }
+
+    // Enum per modalità di delivery messaggio jms
+    public enum DeliveryModeJMS {
+        PERSISTENT, NON_PERSISTENT
+    }
+    // end MEV#27891
+
+    // MAC#28020
+    // Enum per modalità di validazione criteri
+    public enum ValidationMode {
+        JOB, MDB
+    }
+    // end MAC#28020
 }

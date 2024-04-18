@@ -1,20 +1,31 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.async.helper;
 
 import it.eng.parer.entity.LogLockElab;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.job.helper.JobHelper;
-import it.eng.parer.job.utils.JobConstants;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+
+import javax.ejb.*;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.LockTimeoutException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.*;
+
+import it.eng.parer.job.utils.JobConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +38,9 @@ import org.slf4j.LoggerFactory;
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
 public class AsyncHelper {
 
-    Logger log = LoggerFactory.getLogger(AsyncHelper.class);
     @PersistenceContext(unitName = "ParerJPA")
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
+    Logger log = LoggerFactory.getLogger(AsyncHelper.class);
 
     @EJB
     private JobHelper jobHelper;
@@ -37,15 +48,10 @@ public class AsyncHelper {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void initLockPerStrut(String asyncTask, Long idStrut) {
         // Verifico la presenza del lock per la struttura
-        Query query = entityManager.createQuery(
-                "SELECT count(lock) FROM LogLockElab lock WHERE lock.nmElab = :nmElab AND lock.tiLockElab = :tiLock AND lock.orgStrut.idStrut = :idStrut");
-        query.setParameter("nmElab", asyncTask);
-        query.setParameter("tiLock", JobConstants.LockTypeEnum.LOCK_PER_STRUT.name());
-        query.setParameter("idStrut", idStrut);
-        Long count = (Long) query.getSingleResult();
+        Long count = countLock(asyncTask, idStrut);
         if (count == 0) {
-            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut.longValue(), LockModeType.PESSIMISTIC_WRITE);
-            count = (Long) query.getSingleResult();
+            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut, LockModeType.PESSIMISTIC_WRITE);
+            count = countLock(asyncTask, idStrut);
             if (count == 0) {
                 LogLockElab lockRecord = new LogLockElab();
                 lockRecord.setNmElab(asyncTask);
@@ -85,11 +91,11 @@ public class AsyncHelper {
                 return lockRecord.getIdLockElab();
             } else {
                 // Scrivo già che il servizio chiude con errore in quanto impossibile acquisire il lock
-                log.info(asyncTask + " --- Impossibile acquisire il lock");
+                log.info("{} --- Impossibile acquisire il lock", asyncTask);
                 return null;
             }
         } catch (LockTimeoutException lte) {
-            log.info(asyncTask + " --- Impossibile acquisire il lock", lte);
+            log.info("{} --- Impossibile acquisire il lock", asyncTask, lte);
             return null;
         }
     }
@@ -100,9 +106,7 @@ public class AsyncHelper {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void writeEndLogLock(Long idLock, String asyncTask, String opType, String desc, Long idStrut) {
-        LogLockElab lockRecord = entityManager.find(LogLockElab.class, idLock);
-        lockRecord.setFlElabAttiva(JobConstants.DB_FALSE);
-        entityManager.flush();
+        lockRecord(idLock);
 
         if (idStrut != null) {
             jobHelper.writeLogJob(asyncTask, opType, desc, idStrut);
@@ -111,4 +115,21 @@ public class AsyncHelper {
         }
     }
 
+    public Long countLock(String asyncTask, Long idStrut) {
+        Query query = entityManager.createQuery(
+                "SELECT count(lock) FROM LogLockElab lock WHERE lock.nmElab = :nmElab AND lock.tiLockElab = :tiLock AND lock.orgStrut.idStrut = :idStrut");
+        query.setParameter("nmElab", asyncTask);
+        query.setParameter("tiLock", JobConstants.LockTypeEnum.LOCK_PER_STRUT.name());
+        query.setParameter("idStrut", idStrut);
+        return (Long) query.getSingleResult();
+    }
+
+    public void lockRecord(Long idLock) {
+        LogLockElab lockRecord = entityManager.find(LogLockElab.class, idLock);
+        if (lockRecord == null) {
+            throw new NoResultException("no LogLockElab found for id " + idLock);
+        }
+        lockRecord.setFlElabAttiva(JobConstants.DB_FALSE);
+        entityManager.flush();
+    }
 }

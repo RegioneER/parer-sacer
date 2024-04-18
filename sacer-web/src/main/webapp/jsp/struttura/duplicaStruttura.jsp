@@ -34,8 +34,11 @@
                 <slf:lblField  name="<%=StruttureForm.InsStruttura.CHECK_INCLUDI_ELEMENTI_DISATTIVI%>" width="w50" controlWidth="w50" labelWidth="w40" />
                 <sl:newLine />   
                 <slf:lblField  name="<%=StruttureForm.InsStruttura.CHECK_MANTIENI_DATE_FINE_VALIDITA%>" width="w50" controlWidth="w50" labelWidth="w40" />
+                <sl:newLine />
+                <slf:lblField  name="<%=StruttureForm.InsStruttura.CHECK_INCLUDI_SISTEMI_MIGRAZ%>" width="w50" controlWidth="w50" labelWidth="w40" />
                 <sl:newLine />   
-
+                
+                
                 <sl:pulsantiera>
                     <slf:lblField  name="<%=StruttureForm.CheckDuplicaStruttura.CONFERMA_SCELTA_DUP%>"  width="w50" />
                     <slf:lblField  name="<%=StruttureForm.InsStruttura.CREA_STRUTTURE_TEMPLATE%>"  width="w50" /> 

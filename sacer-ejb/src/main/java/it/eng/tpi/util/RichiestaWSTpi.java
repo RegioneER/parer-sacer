@@ -1,15 +1,22 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.tpi.util;
 
-import it.eng.parer.ws.ejb.XmlContextCache;
-import it.eng.parer.xml.utils.XmlUtils;
-import it.eng.tpi.bean.EliminaCartellaArchiviataRisposta;
-import it.eng.tpi.bean.RegistraCartellaRiArkRisposta;
-import it.eng.tpi.bean.RetrieveFileUnitaDocRisposta;
-import it.eng.tpi.bean.SchedulazioniJobTPIRisposta;
-import it.eng.tpi.bean.StatoArchiviazioneCartellaRisposta;
-import it.eng.tpi.dto.EsitoConnessione;
-import it.eng.tpi.dto.RichiestaTpi.TipoRichiesta;
-import it.eng.tpi.dto.RichiestaTpiInput;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +24,7 @@ import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.net.ssl.SSLContext;
@@ -24,6 +32,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -42,14 +51,24 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.ws.ejb.XmlContextCache;
+import it.eng.parer.xml.utils.XmlUtils;
+import it.eng.tpi.bean.EliminaCartellaArchiviataRisposta;
+import it.eng.tpi.bean.RegistraCartellaRiArkRisposta;
+import it.eng.tpi.bean.RetrieveFileUnitaDocRisposta;
+import it.eng.tpi.bean.SchedulazioniJobTPIRisposta;
+import it.eng.tpi.bean.StatoArchiviazioneCartellaRisposta;
+import it.eng.tpi.dto.EsitoConnessione;
+import it.eng.tpi.dto.RichiestaTpi.TipoRichiesta;
+import it.eng.tpi.dto.RichiestaTpiInput;
+
 public class RichiestaWSTpi {
 
     private static Logger log = LoggerFactory.getLogger(RichiestaWSTpi.class);
     private static XmlContextCache xmlContextCache = null;
 
     public static EsitoConnessione callWs(RichiestaTpiInput input) {
-        return callWs(input.getTipoRichiesta(), input.getUrlRichiesta(), input.getParams(),
-                input.getTimeout().intValue());
+        return callWs(input.getTipoRichiesta(), input.getUrlRichiesta(), input.getParams(), input.getTimeout());
     }
 
     public static EsitoConnessione callWs(TipoRichiesta tipoRichiesta, String url, List<NameValuePair> inputParams,
@@ -116,7 +135,7 @@ public class RichiestaWSTpi {
             // for (NameValuePair pair : inputParams) {
             // builder.queryParam(pair.getName(), pair.getValue());
             // }
-            log.debug("Chiamata del servizio all'url " + url);
+            log.debug("Chiamata del servizio all'url {}", url);
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(new UrlEncodedFormEntity(inputParams));
             HttpResponse response = null;
@@ -127,7 +146,7 @@ public class RichiestaWSTpi {
                 statusCode = response.getStatusLine().getStatusCode();
             } catch (Exception ex) {
                 timeoutException = true;
-                log.debug("catch timeoutException " + ex);
+                log.error("RichiestaWSTpi call ws generic error ", ex);
             }
             if (statusCode == 404 || timeoutException) {
                 esitoConnessione.setErroreConnessione(true);

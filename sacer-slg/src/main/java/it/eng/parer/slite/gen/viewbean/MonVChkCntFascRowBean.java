@@ -1,4 +1,23 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.slite.gen.viewbean;
+
+import java.math.BigDecimal;
 
 import it.eng.parer.viewEntity.MonVChkFascByAmb;
 import it.eng.parer.viewEntity.MonVChkFascByEnte;
@@ -8,17 +27,17 @@ import it.eng.parer.viewEntity.MonVChkFascKoByAmb;
 import it.eng.parer.viewEntity.MonVChkFascKoByEnte;
 import it.eng.parer.viewEntity.MonVChkFascKoByStrut;
 import it.eng.parer.viewEntity.MonVChkFascKoByTiFasc;
-import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.JEEBaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
-import java.math.BigDecimal;
 
 /**
  * RowBean per la tabella
  *
  */
-public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, JEEBaseRowInterface {
+public class MonVChkCntFascRowBean extends BaseRow implements JEEBaseRowInterface {
+
+    private static final long serialVersionUID = 1L;
 
     public static MonVChkCntFascTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntFascTableDescriptor();
 
@@ -37,16 +56,16 @@ public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, 
         return getString("fl_fasc_corr");
     }
 
-    public void setFlFascCorr(String fl_fasc_corr) {
-        setObject("fl_fasc_corr", fl_fasc_corr);
+    public void setFlFascCorr(String flFascCorr) {
+        setObject("fl_fasc_corr", flFascCorr);
     }
 
     public BigDecimal getNiFascCorr() {
         return getBigDecimal("ni_fasc_corr");
     }
 
-    public void setNiFascCorr(BigDecimal ni_fasc_corr) {
-        setObject("ni_fasc_corr", ni_fasc_corr);
+    public void setNiFascCorr(BigDecimal niFascCorr) {
+        setObject("ni_fasc_corr", niFascCorr);
         setFlFascCorr(getNiFascCorr() != null && !getNiFascCorr().equals(BigDecimal.ZERO) ? "1" : "0");
     }
 
@@ -91,16 +110,16 @@ public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, 
         return getString("fl_fasc_attesa_sched_corr");
     }
 
-    public void setFlFascAttesaSchedCorr(String fl_fasc_attesa_sched_corr) {
-        setObject("fl_fasc_attesa_sched_corr", fl_fasc_attesa_sched_corr);
+    public void setFlFascAttesaSchedCorr(String flFascAttesaSchedCorr) {
+        setObject("fl_fasc_attesa_sched_corr", flFascAttesaSchedCorr);
     }
 
     public BigDecimal getNiFascAttesaSchedCorr() {
         return getBigDecimal("ni_fasc_attesa_sched_corr");
     }
 
-    public void setNiFascAttesaSchedCorr(BigDecimal ni_fasc_attesa_sched_corr) {
-        setObject("ni_fasc_attesa_sched_corr", ni_fasc_attesa_sched_corr);
+    public void setNiFascAttesaSchedCorr(BigDecimal niFascAttesaSchedCorr) {
+        setObject("ni_fasc_attesa_sched_corr", niFascAttesaSchedCorr);
         setFlFascAttesaSchedCorr(
                 getNiFascAttesaSchedCorr() != null && !getNiFascAttesaSchedCorr().equals(BigDecimal.ZERO) ? "1" : "0");
     }
@@ -149,16 +168,16 @@ public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, 
         return getString("fl_fasc_nosel_sched_corr");
     }
 
-    public void setFlFascNoselSchedCorr(String fl_fasc_nosel_sched_corr) {
-        setObject("fl_fasc_nosel_sched_corr", fl_fasc_nosel_sched_corr);
+    public void setFlFascNoselSchedCorr(String flFascNoselSchedCorr) {
+        setObject("fl_fasc_nosel_sched_corr", flFascNoselSchedCorr);
     }
 
     public BigDecimal getNiFascNoselSchedCorr() {
         return getBigDecimal("ni_fasc_nosel_sched_corr");
     }
 
-    public void setNiFascNoselSchedCorr(BigDecimal ni_fasc_nosel_sched_corr) {
-        setObject("ni_fasc_nosel_sched_corr", ni_fasc_nosel_sched_corr);
+    public void setNiFascNoselSchedCorr(BigDecimal niFascNoselSchedCorr) {
+        setObject("ni_fasc_nosel_sched_corr", niFascNoselSchedCorr);
         setFlFascNoselSchedCorr(
                 getNiFascNoselSchedCorr() != null && !getNiFascNoselSchedCorr().equals(BigDecimal.ZERO) ? "1" : "0");
     }
@@ -208,16 +227,16 @@ public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, 
         return getNiFascKoFallCorr().equals(BigDecimal.ZERO) ? "0" : "1";
     }
 
-    public void setFlFascKoFallCorr(String fl_fasc_ko_fall_corr) {
-        setObject("fl_fasc_ko_fall_corr", fl_fasc_ko_fall_corr);
+    public void setFlFascKoFallCorr(String flFascKoFallCorr) {
+        setObject("fl_fasc_ko_fall_corr", flFascKoFallCorr);
     }
 
     public BigDecimal getNiFascKoFallCorr() {
         return getBigDecimal("ni_fasc_ko_fall_corr");
     }
 
-    public void setNiFascKoFallCorr(BigDecimal ni_fasc_ko_fall_corr) {
-        setObject("ni_fasc_ko_fall_corr", ni_fasc_ko_fall_corr);
+    public void setNiFascKoFallCorr(BigDecimal niFascKoFallCorr) {
+        setObject("ni_fasc_ko_fall_corr", niFascKoFallCorr);
         setFlFascKoFallCorr(
                 getNiFascKoFallCorr() != null && !getNiFascKoFallCorr().equals(BigDecimal.ZERO) ? "1" : "0");
     }
@@ -265,16 +284,16 @@ public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, 
         return getString("fl_fasc_ko_verif_corr");
     }
 
-    public void setFlFascKoVerifCorr(String fl_fasc_ko_verif_corr) {
-        setObject("fl_fasc_ko_verif_corr", fl_fasc_ko_verif_corr);
+    public void setFlFascKoVerifCorr(String flFascKoVerifCorr) {
+        setObject("fl_fasc_ko_verif_corr", flFascKoVerifCorr);
     }
 
     public BigDecimal getNiFascKoVerifCorr() {
         return getBigDecimal("ni_fasc_ko_verif_corr");
     }
 
-    public void setNiFascKoVerifCorr(BigDecimal ni_fasc_ko_verif_corr) {
-        setObject("ni_fasc_ko_verif_corr", ni_fasc_ko_verif_corr);
+    public void setNiFascKoVerifCorr(BigDecimal niFascKoVerifCorr) {
+        setObject("ni_fasc_ko_verif_corr", niFascKoVerifCorr);
         setFlFascKoVerifCorr(
                 getNiFascKoVerifCorr() != null && !getNiFascKoVerifCorr().equals(BigDecimal.ZERO) ? "1" : "0");
     }
@@ -322,16 +341,16 @@ public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, 
         return getString("fl_fasc_ko_non_verif_corr");
     }
 
-    public void setFlFascKoNonVerifCorr(String fl_fasc_ko_non_verif_corr) {
-        setObject("fl_fasc_ko_non_verif_corr", fl_fasc_ko_non_verif_corr);
+    public void setFlFascKoNonVerifCorr(String flFascKoNonVerifCorr) {
+        setObject("fl_fasc_ko_non_verif_corr", flFascKoNonVerifCorr);
     }
 
     public BigDecimal getNiFascKoNonVerifCorr() {
         return getBigDecimal("ni_fasc_ko_non_verif_corr");
     }
 
-    public void setNiFascKoNonVerifCorr(BigDecimal ni_fasc_ko_non_verif_corr) {
-        setObject("ni_fasc_ko_non_verif_corr", ni_fasc_ko_non_verif_corr);
+    public void setNiFascKoNonVerifCorr(BigDecimal niFascKoNonVerifCorr) {
+        setObject("ni_fasc_ko_non_verif_corr", niFascKoNonVerifCorr);
         setFlFascKoNonVerifCorr(
                 getNiFascKoNonVerifCorr() != null && !getNiFascKoNonVerifCorr().equals(BigDecimal.ZERO) ? "1" : "0");
     }
@@ -379,16 +398,16 @@ public class MonVChkCntFascRowBean extends BaseRow implements BaseRowInterface, 
         return getString("fl_fasc_ko_non_risolub_corr");
     }
 
-    public void setFlFascKoNonRisolubCorr(String fl_fasc_ko_non_risolub_corr) {
-        setObject("fl_fasc_ko_non_risolub_corr", fl_fasc_ko_non_risolub_corr);
+    public void setFlFascKoNonRisolubCorr(String flFascKoNonRisolubCorr) {
+        setObject("fl_fasc_ko_non_risolub_corr", flFascKoNonRisolubCorr);
     }
 
     public BigDecimal getNiFascKoNonRisolubCorr() {
         return getBigDecimal("ni_fasc_ko_non_risolub_corr");
     }
 
-    public void setNiFascKoNonRisolubCorr(BigDecimal ni_fasc_ko_non_risolub_corr) {
-        setObject("ni_fasc_ko_non_risolub_corr", ni_fasc_ko_non_risolub_corr);
+    public void setNiFascKoNonRisolubCorr(BigDecimal niFascKoNonRisolubCorr) {
+        setObject("ni_fasc_ko_non_risolub_corr", niFascKoNonRisolubCorr);
         setFlFascKoNonRisolubCorr(
                 getNiFascKoNonRisolubCorr() != null && !getNiFascKoNonRisolubCorr().equals(BigDecimal.ZERO) ? "1"
                         : "0");

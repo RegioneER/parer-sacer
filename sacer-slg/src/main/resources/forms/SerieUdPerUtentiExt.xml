@@ -61,6 +61,7 @@
         <CheckBox Name="fl_upd_modif_unita_doc" Description="Presenza di unità documentarie aggiornate" Type="STRING" />
         <Input Name="dt_inizio_sel_serie" Description="Data inizio selezione" Type="DATE" />
         <Input Name="dt_fine_sel_serie" Description="Data fine selezione" Type="DATE" />
+        <Input Description="Urn" Name="urn_serie" Type="STRING"/>
         <!-- Stato versione-->
         <Input Name="ti_stato_ver_serie" Description="Stato versione" Type="STRING" />
         <!-- Stato conservazione-->

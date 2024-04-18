@@ -4,6 +4,26 @@
 <%@ include file="../../include.jsp"%>
 <sl:html>
     <sl:head  title="Monitoraggio - Lista elenchi per processo generazione indice AIP" >
+        <script type='text/javascript' >
+            $(document).ready(function () {
+                $('#ElenchiMonitoraggioIndiceAIPList tr').each(
+                        function (index) {
+                            //var elemento = $(this).find('td:eq(2), td:eq(3), td:eq(4)');
+                            //elemento.css({"text-align": "right"});
+                            
+                            // Mostra/nascondi icona link ud
+                            var elemento1 = $("[name='Cd_ti_eve_stato_elenco_vers']").val();
+                            if(elemento1 !== 'IN_CODA_VERIFICA_FIRMA_DT_VERS'
+                            && elemento1 !== 'IN_CODA_INDICE_AIP_DA_ELAB'
+                            && elemento1 !== 'ESEGUITA_VERIFICA_FIRMA_DT_VERS'){
+                            var elemento2 = $(this).find('td:eq(16)');                            
+                                elemento2.empty();
+                            }
+                });
+          });
+        </script>
+        
+        
     </sl:head>
     <sl:body>
         <sl:header changeOrganizationBtnDescription="Cambia struttura" />

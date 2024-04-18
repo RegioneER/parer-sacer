@@ -23,7 +23,7 @@
             $('#Ds_link_unita_doc_oggetto').hide();
             $('#Cd_registro_key_unita_doc_link').hide();
             $('#Aa_key_unita_doc_link').hide();
-            $('#Cd_key_unita_doc_link').hide();
+            $('#Cd_key_unita_doc_link').hide();            
             gestisciRifTemp();
             initChangeEvents();
         });
@@ -55,6 +55,7 @@
                 $('#Aa_key_unita_doc_link').show();
                 $('#Cd_key_unita_doc_link').show();
             }
+            
 
             $('#Is_oggetto_collegamento').change(function () {
                 var $input = $(this).val();
@@ -69,8 +70,7 @@
             if ($('#Is_oggetto_collegamento').val() === '1') {
                 $('#Ds_link_unita_doc_oggetto').show();
             }
-        }
-        ;
+        };
 
         function gestisciRifTemp() {
             var flRifTemp = $('[name=Fl_rif_temp_vers]');
@@ -176,6 +176,14 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_FORZA_CONSERVAZIONE%>" colSpan="2"/>
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_FORZA_COLLEGAMENTO%>" colSpan="2"/>
+                    <sl:newLine />
+                    <%--<slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_FORZA_HASH%>" colSpan="1"/>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_FORZA_FMT_NUMERO%>" colSpan="1"/>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_FORZA_FMT_FILE%>" colSpan="1"/>
+                    <sl:newLine />--%>
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.CD_VERSIONE_WS%>" colSpan="1"/>
                 </slf:section>
                 <slf:section name="<%=UnitaDocumentarieForm.ContrConservRicercaSection.NAME%>" styleClass="importantContainer">
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.DT_ACQUISIZIONE_UNITA_DOC_DA%>" controlWidth="w70" colSpan="1"/>
@@ -186,6 +194,8 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_DOC_AGGIUNTI%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_DOC_ANNUL%>" colSpan="1"/>
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_UNITA_DOC_ANNUL%>" colSpan="1"/>
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_AGG_META%>" colSpan="1"/>
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata.FL_UNITA_DOC_FIRMATO%>" colSpan="2"/>
                     <sl:newLine />
@@ -285,6 +295,16 @@
                     <sl:newLine />
                     <slf:lblField name="<%=UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie.TI_ESITO_VERIF_FIRME_CHIUS%>" colSpan="2"/>
                 </slf:section>
+                    <slf:section name="<%=UnitaDocumentarieForm.FiltriFirmatari.NAME%>" styleClass="importantContainer">
+                    <%--<slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie.CON_FIRMATARIO%>" />
+                    <sl:newLine />--%>
+                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie.NM_FIRMATARIO%>"  />                                        
+                    <sl:newLine />
+                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie.NM_COGNOME_FIRMATARIO%>" />
+                    <sl:newLine />
+                    <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie.CD_FIRMATARIO%>" />                    
+                </slf:section>
+                    
                 <slf:section name="<%=UnitaDocumentarieForm.FiltriFascicoli.NAME%>" styleClass="importantContainer">
                     <slf:lblField colSpan="2" name="<%=UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie.CD_COMPOSITO_VOCE_TITOL%>" />
                     <slf:lblField colSpan="1" name="<%=UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie.AA_FASCICOLO%>"  />

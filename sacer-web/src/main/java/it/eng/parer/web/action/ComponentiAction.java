@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import java.io.File;
@@ -9,10 +26,12 @@ import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Objects;
 
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jettison.json.JSONObject;
@@ -87,7 +106,7 @@ import it.eng.spagoLite.security.Secure;
  */
 public class ComponentiAction extends ComponentiAbstractAction {
 
-    private static Logger logger = LoggerFactory.getLogger(ComponentiAction.class.getName());
+    private static Logger log = LoggerFactory.getLogger(ComponentiAction.class.getName());
     @EJB(mappedName = "java:app/Parer-ejb/ComponentiHelper")
     private ComponentiHelper componentiHelper;
     @EJB(mappedName = "java:app/Parer-ejb/UnitaDocumentarieHelper")
@@ -166,7 +185,7 @@ public class ComponentiAction extends ComponentiAbstractAction {
         DecodeMap mappaSubStruts = DecodeMap.Factory.newInstance(tmpSubStrutsTableBean, "id_sub_strut", "nm_sub_strut");
         getForm().getRicComponentiFiltri().getNm_sub_strut().setDecodeMap(mappaSubStruts);
         // Precompilo la mappa con tutti i valori
-        Iterator it = mappaSubStruts.keySet().iterator();
+        Iterator<?> it = mappaSubStruts.keySet().iterator();
         String[] chiavi = new String[mappaSubStruts.keySet().size()];
         int i = 0;
         while (it.hasNext()) {
@@ -182,8 +201,6 @@ public class ComponentiAction extends ComponentiAbstractAction {
                 ComboGetter.getMappaSortedGenericEnum("stato", VolumeEnums.ControlloConformitaEnum.values()));
         getForm().getRicComponentiFiltri().getTi_esito_verif_firme().setDecodeMap(
                 ComboGetter.getMappaSortedGenericEnum("ti_esito_verif_firme", VolumeEnums.StatoVerifica.values()));
-        // getForm().getRicComponentiFiltri().getTi_esito_verif_firme_chius().setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_esito_verif_firme_chius",
-        // VolumeEnums.StatoVerifica.getComboEsitoVerifFirmeChius()));
         getForm().getRicComponentiFiltri().getFl_comp_firmato().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getRicComponentiFiltri().getCd_registro_key_unita_doc().setDecodeMap(mappaRegistro);
         getForm().getRicComponentiFiltri().getDs_algo_hash_file_calc()
@@ -201,18 +218,10 @@ public class ComponentiAction extends ComponentiAbstractAction {
         getForm().getRicComponentiFiltri().getFl_rif_temp_vers().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getRicComponentiFiltri().getFl_hash_vers().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getRicComponentiFiltri().getNm_tipo_rappr_comp().setDecodeMap(mappaRappr);
-        // getForm().getRicComponentiFiltri().getFl_doc_annul().setValue("0");
         getForm().getRicComponentiFiltri().getNm_sub_strut().setValues(chiavi);
 
-        // if (mappaSubStruts.keySet().size() == 1) {
-        // BigDecimal singleKey = (BigDecimal)
-        // mappaSubStruts.keySet().iterator().next();
-        // getForm().getRicComponentiFiltri().getNm_sub_strut().setValues(new
-        // String[]{String.valueOf(singleKey.longValue())});
-        // }
         getForm().getComponentiList().setTable(null);
 
-        // getForm().getRicComponentiFiltri().getFl_doc_annul().setValue("0");
         // Carico la pagina di ricerca
         forwardToPublisher(Application.Publisher.COMPONENTI_RICERCA);
         // Imposto i filtri in edit mode
@@ -278,8 +287,8 @@ public class ComponentiAction extends ComponentiAbstractAction {
                 }
                 // La validazione non ha riportato errori. carico la tabella con i filtri
                 // impostati
-                String maxResultRicercaComp = configurationHelper.getValoreParamApplic("MAX_RESULT_RICERCA_COMP", null,
-                        null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultRicercaComp = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_RICERCA_COMP);
                 AroVRicCompTableBean componentiTableBean = componentiHelper.getAroVRicCompViewBean(getIdStrut(),
                         compfiltri, dateAcquisizioneValidate, tmpTableBeanTipoUD, tmpTableBeanTipoDoc,
                         Integer.parseInt(maxResultRicercaComp));
@@ -372,18 +381,6 @@ public class ComponentiAction extends ComponentiAbstractAction {
             if (componenteRB.getNiOrdCompPadre() != null) {
                 getForm().getComponentiDetail().getNm_formato_calc().setHidden(true);
             }
-            // // Se Tipo Supporto = 'RIFERIMENTO', visualizzo Registro, Anno e Numero
-            // getForm().getComponentiDetail().getCd_registro_key_unita_doc_rif().setHidden(true);
-            // getForm().getComponentiDetail().getAa_key_unita_doc_rif().setHidden(true);
-            // getForm().getComponentiDetail().getCd_key_unita_doc_rif().setHidden(true);
-            // getSession().setAttribute("visualizzaLabel", false);
-            // if (componenteRB.getTiSupportoComp() != null &&
-            // componenteRB.getTiSupportoComp().equals("RIFERIMENTO")) {
-            // getForm().getComponentiDetail().getCd_registro_key_unita_doc_rif().setHidden(false);
-            // getForm().getComponentiDetail().getAa_key_unita_doc_rif().setHidden(false);
-            // getForm().getComponentiDetail().getCd_key_unita_doc_rif().setHidden(false);
-            // getSession().setAttribute("visualizzaLabel", true);
-            // }
 
             Calendar cal = Calendar.getInstance();
             cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
@@ -433,7 +430,18 @@ public class ComponentiAction extends ComponentiAbstractAction {
             }
 
             // Informazioni sull'archiviazione
-            showHideTipoArchiviazione(componenteRB.getTipoArchiviazione());
+            boolean hideObjectStorage = StringUtils.isBlank(componenteRB.getNmBucket())
+                    && StringUtils.isBlank(componenteRB.getCdKeyFile());
+            boolean hideNastro = StringUtils.isBlank(componenteRB.getDsNomeFileArk());
+            boolean hideOracle = Objects.isNull(componenteRB.getIdFileOracle());
+
+            getForm().getComponentiDetail().getNm_tenant().setHidden(hideObjectStorage);
+            getForm().getComponentiDetail().getNm_bucket().setHidden(hideObjectStorage);
+            getForm().getComponentiDetail().getCd_key_file().setHidden(hideObjectStorage);
+            getForm().getComponentiDetail().getTi_stato_dt_vers().setHidden(hideNastro);
+            getForm().getComponentiDetail().getDs_nome_file_ark().setHidden(hideNastro);
+            getForm().getComponentiDetail().getCd_sub_partition().setHidden(hideOracle);
+            getForm().getComponentiDetail().getId_file_oracle().setHidden(hideOracle);
 
             // Trasformatore
             if (componenteRB.getTiSupportoComp().equals("RIFERIMENTO")) {
@@ -445,8 +453,8 @@ public class ComponentiAction extends ComponentiAbstractAction {
                 getForm().getComponentiDetail().getTrasformatore().setHidden(true);
             }
 
-            String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String maxResultStandard = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
             // Carico la lista firme
             AroVLisFirmaCompTableBean listFirmaCompTB = componentiHelper.getAroVLisFirmaCompTableBean(idComp,
                     Integer.parseInt(maxResultStandard));
@@ -501,11 +509,13 @@ public class ComponentiAction extends ComponentiAbstractAction {
             }
             // Imposto visibile il bottone per scaricare i files DIP per esibizione
             getForm().getComponentiDetail().getScarica_dip_esibizione_comp_doc().setEditMode();
+            getForm().getComponentiDetail().getScarica_dip_esibizione_comp_doc().setDisableHourGlass(true);
 
             // Imposto visibile il bottone per scaricare il report di verifica firma
             if (StringUtils.isNotBlank(componenteRB.getFlCompFirmato())
                     && componenteRB.getFlCompFirmato().equalsIgnoreCase(CostantiDB.Flag.TRUE)) {
                 getForm().getComponentiDetail().getScarica_report_firma().setEditMode();
+                getForm().getComponentiDetail().getScarica_report_firma().setDisableHourGlass(true);
             } else {
                 getForm().getComponentiDetail().getScarica_report_firma().setHidden(true);
             }
@@ -591,37 +601,19 @@ public class ComponentiAction extends ComponentiAbstractAction {
         }
     }
 
-    private void showHideTipoArchiviazione(String tipoArchiviazione) {
-        boolean hideObjectStorage = true;
-        boolean hideNastro = true;
-        boolean hideOracle = true;
-        if (tipoArchiviazione.equals("OBJECT_STORAGE")) {
-            hideObjectStorage = false;
-        } else if (tipoArchiviazione.equals("NASTRO")) {
-            hideNastro = false;
-        } else if (tipoArchiviazione.equals("ORACLE")) {
-            hideOracle = false;
-        }
-
-        getForm().getComponentiDetail().getNm_tenant().setHidden(hideObjectStorage);
-        getForm().getComponentiDetail().getNm_bucket().setHidden(hideObjectStorage);
-        getForm().getComponentiDetail().getCd_key_file().setHidden(hideObjectStorage);
-        getForm().getComponentiDetail().getTi_stato_dt_vers().setHidden(hideNastro);
-        getForm().getComponentiDetail().getDs_nome_file_ark().setHidden(hideNastro);
-        getForm().getComponentiDetail().getCd_sub_partition().setHidden(hideOracle);
-        getForm().getComponentiDetail().getId_file_oracle().setHidden(hideOracle);
-    }
-
     @Override
     public void undoDettaglio() throws EMFError {
+        // not implemented yet
     }
 
     @Override
     public void insertDettaglio() throws EMFError {
+        // not implemented yet
     }
 
     @Override
     public void saveDettaglio() throws EMFError {
+        // not implemented yet
     }
 
     /**
@@ -802,11 +794,6 @@ public class ComponentiAction extends ComponentiAbstractAction {
         forwardToPublisher(Application.Publisher.COMPONENTI_DETAIL);
     }
 
-    // @Override
-    // public void tabInfoElencoVersCompOnClick() throws EMFError {
-    // getForm().getComponentiDettaglioTabs().setCurrentTab(getForm().getComponentiDettaglioTabs().getInfoElencoVersComp());
-    // forwardToPublisher(Application.Publisher.COMPONENTI_DETAIL);
-    // }
     @Override
     public void tabListaMarcheCompOnClick() throws EMFError {
         getForm().getComponentiDettaglioListsTabs()
@@ -875,17 +862,6 @@ public class ComponentiAction extends ComponentiAbstractAction {
         forwardToPublisher(Application.Publisher.FIRME_DETAIL);
     }
 
-    // @Override
-    // public void tabControlloFirmaVersOnClick() throws EMFError {
-    // getForm().getFirmeDettaglioTabs().setCurrentTab(getForm().getFirmeDettaglioTabs().getControlloFirmaVers());
-    // forwardToPublisher(Application.Publisher.FIRME_DETAIL);
-    // }
-    //
-    // @Override
-    // public void tabControlloFirmaChiusVolOnClick() throws EMFError {
-    // getForm().getFirmeDettaglioTabs().setCurrentTab(getForm().getFirmeDettaglioTabs().getControlloFirmaChiusVol());
-    // forwardToPublisher(Application.Publisher.FIRME_DETAIL);
-    // }
     @Override
     public void tabControlliFirmaOnClick() throws EMFError {
         getForm().getFirmeDettaglioTabs().setCurrentTab(getForm().getFirmeDettaglioTabs().getControlliFirma());
@@ -989,10 +965,8 @@ public class ComponentiAction extends ComponentiAbstractAction {
                 getResponse().setContentType(StringUtils.isBlank(contentType) ? "application/zip" : contentType);
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename);
 
-                FileInputStream inputStream = null;
-                try {
+                try (FileInputStream inputStream = new FileInputStream(fileToDownload)) {
                     getResponse().setHeader("Content-Length", String.valueOf(fileToDownload.length()));
-                    inputStream = new FileInputStream(fileToDownload);
                     byte[] bytes = new byte[8000];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(bytes)) != -1) {
@@ -1000,18 +974,16 @@ public class ComponentiAction extends ComponentiAbstractAction {
                     }
                     outUD.flush();
                 } catch (IOException e) {
-                    logger.error("Eccezione nel recupero del documento ", e);
+                    log.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
-                    IOUtils.closeQuietly(inputStream);
                     IOUtils.closeQuietly(outUD);
-                    inputStream = null;
                     outUD = null;
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
-                    fileToDownload.delete();
+                if (deleteFile.booleanValue()) {
+                    FileUtils.deleteQuietly(fileToDownload);
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");
@@ -1029,6 +1001,7 @@ public class ComponentiAction extends ComponentiAbstractAction {
 
     @Override
     public void reloadAfterGoBack(String publisherName) {
+        // not implemented yet
     }
 
     @Override
@@ -1051,11 +1024,10 @@ public class ComponentiAction extends ComponentiAbstractAction {
                 getMessageBox().addError(ddip.getRispostaWs().getErrorMessage());
             }
         } catch (NamingException ex) {
-            // logger.fatal(ex);
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
             getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
         }
-        if (getMessageBox().isEmpty()) {
+        if (getMessageBox().isEmpty() && !Objects.isNull(ddip)) {
             getSession().setAttribute(WebConstants.DOWNLOAD_DIP.DIP_RECUPERO_EXT.name(), ddip.getRecuperoExt());
             getSession().setAttribute(WebConstants.DOWNLOAD_DIP.DIP_RISPOSTA_WS.name(), ddip.getRispostaWs());
             getSession().setAttribute(WebConstants.DOWNLOAD_DIP.DIP_ENTITA.name(),
@@ -1086,8 +1058,7 @@ public class ComponentiAction extends ComponentiAbstractAction {
             ddip = new DownloadDip(myRecuperoExt, rispostaWs);
             ddip.scaricaDipZip(DownloadDip.TIPO_DOWNLOAD.SCARICA_COMP_CONV);
         } catch (NamingException ex) {
-            // logger.fatal(ex);
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
             getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
         }
         if (getMessageBox().isEmpty()) {
@@ -1139,8 +1110,7 @@ public class ComponentiAction extends ComponentiAbstractAction {
             ddip.setTipoEntitaSacer(tipoEntita);
             ddip.scaricaDipZip(DownloadDip.TIPO_DOWNLOAD.SCARICA_ZIP);
         } catch (NamingException ex) {
-            // logger.fatal(ex);
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
             getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
         }
         if (getMessageBox().isEmpty()) {

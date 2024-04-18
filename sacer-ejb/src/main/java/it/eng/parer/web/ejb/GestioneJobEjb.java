@@ -1,8 +1,24 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.ejb;
 
 import it.eng.parer.entity.DecJob;
 import it.eng.parer.entity.DecJobFoto;
-import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.slite.gen.form.GestioneJobForm;
 import it.eng.parer.web.helper.GestioneJobHelper;
 import it.eng.spagoCore.error.EMFError;
@@ -12,14 +28,21 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.DecJob;
+import it.eng.parer.entity.DecJobFoto;
+import it.eng.parer.slite.gen.form.GestioneJobForm;
+import it.eng.parer.web.helper.GestioneJobHelper;
+import it.eng.spagoCore.error.EMFError;
+import it.eng.spagoLite.db.base.row.BaseRow;
+import it.eng.spagoLite.db.base.table.BaseTable;
 
 /**
  *
@@ -55,6 +78,7 @@ public class GestioneJobEjb {
         return helper.areAllJobsDisattivati();
     }
 
+    @SuppressWarnings("unchecked")
     public void ripristinaFotoGestioneJob() {
         // Ripristino solo lo stato, se i dati di schedulazione sono non nulli,
         // altrimenti non ripristino lo stato.
@@ -137,10 +161,10 @@ public class GestioneJobEjb {
                     BaseRow row = new BaseRow();
                     row.setString("nm_job", ((String) job[0]));
                     row.setString("ds_job", (String) job[1]);
-                    if (job[2] != null) {
+                    if (job[2] != null) { // dt_prossima_attivazione
                         row.setTimestamp("dt_prossima_attivazione", new Timestamp(((Date) job[2]).getTime()));
-                        if ((String) job[9] == null
-                                || (((String) job[9]).equals("ATTIVO") || ((String) job[9]).equals("DISATTIVO"))) {
+                        if ((String) job[9] == null // ti_stato_timer
+                                || (((String) job[9]).equals("ATTIVO") || ((String) job[9]).equals("INATTIVO"))) {
                             attivo = true;
                         }
                     }
@@ -148,29 +172,45 @@ public class GestioneJobEjb {
                     if (job[4] != null) {
                         row.setTimestamp("dt_ultima_esecuzione", new Timestamp(((Date) job[4]).getTime()));
                     }
-
-                    String statoJob = "";
-                    if (attivo) {
-                        row.setString("stato_job", "ATTIVO");
-                        row.setString("operazione_job_start", "0");
-                        row.setString("operazione_job_single", "0");
-                        row.setString("operazione_job_stop", "1");
-                    } else if (job[5] != null && ((String) job[5]).equals("1")) {
+                    //
+                    if (job[5] != null && ((Character) job[5]).toString().equals("1")) {
                         row.setString("stato_job", "IN_ESECUZIONE");
                         row.setString("operazione_job_start", "0");
                         row.setString("operazione_job_stop", "0");
                         row.setString("operazione_job_single", "0");
+                    } else if (attivo) {
+                        // Se è SCHEDULATO
+                        row.setString("stato_job", "ATTIVO");
+                        row.setString("operazione_job_start", "0");
+                        row.setString("operazione_job_single", "0");
+                        row.setString("operazione_job_stop", "1");
+                    } // Se è in ESECUZIONE_SINGOLA
+                    else if (((String) job[9] != null // ti_stato_timer
+                            && ((String) job[9]).equals("ESECUZIONE_SINGOLA"))) {
+                        row.setString("stato_job", "DISATTIVO");
+                        row.setString("operazione_job_stop", "1");
+                        row.setString("operazione_job_single", "0");
+                        row.setString("operazione_job_start", "0");
                     } else {
                         row.setString("stato_job", "DISATTIVO");
                         row.setString("operazione_job_stop", "0");
                         row.setString("operazione_job_single", "1");
                         row.setString("operazione_job_start", "1");
                     }
+                    if (((String) job[10]).equals("NO_TIMER")) {
+                        row.setString("operazione_job_start", "0");
+                        row.setString("operazione_job_stop", "0");
+                    }
+                    row.setString("ti_sched_job", (String) job[10]);
 
                     // Ultima esecuzione OK
-                    row.setString("last_exec_ok", (String) job[6]);
+                    if (job[6] != null) {
+                        row.setString("last_exec_ok", ((Character) job[6]).toString());
+                    }
 
                     row.setString("job_selezionati", "0");
+
+                    // row.setString("ds_linkabile", disabilitaLinkNomeJob ? "0" : "1");
 
                     row.setString("nm_ambito", (String) job[7]);
                     row.setBigDecimal("ni_ord_exec", (BigDecimal) job[8]);
@@ -207,7 +247,7 @@ public class GestioneJobEjb {
                     if (job[2] != null) {
                         row.setTimestamp("dt_prossima_attivazione", new Timestamp(((Date) job[2]).getTime()));
                         if ((String) job[6] == null
-                                || (((String) job[6]).equals("ATTIVO") || ((String) job[6]).equals("DISATTIVO"))) {
+                                || (((String) job[6]).equals("ATTIVO") || ((String) job[6]).equals("INATTIVO"))) {
                             attivo = true;
                         }
                     }
@@ -216,11 +256,10 @@ public class GestioneJobEjb {
                         row.setTimestamp("dt_ultima_esecuzione", new Timestamp(((Date) job[4]).getTime()));
                     }
 
-                    String statoJob = "";
                     if (attivo) {
                         row.setString("stato_job", "ATTIVO");
 
-                    } else if (job[5] != null && ((String) job[5]).equals("1")) {
+                    } else if (job[5] != null && ((Character) job[5]).toString().equals("1")) {
                         row.setString("stato_job", "IN_ESECUZIONE");
 
                     } else {
@@ -259,11 +298,10 @@ public class GestioneJobEjb {
                         row.setTimestamp("dt_ultima_esecuzione", new Timestamp(((Date) job[4]).getTime()));
                     }
 
-                    String statoJob = "";
                     if (attivo) {
                         row.setString("stato_job", "ATTIVO");
 
-                    } else if (job[5] != null && ((String) job[5]).equals("1")) {
+                    } else if (job[5] != null && ((Character) job[5]).toString().equals("1")) {
                         row.setString("stato_job", "DISATTIVO");
 
                     } else {
@@ -279,6 +317,14 @@ public class GestioneJobEjb {
         }
 
         return jobTableBean;
+    }
+
+    public boolean isNoTimerJob(String nmJob) {
+        return helper.getDecJobByName(nmJob).getTiSchedJob().equals("NO_TIMER");
+    }
+
+    public String getDsJob(String nmJob) {
+        return helper.getDecJobByName(nmJob).getDsJob();
     }
 
 }

@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import static it.eng.parer.serie.ejb.SerieEjb.CD_SERIE_PATTERN;
@@ -114,12 +131,14 @@ import it.eng.parer.slite.gen.tablebean.OrgTipoServizioTableBean;
 import it.eng.parer.slite.gen.viewbean.DecVCalcTiServOnTipoUdRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsTableBean;
+import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrTableBean;
 import it.eng.parer.util.Utils;
 import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.ejb.CriteriRaggruppamentoEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.helper.CriteriRaggrHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.util.ActionMap;
 import it.eng.parer.web.util.ComboGetter;
@@ -132,6 +151,8 @@ import it.eng.parer.ws.utils.KeyOrdUtility;
 import it.eng.parer.ws.versamento.dto.ConfigRegAnno;
 import it.eng.parer.ws.versamentoTpi.utils.FileServUtils;
 import it.eng.spagoCore.error.EMFError;
+import it.eng.spagoLite.ExecutionHistory;
+import it.eng.spagoLite.SessionManager;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.BaseTableInterface;
@@ -150,6 +171,7 @@ import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class StrutTipiAction extends StrutTipiAbstractAction {
@@ -183,6 +205,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
     private SottoStruttureEjb subStrutEjb;
     @EJB(mappedName = "java:app/Parer-ejb/CriteriRaggruppamentoEjb")
     private CriteriRaggruppamentoEjb critRaggrEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/CriteriRaggrHelper")
+    private CriteriRaggrHelper crHelper;
     @EJB(mappedName = "java:app/Parer-ejb/AmbienteEjb")
     private AmbienteEjb ambienteEjb;
     @EJB(mappedName = "java:app/Parer-ejb/AmministrazioneEjb")
@@ -611,6 +635,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                     getForm().getXsdModelliUdDetail().setViewMode();
                     // button edit mode
                     getForm().getXsdModelliUdDetail().getScaricaXsdModelliUdButton().setEditMode();
+                    getForm().getXsdModelliUdDetail().getScaricaXsdModelliUdButton().setDisableHourGlass(true);
                     getForm().getXsdModelliUdDetail().setStatus(Status.view);
                 }
             }
@@ -828,6 +853,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
             getForm().getTipoUnitaDoc().setEditMode();
             getForm().getTipoUnitaDoc().clear();
+            getForm().getTipoUnitaDoc().getStorage_utilizzato_vers().setHidden(true);
+            getForm().getTipoUnitaDoc().getStorage_utilizzato_agg_doc().setHidden(true);
             getForm().getTipoUnitaDoc().getDt_istituz().setValue(stringToday);
             getForm().getTipoUnitaDocCreazioneCriterio().setEditMode();
             getForm().getTipoUnitaDocCreazioneCriterio().clear();
@@ -1115,106 +1142,65 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         String action = getNavigationEvent();
         ActionMap mappa = (ActionMap) getSession().getAttribute("ActionMap");
         getSession().setAttribute("lista", lista);
-        if (getForm().getXsdDatiSpecList().getName().equals(lista)) {
+        if (getForm().getXsdDatiSpecList().getName().equals(lista) && !action.equals(ListAction.NE_DETTAGLIO_DELETE)) {
             /*
-             * Se l'evento non è delete allora fa la redirect
+             *
+             * Ricordarsi di togliere gli append inutili nella stringa se non serve passare i parametri in quella
+             * maniera
              */
-            boolean redirect = false;
-            if (getNavigationEvent().equals(NE_DETTAGLIO_DELETE)) {
-                DecXsdDatiSpecRowBean xsdDatiSpecRowBean = ((DecXsdDatiSpecRowBean) getForm().getXsdDatiSpecList()
-                        .getTable().getCurrentRow());
-                getMessageBox().clear();
-                Date dtSoppres = xsdDatiSpecRowBean.getDtSoppres();
-                Date today = Calendar.getInstance().getTime();
-                if (dtSoppres.compareTo(today) < 0) {
-                    getMessageBox().addError("Versione XSD gi\u00E0 disattivata in precedenza");
-                    forwardToPublisher(getLastPublisher());
-                } else {
-                    // Il sistema controlla che tale attributo non sia associato a nessun tipo
-                    // serie, altrimenti da
-                    // errore
-                    if (datiSpecEjb.isXsdDatiSpecInUseInTipiSerie(xsdDatiSpecRowBean.getIdXsdDatiSpec())) {
-                        getMessageBox().addError(
-                                "Almeno un attributo dell'xsd \u00E8 utilizzato da un tipo serie. L'eliminazione dell'xsd non \u00E8 consentita");
-                        forwardToPublisher(getLastPublisher());
-                    }
-                    if (!getMessageBox().hasError()) {
-                        boolean isInUse = datiSpecEjb.isXsdDatiSpecInUse(xsdDatiSpecRowBean);
-                        boolean isInUseOnCampiRegole = datiSpecEjb.isXsdDatiSpecInUseOnCampi(
-                                xsdDatiSpecRowBean.getIdXsdDatiSpec(), "DATO_SPEC_UNI_DOC", "DATO_SPEC_DOC_PRINC");
-                        // se in uso non posso cancellare, ma posso disattivare
-                        if (isInUse || isInUseOnCampiRegole) {
-                            // Mostra messaggio di disattivazione
-                            getRequest().setAttribute("confermaDisattivazioneXsd", true);
-                            forwardToPublisher(getLastPublisher());
-                        } else {
-                            redirect = true;
-                        }
-                    }
-                }
-            } else {
-                redirect = true;
+            StrutDatiSpecForm form = new StrutDatiSpecForm();
+            Integer row = getForm().getXsdDatiSpecList().getTable().getCurrentRowIndex();
+
+            StringBuilder string = new StringBuilder(
+                    "?operation=listNavigationOnClick&navigationEvent=" + getNavigationEvent() + "&table="
+                            + StrutDatiSpecForm.XsdDatiSpecList.NAME + "&riga=" + row.toString());
+            form.getXsdDatiSpecList().setTable(getForm().getXsdDatiSpecList().getTable());
+
+            /*
+             * Propago l'idStruttura che ho salvato in memoria, per passarlo con la nuova form che porterà nella nuova
+             * action
+             */
+            BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
+            form.getIdList().getId_strut().setValue(idStrut.toString());
+
+            OrgStrutRowBean struttura = struttureEjb.getOrgStrutRowBean(idStrut);
+            string.append("&cessato=").append(struttura.getFlCessato());
+
+            if (getLastPublisher().equals(Application.Publisher.TIPO_DOC_DETAIL)) {
+                string.append("&idTipoDoc=")
+                        .append(((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow())
+                                .getIdTipoDoc().intValue());
+                form.getIdList().getId_tipo_doc()
+                        .setValue(((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow())
+                                .getIdTipoDoc().toString());
+                getSession().setAttribute("lastPage", "tipoDoc");
+                form.getTipoDocRif().getNm_tipo_doc().setValue(
+                        ((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow()).getNmTipoDoc());
+                form.getTipoDocRif().getDs_tipo_doc().setValue(
+                        ((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow()).getDsTipoDoc());
+            } else if (getLastPublisher().equals(Application.Publisher.TIPO_UNITA_DOC_DETAIL)) {
+                string.append("&idTipoUnitaDoc=")
+                        .append(((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
+                                .getIdTipoUnitaDoc().intValue());
+                form.getIdList().getId_tipo_unita_doc()
+                        .setValue(((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
+                                .getIdTipoUnitaDoc().toString());
+                getSession().setAttribute("lastPage", "tipoUnitaDoc");
+                form.getTipoUdRif().getNm_tipo_unita_doc()
+                        .setValue(((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
+                                .getNmTipoUnitaDoc());
+                form.getTipoUdRif().getDs_tipo_unita_doc()
+                        .setValue(((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
+                                .getDsTipoUnitaDoc());
             }
-            if (redirect) {
-                /*
-                 *
-                 * Ricordarsi di togliere gli append inutili nella stringa se non serve passare i parametri in quella
-                 * maniera
-                 */
-                StrutDatiSpecForm form = new StrutDatiSpecForm();
-                Integer row = getForm().getXsdDatiSpecList().getTable().getCurrentRowIndex();
 
-                StringBuilder string = new StringBuilder(
-                        "?operation=listNavigationOnClick&navigationEvent=" + getNavigationEvent() + "&table="
-                                + StrutDatiSpecForm.XsdDatiSpecList.NAME + "&riga=" + row.toString());
-                form.getXsdDatiSpecList().setTable(getForm().getXsdDatiSpecList().getTable());
+            form.getStrutRif().getStruttura().setValue(getForm().getStrutRif().getStruttura().parse());
+            form.getStrutRif().getId_ente().setValue(getForm().getStrutRif().getId_ente().getDecodedValue());
 
-                /*
-                 * Propago l'idStruttura che ho salvato in memoria, per passarlo con la nuova form che porterà nella
-                 * nuova action
-                 */
-                BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
-                form.getIdList().getId_strut().setValue(idStrut.toString());
-
-                OrgStrutRowBean struttura = struttureEjb.getOrgStrutRowBean(idStrut);
-                string.append("&cessato=").append(struttura.getFlCessato());
-
-                if (getLastPublisher().equals(Application.Publisher.TIPO_DOC_DETAIL)) {
-                    string.append("&idTipoDoc=")
-                            .append(((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow())
-                                    .getIdTipoDoc().intValue());
-                    form.getIdList().getId_tipo_doc()
-                            .setValue(((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow())
-                                    .getIdTipoDoc().toString());
-                    getSession().setAttribute("lastPage", "tipoDoc");
-                    form.getTipoDocRif().getNm_tipo_doc().setValue(
-                            ((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow()).getNmTipoDoc());
-                    form.getTipoDocRif().getDs_tipo_doc().setValue(
-                            ((DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow()).getDsTipoDoc());
-                } else if (getLastPublisher().equals(Application.Publisher.TIPO_UNITA_DOC_DETAIL)) {
-                    string.append("&idTipoUnitaDoc=").append(
-                            ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
-                                    .getIdTipoUnitaDoc().intValue());
-                    form.getIdList().getId_tipo_unita_doc().setValue(
-                            ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
-                                    .getIdTipoUnitaDoc().toString());
-                    getSession().setAttribute("lastPage", "tipoUnitaDoc");
-                    form.getTipoUdRif().getNm_tipo_unita_doc().setValue(
-                            ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
-                                    .getNmTipoUnitaDoc());
-                    form.getTipoUdRif().getDs_tipo_unita_doc().setValue(
-                            ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
-                                    .getDsTipoUnitaDoc());
-                }
-
-                form.getStrutRif().getStruttura().setValue(getForm().getStrutRif().getStruttura().parse());
-                form.getStrutRif().getId_ente().setValue(getForm().getStrutRif().getId_ente().getDecodedValue());
-
-                this.setInsertAction(false);
-                this.setEditAction(false);
-                this.setDeleteAction(false);
-                redirectToAction(Application.Actions.STRUT_DATI_SPEC, string.toString(), form);
-            }
+            this.setInsertAction(false);
+            this.setEditAction(false);
+            this.setDeleteAction(false);
+            redirectToAction(Application.Actions.STRUT_DATI_SPEC, string.toString(), form);
         } else if (getForm().getTipoUnitaDocList().getName().equals(lista)) {
             getSession().setAttribute("provenienzaRegola", Application.Publisher.TIPO_UNITA_DOC_DETAIL);
             forwardToPublisher(Application.Publisher.TIPO_UNITA_DOC_DETAIL);
@@ -1345,6 +1331,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
     @Override
     public void elencoOnClick() throws EMFError {
+        ArrayList<ExecutionHistory> executionHistoryList = SessionManager.getExecutionHistory(getSession());
         // Ripristino la visibilità dei campi "condivisi" nella gestione delle regole
         if (getLastPublisher().equals(Application.Publisher.REGISTRO_UNITA_DOC_DETAIL)) {
             getForm().getTipoUnitaDoc().getNm_tipo_unita_doc().setHidden(false);
@@ -1743,6 +1730,9 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         getForm().getRegistroUnitaDoc().getFl_registro_fisc().setViewMode();
         getForm().getRegistroUnitaDoc().getControllo_formato().setViewMode();
         getForm().getRegistroUnitaDoc().getDt_istituz().setViewMode();
+        // Data primo e ultimo versamento non editabili
+        getForm().getRegistroUnitaDoc().getDt_first_vers().setViewMode();
+        getForm().getRegistroUnitaDoc().getDt_last_vers().setViewMode();
         // Nascondo flag
         getForm().getCreaCriterioRegistroSection().setHidden(true);
 
@@ -1786,12 +1776,14 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         getForm().getTipoUnitaDoc().getNm_tipo_unita_doc().setViewMode();
         getForm().getTipoUnitaDoc().getTi_save_file().setViewMode();
         getForm().getTipoUnitaDoc().getDt_istituz().setViewMode();
+
         // Nascondo il tab (che contiene il flag) per la creazione del criterio
         getForm().getCreaCriterioTipoUnitaDocSection().setHidden(true);
 
         DecTipoUnitaDocRowBean tipoUnitaDocCurrent = (DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable()
                 .getCurrentRow();
 
+        loadStorageUtilizzato(tipoUnitaDocCurrent.getIdTipoUnitaDoc());
         // sono in update e quindi non imposto i valori di default per il tipo
         // salvataggio
         // andrebbe a sovrascrivere il valore effettivo del record in modifica.
@@ -1811,8 +1803,9 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             getForm().getTipoUnitaDocCreazioneCriterio().getCreaCriterioRaggrStandardTipoUdButton().setHidden(true);
         }
 
-        // Data primo versamento non editabile
+        // Data primo e ultimo versamento non editabili
         getForm().getTipoUnitaDoc().getDt_first_vers().setViewMode();
+        getForm().getTipoUnitaDoc().getDt_last_vers().setViewMode();
 
         getForm().getTipoUnitaDocList().setStatus(Status.update);
         getForm().getTipoUnitaDoc().setStatus(Status.update);
@@ -1868,20 +1861,19 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
     /**
      * Metodo che inizializza la ComboBox presente nella form relativa a TipoUnita
      */
-    private void setTipoUnitaComboBox() {
+    private void setTipoUnitaComboBox() throws EMFError {
         setTipoUnitaComboBox(false);
     }
 
     /**
      * Metodo che inizializza la ComboBox presente nella form relativa a TipoUnita
      */
-    private void setTipoUnitaComboBox(boolean isUpdate) {
+    private void setTipoUnitaComboBox(boolean isUpdate) throws EMFError {
         getForm().getTipoUnitaDoc().getTi_save_file().setDecodeMap(
                 ComboGetter.getMappaSortedGenericEnum("ti_save_file", CostantiDB.TipoSalvataggioFile.values()));
         if (!isUpdate) {
             getForm().getTipoUnitaDoc().getTi_save_file().setValue(CostantiDB.TipoSalvataggioFile.BLOB.name());
         }
-
         DecCategTipoUnitaDocTableBean table = tipoUnitaDocEjb.getDecCategTipoUnitaDocTableBean(true);
         DecodeMap mappaTiCateg = new DecodeMap();
         mappaTiCateg.populatedMap(table, "id_categ_tipo_unita_doc", "cd_categ_tipo_unita_doc");
@@ -1951,7 +1943,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
     }
 
     /**
-     * Metodo che cancella l'entitÃ  DecRegistroUnitaDoc corrispondente al record della lista selezionato
+     * Metodo che cancella l'entitÃ DecRegistroUnitaDoc corrispondente al record della lista selezionato
      *
      * @throws EMFError
      *             errore generico
@@ -1978,8 +1970,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.REGISTRO_UNITA_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
@@ -2016,7 +2007,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
     }
 
     /**
-     * Metodo che cancella l'entità DecTipoUnitaDoc corrispondente al record della lista selezionato
+     * Metodo che cancella l'entità DecTipoUnitaDoc corrispondente al record della lista selezionato
      *
      * @throws EMFError
      *             errore generico
@@ -2034,8 +2025,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 if (Application.Publisher.CREA_STRUTTURA.equalsIgnoreCase(param.getNomePagina())) {
                     StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
@@ -2066,7 +2056,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
     }
 
     /**
-     * Metodo che cancella l'entitÃ  DecTipoDoc corrispondente al record della lista selezionato
+     * Metodo che cancella l'entitÃ DecTipoDoc corrispondente al record della lista selezionato
      *
      * @throws EMFError
      *             errore generico
@@ -2081,8 +2071,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.TIPO_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
@@ -2116,8 +2105,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.REGISTRO_UNITA_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
@@ -2176,8 +2164,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.TIPO_UNITA_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
@@ -2231,8 +2218,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
 
             StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
@@ -2279,8 +2265,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.TIPO_STRUT_UNITA_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
@@ -2329,8 +2314,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.REGISTRO_UNITA_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
@@ -2516,8 +2500,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getRegistroUnitaDoc().getStatus().equals(Status.insert)) {
@@ -2754,8 +2737,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this), SpagoliteLogUtil
                                     .getToolbarSave(getForm().getTipoUnitaDoc().getStatus().equals(Status.update)));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -2876,8 +2858,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getTipoDocAmmesso().getStatus().equals(Status.insert)) {
@@ -2980,8 +2961,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getTipoStrutUnitaDoc().getStatus().equals(Status.insert)) {
@@ -3057,8 +3037,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             try {
@@ -3230,8 +3209,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getTipoDoc().getStatus().equals(Status.insert)) {
@@ -3354,8 +3332,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getTipoStrutDocAmmessoDaTipoDoc().getStatus().equals(Status.insert)) {
@@ -3506,13 +3483,25 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         }
         getSession().removeAttribute("provenienzaParametri");
 
-        // // Section parametri chiuse
-        // getForm().getParametriAmministrazioneSection().setLoadOpened(false);
-        // getForm().getParametriConservazioneSection().setLoadOpened(false);
-        // getForm().getParametriGestioneSection().setLoadOpened(false);
         if ((StringUtils.isNotBlank(cessato) && "1".equals(cessato)) || getRequest().getAttribute("cessato") != null) {
             getForm().getTipoUnitaDocList().setUserOperations(true, false, false, false);
         }
+
+        loadStorageUtilizzato(idTipoUnitaDoc);
+
+    }
+
+    private void loadStorageUtilizzato(BigDecimal idTipoUnitaDoc) {
+        getForm().getTipoUnitaDoc().getStorage_utilizzato_vers().setHidden(false);
+        getForm().getTipoUnitaDoc().getStorage_utilizzato_agg_doc().setHidden(false);
+        getForm().getTipoUnitaDoc().getStorage_utilizzato_vers().setViewMode();
+        getForm().getTipoUnitaDoc().getStorage_utilizzato_agg_doc().setViewMode();
+        getForm().getTipoUnitaDoc().getStorage_utilizzato_vers()
+                .setValue(tipoUnitaDocEjb.getStorageUtilizzatoVersamento(idTipoUnitaDoc));
+        getForm().getTipoUnitaDoc().getStorage_utilizzato_vers_mm()
+                .setValue(tipoUnitaDocEjb.getStorageUtilizzatoVersamentoMultimedia(idTipoUnitaDoc));
+        getForm().getTipoUnitaDoc().getStorage_utilizzato_agg_doc()
+                .setValue(tipoUnitaDocEjb.getStorageUtilizzatoAggiuntaDocumenti(idTipoUnitaDoc));
     }
 
     private void loadTipoUnitaDoclists(boolean isFirst) throws EMFError, ParerUserError {
@@ -3607,11 +3596,14 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         getForm().getSistemiVersantiList().setTable(listaSistemiVersanti);
         getForm().getSistemiVersantiList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
         getForm().getTipoUnitaDoc().getDt_first_vers().setValue("");
+        getForm().getTipoUnitaDoc().getDt_last_vers().setValue("");
         if (getForm().getSistemiVersantiList().getTable().getRow(0) != null
                 && getForm().getSistemiVersantiList().getTable().getRow(0).getObject("dt_first_vers") != null) {
             SimpleDateFormat format = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
             Date d = (Date) getForm().getSistemiVersantiList().getTable().getRow(0).getObject("dt_first_vers");
             getForm().getTipoUnitaDoc().getDt_first_vers().setValue("" + format.format(d));
+            Date dLast = (Date) getForm().getSistemiVersantiList().getTable().getRow(0).getObject("dt_last_vers");
+            getForm().getTipoUnitaDoc().getDt_last_vers().setValue("" + format.format(dLast));
         }
 
         // Lista criteri di raggruppamento
@@ -3886,21 +3878,16 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
 
             // sono in update e quindi non imposto i valori di default per il tipo
-            // salvataggio
-            // andrebbe a sovrascrivere il valore effettivo del record in modifica.
+            // salvataggio. Questo andrebbe infatti a sovrascrivere il valore effettivo del record in modifica.
             setTipoUnitaComboBox(true);
             if (!struttureEjb.existAroUnitaDocByIdTipoUnitaDoc(idTipoUnitaDoc, idStrut)) {
                 getForm().getTipoUnitaDoc().setEditMode();
             }
+            //
 
-            // getForm().getParametriAmministrazioneTipoUdList().getDs_valore_param_applic_tipo_ud_amm().setEditMode();
-            // getForm().getParametriConservazioneTipoUdList().getDs_valore_param_applic_tipo_ud_cons().setEditMode();
-            // getForm().getParametriGestioneTipoUdList().getDs_valore_param_applic_tipo_ud_gest().setEditMode();
-            // getForm().getParametriAmministrazioneTipoUdList().setHideDeleteButton(true);
-            // getForm().getParametriConservazioneTipoUdList().setHideDeleteButton(true);
-            // getForm().getParametriGestioneTipoUdList().setHideDeleteButton(true);
-            // Data primo versamento non editabile
+            // Data primo e ultimo versamento non editabili
             getForm().getTipoUnitaDoc().getDt_first_vers().setViewMode();
+            getForm().getTipoUnitaDoc().getDt_last_vers().setViewMode();
             getForm().getTipoUnitaDocList().setStatus(Status.update);
             getForm().getTipoUnitaDoc().setStatus(Status.update);
         } else {
@@ -3965,8 +3952,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this), SpagoliteLogUtil.getToolbarDelete());
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             registroEjb.deleteDecRegistroUnitaDoc(param, registroUnitaDocRowBean.getIdRegistroUnitaDoc().longValue());
@@ -4001,6 +3987,10 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         if (!struttureEjb.existAroUnitaDocByIdRegistroUnitaDoc(idRegistroUnitaDoc, idStrut)) {
             getForm().getRegistroUnitaDoc().setEditMode();
         }
+
+        // Data primo e ultimo versamento non editabili
+        getForm().getRegistroUnitaDoc().getDt_first_vers().setViewMode();
+        getForm().getRegistroUnitaDoc().getDt_last_vers().setViewMode();
 
         getForm().getRegistroUnitaDoc().setStatus(Status.update);
         getForm().getRegistroUnitaDocList().setStatus(Status.update);
@@ -4139,8 +4129,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                     Long idRegolaValSubStrut = null;
                     try {
                         LogParam param = SpagoliteLogUtil.getLogParam(
-                                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                                 SpagoliteLogUtil.getToolbarInsert());
                         param.setNomeTipoOggetto(SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA);
@@ -4183,8 +4172,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                         dtSoppres)) {
                     try {
                         LogParam param = SpagoliteLogUtil.getLogParam(
-                                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                                 SpagoliteLogUtil.getToolbarUpdate());
                         param.setNomeTipoOggetto(SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA);
@@ -4235,8 +4223,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         } else {
             try {
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.REGOLA_DETAIL)) {
                     param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
@@ -4299,8 +4286,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                 BigDecimal idTipoUnitaDoc = ((OrgRegolaValSubStrutRowBean) getForm().getRegoleSubStrutList().getTable()
                         .getCurrentRow()).getIdTipoUnitaDoc();
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setNomeTipoOggetto(SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA);
                 param.setIdOggetto(idTipoUnitaDoc);
@@ -4385,8 +4371,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                 BigDecimal idTipoUnitaDoc = ((OrgRegolaValSubStrutRowBean) getForm().getRegoleSubStrutList().getTable()
                         .getCurrentRow()).getIdTipoUnitaDoc();
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this), SpagoliteLogUtil.getToolbarSave(
                                 getForm().getCampiSubStrutList().getStatus().equals(Status.update)),
                         idTipoUnitaDoc);
@@ -4616,7 +4601,62 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
     @Override
     public void deleteCriteriRaggruppamentoList() throws EMFError {
-        redirectToCreaCriterioRaggrPage();
+        try {
+            DecVRicCriterioRaggrRowBean row = (DecVRicCriterioRaggrRowBean) getForm().getCriteriRaggruppamentoList()
+                    .getTable().getCurrentRow();
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.REGISTRO_UNITA_DOC_DETAIL)) {
+                StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
+                param.setNomeAzione(
+                        SpagoliteLogUtil.getDetailActionNameDelete(form, form.getCriteriRaggruppamentoList()));
+            } else if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.TIPO_DOC_DETAIL)) {
+                StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
+                param.setNomeAzione(
+                        SpagoliteLogUtil.getDetailActionNameDelete(form, form.getCriteriRaggruppamentoList()));
+            } else if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.TIPO_UNITA_DOC_DETAIL)) {
+                StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
+                param.setNomeAzione(
+                        SpagoliteLogUtil.getDetailActionNameDelete(form, form.getCriteriRaggruppamentoList()));
+            } else if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.CREA_STRUTTURA)) {
+                StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
+                param.setNomeAzione(
+                        SpagoliteLogUtil.getDetailActionNameDelete(form, form.getCriteriRaggruppamentoList()));
+            } else if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.LISTA_CRITERI_RAGGR)) {
+                // Correzione bug in cui mancava la gestione della cancellazione da lista criteri reggr
+                CriteriRaggruppamentoForm form = (CriteriRaggruppamentoForm) SpagoliteLogUtil.getForm(this);
+                param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(form, form.getCriterioRaggrList()));
+            } else {
+                param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
+            }
+
+            if (crHelper.deleteDecCriterioRaggr(param, row.getIdStrut(), row.getNmCriterioRaggr())) {
+                getMessageBox()
+                        .addMessage(new Message(MessageLevel.INF, "Criterio di raggruppamento eliminato con successo"));
+                getMessageBox().setViewMode(ViewMode.plain);
+                if (Application.Publisher.CRITERIO_RAGGR_DETAIL.equals(getLastPublisher())
+                        || "".equals(getLastPublisher())) {
+                    goBack();
+                } else if (Application.Publisher.LISTA_CRITERI_RAGGR.equals(getLastPublisher())) {
+                    reloadAfterGoBack(Application.Publisher.LISTA_CRITERI_RAGGR);
+                    forwardToPublisher(getLastPublisher());
+                } else {
+                    goBack();
+                }
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError(ex.getDescription());
+            if ("".equals(getLastPublisher())) {
+                goBack();
+            } else {
+                forwardToPublisher(getLastPublisher());
+            }
+        }
     }
 
     /**
@@ -4754,8 +4794,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this), SpagoliteLogUtil
                             .getToolbarSave(getForm().getAaRegistroUnitaDocList().getStatus().equals(Status.update)));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -4838,9 +4877,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
     public boolean inserimentoWizardAnniParteOnExit() throws EMFError {
         forwardToPublisher(getDefaultInserimentoWizardPublisher());
         if (getForm().getDatiAnniParte().postAndValidate(getRequest(), getMessageBox())) {
-            String annoValidoMinimo = configurationHelper.getValoreParamApplic(
-                    CostantiDB.ParametroAppl.REG_ANNO_VALID_MINIMO, null, null, null, null,
-                    CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String annoValidoMinimo = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.REG_ANNO_VALID_MINIMO);
             if (StringUtils.isBlank(annoValidoMinimo) || !StringUtils.isNumeric(annoValidoMinimo)) {
                 getMessageBox().addError(
                         "Parametro di configurazione applicativo per l'anno minimo di validit\u00E0 non valido");
@@ -5307,8 +5345,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.TIPO_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
                 StrutTipiForm form = (StrutTipiForm) SpagoliteLogUtil.getForm(this);
@@ -5522,40 +5559,66 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         registroRowBean.setIdStrut(idStrut);
         String criterioAutomRegistro = getForm().getRegistroCreazioneCriterio().getCriterio_autom_registro().parse();
 
-        // Validazione formale dei dati
-        if (getForm().getRegistroUnitaDoc().validate(getMessageBox())) {
-            try {
+        if (getForm().getRegistroUnitaDoc().getCd_registro_unita_doc().parse() == null) {
+            getMessageBox().addError("Errore di compilazione form: codice registro non inserito<br/>");
+        } else {
+            // Controllo che il nome struttura rispetti
+            FileServUtils fsu = new FileServUtils();
+            if (!fsu.controllaSubPath(getForm().getRegistroUnitaDoc().getCd_registro_normaliz().parse())) {
+                getMessageBox()
+                        .addError("Errore di compilazione form: Tipo registro contenente caratteri non permessi <br/>");
+            } else {
                 /*
-                 * Codice aggiuntivo per il logging... Stessa operazione dell'Inserimento di un registro anche se si
-                 * tratta di una duplicazione
+                 * Controllo che la lunghezza totale, tenendo presente anche ambiente, ente e struttura, sia minore o
+                 * uguale a 100 caratteri (aggiungo 3 che è il numero di underscores di separazione)
                  */
-                LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
-                        getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
-                        SpagoliteLogUtil.getToolbarSave(false));
-                param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-                registroEjb.duplicaRegistroUnitaDoc(param, registroRowBean, criterioAutomRegistro);
-                DecRegistroUnitaDocTableBean registroTableBean = new DecRegistroUnitaDocTableBean();
-                registroTableBean.add(registroRowBean);
-                getForm().getRegistroUnitaDocList().setTable(registroTableBean);
-                getForm().getRegistroUnitaDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-                getForm().getRegistroUnitaDocList().getTable().setCurrentRowIndex(0);
-                // Setto il nuovo id anche nella lista id e carico le liste
-                getForm().getIdList().getId_registro_unita_doc()
-                        .setValue(registroRowBean.getIdRegistroUnitaDoc().toPlainString());
-                reloadRegistroLists();
-                getForm().getRegistroUnitaDoc().setViewMode();
-                getForm().getRegistroUnitaDoc().setStatus(Status.view);
-                getForm().getRegistroUnitaDocList().setStatus(Status.view);
-                getMessageBox().addMessage(new Message(MessageLevel.INF, "Nuovo registro duplicato con successo!"));
-                getMessageBox().setViewMode(ViewMode.plain);
-                getSession().removeAttribute("fromDuplicaRegistro");
-                getForm().getTipoUnitaDoc().getLogEventiTipoUD().setEditMode();
-                getForm().getRegistroUnitaDoc().getLogEventi().setEditMode();
+                int lunghezzaAmbEnteStrutReg = getForm().getStrutRif().getNm_ambiente().parse().length()
+                        + getForm().getStrutRif().getId_ente().parse().length()
+                        + getForm().getStrutRif().getNm_strut().parse().length()
+                        + getForm().getRegistroUnitaDoc().getCd_registro_unita_doc().parse().length() + 3;
 
-            } catch (Exception e) {
-                getMessageBox().addError("Errore nella duplicazione del registro");
+                if (lunghezzaAmbEnteStrutReg > 100) {
+                    getMessageBox().addError(
+                            "Errore inserimento Registro: lunghezza nome ambiente + nome ente + nome struttura + tipo registro superiore a 100 caratteri <br/>");
+                }
+            }
+        }
+
+        // Validazione formale dei dati
+        if (!getMessageBox().hasError()) {
+            if (getForm().getRegistroUnitaDoc().validate(getMessageBox())) {
+                try {
+                    /*
+                     * Codice aggiuntivo per il logging... Stessa operazione dell'Inserimento di un registro anche se si
+                     * tratta di una duplicazione
+                     */
+                    LogParam param = SpagoliteLogUtil.getLogParam(
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                            getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
+                            SpagoliteLogUtil.getToolbarSave(false));
+                    param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+                    registroEjb.duplicaRegistroUnitaDoc(param, registroRowBean, criterioAutomRegistro);
+                    DecRegistroUnitaDocTableBean registroTableBean = new DecRegistroUnitaDocTableBean();
+                    registroTableBean.add(registroRowBean);
+                    getForm().getRegistroUnitaDocList().setTable(registroTableBean);
+                    getForm().getRegistroUnitaDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+                    getForm().getRegistroUnitaDocList().getTable().setCurrentRowIndex(0);
+                    // Setto il nuovo id anche nella lista id e carico le liste
+                    getForm().getIdList().getId_registro_unita_doc()
+                            .setValue(registroRowBean.getIdRegistroUnitaDoc().toPlainString());
+                    reloadRegistroLists();
+                    getForm().getRegistroUnitaDoc().setViewMode();
+                    getForm().getRegistroUnitaDoc().setStatus(Status.view);
+                    getForm().getRegistroUnitaDocList().setStatus(Status.view);
+                    getMessageBox().addMessage(new Message(MessageLevel.INF, "Nuovo registro duplicato con successo!"));
+                    getMessageBox().setViewMode(ViewMode.plain);
+                    getSession().removeAttribute("fromDuplicaRegistro");
+                    getForm().getTipoUnitaDoc().getLogEventiTipoUD().setEditMode();
+                    getForm().getRegistroUnitaDoc().getLogEventi().setEditMode();
+
+                } catch (Exception e) {
+                    getMessageBox().addError("Errore nella duplicazione del registro");
+                }
             }
         }
         forwardToPublisher(Application.Publisher.REGISTRO_UNITA_DOC_DETAIL);
@@ -5575,8 +5638,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setNomeAzione(SpagoliteLogUtil.getButtonActionName(getForm(), getForm().getTipoUnitaDocAmmesso(),
                     getForm().getTipoUnitaDocAmmesso().getCreaTipoSerieStandard().getName()));
@@ -5638,8 +5700,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
     private void logEventiCommon(String tipoOggetto, String idOggetto) throws EMFError {
         GestioneLogEventiForm form = new GestioneLogEventiForm();
-        form.getOggettoDetail().getNmApp().setValue(configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        form.getOggettoDetail().getNmApp()
+                .setValue(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         form.getOggettoDetail().getNm_tipo_oggetto().setValue(tipoOggetto);
         form.getOggettoDetail().getIdOggetto().setValue(idOggetto);
         redirectToAction(it.eng.parer.sacerlog.slite.gen.Application.Actions.GESTIONE_LOG_EVENTI,
@@ -5663,8 +5725,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -5705,8 +5766,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                 SpagoliteLogUtil.getButtonActionName(getForm(), getForm().getRegistroCreazioneCriterio(), getForm()
                         .getRegistroCreazioneCriterio().getCreaCriterioRaggrStandardRegistroButton().getName()));
@@ -5729,8 +5789,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                 SpagoliteLogUtil.getButtonActionName(getForm(), getForm().getTipoUnitaDocCreazioneCriterio(), getForm()
                         .getTipoUnitaDocCreazioneCriterio().getCreaCriterioRaggrStandardTipoUdButton().getName()));
@@ -5753,8 +5812,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                 SpagoliteLogUtil.getButtonActionName(getForm(), getForm().getTipoDocCreazioneCriterio(),
                         getForm().getTipoDocCreazioneCriterio().getCreaCriterioRaggrStandardTipoDocButton().getName()));
@@ -6039,8 +6097,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                     SpagoliteLogUtil.getToolbarSave(getForm().getTipoUnitaDoc().getStatus().equals(Status.update)));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -6306,8 +6363,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
@@ -6352,6 +6408,81 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                 forwardToPublisher(Application.Publisher.MODELLO_XSD_UD_AMMESSO_DETAIL);
             }
         }
+    }
+
+    @Override
+    public void deleteXsdDatiSpecList() throws EMFError {
+        DecXsdDatiSpecRowBean xsdDatiSpecRowBean = ((DecXsdDatiSpecRowBean) getForm().getXsdDatiSpecList().getTable()
+                .getCurrentRow());
+        getMessageBox().clear();
+        Date dtSoppres = xsdDatiSpecRowBean.getDtSoppres();
+        Date today = Calendar.getInstance().getTime();
+        if (dtSoppres.compareTo(today) < 0) {
+            getMessageBox().addError("Versione XSD gi\u00E0 disattivata in precedenza");
+            if (StringUtils.isNotBlank(getLastPublisher())) {
+                forwardToPublisher(getLastPublisher());
+            } else {
+                goBack();
+            }
+        } else {
+            // Il sistema controlla che tale attributo non sia associato a nessun tipo serie, altrimenti da errore
+            if (datiSpecEjb.isXsdDatiSpecInUseInTipiSerie(xsdDatiSpecRowBean.getIdXsdDatiSpec())) {
+                getMessageBox().addError(
+                        "Almeno un attributo dell'xsd \u00E8 utilizzato da un tipo serie . L'eliminazione dell'xsd non \u00E8 consentita");
+            }
+            if (!getMessageBox().hasError()) {
+                boolean isInUse = datiSpecEjb.isXsdDatiSpecInUse(xsdDatiSpecRowBean);
+                boolean isInUseOnCampiRegole = datiSpecEjb.isXsdDatiSpecInUseOnCampi(
+                        xsdDatiSpecRowBean.getIdXsdDatiSpec(), "DATO_SPEC_UNI_DOC", "DATO_SPEC_DOC_PRINC");
+                // se in uso non posso cancellare, ma posso disattivare
+                if (isInUse || isInUseOnCampiRegole) {
+                    if (StringUtils.isNotBlank(getLastPublisher())) {
+                        // Mostra messaggio di disattivazione
+                        getRequest().setAttribute("confermaDisattivazioneXsd", true);
+                        forwardToPublisher(getLastPublisher());
+                        SessionManager.removeLastExecutionHistory(getSession());
+                    } else {
+                        deleteXsd(xsdDatiSpecRowBean);
+                    }
+                } else {
+                    deleteXsd(xsdDatiSpecRowBean);
+                }
+            } else {
+                forwardToPublisher(getLastPublisher());
+                SessionManager.removeLastExecutionHistory(getSession());
+            }
+        }
+    }
+
+    private void deleteXsd(DecXsdDatiSpecRowBean xsdDatiSpecRowBean) throws EMFError {
+        // se non in uso e ultimo in lista
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        if (Application.Publisher.XSD_DATI_SPEC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
+            param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
+        } else {
+            param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getXsdDatiSpecList()));
+        }
+        try {
+            datiSpecEjb.delXsdDatiSpec(param, xsdDatiSpecRowBean);
+        } catch (ParerUserError ex) {
+            logger.error(ex.getMessage(), ex);
+            getMessageBox().addError("Errore inatteso nell'eliminazione del xsd");
+        }
+        if (!getMessageBox().hasError()) {
+            DecXsdDatiSpecTableBean xsdDatiSpecTableBean = datiSpecEjb.getDecXsdDatiSpecTableBean(xsdDatiSpecRowBean);
+
+            getForm().getXsdDatiSpecList().setTable(xsdDatiSpecTableBean);
+            getForm().getXsdDatiSpecList().getTable().first();
+            getForm().getXsdDatiSpecList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+        }
+        forwardToPublisher(getLastPublisher());
+        SessionManager.removeLastExecutionHistory(getSession());
     }
 
     @Override
@@ -6462,8 +6593,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
         param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());

@@ -1,19 +1,59 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.fascicoli.ejb;
 
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.LoggerFactory;
+
+import it.eng.paginator.helper.LazyListHelper;
 import it.eng.parer.entity.AroRichAnnulVers;
 import it.eng.parer.entity.DecClasseErrSacer;
 import it.eng.parer.entity.DecCriterioRaggrFasc;
 import it.eng.parer.entity.DecErrSacer;
+import it.eng.parer.entity.DecModelloXsdFascicolo;
 import it.eng.parer.entity.DecSelCriterioRaggrFasc;
 import it.eng.parer.entity.DecTipoFascicolo;
 import it.eng.parer.entity.FasAmminPartec;
+import it.eng.parer.entity.FasEventoFascicolo;
 import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasLinkFascicolo;
 import it.eng.parer.entity.FasRespFascicolo;
 import it.eng.parer.entity.FasSogFascicolo;
 import it.eng.parer.entity.FasUniOrgRespFascicolo;
+import it.eng.parer.entity.FasValoreAttribFascicolo;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.MonContaFascicoliKo;
 import it.eng.parer.entity.OrgAmbiente;
@@ -22,27 +62,36 @@ import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VrsErrSesFascicoloKo;
 import it.eng.parer.entity.VrsFascicoloKo;
 import it.eng.parer.entity.VrsSesFascicoloErr;
-import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.entity.VrsSesFascicoloKo;
 import it.eng.parer.entity.VrsXmlSesFascicoloErr;
 import it.eng.parer.entity.VrsXmlSesFascicoloKo;
 import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
+import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.fascicoli.dto.RicercaFascicoliBean;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
+import it.eng.parer.job.utils.JobConstants;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.sacerlog.util.LogParam;
 import it.eng.parer.slite.gen.form.CriteriRaggrFascicoliForm;
 import it.eng.parer.slite.gen.form.CriteriRaggrFascicoliForm.CreaCriterioRaggrFascicoli;
-import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.slite.gen.tablebean.DecCriterioRaggrFascRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoFascicoloTableBean;
 import it.eng.parer.slite.gen.tablebean.FasAmminPartecTableBean;
+import it.eng.parer.slite.gen.tablebean.FasEventoFascicoloRowBean;
+import it.eng.parer.slite.gen.tablebean.FasEventoFascicoloTableBean;
+import it.eng.parer.slite.gen.tablebean.FasFascicoloTableBean;
 import it.eng.parer.slite.gen.tablebean.FasLinkFascicoloRowBean;
 import it.eng.parer.slite.gen.tablebean.FasLinkFascicoloTableBean;
 import it.eng.parer.slite.gen.tablebean.FasRespFascicoloRowBean_ext;
 import it.eng.parer.slite.gen.tablebean.FasRespFascicoloTableBean;
+import it.eng.parer.slite.gen.tablebean.FasSogFascicoloRowBean;
 import it.eng.parer.slite.gen.tablebean.FasSogFascicoloTableBean;
 import it.eng.parer.slite.gen.tablebean.FasUniOrgRespFascicoloTableBean;
+import it.eng.parer.slite.gen.tablebean.FasValoreAttribFascicoloRowBean;
+import it.eng.parer.slite.gen.tablebean.FasValoreAttribFascicoloTableBean;
 import it.eng.parer.slite.gen.tablebean.VrsSesFascicoloKoRowBean;
 import it.eng.parer.slite.gen.tablebean.VrsSesFascicoloKoTableBean;
 import it.eng.parer.slite.gen.viewbean.ElvVRicElencoFascByFasRowBean;
@@ -70,39 +119,27 @@ import it.eng.parer.viewEntity.MonVCntFascKoByAmb;
 import it.eng.parer.viewEntity.MonVCntFascKoByEnte;
 import it.eng.parer.viewEntity.MonVCntFascKoByStrut;
 import it.eng.parer.viewEntity.MonVCntFascKoByTiFasc;
-import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.viewEntity.OrgVChkPartitionFascByAa;
 import it.eng.parer.viewEntity.VrsVUpdFascicoloKo;
+import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.helper.UserHelper;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.web.util.XmlPrettyPrintFormatter;
-import it.eng.parer.ws.dto.CSChiaveFasc;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
+import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.LoggerFactory;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Map;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings({ "rawtypes" })
 @Stateless
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -110,31 +147,37 @@ public class FascicoliEjb {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(FascicoliEjb.class);
 
-    public static enum fieldSetToPopulate {
+    @EJB(mappedName = "java:app/paginator/LazyListHelper")
+    protected LazyListHelper lazyListHelper;
+
+    @EJB
+    private ObjectStorageService objectStorageService;
+
+    public enum fieldSetToPopulate {
         FASCICOLI_VERSATI, FASCICOLI_FALLITI, FASCICOLI_VERSATI_B30, FASCICOLI_FALLITI_B30
     }
 
-    public static enum statoConservazioneFascicoliVersati {
+    public enum statoConservazioneFascicoliVersati {
         PRESA_IN_CARICO, AIP_GENERATO, AIP_IN_AGGIORNAMENTO, ANNULLATA
     }
 
-    public static enum statoFascicoliVersFalliti {
+    public enum statoFascicoliVersFalliti {
         NON_RISOLUBILE, VERIFICATO, NON_VERIFICATO
     }
 
-    public static enum statoSessioneFascicoliErrata {
+    public enum statoSessioneFascicoliErrata {
         NON_RISOLUBILE, VERIFICATO, NON_VERIFICATO
     }
 
-    public static enum statoSessioneFascicoloKo {
+    public enum statoSessioneFascicoloKo {
         NON_RISOLUBILE, VERIFICATO, NON_VERIFICATO, RISOLTO
     }
 
-    public static enum tipoUsoClasseErrore {
+    public enum tipoUsoClasseErrore {
         GENERICO, VERS_FASCICOLO, VERS_UNITA_DOC, RECUP_UNITA_DOC, ANNULL_UNITA_DOC, SERVIZI_UTENTE
     }
 
-    public static enum tipoXmlSessioneFascicoloErrata {
+    public enum tipoXmlSessioneFascicoloErrata {
         RICHIESTA, RISPOSTA
     }
 
@@ -164,21 +207,29 @@ public class FascicoliEjb {
     private UserHelper userHelper;
     @EJB
     private MonitoraggioHelper monitoraggioHelper;
-    @EJB
-    private StruttureHelper struttureHelper;
 
     public FasVRicFascicoliTableBean ricercaFascicoli(RicercaFascicoliBean bean, BigDecimal idStruct, long userId) {
         FasVRicFascicoliTableBean result = new FasVRicFascicoliTableBean();
-        List<FasVRicFascicoli> list = fascicoliHelper.retrieveFascicoli(bean, idStruct, userId);
-
-        if (list != null && !list.isEmpty()) {
-            try {
-                result = (FasVRicFascicoliTableBean) Transform.entities2TableBean(list);
-            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
-                    | InvocationTargetException ex) {
-                logger.error("Errore durante il recupero dei fascicoli " + ExceptionUtils.getRootCauseMessage(ex), ex);
-            }
-
+        List<Object[]> list = fascicoliHelper.retrieveFascicoli(bean, idStruct, userId);
+        for (Object[] obj : list) {
+            FasVRicFascicoliRowBean row = new FasVRicFascicoliRowBean();
+            row.setIdFascicolo((BigDecimal) obj[0]);
+            row.setAaFascicolo((BigDecimal) obj[1]);
+            row.setCdKeyFascicolo((String) obj[2]);
+            row.setCdCompositoVoceTitol((String) obj[3]);
+            row.setNmTipoFascicolo((String) obj[4]);
+            row.setDtApeFascicolo((Timestamp) obj[5]);
+            row.setDtChiuFascicolo((Timestamp) obj[6]);
+            row.setTsVersFascicolo((Timestamp) obj[7]);
+            row.setNiUnitaDoc((BigDecimal) obj[8]);
+            row.setNiAaConservazione((BigDecimal) obj[9]);
+            row.setCdLivelloRiserv((String) obj[10]);
+            row.setFlForzaContrClassif(((Character) obj[11]).toString());
+            row.setFlForzaContrNumero(((Character) obj[12]).toString());
+            row.setFlForzaContrColleg(((Character) obj[13]).toString());
+            row.setTiStatoFascElencoVers((String) obj[14]);
+            row.setTiStatoConservazione((String) obj[15]);
+            result.add(row);
         }
         return result;
     }
@@ -230,6 +281,30 @@ public class FascicoliEjb {
             try {
                 result = (FasVVisFascicoloRowBean) Transform.entity2RowBean(dettaglio);
 
+                result.setBigDecimal("aa_fascicolo_titolo", result.getAaFascicolo());
+                result.setString("cd_key_fascicolo_titolo", result.getCdKeyFascicolo());
+
+                if (StringUtils.isNotBlank(result.getCdIndiceClassif())
+                        && StringUtils.isNotBlank(result.getDsIndiceClassif())) {
+
+                    // Regola: tutti i caratteri / di posizione pari diventano - tutti i dispari restano così come sono
+                    // ad eccezione del primo che va eliminato.
+                    StringBuilder myString = new StringBuilder(result.getDsIndiceClassif());
+                    int contaSlash = 0;
+
+                    for (int i = 0; i < result.getDsIndiceClassif().length(); i++) {
+                        if (myString.charAt(i) == '/') {
+                            contaSlash++;
+                            if (contaSlash % 2 == 0) {
+                                myString.setCharAt(i, '-');
+                            }
+                        }
+                    }
+
+                    result.setString("indice_classif",
+                            result.getCdIndiceClassif() + "    " + myString.substring(1, myString.length()));
+                }
+
                 if (StringUtils.isNotBlank(result.getCdRegKeyUnitaDocFirst()) && result.getAaKeyUnitaDocFirst() != null
                         && StringUtils.isNotBlank(result.getCdKeyUnitaDocFirst())) {
                     result.setString("unita_doc_first", result.getCdRegKeyUnitaDocFirst() + " - "
@@ -252,6 +327,18 @@ public class FascicoliEjb {
                     result.setString("proc_ammin", result.getCdProcAmmin() + " - " + result.getDsProcAmmin());
                 }
 
+                // MEV#29090
+                String blXmlSpecifico = result.getBlXmlSpecifico();
+                if (blXmlSpecifico != null) {
+                    result.setBlXmlSpecifico(formatter.prettyPrintWithDOM3LS(blXmlSpecifico));
+                }
+
+                String blXmlNormativo = result.getBlXmlNormativo();
+                if (blXmlNormativo != null) {
+                    result.setBlXmlNormativo(formatter.prettyPrintWithDOM3LS(blXmlNormativo));
+                }
+                // end MEV#29090
+
                 String blXmlSegnatura = result.getBlXmlSegnatura();
                 if (blXmlSegnatura != null) {
                     result.setBlXmlSegnatura(formatter.prettyPrintWithDOM3LS(blXmlSegnatura));
@@ -271,6 +358,11 @@ public class FascicoliEjb {
                 if (blXmlVersSip != null) {
                     result.setBlXmlVersSip(formatter.prettyPrintWithDOM3LS(blXmlVersSip));
                 }
+
+                // MEV#29090
+                addXmlVersFascFromOStoFasVVisFascicoloBean(result);
+                addXmlFascFromOStoFasVVisFascicoloBean(result);
+                // end MEV#29090
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
                     | InvocationTargetException ex) {
                 logger.error("Errore durante il recupero dei fascicoli " + ExceptionUtils.getRootCauseMessage(ex), ex);
@@ -278,6 +370,66 @@ public class FascicoliEjb {
         }
         return result;
     }
+
+    // MEV#29090
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento del fascicolo sia l'object storage (gestito dal
+     * parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            FasVVisFascicoloRowBean
+     */
+    private void addXmlVersFascFromOStoFasVVisFascicoloBean(FasVVisFascicoloRowBean riga) {
+        boolean xmlVersVuoti = riga.getBlXmlVersSip() == null && riga.getBlXmlVersRapp() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (xmlVersVuoti) {
+            Map<String, String> xmls = objectStorageService
+                    .getObjectXmlVersFascicolo(riga.getIdFascicolo().longValue());
+            // recupero oggetti da O.S. (se presenti)
+            if (!xmls.isEmpty()) {
+                riga.setBlXmlVersSip(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA));
+                riga.setBlXmlVersRapp(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA));
+            }
+        }
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di profilo del fascicolo sia l'object storage (gestito dal
+     * parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            FasVVisFascicoloRowBean
+     */
+    private void addXmlFascFromOStoFasVVisFascicoloBean(FasVVisFascicoloRowBean riga) {
+        boolean xmlVuoti = riga.getBlXmlNormativo() == null && riga.getBlXmlSegnatura() == null
+                && riga.getBlXmlSpecifico() == null && riga.getBlXmlVersProfilo() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (xmlVuoti) {
+            Map<String, String> xmls = objectStorageService.getObjectXmlFascicolo(riga.getIdFascicolo().longValue());
+            // recupero oggetti da O.S. (se presenti)
+            if (!xmls.isEmpty()) {
+                riga.setBlXmlVersProfilo(xmls.get(CostantiDB.TiModelloXsdProfilo.PROFILO_GENERALE_FASCICOLO.name()));
+                riga.setBlXmlNormativo(xmls.get(CostantiDB.TiModelloXsdProfilo.PROFILO_NORMATIVO_FASCICOLO.name()));
+                riga.setBlXmlSegnatura(xmls.get(CostantiDB.TiModelloXsdProfilo.PROFILO_ARCHIVISTICO_FASCICOLO.name()));
+                riga.setBlXmlSpecifico(xmls.get(CostantiDB.TiModelloXsdProfilo.PROFILO_SPECIFICO_FASCICOLO.name()));
+            }
+        }
+    }
+    // end MEV#29090
 
     public FasVRicFascicoliRowBean retrieveFasVRicFascicoli(BigDecimal idFascicolo) {
         FasVRicFascicoliRowBean result = new FasVRicFascicoliRowBean();
@@ -385,6 +537,83 @@ public class FascicoliEjb {
         return result;
     }
 
+    public FasSogFascicoloTableBean retrieveFasSogFascicoloWithEventi(BigDecimal idFascicolo) {
+        FasSogFascicoloTableBean result = new FasSogFascicoloTableBean();
+        FasSogFascicoloRowBean row = new FasSogFascicoloRowBean();
+        List<FasSogFascicolo> list = fascicoliHelper.retrieveFasSogFascicolo(idFascicolo.longValue());
+
+        for (FasSogFascicolo sogFascicolo : list) {
+            try {
+                row = (FasSogFascicoloRowBean) Transform.entity2RowBean(sogFascicolo);
+                if (sogFascicolo.getDsDenomSog() != null) {
+                    row.setString("denominazione", sogFascicolo.getDsDenomSog());
+                } else {
+                    row.setString("denominazione", sogFascicolo.getNmNomeSog() + " " + sogFascicolo.getNmCognSog());
+                }
+                row.setString("cd_sog",
+                        fascicoliHelper.getFasCodIdeSog(sogFascicolo.getIdSogFascicolo(), "NON_PREDEFINITO"));
+                row.setString("ti_cd_sog",
+                        fascicoliHelper.getFasCodIdeSog(sogFascicolo.getIdSogFascicolo(), "PREDEFINITO"));
+                row.setString("evento_soggetto", fascicoliHelper.getEventiSoggetto(sogFascicolo.getIdSogFascicolo()));
+                result.add(row);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero dei fascicoli " + ExceptionUtils.getRootCauseMessage(ex), ex);
+            }
+        }
+        return result;
+    }
+
+    public FasEventoFascicoloTableBean retrieveFasEventoFascicolo(BigDecimal idFascicolo) {
+        FasEventoFascicoloTableBean result = new FasEventoFascicoloTableBean();
+        FasEventoFascicoloRowBean row = new FasEventoFascicoloRowBean();
+        List<FasEventoFascicolo> list = fascicoliHelper.retrieveFasEventoFascicolo(idFascicolo.longValue());
+
+        for (FasEventoFascicolo eventoFascicolo : list) {
+            try {
+                row = (FasEventoFascicoloRowBean) Transform.entity2RowBean(eventoFascicolo);
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                if (eventoFascicolo.getTsApertura() != null) {
+                    Date dataAperturaFormattata = formatter.parse(formatter.format(eventoFascicolo.getTsApertura()));
+                    row.setTsApertura(new Timestamp(dataAperturaFormattata.getTime()));
+                }
+                if (eventoFascicolo.getTsChiusura() != null) {
+                    Date dataChiusuraFormattata = formatter.parse(formatter.format(eventoFascicolo.getTsChiusura()));
+                    row.setTsChiusura(new Timestamp(dataChiusuraFormattata.getTime()));
+                }
+                result.add(row);
+            } catch (Exception ex) {
+                logger.error("Errore durante il recupero degli eventi del fascicolo "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+            }
+        }
+        return result;
+    }
+
+    public FasValoreAttribFascicoloTableBean retrieveFasValoreAttribFascicolo(BigDecimal idFascicolo,
+            BigDecimal idModelloXsdFasc) {
+        FasValoreAttribFascicoloTableBean result = new FasValoreAttribFascicoloTableBean();
+        FasValoreAttribFascicoloRowBean riga = new FasValoreAttribFascicoloRowBean();
+
+        if (idModelloXsdFasc != null) {
+            List<FasValoreAttribFascicolo> list = fascicoliHelper
+                    .retrieveFasValoreAttribFascicolo(idFascicolo.longValue(), idModelloXsdFasc.longValue());
+
+            for (FasValoreAttribFascicolo valore : list) {
+                try {
+                    riga = (FasValoreAttribFascicoloRowBean) Transform.entity2RowBean(valore);
+                    riga.setString("nm_attrib_dati_spec", valore.getDecAttribFascicolo().getNmAttribFascicolo());
+                    result.add(riga);
+                } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                        | IllegalAccessException | InvocationTargetException ex) {
+                    logger.error("Errore durante il recupero degli attributi del fascicolo "
+                            + ExceptionUtils.getRootCauseMessage(ex), ex);
+                }
+            }
+        }
+        return result;
+    }
+
     public FasRespFascicoloTableBean retrieveFasRespFascicolo(BigDecimal idFascicolo) {
         FasRespFascicoloTableBean result = new FasRespFascicoloTableBean();
         List<FasRespFascicolo> list = fascicoliHelper.retrieveFasRespFascicolo(idFascicolo.longValue());
@@ -447,6 +676,22 @@ public class FascicoliEjb {
         return result;
     }
 
+    public FasFascicoloTableBean getSottofascicoli(BigDecimal idFascicolo) {
+        FasFascicoloTableBean result = new FasFascicoloTableBean();
+        List<FasFascicolo> list = fascicoliHelper.getSottofascicoli(idFascicolo.longValue());
+
+        if (list != null && !list.isEmpty()) {
+            try {
+                result = (FasFascicoloTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero dei sottofascicoli " + ExceptionUtils.getRootCauseMessage(ex),
+                        ex);
+            }
+        }
+        return result;
+    }
+
     private void buildParentLinks(FasLinkFascicoloTableBean result, List<FasLinkFascicolo> listparent)
             throws ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
@@ -504,7 +749,8 @@ public class FascicoliEjb {
         }
 
         if (l != null && !l.isEmpty()) {
-            String tipoStato = null, tipoData = null;
+            String tipoStato = null;
+            String tipoData = null;
             BigDecimal niFasc = null;
             for (Iterator iterator = l.iterator(); iterator.hasNext();) {
                 Object next = iterator.next();
@@ -575,7 +821,8 @@ public class FascicoliEjb {
         }
 
         if (l != null && !l.isEmpty()) {
-            String tipoStato = null, tipoData = null;
+            String tipoStato = null;
+            String tipoData = null;
             BigDecimal niFasc = null;
             for (Iterator iterator = l.iterator(); iterator.hasNext();) {
                 Object next = iterator.next();
@@ -641,7 +888,8 @@ public class FascicoliEjb {
     public MonVChkCntFascRowBean calcolaRiepilogo(BigDecimal idUser, BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idStrut, BigDecimal idTipoFascicolo) {
         MonVChkCntFascRowBean rowBean = new MonVChkCntFascRowBean();
-        List l = null, l2 = null;
+        List l = null;
+        List l2 = null;
         if (idTipoFascicolo != null) {
             l = fascicoliHelper.retrieveMonFascicoliByTipoFascicolo(idTipoFascicolo);
             l2 = fascicoliHelper.retrieveMonFascicoliKoByTipoFascicolo(idTipoFascicolo);
@@ -670,22 +918,22 @@ public class FascicoliEjb {
 
     private String getTiStatoFascFromCntFasc(Object obj) {
         if (obj instanceof MonVCntFascByTiFasc) {
-            return ((MonVCntFascByTiFasc) obj).getTiStatoFasc();
+            return ((MonVCntFascByTiFasc) obj).getMonVCntFascByTiFascId().getTiStatoFasc();
         } else if (obj instanceof MonVCntFascByStrut) {
-            return ((MonVCntFascByStrut) obj).getTiStatoFasc();
+            return ((MonVCntFascByStrut) obj).getMonVCntFascByStrutId().getTiStatoFasc();
         } else if (obj instanceof MonVCntFascByEnte) {
-            return ((MonVCntFascByEnte) obj).getTiStatoFasc();
+            return ((MonVCntFascByEnte) obj).getMonVCntFascByEnteId().getTiStatoFasc();
         } else if (obj instanceof MonVCntFascByAmb) {
-            return ((MonVCntFascByAmb) obj).getTiStatoFasc();
+            return ((MonVCntFascByAmb) obj).getMonVCntFascByAmbId().getTiStatoFasc();
         }
         if (obj instanceof MonVCntFascKoByTiFasc) {
-            return ((MonVCntFascKoByTiFasc) obj).getTiStatoFascKo();
+            return ((MonVCntFascKoByTiFasc) obj).getMonVCntFascKoByTiFascId().getTiStatoFascKo();
         } else if (obj instanceof MonVCntFascKoByStrut) {
-            return ((MonVCntFascKoByStrut) obj).getTiStatoFascKo();
+            return ((MonVCntFascKoByStrut) obj).getMonVCntFascKoByStrutId().getTiStatoFascKo();
         } else if (obj instanceof MonVCntFascKoByEnte) {
-            return ((MonVCntFascKoByEnte) obj).getTiStatoFascKo();
+            return ((MonVCntFascKoByEnte) obj).getMonVCntFascKoByEnteId().getTiStatoFascKo();
         } else if (obj instanceof MonVCntFascKoByAmb) {
-            return ((MonVCntFascKoByAmb) obj).getTiStatoFascKo();
+            return ((MonVCntFascKoByAmb) obj).getMonVCntFascKoByAmbId().getTiStatoFascKo();
         } else {
             throw new RuntimeException("Tipo di istanza non prevista per il metodo getTiStatoFascFromCntFasc()");
         }
@@ -693,22 +941,22 @@ public class FascicoliEjb {
 
     private String getTiDtCreazioneFromCntFasc(Object obj) {
         if (obj instanceof MonVCntFascByTiFasc) {
-            return ((MonVCntFascByTiFasc) obj).getTiDtCreazione();
+            return ((MonVCntFascByTiFasc) obj).getMonVCntFascByTiFascId().getTiDtCreazione();
         } else if (obj instanceof MonVCntFascByStrut) {
-            return ((MonVCntFascByStrut) obj).getTiDtCreazione();
+            return ((MonVCntFascByStrut) obj).getMonVCntFascByStrutId().getTiDtCreazione();
         } else if (obj instanceof MonVCntFascByEnte) {
-            return ((MonVCntFascByEnte) obj).getTiDtCreazione();
+            return ((MonVCntFascByEnte) obj).getMonVCntFascByEnteId().getTiDtCreazione();
         } else if (obj instanceof MonVCntFascByAmb) {
-            return ((MonVCntFascByAmb) obj).getTiDtCreazione();
+            return ((MonVCntFascByAmb) obj).getMonVCntFascByAmbId().getTiDtCreazione();
         }
         if (obj instanceof MonVCntFascKoByTiFasc) {
-            return ((MonVCntFascKoByTiFasc) obj).getTiDtCreazione();
+            return ((MonVCntFascKoByTiFasc) obj).getMonVCntFascKoByTiFascId().getTiDtCreazione();
         } else if (obj instanceof MonVCntFascKoByStrut) {
-            return ((MonVCntFascKoByStrut) obj).getTiDtCreazione();
+            return ((MonVCntFascKoByStrut) obj).getMonVCntFascKoByStrutId().getTiDtCreazione();
         } else if (obj instanceof MonVCntFascKoByEnte) {
-            return ((MonVCntFascKoByEnte) obj).getTiDtCreazione();
+            return ((MonVCntFascKoByEnte) obj).getMonVCntFascKoByEnteId().getTiDtCreazione();
         } else if (obj instanceof MonVCntFascKoByAmb) {
-            return ((MonVCntFascKoByAmb) obj).getTiDtCreazione();
+            return ((MonVCntFascKoByAmb) obj).getMonVCntFascKoByAmbId().getTiDtCreazione();
         } else {
             throw new RuntimeException("Tipo di istanza non prevista per il metodo getTiDtCreazioneFromCntFasc()");
         }
@@ -741,10 +989,14 @@ public class FascicoliEjb {
             BigDecimal idEnte, BigDecimal idStrut, BigDecimal idTipoFascicolo, Date[] dateValidate,
             BigDecimal rangeAnnoDa, BigDecimal rangeAnnoA, String rangeNumeroDa, String rangeNumeroA,
             String statoIndiceAip, Set<String> statiConservazione, String flSessioneFascicoloKo) {
+        CriteriaQuery criteriaQuery = fascicoliHelper.retrieveVLisFascCriteriaQuery(idUser, idAmbiente, idEnte, idStrut,
+                idTipoFascicolo, dateValidate, rangeAnnoDa, rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoIndiceAip,
+                statiConservazione, flSessioneFascicoloKo);
+        return lazyListHelper.getTableBean(criteriaQuery, this::getMonVLisFascTableBeanFromResultList);
+    }
+
+    private MonVLisFascTableBean getMonVLisFascTableBeanFromResultList(List l) {
         MonVLisFascTableBean t = new MonVLisFascTableBean();
-        List l = fascicoliHelper.retrieveVLisFasc(idUser, idAmbiente, idEnte, idStrut, idTipoFascicolo, dateValidate,
-                rangeAnnoDa, rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoIndiceAip, statiConservazione,
-                flSessioneFascicoloKo);
         if (l != null && !l.isEmpty()) {
             MonVLisFascRowBean rb = null;
             for (Iterator iterator = l.iterator(); iterator.hasNext();) {
@@ -778,9 +1030,14 @@ public class FascicoliEjb {
             BigDecimal idEnte, BigDecimal idStrut, BigDecimal idTipoFascicolo, Date[] dateValidate,
             BigDecimal rangeAnnoDa, BigDecimal rangeAnnoA, String rangeNumeroDa, String rangeNumeroA,
             String statoSessione, String cdClasseErr, String cdErr) {
+        CriteriaQuery query = fascicoliHelper.retrieveVLisFascKoCriteriaQuery(idUser, idAmbiente, idEnte, idStrut,
+                idTipoFascicolo, dateValidate, rangeAnnoDa, rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoSessione,
+                cdClasseErr, cdErr);
+        return lazyListHelper.getTableBean(query, this::getMonVLisFascKoTableBeanFromResultList);
+    }
+
+    private MonVLisFascKoTableBean getMonVLisFascKoTableBeanFromResultList(List l) {
         MonVLisFascKoTableBean t = new MonVLisFascKoTableBean();
-        List l = fascicoliHelper.retrieveVLisFascKo(idUser, idAmbiente, idEnte, idStrut, idTipoFascicolo, dateValidate,
-                rangeAnnoDa, rangeAnnoA, rangeNumeroDa, rangeNumeroA, statoSessione, cdClasseErr, cdErr);
         if (l != null && !l.isEmpty()) {
             MonVLisFascKoRowBean rb = null;
             for (Iterator iterator = l.iterator(); iterator.hasNext();) {
@@ -795,11 +1052,15 @@ public class FascicoliEjb {
     }
 
     public VrsSesFascicoloKoTableBean ricercaVersamentiFascicoliKo(BigDecimal idFascicoloKo) {
+        Query query = fascicoliHelper.retrieveSessioniFalliteByIdFascKo(idFascicoloKo);
+        return lazyListHelper.getTableBean(query, this::getVrsSesFascicoloKoTableBeanFrom);
+    }
+
+    private VrsSesFascicoloKoTableBean getVrsSesFascicoloKoTableBeanFrom(List<VrsSesFascicoloKo> list) {
         VrsSesFascicoloKoTableBean t = new VrsSesFascicoloKoTableBean();
-        List<VrsSesFascicoloKo> l = fascicoliHelper.retrieveSessioniFalliteByIdFascKo(idFascicoloKo);
-        if (l != null && !l.isEmpty()) {
+        if (list != null && !list.isEmpty()) {
             VrsSesFascicoloKoRowBean rb = null;
-            for (Iterator<VrsSesFascicoloKo> iterator = l.iterator(); iterator.hasNext();) {
+            for (Iterator<VrsSesFascicoloKo> iterator = list.iterator(); iterator.hasNext();) {
                 VrsSesFascicoloKo ogg = iterator.next();
                 rb = new VrsSesFascicoloKoRowBean();
                 rb.entityToRowBean(ogg);
@@ -845,6 +1106,9 @@ public class FascicoliEjb {
                     }
                 }
             }
+            // MEV#29090
+            aggiungiXmlSesFascFallitaDaObjectStorage(ret);
+            // end MEV#29090
             IamUser user = ses.getIamUser();
             if (user != null) {
                 dett.setBigDecimal("id_user_iam", new BigDecimal(user.getIdUserIam()));
@@ -872,6 +1136,71 @@ public class FascicoliEjb {
         }
         return ret;
     }
+
+    // MEV#29090
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento fascicolo fallito sia l'object storage (gestito
+     * dal parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            DettaglioVersamentoFascicoloKo
+     */
+    private void aggiungiXmlSesFascFallitaDaObjectStorage(DettaglioVersamentoFascicoloKo riga) {
+        boolean xmlSesFascKoVuoti = riga.getDettaglioVersamentoRB().getString("bl_xml_sip") == null
+                && riga.getDettaglioVersamentoRB().getString("bl_xml_rapp_vers") == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (riga.getDettaglioVersamentoRB().getBigDecimal("id_ses_fascicolo_ko") != null && xmlSesFascKoVuoti) {
+            Map<String, String> xmls = objectStorageService.getObjectSipFascFallito(
+                    riga.getDettaglioVersamentoRB().getBigDecimal("id_ses_fascicolo_ko").longValue());
+            // recupero oggetti se presenti su O.S
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                riga.getDettaglioVersamentoRB().setString("bl_xml_sip",
+                        formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA)));
+                riga.getDettaglioVersamentoRB().setString("bl_xml_rapp_vers",
+                        formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA)));
+            }
+        }
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento fascicolo errato sia l'object storage (gestito
+     * dal parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            BaseRow
+     */
+    private void aggiungiXmlSesFascErrataDaObjectStorage(BaseRow riga) {
+        boolean xmlSesFascErrVuoti = riga.getString("bl_xml_sip") == null && riga.getString("bl_xml_rapp_vers") == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (riga.getBigDecimal("id_ses_fascicolo_err") != null && xmlSesFascErrVuoti) {
+            Map<String, String> xmls = objectStorageService
+                    .getObjectSipFascErrato(riga.getBigDecimal("id_ses_fascicolo_err").longValue());
+            // recupero oggetti se presenti su O.S
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                riga.setString("bl_xml_sip",
+                        formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA)));
+                riga.setString("bl_xml_rapp_vers",
+                        formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA)));
+            }
+        }
+    }
+    // end MEV#29090
 
     public DecodeMap getClasseErrSacerByTipiUsoDecodeMap(List<String> tipiUso) {
         DecodeMap errori = new DecodeMap();
@@ -909,10 +1238,14 @@ public class FascicoliEjb {
 
     public BaseTable ricercaSessFascErrate(Date dataDa, Date dataA, String statoSessione, String cdClasseErr,
             String cdErr) {
+        CriteriaQuery query = fascicoliHelper.createSessFascErrateCriteriaQuery(dataDa, dataA, statoSessione,
+                cdClasseErr, cdErr);
+        return lazyListHelper.getTableBean(query, this::getBaseTableFromVrsSesFascicoloErr);
+    }
+
+    private BaseTable getBaseTableFromVrsSesFascicoloErr(List<VrsSesFascicoloErr> l) {
         BaseTable t = new BaseTable();
-        BaseRow r = null;
-        List<VrsSesFascicoloErr> l = fascicoliHelper.retrieveSessFascErrate(dataDa, dataA, statoSessione, cdClasseErr,
-                cdErr);
+        BaseRow r;
         if (l != null && !l.isEmpty()) {
             for (Iterator<VrsSesFascicoloErr> iterator = l.iterator(); iterator.hasNext();) {
                 VrsSesFascicoloErr ogg = iterator.next();
@@ -983,6 +1316,9 @@ public class FascicoliEjb {
                     }
                 }
             }
+            // MEV#29090
+            aggiungiXmlSesFascErrataDaObjectStorage(r);
+            // end MEV#29090
         }
         return r;
     }
@@ -993,7 +1329,7 @@ public class FascicoliEjb {
      */
     public SalvaDettaSessErrDto salvaDettaglioSessioneFascicoloErr(BigDecimal id, BigDecimal idAmbiente,
             BigDecimal idEnte, BigDecimal idStrut, BigDecimal idTipoFascicolo, BigDecimal annoFascicolo,
-            String numFascicolo) throws EMFError {
+            String numFascicolo) {
         SalvaDettaSessErrDto ret = new SalvaDettaSessErrDto();
         VrsSesFascicoloErr sess = fascicoliHelper.findById(VrsSesFascicoloErr.class, id);
         VrsSesFascicoloKo sessFasKo = null;
@@ -1024,17 +1360,17 @@ public class FascicoliEjb {
         // SE TUTTI I CONTROLLI HANNO SUCCESSO SI TRASFORMA UNA SESSIONE ERRATA IN VERSAMENTO FALLITO
         // Punto 1 dell'analisi
         if (amb != null && ente != null && str != null && tip != null && annoFascicolo != null
-                && (numFascicolo != null || (!numFascicolo.equals("")))) {
+                && (numFascicolo != null && !numFascicolo.equals(""))) {
             // Controllo partizionamento
             List<OrgVChkPartitionFascByAa> lp = fascicoliHelper.retrieveOrgVChkPartitionFascByAaByStrutAnno(idStrut,
                     annoFascicolo);
-            if (lp != null && lp.size() > 0 && lp.iterator().next().getFlPartFascOk().equals("1")) {
+            if (lp != null && !lp.isEmpty() && lp.iterator().next().getFlPartFascOk().equals("1")) {
                 // Partizionamento ok, FLUSSO ALTERNATIVO DI TRASFORMAZIONE SESSIONE
                 List<FasFascicolo> fascicoli = fascicoliHelper.retrieveFasFascicoloByStrutAnnoNumValid(str,
                         annoFascicolo.longValueExact(), numFascicolo);
                 // SE IL FASCICOLO ESISTE
                 // Punto 2 dell'analisi
-                if (fascicoli != null && fascicoli.size() > 0) {
+                if (fascicoli != null && !fascicoli.isEmpty()) {
                     FasFascicolo fs = fascicoli.get(0);
                     fs.setFlSesFascicoloKo("1");
                     sessFasKo = new VrsSesFascicoloKo();
@@ -1047,7 +1383,7 @@ public class FascicoliEjb {
                     List<IamUser> lUsr = null;
                     if (sess.getNmUseridWs() != null) {
                         lUsr = userHelper.findIamUserList(sess.getNmUseridWs());
-                        if (lUsr != null && lUsr.size() > 0) {
+                        if (lUsr != null && !lUsr.isEmpty()) {
                             sessFasKo.setIamUser(lUsr.get(0));
                         }
                     }
@@ -1064,7 +1400,7 @@ public class FascicoliEjb {
                     List<VrsFascicoloKo> fasKo = fascicoliHelper.retrieveFasNonVersatoByStrutAnnoNum(str,
                             annoFascicolo.longValueExact(), numFascicolo, true); // RICHIEDE LOCK PESSIMISTICO
                     // SE ESISTE UN FASCICOLO NON VERSATO (punto b dell'analisi)
-                    if (fasKo != null && fasKo.size() > 0) {
+                    if (fasKo != null && !fasKo.isEmpty()) {
                         VrsFascicoloKo fko = fasKo.get(0);
                         sessFasKo = new VrsSesFascicoloKo();
                         sessFasKo.setVrsFascicoloKo(fko);
@@ -1075,7 +1411,7 @@ public class FascicoliEjb {
                         List<IamUser> lUsr = null;
                         if (sess.getNmUseridWs() != null) {
                             lUsr = userHelper.findIamUserList(sess.getNmUseridWs());
-                            if (lUsr != null && lUsr.size() > 0) {
+                            if (lUsr != null && !lUsr.isEmpty()) {
                                 sessFasKo.setIamUser(lUsr.get(0));
                             }
                         }
@@ -1092,9 +1428,9 @@ public class FascicoliEjb {
                         List<MonContaFascicoliKo> cntKo = fascicoliHelper.retrieveMonContaFascicoliKoByChiaveTotaliz(
                                 fko.getTsIniLastSes(), str, fko.getTiStatoFascicoloKo(),
                                 fko.getAaFascicolo().longValueExact(), fko.getDecTipoFascicolo(), true); // ASSSUME IL
-                                                                                                         // LOCK
-                                                                                                         // PESSIMISTICO
-                        if (cntKo != null && cntKo.size() > 0) {
+                        // LOCK
+                        // PESSIMISTICO
+                        if (cntKo != null && !cntKo.isEmpty()) {
                             MonContaFascicoliKo monCnt = cntKo.get(0);
                             // Punto b) IV
                             monCnt.setNiFascicoliKo(monCnt.getNiFascicoliKo().subtract(BigDecimal.ONE));
@@ -1102,7 +1438,7 @@ public class FascicoliEjb {
                         // Punto b) V
                         List<VrsVUpdFascicoloKo> listaVrs = fascicoliHelper
                                 .retrieveVrsVUpdFascicoloKoByFascKo(fko.getIdFascicoloKo());
-                        if (listaVrs != null && listaVrs.size() > 0) {
+                        if (listaVrs != null && !listaVrs.isEmpty()) {
                             VrsVUpdFascicoloKo vrsUpd = listaVrs.get(0);
                             fko.setTsIniFirstSes(vrsUpd.getTsIniFirstSes());
                             fko.setTsIniLastSes(vrsUpd.getTsIniLastSes());
@@ -1122,14 +1458,14 @@ public class FascicoliEjb {
                         // Punto b) VI
                         List<LogVVisLastSched> logVs = monitoraggioHelper
                                 .getLogVVisLastSched(JobConstants.JobEnum.CALCOLO_CONTENUTO_FASCICOLI.name());
-                        if (logVs != null && logVs.size() > 0
+                        if (logVs != null && !logVs.isEmpty()
                                 && fko.getTsIniLastSes().before(logVs.get(0).getDtRegLogJobIni())) {
                             // SE DATA MINORE...
                             List<MonContaFascicoliKo> cntKo2 = fascicoliHelper
                                     .retrieveMonContaFascicoliKoByChiaveTotaliz(fko.getTsIniLastSes(), str,
                                             fko.getTiStatoFascicoloKo(), fko.getAaFascicolo().longValueExact(),
                                             fko.getDecTipoFascicolo(), true); // ASSSUME IL LOCK PESSIMISTICO
-                            if (cntKo2 != null && cntKo2.size() > 0) {
+                            if (cntKo2 != null && !cntKo2.isEmpty()) {
                                 MonContaFascicoliKo mcfk = cntKo2.get(0);
                                 mcfk.setNiFascicoliKo(mcfk.getNiFascicoliKo().add(BigDecimal.ONE));
                             } else {
@@ -1176,7 +1512,7 @@ public class FascicoliEjb {
                         List<IamUser> lUsr = null;
                         if (sess.getNmUseridWs() != null) {
                             lUsr = userHelper.findIamUserList(sess.getNmUseridWs());
-                            if (lUsr != null && lUsr.size() > 0) {
+                            if (lUsr != null && !lUsr.isEmpty()) {
                                 sessFasKo.setIamUser(lUsr.get(0));
                             }
                         }
@@ -1193,10 +1529,10 @@ public class FascicoliEjb {
                         List<MonContaFascicoliKo> cntKo3 = fascicoliHelper.retrieveMonContaFascicoliKoByChiaveTotaliz(
                                 vrsFasKo.getTsIniLastSes(), vrsFasKo.getOrgStrut(), vrsFasKo.getTiStatoFascicoloKo(),
                                 vrsFasKo.getAaFascicolo().longValueExact(), vrsFasKo.getDecTipoFascicolo(), true); // ASSSUME
-                                                                                                                   // IL
-                                                                                                                   // LOCK
-                                                                                                                   // PESSIMISTICO
-                        if (cntKo3 != null && cntKo3.size() > 0) {
+                        // IL
+                        // LOCK
+                        // PESSIMISTICO
+                        if (cntKo3 != null && !cntKo3.isEmpty()) {
                             MonContaFascicoliKo ogg = cntKo3.get(0);
                             ogg.setNiFascicoliKo(ogg.getNiFascicoliKo().add(BigDecimal.ONE));
                         } else {
@@ -1222,12 +1558,8 @@ public class FascicoliEjb {
                         xmlKo.setTiXml(xmlErr.getTiXml());
                         xmlKo.setCdVersioneXml(xmlErr.getCdVersioneXml());
                         xmlKo.setBlXml(xmlErr.getBlXml());
-                        // xmlKo.setDsHashXml(xmlErr.getDsHashXml());
-                        // xmlKo.setDsAlgoHashXml(xmlErr.getDsAlgoHashXml());
-                        // xmlKo.setDsUrnXml(xmlErr.getDsUrnXml());
                         xmlKo.setIdStrut(new BigDecimal(sess.getOrgStrut().getIdStrut()));
-                        xmlKo.setDtRegXmlSesKo(new Date());
-                        // xmlKo.setCdEncodingHashXml(xmlErr.getCdEncodingHashXml());
+                        xmlKo.setDtRegXmlSesKo(LocalDate.now());
                         fascicoliHelper.getEntityManager().persist(xmlKo);
                     }
                 }
@@ -1258,6 +1590,7 @@ public class FascicoliEjb {
         private boolean sessioneCancellata;
 
         public SalvaDettaSessErrDto() {
+            // default
         }
 
         public String getMsg() {
@@ -1283,6 +1616,7 @@ public class FascicoliEjb {
         private BaseTable listaErroriTB;
 
         public DettaglioVersamentoFascicoloKo() {
+            // default
         }
 
         public BaseRow getDettaglioVersamentoRB() {
@@ -1373,8 +1707,6 @@ public class FascicoliEjb {
                 if (ogg.getDecVoceTitol() != null) {
                     r.setBigDecimal("id_voce_titol", new BigDecimal(ogg.getDecVoceTitol().getIdVoceTitol()));
                 }
-                // if (ogg.getDecVoceTitol().getDecTitol() != null)
-                // r.setBigDecimal("id_titol", new BigDecimal(ogg.getDecVoceTitol().getDecTitol().getIdTitol()));
                 t.add(r);
             }
         }
@@ -1448,23 +1780,23 @@ public class FascicoliEjb {
 
     public long getNumFascCriterioStd(BigDecimal idStrut) {
         OrgStrut strut = fascicoliHelper.findById(OrgStrut.class, idStrut);
-        String numFascCriterioStd = configurationHelper.getValoreParamApplic("NUM_FASC_CRITERIO_STD",
-                BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut, null, null,
-                TipoAplVGetValAppart.STRUT);
+        String numFascCriterioStd = configurationHelper.getValoreParamApplicByStrut(
+                CostantiDB.ParametroAppl.NUM_FASC_CRITERIO_STD,
+                BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut);
         return new Long(numFascCriterioStd);
     }
 
     public long getNumGgScadCriterioFascStd(BigDecimal idStrut) {
         OrgStrut strut = fascicoliHelper.findById(OrgStrut.class, idStrut);
-        String numGgScadCriterioFascStd = configurationHelper.getValoreParamApplic("NUM_GG_SCAD_CRITERIO_FASC_STD",
-                BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut, null, null,
-                TipoAplVGetValAppart.STRUT);
+        String numGgScadCriterioFascStd = configurationHelper.getValoreParamApplicByStrut(
+                CostantiDB.ParametroAppl.NUM_GG_SCAD_CRITERIO_FASC_STD,
+                BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut);
         return new Long(numGgScadCriterioFascStd);
     }
 
     public long saveCriterioRaggrFascicoli(LogParam param, CreaCriterioRaggrFascicoli filtri,
-            Object[] anniFascicoliValidati, BigDecimal idStruttura, String nome, String criterioStandard,
-            List<BigDecimal> voceTitolList) throws EMFError, ParerUserError {
+            Object[] anniFascicoliValidati, String nome, String criterioStandard, List<BigDecimal> voceTitolList)
+            throws EMFError {
         return fascicoliHelper.saveCritRaggrFasc(param, filtri, anniFascicoliValidati, filtri.getId_strut().parse(),
                 nome, criterioStandard, voceTitolList);
     }
@@ -1482,9 +1814,9 @@ public class FascicoliEjb {
         return fascicoliHelper.existElvElencoVersPerCriterioRaggrFasc(idCriterioRaggrFasc);
     }
 
-    public boolean isCriterioRaggrFascStandard(BigDecimal idStrut, String nmCriterioRaggr, BigDecimal aaFascicolo,
-            BigDecimal aaFascicoloDa, BigDecimal aaFascicoloA, BigDecimal niTempoScadChius, String tiTempoScadChius,
-            Set<String> tipiFascicolo, List<BigDecimal> voceTitolList, BigDecimal niMaxFasc) throws EMFError {
+    public boolean isCriterioRaggrFascStandard(BigDecimal idStrut, BigDecimal aaFascicolo, BigDecimal aaFascicoloDa,
+            BigDecimal aaFascicoloA, BigDecimal niTempoScadChius, String tiTempoScadChius, Set<String> tipiFascicolo,
+            List<BigDecimal> voceTitolList, BigDecimal niMaxFasc) {
         int numeroCondizioniSoddisfatte = 0;
         /*
          * ATTENZIONE: IL NUMERO DI CONDIZIONI NECESSARIE DIPENDE DA QUANTE CONDIZIONI DEVONO ESSERE SODDISFATTE
@@ -1557,9 +1889,7 @@ public class FascicoliEjb {
 
     public DecCriterioRaggrFascRowBean getDecCriterioRaggrFascRowBean(BigDecimal idCriterioRaggrFasc,
             BigDecimal idStrut) {
-        DecCriterioRaggrFascRowBean criterioRaggrFascRowBean = getDecCriterioRaggrFasc(idCriterioRaggrFasc, null,
-                idStrut);
-        return criterioRaggrFascRowBean;
+        return getDecCriterioRaggrFasc(idCriterioRaggrFasc, null, idStrut);
     }
 
     private DecCriterioRaggrFascRowBean getDecCriterioRaggrFasc(BigDecimal idCriterioRaggrFasc, String nmCriterioRaggr,
@@ -1585,4 +1915,85 @@ public class FascicoliEjb {
 
         return criterioRaggrDocRowBean;
     }
+
+    /**
+     *
+     * @return DecModelloXsdFascicoloTableBean
+     */
+    public DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBeanInit() {
+        DecModelloXsdFascicoloTableBean decModelloXsdFascicoloTableBean = new DecModelloXsdFascicoloTableBean();
+        try {
+
+            List<DecModelloXsdFascicolo> modelliXsdFascicolo = fascicoliHelper.getDecModelloXsdFascicoloDisp();
+            if (modelliXsdFascicolo != null && !modelliXsdFascicolo.isEmpty()) {
+                decModelloXsdFascicoloTableBean = (DecModelloXsdFascicoloTableBean) Transform
+                        .entities2TableBean(modelliXsdFascicolo);
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return decModelloXsdFascicoloTableBean;
+    }
+
+    /**
+     *
+     * @param idTipoFascicolo
+     *            id tipo fascicolo
+     *
+     * @return DecModelloXsdFascicoloTableBean
+     */
+    public DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBeanByTipoFascicolo(long idTipoFascicolo) {
+        DecModelloXsdFascicoloTableBean decModelloXsdFascicoloTableBean = new DecModelloXsdFascicoloTableBean();
+        try {
+
+            List<Object[]> modelliXsdFascicolo = fascicoliHelper
+                    .getDecModelloXsdFascicoloByTipoFascicolo(idTipoFascicolo);
+            if (modelliXsdFascicolo != null && !modelliXsdFascicolo.isEmpty()) {
+                DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = null;
+                DecModelloXsdFascicolo modello;
+                for (Object[] obj : modelliXsdFascicolo) {
+                    modello = fascicoliHelper.findById(DecModelloXsdFascicolo.class, (long) obj[0]);
+                    modelloXsdFascicoloRowBean = (DecModelloXsdFascicoloRowBean) Transform
+                            .entity2RowBean((DecModelloXsdFascicolo) modello);
+                    decModelloXsdFascicoloTableBean.add(modelloXsdFascicoloRowBean);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return decModelloXsdFascicoloTableBean;
+    }
+
+    /**
+     *
+     * @param idTipoFascicolo
+     *            id tipo fascicolo
+     * @param idModelloXsdFascicolo
+     *            id modello fascicolo
+     *
+     * @return DecModelloXsdFascicoloTableBean
+     */
+    public DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBeanByTipoFascicoloAndModelloXsd(
+            long idTipoFascicolo, long idModelloXsdFascicolo) {
+        DecModelloXsdFascicoloTableBean decModelloXsdFascicoloTableBean = new DecModelloXsdFascicoloTableBean();
+        try {
+
+            DecModelloXsdFascicolo modello = fascicoliHelper.findById(DecModelloXsdFascicolo.class,
+                    idModelloXsdFascicolo);
+            List<DecModelloXsdFascicolo> modelliXsdFascicolo = fascicoliHelper
+                    .getDecModelloXsdFascicoloByTipoFascicoloAndIdModelloXsd(idTipoFascicolo,
+                            modello.getTiModelloXsd());
+            if (modelliXsdFascicolo != null && !modelliXsdFascicolo.isEmpty()) {
+                decModelloXsdFascicoloTableBean = (DecModelloXsdFascicoloTableBean) Transform
+                        .entities2TableBean(modelliXsdFascicolo);
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return decModelloXsdFascicoloTableBean;
+    }
+
 }

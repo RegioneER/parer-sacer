@@ -1,4 +1,32 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
@@ -18,7 +46,7 @@ import it.eng.parer.entity.constraint.DecModelloXsdUd;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
-import it.eng.parer.entity.constraint.SIOrgEnteSiam.TiEnteConvenz;
+import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.serie.dto.RegistroTipoUnitaDoc;
 import it.eng.parer.serie.ejb.SerieEjb;
 import it.eng.parer.slite.gen.Application;
@@ -29,14 +57,14 @@ import it.eng.parer.slite.gen.form.ElenchiVersamentoForm;
 import it.eng.parer.slite.gen.form.FascicoliForm;
 import it.eng.parer.slite.gen.form.SerieUDForm;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
-import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie;
+import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie;
+import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.UnitaDocumentarieList;
 import it.eng.parer.slite.gen.form.VolumiForm;
-import it.eng.parer.slite.gen.tablebean.AroFileVerIndiceAipUdRowBean;
 import it.eng.parer.slite.gen.tablebean.AroUpdUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.AroVerIndiceAipUdRowBean;
 import it.eng.parer.slite.gen.tablebean.AroVerIndiceAipUdTableBean;
@@ -56,6 +84,7 @@ import it.eng.parer.slite.gen.tablebean.DecTipoRapprCompTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoStrutDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
+import it.eng.parer.slite.gen.tablebean.DecVersioneWsTableBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerRowBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgSubStrutTableBean;
@@ -111,10 +140,12 @@ import it.eng.parer.web.validator.UnitaDocumentarieValidator;
 import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.dto.IRispostaWS.SeverityEnum;
+import it.eng.parer.ws.ejb.RecuperoDocumento;
 import it.eng.parer.ws.recupero.dto.ComponenteRec;
 import it.eng.parer.ws.recupero.dto.ParametriRecupero;
 import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
+import it.eng.parer.ws.recupero.ejb.oracleClb.RecClbOracle;
 import it.eng.parer.ws.recuperoDip.ejb.RecuperoDip;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
@@ -144,9 +175,9 @@ import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.form.fields.impl.MultiSelect;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.security.Secure;
-import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -162,17 +193,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.zip.*;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.codehaus.jettison.json.JSONObject;
 
 /**
  *
@@ -180,7 +211,9 @@ import org.codehaus.jettison.json.JSONObject;
  */
 public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
-    private static Logger logger = LoggerFactory.getLogger(UnitaDocumentarieAction.class.getName());
+    private static final String ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO = "Eccezione nel recupero del Rapporto di versamento: ";
+    private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
+    private static Logger log = LoggerFactory.getLogger(UnitaDocumentarieAction.class.getName());
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configurationHelper;
     @EJB(mappedName = "java:app/Parer-ejb/UnitaDocumentarieHelper")
@@ -215,6 +248,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     private TipoFascicoloEjb tipoFascicoloEjb;
     @EJB(mappedName = "java:app/Parer-ejb/UniformResourceNameUtilHelper")
     private UniformResourceNameUtilHelper urnHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/RecuperoDocumento")
+    private RecuperoDocumento recuperoDocumento;
 
     private DecodeMap mappaTipoUD;
     private DecodeMap mappaRegistro;
@@ -227,7 +262,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Metodo di inizializzazione form di ricerca unitÃ  documentarie
+     * Metodo di inizializzazione form di ricerca unitÃ documentarie
      *
      * @throws EMFError
      *             errore generico
@@ -237,7 +272,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Metodo di inizializzazione form di ricerca unitÃ  documentarie semplice
+     * Metodo di inizializzazione form di ricerca unitÃ documentarie semplice
      *
      * @throws EMFError
      *             errore generico
@@ -264,7 +299,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
         initMappeTipiDato();
 
-        // Setto le varie combo dei FILTRI di ricerca UnitÃ  Documentarie
+        // Setto le varie combo dei FILTRI di ricerca Unità Documentarie
         getForm().getFiltriUnitaDocumentarieSemplice().getNm_tipo_unita_doc().setDecodeMap(mappaTipoUD);
         getForm().getFiltriUnitaDocumentarieSemplice().getNm_tipo_doc().setDecodeMap(mappaTipoDoc);
         getForm().getFiltriUnitaDocumentarieSemplice().getFl_unita_doc_firmato()
@@ -277,7 +312,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriUnitaDocumentarieSemplice().getFl_forza_collegamento()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        // getForm().getFiltriUnitaDocumentarieSemplice().getFl_forza_hash()
+        // .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        // getForm().getFiltriUnitaDocumentarieSemplice().getFl_forza_fmt_numero()
+        // .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        // getForm().getFiltriUnitaDocumentarieSemplice().getFl_forza_fmt_file()
+        // .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        DecVersioneWsTableBean versioneWsTableBean = tipoUnitaDocEjb.getDecVersioneWsTableBean("Versamento ud");
+        getForm().getFiltriUnitaDocumentarieSemplice().getCd_versione_ws()
+                .setDecodeMap(DecodeMap.Factory.newInstance(versioneWsTableBean, "cd_versione_ws", "cd_versione_ws"));
         getForm().getFiltriUnitaDocumentarieSemplice().getFl_doc_aggiunti()
+                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getFiltriUnitaDocumentarieSemplice().getFl_agg_meta()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriUnitaDocumentarieSemplice().getTi_stato_conservazione()
                 .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_conservazione",
@@ -313,7 +359,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Imposto i filtri in edit mode
         getForm().getFiltriUnitaDocumentarieSemplice().setEditMode();
         getForm().getUnitaDocumentarieRicercaButtonList().setEditMode();
-        // Inizializzo la lista di unitÃ  documentarie vuota e con 10 righe per pagina
+        // Inizializzo la lista di unitÃ documentarie vuota e con 10 righe per pagina
         getForm().getUnitaDocumentarieList().setTable(null);
         getForm().getUnitaDocumentarieTabs()
                 .setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriRicercaAvanzata());
@@ -322,7 +368,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Metodo di inizializzazione form di ricerca unitÃ  documentarie avanzata
+     * Metodo di inizializzazione form di ricerca unitÃ documentarie avanzata
      *
      * @throws EMFError
      *             errore generico
@@ -353,10 +399,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.AnnulVers.UnitaDocumentarieRicercaVersAnnullati");
         getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(), TipoRicercaAttribute.VERS_ANNULLATI.name());
-        // setUnitaDocumentarieRicercaAvanzata();
         setUnitaDocumentarieRicercaUDAnnullate();
         getForm().getUnitaDocumentarieRicercaButtonList().getRicercaUDAnnullate().setEditMode();
         getForm().getUnitaDocumentarieRicercaButtonList().getDownloadContenutoAnnullate().setEditMode();
+        getForm().getUnitaDocumentarieRicercaButtonList().getDownloadContenutoAnnullate().setDisableHourGlass(true);
         // getForm().getFiltriUnitaDocumentarieAvanzata().getFl_unita_doc_annul().setValue("1");
         postLoad();
     }
@@ -369,10 +415,11 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
          */
         getForm().addComponent(new UnitaDocumentarieList());
 
-        // Pulisco i filtri di ricerca unità  documentarie avanzata
+        // Pulisco i filtri di ricerca unità documentarie avanzata
         getForm().getFiltriUnitaDocumentarieAvanzata().reset();
         getForm().getFiltriCollegamentiUnitaDocumentarie().reset();
         getForm().getFiltriComponentiUnitaDocumentarie().reset();
+        getForm().getFiltriFirmatariUnitaDocumentarie().reset();
         getForm().getFiltriFascicoliUnitaDocumentarie().reset();
 
         /*
@@ -411,7 +458,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 ComboGetter.getMappaSortedGenericEnum("ti_conservazione", VolumeEnums.TipoConservazione.values()));
         getForm().getFiltriUnitaDocumentarieAvanzata().getNm_sistema_migraz().setDecodeMap(mappaSisMig);
         getForm().getFiltriUnitaDocumentarieAvanzata().getFl_profilo_normativo()
-                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());//
+
+        DecVersioneWsTableBean versioneWsTableBean = tipoUnitaDocEjb.getDecVersioneWsTableBean("Versamento ud");
+        getForm().getFiltriUnitaDocumentarieAvanzata().getCd_versione_ws()
+                .setDecodeMap(DecodeMap.Factory.newInstance(versioneWsTableBean, "cd_versione_ws", "cd_versione_ws"));
+
         getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper().setDecodeMap(
                 ComboGetter.getMappaSortedGenericEnum("operatore", CostantiDB.TipoOperatoreDatiSpec.values()));
         getForm().getFiltriCollegamentiUnitaDocumentarie().getCon_collegamento()
@@ -422,10 +474,14 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 .setDecodeMap(mappaRegistro);
         getForm().getFiltriUnitaDocumentarieAvanzata().getFl_doc_aggiunti()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getFiltriUnitaDocumentarieAvanzata().getFl_agg_meta()
+                .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriUnitaDocumentarieAvanzata().getFl_hash_vers()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriComponentiUnitaDocumentarie().getFl_rif_temp_vers()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        // getForm().getFiltriFirmatariUnitaDocumentarie().getCon_firmatario()
+        // .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
 
         /* Filtro sottostrutture */
         OrgSubStrutTableBean tmpSubStrutsTableBean = subStrutEjb
@@ -487,6 +543,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
         // Setto le section aperte o chiuse
         getForm().getFiltriCollegamenti().setLoadOpened(false);
+        getForm().getFiltriFirmatari().setLoadOpened(false);
 
         // Carico la pagina di ricerca
         forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA);
@@ -495,6 +552,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getFiltriUnitaDocumentarieAvanzata().setEditMode();
         getForm().getUnitaDocumentarieRicercaButtonList().setEditMode();
         getForm().getFiltriCollegamentiUnitaDocumentarie().setEditMode();
+        getForm().getFiltriFirmatariUnitaDocumentarie().setEditMode();
         getForm().getFiltriComponentiUnitaDocumentarie().setEditMode();
         getForm().getFiltriFascicoliUnitaDocumentarie().setEditMode();
 
@@ -540,7 +598,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     public void setUnitaDocumentarieRicercaUDAnnullate() throws EMFError {
-        // Pulisco i filtri di ricerca unità  documentarie annullate
+        // Pulisco i filtri di ricerca unità documentarie annullate
         getForm().getFiltriUnitaDocumentarieAnnullate().reset();
 
         initMappeTipiDato();
@@ -577,10 +635,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     private void ricercaEDownload(boolean effettuaDownload) throws EMFError {
-        // Controllo se la ricerca unità  documentaria è semplice o avanzata
+        // Controllo se la ricerca unità documentaria è semplice o avanzata
         // RICERCA UNITA' DOCUMENTARIE SEMPLICE
         if (getLastPublisher().equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_SEMPLICE)) {
-            // Pulisce lo stack di id unitÃ  documentarie, necessario per il caricamento delle ud collegate
+            // Pulisce lo stack di id unitÃ documentarie, necessario per il caricamento delle ud collegate
             getSession().setAttribute("idUdStack", new ArrayList<BigDecimal>());
             UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice filtri = getForm()
                     .getFiltriUnitaDocumentarieSemplice();
@@ -606,13 +664,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         filtri.getDt_reg_unita_doc_da().getHtmlDescription(),
                         filtri.getDt_reg_unita_doc_a().getHtmlDescription());
 
-                // Controllo l'obbligatorietà  di anno o range anni di chiave unitÃ  documentaria
+                // Controllo l'obbligatorietà di anno o range anni di chiave unitÃ documentaria
                 validator.controllaPresenzaAnno(filtri.getAa_key_unita_doc().parse(),
                         filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse());
 
                 /*
                  * "Rielaboro" i filtri relativi ai tipi dato che necessitano di autorizzazioni. Controllo i valori che
-                 * poi dovrò passare come filtro (Tipo Unità  Documentaria, Tipo Documento, Sotto struttura, Registro):
+                 * poi dovrò passare come filtro (Tipo Unità Documentaria, Tipo Documento, Sotto struttura, Registro):
                  * se non è valorizzato faccio una ricerca per tutti i valori ammessi (escamotage per far visualizzare
                  * in fase di ricerca solo i tipi di dato cui l'utente è abilitato) NOTA BENE: Per sotto struttura, pur
                  * essendo un tipo dato che necessita autorizzazioni, questo passaggio non è necessario: il campo è
@@ -646,21 +704,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     }
 
                     // Elimino il record dei filtri dati specifici dalla tabella USR_FILTRO_ATTRIB
-                    BigDecimal idUser = new BigDecimal(getUser().getIdUtente());
 
                     // Effettuo la ricerca per la visualizzazione oppure per il download dei contenuti
                     if (effettuaDownload) {
                         AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicSempliceViewBeanNoLimit(filtri,
                                 idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocListPerRicerca,
-                                idTipoDocListPerRicerca, dateAcquisizioneValidate, dateUnitaDocValidate, getIdStrut(),
-                                idUser);
+                                idTipoDocListPerRicerca, dateAcquisizioneValidate, dateUnitaDocValidate, getIdStrut());
                         if (!getMessageBox().hasError()) {
                             File tmpFile = new File(System.getProperty("java.io.tmpdir"),
                                     "Contenuto_ricerca_unita_documentarie.csv");
                             try {
-                                ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(),
-                                        /* (BaseTableInterface<? extends BaseRowInterface>) */ tb,
-                                        AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile, this);
+                                ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
+                                        AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
                                 getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
@@ -672,7 +727,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                 getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
                                         "text/csv");
                             } catch (IOException ex) {
-                                logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+                                log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
                                 getMessageBox().addError("Errore inatteso nella preparazione del download");
                             }
                         }
@@ -684,13 +739,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         }
 
                     } else {
-                        String maxResultRicercauD = configurationHelper.getValoreParamApplic("MAX_RESULT_RICERCA_UD",
-                                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                        String maxResultRicercauD = configurationHelper
+                                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_RICERCA_UD);
                         AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicSempliceViewBean(filtri,
                                 idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocListPerRicerca,
                                 idTipoDocListPerRicerca, dateAcquisizioneValidate, dateUnitaDocValidate, getIdStrut(),
-                                idUser, Integer.parseInt(maxResultRicercauD));
-                        // Carico la tabella con i filtri impostati
+                                Integer.parseInt(maxResultRicercauD));
+                        // Carico la tabella con i filtri impostati\
                         getForm().getUnitaDocumentarieList().setTable(tb);
                         getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
                         // Aggiungo alla lista una regola di ordinamento
@@ -715,16 +770,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             if (!effettuaDownload) {
                 getForm().getUnitaDocumentarieList().setTable(null);
             }
-            // Pulisce lo stack di id unità  documentarie, necessario per il caricamento delle ud collegate
+            // Pulisce lo stack di id unità documentarie, necessario per il caricamento delle ud collegate
             getSession().setAttribute("idUdStack", new ArrayList<BigDecimal>());
             final FiltriUnitaDocumentarieAvanzata filtri = getForm().getFiltriUnitaDocumentarieAvanzata();
             final FiltriCollegamentiUnitaDocumentarie filtriCollegamenti = getForm()
                     .getFiltriCollegamentiUnitaDocumentarie();
+            final FiltriFirmatariUnitaDocumentarie filtriFirmatari = getForm().getFiltriFirmatariUnitaDocumentarie();
             final FiltriComponentiUnitaDocumentarie compfiltri = getForm().getFiltriComponentiUnitaDocumentarie();
             final FiltriFascicoliUnitaDocumentarie fascfiltri = getForm().getFiltriFascicoliUnitaDocumentarie();
             // Esegue la post dei filtri compilati
             filtri.post(getRequest());
             filtriCollegamenti.post(getRequest());
+            filtriFirmatari.post(getRequest());
             compfiltri.post(getRequest());
             fascfiltri.post(getRequest());
             String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA;
@@ -755,7 +812,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 }
 
                 if (!getMessageBox().hasError()) {
-                    // Controllo l'obbligatorietÃ  di anno o range anni di chiave unitÃ  documentaria
+                    // Controllo l'obbligatorietÃ di anno o range anni di chiave unitÃ documentaria
                     validator.controllaPresenzaAnno(filtri.getAa_key_unita_doc().parse(),
                             filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse());
                 }
@@ -778,7 +835,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             filtriCollegamenti.getDs_link_unita_doc_oggetto().parse());
                 }
 
-                // Valida i campi di Range di chiavi unitÃ  documentaria
+                // Valida i campi di Range di chiavi unitÃ documentaria
                 Object[] chiavi = null;
                 if (!getMessageBox().hasError()) {
                     String[] registro = Arrays.copyOf(
@@ -838,7 +895,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 if (!getMessageBox().hasError()) {
                     // La validazione non ha riportato errori.
-                    // Setto i filtri di chiavi unitÃ  documentaria impostando gli eventuali valori di default
+                    // Setto i filtri di chiavi unitÃ documentaria impostando gli eventuali valori di default
                     if (chiavi != null && chiavi.length == 5) {
                         filtri.getAa_key_unita_doc_da()
                                 .setValue(chiavi[1] != null ? ((BigDecimal) chiavi[1]).toString() : null);
@@ -852,12 +909,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     // Controllo dove sono stati inseriti i filtri tra la chiave fascicolo singola e la chiave fascicolo
                     // per range
                     if (chiaviFasc != null) {
-                        boolean chiave = false;
                         boolean range = false;
-
-                        if (chiaviFasc.getAnno() != null || chiaviFasc.getNumero() != null) {
-                            chiave = true;
-                        }
 
                         if (chiaviFasc.getAnnoDa() != null || chiaviFasc.getAnnoA() != null
                                 || chiaviFasc.getNumeroDa() != null || chiaviFasc.getNumeroA() != null) {
@@ -877,7 +929,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     }
 
                     // Elimino il record dei filtri dati specifici dalla tabella USR_FILTRO_ATTRIB
-                    BigDecimal idUser = new BigDecimal(getUser().getIdUtente());
 
                     // Ricavo la Lista Dati Specifici compilati a video
                     List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = (ArrayList) getSession()
@@ -888,18 +939,17 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             .parse() != null;
 
                     if (effettuaDownload) {
-                        AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicAvanzataViewBean(filtri,
+                        AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicAvanzataViewBeanNoLimit(filtri,
                                 idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocSetPerRicerca,
-                                idTipoDocListPerRicerca, listaDatiSpecOnLine, filtriCollegamenti, compfiltri,
-                                fascfiltri, dateAcquisizioneValidate, dateUnitaDocValidate, dateCreazioneComp,
-                                getIdStrut(), idUser, addSerie || addRichAnnulVers);
+                                idTipoDocListPerRicerca, listaDatiSpecOnLine, filtriCollegamenti, filtriFirmatari,
+                                compfiltri, fascfiltri, dateAcquisizioneValidate, dateUnitaDocValidate,
+                                dateCreazioneComp, getIdStrut(), addSerie || addRichAnnulVers);
                         if (!getMessageBox().hasError()) {
                             File tmpFile = new File(System.getProperty("java.io.tmpdir"),
                                     "Contenuto_ricerca_unita_documentarie.csv");
                             try {
-                                ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(),
-                                        /* (BaseTableInterface<? extends BaseRowInterface>) */ tb,
-                                        AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile, this);
+                                ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
+                                        AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                                 getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                         getControllerName());
                                 getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
@@ -911,7 +961,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                 getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
                                         "text/csv");
                             } catch (IOException ex) {
-                                logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+                                log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
                                 getMessageBox().addError("Errore inatteso nella preparazione del download");
                             }
                         }
@@ -925,9 +975,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     } else {
                         AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicAvanzataViewBean(filtri,
                                 idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocSetPerRicerca,
-                                idTipoDocListPerRicerca, listaDatiSpecOnLine, filtriCollegamenti, compfiltri,
-                                fascfiltri, dateAcquisizioneValidate, dateUnitaDocValidate, dateCreazioneComp,
-                                getIdStrut(), idUser, addSerie || addRichAnnulVers);
+                                idTipoDocListPerRicerca, listaDatiSpecOnLine, filtriCollegamenti, filtriFirmatari,
+                                compfiltri, fascfiltri, dateAcquisizioneValidate, dateUnitaDocValidate,
+                                dateCreazioneComp, getIdStrut(), addSerie || addRichAnnulVers);
                         // Carico la tabella con i filtri impostati
                         getForm().getUnitaDocumentarieList().setTable(tb);
                         getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
@@ -1236,7 +1286,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                 + getForm().getFascicoliAppartenenzaList().getTable().getCurrentRowIndex(),
                         fascicoliForm);
             } else if (getRequest().getParameter("table").equals(getForm().getUnitaDocumentarieList().getName())) {
-                // Lista unitÃ  documentarie
+                // Lista unitÃ documentarie
                 getForm().getUnitaDocumentarieDettaglioTabs()
                         .setCurrentTab(getForm().getUnitaDocumentarieDettaglioTabs().getInfoPrincipaliUD());
                 getForm().getUnitaDocumentarieDettaglioListsTabs()
@@ -1248,7 +1298,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 // venga lanciata la load dettaglio che caricherebbe controllo del flag risolto
                 AroVLisLinkUnitaDocRowBean av = getAroVLisLinkUnitaDocRowBean();
 
-                // Ottengo l'id dell'unitÃ  documentaria collegata
+                // Ottengo l'id dell'unitÃ documentaria collegata
                 getSession().setAttribute("idud", av.getIdUnitaDoc());
                 if (av.getFlRisolto().equals("1")) {
                     // MEV#17625
@@ -1258,7 +1308,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             .equals(CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name())) {
                         // Se il flag risolto Ã¨ a 1 (true) e l'UD non è ANNULLATA carico il dettaglio disponibile,
                         // aggiungendo
-                        // allo stack delle unitÃ  documentarie l'id dell'UD attuale
+                        // allo stack delle unitÃ documentarie l'id dell'UD attuale
                         List<BigDecimal> idUdStack = getIdUdStack();
                         idUdStack.add(av.getIdUnitaDoc());
                         getSession().setAttribute("idUdStack", idUdStack);
@@ -1272,7 +1322,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             "Dettaglio non disponibile per questa Unita' Documentaria (collegamento non risolto)");
                 }
 
-                // Lista collegamenti unitÃ  documentarie
+                // Lista collegamenti unitÃ documentarie
                 // devo aver cliccato sul un link dettaglio valido
                 if (!getMessageBox().hasError()) {
                     getForm().getUnitaDocumentarieDettaglioTabs()
@@ -1349,28 +1399,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             getForm().getNotaDetail().clear();
             getForm().getNotaDetail().setViewMode();
 
-            // Gestione progressivo nota incrementale, inserendo i progressivi mancanti
-            // int sizeNote = getForm().getNoteList().getTable().size();
-            // BigDecimal lastPgNota = serieEjb.getMaxPgNota(idVersione);
-            // String nextPg = String.valueOf(sizeNote + 1);
-            // if (lastPgNota.intValue() > sizeNote) {
-            // // Buco di numerazione
-            // AroVLisNotaUnitaDocTableBean tb = (AroVLisNotaUnitaDocTableBean) getForm().getNoteList().getTable();
-            // List<Object> progressivi = tb.toList(AroVLisNotaUnitaDocRowBean.TABLE_DESCRIPTOR.COL_PG_NOTA_UNITA_DOC,
-            // new
-            // SortingRule[]{SortingRule.getAscending(AroVLisNotaUnitaDocRowBean.TABLE_DESCRIPTOR.COL_PG_NOTA_UNITA_DOC)});
-            // int index = 1;
-            // for (Object progressivo : progressivi) {
-            // int pg = ((BigDecimal) progressivo).intValue();
-            // if (index != pg) {
-            // nextPg = String.valueOf(index);
-            // break;
-            // }
-            // index++;
-            // }
-            // }
-            // BigDecimal lastPgNota = udHelper.getMaxPgNota(idUnitaDoc, idTipoUnitaDoc);
-            // String nextPg = lastPgNota.add(BigDecimal.ONE).toPlainString();
             getForm().getNotaDetail().getPg_nota_unita_doc().setValue(null);
             getForm().getNotaDetail().getNm_userid_nota().setValue(getUser().getUsername());
             getForm().getNotaDetail().getDt_nota_unita_doc().setValue(formato.format(Calendar.getInstance().getTime()));
@@ -1389,14 +1417,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Restituisce il row bean relativo all'unitÃ  documentaria collegata selezionata
+     * Restituisce il row bean relativo all'unitÃ documentaria collegata selezionata
      *
      * @return AroVLisLinkUnitaDocRowBean
      */
     private AroVLisLinkUnitaDocRowBean getAroVLisLinkUnitaDocRowBean() {
-        AroVLisLinkUnitaDocRowBean av = (AroVLisLinkUnitaDocRowBean) getForm().getCollegamentiList().getTable()
-                .getCurrentRow();
-        return av;
+        return (AroVLisLinkUnitaDocRowBean) getForm().getCollegamentiList().getTable().getCurrentRow();
     }
 
     /**
@@ -1411,9 +1437,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Controllo per quale tabella Ã¨ stato invocato il metodo
         String lista = getRequest().getParameter("table");
         if (lista != null) {
-            String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                    CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                    CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String sistemaConservazione = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
             if (getRequest().getParameter("table").equals(getForm().getUnitaDocumentarieList().getName())) {
                 // UNITA' DOCUMENTARIA
                 BigDecimal idUnitaDoc = getForm().getUnitaDocumentarieList().getTable().getCurrentRow()
@@ -1457,19 +1482,22 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 // Di default nascondo il bottone per il download degli xml e i relativi tab
                 getForm().getDocumentiUnitaDocumentarieDetail().getScarica_xml_doc().setViewMode();
+                getForm().getDocumentiUnitaDocumentarieDetail().getScarica_xml_doc().setDisableHourGlass(true);
                 getForm().getDocumentiDettaglioTabs().getXMLRichiestaDoc().setHidden(true);
                 getForm().getDocumentiDettaglioTabs().getXMLRispostaDoc().setHidden(true);
                 getForm().getDocumentiDettaglioTabs().getXMLRapportoDoc().setHidden(true);
 
                 /*
-                 * Per i documenti AGGIUNTI devo ricavare anche gli xml di richiesta e risposta Quindi, controllo che il
-                 * documento in questione sia o meno aggiunto, confrontando la sua data di creazione con quella di
-                 * creazione UD. Se quest'ultima Ã¨ antecedente la data di creazione del documento, significa che esso
-                 * Ã¨ AGGIUNTO e dunque ne mostro i valori si xml richiesta e risposta in quanto sicuramente presenti
+                 * Per i documenti AGGIUNTI devo ricavare anche gli xml di richiesta e risposta. Quindi, controllo che
+                 * il documento in questione sia o meno aggiunto, confrontando la sua data di creazione con quella di
+                 * creazione UD. Se quest'ultima è antecedente la data di creazione del documento, significa che esso è
+                 * stato AGGIUNTO e dunque ne mostro i valori di xml richiesta e risposta in quanto sicuramente presenti
                  */
-                Date dataUD = getForm().getUnitaDocumentarieDetail().getDt_reg_unita_doc().parse();
+                Date dataUD = getForm().getUnitaDocumentarieDetail().getDt_creazione().parse();
                 if (dataUD != null && documentoAaaRB.getDtCreazione() != null) {
                     if (dataUD.before(documentoAaaRB.getDtCreazione())) {
+                        // load from O.S.
+                        udHelper.addXmlDocFromOStoAroVVisDocIamRowBean(documentoAaaRB);
                         // Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line in versione
                         // "pretty-print"
                         String xmlrich = documentoAaaRB.getBlXmlRichDoc();
@@ -1483,6 +1511,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             getForm().getDocumentiUnitaDocumentarieDetail().getBl_xml_rich_doc().setValue(xmlrich);
                             getForm().getDocumentiUnitaDocumentarieDetail().getBl_xml_risp_doc().setValue(xmlrisp);
                             getForm().getDocumentiUnitaDocumentarieDetail().getScarica_xml_doc().setEditMode();
+                            getForm().getDocumentiUnitaDocumentarieDetail().getScarica_xml_doc()
+                                    .setDisableHourGlass(true);
                             getForm().getDocumentiDettaglioTabs().getXMLRichiestaDoc().setHidden(false);
                             getForm().getDocumentiDettaglioTabs().getXMLRispostaDoc().setHidden(false);
                         }
@@ -1494,14 +1524,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     }
                 }
                 getForm().getDocumentiUnitaDocumentarieDetail().getScarica_comp_file_doc().setEditMode();
+                getForm().getDocumentiUnitaDocumentarieDetail().getScarica_comp_file_doc().setDisableHourGlass(true);
 
                 getForm().getDocumentiUnitaDocumentarieDetail().getScarica_sip_doc().setViewMode();
                 if (udHelper.isDocumentoAggiunto(iddoc)) {
                     getForm().getDocumentiUnitaDocumentarieDetail().getScarica_sip_doc().setEditMode();
+                    getForm().getDocumentiUnitaDocumentarieDetail().getScarica_sip_doc().setDisableHourGlass(true);
                 }
 
                 // Imposto visibile il bottone per scaricare i files DIP per esibizione
                 getForm().getDocumentiUnitaDocumentarieDetail().getScarica_dip_esibizione_doc().setEditMode();
+                getForm().getDocumentiUnitaDocumentarieDetail().getScarica_dip_esibizione_doc()
+                        .setDisableHourGlass(true);
 
                 Calendar cal = Calendar.getInstance();
                 cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
@@ -1515,8 +1549,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     getForm().getVersamentoAnnullatoDocSection().setHidden(true);
                     getForm().getDocumentiUnitaDocumentarieDetail().getDt_annul_doc().setValue(null);
                 } else /*
-                        * Se il documento Ã¨ annullato e l'unitÃ  doc Ã¨ valida oppure l'unitÃ  documentaria Ã¨
-                        * annullata e la data Ã¨ diversa da quella di annullamento del documento
+                        * Se il documento è annullato e l'unità doc è valida oppure l'unità documentaria è annullata e
+                        * la data è diversa da quella di annullamento del documento
                         */ if (dtAnnulUd.compareTo(cal.getTime()) == 0 || dtAnnulUd.compareTo(dtAnnulDoc) != 0) {
                     getForm().getVersamentoAnnullatoDocSection().setHidden(false);
                 }
@@ -1555,8 +1589,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                         MessaggiWSFormat.formattaUrnPartUnitaDoc(tmpChiave), urnPartDocumento)));
                 getSession().setAttribute("UD_URN_DOC",
                         getForm().getDocumentiUnitaDocumentarieDetail().getUrn_doc().getValue());
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 // Carico la lista componenti
                 AroVLisCompDocTableBean listCompDocTB = udHelper.getAroVLisCompDocTableBean(iddoc,
                         Integer.parseInt(maxResultStandard));
@@ -1601,7 +1635,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 RispostaWSRecupero rispostaWs = new RispostaWSRecupero();
                 RecuperoExt myRecuperoExt = new RecuperoExt();
                 myRecuperoExt.setParametriRecupero(new ParametriRecupero());
-                // verifica se l'unità  documentaria richiesta contiene file convertibili
+                // verifica se l'unità documentaria richiesta contiene file convertibili
                 myRecuperoExt.getParametriRecupero().setTipoEntitaSacer(CostantiDB.TipiEntitaRecupero.DOC_DIP);
                 myRecuperoExt.getParametriRecupero().setUtente(getUser());
                 myRecuperoExt.getParametriRecupero().setIdUnitaDoc(documentoAaaRB.getIdUnitaDoc().longValue());
@@ -1615,14 +1649,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     getForm().getDocumentiUnitaDocumentarieDetail().getScarica_dip_doc().setHidden(true);
                 }
             } else if (getRequest().getParameter("table").equals(getForm().getIndiciAIPList().getName())) {
-                // AroVVisFirmaCompRowBean aroVVisFirmaComp =
-                // udHelper.getAroVVisFirmaCompRowBean(getAroVRicUnitaDocRowBean().getIdUnitaDoc());
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
                 AroVerIndiceAipUdRowBean versioneIndice = (AroVerIndiceAipUdRowBean) getForm().getIndiciAIPList()
                         .getTable().getCurrentRow();
-                AroFileVerIndiceAipUdRowBean fileVerIndiceRowBean = udHelper.getAroFileVerIndiceAipUdRowBean(
-                        versioneIndice.getIdVerIndiceAip(), Integer.parseInt(maxResultStandard));
                 getForm().getVersioneIndiceAIPDetail().copyFromBean(versioneIndice);
                 getForm().getVersioneIndiceAIPDetail().getCd_registro_key_unita_doc()
                         .setValue(getForm().getUnitaDocumentarieDetail().getCd_registro_key_unita_doc().parse());
@@ -1637,13 +1665,28 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 getForm().getVersioneIndiceAIPDetail().getNm_strut()
                         .setValue(getForm().getUnitaDocumentarieDetail().getNm_strut().parse());
                 getForm().getVersioneIndiceAIPDetail().getScarica_indice_aip_detail().setEditMode();
+                getForm().getVersioneIndiceAIPDetail().getScarica_indice_aip_detail().setDisableHourGlass(true);
 
-                String fileIndice = fileVerIndiceRowBean.getBlFileVerIndiceAip();
-                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
-                if (fileIndice != null) {
-                    fileIndice = formatter.prettyPrintWithDOM3LS(fileIndice);
-                    getForm().getVersioneIndiceAIPDetail().getBl_file_ver_indice_aip().setValue(fileIndice);
+                // MEV#30395
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    // recupero documento blob vs obj storage
+                    // build dto per recupero
+                    RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(Constants.TiEntitaSacerObjectStorage.INDICE_AIP,
+                            versioneIndice.getIdVerIndiceAip().longValue(), baos, RecClbOracle.TabellaClob.CLOB);
+                    // recupero
+                    boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                    if (!esitoRecupero) {
+                        throw new IOException(ECCEZIONE_RECUPERO_INDICE_AIP);
+                    }
+                    XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                    String xmlIndice = formatter
+                            .prettyPrintWithDOM3LS(baos.toString(StandardCharsets.UTF_8.displayName()));
+                    getForm().getVersioneIndiceAIPDetail().getBl_file_ver_indice_aip().setValue(xmlIndice);
+                } catch (IOException ex) {
+                    getMessageBox().addError(ex.getMessage());
                 }
+                // MEV#30395
             } else if (getRequest().getParameter("table").equals(getForm().getAggiornamentiMetadatiList().getName())) {
                 // AGGIORNAMENTO METADATI
                 // Ottengo l'id aggiornamento
@@ -1667,12 +1710,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 getForm().getAggiornamentiDettaglioTabs().getXMLRispostaUpd().setHidden(true);
 
                 /*
-                 * Per i gli AGGIORNAMENTI METADATI devo ricavare anche gli xml di richiesta e risposta Quindi,
-                 * controllo l'aggiornamento in questione, confrontando la sua data di creazione con quella di creazione
-                 * UD. Se quest'ultima è antecedente la data di creazione dell'aggiornamento, ne mostro i valori di xml
+                 * Per gli AGGIORNAMENTI METADATI devo ricavare anche gli xml di richiesta e risposta. Quindi controllo
+                 * l'aggiornamento in questione, confrontando la sua data di creazione con quella di creazione UD. Se
+                 * quest'ultima è antecedente la data di creazione dell'aggiornamento, ne mostro i valori di xml
                  * richiesta e risposta in quanto sicuramente presenti
                  */
-                Date dataUD = getForm().getUnitaDocumentarieDetail().getDt_reg_unita_doc().parse();
+                Date dataUD = getForm().getUnitaDocumentarieDetail().getDt_creazione().parse();
                 if (dataUD != null && aggiornamentoAaaRB.getTsIniSes() != null) {
                     if (dataUD.before(aggiornamentoAaaRB.getTsIniSes())) {
                         // Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line in versione
@@ -1686,6 +1729,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             xmlrisp = formatter.prettyPrintWithDOM3LS(xmlrisp);
                             getForm().getAggiornamentiMetadatiUDDetail().getBl_xml_rich().setValue(xmlrich);
                             getForm().getAggiornamentiMetadatiUDDetail().getBl_xml_risp().setValue(xmlrisp);
+                            getForm().getAggiornamentiMetadatiUDDetail().getScarica_xml_upd().setDisableHourGlass(true);
                             getForm().getAggiornamentiMetadatiUDDetail().getScarica_xml_upd().setEditMode();
                             getForm().getAggiornamentiDettaglioTabs().getXMLRichiestaUpd().setHidden(false);
                             getForm().getAggiornamentiDettaglioTabs().getXMLRispostaUpd().setHidden(false);
@@ -1704,17 +1748,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 tmpChiave.setAnno(aggiornamentoAaaRB.getAaKeyUnitaDoc().longValue());
                 tmpChiave.setNumero(aggiornamentoAaaRB.getCdKeyUnitaDoc());
 
-                /*
-                 * getForm().getAggiornamentiMetadatiUDDetail().getDs_urn_upd_unita_doc()
-                 * .setValue(MessaggiWSFormat.formattaUrnUpdUniDoc(MessaggiWSFormat.formattaBaseUrnUpdUnitaDoc(
-                 * MessaggiWSFormat.formattaUrnPartVersatore(tmpVers),
-                 * MessaggiWSFormat.formattaUrnPartUnitaDoc(tmpChiave),
-                 * aggiornamentoAaaRB.getPgUpdUnitaDoc().longValue(), true, Costanti.UrnFormatter.UPD_FMT_STRING_V3,
-                 * Costanti.UrnFormatter.PAD5DIGITS_FMT)));
-                 */
                 // Carico la lista documenti aggiornati
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 AroVLisUpdDocUnitaDocTableBean listUpdDocTB = udHelper.getAroVLisUpdDocUnitaDocTableBean(idupdunitadoc,
                         Integer.parseInt(maxResultStandard));
                 getForm().getDocumentiUpdUDList().setTable(listUpdDocTB);
@@ -1763,7 +1799,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                                     "id_tipo_nota_unita_doc", "ds_tipo_nota_unita_doc"));
                     getForm().getNotaDetail().setViewMode();
 
-                    // getForm().getNotaDetail().copyFromBean(currentRow);
                     AroVVisNotaUnitaDocRowBean notaRB = udHelper.getAroVVisNotaUnitaDocRowBean(idNotaUnitaDoc);
 
                     // Copio i dati della nota sulla form di dettaglio
@@ -1777,32 +1812,31 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Metodo di caricamento dell'unitÃ  documentaria in base al suo id
+     * Metodo di caricamento dell'unitÃ documentaria in base al suo id
      *
      * @param idUnitDoc
-     *            id dell'unitÃ  documentaria
-     *
+     *            id dell'unitÃ documentaria
+     * 
      * @throws EMFError
      *             errore generico
      */
     public void getDettaglioUD(BigDecimal idUnitDoc) throws EMFError {
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        // Ottengo l'id dell'unitÃ  documentaria
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
+        // Ottengo l'id dell'unitÃ documentaria
         getSession().setAttribute("idud", idUnitDoc);
-        // Dall'id dell'unitÃ  documentaria vado a prendere l'AroVVisUnitaDocRowBean
+        // Dall'id dell'unitÃ documentaria vado a prendere l'AroVVisUnitaDocRowBean
         AroVVisUnitaDocIamRowBean udRB = udHelper.getAroVVisUnitaDocIamRowBean(idUnitDoc);
-        // Dall'id dell'unitÃ  documentaria vado a prendere gli AroVLisDocTableBean
+        // Dall'id dell'unitÃ documentaria vado a prendere gli AroVLisDocTableBean
         AroVLisDocTableBean listDocumenti = udHelper.getAroVLisDocTableBean(idUnitDoc, null);
-        String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String maxResultStandard = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
         // Ricavo la lista collegamenti e lista archiviazioni secondarie
         AroVLisLinkUnitaDocTableBean listCollegamentiTB = udHelper.getAroVLisLinkUnitaDocTableBean(idUnitDoc,
                 Integer.parseInt(maxResultStandard));
         AroVLisArchivUnitaDocTableBean listArchiviazioniSecondarieTB = udHelper
                 .getAroVLisArchivUnitaDocTableBean(idUnitDoc, Integer.parseInt(maxResultStandard));
-        // Ricavo la lista dei dati specifici per unitÃ  documentaria
+        // Ricavo la lista dei dati specifici per unità documentaria
         AroVLisDatiSpecTableBean listDatiSpecTB = udHelper.getAroVLisDatiSpecTableBean(idUnitDoc,
                 TipoEntitaSacer.UNI_DOC, Constants.TI_USO_XSD_VERS, Integer.parseInt(maxResultStandard));
         AroVLisDatiSpecTableBean listDatiSpecMigrazioneTB = udHelper.getAroVLisDatiSpecTableBean(idUnitDoc,
@@ -1837,7 +1871,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             getForm().getUnitaDocumentarieDetail().getScarica_xml_unisincro().setHidden(true);
         }
 
-        // Carico la pagina di dettaglio dell'unitÃ  doc.
+        // Carico la pagina di dettaglio dell'unitÃ doc.
         getForm().getUnitaDocumentarieDetail().copyFromBean(udRB);
 
         Calendar cal = Calendar.getInstance();
@@ -1989,12 +2023,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         RispostaWSRecupero rispostaWs = new RispostaWSRecupero();
         RecuperoExt myRecuperoExt = new RecuperoExt();
         myRecuperoExt.setParametriRecupero(new ParametriRecupero());
-        // verifica se l'unità  documentaria richiesta contiene file convertibili
+        // verifica se l'unità documentaria richiesta contiene file convertibili
         myRecuperoExt.getParametriRecupero().setTipoEntitaSacer(CostantiDB.TipiEntitaRecupero.UNI_DOC_DIP);
         myRecuperoExt.getParametriRecupero().setUtente(getUser());
         myRecuperoExt.getParametriRecupero().setIdUnitaDoc(idUnitDoc.longValue());
         recuperoDip.contaComponenti(rispostaWs, myRecuperoExt);
         getForm().getUnitaDocumentarieDetail().getScarica_dip_ud().setEditMode();
+        getForm().getUnitaDocumentarieDetail().getScarica_dip_ud().setDisableHourGlass(true);
         if (rispostaWs.getSeverity() == SeverityEnum.OK
                 && rispostaWs.getDatiRecuperoDip().getNumeroElementiTrovati() > 0) {
             getForm().getUnitaDocumentarieDetail().getScarica_dip_ud().setHidden(false);
@@ -2005,10 +2040,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         if (listIndiciAIPTB != null && !listIndiciAIPTB.isEmpty()) {
             AroVerIndiceAipUdRowBean versioneIndice = (AroVerIndiceAipUdRowBean) getForm().getIndiciAIPList().getTable()
                     .remove(0);
-            AroFileVerIndiceAipUdRowBean fileVerIndiceRowBean = udHelper.getAroFileVerIndiceAipUdRowBean(
-                    versioneIndice.getIdVerIndiceAip(), Integer.parseInt(maxResultStandard));
             getForm().getVersioneIndiceAIPLast().copyFromBean(versioneIndice);
             getForm().getVersioneIndiceAIPLast().getScarica_indice_aip_last().setEditMode();
+            getForm().getVersioneIndiceAIPLast().getScarica_indice_aip_last().setDisableHourGlass(true);
 
             // Hash SHA-1
             if (versioneIndice.getDsHashIndiceAip() == null) {
@@ -2034,11 +2068,24 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 getForm().getVersioneIndiceAIPLast().getHash_personalizzato().setHidden(true);
             }
 
-            String fileIndice = fileVerIndiceRowBean.getBlFileVerIndiceAip();
-            if (fileIndice != null) {
-                fileIndice = formatter.prettyPrintWithDOM3LS(fileIndice);
-                getForm().getVersioneIndiceAIPLast().getBl_file_ver_indice_aip().setValue(fileIndice);
+            // MEV#30395
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                // recupero documento blob vs obj storage
+                // build dto per recupero
+                RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(Constants.TiEntitaSacerObjectStorage.INDICE_AIP,
+                        versioneIndice.getIdVerIndiceAip().longValue(), baos, RecClbOracle.TabellaClob.CLOB);
+                // recupero
+                boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                if (!esitoRecupero) {
+                    throw new IOException(ECCEZIONE_RECUPERO_INDICE_AIP);
+                }
+                String xmlIndice = formatter.prettyPrintWithDOM3LS(baos.toString(StandardCharsets.UTF_8.displayName()));
+                getForm().getVersioneIndiceAIPLast().getBl_file_ver_indice_aip().setValue(xmlIndice);
+            } catch (IOException ex) {
+                getMessageBox().addError(ex.getMessage());
             }
+            // MEV#30395
         } else {
             getForm().getVersioneIndiceAIPLast().reset();
             getForm().getVersioneIndiceAIPLast().getScarica_indice_aip_last().setViewMode();
@@ -2162,7 +2209,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 BigDecimal nuovoProgressivo = getForm().getUnitaDocumentarieDetail().getPg_unita_doc().parse();
                 List<Object[]> progressivoEsistenteUnitaDocList = progressivoEsistenteUnitaDocList(idStrut, idUnitaDoc,
                         cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, nuovoProgressivo);
-                if (progressivoEsistenteUnitaDocList.size() > 0) {
+                if (!progressivoEsistenteUnitaDocList.isEmpty()) {
                     Object[] attributi = { idUnitaDoc, nuovoProgressivo };
                     getSession().setAttribute("salvataggioAttributesAssegnaProgr", attributi);
                     getRequest().setAttribute("customBoxAssegnaProgr", true);
@@ -2286,7 +2333,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Metodo invocato dal bottone omonimo dei filtri ricerca unitÃ  documentarie per ripulire i filtri
+     * Metodo invocato dal bottone omonimo dei filtri ricerca unitÃ documentarie per ripulire i filtri
      *
      * @throws EMFError
      *             errore generico
@@ -2305,7 +2352,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Filtri Ricerca di Ricerca UnitÃ  Documentarie
+     * Attiva il tab Filtri Ricerca di Ricerca UnitÃ Documentarie
      *
      * @throws EMFError
      *             errore generico
@@ -2347,7 +2394,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Filtri Dati Specifici di Ricerca UnitÃ  Documentarie
+     * Attiva il tab Filtri Dati Specifici di Ricerca UnitÃ Documentarie
      *
      * @throws EMFError
      *             errore generico
@@ -2363,7 +2410,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
     // Gestione DETTAGLIO UNITA' DOCUMENTARIE TABS
     /**
-     * Attiva il tab Info Versate nel dettaglio di un'unitÃ  documentaria
+     * Attiva il tab Info Versate nel dettaglio di un'unitÃ documentaria
      *
      * @throws EMFError
      *             errore generico
@@ -2383,7 +2430,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Info Versamento nel dettaglio di un'unitÃ  documentaria
+     * Attiva il tab Info Versamento nel dettaglio di un'unitÃ documentaria
      *
      * @throws EMFError
      *             errore generico
@@ -2430,15 +2477,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
     }
 
-    @Override
-    public void tabNoteUDOnClick() throws EMFError {
-        getForm().getUnitaDocumentarieDettaglioTabs()
-                .setCurrentTab(getForm().getUnitaDocumentarieDettaglioTabs().getNoteUD());
-        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
-    }
-
     /**
-     * Attiva il tab Lista Collegamenti nel dettaglio di un'unitÃ  documentaria
+     * Attiva il tab Lista Collegamenti nel dettaglio di un'unitÃ documentaria
      *
      * @throws EMFError
      *             errore generico
@@ -2451,7 +2491,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Lista Archiviazioni Secondarie nel dettaglio di un'unitÃ  documentaria
+     * Attiva il tab Lista Archiviazioni Secondarie nel dettaglio di un'unitÃ documentaria
      *
      * @throws EMFError
      *             errore generico
@@ -2464,7 +2504,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Lista Dati Specifici nel dettaglio di un'unitÃ  documentaria
+     * Attiva il tab Lista Dati Specifici nel dettaglio di un'unitÃ documentaria
      *
      * @throws EMFError
      *             errore generico
@@ -2477,7 +2517,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Lista Dati Specifici Migrazione nel dettaglio di un'unitÃ  documentaria
+     * Attiva il tab Lista Dati Specifici Migrazione nel dettaglio di un'unitÃ documentaria
      *
      * @throws EMFError
      *             errore generico
@@ -2490,7 +2530,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Lista Indici AIP nel dettaglio di un'unitÃ  documentaria
+     * Attiva il tab Lista Indici AIP nel dettaglio di un'unitÃ documentaria
      *
      * @throws EMFError
      *             errore generico
@@ -2566,8 +2606,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     // end MEV#24597
 
     /**
-     * Metodo di inizializzazione delle combo comuni a creazione criterio, ricerca unitÃ  documentarie e creazione
-     * volume
+     * Metodo di inizializzazione delle combo comuni a creazione criterio, ricerca unitÃ documentarie e creazione volume
      *
      * @throws EMFError
      *             errore generico
@@ -2650,12 +2689,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         forwardToPublisher(Application.Publisher.DOCUMENTI_UNITA_DOCUMENTARIE_DETAIL);
     }
 
-    @Override
-    public void tabNoteDocOnClick() throws EMFError {
-        getForm().getDocumentiDettaglioTabs().setCurrentTab(getForm().getDocumentiDettaglioTabs().getNoteDoc());
-        forwardToPublisher(Application.Publisher.DOCUMENTI_UNITA_DOCUMENTARIE_DETAIL);
-    }
-
     // Gestione DOCUMENTI DETTAGLIO LISTS TABS
     /**
      * Attiva il tab Lista Componenti nel dettaglio di un documento
@@ -2704,13 +2737,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             this.verificaUrnUd(idUnitaDoc.longValue());
             scaricaCompUd(CostantiDB.TipiEntitaRecupero.UNI_DOC);
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero del file unità documentaria ", e);
+            log.error("Eccezione nel recupero del file unità documentaria ", e);
             getMessageBox().addError("Eccezione nel recupero del file unità documentaria: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero del file unità documentaria "
                     + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero del file unità documentaria: " + message);
-            logger.error("Eccezione nel recupero del file unità documentaria ", e);
+            log.error("Eccezione nel recupero del file unità documentaria ", e);
         }
     }
 
@@ -2722,17 +2755,17 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             this.verificaUrnUd(idUnitaDoc.longValue());
             scaricaCompUd(CostantiDB.TipiEntitaRecupero.UNI_DOC_DIP_ESIBIZIONE);
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero del DIP ", e);
+            log.error("Eccezione nel recupero del DIP ", e);
             getMessageBox().addError("Eccezione nel recupero del DIP: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero del DIP " + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero del DIP: " + message);
-            logger.error("Eccezione nel recupero del DIP ", e);
+            log.error("Eccezione nel recupero del DIP ", e);
         }
     }
 
     /**
-     * Metodo per fare il download dei componenti di tipo file dei documenti di una determinata unitÃ  documentaria in
+     * Metodo per fare il download dei componenti di tipo file dei documenti di una determinata unitÃ documentaria in
      * file zip (Franz Edition)
      */
     private void scaricaCompUd(CostantiDB.TipiEntitaRecupero tipoEntitaRecupero) throws EMFError {
@@ -2794,8 +2827,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             File fileToDownload = new File(path);
             if (fileToDownload.exists()) {
                 /*
-                 * Definiamo l'output previsto che sarÃ  un file in formato zip di cui si occuperÃ  la servlet per fare
-                 * il download
+                 * Definiamo l'output previsto che sarÃ un file in formato zip di cui si occuperÃ la servlet per fare il
+                 * download
                  */
                 OutputStream outUD = getServletOutputStream();
                 getResponse().setContentType(StringUtils.isBlank(contentType) ? "application/zip" : contentType);
@@ -2812,7 +2845,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     }
                     outUD.flush();
                 } catch (IOException e) {
-                    logger.error("Eccezione nel recupero del documento ", e);
+                    log.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
                     IOUtils.closeQuietly(inputStream);
@@ -2822,7 +2855,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
+                if (Boolean.TRUE.equals(deleteFile)) {
                     fileToDownload.delete();
                 }
             } else {
@@ -2850,12 +2883,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             this.verificaUrnUd(idUnitaDoc.longValue());
             scaricaCompDoc(CostantiDB.TipiEntitaRecupero.DOC);
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero del file documento ", e);
+            log.error("Eccezione nel recupero del file documento ", e);
             getMessageBox().addError("Eccezione nel recupero del file documento: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero del file documento " + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero del file documento: " + message);
-            logger.error("Eccezione nel recupero del file documento ", e);
+            log.error("Eccezione nel recupero del file documento ", e);
         }
     }
 
@@ -2990,12 +3023,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
             }
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero AIP ", e);
+            log.error("Eccezione nel recupero AIP ", e);
             getMessageBox().addError("Eccezione nel recupero AIP: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero AIP " + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero AIP: " + message);
-            logger.error("Eccezione nel recupero AIP ", e);
+            log.error("Eccezione nel recupero AIP ", e);
         }
     }
 
@@ -3034,8 +3067,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             outUD.flush();
             outUD.close();
         } catch (Exception e) {
-            // getMessageBox().addMessage(new Message(MessageLevel.FATAL, "Errore nel recupero dei file da zippare"));
-            logger.error("Eccezione", e);
+            log.error("Eccezione", e);
         } finally {
             freeze();
         }
@@ -3076,8 +3108,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             outUD.flush();
             outUD.close();
         } catch (Exception e) {
-            // getMessageBox().addMessage(new Message(MessageLevel.FATAL, "Errore nel recupero dei file da zippare"));
-            logger.error("Eccezione", e);
+            log.error("Eccezione", e);
         } finally {
             freeze();
         }
@@ -3096,8 +3127,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      * @throws IOException
      */
     private void zippaXmlAnnulVers(ZipOutputStream out, AroVVisUnitaDocIamRowBean udRB, BigDecimal idRichAnnulVers,
-            CostantiDB.TiXmlRichAnnulVers tiXmlRichAnnulVers)
-            throws EMFError, IOException, UnsupportedEncodingException {
+            CostantiDB.TiXmlRichAnnulVers tiXmlRichAnnulVers) throws EMFError, IOException {
         // Definiamo il buffer per lo stream di bytes
         byte[] data = new byte[1000];
         InputStream is = null;
@@ -3118,7 +3148,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 // Inserisco nello zippone il CLOB dell'xml di richiesta dell'annullamento dell'unità documentaria
                 if (xmlRichAnnulVersClob != null && !xmlRichAnnulVersClob.isEmpty()) {
-                    is = new ByteArrayInputStream(xmlRichAnnulVersClob.getBytes("UTF-8"));
+                    is = new ByteArrayInputStream(xmlRichAnnulVersClob.getBytes(StandardCharsets.UTF_8));
                     int count;
                     out.putNextEntry(new ZipEntry(xmlRichAnnulVersName));
                     while ((count = is.read(data, 0, 1000)) != -1) {
@@ -3136,7 +3166,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 // Inserisco nello zippone il CLOB dell'xml di risposta dell'annullamento dell'unità documentaria
                 if (xmlRispAnnulVersClob != null && !xmlRispAnnulVersClob.isEmpty()) {
-                    is = new ByteArrayInputStream(xmlRispAnnulVersClob.getBytes("UTF-8"));
+                    is = new ByteArrayInputStream(xmlRispAnnulVersClob.getBytes(StandardCharsets.UTF_8));
                     int count;
                     out.putNextEntry(new ZipEntry(xmlRispAnnulVersName));
                     while ((count = is.read(data, 0, 1000)) != -1) {
@@ -3172,13 +3202,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             this.verificaUrnUd(row.getIdUnitaDoc().longValue());
             scarica_rv();
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero del Rapporto di versamento ", e);
-            getMessageBox().addError("Eccezione nel recupero del Rapporto di versamento: " + e.getDescription());
+            log.error("Eccezione nel recupero del Rapporto di versamento ", e);
+            getMessageBox().addError(ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero del Rapporto di versamento "
                     + ExceptionUtils.getRootCauseMessage(e);
-            getMessageBox().addError("Eccezione nel recupero del Rapporto di versamento: " + message);
-            logger.error("Eccezione nel recupero del Rapporto di versamento ", e);
+            getMessageBox().addError(ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO + message);
+            log.error("Eccezione nel recupero del Rapporto di versamento ", e);
         }
     }
 
@@ -3189,7 +3219,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // EVO#16486
             this.verificaUrnUd(idud.longValue());
             /*
-             * Ricavo l'unità documentaria prendendo i dati da DB anche se li ho già nella maschera di dettaglio, onde
+             * Ricavo l'unità documentaria prendendo i dati da DB anche se li ho già nella maschera di dettaglio, onde
              * evitare che un domani, eliminando quei campi dall'online, vada tutto in vacca
              */
             AroVVisUnitaDocIamRowBean udRB = udHelper.getAroVVisUnitaDocIamRowBean(idud);
@@ -3213,20 +3243,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 outUD.flush();
                 outUD.close();
             } catch (Exception e) {
-                // getMessageBox().addMessage(new Message(MessageLevel.FATAL, "Errore nel recupero dei file da
-                // zippare"));
-                logger.error("Eccezione", e);
+                log.error("Eccezione", e);
             } finally {
                 freeze();
             }
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero del Rapporto di versamento ", e);
-            getMessageBox().addError("Eccezione nel recupero del Rapporto di versamento: " + e.getDescription());
+            log.error("Eccezione nel recupero del Rapporto di versamento ", e);
+            getMessageBox().addError(ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero del Rapporto di versamento "
                     + ExceptionUtils.getRootCauseMessage(e);
-            getMessageBox().addError("Eccezione nel recupero del Rapporto di versamento: " + message);
-            logger.error("Eccezione nel recupero del Rapporto di versamento ", e);
+            getMessageBox().addError(ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO + message);
+            log.error("Eccezione nel recupero del Rapporto di versamento ", e);
         }
     }
 
@@ -3291,12 +3319,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
             }
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero SIP unità documentaria ", e);
+            log.error("Eccezione nel recupero SIP unità documentaria ", e);
             getMessageBox().addError("Eccezione nel recupero SIP unità documentaria: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero SIP unità documentaria " + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero SIP unità documentaria: " + message);
-            logger.error("Eccezione nel recupero SIP unità documentaria ", e);
+            log.error("Eccezione nel recupero SIP unità documentaria ", e);
         }
     }
 
@@ -3355,19 +3383,19 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
             }
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero SIP documento ", e);
+            log.error("Eccezione nel recupero SIP documento ", e);
             getMessageBox().addError("Eccezione nel recupero SIP documento: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero SIP documento " + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero SIP documento: " + message);
-            logger.error("Eccezione nel recupero SIP documento ", e);
+            log.error("Eccezione nel recupero SIP documento ", e);
         }
     }
 
     /**
-     * Metodo che fornisce uno stack utilizzato per mantenere gli id delle unitÃ  documentarie visualizzate
+     * Metodo che fornisce uno stack utilizzato per mantenere gli id delle unitÃ documentarie visualizzate
      *
-     * @return lo stack di unitÃ  documentarie
+     * @return lo stack di unitÃ documentarie
      */
     public List<BigDecimal> getIdUdStack() {
         if (getSession().getAttribute("idUdStack") == null) {
@@ -3638,10 +3666,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Valido i filtri data creazione da - a restituendo le date comprensive di orario
         validator.validaDate(dataCreazioneDa, oreCreazioneDa, minutiCreazioneDa, dataCreazioneA, oreCreazioneA,
                 minutiCreazioneA, descDataCreazioneDa, descDataCreazioneA);
-        // Valido i filtri data dei metadati unitÃ  documentaria
+        // Valido i filtri data dei metadati unitÃ documentaria
         validator.validaOrdineDateOrari(dataRegUDDa, dataRegUDA, descDataRegUDDa, descDataRegUDA);
         Object[] chiavi;
-        // Valida i campi di chiavi unitÃ  documentaria
+        // Valida i campi di chiavi unitÃ documentaria
         if (filtri instanceof FiltriUnitaDocumentarieAvanzata) {
             String[] reg = new String[((Set<String>) registro).size()];
             ((Set<String>) registro).toArray(reg);
@@ -3683,22 +3711,22 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Trigger sul filtro "Tipo UnitÃ  Documentaria" per l'aggiunta/rimozione dei dati specifici definiti dal filtro
+     * Trigger sul filtro "Tipo UnitÃ Documentaria" per l'aggiunta/rimozione dei dati specifici definiti dal filtro
      * stesso
      *
-     * @return l'oggetto JSON dei filtri unitÃ  documentaria ricerca avanzata
-     *
+     * @return l'oggetto JSON dei filtri unitÃ documentaria ricerca avanzata
+     * 
      * @throws EMFError
      *             errore generico
      */
     @Override
     public JSONObject triggerFiltriUnitaDocumentarieAvanzataNm_tipo_unita_docOnTrigger() throws EMFError {
         FiltriUnitaDocumentarieAvanzata udfa = getForm().getFiltriUnitaDocumentarieAvanzata();
-        // Ricavo l'elenco dei tipi unitÃ  documentaria PRIMA di modificare (aggiunta/rimozione) il relativo filtro
+        // Ricavo l'elenco dei tipi unitÃ documentaria PRIMA di modificare (aggiunta/rimozione) il relativo filtro
         List<BigDecimal> tipoUnitaDocPre = udfa.getNm_tipo_unita_doc().parse();
         // Eseguo la post del filtri
         udfa.post(getRequest());
-        // Ricavo l'elenco dei tipi unitÃ  documentaria DOPO aver modificato (aggiunta/rimozione) il relativo filtro
+        // Ricavo l'elenco dei tipi unitÃ documentaria DOPO aver modificato (aggiunta/rimozione) il relativo filtro
         List<BigDecimal> tipoUnitaDocPost = udfa.getNm_tipo_unita_doc().parse();
         // Confronto i due elenchi: se la lunghezza di tipoUnitaDocPre Ã¨ inferiore
         // a quella di tipoUnitaDocPost significa che ho fatto un'aggiunta
@@ -3726,7 +3754,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             String nmTipoUnitaDoc = udHelper.getDecTipoUnitaDocRowBean(elementoDiverso.get(0)).getNmTipoUnitaDoc();
 
             // Per ogni DATO SPECIFICO di questo TIPO UNITA' DOCUMENTARIA
-            // rimuovo il riferimento al tipo unitÃ  documentaria
+            // rimuovo il riferimento al tipo unitÃ documentaria
             for (DecCriterioDatiSpecBean datoSpec : listaDatiSpecOnLine) {
                 List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
                 for (int i = 0; i < tabellaDefinitoDa.size(); i++) {
@@ -3737,7 +3765,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 }
             }
 
-            // Controllo se ho ancora dati specifici per tutti i tipi unitÃ  documentaria
+            // Controllo se ho ancora dati specifici per tutti i tipi unitÃ documentaria
             // e nel frattempo rimuovo gli eventuali dati specifici che non hanno piÃ¹ elementi
             // del tipo "definitoDa"
             boolean hasDSsuTipiUnitaDoc = false;
@@ -3782,8 +3810,8 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     /**
      * Trigger sul filtro "Tipo Documento" per l'aggiunta/rimozione dei dati specifici definiti dal filtro stesso
      *
-     * @return l'oggetto JSON dei filtri unitÃ  documentaria ricerca avanzata
-     *
+     * @return l'oggetto JSON dei filtri unitÃ documentaria ricerca avanzata
+     * 
      * @throws EMFError
      *             errore generico
      */
@@ -3991,7 +4019,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Per ogni DATO SPECIFICO di questo TIPO UNITA' DOCUMENTARIA AGGIUNTO
         for (DecAttribDatiSpecRowBean rigaDatoSpecifico : datiSpecTB) {
             // Se passo di qua, significa che ho dei dati specifici
-            // per questo Tipo UnitÃ  Documentaria e dunque spunto il flag a video
+            // per questo Tipo UnitÃ Documentaria e dunque spunto il flag a video
             getForm().getFiltriUnitaDocumentarieAvanzata().getFlag_dati_spec_presenti_ud().setChecked(true);
 
             // Ricavo l'informazione "Definito da" per il TIPO UNITA' DOCUMENTARIA
@@ -4120,10 +4148,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         } // Caso DOC
                         else if (definitoDa.getNmTipoDoc() != null) {
                             insiemeTipiDoc.add(definitoDa.getNmTipoDoc());
-                        } // Caso Sistema Migrazione con entitÃ  Sacer UNI_DOC
+                        } // Caso Sistema Migrazione con entitÃ Sacer UNI_DOC
                         else if (definitoDa.getTiEntitaSacer().equals(TipoEntitaSacer.UNI_DOC.name())) {
                             insiemeSistemiMigrazUniDoc.add(definitoDa.getNmSistemaMigraz());
-                        } // Caso Sistema Migrazione con entitÃ  Sacer DOC
+                        } // Caso Sistema Migrazione con entitÃ Sacer DOC
                         else if (definitoDa.getTiEntitaSacer().equals(TipoEntitaSacer.DOC.name())) {
                             insiemeSistemiMigrazDoc.add(definitoDa.getNmSistemaMigraz());
                         }
@@ -4168,7 +4196,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                         } // END IF
                     } // END FOR di ListaDefinitoDa
                     filtriDatiSpec.append(")");
-                } // END WHILE sull'insieme dei TipiUnitÃ Doc
+                } // END WHILE sull'insieme dei TipiUnitÃ Doc
                 filtriDatiSpec.append(")");
             }
 
@@ -4180,7 +4208,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 while (it.hasNext()) {
                     if (firstTimeDefinitoDa) {
                         /*
-                         * Controllo filtriDatiSpec Ã¨ != da stringa vuota, significa che in precedenza ho giÃ  scritto
+                         * Controllo filtriDatiSpec Ã¨ != da stringa vuota, significa che in precedenza ho giÃ scritto
                          * qualcosa e dunque vado a capo
                          */
                         if (filtriDatiSpec.length() > 0) {
@@ -4219,7 +4247,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 while (it.hasNext()) {
                     if (firstTimeDefinitoDa) {
                         /*
-                         * Controllo filtriDatiSpec Ã¨ != da stringa vuota, significa che in precedenza ho giÃ  scritto
+                         * Controllo filtriDatiSpec Ã¨ != da stringa vuota, significa che in precedenza ho giÃ scritto
                          * qualcosa e dunque vado a capo
                          */
                         if (filtriDatiSpec.length() > 0) {
@@ -4261,7 +4289,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 while (it.hasNext()) {
                     if (firstTimeDefinitoDa) {
                         /*
-                         * Controllo filtriDatiSpec Ã¨ != da stringa vuota, significa che in precedenza ho giÃ  scritto
+                         * Controllo filtriDatiSpec Ã¨ != da stringa vuota, significa che in precedenza ho giÃ scritto
                          * qualcosa e dunque vado a capo
                          */
                         if (filtriDatiSpec.length() > 0) {
@@ -4310,7 +4338,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // EVO#16486
             this.verificaUrnUd(idud.longValue());
             /*
-             * Ricavo l'unità documentaria prendendo i dati da DB anche se li ho già nella maschera di dettaglio, onde
+             * Ricavo l'unità documentaria prendendo i dati da DB anche se li ho già nella maschera di dettaglio, onde
              * evitare che un domani, eliminando quei campi dall'online, vada tutto in vacca
              */
             AroVVisUnitaDocIamRowBean udRB = udHelper.getAroVVisUnitaDocIamRowBean(idud);
@@ -4319,7 +4347,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             Date dataRegUd = udRB.getDtRegUnitaDoc();
 
             /*
-             * Definiamo l'output previsto che sarÃ  un file in formato zip di cui si occuperÃ  la servlet per fare il
+             * Definiamo l'output previsto che sarÃ un file in formato zip di cui si occuperÃ la servlet per fare il
              * download
              */
             ZipOutputStream outUD = new ZipOutputStream(getServletOutputStream());
@@ -4334,20 +4362,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 outUD.flush();
                 outUD.close();
             } catch (Exception e) {
-                // getMessageBox().addMessage(new Message(MessageLevel.FATAL, "Errore nel recupero dei file da
-                // zippare"));
-                logger.error("Eccezione", e);
+                log.error("Eccezione", e);
             } finally {
                 freeze();
             }
         } catch (ParerInternalError e) {
-            logger.error("Eccezione nel recupero documenti di conservazione ", e);
+            log.error("Eccezione nel recupero documenti di conservazione ", e);
             getMessageBox().addError("Eccezione nel recupero documenti di conservazione: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero documenti di conservazione "
                     + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero documenti di conservazione: " + message);
-            logger.error("Eccezione nel recupero documenti di conservazione ", e);
+            log.error("Eccezione nel recupero documenti di conservazione ", e);
         }
     }
 
@@ -4356,15 +4382,16 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      *
      * @param out
      *            l'outputStream da utilizzare
-     * @param tb
-     *            il tableBean contenente i dati
-     *
-     * @throws EMFError
-     *             errore generico
+     * @param udRB
+     *            il tableBean contenente i dati AroVVisUnitaDocIamRowBean
+     * @param docTB
+     *            il tableBean contenente i dati AroVVisDocIamTableBean
+     * 
      * @throws IOException
+     *             eccezione in fase di scrittura del file
      */
     private void zippaXML(ZipOutputStream out, AroVVisUnitaDocIamRowBean udRB, AroVVisDocIamTableBean docTB)
-            throws EMFError, IOException, UnsupportedEncodingException {
+            throws IOException {
         // Definiamo il buffer per lo stream di bytes
         byte[] data = new byte[1000];
         InputStream is = null;
@@ -4403,7 +4430,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 // Inserisco nello zippone il CLOB dell'xml di richiesta del documento
                 if (xmlRichClob != null && !xmlRichClob.isEmpty()) {
-                    is = new ByteArrayInputStream(xmlRichClob.getBytes("UTF-8"));
+                    is = new ByteArrayInputStream(xmlRichClob.getBytes(StandardCharsets.UTF_8));
                     int count;
                     out.putNextEntry(new ZipEntry(xmlRichName));
                     while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4414,7 +4441,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 // Inserisco nello zippone il CLOB dell'xml di risposta del documento
                 if (xmlRispClob != null && !xmlRispClob.isEmpty()) {
-                    is = new ByteArrayInputStream(xmlRispClob.getBytes("UTF-8"));
+                    is = new ByteArrayInputStream(xmlRispClob.getBytes(StandardCharsets.UTF_8));
                     int count;
                     out.putNextEntry(new ZipEntry(xmlRispName));
                     while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4425,7 +4452,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 // Inserisco nello zippone il CLOB dell'xml di rapporto di versamento del documento
                 if (xmlRappClob != null && !xmlRappClob.isEmpty()) {
-                    is = new ByteArrayInputStream(xmlRappClob.getBytes("UTF-8"));
+                    is = new ByteArrayInputStream(xmlRappClob.getBytes(StandardCharsets.UTF_8));
                     int count;
                     out.putNextEntry(new ZipEntry(xmlRappVersName));
                     while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4436,9 +4463,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             }
         }
 
-        // Se ho anche l'unitÃ  documentaria, piazzo nello zippone pure i suoi CLOB
+        // Se ho anche l'unitÃ documentaria, piazzo nello zippone pure i suoi CLOB
         if (udRB != null) {
-            // Ricavo i nomi dei file xml di richiesta e risposta dell'unitÃ  documentaria
+            // Ricavo i nomi dei file xml di richiesta e risposta dell'unitÃ documentaria
             String prefisso = udRB.getCdRegistroKeyUnitaDoc() + "-" + udRB.getAaKeyUnitaDoc() + "-"
                     + udRB.getCdKeyUnitaDoc();
 
@@ -4478,7 +4505,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             // Inserisco nello zippone il CLOB dell'xml di richiesta dell'UD
             if (xmlRichClob != null && !xmlRichClob.isEmpty()) {
-                is = new ByteArrayInputStream(xmlRichClob.getBytes("UTF-8"));
+                is = new ByteArrayInputStream(xmlRichClob.getBytes(StandardCharsets.UTF_8));
                 int count;
                 out.putNextEntry(new ZipEntry(xmlRichName));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4489,7 +4516,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             // Inserisco nello zippone il CLOB dell'xml di indice dell'UD
             if (xmlIndexClob != null && !xmlIndexClob.isEmpty()) {
-                is = new ByteArrayInputStream(xmlIndexClob.getBytes("UTF-8"));
+                is = new ByteArrayInputStream(xmlIndexClob.getBytes(StandardCharsets.UTF_8));
                 int count;
                 out.putNextEntry(new ZipEntry(xmlIndexName));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4500,7 +4527,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             // Inserisco nello zippone il CLOB dell'xml di risposta dell'UD
             if (xmlRispClob != null && !xmlRispClob.isEmpty()) {
-                is = new ByteArrayInputStream(xmlRispClob.getBytes("UTF-8"));
+                is = new ByteArrayInputStream(xmlRispClob.getBytes(StandardCharsets.UTF_8));
                 int count;
                 out.putNextEntry(new ZipEntry(xmlRispName));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4511,7 +4538,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             // Inserisco nello zippone il CLOB dell'xml di rapporto di versamento dell'UD
             if (xmlRappClob != null && !xmlRappClob.isEmpty()) {
-                is = new ByteArrayInputStream(xmlRappClob.getBytes("UTF-8"));
+                is = new ByteArrayInputStream(xmlRappClob.getBytes(StandardCharsets.UTF_8));
                 int count;
                 out.putNextEntry(new ZipEntry(xmlRappVersName));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4531,15 +4558,17 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      *
      * @param out
      *            l'outputStream da utilizzare
-     * @param tb
-     *            il tableBean contenente i dati
+     * @param udRB
+     *            il tableBean AroVVisUnitaDocIamRowBean
      *
-     * @throws EMFError
-     *             errore generico
+     * @param docTB
+     *            i tableBean AroVVisDocIamTableBean
+     *
      * @throws IOException
+     *             errore in scrittura del file
      */
     private void zippaRapportoVersamento(ZipOutputStream out, AroVVisUnitaDocIamRowBean udRB,
-            AroVVisDocIamTableBean docTB) throws EMFError, IOException, UnsupportedEncodingException {
+            AroVVisDocIamTableBean docTB) throws IOException {
         // Definiamo il buffer per lo stream di bytes
         byte[] data = new byte[1000];
         InputStream is = null;
@@ -4561,7 +4590,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
                 // Inserisco nello zippone il CLOB dell'xml di rapporto di versamento del documento
                 if (xmlRappClob != null && !xmlRappClob.isEmpty()) {
-                    is = new ByteArrayInputStream(xmlRappClob.getBytes("UTF-8"));
+                    is = new ByteArrayInputStream(xmlRappClob.getBytes(StandardCharsets.UTF_8));
                     int count;
                     out.putNextEntry(new ZipEntry(xmlRappVersName));
                     while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4574,7 +4603,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
         // Se ho anche l'unità documentaria, piazzo nello zippone pure i suoi CLOBBI del rapporto di versamento
         if (udRB != null) {
-            // Ricavo i nomi dei file xml di richiesta e risposta dell'unitÃ  documentaria
+            // Ricavo i nomi dei file xml di richiesta e risposta dell'unitÃ documentaria
             String prefisso = udRB.getCdRegistroKeyUnitaDoc() + "-" + udRB.getAaKeyUnitaDoc() + "-"
                     + udRB.getCdKeyUnitaDoc();
 
@@ -4590,7 +4619,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             // Inserisco nello zippone il CLOB dell'xml di rapporto di versamento dell'UD
             if (xmlRappClob != null && !xmlRappClob.isEmpty()) {
-                is = new ByteArrayInputStream(xmlRappClob.getBytes("UTF-8"));
+                is = new ByteArrayInputStream(xmlRappClob.getBytes(StandardCharsets.UTF_8));
                 int count;
                 out.putNextEntry(new ZipEntry(xmlRappVersName));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4610,7 +4639,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         BigDecimal idud = (BigDecimal) getSession().getAttribute("idud");
         BigDecimal iddoc = (BigDecimal) getSession().getAttribute("iddoc");
         /*
-         * Ricavo l'unitÃ  documentaria ed il documento prendendo i dati da DB anche se li ho giÃ  nella maschera di
+         * Ricavo l'unitÃ documentaria ed il documento prendendo i dati da DB anche se li ho giÃ nella maschera di
          * dettaglio, onde evitare che un domani, eliminando quei campi dall'online, vada tutto in vacca
          */
         AroVVisDocIamTableBean docTB = udHelper.getAroVVisDocIamTableBean(iddoc);
@@ -4620,7 +4649,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 + "-" + docTB.getRow(0).getPgDoc();
 
         /*
-         * Definiamo l'output previsto che sarÃ  un file in formato zip di cui si occuperÃ  la servlet per fare il
+         * Definiamo l'output previsto che sarÃ un file in formato zip di cui si occuperÃ la servlet per fare il
          * download
          */
         ZipOutputStream outUD = new ZipOutputStream(getServletOutputStream());
@@ -4632,7 +4661,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             outUD.flush();
             outUD.close();
         } catch (Exception e) {
-            logger.error("Eccezione", e);
+            log.error("Eccezione", e);
         } finally {
             freeze();
         }
@@ -4643,13 +4672,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         BigDecimal idud = (BigDecimal) getSession().getAttribute("idud");
         BigDecimal idupd = (BigDecimal) getSession().getAttribute("idupdunitadoc");
         /*
-         * Ricavo l'unità  documentaria e l'aggiornamento prendendo i dati da DB anche se li ho già nella maschera di
+         * Ricavo l'unità documentaria e l'aggiornamento prendendo i dati da DB anche se li ho già nella maschera di
          * dettaglio, onde evitare che un domani, eliminando quei campi dall'online, vada tutto in vacca
          */
         AroVVisUpdUnitaDocTableBean updTB = udHelper.getAroVVisUpdUnitaDocTableBean(idupd);
         AroVVisUnitaDocIamRowBean udRB = udHelper.getAroVVisUnitaDocIamRowBean(idud);
-        String filename = "SIP_AGGIORNAMENTO_" + udRB.getCdRegistroKeyUnitaDoc().replaceAll(" ", "_") + "-"
-                + udRB.getAaKeyUnitaDoc().toString() + "-" + udRB.getCdKeyUnitaDoc().replaceAll(" ", "_") + "-"
+        String filename = "SIP_AGGIORNAMENTO_" + udRB.getCdRegistroKeyUnitaDoc().replace(" ", "_") + "-"
+                + udRB.getAaKeyUnitaDoc().toString() + "-" + udRB.getCdKeyUnitaDoc().replace(" ", "_") + "-"
                 + updTB.getRow(0).getPgUpdUnitaDoc();
 
         /*
@@ -4665,7 +4694,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             outUD.flush();
             outUD.close();
         } catch (Exception e) {
-            logger.error("Eccezione", e);
+            log.error("Eccezione", e);
         } finally {
             freeze();
         }
@@ -4676,7 +4705,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      *
      * @param out
      *            l'outputStream da utilizzare
-     * @param tb
+     * @param updTB
      *            il tableBean contenente i dati
      *
      * @throws EMFError
@@ -4707,7 +4736,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             // Inserisco nello zippone il CLOB dell'xml di richiesta dell'aggiornamento
             if (xmlRichClob != null && !xmlRichClob.isEmpty()) {
-                is = new ByteArrayInputStream(xmlRichClob.getBytes("UTF-8"));
+                is = new ByteArrayInputStream(xmlRichClob.getBytes(StandardCharsets.UTF_8));
                 int count;
                 out.putNextEntry(new ZipEntry(dirname + "/" + xmlRichName));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4718,7 +4747,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             // Inserisco nello zippone il CLOB dell'xml di risposta dell'aggiornamento
             if (xmlRispClob != null && !xmlRispClob.isEmpty()) {
-                is = new ByteArrayInputStream(xmlRispClob.getBytes("UTF-8"));
+                is = new ByteArrayInputStream(xmlRispClob.getBytes(StandardCharsets.UTF_8));
                 int count;
                 out.putNextEntry(new ZipEntry(dirname + "/" + xmlRispName));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -4761,7 +4790,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             List<DecCriterioDatiSpecBean> listaDatiSpecOnLine, DecCriterioAttribBean criterioAttrib) {
         boolean giaPresente = false;
         List<DecCriterioAttribBean> totaleDefinitoDaList = new ArrayList();
-        // Controllo se il dato specifico che sto trattando Ã¨ giÃ  stato inserito
+        // Controllo se il dato specifico che sto trattando Ã¨ giÃ stato inserito
         // nella Lista Dati Specifici presentata a video
         if (!listaDatiSpecOnLine.isEmpty()) {
             for (int j = 0; j < listaDatiSpecOnLine.size(); j++) {
@@ -4778,7 +4807,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             }
         }
 
-        // Se invece il dato specifico non Ã¨ giÃ  presente, lo inserisco
+        // Se invece il dato specifico non Ã¨ giÃ presente, lo inserisco
         // e aggiunto l'informazione su dove Ã¨ "Definito da"
         if (!giaPresente) {
             DecCriterioDatiSpecBean datoSpec = new DecCriterioDatiSpecBean();
@@ -4869,54 +4898,52 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     public void scarica_indice_aip(BigDecimal idVerIndiceAip) throws EMFError {
-        String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC);
-        AroFileVerIndiceAipUdRowBean fileVerIndiceRowBean = udHelper.getAroFileVerIndiceAipUdRowBean(idVerIndiceAip,
+        String maxResultStandard = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
+        AroVerIndiceAipUdRowBean verIndiceRowBean = udHelper.getAroVerIndiceAipUdRowBean(idVerIndiceAip,
                 Integer.parseInt(maxResultStandard));
-        String filename = fileVerIndiceRowBean.getString("urn");
+        String filename = verIndiceRowBean.getString("urn");
 
-        ZipOutputStream out = new ZipOutputStream(getServletOutputStream());
+        ZipArchiveOutputStream out = new ZipArchiveOutputStream(getServletOutputStream());
         getResponse().setContentType("application/zip");
         getResponse().setHeader("Content-Disposition",
                 "attachment; filename=\"" + ComponenteRec.estraiNomeFileCompleto(filename) + ".zip");
 
         try {
-            zippaIndiceAIP(out, filename, fileVerIndiceRowBean);
+            zippaIndiceAIPOs(out, idVerIndiceAip.longValue());
             out.flush();
             out.close();
         } catch (Exception e) {
-            logger.error("Eccezione", e);
+            log.error("Eccezione", e);
         } finally {
             freeze();
         }
     }
 
-    private void zippaIndiceAIP(ZipOutputStream out, String filename, AroFileVerIndiceAipUdRowBean aroFile)
-            throws EMFError, IOException {
-        // Definiamo il buffer per lo stream di bytes
-        byte[] data = new byte[1000];
-        InputStream is = null;
-        if (aroFile != null) {
-            // String xmlName = ComponenteRec.estraiNomeFileCompleto(filename) + ".xml";
-            // MEV #27035
-            String xmlName = "PIndexUD.xml";
-            // end MEV #27035
-            String xmlClobbo = aroFile.getBlFileVerIndiceAip();
-            if (xmlClobbo != null) {
-                is = new ByteArrayInputStream(xmlClobbo.getBytes("UTF-8"));
-                int count;
-                out.putNextEntry(new ZipEntry(xmlName));
-                while ((count = is.read(data, 0, 1000)) != -1) {
-                    out.write(data, 0, count);
-                }
-                out.closeEntry();
-            }
+    // MEV#30395
+    private void zippaIndiceAIPOs(ZipArchiveOutputStream zipOutputStream, Long idVerIndiceAip) throws IOException {
+
+        // MEV #27035
+        String xmlName = "PIndexUD.xml";
+        // end MEV #27035
+
+        ZipArchiveEntry verIndiceAipZae = new ZipArchiveEntry(xmlName);
+        zipOutputStream.putArchiveEntry(verIndiceAipZae);
+
+        // recupero documento blob vs obj storage
+        // build dto per recupero
+        RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(Constants.TiEntitaSacerObjectStorage.INDICE_AIP,
+                idVerIndiceAip, zipOutputStream, RecClbOracle.TabellaClob.CLOB);
+        // recupero
+        boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+
+        if (!esitoRecupero) {
+            throw new IOException(ECCEZIONE_RECUPERO_INDICE_AIP);
         }
 
-        if (is != null) {
-            is.close();
-        }
+        zipOutputStream.closeArchiveEntry();
     }
+    // end MEV#30395
 
     @Override
     public void scarica_dip_ud() throws EMFError {
@@ -4936,8 +4963,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 getMessageBox().addError(ddip.getRispostaWs().getErrorMessage());
             }
         } catch (NamingException ex) {
-            // logger.fatal(ex);
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
             getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
         }
         if (getMessageBox().isEmpty()) {
@@ -4974,8 +5000,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     getMessageBox().addError(ddip.getRispostaWs().getErrorMessage());
                 }
             } catch (NamingException ex) {
-                // logger.fatal(ex);
-                logger.error("Eccezione", ex);
+                log.error("Eccezione", ex);
                 getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
             }
         } else {
@@ -5011,8 +5036,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             ddip = new DownloadDip(myRecuperoExt, rispostaWs);
             ddip.scaricaDipZip(DownloadDip.TIPO_DOWNLOAD.SCARICA_COMP_CONV);
         } catch (NamingException ex) {
-            // logger.fatal(ex);
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
             getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
         }
         if (getMessageBox().isEmpty()) {
@@ -5064,8 +5088,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             ddip.setTipoEntitaSacer(tipoEntita);
             ddip.scaricaDipZip(DownloadDip.TIPO_DOWNLOAD.SCARICA_ZIP);
         } catch (NamingException ex) {
-            // logger.fatal(ex);
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
             getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
         }
         if (getMessageBox().isEmpty()) {
@@ -5320,7 +5343,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 if (idRichAnnulVers != null) {
                     // Registro una mappa che mi permetta di raggruppare i dati per eseguire le query strettamente
                     // necessarie
-                    Map<RegistroTipoUnitaDoc, List<BigDecimal>> map = new HashMap<>();
                     BigDecimal ultimoProgressivoItemRichiesta = annulVersEjb
                             .getUltimoProgressivoItemRichiesta(idRichAnnulVers);
                     int progressivo = ultimoProgressivoItemRichiesta.add(BigDecimal.ONE).intValue();
@@ -5480,7 +5502,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             "id_tipo_nota_unita_doc", "ds_tipo_nota_unita_doc"));
             getForm().getNotaDetail().setViewMode();
 
-            // getForm().getNotaDetail().copyFromBean(currentRow);
             AroVVisNotaUnitaDocRowBean notaRB = udHelper.getAroVVisNotaUnitaDocRowBean(idNotaUnitaDoc);
             // Copio i dati della nota sulla form di dettaglio
             getForm().getNotaDetail().copyFromBean(notaRB);
@@ -5506,7 +5527,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getNotaDetail().post(getRequest());
         BigDecimal idTipoNotaUnitaDoc = getForm().getNotaDetail().getId_tipo_nota_unita_doc().parse();
         BigDecimal idUnitaDoc = getForm().getUnitaDocumentarieDetail().getId_unita_doc().parse();
-        BigDecimal idVerIndiceAip = getForm().getVersioneIndiceAIPLast().getId_ver_indice_aip().parse(); // TODO:
         // VERIFICARE
 
         if (idTipoNotaUnitaDoc != null) {
@@ -5538,6 +5558,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         if (ogg instanceof UnitaDocumentarieForm) {
             UnitaDocumentarieForm form = getForm();
             form.getUnitaDocumentarieRicercaButtonList().getDownloadContenuto().setEditMode();
+            form.getUnitaDocumentarieRicercaButtonList().getDownloadContenuto().setDisableHourGlass(true);
             if (form.getUnitaDocumentarieList().getTable() != null
                     && form.getUnitaDocumentarieList().getTable().size() > 0) {
                 form.getUnitaDocumentarieRicercaButtonList().getDownloadContenuto().setHidden(false);
@@ -5548,6 +5569,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             if (form.getUnitaDocumentarieAnnullateList().getTable() != null
                     && form.getUnitaDocumentarieAnnullateList().getTable().size() > 0) {
                 form.getUnitaDocumentarieRicercaButtonList().getDownloadContenutoAnnullate().setHidden(false);
+                form.getUnitaDocumentarieRicercaButtonList().getDownloadContenutoAnnullate().setDisableHourGlass(true);
             } else {
                 form.getUnitaDocumentarieRicercaButtonList().getDownloadContenutoAnnullate().setHidden(true);
             }
@@ -5605,12 +5627,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Recupero la versione indice aip
         BigDecimal idVerIndiceAipUd = ((BaseTableInterface) getForm().getNoteList().getTable())
                 .getRow(numberRiga.intValue()).getBigDecimal("id_ver_indice_aip");
-        String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+
         AroVerIndiceAipUdRowBean versioneIndice = udHelper
                 .retrieveVersioneIndiceAipUdById(idVerIndiceAipUd.longValue());
-        AroFileVerIndiceAipUdRowBean fileVerIndiceRowBean = udHelper.getAroFileVerIndiceAipUdRowBean(idVerIndiceAipUd,
-                Integer.parseInt(maxResultStandard));
         getForm().getVersioneIndiceAIPDetail().copyFromBean(versioneIndice);
         getForm().getVersioneIndiceAIPDetail().getCd_registro_key_unita_doc()
                 .setValue(getForm().getUnitaDocumentarieDetail().getCd_registro_key_unita_doc().parse());
@@ -5625,13 +5644,27 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getVersioneIndiceAIPDetail().getNm_strut()
                 .setValue(getForm().getUnitaDocumentarieDetail().getNm_strut().parse());
         getForm().getVersioneIndiceAIPDetail().getScarica_indice_aip_detail().setEditMode();
+        getForm().getVersioneIndiceAIPDetail().getScarica_indice_aip_detail().setDisableHourGlass(true);
 
-        String fileIndice = fileVerIndiceRowBean.getBlFileVerIndiceAip();
-        XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
-        if (fileIndice != null) {
-            fileIndice = formatter.prettyPrintWithDOM3LS(fileIndice);
-            getForm().getVersioneIndiceAIPDetail().getBl_file_ver_indice_aip().setValue(fileIndice);
+        // MEV#30395
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            // recupero documento blob vs obj storage
+            // build dto per recupero
+            RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(Constants.TiEntitaSacerObjectStorage.INDICE_AIP,
+                    versioneIndice.getIdVerIndiceAip().longValue(), baos, RecClbOracle.TabellaClob.CLOB);
+            // recupero
+            boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+            if (!esitoRecupero) {
+                throw new IOException(ECCEZIONE_RECUPERO_INDICE_AIP);
+            }
+            XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+            String xmlIndice = formatter.prettyPrintWithDOM3LS(baos.toString(StandardCharsets.UTF_8.displayName()));
+            getForm().getVersioneIndiceAIPDetail().getBl_file_ver_indice_aip().setValue(xmlIndice);
+        } catch (IOException ex) {
+            getMessageBox().addError(ex.getMessage());
         }
+        // MEV#30395
 
         // Setto la tabella delle versioni indici aip aggiungendo solo quella recuperata
         AroVerIndiceAipUdTableBean listIndiciAIPTB = new AroVerIndiceAipUdTableBean();
@@ -5655,11 +5688,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // /* Resetto la lista per evitare conflitti tra la ricerca avanzata (con selectedList)
         // e la ricerca versamenti annullati (lista "normale") aolo sw non sto facendo download altrimenti
         // quando builda il csv non trova nulla nella table */
-        // if (!effettuaDownload) {
-        // getForm().getUnitaDocumentarieList().setTable(null);
-        // }
-        //// Pulisce lo stack di id unità  documentarie, necessario per il caricamento delle ud collegate
-        // getSession().setAttribute("idUdStack", new ArrayList<BigDecimal>());
         getForm().getUnitaDocumentarieAnnullateList().setHideDetailButton(false);
         // Valida i filtri per verificare quelli obbligatori
         String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_UDANNULLATE;
@@ -5699,7 +5727,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             }
 
             if (!getMessageBox().hasError()) {
-                // Controllo l'obbligatorietÃ  di anno o range anni di chiave unitÃ  documentaria
+                // Controllo l'obbligatorietÃ di anno o range anni di chiave unitÃ documentaria
                 validator.controllaPresenzaAnno(filtri.getAa_key_unita_doc().parse(),
                         filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse());
             }
@@ -5711,7 +5739,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             List<BigDecimal> idTipoDocListPerRicerca = getValoriForQueryFromFiltroIdTipoDocMultiselect(
                     filtri.getId_tipo_doc());
 
-            // Valida i campi di Range di chiavi unità  documentaria
+            // Valida i campi di Range di chiavi unità documentaria
             Object[] chiavi = null;
             if (!getMessageBox().hasError()) {
                 String[] registro = Arrays.copyOf(filtri.getCd_registro_key_unita_doc().getDecodedValues().toArray(),
@@ -5724,7 +5752,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
             if (!getMessageBox().hasError()) {
                 // La validazione non ha riportato errori.
-                // Setto i filtri di chiavi unitÃ  documentaria impostando gli eventuali valori di default
+                // Setto i filtri di chiavi unitÃ documentaria impostando gli eventuali valori di default
                 if (chiavi != null && chiavi.length == 5) {
                     filtri.getAa_key_unita_doc_da()
                             .setValue(chiavi[1] != null ? ((BigDecimal) chiavi[1]).toString() : null);
@@ -5734,21 +5762,17 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     filtri.getCd_key_unita_doc_a().setValue(chiavi[4] != null ? (String) chiavi[4] : null);
                 }
 
-                BigDecimal idUser = new BigDecimal(getUser().getIdUtente());
-
                 if (effettuaDownload) {
-                    AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicAnnullateTableBean(filtri,
+                    AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicAnnullateTableBeanNoLimit(filtri,
                             idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocSetPerRicerca, idTipoDocListPerRicerca,
-                            dateAcquisizioneValidate, dateUnitaDocValidate, dateAnnulValidate, idUser);
+                            dateAcquisizioneValidate, dateUnitaDocValidate, dateAnnulValidate);
                     // Carico la tabella con i risultati nella lista usata per buildare il CSV
-                    getForm().getUnitaDocumentarieList().setTable(tb);
                     if (!getMessageBox().hasError()) {
                         File tmpFile = new File(System.getProperty("java.io.tmpdir"),
                                 "Contenuto_ricerca_unita_documentarie.csv");
                         try {
-                            ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(),
-                                    /* (BaseTableInterface<? extends BaseRowInterface>) */ tb,
-                                    AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile, this);
+                            ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
+                                    AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
                             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
                                     getControllerName());
                             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
@@ -5760,7 +5784,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
                                     "text/csv");
                         } catch (IOException ex) {
-                            logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+                            log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
                             getMessageBox().addError("Errore inatteso nella preparazione del download");
                         }
                     }
@@ -5774,7 +5798,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 } else {
                     AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicAnnullateTableBean(filtri,
                             idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocSetPerRicerca, idTipoDocListPerRicerca,
-                            dateAcquisizioneValidate, dateUnitaDocValidate, dateAnnulValidate, idUser);
+                            dateAcquisizioneValidate, dateUnitaDocValidate, dateAnnulValidate);
                     // Carico la tabella con i filtri impostati
                     getForm().getUnitaDocumentarieAnnullateList().setTable(tb);
                     getForm().getUnitaDocumentarieAnnullateList().getTable().setPageSize(10);
@@ -5795,16 +5819,14 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     // EVO#16486
     public void verificaUrnUd(long idUnitaDoc) throws ParerInternalError, ParseException {
         AroUnitaDoc aroUnitaDoc = udHelper.findById(AroUnitaDoc.class, idUnitaDoc);
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         CSVersatore versatore = this.getVersatoreUd(aroUnitaDoc, sistemaConservazione);
         CSChiave chiave = this.getChiaveUd(aroUnitaDoc);
 
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-        String dataInizioParam = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String dataInizioParam = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
         Date dataInizio = dateFormat.parse(dataInizioParam);
 
         // Gestione KEY NORMALIZED / URN PREGRESSI

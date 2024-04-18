@@ -1,36 +1,65 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.informazioni.noteRilascio.helper;
 
-import it.eng.parer.grantedEntity.SIAplApplic;
-import it.eng.parer.grantedEntity.SIAplNotaRilascio;
-import it.eng.parer.slite.gen.form.NoteRilascioForm;
-import it.eng.spagoCore.error.EMFError;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+
+import it.eng.parer.grantedEntity.SIAplApplic;
+import it.eng.parer.grantedEntity.SIAplNotaRilascio;
+import it.eng.parer.helper.GenericHelper;
 
 /**
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless
 @LocalBean
 public class NoteRilascioHelper {
 
     public NoteRilascioHelper() {
+        /* default */
     }
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
+    /**
+     * @deprecated non più utilizzato
+     * 
+     * @param nmApplic
+     *            nome dell'applicazione
+     * 
+     * @return {@link SIAplApplic} o null se non trova record
+     */
+    @Deprecated
     public SIAplApplic getAplApplicByName(String nmApplic) {
-        String queryStr = "SELECT applic FROM SIAplApplic applic " + "WHERE applic.nmApplic = :nmApplic ";
+        String queryStr = "SELECT applic FROM SIAplApplic applic WHERE applic.nmApplic = :nmApplic ";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("nmApplic", nmApplic);
         List<SIAplApplic> applic = query.getResultList();
@@ -45,25 +74,31 @@ public class NoteRilascioHelper {
         String queryStr = "SELECT applic FROM SIAplApplic applic WHERE applic.nmApplic = :nomeappl";
         Query q = entityManager.createQuery(queryStr);
         q.setParameter("nomeappl", name);
-        SIAplApplic applic = (SIAplApplic) q.getSingleResult();
-        return applic;
+        return (SIAplApplic) q.getSingleResult();
     }
 
-    public List<SIAplNotaRilascio> getAplNoteRilascioList(BigDecimal idApplic) throws EMFError {
+    public List<SIAplNotaRilascio> getAplNoteRilascioList(BigDecimal idApplic) {
         String queryStr = "SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio "
                 + "WHERE notaRilascio.siAplApplic.idApplic = :idApplic " + "ORDER BY notaRilascio.dtVersione DESC";
 
         Query query = entityManager.createQuery(queryStr);
 
         if (idApplic != null) {
-            query.setParameter("idApplic", idApplic);
+            query.setParameter("idApplic", GenericHelper.longFromBigDecimal(idApplic));
         }
 
-        List<SIAplNotaRilascio> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
+    /**
+     * @deprecated non più utilizzato
+     * 
+     * @param cdVersione
+     *            codice della versione
+     * 
+     * @return SIAplNotaRilascio
+     */
+    @Deprecated
     public SIAplNotaRilascio getAplNotaRilascioByVersione(String cdVersione) {
 
         StringBuilder queryStr = new StringBuilder("SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio");
@@ -110,26 +145,16 @@ public class NoteRilascioHelper {
         entityManager.flush();
     }
 
-    public SIAplApplic getAplApplic(long idApplic) throws EMFError {
-        SIAplApplic applic = entityManager.find(SIAplApplic.class, idApplic);
-        return applic;
-    }
-
     public List<SIAplNotaRilascio> getAplNoteRilascioPrecList(BigDecimal idApplic, BigDecimal idNotaRilascio,
-            Date dtVersione) throws EMFError {
+            Date dtVersione) {
         String queryStr = "SELECT notaRilascio FROM SIAplNotaRilascio notaRilascio "
                 + "JOIN notaRilascio.siAplApplic applic " + "WHERE notaRilascio.idNotaRilascio != :idNotaRilascio "
                 + "AND applic.idApplic = :idApplic ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idNotaRilascio", idNotaRilascio);
-        query.setParameter("idApplic", idApplic);
+        query.setParameter("idNotaRilascio", GenericHelper.longFromBigDecimal(idNotaRilascio));
+        query.setParameter("idApplic", GenericHelper.longFromBigDecimal(idApplic));
         List<SIAplNotaRilascio> list = query.getResultList();
-        CollectionUtils.filter(list, new Predicate() {
-            @Override
-            public boolean evaluate(final Object object) {
-                return ((SIAplNotaRilascio) object).getDtVersione().compareTo(dtVersione) < 0;
-            }
-        });
+        CollectionUtils.filter(list, object -> ((SIAplNotaRilascio) object).getDtVersione().compareTo(dtVersione) < 0);
         return list;
     }
 }

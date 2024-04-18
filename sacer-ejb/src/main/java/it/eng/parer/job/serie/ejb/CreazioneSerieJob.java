@@ -1,4 +1,39 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.serie.ejb;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.entity.DecTipoSerie;
@@ -20,21 +55,6 @@ import it.eng.parer.web.helper.UserHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -183,9 +203,9 @@ public class CreazioneSerieJob {
                         try {
                             OrgStrut strut = serieHelper.findById(OrgStrut.class, idStrut);
                             // userCreazioneSerie = userHelper.findIamUser(nmUserId);
-                            String nmUserId = configHelper.getValoreParamApplic("USERID_CREAZIONE_SERIE",
-                                    BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+                            String nmUserId = configHelper.getValoreParamApplicByStrut(
+                                    CostantiDB.ParametroAppl.USERID_CREAZIONE_SERIE,
+                                    BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut);
                             IamUser userCreazioneSerie = userHelper.findIamUser(nmUserId);
                             idVersione = serieEjb.saveSerie(userCreazioneSerie.getIdUserIam(), idStrut, serieBean,
                                     null);

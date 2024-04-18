@@ -1,10 +1,23 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTitolario.helper;
 
-import it.eng.parer.entity.DecLivelloTitol;
-import it.eng.parer.entity.DecTitol;
-import it.eng.parer.entity.DecValVoceTitol;
-import it.eng.parer.entity.DecVoceTitol;
-import it.eng.parer.entity.OrgOperTitol;
+import it.eng.parer.entity.*;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.AroVRicUnitaDoc;
 import it.eng.parer.viewEntity.DecVLisValVoceTitol;
@@ -20,8 +33,6 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -31,15 +42,13 @@ import org.slf4j.LoggerFactory;
 @LocalBean
 public class StrutTitolariHelper extends GenericHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(StrutTitolariHelper.class);
-
     public boolean existChiaveUd(BigDecimal idStrut, String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc,
             String cdKeyUnitaDoc, Date dtDocInvio) {
         Query query = getEntityManager()
                 .createQuery("select count(ud) " + "from AroUnitaDoc ud " + "where ud.orgStrut.idStrut = :idStrutIn "
                         + "and ud.cdKeyUnitaDoc = :cdKeyUnitaDocIn " + "and ud.aaKeyUnitaDoc = :aaKeyUnitaDocIn "
                         + "and ud.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDocIn " + "and ud.dtAnnul > :data");
-        query.setParameter("idStrutIn", idStrut);
+        query.setParameter("idStrutIn", longFromBigDecimal(idStrut));
         query.setParameter("cdKeyUnitaDocIn", cdKeyUnitaDoc);
         query.setParameter("aaKeyUnitaDocIn", aaKeyUnitaDoc);
         query.setParameter("cdRegistroKeyUnitaDocIn", cdRegistroKeyUnitaDoc);
@@ -97,16 +106,14 @@ public class StrutTitolariHelper extends GenericHelper {
         query.setParameter(8, val);
         query.setParameter(9, val);
 
-        List result = (List<DecVTreeTitol>) query.getResultList();
-
-        return result;
+        return query.getResultList();
     }
 
     public OrgOperTitol getOperTitol(BigDecimal idTitol, Date dtVal) {
         String dtValString = (dtVal != null ? "AND o.dtValOperTitol <= :dtVal " : "");
         Query query = getEntityManager().createQuery("SELECT o FROM OrgOperTitol o "
                 + "WHERE o.decTitol.idTitol = :idTitol " + dtValString + "ORDER BY o.dtValOperTitol DESC");
-        query.setParameter("idTitol", idTitol);
+        query.setParameter("idTitol", longFromBigDecimal(idTitol));
         if (StringUtils.isNotBlank(dtValString)) {
             query.setParameter("dtVal", dtVal);
         }
@@ -136,11 +143,11 @@ public class StrutTitolariHelper extends GenericHelper {
     }
 
     public List<DecLivelloTitol> getLivelliList(BigDecimal idTitol, Set<BigDecimal> niLivelloToExclude) {
-        String toExclude = (niLivelloToExclude != null) ? " AND l.niLivello NOT IN :niLivelloToExclude " : "";
+        String toExclude = (niLivelloToExclude != null) ? " AND l.niLivello NOT IN (:niLivelloToExclude) " : "";
 
         Query query = getEntityManager().createQuery("SELECT l FROM DecLivelloTitol l "
                 + "WHERE l.decTitol.idTitol = :idTitol " + toExclude + "ORDER BY l.niLivello");
-        query.setParameter("idTitol", idTitol);
+        query.setParameter("idTitol", longFromBigDecimal(idTitol));
         if (StringUtils.isNotBlank(toExclude)) {
             query.setParameter("niLivelloToExclude", niLivelloToExclude);
         }
@@ -150,7 +157,7 @@ public class StrutTitolariHelper extends GenericHelper {
     public DecLivelloTitol getLivello(BigDecimal niLivello, BigDecimal idTitol) {
         Query query = getEntityManager().createQuery("SELECT l FROM DecLivelloTitol l "
                 + "WHERE l.decTitol.idTitol = :idTitol " + "AND l.niLivello = :niLivello");
-        query.setParameter("idTitol", idTitol);
+        query.setParameter("idTitol", longFromBigDecimal(idTitol));
         query.setParameter("niLivello", niLivello);
 
         DecLivelloTitol livello = null;
@@ -165,8 +172,7 @@ public class StrutTitolariHelper extends GenericHelper {
                 + "WHERE v.decTitol.idTitol = :idTitol " + "AND v.cdCompositoVoceTitol = :cdVoceComposito");
         query.setParameter("idTitol", idTitol);
         query.setParameter("cdVoceComposito", StringEscapeUtils.escapeJava(cdVoceComposito));
-        DecVoceTitol voce = (DecVoceTitol) query.getSingleResult();
-        return voce;
+        return (DecVoceTitol) query.getSingleResult();
     }
 
     public DecValVoceTitol getLastDecValVoceTitol(long idVoceTitol) {
@@ -184,7 +190,7 @@ public class StrutTitolariHelper extends GenericHelper {
     public DecVoceTitol getDecVoceTitol(BigDecimal idVoceTitol) {
         Query query = getEntityManager()
                 .createQuery("SELECT v FROM DecVoceTitol v " + "WHERE v.idVoceTitol = :idVoceTitol ");
-        query.setParameter("idVoceTitol", idVoceTitol);
+        query.setParameter("idVoceTitol", longFromBigDecimal(idVoceTitol));
         List<DecVoceTitol> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return list.get(0);
@@ -216,10 +222,10 @@ public class StrutTitolariHelper extends GenericHelper {
             builder.append(" AND titol.idTitol != :idTitol");
         }
         Query query = getEntityManager().createQuery(builder.toString());
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("nmTitol", nmTitol);
         if (idTitol != null) {
-            query.setParameter("idTitol", idTitol);
+            query.setParameter("idTitol", longFromBigDecimal(idTitol));
         }
         Long result = (Long) query.getSingleResult();
         return result > 0;
@@ -228,7 +234,7 @@ public class StrutTitolariHelper extends GenericHelper {
     public boolean existTitolario(BigDecimal idStrut, Date dtIniVal, Date dtFinVal) {
         Query query = getEntityManager().createQuery(
                 "SELECT count(titol) FROM DecTitol titol WHERE titol.orgStrut.idStrut = :idStrut AND ((titol.dtIstituz <= :dtFinVal) AND (titol.dtSoppres >= :dtIniVal))");
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("dtIniVal", dtIniVal);
         query.setParameter("dtFinVal", dtFinVal);
         Long result = (Long) query.getSingleResult();
@@ -253,7 +259,7 @@ public class StrutTitolariHelper extends GenericHelper {
         }
         queryStr.append("ORDER BY titol.dtIstituz DESC");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
@@ -278,7 +284,7 @@ public class StrutTitolariHelper extends GenericHelper {
         queryStr.append("ORDER BY voceTitol.dtIstituz DESC");
 
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idcrit", idCriterioRaggrFasc);
+        query.setParameter("idcrit", longFromBigDecimal(idCriterioRaggrFasc));
         if (tiSel != null) {
             query.setParameter("filtro", tiSel);
         }

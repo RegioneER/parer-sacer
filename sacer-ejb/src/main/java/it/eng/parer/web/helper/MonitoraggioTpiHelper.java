@@ -1,4 +1,38 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
+
+import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.TpiErrArk;
 import it.eng.parer.entity.TpiPathElab;
@@ -7,6 +41,7 @@ import it.eng.parer.entity.VrsArkPathDtVers;
 import it.eng.parer.entity.VrsDtVers;
 import it.eng.parer.entity.VrsFileNoarkPathDtVers;
 import it.eng.parer.entity.VrsPathDtVers;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.slite.gen.tablebean.TpiErrArkTableBean;
 import it.eng.parer.slite.gen.tablebean.TpiPathElabRowBean;
@@ -23,24 +58,12 @@ import it.eng.parer.slite.gen.viewbean.TpiVVisDtSchedRowBean;
 import it.eng.parer.viewEntity.TpiVLisDtSched;
 import it.eng.parer.viewEntity.TpiVVisDtSched;
 import it.eng.parer.web.util.Transform;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class MonitoraggioTpiHelper {
@@ -76,10 +99,14 @@ public class MonitoraggioTpiHelper {
         Query query = entityManager.createQuery(queryStr.toString());
         // setParameters
         if (dateVersDa != null) {
-            query.setParameter("dataDa", dateVersDa);
+            // MAC#27666
+            query.setParameter("dataDa", dateVersDa.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            // end MAC#27666
         }
         if (dateVersA != null) {
-            query.setParameter("dataA", dateVersA);
+            // MAC#27666
+            query.setParameter("dataA", dateVersA.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+            // end MAC#27666
         }
         if (flMigraz != null) {
             query.setParameter("migraz", flMigraz);
@@ -116,7 +143,7 @@ public class MonitoraggioTpiHelper {
     public VrsPathDtVersTableBean getPathsDateVersamentoArk(BigDecimal idVrsDtVers) {
         Query query = entityManager.createQuery(
                 "SELECT paths from VrsPathDtVers paths WHERE paths.vrsDtVers.idDtVers = :dtVers ORDER BY paths.dlPath");
-        query.setParameter("dtVers", idVrsDtVers);
+        query.setParameter("dtVers", GenericHelper.longFromBigDecimal(idVrsDtVers));
         List<VrsPathDtVers> pathsList = query.getResultList();
         VrsPathDtVersTableBean pathsTableBean = new VrsPathDtVersTableBean();
         try {
@@ -164,7 +191,7 @@ public class MonitoraggioTpiHelper {
     public VrsFileNoarkPathDtVersTableBean getFilesNoArkPath(BigDecimal idPathDtVers, String tiArkFileNoArk) {
         Query query = entityManager.createQuery(
                 "SELECT noArk FROM VrsFileNoarkPathDtVers noArk WHERE noArk.vrsPathDtVers.idPathDtVers = :path AND noArk.tiArkFileNoark = :tipoArk");
-        query.setParameter("path", idPathDtVers);
+        query.setParameter("path", GenericHelper.longFromBigDecimal(idPathDtVers));
         query.setParameter("tipoArk", tiArkFileNoArk);
         List<VrsFileNoarkPathDtVers> fileNoArkList = query.getResultList();
         VrsFileNoarkPathDtVersTableBean fileNoArkTableBean = new VrsFileNoarkPathDtVersTableBean();
@@ -247,7 +274,7 @@ public class MonitoraggioTpiHelper {
 
     public TpiVVisDtSchedRowBean getDataSchedulazioneTpi(BigDecimal idTpiDtSched) {
         String queryStr = "SELECT tpiSched FROM TpiVVisDtSched tpiSched WHERE tpiSched.idDtSched = :idDtSched";
-        Query query = entityManager.createQuery(queryStr.toString());
+        Query query = entityManager.createQuery(queryStr);
         query.setParameter("idDtSched", idTpiDtSched);
         List<TpiVVisDtSched> schedList = query.getResultList();
         TpiVVisDtSchedRowBean row = null;
@@ -280,7 +307,7 @@ public class MonitoraggioTpiHelper {
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = entityManager.createQuery(queryStr.toString());
         if (idTpiDtSched != null) {
-            query.setParameter("idDtSched", idTpiDtSched);
+            query.setParameter("idDtSched", GenericHelper.longFromBigDecimal(idTpiDtSched));
         }
         if (flMigraz != null) {
             query.setParameter("flMigraz", flMigraz);
@@ -337,7 +364,7 @@ public class MonitoraggioTpiHelper {
     public TpiErrArkTableBean getErrArkJobList(BigDecimal idTpiSchedJob) {
         String queryStr = "SELECT errArk FROM TpiErrArk errArk WHERE errArk.tpiSchedJob.idSchedJob = :idSched";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idSched", idTpiSchedJob);
+        query.setParameter("idSched", GenericHelper.longFromBigDecimal(idTpiSchedJob));
         List<TpiErrArk> errArkList = query.getResultList();
         TpiErrArkTableBean errArkViewBean = new TpiErrArkTableBean();
         try {
@@ -353,7 +380,7 @@ public class MonitoraggioTpiHelper {
     public TpiPathElabTableBean getPathElabJobList(BigDecimal idTpiSchedJob) {
         String queryStr = "SELECT paths FROM TpiPathElab paths WHERE paths.tpiSchedJob.idSchedJob = :idSched ORDER BY paths.dtVersElab, paths.dlPathElab";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idSched", idTpiSchedJob);
+        query.setParameter("idSched", GenericHelper.longFromBigDecimal(idTpiSchedJob));
         List<TpiPathElab> pathList = query.getResultList();
         TpiPathElabTableBean pathElabBean = new TpiPathElabTableBean();
         try {

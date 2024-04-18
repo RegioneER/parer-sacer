@@ -26,6 +26,7 @@
 
             <sl:pulsantiera>
                 <slf:lblField  name="<%=FormatiForm.VisFormatoFileStandard.VIS_FORMATO_BUTTON%>" colSpan="4" />
+                <slf:lblField  name="<%=FormatiForm.VisFormatoFileStandard.EXTRACT_CSV_BUTTON%>" colSpan="4" />
             </sl:pulsantiera>
 
             <sl:newLine skipLine="true"/>

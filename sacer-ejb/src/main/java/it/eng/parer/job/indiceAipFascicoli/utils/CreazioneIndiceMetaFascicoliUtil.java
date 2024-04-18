@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipFascicoli.utils;
 
 import it.eng.parer.aipFascicoli.xml.usprofascResp.AmministrazionePartecipanteType;
@@ -58,10 +75,10 @@ public class CreazioneIndiceMetaFascicoliUtil {
                 .lookup("java:module/CreazioneIndiceMetaFascicoliHelper");
     }
 
-    public Fascicolo generaIndiceMetaFascicolo(FasVVisFascicolo creaMeta, String cdXsd)
+    public Fascicolo generaIndiceMetaFascicolo(FasVVisFascicolo creaMeta, String cdVersioneXml)
             throws DatatypeConfigurationException {
         Fascicolo indiceMetaFascicolo = new Fascicolo();
-        popolaIndiceMetaFascicolo(indiceMetaFascicolo, creaMeta, cdXsd);
+        popolaIndiceMetaFascicolo(indiceMetaFascicolo, creaMeta, cdVersioneXml);
         return indiceMetaFascicolo;
     }
 
@@ -206,8 +223,6 @@ public class CreazioneIndiceMetaFascicoliUtil {
                 soggettoCoinvolto.setNome(fasSogFascicolo.getNmNomeSog());
                 soggettoCoinvolto.setCognome(fasSogFascicolo.getNmCognSog());
                 soggettoCoinvolto.setDenominazione(fasSogFascicolo.getDsDenomSog());
-                soggettoCoinvolto.setIdentificativo(fasSogFascicolo.getCdSog());
-                soggettoCoinvolto.setTipoIdentificativo(fasSogFascicolo.getTiCdSog());
                 soggettoCoinvolto.setTipoRapporto(fasSogFascicolo.getTiRapp());
                 soggettiCoinvolti.getSoggettoCoinvolto().add(soggettoCoinvolto);
             }

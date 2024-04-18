@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
@@ -33,9 +50,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -71,7 +88,7 @@ public class DetailController {
         }
     }
 
-    @RequestMapping(value = "/strut/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/strut/{id}")
     public @ResponseBody void detailStrut(final HttpServletRequest request, final HttpServletResponse res,
             @PathVariable BigDecimal id, Model model) {
         model.addAttribute("id", id);
@@ -91,7 +108,7 @@ public class DetailController {
         SessionManager.addPrevExecutionToHistory(request.getSession(), true, false, null);
         User user = checkUser(request.getSession());
         user.setIdOrganizzazioneFoglia(id);
-        Map<String, String> organizzazione = new LinkedHashMap<String, String>();
+        Map<String, String> organizzazione = new LinkedHashMap<>();
         organizzazione.put(WebConstants.Organizzazione.AMBIENTE.name(), row.getString("nm_ambiente"));
         organizzazione.put(WebConstants.Organizzazione.ENTE.name(), row.getString("nm_ente"));
         organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(), row.getNmStrut());
@@ -111,7 +128,7 @@ public class DetailController {
         }
     }
 
-    @RequestMapping(value = "/ud/{idStrut}/{registro}/{anno}/{numero}", method = RequestMethod.GET)
+    @GetMapping(value = "/ud/{idStrut}/{registro}/{anno}/{numero}")
     public @ResponseBody void detailUd(final HttpServletRequest request, final HttpServletResponse res,
             @PathVariable BigDecimal idStrut, @PathVariable String registro, @PathVariable BigDecimal anno,
             @PathVariable String numero, Model model) {

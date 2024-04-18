@@ -1,19 +1,32 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.ejb;
 
-import it.eng.parer.idpjaas.logutils.IdpConfigLog;
-import it.eng.parer.idpjaas.logutils.IdpLogger;
-import it.eng.parer.idpjaas.logutils.LogDto;
-import it.eng.parer.util.ejb.AppServerInstance;
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.CostantiDB;
 import java.net.UnknownHostException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -21,8 +34,17 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.idpjaas.logutils.IdpConfigLog;
+import it.eng.parer.idpjaas.logutils.IdpLogger;
+import it.eng.parer.idpjaas.logutils.LogDto;
+import it.eng.parer.util.ejb.AppServerInstance;
+import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.spagoCore.util.JpaUtils;
 
 /**
  *
@@ -44,13 +66,14 @@ public class WsIdpLogger {
     private EntityManager entityManager;
     //
 
+    @SuppressWarnings("unchecked")
     @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     public void scriviLog(LogDto logDto) {
         HashMap<String, String> iamDefaults = null;
 
         RispostaControlli rispostaControlli = controlliSemantici
                 .caricaDefaultDaDBParametriApplic(CostantiDB.TipoParametroAppl.IAM);
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             throw new RuntimeException("WsIdpLogger: Impossibile accedere alla tabella parametri");
         } else {
             iamDefaults = (HashMap<String, String>) rispostaControlli.getrObject();
@@ -65,7 +88,9 @@ public class WsIdpLogger {
                 && !iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI).isEmpty()
                 && iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI) != null
                 && !iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI).isEmpty()) {
+            Connection connection = null;
             try {
+                connection = JpaUtils.provideConnectionFrom(entityManager);
                 IdpConfigLog icl = new IdpConfigLog();
                 icl.setQryRegistraEventoUtente(
                         iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE));
@@ -77,9 +102,6 @@ public class WsIdpLogger {
                 icl.setMaxGiorni(Integer.parseInt(iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_GIORNI)));
 
                 logDto.setServername(asi.getName());
-
-                java.sql.Connection connection = entityManager.unwrap(java.sql.Connection.class);
-
                 IdpLogger.EsitiLog risposta = (new IdpLogger(icl).scriviLog(logDto, connection));
 
                 if (risposta == IdpLogger.EsitiLog.UTENTE_DISATTIVATO) {
@@ -97,7 +119,7 @@ public class WsIdpLogger {
                     query.setParameter("nmUseridIn", logDto.getNmUser());
                     query.executeUpdate();
 
-                    log.warn("ERRORE DI AUTENTICAZIONE WS." + " DISATTIVAZIONE UTENTE: " + logDto.getNmUser());
+                    log.warn("ERRORE DI AUTENTICAZIONE WS.{} DISATTIVAZIONE UTENTE: ", logDto.getNmUser());
                 }
 
             } catch (UnknownHostException ex) {
@@ -107,6 +129,14 @@ public class WsIdpLogger {
                 throw new RuntimeException("WsIdpLogger: Errore nell'accesso ai dati di log: " + ex.getMessage());
             } catch (Exception ex) {
                 throw new RuntimeException("WsIdpLogger: Errore: " + ex.getMessage());
+            } finally {
+                if (connection != null) {
+                    try {
+                        connection.close();
+                    } catch (SQLException ex) {
+                        log.error("Errore nella chiusura della connessione: ", ex);
+                    }
+                }
             }
         }
 

@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper;
 
 import java.math.BigDecimal;
@@ -16,6 +33,7 @@ import it.eng.parer.entity.DecAttribDatiSpec;
 import it.eng.parer.entity.DecTipoStrutUdXsd;
 import it.eng.parer.entity.DecXsdAttribDatiSpec;
 import it.eng.parer.entity.DecXsdDatiSpec;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.slite.gen.tablebean.DecXsdDatiSpecRowBean;
 import it.eng.parer.ws.utils.CostantiDB;
@@ -99,7 +117,7 @@ public class DatiSpecificiHelper extends GenericHelper {
                 break;
             }
         }
-        List<DecAttribDatiSpec> attrib = (List<DecAttribDatiSpec>) query.getResultList();
+        List<DecAttribDatiSpec> attrib = query.getResultList();
         if (attrib.isEmpty()) {
             return null;
         }
@@ -210,7 +228,7 @@ public class DatiSpecificiHelper extends GenericHelper {
                 break;
             }
         }
-        List<DecAttribDatiSpec> attrib = (List<DecAttribDatiSpec>) query.getResultList();
+        List<DecAttribDatiSpec> attrib = query.getResultList();
         if (attrib.isEmpty()) {
             return null;
         }
@@ -219,7 +237,7 @@ public class DatiSpecificiHelper extends GenericHelper {
 
     public DecAttribDatiSpec getDecAttribDatiSpecByName(BigDecimal idStrutCorrente, String tiUsoAttrib,
             String tiEntitaSacer, String nmTipoUnitaDoc, String nmTipoDoc, String nmTipoCompDoc, String nmTipoStrutDoc,
-            String nmSistemaMigraz, String nmAttribDatiSpec) {
+            String nmAttribDatiSpec) {
         String queryStr = "SELECT attribDatiSpec FROM DecAttribDatiSpec attribDatiSpec ";
 
         if (nmTipoUnitaDoc != null) {
@@ -250,7 +268,7 @@ public class DatiSpecificiHelper extends GenericHelper {
                 + "AND attribDatiSpec.nmAttribDatiSpec = :nmAttribDatiSpec ";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrutCorrente", idStrutCorrente);
+        query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
         if (nmTipoUnitaDoc != null) {
             query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
         }
@@ -311,19 +329,17 @@ public class DatiSpecificiHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
 
-        query.setParameter("idXsdDatiSpec", idXsdDatiSpec);
+        query.setParameter("idXsdDatiSpec", longFromBigDecimal(idXsdDatiSpec));
 
         if (idTipoDoc != null) {
-            query.setParameter("idTipoDoc", idTipoDoc);
+            query.setParameter("idTipoDoc", longFromBigDecimal(idTipoDoc));
         } else if (idTipoUnitaDoc != null) {
-            query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+            query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
         } else if (idTipoCompDoc != null) {
-            query.setParameter("idTipoCompDoc", idTipoCompDoc);
+            query.setParameter("idTipoCompDoc", longFromBigDecimal(idTipoCompDoc));
         }
 
-        List<DecAttribDatiSpec> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
     public List<String> getNmAttribDatiSpecList(BigDecimal idStrut, BigDecimal idTipoUnitaDoc, BigDecimal idTipoDoc,
@@ -345,26 +361,25 @@ public class DatiSpecificiHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
 
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("tiEntitaSacer", tiEntitaSacer);
         if (idTipoDoc != null) {
-            query.setParameter("idTipoDoc", idTipoDoc);
+            query.setParameter("idTipoDoc", longFromBigDecimal(idTipoDoc));
         } else if (idTipoUnitaDoc != null) {
-            query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+            query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
         } else if (idTipoCompDoc != null) {
-            query.setParameter("idTipoCompDoc", idTipoCompDoc);
+            query.setParameter("idTipoCompDoc", longFromBigDecimal(idTipoCompDoc));
         } else if (StringUtils.isNotBlank(nmSistemaMigraz)) {
             query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
         }
-        List<String> list = query.getResultList();
 
-        return list;
+        return query.getResultList();
     }
 
     public List<DecAttribDatiSpec> retrieveDecAttribDatiSpecList(BigDecimal idXsdDatiSpec) {
         Query query = getEntityManager().createQuery(
                 "SELECT attribDatiSpec FROM DecXsdAttribDatiSpec xsdAttrib JOIN xsdAttrib.decAttribDatiSpec attribDatiSpec WHERE xsdAttrib.decXsdDatiSpec.idXsdDatiSpec = :idXsdDatiSpec ");
-        query.setParameter("idXsdDatiSpec", idXsdDatiSpec);
+        query.setParameter("idXsdDatiSpec", longFromBigDecimal(idXsdDatiSpec));
         return query.getResultList();
     }
 
@@ -419,6 +434,8 @@ public class DatiSpecificiHelper extends GenericHelper {
             break;
         case DOC:
             builder.append("AND d.decTipoDoc.nmTipoDoc = :nmTipoDoc ");
+            break;
+        default:
             break;
         }
 
@@ -492,18 +509,18 @@ public class DatiSpecificiHelper extends GenericHelper {
         }
         queryStr.append(" ORDER BY xsdDatiSpec.dtIstituz DESC, xsdDatiSpec.cdVersioneXsd DESC");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("tiUsoXsd", tiUsoXsd);
         query.setParameter("tiEntitaSacer", tiEntitaSacer);
         if (tiUsoXsd.equals(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name()) && StringUtils.isNotBlank(nmSistemaMigraz)) {
             query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
         } else {
             if (idTipoDoc != null) {
-                query.setParameter("idTipoDoc", idTipoDoc);
+                query.setParameter("idTipoDoc", longFromBigDecimal(idTipoDoc));
             } else if (idTipoUnitaDoc != null) {
-                query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+                query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
             } else if (idTipoCompDoc != null) {
-                query.setParameter("idTipoCompDoc", idTipoCompDoc);
+                query.setParameter("idTipoCompDoc", longFromBigDecimal(idTipoCompDoc));
             }
         }
 
@@ -532,16 +549,16 @@ public class DatiSpecificiHelper extends GenericHelper {
         query.setParameter("cdVersioneXsd", xsdDatiSpec.getCdVersioneXsd());
 
         if (xsdDatiSpec.getNmSistemaMigraz() != null) {
-            query.setParameter("idStrut", xsdDatiSpec.getIdStrut());
+            query.setParameter("idStrut", longFromBigDecimal(xsdDatiSpec.getIdStrut()));
             query.setParameter("tiSacerType", xsdDatiSpec.getTiEntitaSacer());
             query.setParameter("nmSistemaMigraz", xsdDatiSpec.getNmSistemaMigraz());
         } else {
             if (xsdDatiSpec.getIdTipoDoc() != null) {
-                query.setParameter("idTipoDoc", xsdDatiSpec.getIdTipoDoc());
+                query.setParameter("idTipoDoc", longFromBigDecimal(xsdDatiSpec.getIdTipoDoc()));
             } else if (xsdDatiSpec.getIdTipoUnitaDoc() != null) {
-                query.setParameter("idTipoUnitaDoc", xsdDatiSpec.getIdTipoUnitaDoc());
+                query.setParameter("idTipoUnitaDoc", longFromBigDecimal(xsdDatiSpec.getIdTipoUnitaDoc()));
             } else if (xsdDatiSpec.getIdTipoCompDoc() != null) {
-                query.setParameter("idTipoCompDoc", xsdDatiSpec.getIdTipoCompDoc());
+                query.setParameter("idTipoCompDoc", longFromBigDecimal(xsdDatiSpec.getIdTipoCompDoc()));
             }
             query.setParameter("isMigraz", "MIGRAZ");
         }
@@ -552,6 +569,44 @@ public class DatiSpecificiHelper extends GenericHelper {
         }
 
         return list.get(0);
+    }
+
+    public List<DecXsdDatiSpec> retrieveDecXsdDatiSpecList(OrgStrut strut, String tiUsoXsd, String tiEntitaSacer,
+            BigDecimal idTipoUnitaDoc, BigDecimal idTipoDoc, BigDecimal idTipoCompDoc, String nmSistemaMigraz) {
+        String clause = " AND ";
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT xsdDatiSpec FROM DecXsdDatiSpec xsdDatiSpec " + "WHERE xsdDatiSpec.orgStrut = :strut"
+                        + "AND xsdDatiSpec.tiUsoXsd = :tiUsoXsd " + "AND xsdDatiSpec.tiEntitaSacer = :tiEntitaSacer ");
+
+        if (tiUsoXsd.equals(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name()) && StringUtils.isNotBlank(nmSistemaMigraz)) {
+            queryStr.append(clause).append("xsdDatiSpec.nmSistemaMigraz = :nmSistemaMigraz");
+        } else {
+            if (idTipoDoc != null) {
+                queryStr.append(clause).append("xsdDatiSpec.decTipoDoc.idTipoDoc = :idTipoDoc");
+            } else if (idTipoUnitaDoc != null) {
+                queryStr.append(clause).append("xsdDatiSpec.decTipoUnitaDoc.idTipoUnitaDoc = :idTipoUnitaDoc");
+            } else if (idTipoCompDoc != null) {
+                queryStr.append(clause).append("xsdDatiSpec.decTipoCompDoc.idTipoCompDoc = :idTipoCompDoc");
+            }
+        }
+        queryStr.append(" ORDER BY xsdDatiSpec.dtIstituz DESC, xsdDatiSpec.cdVersioneXsd DESC");
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("strut", strut);
+        query.setParameter("tiUsoXsd", tiUsoXsd);
+        query.setParameter("tiEntitaSacer", tiEntitaSacer);
+        if (tiUsoXsd.equals(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name()) && StringUtils.isNotBlank(nmSistemaMigraz)) {
+            query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
+        } else {
+            if (idTipoDoc != null) {
+                query.setParameter("idTipoDoc", idTipoDoc);
+            } else if (idTipoUnitaDoc != null) {
+                query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+            } else if (idTipoCompDoc != null) {
+                query.setParameter("idTipoCompDoc", idTipoCompDoc);
+            }
+        }
+
+        return query.getResultList();
     }
 
     public boolean checkRelationsAreEmptyForDecXsdDatiSpec(long idXsdDatiSpec) {
@@ -572,7 +627,7 @@ public class DatiSpecificiHelper extends GenericHelper {
                 .createQuery("SELECT COUNT(xsdAttrib.decAttribDatiSpec) FROM OrgCampoValSubStrut campo "
                         + "JOIN campo.decAttribDatiSpec attrib JOIN attrib.decXsdAttribDatiSpecs xsdAttrib "
                         + "JOIN xsdAttrib.decXsdDatiSpec xsdDatiSpec WHERE xsdDatiSpec.idXsdDatiSpec = :idXsdDatiSpec ");
-        query.setParameter("idXsdDatiSpec", idXsdDatiSpec);
+        query.setParameter("idXsdDatiSpec", longFromBigDecimal(idXsdDatiSpec));
         Long count = (Long) query.getSingleResult();
         return count > 0L;
 
@@ -595,8 +650,8 @@ public class DatiSpecificiHelper extends GenericHelper {
                 + "WHERE xsdAttribDatiSpec.decAttribDatiSpec.idAttribDatiSpec = :idAttribDatiSpec "
                 + "AND xsdAttribDatiSpec.decXsdDatiSpec.idXsdDatiSpec = :idXsdDatiSpec";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idAttribDatiSpec", idAttribDatiSpec);
-        query.setParameter("idXsdDatiSpec", idXsdDatiSpec);
+        query.setParameter("idAttribDatiSpec", longFromBigDecimal(idAttribDatiSpec));
+        query.setParameter("idXsdDatiSpec", longFromBigDecimal(idXsdDatiSpec));
         List<DecXsdAttribDatiSpec> list = query.getResultList();
 
         if (list.isEmpty()) {
@@ -615,14 +670,12 @@ public class DatiSpecificiHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("nmAttribDatiSpec", nmAttribDatiSpec);
 
-        query.setParameter("idXsdDatiSpec", idXsdDatiSpec);
+        query.setParameter("idXsdDatiSpec", longFromBigDecimal(idXsdDatiSpec));
         query.setParameter("tiSacerType", tiSacerType);
         query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
 
-        DecXsdAttribDatiSpec result = (DecXsdAttribDatiSpec) query.getSingleResult();
-
-        return result;
+        return (DecXsdAttribDatiSpec) query.getSingleResult();
     }
 
     public DecXsdAttribDatiSpec getDecXsdAttribDatiSpecByNameAndXsdId(String nmAttribDatiSpec, BigDecimal idTipoDoc,
@@ -641,18 +694,17 @@ public class DatiSpecificiHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("nmAttribDatiSpec", nmAttribDatiSpec);
-        query.setParameter("idXsdDatiSpec", idXsdDatiSpec);
+        query.setParameter("idXsdDatiSpec", longFromBigDecimal(idXsdDatiSpec));
 
         if (idTipoDoc != null) {
-            query.setParameter("idTipoDoc", idTipoDoc);
+            query.setParameter("idTipoDoc", longFromBigDecimal(idTipoDoc));
         } else if (idTipoUnitaDoc != null) {
-            query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+            query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
         } else if (idTipoCompDoc != null) {
-            query.setParameter("idTipoCompDoc", idTipoCompDoc);
+            query.setParameter("idTipoCompDoc", longFromBigDecimal(idTipoCompDoc));
         }
 
-        DecXsdAttribDatiSpec result = (DecXsdAttribDatiSpec) query.getSingleResult();
-        return result;
+        return (DecXsdAttribDatiSpec) query.getSingleResult();
     }
 
     public void deleteDecXsdDatiSpecMigraz(long idStrut) {
@@ -754,11 +806,11 @@ public class DatiSpecificiHelper extends GenericHelper {
          */
         String subQuery = queryStr.toString()
                 .replaceFirst("SELECT xsdDatiSpec FROM", "SELECT MAX(xsdDatiSpec.dtIstituz) FROM")
-                .replaceAll("xsdDatiSpec", "subQuery");
+                .replace("xsdDatiSpec", "subQuery");
         subQuery += " AND subQuery.dtIstituz <= :filterDate AND subQuery.dtSoppres >= :filterDate ";
         String subQuery2 = queryStr.toString()
                 .replaceFirst("SELECT xsdDatiSpec FROM", "SELECT MAX(xsdDatiSpec.cdVersioneXsd) FROM")
-                .replaceAll("xsdDatiSpec", "subQuery2");
+                .replace("xsdDatiSpec", "subQuery2");
         subQuery2 += " AND subQuery2.dtIstituz <= :filterDate AND subQuery2.dtSoppres >= :filterDate ";
         queryStr.append(" AND xsdDatiSpec.dtIstituz = (").append(subQuery).append(")");
 
@@ -767,16 +819,16 @@ public class DatiSpecificiHelper extends GenericHelper {
 
         queryStr.append(" AND xsdDatiSpec.cdVersioneXsd = (").append(subQuery2).append(")");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idStrut", xsdDatiSpecRowBean.getIdStrut());
+        query.setParameter("idStrut", longFromBigDecimal(xsdDatiSpecRowBean.getIdStrut()));
         if (StringUtils.isNotBlank(xsdDatiSpecRowBean.getNmSistemaMigraz())) {
             query.setParameter("nmSistemaMigraz", xsdDatiSpecRowBean.getNmSistemaMigraz());
         } else {
             if (xsdDatiSpecRowBean.getIdTipoDoc() != null) {
-                query.setParameter("idTipoDoc", xsdDatiSpecRowBean.getIdTipoDoc());
+                query.setParameter("idTipoDoc", longFromBigDecimal(xsdDatiSpecRowBean.getIdTipoDoc()));
             } else if (xsdDatiSpecRowBean.getIdTipoUnitaDoc() != null) {
-                query.setParameter("idTipoUnitaDoc", xsdDatiSpecRowBean.getIdTipoUnitaDoc());
+                query.setParameter("idTipoUnitaDoc", longFromBigDecimal(xsdDatiSpecRowBean.getIdTipoUnitaDoc()));
             } else if (xsdDatiSpecRowBean.getIdTipoCompDoc() != null) {
-                query.setParameter("idTipoCompDoc", xsdDatiSpecRowBean.getIdTipoCompDoc());
+                query.setParameter("idTipoCompDoc", longFromBigDecimal(xsdDatiSpecRowBean.getIdTipoCompDoc()));
             }
         }
         Date now = Calendar.getInstance().getTime();
@@ -815,15 +867,13 @@ public class DatiSpecificiHelper extends GenericHelper {
                 + ":idEntity AND d.tiEntitaSacer = :tiEntitaSacer "
                 + "AND d.dtIstituz <= :filterDate AND d.dtSoppres >= :filterDate " + "AND d.tiUsoXsd = 'VERS' " + ")";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("idEntity", idEntity);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        query.setParameter("idEntity", longFromBigDecimal(idEntity));
         query.setParameter("tiEntitaSacer", tiEntitaSacer);
         Date now = Calendar.getInstance().getTime();
         query.setParameter("filterDate", now);
 
-        List<DecAttribDatiSpec> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
     /**
@@ -844,7 +894,7 @@ public class DatiSpecificiHelper extends GenericHelper {
                 + "AND EXISTS (SELECT campo FROM OrgCampoValSubStrut campo WHERE campo.decAttribDatiSpec = attribDatiSpec ";
 
         if (tipiCampo != null) {
-            queryStr = queryStr + "AND campo.tiCampo IN :tipiCampo) ";
+            queryStr = queryStr + "AND campo.tiCampo IN (:tipiCampo)) ";
         } else {
             queryStr = queryStr + ")";
         }
@@ -859,39 +909,51 @@ public class DatiSpecificiHelper extends GenericHelper {
         return count > 0L;
     }
 
+    // TODO: Sarebbe da rifare meglio in quanto si dà per scontato che solo uno tra nmTipoUnitaDoc, nmTipoDoc ed
+    // nmTipocompdoc sia valorizzato
     public DecXsdDatiSpec getDecXsdDatiSpec(BigDecimal idStrutCorrente, String tiUsoXsd, String tiEntitaSacer,
             String nmTipoUnitaDoc, String nmTipoDoc, String nmTipoCompDoc, String nmTipoStrutDoc,
             String nmSistemaMigraz, String cdVersioneXsd) {
+        String whereWord = " WHERE ";
         String queryStr = "SELECT xsdDatiSpec FROM DecXsdDatiSpec xsdDatiSpec ";
 
         if (nmTipoUnitaDoc != null) {
-            queryStr = queryStr + "WHERE xsdDatiSpec.decTipoUnitaDoc.orgStrut.idStrut = :idStrutCorrente "
+            queryStr = queryStr + whereWord + " xsdDatiSpec.decTipoUnitaDoc.orgStrut.idStrut = :idStrutCorrente "
                     + "AND xsdDatiSpec.decTipoUnitaDoc.nmTipoUnitaDoc = :nmTipoUnitaDoc ";
+            whereWord = " AND ";
         }
 
         if (nmTipoDoc != null) {
-            queryStr = queryStr + "WHERE xsdDatiSpec.decTipoDoc.orgStrut.idStrut = :idStrutCorrente "
+            queryStr = queryStr + whereWord + " xsdDatiSpec.decTipoDoc.orgStrut.idStrut = :idStrutCorrente "
                     + "AND xsdDatiSpec.decTipoDoc.nmTipoDoc = :nmTipoDoc ";
+            whereWord = " AND ";
         }
 
         if (nmTipoCompDoc != null) {
-            queryStr = queryStr
-                    + "WHERE xsdDatiSpec.decTipoCompDoc.decTipoStrutDoc.orgStrut.idStrut = :idStrutCorrente "
+            queryStr = queryStr + whereWord
+                    + " xsdDatiSpec.decTipoCompDoc.decTipoStrutDoc.orgStrut.idStrut = :idStrutCorrente "
                     + "AND xsdDatiSpec.decTipoCompDoc.decTipoStrutDoc.nmTipoStrutDoc = :nmTipoStrutDoc "
                     + "AND xsdDatiSpec.decTipoCompDoc.nmTipoCompDoc = :nmTipoCompDoc ";
+            whereWord = " AND ";
+        }
+
+        if (nmSistemaMigraz != null) {
+            queryStr = queryStr + whereWord + " xsdDatiSpec.orgStrut.idStrut = :idStrutCorrente ";
+            whereWord = " AND ";
         }
 
         if (tiUsoXsd.equals("MIGRAZ")) {
-            queryStr = queryStr + "AND xsdDatiSpec.nmSistemaMigraz = :nmSistemaMigraz ";
+            queryStr = queryStr + whereWord + " xsdDatiSpec.nmSistemaMigraz = :nmSistemaMigraz ";
         } else {
-            queryStr = queryStr + "AND xsdDatiSpec.nmSistemaMigraz IS NULL ";
+            queryStr = queryStr + whereWord + " xsdDatiSpec.nmSistemaMigraz IS NULL ";
         }
 
-        queryStr = queryStr + "AND xsdDatiSpec.tiUsoXsd = :tiUsoXsd "
+        whereWord = " AND ";
+        queryStr = queryStr + whereWord + " xsdDatiSpec.tiUsoXsd = :tiUsoXsd "
                 + "AND xsdDatiSpec.tiEntitaSacer = :tiEntitaSacer " + "AND xsdDatiSpec.cdVersioneXsd = :cdVersioneXsd ";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrutCorrente", idStrutCorrente);
+        query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
         if (nmTipoUnitaDoc != null) {
             query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
         }
@@ -942,7 +1004,7 @@ public class DatiSpecificiHelper extends GenericHelper {
 
         if (nmTipoUnitaDoc != null) {
             query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
-            query.setParameter("idStrutCorrente", idStrutCorrente);
+            query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
             query.setParameter("nmTipoStrutUnitaDoc", nmTipoStrutUnitaDoc);
         }
         query.setParameter("tiUsoXsd", tiUsoXsd);
@@ -971,8 +1033,7 @@ public class DatiSpecificiHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idXsdDatiSpec", idXsdDatiSpec.longValue());
 
-        Long result = (Long) query.getSingleResult();
-        return result;
+        return (Long) query.getSingleResult();
     }
 
 }

@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.hsm.beans.HSMUser;
@@ -84,8 +101,12 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.ActionUtils;
 import it.eng.parer.web.util.ComboGetter;
+import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.web.validator.TypeValidator;
+import it.eng.parer.ws.dto.CSChiave;
+import it.eng.parer.ws.dto.CSChiaveSerie;
+import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
@@ -120,6 +141,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -185,11 +207,12 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
     @Override
     public void initOnClick() throws EMFError {
+        // si può cancellare?
     }
 
     // <editor-fold defaultstate="collapsed" desc="Creazione serie">
     @Secure(action = "Menu.Serie.CreazioneSerie")
-    public void loadCreazioneSerie() throws EMFError {
+    public void loadCreazioneSerie() {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Serie.CreazioneSerie");
 
@@ -241,16 +264,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     if (getForm().getCreazioneSerie().getBl_file_input_serie().parse() == null) {
                         getMessageBox().addError("Nessun file selezionato");
                     }
-                    /*
-                     * if (StringUtils.isBlank(getForm().getCreazioneSerie().getCd_doc_file_input_ver_serie().parse()))
-                     * { getMessageBox().addError("<br/>Campo " +
-                     * getForm().getCreazioneSerie().getCd_doc_file_input_ver_serie().getDescription() +
-                     * " obbligatorio per il tipo creazione 'ACQUISIZIONE_FILE'"); } if
-                     * (StringUtils.isBlank(getForm().getCreazioneSerie().getDs_doc_file_input_ver_serie().parse())) {
-                     * getMessageBox().addError("<br/>Campo " +
-                     * getForm().getCreazioneSerie().getDs_doc_file_input_ver_serie().getDescription() +
-                     * " obbligatorio per il tipo creazione 'ACQUISIZIONE_FILE'"); }
-                     */
                     if (StringUtils.isBlank(getForm().getCreazioneSerie().getFl_fornito_ente().parse())) {
                         getMessageBox().addError(
                                 "<br/>Campo " + getForm().getCreazioneSerie().getFl_fornito_ente().getDescription()
@@ -300,8 +313,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                         String dsListaAnniSelSerie = getForm().getCreazioneSerie().getDs_lista_anni_sel_serie().parse();
                         serieEjb.checkDecTipoSerieUd(idTipoSerie);
                         if (!getMessageBox().hasError()) {
-                            checkFieldsTipoSelUdTipoSerie(row.getNiMmCreaAutom(), row.getTiSelUd(), dtInizio, dtFine,
-                                    dsListaAnniSelSerie);
+                            checkFieldsTipoSelUdTipoSerie(row.getTiSelUd(), dtInizio, dtFine, dsListaAnniSelSerie);
                         }
                         if (!getMessageBox().hasError()) {
                             if (dtInizio == null || dtFine == null) {
@@ -489,10 +501,8 @@ public class SerieUDAction extends SerieUDAbstractAction {
         forwardToPublisher(Application.Publisher.CREAZIONE_SERIE_UD);
     }
 
-    private void checkFieldsTipoSelUdTipoSerie(BigDecimal niMmCreazioneAutom, String tiSelUd, Date dtInizio,
-            Date dtFine, String dsListaAnniSelSerie) {
+    private void checkFieldsTipoSelUdTipoSerie(String tiSelUd, Date dtInizio, Date dtFine, String dsListaAnniSelSerie) {
         if (tiSelUd.equals(CostantiDB.TipoSelUdTipiSerie.DT_UD_SERIE.name())) {
-            // if (niMmCreazioneAutom != null) {
             if (dtInizio == null || dtFine == null) {
                 getMessageBox().addError("Il range di date con cui selezionare le unit\u00E0 documentarie "
                         + "che appartengono alla serie da creare, deve essere valorizzato poich\u00E9 "
@@ -502,7 +512,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 getMessageBox().addError(
                         "L'estremo inferiore del range di date di selezione delle unit\u00E0 documentarie non \u00E8 minore o uguale di quello superiore");
             }
-            // }
             if (StringUtils.isBlank(dsListaAnniSelSerie)) {
                 getMessageBox().addError(
                         "Il campo '" + getForm().getCreazioneSerie().getDs_lista_anni_sel_serie().getDescription()
@@ -600,12 +609,12 @@ public class SerieUDAction extends SerieUDAbstractAction {
         boolean error = false;
         if (unlimited != null && anniConserv != null) {
             if ((unlimited.equals("1") && !anniConserv.equals(new BigDecimal(9999)))
-                    || ((unlimited.equals("0") && anniConserv.equals(new BigDecimal(9999))))) {
+                    || (unlimited.equals("0") && anniConserv.equals(new BigDecimal(9999)))) {
                 error = true;
             }
         }
         if ((anniConserv == null && StringUtils.isBlank(unlimited))
-                || ((unlimited != null && unlimited.equals("0") && anniConserv == null))) {
+                || (unlimited != null && unlimited.equals("0") && anniConserv == null)) {
             error = true;
         }
         if (error) {
@@ -739,33 +748,11 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 getForm().getSerieDetail().copyToBean(tmpRow);
                 getForm().getDatiSerieDetail().copyFromBean(tmpRow);
 
-                DateFormat formato = new SimpleDateFormat(WebConstants.DATE_FORMAT_HOUR_MINUTE_TYPE);
+                DateFormat formato = new SimpleDateFormat(Constants.DATE_FORMAT_HOUR_MINUTE_TYPE);
 
                 getForm().getNotaDetail().clear();
                 getForm().getNotaDetail().setViewMode();
 
-                // Gestione progressivo nota incrementale, inserendo i progressivi mancanti
-                // int sizeNote = getForm().getNoteList().getTable().size();
-                // BigDecimal lastPgNota = serieEjb.getMaxPgNota(idVersione);
-                // String nextPg = String.valueOf(sizeNote + 1);
-                // if (lastPgNota.intValue() > sizeNote) {
-                // // Buco di numerazione
-                // SerVLisNotaSerieTableBean tb = (SerVLisNotaSerieTableBean) getForm().getNoteList().getTable();
-                // List<Object> progressivi = tb.toList(SerVLisNotaSerieRowBean.TABLE_DESCRIPTOR.COL_PG_NOTA_VER_SERIE,
-                // new
-                // SortingRule[]{SortingRule.getAscending(SerVLisNotaSerieRowBean.TABLE_DESCRIPTOR.COL_PG_NOTA_VER_SERIE)});
-                // int index = 1;
-                // for (Object progressivo : progressivi) {
-                // int pg = ((BigDecimal) progressivo).intValue();
-                // if (index != pg) {
-                // nextPg = String.valueOf(index);
-                // break;
-                // }
-                // index++;
-                // }
-                // }
-                // BigDecimal lastPgNota = serieEjb.getMaxPgNota(idVersione, idTipoSerie);
-                // String nextPg = lastPgNota.add(BigDecimal.ONE).toPlainString();
                 getForm().getNotaDetail().getPg_nota_ver_serie().setValue(null);
                 getForm().getNotaDetail().getNm_userid().setValue(getUser().getUsername());
                 getForm().getNotaDetail().getDt_nota_ver_serie()
@@ -928,10 +915,10 @@ public class SerieUDAction extends SerieUDAbstractAction {
             } else if (getTableName().equals(getForm().getVolumiList().getName())) {
                 SerVLisVolSerieUdRowBean row = (SerVLisVolSerieUdRowBean) getForm().getVolumiList().getTable()
                         .getCurrentRow();
-                SerVVisVolVerSerieUdRowBean detailRow = (SerVVisVolVerSerieUdRowBean) serieEjb
-                        .getSerVVisVolSerieUdRowBean(row.getIdVolVerSerie());
+                SerVVisVolVerSerieUdRowBean detailRow = serieEjb.getSerVVisVolSerieUdRowBean(row.getIdVolVerSerie());
                 getForm().getVolumeDetail().copyFromBean(detailRow);
                 getForm().getVolumeDetail().getDownloadIxVol().setEditMode();
+                getForm().getVolumeDetail().getDownloadIxVol().setDisableHourGlass(true);
 
                 getForm().getFiltriContenutoSerieDetail().clear();
                 getForm().getFiltriContenutoSerieDetail().setEditMode();
@@ -1067,6 +1054,21 @@ public class SerieUDAction extends SerieUDAbstractAction {
     private void loadDettaglioSerie(BigDecimal idVerSerie, boolean versioneCorrente) throws EMFError {
         SerVVisSerieUdRowBean detailRow = serieEjb.getSerVVisSerieUdRowBean(idVerSerie);
         getForm().getSerieDetail().copyFromBean(detailRow);
+
+        CSVersatore tmpVers = new CSVersatore();
+        tmpVers.setAmbiente(detailRow.getNmAmbiente());
+        tmpVers.setEnte(detailRow.getNmEnte());
+        tmpVers.setStruttura(detailRow.getNmStrut());
+
+        CSChiaveSerie chiaveSerie = new CSChiaveSerie();
+        chiaveSerie.setAnno(detailRow.getAaSerie().intValue());
+        chiaveSerie.setNumero(detailRow.getCdCompositoSerie());
+
+        getForm().getSerieDetail().getUrn_serie()
+                .setValue(MessaggiWSFormat.formattaUrnDocUniDoc(
+                        MessaggiWSFormat.formattaBaseUrnSerie(MessaggiWSFormat.formattaUrnPartVersatore(tmpVers),
+                                MessaggiWSFormat.formattaUrnPartSerie(chiaveSerie))));
+
         if (detailRow.getNiAnniConserv().equals(new BigDecimal(9999))) {
             getForm().getSerieDetail().getConserv_unlimited().setValue("1");
         } else {
@@ -1385,11 +1387,13 @@ public class SerieUDAction extends SerieUDAbstractAction {
         }
         if (StringUtils.isNotBlank(detailRow.getBlFileIxAip())) {
             getForm().getSerieDetailButtonList().getDownloadAIP().setHidden(false);
+            getForm().getSerieDetailButtonList().getDownloadAIP().setDisableHourGlass(true);
         }
         if (detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())
                 || detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.IN_CUSTODIA.name())
                 || detailRow.getTiStatoVerSerie().equals(CostantiDB.StatoVersioneSerie.ANNULLATA.name())) {
             getForm().getSerieDetailButtonList().getDownloadPacchettoArk().setHidden(false);
+            getForm().getSerieDetailButtonList().getDownloadPacchettoArk().setDisableHourGlass(true);
         }
         if (!getMessageBox().hasError() && StringUtils.isNotBlank(detailRow.getDsMsgSerieDaRigenera())) {
             getMessageBox().addWarning(detailRow.getDsMsgSerieDaRigenera());
@@ -1470,8 +1474,8 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 if (!getMessageBox().hasError()) {
                     DecTipoSerieRowBean tipoSerieRow = tipoSerieEjb.getDecTipoSerieRowBean(idTipoSerie);
                     if (!getMessageBox().hasError()) {
-                        checkFieldsTipoSelUdTipoSerie(tipoSerieRow.getNiMmCreaAutom(), tipoSerieRow.getTiSelUd(),
-                                dtInizioSelSerie, dtFineSelSerie, dsListaAnniSelSerie);
+                        checkFieldsTipoSelUdTipoSerie(tipoSerieRow.getTiSelUd(), dtInizioSelSerie, dtFineSelSerie,
+                                dsListaAnniSelSerie);
                     }
                     if (!getMessageBox().hasError()
                             && tipoSerieRow.getTiSelUd().equals(CostantiDB.TipoSelUdTipiSerie.DT_UD_SERIE.name())) {
@@ -2043,7 +2047,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
                         // List<BigDecimal> idUnitaDocs = (List<BigDecimal>) (List<?>)
                         // tb.toList(SerVLisUdAppartSerieRowBean.TABLE_DESCRIPTOR.COL_ID_UNITA_DOC,
                         // new
-                        // SortingRule[]{SortingRule.getAscending(SerVLisUdAppartSerieRowBean.TABLE_DESCRIPTOR.COL_DS_KEY_ORD_UD_SERIE)});
 
                         loadUdDetail(tb);
                     } else {
@@ -2053,16 +2056,8 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     }
                 }
             } else if (getTableName().equals(getForm().getUdVolumeList().getName())) {
-                // SerVLisUdAppartVolSerieRowBean currentRowBean = (SerVLisUdAppartVolSerieRowBean)
-                // getForm().getUdVolumeList().getTable().getCurrentRow();
                 SerVLisUdAppartVolSerieTableBean tb = (SerVLisUdAppartVolSerieTableBean) getForm().getUdVolumeList()
                         .getTable();
-                // List<BigDecimal> idUnitaDocs = (List<BigDecimal>) (List<?>)
-                // tb.toList(SerVLisUdAppartVolSerieRowBean.TABLE_DESCRIPTOR.COL_ID_UNITA_DOC,
-                // new
-                // SortingRule[]{SortingRule.getAscending(SerVLisUdAppartVolSerieRowBean.TABLE_DESCRIPTOR.COL_DS_KEY_ORD_UD_SERIE)});
-                //
-                // BigDecimal idUnitaDoc = currentRowBean.getIdUnitaDoc();
                 loadUdDetail(tb);
             } else if (getTableName().equals(getForm().getErroreContenutoUdList().getName())) {
                 SerVLisUdNoversRowBean currentRowBean = (SerVLisUdNoversRowBean) getForm().getErroreContenutoUdList()
@@ -2075,16 +2070,8 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
                 loadUdNoVersDetail(idUnitaDocNonVers, cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, idStrut);
             } else if (getTableName().equals(getForm().getErroriFileInputUdList().getName())) {
-                // SerVLisUdErrFileInputRowBean currentRowBean = (SerVLisUdErrFileInputRowBean)
-                // getForm().getErroriFileInputUdList().getTable().getCurrentRow();
                 SerVLisUdErrFileInputTableBean tb = (SerVLisUdErrFileInputTableBean) getForm()
                         .getErroriFileInputUdList().getTable();
-                // List<BigDecimal> idUnitaDocs = (List<BigDecimal>) (List<?>)
-                // tb.toList(SerVLisUdErrFileInputRowBean.TABLE_DESCRIPTOR.COL_ID_UNITA_DOC,
-                // new
-                // SortingRule[]{SortingRule.getAscending(SerVLisUdErrFileInputRowBean.TABLE_DESCRIPTOR.COL_DS_KEY_ORD_UD_SERIE)});
-
-                // BigDecimal idUnitaDoc = currentRowBean.getIdUnitaDoc();
                 loadUdDetail(tb);
             } else if (getTableName().equals(getForm().getLacuneList().getName())) {
                 forwardToPublisher(Application.Publisher.LACUNA_DETAIL);
@@ -2102,7 +2089,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
     }
 
     private void loadUdNoVersDetail(BigDecimal idUnitaDocNonVers, String cdRegistroKeyUnitaDoc,
-            BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal idStrut) throws EMFError {
+            BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal idStrut) {
         MonitoraggioForm form = new MonitoraggioForm();
         MonVLisUdNonVersIamTableBean tb = new MonVLisUdNonVersIamTableBean();
         MonVLisUdNonVersIamRowBean row = new MonVLisUdNonVersIamRowBean();
@@ -2120,7 +2107,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 form);
     }
 
-    private void loadUdDetail(AbstractBaseTable tb) throws EMFError {
+    private void loadUdDetail(AbstractBaseTable tb) {
         UnitaDocumentarieForm form = new UnitaDocumentarieForm();
         form.getUnitaDocumentarieList().setTable(tb);
         redirectToAction(Application.Actions.UNITA_DOCUMENTARIE,
@@ -3074,7 +3061,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
             if (detailRow.getTiContenutoVerSerie().equals(CostantiDB.TipoContenutoVerSerie.ACQUISITO.name())) {
                 getForm().getContenutoSerieDetail().getFl_err_contenuto_file().setHidden(false);
                 getForm().getContenutoButtonList().getDownloadFile().setHidden(false);
+                getForm().getContenutoButtonList().getDownloadFile().setDisableHourGlass(true);
                 getForm().getContenutoButtonList().getDownloadErroriFileInput().setHidden(false);
+                getForm().getContenutoButtonList().getDownloadErroriFileInput().setDisableHourGlass(true);
 
                 getForm().getUdList().getFl_presente_contenuto_1()
                         .setDescription(descColonna1 + CostantiDB.TipoContenutoVerSerie.CALCOLATO.name());
@@ -3128,6 +3117,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
             if (contenCalc || contenAcq) {
                 getForm().getContenutoButtonList().getDownloadQuery().setHidden(false);
+                getForm().getContenutoButtonList().getDownloadQuery().setDisableHourGlass(true);
                 if (serieEjb.checkVersione(detailRow.getIdVerSerie(), CostantiDB.StatoVersioneSerie.APERTA.name())
                         && serieEjb.checkContenuto(detailRow.getIdVerSerie(), contenCalc, contenAcq, contenEff,
                                 CostantiDB.StatoContenutoVerSerie.CREATO.name(),
@@ -3412,9 +3402,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
             getMessageBox().addError(
                     "La versione della serie non \u00E8 quella corrente o lo stato della versione \u00E8 diverso da APERTA, DA_CONTROLLARE, CONTROLLATA, DA_VALIDARE");
             forwardToPublisher(getLastPublisher());
-            // } else if (currentRow.getIdUserIam().longValue() != getUser().getIdUtente()) {
-            // getMessageBox().addError("L'utente non pu\u00F2 eliminare la nota perch\u00E9 non corrisponde all'utente
-            // che la ha registrata");
         } else {
             BigDecimal idNota = currentRow.getIdNotaVerSerie();
             int riga = getForm().getNoteList().getTable().getCurrentRowIndex();
@@ -3460,10 +3447,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
             getMessageBox().addError(
                     "La versione della serie non \u00E8 quella corrente o lo stato della versione \u00E8 diverso da APERTA, DA_CONTROLLARE, CONTROLLATA, DA_VALIDARE");
             forwardToPublisher(getLastPublisher());
-            // } else if (currentRow.getIdUserIam().longValue() != getUser().getIdUtente()) {
-            // getMessageBox().addError("L'utente non pu\u00F2 modificare la nota perch\u00E9 non corrisponde all'utente
-            // che la ha registrata");
-            // forwardToPublisher(getLastPublisher());
         } else {
             BaseRow tmpRow = new BaseRow();
             getForm().getSerieDetail().copyToBean(tmpRow);
@@ -3477,7 +3460,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
             getForm().getNotaDetail().copyFromBean(currentRow);
             getForm().getNotaDetail().getDs_nota_ver_serie().setEditMode();
-            DateFormat formato = new SimpleDateFormat(WebConstants.DATE_FORMAT_HOUR_MINUTE_TYPE);
+            DateFormat formato = new SimpleDateFormat(Constants.DATE_FORMAT_HOUR_MINUTE_TYPE);
             getForm().getNotaDetail().getDt_nota_ver_serie().setValue(formato.format(Calendar.getInstance().getTime()));
 
             getForm().getNoteList().setStatus(Status.update);
@@ -3508,11 +3491,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
     public void updateStatiList() throws EMFError {
         SerVLisStatoSerieRowBean currentRow = (SerVLisStatoSerieRowBean) getForm().getStatiList().getTable()
                 .getCurrentRow();
-        // if (currentRow.getIdUserIam().longValue() != getUser().getIdUtente()) {
-        // getMessageBox().addError("L'utente non pu\u00F2 modificare lo stato perch\u00E9 non corrisponde all'utente
-        // che lo ha registrato");
-        // forwardToPublisher(getLastPublisher());
-        // } else {
         BaseRow tmpRow = new BaseRow();
         getForm().getSerieDetail().copyToBean(tmpRow);
         getForm().getDatiSerieDetail().copyFromBean(tmpRow);
@@ -3525,7 +3503,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
         getForm().getStatiList().setStatus(Status.update);
 
         forwardToPublisher(Application.Publisher.STATO_DETAIL);
-        // }
     }
 
     /* TAB CONTENUTO SERIE */
@@ -3578,7 +3555,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
         try {
             String fileString = serieEjb.getFileAcquisito(idVerSerie);
             if (fileString != null) {
-
                 file = new FileOutputStream(tmpFile);
                 is = new ByteArrayInputStream(fileString.getBytes(Charset.forName("UTF-8")));
                 byte[] data = new byte[1024];
@@ -3623,8 +3599,14 @@ public class SerieUDAction extends SerieUDAbstractAction {
         File tmpFile = new File(System.getProperty("java.io.tmpdir"), filename);
 
         try {
-            ActionUtils.buildCsvString(getForm().getUdList(), getForm().getUdList().getTable(),
-                    SerVLisUdAppartSerieRowBean.TABLE_DESCRIPTOR, tmpFile, this);
+
+            SerVLisUdAppartSerieTableBean fullUdTable = serieEjb.getSerVLisUdAppartSerieTableBeanForDownload(
+                    getForm().getContenutoSerieDetail().getId_contenuto_ver_serie().parse(),
+                    getRicercaUdAppartBeanFromContenutoSerie());
+            // uso il Fields solo per sapere i nomi di colonna, ma poi estraggo la table completa, bypassando il lazy
+            // loading usato per l'interfaccia utente
+            ActionUtils.buildCsvString(getForm().getUdList(), fullUdTable, SerVLisUdAppartSerieRowBean.TABLE_DESCRIPTOR,
+                    tmpFile);
 
             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
@@ -3657,7 +3639,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
         try {
             ActionUtils.buildCsvString(getForm().getErroriContenutiList(),
                     getForm().getErroriContenutiList().getTable(), SerVLisErrContenSerieUdRowBean.TABLE_DESCRIPTOR,
-                    tmpFile, this);
+                    tmpFile);
 
             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
@@ -3726,9 +3708,11 @@ public class SerieUDAction extends SerieUDAbstractAction {
         File tmpFile = new File(System.getProperty("java.io.tmpdir"), filename);
 
         try {
-            ActionUtils.buildCsvString(getForm().getErroriFileInputList(),
-                    getForm().getErroriFileInputList().getTable(), SerVLisErrFileSerieUdRowBean.TABLE_DESCRIPTOR,
-                    tmpFile, this);
+            final SerVLisErrFileSerieUdTableBean fullListTable = serieEjb.getSerVLisErrFileSerieUdTableBeanForDownload(
+                    getForm().getSerieDetail().getId_ver_serie().parse(),
+                    CostantiDB.ScopoFileInputVerSerie.ACQUISIRE_CONTENUTO.name());
+            ActionUtils.buildCsvString(getForm().getErroriFileInputList(), fullListTable,
+                    SerVLisErrFileSerieUdRowBean.TABLE_DESCRIPTOR, tmpFile);
 
             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
@@ -3819,19 +3803,21 @@ public class SerieUDAction extends SerieUDAbstractAction {
     public void ricercaContenuto() throws EMFError {
         if (getForm().getFiltriContenutoSerieDetail().postAndValidate(getRequest(), getMessageBox())) {
             log.info("Carico la lista in base ai parametri");
-            BigDecimal idContenutoVerSerie = getForm().getContenutoSerieDetail().getId_contenuto_ver_serie().parse();
-            BigDecimal aaSerie = getForm().getContenutoSerieDetail().getAa_serie().parse();
-            RicercaUdAppartBean parametri = initParametriRicercaContenuto(aaSerie);
-
+            SerVLisUdAppartSerieTableBean udTb = serieEjb.getSerVLisUdAppartSerieTableBean(
+                    getForm().getContenutoSerieDetail().getId_contenuto_ver_serie().parse(),
+                    getRicercaUdAppartBeanFromContenutoSerie());
             int lastPageSize = getForm().getUdList().getTable().getPageSize();
-
-            SerVLisUdAppartSerieTableBean udTb = serieEjb.getSerVLisUdAppartSerieTableBean(idContenutoVerSerie,
-                    parametri);
             getForm().getUdList().setTable(udTb);
             getForm().getUdList().getTable().setPageSize(lastPageSize);
             getForm().getUdList().getTable().first();
         }
         forwardToPublisher(getLastPublisher());
+    }
+
+    private RicercaUdAppartBean getRicercaUdAppartBeanFromContenutoSerie() throws EMFError {
+        BigDecimal aaSerie = getForm().getContenutoSerieDetail().getAa_serie().parse();
+        RicercaUdAppartBean parametri = initParametriRicercaContenuto(aaSerie);
+        return parametri;
     }
 
     private RicercaUdAppartBean initParametriRicercaContenuto(BigDecimal aaSerie) throws EMFError {
@@ -3941,7 +3927,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
+                if (Boolean.TRUE.equals(deleteFile)) {
                     fileToDownload.delete();
                 }
             } else {
@@ -3960,15 +3946,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
     @Override
     public void updateLacuneList() throws EMFError {
-        // if (getLastPublisher().equals(Application.Publisher.CONSISTENZA_ATTESA_DETAIL)) {
-        // getForm().getLacunaDetail().getTi_lacuna().setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_lacuna",
-        // CostantiDB.TipoLacuna.values()));
-        // getForm().getLacunaDetail().getTi_mod_lacuna().setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_mod_lacuna",
-        // CostantiDB.TipoModLacuna.values()));
-        // SerLacunaConsistVerSerieRowBean row = (SerLacunaConsistVerSerieRowBean)
-        // getForm().getLacuneList().getTable().getCurrentRow();
-        // getForm().getLacunaDetail().copyFromBean(row);
-        // }
         initUpdateLacuna();
     }
 
@@ -3977,7 +3954,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
         initUpdateLacuna();
     }
 
-    private void initUpdateLacuna() throws EMFError {
+    private void initUpdateLacuna() {
         getForm().getLacunaDetail().setEditMode();
         getForm().getLacunaDetail().getTi_mod_lacuna().setViewMode();
 
@@ -4242,13 +4219,13 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
                 nomeXml = nomeXml + extension;
 
-                getResponse().setContentType("application/xml");
+                getResponse().setContentType(it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.XML.getContentType());
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeXml);
                 // Ricavo lo stream di output
                 OutputStream out = getServletOutputStream();
                 try {
                     // Caccio dentro nello zippone il blobbo
-                    scriviBlobboSuStream(out, nomeXml, indiceAip);
+                    scriviBlobboSuStream(out, indiceAip);
                     out.flush();
                 } catch (IOException e) {
                     getMessageBox().addMessage(
@@ -4270,7 +4247,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
         }
     }
 
-    public void scriviBlobboSuStream(OutputStream out, String filename, byte[] blobbo) throws EMFError, IOException {
+    public void scriviBlobboSuStream(OutputStream out, byte[] blobbo) throws IOException {
         // Ricavo lo stream di input
         InputStream is = new ByteArrayInputStream(blobbo);
         byte[] data = new byte[1024];
@@ -4468,13 +4445,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
             if (cleanList) {
                 /* Carico la lista delle serie da firmare: quelli della struttura dell'utente e con stato DA_FIRMARE */
-                BaseTable serieDaFirmareBeanList = (BaseTable) serieEjb.getSerieDaFirmareBeanList(
+                BaseTable serieDaFirmareBeanList = serieEjb.getSerieDaFirmareBeanList(
                         strutWithAmbienteEnte.getBigDecimal("id_ambiente"), strutWithAmbienteEnte.getIdEnte(),
                         strutWithAmbienteEnte.getIdStrut(), CostantiDB.StatoVersioneSerie.DA_FIRMARE);
-                // SerVRicSerieUdTableBean serieDaFirmareBeanList = (SerVRicSerieUdTableBean)
-                // serieEjb.getSerieDaFirmareBeanList(strutWithAmbienteEnte.getBigDecimal("id_ambiente"),
-                // strutWithAmbienteEnte.getIdEnte(), strutWithAmbienteEnte.getIdStrut(),
-                // CostantiDB.StatoVersioneSerie.DA_FIRMARE);
                 getForm().getSerieDaFirmareList().setTable(serieDaFirmareBeanList);
                 getForm().getSerieDaFirmareList().getTable().setPageSize(10);
                 getForm().getSerieDaFirmareList().getTable().first();
@@ -4529,7 +4502,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
      * @throws EMFError
      *             errore generico
      */
-    private void initFiltriSerieDaFirmare(OrgStrutRowBean strutWithAmbienteEnte) throws EMFError {
+    private void initFiltriSerieDaFirmare(OrgStrutRowBean strutWithAmbienteEnte) {
         // Azzero i filtri
         getForm().getFiltriSerieDaFirmare().reset();
 
@@ -4637,7 +4610,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
         return getForm().getFiltriSerieDaFirmare().asJSON();
     }
 
-    public void checkUniqueEnteInCombo(BigDecimal idEnte) throws EMFError {
+    public void checkUniqueEnteInCombo(BigDecimal idEnte) {
         if (idEnte != null) {
             // Ricavo il TableBean relativo alle strutture dipendenti dall'ente scelto
             OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
@@ -4664,26 +4637,20 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
         getSession().setAttribute("idStrutRif", idStrut);
         if (idStrut == null) {
-            // Rimuovo l'attributo idStrutRif (se presente in sessione vuol dire che si riferisce ad una struttura
-            // selezionata precedentemente)
+            // Rimuovo l'attributo idStrutRif /se presente in sessione vuol dire che si riferisce ad una struttura
+            // selezionata precedentemente
             getSession().removeAttribute("idStrutRif");
             // Traccio in sessione un attributo specifico
             getSession().setAttribute("isStrutNull", true);
         }
 
-        // OrgStrutRowBean strutWithAmbienteEnte = evEjb.getOrgStrutRowBeanWithAmbienteEnte(idStrut);
-        /* Carico la lista delle serie da firmare: quelle della struttura dell'utente e con stato DA_FIRMARE */
-        // SerVRicSerieUdTableBean serieDaFirmareBeanList = (SerVRicSerieUdTableBean)
-        // serieEjb.getSerieDaFirmareBeanList(idAmbiente, idEnte, idStrut, CostantiDB.StatoVersioneSerie.DA_FIRMARE);
-        BaseTable serieDaFirmareBeanList = (BaseTable) serieEjb.getSerieDaFirmareBeanList(idAmbiente, idEnte, idStrut,
+        BaseTable serieDaFirmareBeanList = serieEjb.getSerieDaFirmareBeanList(idAmbiente, idEnte, idStrut,
                 CostantiDB.StatoVersioneSerie.DA_FIRMARE);
         getForm().getSerieDaFirmareList().setTable(serieDaFirmareBeanList);
         getForm().getSerieDaFirmareList().getTable().setPageSize(10);
         getForm().getSerieDaFirmareList().getTable().first();
         /* Rengo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaSerieDaFirmareButtonList().setEditMode();
-        // getForm().getElenchiVersamentoList().setUserOperations(true, false, false, false);
-
         // Se non ci sono serie in stato FIRMATA_NO_MARCA, nascondo il bottone per "marcare"
         if (!serieEjb.existsFirmataNoMarca(null)) {
             getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
@@ -4735,10 +4702,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
         forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
     }
 
-    public void eseguiMarcaturaIndiciAIPSerie() {
-
-    }
-
     @Override
     public void tabInfoPrincipaliVolumeOnClick() throws EMFError {
         getForm().getVolumeDetailTabs().setCurrentTab(getForm().getVolumeDetailTabs().getInfoPrincipaliVolume());
@@ -4779,7 +4742,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
             String fileVolume = nameAndFileVolume[1];
 
             // Nome del file IndiceAIPSerieUD-<versione serie>_<ambiente>_<ente>_<struttura>_<codice serie>”
-            getResponse().setContentType("application/xml");
+            getResponse().setContentType(it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.XML.getContentType());
             getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeFileVolume + ".xml");
             // Ricavo lo stream di output
             OutputStream out = getServletOutputStream();
@@ -4809,7 +4772,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 }
             }
         } catch (ParerUserError ex) {
-            log.error("Errore nel recupero del file XML relativo all'indice del volume:" + ex.getMessage());
+            log.error("Errore nel recupero del file XML relativo all'indice del volume: {}", ex.getMessage());
             getMessageBox().addError("Errore nel recupero del file XML relativo all'indice del volume");
         }
 
@@ -5278,7 +5241,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
         return getForm().getFiltriRicercaSerie().asJSON();
     }
 
-    private void initFiltriStrut(String fieldSetName) throws EMFError {
+    private void initFiltriStrut(String fieldSetName) {
         /* Ricavo Ambiente, Ente e Struttura CORRENTI */
         OrgStrutRowBean strutWithAmbienteEnte = evEjb
                 .getOrgStrutRowBeanWithAmbienteEnte(getUser().getIdOrganizzazioneFoglia());
@@ -5370,7 +5333,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
     private void controllaContenuto(BigDecimal idVerSerie, BigDecimal idSerie, String cdSerie, BigDecimal aaSerie,
             BigDecimal idStrut, String tipoContenuto) {
-        log.info("Inviata richiesta di controllo contenuto " + tipoContenuto);
+        log.info("Inviata richiesta di controllo contenuto {}", tipoContenuto);
         try {
             String keyFuture = FutureUtils.buildKeyFuture(CostantiDB.TipoChiamataAsync.CONTROLLO_CONTENUTO.name(),
                     cdSerie, aaSerie, idStrut, idVerSerie.longValue());
@@ -5477,7 +5440,8 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
         if (!getMessageBox().hasError()) {
             if (idSerie != null && idVerSerie != null) {
-                if (serieEjb.checkVersione(idVerSerie, CostantiDB.StatoVersioneSerie.DA_CONTROLLARE.name())
+                if (serieEjb.checkVersione(getMessageBox(), idVerSerie,
+                        CostantiDB.StatoVersioneSerie.DA_CONTROLLARE.name())
                         && serieEjb.existContenuto(idVerSerie, CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name())
                         && serieEjb.checkContenuto(idVerSerie, false, false, true,
                                 CostantiDB.StatoContenutoVerSerie.CREATO.name(),
@@ -5646,9 +5610,6 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     if (hsmUserName != null) {
 
                         getRequest().setAttribute("customSerieSelect", true);
-
-                        // String user =
-                        // configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_USERNAME);
                         getForm().getFiltriSerieDaFirmare().getUser().setValue(hsmUserName);
                         getForm().getFiltriSerieDaFirmare().getUser().setViewMode();
                     }

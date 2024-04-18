@@ -1,9 +1,46 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.paginator.helper.LazyListHelper;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.LogOper;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VolVolumeConserv;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.slite.gen.form.VolumiForm.Filtri;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.viewbean.VolVRicVolumeRowBean;
@@ -13,27 +50,13 @@ import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.util.StringPadding;
 import it.eng.parer.web.util.Transform;
 import it.eng.spagoCore.error.EMFError;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Session Bean implementation class VolVolumeConservHelper Contiene i metodi (implementati di
  * VolVolumeConservHelperLocal), per la gestione della persistenza su DB per le operarazioni CRUD su oggetti di
  * VolVolumeConservTableBean ed VolVolumeConservRowBean
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class VolumiHelper {
@@ -42,11 +65,17 @@ public class VolumiHelper {
      * Default constructor.
      */
     public VolumiHelper() {
+        /**
+         * Default constructor.
+         */
     }
 
     private static final Logger log = LoggerFactory.getLogger(VolumiHelper.class.getName());
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
+
+    @EJB(mappedName = "java:app/paginator/LazyListHelper")
+    LazyListHelper lazyListHelper;
 
     // ///////////////////////////////////////////////////
     // Metodi aggiunti
@@ -63,7 +92,6 @@ public class VolumiHelper {
             tmpRowBean.setNmVolumeConserv(vol.getNmVolumeConserv());
             tmpTableBean.add(tmpRowBean);
         }
-        // tmpTableBean.setPageSize(10);
         return tmpTableBean;
     }
 
@@ -71,6 +99,23 @@ public class VolumiHelper {
     // ai filtri di ricerca passati in ingresso
     public VolVRicVolumeTableBean getVolVRicVolumeViewBean(BigDecimal idStrut, Filtri filtri, int maxResults)
             throws EMFError {
+        return getVolVRicVolumeViewBeanPlainFilters(idStrut, maxResults, filtri.getTi_stato_volume_conserv().parse(),
+                filtri.getId_volume_conserv().parse(), filtri.getNm_volume_conserv().parse(),
+                filtri.getDs_volume_conserv().parse(), filtri.getCreato_man().parse(),
+                filtri.getDt_creazione_da().parse(), filtri.getDt_creazione_a().parse(),
+                filtri.getCd_registro_key_unita_doc().parse(), filtri.getAa_key_unita_doc().parse(),
+                filtri.getCd_key_unita_doc().parse(), filtri.getAa_key_unita_doc_da().parse(),
+                filtri.getAa_key_unita_doc_a().parse(), filtri.getCd_key_unita_doc_da().parse(),
+                filtri.getCd_key_unita_doc_a().parse(), filtri.getNm_criterio_raggr().parse(),
+                filtri.getTi_presenza_firme().parse(), filtri.getTi_val_firme().parse(),
+                filtri.getNt_volume_chiuso().parse(), filtri.getNt_indice_volume().parse());
+    }
+
+    public VolVRicVolumeTableBean getVolVRicVolumeViewBeanPlainFilters(BigDecimal idStrut, int maxResults, String stato,
+            BigDecimal idVolume, String nmVolumeConserv, String dsVolumeConserv, String creatoMan,
+            Timestamp dtCreazioneDa, Timestamp dtCreazioneA, String registro, BigDecimal anno, String codice,
+            BigDecimal anno_range_da, BigDecimal anno_range_a, String codice_range_da, String codice_range_a,
+            String criterio, String presenza, String validita, String ntVolumeChiuso, String ntIndiceVolume) {
         String whereWord = "and ";
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.VolVRicVolume"
                 + "(u.dtChius, u.dtCreazione, u.dtFirmaMarca, u.dtScadChius, u.idVolumeConserv, u.niCompVolume,"
@@ -81,35 +126,30 @@ public class VolumiHelper {
                 + " WHERE u.idStrutVolume = :idstrut ");
 
         // Inserimento nella query del filtro STATO
-        String stato = filtri.getTi_stato_volume_conserv().parse();
         if (stato != null) {
             queryStr.append(whereWord).append("u.tiStatoVolumeConserv = :statoin ");
             whereWord = "and ";
         }
 
         // Inserimento nella query del filtro ID VOLUME
-        BigDecimal idVolume = filtri.getId_volume_conserv().parse();
         if (idVolume != null) {
             queryStr.append(whereWord).append("u.idVolumeConserv = :idvolume ");
             whereWord = "and ";
         }
 
         // Inserimento nella query del filtro NM_VOLUME_CONSERV
-        String nmVolumeConserv = filtri.getNm_volume_conserv().parse();
         if (nmVolumeConserv != null) {
             queryStr.append(whereWord).append("UPPER(u.nmVolumeConserv) LIKE :nmVolumeConserv ");
             whereWord = "and ";
         }
 
         // Inserimento nella query del filtro DS_VOLUME_CONSERV
-        String dsVolumeConserv = filtri.getDs_volume_conserv().parse();
         if (dsVolumeConserv != null) {
             queryStr.append(whereWord).append("UPPER(u.dsVolumeConserv) LIKE :dsVolumeConserv ");
             whereWord = "and ";
         }
 
         // Inserimento nella query del filtro CREATO_MAN
-        String creatoMan = filtri.getCreato_man().parse();
         if (creatoMan != null) {
             if (creatoMan.equals("1")) {
                 queryStr.append(whereWord).append("u.idCriterioRaggr IS NULL ");
@@ -123,10 +163,10 @@ public class VolumiHelper {
         Date data_a = null;
 
         // Inserimento nella query del filtro DATA CREAZIONE DA - A
-        if (filtri.getDt_creazione_da().parse() != null) {
-            data_da = new Date(filtri.getDt_creazione_da().parse().getTime());
-            if (filtri.getDt_creazione_a().parse() != null) {
-                data_a = new Date(filtri.getDt_creazione_a().parse().getTime());
+        if (dtCreazioneDa != null) {
+            data_da = new Date(dtCreazioneDa.getTime());
+            if (dtCreazioneA != null) {
+                data_a = new Date(dtCreazioneA.getTime());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(data_a);
                 calendar.add(Calendar.DATE, 1);
@@ -145,18 +185,11 @@ public class VolumiHelper {
             whereWord = "and ";
         }
         // Inserimento nella query del filtro CHIAVE DOCUMENTO
-        String registro = filtri.getCd_registro_key_unita_doc().parse();
-        BigDecimal anno = filtri.getAa_key_unita_doc().parse();
-        String codice = filtri.getCd_key_unita_doc().parse();
 
         if (StringUtils.isNotBlank(registro)) {
             queryStr.append(whereWord).append("u.cdRegistroKeyUnitaDoc = :registroin ");
             whereWord = "AND ";
         }
-        // else {
-        // queryStr.append(whereWord).append("u.cdRegistroKeyUnitaDoc IN :registroin ");
-        // whereWord = "AND ";
-        // }
 
         if (anno != null) {
             queryStr.append(whereWord).append("u.aaKeyUnitaDoc = :annoin ");
@@ -169,10 +202,6 @@ public class VolumiHelper {
         }
 
         // Inserimento nella query del filtro CHIAVE UNITA DOC PER RANGE
-        BigDecimal anno_range_da = filtri.getAa_key_unita_doc_da().parse();
-        BigDecimal anno_range_a = filtri.getAa_key_unita_doc_a().parse();
-        String codice_range_da = filtri.getCd_key_unita_doc_da().parse();
-        String codice_range_a = filtri.getCd_key_unita_doc_a().parse();
 
         if (anno_range_da != null && anno_range_a != null) {
             queryStr.append(whereWord).append("u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a ");
@@ -182,34 +211,29 @@ public class VolumiHelper {
         if (codice_range_da != null && codice_range_a != null) {
             codice_range_da = StringPadding.padString(codice_range_da, "0", 12, StringPadding.PADDING_LEFT);
             codice_range_a = StringPadding.padString(codice_range_a, "0", 12, StringPadding.PADDING_LEFT);
-            queryStr.append(whereWord)
-                    .append("FUNC('lpad', u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
+            queryStr.append(whereWord).append("LPAD( u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro CRITERIO
-        String criterio = filtri.getNm_criterio_raggr().parse();
 
         if (criterio != null) {
             queryStr.append(whereWord).append("u.nmCriterioRaggr = :criterioin ");
             whereWord = "and ";
         }
         // Inserimento nella query del filtro PRESENZA FIRME
-        String presenza = filtri.getTi_presenza_firme().parse();
 
         if (presenza != null) {
             queryStr.append(whereWord).append("u.tiPresenzaFirme = :presenzain ");
             whereWord = "and ";
         }
         // Inserimento nella query del filtro VALIDITA' FIRME
-        String validita = filtri.getTi_val_firme().parse();
 
         if (validita != null) {
             queryStr.append(whereWord).append("u.tiValFirme = :validitain ");
             whereWord = "and ";
         }
         // Inserimento nella query del filtro NT VOLUME CHIUSO
-        String ntVolumeChiuso = filtri.getNt_volume_chiuso().parse();
 
         if (ntVolumeChiuso != null) {
             queryStr.append(whereWord).append("UPPER(u.ntVolumeChiuso) LIKE :ntVolumeChiuso ");
@@ -217,11 +241,9 @@ public class VolumiHelper {
         }
 
         // Inserimento nella query del filtro NT INDICE VOLUME
-        String ntIndiceVolume = filtri.getNt_indice_volume().parse();
 
         if (ntIndiceVolume != null) {
             queryStr.append(whereWord).append("UPPER(u.ntIndiceVolume) LIKE :ntIndiceVolume ");
-            whereWord = "and ";
         }
 
         // ordina per data creazione decrescente
@@ -257,10 +279,6 @@ public class VolumiHelper {
         if (StringUtils.isNotBlank(registro)) {
             query.setParameter("registroin", registro);
         }
-        // else {
-        // Set<Object> keySet = (Set<Object>) filtri.getCd_registro_key_unita_doc().getDecodeMap().keySet();
-        // query.setParameter("registroin", keySet);
-        // }
 
         if (anno != null) {
             query.setParameter("annoin", anno);
@@ -302,9 +320,11 @@ public class VolumiHelper {
 
         query.setMaxResults(maxResults);
 
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA DI "VOLUMI"
-        List<VolVRicVolume> listaVolumi = query.getResultList();
+        return lazyListHelper.getTableBean(query, list -> getVolVRicVolumeTableBeanFrom(list), "u.idVolumeConserv");
 
+    }
+
+    private VolVRicVolumeTableBean getVolVRicVolumeTableBeanFrom(List<VolVRicVolume> listaVolumi) {
         VolVRicVolumeTableBean volumiTableBean = new VolVRicVolumeTableBean();
 
         try {
@@ -342,7 +362,7 @@ public class VolumiHelper {
             String noteVolChiuso) {
         String queryStr = "SELECT u FROM VolVolumeConserv u WHERE u.idVolumeConserv = :idvol ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idvol", idVolume);
+        query.setParameter("idvol", GenericHelper.longFromBigDecimal(idVolume));
 
         List<VolVolumeConserv> volumeConserv = query.getResultList();
         VolVolumeConserv record = volumeConserv.get(0);
@@ -360,11 +380,10 @@ public class VolumiHelper {
         }
     }
 
-    public IamUser retrieveUserById(long userId) throws NoResultException, NonUniqueResultException {
+    public IamUser retrieveUserById(long userId) {
         Query q = entityManager.createQuery("SELECT u FROM IamUser u WHERE u.idUserIam = :userId");
         q.setParameter("userId", userId);
-        IamUser user = (IamUser) q.getSingleResult();
-        return user;
+        return (IamUser) q.getSingleResult();
     }
 
     public void writeLogOper(VolVolumeConserv volume, OrgStrut struttura, Long idUser, String tipoOper) {
@@ -390,14 +409,10 @@ public class VolumiHelper {
         String queryStr = "SELECT u FROM VolVolumeConserv u WHERE u.orgStrut.idStrut = :idstrut and u.nmVolumeConserv = :nomecrit";
 
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idstrut", idStruttura);
+        query.setParameter("idstrut", GenericHelper.longFromBigDecimal(idStruttura));
         query.setParameter("nomecrit", nome);
 
-        if (query.getResultList().isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+        return !query.getResultList().isEmpty();
     }
 
     public OrgStrutRowBean getOrgStrutRowBean(BigDecimal idStrut) {

@@ -1,8 +1,27 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.elencoVersamento.ejb;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.DateFormat;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +44,6 @@ import it.eng.parer.elencoVersamento.utils.ElencoEnums.FileTypeEnum;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.OpTypeEnum;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.UdDocStatusEnum;
 import it.eng.parer.entity.AroUnitaDoc;
-import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.ElvElencoVersDaElab;
 import it.eng.parer.entity.ElvFileElencoVer;
@@ -38,26 +56,17 @@ import it.eng.parer.entity.constraint.ElvElencoVer.TiValidElenco;
 import it.eng.parer.entity.constraint.ElvStatoElencoVer;
 import it.eng.parer.entity.constraint.ElvUrnElencoVers.TiUrnElenco;
 import it.eng.parer.entity.constraint.ElvUrnFileElencoVers;
-import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerNoResultException;
-import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
-import it.eng.parer.viewEntity.ElvVLisAllUdByElenco;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -83,12 +92,14 @@ public class IndiceElencoVersJobEjb {
     private ConfigurationHelper configurationHelper;
     @EJB
     private UniformResourceNameUtilHelper urnHelper;
+    @EJB
+    private GenericHelper genericHelper;
 
     @Resource
     private SessionContext context;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void buildIndex(LogJob logJob) throws Exception {
+    public void buildIndex(LogJob logJob) throws ParerNoResultException, NoSuchAlgorithmException, IOException {
         log.info("Creazione automatica indici...");
         List<OrgStrut> strutture = elencoHelper.retrieveStrutture();
 
@@ -98,7 +109,8 @@ public class IndiceElencoVersJobEjb {
         jobHelper.writeLogJob(OpTypeEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(), OpTypeEnum.FINE_SCHEDULAZIONE.name());
     }
 
-    public void manageStrut(long idStruttura, long idLogJob) throws Exception {
+    private void manageStrut(long idStruttura, long idLogJob)
+            throws ParerNoResultException, NoSuchAlgorithmException, IOException {
         log.debug("manageStrut");
         BigDecimal idStrut = new BigDecimal(idStruttura);
         /*
@@ -107,23 +119,7 @@ public class IndiceElencoVersJobEjb {
          */
         List<Long> elenchiDaChiudere = elencoHelper.retrieveIdElenchiDaElaborare(idStrut,
                 ElencoStatusEnum.DA_CHIUDERE.name());
-        log.info("struttura id " + idStrut + ": trovati " + elenchiDaChiudere.size()
-                + " elenchi DA_CHIUDERE da processare");
-
-        /*
-         * Se per la struttura versante la lista degli elenchi da chiudere non è vuota e se il parametro
-         * VERIFICA_PARTIZIONI vale true
-         */
-        final String verificaPartizioni = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI, null, null, null, null, TipoAplVGetValAppart.APPLIC);
-        if (!elenchiDaChiudere.isEmpty() && Boolean.parseBoolean(verificaPartizioni)
-                && struttureEjb.checkPartizioni(new BigDecimal(idStruttura), new Date(),
-                        CostantiDB.TiPartition.FILE_ELENCHI_VERS.name()).equals("0")) {
-            OrgStrut strut = elencoHelper.retrieveOrgStrutByid(idStrut);
-            throw new ParerUserError("La partizione di tipo FILE_ELENCHI_VERS per la data corrente e la struttura "
-                    + strut.getOrgEnte().getOrgAmbiente().getNmAmbiente() + "-" + strut.getOrgEnte().getNmEnte() + "-"
-                    + strut.getNmStrut() + " non è definita");
-        }
+        log.info("struttura id {}: trovati {} elenchi DA_CHIUDERE da processare", idStrut, elenchiDaChiudere.size());
 
         IndiceElencoVersJobEjb indiceElencoVersEjbRef1 = context.getBusinessObject(IndiceElencoVersJobEjb.class);
         for (Long idElenchi : elenchiDaChiudere) {
@@ -135,14 +131,14 @@ public class IndiceElencoVersJobEjb {
          * ELV_ELENCO_VERS_DA_ELAB), il cui elenco preveda tipo validazione = NO_FIRMA o NO_INDICE e modalità di
          * validazione = AUTOMATICA. Se i valori nell'elenco sono nulli leggo i valori dal criterio di raggruppamento.
          */
-        final String numMaxElenchiDaValidare = configurationHelper.getValoreParamApplic("NUM_MAX_ELENCHI_DA_VALIDARE",
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        final String numMaxElenchiDaValidare = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_ELENCHI_DA_VALIDARE);
         List<Long> elenchiDaValidare = new ArrayList<>();
         if (Integer.valueOf(numMaxElenchiDaValidare) > 0) {
             elenchiDaValidare = elencoHelper.retrieveIdElenchiDaValidare(idStrut, ElencoStatusEnum.CHIUSO.name(),
                     numMaxElenchiDaValidare);
         }
-        log.info("struttura id " + idStrut + ": trovati " + elenchiDaValidare.size() + " elenchi CHIUSO da validare");
+        log.info("struttura id {}: trovati {} elenchi CHIUSO da validare", idStrut, elenchiDaValidare.size());
 
         IndiceElencoVersJobEjb indiceElencoVersEjbRef2 = context.getBusinessObject(IndiceElencoVersJobEjb.class);
         for (Long idElenchi : elenchiDaValidare) {
@@ -151,8 +147,9 @@ public class IndiceElencoVersJobEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void manageIndexAtomic(long idElenco, long idStruttura, long idLogJob) throws Exception {
-        log.debug("manageIndexAtomic - idElenco " + idElenco + " idStruttura " + idStruttura);
+    public void manageIndexAtomic(long idElenco, long idStruttura, long idLogJob)
+            throws ParerNoResultException, NoSuchAlgorithmException, IOException {
+        log.debug("manageIndexAtomic - idElenco {} idStruttura {}", idElenco, idStruttura);
         LogJob logJob = elencoHelper.retrieveLogJobByid(idLogJob);
         OrgStrut struttura = elencoHelper.retrieveOrgStrutByid(new BigDecimal(idStruttura));
         ElvElencoVer elenco = elencoHelper.retrieveElencoById(idElenco);
@@ -161,24 +158,12 @@ public class IndiceElencoVersJobEjb {
         manageIndex(elenco, struttura, logJob);
     }
 
-    public void manageIndex(ElvElencoVer elenco, OrgStrut struttura, LogJob logJob) throws ParerUserError,
-            ParseException, ParerInternalError, ParerNoResultException, NoSuchAlgorithmException, IOException {
+    private void manageIndex(ElvElencoVer elenco, OrgStrut struttura, LogJob logJob)
+            throws ParerNoResultException, NoSuchAlgorithmException, IOException {
         // EVO#16486
         // Determina le unità doc appartenenti all'elenco corrente (quelle versate, quelle per aggiunta documento e
         // quelle per aggiornamento metadati)
         log.debug("manageIndex");
-
-        // MEV#26219
-        // TODO: valutare ripristino logica urn pregressi dopo refactory job
-        // List<BigDecimal> idUdList = elencoHelper.retrieveUdInElencoByElencoIdList(elenco.getIdElencoVers());
-        // // Per ogni unità doc dell'elenco
-        // for (BigDecimal idUd : idUdList) {
-        // // Apro nuova transazione
-        // context.getBusinessObject(IndiceElencoVersJobEjb.class).verificaUrnUdElenco(idUd.longValue(),
-        // elenco.getIdElencoVers());
-        // }
-        // end MEV#26219
-
         // determina nome ente e struttura normalizzati e non
         OrgEnte ente = struttura.getOrgEnte();
         String nomeStruttura = struttura.getNmStrut();
@@ -206,100 +191,12 @@ public class IndiceElencoVersJobEjb {
                 "CREAZIONE_INDICE_ELENCO_VERS", null, ElvStatoElencoVer.TiStatoElenco.CHIUSO, null);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void verificaUrnUdElenco(long idUnitaDoc, long idElencoVers)
-            throws ParerUserError, ParseException, ParerInternalError {
-        log.debug("verificaUrnUdElenco - idUnitaDoc " + idUnitaDoc + " idElencoVers " + idElencoVers);
-        AroUnitaDoc aroUnitaDoc = elencoHelper.findByIdWithLock(AroUnitaDoc.class, idUnitaDoc);
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        CSVersatore versatore = this.getVersatoreUd(aroUnitaDoc, sistemaConservazione);
-        CSChiave chiave = this.getChiaveUd(aroUnitaDoc);
-
-        /*
-         * 
-         * Gestione KEY NORMALIZED / URN PREGRESSI
-         * 
-         * 
-         */
-        // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
-        // il sistema aggiorna ARO_UNITA_DOC
-        DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-        String dataInizioParam = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        Date dataInizio = dateFormat.parse(dataInizioParam);
-        // controllo e calcolo URN normalizzato
-        log.debug("verificaUrnUdElenco - controllo e calcolo URN normalizzato");
-        ElvVLisAllUdByElenco elvVLisAllUdByElenco = elencoHelper.retrieveElvVLisAllUdByElenco(idElencoVers, idUnitaDoc);
-        if (!elvVLisAllUdByElenco.getDtVersMax().after(dataInizio)
-                && StringUtils.isBlank(elvVLisAllUdByElenco.getCdKeyUnitaDocNormaliz())) {
-            // calcola e verifica la chiave normalizzata
-            String cdKeyNormalized = MessaggiWSFormat.normalizingKey(aroUnitaDoc.getCdKeyUnitaDoc()); // base
-            if (urnHelper.existsCdKeyNormalized(aroUnitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc(),
-                    aroUnitaDoc.getAaKeyUnitaDoc(), aroUnitaDoc.getCdKeyUnitaDoc(), cdKeyNormalized)) {
-                // urn normalizzato già presente su sistema
-                throw new ParerInternalError("Il numero normalizzato per l'unità documentaria "
-                        + MessaggiWSFormat.formattaUrnPartUnitaDoc(chiave) + " è già presente ");
-            } else {
-                // cd key normalized (se calcolato)
-                if (StringUtils.isBlank(aroUnitaDoc.getCdKeyUnitaDocNormaliz())) {
-                    aroUnitaDoc.setCdKeyUnitaDocNormaliz(cdKeyNormalized);
-                }
-            }
-        }
-        // 2. verifica pregresso
-        // A. check data massima versamento recuperata in precedenza rispetto parametro
-        // su db
-        log.debug("verificaUrnUdElenco - verifica pregresso");
-        if (!elvVLisAllUdByElenco.getDtVersMax().after(dataInizio)) {
-            // B. eseguo registra urn comp pregressi
-            urnHelper.scriviUrnCompPreg(aroUnitaDoc, versatore, chiave);
-            // C. eseguo registra urn sip pregressi
-            // C.1. eseguo registra urn sip pregressi ud
-            urnHelper.scriviUrnSipUdPreg(aroUnitaDoc, versatore, chiave);
-            // C.2. eseguo registra urn sip pregressi documenti aggiunti
-            urnHelper.scriviUrnSipDocAggPreg(aroUnitaDoc, versatore, chiave);
-            // C.3. eseguo registra urn pregressi upd
-            urnHelper.scriviUrnSipUpdPreg(aroUnitaDoc, versatore, chiave);
-        }
-
-        log.debug("verificaUrnUdElenco - ultima versione AIP");
-        AroVerIndiceAipUd aroVerIndiceAipUd = elencoHelper.getUltimaVersioneIndiceAip(aroUnitaDoc.getIdUnitaDoc());
-        if (aroVerIndiceAipUd != null && !aroVerIndiceAipUd.getDtCreazione().after(dataInizio)) {
-            // eseguo registra urn aip pregressi
-            log.debug("verificaUrnUdElenco - eseguo registra urn aip pregressi");
-            urnHelper.scriviUrnAipUdPreg(aroUnitaDoc, versatore, chiave);
-        }
-    }
-
-    public CSChiave getChiaveUd(AroUnitaDoc ud) {
-        CSChiave csc = new CSChiave();
-        csc.setTipoRegistro(ud.getCdRegistroKeyUnitaDoc());
-        csc.setAnno(ud.getAaKeyUnitaDoc().longValue());
-        csc.setNumero(ud.getCdKeyUnitaDoc());
-
-        return csc;
-    }
-
-    public CSVersatore getVersatoreUd(AroUnitaDoc ud, String sistemaConservazione) {
-        CSVersatore csv = new CSVersatore();
-        csv.setStruttura(ud.getOrgStrut().getNmStrut());
-        csv.setEnte(ud.getOrgStrut().getOrgEnte().getNmEnte());
-        csv.setAmbiente(ud.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
-        // sistema (new URN)
-        csv.setSistemaConservazione(sistemaConservazione);
-
-        return csv;
-    }
-
-    public void calcolaUrnElenco(ElvElencoVer elenco, String nomeStruttura, String nomeStrutturaNorm, String nomeEnte,
+    private void calcolaUrnElenco(ElvElencoVer elenco, String nomeStruttura, String nomeStrutturaNorm, String nomeEnte,
             String nomeEnteNorm) {
         log.debug("calcolaUrnElenco");
         // sistema (new URN)
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         // salvo ORIGINALE
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         urnHelper.salvaUrnElvElencoVers(elenco,
@@ -313,13 +210,13 @@ public class IndiceElencoVersJobEjb {
                 TiUrnElenco.NORMALIZZATO);
     }
 
-    public void buildIndexFile(ElvElencoVer elenco)
+    private void buildIndexFile(ElvElencoVer elenco)
             throws ParerNoResultException, NoSuchAlgorithmException, IOException {
         byte[] indexFile = null;
         log.debug("buildIndexFile");
         // creo il file indice_conservazione.xml
-        log.info("creazione indice per elenco id '" + elenco.getIdElencoVers() + "' appartenente alla struttura '"
-                + elenco.getOrgStrut().getIdStrut() + "'");
+        log.info("creazione indice per elenco id '{}' appartenente alla struttura '{}'", elenco.getIdElencoVers(),
+                elenco.getOrgStrut().getIdStrut());
         indexFile = indiceEjb.createIndex(elenco, false);
         // registro il file indice_conservazione.xml (in ELV_FILE_ELENCO_VERS)
         ElvFileElencoVer elvFileElencoVers = elencoHelper.storeFileIntoElenco(elenco, indexFile,
@@ -331,9 +228,8 @@ public class IndiceElencoVersJobEjb {
         csv.setEnte(elenco.getOrgStrut().getOrgEnte().getNmEnte());
         csv.setAmbiente(elenco.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
         // sistema (new URN)
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         csv.setSistemaConservazione(sistemaConservazione);
         // calcolo parte urn ORIGINALE
         String tmpUrn = MessaggiWSFormat.formattaUrnPartVersatore(csv);
@@ -356,7 +252,7 @@ public class IndiceElencoVersJobEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void manageValidAtomic(long idElenco, long idStruttura, long idLogJob) throws ParseException {
+    public void manageValidAtomic(long idElenco, long idStruttura, long idLogJob) {
         log.debug("manageValidAtomic");
         LogJob logJob = elencoHelper.retrieveLogJobByid(idLogJob);
         OrgStrut struttura = elencoHelper.retrieveOrgStrutByid(new BigDecimal(idStruttura));
@@ -373,13 +269,13 @@ public class IndiceElencoVersJobEjb {
                     "Validazione indice elenco in cui non sono presenti unità documentarie annullate",
                     ElvStatoElencoVer.TiStatoElenco.VALIDATO, null);
         } else {
-            log.debug("manageValidAtomic - chiamo evEjb.deleteElenco(idElenco) per elenco " + idElenco + " e struttura "
-                    + idStruttura);
+            log.debug("manageValidAtomic - chiamo evEjb.deleteElenco(idElenco) per elenco {} e struttura {}", idElenco,
+                    idStruttura);
             evEjb.deleteElenco(idElenco);
         }
     }
 
-    public void manageValid(ElvElencoVer elenco) {
+    private void manageValid(ElvElencoVer elenco) {
         // iv) aggiorno l'elenco valorizzando la data di firma, il tipo di validazione e la modalità con i valori
         // definiti dall'elenco.
         log.debug("manageValid");

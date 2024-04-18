@@ -1,4 +1,41 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.allineamentoOrganizzazioni.ejb;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.WebServiceException;
+import javax.xml.ws.soap.SOAPFaultException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.integriam.client.ws.IAMSoapClients;
 import it.eng.integriam.client.ws.reporg.CancellaOrganizzazioneRisposta;
@@ -16,31 +53,14 @@ import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.OrgSubStrut;
 import it.eng.parer.job.allineamentoOrganizzazioni.dto.ParametriInputOrganizzazioni;
-import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.allineamentoOrganizzazioni.utils.CostantiReplicaOrg;
 import it.eng.parer.job.allineamentoOrganizzazioni.utils.CostantiReplicaOrg.EsitoServizio;
+import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.ApplEnum;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.utils.CostantiDB;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.soap.SOAPFaultException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -237,19 +257,18 @@ public class AllineamentoOrganizzazioniEjb {
          * inserimento, modifica o cancellazione
          */
         ParametriInputOrganizzazioni parametriInputOrganizzazioni = new ParametriInputOrganizzazioni();
-        parametriInputOrganizzazioni.setNmUserid(coHelper.getValoreParamApplic("USERID_REPLICA_ORG", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC));
-        parametriInputOrganizzazioni.setCdPsw(coHelper.getValoreParamApplic("PSW_REPLICA_ORG", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC));
-        parametriInputOrganizzazioni.setNmApplic(coHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC));
+        parametriInputOrganizzazioni
+                .setNmUserid(coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_REPLICA_ORG));
+        parametriInputOrganizzazioni
+                .setCdPsw(coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_REPLICA_ORG));
+        parametriInputOrganizzazioni
+                .setNmApplic(coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         /* Ricavo l'url del ws */
-        parametriInputOrganizzazioni.setUrlReplicaOrganizzazioni(coHelper.getValoreParamApplic("URL_REPLICA_ORG", null,
-                null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        parametriInputOrganizzazioni.setUrlReplicaOrganizzazioni(
+                coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_REPLICA_ORG));
 
         /* Ricavo il timeout per la chiamata */
-        String timeoutString = coHelper.getValoreParamApplic("TIMEOUT_REPLICA_ORG", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String timeoutString = coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_REPLICA_ORG);
         // imposto il valore di timeout solo se è configurato, altrimenti utillizo il default
         if (timeoutString != null && timeoutString.matches("^[0-9]+$")) {
             int timeoutReplicaOrganizzazione = Integer.parseInt(timeoutString);
@@ -294,7 +313,8 @@ public class AllineamentoOrganizzazioniEjb {
             case "ENTE":
                 OrgEnte ente = aoHelper.getOrgEnte(organizDaReplic.getIdOrganizApplic());
                 if (ente != null) {
-                    parametriInputOrganizzazioni.setIdOrganizApplicPadre((int) ente.getOrgAmbiente().getIdAmbiente());
+                    parametriInputOrganizzazioni
+                            .setIdOrganizApplicPadre(Math.toIntExact(ente.getOrgAmbiente().getIdAmbiente()));
                     parametriInputOrganizzazioni.setNmTipoOrganizPadre("AMBIENTE");
                     parametriInputOrganizzazioni.setNmOrganiz(ente.getNmEnte());
                     parametriInputOrganizzazioni.setDsOrganiz(ente.getDsEnte());
@@ -306,7 +326,8 @@ public class AllineamentoOrganizzazioniEjb {
             case "STRUTTURA":
                 OrgStrut strut = aoHelper.getOrgStrut(organizDaReplic.getIdOrganizApplic());
                 if (strut != null) {
-                    parametriInputOrganizzazioni.setIdOrganizApplicPadre((int) strut.getOrgEnte().getIdEnte());
+                    parametriInputOrganizzazioni
+                            .setIdOrganizApplicPadre(Math.toIntExact(strut.getOrgEnte().getIdEnte()));
                     parametriInputOrganizzazioni.setNmTipoOrganizPadre("ENTE");
                     parametriInputOrganizzazioni.setNmOrganiz(strut.getNmStrut());
                     parametriInputOrganizzazioni.setDsOrganiz(strut.getDsStrut());
@@ -332,7 +353,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecTipoUnitaDoc tipoUD : listaTipiUD) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.TIPO_UNITA_DOC.name());
-                        tipoDato.setIdTipoDatoApplic((int) tipoUD.getIdTipoUnitaDoc());
+                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(tipoUD.getIdTipoUnitaDoc()));
                         tipoDato.setNmTipoDato(tipoUD.getNmTipoUnitaDoc());
                         tipoDato.setDsTipoDato(tipoUD.getDsTipoUnitaDoc());
                         lista.getTipoDato().add(tipoDato);
@@ -343,7 +364,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecRegistroUnitaDoc registro : listaRegistri) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.REGISTRO.name());
-                        tipoDato.setIdTipoDatoApplic((int) registro.getIdRegistroUnitaDoc());
+                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(registro.getIdRegistroUnitaDoc()));
                         tipoDato.setNmTipoDato(registro.getCdRegistroUnitaDoc());
                         tipoDato.setDsTipoDato(registro.getDsRegistroUnitaDoc());
                         lista.getTipoDato().add(tipoDato);
@@ -354,7 +375,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (OrgSubStrut sottoStruttura : listaSottoStrutture) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.SUB_STRUTTURA.name());
-                        tipoDato.setIdTipoDatoApplic((int) sottoStruttura.getIdSubStrut());
+                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(sottoStruttura.getIdSubStrut()));
                         tipoDato.setNmTipoDato(sottoStruttura.getNmSubStrut());
                         tipoDato.setDsTipoDato(sottoStruttura.getDsSubStrut());
                         lista.getTipoDato().add(tipoDato);
@@ -365,7 +386,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecTipoDoc tipoDoc : listaTipiDoc) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.TIPO_DOC.name());
-                        tipoDato.setIdTipoDatoApplic((int) tipoDoc.getIdTipoDoc());
+                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(tipoDoc.getIdTipoDoc()));
                         tipoDato.setNmTipoDato(tipoDoc.getNmTipoDoc());
                         tipoDato.setDsTipoDato(tipoDoc.getDsTipoDoc());
                         lista.getTipoDato().add(tipoDato);
@@ -376,7 +397,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecTipoFascicolo tipoFascicolo : listaTipiFascicolo) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.TIPO_FASCICOLO.name());
-                        tipoDato.setIdTipoDatoApplic((int) tipoFascicolo.getIdTipoFascicolo());
+                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(tipoFascicolo.getIdTipoFascicolo()));
                         tipoDato.setNmTipoDato(tipoFascicolo.getNmTipoFascicolo());
                         tipoDato.setDsTipoDato(tipoFascicolo.getDsTipoFascicolo());
                         lista.getTipoDato().add(tipoDato);

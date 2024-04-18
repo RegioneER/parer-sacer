@@ -375,14 +375,14 @@
     <List Name="UlterioriErroriUnitaDocAggMetaFallitiList" Description="Lista ulteriori errori" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
         <Input  Type="INTEGER" Description="Progressivo" Name="pg_err"/>
         <Input  Type="STRING" Description="Tipo" Name="ti_err"/>
-        <Input  Type="STRING" Description="Errore" Name="cd_ds_err"/>
+        <Input  Type="STRING" Description="Errore" Name="cd_ds_err"/>        
         <Input  Type="STRING" Description="Controllo in errore" Name="cd_controllo_ws"/>
     </List>
     
     <Tab Name="UnitaDocAggMetaFallitiTabs" Description="Aggiornamenti metadati">
         <TabElement Name="InformazioniPrincipaliUnitaDocAggFalliti" Description="Informazioni principali" />
-        <TabElement Name="IndiceSipAggiornamentoUnitaDocAggFalliti" Description="Indice SIP aggiornamento" />
-        <TabElement Name="EsitoNegativoVersamentoUnitaDocAggFalliti" Description="Esito negativo versamento" />    
+        <!--<TabElement Name="IndiceSipAggiornamentoUnitaDocAggFalliti" Description="Indice SIP aggiornamento" />
+        <TabElement Name="EsitoNegativoVersamentoUnitaDocAggFalliti" Description="Esito negativo versamento" />-->    
         <TabElement Name="ListaUlterioriErroriUnitaDocAggFalliti" Description="Lista ulteriori errori" />
     </Tab>
    

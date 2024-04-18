@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import java.io.ByteArrayInputStream;
@@ -205,8 +222,8 @@ public class VolumiAction extends VolumiAbstractAction {
                 }
 
                 // La validazione non ha riportato errori. carico la tabella con i filtri impostati
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 getForm().getVolumiList().setTable(volumiHelper.getVolVRicVolumeViewBean(getIdStrut(), filtri,
                         Integer.parseInt(maxResultStandard)));
                 getForm().getVolumiList().getTable().setPageSize(10);
@@ -491,8 +508,8 @@ public class VolumiAction extends VolumiAbstractAction {
         if ((getTableName() != null && (getTableName().equals(getForm().getVolumiList().getName())))
                 || getTableName() == null) {
             // Controllo atto a permettere la navigazione nella navbar dei componenti
-            String maxResultCompVol = configurationHelper.getValoreParamApplic("MAX_RESULT_COMP_VOL", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String maxResultCompVol = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_COMP_VOL);
             VolVListaCompVolTableBean listaComp = componentiHelper.getVolVListaCompVolViewBean(idvol,
                     new ComponentiFiltri(), null, tmpTableBeanTipoUD, tmpTableBeanTipoDoc, tmpSubStrutsTableBean,
                     Integer.parseInt(maxResultCompVol));
@@ -525,6 +542,7 @@ public class VolumiAction extends VolumiAbstractAction {
                 getForm().getVolumiList().setUserOperations(true, true, false, false);
                 if (!statoVolume.equals(VolStatusEnum.CHIUSO.name())) {
                     getForm().getVolumiDetail().getDownloadProveConservazione().setEditMode();
+                    getForm().getVolumiDetail().getDownloadProveConservazione().setDisableHourGlass(true);
                 }
             } else if (statoVolume.equals(VolStatusEnum.APERTO.name())) {
                 if (vv.getDtScadChius().after(Calendar.getInstance().getTime())) {
@@ -567,7 +585,7 @@ public class VolumiAction extends VolumiAbstractAction {
                 // Controllo che non esista su db per quella struttura un volume con lo stesso nome
                 if (volumiHelper.existNomeVolume(nomeVol, getIdStrut())) {
                     getMessageBox().addMessage(
-                            new Message(MessageLevel.ERR, "Nome volume già  esistente per la struttura utilizzata"));
+                            new Message(MessageLevel.ERR, "Nome volume già  esistente per la struttura utilizzata"));
                     // se non va bene, reimposto il valore precedente nella casella di testo del nome volume
                     getForm().getVolumiDetail().getNm_volume_conserv().setValue(vv.getNmVolumeConserv());
                 }
@@ -710,8 +728,8 @@ public class VolumiAction extends VolumiAbstractAction {
                     compfiltri.getCd_key_unita_doc_da().setValue(chiavi[3] != null ? (String) chiavi[3] : null);
                     compfiltri.getCd_key_unita_doc_a().setValue(chiavi[4] != null ? (String) chiavi[4] : null);
                 }
-                String maxResultCompVol = configurationHelper.getValoreParamApplic("MAX_RESULT_COMP_VOL", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultCompVol = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_COMP_VOL);
                 getForm().getComponentiList()
                         .setTable(componentiHelper.getVolVListaCompVolViewBean(
                                 (BigDecimal) getSession().getAttribute("idvol"), compfiltri, dateAcquisizioneValidate,
@@ -933,8 +951,8 @@ public class VolumiAction extends VolumiAbstractAction {
                     OrgSubStrutTableBean tmpSubStrutsTableBean = subStrutEjb
                             .getOrgSubStrutTableBeanAbilitate(getUser().getIdUtente(), getIdStrut());
 
-                    String maxResultCompVol = configurationHelper.getValoreParamApplic("MAX_RESULT_COMP_VOL", null,
-                            null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                    String maxResultCompVol = configurationHelper
+                            .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_COMP_VOL);
                     VolVListaCompVolTableBean listaComp = componentiHelper.getVolVListaCompVolViewBean(
                             new BigDecimal(idVolume),
                             getForm().getComponentiFiltri() != null ? getForm().getComponentiFiltri()
@@ -963,8 +981,8 @@ public class VolumiAction extends VolumiAbstractAction {
                 int paginaCorrente = getForm().getVolumiList().getTable().getCurrentPageIndex();
                 int inizio = getForm().getVolumiList().getTable().getFirstRowPageIndex();
                 int pageSize = getForm().getVolumiList().getTable().getPageSize();
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 getForm().getVolumiList().setTable(volumiHelper.getVolVRicVolumeViewBean(getIdStrut(),
                         getForm().getFiltri(), Integer.parseInt(maxResultStandard)));
                 getForm().getVolumiList().getTable().setPageSize(pageSize);

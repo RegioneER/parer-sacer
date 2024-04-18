@@ -1,4 +1,38 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.ejb;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AroWarnUpdUnitaDoc;
 import it.eng.parer.entity.DecClasseErrSacer;
@@ -46,27 +80,12 @@ import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "MonitoraggioAggMetaEjb")
 @LocalBean
 public class MonitoraggioAggMetaEjb {
@@ -104,20 +123,16 @@ public class MonitoraggioAggMetaEjb {
     public BaseRow calcolaRiepilogoAggMeta(BigDecimal idUser, BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idStrut, BigDecimal aaKeyUnitaDoc, BigDecimal aaKeyUnitaDocDa, BigDecimal aaKeyUnitaDocA,
             BigDecimal idTipoUnitaDoc, BigDecimal idRegistroUnitaDoc, BigDecimal idTipoDocPrinc) {
-        Map<String, Object> risultati = new HashMap<>();
+        Map<String, Object> risultati;
         BaseRow campi = new BaseRow();
-        String tipoEntita = null;
 
         if (idStrut != null) {
-            tipoEntita = "STRUTTURA";
             risultati = monitoraggioAggMetaHelper.getTotali("STRUTTURA", idUser, idAmbiente, idEnte, idStrut,
                     aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc, idTipoDocPrinc);
         } else if (idEnte != null) {
-            tipoEntita = "ENTE";
             risultati = monitoraggioAggMetaHelper.getTotali("ENTE", idUser, idAmbiente, idEnte, null, null, null, null,
                     null, null, null);
         } else if (idAmbiente != null) {
-            tipoEntita = "AMBIENTE";
             risultati = monitoraggioAggMetaHelper.getTotali("AMBIENTE", idUser, idAmbiente, null, null, null, null,
                     null, null, null, null);
         } else {
@@ -125,7 +140,7 @@ public class MonitoraggioAggMetaEjb {
         }
 
         resetCounters(campi);
-        assignValueFields(campi, risultati, tipoEntita);
+        assignValueFields(campi, risultati);
 
         return campi;
     }
@@ -133,21 +148,17 @@ public class MonitoraggioAggMetaEjb {
     public BaseRow calcolaRiepilogoAggMetaDataCorrente(BigDecimal idUser, BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idStrut, BigDecimal aaKeyUnitaDoc, BigDecimal aaKeyUnitaDocDa, BigDecimal aaKeyUnitaDocA,
             BigDecimal idTipoUnitaDoc, BigDecimal idRegistroUnitaDoc, BigDecimal idTipoDocPrinc) {
-        Map<String, Object> risultati = new HashMap<>();
+        Map<String, Object> risultati;
         BaseRow campi = new BaseRow();
-        String tipoEntita = null;
 
         if (idStrut != null) {
-            tipoEntita = "STRUTTURA";
             risultati = monitoraggioAggMetaHelper.getTotaliDataCorrente("STRUTTURA", idUser, idAmbiente, idEnte,
                     idStrut, aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc,
                     idTipoDocPrinc);
         } else if (idEnte != null) {
-            tipoEntita = "ENTE";
             risultati = monitoraggioAggMetaHelper.getTotaliDataCorrente("ENTE", idUser, idAmbiente, idEnte, null, null,
                     null, null, null, null, null);
         } else if (idAmbiente != null) {
-            tipoEntita = "AMBIENTE";
             risultati = monitoraggioAggMetaHelper.getTotaliDataCorrente("AMBIENTE", idUser, idAmbiente, null, null,
                     null, null, null, null, null, null);
         } else {
@@ -156,7 +167,7 @@ public class MonitoraggioAggMetaEjb {
         }
 
         resetCountersAggiornamentiMetadatiDataCorrente(campi);
-        assignValueFieldsDataCorrente(campi, risultati, tipoEntita);
+        assignValueFieldsDataCorrente(campi, risultati);
 
         return campi;
     }
@@ -164,20 +175,16 @@ public class MonitoraggioAggMetaEjb {
     public BaseRow calcolaRiepilogoAggMetaFalliti(BigDecimal idUser, BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idStrut, BigDecimal aaKeyUnitaDoc, BigDecimal aaKeyUnitaDocDa, BigDecimal aaKeyUnitaDocA,
             BigDecimal idTipoUnitaDoc, BigDecimal idRegistroUnitaDoc, BigDecimal idTipoDocPrinc) {
-        Map<String, Object> risultati = new HashMap<>();
+        Map<String, Object> risultati;
         BaseRow campi = new BaseRow();
-        String tipoEntita = null;
 
         if (idStrut != null) {
-            tipoEntita = "STRUTTURA";
             risultati = monitoraggioAggMetaHelper.getTotaliFalliti("STRUTTURA", idUser, idAmbiente, idEnte, idStrut,
                     aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc, idTipoDocPrinc);
         } else if (idEnte != null) {
-            tipoEntita = "ENTE";
             risultati = monitoraggioAggMetaHelper.getTotaliFalliti("ENTE", idUser, idAmbiente, idEnte, null, null, null,
                     null, null, null, null);
         } else if (idAmbiente != null) {
-            tipoEntita = "AMBIENTE";
             risultati = monitoraggioAggMetaHelper.getTotaliFalliti("AMBIENTE", idUser, idAmbiente, null, null, null,
                     null, null, null, null, null);
         } else {
@@ -186,7 +193,7 @@ public class MonitoraggioAggMetaEjb {
         }
 
         resetCountersAggiornamentiMetadatiFallitiCorrente(campi);
-        assignValueFieldsFalliti(campi, risultati, tipoEntita);
+        assignValueFieldsFalliti(campi, risultati);
 
         return campi;
     }
@@ -195,21 +202,19 @@ public class MonitoraggioAggMetaEjb {
     public BaseRow calcolaRiepilogoUnitaDocAggMetaFalliti(BigDecimal idUser, BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idStrut, BigDecimal aaKeyUnitaDoc, BigDecimal aaKeyUnitaDocDa, BigDecimal aaKeyUnitaDocA,
             BigDecimal idTipoUnitaDoc, BigDecimal idRegistroUnitaDoc, BigDecimal idTipoDocPrinc) {
-        Map<String, Object> risultati = new HashMap<>();
+        Map<String, Object> risultati;
         BaseRow campi = new BaseRow();
-        String tipoEntita = null;
-
         if (idStrut != null) {
-            tipoEntita = "STRUTTURA";
+            // "STRUTTURA"
             risultati = monitoraggioAggMetaHelper.getTotaliUdUpdFalliti("STRUTTURA", idUser, idAmbiente, idEnte,
                     idStrut, aaKeyUnitaDoc, aaKeyUnitaDocDa, aaKeyUnitaDocA, idTipoUnitaDoc, idRegistroUnitaDoc,
                     idTipoDocPrinc);
         } else if (idEnte != null) {
-            tipoEntita = "ENTE";
+            // "ENTE"
             risultati = monitoraggioAggMetaHelper.getTotaliUdUpdFalliti("ENTE", idUser, idAmbiente, idEnte, null, null,
                     null, null, null, null, null);
         } else if (idAmbiente != null) {
-            tipoEntita = "AMBIENTE";
+            // "AMBIENTE"
             risultati = monitoraggioAggMetaHelper.getTotaliUdUpdFalliti("AMBIENTE", idUser, idAmbiente, null, null,
                     null, null, null, null, null, null);
         } else {
@@ -218,13 +223,13 @@ public class MonitoraggioAggMetaEjb {
         }
 
         resetCountersUnitaDocAggiornamentiMetadatiFalliti(campi);
-        assignValueFieldsUdUpdFalliti(campi, risultati, tipoEntita);
+        assignValueFieldsUdUpdFalliti(campi, risultati);
 
         return campi;
     }
     // end MEV#22438
 
-    public void assignValueFields(BaseRow row, Map<String, Object> risultati, String tipoEntita) {
+    public void assignValueFields(BaseRow row, Map<String, Object> risultati) {
         List<Object[]> checkCorResult = (List<Object[]>) risultati.get("checkCorResult");
 
         List<Object[]> totNoCorResult = (List<Object[]>) risultati.get("totNoCorResult");
@@ -243,16 +248,16 @@ public class MonitoraggioAggMetaEjb {
         // end MEV#22438
 
         /* FLAGS */
-        row.setString("fl_upd_corr", (String) objCheckCorResult[2]);
-        row.setString("fl_upd_attesa_sched_corr", (String) objCheckCorResult[3]);
-        row.setString("fl_upd_nosel_sched_corr", (String) objCheckCorResult[4]);
-        row.setString("fl_upd_ko_norisolub_corr", (String) objCheckCorKoResult[2]);
-        row.setString("fl_upd_ko_verif_corr", (String) objCheckCorKoResult[3]);
-        row.setString("fl_upd_ko_noverif_corr", (String) objCheckCorKoResult[4]);
+        row.setString("fl_upd_corr", String.valueOf(objCheckCorResult[2]));
+        row.setString("fl_upd_attesa_sched_corr", String.valueOf(objCheckCorResult[3]));
+        row.setString("fl_upd_nosel_sched_corr", String.valueOf(objCheckCorResult[4]));
+        row.setString("fl_upd_ko_norisolub_corr", String.valueOf(objCheckCorKoResult[2]));
+        row.setString("fl_upd_ko_verif_corr", String.valueOf(objCheckCorKoResult[3]));
+        row.setString("fl_upd_ko_noverif_corr", String.valueOf(objCheckCorKoResult[4]));
         // MEV#22438
-        row.setString("fl_ud_upd_ko_norisolub", (String) objCheckUdUpdKoResult[2]);
-        row.setString("fl_ud_upd_ko_verif", (String) objCheckUdUpdKoResult[3]);
-        row.setString("fl_ud_upd_ko_noverif", (String) objCheckUdUpdKoResult[4]);
+        row.setString("fl_ud_upd_ko_norisolub", String.valueOf(objCheckUdUpdKoResult[2]));
+        row.setString("fl_ud_upd_ko_verif", String.valueOf(objCheckUdUpdKoResult[3]));
+        row.setString("fl_ud_upd_ko_noverif", String.valueOf(objCheckUdUpdKoResult[4]));
         // end MEV#22438
 
         String flUpdKoTotaliCorr = "0";
@@ -340,7 +345,7 @@ public class MonitoraggioAggMetaEjb {
                 .add(row.getBigDecimal("ni_upd_ko_noverif_b30gg")).add(row.getBigDecimal("ni_upd_ko_verif_b30gg")));
     }
 
-    public void assignValueFieldsDataCorrente(BaseRow row, Map<String, Object> risultati, String tipoEntita) {
+    public void assignValueFieldsDataCorrente(BaseRow row, Map<String, Object> risultati) {
         List<Object[]> totCorResult = (List<Object[]>) risultati.get("totCorResult");
         for (Object[] objTotCorResult : totCorResult) {
             int l = objTotCorResult.length;
@@ -358,7 +363,7 @@ public class MonitoraggioAggMetaEjb {
         }
     }
 
-    public void assignValueFieldsFalliti(BaseRow row, Map<String, Object> risultati, String tipoEntita) {
+    public void assignValueFieldsFalliti(BaseRow row, Map<String, Object> risultati) {
         List<Object[]> totCorKoResult = (List<Object[]>) risultati.get("totCorKoResult");
         for (Object[] objTotCorKoResult : totCorKoResult) {
             int l = objTotCorKoResult.length;
@@ -379,7 +384,7 @@ public class MonitoraggioAggMetaEjb {
     }
 
     // MEV#22438
-    public void assignValueFieldsUdUpdFalliti(BaseRow row, Map<String, Object> risultati, String tipoEntita) {
+    public void assignValueFieldsUdUpdFalliti(BaseRow row, Map<String, Object> risultati) {
         List<Object[]> totUdUpdKoResult = (List<Object[]>) risultati.get("totUdUpdKoResult");
         for (Object[] objTotUdUpdKoResult : totUdUpdKoResult) {
             int l = objTotUdUpdKoResult.length;
@@ -508,7 +513,7 @@ public class MonitoraggioAggMetaEjb {
             r.setString("nm_tipo_unita_doc_last", objInterface.getNmTipoUnitaDocLast());
             r.setString("nm_tipo_doc_princ_last", objInterface.getNmTipoDocPrincLast());
             r.setTimestamp("ts_ini_last_ses", new Timestamp(objInterface.getTsIniLastSes().getTime()));
-            if (!"DIVERSI".equals(objInterface.getDsErrPrincLast().toUpperCase())) {
+            if (!"DIVERSI".equalsIgnoreCase(objInterface.getDsErrPrincLast())) {
                 r.setString("cd_ds_err_princ_last",
                         objInterface.getCdErrPrincLast() + " / " + objInterface.getDsErrPrincLast());
             } else {
@@ -532,8 +537,7 @@ public class MonitoraggioAggMetaEjb {
         try {
             for (MonVLisUpdUdErr updErr : l) {
                 if (id.add(updErr.getIdSesUpdUnitaDocErr())) {
-                    MonVLisUpdUdErrRowBean r = new MonVLisUpdUdErrRowBean();
-                    r = (MonVLisUpdUdErrRowBean) Transform.entity2RowBean(updErr);
+                    MonVLisUpdUdErrRowBean r = (MonVLisUpdUdErrRowBean) Transform.entity2RowBean(updErr);
                     t.add(r);
                 }
             }
@@ -614,7 +618,7 @@ public class MonitoraggioAggMetaEjb {
         return errori;
     }
 
-    public static enum tipoUsoClasseErrore {
+    public enum tipoUsoClasseErrore {
         GENERICO, VERS_UNITA_DOC
     }
 
@@ -793,6 +797,32 @@ public class MonitoraggioAggMetaEjb {
         List<VrsErrSesUpdUnitaDocKo> list = monitoraggioAggMetaHelper.getVrsErrSesUpdUnitaDocKoList(idSesUpdUnitaDocKo);
         try {
             for (VrsErrSesUpdUnitaDocKo ses : list) {
+                VrsErrSesUpdUnitaDocKoRowBean rb = (VrsErrSesUpdUnitaDocKoRowBean) Transform.entity2RowBean(ses);
+                rb.setString("cd_ds_err", ses.getDecErrSacer().getCdErr() + " - " + ses.getDsErr());
+                rb.setString("cd_controllo_ws", ses.getDecControlloWs().getCdControlloWs());
+                tb.add(rb);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException ex) {
+            logger.error("Errore durante il recupero dei dati della tabella VrsErrSesUpdUnitaDocKo "
+                    + ExceptionUtils.getRootCauseMessage(ex), ex);
+        }
+        return tb;
+    }
+
+    public List<Long> ricercaVrsSesUpdUnitaDocKo(BigDecimal idUpdUnitaDocKo) {
+        // VrsSesUpdUnitaDocKoTableBean tb = new VrsSesUpdUnitaDocKoTableBean();
+        return monitoraggioAggMetaHelper.getVrsSesUpdUnitaDocKoList(idUpdUnitaDocKo);
+
+        // return tb;
+    }
+
+    public VrsErrSesUpdUnitaDocKoTableBean ricercaVersamentiErrSesUpdUnitaDocKo(List<Long> idSesUpdUnitaDocKoList) {
+        VrsErrSesUpdUnitaDocKoTableBean tb = new VrsErrSesUpdUnitaDocKoTableBean();
+        List<VrsErrSesUpdUnitaDocKo> list = monitoraggioAggMetaHelper
+                .getVrsErrSesUpdUnitaDocKoList(idSesUpdUnitaDocKoList);
+        try {
+            for (VrsErrSesUpdUnitaDocKo ses : list) {
                 VrsErrSesUpdUnitaDocKoRowBean rb = new VrsErrSesUpdUnitaDocKoRowBean();
                 rb = (VrsErrSesUpdUnitaDocKoRowBean) Transform.entity2RowBean(ses);
                 rb.setString("cd_ds_err", ses.getDecErrSacer().getCdErr() + " - " + ses.getDsErr());
@@ -812,11 +842,10 @@ public class MonitoraggioAggMetaEjb {
         List<VrsErrSesUpdUnitaDocErr> list = monitoraggioAggMetaHelper
                 .getVrsErrSesUpdUnitaDocErrList(idSesUpdUnitaDocErr);
         try {
-            for (VrsErrSesUpdUnitaDocErr record : list) {
-                VrsErrSesUpdUnitaDocErrRowBean rb = new VrsErrSesUpdUnitaDocErrRowBean();
-                rb = (VrsErrSesUpdUnitaDocErrRowBean) Transform.entity2RowBean(record);
-                rb.setString("cd_ds_err", record.getDecErrSacer().getCdErr() + " - " + record.getDsErr());
-                rb.setString("cd_controllo_ws", record.getDecControlloWs().getCdControlloWs());
+            for (VrsErrSesUpdUnitaDocErr rec : list) {
+                VrsErrSesUpdUnitaDocErrRowBean rb = (VrsErrSesUpdUnitaDocErrRowBean) Transform.entity2RowBean(rec);
+                rb.setString("cd_ds_err", rec.getDecErrSacer().getCdErr() + " - " + rec.getDsErr());
+                rb.setString("cd_controllo_ws", rec.getDecControlloWs().getCdControlloWs());
                 tb.add(rb);
             }
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException

@@ -1,4 +1,48 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.calcoloEstrazione;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.async.ejb.CalcoloEstrazioneAsync;
 import it.eng.parer.async.helper.CalcoloEstrazioneHelper;
@@ -12,8 +56,8 @@ import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.LogJob;
 import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa;
+import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.job.helper.JobHelper;
@@ -27,31 +71,6 @@ import it.eng.parer.ws.xml.versReqStato.ChiaveType;
 import it.eng.parer.ws.xml.versReqStato.Recupero;
 import it.eng.parer.ws.xml.versReqStato.VersatoreType;
 import it.eng.spagoLite.security.User;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -77,32 +96,24 @@ public class RestituzioneArchivioJob {
 
     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd-HH:mm:ss:SSS");
 
-    public void restituzioneArchivio(LogJob logJob) throws ParerInternalError, Exception {
-        // boolean success = calcoloAsync.eseguiRichiestaAsync();
-        // if (success) {
-        // LOGGER.info(JobConstants.JobEnum.CALCOLA_ESTRAZIONE_JOB.name() + " --- Richiesta OK");
-        // } else {
-        // LOGGER.info(JobConstants.JobEnum.CALCOLA_ESTRAZIONE_JOB.name() + " --- Richiesta KO");
-        // //throw new ParerInternalError("Impossibile effettuare le richieste");
-        // }
+    public void restituzioneArchivio(LogJob logJob) throws Exception {
 
         /* Determino la directory root $ROOT_FOLDER_EC_RA */
-        String rootFolderEcRaPath = configurationHelper.getValoreParamApplic("ROOT_FOLDER_EC_RA", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String rootFolderEcRaPath = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.ROOT_FOLDER_EC_RA);
 
         // MEV #26985 - Creazione automatica in FTP della cartella creazione archivio
-        // Creo la directory root
+        // Creo la directory ROOT SE NON ESISTE
         createEmptyDir(rootFolderEcRaPath);
 
-        // String rootFolderEcRaPath = "/tmp";
         /* Determino il numero massimo di AIP che si possono processare per ogni esecuzione del job */
-        int maxUd2procRa = Integer.parseInt(configurationHelper.getValoreParamApplic("MAX_UD2PROC_RA", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        int maxUd2procRa = Integer
+                .parseInt(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_UD2PROC_RA));
         /* Inizializzo numero massimo di AIP da processare per ogni esecuzione del job a 0 */
         int totAipEstratti = 0;
         /* Determino il numero massimo di file che si possono copiare in una cartella */
-        int numMaxFileFolderRa = Integer.parseInt(configurationHelper.getValoreParamApplic("NUM_MAX_FILE_FOLDER_RA",
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        int numMaxFileFolderRa = Integer.parseInt(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_FILE_FOLDER_RA));
         /* Inizializzo numero massimo di file copiati per ogni cartella a 0 */
         int totFileCopiati = 0;
         /* Inizializzo la mappa dei numeri progressivi da concatenare alla cartella da rinominare */
@@ -113,6 +124,24 @@ public class RestituzioneArchivioJob {
             /* Ritorno un messaggio di errore che dice che la directory non esiste */
             throw new ParerInternalError("Cartella per l’estrazione degli AIP non definita");
         }
+
+        /*
+         * Determino le richieste in stato RESTITUITO e flag svuota ftp impostato a 1 e per esse libero lo spazio
+         * nell'area FTP
+         */
+        List<AroRichiestaRa> richiesteRaRest = calcoloHelper.retrieveRichiesteRaRestituite();
+        for (AroRichiestaRa richiesta : richiesteRaRest) {
+            svuotaCartelleStruttura(rootFolderEcRaPath, richiesta);
+        }
+
+        // /*
+        // * Determino le richieste in stato ANNULLATO e per esse libero lo spazio nell'area FTP
+        // */
+        // List<AroRichiestaRa> richiesteRaAnnul = calcoloHelper.retrieveRichiesteRaAnnullate();
+        // for (AroRichiestaRa richiesta : richiesteRaAnnul) {
+        // svuotaCartelleStruttura(rootFolderEcRaPath, richiesta);
+        // }
+
         /*
          * Determino le richieste di estrazione con maggiore priorità di esecuzione, con stato ESTRAZIONE_IN_CORSO o
          * IN_ATTESA_ESTRAZIONE; le richieste sono selezionate in ordine di priorita DESC e data fine ASC
@@ -125,12 +154,48 @@ public class RestituzioneArchivioJob {
             }
         }
 
-        LOGGER.info(JobConstants.JobEnum.EVASIONE_RICH_REST_ARCH.name() + " --- Fine schedulazione job");
+        LOGGER.info("{} --- Fine schedulazione job", JobConstants.JobEnum.EVASIONE_RICH_REST_ARCH.name());
         jobHelper.writeAtomicLogJob(JobConstants.JobEnum.EVASIONE_RICH_REST_ARCH.name(),
                 JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name());
     }
 
+    public void svuotaCartelleStruttura(String rootFolderEcRaPath, AroRichiestaRa richiesta) {
+        // ricavo la struttura
+        OrgStrut struttura = calcoloHelper
+                .retrieveOrgStrutById(BigDecimal.valueOf(richiesta.getOrgStrut().getIdStrut()));
+        SIOrgEnteSiam enteConvenz = calcoloHelper
+                .retrieveOrgEnteConvenzById(richiesta.getOrgStrut().getIdEnteConvenz());
+        /* Determino la directory $NM_ENTE_CONVENZIONATO, figlia di $ROOT_FOLDER_EC_RA */
+        String nmEnteSiamNormalizzato = normalize(enteConvenz.getNmEnteSiam());
+        String childFolderEcRaPath = IOUtils.getPath(rootFolderEcRaPath, nmEnteSiamNormalizzato);
+        // /* Determino la folder relativa all'ente versante */
+        // String pathByEnte = IOUtils.getPath(childFolderEcRaPath, struttura.getOrgEnte().getNmEnte());
+        // /* Determino la folder relativa alla struttura */
+        // String pathByStrut = IOUtils.getPath(pathByEnte, (struttura.getCdStrutNormaliz() != null)
+        // ? struttura.getCdStrutNormaliz() : normalize(struttura.getNmStrut()));
+        /* Svuoto la cartella della struttura */
+        // List<String> files = IOUtils.list(pathByStrut, AllFileFilter.getInstance(), false);
+        List<String> files = IOUtils.list(childFolderEcRaPath, AllFileFilter.getInstance(), false);
+        for (String file : files) {
+            File entry = new File(file);
+            if (entry.isDirectory()) {
+                IOUtils.deleteDir(file, true);
+            }
+        }
+        // Imposto a 0 il flag per cancellare l'area FTP una volta svuotata
+        richiesta.setFlSvuotaFtp("0");
+    }
+
     public static void createEmptyDir(String fullPath) throws IOException {
+        Path dirPath = Paths.get(fullPath);
+        File directory = dirPath.toFile();
+        if (!directory.exists()) {
+            LOGGER.debug("La cartella {} non esiste, la creo", fullPath);
+            Files.createDirectories(dirPath);
+        }
+    }
+
+    public static void createEmptyDirWithDelete(String fullPath) throws IOException {
         Path dirPath = Paths.get(fullPath);
         File directory = dirPath.toFile();
         if (directory.exists()) {
@@ -157,24 +222,24 @@ public class RestituzioneArchivioJob {
             throws Exception {
         boolean isAnnullata = false;
 
+        // Recupero la richiesta
         AroRichiestaRa richiesta = calcoloHelper.retrieveRichiestaById(idRichiestaRa);
-        // gestisco le altre estrazioni in corso
-        elaboraEstrazioniInCorso(richiesta.getOrgStrut().getIdStrut(), logJob.getIdLogJob());
 
-        LOGGER.debug(
-                "Richiesta della struttura '" + richiesta.getOrgStrut().getNmStrut() + "' trovata: stato richiesta = '"
-                        + richiesta.getTiStato().name() + "' (id richiesta = '" + richiesta.getIdRichiestaRa() + "')");
+        // gestisco le altre estrazioni in corso: setto lo stato a IN_ATTESA_ESTRAZIONE
+        elaboraEstrazioniInCorso(richiesta.getOrgStrut().getIdStrut());
+
+        LOGGER.debug("Richiesta della struttura '{}' trovata: stato richiesta = '{}' (id richiesta = '{}')",
+                richiesta.getOrgStrut().getNmStrut(), richiesta.getTiStato().name(), richiesta.getIdRichiestaRa());
 
         // ricavo l'ente convenzionato e la directory di destinazione
         SIOrgEnteSiam enteConvenz = calcoloHelper
                 .retrieveOrgEnteConvenzById(richiesta.getOrgStrut().getIdEnteConvenz());
         // MEV #26987 - Normalizzazione nome ente: portato in maiuscolo,
         // tolti gli accenti, sostituiti gli spazi e i caratteri speciali con "_"
-        String nmEnteSiamNormalizzato = StringUtils.stripAccents(enteConvenz.getNmEnteSiam().toUpperCase())
-                .replaceAll(" ", "_").replaceAll("[^a-zA-Z0-9]", "_");
+        String nmEnteSiamNormalizzato = normalize(enteConvenz.getNmEnteSiam());
         String childFolderEcRaPath = IOUtils.getPath(rootFolderEcRaPath, nmEnteSiamNormalizzato);
         // MEV #26985 - Creazione automatica in FTP della cartella creazione archivio
-        // Creo la directory childFolder
+        // Creo la directory childFolder col nome dell'ente convenzionato SE NON ESISTE
         createEmptyDir(childFolderEcRaPath);
         if (!IOUtils.isFileReady(childFolderEcRaPath)) {
             LOGGER.debug(
@@ -188,19 +253,23 @@ public class RestituzioneArchivioJob {
         }
 
         /* Tip: Per ottimizzare l'estrazione bisogna ordinare il result set. Per ora gestisco i file in ordine sparso */
-        // Comparator comp = new UdSerFascObjComparatorDtCreazione();
 
-        /* Determino le Unità Documentarie, le Serie e i Fascicoli che soddisfano la richiesta corrente */
+        /*
+         * Query su ARO_AIP_RESTITUZIONE_ARCHIVIO riferiti alla richiesta corrente e stato DA_ELABORARE Così determino
+         * le Unità Documentarie, le Serie e i Fascicoli che soddisfano la richiesta corrente
+         */
         List<UdSerFascObj> udSerFascObjectList = calcoloHelper.retrieveAipUdSerFascByRichiesta(richiesta, maxUd2procRa);
-        LOGGER.debug("Trovati " + udSerFascObjectList.size() + " oggetti da estrarre per l'ente convenzionato '"
-                + enteConvenz.getNmEnteSiam() + "'");
+        LOGGER.debug("Trovati {} oggetti da estrarre per l'ente convenzionato '{}'", udSerFascObjectList.size(),
+                enteConvenz.getNmEnteSiam());
 
         /* Tip: Per ottimizzare l'estrazione bisogna ordinare il result set. Per ora gestisco i file in ordine sparso */
-        // Collections.sort(udSerFascObjectList, comp);
-
         RestituzioneArchivioJob newCalcoloEstrazioneJobRef1 = context.getBusinessObject(RestituzioneArchivioJob.class);
         // aggiorno stato della richiesta di restituzione archivio corrente in ESTRAZIONE_IN_CORSO
-        newCalcoloEstrazioneJobRef1.setStatoRichiestaRaAtomic(idRichiestaRa, logJob.getIdLogJob());
+        newCalcoloEstrazioneJobRef1.setStatoRichiestaRaAtomic(idRichiestaRa);
+
+        /////////////////////////////////////////
+        // DA VERIFICARE
+        /////////////////////////////////////////
         // pulisco la directory prima di iniziare una nuova estrazione
         AroVChkAipRestArchUd chkAipRestArchUd = calcoloHelper.findViewById(AroVChkAipRestArchUd.class,
                 BigDecimal.valueOf(richiesta.getIdRichiestaRa()));
@@ -210,20 +279,18 @@ public class RestituzioneArchivioJob {
                 File entry = new File(file);
                 if (entry.isDirectory()) {
                     IOUtils.deleteDir(file, true);
-                } else {
-                    // a questo livello non dovrebbero esistere file ma solo directory
-                    // IOUtils.delete(entry);
                 }
             }
         }
+        ////////////////////////////////////////
 
         boolean isTheFirst = true;
         try {
             // Itero l'insieme
-            Iterator i = udSerFascObjectList.iterator();
+            Iterator<UdSerFascObj> i = udSerFascObjectList.iterator();
             while (i.hasNext()) {
                 // Recupera l'elemento e sposta il cursore all'elemento successivo
-                UdSerFascObj o = (UdSerFascObj) i.next();
+                UdSerFascObj o = i.next();
                 // Nota: il controllo sull'iteratore (!i.hasNext(), "se non ho altri elementi"), mi serve per capire se
                 // è l'ultimo elemento
                 totFileCopiati = newCalcoloEstrazioneJobRef1.manageUdSerFascObjFase2(richiesta.getIdRichiestaRa(),
@@ -232,20 +299,12 @@ public class RestituzioneArchivioJob {
                 if (totFileCopiati > numMaxFileFolderRa) {
                     totFileCopiati = totFileCopiati % numMaxFileFolderRa; // calcolo il modulo
                 }
-                /* Verifico se la richiesta corrente è stata annullata */
+                /*
+                 * Il sistema controlla che lo stato di ARO_RICHIESTA_RA non valga ANNNULLATO. Verifico se la richiesta
+                 * corrente è stata annullata e nel caso interrompo l'elaborazione
+                 */
                 isAnnullata = newCalcoloEstrazioneJobRef1.checkRichiestaAnnullata(richiesta.getIdRichiestaRa());
                 if (isAnnullata) {
-                    // pulisco la directory se l'estrazione viene annullata
-                    // List<String> files = IOUtils.list(childFolderEcRaPath, AllFileFilter.getInstance(), false);
-                    // for (String file : files) {
-                    // File entry = new File( file );
-                    // if (entry.isDirectory()) {
-                    // IOUtils.deleteDir(file, true);
-                    // } else {
-                    // //a questo livello non dovrebbero esistere file ma solo directory
-                    // //IOUtils.delete(entry);
-                    // }
-                    // }
                     break;
                 }
                 isTheFirst = false;
@@ -256,10 +315,13 @@ public class RestituzioneArchivioJob {
 
         if (!isAnnullata) {
             /* Cambio stato alla richiesta corrente */
-            newCalcoloEstrazioneJobRef1.setStatoRichiestaRaAtomic(idRichiestaRa, logJob.getIdLogJob());
+            newCalcoloEstrazioneJobRef1.setStatoRichiestaRaAtomic(idRichiestaRa);
         }
 
-        // TODO: elaboraFolderVuote(idStruttura, logJob.getIdLogJob());
+    }
+
+    private static String normalize(String stringa) {
+        return StringUtils.stripAccents(stringa.toUpperCase()).replace(" ", "_").replaceAll("[^a-zA-Z0-9]", "_");
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -270,28 +332,22 @@ public class RestituzioneArchivioJob {
 
         switch (udSerFascObj.getTiEntitaSacer()) {
         case UNI_DOC:
-            totFileCopiatiTmp = manageUdFase2(udSerFascObj.getId(), idRichiestaRa, idEnteConvenz, idLogJob, isTheLast,
-                    isTheFirst, rootFolderEcRaPath, totFileCopiati, mappaProgressivi, numMaxFileFolderRa);
+            totFileCopiatiTmp = manageUdFase2(udSerFascObj.getId(), idRichiestaRa, idEnteConvenz, rootFolderEcRaPath,
+                    totFileCopiati, mappaProgressivi, numMaxFileFolderRa);
             break;
         case SER:
-            // totFileCopiatiTmp = manageSerFase2(udSerFascObj.getId(), udSerFascObj.getDtCreazione(), idEnte, idLogJob,
-            // isTheLast, isTheFirst);
-            break;
         case FASC:
-            // totFileCopiatiTmp = manageFascFase2(udSerFascObj.getId(), udSerFascObj.getDtCreazione(), idEnte,
-            // idLogJob, isTheLast, isTheFirst);
             break;
         }
 
         return totFileCopiatiTmp;
     }
 
-    public Integer manageUdFase2(BigDecimal idAipRestArchivio, long idRichiestaRa, long idEnteConvenz, long idLogJob,
-            boolean isTheLast, boolean isTheFirst, String rootFolderEcRaPath, int totFileCopiati,
-            Map<String, Integer> mappaProgressivi, int numMaxFileFolderRa) throws Exception {
+    public Integer manageUdFase2(BigDecimal idAipRestArchivio, long idRichiestaRa, long idEnteConvenz,
+            String rootFolderEcRaPath, int totFileCopiati, Map<String, Integer> mappaProgressivi,
+            int numMaxFileFolderRa) throws Exception {
         File folder = null;
         String codiceErrore;
-        LogJob logJob = calcoloHelper.retrieveLogJobById(idLogJob);
         AroRichiestaRa richiestaRa = calcoloHelper.retrieveRichiestaById(idRichiestaRa);
         AroAipRestituzioneArchivio aipRestArchivio = calcoloHelper
                 .retrieveAroAipRestituzioneArchivioById(idAipRestArchivio.longValue());
@@ -308,10 +364,9 @@ public class RestituzioneArchivioJob {
 
         // ricavo la struttura
         OrgStrut struttura = calcoloHelper.retrieveOrgStrutById(BigDecimal.valueOf(ud.getOrgStrut().getIdStrut()));
-        LOGGER.debug("processo struttura: " + struttura.getIdStrut());
+        LOGGER.debug("processo struttura:  {}", struttura.getIdStrut());
         /* Determino la directory $NM_ENTE_CONVENZIONATO, figlia di $ROOT_FOLDER_EC_RA */
-        String childFolderEcRaPath = IOUtils.getPath(rootFolderEcRaPath,
-                enteConvenz.getNmEnteSiam().toUpperCase().replaceAll(" ", "_"));
+        String childFolderEcRaPath = IOUtils.getPath(rootFolderEcRaPath, normalize(enteConvenz.getNmEnteSiam()));
         if (!IOUtils.isFileReady(childFolderEcRaPath)) {
             LOGGER.debug(
                     "Cartella per l’estrazione degli AIP non definita o non si hanno i permessi in lettura/scrittura");
@@ -326,10 +381,10 @@ public class RestituzioneArchivioJob {
         String pathByEnte = IOUtils.getPath(childFolderEcRaPath, struttura.getOrgEnte().getNmEnte());
         /* Definisco la folder relativa alla struttura */
         String pathByStrut = IOUtils.getPath(pathByEnte, (struttura.getCdStrutNormaliz() != null)
-                ? struttura.getCdStrutNormaliz() : struttura.getNmStrut().toUpperCase().replaceAll(" ", "_"));
+                ? struttura.getCdStrutNormaliz() : normalize(struttura.getNmStrut()));
         /* Definisco la folder relativa al tipo oggetto */
         String pathByTipo = IOUtils.getPath(pathByStrut, "Unita_documentarie"); // TODO: definire una classe di costanti
-                                                                                // (CostantiRA.UD)
+        // (CostantiRA.UD)
         /* Definisco la folder corrente per la scrittura */
         String pathByAnno = IOUtils.getPath(pathByTipo, aaKeyUnitaDoc.toString());
         /* Definisco folder corrente */
@@ -346,19 +401,14 @@ public class RestituzioneArchivioJob {
         }
 
         /* Tip: Per ottimizzare l'estrazione bisogna ordinare il result set. Per ora gestisco i file in ordine sparso */
-        // if (isTheFirst && !IOUtils.isEmpty(folder)) {
-        // // calcolo il numero di file della folder corrente
-        // totFileCopiati = IOUtils.list(folder, AllFileFilter.getInstance(), false).size();
-        // }
-
         // ATTENZIONE: verifico se il numero di file della folder corrente,
         // è inferiore o uguale al numero di file che la folder corrente può ancora includere
         // (tale numero è definito dal parametro per il numero massimo di file previsto per ogni folder a cui si
         // vuole aggiungere il file derivante dall'elaborazione della richiesta per la struttura corrente)
-        LOGGER.debug("aggiungo il pacchetto dell'indice aip unità documentaria '" + indiceAipUd.getIdIndiceAip()
-                + "' nella folder corrente");
+        LOGGER.debug("aggiungo il pacchetto dell'indice aip unità documentaria '{}' nella folder corrente",
+                indiceAipUd.getIdIndiceAip());
         // Scarico pacchetto indice aip
-        RispostaWSRecupero rispostaWs = scarica_xml_unisincro(richiestaRa, ud);
+        RispostaWSRecupero rispostaWs = scaricaXmlUnisincro(richiestaRa, ud);
         switch (rispostaWs.getSeverity()) {
         case OK:
             boolean isCopied = false;
@@ -367,8 +417,8 @@ public class RestituzioneArchivioJob {
 
             while (!isCopied) {
                 if (totFileCopiati < numMaxFileFolderRa) { // il pacchetto aip ud va nella folder: aggiungo.
-                    LOGGER.debug("aggiungo il pacchetto dell'indice aip unità documentaria '"
-                            + indiceAipUd.getIdIndiceAip() + "' nella folder corrente");
+                    LOGGER.debug("aggiungo il pacchetto dell'indice aip unità documentaria '{}' nella folder corrente",
+                            indiceAipUd.getIdIndiceAip());
                     /* Copio pacchetto indice aip nella folder corrente */
                     isCopied = copyFile(srcFilePath, fileName, folder.getPath(), fileName, true);
                 } else {
@@ -398,44 +448,39 @@ public class RestituzioneArchivioJob {
             } else {
                 codiceErrore = "Errore durante il tentativo di copia. File non trovato";
                 LOGGER.warn(codiceErrore);
-                setErrore(codiceErrore, aipRestArchivio, struttura, logJob);
+                setErrore(codiceErrore, aipRestArchivio);
             }
 
             break;
         case WARNING:
             codiceErrore = rispostaWs.getErrorMessage();
             LOGGER.warn(codiceErrore);
-            setErrore(codiceErrore, aipRestArchivio, struttura, logJob);
+            setErrore(codiceErrore, aipRestArchivio);
             break;
         case ERROR:
             codiceErrore = rispostaWs.getErrorMessage();
-            LOGGER.warn(codiceErrore);
-            setErrore(codiceErrore, aipRestArchivio, struttura, logJob);
+            LOGGER.error(codiceErrore);
+            setErrore(codiceErrore, aipRestArchivio);
             break;
         }
-
-        // TODO: Se l'elemento corrente è l'ultimo e se la folder corrente è vuota
-        // if (isTheLast && IOUtils.isEmpty(folder)) {
-        // IOUtils.delete(folder);
-        // }
 
         return totFileCopiati;
     }
 
     /**
-     * Metodo per fare il download dei componenti di tipo file di un determinato documento in un file zip
-     * 
+     * Metodo per fare il download del pacchetto aip di una determinata unita documentaria in un file zip
+     *
      * @param richiesta
      *            entity AroRichiestaRa
      * @param ud
      *            entity AroUnitaDoc
-     * 
+     *
      * @return RispostaWSRecupero oggetto con risposta recupero
-     * 
+     *
      * @throws Exception
      *             errore generico
      */
-    public RispostaWSRecupero scarica_xml_unisincro(AroRichiestaRa richiesta, AroUnitaDoc ud) throws Exception {
+    public RispostaWSRecupero scaricaXmlUnisincro(AroRichiestaRa richiesta, AroUnitaDoc ud) throws Exception {
         User utente = new User();
         utente.setUsername(richiesta.getIamUser().getNmUserid());
         utente.setIdUtente(richiesta.getIamUser().getIdUserIam());
@@ -478,40 +523,34 @@ public class RestituzioneArchivioJob {
         }
         // end EVO#20972
         RecuperoWeb recuperoUD = new RecuperoWeb(recupero, utente, idUnitaDoc, tipoSalvataggioFile, tipoEntitaRecupero);
-        RispostaWSRecupero rispostaWs = recuperoUD.recuperaOggetto();
 
-        return rispostaWs;
+        return recuperoUD.recuperaOggetto();
     }
 
     public boolean copyFile(String srcFilePath, String srcFileName, String destFilePath, String destFileName,
             boolean isDeleteFile) throws Exception {
         boolean isCopied = false;
 
-        if (srcFilePath != null && srcFileName != null) {
-            if (IOUtils.exists(srcFilePath)) {
-                if (IOUtils.copyFile(IOUtils.extractPath(srcFilePath), IOUtils.getFilename(srcFilePath), destFilePath,
-                        destFileName)) {
-                    // Nel caso sia stato richiesto, elimina il file
-                    if (isDeleteFile) {
-                        File fileToDownload = IOUtils.getFile(srcFilePath);
-                        IOUtils.delete(fileToDownload, true);
-                    }
-                    isCopied = true;
-                }
+        if (srcFilePath != null && srcFileName != null && IOUtils.exists(srcFilePath) && IOUtils.copyFile(
+                IOUtils.extractPath(srcFilePath), IOUtils.getFilename(srcFilePath), destFilePath, destFileName)) {
+            // Nel caso sia stato richiesto, elimina il file
+            if (isDeleteFile) {
+                File fileToDownload = IOUtils.getFile(srcFilePath);
+                IOUtils.delete(fileToDownload, true);
             }
+            isCopied = true;
         }
         return isCopied;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void setStatoRichiestaRaAtomic(long idRichiestaRa, long idLogJob) throws Exception {
+    public void setStatoRichiestaRaAtomic(long idRichiestaRa) {
         LOGGER.debug("setStatoRichiestaRaAtomic...");
         AroRichiestaRa richiesta = calcoloHelper.retrieveRichiestaById(idRichiestaRa);
-        LogJob logJob = calcoloHelper.retrieveLogJobById(idLogJob);
-        setStatoRichiestaRa(richiesta, logJob);
+        setStatoRichiestaRa(richiesta);
     }
 
-    private void setStatoRichiestaRa(AroRichiestaRa richiesta, LogJob logJob) throws Exception {
+    private void setStatoRichiestaRa(AroRichiestaRa richiesta) {
         LOGGER.debug("setStatoRichiestaRa...");
         Date systemDate = new Date();
         richiesta.setTsFine(systemDate);
@@ -529,7 +568,7 @@ public class RestituzioneArchivioJob {
         }
     }
 
-    public void elaboraEstrazioniInCorso(long idStrut, long idLogJob) throws Exception {
+    public void elaboraEstrazioniInCorso(long idStrut) {
         LOGGER.debug("Controllo se ci sono altre richieste di estrazione in corso");
         // determino le altre richieste di estrazioni appartenenti ad altre strutture (per la struttura corrente non
         // dovrebbero esistere),
@@ -537,11 +576,11 @@ public class RestituzioneArchivioJob {
         List<Long> richiesteEstrazioniInCorso = calcoloHelper.retrieveRichiesteEstrazioniInCorso(idStrut);
         RestituzioneArchivioJob newCalcoloEstrazioneJobRef1 = context.getBusinessObject(RestituzioneArchivioJob.class);
 
-        LOGGER.info("trovate " + richiesteEstrazioniInCorso.size()
-                + " richieste di estrazioni in corso da settare in stato = IN_ATTESA_ESTRAZIONE");
+        LOGGER.info("trovate {} richieste di estrazioni in corso da settare in stato = IN_ATTESA_ESTRAZIONE",
+                richiesteEstrazioniInCorso.size());
         for (Long richiestaId : richiesteEstrazioniInCorso) {
-            LOGGER.debug("trovata richiesta " + richiestaId + " in corso da settare in stato = IN_ATTESA_ESTRAZIONE");
-            newCalcoloEstrazioneJobRef1.setDaSospendereAtomic("RICHIESTA SOSPESA", richiestaId, idStrut, idLogJob);
+            LOGGER.debug("trovata richiesta {} in corso da settare in stato = IN_ATTESA_ESTRAZIONE", richiestaId);
+            newCalcoloEstrazioneJobRef1.setDaSospendereAtomic("RICHIESTA SOSPESA", richiestaId);
         }
     }
 
@@ -550,9 +589,8 @@ public class RestituzioneArchivioJob {
     public boolean checkRichiestaAnnullata(long idRichiestaRa) {
         AroRichiestaRa richiesta = calcoloHelper.retrieveRichiestaById(idRichiestaRa);
         Date actualDate = new Date();
-        LOGGER.debug("Verifico se la richiesta '" + richiesta.getIdRichiestaRa() + "' con data inizio "
-                + dateToString(richiesta.getTsInizio()) + " risulta annullata all'istante corrente ("
-                + dateToString(actualDate) + ")");
+        LOGGER.debug("Verifico se la richiesta '{}' con data inizio {} risulta annullata all'istante corrente ({})",
+                richiesta.getIdRichiestaRa(), dateToString(richiesta.getTsInizio()), dateToString(actualDate));
         if (richiesta.getTiStato().equals(AroRichiestaTiStato.ANNULLATO)) {
             LOGGER.debug("Richiesta annullata");
             return true;
@@ -563,23 +601,18 @@ public class RestituzioneArchivioJob {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void setDaSospendereAtomic(String waitReason, Long idRichiestaRa, long idStrut, long idLogJob)
-            throws Exception {
+    public void setDaSospendereAtomic(String waitReason, Long idRichiestaRa) {
         LOGGER.debug("setInAttesaAtomic...");
         AroRichiestaRa richiesta = calcoloHelper.retrieveRichiestaById(idRichiestaRa);
-        OrgStrut struttura = calcoloHelper.retrieveOrgStrutById(new BigDecimal(idStrut));
-        LogJob logJob = calcoloHelper.retrieveLogJobById(idLogJob);
-        // calcoloHelper.writeLogElencoVers(elenco, struttura, "", logJob);
-        setSospesa(waitReason, richiesta, struttura, logJob);
+        setSospesa(waitReason, richiesta);
     }
 
-    private void setSospesa(String waitReason, AroRichiestaRa richiesta, OrgStrut struttura, LogJob logJob)
-            throws Exception {
+    private void setSospesa(String waitReason, AroRichiestaRa richiesta) {
         LOGGER.debug("setSospesa...");
         // il sistema assegna alla richiesta stato = IN_ATTESA_ESTRAZIONE nella tabella ARO_RICHIESTA_RA
         richiesta.setTiStato(AroRichiestaTiStato.IN_ATTESA_ESTRAZIONE);
-        LOGGER.debug("Richiesta id = " + richiesta.getIdRichiestaRa() + " settata con stato "
-                + AroRichiestaTiStato.IN_ATTESA_ESTRAZIONE.name() + " per '" + waitReason + "'");
+        LOGGER.debug("Richiesta id = {} settata con stato {}  per '{}'", richiesta.getIdRichiestaRa(),
+                AroRichiestaTiStato.IN_ATTESA_ESTRAZIONE.name(), waitReason);
         // il sistema definisce sulla richiesta la data di fine (???) ed il motivo dell'attesa pari a "Richiesta
         // sospesa"
         Date systemDate = new Date();
@@ -587,45 +620,22 @@ public class RestituzioneArchivioJob {
         richiesta.setNote(waitReason);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void setStatoAipRestArchivioAtomic(Long idAipRestArchivio, TiStatoAroAipRa tiStato, BigDecimal dim,
-            Date dtEstrazione) throws Exception {
-        LOGGER.debug("setStatoAipRestArchivioAtomic...");
-        AroAipRestituzioneArchivio aipRestArchivio = calcoloHelper
-                .retrieveAroAipRestituzioneArchivioById(idAipRestArchivio);
-        setStatoAipRestArchivio(aipRestArchivio, tiStato, dim, dtEstrazione);
-    }
-
     public void setStatoAipRestArchivio(AroAipRestituzioneArchivio aroAipRestArchivio, TiStatoAroAipRa tiStato,
             BigDecimal dim, Date dtEstrazione) {
         LOGGER.debug("setStatoAipRestArchivio...");
         aroAipRestArchivio.setTiStato(tiStato);
-        LOGGER.debug("Aip restituzione archivio id = " + aroAipRestArchivio.getIdAipRestArchivio()
-                + " settato con stato " + TiStatoAroAipRa.ESTRATTO.name());
+        LOGGER.debug("Aip restituzione archivio id = {} settato con stato {}",
+                aroAipRestArchivio.getIdAipRestArchivio(), TiStatoAroAipRa.ESTRATTO.name());
         aroAipRestArchivio.setDim(dim);
         aroAipRestArchivio.setDtEstrazione(dtEstrazione);
-        LOGGER.debug("Data estrazione: " + dateToString(dtEstrazione) + "; dim: " + dim);
+        LOGGER.debug("Data estrazione: {}; dim: {}", dateToString(dtEstrazione), dim);
     }
 
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void setInErroreAtomic(String cdErrore, Long idAipRestArchivio, long idStrut, long idLogJob)
-            throws Exception {
-        LOGGER.debug("setInErroreAtomic...");
-        AroAipRestituzioneArchivio aipRestArchivio = calcoloHelper
-                .retrieveAroAipRestituzioneArchivioById(idAipRestArchivio);
-        OrgStrut struttura = calcoloHelper.retrieveOrgStrutById(new BigDecimal(idStrut));
-        LogJob logJob = calcoloHelper.retrieveLogJobById(idLogJob);
-        // calcoloHelper.writeLogElencoVers(elenco, struttura, ElencoEnums.OpTypeEnum.RECUPERA_ELENCO_SCADUTO.name(),
-        // logJob);
-        setErrore(cdErrore, aipRestArchivio, struttura, logJob);
-    }
-
-    private void setErrore(String cdErrore, AroAipRestituzioneArchivio aipRestArchivio, OrgStrut struttura,
-            LogJob logJob) throws Exception {
+    private void setErrore(String cdErrore, AroAipRestituzioneArchivio aipRestArchivio) {
         LOGGER.debug("setErrore...");
         aipRestArchivio.setTiStato(TiStatoAroAipRa.ERRORE);
-        LOGGER.debug("Aip restituzione archivio id = " + aipRestArchivio.getIdAipRestArchivio() + " settata con stato "
-                + TiStatoAroAipRa.ERRORE.name() + " per '" + cdErrore + "'");
+        LOGGER.debug("Aip restituzione archivio id = {} settata con stato {} per '{}'",
+                aipRestArchivio.getIdAipRestArchivio(), TiStatoAroAipRa.ERRORE.name(), cdErrore);
         // il sistema definisce sul record il codice errore
         aipRestArchivio.setCdErrore(cdErrore);
     }

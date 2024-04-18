@@ -107,12 +107,16 @@
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.TI_CATEG_STRUT%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.NM_CATEG_STRUT%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.TI_SAVE_FILE%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.STORAGE_UTILIZZATO_VERS%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.STORAGE_UTILIZZATO_VERS_MM%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />                    
+                    <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.STORAGE_UTILIZZATO_AGG_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.ID_TIPO_SERVIZIO%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.ID_TIPO_SERVIZIO_ATTIV%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />                    
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.ID_TIPO_SERV_CONSERV_TIPO_UD%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />                    
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.ID_TIPO_SERV_ATTIV_TIPO_UD%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />                    
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.DT_ISTITUZ%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.DT_FIRST_VERS%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.DT_LAST_VERS%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.DT_SOPPRES%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.DL_NOTE_TIPO_UD%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                 </slf:section>

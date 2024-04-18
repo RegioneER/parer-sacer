@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -8,27 +25,25 @@ package it.eng.parer.job.verificaCompRegistro.helper;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.DecAaRegistroUnitaDoc;
 import it.eng.parer.entity.DecErrAaRegistroUnitaDoc;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 /**
  *
  * @author fioravanti_f
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "VerificaCompRegHelper")
 @LocalBean
 public class VerificaCompRegHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(VerificaCompRegHelper.class);
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
@@ -36,7 +51,7 @@ public class VerificaCompRegHelper {
         List<DecAaRegistroUnitaDoc> aaRegDaElabList;
         String queryStr = "SELECT u FROM DecAaRegistroUnitaDoc u " + "where u.flUpdFmtNumero = '1' ";
         javax.persistence.Query query = entityManager.createQuery(queryStr);
-        aaRegDaElabList = (List<DecAaRegistroUnitaDoc>) query.getResultList();
+        aaRegDaElabList = query.getResultList();
         return aaRegDaElabList;
     }
 
@@ -52,7 +67,7 @@ public class VerificaCompRegHelper {
         query.setParameter("idRegistroUnitaDocIn", idRegistroUnitaDoc);
         query.setParameter("aaKeyUnitaDocIn", new BigDecimal(anno));
         query.setParameter("dataDiOggiIn", new Date());
-        aroUnitaDocs = (List<AroUnitaDoc>) query.getResultList();
+        aroUnitaDocs = query.getResultList();
         return aroUnitaDocs;
     }
 

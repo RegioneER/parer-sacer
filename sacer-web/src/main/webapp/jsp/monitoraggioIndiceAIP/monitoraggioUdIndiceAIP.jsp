@@ -35,6 +35,11 @@
                         $('#loading').remove();
                     });
                 });
+                
+                
+                
+                
+                
             });
         </script>
     </sl:head>
@@ -88,9 +93,21 @@
             <sl:newLine skipLine="true"/>
             
             <!--  piazzo la lista con i risultati -->
+            <slf:tab  name="<%= MonitoraggioIndiceAIPForm.ElenchiMonitoraggioIndiceAIPTabs.NAME%>" tabElement="ListaUdVersate">
             <h2><b><font color="#d3101c">Elenco unità documentarie versate</font></b></h2>
             <slf:list   name="<%= MonitoraggioIndiceAIPForm.UdMonitoraggioIndiceAIPList.NAME%>" />
             <slf:listNavBar  name="<%= MonitoraggioIndiceAIPForm.UdMonitoraggioIndiceAIPList.NAME%>" />
+            </slf:tab>
+            <slf:tab  name="<%= MonitoraggioIndiceAIPForm.ElenchiMonitoraggioIndiceAIPTabs.NAME%>" tabElement="ListaUdAggiornate">
+            <h2><b><font color="#d3101c">Elenco unità documentarie aggiornate</font></b></h2>
+            <slf:list   name="<%= MonitoraggioIndiceAIPForm.UdAggiornateMonitoraggioIndiceAIPList.NAME%>" />
+            <slf:listNavBar  name="<%= MonitoraggioIndiceAIPForm.UdAggiornateMonitoraggioIndiceAIPList.NAME%>" />
+            </slf:tab>
+            <slf:tab  name="<%= MonitoraggioIndiceAIPForm.ElenchiMonitoraggioIndiceAIPTabs.NAME%>" tabElement="ListaDocumentiAggiunti">
+            <h2><b><font color="#d3101c">Elenco documenti aggiunti alle unità documentarie</font></b></h2>
+            <slf:list   name="<%= MonitoraggioIndiceAIPForm.UdDocAggiuntiMonitoraggioIndiceAIPList.NAME%>" />
+            <slf:listNavBar  name="<%= MonitoraggioIndiceAIPForm.UdDocAggiuntiMonitoraggioIndiceAIPList.NAME%>" />
+            </slf:tab>
             <sl:newLine skipLine="true"/>
             <h2><b><font color="#d3101c">Risultati conteggio</font></b></h2>
             <slf:list   name="<%= MonitoraggioIndiceAIPForm.ConteggioMonitoraggioIndiceAIPList.NAME%>" />

@@ -1,5 +1,65 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
+import it.eng.integriam.client.ws.IAMSoapClients;
+import it.eng.integriam.client.ws.renews.News;
+import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazione;
+import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazioneRisposta;
+import it.eng.parer.disciplinare.DisciplinareTecnicoEjb;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.slite.gen.Application;
+import it.eng.parer.slite.gen.action.HomeAbstractAction;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.helper.MonitoraggioHelper;
+import it.eng.parer.web.util.WebConstants;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.spagoCore.error.EMFError;
+import it.eng.spagoLite.db.base.BaseRowInterface;
+import it.eng.spagoLite.db.base.BaseTableInterface;
+import it.eng.spagoLite.form.fields.Field;
+import it.eng.spagoLite.form.fields.Fields;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.ejb.EJB;
+import java.text.SimpleDateFormat;
+import it.eng.spagoLite.security.auth.PwdUtil;
+import org.apache.commons.codec.binary.Base64;
+import javax.xml.ws.BindingProvider;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import javax.ejb.EJB;
+import java.io.*;
+import java.math.BigDecimal;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import it.eng.integriam.client.ws.IAMSoapClients;
 import it.eng.integriam.client.ws.renews.News;
 import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazione;
@@ -66,9 +126,8 @@ public class HomeAction extends HomeAbstractAction {
                 Date now = new Date();
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(getUser().getScadenzaPwd());
-                int numGiorni = Integer
-                        .parseInt(configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NUM_GIORNI_ESPONI_SCAD_PSW,
-                                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+                int numGiorni = Integer.parseInt(
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_GIORNI_ESPONI_SCAD_PSW));
                 cal.add(Calendar.DATE, -numGiorni);
 
                 if (cal.getTime().before(now) && getUser().getScadenzaPwd().after(now)) {
@@ -83,6 +142,7 @@ public class HomeAction extends HomeAbstractAction {
 
             }
             getForm().getContenutoSacerTotaliUdDocComp().getScaricaDisciplinareButton().setEditMode();
+            getForm().getContenutoSacerTotaliUdDocComp().getScaricaDisciplinareButton().setDisableHourGlass(true);
         } catch (Exception e) {
             logger.error("Errore nella caricamento della Home Page", e);
         }
@@ -135,8 +195,9 @@ public class HomeAction extends HomeAbstractAction {
         String retURL = sb.toString();
         String salt = Base64.encodeBase64URLSafeString(PwdUtil.generateSalt());
         String hmac = EncryptionUtil.getHMAC(retURL + ":" + salt);
-        this.getResponse().sendRedirect(configHelper.getValoreParamApplic("URL_MODIFICA_PASSWORD", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC) + "?r=" + retURL + "&h=" + hmac + "&s=" + salt);
+        this.getResponse()
+                .sendRedirect(configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_MODIFICA_PASSWORD)
+                        + "?r=" + retURL + "&h=" + hmac + "&s=" + salt);
 
     }
 
@@ -162,14 +223,10 @@ public class HomeAction extends HomeAbstractAction {
     private void findNews() {
 
         ArrayList<Map<String, String>> list = new ArrayList<>();
-        String url = configHelper.getValoreParamApplic("URL_RECUP_NEWS", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String psw = configHelper.getValoreParamApplic("PSW_RECUP_INFO", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String user = configHelper.getValoreParamApplic("USERID_RECUP_INFO", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String timeoutString = configHelper.getValoreParamApplic("TIMEOUT_RECUP_NEWS", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String url = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_NEWS);
+        String psw = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
+        String user = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
+        String timeoutString = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_RECUP_NEWS);
 
         RestituzioneNewsApplicazione client = IAMSoapClients.restituzioneNewsApplicazioneClient(user, psw, url);
 
@@ -182,8 +239,8 @@ public class HomeAction extends HomeAbstractAction {
                     + "\" per il parametro TIMEOUT_RECUP_NEWS non è corretto. Utilizzo il valore predefinito");
         }
 
-        RestituzioneNewsApplicazioneRisposta resp = client.restituzioneNewsApplicazione(configHelper
-                .getValoreParamApplic("NM_APPLIC", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        RestituzioneNewsApplicazioneRisposta resp = client.restituzioneNewsApplicazione(
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
 
         String newline = System.getProperty("line.separator");
         if (resp.getListaNews() != null) {

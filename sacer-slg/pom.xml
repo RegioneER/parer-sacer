@@ -3,9 +3,9 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>7.3.2-SNAPSHOT</version>
+        <version>9.2.1-SNAPSHOT</version>
     </parent>
-    <groupId>it.eng.parer</groupId>
+    
     <artifactId>sacer-jboss-slg</artifactId>
     <name>sacer-slg</name>
     <description>SLG</description>
@@ -23,6 +23,9 @@
                         <id>parer-tool-compilation</id>
                         <phase>generate-sources</phase>
                         <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                            <compilerVersion>1.8</compilerVersion>
                             <includes>
                                 <include>it/eng/parer/slite/gen/util/*.java</include>
                             </includes>
@@ -42,9 +45,9 @@
                         <id>createSliteDir</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <tasks>                                
+                            <target>                                
                                 <mkdir dir="${project.build.directory}/generated-sources/slite" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -78,33 +81,33 @@
         </plugins>
     </build>
     <dependencies>
-        <dependency>
-            <groupId>org.glassfish.main.persistence</groupId>
-            <artifactId>eclipselink-wrapper</artifactId>        
+		<dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-jakartaee-8.0</artifactId>
             <type>pom</type>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>      
-            <scope>test</scope>
-        </dependency>       
+        </dependency>     
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-middle</artifactId>
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
-            <artifactId>sacer-jpa-el</artifactId>
+            <artifactId>sacer-jboss-jpa</artifactId>
             <scope>provided</scope>
-            <classifier>weaved</classifier>           
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-sl-jpa</artifactId>
-            <!--<classifier>weaved</classifier>-->
         </dependency>
-        
-     
+ 		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>      
+            <scope>test</scope>
+        </dependency>		
     </dependencies>
 </project>

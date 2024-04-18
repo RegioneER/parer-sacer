@@ -1,10 +1,68 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
+
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.ejb.EJB;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.ejb.TipoStrutturaDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
-import it.eng.parer.exception.ParerErrorSeverity;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.util.LogParam;
@@ -24,48 +82,13 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.versamento.dto.FileBinario;
+import it.eng.spagoCore.configuration.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import javax.ejb.EJB;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
@@ -187,6 +210,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
             if (getNavigationEvent().equals(NE_DETTAGLIO_VIEW)) {
                 getForm().getXsdDatiSpec().getScaricaXsdButton().setEditMode();
+                getForm().getXsdDatiSpec().getScaricaXsdButton().setDisableHourGlass(true);
             }
 
             if (getForm().getIdList().getId_tipo_doc().parse() != null) {
@@ -211,6 +235,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
             getForm().getXsdDatiSpec().copyFromBean(xsdDatiSpecRowBean);
 
             getForm().getXsdDatiSpec().getScaricaXsdButton().setEditMode();
+            getForm().getXsdDatiSpec().getScaricaXsdButton().setDisableHourGlass(true);
             getForm().getXsdDatiSpec().getCaricaXsdButton().setViewMode();
 
             if (getForm().getXsdDatiSpecList().getTable().size() > 0) {
@@ -442,22 +467,16 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
             // maximum size that will be stored in memory
             factory.setSizeThreshold(sizeMb);
-            Properties props = new Properties();
-            try {
-                props.load(this.getClass().getClassLoader().getResourceAsStream("/Sacer.properties"));
-            } catch (IOException ex) {
-                throw new ParerUserError(ParerErrorSeverity.ERROR,
-                        "Errore nel caricamento delle impostazioni per l'upload", null);
-            }
             // the location for saving data that is larger than
-            factory.setRepository(new File(props.getProperty("loadXsdApp.upload.directory")));
+            factory.setRepository(
+                    new File(ConfigSingleton.getInstance().getStringValue(LOAD_XSD_APP_UPLOAD_DIR.name())));
             // Create a new file upload handler
             ServletFileUpload upload = new ServletFileUpload(factory);
             // maximum size before a FileUploadException will be thrown
-            upload.setSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxRequestSize")));
-            upload.setFileSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxFileSize")));
-            List items = upload.parseRequest(getRequest());
-            Iterator iter = items.iterator();
+            upload.setSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_REQUEST_SIZE.name()));
+            upload.setFileSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_FILE_SIZE.name()));
+            List<FileItem> items = upload.parseRequest(getRequest());
+            Iterator<FileItem> iter = items.iterator();
 
             DiskFileItem tmpFileItem = null;
             DiskFileItem tmpOperation = null;
@@ -638,8 +657,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getXsdDatiSpec().getStatus().equals(Status.insert)) {
@@ -755,8 +773,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
         if (Application.Publisher.TIPO_COMP_DOC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
@@ -820,8 +837,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
         param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -848,8 +864,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                         SpagoliteLogUtil.getToolbarUpdate());
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());

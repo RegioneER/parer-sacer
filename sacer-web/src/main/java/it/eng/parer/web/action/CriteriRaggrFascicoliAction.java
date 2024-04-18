@@ -1,20 +1,21 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import javax.ejb.EJB;
-
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jettison.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.ejb.SistemaMigrazioneEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
@@ -32,13 +33,7 @@ import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.CriteriRaggrFascicoliAbstractAction;
 import it.eng.parer.slite.gen.form.CriteriRaggrFascicoliForm;
 import it.eng.parer.slite.gen.form.CriteriRaggrFascicoliForm.CreaCriterioRaggrFascicoli;
-import it.eng.parer.slite.gen.tablebean.DecTipoFascicoloTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTitolTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.*;
 import it.eng.parer.slite.gen.viewbean.DecVTreeTitolRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVTreeTitolTableBean;
 import it.eng.parer.volume.utils.VolumeEnums;
@@ -46,6 +41,7 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.util.ActionEnums;
 import it.eng.parer.web.util.ComboGetter;
+import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.web.validator.FascicoliValidator;
 import it.eng.parer.ws.utils.CostantiDB;
@@ -66,6 +62,16 @@ import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  *
@@ -73,7 +79,7 @@ import it.eng.spagoLite.security.Secure;
  */
 public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAction {
 
-    private static Logger logger = LoggerFactory.getLogger(CriteriRaggrFascicoliAction.class.getName());
+    private static Logger log = LoggerFactory.getLogger(CriteriRaggrFascicoliAction.class.getName());
 
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configurationHelper;
@@ -97,7 +103,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
 
     private DecodeMap mappaTipoFascicolo;
     private DecodeMap mappaTitol;
-    private DecodeMap mappaSisMig;
 
     private BaseTable listaTitolari;
 
@@ -180,7 +185,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error("Errore in ricerca ambiente", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -216,7 +221,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         getForm().getFiltriCriteriRaggrFascicoli().getRicercaCriteriRaggrFascicoliButton().setDisableHourGlass(true);
     }
 
-    private void setAmbienteEnteStrutturaDesc(BigDecimal idStrut) throws EMFError {
+    private void setAmbienteEnteStrutturaDesc(BigDecimal idStrut) {
         String[] aes = struttureEjb.getAmbienteEnteStrutturaDesc(idStrut);
         getForm().getCreaCriterioRaggrFascicoli().getNm_ambiente().setValue(aes[0]);
         getForm().getCreaCriterioRaggrFascicoli().getNm_ente().setValue(aes[1]);
@@ -226,7 +231,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
     private boolean isCriterioRaggrFascicoliStandard(CriteriRaggrFascicoliForm.CreaCriterioRaggrFascicoli filtri,
             Object[] anniFascicoliValidati, List<BigDecimal> voceTitolList) throws EMFError {
         BigDecimal idStrut = filtri.getId_strut().parse();
-        String nmCriterioRaggr = filtri.getNm_criterio_raggr().parse();
         BigDecimal aaFascicolo = filtri.getAa_fascicolo().parse();
         BigDecimal aaFascicoloDa = filtri.getAa_fascicolo_da().parse();
         BigDecimal aaFascicoloA = filtri.getAa_fascicolo_a().parse();
@@ -235,14 +239,8 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         Set<String> tipiFascicolo = filtri.getNm_tipo_fascicolo().getDecodedValues();
         BigDecimal niMaxFasc = filtri.getNi_max_fasc().parse();
 
-        // TODO: verificare
-        /*
-         * String tiConservazione = filtri.getTi_conservazione().parse(); List<String> nmSistemaMigraz =
-         * filtri.getNm_sistema_migraz().parse();
-         */
-
-        return fascicoliEjb.isCriterioRaggrFascStandard(idStrut, nmCriterioRaggr, aaFascicolo, aaFascicoloDa,
-                aaFascicoloA, niTempoScadChius, tiTempoScadChius, tipiFascicolo, voceTitolList, niMaxFasc);
+        return fascicoliEjb.isCriterioRaggrFascStandard(idStrut, aaFascicolo, aaFascicoloDa, aaFascicoloA,
+                niTempoScadChius, tiTempoScadChius, tipiFascicolo, voceTitolList, niMaxFasc);
     }
 
     /**
@@ -283,7 +281,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             }
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error("Errore in ricerca ambiente", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -360,9 +358,8 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      * @throws EMFError
      *             errore generico
      */
-    private void populateComboFields(BaseRow critRB) throws EMFError {
+    private void populateComboFields(BaseRow critRB) {
         String[] tipoFasc = null;
-        // String[] sisMigr = null;
 
         int counter = 0;
         if ("1".equals(critRB.getString("fl_filtro_tipo_fascicolo"))) {
@@ -374,21 +371,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 tipoFasc[counter++] = row.getBigDecimal("id_tipo_fascicolo").toString();
             }
         }
-
-        // TODO: verificare
-        // counter = 0;
-        // if ("1".equals(critRB.getString("fl_filtro_sistema_migraz"))) {
-        // BaseTable critMult =
-        // fascicoliEjb.ricercaSelCriterioRaggrFascicoli(critRB.getBigDecimal("id_criterio_raggr_fasc"),
-        // ActionEnums.TipoSelCriteriRaggrFasc.SISTEMA_MIGRAZ.name());
-        // sisMigr = new String[critMult.size()];
-        // for (BaseRow row : critMult) {
-        // sisMigr[counter++] = row.getBigDecimal("id_sistema_migraz").toString();
-        // }
-        // }
-
         getForm().getCreaCriterioRaggrFascicoli().getNm_tipo_fascicolo().setValues(tipoFasc);
-        // getForm().getCreaCriterioRaggrFascicoli().getNm_sistema_migraz().setValues(sisMigr);
     }
 
     /**
@@ -400,7 +383,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      * @throws EMFError
      *             errore generico
      */
-    private void initDecodeMapTitolTipoFascByIdStrut(BigDecimal idStrut) throws EMFError {
+    private void initDecodeMapTitolTipoFascByIdStrut(BigDecimal idStrut) {
         if (idStrut != null) {
             // Setto i valori della combo TIPO FASCICOLO ricavati dalla tabella DEC_TIPO_FASCICOLO
             DecTipoFascicoloTableBean tmpTableBeanTipoFascicolo = tipoFascicoloEjb.getDecTipoFascicoloTableBean(idStrut,
@@ -412,12 +395,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             DecTitolTableBean tmpTableBeanTitol = titolariEjb.getDecTitolTableBean(idStrut, false); // TODO: verificare
             mappaTitol = new DecodeMap();
             mappaTitol.populatedMap(tmpTableBeanTitol, "id_titol", "nm_titol");
-
-            // TODO
-            // Setto i valori della combo SISTEMI DI MIGRAZIONE ricavati dalla tabella APL_SISTEMA_MIGRAZ
-            // BaseTableInterface tmpTableBeanSisMig = sysMigrazioneEjb.getNmSistemaMigrazTableBean(idStrut);
-            // mappaSisMig = new DecodeMap();
-            // mappaSisMig.populatedMap(tmpTableBeanSisMig, "id_sistema_migraz", "nm_sistema_migraz");
         }
     }
 
@@ -430,7 +407,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      * @throws EMFError
      *             errore generico
      */
-    private void initTableBeanTitolListByIdCritRaggrFasc(BigDecimal idCriterioRaggrFasc) throws EMFError {
+    private void initTableBeanTitolListByIdCritRaggrFasc(BigDecimal idCriterioRaggrFasc) {
         if (idCriterioRaggrFasc != null) {
             // Setto i valori della LISTA TITOLARI ricavati dalla tabella DEC_SEL_CRITERIO_RAGGR_FASC
             listaTitolari = titolariEjb.getDecVoceTitolsTableBean(idCriterioRaggrFasc,
@@ -448,7 +425,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      * 
      * @throws EMFError
      */
-    private void initCriterioRaggrFascCombo(BigDecimal idStrut) throws EMFError {
+    private void initCriterioRaggrFascCombo(BigDecimal idStrut) {
         initDecodeMapTitolTipoFascByIdStrut(idStrut);
         getForm().getCreaCriterioRaggrFascicoli().getTi_scad_chius().setDecodeMap(
                 ComboGetter.getMappaOrdinalGenericEnum("ti_scad_chius", VolumeEnums.ExpirationTypeEnum.values()));
@@ -471,7 +448,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      * @throws EMFError
      *             errore generico
      */
-    private void initCriterioRaggrFascLists(BigDecimal idCriterioRaggrFasc) throws EMFError {
+    private void initCriterioRaggrFascLists(BigDecimal idCriterioRaggrFasc) {
         initTableBeanTitolListByIdCritRaggrFasc(idCriterioRaggrFasc);
         getForm().getTitolariList().setTable(listaTitolari);
     }
@@ -538,7 +515,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
     public void elencoOnClick() throws EMFError {
         if (getLastPublisher().equals(Application.Publisher.CRITERIO_RAGGR_FASC_DETAIL)) {
             if (!getMessageBox().hasError()) {
-                // goBackTo(Application.Publisher.LISTA_CRITERI_RAGGR_FASC);
                 goBack();
             }
         } else {
@@ -574,7 +550,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 getForm().getCriterioRaggrFascicoliList().setHideUpdateButton(false);
                 getForm().getCriterioRaggrFascicoliList().setUserOperations(true, true, true, true);
             } catch (EMFError ex) {
-                logger.error(ex.getMessage(), ex);
+                log.error(ex.getMessage(), ex);
             }
         }
     }
@@ -606,7 +582,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         Fields<Field> filtri = null;
         BigDecimal idStrut = null;
         BigDecimal idTipoFascicolo = null;
-        BigDecimal idVoceTitol = null;
 
         // Setto ambiente/ente/struttura in base ai valori della pagina di ricerca criteri
         idStrut = initComboAmbienteEnteStrutturaCreaCriteriRaggrFascFromRicercaCriteri();
@@ -614,7 +589,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         // Inizializzo le combo "standard" della pagina
         initCriterioRaggrFascCombo(idStrut);
         // Setto i filtri e le liste standard
-        populateDefaultValues(filtri, idStrut);
+        populateDefaultValues(idStrut);
         // Setto il numero massimo fascicoli con lo stesso valore della struttura impostata
         settaNumeroMassimoFascicoli(getForm().getCreaCriterioRaggrFascicoli().getId_strut().parse());
         // Setto il numero di giorni di scadenza chiusura con il valore definito sulla struttura corrente
@@ -676,35 +651,18 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      * @throws EMFError
      *             errore generico
      */
-    private void populateDefaultValues(Fields<Field> filtri, BigDecimal idStrut) throws EMFError {
+    private void populateDefaultValues(BigDecimal idStrut) {
         OrgStrutRowBean struttura = null;
         if (idStrut != null) {
             struttura = struttureEjb.getOrgStrutRowBean(idStrut);
         }
-
-        // if (struttura != null) {
-        // if (struttura.getTiScadChiusVolume() != null) {
-        // // TODO: verificare se bisogna leggere il valore dalla struttura
-        // // getForm().getCreaCriterioRaggrFascicoli().getTi_scad_chius().setValue(struttura.getTiScadChiusVolume());
-        // }
-        // if (struttura.getNiTempoScadChius() != null) {
-        // // TODO: verificare se bisogna leggere il valore dalla struttura o da orgStrutConfigFascicolo
-        // //
-        // getForm().getCreaCriterioRaggrFascicoli().getNi_tempo_scad_chius().setValue(struttura.getNiTempoScadChius().toString());
-        // }
-        // if (struttura.getTiTempoScadChius() != null) {
-        // // TODO: verificare se bisogna leggere il valore dalla struttura
-        // //
-        // getForm().getCreaCriterioRaggrFascicoli().getTi_tempo_scad_chius().setValue(struttura.getTiTempoScadChius());
-        // }
-        // }
 
         getForm().getCreaCriterioRaggrFascicoli().getTi_tempo_scad_chius()
                 .setValue(VolumeEnums.TimeTypeEnum.GIORNI.name());
 
         Calendar cal = Calendar.getInstance();
         cal.set(2444, Calendar.DECEMBER, 31);
-        SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+        SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getCreaCriterioRaggrFascicoli().getDt_istituz().setValue(df.format(Calendar.getInstance().getTime()));
         getForm().getCreaCriterioRaggrFascicoli().getDt_soppres().setValue(df.format(cal.getTime()));
 
@@ -730,8 +688,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.LISTA_CRITERI_RAGGR_FASC)) {
@@ -748,10 +705,11 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 getMessageBox().addMessage(
                         new Message(MessageLevel.INF, "Criterio di raggruppamento fascicoli eliminato con successo"));
                 getMessageBox().setViewMode(ViewMode.plain);
-                if (Application.Publisher.CRITERIO_RAGGR_FASC_DETAIL.equals(getLastPublisher())
-                        || "".equals(getLastPublisher())) {
-                    goBackTo(Application.Publisher.LISTA_CRITERI_RAGGR_FASC);
-                } else if (Application.Publisher.LISTA_CRITERI_RAGGR_FASC.equals(getLastPublisher())) {
+                // if (Application.Publisher.CRITERIO_RAGGR_FASC_DETAIL.equals(getLastPublisher())
+                // || "".equals(getLastPublisher())) {
+                // goBackTo(Application.Publisher.LISTA_CRITERI_RAGGR_FASC);
+                // } else
+                if (Application.Publisher.LISTA_CRITERI_RAGGR_FASC.equals(getLastPublisher())) {
                     reloadAfterGoBack(Application.Publisher.LISTA_CRITERI_RAGGR_FASC);
                     forwardToPublisher(getLastPublisher());
                 } else {
@@ -968,17 +926,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         filtri.post(getRequest());
         if (filtri.validate(getMessageBox())) {
             FascicoliValidator validator = new FascicoliValidator(getMessageBox());
-            // TODO: verificare, Valida data creazione
-            /*
-             * Timestamp dataDa = filtri.getDt_().parse(); Timestamp dataA = filtri.getDt_().parse(); Date[]
-             * dateCreazioneValidate = validator.validaDate(dataDa, filtri.getOre_dt_creazione_unita_doc_da().parse(),
-             * filtri.getMinuti_dt_creazione_unita_doc_da().parse(), dataA,
-             * filtri.getOre_dt_creazione_unita_doc_a().parse(), filtri.getMinuti_dt_creazione_unita_doc_a().parse(),
-             * filtri.getDt_creazione_unita_doc_da().getHtmlDescription().replace(WebConstants.FORMATO_DATA, ""),
-             * filtri.getDt_creazione_unita_doc_a().getHtmlDescription().replace(WebConstants.FORMATO_DATA, ""));
-             * validator.validaOrdineDateOrari(filtri.getAa_fascicolo_da().parse(), filtri.getAa_fascicolo_a().parse(),
-             * filtri.getAa_fascicolo_da().getHtmlDescription(), filtri.getAa_fascicolo_a().getHtmlDescription());
-             */
             // Valida Tipo scadenza
             validator.validaTipoScadenza(filtri.getTi_scad_chius().parse(), filtri.getNi_tempo_scad_chius().parse(),
                     filtri.getTi_tempo_scad_chius().parse());
@@ -994,7 +941,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 if (fascicoliEjb.existNomeCriterio(filtri.getNm_criterio_raggr().parse(),
                         filtri.getId_strut().parse())) {
                     getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                            "Nome criterio di raggruppamento fascicoli già esistente per la struttura utilizzata <br>"));
+                            "Nome criterio di raggruppamento fascicoli già esistente per la struttura utilizzata <br>"));
                 }
             } else if (status == CRITERIO_EDIT) {
                 // Controllo che non esista su db per quella struttura un criterio con lo stesso nome, escluso esso
@@ -1002,7 +949,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 if (!filtri.getNm_criterio_raggr().parse().equals(nome) && fascicoliEjb
                         .existNomeCriterio(filtri.getNm_criterio_raggr().parse(), filtri.getId_strut().parse())) {
                     getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                            "Nome criterio di raggruppamento fascicoli già esistente per la struttura utilizzata <br>"));
+                            "Nome criterio di raggruppamento fascicoli già esistente per la struttura utilizzata <br>"));
                 }
             }
             // Valida Descrizione criterio
@@ -1030,37 +977,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 getMessageBox().addMessage(new Message(MessageLevel.ERR,
                         "E’ obbligatorio indicare il filtro sul tipo fascicolo o sull’indice di classificazione <br>"));
 
-            // TODO: verificare
-            /*
-             * if (filtri.getAa_fascicolo().parse() == null && filtri.getAa_fascicolo().parse() == null &&
-             * filtri.getAa_fascicolo_da().parse() == null && filtri.getAa_fascicolo_a().parse() == null &&
-             * filtri.getNm_tipo_fascicolo().parse().isEmpty() && filtri.getTi_conservazione().parse() == null) {
-             * getMessageBox().addMessage(new Message(MessageLevel.ERR,
-             * "Non è stato inserito alcun filtro per il criterio di raggruppamento fascicoli oltre ai dati obbligatori <br>"
-             * )); }
-             */
-
             if (!getMessageBox().hasError()) {
-                /*
-                 * // TODO: verificare BigDecimal numMaxPerWarning = new
-                 * BigDecimal(configurationHelper.getValoreParamApplic("NUM_MAX_COMP_CRITERIO_RAGGR_WARN")); BigDecimal
-                 * numMaxPerErrore = new
-                 * BigDecimal(configurationHelper.getValoreParamApplic("NUM_MAX_COMP_CRITERIO_RAGGR_ERR")); BigDecimal
-                 * niMaxFasc = filtri.getNi_max_fasc().parse(); niMaxFasc = niMaxFasc != null ? niMaxFasc : new
-                 * BigDecimal("0");
-                 * 
-                 * // TODO: verificare, Se il numero massimo di fascicoli è compreso tra numMaxPerWarning e
-                 * numMaxPerErrore if (niMaxFasc.compareTo(numMaxPerWarning) > 0 && niMaxFasc.compareTo(numMaxPerErrore)
-                 * <= 0) { getForm().getCriterioCustomMessageButtonList().setEditMode(); Object[] sa = new Object[9];
-                 * sa[0] = filtri; sa[1] = anniFascicoliValidati; sa[2] = nome; sa[3] = annoDa; sa[4] = annoA; sa[5] =
-                 * new BigDecimal(status); sa[6] = "controllo1"; sa[7] = standardOld; sa[8] = voceTitolList;
-                 * getSession().setAttribute("salvataggioAttributes", sa); getRequest().setAttribute("customBox",
-                 * numMaxPerWarning); } else if (niMaxFasc.compareTo(numMaxPerErrore) > 0) {
-                 * getMessageBox().addError("Attenzione: numero massimo fascicoli superiore a " + numMaxPerErrore +
-                 * ": impossibile eseguire il salvataggio"); } else {
-                 * eseguiPrimoStepSalvataggioCriterioRaggrFascicoli(filtri, anniFascicoliValidati, nome, annoDa, annoA,
-                 * status, standardOld, voceTitolList); }
-                 */
                 eseguiPrimoStepSalvataggioCriterioRaggrFascicoli(filtri, anniFascicoliValidati, nome, annoDa, annoA,
                         status, standardOld, voceTitolList);
             }
@@ -1084,12 +1001,10 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         ComboBox enteCombo = (ComboBox) campi.getComponent("id_ente");
         ComboBox strutCombo = (ComboBox) campi.getComponent("id_strut");
         ComboBox tipoFascicoloCombo = null;
-        // ComboBox titolarioCombo = null;
         Input niMaxFasc = (Input) campi.getComponent("ni_max_fasc");
         if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.FILTRI_CRITERI_RAGGR_FASC)) {
             tipoFascicoloCombo = (ComboBox) campi.getComponent("id_tipo_fascicolo");
         } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
-            // titolarioCombo = (ComboBox) campi.getComponent("id_titol");
         }
 
         // Azzero i valori preimpostati delle varie combo
@@ -1099,7 +1014,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             tipoFascicoloCombo.setValue("");
         } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
             niMaxFasc.setValue("");
-            // titolarioCombo.setValue("");
         }
 
         BigDecimal idAmbiente = (!ambienteCombo.getValue().equals("") ? new BigDecimal(ambienteCombo.getValue())
@@ -1119,9 +1033,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 strutCombo.setDecodeMap(new DecodeMap());
                 if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.FILTRI_CRITERI_RAGGR_FASC)) {
                     tipoFascicoloCombo.setDecodeMap(new DecodeMap());
-                } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
-                    // titolarioCombo.setDecodeMap(new DecodeMap());
-                    // TODO altre combo
                 }
             }
         } else {
@@ -1129,9 +1040,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             strutCombo.setDecodeMap(new DecodeMap());
             if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.FILTRI_CRITERI_RAGGR_FASC)) {
                 tipoFascicoloCombo.setDecodeMap(new DecodeMap());
-            } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
-                // titolarioCombo.setDecodeMap(new DecodeMap());
-                // TODO altre combo
             }
         }
         return campi;
@@ -1144,12 +1052,9 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         ComboBox enteCombo = (ComboBox) campi.getComponent("id_ente");
         ComboBox strutCombo = (ComboBox) campi.getComponent("id_strut");
         ComboBox tipoFascicoloCombo = null;
-        // ComboBox titolarioCombo = null;
         Input niMaxFasc = (Input) campi.getComponent("ni_max_fasc");
         if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.FILTRI_CRITERI_RAGGR_FASC)) {
             tipoFascicoloCombo = (ComboBox) campi.getComponent("id_tipo_fascicolo");
-        } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
-            // titolarioCombo = (ComboBox) campi.getComponent("id_titol");
         }
 
         // Azzero i valori preimpostati delle varie combo
@@ -1158,7 +1063,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             tipoFascicoloCombo.setValue("");
         } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
             niMaxFasc.setValue("");
-            // titolarioCombo.setValue("");
         }
 
         BigDecimal idEnte = (!enteCombo.getValue().equals("") ? new BigDecimal(enteCombo.getValue()) : null);
@@ -1176,17 +1080,11 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.FILTRI_CRITERI_RAGGR_FASC)) {
                 tipoFascicoloCombo.setDecodeMap(new DecodeMap());
                 // TODO altre combo
-            } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
-                // titolarioCombo.setDecodeMap(new DecodeMap());
-                // TODO altre combo
             }
         } else {
             strutCombo.setDecodeMap(new DecodeMap());
             if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.FILTRI_CRITERI_RAGGR_FASC)) {
                 tipoFascicoloCombo.setDecodeMap(new DecodeMap());
-                // TODO altre combo
-            } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
-                // titolarioCombo.setDecodeMap(new DecodeMap());
                 // TODO altre combo
             }
         }
@@ -1249,18 +1147,18 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             // Ricavo tutti i Tipi Fascicolo per la struttura passata in input
             DecTipoFascicoloTableBean tmpTableBeanTipoFascicolo = tipoFascicoloEjb.getDecTipoFascicoloTableBean(idStrut,
                     false);
-            DecodeMap mappaTipoFascicolo = DecodeMap.Factory.newInstance(tmpTableBeanTipoFascicolo, "id_tipo_fascicolo",
+            DecodeMap mapTipoFascicolo = DecodeMap.Factory.newInstance(tmpTableBeanTipoFascicolo, "id_tipo_fascicolo",
                     "nm_tipo_fascicolo");
 
             // Ricavo tutti i Titolari per la struttura passata in input
             DecTitolTableBean tmpTableBeanTitol = titolariEjb.getDecTitolTableBean(idStrut, false); // TODO: verificare
-            DecodeMap mappaTitol = DecodeMap.Factory.newInstance(tmpTableBeanTitol, "id_titol", "nm_titol");
+            DecodeMap mapTitol = DecodeMap.Factory.newInstance(tmpTableBeanTitol, "id_titol", "nm_titol");
 
             if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.FILTRI_CRITERI_RAGGR_FASC)) {
-                getForm().getFiltriCriteriRaggrFascicoli().getId_tipo_fascicolo().setDecodeMap(mappaTipoFascicolo);
+                getForm().getFiltriCriteriRaggrFascicoli().getId_tipo_fascicolo().setDecodeMap(mapTipoFascicolo);
             } else if (sezione.equals(ActionEnums.SezioneCriteriRaggrFasc.CRITERIO_RAGGR_FASC_DETAIL)) {
-                getForm().getCreaCriterioRaggrFascicoli().getNm_tipo_fascicolo().setDecodeMap(mappaTipoFascicolo);
-                getForm().getTitolarioDetail().getId_titol().setDecodeMap(mappaTitol);
+                getForm().getCreaCriterioRaggrFascicoli().getNm_tipo_fascicolo().setDecodeMap(mapTipoFascicolo);
+                getForm().getTitolarioDetail().getId_titol().setDecodeMap(mapTitol);
                 settaNumeroMassimoFascicoli(idStrut);
                 settaNumeroGiorniScadChius(idStrut);
             }
@@ -1445,8 +1343,8 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
     @Override
     public void logEventiCriteriRaggruppamento() throws EMFError {
         GestioneLogEventiForm form = new GestioneLogEventiForm();
-        form.getOggettoDetail().getNmApp().setValue(configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        form.getOggettoDetail().getNmApp()
+                .setValue(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         form.getOggettoDetail().getNm_tipo_oggetto().setValue(SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGR_FASC);
         BaseRow riga = (BaseRow) getForm().getCriterioRaggrFascicoliList().getTable().getCurrentRow();
         form.getOggettoDetail().getIdOggetto().setValue(riga.getBigDecimal("id_criterio_raggr_fasc").toString());
@@ -1482,8 +1380,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
             }
             if (tipoControllo != null && tipoControllo.equals("controllo2")) {
                 eseguiSalvataggioCriterioRaggrFascicoli((CreaCriterioRaggrFascicoli) sa[0], (Object[]) sa[1],
-                        (String) sa[2], (BigDecimal) sa[3], (BigDecimal) sa[4], ((BigDecimal) sa[5]).intValue(),
-                        (String) sa[7], (List<BigDecimal>) sa[8]);
+                        (String) sa[2], ((BigDecimal) sa[5]).intValue(), (String) sa[7], (List<BigDecimal>) sa[8]);
             }
         }
         forwardToPublisher(Application.Publisher.CRITERIO_RAGGR_FASC_DETAIL);
@@ -1521,99 +1418,87 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 getSession().setAttribute("salvataggioAttributes", sa);
                 getRequest().setAttribute("customBox2", true);
             } else {
-                eseguiSalvataggioCriterioRaggrFascicoli(filtri, anniFascicoliValidati, nome, annoDa, annoA, status,
+                eseguiSalvataggioCriterioRaggrFascicoli(filtri, anniFascicoliValidati, nome, status,
                         criterioStandardNow, voceTitolList);
             }
         } // Altrimenti passo direttamente al salvataggio
         else {
-            eseguiSalvataggioCriterioRaggrFascicoli(filtri, anniFascicoliValidati, nome, annoDa, annoA, status,
-                    criterioStandardNow, voceTitolList);
+            eseguiSalvataggioCriterioRaggrFascicoli(filtri, anniFascicoliValidati, nome, status, criterioStandardNow,
+                    voceTitolList);
         }
     }
 
     public void eseguiSalvataggioCriterioRaggrFascicoli(CreaCriterioRaggrFascicoli filtri,
-            Object[] anniFascicoliValidati, String nome, BigDecimal annoDa, BigDecimal annoA, int status,
-            String criterioStandard, List<BigDecimal> voceTitolList) throws EMFError {
-        try {
-            // Salvataggio criterio
-            long idCritRaggrFasc;
-            /*
-             * Codice aggiuntivo per il logging...
-             */
-            LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
-                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
-            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-            if (status == CRITERIO_EDIT) {
-                param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
-            } else {
-                param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
-            }
+            Object[] anniFascicoliValidati, String nome, int status, String criterioStandard,
+            List<BigDecimal> voceTitolList) throws EMFError {
+        // Salvataggio criterio
+        long idCritRaggrFasc;
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        if (status == CRITERIO_EDIT) {
+            param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
+        } else {
+            param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
+        }
 
-            if ((idCritRaggrFasc = fascicoliEjb.saveCriterioRaggrFascicoli(param, filtri, anniFascicoliValidati,
-                    filtri.getId_strut().parse(), nome, criterioStandard, voceTitolList)) > 0) {
-                // Una volta salvato, reimposto i dati corretti nei filtri degli anni
-                // if (annoDa != null) {
-                // filtri.getAa_fascicolo_da().setValue(annoDa.toString());
-                // }
-                // if (annoA != null) {
-                // filtri.getAa_fascicolo_a().setValue(annoA.toString());
-                // }
+        if ((idCritRaggrFasc = fascicoliEjb.saveCriterioRaggrFascicoli(param, filtri, anniFascicoliValidati, nome,
+                criterioStandard, voceTitolList)) > 0) {
+            // Una volta salvato, reimposto i dati corretti nei filtri degli anni
+            // e del flag standard
+            filtri.getFl_criterio_raggr_standard().setValue(criterioStandard);
 
-                // e del flag standard
-                filtri.getFl_criterio_raggr_standard().setValue(criterioStandard);
+            getMessageBox().addMessage(
+                    new Message(MessageLevel.INF, "Criterio di raggruppamento fascicoli salvato con successo"));
+            getMessageBox().setViewMode(ViewMode.plain);
+            BaseRow critRBModificato = (BaseRow) fascicoliEjb
+                    .getDettaglioCriterioRaggrFascicolo(new BigDecimal(idCritRaggrFasc));
 
-                getMessageBox().addMessage(
-                        new Message(MessageLevel.INF, "Criterio di raggruppamento fascicoli salvato con successo"));
-                getMessageBox().setViewMode(ViewMode.plain);
-                BaseRow critRBModificato = (BaseRow) fascicoliEjb
-                        .getDettaglioCriterioRaggrFascicolo(new BigDecimal(idCritRaggrFasc));
-
-                if (status == CRITERIO_INSERT) {
-                    // aggiungo il nuovo criterio alla lista
-                    if (getForm().getCriterioRaggrFascicoliList().getTable() == null) {
-                        getForm().getCriterioRaggrFascicoliList().setTable(new BaseTable());
-                    }
-                    getForm().getCriterioRaggrFascicoliList().getTable().add().copyFromBaseRow(critRBModificato);
-                    getForm().getCriterioRaggrFascicoliList().setStatus(Status.update);
-                    getForm().getTitolariList().setStatus(Status.update);
-
-                    // Devo popolare i campi ambiente/ente/struttura versione "casella di testo"...
-                    getForm().getCreaCriterioRaggrFascicoli().getNm_ambiente()
-                            .setValue(getForm().getCreaCriterioRaggrFascicoli().getId_ambiente().getDecodedValue());
-                    getForm().getCreaCriterioRaggrFascicoli().getNm_ente()
-                            .setValue(getForm().getCreaCriterioRaggrFascicoli().getId_ente().getDecodedValue());
-                    getForm().getCreaCriterioRaggrFascicoli().getNm_strut()
-                            .setValue(getForm().getCreaCriterioRaggrFascicoli().getId_strut().getDecodedValue());
-                } else {
-                    // Setto il nome nella lista in quanto potrebbe servirmi in fase di cancellazione
-                    (getForm().getCriterioRaggrFascicoliList().getTable()).getCurrentRow()
-                            .setString("nm_criterio_raggr", filtri.getNm_criterio_raggr().parse());
+            if (status == CRITERIO_INSERT) {
+                // aggiungo il nuovo criterio alla lista
+                if (getForm().getCriterioRaggrFascicoliList().getTable() == null) {
+                    getForm().getCriterioRaggrFascicoliList().setTable(new BaseTable());
                 }
+                getForm().getCriterioRaggrFascicoliList().getTable().add().copyFromBaseRow(critRBModificato);
+                getForm().getCriterioRaggrFascicoliList().setStatus(Status.update);
+                getForm().getTitolariList().setStatus(Status.update);
 
-                getForm().getCreaCriterioRaggrFascicoli().setViewMode();
-                getForm().getCreaCriterioRaggrFascicoli().setStatus(Status.view);
-                getForm().getCriterioRaggrFascicoliList().setStatus(Status.view);
-                getForm().getTitolariList().setStatus(Status.view);
-                getForm().getTitolarioDetail().setStatus(Status.view);
-
-                getForm().getCreaCriterioRaggrFascicoli().getDuplicaCritButton().setEditMode();
-                getForm().getCreaCriterioRaggrFascicoli().getDuplicaCritButton().setHidden(false);
-                getForm().getCreaCriterioRaggrFascicoli().getLogEventiCriteriRaggruppamento().setEditMode();
-                getForm().getCreaCriterioRaggrFascicoli().getLogEventiCriteriRaggruppamento().setHidden(false);
-                getForm().getCreaCriterioRaggrFascicoli().getInserisciVoceClassificazione().setHidden(true);
-
-                // Nascondo i bottoni con javascript disattivato
-                getForm().getCriterioCustomMessageButtonList().setViewMode();
+                // Devo popolare i campi ambiente/ente/struttura versione "casella di testo"...
+                getForm().getCreaCriterioRaggrFascicoli().getNm_ambiente()
+                        .setValue(getForm().getCreaCriterioRaggrFascicoli().getId_ambiente().getDecodedValue());
+                getForm().getCreaCriterioRaggrFascicoli().getNm_ente()
+                        .setValue(getForm().getCreaCriterioRaggrFascicoli().getId_ente().getDecodedValue());
+                getForm().getCreaCriterioRaggrFascicoli().getNm_strut()
+                        .setValue(getForm().getCreaCriterioRaggrFascicoli().getId_strut().getDecodedValue());
             } else {
-                // Errore
-                getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                        "Errore nel salvataggio del criterio di raggruppamento fascicoli"));
-                getMessageBox().setViewMode(ViewMode.plain);
+                // Setto il nome nella lista in quanto potrebbe servirmi in fase di cancellazione
+                (getForm().getCriterioRaggrFascicoliList().getTable()).getCurrentRow().setString("nm_criterio_raggr",
+                        filtri.getNm_criterio_raggr().parse());
             }
-        } catch (ParerUserError e) {
-            getMessageBox().addError(e.getDescription());
+
+            getForm().getCreaCriterioRaggrFascicoli().setViewMode();
+            getForm().getCreaCriterioRaggrFascicoli().setStatus(Status.view);
+            getForm().getCriterioRaggrFascicoliList().setStatus(Status.view);
+            getForm().getTitolariList().setStatus(Status.view);
+            getForm().getTitolarioDetail().setStatus(Status.view);
+
+            getForm().getCreaCriterioRaggrFascicoli().getDuplicaCritButton().setEditMode();
+            getForm().getCreaCriterioRaggrFascicoli().getDuplicaCritButton().setHidden(false);
+            getForm().getCreaCriterioRaggrFascicoli().getLogEventiCriteriRaggruppamento().setEditMode();
+            getForm().getCreaCriterioRaggrFascicoli().getLogEventiCriteriRaggruppamento().setHidden(false);
+            getForm().getCreaCriterioRaggrFascicoli().getInserisciVoceClassificazione().setHidden(true);
+
+            // Nascondo i bottoni con javascript disattivato
+            getForm().getCriterioCustomMessageButtonList().setViewMode();
+        } else {
+            // Errore
+            getMessageBox().addMessage(
+                    new Message(MessageLevel.ERR, "Errore nel salvataggio del criterio di raggruppamento fascicoli"));
+            getMessageBox().setViewMode(ViewMode.plain);
         }
     }
 
@@ -1632,7 +1517,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
         forwardToPublisher(Application.Publisher.CRITERIO_RAGGR_VOCE_TITOL);
     }
 
-    public void loadTitolarioTree(BigDecimal idTitol) throws EMFError {
+    public void loadTitolarioTree(BigDecimal idTitol) {
         DecVTreeTitolTableBean treeTableBean = titolariEjb.getDecVociTreeTableBean(idTitol,
                 Calendar.getInstance().getTime(), true);
         getForm().getTitolariTree().setTable(treeTableBean);
@@ -1681,7 +1566,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
                 getForm().getTitolariList().getTable().sort();
             } else {
                 getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                        "Indice classificazione già esistente per il criterio di raggruppamento fascicoli <br>"));
+                        "Indice classificazione già esistente per il criterio di raggruppamento fascicoli <br>"));
             }
         }
 

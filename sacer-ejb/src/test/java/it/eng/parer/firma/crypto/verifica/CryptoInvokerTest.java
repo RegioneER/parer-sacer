@@ -1,7 +1,23 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.firma.crypto.verifica;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.eng.paginator.eclipselink.ListSessionListener;
 import it.eng.paginator.ejb.PaginatorInterceptor;
 import it.eng.parer.crypto.model.ParerCRL;
 import it.eng.parer.crypto.model.exceptions.CryptoParerException;
@@ -16,9 +32,10 @@ import it.eng.parer.slite.gen.tablebean.AroCompDocRowBean;
 import it.eng.parer.slite.gen.tablebean.AroCompDocTableBean;
 import it.eng.parer.web.dto.DecCriterioDatiSpecBean;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.helper.HelperTest;
 import it.eng.parer.web.util.StringPadding;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.sequences.eclipselink.NonMonotonicSequenceGenerator;
+import it.eng.sequences.hibernate.NonMonotonicSequenceGenerator;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.FrameElement;
 import it.eng.spagoLite.FrameElementInterface;
@@ -38,6 +55,7 @@ import org.apache.http.HttpMessage;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.protocol.HttpContext;
+import org.hibernate.id.uuid.Helper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -75,10 +93,11 @@ public class CryptoInvokerTest {
                 .addClass(CryptoInvoker.class).addClass(ResponseErrorHandler.class)
                 .addClass(ClientHttpRequestFactory.class).addClass(MultiValueMap.class)
                 .addClass(CryptoRestConfiguratorHelper.class).addClass(ConfigurationHelper.class)
-                .addClass(ListSessionListener.class).addClass(NonMonotonicSequenceGenerator.class)
-                .addClass(PaginatorInterceptor.class).addClass(HttpUriRequest.class).addClass(HttpContext.class)
-                .addClass(HttpRequest.class).addClass(HttpMessage.class).addClass(CryptoErrorHandler.class)
-                .addClass(ObjectMapper.class).addClass(CryptoParerException.class).addClass(RestClientException.class)
+                .addClass(NonMonotonicSequenceGenerator.class).addClass(PaginatorInterceptor.class)
+                .addClass(HttpUriRequest.class).addClass(HttpContext.class).addClass(HttpRequest.class)
+                .addClass(HttpMessage.class).addClass(CryptoErrorHandler.class).addClass(ObjectMapper.class)
+                .addClass(CryptoParerException.class).addClass(RestClientException.class)
+                .addClass(it.eng.paginator.hibernate.OracleSqlInterceptor.class).addClass(HelperTest.class)
                 // with subpackages
                 .addPackages(true, "it.eng.spagoLite.form", "it.eng.parer.jboss.timer.common", "it.eng.spagoLite.db",
                         "it.eng.parer.entity", "it.eng.parer.grantedEntity", "it.eng.parer.viewEntity",
@@ -109,10 +128,12 @@ public class CryptoInvokerTest {
     private CryptoInvoker invoker;
 
     @Test
-    public void invokeCrl() throws Throwable {
-        ParerCRL retrieveCRL = invoker.retrieveCRL("non esiste", "non esiste");
-        Assert.assertNull(retrieveCRL.getCrlNum());
-
+    public void invokeCrl() {
+        try {
+            invoker.retrieveCRL("non esiste", "non esiste");
+        } catch (Exception e) {
+            HelperTest.assertExceptionMessage(e, "CRL_NOT_FOUND");
+        }
     }
 
     @Test

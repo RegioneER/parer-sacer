@@ -5,24 +5,34 @@
        xmlns:p="http://www.springframework.org/schema/p" 
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="
-     http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-         
-         
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
     <context:annotation-config/>
     <context:component-scan base-package="it.eng.parer.web.action"/>
+        
+    <mvc:annotation-driven content-negotiation-manager="contentNegotiationManager"/>
 
     <import resource="/sacerlog-web.xml" />
-        
+
+    
+    <bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+        <!-- Turn off working out content type based on URL file extension, should fall back to looking at the Accept headers -->
+        <property name="favorPathExtension" value="false" />
+    </bean>
+            
     <bean name="paginator" class="it.eng.paginator.ejb.PaginatorImpl"/>    
     <bean name="sacerAuthenticator" class="it.eng.parer.web.security.SacerAuthenticator"/>
+    <!-- Configurazione delle action ereditate dal framework -->
     <bean name="/View.html" class="it.eng.spagoLite.actions.RedirectAction" scope="prototype"/>
     <bean name="/Login.html" class="it.eng.spagoLite.actions.security.LoginAction" scope="prototype" /> 
     <bean name="/Logout.html" class="it.eng.spagoLite.actions.security.LogoutAction" scope="prototype"/>
-    
+     <!-- Configurazione delle action specifiche del modulo web -->
     <bean name="/Home.html" class="it.eng.parer.web.action.HomeAction" scope="prototype"/> 
     <bean name="/Volumi.html" class="it.eng.parer.web.action.VolumiAction" scope="prototype"/>    
     <bean name="/Componenti.html" class="it.eng.parer.web.action.ComponentiAction" scope="prototype"/>

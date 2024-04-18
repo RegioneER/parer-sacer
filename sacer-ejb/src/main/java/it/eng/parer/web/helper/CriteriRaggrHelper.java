@@ -1,14 +1,48 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.DecCriterioFiltroMultiplo;
 import it.eng.parer.entity.DecCriterioRaggr;
 import it.eng.parer.entity.DecRegistroUnitaDoc;
 import it.eng.parer.entity.DecTipoDoc;
 import it.eng.parer.entity.DecTipoUnitaDoc;
 import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.constraint.DecCriterioRaggr.TiValidElencoCriterio;
 import it.eng.parer.entity.constraint.DecCriterioRaggr.TiModValidElencoCriterio;
+import it.eng.parer.entity.constraint.DecCriterioRaggr.TiValidElencoCriterio;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.util.LogParam;
@@ -21,31 +55,17 @@ import it.eng.parer.slite.gen.tablebean.DecCriterioRaggrTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrTableBean;
-import it.eng.parer.viewEntity.DecVRicCriterioRaggr;
-import it.eng.parer.aop.TransactionInterceptor;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.DecVCreaCritRaggrRegistro;
 import it.eng.parer.viewEntity.DecVCreaCritRaggrTipoDoc;
 import it.eng.parer.viewEntity.DecVCreaCritRaggrTipoUd;
+import it.eng.parer.viewEntity.DecVRicCriterioRaggr;
 import it.eng.parer.web.util.ApplEnum;
 import it.eng.parer.web.util.Constants.TipoDato;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
-import it.eng.spagoLite.db.base.sorting.SortingRule;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 @Interceptors({ TransactionInterceptor.class })
@@ -60,60 +80,44 @@ public class CriteriRaggrHelper extends GenericHelper {
 
     public Long saveCritRaggr(LogParam param, CreaCriterioRaggr filtri, Date[] dateCreazioneValidate,
             BigDecimal idStruttura, String nome, String criterioStandard) throws EMFError, ParerUserError {
-        DecCriterioRaggr record = new DecCriterioRaggr();
+        DecCriterioRaggr rec = new DecCriterioRaggr();
         if (nome != null) {
-            // Se c'è il parametro nome, carico il criterio di raggruppamento corrispondente
-            String queryStr = "SELECT u FROM DecCriterioRaggr u WHERE u.orgStrut.idStrut = :idstrut and u.nmCriterioRaggr = :nomecrit";
-
-            Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idstrut", idStruttura);
-            query.setParameter("nomecrit", nome);
-            record = (DecCriterioRaggr) query.getSingleResult();
+            rec = getDecCriterioRaggrByStrutturaAndCriterio(idStruttura, nome);
         }
 
-        if (record.getDecCriterioFiltroMultiplos() == null) {
-            record.setDecCriterioFiltroMultiplos(new ArrayList<DecCriterioFiltroMultiplo>());
+        if (rec.getDecCriterioFiltroMultiplos() == null) {
+            rec.setDecCriterioFiltroMultiplos(new ArrayList<>());
         }
 
-        StringBuilder queryStr = new StringBuilder("SELECT u FROM OrgStrut u WHERE u.idStrut = :idstrut");
-        Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idstrut", idStruttura);
-        record.setOrgStrut((OrgStrut) query.getSingleResult());
+        rec.setOrgStrut(getOrgStrutById(idStruttura));
 
         // Setto i filtri multipli a 0 come default
-        record.setFlFiltroTipoUnitaDoc("0");
-        record.setFlFiltroTipoDoc("0");
-        record.setFlFiltroSistemaMigraz("0");
-        record.setFlFiltroRegistroKey("0");
-        record.setFlFiltroRangeRegistroKey("0");
-        record.setFlFiltroTiEsitoVerifFirme("0");
+        rec.setFlFiltroTipoUnitaDoc("0");
+        rec.setFlFiltroTipoDoc("0");
+        rec.setFlFiltroSistemaMigraz("0");
+        rec.setFlFiltroRegistroKey("0");
+        rec.setFlFiltroRangeRegistroKey("0");
+        rec.setFlFiltroTiEsitoVerifFirme("0");
 
         // Per ogni tipo unità doc creo un record filtro multiplo
-        queryStr = new StringBuilder("SELECT u FROM DecTipoUnitaDoc u ");
-        if (filtri.getNm_tipo_unita_doc().parse() != null && filtri.getNm_tipo_unita_doc().parse().size() > 0) {
-            queryStr.append("WHERE u.idTipoUnitaDoc in :idtipoud");
-            query = getEntityManager().createQuery(queryStr.toString());
-            List<BigDecimal> asList = filtri.getNm_tipo_unita_doc().parse();
-            query.setParameter("idtipoud", asList);
-            List<DecTipoUnitaDoc> lista = query.getResultList();
-            if (!lista.isEmpty()) {
-                record.setFlFiltroTipoUnitaDoc("1");
-                for (DecTipoUnitaDoc tipo : lista) {
+
+        if (filtri.getNm_tipo_unita_doc().parse() != null && !filtri.getNm_tipo_unita_doc().parse().isEmpty()) {
+            List<Long> asList = longListFrom(filtri.getNm_tipo_unita_doc().parse());
+            List<DecTipoUnitaDoc> decTipoUnitaDocList = getDecTipoUnitaDocsByTipoUnitaDoc(asList);
+            if (!decTipoUnitaDocList.isEmpty()) {
+                rec.setFlFiltroTipoUnitaDoc("1");
+                for (DecTipoUnitaDoc tipo : decTipoUnitaDocList) {
                     // Se siamo nel caso di modifica di un criterio, devo verificare se i filtri sono già presenti prima
                     // di salvarli
                     if (nome != null) {
-                        query = getEntityManager().createQuery("SELECT u FROM DecCriterioFiltroMultiplo u "
-                                + "WHERE u.decTipoUnitaDoc = :tipo and u.tiFiltroMultiplo = :filtro "
-                                + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                        query.setParameter("tipo", tipo);
-                        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
-                        query.setParameter("crit", record.getIdCriterioRaggr());
-                        if (query.getResultList().isEmpty()) {
-                            saveCritRaggrFiltroMultiplo(record, null, null, null, tipo, null,
+                        final List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiploList = getDecCriterioFiltroMultiploList(
+                                rec, tipo);
+                        if (decCriterioFiltroMultiploList.isEmpty()) {
+                            saveCritRaggrFiltroMultiplo(rec, null, null, null, tipo, null,
                                     ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
                         }
                     } else {
-                        saveCritRaggrFiltroMultiplo(record, null, null, null, tipo, null,
+                        saveCritRaggrFiltroMultiplo(rec, null, null, null, tipo, null,
                                 ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
                     }
                 }
@@ -121,55 +125,36 @@ public class CriteriRaggrHelper extends GenericHelper {
                     // In caso di modifica, potrei aver eliminato qualche filtro dalle multiselect, che non
                     // risulterebbero più presenti nella lista
                     // Eseguo perciò una bulk delete sui record non presenti nella lista
-                    Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                            + "WHERE u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit "
-                            + "and u.decTipoUnitaDoc.idTipoUnitaDoc NOT IN :tipi");
-                    q.setParameter("tipi", asList);
-                    q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
-                    q.setParameter("crit", record.getIdCriterioRaggr());
-                    q.executeUpdate();
-                    getEntityManager().flush();
+                    deleteDecCriterioFiltroMultiploByDecCriterioNotInTipoUnitaDoc(rec, asList);
                 }
             }
         } else {
             // Se sono in modifica, potrei avere eliminato tutti i filtri che avevo creato precedentemente
             // Eseguo perciò una bulk delete per eliminare quei record
             if (nome != null) {
-                Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                        + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
-                q.setParameter("crit", record.getIdCriterioRaggr());
-                q.executeUpdate();
-                getEntityManager().flush();
+                deleteDecCriterioFiltroMultiploTipoUniDocByDecCriterio(rec);
             }
         }
 
         // Per ogni tipo doc creo un record filtro multiplo
-        queryStr = new StringBuilder("SELECT u FROM DecTipoDoc u ");
-        if (filtri.getNm_tipo_doc().parse() != null && filtri.getNm_tipo_doc().parse().size() > 0) {
-            queryStr.append("WHERE u.idTipoDoc in :idtipodoc");
-            query = getEntityManager().createQuery(queryStr.toString());
-            List<BigDecimal> asList = filtri.getNm_tipo_doc().parse();
-            query.setParameter("idtipodoc", asList);
-            List<DecTipoDoc> lista = query.getResultList();
+
+        if (filtri.getNm_tipo_doc().parse() != null && !filtri.getNm_tipo_doc().parse().isEmpty()) {
+            List<Long> nmTipoDocList = longListFrom(filtri.getNm_tipo_doc().parse());
+            List<DecTipoDoc> lista = getDecTipoDocsByTipoDocList(nmTipoDocList);
             if (!lista.isEmpty()) {
-                record.setFlFiltroTipoDoc("1");
+                rec.setFlFiltroTipoDoc("1");
                 for (DecTipoDoc tipo : lista) {
                     // Se sto modificando il criterio, verifico se ho già inserito precedentemente il filtro,
                     // Altrimenti lo salvo direttamente
                     if (nome != null) {
-                        query = getEntityManager().createQuery("SELECT u FROM DecCriterioFiltroMultiplo u "
-                                + "WHERE u.decTipoDoc = :tipo and u.tiFiltroMultiplo = :filtro "
-                                + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                        query.setParameter("tipo", tipo);
-                        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
-                        query.setParameter("crit", record.getIdCriterioRaggr());
-                        if (query.getResultList().isEmpty()) {
-                            saveCritRaggrFiltroMultiplo(record, null, null, tipo, null, null,
+                        final List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiploList = getDecCriterioFiltroMultiplosByTipoDocAndDecCriterio(
+                                rec, tipo);
+                        if (decCriterioFiltroMultiploList.isEmpty()) {
+                            saveCritRaggrFiltroMultiplo(rec, null, null, tipo, null, null,
                                     ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
                         }
                     } else {
-                        saveCritRaggrFiltroMultiplo(record, null, null, tipo, null, null,
+                        saveCritRaggrFiltroMultiplo(rec, null, null, tipo, null, null,
                                 ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
                     }
                 }
@@ -177,113 +162,69 @@ public class CriteriRaggrHelper extends GenericHelper {
                     // In caso di modifica, potrei aver eliminato qualche filtro dalle multiselect, che non
                     // risulterebbero più presenti nella lista
                     // Eseguo perciò una bulk delete sui record non presenti nella lista
-                    Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                            + "WHERE u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit "
-                            + "and u.decTipoDoc.idTipoDoc NOT IN :tipi");
-                    q.setParameter("tipi", asList);
-                    q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
-                    q.setParameter("crit", record.getIdCriterioRaggr());
-                    q.executeUpdate();
-                    getEntityManager().flush();
+                    deleteDecCriterioFiltroMultiploByDecCriterioNotInTipoDocs(rec, nmTipoDocList);
                 }
             }
         } else {
             // Se sono in modifica, potrei avere eliminato tutti i filtri che avevo creato precedentemente
             // Eseguo perciò una bulk delete per eliminare quei record
             if (nome != null) {
-                Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                        + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
-                q.setParameter("crit", record.getIdCriterioRaggr());
-                q.executeUpdate();
-
-                getEntityManager().flush();
+                deleteDecCriterioFiltroMultiploTipoDocByDecCriterio(rec);
             }
         }
 
-        queryStr = new StringBuilder(
-                "SELECT DISTINCT v.nmSistemaMigraz FROM OrgUsoSistemaMigraz u JOIN u.aplSistemaMigraz v "
-                        + "WHERE u.orgStrut.idStrut = :idStrutturain " + "AND v.nmSistemaMigraz is not null ");
         // Per ogni sistema di migrazione creo un record filtro multiplo
-        if (filtri.getNm_sistema_migraz().parse() != null && filtri.getNm_sistema_migraz().parse().size() > 0) {
-            queryStr.append("AND v.nmSistemaMigraz in :nmsistemamigraz");
-            query = getEntityManager().createQuery(queryStr.toString());
-            List<String> asList = filtri.getNm_sistema_migraz().parse();
-            query.setParameter("nmsistemamigraz", asList);
-            query.setParameter("idStrutturain", idStruttura);
-            List<String> lista = query.getResultList();
-            if (!lista.isEmpty()) {
-                record.setFlFiltroSistemaMigraz("1");
-                for (String tipo : lista) {
+        if (filtri.getNm_sistema_migraz().parse() != null && !filtri.getNm_sistema_migraz().parse().isEmpty()) {
+            List<String> nmSistemaMigrazList = filtri.getNm_sistema_migraz().parse();
+            List<String> orgUsoSistemaMigrazList = getOrgUsoSistemaMigrazByNmSistemaMigrazList(idStruttura,
+                    nmSistemaMigrazList);
+            if (!orgUsoSistemaMigrazList.isEmpty()) {
+                rec.setFlFiltroSistemaMigraz("1");
+                for (String tipo : orgUsoSistemaMigrazList) {
                     // Se sto modificando il criterio, verifico se ho già inserito precedentemente il filtro,
                     // Altrimenti lo salvo direttamente
                     if (nome != null) {
-                        query = getEntityManager().createQuery("SELECT u FROM DecCriterioFiltroMultiplo u "
-                                + "WHERE u.nmSistemaMigraz = :tipo " + "and u.tiFiltroMultiplo = :filtro "
-                                + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                        query.setParameter("tipo", tipo);
-                        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
-                        query.setParameter("crit", record.getIdCriterioRaggr());
-                        if (query.getResultList().isEmpty()) {
-                            saveCritRaggrFiltroMultiploSisMigr(record, tipo,
+                        final List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiploList = getDecCriterioFiltroMultiploByDecCriterioRaggr(
+                                rec, tipo);
+                        if (decCriterioFiltroMultiploList.isEmpty()) {
+                            saveCritRaggrFiltroMultiploSisMigr(rec, tipo,
                                     ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
                         }
                     } else {
-                        saveCritRaggrFiltroMultiploSisMigr(record, tipo,
+                        saveCritRaggrFiltroMultiploSisMigr(rec, tipo,
                                 ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
                     }
                 }
                 if (nome != null) {
-                    // In caso di modifica, potrei aver eliminato qualche filtro dalle multiselect, che non
-                    // risulterebbero più presenti nella lista
-                    // Eseguo perciò una bulk delete sui record non presenti nella lista
-                    Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                            + "WHERE u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit "
-                            + "and u.nmSistemaMigraz NOT IN :tipi");
-                    q.setParameter("tipi", asList);
-                    q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
-                    q.setParameter("crit", record.getIdCriterioRaggr());
-                    q.executeUpdate();
-                    getEntityManager().flush();
+                    deleteDecCriterioRaggrByDecCriterioRaggrNotInNmSistemaMigraz(rec, nmSistemaMigrazList);
                 }
             }
         } else {
             // Se sono in modifica, potrei avere eliminato tutti i filtri che avevo creato precedentemente
             // Eseguo perciò una bulk delete per eliminare quei record
             if (nome != null) {
-                Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                        + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
-                q.setParameter("crit", record.getIdCriterioRaggr());
-                q.executeUpdate();
+                deleteDecCriterioFiltroMultiploTipoSistemaMigrazByDecCriterioRaggr(rec);
             }
         }
 
         // Per ogni registro creo un record filtro multiplo
-        queryStr = new StringBuilder("SELECT u FROM DecRegistroUnitaDoc u ");
+
         if (filtri.getCd_registro_key_unita_doc().parse() != null
-                && filtri.getCd_registro_key_unita_doc().parse().size() > 0) {
-            queryStr.append("WHERE u.idRegistroUnitaDoc in :idreg");
-            query = getEntityManager().createQuery(queryStr.toString());
-            List<BigDecimal> asList = filtri.getCd_registro_key_unita_doc().parse();
-            query.setParameter("idreg", asList);
-            List<DecRegistroUnitaDoc> lista = query.getResultList();
+                && !filtri.getCd_registro_key_unita_doc().parse().isEmpty()) {
+            List<Long> cdRegistroKeyUnitaDocList = longListFrom(filtri.getCd_registro_key_unita_doc().parse());
+            List<DecRegistroUnitaDoc> lista = getDecRegistroUnitaDocByIdRegistroUnitaDoc(cdRegistroKeyUnitaDocList);
             if (!lista.isEmpty()) {
-                record.setFlFiltroRegistroKey("1");
+                rec.setFlFiltroRegistroKey("1");
                 for (DecRegistroUnitaDoc reg : lista) {
                     if (nome != null) {
-                        query = getEntityManager().createQuery("SELECT u FROM DecCriterioFiltroMultiplo u "
-                                + "WHERE u.decRegistroUnitaDoc = :reg " + "and u.tiFiltroMultiplo = :filtro "
-                                + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                        query.setParameter("reg", reg);
-                        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
-                        query.setParameter("crit", record.getIdCriterioRaggr());
-                        if (query.getResultList().isEmpty()) {
-                            saveCritRaggrFiltroMultiplo(record, reg, null, null, null, null,
+                        final List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiploList = getDecCriterioFiltroMultiploByDecRegistroUnitaDoc(
+                                rec, reg);
+                        if (decCriterioFiltroMultiploList.isEmpty()) {
+                            saveCritRaggrFiltroMultiplo(rec, reg, null, null, null, null,
                                     ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
                         }
                     } else {
-                        saveCritRaggrFiltroMultiplo(record, reg, null, null, null, null,
+                        saveCritRaggrFiltroMultiplo(rec, reg, null, null, null, null,
                                 ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
                     }
                 }
@@ -291,138 +232,109 @@ public class CriteriRaggrHelper extends GenericHelper {
                     // In caso di modifica, potrei aver eliminato qualche filtro dalle multiselect, che non
                     // risulterebbero più presenti nella lista
                     // Eseguo perciò una bulk delete sui record non presenti nella lista
-                    Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                            + "WHERE u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit "
-                            + "and u.decRegistroUnitaDoc.idRegistroUnitaDoc NOT IN :regs");
-                    q.setParameter("regs", asList);
-                    q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
-                    q.setParameter("crit", record.getIdCriterioRaggr());
-                    q.executeUpdate();
-                    getEntityManager().flush();
+                    deleteDecCriterioFiltroMultiploByDecCriterioRaggrNotInIdRegistroUnitaDoc(rec,
+                            cdRegistroKeyUnitaDocList);
                 }
             }
         } else {
             if (nome != null) {
                 // Se sono in modifica, potrei avere eliminato tutti i filtri che avevo creato precedentemente
                 // Eseguo perciò una bulk delete per eliminare quei record
-                Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                        + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
-                q.setParameter("crit", record.getIdCriterioRaggr());
-                q.executeUpdate();
-                getEntityManager().flush();
+                deleteDecCriterioFiltroMultiploTipoRegistroUniDocByDecCriterioRaggr(rec);
             }
         }
 
         // Per ogni tipo esito verifica firme creo un record filtro multiplo
-        if (filtri.getTi_esito_verif_firme().parse() != null && filtri.getTi_esito_verif_firme().parse().size() > 0) {
+        if (filtri.getTi_esito_verif_firme().parse() != null && !filtri.getTi_esito_verif_firme().parse().isEmpty()) {
             List<String> asList = filtri.getTi_esito_verif_firme().parse();
             if (!asList.isEmpty()) {
-                record.setFlFiltroTiEsitoVerifFirme("1");
-                for (Object tipo : asList) {
+                rec.setFlFiltroTiEsitoVerifFirme("1");
+                for (String tipo : asList) {
                     if (nome != null) {
-                        query = getEntityManager().createQuery("SELECT u FROM DecCriterioFiltroMultiplo u "
-                                + "WHERE u.tiEsitoVerifFirme = :tipo " + "and u.tiFiltroMultiplo = :filtro "
-                                + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                        query.setParameter("tipo", (String) tipo);
-                        query.setParameter("filtro",
-                                ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
-                        query.setParameter("crit", record.getIdCriterioRaggr());
-                        if (query.getResultList().isEmpty()) {
-                            saveCritRaggrFiltroMultiplo(record, null, null, null, null, (String) tipo,
+                        final List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiploList = getDecCriterioFiltroMultiploByDecCriterioRaggrAndTipoEsitoVerifFirme(
+                                rec, tipo);
+                        if (decCriterioFiltroMultiploList.isEmpty()) {
+                            saveCritRaggrFiltroMultiplo(rec, null, null, null, null, tipo,
                                     ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
                         }
                     } else {
-                        saveCritRaggrFiltroMultiplo(record, null, null, null, null, (String) tipo,
+                        saveCritRaggrFiltroMultiplo(rec, null, null, null, null, tipo,
                                 ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
                     }
                 }
                 // In caso di modifica, l'utente potrebbe aver eliminato qualche filtro dalle multiselect, che non
                 // risulterebbero più presenti nella lista
                 // Eseguo perciò una bulk delete sui record non presenti nella lista
-                Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                        + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit and u.tiEsitoVerifFirme NOT IN :esiti");
-                q.setParameter("esiti", asList);
-                q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
-                q.setParameter("crit", record.getIdCriterioRaggr());
-                q.executeUpdate();
-                getEntityManager().flush();
+                deleteDecCriterioFiltroMultiploByDecCriterioRaggrNotInEsitoVerifFirme(rec, asList);
             }
         } else {
             if (nome != null) {
                 // Se sono in modifica, potrei avere eliminato tutti i filtri che avevo creato precedentemente
                 // Eseguo perciò una bulk delete per eliminare quei record
-                Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
-                        + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
-                q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
-                q.setParameter("crit", record.getIdCriterioRaggr());
-                q.executeUpdate();
-                getEntityManager().flush();
+                deleteDecCriterioFiltroMultiploTipoEsitoVerifFirmeByDecCriterioRaggr(rec);
             }
         }
 
-        record.setNmCriterioRaggr(filtri.getNm_criterio_raggr().parse());
-        record.setDsCriterioRaggr(filtri.getDs_criterio_raggr().parse());
-        record.setNiMaxComp(filtri.getNi_max_comp().parse());
-        record.setNiMaxElenchiByGg(filtri.getNi_max_elenchi_by_gg().parse());
-        record.setTiScadChiusVolume(filtri.getTi_scad_chius_volume().getValue());
-        record.setNiTempoScadChius(filtri.getNi_tempo_scad_chius().parse());
-        record.setTiTempoScadChius(filtri.getTi_tempo_scad_chius().getValue());
-        record.setDtIstituz(filtri.getDt_istituz().parse());
-        record.setDtSoppres(filtri.getDt_soppres().parse());
-        record.setCdKeyUnitaDoc(filtri.getCd_key_unita_doc().parse());
-        record.setCdKeyUnitaDocDa(filtri.getCd_key_unita_doc_da().parse());
-        record.setCdKeyUnitaDocA(filtri.getCd_key_unita_doc_a().parse());
-        record.setAaKeyUnitaDoc(filtri.getAa_key_unita_doc().parse());
-        record.setAaKeyUnitaDocDa(filtri.getAa_key_unita_doc_da().parse());
-        record.setAaKeyUnitaDocA(filtri.getAa_key_unita_doc_a().parse());
-        record.setFlUnitaDocFirmato(filtri.getFl_unita_doc_firmato().parse());
+        rec.setNmCriterioRaggr(filtri.getNm_criterio_raggr().parse());
+        rec.setDsCriterioRaggr(filtri.getDs_criterio_raggr().parse());
+        rec.setNiMaxComp(filtri.getNi_max_comp().parse());
+        rec.setNiMaxElenchiByGg(filtri.getNi_max_elenchi_by_gg().parse());
+        rec.setTiScadChiusVolume(filtri.getTi_scad_chius_volume().getValue());
+        rec.setNiTempoScadChius(filtri.getNi_tempo_scad_chius().parse());
+        rec.setTiTempoScadChius(filtri.getTi_tempo_scad_chius().getValue());
+        rec.setDtIstituz(filtri.getDt_istituz().parse());
+        rec.setDtSoppres(filtri.getDt_soppres().parse());
+        rec.setCdKeyUnitaDoc(filtri.getCd_key_unita_doc().parse());
+        rec.setCdKeyUnitaDocDa(filtri.getCd_key_unita_doc_da().parse());
+        rec.setCdKeyUnitaDocA(filtri.getCd_key_unita_doc_a().parse());
+        rec.setAaKeyUnitaDoc(filtri.getAa_key_unita_doc().parse());
+        rec.setAaKeyUnitaDocDa(filtri.getAa_key_unita_doc_da().parse());
+        rec.setAaKeyUnitaDocA(filtri.getAa_key_unita_doc_a().parse());
+        rec.setFlUnitaDocFirmato(filtri.getFl_unita_doc_firmato().parse());
         Date dataDa = (dateCreazioneValidate != null ? dateCreazioneValidate[0] : null);
         Date dataA = (dateCreazioneValidate != null ? dateCreazioneValidate[1] : null);
-        record.setDtCreazioneUnitaDocDa(dataDa);
-        record.setDtCreazioneUnitaDocA(dataA);
-        record.setFlForzaAccettazione(filtri.getFl_forza_accettazione().parse());
-        record.setFlForzaConservazione(filtri.getFl_forza_conservazione().parse());
-        record.setTiConservazione(filtri.getTi_conservazione().parse());
-        record.setDtRegUnitaDocDa(filtri.getDt_reg_unita_doc_da().parse());
-        record.setDtRegUnitaDocA(filtri.getDt_reg_unita_doc_a().parse());
-        record.setDlOggettoUnitaDoc(filtri.getDl_oggetto_unita_doc().parse());
-        record.setDlDoc(filtri.getDl_doc().parse());
-        record.setDsAutoreDoc(filtri.getDs_autore_doc().parse());
-        record.setNtCriterioRaggr(filtri.getNt_criterio_raggr().parse());
-        record.setFlCriterioRaggrStandard(criterioStandard);
+        rec.setDtCreazioneUnitaDocDa(dataDa);
+        rec.setDtCreazioneUnitaDocA(dataA);
+        rec.setFlForzaAccettazione(filtri.getFl_forza_accettazione().parse());
+        rec.setFlForzaConservazione(filtri.getFl_forza_conservazione().parse());
+        rec.setTiConservazione(filtri.getTi_conservazione().parse());
+        rec.setDtRegUnitaDocDa(filtri.getDt_reg_unita_doc_da().parse());
+        rec.setDtRegUnitaDocA(filtri.getDt_reg_unita_doc_a().parse());
+        rec.setDlOggettoUnitaDoc(filtri.getDl_oggetto_unita_doc().parse());
+        rec.setDlDoc(filtri.getDl_doc().parse());
+        rec.setDsAutoreDoc(filtri.getDs_autore_doc().parse());
+        rec.setNtCriterioRaggr(filtri.getNt_criterio_raggr().parse());
+        rec.setFlCriterioRaggrStandard(criterioStandard);
         // Salvo di default come non fiscale, poi i successivi controlli stabiliranno l'esatto valore
-        record.setFlCriterioRaggrFisc("0");
-        record.setTiGestElencoCriterio(filtri.getTi_gest_elenco_criterio().parse());
-        record.setTiValidElenco(TiValidElencoCriterio.valueOf(filtri.getTi_valid_elenco().parse()));
-        record.setTiModValidElenco(TiModValidElencoCriterio.valueOf(filtri.getTi_mod_valid_elenco().parse()));
+        rec.setFlCriterioRaggrFisc("0");
+        rec.setTiGestElencoCriterio(filtri.getTi_gest_elenco_criterio().parse());
+        rec.setTiValidElenco(TiValidElencoCriterio.valueOf(filtri.getTi_valid_elenco().parse()));
+        rec.setTiModValidElenco(TiModValidElencoCriterio.valueOf(filtri.getTi_mod_valid_elenco().parse()));
 
         try {
-            getEntityManager().persist(record);
+            getEntityManager().persist(rec);
             getEntityManager().flush();
             sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                     param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGRUPPAMENTO,
-                    new BigDecimal(record.getIdCriterioRaggr()), param.getNomePagina());
+                    new BigDecimal(rec.getIdCriterioRaggr()), param.getNomePagina());
         } catch (RuntimeException re) {
-            /// logga l'errore e blocca tutto
-            // log.fatal("Eccezione nella persistenza del " + re);
-            log.error("Eccezione nella persistenza del  " + re);
+            log.error("Eccezione nella persistenza", re);
             throw new EMFError(EMFError.BLOCKING, re);
         }
 
         // Gestione del flag fiscale
-        String flCriterioRaggrFiscMessage = getFlCriterioRaggrFiscMessage(new BigDecimal(record.getIdCriterioRaggr()));
+        String flCriterioRaggrFiscMessage = getFlCriterioRaggrFiscMessage(new BigDecimal(rec.getIdCriterioRaggr()));
         if (flCriterioRaggrFiscMessage.equals(ApplEnum.FlagFiscaleMessage.FISCALE.getDescrizione())) {
-            record.setFlCriterioRaggrFisc("1");
+            rec.setFlCriterioRaggrFisc("1");
         } else if (flCriterioRaggrFiscMessage.equals(ApplEnum.FlagFiscaleMessage.NON_FISCALE.getDescrizione())) {
-            record.setFlCriterioRaggrFisc("0");
+            rec.setFlCriterioRaggrFisc("0");
         } else {
             throw new ParerUserError(
                     "Il criterio è errato perchè è standard ed il tipo di unità documentaria usato dal criterio "
                             + "è associata a registri fiscali ed a registri non fiscali");
         }
 
-        return record.getIdCriterioRaggr();
+        return rec.getIdCriterioRaggr();
     }
 
     private void saveCritRaggrFiltroMultiploSisMigr(DecCriterioRaggr crit, String nmSistemaMigraz,
@@ -434,7 +346,7 @@ public class CriteriRaggrHelper extends GenericHelper {
         crit.getDecCriterioFiltroMultiplos().add(filtro);
     }
 
-    private void saveCritRaggrFiltroMultiplo(DecCriterioRaggr crit, DecRegistroUnitaDoc reg,
+    public void saveCritRaggrFiltroMultiplo(DecCriterioRaggr crit, DecRegistroUnitaDoc reg,
             DecRegistroUnitaDoc regRange, DecTipoDoc tipoDoc, DecTipoUnitaDoc tipoUD, String tiEsitoVerifFirme,
             String tiFiltroMultiplo) {
         DecCriterioFiltroMultiplo filtro = new DecCriterioFiltroMultiplo();
@@ -452,186 +364,22 @@ public class CriteriRaggrHelper extends GenericHelper {
         String queryStr = "SELECT u FROM DecCriterioRaggr u WHERE u.orgStrut.idStrut = :idstrut and u.nmCriterioRaggr = :nomecrit";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idstrut", idStruttura);
+        query.setParameter("idstrut", longFromBigDecimal(idStruttura));
         query.setParameter("nomecrit", nome);
 
-        if (query.getResultList().isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
+        return !query.getResultList().isEmpty();
     }
 
     public DecVRicCriterioRaggrTableBean getCriteriRaggr(CriteriRaggruppamentoForm.FiltriCriteriRaggr filtriCriteri)
             throws EMFError {
-        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
-                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
-                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
-                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u ");
-        String whereWord = "WHERE ";
-        /* Inserimento nella query del filtro ID_AMBIENTE */
-        BigDecimal idAmbiente = filtriCriteri.getId_ambiente().parse();
-        if (idAmbiente != null) {
-            queryStr.append(whereWord).append("u.idAmbiente = :idAmbiente ");
-            whereWord = "AND ";
-        }
-        /* Inserimento nella query del filtro ID_ENTE */
-        BigDecimal idEnte = filtriCriteri.getId_ente().parse();
-        if (idEnte != null) {
-            queryStr.append(whereWord).append("u.idEnte = :idEnte ");
-            whereWord = "AND ";
-        }
-        /* Inserimento nella query del filtro ID_STRUT */
-        BigDecimal idStrut = filtriCriteri.getId_strut().parse();
-        if (idStrut != null) {
-            queryStr.append(whereWord).append("u.idStrut = :idStrut ");
-            whereWord = "AND ";
-        }
-        String nmCriterioRaggr = filtriCriteri.getNm_criterio_raggr().parse();
-        if (nmCriterioRaggr != null) {
-            queryStr.append(whereWord).append("UPPER(u.nmCriterioRaggr) LIKE :nmCriterioRaggr ");
-            whereWord = "AND ";
-        }
-        String flCriterioRaggrStandard = filtriCriteri.getFl_criterio_raggr_standard().parse();
-        if (flCriterioRaggrStandard != null) {
-            queryStr.append(whereWord).append("u.flCriterioRaggrStandard = :flCriterioRaggrStandard ");
-            whereWord = "AND ";
-        }
-        String flCriterioRaggrFisc = filtriCriteri.getFl_criterio_raggr_fisc().parse();
-        if (flCriterioRaggrFisc != null) {
-            queryStr.append(whereWord).append("u.flCriterioRaggrFisc = :flCriterioRaggrFisc ");
-            whereWord = "AND ";
-        }
-        String tiValidElenco = filtriCriteri.getTi_valid_elenco().parse();
-        if (tiValidElenco != null) {
-            queryStr.append(whereWord).append("u.tiValidElenco = :tiValidElenco ");
-            whereWord = "AND ";
-        }
-        String tiModValidElenco = filtriCriteri.getTi_mod_valid_elenco().parse();
-        if (tiModValidElenco != null) {
-            queryStr.append(whereWord).append("u.tiModValidElenco = :tiModValidElenco ");
-            whereWord = "AND ";
-        }
-        String tiGestElencoCriterio = filtriCriteri.getTi_gest_elenco_criterio().parse();
-        if (tiGestElencoCriterio != null) {
-            queryStr.append(whereWord).append("u.tiGestElencoCriterio = :tiGestElencoCriterio ");
-            whereWord = "AND ";
-        }
-        BigDecimal idRegistroUnitaDoc = filtriCriteri.getId_registro_unita_doc().parse();
-        if (idRegistroUnitaDoc != null) {
-            queryStr.append(whereWord).append(
-                    "(u.idRegistroUnitaDoc = :idRegistroUnitaDoc OR u.idRegistroRangeUnitaDoc = :idRegistroUnitaDoc) ");
-            whereWord = "AND ";
-        }
-        BigDecimal idTipoUnitaDoc = filtriCriteri.getId_tipo_unita_doc().parse();
-        if (idTipoUnitaDoc != null) {
-            queryStr.append(whereWord).append("u.idTipoUnitaDoc = :idTipoUnitaDoc ");
-            whereWord = "AND ";
-        }
-        BigDecimal idTipoDoc = filtriCriteri.getId_tipo_doc().parse();
-        if (idTipoDoc != null) {
-            queryStr.append(whereWord).append("u.idTipoDoc = :idTipoDoc ");
-            whereWord = "AND ";
-        }
-        BigDecimal aaKeyUnitaDoc = filtriCriteri.getAa_key_unita_doc().parse();
-        if (aaKeyUnitaDoc != null) {
-            queryStr.append(whereWord).append(
-                    "(u.aaKeyUnitaDoc = :aaKeyUnitaDoc OR (u.aaKeyUnitaDocDa <= :aaKeyUnitaDoc AND u.aaKeyUnitaDocA >= :aaKeyUnitaDoc)) ");
-            whereWord = "AND ";
-        }
-        String criterioAttivo = filtriCriteri.getCriterio_attivo().parse();
-        if (criterioAttivo != null) {
-            if (criterioAttivo.equals("1")) {
-                queryStr.append(whereWord).append("u.dtSoppres >= :data AND u.dtIstituz <= :data ");
-            } else {
-                queryStr.append(whereWord).append("u.dtSoppres < :data OR u.dtIstituz > :data ");
-            }
-            whereWord = "AND ";
-        }
-
-        queryStr.append("ORDER BY u.nmCriterioRaggr ");
-
-        Query query = getEntityManager().createQuery(queryStr.toString());
-        if (idAmbiente != null) {
-            query.setParameter("idAmbiente", idAmbiente);
-        }
-        if (idEnte != null) {
-            query.setParameter("idEnte", idEnte);
-        }
-        if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
-        }
-        if (nmCriterioRaggr != null) {
-            query.setParameter("nmCriterioRaggr", "%" + nmCriterioRaggr.toUpperCase() + "%");
-        }
-        if (flCriterioRaggrStandard != null) {
-            query.setParameter("flCriterioRaggrStandard", flCriterioRaggrStandard);
-        }
-        if (flCriterioRaggrFisc != null) {
-            query.setParameter("flCriterioRaggrFisc", flCriterioRaggrFisc);
-        }
-        if (tiValidElenco != null) {
-            query.setParameter("tiValidElenco", tiValidElenco);
-        }
-        if (tiModValidElenco != null) {
-            query.setParameter("tiModValidElenco", tiModValidElenco);
-        }
-        if (tiGestElencoCriterio != null) {
-            query.setParameter("tiGestElencoCriterio", tiGestElencoCriterio);
-        }
-        if (idRegistroUnitaDoc != null) {
-            query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
-        }
-        if (idTipoUnitaDoc != null) {
-            query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        }
-        if (idTipoDoc != null) {
-            query.setParameter("idTipoDoc", idTipoDoc);
-        }
-        if (aaKeyUnitaDoc != null) {
-            query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
-        }
-        if (criterioAttivo != null) {
-            Calendar dataOdierna = Calendar.getInstance();
-            dataOdierna.set(Calendar.HOUR_OF_DAY, 0);
-            dataOdierna.set(Calendar.MINUTE, 0);
-            dataOdierna.set(Calendar.SECOND, 0);
-            dataOdierna.set(Calendar.MILLISECOND, 0);
-            query.setParameter("data", dataOdierna.getTime());
-        }
-
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<DecVRicCriterioRaggr> listaCritRaggr = query.getResultList();
-        DecVRicCriterioRaggrTableBean critRaggrTableBean = new DecVRicCriterioRaggrTableBean();
-        DecVRicCriterioRaggrRowBean critRaggrRowBean;
-
-        try {
-            if (listaCritRaggr != null && !listaCritRaggr.isEmpty()) {
-                for (DecVRicCriterioRaggr scriteriato : listaCritRaggr) {
-                    critRaggrRowBean = (DecVRicCriterioRaggrRowBean) Transform.entity2RowBean(scriteriato);
-                    critRaggrRowBean.setString("nm_ente_nm_strut",
-                            scriteriato.getNmEnte() + " - " + scriteriato.getNmStrut());
-                    String cdRegistro = null;
-                    String aaUnitaDoc = null;
-                    if (scriteriato.getCdRegistroUnitaDoc() != null) {
-                        cdRegistro = scriteriato.getCdRegistroUnitaDoc();
-                    } else if (scriteriato.getCdRegistroRangeUnitaDoc() != null) {
-                        cdRegistro = scriteriato.getCdRegistroRangeUnitaDoc();
-                    }
-                    critRaggrRowBean.setString("cd_registro", cdRegistro);
-                    if (scriteriato.getAaKeyUnitaDoc() != null) {
-                        aaUnitaDoc = "" + scriteriato.getAaKeyUnitaDoc();
-                    } else if (scriteriato.getAaKeyUnitaDocDa() != null) {
-                        aaUnitaDoc = scriteriato.getAaKeyUnitaDocDa() + " - " + scriteriato.getAaKeyUnitaDocA();
-                    }
-                    critRaggrRowBean.setString("aa_unita_doc", aaUnitaDoc);
-                    critRaggrTableBean.add(critRaggrRowBean);
-                }
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return critRaggrTableBean;
+        return getCriteriRaggr(filtriCriteri.getId_ambiente().parse(), filtriCriteri.getId_ente().parse(),
+                filtriCriteri.getId_strut().parse(), filtriCriteri.getNm_criterio_raggr().parse(),
+                filtriCriteri.getFl_criterio_raggr_standard().parse(),
+                filtriCriteri.getFl_criterio_raggr_fisc().parse(), filtriCriteri.getTi_valid_elenco().parse(),
+                filtriCriteri.getTi_mod_valid_elenco().parse(), filtriCriteri.getTi_gest_elenco_criterio().parse(),
+                filtriCriteri.getId_registro_unita_doc().parse(), filtriCriteri.getId_tipo_unita_doc().parse(),
+                filtriCriteri.getId_tipo_doc().parse(), filtriCriteri.getAa_key_unita_doc().parse(),
+                filtriCriteri.getCriterio_attivo().parse());
     }
 
     public List<DecCriterioRaggr> retrieveDecCriterioRaggrList(BigDecimal idAmbiente, BigDecimal idEnte,
@@ -657,21 +405,20 @@ public class CriteriRaggrHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", idEnte);
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (nmCriterioRaggr != null) {
             query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
         }
 
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<DecCriterioRaggr> listaCritRaggr = query.getResultList();
-        return listaCritRaggr;
+        return query.getResultList();
     }
 
     public List<DecCriterioRaggr> retrieveDecCriterioRaggrList(BigDecimal idStruttura) {
@@ -680,15 +427,9 @@ public class CriteriRaggrHelper extends GenericHelper {
 
     public boolean deleteDecCriterioRaggr(LogParam param, BigDecimal idStrut, String nmCriterioRaggr)
             throws ParerUserError {
-        boolean result = false;
+        boolean result;
 
-        String queryStr = "SELECT u FROM DecCriterioRaggr u WHERE u.orgStrut.idStrut = :idstrut and u.nmCriterioRaggr = :nomecrit";
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idstrut", idStrut);
-        query.setParameter("nomecrit", nmCriterioRaggr);
-
-        // Ottengo la entity del record da eliminare
-        DecCriterioRaggr row = (DecCriterioRaggr) query.getSingleResult();
+        DecCriterioRaggr row = getDecCriterioRaggrByStrutturaAndCriterio(idStrut, nmCriterioRaggr);
         if (row != null && row.getVolVolumeConservs().isEmpty() && row.getElvElencoVers().isEmpty()) {
             sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                     param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGRUPPAMENTO,
@@ -696,10 +437,14 @@ public class CriteriRaggrHelper extends GenericHelper {
             // Rimuovo il record
             getEntityManager().remove(row);
             getEntityManager().flush();
-            log.info("Cancellazione criterio di raggruppamento " + nmCriterioRaggr + " della struttura " + idStrut
-                    + " avvenuta con successo!");
+            log.info("Cancellazione criterio di raggruppamento {} della struttura {} avvenuta con successo!",
+                    nmCriterioRaggr, idStrut);
             result = true;
         } else {
+            if (row == null) {
+                throw new ParerUserError("Errore nell'eliminazione del criterio " + nmCriterioRaggr
+                        + ", non ci sono record per idStrut " + idStrut + " e nmCriterioRaggr " + nmCriterioRaggr);
+            }
             throw new ParerUserError("Errore nell'eliminazione del criterio " + row.getNmCriterioRaggr()
                     + ", il criterio è collegato a dei volumi od a degli elenchi di versamento");
         }
@@ -716,7 +461,7 @@ public class CriteriRaggrHelper extends GenericHelper {
         }
         queryStr.append("ORDER BY f.tiFiltroMultiplo");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idcrit", idCriterioRaggr);
+        query.setParameter("idcrit", longFromBigDecimal(idCriterioRaggr));
         if (tiFiltroMultiplo != null) {
             query.setParameter("filtro", tiFiltroMultiplo);
         }
@@ -729,11 +474,11 @@ public class CriteriRaggrHelper extends GenericHelper {
                 listaFiltriTableBean = (DecCriterioFiltroMultiploTableBean) Transform
                         .entities2TableBean(listaFiltriCritRaggr);
                 if (tiFiltroMultiplo.equals(ApplEnum.TipoFiltroMultiploCriteriRaggr.RANGE_REGISTRO_UNI_DOC.name())) {
-                    for (DecCriterioFiltroMultiplo record : listaFiltriCritRaggr) {
+                    for (DecCriterioFiltroMultiplo d : listaFiltriCritRaggr) {
                         for (DecCriterioFiltroMultiploRowBean row : listaFiltriTableBean) {
-                            if (record.getIdCriterioFiltroMult() == row.getIdCriterioFiltroMult().longValue()) {
+                            if (d.getIdCriterioFiltroMult() == row.getIdCriterioFiltroMult().longValue()) {
                                 row.setIdRegistroRangeUnitaDoc(
-                                        new BigDecimal(record.getDecRegistroRangeUnitaDoc().getIdRegistroUnitaDoc()));
+                                        new BigDecimal(d.getDecRegistroRangeUnitaDoc().getIdRegistroUnitaDoc()));
                                 break;
                             }
                         }
@@ -747,16 +492,16 @@ public class CriteriRaggrHelper extends GenericHelper {
     }
 
     public DecCriterioRaggrTableBean getCriteriRaggrbyId(BigDecimal id, BigDecimal idStruttura) {
-        String whereWord = " and ";
+        final String whereWord = " and ";
         StringBuilder queryStr = new StringBuilder(
                 "SELECT u FROM DecCriterioRaggr u WHERE u.orgStrut.idStrut = :idstrut");
         if (id != null) {
             queryStr.append(whereWord).append("u.idCriterioRaggr = :id");
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idstrut", idStruttura);
+        query.setParameter("idstrut", longFromBigDecimal(idStruttura));
         if (id != null) {
-            query.setParameter("id", id);
+            query.setParameter("id", longFromBigDecimal(id));
         }
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
         List<DecCriterioRaggr> listaCritRaggr = query.getResultList();
@@ -796,15 +541,11 @@ public class CriteriRaggrHelper extends GenericHelper {
         return listaCritRaggrTableBean;
     }
 
-    public OrgStrutRowBean getOrgStrutById(BigDecimal idStrut) {
-        OrgStrutRowBean strutRB = new OrgStrutRowBean();
-        try {
-            strutRB = (OrgStrutRowBean) Transform
-                    .entity2RowBean(getEntityManager().find(OrgStrut.class, idStrut.longValue()));
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return strutRB;
+    public OrgStrut getOrgStrutById(BigDecimal idStruttura) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM OrgStrut u WHERE u.idStrut = :idstrut");
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idstrut", longFromBigDecimal(idStruttura));
+        return (OrgStrut) query.getSingleResult();
     }
 
     public DecCriterioRaggrRowBean getDecCriterioRaggrById(BigDecimal idCriterioRaggr) {
@@ -816,18 +557,18 @@ public class CriteriRaggrHelper extends GenericHelper {
                 // Info criterio
                 critRB = (DecCriterioRaggrRowBean) Transform.entity2RowBean(criterioRaggr);
                 // Info ambiente
-                String tiGestElencoNoStd = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_NOSTD",
+                String tiGestElencoNoStd = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD,
                         BigDecimal.valueOf(criterioRaggr.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
-                        BigDecimal.valueOf(criterioRaggr.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
-                String tiGestElencoStdFisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_FISC",
+                        BigDecimal.valueOf(criterioRaggr.getOrgStrut().getIdStrut()));
+                String tiGestElencoStdFisc = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC,
                         BigDecimal.valueOf(criterioRaggr.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
-                        BigDecimal.valueOf(criterioRaggr.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
-                String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_NOFISC",
+                        BigDecimal.valueOf(criterioRaggr.getOrgStrut().getIdStrut()));
+                String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC,
                         BigDecimal.valueOf(criterioRaggr.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
-                        BigDecimal.valueOf(criterioRaggr.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
+                        BigDecimal.valueOf(criterioRaggr.getOrgStrut().getIdStrut()));
                 critRB.setString("ti_gest_elenco_std_nofisc", tiGestElencoStdNofisc);
                 critRB.setString("ti_gest_elenco_nostd", tiGestElencoNoStd);
                 critRB.setString("ti_gest_elenco_std_fisc", tiGestElencoStdFisc);
@@ -838,55 +579,23 @@ public class CriteriRaggrHelper extends GenericHelper {
         return critRB;
     }
 
-    public DecCriterioRaggr getDecCriterioRaggr(BigDecimal idStrutCorrente, String nmCriterioRaggr) {
-        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecCriterioRaggr u ");
-        String whereWord = "WHERE ";
-
-        if (idStrutCorrente != null) {
-            queryStr.append(whereWord).append("u.orgStrut.idStrut = :idStrutCorrente ");
-            whereWord = "AND ";
-        }
-
-        if (nmCriterioRaggr != null) {
-            queryStr.append(whereWord).append("u.nmCriterioRaggr = :nmCriterioRaggr ");
-            whereWord = "AND ";
-        }
-
-        Query query = getEntityManager().createQuery(queryStr.toString());
-
-        if (idStrutCorrente != null) {
-            query.setParameter("idStrutCorrente", idStrutCorrente);
-        }
-
-        if (nmCriterioRaggr != null) {
-            query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
-        }
-
-        List<DecCriterioRaggr> list = query.getResultList();
-
-        if (list.isEmpty()) {
-            return null;
-        }
-        return list.get(0);
-    }
-
     /**
      * Verifico se i tipi documento passati in ricerca sono tutti principali
      *
      * @param idTipiDocumentoList
-     *            lista id tipo documento
-     * 
-     * @return true/false
+     *            lista id tipi documento
+     *
+     * @return true o false
      */
     public boolean areAllTipiDocPrincipali(List<BigDecimal> idTipiDocumentoList) {
         String queryStr = "SELECT u FROM DecTipoDoc u " + "WHERE u.flTipoDocPrincipale = '1' ";
 
         if (idTipiDocumentoList != null && !idTipiDocumentoList.isEmpty()) {
-            queryStr = queryStr + "AND u.idTipoDoc IN :idTipiDocList ";
+            queryStr = queryStr + "AND u.idTipoDoc IN (:idTipiDocList) ";
         }
         Query query = getEntityManager().createQuery(queryStr);
         if (idTipiDocumentoList != null && !idTipiDocumentoList.isEmpty()) {
-            query.setParameter("idTipiDocList", idTipiDocumentoList);
+            query.setParameter("idTipiDocList", longListFrom(idTipiDocumentoList));
         }
         List<DecTipoDoc> listaTipiDoc = query.getResultList();
         return listaTipiDoc.size() == idTipiDocumentoList.size();
@@ -894,113 +603,28 @@ public class CriteriRaggrHelper extends GenericHelper {
 
     public DecVRicCriterioRaggrTableBean getCriteriRaggrFromAmministrazioneStruttura(BigDecimal idStrut,
             List<BigDecimal> idRegistroUnitaDocList, List<BigDecimal> idTipoUnitaDocList,
-            List<BigDecimal> idTipoDocList) throws EMFError {
-        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
-                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
-                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
-                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
-                + "WHERE u.idStrut = :idStrut ");
-
-        if (!idRegistroUnitaDocList.isEmpty()) {
-            queryStr = queryStr.append("AND u.idRegistroUnitaDoc IN :idRegistroUnitaDocList ");
-        }
-        if (!idTipoUnitaDocList.isEmpty()) {
-            queryStr = queryStr.append("AND u.idTipoUnitaDoc IN :idTipoUnitaDocList ");
-        }
-        if (!idTipoDocList.isEmpty()) {
-            queryStr = queryStr.append("AND u.idTipoDoc IN :idTipoDocList ");
-        }
-
-        queryStr.append("ORDER BY u.nmCriterioRaggr ASC ");
-
-        Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idStrut", idStrut);
-
-        if (!idRegistroUnitaDocList.isEmpty()) {
-            query.setParameter("idRegistroUnitaDocList", idRegistroUnitaDocList);
-        }
-        if (!idTipoUnitaDocList.isEmpty()) {
-            query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
-        }
-        if (!idTipoDocList.isEmpty()) {
-            query.setParameter("idTipoDocList", idTipoDocList);
-        }
-
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<DecVRicCriterioRaggr> listaCritRaggr = query.getResultList();
-        return listaCriteriToTableBean(listaCritRaggr);
+            List<BigDecimal> idTipoDocList) {
+        return listaCriteriToTableBean(getDecVRicCriterioRaggrsByAmministrazioneStruttura(idStrut,
+                idRegistroUnitaDocList, idTipoUnitaDocList, idTipoDocList));
     }
 
-    public DecVRicCriterioRaggrTableBean getCriteriRaggrFromStruttura(BigDecimal idStrut, boolean filterValid)
-            throws EMFError {
-        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
-                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
-                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
-                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
-                + "WHERE u.idStrut = :idStrut ";
-        if (filterValid) {
-            queryStr += " AND u.dtIstituz <= :filterDate AND u.dtSoppres >= :filterDate ";
-        }
-        queryStr += "ORDER BY u.nmCriterioRaggr ";
-
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        if (filterValid) {
-            Date now = Calendar.getInstance().getTime();
-            query.setParameter("filterDate", now);
-        }
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<DecVRicCriterioRaggr> listaCritRaggr = query.getResultList();
-        return listaCriteriToTableBean(listaCritRaggr);
+    public DecVRicCriterioRaggrTableBean getCriteriRaggrFromStruttura(BigDecimal idStrut, boolean filterValid) {
+        return listaCriteriToTableBean(getDecVRicCriterioRaggrsByStruttura(idStrut, filterValid));
     }
 
     public DecVRicCriterioRaggrTableBean getCriteriRaggrFromRegistroNoRange(BigDecimal idStrut,
-            BigDecimal idRegistroUnitaDoc) throws EMFError {
-        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
-                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
-                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
-                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
-                + "WHERE u.idStrut = :idStrut AND u.idRegistroUnitaDoc = :idRegistroUnitaDoc "
-                + "ORDER BY u.nmCriterioRaggr ";
+            BigDecimal idRegistroUnitaDoc) {
 
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<DecVRicCriterioRaggr> listaCritRaggr = query.getResultList();
-        return listaCriteriToTableBean(listaCritRaggr);
+        return listaCriteriToTableBean(getDecVRicCriterioRaggrsByRegistroNoRange(idStrut, idRegistroUnitaDoc));
     }
 
-    public DecVRicCriterioRaggrTableBean getCriteriRaggrFromTipoUnitaDoc(BigDecimal idStrut, BigDecimal idTipoUnitaDoc)
-            throws EMFError {
-        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
-                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
-                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
-                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
-                + "WHERE u.idStrut = :idStrut AND u.idTipoUnitaDoc = :idTipoUnitaDoc " + "ORDER BY u.nmCriterioRaggr ";
-
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<DecVRicCriterioRaggr> listaCritRaggr = query.getResultList();
-        return listaCriteriToTableBean(listaCritRaggr);
+    public DecVRicCriterioRaggrTableBean getCriteriRaggrFromTipoUnitaDoc(BigDecimal idStrut,
+            BigDecimal idTipoUnitaDoc) {
+        return listaCriteriToTableBean(getDecVRicCriterioRaggrsByTipoUnitaDoc(idStrut, idTipoUnitaDoc));
     }
 
-    public DecVRicCriterioRaggrTableBean getCriteriRaggrFromTipoDoc(BigDecimal idStrut, BigDecimal idTipoDoc)
-            throws EMFError {
-        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
-                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
-                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
-                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
-                + "WHERE u.idStrut = :idStrut AND u.idTipoDoc = :idTipoDoc " + "ORDER BY u.nmCriterioRaggr ";
-
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("idTipoDoc", idTipoDoc);
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<DecVRicCriterioRaggr> listaCritRaggr = query.getResultList();
-        return listaCriteriToTableBean(listaCritRaggr);
+    public DecVRicCriterioRaggrTableBean getCriteriRaggrFromTipoDoc(BigDecimal idStrut, BigDecimal idTipoDoc) {
+        return listaCriteriToTableBean(getDecVRicCriterioRaggrsByTipoDoc(idStrut, idTipoDoc));
     }
 
     private DecVRicCriterioRaggrTableBean listaCriteriToTableBean(List<DecVRicCriterioRaggr> listaCritRaggr) {
@@ -1058,27 +682,6 @@ public class CriteriRaggrHelper extends GenericHelper {
         }
     }
 
-    // /**
-    // * Restituisce il valore di numMaxCompCriterioRaggr per la struttura passata in input. Se la struttura non è
-    // * presente o viene passato come parametro un id nullo, viene restituito 0
-    // *
-    // * @param idStrut
-    // * @return
-    // */
-    // public long getNumMaxCompDaStruttura(BigDecimal idStrut) {
-    // long numComp = 0;
-    // if (idStrut != null) {
-    // String queryStr = "SELECT strut.numMaxCompCriterioRaggr FROM OrgStrut strut WHERE strut.idStrut = :idStrut ";
-    // Query q = getEntityManager().createQuery(queryStr);
-    // q.setParameter("idStrut", idStrut.longValue());
-    // List<BigDecimal> numMaxList = (List<BigDecimal>) q.getResultList();
-    // if (!numMaxList.isEmpty()) {
-    // numComp = numMaxList.get(0).longValue();
-    // }
-    // }
-    // return numComp;
-    // }
-
     /**
      * Recupera i criteri di raggruppamento che hanno come campo: - l'anno passato come parametro e - il registro
      * passato come parametro oppure un tipo ud legato al registro passato come parametro
@@ -1087,7 +690,7 @@ public class CriteriRaggrHelper extends GenericHelper {
      *            id registro unita doc
      * @param aaKeyUnitaDoc
      *            anno unita doc
-     * 
+     *
      * @return lista oggetti di tipo {@link DecCriterioRaggr}
      */
     public List<DecCriterioRaggr> getDecCriterioRaggrRegistroOTipiUdAssociatiList(BigDecimal idRegistroUnitaDoc,
@@ -1105,8 +708,8 @@ public class CriteriRaggrHelper extends GenericHelper {
                         //
                         + "AND criterioRaggr.aaKeyUnitaDoc = :aaKeyUnitaDoc "
                         + "AND criterioRaggr.flCriterioRaggrStandard = '1' ");
-        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
-        query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
+        query.setParameter("idRegistroUnitaDoc", longFromBigDecimal(idRegistroUnitaDoc));
+        query.setParameter("aaKeyUnitaDoc", bigDecimalFromInteger(aaKeyUnitaDoc));
         return query.getResultList();
     }
 
@@ -1122,7 +725,7 @@ public class CriteriRaggrHelper extends GenericHelper {
      *            id del tipo dato
      * @param tipoDato
      *            registro, tipo ud oppure tipo doc
-     * 
+     *
      * @return String criterio
      */
     public String getCriterioStandardPerTipoDatoAnno(long idTipoDato, TipoDato tipoDato) {
@@ -1246,8 +849,7 @@ public class CriteriRaggrHelper extends GenericHelper {
         query.setParameter("idTipoDato", idTipoDato);
         Date now = Calendar.getInstance().getTime();
         query.setParameter("data", now);
-        List<DecCriterioRaggr> criteri = (List<DecCriterioRaggr>) query.getResultList();
-        return criteri;
+        return query.getResultList();
     }
 
     public List<DecCriterioRaggr> getCriteriPerAssociazioneRegistroTipoUd(Long idRegistroUnitaDoc,
@@ -1256,18 +858,17 @@ public class CriteriRaggrHelper extends GenericHelper {
                 + "JOIN multiplo.decCriterioRaggr criterio "
                 + "WHERE (multiplo.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc OR multiplo.decRegistroRangeUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc) "
                 + "AND multiplo.decTipoUnitaDoc.idTipoUnitaDoc = :idTipoUnitaDoc ";
-        Query query = getEntityManager().createQuery(queryStr.toString());
+        Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
         query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        List<DecCriterioRaggr> criteri = (List<DecCriterioRaggr>) query.getResultList();
-        return criteri;
+        return query.getResultList();
     }
 
     public DecVCreaCritRaggrRegistro getDecVCreaCritRaggrRegistro(Long idRegistroUnitaDoc) {
         String queryStr = "SELECT u FROM DecVCreaCritRaggrRegistro u "
                 + "WHERE u.idRegistroUnitaDoc = :idRegistroUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
+        query.setParameter("idRegistroUnitaDoc", bigDecimalFromLong(idRegistroUnitaDoc));
         List<DecVCreaCritRaggrRegistro> list = query.getResultList();
         return list.get(0);
     }
@@ -1275,7 +876,7 @@ public class CriteriRaggrHelper extends GenericHelper {
     public DecVCreaCritRaggrTipoUd getDecVCreaCritRaggrTipoUd(Long idTipoUnitaDoc) {
         String queryStr = "SELECT u FROM DecVCreaCritRaggrTipoUd u " + "WHERE u.idTipoUnitaDoc = :idTipoUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+        query.setParameter("idTipoUnitaDoc", bigDecimalFromLong(idTipoUnitaDoc));
         List<DecVCreaCritRaggrTipoUd> list = query.getResultList();
         return list.get(0);
     }
@@ -1283,7 +884,7 @@ public class CriteriRaggrHelper extends GenericHelper {
     public DecVCreaCritRaggrTipoDoc getDecVCreaCritRaggrTipoDoc(Long idTipoDoc) {
         String queryStr = "SELECT u FROM DecVCreaCritRaggrTipoDoc u " + "WHERE u.idTipoDoc = :idTipoDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idTipoDoc", idTipoDoc);
+        query.setParameter("idTipoDoc", bigDecimalFromLong(idTipoDoc));
         List<DecVCreaCritRaggrTipoDoc> list = query.getResultList();
         return list.get(0);
     }
@@ -1293,9 +894,9 @@ public class CriteriRaggrHelper extends GenericHelper {
      *
      * @param idRegistroKeyUnitaDocList
      *            id registro chiave unita doc
-     * 
+     *
      * @return true/false
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1306,7 +907,7 @@ public class CriteriRaggrHelper extends GenericHelper {
                     + "AND registroUnitaDoc.idRegistroUnitaDoc IN :idRegistroKeyUnitaDocList ";
 
             Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idRegistroKeyUnitaDocList", idRegistroKeyUnitaDocList);
+            query.setParameter("idRegistroKeyUnitaDocList", longListFrom(idRegistroKeyUnitaDocList));
             Long numRegistriFiscali = (Long) query.getSingleResult();
             return numRegistriFiscali == idRegistroKeyUnitaDocList.size();
         } else {
@@ -1319,9 +920,9 @@ public class CriteriRaggrHelper extends GenericHelper {
      *
      * @param idTipoUnitaDocList
      *            lista id tipo unita doc
-     * 
+     *
      * @return true/false
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1335,8 +936,8 @@ public class CriteriRaggrHelper extends GenericHelper {
             // (metto in DISTINCT per evitare di avere registri ripetuti associati a tipi ud diverse)
             // li scorro per verificare se sono tutti fiscali. Se la lista da controllare è vuota, è come se fosse false
             Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
-            List<DecRegistroUnitaDoc> registroUnitaDocList = (List<DecRegistroUnitaDoc>) query.getResultList();
+            query.setParameter("idTipoUnitaDocList", longListFrom(idTipoUnitaDocList));
+            List<DecRegistroUnitaDoc> registroUnitaDocList = query.getResultList();
             int countRegAssFisc = 0;
             for (DecRegistroUnitaDoc registroUnitaDoc : registroUnitaDocList) {
                 if (registroUnitaDoc.getFlRegistroFisc().equals("1")) {
@@ -1364,10 +965,520 @@ public class CriteriRaggrHelper extends GenericHelper {
 
     public List<String> getCriteriNonCoerenti(BigDecimal idTipoUnitaDoc) {
         String queryStr = "SELECT chkCriteriByTipoUd.dsCriterioNonCoerente FROM DecVChkCriteriByTipoUd chkCriteriByTipoUd "
-                + "WHERE chkCriteriByTipoUd.idTipoUnitaDoc = :idTipoUnitaDoc ";
+                + "WHERE chkCriteriByTipoUd.decVChkCriteriByTipoUdId.idTipoUnitaDoc = :idTipoUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        List<String> list = (List<String>) query.getResultList();
-        return list;
+        return query.getResultList();
     }
+
+    public OrgStrutRowBean getOrgStrutRowBeanById(BigDecimal idStrut) {
+        OrgStrutRowBean strutRB = new OrgStrutRowBean();
+        try {
+            strutRB = (OrgStrutRowBean) Transform
+                    .entity2RowBean(getEntityManager().find(OrgStrut.class, idStrut.longValue()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return strutRB;
+    }
+
+    public DecCriterioRaggr getDecCriterioRaggrByStrutturaCorrenteAndCriterio(BigDecimal idStrutCorrente,
+            String nmCriterioRaggr) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecCriterioRaggr u ");
+        String whereWord = "WHERE ";
+
+        if (idStrutCorrente != null) {
+            queryStr.append(whereWord).append("u.orgStrut.idStrut = :idStrutCorrente ");
+            whereWord = "AND ";
+        }
+
+        if (nmCriterioRaggr != null) {
+            queryStr.append(whereWord).append("u.nmCriterioRaggr = :nmCriterioRaggr ");
+        }
+
+        Query query = getEntityManager().createQuery(queryStr.toString());
+
+        if (idStrutCorrente != null) {
+            query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
+        }
+
+        if (nmCriterioRaggr != null) {
+            query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
+        }
+
+        List<DecCriterioRaggr> list = query.getResultList();
+
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public DecCriterioRaggr getDecCriterioRaggrByStrutturaAndCriterio(BigDecimal idStruttura, String nome) {
+        DecCriterioRaggr decCriterioRaggr;// Se c'è il parametro nome, carico il criterio di raggruppamento
+                                          // corrispondente
+        String queryStr = "SELECT u FROM DecCriterioRaggr u WHERE u.orgStrut.idStrut = :idstrut and u.nmCriterioRaggr = :nomecrit";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idstrut", longFromBigDecimal(idStruttura));
+        query.setParameter("nomecrit", nome);
+        decCriterioRaggr = (DecCriterioRaggr) query.getSingleResult();
+        return decCriterioRaggr;
+    }
+
+    public DecVRicCriterioRaggrTableBean getCriteriRaggr(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
+            String nmCriterioRaggr, String flCriterioRaggrStandard, String flCriterioRaggrFisc, String tiValidElenco,
+            String tiModValidElenco, String tiGestElencoCriterio, BigDecimal idRegistroUnitaDoc,
+            BigDecimal idTipoUnitaDoc, BigDecimal idTipoDoc, BigDecimal aaKeyUnitaDoc, String criterioAttivo) {
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
+                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.id.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
+                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
+                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u ");
+        String whereWord = "WHERE ";/* Inserimento nella query del filtro ID_AMBIENTE */
+        if (idAmbiente != null) {
+            queryStr.append(whereWord).append("u.idAmbiente = :idAmbiente ");
+            whereWord = "AND ";
+        }
+        /* Inserimento nella query del filtro ID_ENTE */
+        if (idEnte != null) {
+            queryStr.append(whereWord).append("u.idEnte = :idEnte ");
+            whereWord = "AND ";
+        }
+        /* Inserimento nella query del filtro ID_STRUT */
+        if (idStrut != null) {
+            queryStr.append(whereWord).append("u.idStrut = :idStrut ");
+            whereWord = "AND ";
+        }
+        if (nmCriterioRaggr != null) {
+            queryStr.append(whereWord).append("UPPER(u.nmCriterioRaggr) LIKE :nmCriterioRaggr ");
+        }
+        if (flCriterioRaggrStandard != null) {
+            queryStr.append(whereWord).append("u.flCriterioRaggrStandard = :flCriterioRaggrStandard ");
+        }
+        if (flCriterioRaggrFisc != null) {
+            queryStr.append(whereWord).append("u.flCriterioRaggrFisc = :flCriterioRaggrFisc ");
+        }
+        if (tiValidElenco != null) {
+            queryStr.append(whereWord).append("u.tiValidElenco = :tiValidElenco ");
+        }
+        if (tiModValidElenco != null) {
+            queryStr.append(whereWord).append("u.tiModValidElenco = :tiModValidElenco ");
+        }
+        if (tiGestElencoCriterio != null) {
+            queryStr.append(whereWord).append("u.tiGestElencoCriterio = :tiGestElencoCriterio ");
+        }
+        if (idRegistroUnitaDoc != null) {
+            queryStr.append(whereWord).append(
+                    "(u.id.idRegistroUnitaDoc = :idRegistroUnitaDoc OR u.id.idRegistroRangeUnitaDoc = :idRegistroUnitaDoc) ");
+        }
+        if (idTipoUnitaDoc != null) {
+            queryStr.append(whereWord).append("u.id.idTipoUnitaDoc = :idTipoUnitaDoc ");
+        }
+        if (idTipoDoc != null) {
+            queryStr.append(whereWord).append("u.id.idTipoDoc = :idTipoDoc ");
+        }
+        if (aaKeyUnitaDoc != null) {
+            queryStr.append(whereWord).append(
+                    "(u.aaKeyUnitaDoc = :aaKeyUnitaDoc OR (u.aaKeyUnitaDocDa <= :aaKeyUnitaDoc AND u.aaKeyUnitaDocA >= :aaKeyUnitaDoc)) ");
+        }
+        if (criterioAttivo != null) {
+            if (criterioAttivo.equals("1")) {
+                queryStr.append(whereWord).append("u.dtSoppres >= :data AND u.dtIstituz <= :data ");
+            } else {
+                queryStr.append(whereWord).append("u.dtSoppres < :data OR u.dtIstituz > :data ");
+            }
+        }
+
+        queryStr.append("ORDER BY u.nmCriterioRaggr ");
+
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        if (idAmbiente != null) {
+            query.setParameter("idAmbiente", idAmbiente);
+        }
+        if (idEnte != null) {
+            query.setParameter("idEnte", idEnte);
+        }
+        if (idStrut != null) {
+            query.setParameter("idStrut", idStrut);
+        }
+        if (nmCriterioRaggr != null) {
+            query.setParameter("nmCriterioRaggr", "%" + nmCriterioRaggr.toUpperCase() + "%");
+        }
+        if (flCriterioRaggrStandard != null) {
+            query.setParameter("flCriterioRaggrStandard", flCriterioRaggrStandard);
+        }
+        if (flCriterioRaggrFisc != null) {
+            query.setParameter("flCriterioRaggrFisc", flCriterioRaggrFisc);
+        }
+        if (tiValidElenco != null) {
+            query.setParameter("tiValidElenco", tiValidElenco);
+        }
+        if (tiModValidElenco != null) {
+            query.setParameter("tiModValidElenco", tiModValidElenco);
+        }
+        if (tiGestElencoCriterio != null) {
+            query.setParameter("tiGestElencoCriterio", tiGestElencoCriterio);
+        }
+        if (idRegistroUnitaDoc != null) {
+            query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
+        }
+        if (idTipoUnitaDoc != null) {
+            query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+        }
+        if (idTipoDoc != null) {
+            query.setParameter("idTipoDoc", idTipoDoc);
+        }
+        if (aaKeyUnitaDoc != null) {
+            query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
+        }
+        if (criterioAttivo != null) {
+            Calendar dataOdierna = Calendar.getInstance();
+            dataOdierna.set(Calendar.HOUR_OF_DAY, 0);
+            dataOdierna.set(Calendar.MINUTE, 0);
+            dataOdierna.set(Calendar.SECOND, 0);
+            dataOdierna.set(Calendar.MILLISECOND, 0);
+            query.setParameter("data", dataOdierna.getTime());
+        }
+
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        List<DecVRicCriterioRaggr> listaCritRaggr = query.getResultList();
+        DecVRicCriterioRaggrTableBean critRaggrTableBean = new DecVRicCriterioRaggrTableBean();
+        DecVRicCriterioRaggrRowBean critRaggrRowBean;
+
+        try {
+            if (listaCritRaggr != null && !listaCritRaggr.isEmpty()) {
+                for (DecVRicCriterioRaggr scriteriato : listaCritRaggr) {
+                    critRaggrRowBean = (DecVRicCriterioRaggrRowBean) Transform.entity2RowBean(scriteriato);
+                    critRaggrRowBean.setString("nm_ente_nm_strut",
+                            scriteriato.getNmEnte() + " - " + scriteriato.getNmStrut());
+                    String cdRegistro = null;
+                    String aaUnitaDoc = null;
+                    if (scriteriato.getCdRegistroUnitaDoc() != null) {
+                        cdRegistro = scriteriato.getCdRegistroUnitaDoc();
+                    } else if (scriteriato.getCdRegistroRangeUnitaDoc() != null) {
+                        cdRegistro = scriteriato.getCdRegistroRangeUnitaDoc();
+                    }
+                    critRaggrRowBean.setString("cd_registro", cdRegistro);
+                    if (scriteriato.getAaKeyUnitaDoc() != null) {
+                        aaUnitaDoc = "" + scriteriato.getAaKeyUnitaDoc();
+                    } else if (scriteriato.getAaKeyUnitaDocDa() != null) {
+                        aaUnitaDoc = scriteriato.getAaKeyUnitaDocDa() + " - " + scriteriato.getAaKeyUnitaDocA();
+                    }
+                    critRaggrRowBean.setString("aa_unita_doc", aaUnitaDoc);
+                    critRaggrTableBean.add(critRaggrRowBean);
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return critRaggrTableBean;
+    }
+
+    public List<DecVRicCriterioRaggr> getDecVRicCriterioRaggrsByAmministrazioneStruttura(BigDecimal idStrut,
+            List<BigDecimal> idRegistroUnitaDocList, List<BigDecimal> idTipoUnitaDocList,
+            List<BigDecimal> idTipoDocList) {
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
+                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.id.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
+                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
+                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
+                + "WHERE u.idStrut = :idStrut ");
+
+        if (!idRegistroUnitaDocList.isEmpty()) {
+            queryStr = queryStr.append("AND u.id.idRegistroUnitaDoc IN (:idRegistroUnitaDocList) ");
+        }
+        if (!idTipoUnitaDocList.isEmpty()) {
+            queryStr = queryStr.append("AND u.id.idTipoUnitaDoc IN (:idTipoUnitaDocList) ");
+        }
+        if (!idTipoDocList.isEmpty()) {
+            queryStr = queryStr.append("AND u.id.idTipoDoc IN (:idTipoDocList) ");
+        }
+
+        queryStr.append("ORDER BY u.nmCriterioRaggr ASC ");
+
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idStrut", idStrut);
+
+        if (!idRegistroUnitaDocList.isEmpty()) {
+            query.setParameter("idRegistroUnitaDocList", idRegistroUnitaDocList);
+        }
+        if (!idTipoUnitaDocList.isEmpty()) {
+            query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
+        }
+        if (!idTipoDocList.isEmpty()) {
+            query.setParameter("idTipoDocList", idTipoDocList);
+        }
+
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        return query.getResultList();
+    }
+
+    public List<DecVRicCriterioRaggr> getDecVRicCriterioRaggrsByStruttura(BigDecimal idStrut, boolean filterValid) {
+        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
+                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, "
+                + "u.decVRicCriterioRaggrId.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
+                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, "
+                + "u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
+                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, "
+                + "u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u " + "WHERE u.idStrut = :idStrut ";
+
+        if (filterValid) {
+            queryStr += " AND u.dtIstituz <= :filterDate AND u.dtSoppres >= :filterDate ";
+        }
+        queryStr += "ORDER BY u.nmCriterioRaggr ";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idStrut", idStrut);
+        if (filterValid) {
+            Date now = Calendar.getInstance().getTime();
+            query.setParameter("filterDate", now);
+        }
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        return query.getResultList();
+    }
+
+    public List<DecVRicCriterioRaggr> getDecVRicCriterioRaggrsByRegistroNoRange(BigDecimal idStrut,
+            BigDecimal idRegistroUnitaDoc) {
+        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
+                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.id.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
+                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
+                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
+                + "WHERE u.idStrut = :idStrut AND u.id.idRegistroUnitaDoc = :idRegistroUnitaDoc "
+                + "ORDER BY u.nmCriterioRaggr ";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        return query.getResultList();
+    }
+
+    public List<DecVRicCriterioRaggr> getDecVRicCriterioRaggrsByTipoUnitaDoc(BigDecimal idStrut,
+            BigDecimal idTipoUnitaDoc) {
+        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
+                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.id.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
+                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
+                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
+                + "WHERE u.idStrut = :idStrut AND u.id.idTipoUnitaDoc = :idTipoUnitaDoc "
+                + "ORDER BY u.nmCriterioRaggr ";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        return query.getResultList();
+    }
+
+    public List<DecVRicCriterioRaggr> getDecVRicCriterioRaggrsByTipoDoc(BigDecimal idStrut, BigDecimal idTipoDoc) {
+        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
+                + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.id.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
+                + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
+                + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u "
+                + "WHERE u.idStrut = :idStrut AND u.id.idTipoDoc = :idTipoDoc " + "ORDER BY u.nmCriterioRaggr ";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("idTipoDoc", idTipoDoc);
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        return query.getResultList();
+    }
+
+    public void deleteDecCriterioFiltroMultiploTipoEsitoVerifFirmeByDecCriterioRaggr(
+            DecCriterioRaggr decCriterioRaggr) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public void deleteDecCriterioFiltroMultiploByDecCriterioRaggrNotInEsitoVerifFirme(DecCriterioRaggr decCriterioRaggr,
+            List<String> esitiVerifFirme) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit and u.tiEsitoVerifFirme NOT IN (:esiti)");
+        q.setParameter("esiti", esitiVerifFirme);
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiploByDecCriterioRaggrAndTipoEsitoVerifFirme(
+            DecCriterioRaggr decCriterioRaggr, String tipo) {
+        Query query = getEntityManager()
+                .createQuery("SELECT u FROM DecCriterioFiltroMultiplo u " + "WHERE u.tiEsitoVerifFirme = :tipo "
+                        + "and u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        query.setParameter("tipo", tipo);
+        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_ESITO_VERIF_FIRME.name());
+        query.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        return query.getResultList();
+    }
+
+    public void deleteDecCriterioFiltroMultiploTipoRegistroUniDocByDecCriterioRaggr(DecCriterioRaggr decCriterioRaggr) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public void deleteDecCriterioFiltroMultiploByDecCriterioRaggrNotInIdRegistroUnitaDoc(
+            DecCriterioRaggr decCriterioRaggr, List<Long> cdRegistroKeyUnitaDocList) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit "
+                + "and u.decRegistroUnitaDoc.idRegistroUnitaDoc NOT IN (:regs)");
+        q.setParameter("regs", cdRegistroKeyUnitaDocList);
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiploByDecRegistroUnitaDoc(
+            DecCriterioRaggr decCriterioRaggr, DecRegistroUnitaDoc reg) {
+        Query query = getEntityManager()
+                .createQuery("SELECT u FROM DecCriterioFiltroMultiplo u " + "WHERE u.decRegistroUnitaDoc = :reg "
+                        + "and u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        query.setParameter("reg", reg);
+        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.REGISTRO_UNI_DOC.name());
+        query.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        return query.getResultList();
+    }
+
+    public List<DecRegistroUnitaDoc> getDecRegistroUnitaDocByIdRegistroUnitaDoc(List<Long> cdRegistroKeyUnitaDocList) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecRegistroUnitaDoc u ");
+        queryStr.append("WHERE u.idRegistroUnitaDoc in :idreg");
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idreg", cdRegistroKeyUnitaDocList);
+        return query.getResultList();
+    }
+
+    public void deleteDecCriterioFiltroMultiploTipoSistemaMigrazByDecCriterioRaggr(DecCriterioRaggr decCriterioRaggr) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+    }
+
+    public void deleteDecCriterioRaggrByDecCriterioRaggrNotInNmSistemaMigraz(DecCriterioRaggr decCriterioRaggr,
+            List<String> nmSistemaMigrazList) {
+        // In caso di modifica, potrei aver eliminato qualche filtro dalle multiselect, che non
+        // risulterebbero più presenti nella lista
+        // Eseguo perciò una bulk delete sui record non presenti nella lista
+        Query q = getEntityManager()
+                .createQuery("DELETE FROM DecCriterioFiltroMultiplo u " + "WHERE u.tiFiltroMultiplo = :filtro "
+                        + "and u.decCriterioRaggr.idCriterioRaggr = :crit " + "and u.nmSistemaMigraz NOT IN (:tipi)");
+        q.setParameter("tipi", nmSistemaMigrazList);
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiploByDecCriterioRaggr(
+            DecCriterioRaggr decCriterioRaggr, String tipo) {
+        Query query = getEntityManager()
+                .createQuery("SELECT u FROM DecCriterioFiltroMultiplo u " + "WHERE u.nmSistemaMigraz = :tipo "
+                        + "and u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        query.setParameter("tipo", tipo);
+        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.SISTEMA_MIGRAZ.name());
+        query.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        return query.getResultList();
+    }
+
+    public List<String> getOrgUsoSistemaMigrazByNmSistemaMigrazList(BigDecimal idStruttura,
+            List<String> nmSistemaMigrazList) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT DISTINCT v.nmSistemaMigraz FROM OrgUsoSistemaMigraz u JOIN u.aplSistemaMigraz v "
+                        + "WHERE u.orgStrut.idStrut = :idStrutturain " + "AND v.nmSistemaMigraz is not null ");
+        queryStr.append("AND v.nmSistemaMigraz in :nmsistemamigraz");
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("nmsistemamigraz", nmSistemaMigrazList);
+        query.setParameter("idStrutturain", longFromBigDecimal(idStruttura));
+        return query.getResultList();
+    }
+
+    public void deleteDecCriterioFiltroMultiploByDecCriterioNotInTipoDocs(DecCriterioRaggr decCriterioRaggr,
+            List<Long> nmTipoDocList) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit "
+                + "and u.decTipoDoc.idTipoDoc NOT IN (:tipi)");
+        q.setParameter("tipi", nmTipoDocList);
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiplosByTipoDocAndDecCriterio(
+            DecCriterioRaggr decCriterioRaggr, DecTipoDoc tipo) {
+        Query query = getEntityManager().createQuery("SELECT u FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.decTipoDoc = :tipo and u.tiFiltroMultiplo = :filtro "
+                + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        query.setParameter("tipo", tipo);
+        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
+        query.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        return query.getResultList();
+    }
+
+    public List<DecTipoDoc> getDecTipoDocsByTipoDocList(List<Long> nmTipoDocList) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecTipoDoc u ");
+        queryStr.append("WHERE u.idTipoDoc in :idtipodoc");
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idtipodoc", nmTipoDocList);
+        return query.getResultList();
+    }
+
+    public void deleteDecCriterioFiltroMultiploTipoUniDocByDecCriterio(DecCriterioRaggr decCriterioRaggr) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public void deleteDecCriterioFiltroMultiploTipoDocByDecCriterio(DecCriterioRaggr decCriterioRaggr) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_DOC.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+
+        getEntityManager().flush();
+    }
+
+    public void deleteDecCriterioFiltroMultiploByDecCriterioNotInTipoUnitaDoc(DecCriterioRaggr decCriterioRaggr,
+            List<Long> asList) {
+        Query q = getEntityManager().createQuery("DELETE FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.tiFiltroMultiplo = :filtro " + "and u.decCriterioRaggr.idCriterioRaggr = :crit "
+                + "and u.decTipoUnitaDoc.idTipoUnitaDoc NOT IN (:tipi)");
+        q.setParameter("tipi", asList);
+        q.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
+        q.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
+    public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiploList(DecCriterioRaggr decCriterioRaggr,
+            DecTipoUnitaDoc tipo) {
+        Query query = getEntityManager().createQuery("SELECT u FROM DecCriterioFiltroMultiplo u "
+                + "WHERE u.decTipoUnitaDoc = :tipo and u.tiFiltroMultiplo = :filtro "
+                + "and u.decCriterioRaggr.idCriterioRaggr = :crit");
+        query.setParameter("tipo", tipo);
+        query.setParameter("filtro", ApplEnum.TipoFiltroMultiploCriteriRaggr.TIPO_UNI_DOC.name());
+        query.setParameter("crit", decCriterioRaggr.getIdCriterioRaggr());
+        return query.getResultList();
+    }
+
+    public List<DecTipoUnitaDoc> getDecTipoUnitaDocsByTipoUnitaDoc(List<Long> asList) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecTipoUnitaDoc u ");
+        queryStr.append("WHERE u.idTipoUnitaDoc in :idtipoud");
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        query.setParameter("idtipoud", asList);
+        return query.getResultList();
+    }
+
 }

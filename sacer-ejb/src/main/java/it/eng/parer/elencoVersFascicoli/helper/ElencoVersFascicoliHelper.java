@@ -1,43 +1,24 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.elencoVersFascicoli.helper;
 
-import it.eng.parer.elencoVersFascicoli.utils.FasFascicoloObj;
-import it.eng.parer.entity.AroCompDoc;
-import it.eng.parer.entity.AroDoc;
-import it.eng.parer.entity.AroUnitaDoc;
-import it.eng.parer.entity.DecCriterioRaggrFasc;
-import it.eng.parer.entity.ElvDocAggDaElabElenco;
-import it.eng.parer.entity.ElvElencoVersFasc;
-import it.eng.parer.entity.ElvElencoVersFascDaElab;
-import it.eng.parer.entity.ElvFascDaElabElenco;
-import it.eng.parer.entity.ElvFileElencoVersFasc;
-import it.eng.parer.entity.ElvLogElencoVer;
-import it.eng.parer.entity.ElvStatoElencoVersFasc;
-import it.eng.parer.entity.FasStatoFascicoloElenco;
-import it.eng.parer.entity.FasFascicolo;
-import it.eng.parer.entity.HsmElencoFascSesFirma;
-import it.eng.parer.entity.IamUser;
-import it.eng.parer.entity.LogJob;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.constraint.ElvFascDaElabElenco.TiStatoFascDaElab;
-import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
-import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
-import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
-import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
-import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
-import it.eng.parer.entity.constraint.HsmElencoFascSesFirma.TiEsitoFirmaElencoFasc;
-import it.eng.parer.exception.ParerNoResultException;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.volume.utils.DatiSpecQueryParams;
-import it.eng.parer.volume.utils.ReturnParams;
-import it.eng.parer.web.dto.DecCriterioAttribBean;
-import it.eng.parer.web.dto.DecCriterioDatiSpecBean;
-import it.eng.parer.web.dto.DefinitoDaBean;
-import it.eng.parer.web.util.Constants;
-import it.eng.parer.ws.utils.CostantiDB;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -46,6 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
 import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -57,14 +39,50 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.elencoVersFascicoli.utils.FasFascicoloObj;
+import it.eng.parer.entity.AroCompDoc;
+import it.eng.parer.entity.AroDoc;
+import it.eng.parer.entity.AroUnitaDoc;
+import it.eng.parer.entity.DecCriterioRaggrFasc;
+import it.eng.parer.entity.ElvElencoVersFasc;
+import it.eng.parer.entity.ElvElencoVersFascDaElab;
+import it.eng.parer.entity.ElvFascDaElabElenco;
+import it.eng.parer.entity.ElvFileElencoVersFasc;
+import it.eng.parer.entity.ElvLogElencoVer;
+import it.eng.parer.entity.ElvStatoElencoVersFasc;
+import it.eng.parer.entity.FasFascicolo;
+import it.eng.parer.entity.FasStatoFascicoloElenco;
+import it.eng.parer.entity.HsmElencoFascSesFirma;
+import it.eng.parer.entity.IamUser;
+import it.eng.parer.entity.LogJob;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
+import it.eng.parer.entity.constraint.ElvFascDaElabElenco.TiStatoFascDaElab;
+import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
+import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
+import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
+import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
+import it.eng.parer.entity.constraint.HsmElencoFascSesFirma.TiEsitoFirmaElencoFasc;
+import it.eng.parer.exception.ParerNoResultException;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.volume.utils.DatiSpecQueryParams;
+import it.eng.parer.volume.utils.ReturnParams;
+import it.eng.parer.web.dto.DecCriterioAttribBean;
+import it.eng.parer.web.dto.DecCriterioDatiSpecBean;
+import it.eng.parer.web.dto.DefinitoDaBean;
+import it.eng.parer.web.util.Constants;
+import it.eng.parer.ws.utils.CostantiDB;
 
 /**
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Stateless(mappedName = "ElencoVersFascicoliHelper")
 @LocalBean
 public class ElencoVersFascicoliHelper extends GenericHelper {
@@ -82,26 +100,22 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "AND elencoDaElab.idStrut = :idStrut)");
         q.setParameter("statoAperto", TiStatoElencoFascDaElab.APERTO);
         q.setParameter("systemDate", systemDate);
-        q.setParameter("idStrut", idStrut);
-        List<Long> elenchi = q.getResultList();
-        return elenchi;
+        q.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        return q.getResultList();
     }
 
     public List<OrgStrut> retrieveStrutture() {
         Query q = em.createQuery("SELECT s FROM OrgStrut s ORDER BY s.idStrut");
-        List<OrgStrut> strutture = q.getResultList();
-        return strutture;
+        return q.getResultList();
     }
 
-    public List<DecCriterioRaggrFasc> retrieveCriterioByStrut(OrgStrut struttura, Date jobStartDate)
-            throws ParseException {
+    public List<DecCriterioRaggrFasc> retrieveCriterioByStrut(OrgStrut struttura, Date jobStartDate) {
         Query q = em.createQuery("SELECT crf " + "FROM DecCriterioRaggrFasc crf " + "WHERE crf.orgStrut = :struttura "
                 + "AND crf.dtIstituz <= :jobStartDate " + "AND crf.dtSoppres > :jobStartDate "
                 + "ORDER BY crf.dtIstituz");
         q.setParameter("struttura", struttura);
         q.setParameter("jobStartDate", jobStartDate);
-        List<DecCriterioRaggrFasc> criteriRaggrFasc = q.getResultList();
-        return criteriRaggrFasc;
+        return q.getResultList();
     }
 
     public ElvElencoVersFasc retrieveElencoByCriterio(DecCriterioRaggrFasc criterio, BigDecimal aaFascicolo,
@@ -122,14 +136,13 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
             }
 
             Query q = em.createQuery(queryStr.toString());
-            q.setParameter("idCriterio", criterio.getIdCriterioRaggrFasc());
-            q.setParameter("idStruttura", struttura.getIdStrut());
+            q.setParameter("idCriterio", BigDecimal.valueOf(criterio.getIdCriterioRaggrFasc()));
+            q.setParameter("idStruttura", BigDecimal.valueOf(struttura.getIdStrut()));
             q.setParameter("statoAperto", TiStatoElencoFascDaElab.APERTO);
             if (tuttiAnniFascicoloNulli) {
                 q.setParameter("aaFascicolo", aaFascicolo);
             }
-            ElvElencoVersFasc elenco = (ElvElencoVersFasc) q.getSingleResult();
-            return elenco;
+            return (ElvElencoVersFasc) q.getSingleResult();
         } catch (NoResultException ex) {
             throw new ParerNoResultException();
         }
@@ -145,28 +158,24 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      * @return lista oggetti di tipo {@link FasFascicoloObj}
      */
     public List<FasFascicoloObj> retrieveFascicoliToProcess(DecCriterioRaggrFasc criterio) {
-        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT u.idFascicolo, u.aaFascicolo, u.tsVersFascicolo "
-                + "FROM ElvVSelFascVers u " + "WHERE u.idCriterioRaggrFasc = :idCriterio ");
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT u.id.idFascicolo, u.aaFascicolo, u.tsVersFascicolo "
+                + "FROM ElvVSelFascVers u " + "WHERE u.id.idCriterioRaggrFasc = :idCriterio ");
 
         if (criterio.getAaFascicolo() != null) {
             queryStr.append(" AND u.aaFascicolo = :aaFascicolo ");
         } else if (criterio.getAaFascicoloDa() != null || criterio.getAaFascicoloA() != null) {
-            // if (criterio.getAaFascicoloDa() != null) {
             queryStr.append(" AND u.aaFascicolo >= :aaFascicoloDa ");
-            // }
-            // if (criterio.getAaFascicoloA() != null) {
             queryStr.append(" AND u.aaFascicolo <= :aaFascicoloA ");
-            // }
         }
 
         // TODO: se per il criterio i filtri aa_fascicolo oppure aa_fascicolo_da o aa_fascicolo_a sono valorizzati,
-        // fascicoli sono selezionati in ordine di data creazione;
+        // fascicoli sono selezionati in ordine di data creazione
         // se per il criterio i filtri aa_fascicolo e aa_fascicolo_da e aa_fascicolo_a non sono valorizzati,
-        // i fascicoli sono selezionati in ordine di anno della chiave del fascicolo + data creazione;
+        // i fascicoli sono selezionati in ordine di anno della chiave del fascicolo + data creazione
         queryStr.append(" ORDER BY u.tsVersFascicolo");
 
         Query q = em.createQuery(queryStr.toString());
-        q.setParameter("idCriterio", criterio.getIdCriterioRaggrFasc());
+        q.setParameter("idCriterio", BigDecimal.valueOf(criterio.getIdCriterioRaggrFasc()));
 
         if (criterio.getAaFascicolo() != null) {
             q.setParameter("aaFascicolo", criterio.getAaFascicolo());
@@ -183,7 +192,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
             }
         }
 
-        List<Object[]> fasFascicoloObjectList = (List<Object[]>) q.getResultList();
+        List<Object[]> fasFascicoloObjectList = q.getResultList();
         List<FasFascicoloObj> fasFascicoloObjSet = new ArrayList<>();
 
         for (Object[] fasFascicoloObject : fasFascicoloObjectList) {
@@ -606,12 +615,6 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
     }
 
     public void setNonElabSched(OrgStrut struttura, LogJob logJob) {
-        /* Set fascicoli non selezionati da schedulatore */
-        // 1) registro un nuovo stato pari a NON_SELEZ_SCHED (tabella FAS_STATO_FASCICOLO_ELENCO) per tutti i fascicoli
-        // appartenenti all’elenco
-        // presenti nella tabella ELV_FASC_DA_ELAB_ELENCO (che e’ filtrata mediante la struttura corrente
-        // e con data creazione inferiore alla data di inizio della creazione automatica degli elenchi e con stato =
-        // IN_ATTESA_SCHED)
         List<FasFascicolo> fasFascicoloList = retrieveFascicoliInQueue(struttura, logJob);
         for (FasFascicolo ff : fasFascicoloList) {
             FasStatoFascicoloElenco statoFascicoloElenco = new FasStatoFascicoloElenco();
@@ -621,44 +624,36 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
 
             ff.getFasStatoFascicoloElencos().add(statoFascicoloElenco);
         }
-        LOG.debug("Elenco Versamento Fascicoli - Trovati nella coda di elaborazione " + fasFascicoloList.size()
-                + " fascicoli non schedulati relativi alla struttura '" + struttura.getNmStrut()
-                + "'. Registro nuovo stato 'NON_ELAB_SCHED'");
+        LOG.debug("Elenco Versamento Fascicoli - Trovati nella coda di elaborazione {}"
+                + " fascicoli non schedulati relativi alla struttura '{}'. Registro nuovo stato 'NON_ELAB_SCHED'",
+                fasFascicoloList.size(), struttura.getNmStrut());
 
-        // 2) aggiorno tutti i fascicoli (tabella FAS_FASCICOLO) presenti nella tabella ELV_FASC_DA_ELAB_ELENCO
-        // (che è filtrata mediante la struttura corrente e con data creazione inferiore alla data di inizio della
-        // creazione automatica degli elenchi
-        // e con stato = IN_ATTESA_SCHED), assegnando stato = NON_SELEZ_SCHED
         Query q1 = em.createQuery("UPDATE FasFascicolo ff SET ff.tiStatoFascElencoVers = :nonSelezSched "
                 + "WHERE EXISTS (" + "SELECT ffDaElab "
-                + "FROM ElvFascDaElabElenco ffDaElab JOIN ffDaElab.fasFascicolo ff1 " + "WHERE ff1 = ff "
-                + "AND ffDaElab.idStrut = :idStrut " + "AND ffDaElab.tsVersFascicolo < :startJobTime "
-                + "AND ffDaElab.tiStatoFascDaElab = :inAttesaSched)");
+                + "FROM ElvFascDaElabElenco ffDaElab JOIN ffDaElab.fasFascicolo ff1 "
+                + "WHERE ff1.idFascicolo = ff.idFascicolo " + "AND ffDaElab.idStrut = :idStrut "
+                + "AND ffDaElab.tsVersFascicolo < :startJobTime " + "AND ffDaElab.tiStatoFascDaElab = :inAttesaSched)");
         q1.setParameter("startJobTime", logJob.getDtRegLogJob());
-        q1.setParameter("idStrut", struttura.getIdStrut());
+        q1.setParameter("idStrut", BigDecimal.valueOf(struttura.getIdStrut()));
         q1.setParameter("nonSelezSched",
                 it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers.NON_SELEZ_SCHED);
         q1.setParameter("inAttesaSched", TiStatoFascDaElab.IN_ATTESA_SCHED);
         int updated1 = q1.executeUpdate();
-        LOG.debug("Elenco Versamento Fascicoli - Trovati " + updated1
-                + " fascicoli non schedulati relativi alla struttura '" + struttura.getNmStrut()
-                + "'. Assegno 'NON_ELAB_SCHED'");
+        LOG.debug("Elenco Versamento Fascicoli - Trovati {}" + " fascicoli non schedulati relativi alla struttura '{}"
+                + "'. Assegno 'NON_ELAB_SCHED'", updated1, struttura.getNmStrut());
 
-        // 3) aggiorno tutti i fascicoli (tabella ELV_FASC_DA_ELAB_ELENCO) appartenenti alla struttura corrente
-        // e presenti nella coda da elaborare con data creazione inferiore alla data di inizio della creazione
-        // automatica degli elenchi
-        // e con stato = IN_ATTESA_SCHED, assegnando stato = NON_SELEZ_SCHED
         Query q2 = em.createQuery("UPDATE ElvFascDaElabElenco ffDaElab SET ffDaElab.tiStatoFascDaElab = :nonSelezSched "
                 + "WHERE ffDaElab.tsVersFascicolo < :startJobTime " + "AND ffDaElab.idStrut = :idStrut "
                 + "AND ffDaElab.tiStatoFascDaElab = :inAttesaSched");
         q2.setParameter("startJobTime", logJob.getDtRegLogJob());
-        q2.setParameter("idStrut", struttura.getIdStrut());
+        q2.setParameter("idStrut", BigDecimal.valueOf(struttura.getIdStrut()));
         q2.setParameter("nonSelezSched", TiStatoFascDaElab.NON_SELEZ_SCHED);
         q2.setParameter("inAttesaSched", TiStatoFascDaElab.IN_ATTESA_SCHED);
         int updated2 = q2.executeUpdate();
-        LOG.debug("Elenco Versamento Fascicoli - Trovati nella coda di elaborazione " + updated2
-                + " fascicoli non schedulati relativi alla struttura '" + struttura.getNmStrut()
-                + "'. Assegno 'NON_ELAB_SCHED'");
+        LOG.debug(
+                "Elenco Versamento Fascicoli - Trovati nella coda di elaborazione {}"
+                        + " fascicoli non schedulati relativi alla struttura '" + "'. Assegno 'NON_ELAB_SCHED'",
+                updated2, struttura.getNmStrut());
     }
 
     public List<FasFascicolo> retrieveFascicoliInQueue(OrgStrut struttura, LogJob logJob) {
@@ -667,7 +662,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "FROM ElvFascDaElabElenco ffDaElab JOIN ffDaElab.fasFascicolo ff1 " + "WHERE ff1 = ff "
                 + "AND ffDaElab.idStrut = :idStrut " + "AND ffDaElab.tsVersFascicolo < :startJobTime "
                 + "AND ffDaElab.tiStatoFascDaElab = :inAttesaSched)");
-        q.setParameter("idStrut", struttura.getIdStrut());
+        q.setParameter("idStrut", BigDecimal.valueOf(struttura.getIdStrut()));
         q.setParameter("startJobTime", logJob.getDtRegLogJob());
         q.setParameter("inAttesaSched", TiStatoFascDaElab.IN_ATTESA_SCHED);
         fascicoliInQueue = q.getResultList();
@@ -688,11 +683,11 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "AND doc.tiCreazione = :TIPO_CREAZIONE";
 
         Query q = em.createQuery(query);
-        q.setParameter("unitaDoc", unitaDoc);
+        q.setParameter("unitaDoc", longFromBigDecimal(unitaDoc));
         q.setParameter("TIPO_CREAZIONE", "VERSAMENTO_UNITA_DOC"); // TODO: inserire ENUM
 
-        long numDocsInUd = ((Long) q.getSingleResult()).longValue();
-        LOG.debug("ADV - Trovati '" + numDocsInUd + "' documenti all'interno dell'unità  documentale " + unitaDoc);
+        long numDocsInUd = ((Long) q.getSingleResult());
+        LOG.debug("ADV - Trovati '{}' documenti all'interno dell'unità  documentale {}", numDocsInUd, unitaDoc);
         return numDocsInUd;
     }
 
@@ -700,8 +695,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         Query q = em.createQuery("SELECT comp " + "FROM AroDoc doc " + "JOIN doc.aroStrutDocs aroStrutDoc "
                 + "JOIN aroStrutDoc.aroCompDocs comp " + "WHERE comp.aroCompDoc is null " + "AND doc.idDoc = :idDoc");
         q.setParameter("idDoc", doc.getIdDoc());
-        List<AroCompDoc> comps = q.getResultList();
-        return comps;
+        return q.getResultList();
     }
 
     /**
@@ -718,10 +712,9 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "FROM AroUnitaDoc unitaDoc " + "JOIN unitaDoc.aroDocs doc " + "JOIN doc.aroStrutDocs strutDoc "
                 + "JOIN strutDoc.aroCompDocs comp " + "WHERE doc.aroUnitaDoc.idUnitaDoc = :unitaDocId "
                 + "AND doc.tiCreazione = :TIPO_CREAZIONE");
-        q.setParameter("unitaDocId", unitaDocId);
+        q.setParameter("unitaDocId", longFromBigDecimal(unitaDocId));
         q.setParameter("TIPO_CREAZIONE", "VERSAMENTO_UNITA_DOC"); // TODO: inserire ENUM
-        Object result = q.getSingleResult();
-        return result;
+        return q.getSingleResult();
     }
 
     /**
@@ -736,9 +729,8 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
     public Object numCompsAndSizeInDoc(BigDecimal docId) {
         Query q = em.createQuery("SELECT count(comp.idCompDoc), SUM(comp.niSizeFileCalc) " + "FROM AroDoc doc "
                 + "JOIN doc.aroStrutDocs strutDoc " + "JOIN strutDoc.aroCompDocs comp " + "WHERE doc.idDoc = :docId");
-        q.setParameter("docId", docId);
-        Object result = q.getSingleResult();
-        return result;
+        q.setParameter("docId", longFromBigDecimal(docId));
+        return q.getSingleResult();
     }
 
     public void deleteFasFascicoloFromQueue(FasFascicolo ff) {
@@ -753,35 +745,17 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         }
         if (fascDaElab != null) {
             em.remove(fascDaElab);
-            LOG.debug("ADV - Eliminato fascicolo con id = " + ff.getIdFascicolo() + " dalla coda di elaborazione");
+            LOG.debug("ADV - Eliminato fascicolo con id = {} dalla coda di elaborazione", ff.getIdFascicolo());
         }
 
-    }
-
-    public void deleteDocFromQueue(AroDoc doc) {
-        ElvDocAggDaElabElenco docAggDaElab;
-        Query q = em.createQuery("select docAggDaElab " + "from ElvDocAggDaElabElenco docAggDaElab "
-                + "where docAggDaElab.aroDoc.idDoc = :idDoc");
-        q.setParameter("idDoc", doc.getIdDoc());
-        try {
-            docAggDaElab = (ElvDocAggDaElabElenco) q.getSingleResult();
-        } catch (NoResultException ex) {
-            docAggDaElab = null;
-        }
-        if (docAggDaElab != null) {
-            em.remove(docAggDaElab);
-            LOG.debug("ADV - Eliminato il documento con id = " + doc.getIdDoc() + " dalla coda di elaborazione");
-        }
     }
 
     public List<FasFascicolo> retrieveFasFascicoliInElenco(ElvElencoVersFasc elenco) {
-        List<FasFascicolo> fasFascicoliList = elenco.getFasFascicoli();
-        return fasFascicoliList;
+        return elenco.getFasFascicoli();
     }
 
     public ElvElencoVersFasc retrieveElencoById(Long idElenco) {
-        ElvElencoVersFasc elenco = em.find(ElvElencoVersFasc.class, idElenco);
-        return elenco;
+        return em.find(ElvElencoVersFasc.class, idElenco);
     }
 
     public ElvStatoElencoVersFasc retrieveStatoElencoByIdElencoVersFascStato(Long idElencoVersFasc,
@@ -812,9 +786,31 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         writeLogElencoVers(elenco, struttura, null, tipoOper, null, logJob);
     }
 
-    // TODO: verificare perchè la tabella LOG è assente
+    /**
+     * @deprecated (i parametri elenco, ff, logJob non vengono usati, meglio usare direttamente il metodo senza questi
+     *             parametri)
+     * 
+     * @param elenco
+     *            elenco dei vers Fasc
+     * @param struttura
+     *            la struttura
+     * @param user
+     *            identificativo dell'utente
+     * @param tipoOper
+     *            tipo operazione
+     * @param ff
+     *            fascicolo
+     * @param logJob
+     *            {@link LogJob}
+     */
+    @Deprecated
     public void writeLogElencoVers(ElvElencoVersFasc elenco, OrgStrut struttura, Long user, String tipoOper,
             FasFascicolo ff, LogJob logJob) {
+        writeLogElencoVers(struttura, user, tipoOper);
+    }
+    // TODO: verificare perchè la tabella LOG è assente
+
+    public void writeLogElencoVers(OrgStrut struttura, Long user, String tipoOper) {
         ElvLogElencoVer logElenco = new ElvLogElencoVer();
         Date date = new Date();
         logElenco.setOrgStrut(struttura);
@@ -823,28 +819,16 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         if (user != null) {
             logElenco.setIamUser(em.find(IamUser.class, user));
         }
-        /*
-         * logElenco.setIdElencoVers(new BigDecimal(elenco.getIdElencoVersFasc()));
-         * logElenco.setNmElenco(elenco.getNmElenco()); // TODO: verificare perche il campo non c'è if (ff != null) {
-         * //TODO: controllare perche il campo sotto non c'è //logElenco.setIdDoc(new BigDecimal(doc.getIdDoc()));
-         * logElenco.setPgDoc(doc.getPgDoc()); logElenco.setTiDoc(doc.getTiDoc()); } if (unitaDoc != null) {
-         * logElenco.setCdRegistroKeyUnitaDoc(unitaDoc.getCdRegistroKeyUnitaDoc());
-         * logElenco.setAaKeyUnitaDoc(unitaDoc.getAaKeyUnitaDoc());
-         * logElenco.setCdKeyUnitaDoc(unitaDoc.getCdKeyUnitaDoc()); } if (logJob != null) { logElenco.setLogJob(logJob);
-         * }
-         */
         em.persist(logElenco);
         em.flush();
     }
 
     public OrgStrut retrieveOrgStrutByid(BigDecimal idStrut) {
-        OrgStrut orgStrut = em.find(OrgStrut.class, idStrut.longValue());
-        return orgStrut;
+        return em.find(OrgStrut.class, idStrut.longValue());
     }
 
     public LogJob retrieveLogJobByid(long idLogJob) {
-        LogJob logJob = em.find(LogJob.class, idLogJob);
-        return logJob;
+        return em.find(LogJob.class, idLogJob);
     }
 
     public long retrieveUserIdByUsername(String username) {
@@ -859,24 +843,17 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         return user.getIdUserIam();
     }
 
-    public ElvElencoVersFasc writeNewElenco(ElvElencoVersFasc elenco) {
-        elenco = em.merge(elenco);
-        return elenco;
-    }
-
     public ElvStatoElencoVersFasc writeNewStatoElenco(ElvStatoElencoVersFasc statoElenco) {
         statoElenco = em.merge(statoElenco);
         return statoElenco;
     }
 
     public FasFascicolo retrieveFasFascicoloById(long idFascicolo) {
-        FasFascicolo fasFascicolo = em.find(FasFascicolo.class, idFascicolo);
-        return fasFascicolo;
+        return em.find(FasFascicolo.class, idFascicolo);
     }
 
     public AroUnitaDoc retrieveAndLockUnitaDocById(long idUnitaDoc) {
-        AroUnitaDoc unitaDoc = em.find(AroUnitaDoc.class, idUnitaDoc, LockModeType.PESSIMISTIC_WRITE);
-        return unitaDoc;
+        return em.find(AroUnitaDoc.class, idUnitaDoc, LockModeType.PESSIMISTIC_WRITE);
     }
 
     public void lockElenco(ElvElencoVersFasc elenco) {
@@ -888,12 +865,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
     }
 
     public AroDoc retrieveDocById(long idDoc) {
-        AroDoc doc = em.find(AroDoc.class, idDoc);
-        return doc;
-    }
-
-    public void lockDoc(AroDoc doc) {
-        em.lock(doc, LockModeType.PESSIMISTIC_WRITE);
+        return em.find(AroDoc.class, idDoc);
     }
 
     public AroCompDoc retrieveCompDocById(long idCompDoc) {
@@ -909,13 +881,8 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         em.detach(doc);
     }
 
-    public void detachAroCompDoc(AroCompDoc compDoc) {
-        em.detach(compDoc);
-    }
-
     public DecCriterioRaggrFasc retrieveCriterioByid(long idCriterio) {
-        DecCriterioRaggrFasc criterio = em.find(DecCriterioRaggrFasc.class, idCriterio);
-        return criterio;
+        return em.find(DecCriterioRaggrFasc.class, idCriterio);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -936,18 +903,16 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         em.persist(elenco);
     }
 
-    public boolean checkFascicoloAnnullato(FasFascicolo ff) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    public boolean checkFascicoloAnnullato(FasFascicolo ff) {
         boolean annullato = false;
         Date dataAnnullamento;
-        Date defaultAnnullamento = sdf.parse("2444-12-31");
         Query q = em.createQuery("select ff.dtAnnull " + "from FasFascicolo ff " + "where ff.idFascicolo = :idFf");
         q.setParameter("idFf", ff.getIdFascicolo());
         dataAnnullamento = (java.util.Date) q.getSingleResult();
-        if (dataAnnullamento.getTime() != defaultAnnullamento.getTime()) {
+        if (dataAnnullamento.getTime() != getDataNonAnnullata().getTime()) {
             annullato = true;
         }
-        LOG.debug("Fascicolo: '" + ff.getIdFascicolo() + "' annullato: " + annullato);
+        LOG.debug("Fascicolo: '{}' annullato: {}", ff.getIdFascicolo(), annullato);
         return annullato;
     }
 
@@ -956,8 +921,8 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         if (elenco.getNiFascVersElenco().intValue() < elenco.getNiMaxFascCrit().intValue()) {
             fasFascicoliOk = true;
         }
-        LOG.debug("Ok = " + fasFascicoliOk + " Num fascicoli inseriti: " + elenco.getNiFascVersElenco().intValue() + "/"
-                + elenco.getNiMaxFascCrit().intValue());
+        LOG.debug("Ok = {}" + " Num fascicoli inseriti: {}" + "/{}", fasFascicoliOk,
+                elenco.getNiFascVersElenco().intValue(), elenco.getNiMaxFascCrit().intValue());
         return fasFascicoliOk;
     }
 
@@ -968,8 +933,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "ORDER BY elenco.tsCreazioneElenco");
         q.setParameter("idStrut", idStrut);
         q.setParameter("statoElenco", statoElenco);
-        List<Long> idElenchi = q.getResultList();
-        return idElenchi;
+        return q.getResultList();
     }
 
     public void deleteElencoVersFascDaElab(Long idElencoVersFascDaElab) {
@@ -1002,11 +966,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         Query q = em.createQuery("SELECT elencoVersFascDaElab " + "FROM ElvElencoVersFascDaElab elencoVersFascDaElab "
                 + "WHERE elencoVersFascDaElab.elvElencoVersFasc.idElencoVersFasc = :idElenco");
         q.setParameter("idElenco", elenco.getIdElencoVersFasc());
-        // try {
         elencoVersFascDaElab = (ElvElencoVersFascDaElab) q.getSingleResult();
-        // } catch (NoResultException ex) {
-        // return null;
-        // }
         return elencoVersFascDaElab;
     }
 
@@ -1017,9 +977,8 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "AND elencoInError.tiEsito = :esito");
         q.setParameter("idElenco", elenco.getIdElencoVersFasc());
         q.setParameter("esito", esito);
-        List<HsmElencoFascSesFirma> hsmElencoFascSesFirma = q.getResultList();
 
-        return hsmElencoFascSesFirma;
+        return q.getResultList();
     }
 
     /**
@@ -1039,7 +998,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
             statoFascicoloElenco.setTiStatoFascElencoVers(status);
 
             ff.getFasStatoFascicoloElencos().add(statoFascicoloElenco);
-            LOG.debug(" - Registrato per il fascicolo '" + ff.getIdFascicolo() + "' nuovo stato " + status.name());
+            LOG.debug(" - Registrato per il fascicolo '{}' nuovo stato {}", ff.getIdFascicolo(), status.name());
         }
     }
 
@@ -1056,13 +1015,12 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         List<FasFascicolo> fasFascicoli = retrieveFasFascicoliInElenco(elenco);
         for (FasFascicolo ff : fasFascicoli) {
             ff.setTiStatoFascElencoVers(status);
-            LOG.debug(" - Assegnato al fascicolo '" + ff.getIdFascicolo() + "' lo stato " + status.name());
+            LOG.debug(" - Assegnato al fascicolo '{}' lo stato {}", ff.getIdFascicolo(), status.name());
         }
     }
 
     public void deleteElvElencoVersFasc(BigDecimal idElencoVersFasc) {
         em.remove(em.find(ElvElencoVersFasc.class, idElencoVersFasc.longValue()));
-        // em.flush();
     }
 
     public void insertFascCodaFascDaElab(long idFascicolo, TiStatoFascDaElab status) {
@@ -1107,7 +1065,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 ElvFileElencoVersFasc.class);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiFileElencoVers", tiFileElencoVers);
-        List list = query.getResultList();
+        List<ElvFileElencoVersFasc> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return (ElvFileElencoVersFasc) query.getResultList().get(0);
         } else {
@@ -1122,7 +1080,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiFileElencoVers", tiFileElencoVers);
-        List list = query.getResultList();
+        List<byte[]> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return (byte[]) query.getResultList().get(0);
         } else {
@@ -1133,11 +1091,11 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
     public ElvFileElencoVersFasc getFileIndiceElenco(long idElencoVersFasc, String tiFileElencoVers) {
         String queryStr = "SELECT u FROM ElvFileElencoVersFasc u "
                 + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc "
-                + "AND u.tiFileElencoVers IN :tiFileElencoVers";
+                + "AND u.tiFileElencoVers IN (:tiFileElencoVers)";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
-        List<ElvFileElencoVersFasc> elencoList = (List<ElvFileElencoVersFasc>) query.getResultList();
+        List<ElvFileElencoVersFasc> elencoList = query.getResultList();
         if (!elencoList.isEmpty()) {
             return elencoList.get(0);
         } else {
@@ -1147,7 +1105,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
 
     public List<ElvFileElencoVersFasc> retrieveFileIndiceElenco(long idElencoVersFasc, String... tiFileElencoVers) {
         String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVersFasc u "
-                + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN :tiFileElencoVers";
+                + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN (:tiFileElencoVers)";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
@@ -1179,8 +1137,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "ORDER BY statoElencoVersoFasc.tsStato ASC");
         q.setParameter("tiStato", TiStatoElencoFascDaElab.AIP_CREATI);
         q.setParameter("tiStatoFirmato", TiStatoElencoFasc.FIRMATO);
-        List<Long> elenchi = q.getResultList();
-        return elenchi;
+        return q.getResultList();
     }
 
     /**
@@ -1197,7 +1154,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "WHERE fasFascicolo.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc "
                 + "AND fasFascicolo.tiStatoConservazione = :tiStatoConservazione ";
         Query queryUd = em.createQuery(queryUdStr);
-        queryUd.setParameter("idElencoVersFasc", idElencoVersFasc.longValue());
+        queryUd.setParameter("idElencoVersFasc", longFromBigDecimal(idElencoVersFasc));
         queryUd.setParameter("tiStatoConservazione", TiStatoConservazione.ANNULLATO);
         result = queryUd.getResultList().isEmpty();
 
@@ -1208,8 +1165,8 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         String queryFfStr = "SELECT fasFascicolo FROM FasFascicolo fasFascicolo "
                 + "WHERE fasFascicolo.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc ";
         Query queryFf = em.createQuery(queryFfStr);
-        queryFf.setParameter("idElencoVersFasc", idElencoVersFasc.longValue());
-        return (List<FasFascicolo>) queryFf.getResultList();
+        queryFf.setParameter("idElencoVersFasc", longFromBigDecimal(idElencoVersFasc));
+        return queryFf.getResultList();
     }
 
     /**
@@ -1242,9 +1199,10 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      */
     public Set<Long> retrieveFascVersInElencoAipCreato(long idElenco) {
         TypedQuery<Long> q1 = em.createQuery("SELECT ff.idFascicolo " + "FROM FasFascicolo ff "
-                + " WHERE ff.elvElencoVersFasc.idElencoVersFasc = :idElenco " + " AND ff.dtAnnull = {d '2444-12-31'} "
+                + " WHERE ff.elvElencoVersFasc.idElencoVersFasc = :idElenco " + " AND ff.dtAnnull = :dtAnnull "
                 + " AND ff.tiStatoFascElencoVers = :tiStatoFascElencoVers ", Long.class);
 
+        q1.setParameter("dtAnnull", getDataNonAnnullata());
         q1.setParameter("idElenco", idElenco);
         q1.setParameter("tiStatoFascElencoVers", TiStatoFascElencoVers.IN_ELENCO_CON_AIP_CREATO);
         List<Long> l1 = q1.getResultList();
@@ -1254,5 +1212,4 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
 
         return hs;
     }
-
 }

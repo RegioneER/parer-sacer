@@ -1,12 +1,28 @@
-package it.eng.parer.slite.gen.tablebean;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
-import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
+package it.eng.parer.slite.gen.tablebean;
 
 import java.sql.Types;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
+
+import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
+import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 
 /**
  * @author Sloth
@@ -26,11 +42,16 @@ public class FasSogFascicoloTableDescriptor extends TableDescriptor {
     public static final String COL_ID_SOG_FASCICOLO = "id_sog_fascicolo";
     public static final String COL_ID_FASCICOLO = "id_fascicolo";
     public static final String COL_TI_RAPP = "ti_rapp";
+    public static final String COL_TI_SES = "ti_ses";
+    public static final String COL_TI_SOG = "ti_sog";
     public static final String COL_NM_NOME_SOG = "nm_nome_sog";
     public static final String COL_NM_COGN_SOG = "nm_cogn_sog";
     public static final String COL_DS_DENOM_SOG = "ds_denom_sog";
     public static final String COL_CD_SOG = "cd_sog";
     public static final String COL_TI_CD_SOG = "ti_cd_sog";
+    public static final String COL_DS_CIT = "ds_cit";
+    public static final String COL_DT_NAS = "dt_nas";
+    public static final String COL_DS_CMN_NSC = "ds_cmn_nsc";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -38,11 +59,16 @@ public class FasSogFascicoloTableDescriptor extends TableDescriptor {
         map.put(COL_ID_SOG_FASCICOLO, new ColumnDescriptor(COL_ID_SOG_FASCICOLO, Types.DECIMAL, 22, true));
         map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
         map.put(COL_TI_RAPP, new ColumnDescriptor(COL_TI_RAPP, Types.VARCHAR, 30, false));
+        map.put(COL_TI_SES, new ColumnDescriptor(COL_TI_SES, Types.VARCHAR, 30, false));
+        map.put(COL_TI_SOG, new ColumnDescriptor(COL_TI_SOG, Types.VARCHAR, 30, false));
         map.put(COL_NM_NOME_SOG, new ColumnDescriptor(COL_NM_NOME_SOG, Types.VARCHAR, 100, false));
         map.put(COL_NM_COGN_SOG, new ColumnDescriptor(COL_NM_COGN_SOG, Types.VARCHAR, 100, false));
         map.put(COL_DS_DENOM_SOG, new ColumnDescriptor(COL_DS_DENOM_SOG, Types.VARCHAR, 254, false));
         map.put(COL_CD_SOG, new ColumnDescriptor(COL_CD_SOG, Types.VARCHAR, 100, false));
         map.put(COL_TI_CD_SOG, new ColumnDescriptor(COL_TI_CD_SOG, Types.VARCHAR, 30, false));
+        map.put(COL_DS_CIT, new ColumnDescriptor(COL_DS_CIT, Types.VARCHAR, 100, false));
+        map.put(COL_DT_NAS, new ColumnDescriptor(COL_DT_NAS, Types.TIMESTAMP, 7, false));
+        map.put(COL_DS_CMN_NSC, new ColumnDescriptor(COL_DS_CMN_NSC, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

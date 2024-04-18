@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipFascicoli.utils;
 
 import it.eng.parer.aipFascicoli.xml.usmainResp.CreatingApplicationType;
@@ -22,14 +39,9 @@ import it.eng.parer.aipFascicoli.xml.usmainResp.LawAndRegulationsType;
 import it.eng.parer.aipFascicoli.xml.usmainResp.NameAndSurnameType;
 import it.eng.parer.aipFascicoli.xml.usmainResp.ProcessType;
 import it.eng.parer.aipFascicoli.xml.usmainResp.TimeReferenceType;
-import it.eng.parer.entity.DecModelloXsdFascicolo;
-import it.eng.parer.entity.DecTipoFascicolo;
-import it.eng.parer.entity.FasContenVerAipFascicolo;
-import it.eng.parer.entity.FasFascicolo;
-import it.eng.parer.entity.FasMetaVerAipFascicolo;
-import it.eng.parer.entity.FasSipVerAipFascicolo;
-import it.eng.parer.entity.FasVerAipFascicolo;
-import it.eng.parer.entity.FasXmlVersFascicolo;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.helper.TipoFascicoloHelper;
+import it.eng.parer.entity.*;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.job.indiceAipFascicoli.helper.ControlliRecIndiceAipFascicoli;
@@ -71,12 +83,15 @@ import org.xml.sax.SAXException;
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings({ "unchecked" })
 public class CreazioneIndiceAipFascicoliUtil {
 
     private static final Logger log = LoggerFactory.getLogger(CreazioneIndiceAipFascicoliUtil.class);
     private RispostaControlli rispostaControlli;
     private ControlliRecIndiceAipFascicoli controlliRecIndiceAipFascicoli;
     private XmlContextCache xmlContextCache;
+    private AmbientiHelper ambientiHelper;
+    private TipoFascicoloHelper tipoFascicoloHelper;
     private final String hashFunction = TipiHash.SHA_256.descrivi();
 
     // stateless ejb per la lettura di informazioni relative ai dati da recuperare
@@ -89,15 +104,14 @@ public class CreazioneIndiceAipFascicoliUtil {
         controlliRecIndiceAipFascicoli = (ControlliRecIndiceAipFascicoli) new InitialContext()
                 .lookup("java:module/ControlliRecIndiceAipFascicoli");
         xmlContextCache = (XmlContextCache) new InitialContext().lookup("java:module/XmlContextCache");
+        ambientiHelper = (AmbientiHelper) new InitialContext().lookup("java:module/AmbientiHelper");
+        tipoFascicoloHelper = (TipoFascicoloHelper) new InitialContext().lookup("java:module/TipoFascicoloHelper");
     }
 
     private void setRispostaError() {
-        // log.fatal(
-        // "Creazione Indice AIP Fascicoli - Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): "
-        // + rispostaControlli.getDsErr());
         log.error(
-                "Creazione Indice AIP Fascicoli - Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): "
-                        + rispostaControlli.getDsErr());
+                "Creazione Indice AIP Fascicoli - Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): {}",
+                rispostaControlli.getDsErr());
         throw new RuntimeException(rispostaControlli.getCodErr() + " - " + rispostaControlli.getDsErr());
     }
 
@@ -196,7 +210,7 @@ public class CreazioneIndiceAipFascicoliUtil {
         // Recupero il fascicolo
         rispostaControlli.reset();
         rispostaControlli = controlliFascicoli.leggiFascicolo(idFascicolo);
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             tmpFasFascicolo = (FasFascicolo) rispostaControlli.getrObject();
@@ -220,7 +234,7 @@ public class CreazioneIndiceAipFascicoliUtil {
         applicazione.setProducer(creatingApplicationProducer);
         rispostaControlli.reset();
         rispostaControlli = controlliRecIndiceAipFascicoli.getVersioneSacer();
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             applicazione.setVersion(rispostaControlli.getrString());
@@ -230,7 +244,7 @@ public class CreazioneIndiceAipFascicoliUtil {
         /* Source IdC */
         rispostaControlli.reset();
         rispostaControlli = controlliRecIndiceAipFascicoli.getVersioniPrecedentiAIP(idFascicolo);
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<FasVerAipFascicolo> versioniPrecedenti = (List<FasVerAipFascicolo>) rispostaControlli.getrObject();
@@ -266,8 +280,8 @@ public class CreazioneIndiceAipFascicoliUtil {
         EmbeddedMetadataType extraInfoDescGenerale = new EmbeddedMetadataType();
         MetadatiIntegratiSelfDescriptionType miSelfD = new MetadatiIntegratiSelfDescriptionType();
         this.popolaMetadatiIntegratiSelfDesc(tmpFasFascicolo, miSelfD, codiceVersione);
-        it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory JAXBObjFactorySelfDes = new it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory();
-        extraInfoDescGenerale.setAny(JAXBObjFactorySelfDes.createMetadatiIntegratiSelfDescription(miSelfD));
+        it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory jaxbObjFactorySelfDes = new it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory();
+        extraInfoDescGenerale.setAny(jaxbObjFactorySelfDes.createMetadatiIntegratiSelfDescription(miSelfD));
         moreInfoApplic.setEmbeddedMetadata(extraInfoDescGenerale);
         selfie.setMoreInfo(moreInfoApplic);
         idc.setSelfDescription(selfie);
@@ -287,7 +301,8 @@ public class CreazioneIndiceAipFascicoliUtil {
         // Label
         String label = "Tipo Fascicolo";
         vdcGruppo.setLabel(label);
-        DecTipoFascicolo decTipoFascicolo = tmpFasFascicolo.getDecTipoFascicolo();
+        DecTipoFascicolo decTipoFascicolo = tipoFascicoloHelper
+                .findDecTipoFascicolo(tmpFasFascicolo.getDecTipoFascicolo().getIdTipoFascicolo());
         if (decTipoFascicolo != null) {
             // ID
             IdentifierType idVdcGruppo = new IdentifierType();
@@ -318,7 +333,7 @@ public class CreazioneIndiceAipFascicoliUtil {
         // Hash
         rispostaControlli.reset();
         rispostaControlli = controlliRecIndiceAipFascicoli.getVersioneCorrenteMetaFascicolo(idVerAipFascicolo);
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<FasMetaVerAipFascicolo> versioneCorrente = (List<FasMetaVerAipFascicolo>) rispostaControlli
@@ -349,7 +364,7 @@ public class CreazioneIndiceAipFascicoliUtil {
         /* File */
         rispostaControlli.reset();
         rispostaControlli = controlliRecIndiceAipFascicoli.getFasContenVerAipFascicolo(idVerAipFascicolo);
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<FasContenVerAipFascicolo> fasContenVerAipFascList = (List<FasContenVerAipFascicolo>) rispostaControlli
@@ -381,19 +396,6 @@ public class CreazioneIndiceAipFascicoliUtil {
                 tmpHashFileItem.setFunction(hashFunction);
                 file.setHash(tmpHashFileItem);
 
-                /* MoreInfo */
-                /*
-                 * MoreInfoType moreInfoFile = new MoreInfoType();
-                 * moreInfoFile.setXMLScheme("Unisincro_MoreInfoFileGroup_v1.0.xsd"); EmbeddedMetadataType emdfile = new
-                 * EmbeddedMetadataType(); MetadatiIntegratiFileGroup miFileG = new MetadatiIntegratiFileGroup();
-                 * this.popolaIndiceAipFile(tmpFasFascicolo, miFileG, codiceVersione,
-                 * fasContenVerAipFasc.getAroVerIndiceAipUd().getDsHash());
-                 * it.eng.parer.aipFascicoli.xml.usfileResp.ObjectFactory JAXBObjFactoryFileGroup = new
-                 * it.eng.parer.aipFascicoli.xml.usfileResp.ObjectFactory();
-                 * emdfile.setAny(JAXBObjFactoryFileGroup.createMetadatiIntegratiFileGroup(miFileG));
-                 * moreInfoFile.setEmbeddedMetadata(emdfile); file.setMoreInfo(moreInfoFile);
-                 */
-
                 fileGroupAipUd.getFile().add(file);
             }
         }
@@ -406,7 +408,7 @@ public class CreazioneIndiceAipFascicoliUtil {
         /* File */
         rispostaControlli.reset();
         rispostaControlli = controlliRecIndiceAipFascicoli.getFasSipVerAipFascicolo(idVerAipFascicolo);
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<FasSipVerAipFascicolo> fasSipVerAipFascList = (List<FasSipVerAipFascicolo>) rispostaControlli
@@ -488,7 +490,8 @@ public class CreazioneIndiceAipFascicoliUtil {
     private void popolaMetadatiIntegratiSelfDesc(FasFascicolo tmpFasFascicolo,
             MetadatiIntegratiSelfDescriptionType miSelfD, String codiceVersione)
             throws ParerInternalError, JAXBException {
-        long idAmbiente = tmpFasFascicolo.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
+        OrgStrut orgStrut = ambientiHelper.findOrgStrutById(tmpFasFascicolo.getOrgStrut().getIdStrut());
+        long idAmbiente = orgStrut.getOrgEnte().getOrgAmbiente().getIdAmbiente();
 
         /*
          * Determino il modello xsd per l'ambiente di appartenenza della struttura a cui il fascicolo appartiene, con il
@@ -496,21 +499,21 @@ public class CreazioneIndiceAipFascicoliUtil {
          */
         rispostaControlli.reset();
         rispostaControlli = controlliRecIndiceAipFascicoli.getDecModelloSelfDescMoreInfo(idAmbiente);
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<DecModelloXsdFascicolo> decModelloXsdFascList = (List<DecModelloXsdFascicolo>) rispostaControlli
                     .getrObject();
-            log.info("Creazione Indice AIP Fascicoli - ambiente id " + idAmbiente + ": trovati "
-                    + decModelloXsdFascList.size()
-                    + " modelli xsd attivi di tipo AIP_SELF_DESCRIPTION_MORE_INFO da processare");
+            log.info(
+                    "Creazione Indice AIP Fascicoli - ambiente id {}: trovati {}"
+                            + " modelli xsd attivi di tipo AIP_SELF_DESCRIPTION_MORE_INFO da processare",
+                    idAmbiente, decModelloXsdFascList.size());
 
             /* Se per l'ambiente il modello XSD non viene trovato */
             if (decModelloXsdFascList.isEmpty()) {
                 throw new ParerInternalError(
                         "Il modello di tipo AIP_SELF_DESCRIPTION_MORE_INFO per la data corrente e l'ambiente "
-                                + tmpFasFascicolo.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente()
-                                + " non è definito");
+                                + orgStrut.getOrgEnte().getOrgAmbiente().getNmAmbiente() + " non è definito");
             }
 
             // Procedo nella costruzione della porzione di xml da inserire nel tag <MoreInfo> secondo l’xsd recuperato.
@@ -536,80 +539,23 @@ public class CreazioneIndiceAipFascicoliUtil {
     }
 
     private StringWriter marshallMiSelfDesc(MetadatiIntegratiSelfDescriptionType miSelfD) throws JAXBException {
-        it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory objFct_miSelfDescType = new it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory();
-        JAXBElement<MetadatiIntegratiSelfDescriptionType> element_miSelfDescType = objFct_miSelfDescType
+        it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory objFctMiSelfDescType = new it.eng.parer.aipFascicoli.xml.usselfdescResp.ObjectFactory();
+        JAXBElement<MetadatiIntegratiSelfDescriptionType> elementMiSelfDescType = objFctMiSelfDescType
                 .createMetadatiIntegratiSelfDescription(miSelfD);
 
         StringWriter tmpWriter = new StringWriter();
         Marshaller tmpMarshaller = xmlContextCache.getSelfDescMoreInfoCtx().createMarshaller();
         tmpMarshaller.setSchema(xmlContextCache.getSchemaOfAipFascSelfDescSchema());
-        tmpMarshaller.marshal(element_miSelfDescType, tmpWriter);
+        tmpMarshaller.marshal(elementMiSelfDescType, tmpWriter);
         return tmpWriter;
     }
-
-    // private void popolaIndiceAipFile(FasFascicolo tmpFasFascicolo, MetadatiIntegratiFileGroup miFileG, String
-    // codiceVersione, String dsHash) throws ParerInternalError, JAXBException {
-    // long idAmbiente = tmpFasFascicolo.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
-    //
-    // /* Determino il modello xsd per l'ambiente di appartenenza della struttura a cui il fascicolo appartiene, con il
-    // tipo "FILE_GROUP_FILE_MORE_INFO" */
-    // rispostaControlli.reset();
-    // rispostaControlli = controlliRecIndiceAipFascicoli.getDecModelloFileGroupFileMoreInfo(idAmbiente);
-    // if (rispostaControlli.isrBoolean() == false) {
-    // setRispostaError();
-    // } else {
-    // List<DecModelloXsdFascicolo> decModelloXsdFascList = (List<DecModelloXsdFascicolo>)
-    // rispostaControlli.getrObject();
-    // log.info("Creazione Indice AIP Fascicoli - ambiente id " + idAmbiente + ": trovati " +
-    // decModelloXsdFascList.size() + " modelli xsd attivi di tipo FILE_GROUP_FILE_MORE_INFO da processare");
-    //
-    // /* Se per l'ambiente il modello XSD non viene trovato */
-    // if (decModelloXsdFascList.isEmpty()) {
-    // throw new ParerInternalError("Il modello di tipo FILE_GROUP_FILE_MORE_INFO per la data corrente e l'ambiente "
-    // + tmpFasFascicolo.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente() + " non è definito");
-    // }
-    //
-    // // Procedo nella costruzione della porzione di xml da inserire nel tag <MoreInfo> secondo l’xsd recuperato.
-    // it.eng.parer.aipFascicoli.xml.usfileResp.IndiceAIP indiceAip = new
-    // it.eng.parer.aipFascicoli.xml.usfileResp.IndiceAIP();
-    // indiceAip.setNomeFileIndiceAIP("IndiceAIP-" + codiceVersione + ".xml");
-    // indiceAip.setHashIndiceAIP(dsHash);
-    // miFileG.setIndiceAIP(indiceAip);
-    //
-    // /* Eseguo il marshalling degli oggetti creati in MetadatiIntegratiFileGroup per salvarli */
-    // StringWriter tmpWriter = marshallMiFileGroup(miFileG);
-    //
-    // // Eseguo la validazione dell'xml prodotto con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO
-    // try {
-    // String xsd = decModelloXsdFascList.get(0).getBlXsd();
-    // XmlUtils.validateXml(xsd, tmpWriter.toString());
-    // log.info("Documento validato con successo");
-    // } catch (SAXException | IOException ex) {
-    // log.error(ex.getMessage(), ex);
-    // throw new ParerInternalError("Il file non rispetta l'XSD previsto per lo scambio");
-    // }
-    // }
-    // }
-    //
-    // private StringWriter marshallMiFileGroup(MetadatiIntegratiFileGroup miFileGroup) throws JAXBException {
-    // it.eng.parer.aipFascicoli.xml.usfileResp.ObjectFactory objFct_miFileGroupType = new
-    // it.eng.parer.aipFascicoli.xml.usfileResp.ObjectFactory();
-    // JAXBElement<MetadatiIntegratiFileGroup> element_miFileGroupType =
-    // objFct_miFileGroupType.createMetadatiIntegratiFileGroup(miFileGroup);
-    //
-    // StringWriter tmpWriter = new StringWriter();
-    // Marshaller tmpMarshaller = xmlContextCache.getFileGroupMoreInfoCtx().createMarshaller();
-    // tmpMarshaller.setSchema(xmlContextCache.getSchemaOfAipFascFileSchema());
-    // tmpMarshaller.marshal(element_miFileGroupType, tmpWriter);
-    // return tmpWriter;
-    // }
 
     private void popolaIndiceSipFile(Long idXmlVersFascicolo, FasFascicolo tmpFasFascicolo,
             FileGroupType fileGroupVers) {
         rispostaControlli.reset();
         rispostaControlli = controlliRecIndiceAipFascicoli.leggiXmlVersFascicoliAip(idXmlVersFascicolo,
                 tmpFasFascicolo.getIdFascicolo());
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             FasXmlVersFascicolo fasXmlVersFasc = (FasXmlVersFascicolo) rispostaControlli.getrObject();

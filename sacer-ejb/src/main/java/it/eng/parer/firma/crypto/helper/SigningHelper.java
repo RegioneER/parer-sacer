@@ -1,12 +1,30 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.firma.crypto.helper;
+
+import java.util.List;
+
+import javax.ejb.EJB;
 
 import it.eng.parer.entity.HsmSessioneFirma;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.ws.utils.CostantiDB;
-import java.util.List;
-import javax.ejb.EJB;
 
 /**
  * Defines the methods must be implemented by the helper that reads and stores informations about signature session
@@ -120,8 +138,7 @@ public abstract class SigningHelper extends GenericHelper {
      */
     protected long getTimeSessionBlock() {
         // The value's unit is minute
-        String value = confHlp.getValoreParamApplic(TIME_SESSION_BLOCKED, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String value = confHlp.getValoreParamApplicByApplic(TIME_SESSION_BLOCKED);
         int min = Integer.parseInt(value);
 
         // Converts the value in milliseconds

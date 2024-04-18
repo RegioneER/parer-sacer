@@ -47,16 +47,7 @@
                 </sl:pulsantiera>
                 <sl:newLine skipLine="true" />
             </slf:tab>
-            <slf:tab  name="<%= MonitoraggioAggMetaForm.UnitaDocAggMetaFallitiTabs.NAME%>" tabElement="IndiceSipAggiornamentoUnitaDocAggFalliti">
-                <sl:newLine />
-                <slf:lblField name="<%=MonitoraggioAggMetaForm.DettaglioUnitaDocAggMetaFallito.BL_XML_RICH_LAST%>" colSpan="4" controlWidth="w100" />
-                <sl:newLine /> 
-            </slf:tab>
-            <slf:tab  name="<%= MonitoraggioAggMetaForm.UnitaDocAggMetaFallitiTabs.NAME%>" tabElement="EsitoNegativoVersamentoUnitaDocAggFalliti">
-                <sl:newLine />
-                <slf:lblField name="<%=MonitoraggioAggMetaForm.DettaglioUnitaDocAggMetaFallito.BL_XML_RISP_LAST%>" colSpan="4" controlWidth="w100" />
-                <sl:newLine /> 
-            </slf:tab>
+           
             <slf:tab  name="<%= MonitoraggioAggMetaForm.UnitaDocAggMetaFallitiTabs.NAME%>" tabElement="ListaUlterioriErroriUnitaDocAggFalliti">
                 <slf:listNavBar name="<%= MonitoraggioAggMetaForm.UlterioriErroriUnitaDocAggMetaFallitiList.NAME%>" pageSizeRelated="true"/>
                 <slf:list name="<%= MonitoraggioAggMetaForm.UlterioriErroriUnitaDocAggMetaFallitiList.NAME%>" />

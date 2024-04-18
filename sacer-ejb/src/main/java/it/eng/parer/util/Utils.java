@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.util;
 
 import java.math.BigDecimal;
@@ -69,5 +86,21 @@ public class Utils {
         c.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
         c.set(Calendar.MILLISECOND, 0);
         return c.getTime();
+    }
+
+    public static String composeVersioniString(List<String> listaVersioni) {
+        StringBuilder sb = new StringBuilder();
+        if (listaVersioni != null && !listaVersioni.isEmpty()) {
+            final String separatore = ", ";
+            sb.append("(vers.");
+            listaVersioni.stream().forEachOrdered(v -> {
+                sb.append(" ").append(v);
+                sb.append(separatore);
+            });
+            // rimuovo l'ultima separatore
+            sb.delete(sb.length() - separatore.length(), sb.length());
+            sb.append(")");
+        }
+        return sb.toString();
     }
 }

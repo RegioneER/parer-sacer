@@ -1,12 +1,28 @@
-package it.eng.parer.slite.gen.viewbean;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
-import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
+package it.eng.parer.slite.gen.viewbean;
 
 import java.sql.Types;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
+
+import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
+import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 
 /**
  * @author Sloth
@@ -27,6 +43,7 @@ public class DecVLisSisVersByTipoUdTableDescriptor extends TableDescriptor {
     public static final String COL_ID_SISTEMA_VERSANTE = "id_sistema_versante";
     public static final String COL_NM_SISTEMA_VERSANTE = "nm_sistema_versante";
     public static final String COL_DT_EROG = "dt_erog";
+    public static final String COL_DT_LAST_EROG = "dt_last_erog";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -35,6 +52,7 @@ public class DecVLisSisVersByTipoUdTableDescriptor extends TableDescriptor {
         map.put(COL_ID_SISTEMA_VERSANTE, new ColumnDescriptor(COL_ID_SISTEMA_VERSANTE, Types.DECIMAL, 22, true));
         map.put(COL_NM_SISTEMA_VERSANTE, new ColumnDescriptor(COL_NM_SISTEMA_VERSANTE, Types.VARCHAR, 100, true));
         map.put(COL_DT_EROG, new ColumnDescriptor(COL_DT_EROG, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_LAST_EROG, new ColumnDescriptor(COL_DT_LAST_EROG, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

@@ -1,28 +1,25 @@
-package it.eng.parer.firma.crypto.verifica;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.parer.crypto.model.CryptoEnums.EsitoControllo;
-import it.eng.parer.crypto.model.CryptoEnums.TipoControlli;
-import it.eng.parer.crypto.model.CryptoEnums.TipoFileEnum;
-import it.eng.parer.crypto.model.ParerCRL;
-import it.eng.parer.crypto.model.ParerRevokedCertificate;
-import it.eng.parer.crypto.model.ValidationInfos;
-import it.eng.parer.crypto.model.exceptions.CryptoParerException;
-import it.eng.parer.entity.AroCompDoc;
-import it.eng.parer.entity.AroContrFirmaComp;
-import it.eng.parer.entity.AroContrVerifFirmaDtVer;
-import it.eng.parer.entity.AroFirmaComp;
-import it.eng.parer.entity.AroVerifFirmaDtVer;
-import it.eng.parer.entity.FirCertifCa;
-import it.eng.parer.entity.FirCertifFirmatario;
-import it.eng.parer.entity.FirCrl;
-import it.eng.parer.entity.FirFilePerFirma;
-import it.eng.parer.entity.FirUrlDistribCrl;
-import it.eng.parer.exception.CRLNotFoundException;
+package it.eng.parer.firma.crypto.verifica;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.SignatureException;
-
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,11 +40,30 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.apache.commons.lang3.StringUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClientException;
+
+import it.eng.parer.crypto.model.CryptoEnums.EsitoControllo;
+import it.eng.parer.crypto.model.CryptoEnums.TipoControlli;
+import it.eng.parer.crypto.model.CryptoEnums.TipoFileEnum;
+import it.eng.parer.crypto.model.ParerCRL;
+import it.eng.parer.crypto.model.ParerRevokedCertificate;
+import it.eng.parer.crypto.model.ValidationInfos;
+import it.eng.parer.crypto.model.exceptions.CryptoParerException;
+import it.eng.parer.entity.AroCompDoc;
+import it.eng.parer.entity.AroContrFirmaComp;
+import it.eng.parer.entity.AroContrVerifFirmaDtVer;
+import it.eng.parer.entity.AroFirmaComp;
+import it.eng.parer.entity.AroVerifFirmaDtVer;
+import it.eng.parer.entity.FirCertifCa;
+import it.eng.parer.entity.FirCertifFirmatario;
+import it.eng.parer.entity.FirCrl;
+import it.eng.parer.entity.FirFilePerFirma;
+import it.eng.parer.entity.FirUrlDistribCrl;
+import it.eng.parer.exception.CRLNotFoundException;
 
 /**
  *
@@ -88,7 +104,10 @@ public class FirmeDtVers {
                     }
                     ValidationInfos certificateExpiration = new ValidationInfos();
                     ValidationInfos caCertificateExpiration = new ValidationInfos();
-                    ValidationInfos crlValidation = new ValidationInfos();
+                    // MAC#28280
+                    // ValidationInfos crlValidation = new ValidationInfos();
+                    ValidationInfos crlValidation = null;
+                    // end MAC#28280
 
                     HashMap<String, AroContrFirmaComp> controlliVers = new HashMap<>();
 
@@ -102,9 +121,12 @@ public class FirmeDtVers {
                     }
                     this.caCertificateExpiration(caCertificateExpiration, firmaComp, dataRif);
                     this.certificateExpiration(certificateExpiration, firmaComp, dataRif, isCertificatoErrato);
+                    // MAC#28280
                     // CryproLibrary
-                    ParerCRL crl = this.certificateRevocation(crlValidation, firmaComp, dataRif,
-                            caCertificateExpiration.isValid(), certificateExpiration.isValid());
+                    // ParerCRL crl = this.certificateRevocation(crlValidation, firmaComp, dataRif,
+                    // caCertificateExpiration.isValid(), certificateExpiration.isValid());
+                    ParerCRL crl = null;
+                    // end MAC#28280
 
                     AroVerifFirmaDtVer firma = this.buildFirma(crl, caCertificateExpiration, certificateExpiration,
                             crlValidation, firmaComp.getFirCertifFirmatario().getFirCertifCa(), controlliVers, true);
@@ -191,12 +213,14 @@ public class FirmeDtVers {
         firma.getAroContrVerifFirmaDtVers().add(controlliCertificato);
         controlliCertificato.setTiContr(TipoControlli.CERTIFICATO.name());
 
+        // MAC#28280
         // CONTROLLI FIRMA - CRL CertificateRevocation
-        AroContrVerifFirmaDtVer controlliCRL = new AroContrVerifFirmaDtVer();
-        controlliCRL.setAroVerifFirmaDtVer(firma);
-        firma.getAroContrVerifFirmaDtVers().add(controlliCRL);
-        controlliCRL.setTiContr(TipoControlli.CRL.name());
-        controlliCRL.setFirCrl(firCrl);
+        // AroContrVerifFirmaDtVer controlliCRL = new AroContrVerifFirmaDtVer();
+        // controlliCRL.setAroVerifFirmaDtVer(firma);
+        // firma.getAroContrVerifFirmaDtVers().add(controlliCRL);
+        // controlliCRL.setTiContr(TipoControlli.CRL.name());
+        // controlliCRL.setFirCrl(firCrl);
+        // end MAC#28280
 
         // CONTROLLI FIRMA - CRITTOGRAFICO
         String esito;
@@ -257,6 +281,7 @@ public class FirmeDtVers {
             }
         }
 
+        // MAC#28280
         /*
          * CONTROLLI FIRMA - CRL nb: la nuova chiamata alla libreria di chiusura dovrà lanciare un'eccezione se l'esito
          * di verifica CRL è pari a CRL_SCADUTA o CRL_NON_SCARICABILE e la CA risulta attiva (ie. la CA ha un
@@ -264,37 +289,38 @@ public class FirmeDtVers {
          *
          */
         boolean isCRLWarning = false;
-        if (crlValidation != null) {
-
-            if (crlValidation.isValid()) {
-                controlliCRL.setTiEsitoContrVerif(EsitoControllo.POSITIVO.name());
-                controlliCRL.setDsMsgContrVerif(EsitoControllo.POSITIVO.message());
-            } else {
-                if (crlValidation.getEsito().equals(EsitoControllo.CERTIFICATO_SCADUTO_3_12_2009)) {
-                    isCRLWarning = true;
-                } else if (crlValidation.getEsito().equals(EsitoControllo.CRL_SCADUTA)
-                        || crlValidation.getEsito().equals(EsitoControllo.CRL_NON_SCARICABILE)) {
-                    Date now = new Date();
-                    /*
-                     * Lancio l'eccezione se il flag è attivo, il certificato della CA è attivo e il punto di
-                     * distribuzione è definito Questo controllo non è presente al versamento.
-                     */
-                    if (flagExceptionNoCrl && certificatoCa.getDtIniValCertifCa().before(now)
-                            && certificatoCa.getDtFinValCertifCa().after(now)
-                            && certificatoCa.getFirUrlDistribCrls() != null
-                            && !certificatoCa.getFirUrlDistribCrls().isEmpty()) {
-                        throw new CRLNotFoundException("CRL scaduta o non scaricabile e la CA ("
-                                + certificatoCa.getDlDnIssuerCertifCa() + ") è ancora attiva");
-                    }
-
-                } else {
-                    esitoVerifiche = false;
-                }
-                controlliCRL.setTiEsitoContrVerif(crlValidation.getEsito().name());
-                controlliCRL.setDsMsgContrVerif(
-                        crlValidation.getEsito().message() + " : " + crlValidation.getErrorsString());
-            }
-        }
+        // if (crlValidation != null) {
+        //
+        // if (crlValidation.isValid()) {
+        // controlliCRL.setTiEsitoContrVerif(EsitoControllo.POSITIVO.name());
+        // controlliCRL.setDsMsgContrVerif(EsitoControllo.POSITIVO.message());
+        // } else {
+        // if (crlValidation.getEsito().equals(EsitoControllo.CERTIFICATO_SCADUTO_3_12_2009)) {
+        // isCRLWarning = true;
+        // } else if (crlValidation.getEsito().equals(EsitoControllo.CRL_SCADUTA)
+        // || crlValidation.getEsito().equals(EsitoControllo.CRL_NON_SCARICABILE)) {
+        // Date now = new Date();
+        // /*
+        // * Lancio l'eccezione se il flag è attivo, il certificato della CA è attivo e il punto di
+        // * distribuzione è definito Questo controllo non è presente al versamento.
+        // */
+        // if (flagExceptionNoCrl && certificatoCa.getDtIniValCertifCa().before(now)
+        // && certificatoCa.getDtFinValCertifCa().after(now)
+        // && certificatoCa.getFirUrlDistribCrls() != null
+        // && !certificatoCa.getFirUrlDistribCrls().isEmpty()) {
+        // throw new CRLNotFoundException("CRL scaduta o non scaricabile e la CA ("
+        // + certificatoCa.getDlDnIssuerCertifCa() + ") è ancora attiva");
+        // }
+        //
+        // } else {
+        // esitoVerifiche = false;
+        // }
+        // controlliCRL.setTiEsitoContrVerif(crlValidation.getEsito().name());
+        // controlliCRL.setDsMsgContrVerif(
+        // crlValidation.getEsito().message() + " : " + crlValidation.getErrorsString());
+        // }
+        // }
+        // end MAC#28280
         String tiEsito;
         String tiEsitoMsg;
         if (esitoVerifiche) {

@@ -1,14 +1,34 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.util;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.slite.gen.form.MonitoraggioForm;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
+import it.eng.parer.slite.gen.viewbean.MonVLisUdNonVersIamTableDescriptor;
+import it.eng.parer.web.action.MonitoraggioAction;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
@@ -41,6 +61,7 @@ import javax.naming.NamingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.codehaus.jettison.json.JSONObject;
+import org.springframework.util.Assert;
 
 public class ActionUtils {
 
@@ -98,7 +119,7 @@ public class ActionUtils {
             DecodeMap mappaEnte = new DecodeMap();
             mappaEnte.populatedMap(tmpTableBeanEnte, "id_ente", "nm_ente");
             enteCombo.setDecodeMap(mappaEnte);
-            // Se ho un solo ente lo setto gi\u00e0  impostato nella combo
+            // Se ho un solo ente lo setto gi\u00e0 impostato nella combo
             if (tmpTableBeanEnte.size() == 1) {
                 enteCombo.setValue(tmpTableBeanEnte.getRow(0).getIdEnte().toString());
                 checkUniqueEnteInCombo(tmpTableBeanEnte.getRow(0).getIdEnte(), strutCombo, idUtente, filterValid);
@@ -127,7 +148,7 @@ public class ActionUtils {
             DecodeMap mappaStrut = new DecodeMap();
             mappaStrut.populatedMap(tmpTableBeanStrut, "id_strut", "nm_strut");
             strutCombo.setDecodeMap(mappaStrut);
-            // Se ho una sola struttura la setto gi\u00e0  impostata nella combo
+            // Se ho una sola struttura la setto gi\u00e0 impostata nella combo
             if (tmpTableBeanStrut.size() == 1) {
                 strutCombo.setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
             }
@@ -143,7 +164,7 @@ public class ActionUtils {
 
         BigDecimal idStrut = (!strutCombo.getValue().equals("") ? new BigDecimal(strutCombo.getValue()) : null);
         if (idStrut != null) {
-            // Ricavo il TableBean relativo ai tipi di unit\u00e0  doc dall'ente scelto
+            // Ricavo il TableBean relativo ai tipi di unit\u00e0 doc dall'ente scelto
             DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(idUtente, idStrut);
             DecodeMap mappaUD = new DecodeMap();
             mappaUD.populatedMap(tmpTableBeanTUD, "id_tipo_unita_doc", "nm_tipo_unita_doc");
@@ -344,8 +365,10 @@ public class ActionUtils {
      * invocato anche se non si è popolata una lista a video.
      */
     public static void buildCsvString(it.eng.spagoLite.form.list.List<SingleValueField<?>> fields,
-            BaseTableInterface<? extends BaseRowInterface> table, TableDescriptor tableDescriptor, File tmpFile,
-            ListAction action) throws IOException {
+            BaseTableInterface<? extends BaseRowInterface> table, TableDescriptor tableDescriptor, File tmpFile)
+            throws IOException {
+        Assert.isNull(table.getLazyListInterface(),
+                "Bisogna fornire una tabella con tutti i record caricati, non è possibile gestire la logica del LazyList durante l'estrazione su csv");
         final String csvSeparator = ";";
         final String quote = "\"";
         final String end = "\r\n";
@@ -364,27 +387,28 @@ public class ActionUtils {
             }
             out.append(end);
             Map<String, ColumnDescriptor> columnMap = tableDescriptor.getColumnMap();
-            fields.getTable().setCurrentRowIndex(0);
+            //
 
-            if (table.getLazyListBean() != null) {
-                int max = (table.getLazyListBean() != null) ? table.getLazyListBean().getMaxResult() : table.fullSize();
-                int count = table.fullSize();
-                double quantiPassi = Math.ceil(count / max);
-
-                for (int i = 0; i <= quantiPassi; i++) {
-
-                    int pageToOpen = (i * table.getLazyListBean().getMaxResult()) / table.getPageSize();
-                    table = action.getPaginator().goPage(table, i > 0 ? pageToOpen + 1 : pageToOpen);
-                    writeTable(table, columnMap, columns, out);
-                }
-            } else {
-                writeTable(table, columnMap, columns, out);
+            /*
+             * if (table.getLazyListBean() != null) { int max = (table.getLazyListBean() != null) ?
+             * table.getLazyListBean().getMaxResult() : table.fullSize(); int count = table.fullSize(); double
+             * quantiPassi = Math.ceil(count / max);
+             * 
+             * for (int i = 0; i <= quantiPassi; i++) {
+             * 
+             * int pageToOpen = (i * table.getLazyListBean().getMaxResult()) / table.getPageSize(); table =
+             * action.getPaginator().goPage(table, i > 0 ? pageToOpen + 1 : pageToOpen); writeTable(table, columnMap,
+             * columns, out); } } else {
+             */
+            if (fields.getTable() != null) {
+                fields.getTable().setCurrentRowIndex(0);
             }
+            writeTable(table, columnMap, columns, out);
+            /* } */
 
         } catch (IOException e) {
             throw e;
         }
-
     }
 
     private static void writeTable(BaseTableInterface<? extends BaseRowInterface> table,
@@ -401,6 +425,7 @@ public class ActionUtils {
                     isFirst = false;
                 }
                 ColumnDescriptor descriptor = columnMap.get(column);
+                // if (descriptor != null) {
                 switch (descriptor.getType()) {
                 case Types.DECIMAL:
                     out.append(row.getBigDecimal(column) != null ? row.getBigDecimal(column).toPlainString() : "");
@@ -417,6 +442,7 @@ public class ActionUtils {
                     break;
                 }
             }
+            // }
             out.append(end);
         }
     }

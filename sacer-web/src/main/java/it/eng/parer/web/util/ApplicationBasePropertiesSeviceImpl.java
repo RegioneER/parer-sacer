@@ -1,17 +1,33 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.web.util;
 
-import it.eng.parer.web.helper.AmministrazioneHelper;
+import javax.ejb.EJB;
+
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoLite.actions.application.ApplicationBaseProperties;
 import it.eng.spagoLite.actions.application.IApplicationBasePropertiesSevice;
-import java.math.BigDecimal;
-import javax.ejb.EJB;
 
 /**
  *
@@ -27,18 +43,12 @@ public class ApplicationBasePropertiesSeviceImpl implements IApplicationBaseProp
 
     @Override
     public ApplicationBaseProperties getApplicationBaseProperties() {
-        String nmApplic = configurationHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC); // NM_APPLIC
-        String user = configurationHelper.getValoreParamApplic("USERID_RECUP_INFO", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String password = configurationHelper.getValoreParamApplic("PSW_RECUP_INFO", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String url = configurationHelper.getValoreParamApplic("URL_RECUP_HELP", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nmApplic = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC); // NM_APPLIC
+        String user = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
+        String password = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
+        String url = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_HELP);
 
-        ApplicationBaseProperties prop = new ApplicationBaseProperties(nmApplic, user, password, url);
-
-        return prop;
+        return new ApplicationBaseProperties(nmApplic, user, password, url);
     }
 
 }

@@ -1,12 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.tpi.helper;
 
-import it.eng.parer.entity.RecDtVersRecup;
-import it.eng.parer.entity.RecSessioneRecup;
-import it.eng.parer.entity.VrsDtVers;
-import it.eng.parer.job.utils.JobConstants;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -15,14 +29,20 @@ import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xadisk.connector.outbound.XADiskConnectionFactory;
+
+import it.eng.parer.entity.RecDtVersRecup;
+import it.eng.parer.entity.RecSessioneRecup;
+import it.eng.parer.entity.VrsDtVers;
+import it.eng.parer.job.utils.JobConstants;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ElaboraSessioniRecuperoHelper")
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -32,9 +52,6 @@ public class ElaboraSessioniRecuperoHelper {
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
-    @Resource(mappedName = "jca/xadiskLocal")
-    private XADiskConnectionFactory xadCf;
-
     @EJB
     private ElaboraSessioniRecuperoHelper me;
 
@@ -42,15 +59,14 @@ public class ElaboraSessioniRecuperoHelper {
         javax.persistence.Query query = entityManager
                 .createQuery("SELECT s FROM RecSessioneRecup s WHERE s.tiStatoSessioneRecup = :stato");
         query.setParameter("stato", JobConstants.StatoSessioniRecupEnum.IN_CORSO.name());
-        return (List<RecSessioneRecup>) query.getResultList();
+        return query.getResultList();
     }
 
-    public List<VrsDtVers> getVrsDtVersByDate(Date dtVers) {
+    public List<VrsDtVers> getVrsDtVersByDate(/* MAC#27666 */LocalDate dtVers/* end MAC#27666 */) {
         javax.persistence.Query query = entityManager.createQuery("SELECT v FROM VrsDtVers v WHERE v.dtVers = :data");
         query.setParameter("data", dtVers);
 
-        List<VrsDtVers> lstObjects = (List<VrsDtVers>) query.getResultList();
-        return lstObjects;
+        return query.getResultList();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

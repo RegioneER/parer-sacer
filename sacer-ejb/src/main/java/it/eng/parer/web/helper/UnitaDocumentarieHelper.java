@@ -1,5 +1,56 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.paginator.helper.LazyListHelper;
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroCompUrnCalc;
 import it.eng.parer.entity.AroDoc;
@@ -16,6 +67,7 @@ import it.eng.parer.entity.DecAttribDatiSpec;
 import it.eng.parer.entity.DecTipoDoc;
 import it.eng.parer.entity.DecTipoNotaUnitaDoc;
 import it.eng.parer.entity.DecTipoUnitaDoc;
+import it.eng.parer.entity.DecVersioneWs;
 import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.OrgEnte;
@@ -28,6 +80,7 @@ import it.eng.parer.entity.constraint.SIOrgEnteSiam.TiEnteConvenz;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice;
@@ -45,7 +98,6 @@ import it.eng.parer.slite.gen.tablebean.DecTipoNotaUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisArchivUnitaDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisCompDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisDatiSpecDocTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisDatiSpecTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisDocRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisDocTableBean;
@@ -72,23 +124,22 @@ import it.eng.parer.util.Utils;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
 import it.eng.parer.viewEntity.AroVLisArchivUnitaDoc;
 import it.eng.parer.viewEntity.AroVLisCompDoc;
-import it.eng.parer.viewEntity.AroVLisDatiSpecDoc;
 import it.eng.parer.viewEntity.AroVLisDoc;
 import it.eng.parer.viewEntity.AroVLisElvVer;
 import it.eng.parer.viewEntity.AroVLisFasc;
 import it.eng.parer.viewEntity.AroVLisLinkUnitaDoc;
 import it.eng.parer.viewEntity.AroVLisNotaUnitaDoc;
+import it.eng.parer.viewEntity.AroVLisUpdCompUnitaDoc;
+import it.eng.parer.viewEntity.AroVLisUpdDocUnitaDoc;
+import it.eng.parer.viewEntity.AroVLisUpdKoRisolti;
 import it.eng.parer.viewEntity.AroVLisVolCor;
 import it.eng.parer.viewEntity.AroVLisVolNoValDoc;
 import it.eng.parer.viewEntity.AroVRicUnitaDoc;
 import it.eng.parer.viewEntity.AroVVisDocIam;
+import it.eng.parer.viewEntity.AroVVisNotaUnitaDoc;
 import it.eng.parer.viewEntity.AroVVisUnitaDocIam;
 import it.eng.parer.viewEntity.AroVVisUpdUnitaDoc;
-import it.eng.parer.viewEntity.AroVLisUpdDocUnitaDoc;
-import it.eng.parer.viewEntity.AroVLisUpdCompUnitaDoc;
-import it.eng.parer.viewEntity.AroVLisUpdKoRisolti;
 import it.eng.parer.viewEntity.ElvVLisUpdUd;
-import it.eng.parer.viewEntity.AroVVisNotaUnitaDoc;
 import it.eng.parer.volume.helper.VolumeHelper;
 import it.eng.parer.volume.utils.DatiSpecQueryParams;
 import it.eng.parer.volume.utils.ReturnParams;
@@ -100,54 +151,36 @@ import it.eng.parer.web.util.Constants.TipoEntitaSacer;
 import it.eng.parer.web.util.StringPadding;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import it.eng.spagoLite.form.fields.Field;
-import it.eng.spagoLite.form.fields.SingleValueField;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Session Bean implementation class unitaDocumetarieHelper Contiene i metodi (implementati di
  * unitaDocumentarieHelperLocal), per la gestione della persistenza su DB per le operarazioni CRUD su oggetti di
  * UnitaDocumentarieTableBean ed UnitaDocumentarieRowBean
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class UnitaDocumentarieHelper extends GenericHelper {
 
     private static final Logger log = LoggerFactory.getLogger(UnitaDocumentarieHelper.class.getName());
+
+    private static final String ID_VER_INDICE_AIP_PARAMETER = "idVerIndiceAip";
+
     @EJB(mappedName = "java:app/Parer-ejb/VolumeHelper")
     private VolumeHelper volumeHelper;
     @EJB
     private UnitaDocumentarieHelper me;
     @EJB
     private ConfigurationHelper configurationHelper;
+    @EJB(mappedName = "java:app/paginator/LazyListHelper")
+    private LazyListHelper lazyListHelper;
+
+    @EJB
+    private ObjectStorageService objectStorageService;
 
     // Metodo che restituisce un viewbean con il record trovato in base
     // ai parametri
@@ -156,7 +189,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String whereWord = "WHERE ";
         StringBuilder queryStr = new StringBuilder("SELECT u FROM AroVRicUnitaDoc u ");
         if (idUnitaDoc != null) {
-            queryStr.append(whereWord).append("u.idUnitaDoc = :idud");
+            queryStr.append(whereWord).append("u.id.idUnitaDoc = :idud");
             whereWord = " AND ";
         }
         if (idStruttura != null) {
@@ -165,7 +198,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         }
         if (statoDoc != null) {
             queryStr.append(whereWord).append("u.tiStatoDoc = :statodoc");
-            whereWord = " AND ";
         }
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -197,247 +229,330 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return rowBean;
     }
 
-    /*
+    /**
      * Metodo che wrappa quello seguente in quanto bypassa l'intercettazione fatta nell'ejb-jar.xml per il metodo
      * getAroVRicUnitaDocRicSempliceViewBean() che viene limitato ad un numero massimo di records.
+     *
+     * @param filtri
+     *            filtri di ricerca
+     * @param idTipoUnitaDocList
+     *            lista di id del tipo di unità documentaria
+     * @param cdRegistroUnitaDocList
+     *            lista di codici del registro dell' unità documentaria
+     * @param idTipoDocList
+     *            lista di id del tipo documento
+     * @param dateAcquisizioneValidate
+     *            array di date validate
+     * @param dateUnitaDocValidate
+     *            array di date relative alle unità documentarie
+     * @param idStruttura
+     *            id della struttura
+     *
+     * @return {@link AroVRicUnitaDocTableBean} table bean da usare per la UI
+     *
+     * @throws EMFError
+     *             errore generico
      */
     public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicSempliceViewBeanNoLimit(FiltriUnitaDocumentarieSemplice filtri,
             List<BigDecimal> idTipoUnitaDocList, List<String> cdRegistroUnitaDocList, List<BigDecimal> idTipoDocList,
-            Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate, BigDecimal idStruttura, BigDecimal idUser)
-            throws EMFError {
+            Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate, BigDecimal idStruttura) throws EMFError {
 
-        return getAroVRicUnitaDocRicSempliceViewBean(filtri, idTipoUnitaDocList, cdRegistroUnitaDocList, idTipoDocList,
-                dateAcquisizioneValidate, dateUnitaDocValidate, idStruttura, idUser, -1);
+        return getAroVRicUnitaDocRicSempliceViewBeanPlainFilter(idTipoUnitaDocList, cdRegistroUnitaDocList,
+                idTipoDocList, dateAcquisizioneValidate, dateUnitaDocValidate, idStruttura,
+                new FiltriUnitaDocumentarieSemplicePlain(filtri), -1, false);
     }
 
+    /**
+     * @param filtri
+     *            filtri di ricerca
+     * @param idTipoUnitaDocList
+     *            lista di tipi di unità documentarie
+     * @param cdRegistroUnitaDocList
+     *            lista di codici di registro delle unità documentarie
+     * @param idTipoDocList
+     *            lista dei tipi di documento
+     * @param dateAcquisizioneValidate
+     *            array delle date di acquisizione
+     * @param dateUnitaDocValidate
+     *            array delle date delle unità documentarie
+     * @param idStruttura
+     *            id della struttura
+     * @param maxResults
+     *            numero massimo di risultati
+     *
+     * @return {@link AroVRicUnitaDocTableBean} table bena per la UI
+     *
+     * @throws EMFError
+     *             errore generico
+     */
     // Metodo che restituisce un viewbean con i record trovati in base
     // ai filtri di ricerca passati in ingresso
     public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicSempliceViewBean(FiltriUnitaDocumentarieSemplice filtri,
             List<BigDecimal> idTipoUnitaDocList, List<String> cdRegistroUnitaDocList, List<BigDecimal> idTipoDocList,
-            Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate, BigDecimal idStruttura, BigDecimal idUser,
-            int maxResults) throws EMFError {
+            Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate, BigDecimal idStruttura, int maxResults)
+            throws EMFError {
+        return getAroVRicUnitaDocRicSempliceViewBeanPlainFilter(idTipoUnitaDocList, cdRegistroUnitaDocList,
+                idTipoDocList, dateAcquisizioneValidate, dateUnitaDocValidate, idStruttura,
+                new FiltriUnitaDocumentarieSemplicePlain(filtri), maxResults, true);
+    }
+
+    // Metodo che restituisce un viewbean con i record trovati in base
+    // ai filtri di ricerca passati in ingresso
+    public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicSempliceViewBeanPlainFilter(
+            List<BigDecimal> idTipoUnitaDocList, List<String> cdRegistroUnitaDocList, List<BigDecimal> idTipoDocList,
+            Date[] dateAcquisizioneValidate, Date[] dateUnitaDocValidate, BigDecimal idStruttura,
+            FiltriUnitaDocumentarieSemplicePlain filtri, int maxResults, boolean lazy) {
         String whereWord = "WHERE ";
-        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicUnitaDoc "
+        StringBuilder queryStrBuilder = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicUnitaDoc "
                 + "(u.idUnitaDoc, u.aaKeyUnitaDoc, u.cdKeyUnitaDoc, u.cdRegistroKeyUnitaDoc, u.dtCreazione, u.dtRegUnitaDoc, "
                 + "u.flUnitaDocFirmato, u.tiEsitoVerifFirme, u.dsMsgEsitoVerifFirme, u.nmTipoUnitaDoc, u.flForzaAccettazione, "
                 + "u.flForzaConservazione, u.dsKeyOrd, u.niAlleg, u.niAnnessi, u.niAnnot, u.nmTipoDocPrinc, u.dsListaStatiElencoVers, u.tiStatoConservazione) FROM AroVRicUnitaDoc u ");
 
         // Inserimento nella query del filtro Tipo Unità Doc
-        if (idTipoUnitaDocList.size() > 0) {
-            queryStr.append(whereWord).append("u.idTipoUnitaDoc IN :tipoudin ");
+        if (!idTipoUnitaDocList.isEmpty()) {
+            queryStrBuilder.append(whereWord).append(" u.idTipoUnitaDoc IN (:tipoudin) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro CD_VERSIONE_XSD_UD
-        String cdVersioneXsdUd = filtri.getCd_versione_xsd_ud().parse();
+        String cdVersioneXsdUd = filtri.getCdVersioneXsdUd();
         if (cdVersioneXsdUd != null) {
-            queryStr.append(whereWord).append("u.cdVersioneXsdUd = :cdVersioneXsdUd ");
+            queryStrBuilder.append(whereWord).append(" u.cdVersioneXsdUd = :cdVersioneXsdUd ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro Registro
-        if (cdRegistroUnitaDocList.size() > 0) {
-            queryStr.append(whereWord).append("u.cdRegistroKeyUnitaDoc IN :registrokeyunitadocin ");
+        if (!cdRegistroUnitaDocList.isEmpty()) {
+            queryStrBuilder.append(whereWord).append(" u.cdRegistroKeyUnitaDoc IN (:registrokeyunitadocin) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro Tipo Doc
-        if (idTipoDocList.size() > 0) {
-            queryStr.append(whereWord).append("u.idTipoDoc IN :tipodocin ");
+        if (!idTipoDocList.isEmpty()) {
+            queryStrBuilder.append(whereWord).append(" u.idTipoDoc IN (:tipodocin) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro CD_VERSIONE_XSD_DOC
-        String cdVersioneXsdDoc = filtri.getCd_versione_xsd_doc().parse();
+        String cdVersioneXsdDoc = filtri.getCdVersioneXsdDoc();
         if (cdVersioneXsdDoc != null) {
-            queryStr.append(whereWord).append("u.cdVersioneXsdDoc = :cdVersioneXsdDoc ");
+            queryStrBuilder.append(whereWord).append(" u.cdVersioneXsdDoc = :cdVersioneXsdDoc ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro CHIAVE UNITA DOC
-        // String registro = filtri.getCd_registro_key_unita_doc().getDecodedValue();
-        BigDecimal anno = filtri.getAa_key_unita_doc().parse();
-        String codice = filtri.getCd_key_unita_doc().parse();
+        BigDecimal anno = filtri.getAnno();
+        String codice = filtri.getCodice();
 
         if (anno != null) {
-            queryStr.append(whereWord).append("u.aaKeyUnitaDoc = :annoin ");
+            queryStrBuilder.append(whereWord).append(" u.aaKeyUnitaDoc = :annoin ");
             whereWord = "AND ";
         }
 
         if (codice != null) {
-            queryStr.append(whereWord).append("u.cdKeyUnitaDoc = :codicein ");
+            queryStrBuilder.append(whereWord).append(" u.cdKeyUnitaDoc = :codicein ");
             whereWord = "AND ";
         }
 
-        String cdKeyDocVers = filtri.getCd_key_doc_vers().parse();
+        String cdKeyDocVers = filtri.getCdKeyDocVers();
         if (cdKeyDocVers != null) {
-            queryStr.append(whereWord).append("UPPER(u.cdKeyDocVers) LIKE :cdKeyDocVers ");
+            queryStrBuilder.append(whereWord).append(" UPPER(u.cdKeyDocVers) LIKE :cdKeyDocVers ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro CHIAVE UNITA DOC PER RANGE
-        BigDecimal anno_range_da = filtri.getAa_key_unita_doc_da().parse();
-        BigDecimal anno_range_a = filtri.getAa_key_unita_doc_a().parse();
-        String codice_range_da = filtri.getCd_key_unita_doc_da().parse();
-        String codice_range_a = filtri.getCd_key_unita_doc_a().parse();
+        BigDecimal annoRangeDa = filtri.getAnnoRangeDa();
+        BigDecimal annoRangeA = filtri.getAnnoRangeA();
+        String codiceRangeDa = filtri.getCodiceRangeDa();
+        String codiceRangeA = filtri.getCodiceRangeA();
 
-        if (anno_range_da != null && anno_range_a != null) {
-            queryStr.append(whereWord).append("u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a ");
+        if (annoRangeDa != null && annoRangeA != null) {
+            queryStrBuilder.append(whereWord).append(" u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a ");
             whereWord = "AND ";
         }
 
-        if (codice_range_da != null && codice_range_a != null) {
-            codice_range_da = StringPadding.padString(codice_range_da, "0", 12, StringPadding.PADDING_LEFT);
-            codice_range_a = StringPadding.padString(codice_range_a, "0", 12, StringPadding.PADDING_LEFT);
-            queryStr.append(whereWord)
-                    .append("FUNC('lpad', u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            codiceRangeDa = StringPadding.padString(codiceRangeDa, "0", 12, StringPadding.PADDING_LEFT);
+            codiceRangeA = StringPadding.padString(codiceRangeA, "0", 12, StringPadding.PADDING_LEFT);
+            queryStrBuilder.append(whereWord)
+                    .append(" LPAD( u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
             whereWord = "AND ";
         }
 
-        String codice_num_contiene = filtri.getCd_key_unita_doc_contiene().parse();
+        String codiceNumContiene = filtri.getCdKeyUnitaDocContiene();
 
-        if (codice_num_contiene != null) {
-            queryStr.append(whereWord).append("UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene ");
+        if (codiceNumContiene != null) {
+            queryStrBuilder.append(whereWord).append(" UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene ");
             whereWord = " AND ";
+            codiceNumContiene = codiceNumContiene.toUpperCase();
         }
 
         // Inserimento nella query del filtro PRESENZA FIRME
-        String presenza = filtri.getFl_unita_doc_firmato().parse();
+        String presenza = filtri.getPresenza();
         if (presenza != null) {
-            queryStr.append(whereWord).append("u.flUnitaDocFirmato = :presenzain ");
+            queryStrBuilder.append(whereWord).append(" u.flUnitaDocFirmato = :presenzain ");
             whereWord = "AND ";
         }
         // Inserimento nella query del filtro ESITO FIRME VERS
-        String esito = filtri.getTi_esito_verif_firme().parse();
+        String esito = filtri.getEsito();
         if (esito != null) {
-            queryStr.append(whereWord).append("u.tiEsitoVerifFirme = :esitoin ");
+            queryStrBuilder.append(whereWord).append(" u.tiEsitoVerifFirme = :esitoin ");
             whereWord = "AND ";
         }
 
-        Date data_da = (dateAcquisizioneValidate != null ? dateAcquisizioneValidate[0] : null);
-        Date data_a = (dateAcquisizioneValidate != null ? dateAcquisizioneValidate[1] : null);
+        Date dataDa = (getDateOrNull(dateAcquisizioneValidate, 0));
+        Date dataA = (getDateOrNull(dateAcquisizioneValidate, 1));
 
-        if ((data_da != null) && (data_a != null)) {
-            queryStr.append(whereWord).append("(u.dtCreazione >= :datada AND u.dtCreazione <= :dataa) ");
+        if ((dataDa != null) && (dataA != null)) {
+            queryStrBuilder.append(whereWord).append(" (u.dtCreazione >= :datada AND u.dtCreazione <= :dataa) ");
             whereWord = "AND ";
         }
         // Inserimento nella query del filtro ESISTE PROFILO NORMATIVO
-        String profiloNorm = filtri.getFl_profilo_normativo().parse();
+        String profiloNorm = filtri.getProfiloNorm();
         if (profiloNorm != null) {
-            queryStr.append(whereWord).append("u.flEsisteProfiloNormativo = :profiloNorm ");
+            queryStrBuilder.append(whereWord).append(" u.flEsisteProfiloNormativo = :profiloNorm ");
             whereWord = "AND ";
         }
         // Inserimento nella query del filtro FORZA ACCETTAZIONE
-        String forzaAcc = filtri.getFl_forza_accettazione().parse();
+        String forzaAcc = filtri.getForzaAcc();
         if (forzaAcc != null) {
-            queryStr.append(whereWord).append("u.flForzaAccettazione = :forzaaccin ");
+            queryStrBuilder.append(whereWord).append(" u.flForzaAccettazione = :forzaaccin ");
             whereWord = "AND ";
         }
         // Inserimento nella query del filtro FORZA CONSERVAZIONE
-        String forzaConserva = filtri.getFl_forza_conservazione().parse();
+        String forzaConserva = filtri.getForzaConserva();
         if (forzaConserva != null) {
-            queryStr.append(whereWord).append("u.flForzaConservazione = :forzaconservain ");
+            queryStrBuilder.append(whereWord).append(" u.flForzaConservazione = :forzaconservain ");
             whereWord = "AND ";
         }
         // Inserimento nella query del filtro FORZA COLLEGAMENTO
-        String forzaColleg = filtri.getFl_forza_collegamento().parse();
+        String forzaColleg = filtri.getForzaColleg();
         if (forzaColleg != null) {
-            queryStr.append(whereWord).append("u.flForzaCollegamento = :forzacollegin ");
+            queryStrBuilder.append(whereWord).append(" u.flForzaCollegamento = :forzacollegin ");
+            whereWord = "AND ";
+        }
+        // // Inserimento nella query del filtro FORZA HASH
+        // String forzaHash = filtri.getForzaHash();
+        // if (forzaHash != null) {
+        // queryStrBuilder.append(whereWord).append("u.flForzaHash = :forzahashin ");
+        // whereWord = "AND ";
+        // }
+        // // Inserimento nella query del filtro FORZA FORMATO NUMERO
+        // String forzaFmtNumero = filtri.getForzaFmtNumero();
+        // if (forzaFmtNumero != null) {
+        // queryStrBuilder.append(whereWord).append("u.flForzaFmtNumero = :forzafmtnumeroin ");
+        // whereWord = "AND ";
+        // }
+        // // Inserimento nella query del filtro FORZA FORMATO FILE
+        // String forzaFmtFile = filtri.getForzaFmtFile();
+        // if (forzaFmtFile != null) {
+        // queryStrBuilder.append(whereWord).append("u.flForzaFmtFile = :forzafmtfilein ");
+        // whereWord = "AND ";
+        // }
+        // Inserimento nella query del filtro CD_VERSIONE_WS
+        String cdVersioneWs = filtri.getCdVersioneWs();
+        if (cdVersioneWs != null) {
+            queryStrBuilder.append(whereWord).append(" u.cdVersioneWs = :cdVersioneWs ");
             whereWord = "AND ";
         }
 
-        String unitaDocAnnul = filtri.getFl_unita_doc_annul().parse();
+        String unitaDocAnnul = filtri.getUnitaDocAnnul();
         if (unitaDocAnnul != null) {
-            queryStr.append(whereWord).append("u.flUnitaDocAnnul = :unitaDocAnnul ");
+            queryStrBuilder.append(whereWord).append(" u.flUnitaDocAnnul = :unitaDocAnnul ");
             whereWord = "AND ";
         }
-        String docAggiunti = filtri.getFl_doc_aggiunti().parse();
+        String docAggiunti = filtri.getDocAggiunti();
         if (docAggiunti != null) {
-            queryStr.append(whereWord).append("u.flDocAggiunti = :docAggiunti ");
+            queryStrBuilder.append(whereWord).append(" u.flDocAggiunti = :docAggiunti ");
+            whereWord = "AND ";
+        }
+
+        // Inserimento nella query del filtro FL_AGG_META
+        String flAggMeta = filtri.getFlAggMeta();
+        if (flAggMeta != null) {
+            queryStrBuilder.append(whereWord).append(" u.flAggMeta = :flAggMeta ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro FL_HASH_VERS
-        String flHashVers = filtri.getFl_hash_vers().parse();
+        String flHashVers = filtri.getFlHashVers();
         if (flHashVers != null) {
-            queryStr.append(whereWord).append("u.flHashVers = :flHashVers ");
+            queryStrBuilder.append(whereWord).append(" u.flHashVers = :flHashVers ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro STATO CONSERVAZIONE
-        String statoConserva = filtri.getTi_stato_conservazione().parse();
+        String statoConserva = filtri.getStatoConserva();
         if (statoConserva != null) {
-            queryStr.append(whereWord).append("u.tiStatoConservazione = :statoconservain ");
+            queryStrBuilder.append(whereWord).append(" u.tiStatoConservazione = :statoconservain ");
             whereWord = "AND ";
         }
         // Inserimento nella query del filtro TI_STATO_UD_ELENCO_VERS
-        String tiStatoUdElencoVers = filtri.getTi_stato_ud_elenco_vers().parse();
+        String tiStatoUdElencoVers = filtri.getTiStatoUdElencoVers();
         if (tiStatoUdElencoVers != null) {
-            queryStr.append(whereWord).append(
-                    "(u.tiStatoUdElencoVers = :tiStatoUdElencoVers OR u.tiStatoDocElencoVers = :tiStatoUdElencoVers) ");
+            queryStrBuilder.append(whereWord).append(
+                    " (u.tiStatoUdElencoVers = :tiStatoUdElencoVers OR u.tiStatoDocElencoVers = :tiStatoUdElencoVers) ");
             whereWord = "AND ";
         }
 
-        Date data_meta_da = (dateUnitaDocValidate != null ? dateUnitaDocValidate[0] : null);
-        Date data_meta_a = (dateUnitaDocValidate != null ? dateUnitaDocValidate[1] : null);
+        Date dataMetaDa = (getDateOrNull(dateUnitaDocValidate, 0));
+        Date dataMetaA = (getDateOrNull(dateUnitaDocValidate, 1));
 
-        if ((data_meta_da != null) && (data_meta_a != null)) {
-            queryStr.append(whereWord).append("(u.dtRegUnitaDoc between :datametada AND :datametaa) ");
+        if ((dataMetaDa != null) && (dataMetaA != null)) {
+            queryStrBuilder.append(whereWord).append(" (u.dtRegUnitaDoc between :datametada AND :datametaa) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro TI_DOC ("Elemento")
-        String tiDoc = filtri.getTi_doc().parse();
+        String tiDoc = filtri.getTiDoc();
         if (tiDoc != null) {
-            queryStr.append(whereWord).append("u.tiDoc = :tiDoc ");
+            queryStrBuilder.append(whereWord).append(" u.tiDoc = :tiDoc ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro metadati Oggetto
-        String oggettoMeta = filtri.getDl_oggetto_unita_doc().parse();
+        String oggettoMeta = filtri.getOggettoMeta();
         if (oggettoMeta != null) {
-            queryStr.append(whereWord).append("UPPER(u.dlOggettoUnitaDoc) LIKE :dloggettounitadocin ");
+            queryStrBuilder.append(whereWord).append(" UPPER(u.dlOggettoUnitaDoc) LIKE :dloggettounitadocin ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro metadati Autore documento
-        String autoreDocMeta = filtri.getDs_autore_doc().parse();
+        String autoreDocMeta = filtri.getAutoreDocMeta();
         if (autoreDocMeta != null) {
-            queryStr.append(whereWord).append("UPPER(u.dsAutoreDoc) LIKE :dldocmetain ");
+            queryStrBuilder.append(whereWord).append(" UPPER(u.dsAutoreDoc) LIKE :dldocmetain ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro metadati Descrizione documento
-        String descrizioneDocMeta = filtri.getDl_doc().parse();
+        String descrizioneDocMeta = filtri.getDescrizioneDocMeta();
         if (descrizioneDocMeta != null) {
-            queryStr.append(whereWord).append("UPPER(u.dlDoc) LIKE :dsautoredocin ");
+            queryStrBuilder.append(whereWord).append(" UPPER(u.dlDoc) LIKE :dsautoredocin ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro Tipo Conservazione
-        String tipoConservazione = filtri.getTi_conservazione().parse();
+        String tipoConservazione = filtri.getTipoConservazione();
         if (tipoConservazione != null) {
-            queryStr.append(whereWord).append("u.tiConservazione = :ticonservazionein ");
+            queryStrBuilder.append(whereWord).append(" u.tiConservazione = :ticonservazionein ");
             whereWord = "AND ";
         }
 
-        queryStr.append(whereWord).append("u.idStrutUnitaDoc = :idstrutin ");
+        queryStrBuilder.append(whereWord).append(" u.idStrutUnitaDoc = :idstrutin ");
         whereWord = "AND ";
 
-        List<BigDecimal> subStruts = filtri.getNm_sub_strut().parse();
+        List<BigDecimal> subStruts = filtri.getSubStruts();
         if (!subStruts.isEmpty()) {
-            queryStr.append(whereWord).append(" u.idSubStrut IN :subStruts ");
-            whereWord = "AND ";
+            queryStrBuilder.append(whereWord).append(" u.idSubStrut IN (:subStruts) ");
         }
 
         // ordina per dsKeyDoc crescente
-        queryStr.append("ORDER BY u.dsKeyOrd");
+        queryStrBuilder.append(" ORDER BY u.dsKeyOrd");
 
-        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = getEntityManager().createQuery(queryStr.toString());
+        Query query = getEntityManager().createQuery(queryStrBuilder.toString());
 
         // non avendo passato alla query i parametri di ricerca, devo passarli ora
-        if (idTipoUnitaDocList.size() > 0) {
+        if (!idTipoUnitaDocList.isEmpty()) {
             query.setParameter("tipoudin", idTipoUnitaDocList);
         }
 
@@ -445,7 +560,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("cdVersioneXsdUd", cdVersioneXsdUd);
         }
 
-        if (cdRegistroUnitaDocList.size() > 0) {
+        if (!cdRegistroUnitaDocList.isEmpty()) {
             query.setParameter("registrokeyunitadocin", cdRegistroUnitaDocList);
         }
 
@@ -461,18 +576,18 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("cdKeyDocVers", "%" + cdKeyDocVers.toUpperCase() + "%");
         }
 
-        if (anno_range_da != null && anno_range_a != null) {
-            query.setParameter("annoin_da", anno_range_da);
-            query.setParameter("annoin_a", anno_range_a);
+        if (annoRangeDa != null && annoRangeA != null) {
+            query.setParameter("annoin_da", annoRangeDa);
+            query.setParameter("annoin_a", annoRangeA);
         }
 
-        if (codice_range_da != null && codice_range_a != null) {
-            query.setParameter("codicein_da", codice_range_da);
-            query.setParameter("codicein_a", codice_range_a);
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            query.setParameter("codicein_da", codiceRangeDa);
+            query.setParameter("codicein_a", codiceRangeA);
         }
 
-        if (codice_num_contiene != null) {
-            query.setParameter("codicein_contiene", "%" + codice_num_contiene + "%");
+        if (codiceNumContiene != null) {
+            query.setParameter("codicein_contiene", "%" + codiceNumContiene + "%");
         }
 
         if (presenza != null) {
@@ -483,9 +598,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("esitoin", esito);
         }
 
-        if (data_da != null && data_a != null) {
-            query.setParameter("datada", data_da, TemporalType.TIMESTAMP);
-            query.setParameter("dataa", data_a, TemporalType.TIMESTAMP);
+        if (dataDa != null && dataA != null) {
+            query.setParameter("datada", dataDa, TemporalType.TIMESTAMP);
+            query.setParameter("dataa", dataA, TemporalType.TIMESTAMP);
         }
 
         if (profiloNorm != null) {
@@ -504,12 +619,32 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("forzacollegin", forzaColleg);
         }
 
+        // if (forzaHash != null) {
+        // query.setParameter("forzahashin", forzaHash);
+        // }
+        //
+        // if (forzaFmtNumero != null) {
+        // query.setParameter("forzafmtnumeroin", forzaFmtNumero);
+        // }
+        //
+        // if (forzaFmtFile != null) {
+        // query.setParameter("forzafmtfilein", forzaFmtFile);
+        // }
+
+        if (cdVersioneWs != null) {
+            query.setParameter("cdVersioneWs", cdVersioneWs);
+        }
+
         if (unitaDocAnnul != null) {
             query.setParameter("unitaDocAnnul", unitaDocAnnul);
         }
 
         if (docAggiunti != null) {
             query.setParameter("docAggiunti", docAggiunti);
+        }
+
+        if (flAggMeta != null) {
+            query.setParameter("flAggMeta", flAggMeta);
         }
 
         if (flHashVers != null) {
@@ -524,7 +659,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("tiStatoUdElencoVers", tiStatoUdElencoVers);
         }
 
-        if (idTipoDocList.size() > 0) {
+        if (!idTipoDocList.isEmpty()) {
             query.setParameter("tipodocin", idTipoDocList);
         }
 
@@ -532,9 +667,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("cdVersioneXsdDoc", cdVersioneXsdDoc);
         }
 
-        if (data_meta_da != null && data_meta_a != null) {
-            query.setParameter("datametada", data_meta_da, TemporalType.DATE);
-            query.setParameter("datametaa", data_meta_a, TemporalType.DATE);
+        if (dataMetaDa != null && dataMetaA != null) {
+            query.setParameter("datametada", dataMetaDa, TemporalType.DATE);
+            query.setParameter("datametaa", dataMetaA, TemporalType.DATE);
         }
 
         if (tiDoc != null) {
@@ -569,9 +704,14 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setMaxResults(maxResults);
         }
 
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA DI "UNITA' DOCUMENTARIE"
-        List<AroVRicUnitaDoc> listaUD = query.getResultList();
+        if (lazy) {
+            return lazyListHelper.getTableBean(query, this::resultListToAroVRicUnitaDocRowBeans, "u.idUnitaDoc");
+        } else {
+            return resultListToAroVRicUnitaDocRowBeans(query.getResultList());
+        }
+    }
 
+    private AroVRicUnitaDocTableBean resultListToAroVRicUnitaDocRowBeans(List<AroVRicUnitaDoc> listaUD) {
         AroVRicUnitaDocTableBean udTableBean = new AroVRicUnitaDocTableBean();
 
         try {
@@ -589,28 +729,96 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
             List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
             UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie filtriCollegamenti,
+            UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie filtriFirmatari,
             UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
             UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie filtriFascicoli, Date[] dateAcquisizioneValidate,
-            Date[] dateUnitaDocValidate, Date[] dateCreazioneCompValidate, BigDecimal idStruttura, BigDecimal idUser,
-            boolean addButton) throws EMFError {
-        return getAroVRicUnitaDocRicAvanzataViewBean(filtri, idTipoUnitaDocList, cdRegistroUnitaDocSet, idTipoDocList,
-                listaDatiSpecOnLine, filtriCollegamenti, filtriComponenti, filtriFascicoli, dateAcquisizioneValidate,
-                dateUnitaDocValidate, dateCreazioneCompValidate, idStruttura, idUser, addButton);
+            Date[] dateUnitaDocValidate, Date[] dateCreazioneCompValidate, BigDecimal idStruttura, boolean addButton)
+            throws EMFError {
+        final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
+        final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
+        return getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList, cdRegistroUnitaDocSet,
+                idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate, dateCreazioneCompValidate, idStruttura,
+                addButton, new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
+                new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
+                new FiltriFirmatariUnitaDocumentariePlain(filtriFirmatari),
+                new FiltriComponentiUnitaDocumentariePlain(filtriComponenti),
+                new FiltriFascicoliUnitaDocumentariePlain(filtriFascicoli), false);
     }
 
+    private Date getDateOrNull(Date[] dateUnitaDocValidate, int i) {
+        return dateUnitaDocValidate != null ? dateUnitaDocValidate[i] : null;
+    }
+
+    /**
+     * @param filtri
+     *            filtri di ricerca
+     * @param idTipoUnitaDocList
+     *            tipi di unita documentarie
+     * @param cdRegistroUnitaDocSet
+     *            codici registro
+     * @param idTipoDocList
+     *            tipi di documenti
+     * @param listaDatiSpecOnLine
+     *            dati spec online
+     * @param filtriCollegamenti
+     *            filtri di ricerca collegamenti
+     * @param filtriFirmatari
+     *            filtri di ricerca firmatatio
+     * @param filtriComponenti
+     *            filtri di ricerca componenti
+     * @param filtriFascicoli
+     *            filtri di ricerca fascicoli
+     * @param dateAcquisizioneValidate
+     *            date di acquisizione
+     * @param dateUnitaDocValidate
+     *            date delle unità documentarie
+     * @param dateCreazioneCompValidate
+     *            date di creazione
+     * @param idStruttura
+     *            id della struttura
+     * @param addButton
+     *            true, aggiunge il bottone per la UI
+     *
+     * @return AroVRicUnitaDocTableBean table bean per la UI
+     *
+     * @throws EMFError
+     *             errore generico
+     */
     // Metodo che restituisce un viewbean con i record trovati in base
     // ai filtri di ricerca passati in ingresso
     public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAvanzataViewBean(FiltriUnitaDocumentarieAvanzata filtri,
             List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
             List<DecCriterioDatiSpecBean> listaDatiSpecOnLine,
             UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie filtriCollegamenti,
+            UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie filtriFirmatari,
             UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti,
             UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie filtriFascicoli, Date[] dateAcquisizioneValidate,
-            Date[] dateUnitaDocValidate, Date[] dateCreazioneCompValidate, BigDecimal idStruttura, BigDecimal idUser,
-            boolean addButton) throws EMFError {
+            Date[] dateUnitaDocValidate, Date[] dateCreazioneCompValidate, BigDecimal idStruttura, boolean addButton)
+            throws EMFError {
+        final Date dateMetaDa = getDateOrNull(dateUnitaDocValidate, 0);
+        final Date dateMetaA = getDateOrNull(dateUnitaDocValidate, 1);
+        return getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(idTipoUnitaDocList, cdRegistroUnitaDocSet,
+                idTipoDocList, listaDatiSpecOnLine, dateAcquisizioneValidate, dateCreazioneCompValidate, idStruttura,
+                addButton, new FiltriUnitaDocumentarieAvanzataPlain(filtri, dateMetaDa, dateMetaA),
+                new FiltriCollegamentiUnitaDocumentariePlain(filtriCollegamenti),
+                new FiltriFirmatariUnitaDocumentariePlain(filtriFirmatari),
+                new FiltriComponentiUnitaDocumentariePlain(filtriComponenti),
+                new FiltriFascicoliUnitaDocumentariePlain(filtriFascicoli), true);
+    }
+
+    // Metodo che restituisce un viewbean con i record trovati in base
+    // ai filtri di ricerca passati in ingresso
+    public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAvanzataViewBeanPlainFilter(
+            List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
+            List<DecCriterioDatiSpecBean> listaDatiSpecOnLine, Date[] dateAcquisizioneValidate,
+            Date[] dateCreazioneCompValidate, BigDecimal idStruttura, boolean addButton,
+            FiltriUnitaDocumentarieAvanzataPlain filtri, FiltriCollegamentiUnitaDocumentariePlain filtriCollegamenti,
+            FiltriFirmatariUnitaDocumentariePlain filtriFirmatari,
+            FiltriComponentiUnitaDocumentariePlain filtriComponenti,
+            FiltriFascicoliUnitaDocumentariePlain filtriFascicoli, boolean lazy) {
         String whereWord = "WHERE ";
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicUnitaDoc "
-                + "(u.idUnitaDoc, u.aaKeyUnitaDoc, u.cdKeyUnitaDoc, u.cdRegistroKeyUnitaDoc,"
+                + "(u.id.idUnitaDoc, u.aaKeyUnitaDoc, u.cdKeyUnitaDoc, u.cdRegistroKeyUnitaDoc,"
                 + " u.dtCreazione, u.dtRegUnitaDoc, u.flUnitaDocFirmato, u.tiEsitoVerifFirme,"
                 + " u.dsMsgEsitoVerifFirme, u.nmTipoUnitaDoc, u.flForzaAccettazione,"
                 + " u.flForzaConservazione, u.dsKeyOrd,"
@@ -624,47 +832,47 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         boolean joinFirma = false;
         boolean joinCertif = false;
         StringBuilder whereCompClause = new StringBuilder();
-        if (filtriComponenti.getNm_tipo_strut_doc().parse() != null) {
-            whereCompClause.append(" AND strutDoc.decTipoStrutDoc.idTipoStrutDoc = :tipoStrutDocIn");
+        if (filtriComponenti.getNmTipoStrutDoc() != null) {
+            whereCompClause.append(" AND strutDoc.decTipoStrutDoc.idTipoStrutDoc = :tipoStrutDocIn ");
         }
-        if (filtriComponenti.getNm_tipo_comp_doc().parse() != null) {
-            whereCompClause.append(" AND comp.decTipoCompDoc.idTipoCompDoc = :tipoCompDocIn");
+        if (filtriComponenti.getNmTipoCompDoc() != null) {
+            whereCompClause.append(" AND comp.decTipoCompDoc.idTipoCompDoc = :tipoCompDocIn ");
         }
-        if (filtriComponenti.getDs_nome_comp_vers().parse() != null) {
-            whereCompClause.append(" AND UPPER(comp.dsNomeCompVers) LIKE :nomeCompVersIn");
+        if (filtriComponenti.getDsNomeCompVers() != null) {
+            whereCompClause.append(" AND UPPER(comp.dsNomeCompVers) LIKE :nomeCompVersIn ");
         }
-        if (filtriComponenti.getDl_urn_comp_vers().parse() != null) {
-            whereCompClause.append(" AND UPPER(comp.dlUrnCompVers) LIKE :urnCompVersIn");
+        if (filtriComponenti.getDlUrnCompVers() != null) {
+            whereCompClause.append(" AND UPPER(comp.dlUrnCompVers) LIKE :urnCompVersIn ");
         }
-        if (filtriComponenti.getDs_hash_file_vers().parse() != null) {
-            whereCompClause.append(" AND comp.dsHashFileVers = :hashFileVersIn");
+        if (filtriComponenti.getDsHashFileVers() != null) {
+            whereCompClause.append(" AND comp.dsHashFileVers = :hashFileVersIn ");
         }
-        if (filtriComponenti.getNm_mimetype_file().parse() != null) {
+        if (filtriComponenti.getNmMimetypeFile() != null) {
             joinFormato = true;
-            whereCompClause.append(" AND UPPER(fileStandard.nmMimetypeFile) LIKE :mimeTypeIn");
+            whereCompClause.append(" AND UPPER(fileStandard.nmMimetypeFile) LIKE :mimeTypeIn ");
         }
-        if (filtriComponenti.getNm_formato_file_vers().parse() != null) {
-            whereCompClause.append(" AND comp.decFormatoFileDoc.idFormatoFileDoc = :formatoFileDocIn");
+        if (filtriComponenti.getNmFormatoFileVers() != null) {
+            whereCompClause.append(" AND comp.decFormatoFileDoc.idFormatoFileDoc = :formatoFileDocIn ");
         }
 
         // Inserimento nella query del filtro file size
-        BigDecimal fileSizeDa = filtriComponenti.getNi_size_file_da().parse();
-        BigDecimal fileSizeA = filtriComponenti.getNi_size_file_a().parse();
+        BigDecimal fileSizeDa = filtriComponenti.getNiSizeFileDa();
+        BigDecimal fileSizeA = filtriComponenti.getNiSizeFileA();
         if (fileSizeDa == null && fileSizeA != null) {
             fileSizeDa = BigDecimal.ZERO;
         }
         if (fileSizeDa != null && fileSizeA != null) {
             whereCompClause.append(" AND comp.niSizeFileCalc between :filesizedain AND :filesizeain ");
         }
-        if (filtriComponenti.getDs_formato_rappr_calc().parse() != null) {
-            whereCompClause.append(" AND comp.dsFormatoRapprCalc = :formatoRapprCalcIn");
+        if (filtriComponenti.getDsFormatoRapprCalc() != null) {
+            whereCompClause.append(" AND comp.dsFormatoRapprCalc = :formatoRapprCalcIn ");
         }
-        if (filtriComponenti.getDs_formato_rappr_esteso_calc().parse() != null) {
-            whereCompClause.append(" AND comp.dsFormatoRapprEstesoCalc = :formatoRapprCalcEstesoIn");
+        if (filtriComponenti.getDsFormatoRapprEstesoCalc() != null) {
+            whereCompClause.append(" AND comp.dsFormatoRapprEstesoCalc = :formatoRapprCalcEstesoIn ");
         }
 
-        if (filtriComponenti.getFl_comp_firmato().parse() != null) {
-            if (filtriComponenti.getFl_comp_firmato().parse().equals("1")) {
+        if (filtriComponenti.getFlCompFirmato() != null) {
+            if (filtriComponenti.getFlCompFirmato().equals("1")) {
                 whereCompClause.append(" AND comp.flCompFirmato = :compFirmatoIn ");
             } else {
                 whereCompClause.append(
@@ -672,102 +880,115 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             }
         }
 
-        if (filtriComponenti.getFl_rif_temp_vers().parse() != null) {
-            if (filtriComponenti.getFl_rif_temp_vers().parse().equals("1")) {
+        if (filtriComponenti.getFlRifTempVers() != null) {
+            if (filtriComponenti.getFlRifTempVers().equals("1")) {
                 whereCompClause.append(" AND comp.tmRifTempVers IS NOT NULL ");
             } else {
                 whereCompClause.append(
                         " AND NOT EXISTS (SELECT comp3 FROM AroCompDoc comp3 JOIN comp3.aroStrutDoc strutDoc3 WHERE strutDoc3.aroDoc.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc AND comp3.tmRifTempVers IS NOT NULL ) ");
             }
         }
-        if (filtriComponenti.getDs_rif_temp_vers().parse() != null) {
+        if (filtriComponenti.getDsRifTempVers() != null) {
             whereCompClause.append(" AND UPPER(comp.dsRifTempVers) LIKE :dsRifTempVers ");
         }
 
-        if (filtriComponenti.getTi_esito_contr_conforme().parse() != null) {
+        if (filtriComponenti.getTiEsitoContrConforme() != null) {
             joinFirma = true;
-            whereCompClause.append(" AND firma.tiEsitoContrConforme = :esitoContrConformeIn");
+            whereCompClause.append(" AND firma.tiEsitoContrConforme = :esitoContrConformeIn ");
         }
 
-        Date data_val_da = null;
-        Date data_val_a = null;
+        Date dataValDa = null;
+        Date dataValA = null;
         // Inserimento nella query del filtro DATA SCADENZA DA - A
-        if (filtriComponenti.getDt_scad_firma_comp_da().parse() != null) {
-            data_val_da = new Date(filtriComponenti.getDt_scad_firma_comp_da().parse().getTime());
-            if (filtriComponenti.getDt_scad_firma_comp_a().parse() != null) {
-                data_val_a = new Date(filtriComponenti.getDt_scad_firma_comp_a().parse().getTime());
+        if (filtriComponenti.getDtScadFirmaCompDa() != null) {
+            dataValDa = new Date(filtriComponenti.getDtScadFirmaCompDa().getTime());
+            if (filtriComponenti.getDtScadFirmaCompA() != null) {
+                dataValA = new Date(filtriComponenti.getDtScadFirmaCompA().getTime());
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(data_val_a);
+                calendar.setTime(dataValA);
                 calendar.add(Calendar.DATE, 1);
-                data_val_a = calendar.getTime();
+                dataValA = calendar.getTime();
             } else {
-                data_val_a = new Date();
+                dataValA = new Date();
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(data_val_a);
+                calendar.setTime(dataValA);
                 calendar.add(Calendar.DATE, 1);
-                data_val_a = calendar.getTime();
+                dataValA = calendar.getTime();
             }
         }
 
-        if ((data_val_da != null) && (data_val_a != null)) {
+        if ((dataValDa != null) && (dataValA != null)) {
             joinFirma = true;
             joinCertif = true;
             whereCompClause.append(" AND certif.dtFinValCertifFirmatario between :datavalda AND :datavala ");
         }
 
-        if (filtriComponenti.getTi_esito_contr_formato_file().parse() != null) {
-            whereCompClause.append(" AND comp.tiEsitoContrFormatoFile = :esitoContrFormatoFileIn");
+        if (filtriComponenti.getTiEsitoContrFormatoFile() != null) {
+            whereCompClause.append(" AND comp.tiEsitoContrFormatoFile = :esitoContrFormatoFileIn ");
         }
-        if (filtriComponenti.getTi_esito_verif_firma().parse() != null) {
-            whereCompClause.append(" AND firma.tiEsitoVerifFirma = :esitoVerifFirmeIn");
+        if (filtriComponenti.getTiEsitoVerifFirma() != null) {
+            whereCompClause.append(" AND firma.tiEsitoVerifFirma = :esitoVerifFirmeIn ");
             joinFirma = true;
         }
-        if (filtriComponenti.getTi_esito_verif_firme_chius().parse() != null) {
-            whereCompClause.append(" AND appartComp.tiEsitoVerifFirmeChius = :esitoVerifFirmeChiusIn");
+        if (filtriComponenti.getTiEsitoVerifFirmeChiuse() != null) {
+            whereCompClause.append(" AND appartComp.tiEsitoVerifFirmeChius = :esitoVerifFirmeChiusIn ");
             joinAppart = true;
         }
-        if (filtriComponenti.getDs_hash_file_calc().parse() != null) {
-            whereCompClause.append(" AND comp.dsHashFileCalc = :hashFileCalcIn");
+        if (filtriComponenti.getDsHashFileCalc() != null) {
+            whereCompClause.append(" AND comp.dsHashFileCalc = :hashFileCalcIn ");
         }
-        if (filtriComponenti.getDs_algo_hash_file_calc().parse() != null) {
-            whereCompClause.append(" AND comp.dsAlgoHashFileCalc = :algoHashFileCalcIn");
+        if (filtriComponenti.getDsAlgoHashFileCalc() != null) {
+            whereCompClause.append(" AND comp.dsAlgoHashFileCalc = :algoHashFileCalcIn ");
         }
-        if (filtriComponenti.getCd_encoding_hash_file_calc().parse() != null) {
-            whereCompClause.append(" AND comp.cdEncodingHashFileCalc = :encodingHashFileCalcIn");
+        if (filtriComponenti.getCdEncodingHashFileCalc() != null) {
+            whereCompClause.append(" AND comp.cdEncodingHashFileCalc = :encodingHashFileCalcIn ");
         }
-        if (filtriComponenti.getDs_urn_comp_calc().parse() != null) {
-            whereCompClause.append(" AND UPPER(comp.dsUrnCompCalc) LIKE :urnCompCalcIn");
+        if (filtriComponenti.getDsUrnCompCalc() != null) {
+            whereCompClause.append(" AND UPPER(comp.dsUrnCompCalc) LIKE :urnCompCalcIn ");
         }
 
-        Date data_comp_da = (dateCreazioneCompValidate != null ? dateCreazioneCompValidate[0] : null);
-        Date data_comp_a = (dateCreazioneCompValidate != null ? dateCreazioneCompValidate[1] : null);
+        Date dataCompDa = (getDateOrNull(dateCreazioneCompValidate, 0));
+        Date dataCompA = (getDateOrNull(dateCreazioneCompValidate, 1));
 
-        if ((data_comp_da != null) && (data_comp_a != null)) {
-            whereCompClause.append(" AND strutDoc.aroDoc.dtCreazione between :dataCompDaIn AND :dataCompAIn");
+        if ((dataCompDa != null) && (dataCompA != null)) {
+            whereCompClause.append(" AND strutDoc.aroDoc.dtCreazione between :dataCompDaIn AND :dataCompAIn ");
         }
         //
-        if (filtriComponenti.getFl_forza_accettazione_comp().parse() != null) {
-            whereCompClause.append(" AND strutDoc.aroDoc.flForzaAccettazione = :flForzaAccIn");
+        if (filtriComponenti.getFlForzaAccettazioneComp() != null) {
+            whereCompClause.append(" AND strutDoc.aroDoc.flForzaAccettazione = :flForzaAccIn ");
         }
 
-        if (filtriComponenti.getFl_forza_conservazione_comp().parse() != null) {
-            whereCompClause.append(" AND strutDoc.aroDoc.flForzaConservazione = :flForzaConsIn");
+        if (filtriComponenti.getFlForzaConservazioneComp() != null) {
+            whereCompClause.append(" AND strutDoc.aroDoc.flForzaConservazione = :flForzaConsIn ");
         }
 
-        if (filtriComponenti.getTi_supporto_comp().parse() != null) {
-            whereCompClause.append(" AND comp.tiSupportoComp = :tiSupportoCompIn");
+        if (filtriComponenti.getTiSupportoComp() != null) {
+            whereCompClause.append(" AND comp.tiSupportoComp = :tiSupportoCompIn ");
         }
 
-        if (filtriComponenti.getTi_supporto_comp().parse() != null) {
-            whereCompClause.append(" AND comp.tiSupportoComp = :tiSupportoCompIn");
+        // TODO condizione duplicata, la togliamo?
+        if (filtriComponenti.getNmTipoRapprComp() != null) {
+            whereCompClause.append(" AND comp.decTipoRapprComp.idTipoRapprComp = :idTipoRapprCompIn ");
         }
 
-        if (filtriComponenti.getNm_tipo_rappr_comp().parse() != null) {
-            whereCompClause.append(" AND comp.decTipoRapprComp.idTipoRapprComp = :idTipoRapprCompIn");
+        if (filtriComponenti.getDsIdCompVers() != null) {
+            whereCompClause.append(" AND UPPER(comp.dsIdCompVers) LIKE :idCompDocIn ");
         }
 
-        if (filtriComponenti.getDs_id_comp_vers().parse() != null) {
-            whereCompClause.append(" AND UPPER(comp.dsIdCompVers) LIKE :idCompDocIn");
+        // Se il filtro "Cd firmatario" è valorizzato
+        if (StringUtils.isNotBlank(filtriFirmatari.getCdFirmatario())) {
+            whereCompClause.append(" AND UPPER(firma.cdFirmatario) LIKE :cdFirmatario ");
+            joinFirma = true;
+        }
+        // Se il filtro "Cognome firmatario" è valorizzato
+        if (StringUtils.isNotBlank(filtriFirmatari.getNmCognomeFirmatario())) {
+            whereCompClause.append(" AND UPPER(firma.nmCognomeFirmatario) LIKE :nmCognomeFirmatario ");
+            joinFirma = true;
+        }
+        // Se il filtro "Nome firmatario" è valorizzato
+        if (StringUtils.isNotBlank(filtriFirmatari.getNmFirmatario())) {
+            whereCompClause.append(" AND UPPER(firma.nmFirmatario) LIKE :nmFirmatario ");
+            joinFirma = true;
         }
 
         if (StringUtils.isNotBlank(whereCompClause.toString())) {
@@ -775,215 +996,245 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             queryStr.append(whereCompClause.toString());
             whereWord = " AND ";
         }
+
         // FINE GESTIONE FILTRI COMPONENTI
 
         // Inserimento nella query del filtro Tipo Unità Doc versione multiselect
         if (!idTipoUnitaDocList.isEmpty()) {
-            queryStr.append(whereWord).append("(u.idTipoUnitaDoc IN :listtipoud)");
+            queryStr.append(whereWord).append(" (u.idTipoUnitaDoc IN (:listtipoud)) ");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro CD_VERSIONE_XSD_UD
-        String cdVersioneXsdUd = filtri.getCd_versione_xsd_ud().parse();
+        String cdVersioneXsdUd = filtri.getCdVersioneXsdUd();
         if (cdVersioneXsdUd != null) {
-            queryStr.append(whereWord).append("u.cdVersioneXsdUd = :cdVersioneXsdUd ");
+            queryStr.append(whereWord).append(" u.cdVersioneXsdUd = :cdVersioneXsdUd ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro Registro
         if (!cdRegistroUnitaDocSet.isEmpty()) {
-            queryStr.append(whereWord).append("u.cdRegistroKeyUnitaDoc IN :setregistro ");
+            queryStr.append(whereWord).append(" u.cdRegistroKeyUnitaDoc IN (:setregistro) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro Tipo Documento
         if (!idTipoDocList.isEmpty()) {
-            queryStr.append(whereWord).append("u.idTipoDoc IN :listtipodoc ");
+            queryStr.append(whereWord).append(" u.idTipoDoc IN (:listtipodoc) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro CD_VERSIONE_XSD_DOC
-        String cdVersioneXsdDoc = filtri.getCd_versione_xsd_doc().parse();
+        String cdVersioneXsdDoc = filtri.getCdVersioneXsdDoc();
         if (cdVersioneXsdDoc != null) {
-            queryStr.append(whereWord).append("u.cdVersioneXsdDoc = :cdVersioneXsdDoc ");
+            queryStr.append(whereWord).append(" u.cdVersioneXsdDoc = :cdVersioneXsdDoc ");
             whereWord = "AND ";
         }
 
-        BigDecimal anno = filtri.getAa_key_unita_doc().parse();
-        String codice = filtri.getCd_key_unita_doc().parse();
+        BigDecimal anno = filtri.getAaKeyUnitaDoc();
+        String codice = filtri.getCdKeyUnitaDoc();
 
         if (anno != null) {
-            queryStr.append(whereWord).append("u.aaKeyUnitaDoc = :annoin ");
+            queryStr.append(whereWord).append(" u.aaKeyUnitaDoc = :annoin ");
             whereWord = " AND ";
         }
 
         if (codice != null) {
-            queryStr.append(whereWord).append("u.cdKeyUnitaDoc = :codicein ");
+            queryStr.append(whereWord).append(" u.cdKeyUnitaDoc = :codicein ");
             whereWord = " AND ";
         }
 
-        String cdKeyDocVers = filtri.getCd_key_doc_vers().parse();
+        String cdKeyDocVers = filtri.getCdKeyDocVers();
         if (cdKeyDocVers != null) {
-            queryStr.append(whereWord).append("UPPER(u.cdKeyDocVers) LIKE :cdKeyDocVers ");
+            queryStr.append(whereWord).append(" UPPER(u.cdKeyDocVers) LIKE :cdKeyDocVers ");
             whereWord = "AND ";
         }
 
-        BigDecimal anno_range_da = filtri.getAa_key_unita_doc_da().parse();
-        BigDecimal anno_range_a = filtri.getAa_key_unita_doc_a().parse();
-        String codice_range_da = filtri.getCd_key_unita_doc_da().parse();
-        String codice_range_a = filtri.getCd_key_unita_doc_a().parse();
+        BigDecimal annoRangeDa = filtri.getAaKeyUnitaDocDa();
+        BigDecimal annoRangeA = filtri.getAaKeyUnitaDocA();
+        String codiceRangeDa = filtri.getCdKeyUnitaDocDa();
+        String codiceRangeA = filtri.getCdKeyUnitaDocA();
 
-        if (anno_range_da != null && anno_range_a != null) {
-            queryStr.append(whereWord).append("(u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a) ");
+        if (annoRangeDa != null && annoRangeA != null) {
+            queryStr.append(whereWord).append(" (u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a) ");
             whereWord = " AND ";
         }
 
-        if (codice_range_da != null && codice_range_a != null) {
-            codice_range_da = StringPadding.padString(codice_range_da, "0", 12, StringPadding.PADDING_LEFT);
-            codice_range_a = StringPadding.padString(codice_range_a, "0", 12, StringPadding.PADDING_LEFT);
-            queryStr.append(whereWord)
-                    .append("FUNC('lpad', u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            codiceRangeDa = StringPadding.padString(codiceRangeDa, "0", 12, StringPadding.PADDING_LEFT);
+            codiceRangeA = StringPadding.padString(codiceRangeA, "0", 12, StringPadding.PADDING_LEFT);
+            queryStr.append(whereWord).append(" LPAD( u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
             whereWord = " AND ";
         }
 
-        String codice_num_contiene = filtri.getCd_key_unita_doc_contiene().parse();
+        String codiceNumContiene = filtri.getCdKeyUnitaDocContiene();
 
-        if (codice_num_contiene != null) {
-            queryStr.append(whereWord).append("UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene ");
+        if (codiceNumContiene != null) {
+            queryStr.append(whereWord).append(" UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene ");
             whereWord = " AND ";
+            codiceNumContiene = codiceNumContiene.toUpperCase();
         }
 
         // Inserimento nella query del filtro PRESENZA FIRME
-        String presenza = filtri.getFl_unita_doc_firmato().parse();
+        String presenza = filtri.getFlUnitaDocFirmato();
         if (presenza != null) {
-            queryStr.append(whereWord).append("u.flUnitaDocFirmato = :presenzain ");
+            queryStr.append(whereWord).append(" u.flUnitaDocFirmato = :presenzain ");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro ESITO FIRME VERS in versione multiselect
-        List<String> esitoveriffirmeList = filtri.getTi_esito_verif_firme().parse();
+        List<String> esitoveriffirmeList = filtri.getTiEsitoVerifFirme();
         if (!esitoveriffirmeList.isEmpty()) {
-            queryStr.append(whereWord).append("(u.tiEsitoVerifFirme IN :listaesitoveriffirme)");
+            queryStr.append(whereWord).append(" (u.tiEsitoVerifFirme IN (:listaesitoveriffirme)) ");
             whereWord = " AND ";
         }
 
-        Date data_da = (dateAcquisizioneValidate != null ? dateAcquisizioneValidate[0] : null);
-        Date data_a = (dateAcquisizioneValidate != null ? dateAcquisizioneValidate[1] : null);
+        Date dataDa = (getDateOrNull(dateAcquisizioneValidate, 0));
+        Date dataA = (getDateOrNull(dateAcquisizioneValidate, 1));
 
-        if ((data_da != null) && (data_a != null)) {
-            queryStr.append(whereWord).append("(u.dtCreazione between :datada AND :dataa) ");
+        if ((dataDa != null) && (dataA != null)) {
+            queryStr.append(whereWord).append(" (u.dtCreazione between :datada AND :dataa) ");
             whereWord = " AND ";
         }
         // Inserimento nella query del filtro ESISTE PROFILO NORMATIVO
-        String profiloNorm = filtri.getFl_profilo_normativo().parse();
+        String profiloNorm = filtri.getProfiloNorm();
         if (profiloNorm != null) {
-            queryStr.append(whereWord).append("u.flEsisteProfiloNormativo = :profiloNorm ");
+            queryStr.append(whereWord).append(" u.flEsisteProfiloNormativo = :profiloNorm ");
             whereWord = "AND ";
         }
         // Inserimento nella query del filtro FORZA ACCETTAZIONE
-        String forzaAcc = filtri.getFl_forza_accettazione().parse();
+        String forzaAcc = filtri.getFlForzaAccettazione();
         if (forzaAcc != null) {
-            queryStr.append(whereWord).append("u.flForzaAccettazione = :forzaaccin ");
+            queryStr.append(whereWord).append(" u.flForzaAccettazione = :forzaaccin ");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro FORZA CONSERVAZIONE
-        String forzaConserva = filtri.getFl_forza_conservazione().parse();
+        String forzaConserva = filtri.getFlForzaConservazione();
         if (forzaConserva != null) {
-            queryStr.append(whereWord).append("u.flForzaConservazione = :forzaconservain ");
+            queryStr.append(whereWord).append(" u.flForzaConservazione = :forzaconservain ");
             whereWord = " AND ";
         }
         // Inserimento nella query del filtro FORZA COLLEGAMENTO
-        String forzaColleg = filtri.getFl_forza_collegamento().parse();
+        String forzaColleg = filtri.getFlForzaCollegamento();
         if (forzaColleg != null) {
-            queryStr.append(whereWord).append("u.flForzaCollegamento = :forzacollegin ");
+            queryStr.append(whereWord).append(" u.flForzaCollegamento = :forzacollegin ");
             whereWord = "AND ";
         }
 
-        String unitaDocAnnul = filtri.getFl_unita_doc_annul().parse();
-        if (unitaDocAnnul != null) {
-            queryStr.append(whereWord).append("u.flUnitaDocAnnul = :unitaDocAnnul ");
+        // // Inserimento nella query del filtro FORZA HASH
+        // String forzaHash = filtri.getForzaHash();
+        // if (forzaHash != null) {
+        // queryStr.append(whereWord).append("u.flForzaHash = :forzahashin ");
+        // whereWord = "AND ";
+        // }
+        // // Inserimento nella query del filtro FORZA FORMATO NUMERO
+        // String forzaFmtNumero = filtri.getForzaFmtNumero();
+        // if (forzaFmtNumero != null) {
+        // queryStr.append(whereWord).append("u.flForzaFmtNumero = :forzafmtnumeroin ");
+        // whereWord = "AND ";
+        // }
+        // // Inserimento nella query del filtro FORZA FORMATO FILE
+        // String forzaFmtFile = filtri.getForzaFmtFile();
+        // if (forzaFmtFile != null) {
+        // queryStr.append(whereWord).append("u.flForzaFmtFile = :forzafmtfilein ");
+        // whereWord = "AND ";
+        // }
+        // Inserimento nella query del filtro CD_VERSIONE_WS
+        String cdVersioneWs = filtri.getCdVersioneWs();
+        if (cdVersioneWs != null) {
+            queryStr.append(whereWord).append(" u.cdVersioneWs = :cdVersioneWs ");
             whereWord = "AND ";
         }
-        String docAggiunti = filtri.getFl_doc_aggiunti().parse();
+
+        String unitaDocAnnul = filtri.getFlUnitaDocAnnul();
+        if (unitaDocAnnul != null) {
+            queryStr.append(whereWord).append(" u.flUnitaDocAnnul = :unitaDocAnnul ");
+            whereWord = "AND ";
+        }
+        String docAggiunti = filtri.getFlDocAggiunti();
         if (docAggiunti != null) {
-            queryStr.append(whereWord).append("u.flDocAggiunti = :docAggiunti ");
+            queryStr.append(whereWord).append(" u.flDocAggiunti = :docAggiunti ");
+            whereWord = "AND ";
+        }
+
+        // Inserimento nella query del filtro FL_AGG_META
+        String flAggMeta = filtri.getFlAggMeta();
+        if (flAggMeta != null) {
+            queryStr.append(whereWord).append(" u.flAggMeta = :flAggMeta ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro FL_HASH_VERS
-        String flHashVers = filtri.getFl_hash_vers().parse();
+        String flHashVers = filtri.getFlHashVers();
         if (flHashVers != null) {
-            queryStr.append(whereWord).append("u.flHashVers = :flHashVers ");
+            queryStr.append(whereWord).append(" u.flHashVers = :flHashVers ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro STATO CONSERVAZIONE
-        String tiStatoConservazione = filtri.getTi_stato_conservazione().parse();
+        String tiStatoConservazione = filtri.getTiStatoConservazione();
         if (tiStatoConservazione != null) {
-            queryStr.append(whereWord).append("u.tiStatoConservazione = :tiStatoConservazione ");
+            queryStr.append(whereWord).append(" u.tiStatoConservazione = :tiStatoConservazione ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro TI_STATO_UD_ELENCO_VERS
-        String tiStatoUdElencoVers = filtri.getTi_stato_ud_elenco_vers().parse();
+        String tiStatoUdElencoVers = filtri.getTiStatoUdElencoVers();
         if (tiStatoUdElencoVers != null) {
             queryStr.append(whereWord).append(
-                    "(u.tiStatoUdElencoVers = :tiStatoUdElencoVers OR u.tiStatoDocElencoVers = :tiStatoUdElencoVers) ");
+                    " (u.tiStatoUdElencoVers = :tiStatoUdElencoVers OR u.tiStatoDocElencoVers = :tiStatoUdElencoVers) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro NM_SISTEMA_MIGRAZ in versione multiselect
-        List<String> sisMigrazList = filtri.getNm_sistema_migraz().parse();
+        List<String> sisMigrazList = filtri.getNmSistemaMigraz();
         if (!sisMigrazList.isEmpty()) {
-            queryStr.append(whereWord).append("(u.nmSistemaMigraz IN :listasismigraz)");
+            queryStr.append(whereWord).append(" (u.nmSistemaMigraz IN (:listasismigraz)) ");
             whereWord = " AND ";
         }
 
-        Date data_meta_da = (dateUnitaDocValidate != null ? dateUnitaDocValidate[0] : null);
-        Date data_meta_a = (dateUnitaDocValidate != null ? dateUnitaDocValidate[1] : null);
-
-        if ((data_meta_da != null) && (data_meta_a != null)) {
-            queryStr.append(whereWord).append("(u.dtRegUnitaDoc between :datametada AND :datametaa) ");
+        if ((filtri.getDataMetaDa() != null) && (filtri.getDataMetaA() != null)) {
+            queryStr.append(whereWord).append(" (u.dtRegUnitaDoc between :datametada AND :datametaa) ");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro TI_DOC ("Elemento")
-        String tiDoc = filtri.getTi_doc().parse();
+        String tiDoc = filtri.getTiDoc();
         if (tiDoc != null) {
-            queryStr.append(whereWord).append("u.tiDoc = :tiDoc ");
+            queryStr.append(whereWord).append(" u.tiDoc = :tiDoc ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro metadati Oggetto
-        String oggettoMeta = filtri.getDl_oggetto_unita_doc().parse();
+        String oggettoMeta = filtri.getDlOggettoUnitaDoc();
         if (oggettoMeta != null) {
-            queryStr.append(whereWord).append("UPPER(u.dlOggettoUnitaDoc) LIKE :dloggettounitadocin ");
+            queryStr.append(whereWord).append(" UPPER(u.dlOggettoUnitaDoc) LIKE :dloggettounitadocin ");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro metadati Autore documento
-        String autoreDocMeta = filtri.getDs_autore_doc().parse();
+        String autoreDocMeta = filtri.getDsAutoreDoc();
         if (autoreDocMeta != null) {
-            queryStr.append(whereWord).append("UPPER(u.dsAutoreDoc) LIKE :dldocmetain ");
+            queryStr.append(whereWord).append(" UPPER(u.dsAutoreDoc) LIKE :dldocmetain ");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro metadati Descrizione documento
-        String descrizioneDocMeta = filtri.getDl_doc().parse();
+        String descrizioneDocMeta = filtri.getDlDoc();
         if (descrizioneDocMeta != null) {
-            queryStr.append(whereWord).append("UPPER(u.dlDoc) LIKE :dsautoredocin ");
+            queryStr.append(whereWord).append(" UPPER(u.dlDoc) LIKE :dsautoredocin ");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro Tipo Conservazione
-        String tipoConservazione = filtri.getTi_conservazione().parse();
+        String tipoConservazione = filtri.getTiConservazione();
         if (tipoConservazione != null) {
-            queryStr.append(whereWord).append("u.tiConservazione = :ticonservazionein ");
+            queryStr.append(whereWord).append(" u.tiConservazione = :ticonservazionein ");
             whereWord = " AND ";
         }
 
-        queryStr.append(whereWord).append("u.idStrutUnitaDoc = :idstrutin ");
+        queryStr.append(whereWord).append(" u.idStrutUnitaDoc = :idstrutin ");
         whereWord = " AND ";
 
         // UTILIZZO DEI DATI SPECIFICI
@@ -1005,80 +1256,70 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         Date dtChiuFascRangeA = null;
         String oggettoFasc = null;
 
-        // FILTRI SU FASCICOLI
-        // TODO: verificare, Verifico se almeno un filtro sul fascicolo di appartenenza è stato definito
-        boolean fascfilterDefined = false;
-        for (Field field : filtriFascicoli.getComponentList()) {
-            if (((SingleValueField) field).getValue() != null && ((SingleValueField) field).getValue().length() > 0) {
-                fascfilterDefined = true;
-                break;
-            }
-        }
-
-        if (fascfilterDefined) {
+        if (filtriFascicoli.isFiltriImpostati()) {
             queryStr.append(whereWord)
-                    .append("exists (select fasc_ud from AroVLisFasc fasc_ud where fasc_ud.idUnitaDoc = u.idUnitaDoc ");
+                    .append(" exists (select 1 from AroVLisFasc fasc_ud where fasc_ud.id.idUnitaDoc = u.idUnitaDoc ");
 
             // Se il filtro "Indice cassificazione" è valorizzato
-            valoreClassif = filtriFascicoli.getCd_composito_voce_titol().parse();
+            valoreClassif = filtriFascicoli.getCdCompositoVoceTitol();
             if (valoreClassif != null) {
-                queryStr.append(whereWord).append("UPPER(fasc_ud.cdCompositoVoceTitol) LIKE :valoreclassif ");
+                queryStr.append(whereWord).append(" UPPER(fasc_ud.cdCompositoVoceTitol) LIKE :valoreclassif ");
                 whereWord = " AND ";
             }
 
-            aaFascicolo = filtriFascicoli.getAa_fascicolo().parse();
+            aaFascicolo = filtriFascicoli.getAaFascicolo();
             if (aaFascicolo != null) {
-                queryStr.append(whereWord).append("fasc_ud.aaFascicolo = :aafasc ");
+                queryStr.append(whereWord).append(" fasc_ud.aaFascicolo = :aafasc ");
                 whereWord = " AND ";
             }
 
-            cdKeyFascicolo = filtriFascicoli.getCd_key_fascicolo().parse();
+            cdKeyFascicolo = filtriFascicoli.getCdKeyFascicolo();
             if (cdKeyFascicolo != null) {
-                queryStr.append(whereWord).append("fasc_ud.cdKeyFascicolo = :cdfasc ");
+                queryStr.append(whereWord).append(" fasc_ud.cdKeyFascicolo = :cdfasc ");
                 whereWord = " AND ";
             }
 
-            aaFascRangeDa = filtriFascicoli.getAa_fascicolo_da().parse();
-            aaFascRangeA = filtriFascicoli.getAa_fascicolo_a().parse();
+            aaFascRangeDa = filtriFascicoli.getAaFascicoloDa();
+            aaFascRangeA = filtriFascicoli.getAaFascicoloA();
             if (aaFascRangeDa != null && aaFascRangeA != null) {
-                queryStr.append(whereWord).append("(fasc_ud.aaFascicolo BETWEEN :aafasc_da AND :aafasc_a) ");
+                queryStr.append(whereWord).append(" (fasc_ud.aaFascicolo BETWEEN :aafasc_da AND :aafasc_a) ");
                 whereWord = " AND ";
             }
 
-            cdFascRangeDa = filtriFascicoli.getCd_key_fascicolo_da().parse();
-            cdFascRangeA = filtriFascicoli.getCd_key_fascicolo_a().parse();
+            cdFascRangeDa = filtriFascicoli.getCdKeyFascicoloDa();
+            cdFascRangeA = filtriFascicoli.getCdKeyFascicoloA();
             if (cdFascRangeDa != null && cdFascRangeA != null) {
                 cdFascRangeDa = StringPadding.padString(cdFascRangeDa, "0", 12, StringPadding.PADDING_LEFT);
                 cdFascRangeA = StringPadding.padString(cdFascRangeA, "0", 12, StringPadding.PADDING_LEFT);
                 queryStr.append(whereWord)
-                        .append("FUNC('lpad', fasc_ud.cdKeyFascicolo, 12, '0') BETWEEN :cdfasc_da AND :cdfasc_a ");
+                        .append(" LPAD( fasc_ud.cdKeyFascicolo, 12, '0') BETWEEN :cdfasc_da AND :cdfasc_a ");
                 whereWord = " AND ";
             }
 
-            tipoFascIn = filtriFascicoli.getNm_tipo_fascicolo().parse();
-            if (filtriFascicoli.getNm_tipo_fascicolo().parse() != null) {
-                queryStr.append(whereWord).append("fasc_ud.idTipoFascicolo = :tipofascin ");
+            tipoFascIn = filtriFascicoli.getNmTipoFascicolo();
+            if (tipoFascIn != null) {
+                queryStr.append(whereWord).append(" fasc_ud.idTipoFascicolo = :tipofascin ");
                 whereWord = " AND ";
             }
 
-            dtApeFascRangeDa = filtriFascicoli.getDt_ape_fascicolo_da().parse();
-            dtApeFascRangeA = filtriFascicoli.getDt_ape_fascicolo_a().parse();
+            dtApeFascRangeDa = filtriFascicoli.getDtApeFascicoloDa();
+            dtApeFascRangeA = filtriFascicoli.getDtApeFascicoloA();
             if (dtApeFascRangeDa != null && dtApeFascRangeA != null) {
-                queryStr.append(whereWord).append("(fasc_ud.dtApeFascicolo BETWEEN :dtapefasc_da AND :dtapefasc_a) ");
+                queryStr.append(whereWord).append(" (fasc_ud.dtApeFascicolo BETWEEN :dtapefasc_da AND :dtapefasc_a) ");
                 whereWord = " AND ";
             }
 
-            dtChiuFascRangeDa = filtriFascicoli.getDt_chiu_fascicolo_da().parse();
-            dtChiuFascRangeA = filtriFascicoli.getDt_chiu_fascicolo_a().parse();
+            dtChiuFascRangeDa = filtriFascicoli.getDtChiuFascicoloDa();
+            dtChiuFascRangeA = filtriFascicoli.getDtChiuFascicoloA();
             if (dtChiuFascRangeDa != null && dtChiuFascRangeA != null) {
                 queryStr.append(whereWord)
-                        .append("(fasc_ud.dtChiuFascicolo BETWEEN :dtchiufasc_da AND :dtchiufasc_a) ");
+                        .append(" (fasc_ud.dtChiuFascicolo BETWEEN :dtchiufasc_da AND :dtchiufasc_a) ");
                 whereWord = " AND ";
             }
 
-            oggettoFasc = filtriFascicoli.getDs_oggetto_fascicolo().parse();
+            oggettoFasc = filtriFascicoli.getDsOggettoFascicolo();
             if (oggettoFasc != null) {
-                queryStr.append(whereWord).append("UPPER(fasc_ud.dsOggettoFascicolo) LIKE :dsoggfasc ");
+                queryStr.append(whereWord).append(" UPPER(fasc_ud.dsOggettoFascicolo) LIKE :dsoggfasc ");
                 whereWord = " AND ";
             }
 
@@ -1093,127 +1334,123 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         // FILTRI SU COLLEGAMENTI
         // Se il filtro "Con collegamento" vale "Sì"
-        if (filtriCollegamenti.getCon_collegamento().parse() != null
-                && filtriCollegamenti.getCon_collegamento().parse().equals("1")) {
+        if (filtriCollegamenti.getConCollegamento() != null && filtriCollegamenti.getConCollegamento().equals("1")) {
             queryStr.append(whereWord).append(
-                    "exists (select link from AroLinkUnitaDoc link where link.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
+                    " exists (select 1 from AroLinkUnitaDoc link where link.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
 
             // Se il filtro "Collegamento risolto" vale "Sì"
-            if (filtriCollegamenti.getCollegamento_risolto().parse() != null
-                    && filtriCollegamenti.getCollegamento_risolto().parse().equals("1")) {
-                queryStr.append(whereWord).append("link.aroUnitaDocLink is not null ");
+            if (filtriCollegamenti.getCollegamentoRisolto() != null
+                    && filtriCollegamenti.getCollegamentoRisolto().equals("1")) {
+                queryStr.append(whereWord).append(" link.aroUnitaDocLink is not null ");
             }
             // Se il filtro "Collegamento risolto" vale "No"
-            if (filtriCollegamenti.getCollegamento_risolto().parse() != null
-                    && filtriCollegamenti.getCollegamento_risolto().parse().equals("0")) {
-                queryStr.append(whereWord).append("link.aroUnitaDocLink is null ");
+            if (filtriCollegamenti.getCollegamentoRisolto() != null
+                    && filtriCollegamenti.getCollegamentoRisolto().equals("0")) {
+                queryStr.append(whereWord).append(" link.aroUnitaDocLink is null ");
             }
             // Se il filtro "Descr. collegamento" è valorizzato
-            valoreColl = filtriCollegamenti.getDs_link_unita_doc().parse();
+            valoreColl = filtriCollegamenti.getDsLinkUnitaDoc();
             if (valoreColl != null) {
-                queryStr.append(whereWord).append("UPPER(link.dsLinkUnitaDoc) LIKE :valorecoll ");
+                queryStr.append(whereWord).append(" UPPER(link.dsLinkUnitaDoc) LIKE :valorecoll ");
             }
             // Se il filtro "Registro" è valorizzato
-            valorereg = filtriCollegamenti.getCd_registro_key_unita_doc_link().getDecodedValue();
+            valorereg = filtriCollegamenti.getCdRegistroKeyUnitaDocLink();
             if (valorereg != null && !valorereg.equals("")) {
-                queryStr.append(whereWord).append("link.cdRegistroKeyUnitaDocLink = :valorereg ");
+                queryStr.append(whereWord).append(" link.cdRegistroKeyUnitaDocLink = :valorereg ");
             }
             // Se il filtro "Anno" è valorizzato
-            valoreanno = filtriCollegamenti.getAa_key_unita_doc_link().parse();
+            valoreanno = filtriCollegamenti.getAaKeyUnitaDocLink();
             if (valoreanno != null) {
-                queryStr.append(whereWord).append("link.aaKeyUnitaDocLink = :valoreanno ");
+                queryStr.append(whereWord).append(" link.aaKeyUnitaDocLink = :valoreanno ");
             }
             // Se il filtro "Numero" è valorizzato
-            valorenumero = filtriCollegamenti.getCd_key_unita_doc_link().parse();
+            valorenumero = filtriCollegamenti.getCdKeyUnitaDocLink();
             if (valorenumero != null) {
-                queryStr.append(whereWord).append("link.cdKeyUnitaDocLink = :valorenumero ");
+                queryStr.append(whereWord).append(" link.cdKeyUnitaDocLink = :valorenumero ");
             }
             queryStr.append(") ");
         }
         // Se il filtro "Con collegamento" vale "No"
-        if (filtriCollegamenti.getCon_collegamento().parse() != null
-                && filtriCollegamenti.getCon_collegamento().parse().equals("0")) {
+        if (filtriCollegamenti.getConCollegamento() != null && filtriCollegamenti.getConCollegamento().equals("0")) {
             queryStr.append(whereWord).append(
-                    "not exists (select link1 from AroLinkUnitaDoc link1 where link1.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
+                    " not exists (select 1 from AroLinkUnitaDoc link1 where link1.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
             queryStr.append(") ");
         }
         // Se il filtro "E' oggetto di collegamento" vale "Sì"
-        if (filtriCollegamenti.getIs_oggetto_collegamento().parse() != null
-                && filtriCollegamenti.getIs_oggetto_collegamento().parse().equals("1")) {
+        if (filtriCollegamenti.getIsOggettoCollegamento() != null
+                && filtriCollegamenti.getIsOggettoCollegamento().equals("1")) {
             queryStr.append(whereWord).append(
-                    "exists (select link2 from AroLinkUnitaDoc link2 where link2.aroUnitaDocLink.idUnitaDoc = u.idUnitaDoc ");
+                    " exists (select 1 from AroLinkUnitaDoc link2 where link2.aroUnitaDocLink.idUnitaDoc = u.idUnitaDoc ");
 
             // Se il filtro "Descr. collegamento oggetto" è valorizzato
-            valoreColl2 = filtriCollegamenti.getDs_link_unita_doc_oggetto().parse();
+            valoreColl2 = filtriCollegamenti.getDsLinkUnitaDocOggetto();
             if (valoreColl2 != null) {
-                queryStr.append(whereWord).append("UPPER(link2.dsLinkUnitaDoc) LIKE :valorecoll2 ");
+                queryStr.append(whereWord).append(" UPPER(link2.dsLinkUnitaDoc) LIKE :valorecoll2 ");
             }
             queryStr.append(") ");
         }
         // Se il filtro "Con collegamento" vale "No"
-        if (filtriCollegamenti.getIs_oggetto_collegamento().parse() != null
-                && filtriCollegamenti.getIs_oggetto_collegamento().parse().equals("0")) {
+        if (filtriCollegamenti.getIsOggettoCollegamento() != null
+                && filtriCollegamenti.getIsOggettoCollegamento().equals("0")) {
             queryStr.append(whereWord).append(
-                    "not exists (select link3 from AroLinkUnitaDoc link3 where link3.aroUnitaDocLink.idUnitaDoc = u.idUnitaDoc ");
+                    " not exists (select 1 from AroLinkUnitaDoc link3 where link3.aroUnitaDocLink.idUnitaDoc = u.idUnitaDoc ");
             queryStr.append(") ");
         }
 
-        if (filtri.getDs_classif().parse() != null || filtri.getCd_fascic().parse() != null
-                || filtri.getDs_oggetto_fascic().parse() != null || filtri.getCd_sottofascic().parse() != null
-                || filtri.getDs_oggetto_sottofascic().parse() != null) {
+        if (filtri.getDsClassif() != null || filtri.getCdFascic() != null || filtri.getDsOggettoFascic() != null
+                || filtri.getCdSottofascic() != null || filtri.getDsOggettoSottofascic() != null) {
             queryStr.append(whereWord)
-                    .append(" (exists (select ud from AroUnitaDoc ud where ud.idUnitaDoc = u.idUnitaDoc ");
-            if (filtri.getDs_classif().parse() != null) {
+                    .append(" (exists (select 1 from AroUnitaDoc ud where ud.idUnitaDoc = u.idUnitaDoc ");
+            if (filtri.getDsClassif() != null) {
                 queryStr.append(" and UPPER(ud.dsClassifPrinc) like :classif ");
             }
-            if (filtri.getCd_fascic().parse() != null) {
+            if (filtri.getCdFascic() != null) {
                 queryStr.append(" and UPPER(ud.cdFascicPrinc) like :fascic ");
             }
-            if (filtri.getDs_oggetto_fascic().parse() != null) {
+            if (filtri.getDsOggettoFascic() != null) {
                 queryStr.append(" and UPPER(ud.dsOggettoFascicPrinc) like :oggFascic ");
             }
-            if (filtri.getCd_sottofascic().parse() != null) {
+            if (filtri.getCdSottofascic() != null) {
                 queryStr.append(" and UPPER(ud.cdSottofascicPrinc) like :sottoFascic ");
             }
-            if (filtri.getDs_oggetto_sottofascic().parse() != null) {
+            if (filtri.getDsOggettoSottofascic() != null) {
                 queryStr.append(" and UPPER(ud.dsOggettoSottofascicPrinc) like :oggSottoFascic ");
             }
 
             queryStr.append(
-                    ") or exists (select arch_sec from AroArchivSec arch_sec where arch_sec.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
-            if (filtri.getDs_classif().parse() != null) {
+                    ") or exists (select 1 from AroArchivSec arch_sec where arch_sec.aroUnitaDoc.idUnitaDoc = u.idUnitaDoc ");
+            if (filtri.getDsClassif() != null) {
                 queryStr.append(" and UPPER(arch_sec.dsClassif) like :classif ");
             }
-            if (filtri.getCd_fascic().parse() != null) {
+            if (filtri.getCdFascic() != null) {
                 queryStr.append(" and UPPER(arch_sec.cdFascic) like :fascic ");
             }
-            if (filtri.getDs_oggetto_fascic().parse() != null) {
+            if (filtri.getDsOggettoFascic() != null) {
                 queryStr.append(" and UPPER(arch_sec.dsOggettoFascic) like :oggFascic ");
             }
-            if (filtri.getCd_sottofascic().parse() != null) {
+            if (filtri.getCdSottofascic() != null) {
                 queryStr.append(" and UPPER(arch_sec.cdSottofascic) like :sottoFascic ");
             }
-            if (filtri.getDs_oggetto_sottofascic().parse() != null) {
+            if (filtri.getDsOggettoSottofascic() != null) {
                 queryStr.append(" and UPPER(arch_sec.dsOggettoSottofascic) like :oggSottoFascic ");
             }
             queryStr.append(")) ");
             whereWord = " AND ";
         }
 
-        List<BigDecimal> subStruts = filtri.getNm_sub_strut().parse();
+        List<BigDecimal> subStruts = filtri.getNmSubStrut();
         if (!subStruts.isEmpty()) {
-            queryStr.append(whereWord).append(" u.idSubStrut IN :subStruts ");
-            whereWord = "AND ";
+            queryStr.append(whereWord).append(" u.idSubStrut IN (:subStruts) ");
         }
         // ordina per dsKeyDoc crescente
-        queryStr.append("ORDER BY u.dsKeyOrd");
+        queryStr.append(" ORDER BY u.dsKeyOrd");
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createQuery(queryStr.toString());
         // non avendo passato alla query i parametri di ricerca, devo passarli ora
 
-        if (filtriComponenti.getNm_tipo_strut_doc().parse() != null) {
-            query.setParameter("tipoStrutDocIn", filtriComponenti.getNm_tipo_strut_doc().parse());
+        if (filtriComponenti.getNmTipoStrutDoc() != null) {
+            query.setParameter("tipoStrutDocIn", filtriComponenti.getNmTipoStrutDoc().longValue());
         }
 
         if (!idTipoUnitaDocList.isEmpty()) {
@@ -1244,18 +1481,18 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("cdKeyDocVers", "%" + cdKeyDocVers.toUpperCase() + "%");
         }
 
-        if (anno_range_da != null && anno_range_a != null) {
-            query.setParameter("annoin_da", anno_range_da);
-            query.setParameter("annoin_a", anno_range_a);
+        if (annoRangeDa != null && annoRangeA != null) {
+            query.setParameter("annoin_da", annoRangeDa);
+            query.setParameter("annoin_a", annoRangeA);
         }
 
-        if (codice_range_da != null && codice_range_a != null) {
-            query.setParameter("codicein_da", codice_range_da);
-            query.setParameter("codicein_a", codice_range_a);
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            query.setParameter("codicein_da", codiceRangeDa);
+            query.setParameter("codicein_a", codiceRangeA);
         }
 
-        if (codice_num_contiene != null) {
-            query.setParameter("codicein_contiene", "%" + codice_num_contiene + "%");
+        if (codiceNumContiene != null) {
+            query.setParameter("codicein_contiene", "%" + codiceNumContiene + "%");
         }
 
         if (presenza != null) {
@@ -1266,9 +1503,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("listaesitoveriffirme", esitoveriffirmeList);
         }
 
-        if (data_da != null && data_a != null) {
-            query.setParameter("datada", data_da, TemporalType.TIMESTAMP);
-            query.setParameter("dataa", data_a, TemporalType.TIMESTAMP);
+        if (dataDa != null && dataA != null) {
+            query.setParameter("datada", dataDa, TemporalType.TIMESTAMP);
+            query.setParameter("dataa", dataA, TemporalType.TIMESTAMP);
         }
         if (profiloNorm != null) {
             query.setParameter("profiloNorm", profiloNorm);
@@ -1285,12 +1522,32 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("forzacollegin", forzaColleg);
         }
 
+        // if (forzaHash != null) {
+        // query.setParameter("forzahashin", forzaHash);
+        // }
+        //
+        // if (forzaFmtNumero != null) {
+        // query.setParameter("forzafmtnumeroin", forzaFmtNumero);
+        // }
+        //
+        // if (forzaFmtFile != null) {
+        // query.setParameter("forzafmtfilein", forzaFmtFile);
+        // }
+
+        if (cdVersioneWs != null) {
+            query.setParameter("cdVersioneWs", cdVersioneWs);
+        }
+
         if (unitaDocAnnul != null) {
             query.setParameter("unitaDocAnnul", unitaDocAnnul);
         }
 
         if (docAggiunti != null) {
             query.setParameter("docAggiunti", docAggiunti);
+        }
+
+        if (flAggMeta != null) {
+            query.setParameter("flAggMeta", flAggMeta);
         }
 
         if (flHashVers != null) {
@@ -1317,9 +1574,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("listasismigraz", sisMigrazList);
         }
 
-        if (data_meta_da != null && data_meta_a != null) {
-            query.setParameter("datametada", data_meta_da, TemporalType.DATE);
-            query.setParameter("datametaa", data_meta_a, TemporalType.DATE);
+        if (filtri.getDataMetaDa() != null && filtri.getDataMetaA() != null) {
+            query.setParameter("datametada", filtri.getDataMetaDa(), TemporalType.DATE);
+            query.setParameter("datametaa", filtri.getDataMetaA(), TemporalType.DATE);
         }
 
         if (tiDoc != null) {
@@ -1424,134 +1681,156 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("valorenumero", valorenumero);
         }
 
-        if (filtri.getDs_classif().parse() != null) {
-            query.setParameter("classif", "%" + filtri.getDs_classif().parse().toUpperCase() + "%");
+        if (filtri.getDsClassif() != null) {
+            query.setParameter("classif", "%" + filtri.getDsClassif().toUpperCase() + "%");
         }
-        if (filtri.getCd_fascic().parse() != null) {
-            query.setParameter("fascic", "%" + filtri.getCd_fascic().parse().toUpperCase() + "%");
+        if (filtri.getCdFascic() != null) {
+            query.setParameter("fascic", "%" + filtri.getCdFascic().toUpperCase() + "%");
         }
-        if (filtri.getDs_oggetto_fascic().parse() != null) {
-            query.setParameter("oggFascic", "%" + filtri.getDs_oggetto_fascic().parse().toUpperCase() + "%");
+        if (filtri.getDsOggettoFascic() != null) {
+            query.setParameter("oggFascic", "%" + filtri.getDsOggettoFascic().toUpperCase() + "%");
         }
-        if (filtri.getCd_sottofascic().parse() != null) {
-            query.setParameter("sottoFascic", "%" + filtri.getCd_sottofascic().parse().toUpperCase() + "%");
+        if (filtri.getCdSottofascic() != null) {
+            query.setParameter("sottoFascic", "%" + filtri.getCdSottofascic().toUpperCase() + "%");
         }
-        if (filtri.getDs_oggetto_sottofascic().parse() != null) {
-            query.setParameter("oggSottoFascic", "%" + filtri.getDs_oggetto_sottofascic().parse().toUpperCase() + "%");
+        if (filtri.getDsOggettoSottofascic() != null) {
+            query.setParameter("oggSottoFascic", "%" + filtri.getDsOggettoSottofascic().toUpperCase() + "%");
         }
 
         // Parametri Filtri Componente
-        if (filtriComponenti.getNm_tipo_strut_doc().parse() != null) {
-            query.setParameter("tipoStrutDocIn", filtriComponenti.getNm_tipo_strut_doc().parse());
+        if (filtriComponenti.getNmTipoStrutDoc() != null) {
+            query.setParameter("tipoStrutDocIn", filtriComponenti.getNmTipoStrutDoc().longValue());
         }
-        if (filtriComponenti.getNm_tipo_comp_doc().parse() != null) {
-            query.setParameter("tipoCompDocIn", filtriComponenti.getNm_tipo_comp_doc().parse());
+        if (filtriComponenti.getNmTipoCompDoc() != null) {
+            query.setParameter("tipoCompDocIn", filtriComponenti.getNmTipoCompDoc().longValue());
         }
-        if (filtriComponenti.getDs_nome_comp_vers().parse() != null) {
-            query.setParameter("nomeCompVersIn",
-                    "%" + filtriComponenti.getDs_nome_comp_vers().parse().toUpperCase() + "%");
+        if (filtriComponenti.getDsNomeCompVers() != null) {
+            query.setParameter("nomeCompVersIn", "%" + filtriComponenti.getDsNomeCompVers().toUpperCase() + "%");
         }
-        if (filtriComponenti.getDl_urn_comp_vers().parse() != null) {
-            query.setParameter("urnCompVersIn",
-                    "%" + filtriComponenti.getDl_urn_comp_vers().parse().toUpperCase() + "%");
+        if (filtriComponenti.getDlUrnCompVers() != null) {
+            query.setParameter("urnCompVersIn", "%" + filtriComponenti.getDlUrnCompVers().toUpperCase() + "%");
         }
-        if (filtriComponenti.getDs_hash_file_vers().parse() != null) {
-            query.setParameter("hashFileVersIn", filtriComponenti.getDs_hash_file_vers().parse());
+        if (filtriComponenti.getDsHashFileVers() != null) {
+            query.setParameter("hashFileVersIn", filtriComponenti.getDsHashFileVers());
         }
-        if (filtriComponenti.getNm_mimetype_file().parse() != null) {
-            query.setParameter("mimeTypeIn", "%" + filtriComponenti.getNm_mimetype_file().parse().toUpperCase() + "%");
+        if (filtriComponenti.getNmMimetypeFile() != null) {
+            query.setParameter("mimeTypeIn", "%" + filtriComponenti.getNmMimetypeFile().toUpperCase() + "%");
         }
-        if (filtriComponenti.getNm_formato_file_vers().parse() != null) {
-            query.setParameter("formatoFileDocIn", filtriComponenti.getNm_formato_file_vers().parse());
+        if (filtriComponenti.getNmFormatoFileVers() != null) {
+            query.setParameter("formatoFileDocIn", filtriComponenti.getNmFormatoFileVers().longValue());
         }
         if (fileSizeDa != null && fileSizeA != null) {
             query.setParameter("filesizedain", fileSizeDa);
             query.setParameter("filesizeain", fileSizeA);
         }
-        if (filtriComponenti.getDs_formato_rappr_calc().parse() != null) {
-            query.setParameter("formatoRapprCalcIn", filtriComponenti.getDs_formato_rappr_calc().parse());
+        if (filtriComponenti.getDsFormatoRapprCalc() != null) {
+            query.setParameter("formatoRapprCalcIn", filtriComponenti.getDsFormatoRapprCalc());
         }
-        if (filtriComponenti.getDs_formato_rappr_esteso_calc().parse() != null) {
-            query.setParameter("formatoRapprCalcEstesoIn", filtriComponenti.getDs_formato_rappr_esteso_calc().parse());
+        if (filtriComponenti.getDsFormatoRapprEstesoCalc() != null) {
+            query.setParameter("formatoRapprCalcEstesoIn", filtriComponenti.getDsFormatoRapprEstesoCalc());
         }
-        if (filtriComponenti.getFl_comp_firmato().parse() != null) {
+        if (filtriComponenti.getFlCompFirmato() != null) {
             // Gli devo sempre passare 1
             query.setParameter("compFirmatoIn", "1");
         }
-        if (filtriComponenti.getTi_esito_contr_conforme().parse() != null) {
-            query.setParameter("esitoContrConformeIn", filtriComponenti.getTi_esito_contr_conforme().parse());
+        if (filtriComponenti.getTiEsitoContrConforme() != null) {
+            query.setParameter("esitoContrConformeIn", filtriComponenti.getTiEsitoContrConforme());
         }
-        if (filtriComponenti.getDs_rif_temp_vers().parse() != null) {
-            query.setParameter("dsRifTempVers",
-                    "%" + filtriComponenti.getDs_rif_temp_vers().parse().toUpperCase() + "%");
-        }
-
-        if ((data_val_da != null) && (data_val_a != null)) {
-            query.setParameter("datavalda", data_val_da);
-            query.setParameter("datavala", data_val_a);
+        if (filtriComponenti.getDsRifTempVers() != null) {
+            query.setParameter("dsRifTempVers", "%" + filtriComponenti.getDsRifTempVers().toUpperCase() + "%");
         }
 
-        if (filtriComponenti.getTi_esito_contr_formato_file().parse() != null) {
-            query.setParameter("esitoContrFormatoFileIn", filtriComponenti.getTi_esito_contr_formato_file().parse());
-        }
-        if (filtriComponenti.getTi_esito_verif_firma().parse() != null) {
-            query.setParameter("esitoVerifFirmeIn", filtriComponenti.getTi_esito_verif_firma().parse());
-        }
-        if (filtriComponenti.getTi_esito_verif_firme_chius().parse() != null) {
-            query.setParameter("esitoVerifFirmeChiusIn", filtriComponenti.getTi_esito_verif_firme_chius().parse());
-        }
-        if (filtriComponenti.getDs_hash_file_calc().parse() != null) {
-            query.setParameter("hashFileCalcIn", filtriComponenti.getDs_hash_file_calc().parse());
-        }
-        if (filtriComponenti.getDs_algo_hash_file_calc().parse() != null) {
-            query.setParameter("algoHashFileCalcIn", filtriComponenti.getDs_algo_hash_file_calc().parse());
-        }
-        if (filtriComponenti.getCd_encoding_hash_file_calc().parse() != null) {
-            query.setParameter("encodingHashFileCalcIn", filtriComponenti.getCd_encoding_hash_file_calc().parse());
-        }
-        if (filtriComponenti.getDs_urn_comp_calc().parse() != null) {
-            query.setParameter("urnCompCalcIn",
-                    "%" + filtriComponenti.getDs_urn_comp_calc().parse().toUpperCase() + "%");
+        if ((dataValDa != null) && (dataValA != null)) {
+            query.setParameter("datavalda", dataValDa);
+            query.setParameter("datavala", dataValA);
         }
 
-        if ((data_comp_da != null) && (data_comp_a != null)) {
-            query.setParameter("dataCompDaIn", data_comp_da);
-            query.setParameter("dataCompAIn", data_comp_a);
+        if (filtriComponenti.getTiEsitoContrFormatoFile() != null) {
+            query.setParameter("esitoContrFormatoFileIn", filtriComponenti.getTiEsitoContrFormatoFile());
+        }
+        if (filtriComponenti.getTiEsitoVerifFirma() != null) {
+            query.setParameter("esitoVerifFirmeIn", filtriComponenti.getTiEsitoVerifFirma());
+        }
+        if (filtriComponenti.getTiEsitoVerifFirmeChiuse() != null) {
+            query.setParameter("esitoVerifFirmeChiusIn", filtriComponenti.getTiEsitoVerifFirmeChiuse());
+        }
+        if (filtriComponenti.getDsHashFileCalc() != null) {
+            query.setParameter("hashFileCalcIn", filtriComponenti.getDsHashFileCalc());
+        }
+        if (filtriComponenti.getDsAlgoHashFileCalc() != null) {
+            query.setParameter("algoHashFileCalcIn", filtriComponenti.getDsAlgoHashFileCalc());
+        }
+        if (filtriComponenti.getCdEncodingHashFileCalc() != null) {
+            query.setParameter("encodingHashFileCalcIn", filtriComponenti.getCdEncodingHashFileCalc());
+        }
+        if (filtriComponenti.getDsUrnCompCalc() != null) {
+            query.setParameter("urnCompCalcIn", "%" + filtriComponenti.getDsUrnCompCalc().toUpperCase() + "%");
         }
 
-        if (filtriComponenti.getFl_forza_accettazione_comp().parse() != null) {
-            query.setParameter("flForzaAccIn", filtriComponenti.getFl_forza_accettazione_comp().parse());
+        if ((dataCompDa != null) && (dataCompA != null)) {
+            query.setParameter("dataCompDaIn", dataCompDa);
+            query.setParameter("dataCompAIn", dataCompA);
         }
 
-        if (filtriComponenti.getFl_forza_conservazione_comp().parse() != null) {
-            query.setParameter("flForzaConsIn", filtriComponenti.getFl_forza_conservazione_comp().parse());
+        if (filtriComponenti.getFlForzaAccettazioneComp() != null) {
+            query.setParameter("flForzaAccIn", filtriComponenti.getFlForzaAccettazioneComp());
         }
 
-        if (filtriComponenti.getTi_supporto_comp().parse() != null) {
-            query.setParameter("tiSupportoCompIn", filtriComponenti.getTi_supporto_comp().parse());
+        if (filtriComponenti.getFlForzaConservazioneComp() != null) {
+            query.setParameter("flForzaConsIn", filtriComponenti.getFlForzaConservazioneComp());
         }
 
-        if (filtriComponenti.getNm_tipo_rappr_comp().parse() != null) {
-            query.setParameter("idTipoRapprCompIn", filtriComponenti.getNm_tipo_rappr_comp().parse());
+        if (filtriComponenti.getTiSupportoComp() != null) {
+            query.setParameter("tiSupportoCompIn", filtriComponenti.getTiSupportoComp());
         }
 
-        if (filtriComponenti.getDs_id_comp_vers().parse() != null) {
-            query.setParameter("idCompDocIn", "%" + filtriComponenti.getDs_id_comp_vers().parse().toUpperCase() + "%");
+        if (filtriComponenti.getNmTipoRapprComp() != null) {
+            query.setParameter("idTipoRapprCompIn", filtriComponenti.getNmTipoRapprComp().longValue());
+        }
+
+        if (filtriComponenti.getDsIdCompVers() != null) {
+            query.setParameter("idCompDocIn", "%" + filtriComponenti.getDsIdCompVers().toUpperCase() + "%");
+        }
+
+        if (filtriFirmatari.getCdFirmatario() != null) {
+            query.setParameter("cdFirmatario", "%" + filtriFirmatari.getCdFirmatario().toUpperCase() + "%");
+        }
+        if (filtriFirmatari.getNmCognomeFirmatario() != null) {
+            query.setParameter("nmCognomeFirmatario",
+                    "%" + filtriFirmatari.getNmCognomeFirmatario().toUpperCase() + "%");
+        }
+        if (filtriFirmatari.getNmFirmatario() != null) {
+            query.setParameter("nmFirmatario", "%" + filtriFirmatari.getNmFirmatario().toUpperCase() + "%");
         }
 
         if (!subStruts.isEmpty()) {
             query.setParameter("subStruts", subStruts);
         }
 
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA DI UNITA' DOCUMENTARIE
-        List<AroVRicUnitaDoc> listaUD = query.getResultList();
+        if (lazy) {
+            return lazyListHelper.getTableBean(query, getAroVRicUnitaDocTableBeanFromResultListFunction(addButton),
+                    "u.idUnitaDoc");
+        } else {
+            return getAroVRicUnitaDocTableBeanFromResultList(query.getResultList(), addButton);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private Function<List, AroVRicUnitaDocTableBean> getAroVRicUnitaDocTableBeanFromResultListFunction(
+            boolean addButton) {
+        return list -> getAroVRicUnitaDocTableBeanFromResultList(list, addButton);
+    }
+
+    public static AroVRicUnitaDocTableBean getAroVRicUnitaDocTableBeanFromResultList(List<AroVRicUnitaDoc> listaUD,
+            boolean addButton) {
         AroVRicUnitaDocTableBean udTableBean = new AroVRicUnitaDocTableBean();
 
         try {
             if (listaUD != null && !listaUD.isEmpty()) {
                 for (AroVRicUnitaDoc ud : listaUD) {
                     AroVRicUnitaDocRowBean rowBean = (AroVRicUnitaDocRowBean) Transform.entity2RowBean(ud);
-                    // Se sto gestendo l'aggiunta di ud a una serie, aggiungo questo campo per inserire il bottone "+"
+                    // Se sto gestendo l'aggiunta di ud a una serie, aggiungo questo campo per
+                    // inserire il bottone "+"
                     // sulla selectList
                     if (addButton) {
                         rowBean.setString("addSerie", "1");
@@ -1585,8 +1864,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     public AroVRicUnitaDocTableBean getAroVRicUnitaDocsById(List<BigDecimal> ids) {
-        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicUnitaDoc (u.idUnitaDoc, u.aaKeyUnitaDoc, u.cdKeyUnitaDoc, u.cdRegistroKeyUnitaDoc, u.dtCreazione, u.dtRegUnitaDoc, u.flUnitaDocFirmato, u.tiEsitoVerifFirme, u.dsMsgEsitoVerifFirme, u.nmTipoUnitaDoc, u.flForzaAccettazione, u.flForzaConservazione, u.dsKeyOrd, u.niAlleg, u.niAnnessi, u.niAnnot, u.nmTipoDocPrinc, u.dsListaStatiElencoVers, u.tiStatoConservazione) "
-                + "FROM AroVRicUnitaDoc u " + "WHERE u.idUnitaDoc IN :ids " + "ORDER BY u.dsKeyOrd";
+        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicUnitaDoc (u.id.idUnitaDoc, u.aaKeyUnitaDoc, u.cdKeyUnitaDoc, u.cdRegistroKeyUnitaDoc, u.dtCreazione, u.dtRegUnitaDoc, u.flUnitaDocFirmato, u.tiEsitoVerifFirme, u.dsMsgEsitoVerifFirme, u.nmTipoUnitaDoc, u.flForzaAccettazione, u.flForzaConservazione, u.dsKeyOrd, u.niAlleg, u.niAnnessi, u.niAnnot, u.nmTipoDocPrinc, u.dsListaStatiElencoVers, u.tiStatoConservazione) "
+                + "FROM AroVRicUnitaDoc u " + "WHERE u.id.idUnitaDoc IN (:ids) " + "ORDER BY u.dsKeyOrd";
 
         Query query = getEntityManager().createQuery(queryStr);
         if (!ids.isEmpty()) {
@@ -1595,22 +1874,18 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
         List<AroVRicUnitaDoc> listaUd = query.getResultList();
 
-        AroVRicUnitaDocTableBean listaUdTB = new AroVRicUnitaDocTableBean();
-        try {
-            if (listaUd != null && !listaUd.isEmpty()) {
-                listaUdTB = (AroVRicUnitaDocTableBean) Transform.entities2TableBean(listaUd);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return listaUdTB;
+        return resultListToAroVRicUnitaDocRowBeans(listaUd);
     }
 
     public AroVLisDocTableBean getAroVLisDocTableBeanByIdDoc(Set<BigDecimal> idDocSet) {
-        String queryStr = "SELECT u FROM AroVLisDoc u " + "WHERE u.idDoc IN :idDocSet ";
+        String queryStr = "SELECT u FROM AroVLisDoc u " + "WHERE u.idDoc IN (:idDocSet) ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idDocSet", idDocSet);
         List<AroVLisDoc> listaDoc = query.getResultList();
+        return getAroVLisDocTableBeanFromResultList(listaDoc);
+    }
+
+    private AroVLisDocTableBean getAroVLisDocTableBeanFromResultList(List<AroVLisDoc> listaDoc) {
         AroVLisDocTableBean docTB = new AroVLisDocTableBean();
         try {
             if (listaDoc != null && !listaDoc.isEmpty()) {
@@ -1629,7 +1904,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     public ElvVLisUpdUdTableBean getElvVLisUpdUdTableBeanByIdUpd(Set<BigDecimal> idUpdUnitaDocSet) {
-        String queryStr = "SELECT u FROM ElvVLisUpdUd u " + "WHERE u.idUpdUnitaDoc IN :idUpdUnitaDocSet ";
+        String queryStr = "SELECT u FROM ElvVLisUpdUd u " + "WHERE u.idUpdUnitaDoc IN (:idUpdUnitaDocSet) ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUpdUnitaDocSet", idUpdUnitaDocSet);
         List<ElvVLisUpdUd> listaUpd = query.getResultList();
@@ -1649,12 +1924,12 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     // Metodo che restituisce un rowbean con il record trovato in base
     // al''id unità documentaria
-    public AroVVisUnitaDocIamRowBean getAroVVisUnitaDocIamRowBean(BigDecimal idud) throws EMFError {
-        AroVVisUnitaDocIam record = getEntityManager().find(AroVVisUnitaDocIam.class, idud);
+    public AroVVisUnitaDocIamRowBean getAroVVisUnitaDocIamRowBean(BigDecimal idud) {
+        AroVVisUnitaDocIam rec = getEntityManager().find(AroVVisUnitaDocIam.class, idud);
         AroVVisUnitaDocIamRowBean dettaglioUD = new AroVVisUnitaDocIamRowBean();
         try {
-            if (record != null) {
-                dettaglioUD = (AroVVisUnitaDocIamRowBean) Transform.entity2RowBean(record);
+            if (rec != null) {
+                dettaglioUD = (AroVVisUnitaDocIamRowBean) Transform.entity2RowBean(rec);
             }
         } catch (Exception e) {
             log.error("Errore nel recupero del dettaglio dell'unita' documentaria" + e.getMessage(), e);
@@ -1662,51 +1937,33 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         // Calcolo il campo stato conservazione
         setStatiDocumentari(dettaglioUD);
-
+        addXmlUniDocFromOStoAroVVisUnitaDocIamRowBean(dettaglioUD);
         return dettaglioUD;
     }
 
-    public AroVLisDocTableBean getAroVLisDocTableBean(BigDecimal idud, String tipoDoc) throws EMFError {
-        StringBuilder queryStr = new StringBuilder(
+    public AroVLisDocTableBean getAroVLisDocTableBean(BigDecimal idud, String tipoDoc) {
+        StringBuilder queryStrBuilder = new StringBuilder(
                 "SELECT DISTINCT new it.eng.parer.viewEntity.AroVLisDoc(u.cdKeyDocVers, u.dlDoc, u.dsAutoreDoc, u.dtCreazione, u.flDocFirmato, u.idDoc, u.idUnitaDoc, u.nmTipoDoc, u.pgDoc, u.tiDoc, u.tiDocOrd, u.tiStatoElencoVers, u.tiEsitoVerifFirme) "
                         + " FROM AroVLisDoc u " + "WHERE u.idUnitaDoc = :idud ");
 
         if (tipoDoc != null) {
-            queryStr.append(" and u.tiDoc = :tipodoc ");
+            queryStrBuilder.append(" and u.tiDoc = :tipodoc ");
         }
 
-        queryStr.append("ORDER BY u.tiDocOrd, u.pgDoc");
+        queryStrBuilder.append("ORDER BY u.tiDocOrd, u.pgDoc");
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = getEntityManager().createQuery(queryStr.toString());
+        Query query = getEntityManager().createQuery(queryStrBuilder.toString());
 
         query.setParameter("idud", idud);
         if (tipoDoc != null) {
             query.setParameter("tipodoc", tipoDoc);
         }
 
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<AroVLisDoc> listaDoc = query.getResultList();
-
-        AroVLisDocTableBean listaDocTableBean = new AroVLisDocTableBean();
-        try {
-            if (listaDoc != null && !listaDoc.isEmpty()) {
-                for (AroVLisDoc row : listaDoc) {
-                    AroVLisDocRowBean rowBean = (AroVLisDocRowBean) Transform.entity2RowBean(row);
-                    if (!rowBean.getTiDoc().equals("PRINCIPALE")) {
-                        rowBean.setTiDoc(row.getTiDoc() + " " + row.getPgDoc());
-                    }
-                    listaDocTableBean.add(rowBean);
-                }
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-
-        return listaDocTableBean;
+        return lazyListHelper.getTableBean(query, this::getAroVLisDocTableBeanFromResultList, "idDoc");
     }
 
-    public AroVVisDocIamTableBean getAroVVisDocAggIamTableBean(BigDecimal idud, Date dataCreazioneUd) throws EMFError {
+    public AroVVisDocIamTableBean getAroVVisDocAggIamTableBean(BigDecimal idud, Date dataCreazioneUd) {
         String queryStr = "SELECT u FROM AroVVisDocIam u " + "WHERE u.idUnitaDoc = :idud "
                 + "AND u.dtCreazione > :datacreazioneud ";
 
@@ -1722,6 +1979,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         try {
             if (listaDoc != null && !listaDoc.isEmpty()) {
                 listaDocTableBean = (AroVVisDocIamTableBean) Transform.entities2TableBean(listaDoc);
+                addXmlDocFromOStoAroVVisDocIamTableBean(listaDocTableBean);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -1729,19 +1987,99 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaDocTableBean;
     }
 
-    public AroVLisLinkUnitaDocTableBean getAroVLisLinkUnitaDocTableBean(BigDecimal idud, int maxResults)
-            throws EMFError {
-        String queryStr = "SELECT u FROM AroVLisLinkUnitaDoc u WHERE u.idUnitaDoc = :idud ORDER BY u.cdKeyUnitaDocLink";
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento sia l'object storage (gestito dal parametro
+     * <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param tabella
+     *            AroVVisDocIamTableBean
+     */
+    private void addXmlDocFromOStoAroVVisDocIamTableBean(AroVVisDocIamTableBean tabella) {
+        for (AroVVisDocIamRowBean riga : tabella) {
+            addXmlDocFromOStoAroVVisDocIamRowBean(riga);
+        }
 
-        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento sia l'object storage (gestito dal parametro
+     * <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            AroVVisDocIamRowBean
+     */
+    public void addXmlDocFromOStoAroVVisDocIamRowBean(AroVVisDocIamRowBean riga) {
+        boolean xmlVuoti = riga.getBlXmlRappDoc() == null && riga.getBlXmlRichDoc() == null
+                && riga.getBlXmlRispDoc() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (xmlVuoti) {
+            Map<String, String> xmls = objectStorageService.getObjectSipDoc(riga.getIdDoc().longValue());
+            /*
+             * se recuperati oggetti da O.S.
+             */
+            if (!xmls.isEmpty()) {
+                riga.setBlXmlRappDoc(xmls.get(CostantiDB.TipiXmlDati.RAPP_VERS));
+                riga.setBlXmlRichDoc(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA));
+                riga.setBlXmlRispDoc(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA));
+            }
+        }
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento sia l'object storage (gestito dal parametro
+     * <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            AroVVisUnitaDocIamRowBean
+     */
+    private void addXmlUniDocFromOStoAroVVisUnitaDocIamRowBean(AroVVisUnitaDocIamRowBean riga) {
+        boolean xmlVuoti = riga.getBlXmlRappUd() == null && riga.getBlXmlRichUd() == null
+                && riga.getBlXmlRispUd() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (xmlVuoti) {
+            Map<String, String> xmls = objectStorageService.getObjectSipUnitaDoc(riga.getIdUnitaDoc().longValue());
+            // recupero oggetti da O.S. (se presenti)
+            if (!xmls.isEmpty()) {
+                riga.setBlXmlRappUd(xmls.get(CostantiDB.TipiXmlDati.RAPP_VERS));
+                riga.setBlXmlRichUd(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA));
+                riga.setBlXmlRispUd(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA));
+                riga.setBlXmlIndexUd(xmls.get(CostantiDB.TipiXmlDati.INDICE_FILE));
+            }
+        }
+
+    }
+
+    public AroVLisLinkUnitaDocTableBean getAroVLisLinkUnitaDocTableBean(BigDecimal idud, int maxResults) {
+        String queryStr = "SELECT u FROM AroVLisLinkUnitaDoc u WHERE u.id.idUnitaDoc = :idud ORDER BY u.cdKeyUnitaDocLink";
         Query query = getEntityManager().createQuery(queryStr);
 
         query.setParameter("idud", idud);
 
         query.setMaxResults(maxResults);
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<AroVLisLinkUnitaDoc> listaLink = query.getResultList();
+        return lazyListHelper.getTableBean(query, this::getAroVLisLinkUnitaDocTableBeanFromResultList);
+    }
 
+    private AroVLisLinkUnitaDocTableBean getAroVLisLinkUnitaDocTableBeanFromResultList(
+            List<AroVLisLinkUnitaDoc> listaLink) {
         AroVLisLinkUnitaDocTableBean listaLinkTableBean = new AroVLisLinkUnitaDocTableBean();
         try {
             if (listaLink != null && !listaLink.isEmpty()) {
@@ -1753,19 +2091,19 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaLinkTableBean;
     }
 
-    public AroVLisArchivUnitaDocTableBean getAroVLisArchivUnitaDocTableBean(BigDecimal idud, int maxResults)
-            throws EMFError {
+    public AroVLisArchivUnitaDocTableBean getAroVLisArchivUnitaDocTableBean(BigDecimal idud, int maxResults) {
         String queryStr = "SELECT u FROM AroVLisArchivUnitaDoc u WHERE u.idUnitaDoc = :idud ORDER BY u.dsClassif, u.cdFascic";
 
-        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createQuery(queryStr);
 
         query.setParameter("idud", idud);
 
         query.setMaxResults(maxResults);
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<AroVLisArchivUnitaDoc> listaArchiv = query.getResultList();
+        return lazyListHelper.getTableBean(query, this::resultListToAroVLisArchivUnitaDocTableBean);
+    }
 
+    private AroVLisArchivUnitaDocTableBean resultListToAroVLisArchivUnitaDocTableBean(
+            List<AroVLisArchivUnitaDoc> listaArchiv) {
         AroVLisArchivUnitaDocTableBean listaArchivTableBean = new AroVLisArchivUnitaDocTableBean();
         try {
             if (listaArchiv != null && !listaArchiv.isEmpty()) {
@@ -1778,7 +2116,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     // Metodi per la visualizzazione/ricerca su DOCUMENTI
-    public AroVVisDocIamRowBean getAroVVisDocIamRowBean(BigDecimal iddoc) throws EMFError {
+    public AroVVisDocIamRowBean getAroVVisDocIamRowBean(BigDecimal iddoc) {
         String queryStr = "SELECT u FROM AroVVisDocIam u WHERE u.idDoc = :iddoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -1799,7 +2137,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     // Metodi per la visualizzazione/ricerca su DOCUMENTI
-    public AroVVisDocIamTableBean getAroVVisDocIamTableBean(BigDecimal iddoc) throws EMFError {
+    public AroVVisDocIamTableBean getAroVVisDocIamTableBean(BigDecimal iddoc) {
         String queryStr = "SELECT u FROM AroVVisDocIam u WHERE u.idDoc = :iddoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -1812,6 +2150,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         try {
             if (doc != null && !doc.isEmpty()) {
                 docTableBean = (AroVVisDocIamTableBean) Transform.entities2TableBean(doc);
+                addXmlDocFromOStoAroVVisDocIamTableBean(docTableBean);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -1820,7 +2159,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     // Metodi per la visualizzazione/ricerca su AGGIORNAMENTI METADATI
-    public AroVVisUpdUnitaDocRowBean getAroVVisUpdUnitaDocRowBean(BigDecimal idupdunitadoc) throws EMFError {
+    public AroVVisUpdUnitaDocRowBean getAroVVisUpdUnitaDocRowBean(BigDecimal idupdunitadoc) {
         String queryStr = "SELECT u FROM AroVVisUpdUnitaDoc u WHERE u.idUpdUnitaDoc = :idupdunitadoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -1841,7 +2180,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     // Metodi per la visualizzazione/ricerca su AGGIORNAMENTI METADATI
-    public AroVVisUpdUnitaDocTableBean getAroVVisUpdUnitaDocTableBean(BigDecimal idupdunitadoc) throws EMFError {
+    public AroVVisUpdUnitaDocTableBean getAroVVisUpdUnitaDocTableBean(BigDecimal idupdunitadoc) {
         String queryStr = "SELECT u FROM AroVVisUpdUnitaDoc u WHERE u.idUpdUnitaDoc = :idupdunitadoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -1861,7 +2200,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return updTableBean;
     }
 
-    public AroVLisCompDocTableBean getAroVLisCompDocTableBean(BigDecimal iddoc, int maxResults) throws EMFError {
+    public AroVLisCompDocTableBean getAroVLisCompDocTableBean(BigDecimal iddoc, int maxResults) {
         String queryStr = "SELECT u FROM AroVLisCompDoc u WHERE u.idDoc = :iddoc ORDER BY u.niOrdCompDoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -1884,8 +2223,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaCompDocTableBean;
     }
 
-    public AroVLisUpdDocUnitaDocTableBean getAroVLisUpdDocUnitaDocTableBean(BigDecimal idupd, int maxResults)
-            throws EMFError {
+    public AroVLisUpdDocUnitaDocTableBean getAroVLisUpdDocUnitaDocTableBean(BigDecimal idupd, int maxResults) {
         String queryStr = "SELECT u FROM AroVLisUpdDocUnitaDoc u WHERE u.idUpdUnitaDoc = :idupd ORDER BY u.tiDocOrd, u.pgDoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -1909,35 +2247,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaUpdDocUnitaDocTableBean;
     }
 
-    public AroVLisDatiSpecDocTableBean getAroVLisDatiSpecDocTableBean(BigDecimal iddoc, int maxResults)
-            throws EMFError {
-        // String queryStr = "SELECT u FROM AroVLisDatiSpecDoc u WHERE u.idDoc = :iddoc ORDER BY u.niOrdAttrib";
-
-        String queryStr = "SELECT u FROM AroVLisDatiSpecDoc u WHERE u.idDoc = :iddoc ORDER BY u.niOrdAttrib";
-
-        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("iddoc", iddoc);
-
-        query.setMaxResults(maxResults);
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<AroVLisDatiSpecDoc> listaDatiSpecDoc = query.getResultList();
-
-        AroVLisDatiSpecDocTableBean listaDatiSpecDocTableBean = new AroVLisDatiSpecDocTableBean();
-        try {
-            if (listaDatiSpecDoc != null && !listaDatiSpecDoc.isEmpty()) {
-                listaDatiSpecDocTableBean = (AroVLisDatiSpecDocTableBean) Transform
-                        .entities2TableBean(listaDatiSpecDoc);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return listaDatiSpecDocTableBean;
-    }
-
-    public AroVLisVolNoValDocTableBean getAroVLisVolNoValDocTableBean(BigDecimal iddoc, int maxResults)
-            throws EMFError {
-        String queryStr = "SELECT u FROM AroVLisVolNoValDoc u WHERE u.idDoc = :iddoc ORDER BY u.dtCreazione DESC";
+    public AroVLisVolNoValDocTableBean getAroVLisVolNoValDocTableBean(BigDecimal iddoc, int maxResults) {
+        String queryStr = "SELECT u FROM AroVLisVolNoValDoc u WHERE u.id.idDoc = :iddoc ORDER BY u.dtCreazione DESC";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createQuery(queryStr);
@@ -1959,8 +2270,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaVolNoValDocTableBean;
     }
 
-    public AroVLisUpdCompUnitaDocTableBean getAroVLisUpdCompUnitaDocTableBean(BigDecimal idupd, int maxResults)
-            throws EMFError {
+    public AroVLisUpdCompUnitaDocTableBean getAroVLisUpdCompUnitaDocTableBean(BigDecimal idupd, int maxResults) {
         String queryStr = "SELECT u FROM AroVLisUpdCompUnitaDoc u WHERE u.idUpdUnitaDoc = :idupd ORDER BY u.tiDocOrd, u.pgDoc, u.niOrdCompDoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -1983,8 +2293,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaUpdCompUnitaDocTableBean;
     }
 
-    public AroVLisUpdKoRisoltiTableBean getAroVLisUpdKoRisoltiTableBean(BigDecimal idupd, int maxResults)
-            throws EMFError {
+    public AroVLisUpdKoRisoltiTableBean getAroVLisUpdKoRisoltiTableBean(BigDecimal idupd, int maxResults) {
         String queryStr = "SELECT u FROM AroVLisUpdKoRisolti u WHERE u.idUpdUnitaDoc = :idupd ORDER BY u.tsIniSes";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -2007,13 +2316,12 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaUpdKoRisoltiTableBean;
     }
 
-    public AroWarnUpdUnitaDocTableBean getAroWarnUpdUnitaDocTableBean(BigDecimal idupd, int maxResults)
-            throws EMFError {
+    public AroWarnUpdUnitaDocTableBean getAroWarnUpdUnitaDocTableBean(BigDecimal idupd, int maxResults) {
         String queryStr = "SELECT u FROM AroWarnUpdUnitaDoc u WHERE u.aroUpdUnitaDoc.idUpdUnitaDoc = :idupd ORDER BY u.pgWarn";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idupd", idupd);
+        query.setParameter("idupd", longFromBigDecimal(idupd));
 
         query.setMaxResults(maxResults);
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
@@ -2047,6 +2355,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         case COMP:
             tmpTipoEntita = "dec.decTipoCompDoc.idTipoCompDoc";
             break;
+        default:
+            break;
         }
 
         String queryStr = String.format("SELECT DISTINCT dec.cdVersioneXsd FROM DecXsdAttribDatiSpec decXsd "
@@ -2055,25 +2365,13 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idattribdatispec", idAttribDatiSpec);
-        query.setParameter("id", id);
+        query.setParameter("idattribdatispec", longFromBigDecimal(idAttribDatiSpec));
+        query.setParameter("id", longFromBigDecimal(id));
 
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
         List<String> listaVersioni = query.getResultList();
 
-        String versioni = "";
-        if (!listaVersioni.isEmpty()) {
-            versioni = "ver.";
-            int count = 0;
-            for (String valore : listaVersioni) {
-                versioni = versioni + " " + valore;
-                if (count < listaVersioni.size() - 1) {
-                    versioni = versioni + ", ";
-                    count++;
-                }
-            }
-        }
-        return versioni;
+        return Utils.composeVersioniString(listaVersioni);
     }
 
     public String getVersioniXsdSisMigr(BigDecimal idAttribDatiSpec, String tipoEntitaSacer, String nmSistemaMigraz) {
@@ -2084,30 +2382,17 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idattribdatispec", idAttribDatiSpec);
+        query.setParameter("idattribdatispec", longFromBigDecimal(idAttribDatiSpec));
         query.setParameter("nmsistemamigrazin", nmSistemaMigraz);
         query.setParameter("tipoentitasacerin", tipoEntitaSacer);
 
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
         List<String> listaVersioni = query.getResultList();
 
-        String versioni = "";
-        if (!listaVersioni.isEmpty()) {
-            versioni = "ver.";
-            int count = 0;
-            for (String valore : listaVersioni) {
-                versioni = versioni + " " + valore;
-                if (count < listaVersioni.size() - 1) {
-                    versioni = versioni + ", ";
-                    count++;
-                }
-            }
-        }
-        return versioni;
+        return Utils.composeVersioniString(listaVersioni);
     }
 
-    public DecAttribDatiSpecTableBean getDecAttribDatiSpecTableBean(BigDecimal id, TipoEntitaSacer tipoEntitaSacer)
-            throws EMFError {
+    public DecAttribDatiSpecTableBean getDecAttribDatiSpecTableBean(BigDecimal id, TipoEntitaSacer tipoEntitaSacer) {
         String tmpTipoEntita = null;
 
         switch (tipoEntitaSacer) {
@@ -2120,15 +2405,22 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         case COMP:
             tmpTipoEntita = "u.decTipoCompDoc.idTipoCompDoc";
             break;
+        default:
+            break;
         }
 
-        String queryStr = String.format("SELECT DISTINCT u FROM DecXsdAttribDatiSpec v JOIN v.decAttribDatiSpec u "
-                + "WHERE %s = :id " + "ORDER BY v.niOrdAttrib", tmpTipoEntita);
+        String queryStr = String.format(
+                "SELECT DISTINCT u.idAttribDatiSpec,v.niOrdAttrib FROM DecXsdAttribDatiSpec v JOIN v.decAttribDatiSpec u "
+                        + "WHERE %s = :id ORDER BY v.niOrdAttrib",
+                tmpTipoEntita);
 
         Query query = this.getEntityManager().createQuery(queryStr);
-        query.setParameter("id", id);
-
-        List<DecAttribDatiSpec> listaDatiSpec = query.getResultList();
+        query.setParameter("id", longFromBigDecimal(id));
+        final List<Object[]> rawResults = query.getResultList();
+        List<DecAttribDatiSpec> listaDatiSpec = rawResults.stream().map(rec -> {
+            Long idDec = Long.class.cast(rec[0]);
+            return findById(DecAttribDatiSpec.class, idDec);
+        }).collect(Collectors.toList());
 
         DecAttribDatiSpecTableBean listaDatiSpecTableBean = new DecAttribDatiSpecTableBean();
         try {
@@ -2142,7 +2434,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     public DecAttribDatiSpecTableBean getDecAttribDatiSpecSisMigrTableBean(String tipoSistemaMigrazione,
-            BigDecimal idStrut) throws EMFError {
+            BigDecimal idStrut) {
 
         String queryStr = "SELECT u FROM DecXsdAttribDatiSpec v JOIN v.decAttribDatiSpec u "
                 + "WHERE u.nmSistemaMigraz = :nmsistemamigrazin " + "AND u.orgStrut.idStrut = :idstrutin "
@@ -2151,7 +2443,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         Query query = this.getEntityManager().createQuery(queryStr);
 
         query.setParameter("nmsistemamigrazin", tipoSistemaMigrazione);
-        query.setParameter("idstrutin", idStrut);
+        query.setParameter("idstrutin", longFromBigDecimal(idStrut));
         query.setParameter("unidocin", TipoEntitaSacer.UNI_DOC.name());
         query.setParameter("docin", TipoEntitaSacer.DOC.name());
 
@@ -2169,13 +2461,13 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     // Ricavo i componenti di tipo file di un determinato documento
-    public AroVLisCompDocTableBean getAroVLisCompDocFileTableBean(BigDecimal iddoc) throws EMFError {
+    public AroVLisCompDocTableBean getAroVLisCompDocFileTableBean(BigDecimal iddoc) {
         String queryStr = "SELECT u FROM AroVLisCompDoc u WHERE u.idDoc = :iddoc and UPPER(u.tiSupportoComp) LIKE 'FILE' ORDER BY u.niOrdCompDoc";
 
         Query query = this.getEntityManager().createQuery(queryStr);
         query.setParameter("iddoc", iddoc);
 
-        List listaCompDoc = query.getResultList();
+        List<AroVLisCompDoc> listaCompDoc = query.getResultList();
 
         AroVLisCompDocTableBean listaCompDocTableBean = new AroVLisCompDocTableBean();
         try {
@@ -2190,7 +2482,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     // Ricavo i componenti di tipo file di un determinato documento
     public AroVLisDatiSpecTableBean getAroVLisDatiSpecTableBean(BigDecimal identificativo,
-            TipoEntitaSacer tipoEntitaSacer, String tipoDatiSpec, int maxResults) throws EMFError {
+            TipoEntitaSacer tipoEntitaSacer, String tipoDatiSpec, int maxResults) {
         String tmpTipoEntita = null;
         switch (tipoEntitaSacer) {
         case UNI_DOC:
@@ -2201,6 +2493,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             break;
         case COMP:
             tmpTipoEntita = "u.idCompDoc";
+            break;
+        default:
             break;
         }
 
@@ -2215,8 +2509,11 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         query.setParameter("tipoEntitaSacerIn", tipoEntitaSacer.name());
 
         query.setMaxResults(maxResults);
-        List listaDatiSpec = query.getResultList();
 
+        return lazyListHelper.getTableBean(query, this::getAroVLisDatiSpecTableBeanFromResultList);
+    }
+
+    private AroVLisDatiSpecTableBean getAroVLisDatiSpecTableBeanFromResultList(List<?> listaDatiSpec) {
         AroVLisDatiSpecTableBean listaTableBean = new AroVLisDatiSpecTableBean();
         try {
             if (listaDatiSpec != null && !listaDatiSpec.isEmpty()) {
@@ -2240,10 +2537,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String queryStr = "SELECT DISTINCT (u.tiStatoDoc) FROM AroDoc u WHERE u.aroUnitaDoc.idUnitaDoc = :idunitadoc";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idunitadoc", idUnitaDoc);
+        query.setParameter("idunitadoc", longFromBigDecimal(idUnitaDoc));
 
-        List<String> stati = query.getResultList();
-        return stati;
+        return query.getResultList();
     }
 
     private void setStatiDocumentari(BaseRow riga) {
@@ -2267,7 +2563,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 }
             }
         }
-        String stato = StringUtils.chomp(stati.toString(), ", ");
+        String stato = StringUtils.removeEnd(stati.toString(), ", ");
         riga.setObject("ds_stato_unita_doc", stato);
     }
 
@@ -2309,12 +2605,11 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return doc.getTiCreazione().equals(CostantiDB.TipoCreazioneDoc.AGGIUNTA_DOCUMENTO.name());
     }
 
-    public AroVerIndiceAipUdTableBean getAroVerIndiceAipUdTableBean(BigDecimal idUnitaDoc, int maxResults)
-            throws EMFError {
+    public AroVerIndiceAipUdTableBean getAroVerIndiceAipUdTableBean(BigDecimal idUnitaDoc, int maxResults) {
         String queryStr = "SELECT u FROM AroVerIndiceAipUd u "
                 + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc " + "ORDER BY u.pgVerIndiceAip DESC";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idUnitaDoc", longFromBigDecimal(idUnitaDoc));
         query.setMaxResults(maxResults);
         List<AroVerIndiceAipUd> listaIndici = query.getResultList();
         AroVerIndiceAipUdTableBean listaIndiciTableBean = new AroVerIndiceAipUdTableBean();
@@ -2389,11 +2684,69 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return listaIndiciTableBean;
     }
 
+    // MEV#30395
+    public AroVerIndiceAipUdRowBean getAroVerIndiceAipUdRowBean(BigDecimal idVerIndiceAip, int maxResults) {
+        String queryStr = "SELECT u FROM AroVerIndiceAipUd u " + "WHERE u.idVerIndiceAip = :idVerIndiceAip ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter(ID_VER_INDICE_AIP_PARAMETER, longFromBigDecimal(idVerIndiceAip));
+        query.setMaxResults(maxResults);
+        List<AroVerIndiceAipUd> listaVerIndici = query.getResultList();
+        AroVerIndiceAipUdRowBean verIndiceRowBean = new AroVerIndiceAipUdRowBean();
+        try {
+            if (listaVerIndici != null && !listaVerIndici.isEmpty()) {
+                AroVerIndiceAipUd indice = listaVerIndici.get(0);
+                verIndiceRowBean = (AroVerIndiceAipUdRowBean) Transform.entity2RowBean(indice);
+                if (indice.getAroUrnVerIndiceAipUds() != null && !indice.getAroUrnVerIndiceAipUds().isEmpty()) {
+                    // Recupero lo urn ORIGINALE
+                    AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
+                            .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
+                                @Override
+                                public boolean evaluate(final Object object) {
+                                    return ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE);
+                                }
+                            });
+                    if (urnVerIndiceAipUd != null) {
+                        verIndiceRowBean.setString("urn", urnVerIndiceAipUd.getDsUrn());
+                    }
+                    // Recupero lo urn NORMALIZZATO
+                    urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                            new Predicate() {
+                                @Override
+                                public boolean evaluate(final Object object) {
+                                    return ((AroUrnVerIndiceAipUd) object).getTiUrn()
+                                            .equals(TiUrnVerIxAipUd.NORMALIZZATO);
+                                }
+                            });
+                    if (urnVerIndiceAipUd != null) {
+                        verIndiceRowBean.setString("urn_normalizzato", urnVerIndiceAipUd.getDsUrn());
+                    }
+                    // Recupero lo urn INZIALE
+                    urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                            new Predicate() {
+                                @Override
+                                public boolean evaluate(final Object object) {
+                                    return ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.INIZIALE);
+                                }
+                            });
+                    if (urnVerIndiceAipUd != null) {
+                        verIndiceRowBean.setString("urn_iniziale", urnVerIndiceAipUd.getDsUrn());
+                    }
+                } else {
+                    verIndiceRowBean.setString("urn", indice.getDsUrn());
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return verIndiceRowBean;
+    }
+    // end MEV#30395
+
     public AroFileVerIndiceAipUdRowBean getAroFileVerIndiceAipUdRowBean(BigDecimal idVerIndiceAip, int maxResults) {
         String queryStr = "SELECT u FROM AroFileVerIndiceAipUd u "
                 + "WHERE u.aroVerIndiceAipUd.idVerIndiceAip = :idVerIndiceAip ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idVerIndiceAip", idVerIndiceAip);
+        query.setParameter(ID_VER_INDICE_AIP_PARAMETER, longFromBigDecimal(idVerIndiceAip));
         query.setMaxResults(maxResults);
         List<AroFileVerIndiceAipUd> listaFileIndici = query.getResultList();
         AroFileVerIndiceAipUdRowBean fileIndiceRowBean = new AroFileVerIndiceAipUdRowBean();
@@ -2452,7 +2805,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     public AroVLisVolCorTableBean getAroVLisVolCorViewBean(BigDecimal idUnitaDoc) {
-        String queryStr = "SELECT u FROM AroVLisVolCor u " + "WHERE u.idUnitaDoc = :idUnitaDoc "
+        String queryStr = "SELECT u FROM AroVLisVolCor u " + "WHERE u.id.idUnitaDoc = :idUnitaDoc "
                 + "ORDER BY u.dtCreazione DESC ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -2469,7 +2822,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     public AroVLisElvVerTableBean getAroVLisElvVerViewBean(BigDecimal idUnitaDoc) {
-        String queryStr = "SELECT u FROM AroVLisElvVer u " + "WHERE u.idUnitaDoc = :idUnitaDoc "
+        String queryStr = "SELECT u FROM AroVLisElvVer u " + "WHERE u.id.idUnitaDoc = :idUnitaDoc "
                 + "ORDER BY u.dtCreazioneElenco DESC ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -2490,9 +2843,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String queryStr = "SELECT u.idUnitaDoc FROM AroUnitaDoc u " + "WHERE u.orgStrut.idStrut = :idStrut "
                 + "AND u.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc " + "AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc "
                 + "AND u.cdKeyUnitaDoc = :cdKeyUnitaDoc " + "AND u.dtAnnul != :dtAnnul " + "ORDER BY u.dtAnnul DESC ";
-        List<Long> listaUdAnnullate = new ArrayList<>();
+        List<Long> listaUdAnnullate;
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
         query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
         query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
@@ -2500,7 +2853,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         query.setParameter("dtAnnul", cal.getTime());
-        listaUdAnnullate = (List<Long>) query.getResultList();
+        listaUdAnnullate = query.getResultList();
         // Posso avere più di una ud annullata, dunque prendo l'ultima
         if (listaUdAnnullate != null && !listaUdAnnullate.isEmpty()) {
             return listaUdAnnullate.get(0);
@@ -2515,7 +2868,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 + "AND u.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc " + "AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc "
                 + "AND u.cdKeyUnitaDoc = :cdKeyUnitaDoc " + "AND u.dtAnnul = :dtAnnul ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
         query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
         query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
@@ -2523,7 +2876,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
         cal.set(Calendar.MILLISECOND, 0);
         query.setParameter("dtAnnul", cal.getTime());
-        List<Long> listaUdVersate = (List<Long>) query.getResultList();
+        List<Long> listaUdVersate = query.getResultList();
         if (listaUdVersate != null && !listaUdVersate.isEmpty()) {
             return listaUdVersate.get(0);
         } else {
@@ -2533,7 +2886,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     /**
      * Controlla che l’unità documentaria identificata dalla struttura versante, registro, anno e numero esista
-     *
+     * <p>
      * (NOTA: una unità doc può essere annullata più di una volta, per questo il conteggio può essere superiore a 1)
      *
      * @param idStrut
@@ -2544,7 +2897,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
      *            anno unita doc
      * @param cdKeyUnitaDoc
      *            numero unita doc
-     * 
+     *
      * @return true/false
      */
     public boolean existAroUnitaDoc(BigDecimal idStrut, String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc,
@@ -2553,7 +2906,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 + "AND u.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc " + "AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc "
                 + "AND u.cdKeyUnitaDoc = :cdKeyUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
         query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
         query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
@@ -2574,8 +2927,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 + "AND serie.idStatoSerieCor = statoSerie.idStatoSerie " + "ORDER BY serie.aaSerie ASC ";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
-        List<Object[]> listaObj = (List<Object[]>) query.getResultList();
+        query.setParameter("idUnitaDoc", longFromBigDecimal(idUnitaDoc));
+        List<Object[]> listaObj = query.getResultList();
         BaseTable listaSerieAppartenenza = new BaseTable();
 
         try {
@@ -2599,10 +2952,10 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     public AroVLisFascTableBean getFascicoliAppartenenzaViewBean(BigDecimal idUnitaDoc) {
-        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.AroVLisFasc(a.idFascicolo, a.aaFascicolo, a.cdKeyFascicolo, a.nmTipoFascicolo, "
+        String queryStr = "SELECT DISTINCT new it.eng.parer.viewEntity.AroVLisFasc(a.id.idFascicolo, a.aaFascicolo, a.cdKeyFascicolo, a.nmTipoFascicolo, "
                 + "a.dtApeFascicolo, a.dtChiuFascicolo, a.cdCompositoVoceTitol, a.niUnitaDoc, a.tsIniSes, "
                 + "a.tiEsito, a.tiStatoFascElencoVers, a.tiStatoConservazione) " + "FROM AroVLisFasc a "
-                + "WHERE a.idUnitaDoc = :idUnitaDoc " + "ORDER BY a.aaFascicolo, a.cdKeyFascicolo ";
+                + "WHERE a.id.idUnitaDoc = :idUnitaDoc " + "ORDER BY a.aaFascicolo, a.cdKeyFascicolo ";
 
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -2622,7 +2975,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String queryStr = "SELECT u FROM AroUpdUnitaDoc u " + "WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                 + "ORDER BY u.tsIniSes ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idUnitaDoc", longFromBigDecimal(idUnitaDoc));
         List<AroUpdUnitaDoc> listaUpd = query.getResultList();
         AroUpdUnitaDocTableBean updTableBean = new AroUpdUnitaDocTableBean();
         try {
@@ -2656,8 +3009,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT u FROM AroVLisNotaUnitaDoc u WHERE u.idUnitaDoc = :idUnitaDoc ORDER BY u.niOrd, u.pgNotaUnitaDoc");
         query.setParameter("idUnitaDoc", idUnitaDoc);
-        List<AroVLisNotaUnitaDoc> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public BigDecimal getMaxPgNota(BigDecimal idUnitaDoc, BigDecimal idTipoNotaUnitaDoc) {
@@ -2689,12 +3041,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         if (decTipoNotaUnitaDocList != null && !decTipoNotaUnitaDocList.isEmpty()) {
             if (TiEnteConvenz.PRODUTTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())
                     || TiEnteConvenz.GESTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())) {
-                CollectionUtils.filter(decTipoNotaUnitaDocList, new Predicate() {
-                    @Override
-                    public boolean evaluate(final Object object) {
-                        return ((DecTipoNotaUnitaDoc) object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE");
-                    }
-                });
+                CollectionUtils.filter(decTipoNotaUnitaDocList,
+                        object -> ((DecTipoNotaUnitaDoc) object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE"));
             }
         }
 
@@ -2739,9 +3087,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     public List<DecTipoNotaUnitaDoc> getDecTipoNotaUnitaDocNotInUnitaDoc(BigDecimal idUnitaDoc) {
         Query query = getEntityManager().createQuery(
                 "Select tnud from DecTipoNotaUnitaDoc tnud where tnud.flMolt='0' AND NOT EXISTS ( select n from AroNotaUnitaDoc n where n.decTipoNotaUnitaDoc.idTipoNotaUnitaDoc=tnud.idTipoNotaUnitaDoc and n.aroUnitaDoc.idUnitaDoc = :idUnitaDoc)");
-        query.setParameter("idUnitaDoc", idUnitaDoc);
-        List<DecTipoNotaUnitaDoc> result = query.getResultList();
-        return result;
+        query.setParameter("idUnitaDoc", longFromBigDecimal(idUnitaDoc));
+        return query.getResultList();
     }
 
     public List<DecTipoNotaUnitaDoc> getDecTipoNotaUnitaDocNotInUnitaDocByIdUserIam(long idUtente,
@@ -2750,18 +3097,14 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(
                 "Select tnud from DecTipoNotaUnitaDoc tnud where tnud.flMolt='0' AND NOT EXISTS ( select n from AroNotaUnitaDoc n where n.decTipoNotaUnitaDoc.idTipoNotaUnitaDoc=tnud.idTipoNotaUnitaDoc and n.aroUnitaDoc.idUnitaDoc = :idUnitaDoc)");
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idUnitaDoc", longFromBigDecimal(idUnitaDoc));
         List<DecTipoNotaUnitaDoc> listNotInUnitaDoc = query.getResultList();
 
         if (listNotInUnitaDoc != null && !listNotInUnitaDoc.isEmpty()) {
             if (TiEnteConvenz.PRODUTTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())
                     || TiEnteConvenz.GESTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())) {
-                CollectionUtils.filter(listNotInUnitaDoc, new Predicate() {
-                    @Override
-                    public boolean evaluate(final Object object) {
-                        return ((DecTipoNotaUnitaDoc) object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE");
-                    }
-                });
+                CollectionUtils.filter(listNotInUnitaDoc,
+                        object -> ((DecTipoNotaUnitaDoc) object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE"));
             }
         }
 
@@ -2804,9 +3147,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     public List<DecTipoNotaUnitaDoc> getDecTipoNotaUnitaDocNotInVerIndiceAip(BigDecimal idVerIndiceAip) {
         Query query = getEntityManager().createQuery(
                 "Select tnud from DecTipoNotaUnitaDoc tnud where tnud.flMolt='0' AND NOT EXISTS ( select n from AroNotaUnitaDoc n where n.decTipoNotaUnitaDoc.idTipoNotaUnitaDoc=tnud.idTipoNotaUnitaDoc and n.aroVerIndiceAipUd.idVerIndiceAip = :idVerIndiceAip)");
-        query.setParameter("idVerIndiceAip", idVerIndiceAip);
-        List<DecTipoNotaUnitaDoc> result = query.getResultList();
-        return result;
+        query.setParameter(ID_VER_INDICE_AIP_PARAMETER, longFromBigDecimal(idVerIndiceAip));
+        return query.getResultList();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -2897,7 +3239,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return table;
     }
 
-    public AroVVisNotaUnitaDocRowBean getAroVVisNotaUnitaDocRowBean(BigDecimal idNotaUnitaDoc) throws EMFError {
+    public AroVVisNotaUnitaDocRowBean getAroVVisNotaUnitaDocRowBean(BigDecimal idNotaUnitaDoc) {
         String queryStr = "SELECT u FROM AroVVisNotaUnitaDoc u WHERE u.idNotaUnitaDoc = :idNotaUnitaDoc";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -2994,6 +3336,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         boolean isOk = false;
 
         UsrUser user = getEntityManager().find(UsrUser.class, idUtente);
+        if (user == null) {
+            throw new NoResultException("Impossibile trovare UsrUser con idUtente " + idUtente);
+        }
         TiEnteConvenz tiEnteConvenz = user.getSiOrgEnteSiam().getTiEnteConvenz();
         if (TiEnteConvenz.AMMINISTRATORE.equals(tiEnteConvenz) || TiEnteConvenz.CONSERVATORE.equals(tiEnteConvenz)) {
             isOk = true;
@@ -3019,7 +3364,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         Calendar deadline = Calendar.getInstance();
         deadline.set(2444, 11, 31, 0, 0, 0);
         query.setParameter("dtAnnul", deadline.getTime());
-        List<AroUnitaDoc> unitaDocList = (List<AroUnitaDoc>) query.getResultList();
+        List<AroUnitaDoc> unitaDocList = query.getResultList();
         List<Object[]> regAnnoNumeroObjList = new ArrayList<>();
         if (!unitaDocList.isEmpty()) {
             for (AroUnitaDoc unitaDoc : unitaDocList) {
@@ -3040,14 +3385,14 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     public BigDecimal getPgUnitaDoc(BigDecimal idUnitaDoc) {
-        return ((AroUnitaDoc) getEntityManager().find(AroUnitaDoc.class, idUnitaDoc.longValue())).getPgUnitaDoc();
+        return (getEntityManager().find(AroUnitaDoc.class, idUnitaDoc.longValue())).getPgUnitaDoc();
     }
 
     public boolean existAroUnitaDocsFromRegistro(BigDecimal idRegistroUnitaDoc, BigDecimal idStrut) {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(aroUnitaDoc) FROM AroUnitaDoc aroUnitaDoc WHERE aroUnitaDoc.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc AND aroUnitaDoc.decRegistroUnitaDoc.orgStrut.idStrut = :idStrut ");
-        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idRegistroUnitaDoc", longFromBigDecimal(idRegistroUnitaDoc));
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         Long result = (Long) query.getSingleResult();
         return (result != null) ? result > 0L : false;
     }
@@ -3055,8 +3400,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     public boolean existAroUnitaDocsFromTipoUnita(BigDecimal idTipoUnitaDoc, BigDecimal idStrut) {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(aroUnitaDoc) FROM AroUnitaDoc aroUnitaDoc WHERE aroUnitaDoc.decTipoUnitaDoc.idTipoUnitaDoc = :idTipoUnitaDoc AND aroUnitaDoc.decTipoUnitaDoc.orgStrut.idStrut = :idStrut");
-        query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         Long result = (Long) query.getSingleResult();
         return (result != null) ? result > 0L : false;
     }
@@ -3074,6 +3419,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             queryStr = new StringBuilder("SELECT COUNT(unitaDoc) FROM AroDoc doc " + "JOIN doc.aroUnitaDoc unitaDoc "
                     + "WHERE doc.decTipoDoc.idTipoDoc = :idTipoDato ");
             break;
+        default:
+            break;
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idTipoDato", idTipoDato);
@@ -3081,25 +3428,17 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     }
 
     /*
-     * // Restituisce l'UD e se non è definito il numero normalizzato lo calcola e lo registra public AroUnitaDoc
-     * getAndCalculateUDNumber(BigDecimal id) { AroUnitaDoc ud=findById(AroUnitaDoc.class, id); if (ud!=null &&
-     * ud.getCdKeyUnitaDocNormaliz()==null) { String
-     * numeroNormalizzato=Utils.getNormalizedUDCode(ud.getCdKeyUnitaDoc());
-     * ud.setCdKeyUnitaDocNormaliz(numeroNormalizzato); } return ud; }
-     */
-
-    /*
      * Controlla se esieste un numeroNormalizzato nell'ambito della stessa struttura/anno/numero registro.
      */
     public boolean existsUdWithSameNormalizedNumber(long idRegistroUnitaDoc, BigDecimal annoRegistro,
             String numeroNormalizzato, String numeroNonNormalizzato) {
         Query query = getEntityManager().createQuery("SELECT  COUNT(aroUnitaDoc) FROM AroUnitaDoc aroUnitaDoc " + // "WHERE
-                                                                                                                  // aroUnitaDoc.orgStrut=:orgStrut
-                                                                                                                  // " +
+        // aroUnitaDoc.orgStrut=:orgStrut
+        // " +
                 "WHERE   aroUnitaDoc.decRegistroUnitaDoc.idRegistroUnitaDoc=:idRegistroUnitaDoc "
                 + "AND     aroUnitaDoc.aaKeyUnitaDoc=:annoRegistro " + // "AND
-                                                                       // aroUnitaDoc.cdRegistroKeyUnitaDoc=:codiceRegistro
-                                                                       // " +
+                // aroUnitaDoc.cdRegistroKeyUnitaDoc=:codiceRegistro
+                // " +
                 "AND     aroUnitaDoc.cdKeyUnitaDocNormaliz=:numeroNormalizzato "
                 + "AND     aroUnitaDoc.cdKeyUnitaDoc!=:numeroNonNormalizzato ");
         query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
@@ -3121,7 +3460,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         if (listaDoc != null) {
 
             AroDoc aroDocPrinc = null;
-            ArrayList<AroDoc> alNew = new ArrayList();
+            ArrayList<AroDoc> alNew = new ArrayList<>();
             for (AroDoc aroDoc : listaDoc) {
                 if (aroDoc.getTiDoc().equals("PRINCIPALE")) {
                     aroDocPrinc = aroDoc; // memorizza per dopo il doc PRINCIPALE
@@ -3130,24 +3469,21 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 }
             }
             // Ordina gli elementi tranne il PRINCIPALE...
-            Collections.sort(alNew, new Comparator<AroDoc>() {
-                @Override
-                public int compare(AroDoc doc1, AroDoc doc2) {
-                    int comparazionePerData = doc1.getDtCreazione().compareTo(doc2.getDtCreazione());
-                    if (comparazionePerData == 0) {
-                        int comparazionePerTipo = doc1.getTiDoc().compareTo(doc2.getTiDoc());
-                        if (comparazionePerTipo == 0) {
-                            return doc1.getPgDoc().compareTo(doc2.getPgDoc());
-                        } else {
-                            return comparazionePerTipo;
-                        }
+            Collections.sort(alNew, (doc1, doc2) -> {
+                int comparazionePerData = doc1.getDtCreazione().compareTo(doc2.getDtCreazione());
+                if (comparazionePerData == 0) {
+                    int comparazionePerTipo = doc1.getTiDoc().compareTo(doc2.getTiDoc());
+                    if (comparazionePerTipo == 0) {
+                        return doc1.getPgDoc().compareTo(doc2.getPgDoc());
                     } else {
-                        return comparazionePerData;
+                        return comparazionePerTipo;
                     }
+                } else {
+                    return comparazionePerData;
                 }
             });
             // Mette il PRINCIPALE come primo...
-            alDef = new ArrayList();
+            alDef = new ArrayList<>();
             if (aroDocPrinc != null) {
                 alDef.add(aroDocPrinc);
             }
@@ -3180,14 +3516,15 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         query.setParameter("aroCompDoc", aroCompDoc);
         query.setParameter("tiUrn", tiUrn);
         List<AroCompUrnCalc> l = query.getResultList();
-        return (l != null && l.size() > 0) ? l.get(0) : null;
+        return (l != null && !l.isEmpty()) ? l.get(0) : null;
     }
 
     private String calcAndcheckCdKeyNormalized(AroUnitaDoc aroUnitaDoc, String cdKeyUnitaDocNormaliz) {
         if (this.existsUdWithSameNormalizedNumber(aroUnitaDoc.getIdDecRegistroUnitaDoc(),
                 aroUnitaDoc.getAaKeyUnitaDoc(), cdKeyUnitaDocNormaliz, aroUnitaDoc.getCdKeyUnitaDoc())) {
             // retry with another one
-            // aggiungere _ infondo e richiamare ricorsivamente lo stesso metodo fino a che la condizione di uscita
+            // aggiungere _ infondo e richiamare ricorsivamente lo stesso metodo fino a che
+            // la condizione di uscita
             // restituisce l'urn part normalizzato corretto
             cdKeyUnitaDocNormaliz = cdKeyUnitaDocNormaliz.concat("_");
             return this.calcAndcheckCdKeyNormalized(aroUnitaDoc, cdKeyUnitaDocNormaliz);
@@ -3252,7 +3589,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     /**
      * Verifica e calcolo chiave UD Normalizzata e URN Componenti
-     * 
+     *
      * @param idAroUnitaDoc
      *            id unita doc
      * @param tiUrnToCalculate
@@ -3264,8 +3601,8 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         OrgStrut tmpOrgStrut = tmpAroUnitaDoc.getOrgStrut();
         OrgEnte tmpOrgEnte = tmpOrgStrut.getOrgEnte();
-        String nomeSistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, TipoAplVGetValAppart.APPLIC);
+        String nomeSistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         // verifico cd_key
         // calcola e verifica la chiave normalizzata (se non trovato in precedenza)
         if (StringUtils.isBlank(tmpAroUnitaDoc.getCdKeyUnitaDocNormaliz())) {
@@ -3293,7 +3630,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                                 tmpOrgEnte.getCdEnteNormaliz(), nomeSistema, tiUrn);
                         // new one
                         if (tmpAroCompDoc.getAroAroCompUrnCalcs() == null) {
-                            tmpAroCompDoc.setAroAroCompUrnCalcs(new ArrayList<AroCompUrnCalc>());
+                            tmpAroCompDoc.setAroAroCompUrnCalcs(new ArrayList<>());
                         }
                         // add element
                         tmpAroCompDoc.getAroAroCompUrnCalcs().add(tmpAroCompUrnCalc);
@@ -3303,35 +3640,87 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         }
     }
 
+    /**
+     * @param filtri
+     *            filtri di ricerca
+     * @param idTipoUnitaDocList
+     *            tipi di unità documentarie
+     * @param cdRegistroUnitaDocSet
+     *            registri delle unità documentarie
+     * @param idTipoDocList
+     *            tipi di documenti
+     * @param dateAcquisizioneValidate
+     *            date di acquisizione
+     * @param dateUnitaDocValidate
+     *            date delle unità documentarie
+     * @param dateAnnulValidate
+     *            date di annullamento
+     *
+     * @return AroVRicUnitaDocTableBean table bean per la UI
+     *
+     * @throws EMFError
+     *             errore generico7
+     */
     // Metodo che restituisce un viewbean con i record trovati in base
     // ai filtri di ricerca passati in ingresso
     public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAnnullateTableBean(
             UnitaDocumentarieForm.FiltriUnitaDocumentarieAnnullate filtri, List<BigDecimal> idTipoUnitaDocList,
             Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList, Date[] dateAcquisizioneValidate,
-            Date[] dateUnitaDocValidate, Date[] dateAnnulValidate, BigDecimal idUser) throws EMFError {
+            Date[] dateUnitaDocValidate, Date[] dateAnnulValidate) throws EMFError {
+        final Date dataCreazioneDa = getDateOrNull(dateAcquisizioneValidate, 0);
+        final Date dataCreazioneA = getDateOrNull(dateAcquisizioneValidate, 1);
+        final Date dataRegUnitaDocDa = getDateOrNull(dateUnitaDocValidate, 0);
+        final Date dataRegUnitaDocA = getDateOrNull(dateUnitaDocValidate, 1);
+        final Date dataAnnulDa = getDateOrNull(dateAnnulValidate, 0);
+        final Date dataAnnulA = getDateOrNull(dateAnnulValidate, 1);
+        return getAroVRicUnitaDocRicAnnullateTableBeanPlainFilter(idTipoUnitaDocList, cdRegistroUnitaDocSet,
+                idTipoDocList, new FiltriUnitaDocumentarieAnnullatePlain(filtri, dataCreazioneDa, dataCreazioneA,
+                        dataRegUnitaDocDa, dataRegUnitaDocA, dataAnnulDa, dataAnnulA),
+                true);
+    }
+
+    public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAnnullateTableBeanNoLimit(
+            UnitaDocumentarieForm.FiltriUnitaDocumentarieAnnullate filtri, List<BigDecimal> idTipoUnitaDocList,
+            Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList, Date[] dateAcquisizioneValidate,
+            Date[] dateUnitaDocValidate, Date[] dateAnnulValidate) throws EMFError {
+        final Date dataCreazioneDa = getDateOrNull(dateAcquisizioneValidate, 0);
+        final Date dataCreazioneA = getDateOrNull(dateAcquisizioneValidate, 1);
+        final Date dataRegUnitaDocDa = getDateOrNull(dateUnitaDocValidate, 0);
+        final Date dataRegUnitaDocA = getDateOrNull(dateUnitaDocValidate, 1);
+        final Date dataAnnulDa = getDateOrNull(dateAnnulValidate, 0);
+        final Date dataAnnulA = getDateOrNull(dateAnnulValidate, 1);
+        return getAroVRicUnitaDocRicAnnullateTableBeanPlainFilter(idTipoUnitaDocList, cdRegistroUnitaDocSet,
+                idTipoDocList, new FiltriUnitaDocumentarieAnnullatePlain(filtri, dataCreazioneDa, dataCreazioneA,
+                        dataRegUnitaDocDa, dataRegUnitaDocA, dataAnnulDa, dataAnnulA),
+                false);
+    }
+
+    public AroVRicUnitaDocTableBean getAroVRicUnitaDocRicAnnullateTableBeanPlainFilter(
+            List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
+            FiltriUnitaDocumentarieAnnullatePlain filtriUnitaDocumentarieAnnullatePlain, boolean lazy) {
         String whereWord = "WHERE ";
-        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT u FROM AroDoc doc JOIN doc.aroUnitaDoc u ");
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM AroUnitaDoc u LEFT JOIN u.aroDocs doc ");
 
         // Inserimento nella query del filtro Tipo Unità Doc versione multiselect
         if (!idTipoUnitaDocList.isEmpty()) {
-            queryStr.append(whereWord).append("(u.decTipoUnitaDoc.idTipoUnitaDoc IN :listtipoud)");
+            queryStr.append(whereWord).append("(u.decTipoUnitaDoc.idTipoUnitaDoc IN (:listtipoud))");
             whereWord = " AND ";
         }
 
         // Inserimento nella query del filtro Registro
         if (!cdRegistroUnitaDocSet.isEmpty()) {
-            queryStr.append(whereWord).append("u.decRegistroUnitaDoc.cdRegistroUnitaDoc IN :setregistro ");
+            queryStr.append(whereWord).append("u.decRegistroUnitaDoc.cdRegistroUnitaDoc IN (:setregistro) ");
             whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro Tipo Documento
         if (!idTipoDocList.isEmpty()) {
-            queryStr.append(whereWord).append("doc.decTipoDoc.idTipoDoc IN :listtipodoc ");
+            queryStr.append(whereWord).append("doc.decTipoDoc.idTipoDoc IN (:listtipodoc) ");
             whereWord = "AND ";
         }
 
-        BigDecimal anno = filtri.getAa_key_unita_doc().parse();
-        String codice = filtri.getCd_key_unita_doc().parse();
+        BigDecimal anno = filtriUnitaDocumentarieAnnullatePlain.getAaKeyUnitaDoc();
+        String codice = filtriUnitaDocumentarieAnnullatePlain.getCdKeyUnitaDoc();
 
         if (anno != null) {
             queryStr.append(whereWord).append("u.aaKeyUnitaDoc = :annoin ");
@@ -3343,44 +3732,37 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             whereWord = " AND ";
         }
 
-        BigDecimal anno_range_da = filtri.getAa_key_unita_doc_da().parse();
-        BigDecimal anno_range_a = filtri.getAa_key_unita_doc_a().parse();
-        String codice_range_da = filtri.getCd_key_unita_doc_da().parse();
-        String codice_range_a = filtri.getCd_key_unita_doc_a().parse();
+        BigDecimal annoRangeDa = filtriUnitaDocumentarieAnnullatePlain.getAaKeyUnitaDocDa();
+        BigDecimal annoRangeA = filtriUnitaDocumentarieAnnullatePlain.getAaKeyUnitaDocA();
+        String codiceRangeDa = filtriUnitaDocumentarieAnnullatePlain.getCdKeyUnitaDocDa();
+        String codiceRangeA = filtriUnitaDocumentarieAnnullatePlain.getCdKeyUnitaDocA();
 
-        if (anno_range_da != null && anno_range_a != null) {
+        if (annoRangeDa != null && annoRangeA != null) {
             queryStr.append(whereWord).append("(u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a) ");
             whereWord = " AND ";
         }
 
-        if (codice_range_da != null && codice_range_a != null) {
-            codice_range_da = StringPadding.padString(codice_range_da, "0", 12, StringPadding.PADDING_LEFT);
-            codice_range_a = StringPadding.padString(codice_range_a, "0", 12, StringPadding.PADDING_LEFT);
-            queryStr.append(whereWord)
-                    .append("FUNC('lpad', u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            codiceRangeDa = StringPadding.padString(codiceRangeDa, "0", 12, StringPadding.PADDING_LEFT);
+            codiceRangeA = StringPadding.padString(codiceRangeA, "0", 12, StringPadding.PADDING_LEFT);
+            queryStr.append(whereWord).append("LPAD( u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
             whereWord = " AND ";
         }
 
-        Date data_da = (dateAcquisizioneValidate != null ? dateAcquisizioneValidate[0] : null);
-        Date data_a = (dateAcquisizioneValidate != null ? dateAcquisizioneValidate[1] : null);
-
-        if ((data_da != null) && (data_a != null)) {
+        if ((filtriUnitaDocumentarieAnnullatePlain.getDataCreazioneDa() != null)
+                && (filtriUnitaDocumentarieAnnullatePlain.getDataCreazioneA() != null)) {
             queryStr.append(whereWord).append("(u.dtCreazione between :datada AND :dataa) ");
             whereWord = " AND ";
         }
 
-        Date data_reg_ud_da = (dateUnitaDocValidate != null ? dateUnitaDocValidate[0] : null);
-        Date data_reg_ud_a = (dateUnitaDocValidate != null ? dateUnitaDocValidate[1] : null);
-
-        if ((data_reg_ud_da != null) && (data_reg_ud_a != null)) {
+        if ((filtriUnitaDocumentarieAnnullatePlain.getDataRegUnitaDocDa() != null)
+                && (filtriUnitaDocumentarieAnnullatePlain.getDataRegUnitaDocA() != null)) {
             queryStr.append(whereWord).append("(u.dtRegUnitaDoc between :dataregudda AND :datareguda) ");
             whereWord = " AND ";
         }
 
-        Date data_annul_da = (dateAnnulValidate != null ? dateAnnulValidate[0] : null);
-        Date data_annul_a = (dateAnnulValidate != null ? dateAnnulValidate[1] : null);
-
-        if ((data_annul_da != null) && (data_annul_a != null)) {
+        if ((filtriUnitaDocumentarieAnnullatePlain.getDataAnnulDa() != null)
+                && (filtriUnitaDocumentarieAnnullatePlain.getDataAnnulA() != null)) {
             queryStr.append(whereWord).append("(u.dtAnnul between :dataannulda AND :dataannula) ");
             whereWord = " AND ";
         }
@@ -3392,7 +3774,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         // non avendo passato alla query i parametri di ricerca, devo passarli ora
 
         if (!idTipoUnitaDocList.isEmpty()) {
-            query.setParameter("listtipoud", idTipoUnitaDocList);
+            query.setParameter("listtipoud", longListFrom(idTipoUnitaDocList));
         }
 
         if (!cdRegistroUnitaDocSet.isEmpty()) {
@@ -3407,57 +3789,72 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("codicein", codice);
         }
 
-        if (anno_range_da != null && anno_range_a != null) {
-            query.setParameter("annoin_da", anno_range_da);
-            query.setParameter("annoin_a", anno_range_a);
+        if (annoRangeDa != null && annoRangeA != null) {
+            query.setParameter("annoin_da", annoRangeDa);
+            query.setParameter("annoin_a", annoRangeA);
         }
 
-        if (codice_range_da != null && codice_range_a != null) {
-            query.setParameter("codicein_da", codice_range_da);
-            query.setParameter("codicein_a", codice_range_a);
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            query.setParameter("codicein_da", codiceRangeDa);
+            query.setParameter("codicein_a", codiceRangeA);
         }
 
-        if (data_da != null && data_a != null) {
-            query.setParameter("datada", data_da, TemporalType.TIMESTAMP);
-            query.setParameter("dataa", data_a, TemporalType.TIMESTAMP);
+        if (filtriUnitaDocumentarieAnnullatePlain.getDataCreazioneDa() != null
+                && filtriUnitaDocumentarieAnnullatePlain.getDataCreazioneA() != null) {
+            query.setParameter("datada", filtriUnitaDocumentarieAnnullatePlain.getDataCreazioneDa(),
+                    TemporalType.TIMESTAMP);
+            query.setParameter("dataa", filtriUnitaDocumentarieAnnullatePlain.getDataCreazioneA(),
+                    TemporalType.TIMESTAMP);
         }
 
         if (!idTipoDocList.isEmpty()) {
-            query.setParameter("listtipodoc", idTipoDocList);
+            query.setParameter("listtipodoc", longListFrom(idTipoDocList));
         }
 
-        if (data_reg_ud_da != null && data_reg_ud_a != null) {
-            query.setParameter("dataregudda", data_reg_ud_da, TemporalType.DATE);
-            query.setParameter("datareguda", data_reg_ud_a, TemporalType.DATE);
+        if (filtriUnitaDocumentarieAnnullatePlain.getDataRegUnitaDocDa() != null
+                && filtriUnitaDocumentarieAnnullatePlain.getDataRegUnitaDocA() != null) {
+            query.setParameter("dataregudda", filtriUnitaDocumentarieAnnullatePlain.getDataRegUnitaDocDa(),
+                    TemporalType.DATE);
+            query.setParameter("datareguda", filtriUnitaDocumentarieAnnullatePlain.getDataRegUnitaDocA(),
+                    TemporalType.DATE);
         }
 
-        if ((data_annul_da != null) && (data_annul_a != null)) {
-            query.setParameter("dataannulda", data_annul_da);
-            query.setParameter("dataannula", data_annul_a);
+        if ((filtriUnitaDocumentarieAnnullatePlain.getDataAnnulDa() != null)
+                && (filtriUnitaDocumentarieAnnullatePlain.getDataAnnulA() != null)) {
+            query.setParameter("dataannulda", filtriUnitaDocumentarieAnnullatePlain.getDataAnnulDa());
+            query.setParameter("dataannula", filtriUnitaDocumentarieAnnullatePlain.getDataAnnulA());
         }
+        if (lazy) {
+            return lazyListHelper.getTableBean(query, this::aroUnitaDocsToTableBean);
+        } else {
+            return aroUnitaDocsToTableBean(query.getResultList());
+        }
+    }
 
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA DI UNITA' DOCUMENTARIE
-        List<AroUnitaDoc> listaUD = query.getResultList();
+    private AroVRicUnitaDocTableBean aroUnitaDocsToTableBean(List<AroUnitaDoc> listaUD) {
         AroVRicUnitaDocTableBean udTableBean = new AroVRicUnitaDocTableBean();
 
         try {
             if (listaUD != null && !listaUD.isEmpty()) {
                 for (AroUnitaDoc ud : listaUD) {
+                    getEntityManager().clear();
                     AroUnitaDocRowBean udRowBean = (AroUnitaDocRowBean) Transform.entity2RowBean(ud);
                     AroVRicUnitaDocRowBean rowBean = new AroVRicUnitaDocRowBean();
                     rowBean.copyFromBaseRow(udRowBean);
-                    rowBean.setString("nm_tipo_unita_doc", ud.getDecTipoUnitaDoc().getNmTipoUnitaDoc());
+                    rowBean.setString("nm_tipo_unita_doc",
+                            getNmTipoUnitaDoc(ud.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
                     // Ricavo il campo tipo doc principale
-                    for (AroDoc doc : ud.getAroDocs()) {
+                    for (AroDoc doc : getAroDocs(ud)) {
                         if (doc.getTiDoc().equals("PRINCIPALE")) {
-                            rowBean.setString("nm_tipo_doc_princ", doc.getDecTipoDoc().getNmTipoDoc());
+                            rowBean.setString("nm_tipo_doc_princ", getNmTipoDoc(doc.getIdDecTipoDoc()));
                             break;
                         }
                     }
                     // Ricavo il campo ds lista stati elenco vers
                     rowBean.setString("ds_lista_stati_elenco_vers", getDsListaStatiElencoVers(ud.getIdUnitaDoc()));
 
-                    // Ricavo l'identificativo e il tipo della richiesta di annullamento con stato EVASA cui
+                    // Ricavo l'identificativo e il tipo della richiesta di annullamento con stato
+                    // EVASA cui
                     // l'annullamento si riferisce
                     AroRichAnnulVers aroRichAnnulVers = getAroRichAnnulVers(ud.getIdUnitaDoc());
                     if (aroRichAnnulVers != null) {
@@ -3476,14 +3873,41 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return udTableBean;
     }
 
+    private List<AroDoc> getAroDocs(AroUnitaDoc ud) {
+        TypedQuery<AroDoc> query = getEntityManager()
+                .createQuery("SELECT a FROM AroDoc a WHERE a.aroUnitaDoc = :aroUnitaDoc", AroDoc.class);
+        query.setParameter("aroUnitaDoc", ud);
+        return query.getResultList();
+    }
+
+    private String getNmTipoUnitaDoc(Long idTipoUnitaDoc) {
+        if (idTipoUnitaDoc != null) {
+            DecTipoUnitaDoc tipoUnitaDoc = getEntityManager().find(DecTipoUnitaDoc.class, idTipoUnitaDoc);
+            if (tipoUnitaDoc != null) {
+                return tipoUnitaDoc.getNmTipoUnitaDoc();
+            }
+        }
+        return "";
+    }
+
+    public String getNmTipoDoc(Long idTipoDoc) {
+        if (idTipoDoc != null) {
+            TypedQuery<String> query = getEntityManager()
+                    .createQuery("SELECT d.nmTipoDoc FROM DecTipoDoc d WHERE d.idTipoDoc=:idTipoDoc", String.class);
+            query.setParameter("idTipoDoc", idTipoDoc);
+            return query.getSingleResult();
+        }
+        return "";
+    }
+
     private String getDsListaStatiElencoVers(long idUnitaDoc) {
         Query query = getEntityManager().createNativeQuery(
                 "select " + "listagg (tmp.ti_stato_elenco_vers, '; ') within group (order by tmp.ti_stato_elenco_vers) "
-                        + " from " + "	(select ud_elenco.ti_stato_ud_elenco_vers ti_stato_elenco_vers "
-                        + "	from ARO_UNITA_DOC ud_elenco " + "	where ud_elenco.id_unita_doc = ?1 " + "	" + "	UNION "
-                        + "	select distinct doc_elenco.ti_stato_doc_elenco_vers ti_stato_elenco_vers "
-                        + "	from ARO_DOC doc_elenco " + "	where doc_elenco.id_unita_doc = ?1 "
-                        + "	and doc_elenco.ti_stato_doc_elenco_vers is not null " + "	)	tmp ");
+                        + " from " + " (select ud_elenco.ti_stato_ud_elenco_vers ti_stato_elenco_vers "
+                        + " from ARO_UNITA_DOC ud_elenco " + " where ud_elenco.id_unita_doc = ?1 " + " " + " UNION "
+                        + " select distinct doc_elenco.ti_stato_doc_elenco_vers ti_stato_elenco_vers "
+                        + " from ARO_DOC doc_elenco " + " where doc_elenco.id_unita_doc = ?1 "
+                        + " and doc_elenco.ti_stato_doc_elenco_vers is not null " + ") tmp ");
 
         query.setParameter(1, idUnitaDoc);
         Object obj = query.getSingleResult();
@@ -3510,12 +3934,1509 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         }
     }
 
+    public List<AroNotaUnitaDoc> findAroNotaUnitaDocByIdUnitaDoc(AroUnitaDoc aroUnitaDoc) {
+        TypedQuery<AroNotaUnitaDoc> query = getEntityManager().createQuery(
+                "SELECT n FROM AroNotaUnitaDoc n WHERE n.aroUnitaDoc = :aroUnitaDoc ", AroNotaUnitaDoc.class);
+        query.setParameter("aroUnitaDoc", aroUnitaDoc);
+        return query.getResultList();
+    }
+
+    public String findNmTipoUnitaDocById(Long idTipoUnitaDoc) {
+        TypedQuery<String> query = getEntityManager().createQuery(
+                "SELECT u.nmTipoUnitaDoc FROM DecTipoUnitaDoc u WHERE u.idTipoUnitaDoc=:idTipoUnitaDoc", String.class);
+        query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+        return query.getSingleResult();
+    }
+
+    static class FiltriUnitaDocumentarieSemplicePlain {
+
+        private String cdVersioneXsdUd;
+        private String cdVersioneXsdDoc;
+        private BigDecimal anno;
+        private String codice;
+        private String cdKeyDocVers;
+        private BigDecimal annoRangeDa;
+        private BigDecimal annoRangeA;
+        private String codiceRangeDa;
+        private String codiceRangeA;
+        private String presenza;
+        private String esito;
+        private String forzaAcc;
+        private String forzaConserva;
+        private String forzaColleg;
+        // private String forzaHash;
+        // private String forzaFmtNumero;
+        // private String forzaFmtFile;
+        private String cdVersioneWs;
+        private String unitaDocAnnul;
+        private String docAggiunti;
+        private String flAggMeta;
+        private String flHashVers;
+        private String statoConserva;
+        private String tiStatoUdElencoVers;
+        private String tiDoc;
+        private String oggettoMeta;
+        private String autoreDocMeta;
+        private String descrizioneDocMeta;
+        private String tipoConservazione;
+        private List<BigDecimal> subStruts;
+        private String cdKeyUnitaDocContiene;
+        private String profiloNorm;
+
+        FiltriUnitaDocumentarieSemplicePlain() {
+
+        }
+
+        private FiltriUnitaDocumentarieSemplicePlain(FiltriUnitaDocumentarieSemplice filtri) throws EMFError {
+            this.cdVersioneXsdUd = filtri.getCd_versione_xsd_ud().parse();
+            this.cdVersioneXsdDoc = filtri.getCd_versione_xsd_doc().parse();
+            this.anno = filtri.getAa_key_unita_doc().parse();
+            this.codice = filtri.getCd_key_unita_doc().parse();
+            this.cdKeyDocVers = filtri.getCd_key_doc_vers().parse();
+            this.annoRangeDa = filtri.getAa_key_unita_doc_da().parse();
+            this.annoRangeA = filtri.getAa_key_unita_doc_a().parse();
+            this.codiceRangeDa = filtri.getCd_key_unita_doc_da().parse();
+            this.codiceRangeA = filtri.getCd_key_unita_doc_a().parse();
+            this.presenza = filtri.getFl_unita_doc_firmato().parse();
+            this.esito = filtri.getTi_esito_verif_firme().parse();
+            this.forzaAcc = filtri.getFl_forza_accettazione().parse();
+            this.forzaConserva = filtri.getFl_forza_conservazione().parse();
+            this.forzaColleg = filtri.getFl_forza_collegamento().parse();
+            this.unitaDocAnnul = filtri.getFl_unita_doc_annul().parse();
+            this.docAggiunti = filtri.getFl_doc_aggiunti().parse();
+            this.flHashVers = filtri.getFl_hash_vers().parse();
+            this.statoConserva = filtri.getTi_stato_conservazione().parse();
+            this.tiStatoUdElencoVers = filtri.getTi_stato_ud_elenco_vers().parse();
+            this.tiDoc = filtri.getTi_doc().parse();
+            this.oggettoMeta = filtri.getDl_oggetto_unita_doc().parse();
+            this.autoreDocMeta = filtri.getDs_autore_doc().parse();
+            this.descrizioneDocMeta = filtri.getDl_doc().parse();
+            this.tipoConservazione = filtri.getTi_conservazione().parse();
+            this.subStruts = filtri.getNm_sub_strut().parse();
+            this.cdKeyUnitaDocContiene = filtri.getCd_key_unita_doc_contiene().parse();
+            this.profiloNorm = filtri.getFl_profilo_normativo().parse();
+            // this.forzaHash = filtri.getFl_forza_hash().parse();
+            // this.forzaFmtNumero = filtri.getFl_forza_fmt_numero().parse();
+            // this.forzaFmtFile = filtri.getFl_forza_fmt_file().parse();
+            this.cdVersioneWs = filtri.getCd_versione_ws().parse();
+            this.flAggMeta = filtri.getFl_agg_meta().parse();
+        }
+
+        public String getCdVersioneXsdUd() {
+            return cdVersioneXsdUd;
+        }
+
+        public String getCdVersioneXsdDoc() {
+            return cdVersioneXsdDoc;
+        }
+
+        public BigDecimal getAnno() {
+            return anno;
+        }
+
+        public String getCodice() {
+            return codice;
+        }
+
+        public String getCdKeyDocVers() {
+            return cdKeyDocVers;
+        }
+
+        public BigDecimal getAnnoRangeDa() {
+            return annoRangeDa;
+        }
+
+        public BigDecimal getAnnoRangeA() {
+            return annoRangeA;
+        }
+
+        public String getCodiceRangeDa() {
+            return codiceRangeDa;
+        }
+
+        public String getCodiceRangeA() {
+            return codiceRangeA;
+        }
+
+        public String getPresenza() {
+            return presenza;
+        }
+
+        public String getEsito() {
+            return esito;
+        }
+
+        public String getForzaAcc() {
+            return forzaAcc;
+        }
+
+        public String getForzaConserva() {
+            return forzaConserva;
+        }
+
+        public String getForzaColleg() {
+            return forzaColleg;
+        }
+
+        public String getUnitaDocAnnul() {
+            return unitaDocAnnul;
+        }
+
+        public String getDocAggiunti() {
+            return docAggiunti;
+        }
+
+        public String getFlHashVers() {
+            return flHashVers;
+        }
+
+        public String getStatoConserva() {
+            return statoConserva;
+        }
+
+        public String getTiStatoUdElencoVers() {
+            return tiStatoUdElencoVers;
+        }
+
+        public String getTiDoc() {
+            return tiDoc;
+        }
+
+        public String getOggettoMeta() {
+            return oggettoMeta;
+        }
+
+        public String getAutoreDocMeta() {
+            return autoreDocMeta;
+        }
+
+        public String getDescrizioneDocMeta() {
+            return descrizioneDocMeta;
+        }
+
+        public String getTipoConservazione() {
+            return tipoConservazione;
+        }
+
+        public List<BigDecimal> getSubStruts() {
+            return subStruts;
+        }
+
+        // public String getForzaHash() {
+        // return forzaHash;
+        // }
+        //
+        // public String getForzaFmtNumero() {
+        // return forzaFmtNumero;
+        // }
+        //
+        // public String getForzaFmtFile() {
+        // return forzaFmtFile;
+        // }
+
+        public String getCdVersioneWs() {
+            return cdVersioneWs;
+        }
+
+        void setCdVersioneXsdUd(String cdVersioneXsdUd) {
+            this.cdVersioneXsdUd = cdVersioneXsdUd;
+        }
+
+        void setCdVersioneXsdDoc(String cdVersioneXsdDoc) {
+            this.cdVersioneXsdDoc = cdVersioneXsdDoc;
+        }
+
+        void setAnno(BigDecimal anno) {
+            this.anno = anno;
+        }
+
+        void setCodice(String codice) {
+            this.codice = codice;
+        }
+
+        void setCdKeyDocVers(String cdKeyDocVers) {
+            this.cdKeyDocVers = cdKeyDocVers;
+        }
+
+        void setAnnoRangeDa(BigDecimal annoRangeDa) {
+            this.annoRangeDa = annoRangeDa;
+        }
+
+        void setAnnoRangeA(BigDecimal annoRangeA) {
+            this.annoRangeA = annoRangeA;
+        }
+
+        void setCodiceRangeDa(String codiceRangeDa) {
+            this.codiceRangeDa = codiceRangeDa;
+        }
+
+        void setCodiceRangeA(String codiceRangeA) {
+            this.codiceRangeA = codiceRangeA;
+        }
+
+        void setPresenza(String presenza) {
+            this.presenza = presenza;
+        }
+
+        void setEsito(String esito) {
+            this.esito = esito;
+        }
+
+        void setForzaAcc(String forzaAcc) {
+            this.forzaAcc = forzaAcc;
+        }
+
+        void setForzaConserva(String forzaConserva) {
+            this.forzaConserva = forzaConserva;
+        }
+
+        void setForzaColleg(String forzaColleg) {
+            this.forzaColleg = forzaColleg;
+        }
+
+        void setUnitaDocAnnul(String unitaDocAnnul) {
+            this.unitaDocAnnul = unitaDocAnnul;
+        }
+
+        void setDocAggiunti(String docAggiunti) {
+            this.docAggiunti = docAggiunti;
+        }
+
+        void setFlHashVers(String flHashVers) {
+            this.flHashVers = flHashVers;
+        }
+
+        void setStatoConserva(String statoConserva) {
+            this.statoConserva = statoConserva;
+        }
+
+        void setTiStatoUdElencoVers(String tiStatoUdElencoVers) {
+            this.tiStatoUdElencoVers = tiStatoUdElencoVers;
+        }
+
+        void setTiDoc(String tiDoc) {
+            this.tiDoc = tiDoc;
+        }
+
+        void setOggettoMeta(String oggettoMeta) {
+            this.oggettoMeta = oggettoMeta;
+        }
+
+        void setAutoreDocMeta(String autoreDocMeta) {
+            this.autoreDocMeta = autoreDocMeta;
+        }
+
+        void setDescrizioneDocMeta(String descrizioneDocMeta) {
+            this.descrizioneDocMeta = descrizioneDocMeta;
+        }
+
+        void setTipoConservazione(String tipoConservazione) {
+            this.tipoConservazione = tipoConservazione;
+        }
+
+        void setSubStruts(List<BigDecimal> subStruts) {
+            this.subStruts = subStruts;
+        }
+
+        public String getCdKeyUnitaDocContiene() {
+            return cdKeyUnitaDocContiene;
+        }
+
+        public void setCdKeyUnitaDocContiene(String cdKeyUnitaDocContiene) {
+            this.cdKeyUnitaDocContiene = cdKeyUnitaDocContiene;
+        }
+
+        public String getProfiloNorm() {
+            return this.profiloNorm;
+        }
+
+        public void setProfiloNorm(String profiloNorm) {
+            this.profiloNorm = profiloNorm;
+        }
+
+        // public void setForzaHash(String forzaHash) {
+        // this.forzaHash = forzaHash;
+        // }
+        //
+        // public void setForzaFmtNumero(String forzaFmtNumero) {
+        // this.forzaFmtNumero = forzaFmtNumero;
+        // }
+        //
+        // public void setForzaFmtFile(String forzaFmtFile) {
+        // this.forzaFmtFile = forzaFmtFile;
+        // }
+
+        public void setCdVersioneWs(String cdVersioneWs) {
+            this.cdVersioneWs = cdVersioneWs;
+        }
+
+        public String getFlAggMeta() {
+            return flAggMeta;
+        }
+
+        public void setFlAggMeta(String flAggMeta) {
+            this.flAggMeta = flAggMeta;
+        }
+
+    }
+
+    static class FiltriUnitaDocumentarieAnnullatePlain {
+
+        private BigDecimal aaKeyUnitaDoc;
+        private String cdKeyUnitaDoc;
+        private BigDecimal aaKeyUnitaDocDa;
+        private BigDecimal aaKeyUnitaDocA;
+        private String cdKeyUnitaDocDa;
+        private String cdKeyUnitaDocA;
+        private Date dataCreazioneDa;
+        private Date dataCreazioneA;
+        private Date dataRegUnitaDocDa;
+        private Date dataRegUnitaDocA;
+        private Date dataAnnulDa;
+        private Date dataAnnulA;
+
+        FiltriUnitaDocumentarieAnnullatePlain() {
+
+        }
+
+        private FiltriUnitaDocumentarieAnnullatePlain(UnitaDocumentarieForm.FiltriUnitaDocumentarieAnnullate filtri,
+                Date dataCreazioneDa, Date dataCreazioneA, Date dataRegUnitaDocDa, Date dataRegUnitaDocA,
+                Date dataAnnulDa, Date dataAnnulA) throws EMFError {
+            this.aaKeyUnitaDoc = filtri.getAa_key_unita_doc().parse();
+            this.cdKeyUnitaDoc = filtri.getCd_key_unita_doc().parse();
+            this.aaKeyUnitaDocDa = filtri.getAa_key_unita_doc_da().parse();
+            this.aaKeyUnitaDocA = filtri.getAa_key_unita_doc_a().parse();
+            this.cdKeyUnitaDocDa = filtri.getCd_key_unita_doc_da().parse();
+            this.cdKeyUnitaDocA = filtri.getCd_key_unita_doc_a().parse();
+            this.dataCreazioneDa = dataCreazioneDa;
+            this.dataCreazioneA = dataCreazioneA;
+            this.dataRegUnitaDocDa = dataRegUnitaDocDa;
+            this.dataRegUnitaDocA = dataRegUnitaDocA;
+            this.dataAnnulDa = dataAnnulDa;
+            this.dataAnnulA = dataAnnulA;
+        }
+
+        public BigDecimal getAaKeyUnitaDoc() {
+            return aaKeyUnitaDoc;
+        }
+
+        public String getCdKeyUnitaDoc() {
+            return cdKeyUnitaDoc;
+        }
+
+        public BigDecimal getAaKeyUnitaDocDa() {
+            return aaKeyUnitaDocDa;
+        }
+
+        public BigDecimal getAaKeyUnitaDocA() {
+            return aaKeyUnitaDocA;
+        }
+
+        public String getCdKeyUnitaDocDa() {
+            return cdKeyUnitaDocDa;
+        }
+
+        public String getCdKeyUnitaDocA() {
+            return cdKeyUnitaDocA;
+        }
+
+        public Date getDataCreazioneDa() {
+            return dataCreazioneDa;
+        }
+
+        public Date getDataCreazioneA() {
+            return dataCreazioneA;
+        }
+
+        public Date getDataRegUnitaDocDa() {
+            return dataRegUnitaDocDa;
+        }
+
+        public Date getDataRegUnitaDocA() {
+            return dataRegUnitaDocA;
+        }
+
+        public Date getDataAnnulDa() {
+            return dataAnnulDa;
+        }
+
+        public Date getDataAnnulA() {
+            return dataAnnulA;
+        }
+
+        void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+            this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        }
+
+        void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
+            this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        }
+
+        void setAaKeyUnitaDocDa(BigDecimal aaKeyUnitaDocDa) {
+            this.aaKeyUnitaDocDa = aaKeyUnitaDocDa;
+        }
+
+        void setAaKeyUnitaDocA(BigDecimal aaKeyUnitaDocA) {
+            this.aaKeyUnitaDocA = aaKeyUnitaDocA;
+        }
+
+        void setCdKeyUnitaDocDa(String cdKeyUnitaDocDa) {
+            this.cdKeyUnitaDocDa = cdKeyUnitaDocDa;
+        }
+
+        void setCdKeyUnitaDocA(String cdKeyUnitaDocA) {
+            this.cdKeyUnitaDocA = cdKeyUnitaDocA;
+        }
+
+        void setDataCreazioneDa(Date dataCreazioneDa) {
+            this.dataCreazioneDa = dataCreazioneDa;
+        }
+
+        void setDataCreazioneA(Date dataCreazioneA) {
+            this.dataCreazioneA = dataCreazioneA;
+        }
+
+        void setDataRegUnitaDocDa(Date dataRegUnitaDocDa) {
+            this.dataRegUnitaDocDa = dataRegUnitaDocDa;
+        }
+
+        void setDataRegUnitaDocA(Date dataRegUnitaDocA) {
+            this.dataRegUnitaDocA = dataRegUnitaDocA;
+        }
+
+        void setDataAnnulDa(Date dataAnnulDa) {
+            this.dataAnnulDa = dataAnnulDa;
+        }
+
+        void setDataAnnulA(Date dataAnnulA) {
+            this.dataAnnulA = dataAnnulA;
+        }
+    }
+
+    static class FiltriUnitaDocumentarieAvanzataPlain {
+
+        private String cdVersioneXsdUd;
+        private String cdVersioneXsdDoc;
+        private BigDecimal aaKeyUnitaDoc;
+        private String cdKeyUnitaDoc;
+        private String cdKeyDocVers;
+        private BigDecimal aaKeyUnitaDocDa;
+        private BigDecimal aaKeyUnitaDocA;
+        private String cdKeyUnitaDocDa;
+        private String cdKeyUnitaDocA;
+        private String flUnitaDocFirmato;
+        private List<String> tiEsitoVerifFirme;
+        private String flForzaAccettazione;
+        private String flForzaConservazione;
+        private String flForzaCollegamento;
+        // private String forzaHash;
+        // private String forzaFmtNumero;
+        // private String forzaFmtFile;
+        private String cdVersioneWs;
+        private String flUnitaDocAnnul;
+        private String flDocAggiunti;//
+        private String flAggMeta;
+        private String flHashVers;
+        private String tiStatoConservazione;
+        private String tiStatoUdElencoVers;
+        private List<String> nmSistemaMigraz;
+        private Date dataMetaDa;
+        private Date dataMetaA;
+        private String tiDoc;
+        private String dlOggettoUnitaDoc;
+        private String dsAutoreDoc;
+        private String dlDoc;
+        private String tiConservazione;
+        private String dsClassif;
+        private String cdFascic;
+        private String dsOggettoFascic;
+        private String cdSottofascic;
+        private String dsOggettoSottofascic;
+        private List<BigDecimal> nmSubStrut;
+        private String cdKeyUnitaDocContiene;
+        private String profiloNorm;
+
+        FiltriUnitaDocumentarieAvanzataPlain() {
+        }
+
+        FiltriUnitaDocumentarieAvanzataPlain(FiltriUnitaDocumentarieAvanzata filtri, Date dataMetaDa, Date dataMetaA)
+                throws EMFError {
+            this.dataMetaDa = dataMetaDa;
+            this.dataMetaA = dataMetaA;
+            this.cdVersioneXsdUd = filtri.getCd_versione_xsd_ud().parse();
+            this.cdVersioneXsdDoc = filtri.getCd_versione_xsd_doc().parse();
+            this.aaKeyUnitaDoc = filtri.getAa_key_unita_doc().parse();
+            this.cdKeyUnitaDoc = filtri.getCd_key_unita_doc().parse();
+            this.cdKeyUnitaDocContiene = filtri.getCd_key_unita_doc_contiene().parse();
+            this.cdKeyDocVers = filtri.getCd_key_doc_vers().parse();
+            this.aaKeyUnitaDocDa = filtri.getAa_key_unita_doc_da().parse();
+            this.aaKeyUnitaDocA = filtri.getAa_key_unita_doc_a().parse();
+            this.cdKeyUnitaDocDa = filtri.getCd_key_unita_doc_da().parse();
+            this.cdKeyUnitaDocA = filtri.getCd_key_unita_doc_a().parse();
+            this.flUnitaDocFirmato = filtri.getFl_unita_doc_firmato().parse();
+            this.tiEsitoVerifFirme = filtri.getTi_esito_verif_firme().parse();
+            this.flForzaAccettazione = filtri.getFl_forza_accettazione().parse();
+            this.flForzaConservazione = filtri.getFl_forza_conservazione().parse();
+            this.flForzaCollegamento = filtri.getFl_forza_collegamento().parse();
+            this.flUnitaDocAnnul = filtri.getFl_unita_doc_annul().parse();
+            this.flDocAggiunti = filtri.getFl_doc_aggiunti().parse();
+            this.flHashVers = filtri.getFl_hash_vers().parse();
+            this.tiStatoConservazione = filtri.getTi_stato_conservazione().parse();
+            this.tiStatoUdElencoVers = filtri.getTi_stato_ud_elenco_vers().parse();
+            this.nmSistemaMigraz = filtri.getNm_sistema_migraz().parse();
+            this.tiDoc = filtri.getTi_doc().parse();
+            this.dlOggettoUnitaDoc = filtri.getDl_oggetto_unita_doc().parse();
+            this.dsAutoreDoc = filtri.getDs_autore_doc().parse();
+            this.dlDoc = filtri.getDl_doc().parse();
+            this.tiConservazione = filtri.getTi_conservazione().parse();
+            this.dsClassif = filtri.getDs_classif().parse();
+            this.cdFascic = filtri.getCd_fascic().parse();
+            this.dsOggettoFascic = filtri.getDs_oggetto_fascic().parse();
+            this.cdSottofascic = filtri.getCd_sottofascic().parse();
+            this.dsOggettoSottofascic = filtri.getDs_oggetto_sottofascic().parse();
+            this.nmSubStrut = filtri.getNm_sub_strut().parse();
+            this.profiloNorm = filtri.getFl_profilo_normativo().parse();
+            // this.forzaHash = filtri.getFl_forza_hash().parse();
+            // this.forzaFmtNumero = filtri.getFl_forza_fmt_numero().parse();
+            // this.forzaFmtFile = filtri.getFl_forza_fmt_file().parse();
+            this.cdVersioneWs = filtri.getCd_versione_ws().parse();
+            this.flAggMeta = filtri.getFl_agg_meta().parse();
+        }
+
+        FiltriUnitaDocumentarieAvanzataPlain(FiltriUnitaDocumentarieAvanzata filtri) {
+
+        }
+
+        public String getCdVersioneXsdUd() {
+            return cdVersioneXsdUd;
+        }
+
+        void setCdVersioneXsdUd(String cdVersioneXsdUd) {
+            this.cdVersioneXsdUd = cdVersioneXsdUd;
+        }
+
+        public String getCdVersioneXsdDoc() {
+            return cdVersioneXsdDoc;
+        }
+
+        void setCdVersioneXsdDoc(String cdVersioneXsdDoc) {
+            this.cdVersioneXsdDoc = cdVersioneXsdDoc;
+        }
+
+        public BigDecimal getAaKeyUnitaDoc() {
+            return aaKeyUnitaDoc;
+        }
+
+        void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
+            this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        }
+
+        public String getCdKeyUnitaDoc() {
+            return cdKeyUnitaDoc;
+        }
+
+        void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
+            this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        }
+
+        public String getCdKeyDocVers() {
+            return cdKeyDocVers;
+        }
+
+        void setCdKeyDocVers(String cdKeyDocVers) {
+            this.cdKeyDocVers = cdKeyDocVers;
+        }
+
+        public BigDecimal getAaKeyUnitaDocDa() {
+            return aaKeyUnitaDocDa;
+        }
+
+        void setAaKeyUnitaDocDa(BigDecimal aaKeyUnitaDocDa) {
+            this.aaKeyUnitaDocDa = aaKeyUnitaDocDa;
+        }
+
+        public BigDecimal getAaKeyUnitaDocA() {
+            return aaKeyUnitaDocA;
+        }
+
+        void setAaKeyUnitaDocA(BigDecimal aaKeyUnitaDocA) {
+            this.aaKeyUnitaDocA = aaKeyUnitaDocA;
+        }
+
+        public String getCdKeyUnitaDocDa() {
+            return cdKeyUnitaDocDa;
+        }
+
+        void setCdKeyUnitaDocDa(String cdKeyUnitaDocDa) {
+            this.cdKeyUnitaDocDa = cdKeyUnitaDocDa;
+        }
+
+        public String getCdKeyUnitaDocA() {
+            return cdKeyUnitaDocA;
+        }
+
+        void setCdKeyUnitaDocA(String cdKeyUnitaDocA) {
+            this.cdKeyUnitaDocA = cdKeyUnitaDocA;
+        }
+
+        public String getFlUnitaDocFirmato() {
+            return flUnitaDocFirmato;
+        }
+
+        void setFlUnitaDocFirmato(String flUnitaDocFirmato) {
+            this.flUnitaDocFirmato = flUnitaDocFirmato;
+        }
+
+        public List<String> getTiEsitoVerifFirme() {
+            return tiEsitoVerifFirme;
+        }
+
+        void setTiEsitoVerifFirme(List<String> tiEsitoVerifFirme) {
+            this.tiEsitoVerifFirme = tiEsitoVerifFirme;
+        }
+
+        public String getFlForzaAccettazione() {
+            return flForzaAccettazione;
+        }
+
+        void setFlForzaAccettazione(String flForzaAccettazione) {
+            this.flForzaAccettazione = flForzaAccettazione;
+        }
+
+        public String getFlForzaConservazione() {
+            return flForzaConservazione;
+        }
+
+        void setFlForzaConservazione(String flForzaConservazione) {
+            this.flForzaConservazione = flForzaConservazione;
+        }
+
+        public String getFlForzaCollegamento() {
+            return flForzaCollegamento;
+        }
+
+        void setFlForzaCollegamento(String flForzaCollegamento) {
+            this.flForzaCollegamento = flForzaCollegamento;
+        }
+
+        public String getFlUnitaDocAnnul() {
+            return flUnitaDocAnnul;
+        }
+
+        void setFlUnitaDocAnnul(String flUnitaDocAnnul) {
+            this.flUnitaDocAnnul = flUnitaDocAnnul;
+        }
+
+        public String getFlDocAggiunti() {
+            return flDocAggiunti;
+        }
+
+        void setFlDocAggiunti(String flDocAggiunti) {
+            this.flDocAggiunti = flDocAggiunti;
+        }
+
+        public String getFlHashVers() {
+            return flHashVers;
+        }
+
+        void setFlHashVers(String flHashVers) {
+            this.flHashVers = flHashVers;
+        }
+
+        public String getTiStatoConservazione() {
+            return tiStatoConservazione;
+        }
+
+        void setTiStatoConservazione(String tiStatoConservazione) {
+            this.tiStatoConservazione = tiStatoConservazione;
+        }
+
+        public String getTiStatoUdElencoVers() {
+            return tiStatoUdElencoVers;
+        }
+
+        void setTiStatoUdElencoVers(String tiStatoUdElencoVers) {
+            this.tiStatoUdElencoVers = tiStatoUdElencoVers;
+        }
+
+        public List<String> getNmSistemaMigraz() {
+            return nmSistemaMigraz;
+        }
+
+        void setNmSistemaMigraz(List<String> nmSistemaMigraz) {
+            this.nmSistemaMigraz = nmSistemaMigraz;
+        }
+
+        public Date getDataMetaDa() {
+            return dataMetaDa;
+        }
+
+        void setDataMetaDa(Date dataMetaDa) {
+            this.dataMetaDa = dataMetaDa;
+        }
+
+        public Date getDataMetaA() {
+            return dataMetaA;
+        }
+
+        void setDataMetaA(Date dataMetaA) {
+            this.dataMetaA = dataMetaA;
+        }
+
+        public String getTiDoc() {
+            return tiDoc;
+        }
+
+        void setTiDoc(String tiDoc) {
+            this.tiDoc = tiDoc;
+        }
+
+        public String getDlOggettoUnitaDoc() {
+            return dlOggettoUnitaDoc;
+        }
+
+        void setDlOggettoUnitaDoc(String dlOggettoUnitaDoc) {
+            this.dlOggettoUnitaDoc = dlOggettoUnitaDoc;
+        }
+
+        public String getDsAutoreDoc() {
+            return dsAutoreDoc;
+        }
+
+        void setDsAutoreDoc(String dsAutoreDoc) {
+            this.dsAutoreDoc = dsAutoreDoc;
+        }
+
+        public String getDlDoc() {
+            return dlDoc;
+        }
+
+        void setDlDoc(String dlDoc) {
+            this.dlDoc = dlDoc;
+        }
+
+        public String getTiConservazione() {
+            return tiConservazione;
+        }
+
+        void setTiConservazione(String tiConservazione) {
+            this.tiConservazione = tiConservazione;
+        }
+
+        public String getDsClassif() {
+            return dsClassif;
+        }
+
+        void setDsClassif(String dsClassif) {
+            this.dsClassif = dsClassif;
+        }
+
+        public String getCdFascic() {
+            return cdFascic;
+        }
+
+        void setCdFascic(String cdFascic) {
+            this.cdFascic = cdFascic;
+        }
+
+        public String getDsOggettoFascic() {
+            return dsOggettoFascic;
+        }
+
+        void setDsOggettoFascic(String dsOggettoFascic) {
+            this.dsOggettoFascic = dsOggettoFascic;
+        }
+
+        public String getCdSottofascic() {
+            return cdSottofascic;
+        }
+
+        void setCdSottofascic(String cdSottofascic) {
+            this.cdSottofascic = cdSottofascic;
+        }
+
+        public String getDsOggettoSottofascic() {
+            return dsOggettoSottofascic;
+        }
+
+        void setDsOggettoSottofascic(String dsOggettoSottofascic) {
+            this.dsOggettoSottofascic = dsOggettoSottofascic;
+        }
+
+        public List<BigDecimal> getNmSubStrut() {
+            return nmSubStrut;
+        }
+
+        void setNmSubStrut(List<BigDecimal> nmSubStrut) {
+            this.nmSubStrut = nmSubStrut;
+        }
+
+        public String getCdKeyUnitaDocContiene() {
+            return cdKeyUnitaDocContiene;
+        }
+
+        public void setCdKeyUnitaDocContiene(String cdKeyUnitaDocContiene) {
+            this.cdKeyUnitaDocContiene = cdKeyUnitaDocContiene;
+        }
+
+        public String getProfiloNorm() {
+            return this.profiloNorm;
+        }
+
+        public void setProfiloNorm(String profiloNorm) {
+            this.profiloNorm = profiloNorm;
+        }
+
+        // public String getForzaHash() {
+        // return forzaHash;
+        // }
+        //
+        // public String getForzaFmtNumero() {
+        // return forzaFmtNumero;
+        // }
+        //
+        // public String getForzaFmtFile() {
+        // return forzaFmtFile;
+        // }
+
+        public String getCdVersioneWs() {
+            return cdVersioneWs;
+        }
+
+        // public void setForzaHash(String forzaHash) {
+        // this.forzaHash = forzaHash;
+        // }
+        //
+        // public void setForzaFmtNumero(String forzaFmtNumero) {
+        // this.forzaFmtNumero = forzaFmtNumero;
+        // }
+        //
+        // public void setForzaFmtFile(String forzaFmtFile) {
+        // this.forzaFmtFile = forzaFmtFile;
+        // }
+
+        public void setCdVersioneWs(String cdVersioneWs) {
+            this.cdVersioneWs = cdVersioneWs;
+        }
+
+        public String getFlAggMeta() {
+            return flAggMeta;
+        }
+
+        public void setFlAggMeta(String flAggMeta) {
+            this.flAggMeta = flAggMeta;
+        }
+
+    }
+
+    static class FiltriCollegamentiUnitaDocumentariePlain {
+
+        private String conCollegamento;
+        private String collegamentoRisolto;
+        private String dsLinkUnitaDoc;
+        private String cdRegistroKeyUnitaDocLink;
+        private BigDecimal aaKeyUnitaDocLink;
+        private String cdKeyUnitaDocLink;
+        private String isOggettoCollegamento;
+        private String dsLinkUnitaDocOggetto;
+
+        FiltriCollegamentiUnitaDocumentariePlain() {
+
+        }
+
+        private FiltriCollegamentiUnitaDocumentariePlain(
+                UnitaDocumentarieForm.FiltriCollegamentiUnitaDocumentarie filtriCollegamenti) throws EMFError {
+            conCollegamento = filtriCollegamenti.getCon_collegamento().parse();
+            collegamentoRisolto = filtriCollegamenti.getCollegamento_risolto().parse();
+            dsLinkUnitaDoc = filtriCollegamenti.getDs_link_unita_doc().parse();
+            cdRegistroKeyUnitaDocLink = filtriCollegamenti.getCd_registro_key_unita_doc_link().getDecodedValue();
+            aaKeyUnitaDocLink = filtriCollegamenti.getAa_key_unita_doc_link().parse();
+            cdKeyUnitaDocLink = filtriCollegamenti.getCd_key_unita_doc_link().parse();
+            isOggettoCollegamento = filtriCollegamenti.getIs_oggetto_collegamento().parse();
+            dsLinkUnitaDocOggetto = filtriCollegamenti.getDs_link_unita_doc_oggetto().parse();
+        }
+
+        public String getConCollegamento() {
+            return conCollegamento;
+        }
+
+        void setConCollegamento(String conCollegamento) {
+            this.conCollegamento = conCollegamento;
+        }
+
+        public String getCollegamentoRisolto() {
+            return collegamentoRisolto;
+        }
+
+        void setCollegamentoRisolto(String collegamentoRisolto) {
+            this.collegamentoRisolto = collegamentoRisolto;
+        }
+
+        public String getDsLinkUnitaDoc() {
+            return dsLinkUnitaDoc;
+        }
+
+        void setDsLinkUnitaDoc(String dsLinkUnitaDoc) {
+            this.dsLinkUnitaDoc = dsLinkUnitaDoc;
+        }
+
+        public String getCdRegistroKeyUnitaDocLink() {
+            return cdRegistroKeyUnitaDocLink;
+        }
+
+        void setCdRegistroKeyUnitaDocLink(String cdRegistroKeyUnitaDocLink) {
+            this.cdRegistroKeyUnitaDocLink = cdRegistroKeyUnitaDocLink;
+        }
+
+        public BigDecimal getAaKeyUnitaDocLink() {
+            return aaKeyUnitaDocLink;
+        }
+
+        void setAaKeyUnitaDocLink(BigDecimal aaKeyUnitaDocLink) {
+            this.aaKeyUnitaDocLink = aaKeyUnitaDocLink;
+        }
+
+        public String getCdKeyUnitaDocLink() {
+            return cdKeyUnitaDocLink;
+        }
+
+        void setCdKeyUnitaDocLink(String cdKeyUnitaDocLink) {
+            this.cdKeyUnitaDocLink = cdKeyUnitaDocLink;
+        }
+
+        public String getIsOggettoCollegamento() {
+            return isOggettoCollegamento;
+        }
+
+        void setIsOggettoCollegamento(String isOggettoCollegamento) {
+            this.isOggettoCollegamento = isOggettoCollegamento;
+        }
+
+        public String getDsLinkUnitaDocOggetto() {
+            return dsLinkUnitaDocOggetto;
+        }
+
+        void setDsLinkUnitaDocOggetto(String dsLinkUnitaDocOggetto) {
+            this.dsLinkUnitaDocOggetto = dsLinkUnitaDocOggetto;
+        }
+    }
+
+    static class FiltriFirmatariUnitaDocumentariePlain {
+
+        // private String conFirmatario;
+        private String cdFirmatario;
+        private String nmCognomeFirmatario;
+        private String nmFirmatario;
+
+        FiltriFirmatariUnitaDocumentariePlain() {
+
+        }
+
+        private FiltriFirmatariUnitaDocumentariePlain(
+                UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie filtriFirmatari) throws EMFError {
+            // conFirmatario = filtriFirmatari.getCon_firmatario().parse();
+            cdFirmatario = filtriFirmatari.getCd_firmatario().parse();
+            nmCognomeFirmatario = filtriFirmatari.getNm_cognome_firmatario().parse();
+            nmFirmatario = filtriFirmatari.getNm_firmatario().parse();
+        }
+
+        // public String getConFirmatario() {
+        // return conFirmatario;
+        // }
+        //
+        // public void setConFirmatario(String conFirmatario) {
+        // this.conFirmatario = conFirmatario;
+        // }
+
+        public String getCdFirmatario() {
+            return cdFirmatario;
+        }
+
+        public void setCdFirmatario(String cdFirmatario) {
+            this.cdFirmatario = cdFirmatario;
+        }
+
+        public String getNmCognomeFirmatario() {
+            return nmCognomeFirmatario;
+        }
+
+        public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
+            this.nmCognomeFirmatario = nmCognomeFirmatario;
+        }
+
+        public String getNmFirmatario() {
+            return nmFirmatario;
+        }
+
+        public void setNmFirmatario(String nmFirmatario) {
+            this.nmFirmatario = nmFirmatario;
+        }
+
+    }
+
+    static class FiltriComponentiUnitaDocumentariePlain {
+
+        private String tiEsitoContrFormatoFile;
+        private String tiEsitoVerifFirma;
+        private String tiEsitoVerifFirmeChiuse;
+        private String dsHashFileCalc;
+        private String dsAlgoHashFileCalc;
+        private String cdEncodingHashFileCalc;
+        private String dsUrnCompCalc;
+        private String flForzaAccettazioneComp;
+        private String flForzaConservazioneComp;
+        private String tiSupportoComp;
+        private BigDecimal nmTipoRapprComp;
+        private String dsIdCompVers;
+        private BigDecimal nmTipoStrutDoc;
+        private BigDecimal nmTipoCompDoc;
+        private String dsNomeCompVers;
+        private String dlUrnCompVers;
+        private String dsHashFileVers;
+        private String nmMimetypeFile;
+        private BigDecimal nmFormatoFileVers;
+        private BigDecimal niSizeFileDa;
+        private BigDecimal niSizeFileA;
+        private String dsFormatoRapprCalc;
+        private String dsFormatoRapprEstesoCalc;
+        private String flCompFirmato;
+        private String flRifTempVers;
+        private String dsRifTempVers;
+        private String tiEsitoContrConforme;
+        private Timestamp dtScadFirmaCompDa;
+        private Timestamp dtScadFirmaCompA;
+
+        FiltriComponentiUnitaDocumentariePlain() {
+
+        }
+
+        private FiltriComponentiUnitaDocumentariePlain(
+                UnitaDocumentarieForm.FiltriComponentiUnitaDocumentarie filtriComponenti) throws EMFError {
+            tiEsitoContrFormatoFile = filtriComponenti.getTi_esito_contr_formato_file().parse();
+            tiEsitoVerifFirma = filtriComponenti.getTi_esito_verif_firma().parse();
+            tiEsitoVerifFirmeChiuse = filtriComponenti.getTi_esito_verif_firme_chius().parse();
+            dsHashFileCalc = filtriComponenti.getDs_hash_file_calc().parse();
+            dsAlgoHashFileCalc = filtriComponenti.getDs_algo_hash_file_calc().parse();
+            cdEncodingHashFileCalc = filtriComponenti.getCd_encoding_hash_file_calc().parse();
+            dsUrnCompCalc = filtriComponenti.getDs_urn_comp_calc().parse();
+            flForzaAccettazioneComp = filtriComponenti.getFl_forza_accettazione_comp().parse();
+            flForzaConservazioneComp = filtriComponenti.getFl_forza_conservazione_comp().parse();
+            tiSupportoComp = filtriComponenti.getTi_supporto_comp().parse();
+            nmTipoRapprComp = filtriComponenti.getNm_tipo_rappr_comp().parse();
+            dsIdCompVers = filtriComponenti.getDs_id_comp_vers().parse();
+            nmTipoStrutDoc = filtriComponenti.getNm_tipo_strut_doc().parse();
+            nmTipoCompDoc = filtriComponenti.getNm_tipo_comp_doc().parse();
+            dsNomeCompVers = filtriComponenti.getDs_nome_comp_vers().parse();
+            dlUrnCompVers = filtriComponenti.getDl_urn_comp_vers().parse();
+            dsHashFileVers = filtriComponenti.getDs_hash_file_vers().parse();
+            nmMimetypeFile = filtriComponenti.getNm_mimetype_file().parse();
+            nmFormatoFileVers = filtriComponenti.getNm_formato_file_vers().parse();
+            niSizeFileDa = filtriComponenti.getNi_size_file_da().parse();
+            niSizeFileA = filtriComponenti.getNi_size_file_a().parse();
+            dsFormatoRapprCalc = filtriComponenti.getDs_formato_rappr_calc().parse();
+            dsFormatoRapprEstesoCalc = filtriComponenti.getDs_formato_rappr_esteso_calc().parse();
+            flCompFirmato = filtriComponenti.getFl_comp_firmato().parse();
+            flRifTempVers = filtriComponenti.getFl_rif_temp_vers().parse();
+            dsRifTempVers = filtriComponenti.getDs_rif_temp_vers().parse();
+            tiEsitoContrConforme = filtriComponenti.getTi_esito_contr_conforme().parse();
+            dtScadFirmaCompDa = filtriComponenti.getDt_scad_firma_comp_da().parse();
+            dtScadFirmaCompA = filtriComponenti.getDt_scad_firma_comp_a().parse();
+        }
+
+        public String getTiEsitoContrFormatoFile() {
+            return tiEsitoContrFormatoFile;
+        }
+
+        void setTiEsitoContrFormatoFile(String tiEsitoContrFormatoFile) {
+            this.tiEsitoContrFormatoFile = tiEsitoContrFormatoFile;
+        }
+
+        public String getTiEsitoVerifFirma() {
+            return tiEsitoVerifFirma;
+        }
+
+        void setTiEsitoVerifFirma(String tiEsitoVerifFirma) {
+            this.tiEsitoVerifFirma = tiEsitoVerifFirma;
+        }
+
+        public String getTiEsitoVerifFirmeChiuse() {
+            return tiEsitoVerifFirmeChiuse;
+        }
+
+        void setTiEsitoVerifFirmeChiuse(String tiEsitoVerifFirmeChiuse) {
+            this.tiEsitoVerifFirmeChiuse = tiEsitoVerifFirmeChiuse;
+        }
+
+        public String getDsHashFileCalc() {
+            return dsHashFileCalc;
+        }
+
+        void setDsHashFileCalc(String dsHashFileCalc) {
+            this.dsHashFileCalc = dsHashFileCalc;
+        }
+
+        public String getDsAlgoHashFileCalc() {
+            return dsAlgoHashFileCalc;
+        }
+
+        void setDsAlgoHashFileCalc(String dsAlgoHashFileCalc) {
+            this.dsAlgoHashFileCalc = dsAlgoHashFileCalc;
+        }
+
+        public String getCdEncodingHashFileCalc() {
+            return cdEncodingHashFileCalc;
+        }
+
+        void setCdEncodingHashFileCalc(String cdEncodingHashFileCalc) {
+            this.cdEncodingHashFileCalc = cdEncodingHashFileCalc;
+        }
+
+        public String getDsUrnCompCalc() {
+            return dsUrnCompCalc;
+        }
+
+        void setDsUrnCompCalc(String dsUrnCompCalc) {
+            this.dsUrnCompCalc = dsUrnCompCalc;
+        }
+
+        public String getFlForzaAccettazioneComp() {
+            return flForzaAccettazioneComp;
+        }
+
+        void setFlForzaAccettazioneComp(String flForzaAccettazioneComp) {
+            this.flForzaAccettazioneComp = flForzaAccettazioneComp;
+        }
+
+        public String getFlForzaConservazioneComp() {
+            return flForzaConservazioneComp;
+        }
+
+        void setFlForzaConservazioneComp(String flForzaConservazioneComp) {
+            this.flForzaConservazioneComp = flForzaConservazioneComp;
+        }
+
+        public String getTiSupportoComp() {
+            return tiSupportoComp;
+        }
+
+        void setTiSupportoComp(String tiSupportoComp) {
+            this.tiSupportoComp = tiSupportoComp;
+        }
+
+        public BigDecimal getNmTipoRapprComp() {
+            return nmTipoRapprComp;
+        }
+
+        void setNmTipoRapprComp(BigDecimal nmTipoRapprComp) {
+            this.nmTipoRapprComp = nmTipoRapprComp;
+        }
+
+        public String getDsIdCompVers() {
+            return dsIdCompVers;
+        }
+
+        void setDsIdCompVers(String dsIdCompVers) {
+            this.dsIdCompVers = dsIdCompVers;
+        }
+
+        public BigDecimal getNmTipoStrutDoc() {
+            return nmTipoStrutDoc;
+        }
+
+        void setNmTipoStrutDoc(BigDecimal nmTipoStrutDoc) {
+            this.nmTipoStrutDoc = nmTipoStrutDoc;
+        }
+
+        public BigDecimal getNmTipoCompDoc() {
+            return nmTipoCompDoc;
+        }
+
+        void setNmTipoCompDoc(BigDecimal nmTipoCompDoc) {
+            this.nmTipoCompDoc = nmTipoCompDoc;
+        }
+
+        public String getDsNomeCompVers() {
+            return dsNomeCompVers;
+        }
+
+        void setDsNomeCompVers(String dsNomeCompVers) {
+            this.dsNomeCompVers = dsNomeCompVers;
+        }
+
+        public String getDlUrnCompVers() {
+            return dlUrnCompVers;
+        }
+
+        void setDlUrnCompVers(String dlUrnCompVers) {
+            this.dlUrnCompVers = dlUrnCompVers;
+        }
+
+        public String getDsHashFileVers() {
+            return dsHashFileVers;
+        }
+
+        void setDsHashFileVers(String dsHashFileVers) {
+            this.dsHashFileVers = dsHashFileVers;
+        }
+
+        public String getNmMimetypeFile() {
+            return nmMimetypeFile;
+        }
+
+        void setNmMimetypeFile(String nmMimetypeFile) {
+            this.nmMimetypeFile = nmMimetypeFile;
+        }
+
+        public BigDecimal getNmFormatoFileVers() {
+            return nmFormatoFileVers;
+        }
+
+        void setNmFormatoFileVers(BigDecimal nmFormatoFileVers) {
+            this.nmFormatoFileVers = nmFormatoFileVers;
+        }
+
+        public BigDecimal getNiSizeFileDa() {
+            return niSizeFileDa;
+        }
+
+        void setNiSizeFileDa(BigDecimal niSizeFileDa) {
+            this.niSizeFileDa = niSizeFileDa;
+        }
+
+        public BigDecimal getNiSizeFileA() {
+            return niSizeFileA;
+        }
+
+        void setNiSizeFileA(BigDecimal niSizeFileA) {
+            this.niSizeFileA = niSizeFileA;
+        }
+
+        public String getDsFormatoRapprCalc() {
+            return dsFormatoRapprCalc;
+        }
+
+        void setDsFormatoRapprCalc(String dsFormatoRapprCalc) {
+            this.dsFormatoRapprCalc = dsFormatoRapprCalc;
+        }
+
+        public String getDsFormatoRapprEstesoCalc() {
+            return dsFormatoRapprEstesoCalc;
+        }
+
+        void setDsFormatoRapprEstesoCalc(String dsFormatoRapprEstesoCalc) {
+            this.dsFormatoRapprEstesoCalc = dsFormatoRapprEstesoCalc;
+        }
+
+        public String getFlCompFirmato() {
+            return flCompFirmato;
+        }
+
+        void setFlCompFirmato(String flCompFirmato) {
+            this.flCompFirmato = flCompFirmato;
+        }
+
+        public String getFlRifTempVers() {
+            return flRifTempVers;
+        }
+
+        void setFlRifTempVers(String flRifTempVers) {
+            this.flRifTempVers = flRifTempVers;
+        }
+
+        public String getDsRifTempVers() {
+            return dsRifTempVers;
+        }
+
+        void setDsRifTempVers(String dsRifTempVers) {
+            this.dsRifTempVers = dsRifTempVers;
+        }
+
+        public String getTiEsitoContrConforme() {
+            return tiEsitoContrConforme;
+        }
+
+        void setTiEsitoContrConforme(String tiEsitoContrConforme) {
+            this.tiEsitoContrConforme = tiEsitoContrConforme;
+        }
+
+        public Timestamp getDtScadFirmaCompDa() {
+            return dtScadFirmaCompDa;
+        }
+
+        void setDtScadFirmaCompDa(Timestamp dtScadFirmaCompDa) {
+            this.dtScadFirmaCompDa = dtScadFirmaCompDa;
+        }
+
+        public Timestamp getDtScadFirmaCompA() {
+            return dtScadFirmaCompA;
+        }
+
+        void setDtScadFirmaCompA(Timestamp dtScadFirmaCompA) {
+            this.dtScadFirmaCompA = dtScadFirmaCompA;
+        }
+    }
+
+    static class FiltriFascicoliUnitaDocumentariePlain {
+
+        private String cdCompositoVoceTitol;
+        private BigDecimal aaFascicolo;
+        private String cdKeyFascicolo;
+        private BigDecimal aaFascicoloDa;
+        private BigDecimal aaFascicoloA;
+        private String cdKeyFascicoloDa;
+        private String cdKeyFascicoloA;
+        private BigDecimal nmTipoFascicolo;
+        private Timestamp dtApeFascicoloDa;
+        private Timestamp dtApeFascicoloA;
+        private Timestamp dtChiuFascicoloDa;
+        private Timestamp dtChiuFascicoloA;
+        private String dsOggettoFascicolo;
+
+        FiltriFascicoliUnitaDocumentariePlain() {
+
+        }
+
+        private FiltriFascicoliUnitaDocumentariePlain(
+                UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie filtriFascicoli) throws EMFError {
+            cdCompositoVoceTitol = filtriFascicoli.getCd_composito_voce_titol().parse();
+            aaFascicolo = filtriFascicoli.getAa_fascicolo().parse();
+            cdKeyFascicolo = filtriFascicoli.getCd_key_fascicolo().parse();
+            aaFascicoloDa = filtriFascicoli.getAa_fascicolo_da().parse();
+            aaFascicoloA = filtriFascicoli.getAa_fascicolo_a().parse();
+            cdKeyFascicoloDa = filtriFascicoli.getCd_key_fascicolo_da().parse();
+            cdKeyFascicoloA = filtriFascicoli.getCd_key_fascicolo_a().parse();
+            nmTipoFascicolo = filtriFascicoli.getNm_tipo_fascicolo().parse();
+            dtApeFascicoloDa = filtriFascicoli.getDt_ape_fascicolo_da().parse();
+            dtApeFascicoloA = filtriFascicoli.getDt_ape_fascicolo_a().parse();
+            dtChiuFascicoloDa = filtriFascicoli.getDt_chiu_fascicolo_da().parse();
+            dtChiuFascicoloA = filtriFascicoli.getDt_chiu_fascicolo_a().parse();
+            dsOggettoFascicolo = filtriFascicoli.getDs_oggetto_fascicolo().parse();
+        }
+
+        public String getCdCompositoVoceTitol() {
+            return cdCompositoVoceTitol;
+        }
+
+        void setCdCompositoVoceTitol(String cdCompositoVoceTitol) {
+            this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+        }
+
+        public BigDecimal getAaFascicolo() {
+            return aaFascicolo;
+        }
+
+        void setAaFascicolo(BigDecimal aaFascicolo) {
+            this.aaFascicolo = aaFascicolo;
+        }
+
+        public String getCdKeyFascicolo() {
+            return cdKeyFascicolo;
+        }
+
+        void setCdKeyFascicolo(String cdKeyFascicolo) {
+            this.cdKeyFascicolo = cdKeyFascicolo;
+        }
+
+        public BigDecimal getAaFascicoloDa() {
+            return aaFascicoloDa;
+        }
+
+        void setAaFascicoloDa(BigDecimal aaFascicoloDa) {
+            this.aaFascicoloDa = aaFascicoloDa;
+        }
+
+        public BigDecimal getAaFascicoloA() {
+            return aaFascicoloA;
+        }
+
+        void setAaFascicoloA(BigDecimal aaFascicoloA) {
+            this.aaFascicoloA = aaFascicoloA;
+        }
+
+        public String getCdKeyFascicoloDa() {
+            return cdKeyFascicoloDa;
+        }
+
+        void setCdKeyFascicoloDa(String cdKeyFascicoloDa) {
+            this.cdKeyFascicoloDa = cdKeyFascicoloDa;
+        }
+
+        public String getCdKeyFascicoloA() {
+            return cdKeyFascicoloA;
+        }
+
+        void setCdKeyFascicoloA(String cdKeyFascicoloA) {
+            this.cdKeyFascicoloA = cdKeyFascicoloA;
+        }
+
+        public BigDecimal getNmTipoFascicolo() {
+            return nmTipoFascicolo;
+        }
+
+        void setNmTipoFascicolo(BigDecimal nmTipoFascicolo) {
+            this.nmTipoFascicolo = nmTipoFascicolo;
+        }
+
+        public Timestamp getDtApeFascicoloDa() {
+            return dtApeFascicoloDa;
+        }
+
+        void setDtApeFascicoloDa(Timestamp dtApeFascicoloDa) {
+            this.dtApeFascicoloDa = dtApeFascicoloDa;
+        }
+
+        public Timestamp getDtApeFascicoloA() {
+            return dtApeFascicoloA;
+        }
+
+        void setDtApeFascicoloA(Timestamp dtApeFascicoloA) {
+            this.dtApeFascicoloA = dtApeFascicoloA;
+        }
+
+        public Timestamp getDtChiuFascicoloDa() {
+            return dtChiuFascicoloDa;
+        }
+
+        void setDtChiuFascicoloDa(Timestamp dtChiuFascicoloDa) {
+            this.dtChiuFascicoloDa = dtChiuFascicoloDa;
+        }
+
+        public Timestamp getDtChiuFascicoloA() {
+            return dtChiuFascicoloA;
+        }
+
+        void setDtChiuFascicoloA(Timestamp dtChiuFascicoloA) {
+            this.dtChiuFascicoloA = dtChiuFascicoloA;
+        }
+
+        public String getDsOggettoFascicolo() {
+            return dsOggettoFascicolo;
+        }
+
+        void setDsOggettoFascicolo(String dsOggettoFascicolo) {
+            this.dsOggettoFascicolo = dsOggettoFascicolo;
+        }
+
+        boolean isFiltriImpostati() {
+            for (java.lang.reflect.Field field : getClass().getDeclaredFields()) {
+                try {
+                    if (field.get(this) != null) {
+                        return true;
+                    }
+                } catch (IllegalAccessException e) {
+                    log.error(e.getMessage());
+                }
+            }
+            return false;
+        }
+    }
+
     /**
      * Ricavo il progressivo più alto della versione indice AIP
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return entity AroVerIndiceAipUd
      */
     public AroVerIndiceAipUd getUltimaVersioneIndiceAip(long idUnitaDoc) {
@@ -3523,7 +5444,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 "SELECT u FROM AroVerIndiceAipUd u " + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                         + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' " + "ORDER BY u.pgVerIndiceAip DESC ");
         q.setParameter("idUnitaDoc", idUnitaDoc);
-        List<AroVerIndiceAipUd> lista = (List<AroVerIndiceAipUd>) q.getResultList();
+        List<AroVerIndiceAipUd> lista = q.getResultList();
         if (!lista.isEmpty()) {
             return lista.get(0);
         }
@@ -3533,12 +5454,25 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     public AroVDtVersMaxByUnitaDoc getAroVDtVersMaxByUd(long idUnitaDoc) {
         String queryStr = "SELECT aro FROM AroVDtVersMaxByUnitaDoc aro WHERE aro.idUnitaDoc = :idUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
-        List<AroVDtVersMaxByUnitaDoc> lista = (List<AroVDtVersMaxByUnitaDoc>) query.getResultList();
+        query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
+        List<AroVDtVersMaxByUnitaDoc> lista = query.getResultList();
         if (!lista.isEmpty()) {
             return lista.get(0);
         }
         return null;
+    }
+
+    @Override
+    // Voglio che siano caricati anche i dati lazy della OrgStrut
+    public <T> T findById(Class<T> entityClass, Serializable id) {
+        if (entityClass == AroUnitaDoc.class) {
+            String queryStr = "SELECT ud FROM AroUnitaDoc ud JOIN FETCH ud.orgStrut st JOIN FETCH st.orgEnte et JOIN FETCH et.orgAmbiente WHERE ud.idUnitaDoc = :idUnitaDoc";
+            Query query = getEntityManager().createQuery(queryStr, entityClass);
+            query.setParameter("idUnitaDoc", id);
+            return entityClass.cast(query.getSingleResult());
+        } else {
+            return super.findById(entityClass, id);
+        }
     }
 
     public String getProfiloNormativo(String tiUsoModelloXsd, TiModelloXsdUd tiModelloXsdUd, long idUnitaDoc) {
@@ -3566,9 +5500,15 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             }
 
         } catch (Exception e) {
-            // "Eccezione durante il recupero del profilo normativo ud " + e.getMessage()));
             log.error("Eccezione durante il recupero del profilo normativo ud " + e.getMessage(), e);
         }
         return null;
+    }
+
+    public List<DecVersioneWs> getDecVersioneWsList(String tiWs) {
+        Query query = getEntityManager().createQuery("SELECT versioneWs FROM DecVersioneWs versioneWs "
+                + "WHERE versioneWs.tiWs = :tiWs " + "ORDER BY versioneWs.cdVersioneWs");
+        query.setParameter("tiWs", tiWs);
+        return query.getResultList();
     }
 }

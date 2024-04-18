@@ -38,6 +38,8 @@
                 <sl:newLine />   
                 <slf:lblField  name="<%=StruttureForm.InsStruttura.CHECK_MANTIENI_DATE_FINE_VALIDITA%>" width="w50" controlWidth="w50" labelWidth="w40" />
                 <sl:newLine />   
+                <slf:lblField  name="<%=StruttureForm.InsStruttura.CHECK_INCLUDI_SISTEMI_MIGRAZ%>" width="w50" controlWidth="w50" labelWidth="w40" />
+                <sl:newLine />   
                 <slf:lblField  name="<%=StruttureForm.InsStruttura.BL_XML_STRUT%>" width="w50" controlWidth="w50" labelWidth="w40" />
             </slf:fieldSet>
 

@@ -1,30 +1,21 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb;
-
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.eclipse.persistence.jpa.JpaEntityManager;
-import org.eclipse.persistence.sessions.CopyGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.helper.RegistroHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
@@ -43,6 +34,7 @@ import it.eng.parer.entity.DecTipoSerie;
 import it.eng.parer.entity.DecTipoSerieUd;
 import it.eng.parer.entity.DecTipoUnitaDoc;
 import it.eng.parer.entity.DecTipoUnitaDocAmmesso;
+import it.eng.parer.entity.DecWarnAaRegistroUd;
 import it.eng.parer.entity.IamOrganizDaReplic;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.OrgSubStrut;
@@ -83,6 +75,28 @@ import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.KeyOrdUtility;
 import it.eng.parer.ws.utils.KeySizeUtility;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * EJB di gestione dei registri
@@ -558,14 +572,16 @@ public class RegistroEjb {
                             // Se NON esiste
                             if (!critEjb.existsCriterioPerTipoDato(idRegistroUnitaDoc.longValue(), TipoDato.REGISTRO)) {
                                 param.setNomeAzione(azioneInsCriterio);
-                                tipoUnitaDocEjb.creaCriterioSulTipoUnitaDoc(param, BigDecimal.valueOf(idTipoUnitaDoc));
-                                warningMessage.append("Poiché per il tipo di unità documentaria ");
-                                warningMessage.append(tipoUnitaDocAmmesso.getDecTipoUnitaDoc().getNmTipoUnitaDoc());
-                                warningMessage.append(
-                                        " associata al registro non è stato rilevato alcun criterio e neanche per il registro è stato rilevato alcun criterio, ");
-                                warningMessage.append(
-                                        "ed il registro è fiscale, si è provveduto a creare un criterio standard e fiscale per il tipo unità documentaria.");
-                                warningMessage.append("<br>");
+                                if (tipoUnitaDocEjb.creaCriterioSulTipoUnitaDoc(param,
+                                        BigDecimal.valueOf(idTipoUnitaDoc))) {
+                                    warningMessage.append("Poiché per il tipo di unità documentaria ");
+                                    warningMessage.append(tipoUnitaDocAmmesso.getDecTipoUnitaDoc().getNmTipoUnitaDoc());
+                                    warningMessage.append(
+                                            " associata al registro non è stato rilevato alcun criterio e neanche per il registro è stato rilevato alcun criterio, ");
+                                    warningMessage.append(
+                                            "ed il registro è fiscale, si è provveduto a creare un criterio standard e fiscale per il tipo unità documentaria.");
+                                    warningMessage.append("<br>");
+                                }
                             }
                         }
                     } // Se esiste
@@ -705,58 +721,157 @@ public class RegistroEjb {
 
         return replic;
     }
+    //
+    // private DecRegistroUnitaDoc duplicaRegistroEntity(DecRegistroUnitaDoc registroOriginale)
+    // throws NoSuchFieldException {
+    // CopyGroup group = new CopyGroup();
+    // // Imposto il reset delle chiavi primarie
+    // group.setShouldResetPrimaryKey(true);
+    // // Aggiungo al CopyGroup i parametri da duplicare
+    // group.addAttribute("cdRegistroUnitaDoc");
+    // group.addAttribute("dsRegistroUnitaDoc");
+    // group.addAttribute("dtIstituz");
+    // group.addAttribute("dtSoppres");
+    // group.addAttribute("flCreaSerie");
+    // group.addAttribute("flRegistroFisc");
+    // group.addAttribute("niAnniConserv");
+    // group.addAttribute("flCreaSerie");
+    // group.addAttribute("flCreaTipoSerieStandard");
+    // group.addAttribute("decModelloTipoSerie");
+    // group.addAttribute("nmTipoSerieDaCreare");
+    // group.addAttribute("dsTipoSerieDaCreare");
+    // group.addAttribute("cdSerieDaCreare");
+    // group.addAttribute("dsSerieDaCreare");
+    //
+    // // Attributi di decAaRegistroUnitaDoc da duplicare (esclusa la chiave)
+    // group.addAttribute("decAaRegistroUnitaDocs.aaMaxRegistroUnitaDoc");
+    // group.addAttribute("decAaRegistroUnitaDocs.aaMinRegistroUnitaDoc");
+    // group.addAttribute("decAaRegistroUnitaDocs.flUpdFmtNumero");
+    // group.addAttribute("decAaRegistroUnitaDocs.decRegistroUnitaDoc");
+    // group.addAttribute("decAaRegistroUnitaDocs.decErrAaRegistroUnitaDocs");
+    // group.addAttribute("decAaRegistroUnitaDocs.decWarnAaRegistroUds");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros");
+    // // Attributi di decParteNumeroRegistros da duplicare (esclusa la chiave)
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.dlValoriParte");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.dsParteNumeroRegistro");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niMaxCharParte");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niMinCharParte");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niParteNumeroRegistro");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.nmParteNumeroRegistro");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiCharParte");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiCharSep");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiPadSxParte");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiParte");
+    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.decAaRegistroUnitaDoc");
+    // // Attributi di decTipoUnitaDocAmmessos da duplicare (esclusa la chiave)
+    // group.addAttribute("decTipoUnitaDocAmmessos.decRegistroUnitaDoc");
+    // group.addAttribute("decTipoUnitaDocAmmessos.decTipoUnitaDoc");
+    //
+    // group.addAttribute("orgStrut");
+    // // Imposto la "profondita'" CASCADE_TREE in maniera tale che vengano considerati
+    // // i parametri precedentemente impostati
+    // group.setDepth(CopyGroup.CASCADE_TREE);
+    // DecRegistroUnitaDoc copy = (DecRegistroUnitaDoc) helper.getEntityManager().unwrap(JpaEntityManager.class)
+    // .copy(registroOriginale, group);
+    // return copy;
+    // }
 
     private DecRegistroUnitaDoc duplicaRegistroEntity(DecRegistroUnitaDoc registroOriginale)
             throws NoSuchFieldException {
-        CopyGroup group = new CopyGroup();
-        // Imposto il reset delle chiavi primarie
-        group.setShouldResetPrimaryKey(true);
-        // Aggiungo al CopyGroup i parametri da duplicare
-        group.addAttribute("cdRegistroUnitaDoc");
-        group.addAttribute("dsRegistroUnitaDoc");
-        group.addAttribute("dtIstituz");
-        group.addAttribute("dtSoppres");
-        group.addAttribute("flCreaSerie");
-        group.addAttribute("flRegistroFisc");
-        group.addAttribute("niAnniConserv");
-        group.addAttribute("flCreaSerie");
-        group.addAttribute("flCreaTipoSerieStandard");
-        group.addAttribute("decModelloTipoSerie");
-        group.addAttribute("nmTipoSerieDaCreare");
-        group.addAttribute("dsTipoSerieDaCreare");
-        group.addAttribute("cdSerieDaCreare");
-        group.addAttribute("dsSerieDaCreare");
+        DecRegistroUnitaDoc copy = new DecRegistroUnitaDoc();
+        // Campi base di DecRegistroUnitaDoc
+        copy.setCdRegistroUnitaDoc(registroOriginale.getCdRegistroUnitaDoc());
+        copy.setDsRegistroUnitaDoc(registroOriginale.getDsRegistroUnitaDoc());
+        copy.setDtIstituz(registroOriginale.getDtIstituz());
+        copy.setDtSoppres(registroOriginale.getDtSoppres());
+        copy.setFlCreaSerie(registroOriginale.getFlCreaSerie());
+        copy.setFlRegistroFisc(registroOriginale.getFlRegistroFisc());
+        copy.setNiAnniConserv(registroOriginale.getNiAnniConserv());
+        copy.setFlCreaSerie(registroOriginale.getFlCreaSerie());
+        copy.setFlCreaTipoSerieStandard(registroOriginale.getFlCreaTipoSerieStandard());
+        copy.setDecModelloTipoSerie(registroOriginale.getDecModelloTipoSerie());
+        copy.setNmTipoSerieDaCreare(registroOriginale.getNmTipoSerieDaCreare());
+        copy.setDsTipoSerieDaCreare(registroOriginale.getDsTipoSerieDaCreare());
+        copy.setCdSerieDaCreare(registroOriginale.getCdSerieDaCreare());
+        copy.setDsSerieDaCreare(registroOriginale.getDsSerieDaCreare());
 
-        // Attributi di decAaRegistroUnitaDoc da duplicare (esclusa la chiave)
-        group.addAttribute("decAaRegistroUnitaDocs.aaMaxRegistroUnitaDoc");
-        group.addAttribute("decAaRegistroUnitaDocs.aaMinRegistroUnitaDoc");
-        group.addAttribute("decAaRegistroUnitaDocs.flUpdFmtNumero");
-        group.addAttribute("decAaRegistroUnitaDocs.decRegistroUnitaDoc");
-        group.addAttribute("decAaRegistroUnitaDocs.decErrAaRegistroUnitaDocs");
-        group.addAttribute("decAaRegistroUnitaDocs.decWarnAaRegistroUds");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros");
-        // Attributi di decParteNumeroRegistros da duplicare (esclusa la chiave)
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.dlValoriParte");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.dsParteNumeroRegistro");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niMaxCharParte");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niMinCharParte");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niParteNumeroRegistro");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.nmParteNumeroRegistro");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiCharParte");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiCharSep");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiPadSxParte");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiParte");
-        group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.decAaRegistroUnitaDoc");
-        // Attributi di decTipoUnitaDocAmmessos da duplicare (esclusa la chiave)
-        group.addAttribute("decTipoUnitaDocAmmessos.decRegistroUnitaDoc");
-        group.addAttribute("decTipoUnitaDocAmmessos.decTipoUnitaDoc");
+        // Copio OrgStrut
+        copy.setOrgStrut(registroOriginale.getOrgStrut());
 
-        group.addAttribute("orgStrut");
-        // Imposto la "profondita'" CASCADE_TREE in maniera tale che vengano considerati
-        // i parametri precedentemente impostati
-        group.setDepth(CopyGroup.CASCADE_TREE);
-        DecRegistroUnitaDoc copy = (DecRegistroUnitaDoc) helper.getEntityManager().unwrap(JpaEntityManager.class)
-                .copy(registroOriginale, group);
+        // DecAaRegistroUnitaDoc
+        final List<DecAaRegistroUnitaDoc> decAaRegistroUnitaDocs = registroOriginale.getDecAaRegistroUnitaDocs();
+        if (decAaRegistroUnitaDocs != null && decAaRegistroUnitaDocs.size() > 0) {
+            copy.setDecAaRegistroUnitaDocs(new ArrayList<>());
+            for (DecAaRegistroUnitaDoc u : decAaRegistroUnitaDocs) {
+                DecAaRegistroUnitaDoc ucopy = new DecAaRegistroUnitaDoc();
+                ucopy.setAaMaxRegistroUnitaDoc(u.getAaMaxRegistroUnitaDoc());
+                ucopy.setAaMinRegistroUnitaDoc(u.getAaMinRegistroUnitaDoc());
+                ucopy.setFlUpdFmtNumero(u.getFlUpdFmtNumero());
+                ucopy.setCdFormatoNumero(u.getCdFormatoNumero());
+                ucopy.setDsFormatoNumero(u.getDsFormatoNumero());
+                ucopy.setDecRegistroUnitaDoc(copy);
+
+                final List<DecErrAaRegistroUnitaDoc> decErrAaRegistroUnitaDocs = u.getDecErrAaRegistroUnitaDocs();
+                if (decErrAaRegistroUnitaDocs != null && decErrAaRegistroUnitaDocs.size() > 0) {
+                    ucopy.setDecErrAaRegistroUnitaDocs(new ArrayList<>());
+                    for (DecErrAaRegistroUnitaDoc er : decErrAaRegistroUnitaDocs) {
+                        DecErrAaRegistroUnitaDoc cer = new DecErrAaRegistroUnitaDoc();
+                        cer.setDecAaRegistroUnitaDoc(ucopy);
+                        cer.setAaRegistroUnitaDoc(er.getAaRegistroUnitaDoc());
+                        cer.setDsErrFmtNumero(er.getDsErrFmtNumero());
+                        cer.setIdUnitaDocErrFmtNumero(er.getIdUnitaDocErrFmtNumero());
+                        ucopy.getDecErrAaRegistroUnitaDocs().add(cer);
+                    }
+                }
+
+                final List<DecWarnAaRegistroUd> decWarnAaRegistroUd = u.getDecWarnAaRegistroUds();
+                if (decWarnAaRegistroUd != null && decWarnAaRegistroUd.size() > 0) {
+                    ucopy.setDecWarnAaRegistroUds(new ArrayList<>());
+                    for (DecWarnAaRegistroUd w : decWarnAaRegistroUd) {
+                        DecWarnAaRegistroUd cw = new DecWarnAaRegistroUd();
+                        cw.setDecAaRegistroUnitaDoc(ucopy);
+                        cw.setAaRegistroUnitaDoc(w.getAaRegistroUnitaDoc());
+                        cw.setFlWarnAaRegistroUnitaDoc(w.getFlWarnAaRegistroUnitaDoc());
+                        ucopy.getDecWarnAaRegistroUds().add(cw);
+                    }
+                }
+
+                final List<DecParteNumeroRegistro> decParteNumeroRegistros = u.getDecParteNumeroRegistros();
+                if (decParteNumeroRegistros != null && decParteNumeroRegistros.size() > 0) {
+                    ucopy.setDecParteNumeroRegistros(new ArrayList<>());
+                    for (DecParteNumeroRegistro pr : decParteNumeroRegistros) {
+                        DecParteNumeroRegistro cpr = new DecParteNumeroRegistro();
+                        cpr.setDecAaRegistroUnitaDoc(ucopy);
+                        cpr.setDlValoriParte(pr.getDlValoriParte());
+                        cpr.setDsParteNumeroRegistro(pr.getDsParteNumeroRegistro());
+                        cpr.setNiMaxCharParte(pr.getNiMaxCharParte());
+                        cpr.setNiMinCharParte(pr.getNiMinCharParte());
+                        cpr.setNiParteNumeroRegistro(pr.getNiParteNumeroRegistro());
+                        cpr.setNmParteNumeroRegistro(pr.getNmParteNumeroRegistro());
+                        cpr.setTiCharParte(pr.getTiCharParte());
+                        cpr.setTiCharSep(pr.getTiCharSep());
+                        cpr.setTiPadSxParte(pr.getTiPadSxParte());
+                        cpr.setTiParte(pr.getTiParte());
+                        ucopy.getDecParteNumeroRegistros().add(cpr);
+                    }
+                }
+
+                copy.getDecAaRegistroUnitaDocs().add(ucopy);
+            }
+        }
+
+        // DecTipoUnitaDocAmmesso
+        final List<DecTipoUnitaDocAmmesso> decTipoUnitaDocAmmessos = registroOriginale.getDecTipoUnitaDocAmmessos();
+        if (decTipoUnitaDocAmmessos != null && decTipoUnitaDocAmmessos.size() > 0) {
+            copy.setDecTipoUnitaDocAmmessos(new ArrayList<>());
+            for (DecTipoUnitaDocAmmesso u : decTipoUnitaDocAmmessos) {
+                DecTipoUnitaDocAmmesso cu = new DecTipoUnitaDocAmmesso();
+                cu.setDecRegistroUnitaDoc(copy);
+                cu.setDecTipoUnitaDoc(u.getDecTipoUnitaDoc());
+                copy.getDecTipoUnitaDocAmmessos().add(cu);
+            }
+        }
+
         return copy;
     }
 
@@ -1052,6 +1167,20 @@ public class RegistroEjb {
                 registroUnitaDocRowBean = (DecRegistroUnitaDocRowBean) Transform.entity2RowBean(registroUnitaDoc);
                 registroUnitaDocRowBean.setString("controllo_formato",
                         helper.getDecVChkFmtNumeroForRegistro(registroUnitaDoc.getIdRegistroUnitaDoc()));
+
+                // Data primo e ultimo versamento
+                Object[] dateFirstLastVers = helper
+                        .retrieveDateFirstLastVersRegistro(registroUnitaDoc.getIdRegistroUnitaDoc());
+                if (dateFirstLastVers != null) {
+                    Date d = (Date) dateFirstLastVers[0];
+                    registroUnitaDocRowBean.setTimestamp("dt_first_vers", new Timestamp(d.getTime()));
+                    Date dLast = (Date) dateFirstLastVers[1];
+                    registroUnitaDocRowBean.setTimestamp("dt_last_vers", new Timestamp(dLast.getTime()));//
+                }
+
+                registroUnitaDocRowBean.setString("controllo_formato",
+                        helper.getDecVChkFmtNumeroForRegistro(registroUnitaDoc.getIdRegistroUnitaDoc()));
+
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
             }
@@ -1112,6 +1241,16 @@ public class RegistroEjb {
                     // Controllo formato numero
                     String controlloFormato = helper.getDecVChkFmtNumeroForRegistro(registro.getIdRegistroUnitaDoc());
                     registroRow.setString("controllo_formato", controlloFormato);
+
+                    // Data primo e ultimo versamento
+                    Object[] dateFirstLastVers = helper
+                            .retrieveDateFirstLastVersRegistro(registro.getIdRegistroUnitaDoc());
+                    if (dateFirstLastVers != null) {
+                        Date d = (Date) dateFirstLastVers[0];
+                        registroRow.setTimestamp("dt_first_vers", new Timestamp(d.getTime()));
+                        Date dLast = (Date) dateFirstLastVers[1];
+                        registroRow.setTimestamp("dt_last_vers", new Timestamp(dLast.getTime()));//
+                    }
 
                     registroUnitaDocTableBean.add(registroRow);
                 }

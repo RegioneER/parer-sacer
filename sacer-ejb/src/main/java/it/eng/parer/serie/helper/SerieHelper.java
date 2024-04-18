@@ -1,5 +1,50 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.serie.helper;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.LockModeType;
+import javax.persistence.LockTimeoutException;
+import javax.persistence.PersistenceException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.paginator.helper.LazyListHelper;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.DecCampoInpUd;
@@ -28,6 +73,9 @@ import it.eng.parer.entity.constraint.SerUrnIxVolVerSerie.TiUrnIxVolVerSerie;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.serie.dto.RicercaSerieBean;
 import it.eng.parer.serie.dto.RicercaUdAppartBean;
+import it.eng.parer.slite.gen.viewbean.SerVLisErrFileSerieUdTableBean;
+import it.eng.parer.slite.gen.viewbean.SerVLisUdAppartSerieTableBean;
+import it.eng.parer.slite.gen.viewbean.SerVLisUdAppartVolSerieTableBean;
 import it.eng.parer.viewEntity.ResultVCalcoloSerieUd;
 import it.eng.parer.viewEntity.SerVBucoNumerazioneUd;
 import it.eng.parer.viewEntity.SerVJobContenutoBloccato;
@@ -38,7 +86,6 @@ import it.eng.parer.viewEntity.SerVLisNotaSerie;
 import it.eng.parer.viewEntity.SerVLisSerDaValidare;
 import it.eng.parer.viewEntity.SerVLisStatoSerie;
 import it.eng.parer.viewEntity.SerVLisUdAppartSerie;
-import it.eng.parer.viewEntity.SerVLisUdAppartVolSerie;
 import it.eng.parer.viewEntity.SerVLisUdErrFileInput;
 import it.eng.parer.viewEntity.SerVLisUdNovers;
 import it.eng.parer.viewEntity.SerVLisVerSeriePrec;
@@ -54,41 +101,22 @@ import it.eng.parer.viewEntity.SerVVisVolVerSerieUd;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.LockModeType;
-import javax.persistence.LockTimeoutException;
-import javax.persistence.Query;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.eclipse.persistence.exceptions.DatabaseException;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Stateless
 @LocalBean
 public class SerieHelper extends GenericHelper {
 
+    @EJB(mappedName = "java:app/paginator/LazyListHelper")
+    private LazyListHelper lazyListHelper;
     private static final Logger log = LoggerFactory.getLogger(SerieHelper.class);
 
     public SerContenutoVerSerie getLockSerContenutoVerSerie(Long idVerSerie, String tiContenutoVerSerie) {
@@ -121,8 +149,8 @@ public class SerieHelper extends GenericHelper {
     public SerSerie getSerSerie(BigDecimal idTipoSerie, BigDecimal idStrut, BigDecimal aaSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerSerie s WHERE s.orgStrut.idStrut = :idStrut AND s.decTipoSerie.idTipoSerie = :idTipoSerie AND s.aaSerie = :aaSerie");
-        query.setParameter("idTipoSerie", idTipoSerie);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idTipoSerie", longFromBigDecimal(idTipoSerie));
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("aaSerie", aaSerie);
         List<SerSerie> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
@@ -158,7 +186,7 @@ public class SerieHelper extends GenericHelper {
             queryStr.append(" AND serie.cdCompositoSerie = :cdSerie");
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("aaSerie", aaSerie);
 
         Calendar c = Calendar.getInstance();
@@ -172,7 +200,7 @@ public class SerieHelper extends GenericHelper {
 
         query.setParameter("defaultAnnul", c.getTime());
         if (idTipoSerie != null) {
-            query.setParameter("idTipoSerie", idTipoSerie);
+            query.setParameter("idTipoSerie", longFromBigDecimal(idTipoSerie));
         }
         if (dataInizio != null && dataFine != null) {
             query.setParameter("dataInizio", dataInizio);
@@ -181,14 +209,13 @@ public class SerieHelper extends GenericHelper {
         if (StringUtils.isNotBlank(cdSerie)) {
             query.setParameter("cdSerie", cdSerie);
         }
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
 
     public SerVerSerie getLastSerVerSerie(BigDecimal idSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT v FROM SerVerSerie v WHERE v.serSerie.idSerie = :idSerie ORDER BY v.pgVerSerie DESC");
-        query.setParameter("idSerie", idSerie);
+        query.setParameter("idSerie", longFromBigDecimal(idSerie));
         List<SerVerSerie> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return list.get(0);
@@ -250,40 +277,35 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager()
                 .createQuery("SELECT d FROM DecTipoSerieUd d WHERE d.decTipoSerie.idTipoSerie = :idTipoSerie ");
         query.setParameter("idTipoSerie", idTipoSerie);
-        List<DecTipoSerieUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoSerieUd> getDecTipoSerieUdNoSelUnitaDocAnnul(Long idTipoSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT d FROM DecTipoSerieUd d WHERE d.decTipoSerie.idTipoSerie = :idTipoSerie AND d.flSelUnitaDocAnnul = '0'");
         query.setParameter("idTipoSerie", idTipoSerie);
-        List<DecTipoSerieUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecOutSelUd> getDecOutSelUd(Long idTipoSerieUd) {
         Query query = getEntityManager()
                 .createQuery("SELECT o FROM DecOutSelUd o WHERE o.decTipoSerieUd.idTipoSerieUd = :idTipoSerieUd");
         query.setParameter("idTipoSerieUd", idTipoSerieUd);
-        List<DecOutSelUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<Long> getDecFiltroSelUdSelTables(Long idTipoSerieUd) {
         Query query = getEntityManager().createQuery(
                 "SELECT f.decTipoDoc.idTipoDoc FROM DecFiltroSelUd f WHERE f.decTipoSerieUd.idTipoSerieUd = :idTipoSerieUd AND f.tiFiltro = 'TIPO_DOC_PRINC'");
         query.setParameter("idTipoSerieUd", idTipoSerieUd);
-        List<Long> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecFiltroSelUd> getDecFiltroSelUd(Long idTipoSerieUd) {
         Query query = getEntityManager().createQuery(
                 "SELECT f FROM DecFiltroSelUd f WHERE f.decTipoSerieUd.idTipoSerieUd = :idTipoSerieUd AND f.tiFiltro != 'TIPO_DOC_PRINC'");
         query.setParameter("idTipoSerieUd", idTipoSerieUd);
-        List<DecFiltroSelUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecFiltroSelUdDato> getDecFiltroSelUdDato(Long idTipoSerieUd, String nmTipoUnitaDoc) {
@@ -291,8 +313,7 @@ public class SerieHelper extends GenericHelper {
                 "SELECT d FROM DecFiltroSelUdDato d JOIN d.decFiltroSelUdAttb f WHERE f.decTipoSerieUd.idTipoSerieUd = :idTipoSerieUd AND d.tiEntitaSacer = 'UNI_DOC' AND d.nmTipoUnitaDoc = :nmTipoUnitaDoc");
         query.setParameter("idTipoSerieUd", idTipoSerieUd);
         query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
-        List<DecFiltroSelUdDato> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecFiltroSelUdDato> getDecFiltroSelUdDato(Long idTipoSerieUd, Long idTipoDoc) {
@@ -300,21 +321,28 @@ public class SerieHelper extends GenericHelper {
                 "SELECT d FROM DecFiltroSelUdDato d JOIN d.decFiltroSelUdAttb f JOIN d.decAttribDatiSpec ds JOIN ds.decTipoDoc td WHERE td.idTipoDoc = :idTipoDoc AND ds.tiUsoAttrib = 'VERS' AND ds.tiEntitaSacer = 'DOC' AND d.tiEntitaSacer = 'DOC' AND f.decTipoSerieUd.idTipoSerieUd = :idTipoSerieUd");
         query.setParameter("idTipoSerieUd", idTipoSerieUd);
         query.setParameter("idTipoDoc", idTipoDoc);
-        List<DecFiltroSelUdDato> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecCampoOutSelUd> getDecCampoOutSelUd(Long idOutSelUd) {
         Query query = getEntityManager()
                 .createQuery("SELECT c FROM DecCampoOutSelUd c WHERE c.decOutSelUd.idOutSelUd = :idOutSelUd");
         query.setParameter("idOutSelUd", idOutSelUd);
-        List<DecCampoOutSelUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
+    /**
+     * @param queryString
+     *            la query
+     * 
+     * @return Lista di {@link ResultVCalcoloSerieUd}
+     */
     public List<ResultVCalcoloSerieUd> executeQueryList(String queryString) {
-        Query query = getEntityManager().createNativeQuery(queryString, ResultVCalcoloSerieUd.class);
-        return (List<ResultVCalcoloSerieUd>) query.getResultList();
+        org.hibernate.query.Query query = getEntityManager().createNativeQuery(queryString)
+                .unwrap(org.hibernate.query.Query.class);
+        query.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+        List<Map<String, Object>> resultMap = query.list();
+        return resultMap.stream().map(ResultVCalcoloSerieUd::new).collect(Collectors.toList());
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -322,7 +350,7 @@ public class SerieHelper extends GenericHelper {
         List<ResultVCalcoloSerieUd> result = null;
         try {
             result = executeQueryList(queryString);
-        } catch (DatabaseException e) {
+        } catch (PersistenceException e) {
             log.error("Eccezione", e);
         }
         return result;
@@ -369,8 +397,7 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT c FROM DecCampoInpUd c WHERE c.decTipoSerie.idTipoSerie = :idTipoSerie ORDER BY c.pgOrdCampo");
         query.setParameter("idTipoSerie", idTipoSerie);
-        List<DecCampoInpUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecCampoInpUd> getDecCampoInpUdDatoProfilo(Long idTipoSerie) {
@@ -408,7 +435,7 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(a) FROM AroUdAppartVerSerie a WHERE a.aroUnitaDoc.idUnitaDoc = :idUnitaDoc AND a.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idUnitaDoc", longFromBigDecimal(idUnitaDoc));
         Long count = (Long) query.getSingleResult();
         return count > 0;
     }
@@ -442,7 +469,7 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery("SELECT s FROM SerUrnFileVerSerie s "
                 + "JOIN s.serFileVerSerie fileVerSerie " + "JOIN fileVerSerie.serVerSerie verSerie "
                 + "WHERE verSerie.idVerSerie = :idVerSerie " + "AND s.tiUrn IN :tiUrn");
-        query.setParameter("idVerSerie", idVerSerie);
+        query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
         query.setParameter("tiUrn", tiUrn);
         return query.getResultList();
     }
@@ -452,14 +479,14 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery("SELECT s FROM SerUrnIxVolVerSerie s "
                 + "JOIN s.serIxVolVerSerie ixVolVerSerie " + "JOIN ixVolVerSerie.serVolVerSerie volVerSerie "
                 + "WHERE volVerSerie.idVolVerSerie = :idVolVerSerie " + "AND s.tiUrn IN :tiUrn");
-        query.setParameter("idVolVerSerie", idVolVerSerie);
+        query.setParameter("idVolVerSerie", longFromBigDecimal(idVolVerSerie));
         query.setParameter("tiUrn", tiUrn);
         return query.getResultList();
     }
 
     public List<SerVRicSerieUd> getSerVRicSerieUd(List<BigDecimal> verSeries, BigDecimal idStrut) {
         Query query = getEntityManager().createQuery(
-                "SELECT s FROM SerVRicSerieUd s WHERE s.idStrut = :idStrut AND s.idVerSerie IN :verSeries ORDER BY s.cdCompositoSerie, s.aaSerie");
+                "SELECT s FROM SerVRicSerieUd s WHERE s.idStrut = :idStrut AND s.idVerSerie IN (:verSeries) ORDER BY s.cdCompositoSerie, s.aaSerie");
         query.setParameter("verSeries", verSeries);
         query.setParameter("idStrut", idStrut);
         return query.getResultList();
@@ -480,14 +507,14 @@ public class SerieHelper extends GenericHelper {
             if (filtri.getTi_stato_cor_serie().size() == 1) {
                 queryStr.append(clause).append("s.tiStatoVerSerie = :tiStatoVerSerie ");
             } else {
-                queryStr.append(clause).append("s.tiStatoVerSerie IN :tiStatoVerSerie ");
+                queryStr.append(clause).append("s.tiStatoVerSerie IN (:tiStatoVerSerie) ");
             }
         }
         if (!filtri.getTi_stato_conservazione().isEmpty()) {
             if (filtri.getTi_stato_conservazione().size() == 1) {
                 queryStr.append(clause).append("s.tiStatoSerie = :tiStatoConservazione ");
             } else {
-                queryStr.append(clause).append("s.tiStatoSerie IN :tiStatoConservazione ");
+                queryStr.append(clause).append("s.tiStatoSerie IN (:tiStatoConservazione) ");
             }
         }
         if (filtri.getId_tipo_serie() != null) {
@@ -637,7 +664,7 @@ public class SerieHelper extends GenericHelper {
         if (filtri.getId_modello_tipo_serie() != null) {
             query.setParameter("idModelloTipoSerie", filtri.getId_modello_tipo_serie());
         }
-        return (List<SerVRicSerieUd>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<SerVRicSerieUdUsr> getSerVRicSerieUdUsr(long idUserIam, RicercaSerieBean filtri) {
@@ -697,12 +724,12 @@ public class SerieHelper extends GenericHelper {
         if (filtri.getId_registro_unita_doc() != null) {
             query.setParameter("idRegistroUnitaDoc", filtri.getId_registro_unita_doc());
         }
-        return (List<SerVRicSerieUdUsr>) query.getResultList();
+        return query.getResultList();
     }
 
     public SerVJobContenutoBloccato getSerVJobContenutoBloccato(String nmJob, BigDecimal idContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
-                "SELECT s FROM SerVJobContenutoBloccato s WHERE s.idContenutoVerSerie = :idContenutoVerSerie AND s.nmJob = :nmJob");
+                "SELECT s FROM SerVJobContenutoBloccato s WHERE s.id.idContenutoVerSerie = :idContenutoVerSerie AND s.id.nmJob = :nmJob");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
         query.setParameter("nmJob", nmJob);
         List<SerVJobContenutoBloccato> list = query.getResultList();
@@ -715,7 +742,7 @@ public class SerieHelper extends GenericHelper {
 
     public SerVJobVerSerieBloccato getSerVJobVerSerieBloccato(String nmJob, BigDecimal idVerSerie) {
         Query query = getEntityManager().createQuery(
-                "SELECT s FROM SerVJobVerSerieBloccato s WHERE s.idVerSerie = :idVerSerie AND s.nmJob = :nmJob");
+                "SELECT s FROM SerVJobVerSerieBloccato s WHERE s.id.idVerSerie = :idVerSerie AND s.id.nmJob = :nmJob");
         query.setParameter("idVerSerie", idVerSerie);
         query.setParameter("nmJob", nmJob);
         List<SerVJobVerSerieBloccato> list = query.getResultList();
@@ -730,8 +757,7 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerVLisNotaSerie s WHERE s.idVerSerie = :idVerSerie ORDER BY s.niOrd, s.pgNotaVerSerie");
         query.setParameter("idVerSerie", idVerSerie);
-        List<SerVLisNotaSerie> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public BigDecimal getMaxPgSerVLisNotaSerie(BigDecimal idVerSerie, BigDecimal idTipoNotaSerie) {
@@ -746,28 +772,25 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerVLisStatoSerie s WHERE s.idVerSerie = :idVerSerie ORDER BY s.pgStatoVerSerie");
         query.setParameter("idVerSerie", idVerSerie);
-        List<SerVLisStatoSerie> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<SerVLisVerSeriePrec> getSerVLisVerSeriePrec(BigDecimal idVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerVLisVerSeriePrec s WHERE s.idVerSerieInput = :idVerSerie ORDER BY s.pgVerSerie");
         query.setParameter("idVerSerie", idVerSerie);
-        List<SerVLisVerSeriePrec> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<SerVLisVolSerieUd> getSerVLisVolSerieUd(BigDecimal idVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerVLisVolSerieUd s WHERE s.idVerSerie = :idVerSerie ORDER BY s.pgVolVerSerie");
         query.setParameter("idVerSerie", idVerSerie);
-        List<SerVLisVolSerieUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
-    public List<SerVLisUdAppartVolSerie> getSerVLisUdAppartVolSerie(BigDecimal idVolVerSerie,
-            RicercaUdAppartBean parametri) {
+    public SerVLisUdAppartVolSerieTableBean getSerVLisUdAppartVolSerie(BigDecimal idVolVerSerie,
+            RicercaUdAppartBean parametri, Function<List, SerVLisUdAppartVolSerieTableBean> toTableBeanFunc) {
         StringBuilder builder = new StringBuilder(
                 "SELECT s FROM SerVLisUdAppartVolSerie s WHERE s.idVolVerSerie = :idVolVerSerie ");
         String clause = " AND ";
@@ -804,8 +827,7 @@ public class SerieHelper extends GenericHelper {
                 query.setParameter("pgA", parametri.getPgUdSerieA());
             }
         }
-        List<SerVLisUdAppartVolSerie> list = query.getResultList();
-        return list;
+        return lazyListHelper.getTableBean(query, toTableBeanFunc);
     }
 
     public void deleteSerContenutoVerSerie(long idVerSerie, String tiContenutoVerSerie) {
@@ -844,8 +866,9 @@ public class SerieHelper extends GenericHelper {
         }
     }
 
-    public List<SerVLisUdAppartSerie> getSerVLisUdAppartSerie(BigDecimal idContenutoVerSerie,
-            RicercaUdAppartBean parametri) {
+    public SerVLisUdAppartSerieTableBean getSerVLisUdAppartSerie(BigDecimal idContenutoVerSerie,
+            RicercaUdAppartBean parametri, Function<List, SerVLisUdAppartSerieTableBean> toTableBeanFunc,
+            boolean lazy) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT s FROM SerVLisUdAppartSerie s WHERE s.idContenutoVerSerie = :idContenutoVerSerie");
         String clause = " AND ";
@@ -868,7 +891,8 @@ public class SerieHelper extends GenericHelper {
             }
         }
         queryStr.append(" ORDER BY s.dsKeyOrdUdSerie");
-        Query query = getEntityManager().createQuery(queryStr.toString());
+        TypedQuery<SerVLisUdAppartSerie> query = getEntityManager().createQuery(queryStr.toString(),
+                SerVLisUdAppartSerie.class);
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
         if (parametri != null) {
             if (StringUtils.isNotBlank(parametri.getCdUdSerie())) {
@@ -889,34 +913,40 @@ public class SerieHelper extends GenericHelper {
                 query.setParameter("tiStatoConservazione", parametri.getTiStatoConservazione());
             }
         }
-        List<SerVLisUdAppartSerie> list = query.getResultList();
-        return list;
+        if (lazy) {
+            return lazyListHelper.getTableBean(query, toTableBeanFunc);
+        } else {
+            return toTableBeanFunc.apply(query.getResultList());
+        }
     }
 
     public List<SerVLisErrContenSerieUd> getSerVLisErrContenSerieUd(BigDecimal idContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerVLisErrContenSerieUd s WHERE s.idContenutoVerSerie = :idContenutoVerSerie ORDER BY s.pgErr");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
-        List<SerVLisErrContenSerieUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
-    public List<SerVLisErrFileSerieUd> getSerVLisErrFileSerieUd(BigDecimal idVerSerie,
-            String tiScopoFileInputVerSerie) {
-        Query query = getEntityManager().createQuery(
-                "SELECT s FROM SerVLisErrFileSerieUd s WHERE s.idVerSerie = :idVerSerie AND s.tiScopoFileInputVerSerie = :tiScopoFileInputVerSerie ORDER BY s.niRecErr");
+    public SerVLisErrFileSerieUdTableBean getSerVLisErrFileSerieUd(BigDecimal idVerSerie,
+            String tiScopoFileInputVerSerie, Function<List, SerVLisErrFileSerieUdTableBean> toTableBeanFunc,
+            boolean lazy) {
+        TypedQuery<SerVLisErrFileSerieUd> query = getEntityManager().createQuery(
+                "SELECT s FROM SerVLisErrFileSerieUd s WHERE s.idVerSerie = :idVerSerie AND s.tiScopoFileInputVerSerie = :tiScopoFileInputVerSerie ORDER BY s.niRecErr",
+                SerVLisErrFileSerieUd.class);
         query.setParameter("idVerSerie", idVerSerie);
         query.setParameter("tiScopoFileInputVerSerie", tiScopoFileInputVerSerie);
-        List<SerVLisErrFileSerieUd> list = query.getResultList();
-        return list;
+        if (lazy) {
+            return lazyListHelper.getTableBean(query, toTableBeanFunc);
+        } else {
+            return toTableBeanFunc.apply(query.getResultList());
+        }
     }
 
     public List<SerQueryContenutoVerSerie> getSerQueryContenutoVerSerie(BigDecimal idContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerQueryContenutoVerSerie s WHERE s.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie");
-        query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
-        List<SerQueryContenutoVerSerie> list = query.getResultList();
-        return list;
+        query.setParameter("idContenutoVerSerie", longFromBigDecimal(idContenutoVerSerie));
+        return query.getResultList();
     }
 
     public SerQueryContenutoVerSerie getSerQueryContenutoVerSerie(Long idContenutoVerSerie,
@@ -939,26 +969,23 @@ public class SerieHelper extends GenericHelper {
                 "SELECT s FROM SerLacunaConsistVerSerie s WHERE s.serConsistVerSerie.idConsistVerSerie = :idConsistVerSerie ");
         if (StringUtils.isNotBlank(tiModLacuna)) {
             queryStr.append("AND s.tiModLacuna = :tiModLacuna ");
-            if (tiModLacuna.equals(CostantiDB.TipoModLacuna.RANGE_PROGRESSIVI.name())) {
-                if (niIniLacuna != null && niFinLacuna != null) {
-                    queryStr.append("AND s.niIniLacuna = :niIniLacuna AND s.niFinLacuna = :niFinLacuna");
-                }
+            if (tiModLacuna.equals(CostantiDB.TipoModLacuna.RANGE_PROGRESSIVI.name()) && niIniLacuna != null
+                    && niFinLacuna != null) {
+                queryStr.append("AND s.niIniLacuna = :niIniLacuna AND s.niFinLacuna = :niFinLacuna");
             }
         }
         queryStr.append(" ORDER BY s.pgLacuna");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idConsistVerSerie", idConsistVerSerie);
+        query.setParameter("idConsistVerSerie", longFromBigDecimal(idConsistVerSerie));
         if (StringUtils.isNotBlank(tiModLacuna)) {
             query.setParameter("tiModLacuna", tiModLacuna);
-            if (tiModLacuna.equals(CostantiDB.TipoModLacuna.RANGE_PROGRESSIVI.name())) {
-                if (niIniLacuna != null && niFinLacuna != null) {
-                    query.setParameter("niIniLacuna", niIniLacuna);
-                    query.setParameter("niFinLacuna", niFinLacuna);
-                }
+            if (tiModLacuna.equals(CostantiDB.TipoModLacuna.RANGE_PROGRESSIVI.name()) && niIniLacuna != null
+                    && niFinLacuna != null) {
+                query.setParameter("niIniLacuna", niIniLacuna);
+                query.setParameter("niFinLacuna", niFinLacuna);
             }
         }
-        List<SerLacunaConsistVerSerie> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public Long countSerLacunaConsistVerSerie(BigDecimal idConsistVerSerie, BigDecimal idLacuna, String tiModLacuna,
@@ -970,17 +997,16 @@ public class SerieHelper extends GenericHelper {
         }
         if (StringUtils.isNotBlank(tiModLacuna)) {
             queryStr.append("AND s.tiModLacuna = :tiModLacuna ");
-            if (tiModLacuna.equals(CostantiDB.TipoModLacuna.RANGE_PROGRESSIVI.name())) {
-                if (niIniLacuna != null && niFinLacuna != null) {
-                    queryStr.append("AND s.niIniLacuna <= :niFinLacuna AND s.niFinLacuna >= :niIniLacuna");
-                }
+            if (tiModLacuna.equals(CostantiDB.TipoModLacuna.RANGE_PROGRESSIVI.name()) && niIniLacuna != null
+                    && niFinLacuna != null) {
+                queryStr.append("AND s.niIniLacuna <= :niFinLacuna AND s.niFinLacuna >= :niIniLacuna");
             }
         }
         queryStr.append(" ORDER BY s.pgLacuna");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idConsistVerSerie", idConsistVerSerie);
+        query.setParameter("idConsistVerSerie", longFromBigDecimal(idConsistVerSerie));
         if (idLacuna != null) {
-            query.setParameter("idLacuna", idLacuna);
+            query.setParameter("idLacuna", longFromBigDecimal(idLacuna));
         }
         if (StringUtils.isNotBlank(tiModLacuna)) {
             query.setParameter("tiModLacuna", tiModLacuna);
@@ -989,8 +1015,7 @@ public class SerieHelper extends GenericHelper {
                 query.setParameter("niFinLacuna", niFinLacuna);
             }
         }
-        Long result = (Long) query.getSingleResult();
-        return result;
+        return (Long) query.getSingleResult();
     }
 
     public List<ResultVCalcoloSerieUd> getAroUdAppartVerSerie(long idVerSerie, String tipoContenuto,
@@ -1015,24 +1040,21 @@ public class SerieHelper extends GenericHelper {
         if (StringUtils.isNotBlank(tipoContenuto2)) {
             query.setParameter("tipoContenuto2", tipoContenuto2);
         }
-        List<ResultVCalcoloSerieUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<String> getAroUdAppartChiaveDoppia(long idContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT a.cdUdSerie FROM AroUdAppartVerSerie a WHERE a.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie GROUP BY a.cdUdSerie HAVING COUNT(a.cdUdSerie)>1 ORDER BY a.cdUdSerie");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
-        List<String> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<BigDecimal> getAroUdAppartNumeroDoppio(long idContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT a.pgUdSerie FROM AroUdAppartVerSerie a WHERE a.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND a.pgUdSerie IS NOT NULL GROUP BY a.pgUdSerie HAVING COUNT(a.pgUdSerie)>1 ORDER BY a.pgUdSerie");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
-        List<BigDecimal> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public Long countAroUdAppartVerSerieInPgInterval(long idContenutoVerSerie, BigDecimal pgUdSerieDa,
@@ -1041,7 +1063,7 @@ public class SerieHelper extends GenericHelper {
                 "SELECT COUNT (a) " + "FROM AroUdAppartVerSerie a JOIN a.serContenutoVerSerie contenuto "
                         + "WHERE contenuto.idContenutoVerSerie = :idContenutoVerSerie "
                         + "AND a.pgUdSerie BETWEEN :pgUdSerieDa AND :pgUdSerieA ORDER BY a.dsKeyOrdUdSerie ASC",
-                ResultVCalcoloSerieUd.class);
+                Long.class);
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
         query.setParameter("pgUdSerieDa", pgUdSerieDa);
         query.setParameter("pgUdSerieA", pgUdSerieA);
@@ -1050,39 +1072,35 @@ public class SerieHelper extends GenericHelper {
 
     public List<SerVSelUdNovers> getSerVSelUdNovers(long idVerSerie, BigDecimal aaSelUd) {
         Query query = getEntityManager().createQuery(
-                "SELECT s FROM SerVSelUdNovers s WHERE s.idVerSerie = :idVerSerie AND s.aaKeyUnitaDoc = :aaSelUd");
-        query.setParameter("idVerSerie", idVerSerie);
+                "SELECT s FROM SerVSelUdNovers s WHERE s.id.idVerSerie = :idVerSerie AND s.aaKeyUnitaDoc = :aaSelUd");
+        query.setParameter("idVerSerie", bigDecimalFromLong(idVerSerie));
         query.setParameter("aaSelUd", aaSelUd);
-        List<SerVSelUdNovers> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public Long countSerVSelUdNovers(long idVerSerie, BigDecimal aaSelUd) {
         Query query = getEntityManager().createQuery(
-                "SELECT COUNT(s) FROM SerVSelUdNovers s WHERE s.idVerSerie = :idVerSerie AND s.aaKeyUnitaDoc = :aaSelUd");
-        query.setParameter("idVerSerie", idVerSerie);
+                "SELECT COUNT(s) FROM SerVSelUdNovers s WHERE s.id.idVerSerie = :idVerSerie AND s.aaKeyUnitaDoc = :aaSelUd");
+        query.setParameter("idVerSerie", bigDecimalFromLong(idVerSerie));
         query.setParameter("aaSelUd", aaSelUd);
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
 
     public List<SerVBucoNumerazioneUd> getSerVBucoNumerazioneUd(long idContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
-                "SELECT DISTINCT s FROM SerVBucoNumerazioneUd s WHERE s.idContenutoVerSerie = :idContenutoVerSerie ORDER BY s.pgUdSerIniBuco");
-        query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
-        List<SerVBucoNumerazioneUd> list = query.getResultList();
-        return list;
+                "SELECT DISTINCT s FROM SerVBucoNumerazioneUd s WHERE s.id.idContenutoVerSerie = :idContenutoVerSerie ORDER BY s.id.pgUdSerIniBuco");
+        query.setParameter("idContenutoVerSerie", bigDecimalFromLong(idContenutoVerSerie));
+        return query.getResultList();
     }
 
     public List<SerVSelUdNoversBuco> getSerVSelUdNoversBuco(BigDecimal idVerSerie, BigDecimal pgUdSerIniBuco,
             BigDecimal pgUdSerFinBuco) {
         Query query = getEntityManager().createQuery(
-                "SELECT s FROM SerVSelUdNoversBuco s WHERE s.idVerSerie = :idVerSerie AND s.pgUnitaDoc BETWEEN :pgIni AND :pgFin");
+                "SELECT s FROM SerVSelUdNoversBuco s WHERE s.id.idVerSerie = :idVerSerie AND s.pgUnitaDoc BETWEEN :pgIni AND :pgFin");
         query.setParameter("idVerSerie", idVerSerie);
         query.setParameter("pgIni", pgUdSerIniBuco);
         query.setParameter("pgFin", pgUdSerFinBuco);
-        List<SerVSelUdNoversBuco> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public Long countSerErrContenutoVerSerie(BigDecimal idContenutoVerSerie, String tiGravitaErr) {
@@ -1103,7 +1121,7 @@ public class SerieHelper extends GenericHelper {
             builder.append("AND e.tiOrigineErr = :tiOrigineErr ");
         }
         Query query = getEntityManager().createQuery(builder.toString());
-        query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
+        query.setParameter("idContenutoVerSerie", longFromBigDecimal(idContenutoVerSerie));
         if (StringUtils.isNotBlank(tiGravitaErr)) {
             query.setParameter("tiGravitaErr", tiGravitaErr);
         }
@@ -1113,50 +1131,42 @@ public class SerieHelper extends GenericHelper {
         if (StringUtils.isNotBlank(tiOrigineErr)) {
             query.setParameter("tiOrigineErr", tiOrigineErr);
         }
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
 
     public Long countSerErrContenutoVerSerie(long idContenutoVerSerie, String... tiErrs) {
         Query query = getEntityManager().createQuery(
-                "SELECT COUNT(e) FROM SerErrContenutoVerSerie e WHERE e.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND e.tiErr IN :tiErrs");
+                "SELECT COUNT(e) FROM SerErrContenutoVerSerie e WHERE e.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND e.tiErr IN (:tiErrs)");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
         query.setParameter("tiErrs", Arrays.asList(tiErrs));
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
 
     public List<SerVLisUdErrFileInput> getSerVLisUdErrFileInput(BigDecimal idErrFileInput) {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerVLisUdErrFileInput s WHERE s.idErrFileInput = :idErrFileInput ORDER BY s.dsKeyOrdUdSerie");
         query.setParameter("idErrFileInput", idErrFileInput);
-        List<SerVLisUdErrFileInput> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<SerVLisUdNovers> getSerVLisUdNovers(BigDecimal idErrContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT s FROM SerVLisUdNovers s WHERE s.idErrContenutoVerSerie = :idErrContenutoVerSerie ORDER BY s.cdKeyUnitaDoc");
         query.setParameter("idErrContenutoVerSerie", idErrContenutoVerSerie);
-        List<SerVLisUdNovers> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoSerie> getDecTipoSerieAutom() {
-        SimpleDateFormat df = new SimpleDateFormat("MM/dd");
 
         Query query = getEntityManager().createQuery("SELECT d FROM DecTipoSerie d WHERE d.flCreaAutom = '1' "
-                // + "AND CONCAT(SUBSTRING(d.ggCreaAutom,4,2),'/', SUBSTRING(d.ggCreaAutom,0,2)) <= :ggCreaAutom "
                 + "AND d.tipoContenSerie = 'UNITA_DOC' AND d.flTipoSeriePadre = '0' "
                 + "AND d.dtIstituz <= :filterDate AND d.dtSoppres >= :filterDate "
                 + "AND NOT EXISTS(SELECT serieCreataAutom FROM DecTipoSerieCreataAutom serieCreataAutom "
                 + "WHERE serieCreataAutom.decTipoSerie.idTipoSerie = d.idTipoSerie "
-                + "AND serieCreataAutom.dtCreaAutom = FUNC('to_date',CONCAT(d.ggCreaAutom,'/',FUNC('to_char', CURRENT_DATE, 'yyyy')),'dd/mm/yyyy') )");
+                + "AND serieCreataAutom.dtCreaAutom = TO_DATE(CONCAT(d.ggCreaAutom,'/',TO_CHAR(CURRENT_DATE, 'yyyy')),'dd/mm/yyyy') )");
         Date now = Calendar.getInstance().getTime();
-        // query.setParameter("ggCreaAutom", df.format(now));
         query.setParameter("filterDate", now);
-        List<DecTipoSerie> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public SerSerie getSerieAutom(BigDecimal aaIniCreaAutom, BigDecimal aaFinCreaAutom, long idTipoSerie) {
@@ -1190,8 +1200,7 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(tipoSerieUd) FROM DecTipoSerieUd tipoSerieUd JOIN tipoSerieUd.decTipoSerie tipoSerie WHERE tipoSerie.idTipoSerie = :idTipoSerie AND NOT EXISTS (SELECT out FROM DecOutSelUd out WHERE out.decTipoSerieUd.idTipoSerieUd = tipoSerieUd.idTipoSerieUd AND out.tiOut = 'PG_UD_SERIE')");
         query.setParameter("idTipoSerie", idTipoSerie);
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
 
     public List<Object[]> getSerVerSerieDaElabList(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
@@ -1229,70 +1238,23 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
 
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
 
         if (idEnte != null) {
-            query.setParameter("idEnte", idEnte);
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
 
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
 
         if (tiStatoVerSerie != null) {
             query.setParameter("tiStatoVerSerie", tiStatoVerSerie.name());
         }
-        List<Object[]> lista = query.getResultList();
-        return lista;
+        return query.getResultList();
     }
 
-    // public List<SerVRicSerieUd> getSerieDaFirmareBeanList(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal
-    // idStrut, CostantiDB.StatoVersioneSerie tiStatoVerSerie) {
-    // String queryStr = "SELECT u FROM SerVRicSerieUd ";
-    // String whereWord = "WHERE ";
-    //
-    // if (idAmbiente != null) {
-    // queryStr = queryStr.concat(whereWord).concat("u.idAmbiente = :idAmbiente ");
-    // whereWord = "AND ";
-    // }
-    //
-    // if (idEnte != null) {
-    // queryStr = queryStr.concat(whereWord).concat("u.idEnte = :idEnte ");
-    // whereWord = "AND ";
-    // }
-    //
-    // if (idStrut != null) {
-    // queryStr = queryStr.concat(whereWord).concat("u.idStrut = :idStrut ");
-    // whereWord = "AND ";
-    // }
-    //
-    // if (tiStatoVerSerie != null) {
-    // queryStr = queryStr.concat(whereWord).concat("u.tiStatoVerSerie = :tiStatoVerSerie ");
-    // }
-    //
-    // queryStr = queryStr.concat("ORDER BY u.nmAmbiente, u.nmEnte, u.nmStrut, u.cdCompositoSerie ");
-    //
-    // Query query = getEntityManager().createQuery(queryStr);
-    //
-    // if (idAmbiente != null) {
-    // query.setParameter("idAmbiente", idAmbiente);
-    // }
-    //
-    // if (idEnte != null) {
-    // query.setParameter("idEnte", idEnte);
-    // }
-    //
-    // if (idStrut != null) {
-    // query.setParameter("idStrut", idStrut);
-    // }
-    //
-    // if (tiStatoVerSerie != null) {
-    // query.setParameter("tiStatoVerSerie", tiStatoVerSerie.name());
-    // }
-    // List<SerVRicSerieUd> lista = query.getResultList();
-    // return lista;
-    // }
     public boolean existsFirmataNoMarca(BigDecimal idStrut) {
         StringBuilder queryStr = new StringBuilder("SELECT COUNT(verSerieDaElab) FROM SerVerSerieDaElab verSerieDaElab "
                 + "WHERE verSerieDaElab.tiStatoVerSerie = 'FIRMATA_NO_MARCA' ");
@@ -1302,7 +1264,7 @@ public class SerieHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         return (Long) query.getSingleResult() > 0;
     }
@@ -1321,26 +1283,25 @@ public class SerieHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (tiStatoVerSerie != null) {
             query.setParameter("tiStatoVerSerie", tiStatoVerSerie);
         }
-        return (List<SerVerSerieDaElab>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<AroUnitaDoc> getLockAroUnitaDoc(BigDecimal idContenutoVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT ud FROM AroUdAppartVerSerie udVerSerie JOIN udVerSerie.aroUnitaDoc ud WHERE udVerSerie.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie");
-        query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
-        List<AroUnitaDoc> uds = (List<AroUnitaDoc>) query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
-        return uds;
+        query.setParameter("idContenutoVerSerie", longFromBigDecimal(idContenutoVerSerie));
+        return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
     }
 
     public void deleteSerFileVerSerie(BigDecimal idVerSerie, String tiFileVerSerie) {
         Query query = getEntityManager().createQuery(
                 "DELETE FROM SerFileVerSerie file WHERE file.serVerSerie.idVerSerie = :idVerSerie AND file.tiFileVerSerie = :tiFileVerSerie");
-        query.setParameter("idVerSerie", idVerSerie);
+        query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
         query.setParameter("tiFileVerSerie", tiFileVerSerie);
         query.executeUpdate();
     }
@@ -1348,21 +1309,21 @@ public class SerieHelper extends GenericHelper {
     public void deleteSerVolVerSerie(BigDecimal idVerSerie) {
         Query query = getEntityManager()
                 .createQuery("DELETE FROM SerVolVerSerie vol WHERE vol.serVerSerie.idVerSerie = :idVerSerie");
-        query.setParameter("idVerSerie", idVerSerie);
+        query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
         query.executeUpdate();
     }
 
     public void deleteSerVerSerieDaElab(BigDecimal idVerSerie) {
         Query query = getEntityManager().createQuery(
                 "DELETE FROM SerVerSerieDaElab verDaElab WHERE verDaElab.serVerSerie.idVerSerie = :idVerSerie");
-        query.setParameter("idVerSerie", idVerSerie);
+        query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
         query.executeUpdate();
     }
 
     public int updateStatoConservazioneAroUnitaDocInContenuto(Long idContenutoVerSerie, String tiStatoConservazioneOld,
             String tiStatoConservazioneNew) {
         Query query = getEntityManager().createQuery(
-                "UPDATE AroUnitaDoc ud SET ud.tiStatoConservazione = :tiStatoConservazioneNew WHERE ud.tiStatoConservazione = :tiStatoConservazioneOld AND EXISTS (SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie WHERE udVerSerie.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND udVerSerie.aroUnitaDoc = ud)");
+                "UPDATE AroUnitaDoc ud SET ud.tiStatoConservazione = :tiStatoConservazioneNew WHERE ud.tiStatoConservazione = :tiStatoConservazioneOld AND EXISTS (SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie WHERE udVerSerie.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND udVerSerie.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc)");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
         query.setParameter("tiStatoConservazioneOld", tiStatoConservazioneOld);
         query.setParameter("tiStatoConservazioneNew", tiStatoConservazioneNew);
@@ -1372,7 +1333,7 @@ public class SerieHelper extends GenericHelper {
     public int updateStatoConservazioneAroUnitaDocInContenuto(Long idContenutoVerSerie,
             List<String> tiStatoConservazioneOld, String tiStatoConservazioneNew) {
         Query query = getEntityManager().createQuery(
-                "UPDATE AroUnitaDoc ud SET ud.tiStatoConservazione = :tiStatoConservazioneNew WHERE ud.tiStatoConservazione IN :tiStatoConservazioneOld AND EXISTS (SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie WHERE udVerSerie.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND udVerSerie.aroUnitaDoc = ud)");
+                "UPDATE AroUnitaDoc ud SET ud.tiStatoConservazione = :tiStatoConservazioneNew WHERE ud.tiStatoConservazione IN (:tiStatoConservazioneOld) AND EXISTS (SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie WHERE udVerSerie.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND udVerSerie.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc)");
         query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
         query.setParameter("tiStatoConservazioneOld", tiStatoConservazioneOld);
         query.setParameter("tiStatoConservazioneNew", tiStatoConservazioneNew);
@@ -1389,14 +1350,14 @@ public class SerieHelper extends GenericHelper {
                         + "JOIN contenuto_1.serVerSerie verSerie_1 "
                         + "JOIN verSerie_1.serSerie serie_1 WHERE serie_1.idSerie = :idSerie "
                         + "AND verSerie_1.idVerSerie = :idVerSerie "
-                        + "AND udVerSerie_1.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_1.aroUnitaDoc = ud )"
+                        + "AND udVerSerie_1.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_1.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc )"
                         + "AND NOT EXISTS (SELECT udVerSerie_2 FROM AroUdAppartVerSerie udVerSerie_2 "
                         + "JOIN udVerSerie_2.serContenutoVerSerie contenuto_2 "
                         + "JOIN contenuto_2.serVerSerie verSerie_2 "
                         + "JOIN verSerie_2.serSerie serie_2 WHERE serie_2.idSerie != :idSerie "
-                        + "AND udVerSerie_2.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_2.aroUnitaDoc = ud "
+                        + "AND udVerSerie_2.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_2.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc "
                         + "AND serie_2.dtAnnul = :defaultAnnul )");
-        query.setParameter("idSerie", idSerie);
+        query.setParameter("idSerie", longFromBigDecimal(idSerie));
         query.setParameter("idVerSerie", idVerSerie);
         query.setParameter("tiStatoConservazioneOld", tiStatoConservazioneOld);
         query.setParameter("tiStatoConservazioneNew", tiStatoConservazioneNew);
@@ -1419,20 +1380,20 @@ public class SerieHelper extends GenericHelper {
             String tiStatoConservazioneNew, List<String> statiUdExcluded) {
         Query query = getEntityManager()
                 .createQuery("UPDATE AroUnitaDoc ud SET ud.tiStatoConservazione = :tiStatoConservazioneNew "
-                        + "WHERE ud.tiStatoConservazione IN :statiUdExcluded AND "
+                        + "WHERE ud.tiStatoConservazione IN (:statiUdExcluded) AND "
                         + "EXISTS (SELECT udVerSerie_1 FROM AroUdAppartVerSerie udVerSerie_1 "
                         + "JOIN udVerSerie_1.serContenutoVerSerie contenuto_1 "
                         + "JOIN contenuto_1.serVerSerie verSerie_1 "
                         + "JOIN verSerie_1.serSerie serie_1 WHERE serie_1.idSerie = :idSerie "
                         + "AND verSerie_1.idVerSerie = :idVerSerie "
-                        + "AND udVerSerie_1.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_1.aroUnitaDoc = ud )"
+                        + "AND udVerSerie_1.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_1.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc )"
                         + "AND NOT EXISTS (SELECT udVerSerie_2 FROM AroUdAppartVerSerie udVerSerie_2 "
                         + "JOIN udVerSerie_2.serContenutoVerSerie contenuto_2 "
                         + "JOIN contenuto_2.serVerSerie verSerie_2 "
                         + "JOIN verSerie_2.serSerie serie_2 WHERE serie_2.idSerie != :idSerie "
-                        + "AND udVerSerie_2.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_2.aroUnitaDoc = ud "
+                        + "AND udVerSerie_2.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_2.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc "
                         + "AND serie_2.dtAnnul = :defaultAnnul )");
-        query.setParameter("idSerie", idSerie);
+        query.setParameter("idSerie", longFromBigDecimal(idSerie));
         query.setParameter("idVerSerie", idVerSerie);
         query.setParameter("statiUdExcluded", statiUdExcluded);
         query.setParameter("tiStatoConservazioneNew", tiStatoConservazioneNew);
@@ -1456,16 +1417,14 @@ public class SerieHelper extends GenericHelper {
                 "SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie JOIN udVerSerie.aroUnitaDoc ud WHERE udVerSerie.serContenutoVerSerie.serVerSerie.idVerSerie = :idVerSerie AND udVerSerie.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND ud.tiStatoConservazione = :tiStatoConservazioneUd");
         query.setParameter("idVerSerie", idVerSerie);
         query.setParameter("tiStatoConservazioneUd", tiStatoConservazioneUd);
-        List<AroUdAppartVerSerie> uds = (List<AroUdAppartVerSerie>) query.getResultList();
-        return uds;
+        return query.getResultList();
     }
 
     public List<AroUdAppartVerSerie> getAroUdAppartVerSerieNoAip(Long idVerSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie WHERE udVerSerie.serContenutoVerSerie.serVerSerie.idVerSerie = :idVerSerie AND udVerSerie.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie.idVerIndiceAipUd IS NULL");
         query.setParameter("idVerSerie", idVerSerie);
-        List<AroUdAppartVerSerie> uds = (List<AroUdAppartVerSerie>) query.getResultList();
-        return uds;
+        return query.getResultList();
     }
 
     public int updateAroUdAppartVerSerieNoAip(Long idContenutoEffettivo) {
@@ -1473,7 +1432,7 @@ public class SerieHelper extends GenericHelper {
                 + "SET id_ver_indice_aip_ud = (SELECT u.id_ver_indice_aip_last FROM aro_indice_aip_ud u "
                 + "WHERE u.id_unita_doc = udVerSerie.id_unita_doc AND u.ti_formato_indice_aip = 'UNISYNCRO') "
                 + "WHERE udVerSerie.id_contenuto_ver_serie = ?1 AND udVerSerie.id_ver_indice_aip_ud IS NULL");
-        query.setParameter("1", idContenutoEffettivo);
+        query.setParameter(1, idContenutoEffettivo);
         return query.executeUpdate();
     }
 
@@ -1560,9 +1519,7 @@ public class SerieHelper extends GenericHelper {
                         + "AND udAppartVerSerie.serContenutoVerSerie.tiContenutoVerSerie = :tiContenutoVerSerie ");
         query.setParameter("idVerSerie", idVerSerie);
         query.setParameter("tiContenutoVerSerie", tiContenutoVerSerie);
-        List<AroUdAppartVerSerie> uds = (List<AroUdAppartVerSerie>) query.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                .getResultList();
-        return uds;
+        return query.setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultList();
     }
 
     public SerFileVerSerie getSerFileVerSerie(long idVerSerie, String tiFileVerSerie) {
@@ -1595,8 +1552,7 @@ public class SerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery("SELECT ixVolVerSerie FROM SerIxVolVerSerie ixVolVerSerie "
                 + "WHERE ixVolVerSerie.serVolVerSerie.idVolVerSerie = :idVolVerSerie ");
         query.setParameter("idVolVerSerie", idVolVerSerie);
-        SerIxVolVerSerie ixVolVerSerie = (SerIxVolVerSerie) query.getSingleResult();
-        return ixVolVerSerie;
+        return (SerIxVolVerSerie) query.getSingleResult();
     }
 
     public List<SerIxVolVerSerie> getSerIxVolVerSerieList(long idVerSerie) {
@@ -1620,7 +1576,7 @@ public class SerieHelper extends GenericHelper {
     public List<SerVLisSerDaValidare> getSerVLisSerDaValidare(Long idUserIam, BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idStrut) {
         StringBuilder queryStr = new StringBuilder(
-                "SELECT s FROM SerVLisSerDaValidare s WHERE s.idUserIam = :idUserIam ");
+                "SELECT s FROM SerVLisSerDaValidare s WHERE s.id.idUserIam = :idUserIam ");
         String clause = " AND ";
         if (idAmbiente != null) {
             queryStr.append(clause).append("s.idAmbiente = :idAmbiente");
@@ -1634,7 +1590,7 @@ public class SerieHelper extends GenericHelper {
         queryStr.append(" ORDER BY s.nmAmbiente, s.nmEnte, s.nmStrut, s.cdCompositoSerie");
         Query query = getEntityManager().createQuery(queryStr.toString());
 
-        query.setParameter("idUserIam", idUserIam);
+        query.setParameter("idUserIam", bigDecimalFromLong(idUserIam));
         if (idAmbiente != null) {
             query.setParameter("idAmbiente", idAmbiente);
         }
@@ -1652,9 +1608,9 @@ public class SerieHelper extends GenericHelper {
                 .createQuery("SELECT v FROM SerStatoVerSerie stato JOIN stato.serVerSerie v JOIN v.serSerie s "
                         + "WHERE s.decTipoSerie.idTipoSerie = :idTipoSerie "
                         + "AND v.pgVerSerie = (SELECT MAX(versCorr.pgVerSerie) FROM SerVerSerie versCorr WHERE versCorr.serSerie.idSerie = s.idSerie) "
-                        + "AND stato.tiStatoVerSerie IN :statiSerie " + "AND s.dtAnnul = :defaultAnnul");
+                        + "AND stato.tiStatoVerSerie IN (:statiSerie) " + "AND s.dtAnnul = :defaultAnnul");
 
-        query.setParameter("idTipoSerie", idTipoSerie);
+        query.setParameter("idTipoSerie", longFromBigDecimal(idTipoSerie));
         query.setParameter("statiSerie", Arrays.asList(statiSerie));
         Calendar c = Calendar.getInstance();
         c.set(Calendar.HOUR_OF_DAY, 0);
@@ -1667,18 +1623,17 @@ public class SerieHelper extends GenericHelper {
 
         query.setParameter("defaultAnnul", c.getTime());
 
-        return (List<SerVerSerie>) query.getResultList();
+        return query.getResultList();
     }
 
     public Long countSerQueryContenutoVerSerie(BigDecimal idContenutoVerSerie, BigDecimal idRegistroUnitaDoc,
             BigDecimal idTipoUnitaDoc) {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(q) FROM SerQueryContenutoVerSerie q JOIN q.serContenutoVerSerie contenuto JOIN contenuto.serVerSerie verSerie, SerContenutoVerSerie contenInput WHERE verSerie.idVerSerie = contenInput.serVerSerie.idVerSerie AND contenInput.idContenutoVerSerie = :idContenutoVerSerie AND contenuto.tiContenutoVerSerie = 'CALCOLATO' AND q.idRegistroUnitaDoc = :idRegistroUnitaDoc AND q.idTipoUnitaDoc = :idTipoUnitaDoc");
-        query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
+        query.setParameter("idContenutoVerSerie", longFromBigDecimal(idContenutoVerSerie));
         query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
         query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
 
     public Long countAroUdAppartVerSerie(long idContenutoVerSerie) {
@@ -1693,8 +1648,7 @@ public class SerieHelper extends GenericHelper {
         Query q = getEntityManager().createQuery("SELECT DISTINCT strut "
                 + "FROM SerVerSerieDaElab verSerieDaElab, OrgStrut strut "
                 + "WHERE verSerieDaElab.idStrut = strut.idStrut " + "AND verSerieDaElab.tiStatoVerSerie = 'VALIDATA' ");
-        List<OrgStrut> strutture = q.getResultList();
-        return strutture;
+        return q.getResultList();
     }
 
     public List<SerVRicConsistSerieUd> getSerVRicConsistSerieUd(RicercaSerieBean filtri) {
@@ -1755,7 +1709,7 @@ public class SerieHelper extends GenericHelper {
         if (filtri.getId_registro_unita_doc() != null) {
             query.setParameter("idRegistroUnitaDoc", filtri.getId_registro_unita_doc());
         }
-        return (List<SerVRicConsistSerieUd>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<SerVerSerie> getVersioniSerieCorrentiByTipoSerie(long idTipoSerie) {
@@ -1776,7 +1730,7 @@ public class SerieHelper extends GenericHelper {
 
         query.setParameter("defaultAnnul", c.getTime());
 
-        return (List<SerVerSerie>) query.getResultList();
+        return query.getResultList();
     }
 
     /**
@@ -1791,10 +1745,9 @@ public class SerieHelper extends GenericHelper {
      */
     public List<BigDecimal> retrieveSerVLisVerserByRichann(long idRichAnnulVers) {
         Query query = getEntityManager().createQuery(
-                "SELECT ser.idVerSerie FROM SerVLisVerserByRichann ser WHERE ser.idRichAnnulVers = :idRichAnnulVers ");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        List<BigDecimal> serie = query.getResultList();
-        return serie;
+                "SELECT ser.id.idVerSerie FROM SerVLisVerserByRichann ser WHERE ser.id.idRichAnnulVers = :idRichAnnulVers ");
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        return query.getResultList();
     }
 
     public boolean existsCdSerNormaliz(long idStrut, BigDecimal aaSerie, String cdSerieNormaliz) {

@@ -1,9 +1,35 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.job.validazioneFascicoli.helper;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.AroVerIndiceAipUd;
@@ -17,26 +43,16 @@ import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.ElvVChkAllAipFascInCoda;
 import it.eng.parer.viewEntity.ElvVChkSoloFascAnnul;
 import it.eng.parer.viewEntity.FasVLisUdByFasc;
-import java.math.BigDecimal;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author gilioli_p
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ValidazioneFascicoliHelper")
 @LocalBean
 public class ValidazioneFascicoliHelper extends GenericHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(ValidazioneFascicoliHelper.class);
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
@@ -47,7 +63,7 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
                 + "AND elencoVersFasc.idStatoElencoVersFascCor = statoElencoVersFasc.idStatoElencoVersFasc "
                 + "ORDER BY statoElencoVersFasc.tsStato ASC ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
         query.setParameter("tiStato", tiStato);
         return query.getResultList();
     }
@@ -102,7 +118,7 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
         String queryStr = "SELECT COUNT(unitaDoc) FROM FasUnitaDocFascicolo unitaDocFascicolo "
                 + "JOIN unitaDocFascicolo.aroUnitaDoc unitaDoc " + "JOIN unitaDocFascicolo.fasFascicolo fascicolo "
                 + "WHERE fascicolo.idFascicolo = :idFascicolo "
-                + "AND unitaDoc.tiStatoConservazione IN :statiConservazione ";
+                + "AND unitaDoc.tiStatoConservazione IN (:statiConservazione) ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idFascicolo", idFascicolo);
         query.setParameter("statiConservazione", statiConservazione);
@@ -115,13 +131,13 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
         query2.setParameter("idFascicolo", idFascicolo);
         Long totFasc = (Long) query2.getSingleResult();
 
-        return totFascStati == totFasc;
+        return totFascStati.equals(totFasc);
     }
 
     public void updateStatoConservazioneUdFascicolo(long idFascicolo, List<String> statiOld, String statoNew) {
         Query q = getEntityManager()
                 .createQuery("UPDATE AroUnitaDoc unitaDoc SET unitaDoc.tiStatoConservazione = :statoNew "
-                        + "WHERE unitaDoc.tiStatoConservazione IN :statiOld "
+                        + "WHERE unitaDoc.tiStatoConservazione IN (:statiOld) "
                         + "AND unitaDoc.idUnitaDoc IN (SELECT unitaDoc1.idUnitaDoc FROM FasUnitaDocFascicolo unitaDocFascicolo "
                         + "JOIN unitaDocFascicolo.aroUnitaDoc unitaDoc1 "
                         + "JOIN unitaDocFascicolo.fasFascicolo fascicolo "
@@ -146,7 +162,7 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
                 "SELECT u FROM AroVerIndiceAipUd u " + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                         + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' " + "ORDER BY u.pgVerIndiceAip DESC ");
         q.setParameter("idUnitaDoc", idUnitaDoc);
-        List<AroVerIndiceAipUd> lista = (List<AroVerIndiceAipUd>) q.getResultList();
+        List<AroVerIndiceAipUd> lista = q.getResultList();
         if (!lista.isEmpty()) {
             return lista.get(0);
         }
@@ -172,7 +188,7 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
                         + "JOIN appartUnitaDocVolume.aroUnitaDoc unitaDoc " + "WHERE unitaDoc.idUnitaDoc = :idUnitaDoc "
                         + "ORDER BY volumeConserv.tmMarcaIndice DESC ");
         q.setParameter("idUnitaDoc", idUnitaDoc);
-        List<VolVolumeConserv> lista = (List<VolVolumeConserv>) q.getResultList();
+        List<VolVolumeConserv> lista = q.getResultList();
         if (!lista.isEmpty()) {
             return lista.get(0);
         }
@@ -180,19 +196,19 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
     }
 
     public List<BigDecimal> getUdFascicoloByFascIdList(long idFascicolo) {
-        String queryStr = "SELECT lisUdByFasc.idUnitaDoc FROM FasVLisUdByFasc lisUdByFasc "
-                + "WHERE lisUdByFasc.idFascicolo = :idFascicolo";
+        String queryStr = "SELECT lisUdByFasc.id.idUnitaDoc FROM FasVLisUdByFasc lisUdByFasc "
+                + "WHERE lisUdByFasc.id.idFascicolo = :idFascicolo";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idFascicolo", idFascicolo);
+        query.setParameter("idFascicolo", bigDecimalFromLong(idFascicolo));
         return query.getResultList();
     }
 
     public FasVLisUdByFasc getFasVLisUdByFasc(long idFascicolo, long idUnitaDoc) {
         String queryStr = "SELECT lisUdByFasc FROM FasVLisUdByFasc lisUdByFasc "
-                + "WHERE lisUdByFasc.idFascicolo = :idFascicolo " + "AND lisUdByFasc.idUnitaDoc = :idUnitaDoc ";
+                + "WHERE lisUdByFasc.id.idFascicolo = :idFascicolo " + "AND lisUdByFasc.id.idUnitaDoc = :idUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idFascicolo", idFascicolo);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idFascicolo", bigDecimalFromLong(idFascicolo));
+        query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
         return (FasVLisUdByFasc) query.getSingleResult();
     }
 }

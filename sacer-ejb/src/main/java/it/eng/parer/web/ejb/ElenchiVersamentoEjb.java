@@ -1,7 +1,59 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.ejb;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.crypto.model.ParerTST;
+import it.eng.parer.crypto.model.exceptions.CryptoParerException;
 import it.eng.parer.elencoVersamento.ejb.IndiceElencoVersXsdEjb;
 import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
@@ -16,18 +68,19 @@ import it.eng.parer.entity.AroUpdUnitaDoc;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.DecCriterioRaggr;
 import it.eng.parer.entity.DecTiEveStatoElencoVers;
+import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.ElvElencoVersDaElab;
 import it.eng.parer.entity.ElvFileElencoVer;
-import it.eng.parer.entity.ElvUrnElencoVers;
 import it.eng.parer.entity.ElvStatoElencoVer;
+import it.eng.parer.entity.ElvUrnElencoVers;
 import it.eng.parer.entity.HsmElencoSessioneFirma;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.OrgAmbiente;
 import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
-import it.eng.parer.entity.constraint.ElvElencoVer.TiValidElenco;
 import it.eng.parer.entity.constraint.ElvElencoVer.TiModValidElenco;
+import it.eng.parer.entity.constraint.ElvElencoVer.TiValidElenco;
 import it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco;
 import it.eng.parer.entity.constraint.ElvUpdUdDaElabElenco.ElvUpdUdDaElabTiStatoUpdElencoVers;
 import it.eng.parer.entity.constraint.ElvUrnElencoVers.TiUrnElenco;
@@ -37,10 +90,8 @@ import it.eng.parer.exception.ParerErrorSeverity;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerNoResultException;
 import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.exception.ParerWarningException;
 import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
-import it.eng.parer.crypto.model.exceptions.CryptoParerException;
-import it.eng.parer.entity.ElvElencoVer;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.indiceAip.elenchi.ElaborazioneElencoIndiceAip;
 import it.eng.parer.slite.gen.form.ElenchiVersamentoForm.FiltriElenchiVersamento;
 import it.eng.parer.slite.gen.tablebean.DecCriterioRaggrRowBean;
@@ -67,51 +118,18 @@ import it.eng.parer.viewEntity.ElvVRicElencoVersByStato;
 import it.eng.parer.viewEntity.ElvVRicElencoVersByUd;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.ElenchiVersamentoHelper;
-import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.helper.UserHelper;
+import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
+import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -122,6 +140,7 @@ import org.slf4j.LoggerFactory;
 public class ElenchiVersamentoEjb {
 
     private static final Logger log = LoggerFactory.getLogger(ElenchiVersamentoEjb.class);
+    public static final String DATE_FORMAT = "yyyyMMdd";
 
     @Resource
     private SessionContext context;
@@ -145,6 +164,8 @@ public class ElenchiVersamentoEjb {
     private UserHelper userHelper;
     @EJB
     private UniformResourceNameUtilHelper urnHelper;
+    @EJB
+    private GenericHelper genericHelper;
 
     public ElvElencoVerRowBean getElvElencoVersRowBean(BigDecimal idElencoVers) {
         ElvElencoVer elenco = evWebHelper.findById(ElvElencoVer.class, idElencoVers.longValue());
@@ -166,20 +187,19 @@ public class ElenchiVersamentoEjb {
             boolean elencoFiscale = elenco.getFlElencoFisc().equals("1");
             String tiGestioneAmb;
             if (!elencoStandard && !elencoFiscale) {
-                tiGestioneAmb = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_NOSTD",
-                        BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
-                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
+                tiGestioneAmb = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD, BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
+                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
             } else if (elencoFiscale) {
-                tiGestioneAmb = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_FISC",
+                tiGestioneAmb = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC,
                         BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
-                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
+                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
             } else {
-                tiGestioneAmb = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_NOFISC",
+                tiGestioneAmb = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC,
                         BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
-                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
+                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
             }
             elencoRowBean.setString("ti_gest_elenco_amb", tiGestioneAmb);
             elencoRowBean.setBigDecimal("num_comp", elenco.getNiCompAggElenco().add(elenco.getNiCompVersElenco()));
@@ -261,8 +281,6 @@ public class ElenchiVersamentoEjb {
         try {
             criterioRowBean = (DecCriterioRaggrRowBean) Transform.entity2RowBean(criterio);
         } catch (Exception ex) {
-            log.error("Errore durante il recupero del criterio di raggruppamento "
-                    + ExceptionUtils.getRootCauseMessage(ex), ex);
             throw new EMFError("Errore durante il recupero del criterio di raggruppamento", ex);
         }
         return criterioRowBean;
@@ -287,7 +305,6 @@ public class ElenchiVersamentoEjb {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new EMFError("Errore nel recupero della lista degli elenchi di versamento", e);
         }
         return elenchiVersTableBean;
@@ -313,7 +330,6 @@ public class ElenchiVersamentoEjb {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new EMFError("Errore nel recupero della lista degli elenchi di versamento", e);
         }
         return elenchiVersTableBean;
@@ -339,14 +355,13 @@ public class ElenchiVersamentoEjb {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new EMFError("Errore nel recupero della lista degli elenchi di versamento", e);
         }
         return elenchiVersTableBean;
     }
 
     public ElvVLisElencoVersStatoTableBean getElenchiDaFirmareTableBean(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, BigDecimal idElencoVers, String note, String flElencoFisc, String tiGestElenco,
+            BigDecimal idStrut, BigDecimal idElencoVers, String note, String flElencoFisc, List<String> tiGestElenco,
             Date[] dateCreazioneElencoValidate, long idUserIam, ElencoEnums.ElencoStatusEnum... statiElenco)
             throws EMFError {
         List<ElvVLisElencoVersStato> listaElenchiVersamento = evWebHelper.getListaElenchiDaFirmare(idAmbiente, idEnte,
@@ -356,8 +371,8 @@ public class ElenchiVersamentoEjb {
         try {
             if (listaElenchiVersamento != null && !listaElenchiVersamento.isEmpty()) {
                 for (ElvVLisElencoVersStato elenco : listaElenchiVersamento) {
-                    ElvVLisElencoVersStatoRowBean elenchiVersRowBean = new ElvVLisElencoVersStatoRowBean();
-                    elenchiVersRowBean = (ElvVLisElencoVersStatoRowBean) Transform.entity2RowBean(elenco);
+                    ElvVLisElencoVersStatoRowBean elenchiVersRowBean = (ElvVLisElencoVersStatoRowBean) Transform
+                            .entity2RowBean(elenco);
                     elenchiVersRowBean.setString("amb_ente_strut", elenchiVersRowBean.getNmAmbiente() + " / "
                             + elenchiVersRowBean.getNmEnte() + " / " + elenchiVersRowBean.getNmStrut());
                     elenchiVersRowBean.setBigDecimal("dimensione_byte",
@@ -368,7 +383,6 @@ public class ElenchiVersamentoEjb {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new EMFError("Errore nel recupero della lista degli elenchi di versamento con stato "
                     + Arrays.toString(statiElenco), e);
         }
@@ -383,8 +397,8 @@ public class ElenchiVersamentoEjb {
         try {
             if (listaElenchiVersamento != null && !listaElenchiVersamento.isEmpty()) {
                 for (ElvVLisElencoVersStato elenco : listaElenchiVersamento) {
-                    ElvVLisElencoVersStatoRowBean elenchiVersRowBean = new ElvVLisElencoVersStatoRowBean();
-                    elenchiVersRowBean = (ElvVLisElencoVersStatoRowBean) Transform.entity2RowBean(elenco);
+                    ElvVLisElencoVersStatoRowBean elenchiVersRowBean = (ElvVLisElencoVersStatoRowBean) Transform
+                            .entity2RowBean(elenco);
                     elenchiVersRowBean.setString("amb_ente_strut", elenchiVersRowBean.getNmAmbiente() + " / "
                             + elenchiVersRowBean.getNmEnte() + " / " + elenchiVersRowBean.getNmStrut());
                     elenchiVersRowBean.setBigDecimal("dimensione_byte",
@@ -395,7 +409,6 @@ public class ElenchiVersamentoEjb {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new EMFError("Errore nel recupero della lista degli elenchi di versamento da firmare", e);
         }
         return elenchiVersTableBean;
@@ -500,7 +513,7 @@ public class ElenchiVersamentoEjb {
         List<HsmElencoSessioneFirma> listElencoSessioneFirmaHsm = evHelper.retrieveListaElencoInError(elenco,
                 TiEsitoFirmaElenco.IN_ERRORE);
         for (HsmElencoSessioneFirma elencoSessioneFirmaHsm : listElencoSessioneFirmaHsm) {
-            evHelper.removeEntity(elencoSessioneFirmaHsm, true);
+            genericHelper.removeEntity(elencoSessioneFirmaHsm, true);
         }
 
         /* Cancello l'elenco di versamento corrente */
@@ -513,12 +526,10 @@ public class ElenchiVersamentoEjb {
 
     // EVO#16486
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void verificaUrnUdElenco(long idUnitaDoc, long idElencoVers)
-            throws ParerUserError, ParseException, ParerInternalError {
-        AroUnitaDoc aroUnitaDoc = evHelper.findByIdWithLock(AroUnitaDoc.class, idUnitaDoc);
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+    public void verificaUrnUdElenco(long idUnitaDoc, long idElencoVers) throws ParseException, ParerInternalError {
+        AroUnitaDoc aroUnitaDoc = genericHelper.findByIdWithLock(AroUnitaDoc.class, idUnitaDoc);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         CSVersatore versatore = getVersatoreUd(aroUnitaDoc, sistemaConservazione);
         CSChiave chiave = getChiaveUd(aroUnitaDoc);
 
@@ -531,9 +542,8 @@ public class ElenchiVersamentoEjb {
         // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
         // il sistema aggiorna ARO_UNITA_DOC
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-        String dataInizioParam = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String dataInizioParam = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
         Date dataInizio = dateFormat.parse(dataInizioParam);
         // controllo e calcolo URN normalizzato
         ElvVLisAllUdByElenco elvVLisAllUdByElenco = evHelper.retrieveElvVLisAllUdByElenco(idElencoVers, idUnitaDoc);
@@ -598,10 +608,10 @@ public class ElenchiVersamentoEjb {
     private void calcolaUrnElenco(ElvElencoVer elenco, String nomeStruttura, String nomeStrutturaNorm, String nomeEnte,
             String nomeEnteNorm) {
         // sistema (new URN)
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         // salvo ORIGINALE
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         urnHelper.salvaUrnElvElencoVers(elenco,
                 MessaggiWSFormat.formattaUrnElencoVersamento(sistema, nomeEnte, nomeStruttura,
                         sdf.format(elenco.getDtCreazioneElenco()), Long.toString(elenco.getIdElencoVers())),
@@ -624,7 +634,7 @@ public class ElenchiVersamentoEjb {
      *            lista modifiche di tipo ElencoEnums.OpTypeEnum
      * @param note
      *            contenuto note
-     * 
+     *
      * @throws IOException
      *             errore generico
      * @throws NoSuchAlgorithmException
@@ -644,7 +654,7 @@ public class ElenchiVersamentoEjb {
             ParseException, ParerInternalError {
         ElvElencoVer elenco = evWebHelper.findById(ElvElencoVer.class, idElencoVers);
 
-        log.info("Inizio processo di chiusura manuale elenco di versamento avente id " + elenco.getIdElencoVers());
+        log.info("Inizio processo di chiusura manuale elenco di versamento avente id {}", elenco.getIdElencoVers());
         /* Scrivo il motivo di chiusura */
         elenco.setDlMotivoChius("Elenco di versamento chiuso manualmente");
         /* Se ci sono state modifiche sulle note indice elenco, le salvo e scrivo nel log */
@@ -670,7 +680,7 @@ public class ElenchiVersamentoEjb {
         String nomeEnteNorm = ente.getCdEnteNormaliz();
         // Calcolo e persisto lo urn dell'elenco */
         calcolaUrnElenco(elenco, nomeStruttura, nomeStrutturaNorm, nomeEnte, nomeEnteNorm);
-        log.info("Creazione indice per elenco di versamento avente id '" + elenco.getIdElencoVers());
+        log.info("Creazione indice per elenco di versamento avente id '{}'", elenco.getIdElencoVers());
 
         /* Setto l'elenco a stato chiuso */
         elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.CHIUSO.name());
@@ -712,7 +722,7 @@ public class ElenchiVersamentoEjb {
         /* Scrivo nel log l'avvenuta chiusura */
         evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUserIam,
                 ElencoEnums.OpTypeEnum.CHIUSURA_ELENCO.name());
-        log.info("Fine processo di chiusura manuale elenco di versamento avente id " + elenco.getIdElencoVers());
+        log.info("Fine processo di chiusura manuale elenco di versamento avente id {}", elenco.getIdElencoVers());
     }
 
     /**
@@ -723,7 +733,7 @@ public class ElenchiVersamentoEjb {
      *
      * @param idElencoVers
      *            id elenco di versamento
-     * 
+     *
      * @throws ParerNoResultException
      *             se non viene restituito alcun risultato da
      *             {@link IndiceElencoVersXsdEjb#createIndex(it.eng.parer.entity.ElvElencoVer, boolean) }
@@ -751,16 +761,15 @@ public class ElenchiVersamentoEjb {
         csv.setEnte(elenco.getOrgStrut().getOrgEnte().getNmEnte());
         csv.setAmbiente(elenco.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
         // Aggiorno l'elenco definendo l'hash dell'indice, l'algoritmo usato per il calcolo hash (=SHA-256),
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         csv.setSistemaConservazione(sistemaConservazione);
         // l'encoding del hash (=hexBinary) e la versione del XSD (=2.0) con cui è creato l'indice dell'elenco
         String tmpUrn = MessaggiWSFormat.formattaUrnPartVersatore(csv);
         // calcolo parte urn NORMALIZZATO
         String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(csv, true, Costanti.UrnFormatter.VERS_FMT_STRING);
         // salvo ORIGINALE
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         urnHelper.salvaUrnElvFileElencoVers(
                 elvFileElencoVers, MessaggiWSFormat.formattaUrnElencoIndice(tmpUrn,
                         sdf.format(elenco.getDtCreazioneElenco()), Long.toString(elenco.getIdElencoVers())),
@@ -780,14 +789,14 @@ public class ElenchiVersamentoEjb {
      *            id user iam
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @throws ParseException
      *             errore generico
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void validElenco(long idUserIam, BigDecimal idElencoVers) throws ParseException {
         ElvElencoVer elenco = evWebHelper.findById(ElvElencoVer.class, idElencoVers);
-        log.info("Inizio processo di validazione elenco di versamento avente id " + elenco.getIdElencoVers());
+        log.info("Inizio processo di validazione elenco di versamento avente id {}", elenco.getIdElencoVers());
         /* Assumo lock esclusivo sull'elenco */
         evHelper.lockElenco(elenco);
         /* Controllo se almeno una unità doc appartenente all'elenco e' annullata */
@@ -833,7 +842,7 @@ public class ElenchiVersamentoEjb {
             evWebEjb.deleteElenco(idUserIam, idElencoVers);
         }
 
-        log.info("Fine processo di validazione elenco di versamento avente id " + elenco.getIdElencoVers());
+        log.info("Fine processo di validazione elenco di versamento avente id {}", elenco.getIdElencoVers());
     }
 
     public OrgStrutRowBean getOrgStrutRowBeanWithAmbienteEnte(BigDecimal idStrut) {
@@ -862,7 +871,7 @@ public class ElenchiVersamentoEjb {
      *            data chiusura
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true/false
      */
     public boolean areAllElenchiNonPresentiFirmati(ElvVLisElencoVersStatoTableBean elencoTableBean, Date dataChiusura,
@@ -881,7 +890,7 @@ public class ElenchiVersamentoEjb {
      *            nome elenco
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true/false
      */
     public boolean existNomeElenco(String nmElenco, BigDecimal idStrut) {
@@ -949,8 +958,8 @@ public class ElenchiVersamentoEjb {
             }
 
             /* Aggiorno l'elenco di versamento */
-            log.info("Dimensione elenco di versamento " + elenco.getIdElencoVers() + " pari a "
-                    + elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()) + " KB");
+            log.info("Dimensione elenco di versamento {} pari a {} KB", elenco.getIdElencoVers(),
+                    elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()));
             /* Calcolo la somma delle dimensioni dei componenti inclusi nel documento per AGGIUNTA_DOCUMENTO */
             BigDecimal compDocSize = new BigDecimal(0);
             for (AroStrutDoc strutDoc : documentoPerAggiuntaDocumento.getAroStrutDocs()) {
@@ -960,8 +969,8 @@ public class ElenchiVersamentoEjb {
                 }
             }
 
-            log.info("Dimensioni totali del documento " + documentoPerAggiuntaDocumento.getIdDoc()
-                    + " da rimuovere pari a " + compDocSize + " KB");
+            log.info("Dimensioni totali del documento {} da rimuovere pari a {} KB",
+                    documentoPerAggiuntaDocumento.getIdDoc(), compDocSize);
 
             /* Ricalcolo i valori */
             elenco.setNiUnitaDocModElenco(new BigDecimal(evHelper.contaUdModificatePerDocAggiunti(idElencoVers)));
@@ -970,8 +979,8 @@ public class ElenchiVersamentoEjb {
             elenco.setNiCompAggElenco(new BigDecimal((Long) obj[0]));
             elenco.setNiSizeAggElenco(obj[1] != null ? (BigDecimal) obj[1] : new BigDecimal("0"));
 
-            log.info("NUOVA dimensione elenco di versamento " + elenco.getIdElencoVers() + " pari a "
-                    + elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()) + " KB");
+            log.info("NUOVA dimensione elenco di versamento {} pari a {} KB", elenco.getIdElencoVers(),
+                    elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()));
 
             /* Registro sul log delle operazioni */
             evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUserIam,
@@ -1001,8 +1010,8 @@ public class ElenchiVersamentoEjb {
                 }
 
                 /* Aggiorno l'elenco di versamento */
-                log.info("Dimensione elenco di versamento " + elenco.getIdElencoVers() + " pari a "
-                        + elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()) + " KB");
+                log.info("Dimensione elenco di versamento {} pari a {} KB", elenco.getIdElencoVers(),
+                        elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()));
 
                 /*
                  * Calcolo la somma delle dimensioni dei componenti inclusi nell'unità documentaria per
@@ -1022,8 +1031,8 @@ public class ElenchiVersamentoEjb {
                     }
                 }
 
-                log.info("Dimensioni totali dell'unità documentaria " + unitaDoc.getIdUnitaDoc()
-                        + " da rimuovere pari a " + compUdVersamentoSize + " KB");
+                log.info("Dimensioni totali dell'unità documentaria {} da rimuovere pari a {} KB",
+                        unitaDoc.getIdUnitaDoc(), compUdVersamentoSize);
 
                 /* Ricalcolo i valori */
                 elenco.setNiUnitaDocVersElenco(new BigDecimal(evHelper.contaUdVersate(idElencoVers)));
@@ -1032,8 +1041,8 @@ public class ElenchiVersamentoEjb {
                 elenco.setNiCompVersElenco(new BigDecimal((Long) obj[0]));
                 elenco.setNiSizeVersElenco(obj[1] != null ? (BigDecimal) obj[1] : new BigDecimal("0"));
 
-                log.info("NUOVA dimensione elenco di versamento " + elenco.getIdElencoVers() + " pari a "
-                        + elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()) + " KB");
+                log.info("NUOVA dimensione elenco di versamento {} pari a {} KB", elenco.getIdElencoVers(),
+                        elenco.getNiSizeAggElenco().add(elenco.getNiSizeVersElenco()));
 
                 /* Registro sul log delle operazioni */
                 evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUserIam,
@@ -1126,8 +1135,8 @@ public class ElenchiVersamentoEjb {
                 FileTypeEnum.getStringEnumsList(fileTypes));
         for (ElvFileElencoVer elvFileElencoVer : retrieveFileIndiceElenco) {
             FileTypeEnum fileType = ElencoEnums.FileTypeEnum.valueOf(elvFileElencoVer.getTiFileElencoVers());
-            fileNamePrefix = StringUtils.defaultString(fileNamePrefix).replaceAll(" ", "_");
-            fileNameSuffix = StringUtils.defaultString(fileNameSuffix).replaceAll(" ", "_");
+            fileNamePrefix = StringUtils.defaultString(fileNamePrefix).replace(" ", "_");
+            fileNameSuffix = StringUtils.defaultString(fileNameSuffix).replace(" ", "_");
             String fileExtension = fileType.getFileExtension();
             switch (fileType) {
             case INDICE:
@@ -1135,7 +1144,7 @@ public class ElenchiVersamentoEjb {
             case MARCA_INDICE:
             case FIRMA:
                 // Niente da fare, lo metto per gestire tutti i tipi
-                fileNameSuffix = StringUtils.defaultString(fileNameSuffix).replaceAll("_firma", "");
+                fileNameSuffix = StringUtils.defaultString(fileNameSuffix).replace("_firma", "");
                 break;
             case MARCA_FIRMA:
                 fileNameSuffix += "_firma";
@@ -1159,17 +1168,13 @@ public class ElenchiVersamentoEjb {
 
     private void addEntryToZip(ZipOutputStream out, byte[] file, String filename) throws IOException {
         byte[] data = new byte[1024];
-        InputStream bis = null;
-        try {
-            bis = new ByteArrayInputStream(file);
+        try (InputStream bis = new ByteArrayInputStream(file)) {
             int count;
             out.putNextEntry(new ZipEntry(filename));
             while ((count = bis.read(data, 0, 1024)) != -1) {
                 out.write(data, 0, count);
             }
             out.closeEntry();
-        } finally {
-            IOUtils.closeQuietly(bis);
         }
     }
 
@@ -1187,16 +1192,15 @@ public class ElenchiVersamentoEjb {
         csv.setEnte(elenco.getOrgStrut().getOrgEnte().getNmEnte());
         csv.setAmbiente(elenco.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
         // sistema (new URN)
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         csv.setSistemaConservazione(sistemaConservazione);
         // calcolo parte urn ORIGINALE
         String tmpUrn = MessaggiWSFormat.formattaUrnPartVersatore(csv);
         // calcolo parte urn NORMALIZZATO
         String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(csv, true, Costanti.UrnFormatter.VERS_FMT_STRING);
         // salvo ORIGINALE
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         urnHelper.salvaUrnElvFileElencoVers(
                 elvFileElencoVers, MessaggiWSFormat.formattaUrnElencoIndiceFirmato(tmpUrn,
                         sdf.format(elenco.getDtCreazioneElenco()), Long.toString(elenco.getIdElencoVers())),
@@ -1248,7 +1252,7 @@ public class ElenchiVersamentoEjb {
      *            data firma
      * @param idUtente
      *            id utente
-     * 
+     *
      * @throws IOException
      *             errore generico
      * @throws NoSuchAlgorithmException
@@ -1265,9 +1269,8 @@ public class ElenchiVersamentoEjb {
         final String nmEnte = orgEnte.getNmEnte();
         final String nmAmbiente = orgEnte.getOrgAmbiente().getNmAmbiente();
         String hash = new HashCalculator().calculateHashSHAX(fileFirmato, TipiHash.SHA_256).toHexBinary();
-        final String sistema = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        final String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
 
         ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
         fileElencoVers.setCdVerXsdFile(Costanti.VERSIONE_ELENCO_INDICE_AIP);
@@ -1297,7 +1300,7 @@ public class ElenchiVersamentoEjb {
         String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
                 Costanti.UrnFormatter.VERS_FMT_STRING);
         // salvo ORIGINALE
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         urnHelper.salvaUrnElvFileElencoVers(
                 fileElencoVers, MessaggiWSFormat.formattaUrnElencoIndiciAIPFirmati(tmpUrn,
                         sdf.format(elenco.getDtCreazioneElenco()), Long.toString(elenco.getIdElencoVers())),
@@ -1310,6 +1313,33 @@ public class ElenchiVersamentoEjb {
 
         elenco.setDtFirmaElencoIxAip(signatureDate);
         elenco.setTiStatoElenco(ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name());
+
+        // MEV#30206
+        if (elenco.getTiGestElenco() == null) {
+            if (elenco.getDecCriterioRaggr().getTiGestElencoCriterio() != null) {
+                elenco.setTiGestElenco(elenco.getDecCriterioRaggr().getTiGestElencoCriterio());
+            } else {
+                boolean elencoStandard = elenco.getFlElencoStandard().equals("1");
+                boolean elencoFiscale = elenco.getFlElencoFisc().equals("1");
+                if (!elencoStandard && !elencoFiscale) {
+                    elenco.setTiGestElenco(configurationHelper.getValoreParamApplicByStrut(
+                            CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD,
+                            BigDecimal.valueOf(orgEnte.getOrgAmbiente().getIdAmbiente()),
+                            BigDecimal.valueOf(orgStrut.getIdStrut())));
+                } else if (elencoFiscale) {
+                    elenco.setTiGestElenco(configurationHelper.getValoreParamApplicByStrut(
+                            CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC,
+                            BigDecimal.valueOf(orgEnte.getOrgAmbiente().getIdAmbiente()),
+                            BigDecimal.valueOf(orgStrut.getIdStrut())));
+                } else {
+                    elenco.setTiGestElenco(configurationHelper.getValoreParamApplicByStrut(
+                            CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC,
+                            BigDecimal.valueOf(orgEnte.getOrgAmbiente().getIdAmbiente()),
+                            BigDecimal.valueOf(orgStrut.getIdStrut())));
+                }
+            }
+        }
+        // end MEV#30206
 
         // EVO 19304
         IamUser user = userHelper.findUserById(idUtente);
@@ -1347,23 +1377,45 @@ public class ElenchiVersamentoEjb {
      *            id struttura
      * @param idUtente
      *            id utente
+     * @param isSoloSigillo
+     *            Gestione solo sigillo o firma e sigillo insieme
      * 
      * @throws ParerUserError
      *             errore generico
      */
     public void marcaturaFirmaElenchiIndiciAip(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
-            long idUtente) throws ParerUserError {
+            long idUtente, boolean isSoloSigillo) throws ParerUserError {
         try {
+            /*
+             * MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
+             * 
+             * La logica prevede che se viene chiamato dal job sigillo vuol dire che si vogliono processare solanto gli
+             * elenchi con getsione SIGILLO o SIGILLO_MARC, altrimenti se richiamati da interfaccia utente per la firma
+             * manuale li processa tutti i tipi di gestione, sia di SIGILLO che di FIRMA §/
+             */
+            ArrayList<String> tipiGestione = new ArrayList<>();
+            tipiGestione.add(ElencoEnums.GestioneElencoEnum.SIGILLO.name());
+            if (!isSoloSigillo) {
+                tipiGestione.add(ElencoEnums.GestioneElencoEnum.FIRMA.name());
+            }
             List<ElvVLisElencoDaMarcare> elenchiCompletati = evHelper.retrieveElenchiIndiciAipDaMarcare(idAmbiente,
-                    idEnte, idStrut, idUtente, ElencoEnums.GestioneElencoEnum.FIRMA.name());
+                    idEnte, idStrut, idUtente, tipiGestione);
             gestioneMarcaturaElenchiIndiciAip(null, elenchiCompletati, idUtente);
             Set<Long> struts = new HashSet<>();
+            // MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
+            tipiGestione.clear();
+            tipiGestione.add(ElencoEnums.GestioneElencoEnum.MARCA_SIGILLO.name());
+            if (!isSoloSigillo) {
+                tipiGestione.add(ElencoEnums.GestioneElencoEnum.MARCA_FIRMA.name());
+            }
             List<ElvVLisElencoDaMarcare> elenchiDaMarcare = evHelper.retrieveElenchiIndiciAipDaMarcare(idAmbiente,
-                    idEnte, idStrut, idUtente, ElencoEnums.GestioneElencoEnum.MARCA_FIRMA.name());
+                    idEnte, idStrut, idUtente, tipiGestione);
+            log.info("Elenchi da marcare [{}]", elenchiDaMarcare.size());
             gestioneMarcaturaElenchiIndiciAip(struts, elenchiDaMarcare, idUtente);
             // Presente un requisito che richiede la marcatura di tutti Elenchi Indici AIP nello stato ERR_MARCA
             List<ElvVLisElencoVersStato> listaElenchiErrati = evWebHelper.getListaElenchiDaFirmare(null, null, null,
                     null, null, null, null, null, idUtente, ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name());
+            log.info("Elenchi errati da marcare [{}]", listaElenchiErrati.size());
             gestioneMarcaturaElenchiIndiciAipErrati(struts, listaElenchiErrati, idUtente);
         } catch (ParerInternalError ex) {
             log.error("Errore durante marcatura: ", ex);
@@ -1376,38 +1428,11 @@ public class ElenchiVersamentoEjb {
         for (ElvVLisElencoVersStato elvVLisElencoDaMarcare : elenchiDaMarcare) {
             try {
                 if (struts != null) {
-                    boolean verificaPartizioni = Boolean.parseBoolean(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI, null,
-                                    null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
-                    // List<ElvVLisElencoVersStato> listaElenchiDaChiudere = evWebHelper.getListaElenchiDaFirmare(null,
-                    // null, elvVLisElencoDaMarcare.getIdStrut(), null, null, null, ElencoStatusEnum.DA_CHIUDERE, null,
-                    // idUtente);
-                    // boolean verificaPartizioni =
-                    // Boolean.parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI,
-                    // null, null, null, null));
-                    List<ElvVLisElencoVersStato> listaElenchiDaChiudere = evWebHelper.getListaElenchiDaFirmare(null,
-                            null, elvVLisElencoDaMarcare.getIdStrut(), null, null, null, null, null, idUtente,
-                            ElencoStatusEnum.DA_CHIUDERE.name());
-                    if (struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue()) && verificaPartizioni
-                            && !listaElenchiDaChiudere.isEmpty()) {
-                        if (struttureEjb.checkPartizioni(elvVLisElencoDaMarcare.getIdStrut(), new Date(),
-                                CostantiDB.TiPartition.FILE_ELENCHI_VERS.name()).equals("0")) {
-                            log.error(
-                                    "Partizione di tipo FILE_ELENCHI_VERS non definita per la data corrente e la struttura "
-                                            + elvVLisElencoDaMarcare.getNmAmbiente() + "-"
-                                            + elvVLisElencoDaMarcare.getNmEnte() + "-"
-                                            + elvVLisElencoDaMarcare.getNmStrut());
-                            throw new ParerWarningException();
-                        }
-                    }
+                    struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue());
                 }
                 context.getBusinessObject(ElenchiVersamentoEjb.class).gestioneMarcaturaElenchiIndiciAip(
                         elvVLisElencoDaMarcare.getIdElencoVers().longValue(),
                         ElencoEnums.GestioneElencoEnum.MARCA_FIRMA.name(), idUtente);
-            } catch (ParerWarningException ex) {
-                // Errore di partizione assente, deve essere intercettata per continuare il ciclo
-                context.getBusinessObject(ElenchiVersamentoEjb.class)
-                        .saveErroreMarcaElencoIndiceAip(elvVLisElencoDaMarcare.getIdElencoVers().longValue(), idUtente);
             } catch (ParerInternalError ex) {
                 // Errore di acquisizione marca temporale, deve essere intercettata e gestita, poi terminare lo use case
                 context.getBusinessObject(ElenchiVersamentoEjb.class)
@@ -1422,38 +1447,11 @@ public class ElenchiVersamentoEjb {
         for (ElvVLisElencoDaMarcare elvVLisElencoDaMarcare : elenchiDaMarcare) {
             try {
                 if (struts != null) {
-                    boolean verificaPartizioni = Boolean.parseBoolean(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI, null,
-                                    null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
-                    // List<ElvVLisElencoVersStato> listaElenchiDaChiudere = evWebHelper.getListaElenchiDaFirmare(null,
-                    // null, elvVLisElencoDaMarcare.getIdStrut(), null, null, null, ElencoStatusEnum.DA_CHIUDERE, null,
-                    // idUtente);
-                    // boolean verificaPartizioni =
-                    // Boolean.parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI,
-                    // null, null, null, null));
-                    List<ElvVLisElencoVersStato> listaElenchiDaChiudere = evWebHelper.getListaElenchiDaFirmare(null,
-                            null, elvVLisElencoDaMarcare.getIdStrut(), null, null, null, null, null, idUtente,
-                            ElencoStatusEnum.DA_CHIUDERE.name());
-                    if (struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue()) && verificaPartizioni
-                            && !listaElenchiDaChiudere.isEmpty()) {
-                        if (struttureEjb.checkPartizioni(elvVLisElencoDaMarcare.getIdStrut(), new Date(),
-                                CostantiDB.TiPartition.FILE_ELENCHI_VERS.name()).equals("0")) {
-                            log.error(
-                                    "Partizione di tipo FILE_ELENCHI_VERS non definita per la data corrente e la struttura "
-                                            + elvVLisElencoDaMarcare.getNmAmbiente() + "-"
-                                            + elvVLisElencoDaMarcare.getNmEnte() + "-"
-                                            + elvVLisElencoDaMarcare.getNmStrut());
-                            throw new ParerWarningException();
-                        }
-                    }
+                    struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue());
                 }
                 context.getBusinessObject(ElenchiVersamentoEjb.class).gestioneMarcaturaElenchiIndiciAip(
                         elvVLisElencoDaMarcare.getIdElencoVers().longValue(), elvVLisElencoDaMarcare.getTiGestElenco(),
                         idUtente);
-            } catch (ParerWarningException ex) {
-                // Errore di partizione assente, deve essere intercettata e gestita, poi continuare il ciclo
-                context.getBusinessObject(ElenchiVersamentoEjb.class)
-                        .saveErroreMarcaElencoIndiceAip(elvVLisElencoDaMarcare.getIdElencoVers().longValue(), idUtente);
             } catch (ParerInternalError ex) {
                 // Errore di acquisizione marca temporale, deve essere intercettata e gestita, poi terminare lo use case
                 context.getBusinessObject(ElenchiVersamentoEjb.class)
@@ -1471,7 +1469,9 @@ public class ElenchiVersamentoEjb {
 
         ElencoEnums.GestioneElencoEnum tiGestioneEnum = ElencoEnums.GestioneElencoEnum.valueOf(tiGestElenco);
         switch (tiGestioneEnum) {
+        // MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
         case FIRMA:
+        case SIGILLO:
             /*
              * Aggiunto un controllo per determinare se l'elenco indice AIP si trova realmente nello stato desiderato In
              * caso negativo scrive un log di warning
@@ -1482,14 +1482,17 @@ public class ElenchiVersamentoEjb {
                 elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare);
                 // EVO 19304
                 evWebEjb.registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()),
-                        "MARCA_ELENCO_INDICI_AIP", "Gestione elenco = FIRMA",
+                        "MARCA_ELENCO_INDICI_AIP", "Gestione elenco = " + tiGestioneEnum.name(),
                         it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco.COMPLETATO, null);
             } else {
-                log.warn("Impossibile completare l'elenco indice AIP con id " + elenco.getIdElencoVers()
-                        + ", NON è in stato ELENCO_INDICI_AIP_FIRMATO");
+                log.warn(
+                        "Impossibile completare l'elenco indice AIP con id {}, NON è in stato ELENCO_INDICI_AIP_FIRMATO",
+                        elenco.getIdElencoVers());
             }
             break;
+        // MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
         case MARCA_FIRMA:
+        case MARCA_SIGILLO:
             /*
              * Aggiunto un controllo per determinare se l'elenco indice AIP si trova realmente in uno degli stati
              * desiderati In caso negativo scrive un log di warning
@@ -1499,7 +1502,6 @@ public class ElenchiVersamentoEjb {
                         ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
                 try {
                     /* Richiedo la marca per il file firmato */
-                    // TimeStampToken tsToken = cryptoInvoker.requestTST(firmaElencoIndiciAip);
                     ParerTST tsToken = cryptoInvoker.requestTST(firmaElencoIndiciAip);
                     byte[] marcaTemporale = tsToken.getEncoded();
                     /* Verifico l'avvenuta acquisizione della marcatura temporale */
@@ -1511,14 +1513,12 @@ public class ElenchiVersamentoEjb {
                     }
                 } catch (ParerInternalError ex) {
                     throw ex;
-                    // } catch (IOException | NoSuchAlgorithmException | NoSuchProviderException | TSPException ex) {
                 } catch (CryptoParerException ex) {
-                    log.error("Errore di acquisizione della marca temporale", ex);
                     throw new ParerInternalError(ParerErrorSeverity.ERROR, ExceptionUtils.getRootCauseMessage(ex), ex);
                 }
             } else {
-                log.warn("Impossibile completare l'elenco indice AIP con id " + elenco.getIdElencoVers()
-                        + ", NON è nello stato di quelli marcabili");
+                log.warn("Impossibile completare l'elenco indice AIP con id {}, NON è nello stato di quelli marcabili",
+                        elenco.getIdElencoVers());
             }
             break;
         case NO_FIRMA:
@@ -1570,8 +1570,8 @@ public class ElenchiVersamentoEjb {
         final String nmEnte = orgEnte.getNmEnte();
         final String nmAmbiente = orgEnte.getOrgAmbiente().getNmAmbiente();
         String hash = DigestUtils.sha256Hex(marcaTemporale);
-        final String sistema = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null, TipoAplVGetValAppart.APPLIC);
+        final String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
 
         ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
         fileElencoVers.setTiFileElencoVers(ElencoEnums.FileTypeEnum.MARCA_FIRMA_ELENCO_INDICI_AIP.name());
@@ -1600,7 +1600,7 @@ public class ElenchiVersamentoEjb {
         String tmpUrnNorm = MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
                 Costanti.UrnFormatter.VERS_FMT_STRING);
         // salvo ORIGINALE
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         urnHelper.salvaUrnElvFileElencoVers(
                 fileElencoVers, MessaggiWSFormat.formattaUrnMarcaElencoIndiciAIP(tmpUrn,
                         sdf.format(elenco.getDtCreazioneElenco()), Long.toString(elenco.getIdElencoVers())),
@@ -1612,14 +1612,13 @@ public class ElenchiVersamentoEjb {
                 ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO);
 
         elenco.setDtMarcaElencoIxAip(fileElencoVers.getDtCreazioneFile());
-        // elabElencoIndiceAipEjb.setElencoCompletatoTxReq(elenco.getIdElencoVers());
         List<String> statiUdDocDaCompletare = new ArrayList<>(
                 Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name(),
                         ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name()));
         elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare);
         /* Registro sul log delle operazioni */
         evHelper.writeLogElencoVers(elenco, orgStrut, idUtente, ElencoEnums.OpTypeEnum.MARCA_ELENCO_INDICI_AIP.name());
-        IamUser user = evHelper.findById(IamUser.class, idUtente);
+        IamUser user = genericHelper.findById(IamUser.class, idUtente);
         // EVO 19304
         registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()), "MARCA_ELENCO_INDICI_AIP",
                 "Marca assunta con successo; gestione elenco = MARCA_FIRMA",
@@ -1650,7 +1649,7 @@ public class ElenchiVersamentoEjb {
         evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUtente,
                 ElencoEnums.OpTypeEnum.MARCA_ELENCO_INDICI_AIP_FALLITA.name());
         // EVO 19304
-        IamUser user = evHelper.findById(IamUser.class, idUtente);
+        IamUser user = genericHelper.findById(IamUser.class, idUtente);
         registraStatoElencoVersamento(BigDecimal.valueOf(idElencoVers), "MARCA_ELENCO_INDICI_AIP",
                 "Errore nell’assunzione della marca; gestione elenco = MARCA_FIRMA",
                 TiStatoElenco.ELENCO_INDICI_AIP_ERR_MARCA, user.getNmUserid());
@@ -1661,7 +1660,7 @@ public class ElenchiVersamentoEjb {
      *
      * @param idUser
      *            id utente
-     * 
+     *
      * @return true/false
      */
     public boolean getElenchiIndiciAipToMark(long idUser) {
@@ -1673,29 +1672,20 @@ public class ElenchiVersamentoEjb {
     }
 
     public boolean soloUdAnnul(BigDecimal idElencoVers) {
-        ElvVChkSoloUdAnnul soloUdAnnul = evHelper.findViewById(ElvVChkSoloUdAnnul.class, idElencoVers);
+        ElvVChkSoloUdAnnul soloUdAnnul = genericHelper.findViewById(ElvVChkSoloUdAnnul.class, idElencoVers);
         return soloUdAnnul.getFlSoloUdAnnul() != null && soloUdAnnul.getFlSoloUdAnnul().equals("1")
                 && soloUdAnnul.getFlSoloDocAnnul() != null && soloUdAnnul.getFlSoloDocAnnul().equals("1")
                 && soloUdAnnul.getFlSoloUpdUdAnnul() != null && soloUdAnnul.getFlSoloUpdUdAnnul().equals("1");
     }
 
     public boolean almenoUnaUdAnnul(BigDecimal idElencoVers) {
-        ElvVChkUnaUdAnnul unaUdAnnul = evHelper.findViewById(ElvVChkUnaUdAnnul.class, idElencoVers);
+        ElvVChkUnaUdAnnul unaUdAnnul = genericHelper.findViewById(ElvVChkUnaUdAnnul.class, idElencoVers);
         return unaUdAnnul.getFlUnaUdVersAnnul().equals("1") || unaUdAnnul.getFlUnaUdDocAggAnnul().equals("1")
                 || unaUdAnnul.getFlUnaUdUpdUdAnnul().equals("1");
     }
 
-    // public void manageElencoUdAnnulDaFirmaElenco(BigDecimal idElencoVers) {
-    // ElvElencoVer elencoVers = evHelper.findById(ElvElencoVer.class, idElencoVers);
-    // // Aggiorno le unità doc / doc aggiunti appartenenti all’elenco assegnando stato di generazione indice AIP =
-    // nullo
-    // elabElencoIndiceAipEjb.updateUnitaDocElencoIndiceAIP(idElencoVers.longValue(), null, null);
-    // elabElencoIndiceAipEjb.updateDocumentiElencoIndiceAIP(idElencoVers.longValue(), null, null);
-    // // Elimina l’elenco di versamento
-    // evHelper.removeEntity(elencoVers, true);
-    // }
     public void manageElencoUdAnnulDaFirmaElenco(BigDecimal idElencoVers, long idUserIam) {
-        ElvElencoVer elencoVers = evHelper.findById(ElvElencoVer.class, idElencoVers);
+        ElvElencoVer elencoVers = genericHelper.findById(ElvElencoVer.class, idElencoVers);
 
         List<AroUnitaDoc> unitaDocElencoList = evHelper.getUnitaDocVersateElenco(idElencoVers);
         List<AroDoc> docAggiuntiElencoList = evHelper.getDocAggiuntiElenco(idElencoVers);
@@ -1757,13 +1747,13 @@ public class ElenchiVersamentoEjb {
 
         // Elimino l'elenco di versamento dalla coda degli elenchi in elaborazione
         ElvElencoVersDaElab elencoDaElab = evHelper.retrieveElencoInQueue(elencoVers);
-        evHelper.removeEntity(elencoDaElab, true);
+        genericHelper.removeEntity(elencoDaElab, true);
 
         /* Elimino lo storico delle sessioni di firma in errore per l'elenco (tabella HSM_ELENCO_SESSIONE_FIRMA) */
         List<HsmElencoSessioneFirma> listElencoSessioneFirmaHsm = evHelper.retrieveListaElencoInError(elencoVers,
                 TiEsitoFirmaElenco.IN_ERRORE);
         for (HsmElencoSessioneFirma elencoSessioneFirmaHsm : listElencoSessioneFirmaHsm) {
-            evHelper.removeEntity(elencoSessioneFirmaHsm, true);
+            genericHelper.removeEntity(elencoSessioneFirmaHsm, true);
         }
 
         // Cancello l'elenco di versamento corrente
@@ -1775,7 +1765,7 @@ public class ElenchiVersamentoEjb {
     }
 
     public void manageElencoUdAnnulDaFirmaElencoIndiciAip(BigDecimal idElencoVers) {
-        ElvElencoVer elencoVers = evHelper.findById(ElvElencoVer.class, idElencoVers);
+        ElvElencoVer elencoVers = genericHelper.findById(ElvElencoVer.class, idElencoVers);
         // Modifico alcuni parametri dell'elenco, lo elimino da quelli da elaborare ed elimino il file relativo ad
         // elenco indici aip
         elencoVers.setTiStatoElenco(ElencoStatusEnum.COMPLETATO.name());
@@ -1785,11 +1775,11 @@ public class ElenchiVersamentoEjb {
                 (StringUtils.isNotBlank(nota) ? nota + ";" : "") + "L'elenco contiene solo versamenti annullati");
         // Elimina l’elenco dalla coda degli elenchi da elaborare
         ElvElencoVersDaElab elencoDaElab = evHelper.retrieveElencoInQueue(elencoVers);
-        evHelper.removeEntity(elencoDaElab, true);
+        genericHelper.removeEntity(elencoDaElab, true);
         // Elimina il record relativo al file di tipo ELENCO_INDICI_AIP
         ElvFileElencoVer fileElencoVer = evHelper.getFileIndiceElenco(idElencoVers.longValue(),
                 FileTypeEnum.ELENCO_INDICI_AIP.name());
-        evHelper.removeEntity(fileElencoVer, true);
+        genericHelper.removeEntity(fileElencoVer, true);
     }
 
     public ElvStatoElencoVerTableBean getElvStatoElencoVersTableBean(BigDecimal idElencoVers) throws EMFError {
@@ -1804,7 +1794,7 @@ public class ElenchiVersamentoEjb {
                         statoElencoVersRowBean.setString("nm_userid", statoElencoVers.getIamUser().getNmUserid());
                     }
                     statoElencoVersRowBean.setString("cd_ti_eve_stato_elenco_vers",
-                            (evHelper.findById(DecTiEveStatoElencoVers.class,
+                            (genericHelper.findById(DecTiEveStatoElencoVers.class,
                                     statoElencoVers.getIdTiEveStatoElencoVers())).getCdTiEveStatoElencoVers());
                     statiElencoVersTableBean.add(statoElencoVersRowBean);
                 }
@@ -1829,22 +1819,27 @@ public class ElenchiVersamentoEjb {
         statoElencoVers.setDsCondStatoElencoVers(dsCondStatoElencoVers);
         BigDecimal idTiEveStatoElencoVers = evHelper.getIdTiEveStatoElencoVers(cdTiEveElencoVers);
         statoElencoVers.setIdTiEveStatoElencoVers(idTiEveStatoElencoVers);// setElvElencoVer
-        ElvElencoVer elencoVer = evHelper.findById(ElvElencoVer.class, idElencoVers);
+        ElvElencoVer elencoVer = genericHelper.findById(ElvElencoVer.class, idElencoVers);
         statoElencoVers.setElvElencoVer(elencoVer);
         statoElencoVers.setTsStatoElencoVers(new Date());
-        evHelper.getEntityManager().persist(statoElencoVers);
-        evHelper.getEntityManager().flush();
+        genericHelper.getEntityManager().persist(statoElencoVers);
+        genericHelper.getEntityManager().flush();
         // persist
         elencoVer.setIdStatoElencoVersCor(BigDecimal.valueOf(statoElencoVers.getIdStatoElencoVers()));
         return statoElencoVers.getIdStatoElencoVers();
     }
 
-    public List<ElvVLisElencoVersStato> getElenchiFiscaliStrutturaAperti(long idStrut) {
-        return evHelper.getElenchiFiscaliStrutturaAperti(idStrut, 2010);
-    }
-
     public List<ElvElencoVer> getElenchiFiscaliByStrutturaAperti(long idStrut, int anno) {
-        return evHelper.getElenchiFiscaliByStrutturaAperti(idStrut, anno);
+        // MAC#28509
+        List<ElvElencoVer> list = new ArrayList<>();
+
+        List<ElvElencoVer> l1 = evHelper.getElenchiFiscaliByStrutturaAperti(idStrut, anno);
+        list.addAll(l1);
+        List<ElvElencoVer> l2 = evHelper.getElenchiFiscaliSoloDocAggMdByStrutturaAperti(idStrut, anno);
+        list.addAll(l2);
+
+        return list;
+        // MAC#28509
     }
 
     public boolean isStatoElencoCorrente(long idElencoVers,

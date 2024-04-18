@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.helper;
 
 import it.eng.parer.entity.DecTipoDoc;
@@ -5,6 +22,10 @@ import it.eng.parer.entity.DecTipoStrutDoc;
 import it.eng.parer.entity.DecTipoStrutDocAmmesso;
 import it.eng.parer.entity.DecTipoStrutUdXsd;
 import it.eng.parer.helper.GenericHelper;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -107,13 +128,12 @@ public class TipoDocumentoHelper extends GenericHelper {
      */
     public List<DecTipoDoc> getTipiDocAbilitatiDaStrutturaList(long idUtente, List<BigDecimal> idStrutturaList,
             boolean docPrincipale) {
-        String queryStr = "SELECT u FROM DecTipoDoc u , IamAbilTipoDato iatd WHERE iatd.idTipoDatoApplic = u.idTipoDoc AND iatd.nmClasseTipoDato = 'TIPO_DOC' AND iatd.iamAbilOrganiz.iamUser.idUserIam = :idUtente AND u.orgStrut.idStrut IN :idStrutturaList"
+        String queryStr = "SELECT u FROM DecTipoDoc u , IamAbilTipoDato iatd WHERE iatd.idTipoDatoApplic = u.idTipoDoc AND iatd.nmClasseTipoDato = 'TIPO_DOC' AND iatd.iamAbilOrganiz.iamUser.idUserIam = :idUtente AND u.orgStrut.idStrut IN (:idStrutturaList)"
                 + (docPrincipale ? " AND u.flTipoDocPrincipale = '1'" : "");
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUtente", idUtente);
-        query.setParameter("idStrutturaList", idStrutturaList);
-        List<DecTipoDoc> listaTipiDocAbilitati = query.getResultList();
-        return listaTipiDocAbilitati;
+        query.setParameter("idStrutturaList", longListFrom(idStrutturaList));
+        return query.getResultList();
     }
 
     public Long countDecTipoDocPrincipalePerTipoUnitaDoc(long idTipoUnitaDoc, long idTipoDoc) {
@@ -121,8 +141,7 @@ public class TipoDocumentoHelper extends GenericHelper {
                 "Select COUNT(dtda.decTipoDoc) from DecTipoDocAmmesso dtda WHERE dtda.decTipoDoc.flTipoDocPrincipale='1' AND dtda.decTipoStrutUnitaDoc.decTipoUnitaDoc.idTipoUnitaDoc=:idTipoUnitaDoc AND dtda.decTipoDoc.idTipoDoc = :idTipoDoc");
         query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
         query.setParameter("idTipoDoc", idTipoDoc);
-        Long result = (Long) query.getSingleResult();
-        return result;
+        return (Long) query.getSingleResult();
     }
 
     public List<DecTipoDoc> retrieveDecTipoDocList(BigDecimal idStrut, boolean flPrinc, Date dtSoppressione,
@@ -144,14 +163,13 @@ public class TipoDocumentoHelper extends GenericHelper {
         if (filterValid) {
             queryStr.append(whereClause)
                     .append(" tipoDoc.dtIstituz <= :filterDate AND tipoDoc.dtSoppres >= :filterDate ");
-            whereClause = " AND ";
         }
 
         queryStr.append("ORDER BY tipoDoc.nmTipoDoc ");
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
 
         if (dtSoppressione != null) {
@@ -163,17 +181,14 @@ public class TipoDocumentoHelper extends GenericHelper {
             query.setParameter("filterDate", now);
         }
 
-        List<DecTipoDoc> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoStrutDocAmmesso> getDecTipoStrutDocAmmessoListByIdTipoDoc(Long idTipoDoc) {
         String queryStr = "SELECT u FROM DecTipoStrutDocAmmesso u " + "WHERE u.decTipoDoc.idTipoDoc = :idTipoDoc ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idTipoDoc", idTipoDoc);
-        List<DecTipoStrutDocAmmesso> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoStrutDocAmmesso> getDecTipoStrutDocAmmessoListByIdTipoStrutDoc(Long idTipoStrutDoc) {
@@ -181,8 +196,7 @@ public class TipoDocumentoHelper extends GenericHelper {
                 + "WHERE u.decTipoStrutDoc.idTipoStrutDoc = :idTipoStrutDoc ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
-        List<DecTipoStrutDocAmmesso> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoStrutDoc> getDecTipoStrutDocListByIdStrut(Long idStrut, Date data) {
@@ -191,8 +205,7 @@ public class TipoDocumentoHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idStrut", idStrut);
         query.setParameter("data", data);
-        List<DecTipoStrutDoc> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public DecTipoStrutDocAmmesso getDecTipoStrutDocAmmessoByName(BigDecimal idStrutCorrente, String nmTipoStrutDoc,
@@ -204,7 +217,7 @@ public class TipoDocumentoHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr);
 
-        query.setParameter("idStrutCorrente", idStrutCorrente);
+        query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
         query.setParameter("nmTipoStrutDoc", nmTipoStrutDoc);
         query.setParameter("nmTipoDoc", nmTipoDoc);
 
@@ -245,7 +258,7 @@ public class TipoDocumentoHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr);
 
-        query.setParameter("idStrutCorrente", idStrutCorrente);
+        query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
         query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
         query.setParameter("nmTipoStrutUnitaDoc", nmTipoStrutUnitaDoc);
 

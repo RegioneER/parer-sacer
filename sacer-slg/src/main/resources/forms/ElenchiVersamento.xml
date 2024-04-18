@@ -21,6 +21,8 @@
         <Input Type="STRING"  Description="Descrizione elenco" Name="ds_elenco" />
         <MultiSelect Type="STRING" Description="Stato" Name="ti_stato_elenco" />
         <Input Type="INTEGER"  Description="Numero ore in coda JMS" Name="hh_stato_elenco_in_coda_jms" />
+        <ComboBox Type="STRING" Description="Tipo validazione elenco" Name="ti_valid_elenco"/>
+        <ComboBox Type="STRING" Description="Modalità validazione elenco" Name="ti_mod_valid_elenco"/>
         <ComboBox Type="STRING" Description="Tipo gestione elenco indici AIP" Name="ti_gest_elenco"/>
         <Input Type="DATE" Description="Data creazione da" Name="dt_creazione_elenco_da"/>
         <Input Type="DATE" Description="Data creazione a" Name="dt_creazione_elenco_a"/>
@@ -61,8 +63,7 @@
         <Input Type="INTEGER" Description="Dimensione in bytes" Name="dimensione_byte" GroupingDecimal="true"/>
         <Input Type="DATETIME" Description="Creato il" Name="dt_creazione_elenco" />
         <Input Type="DATETIME" Description="Chiuso il" Name="dt_chius" />
-        <Input Type="DATETIME" Description="Validato il" Name="dt_firma_indice" />
-        <CheckBox Type="STRING" Description="Elenco firmato" Name="fl_elenco_firmato" Readonly="true" />
+        <Input Type="DATETIME" Description="Validato il" Name="dt_firma_indice" />        
         <Input Type="INTEGER" Description="Criterio di raggruppamento" Name="id_criterio_raggr" Hidden="true"/>
         <Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />
         <CheckBox Type="STRING" Description="Elenco standard" Name="fl_elenco_standard" Readonly="true" />
@@ -391,7 +392,7 @@
         <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
         <Input Type="INTEGER" Description="ID Elenco" Name="id_elenco_vers" />
         <ComboBox Type="STRING" Description="Elenco fiscale" Name="fl_elenco_fisc" />
-        <ComboBox Type="STRING" Description="Tipo gestione elenco indici AIP" Name="ti_gest_elenco"/>
+        <MultiSelect Type="STRING" Description="Tipo gestione elenco indici AIP" Name="ti_gest_elenco"/>
         <Input Description="Data creazione da" Name="dt_creazione_elenco_idx_aip_da" Type="DATE"/>
         <Input Description="Ora" MaxLength="2" Name="ore_dt_creazione_elenco_idx_aip_da" Type="INTEGER"/>
         <Input Description="Ora" MaxLength="2" Name="minuti_dt_creazione_elenco_idx_aip_da" Type="INTEGER"/>

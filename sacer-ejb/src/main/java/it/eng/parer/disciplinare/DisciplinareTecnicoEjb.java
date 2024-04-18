@@ -1,17 +1,27 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.disciplinare;
 
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
-import it.eng.parer.aop.TransactionInterceptor;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.grantedEntity.AplParamApplicReport;
-import it.eng.parer.grantedEntity.OrgDiscipStrut;
-import it.eng.parer.grantedEntity.SIUsrOrganizIam;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.ws.utils.CostantiDB;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.Clob;
 import java.text.SimpleDateFormat;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -21,10 +31,22 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
+import it.eng.parer.aop.TransactionInterceptor;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.exception.SacerRuntimeException;
+import it.eng.parer.exception.ParerErrorCategory.SacerErrorCategory;
+import it.eng.parer.grantedEntity.AplParamApplicReport;
+import it.eng.parer.grantedEntity.OrgDiscipStrut;
+import it.eng.parer.grantedEntity.SIUsrOrganizIam;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.utils.CostantiDB;
 
 /**
  *
@@ -51,8 +73,7 @@ public class DisciplinareTecnicoEjb {
         OrgDiscipStrut ods = null;
         log.debug("Inizio produzione disciplinare per la struttura {}", idStrut);
         try {
-            String nmApplic = configurationHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                    CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String nmApplic = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
             par = disciplinareTecnicoHelper.getAplParamApplicReportByAppReport(nmApplic, "DISCIPLINARE_TECNICO");
             SIUsrOrganizIam oIam = ambientiHelper.getSIUsrOrganizIam(new BigDecimal(idStrut));
             if (par != null) {
@@ -78,7 +99,7 @@ public class DisciplinareTecnicoEjb {
                 queryXml = "//fotoOggetto/recordChild[tipoRecord=\"Ente convenzionato\"]/child/idRecord";
                 expr = xPath.compile(queryXml);
                 idEnteConvenzionato = expr.evaluate(doc);
-                if (idEnteConvenzionato != null || !idEnteConvenzionato.equals("")) {
+                if (idEnteConvenzionato != null && !idEnteConvenzionato.equals("")) {
                     queryXml = "//fotoOggetto/recordMaster/keyRecord/datoKey[colonnaKey=\"data_generazione\"]/valoreKey";
                     expr = xPath.compile(queryXml);
                     String dataGenerazioneDisciplinare = expr.evaluate(doc);
@@ -89,8 +110,8 @@ public class DisciplinareTecnicoEjb {
                 }
             }
         } catch (Exception ex) {
-            log.error("ERRORE nella produzione del disciplinare per la struttura {}", idStrut, ex);
-            throw new RuntimeException("ERRORE nella produzione del disciplinare", ex);
+            throw new SacerRuntimeException("ERRORE nella produzione del disciplinare", ex,
+                    SacerErrorCategory.INTERNAL_ERROR);
         }
         if (idEnteConvenzionato == null || idEnteConvenzionato.equals("")) {
             throw new ParerUserError("Nel disciplinare non è presente alcun ente convenzionato!");
@@ -99,7 +120,7 @@ public class DisciplinareTecnicoEjb {
             throw new ParerUserError("Nel disciplinare non è presente alcun accordo!");
         }
         try {
-            if (par != null) {
+            if (ods != null) {
                 ods.setIdEnteConvenz(Long.parseLong(idEnteConvenzionato));
                 ods.setIdAccordoEnte(Long.parseLong(idAccordo));
                 ods.setBlDiscipStrut(arrayPDF);
@@ -107,8 +128,8 @@ public class DisciplinareTecnicoEjb {
                 log.debug("Fine produzione disciplinare per la struttura {}", idStrut);
             }
         } catch (Exception ex) {
-            log.error("ERRORE nella produzione del disciplinare per la struttura {}", idStrut, ex);
-            throw new RuntimeException("ERRORE nella produzione del disciplinare", ex);
+            throw new SacerRuntimeException("ERRORE nella produzione del disciplinare per la struttura " + idStrut, ex,
+                    SacerErrorCategory.INTERNAL_ERROR);
         }
         return arrayPDF;
     }

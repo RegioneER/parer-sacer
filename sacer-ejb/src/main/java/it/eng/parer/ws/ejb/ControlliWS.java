@@ -1,9 +1,27 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.ejb;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -16,11 +34,15 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.entity.AroDoc;
+import it.eng.parer.entity.AroUnitaDoc;
+import it.eng.parer.entity.IamAbilTipoDato;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.idpjaas.logutils.LogDto;
 import it.eng.parer.ws.dto.IWSDesc;
@@ -37,11 +59,13 @@ import it.eng.spagoLite.security.exception.AuthWSException;
  *
  * @author Fioravanti_F
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ControlliWS")
 @LocalBean
 @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
 public class ControlliWS {
 
+    private static final String ECCEZIONE_AUTENTICAZIONE = "Eccezione nella fase di autenticazione del EJB ";
     @EJB
     WsIdpLogger idpLogger;
 
@@ -62,12 +86,14 @@ public class ControlliWS {
         if (versione == null || versione.isEmpty()) {
             switch (tipows) {
             case VERSAMENTO_RECUPERO:
-                rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_010);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_010));
-                break;
+                // EVO#13993
+            case VERSAMENTO_RECUPERO_FASC:
+                // end EVO#13993
             case ANNULLAMENTO:
                 rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_010);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_010));
+                break;
+            default:
                 break;
             }
 
@@ -90,6 +116,9 @@ public class ControlliWS {
         if (!rispostaControlli.isrBoolean()) {
             switch (tipows) {
             case VERSAMENTO_RECUPERO:
+                // EVO#13993
+            case VERSAMENTO_RECUPERO_FASC:
+                // end EVO#13993
                 rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_011);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_011, versione));
                 break;
@@ -97,6 +126,8 @@ public class ControlliWS {
                 rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_003);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_003,
                         StringUtils.join(versioniWs, ",")));
+                break;
+            default:
                 break;
             }
         }
@@ -116,18 +147,19 @@ public class ControlliWS {
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
 
-        log.info("Indirizzo IP del chiamante - access: ws - IP: " + indirizzoIP);
-        // log.debug("Indirizzo IP del chiamante: " + indirizzoIP);
+        log.info("Indirizzo IP del chiamante - access: ws - IP: {}", indirizzoIP);
 
         if ((loginName == null || loginName.isEmpty()) && (certCommonName == null || certCommonName.isEmpty())) {
             switch (tipows) {
             case VERSAMENTO_RECUPERO:
-                rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_004);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_004));
-                break;
+                // EVO#13993
+            case VERSAMENTO_RECUPERO_FASC:
+                // end EVO#13993
             case ANNULLAMENTO:
                 rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_004);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_004));
+                break;
+            default:
                 break;
             }
             return rispostaControlli;
@@ -157,7 +189,7 @@ public class ControlliWS {
             // passo quindi a leggere i dati dell'utente dal db
             IamUser iamUser;
             String queryStr = "select iu from IamUser iu where iu.nmUserid = :nmUseridIn";
-            javax.persistence.Query query = entityManager.createQuery(queryStr, IamUser.class);
+            Query query = entityManager.createQuery(queryStr, IamUser.class);
             /* La query viene fatta per login name oppure se presente per Common Name! */
             query.setParameter("nmUseridIn", loginNameFinale);
             iamUser = (IamUser) query.getSingleResult();
@@ -172,11 +204,14 @@ public class ControlliWS {
             rispostaControlli.setrObject(utente);
             rispostaControlli.setrBoolean(true);
         } catch (AuthWSException e) {
-            log.warn("ERRORE DI AUTENTICAZIONE WS." + " Applicazione: SACER" + " Utente: " + loginNameFinale
-                    + " Tipo errore: " + e.getCodiceErrore().name() + " Indirizzo IP: " + indirizzoIP + " Descrizione: "
-                    + e.getDescrizioneErrore());
+            log.warn(
+                    "ERRORE DI AUTENTICAZIONE WS. Applicazione: SACER Utente: {} Tipo errore: {} Indirizzo IP: {} Descrizione: {}",
+                    loginNameFinale, e.getCodiceErrore().name(), indirizzoIP, e.getDescrizioneErrore());
             switch (tipows) {
             case VERSAMENTO_RECUPERO:
+                // EVO#13993
+            case VERSAMENTO_RECUPERO_FASC:
+                // end EVO#13993
                 if (e.getCodiceErrore().equals(AuthWSException.CodiceErrore.UTENTE_SCADUTO)) {
                     rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_006);
                     rispostaControlli
@@ -195,6 +230,8 @@ public class ControlliWS {
                 rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_001);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_001));
                 break;
+            default:
+                break;
             }
             //
             // log dell'errore di autenticazione; ripeto la sequenza di if per chiarezza.
@@ -211,7 +248,7 @@ public class ControlliWS {
                 // se l'autenticazione fallisce, devo capire se è stato sbagliata la password oppure
                 // non esiste l'utente. Provo a caricarlo e verifico la cosa.
                 String queryStr = "select count(iu) from IamUser iu where iu.nmUserid = :nmUseridIn";
-                javax.persistence.Query query = entityManager.createQuery(queryStr);
+                Query query = entityManager.createQuery(queryStr);
                 query.setParameter("nmUseridIn", loginNameFinale);
                 long tmpNumUtenti = (Long) query.getSingleResult();
                 if (tmpNumUtenti > 0) {
@@ -224,9 +261,9 @@ public class ControlliWS {
             }
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione nella fase di autenticazione del EJB " + e.getMessage()));
-            log.error("Eccezione nella fase di autenticazione del EJB ", e);
+            rispostaControlli.setDsErr(
+                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ECCEZIONE_AUTENTICAZIONE + e.getMessage()));
+            log.error(ECCEZIONE_AUTENTICAZIONE, e);
         }
 
         // scrittura log
@@ -234,6 +271,123 @@ public class ControlliWS {
         //
         return rispostaControlli;
     }
+
+    // MAC#29602
+    public RispostaControlli checkTipoDatoUdIamUserOrganizzazione(String descKey, User utente, Long idUnitaDoc,
+            String classeTipoDato) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+
+        AroUnitaDoc unitaDoc = null;
+        List<IamAbilTipoDato> iamAbilTipoDatos = null;
+
+        try {
+            unitaDoc = entityManager.find(AroUnitaDoc.class, idUnitaDoc);
+            String queryStr = "select t from IamAbilTipoDato t "
+                    + "where t.iamAbilOrganiz.iamUser.idUserIam = :idUserIamIn "
+                    + "and t.iamAbilOrganiz.idOrganizApplic = :idOrganizApplicIn "
+                    + "and t.idTipoDatoApplic = :idTipoDatoApplicIn " + "and t.nmClasseTipoDato = :nmClasseTipoDatoIn ";
+            javax.persistence.Query query = entityManager.createQuery(queryStr, IamAbilTipoDato.class);
+            query.setParameter("idUserIamIn", utente.getIdUtente());
+            query.setParameter("idOrganizApplicIn", utente.getIdOrganizzazioneFoglia());
+            switch (classeTipoDato) {
+            case "REGISTRO":
+                query.setParameter("idTipoDatoApplicIn",
+                        new BigDecimal(unitaDoc.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc()));
+                break;
+            case "TIPO_UNITA_DOC":
+                query.setParameter("idTipoDatoApplicIn",
+                        new BigDecimal(unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
+                break;
+            case "SUB_STRUTTURA":
+                query.setParameter("idTipoDatoApplicIn", new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()));
+                break;
+            default:
+                break;
+            }
+            query.setParameter("nmClasseTipoDatoIn", classeTipoDato);
+            iamAbilTipoDatos = query.getResultList();
+
+            // ottengo un risultato -> abilitato al tipo dato
+            if (iamAbilTipoDatos.size() == 1) {
+                rispostaControlli.setrLong(iamAbilTipoDatos.get(0).getIdAbilTipoDato());
+                rispostaControlli.setrBoolean(true);
+            } else {
+                rispostaControlli.setCodErr(MessaggiWSBundle.UD_019_001);
+                switch (classeTipoDato) {
+                case "REGISTRO":
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_019_001, descKey, String
+                            .format("'REGISTRO': %s", unitaDoc.getDecRegistroUnitaDoc().getCdRegistroUnitaDoc())));
+                    break;
+                case "TIPO_UNITA_DOC":
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_019_001, descKey,
+                            String.format("'TIPO_UNITA_DOC': %s", unitaDoc.getDecTipoUnitaDoc().getNmTipoUnitaDoc())));
+                    break;
+                case "SUB_STRUTTURA":
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_019_001, descKey,
+                            String.format("'SUB_STRUTTURA': %s", unitaDoc.getOrgSubStrut().getNmSubStrut())));
+                    break;
+                default:
+                    break;
+                }
+
+            }
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "ControlliRecupero.checkTipoDatoUdIamUserOrganizzazione: " + e.getMessage()));
+            log.error("Eccezione nella lettura della tabella di decodifica ", e);
+        }
+
+        return rispostaControlli;
+    }
+
+    public RispostaControlli checkTipoDatoDocsIamUserOrganizzazioneByUd(String descKey, User utente, Long idUnitaDoc) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+
+        AroUnitaDoc unitaDoc = null;
+        List<IamAbilTipoDato> iamAbilTipoDatos = null;
+
+        try {
+            unitaDoc = entityManager.find(AroUnitaDoc.class, idUnitaDoc);
+
+            for (AroDoc doc : unitaDoc.getAroDocs()) {
+                String queryStr = "select t from IamAbilTipoDato t "
+                        + "where t.iamAbilOrganiz.iamUser.idUserIam = :idUserIamIn "
+                        + "and t.iamAbilOrganiz.idOrganizApplic = :idOrganizApplicIn "
+                        + "and t.idTipoDatoApplic = :idTipoDatoApplicIn "
+                        + "and t.nmClasseTipoDato = :nmClasseTipoDatoIn ";
+                javax.persistence.Query query = entityManager.createQuery(queryStr, IamAbilTipoDato.class);
+                query.setParameter("idUserIamIn", utente.getIdUtente());
+                query.setParameter("idOrganizApplicIn", utente.getIdOrganizzazioneFoglia());
+                query.setParameter("idTipoDatoApplicIn", new BigDecimal(doc.getDecTipoDoc().getIdTipoDoc()));
+                query.setParameter("nmClasseTipoDatoIn", "TIPO_DOC");
+                iamAbilTipoDatos = query.getResultList();
+
+                // ottengo un risultato -> abilitato al tipo dato
+                if (iamAbilTipoDatos.size() == 1) {
+                    rispostaControlli.setrLong(iamAbilTipoDatos.get(0).getIdAbilTipoDato());
+                    rispostaControlli.setrBoolean(true);
+                } else {
+                    rispostaControlli.setCodErr(MessaggiWSBundle.UD_019_001);
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_019_001, descKey,
+                            String.format("'TIPO_DOC': %s", doc.getDecTipoDoc().getNmTipoDoc())));
+                    rispostaControlli.setrBoolean(false);
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "ControlliRecupero.checkTipoDatoDocsIamUserOrganizzazioneByUd: " + e.getMessage()));
+            log.error("Eccezione nella lettura della tabella di decodifica ", e);
+        }
+
+        return rispostaControlli;
+    }
+    // end MAC#29602
 
     public RispostaControlli checkUtente(String loginName) {
         User utente = null;
@@ -244,10 +398,10 @@ public class ControlliWS {
         try {
             IamUser iamUser;
             String queryStr = "select iu from IamUser iu where iu.nmUserid = :nmUseridIn";
-            javax.persistence.Query query = entityManager.createQuery(queryStr, IamUser.class);
+            Query query = entityManager.createQuery(queryStr, IamUser.class);
             query.setParameter("nmUseridIn", loginName);
-            List<IamUser> tmpUsers = (List<IamUser>) query.getResultList();
-            if (tmpUsers != null && tmpUsers.size() > 0) {
+            List<IamUser> tmpUsers = query.getResultList();
+            if (tmpUsers != null && !tmpUsers.isEmpty()) {
                 iamUser = tmpUsers.get(0);
 
                 if (!iamUser.getFlAttivo().equals("1")) {
@@ -276,9 +430,9 @@ public class ControlliWS {
             }
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione nella fase di autenticazione del EJB " + e.getMessage()));
-            log.error("Eccezione nella fase di autenticazione del EJB ", e);
+            rispostaControlli.setDsErr(
+                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ECCEZIONE_AUTENTICAZIONE + e.getMessage()));
+            log.error(ECCEZIONE_AUTENTICAZIONE, e);
         }
 
         return rispostaControlli;
@@ -290,14 +444,18 @@ public class ControlliWS {
         rispostaControlli.setrBoolean(false);
         boolean checkOrgVersAuth = false;
         long numAbil = 0;
+        Integer tmpIdOrganizz = utente.getIdOrganizzazioneFoglia() != null
+                ? utente.getIdOrganizzazioneFoglia().intValue() : null;
         try {
-            WSLoginHandler.checkAuthz(utente.getUsername(), utente.getIdOrganizzazioneFoglia().intValue(),
-                    descrizione.getNomeWs(), entityManager);
+            WSLoginHandler.checkAuthz(utente.getUsername(), tmpIdOrganizz, descrizione.getNomeWs(), entityManager);
             rispostaControlli.setrBoolean(true);
         } catch (AuthWSException ex) {
             checkOrgVersAuth = true;
             switch (tipows) {
             case VERSAMENTO_RECUPERO:
+                // EVO#13993
+            case VERSAMENTO_RECUPERO_FASC:
+                // end EVO#13993
                 // L''utente {0} non è abilitato entro la struttura versante
                 rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_009);
                 rispostaControlli
@@ -306,6 +464,8 @@ public class ControlliWS {
             case ANNULLAMENTO:
                 rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_008);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_008));
+                break;
+            default:
                 break;
             }
         } catch (Exception ex) {
@@ -319,14 +479,17 @@ public class ControlliWS {
             try {
                 String queryStr = "select count(t) from IamAbilOrganiz t where " + "t.iamUser.idUserIam = :idUserIamIn "
                         + "and t.idOrganizApplic = :idOrganizApplicIn";
-                javax.persistence.Query query = entityManager.createQuery(queryStr, IamUser.class);
+                javax.persistence.Query query = entityManager.createQuery(queryStr);
                 query.setParameter("idUserIamIn", utente.getIdUtente());
-                query.setParameter("idOrganizApplicIn", utente.getIdOrganizzazioneFoglia().intValue());
-                numAbil = (long) query.getSingleResult();
+                query.setParameter("idOrganizApplicIn", BigDecimal.valueOf(tmpIdOrganizz));
+                numAbil = (Long) query.getSingleResult();
                 if (numAbil > 0) {
                     switch (tipows) {
                     case VERSAMENTO_RECUPERO:
-                        // L''utente {0} non è autorizzato alla funzione {1}
+                        // EVO#13993
+                    case VERSAMENTO_RECUPERO_FASC:
+                        // end EVO#13993
+                        // L'utente 0 non è autorizzato alla funzione 1
                         rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_008);
                         rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_008,
                                 utente.getUsername(), descrizione.getNomeWs()));
@@ -334,6 +497,8 @@ public class ControlliWS {
                     case ANNULLAMENTO:
                         rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_008);
                         rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_008));
+                        break;
+                    default:
                         break;
                     }
                 }
@@ -356,23 +521,23 @@ public class ControlliWS {
             String querString = "select count(iu) from IamUser iu " + "JOIN iu.iamAbilOrganizs iao "
                     + "JOIN iao.iamAutorServs ias  " + "WHERE iu.nmUserid = :nmUserid  "
                     + "AND ias.nmServizioWeb = :servizioWeb";
-            javax.persistence.Query query = entityManager.createQuery(querString);
+            Query query = entityManager.createQuery(querString);
             query.setParameter("nmUserid", utente.getUsername());
             query.setParameter("servizioWeb", descrizione.getNomeWs());
             long num = (long) query.getSingleResult();
             if (num > 0) {
                 rispostaControlli.setrBoolean(true);
             } else {
-                // L''utente {0} non è autorizzato alla funzione {1}
+                // L'utente 0 non è autorizzato alla funzione 1
                 rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_008);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_008, utente.getUsername(),
                         descrizione.getNomeWs()));
             }
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione nella fase di autenticazione del EJB " + e.getMessage()));
-            log.error("Eccezione nella fase di autenticazione del EJB ", e);
+            rispostaControlli.setDsErr(
+                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ECCEZIONE_AUTENTICAZIONE + e.getMessage()));
+            log.error(ECCEZIONE_AUTENTICAZIONE, e);
         }
 
         return rispostaControlli;
@@ -393,5 +558,4 @@ public class ControlliWS {
         }
         return rs;
     }
-
 }

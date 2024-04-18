@@ -64,15 +64,18 @@
                     <slf:lblField name="<%=StrutTipoStrutForm.TipoStrutDoc.DS_TIPO_STRUT_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
             </slf:section>
             <slf:section name="<%=StrutTipoStrutForm.STipoCompDoc.NAME%>" styleClass="importantContainer"> 
-
+                    <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.ID_TIPO_COMP_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.NM_TIPO_COMP_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.DS_TIPO_COMP_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.TI_USO_COMP_DOC%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.DT_ISTITUZ%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
                     <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.DT_SOPPRES%>"colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
-
-
             </slf:section>
+             <slf:section name="<%=StrutTipoStrutForm.AllineamentoFormatiAmmessi.NAME%>" styleClass="importantContainer">
+                    <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.FL_GESTITI%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine /><%-- --%>
+                    <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.FL_IDONEI%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
+                    <slf:lblField name="<%=StrutTipoStrutForm.TipoCompDoc.FL_DEPRECATI%>" colSpan= "2" labelWidth="w20" controlWidth="w70"/><sl:newLine />
+                    </slf:section>
              </slf:fieldSet>
            <sl:newLine skipLine="true"/>
 
@@ -81,17 +84,18 @@
                  <sl:newLine skipLine="true"/>
                  <slf:section name="<%=StrutTipoStrutForm.XsdDatiSpecTab.NAME%>" styleClass="importantContainer"> 
                     <slf:listNavBar name="<%= StrutTipoStrutForm.XsdDatiSpecList.NAME%>" pageSizeRelated="true"/>
-<slf:list name="<%= StrutTipoStrutForm.XsdDatiSpecList.NAME%>"  />
+                    <slf:list name="<%= StrutTipoStrutForm.XsdDatiSpecList.NAME%>"  />
                     <slf:listNavBar  name="<%= StrutTipoStrutForm.XsdDatiSpecList.NAME%>" />
                 </slf:section>
                 <slf:section name="<%=StrutTipoStrutForm.FormatoFileAmmessoTab.NAME%>" styleClass="importantContainer"> 
-                     <slf:listNavBar name="<%= StrutTipoStrutForm.FormatoFileAmmessoList.NAME%>" pageSizeRelated="true"/>
-<slf:list name="<%= StrutTipoStrutForm.FormatoFileAmmessoList.NAME%>" />
+                    <slf:listNavBar name="<%= StrutTipoStrutForm.FormatoFileAmmessoList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= StrutTipoStrutForm.FormatoFileAmmessoList.NAME%>" />
                     <slf:listNavBar  name="<%= StrutTipoStrutForm.FormatoFileAmmessoList.NAME%>" />
+                    
                 </slf:section>
                  <slf:section name="<%=StrutTipoStrutForm.STipoRapprCompTab.NAME%>" styleClass="importantContainer"> 
-                     <slf:listNavBar name="<%= StrutTipoStrutForm.TipoRapprCompAmmessoDaTipoCompList.NAME%>" pageSizeRelated="true"/>
-<slf:list name="<%= StrutTipoStrutForm.TipoRapprCompAmmessoDaTipoCompList.NAME%>" />
+                    <slf:listNavBar name="<%= StrutTipoStrutForm.TipoRapprCompAmmessoDaTipoCompList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= StrutTipoStrutForm.TipoRapprCompAmmessoDaTipoCompList.NAME%>" />
                     <slf:listNavBar  name="<%= StrutTipoStrutForm.TipoRapprCompAmmessoDaTipoCompList.NAME%>" />
                 </slf:section>
                 <%--

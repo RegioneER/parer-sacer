@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  Attenzione
  Il codice di questo modulo software è legato:
  * al DBMS Oracle
@@ -15,32 +32,29 @@
  */
 package it.eng.parer.ws.recupero.ejb.oracleBlb;
 
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
-
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.math.BigDecimal;
 import java.sql.Blob;
-import java.sql.Clob;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import it.eng.parer.exception.ConnectionException;
+import it.eng.spagoCore.util.JpaUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author Fioravanti_F
  */
 @Stateless(mappedName = "RecBlbOracle")
@@ -52,103 +66,72 @@ public class RecBlbOracle {
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
+    private static final String QRY_CNT_VRS_CONTENUTO_FILE_KO = "SELECT count(*) FROM VRS_CONTENUTO_FILE_KO t "
+            + "where t.ID_FILE_SESSIONE_KO = ?";
     //
-    private final static String QRY_CNT_ARO_CONTENUTO_COMP = "SELECT count(*) FROM ARO_CONTENUTO_COMP t "
+    private static final String QRY_ARO_CONTENUTO_COMP = "SELECT BL_CONTEN_COMP FROM ARO_CONTENUTO_COMP t "
             + "where t.id_comp_strut_doc = ?";
-    private final static String QRY_CNT_VRS_CONTENUTO_FILE = "SELECT count(*) FROM VRS_CONTENUTO_FILE t "
+    private static final String QRY_VRS_CONTENUTO_FILE_KO = "SELECT BL_CONTENUTO_FILE_SESSIONE FROM VRS_CONTENUTO_FILE_KO t "
+            + "where t.ID_FILE_SESSIONE_KO = ?";
+    private static final String QRY_VRS_CONTENUTO_FILE = "SELECT BL_CONTENUTO_FILE_SESSIONE FROM VRS_CONTENUTO_FILE t "
             + "where t.ID_FILE_SESSIONE = ?";
     //
-    private final static String QRY_ARO_CONTENUTO_COMP = "SELECT BL_CONTEN_COMP FROM ARO_CONTENUTO_COMP t "
-            + "where t.id_comp_strut_doc = ?";
-    private final static String QRY_VRS_CONTENUTO_FILE = "SELECT BL_CONTENUTO_FILE_SESSIONE FROM VRS_CONTENUTO_FILE t "
-            + "where t.ID_FILE_SESSIONE = ?";
-    //
-    private final static String QRY_CNT_FIR_REPORT_COMP = "SELECT count(*) FROM FIR_REPORT t "
+    private static final String QRY_FIR_REPORT_COMP = "SELECT BL_CONTENUTO_REPORT FROM FIR_REPORT t "
             + "where t.id_comp_doc = ?";
-    private final static String QRY_FIR_REPORT_COMP = "SELECT BL_CONTENUTO_REPORT FROM FIR_REPORT t "
-            + "where t.id_comp_doc = ?";
-    private final static int BUFFERSIZE = 10 * 1024 * 1024; // 10 megabyte
+    private static final int BUFFERSIZE = 10 * 1024 * 1024; // 10 megabyte
 
     public enum TabellaBlob {
-        BLOB, ERRORI_VERS, FIR_REPORT
+        BLOB, ERRORI_VERS, FIR_REPORT, ERRORI_VERS_TMP
     }
 
     /**
-     *
      * @param idPadre
      *            id del record padre (relazione 1 a 0/1) dele righe da contare
-     * @param tabellaBlobDaLeggere
-     *            una delle due tabelle di Sacer su cui effettuare il conteggio
-     * 
-     * @return istanza di RispostaControlli contenente in Rboolean il valore true e in RLong il conteggio dei blob
-     *         trovati oppure in CodErr e DsErr codice e descrizione dell'errore e in Rboolean il valore false
+     *
+     * @return numero dei blob o EJBException
      */
-    public RispostaControlli contaBlobComp(long idPadre, TabellaBlob tabellaBlobDaLeggere) {
-        RispostaControlli rispostaControlli;
-        rispostaControlli = new RispostaControlli();
-        rispostaControlli.setrBoolean(false);
+    public long contaBlobErroriVers(long idPadre) {
+        long result = 0L;
         BigDecimal tmpNum = new BigDecimal(0);
         ResultSet rs = null;
-        PreparedStatement pstmt = null;
-        String queryStr = null;
-
-        switch (tabellaBlobDaLeggere) {
-        case BLOB:
-            queryStr = QRY_CNT_ARO_CONTENUTO_COMP;
-            break;
-        case ERRORI_VERS:
-            queryStr = QRY_CNT_VRS_CONTENUTO_FILE;
-            break;
-        case FIR_REPORT:
-            queryStr = QRY_CNT_FIR_REPORT_COMP;
-            break;
-        }
         try {
-            java.sql.Connection conn = entityManager.unwrap(java.sql.Connection.class);
-            try {
-                log.debug(queryStr);
-                pstmt = (PreparedStatement) conn.prepareStatement(queryStr);
+            java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
+            try (PreparedStatement pstmt = conn.prepareStatement(QRY_CNT_VRS_CONTENUTO_FILE_KO)) {
+                log.debug(QRY_CNT_VRS_CONTENUTO_FILE_KO);
                 pstmt.setLong(1, idPadre);
-                rs = (ResultSet) pstmt.executeQuery();
+                rs = pstmt.executeQuery();
                 while (rs.next()) {
                     tmpNum = rs.getBigDecimal(1);
                 }
-                rispostaControlli.setrLong(tmpNum.intValueExact());
-                rispostaControlli.setrBoolean(true);
+                result = tmpNum.intValueExact();
+
             } finally {
-                rs.close();
-                pstmt.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                closeConnection(conn);
             }
         } catch (SQLException ex) {
-            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione RecBlbOracle.contaBlobComp: " + ex.getMessage()));
-            log.error("Eccezione RecBlbOracle.contaBlobComp ", ex);
+            throw new EJBException(ex);
         }
-        return rispostaControlli;
+        return result;
     }
 
     /**
-     *
      * @param idPadre
      *            id del record padre (relazione 1 a 0/1) della riga da cui recuperare il blob
      * @param outputStream
      *            stream su cui scrivere (può essere uno ZipOutputStream o un semplice FileOutputStream
      * @param tabellaBlobDaLeggere
      *            una delle due tabelle di Sacer da cui leggere il blob
-     * 
-     * @return istanza di RispostaControlli contenente in Rboolean il valore true oppure in CodErr e DsErr codice e
-     *         descrizione dell'errore e in Rboolean il valore false
+     *
+     * @return true se è andato tutto bene, false altrimenti
      */
-    public RispostaControlli recuperaBlobCompSuStream(long idPadre, OutputStream outputStream,
-            TabellaBlob tabellaBlobDaLeggere) {
-        RispostaControlli rispostaControlli;
-        rispostaControlli = new RispostaControlli();
-        rispostaControlli.setrBoolean(false);
+    public boolean recuperaBlobCompSuStream(long idPadre, OutputStream outputStream, TabellaBlob tabellaBlobDaLeggere) {
+        boolean rispostaControlli = false;
         Blob blob = null;
         ResultSet rs = null;
         String queryStr = null;
-        InputStream is = null;
         byte[] buffer = new byte[BUFFERSIZE];
 
         switch (tabellaBlobDaLeggere) {
@@ -156,6 +139,9 @@ public class RecBlbOracle {
             queryStr = QRY_ARO_CONTENUTO_COMP;
             break;
         case ERRORI_VERS:
+            queryStr = QRY_VRS_CONTENUTO_FILE_KO;
+            break;
+        case ERRORI_VERS_TMP:
             queryStr = QRY_VRS_CONTENUTO_FILE;
             break;
         case FIR_REPORT:
@@ -163,11 +149,11 @@ public class RecBlbOracle {
             break;
         }
         try {
-            java.sql.Connection conn = entityManager.unwrap(java.sql.Connection.class);
+            java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
             try (PreparedStatement pstmt = conn.prepareStatement(queryStr)) {
                 log.info(queryStr);
                 pstmt.setLong(1, idPadre);
-                rs = (ResultSet) pstmt.executeQuery();
+                rs = pstmt.executeQuery();
                 while (rs.next()) {
                     blob = rs.getBlob(1);
                 }
@@ -175,31 +161,44 @@ public class RecBlbOracle {
                 if (rs != null) {
                     rs.close();
                 }
+                closeConnection(conn);
             }
             if (blob != null) {
-                is = blob.getBinaryStream();
-                int len;
-                while ((len = is.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, len);
-                    log.debug("letto blob e scritto su stream...");
+                try (InputStream is = blob.getBinaryStream();) {
+                    int len;
+                    while ((len = is.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, len);
+                        log.debug("letto blob e scritto su stream...");
+                    }
                 }
-                rispostaControlli.setrBoolean(true);
+                rispostaControlli = true;
             } else {
-                rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                        "RecBlbOracle.recuperaBlobCompSuStream. Errore imprevisto: il blob è nullo"));
+                /*
+                 * MEV 30369 - TODO da rimuovere quando viene completata la migrazione dei BLOB
+                 * (https://parermine.regione.emilia-romagna.it/issues/29978) se non lo trovo su VRS_CONTENUTO_FILE_KO
+                 * lo cerco su VRS_CONTENUTO_FILE perché evidentemente non è ancora stato spostato il CLOB
+                 */
+                if (TabellaBlob.ERRORI_VERS.equals(tabellaBlobDaLeggere)) {
+                    recuperaBlobCompSuStream(idPadre, outputStream, TabellaBlob.ERRORI_VERS_TMP);
+                }
                 log.error("Eccezione nella lettura della tabella dei dati componente: il blob è nullo");
             }
         } catch (SQLException | IOException ex) {
-            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione RecBlbOracle.recuperaBlobCompSuStream: " + ex.getMessage()));
+
             log.error("Eccezione RecBlbOracle.recuperaBlobCompSuStream ", ex);
-        } finally {
-            IOUtils.closeQuietly(is);
         }
 
         return rispostaControlli;
     }
 
+    private void closeConnection(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                throw new ConnectionException(
+                        "RecBlbOracle: Errore nella chiusura della connessione: " + ex.getMessage());
+            }
+        }
+    }
 }

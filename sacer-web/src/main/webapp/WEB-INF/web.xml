@@ -16,6 +16,7 @@
         <filter-name>Charset filter</filter-name>
         <url-pattern>*.html</url-pattern>
     </filter-mapping>
+    <!-- 
     <filter>
         <filter-name>URI Encoding filter</filter-name>
         <filter-class>it.eng.spagoCore.util.UriEcondingFilter</filter-class>
@@ -28,6 +29,7 @@
         <filter-name>URI Encoding filter</filter-name>
         <url-pattern>*.html</url-pattern>
     </filter-mapping>
+    -->
     <!-- SSO + JAX-RS CONFIGURATION -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
@@ -51,37 +53,27 @@
         <url-pattern>/RecPCUniDocMultiMedia</url-pattern>
         <url-pattern>/RecDIPUnitaDocumentariaSync</url-pattern>
         <url-pattern>/RecDIPEsibizioneSync</url-pattern>
-        <url-pattern>/RecAIPUnitaDocumentariaSync</url-pattern>		
-        <url-pattern>/RecDIPComponenteTrasformatoSync</url-pattern>	
-        <url-pattern>/RecDIPRapportiVersSync</url-pattern>	
-        <url-pattern>/InvioRichiestaAnnullamentoVersamenti</url-pattern>	
-        <url-pattern>/RecDIPStatoConservazioneSync</url-pattern>	
-        <url-pattern>/RecDIPProveConservSync</url-pattern>	
+        <url-pattern>/RecAIPUnitaDocumentariaSync</url-pattern>
+        <url-pattern>/RecDIPComponenteTrasformatoSync</url-pattern>
+        <url-pattern>/RecDIPRapportiVersSync</url-pattern>
+        <url-pattern>/InvioRichiestaAnnullamentoVersamenti</url-pattern>
+        <url-pattern>/RecDIPStatoConservazioneSync</url-pattern>
+        <url-pattern>/RecDIPProveConservSync</url-pattern>
     </filter-mapping>
-    <!-- 
-        Per far convivere JAX-RS & la dispatcherServlet di Spring è necessario configurare questi listener.
-        L'ordine è FONDAMENTALE.
-        Vedi https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Development_Guide/sect-RESTEasySpring_Integration.html .
-    -->
+    <!--  -->
+    <filter>
+        <filter-name>keycloack</filter-name>
+        <!--filter-class>org.keycloak.adapters.servlet.KeycloakOIDCFilter</filter-class-->
+        <filter-class>it.eng.spagoCore.util.CustomKeycloakFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>keycloack</filter-name>
+        <url-pattern>/InvioRichiestaAnnullamentoVersamenti</url-pattern>
+    </filter-mapping>
+    <!-- Spring listener-->
     <listener>
-        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
-    <listener>
-        <listener-class>org.jboss.resteasy.plugins.spring.SpringContextLoaderListener</listener-class>
-    </listener>
-    <servlet>
-        <servlet-name>Resteasy</servlet-name>
-        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Resteasy</servlet-name>
-        <url-pattern>/rest/*</url-pattern>
-    </servlet-mapping>
-    <!-- Fondamentale altrimenti il percorso sacer/rest viene ignorato!!! -->
-    <context-param>
-        <param-name>resteasy.servlet.mapping.prefix</param-name>
-        <param-value>/rest</param-value>
-    </context-param>
     <!-- SSO + JAX-RS CONFIGURATION FINE -->
     <listener>
         <listener-class>it.eng.parer.web.util.SerieSessionListener</listener-class>
@@ -92,58 +84,6 @@
     <servlet>
         <servlet-name>ConfigServlet</servlet-name>
         <servlet-class>it.eng.spagoCore.configuration.ConfigServlet</servlet-class>
-        <init-param>
-            <param-name>AF_CONFIG_FILE</param-name>
-            <param-value>/WEB-INF/conf/spago/master.xml</param-value>
-        </init-param>
-        <!-- CONFIGURAZIONE LOGO SULLA CORNICE DELLE PAGINE -->
-        <!-- logo in alto a destra -->
-        <init-param>
-            <param-name>logo1_relativePath</param-name>
-            <param-value>/img/regione/LogoParer.png</param-value>
-        </init-param>
-        <init-param>
-            <param-name>logo1_url</param-name>
-            <param-value>https://poloarchivistico.regione.emilia-romagna.it</param-value>
-        </init-param>
-        <init-param>
-            <param-name>logo1_title</param-name>
-            <param-value>ParER - Polo Archivistico Regionale dell'Emilia-Romagna</param-value>
-        </init-param>
-        <init-param>
-            <param-name>logo1_alt</param-name>
-            <param-value>Logo ParER</param-value>
-        </init-param>
-        <!-- logo in basso a sinistra -->
-        <init-param>
-            <param-name>logo2_relativePath</param-name>
-            <param-value>/img/regione/LogoER.png</param-value>
-        </init-param>
-        <init-param>
-            <param-name>logo2_url</param-name>
-            <param-value>http://www.regione.emilia-romagna.it</param-value>
-        </init-param>
-        <init-param>
-            <param-name>logo2_title</param-name>
-            <param-value>Regione Emilia-Romagna</param-value>
-        </init-param>
-        <init-param>
-            <param-name>logo2_alt</param-name>
-            <param-value>Regione Emilia-Romagna</param-value>
-        </init-param>
-        <!-- CONFIGURAZIONE LOGO SULLA CORNICE DELLE PAGINE FINE -->
-        <init-param>
-            <param-name>titolo_applicativo</param-name>
-            <param-value>SACER</param-value>
-        </init-param>
-        <init-param>
-            <param-name>enableHelpOnline</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <init-param>
-            <param-name>debugAuthorization</param-name>
-            <param-value>true</param-value>
-        </init-param>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet>
@@ -155,6 +95,7 @@
         <servlet-name>SpringServlet</servlet-name>
         <url-pattern>*.html</url-pattern>
         <url-pattern>/VerificaFirme</url-pattern>
+        <url-pattern>/rest/docounter</url-pattern>
         <url-pattern>/detail/*</url-pattern>
     </servlet-mapping>
     <!-- WS RESTful implementati tramite servlet -->
@@ -202,6 +143,16 @@
         <servlet-name>RecAIPUnitaDocumentariaSrvlt</servlet-name>
         <url-pattern>/RecAIPUnitaDocumentariaSync</url-pattern>
     </servlet-mapping>
+    <!-- EVO#13993 -->
+    <servlet>
+        <servlet-name>RecAIPFascicoloSrvlt</servlet-name>
+        <servlet-class>it.eng.parer.restWS.RecAIPFascicoloSrvlt</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RecAIPFascicoloSrvlt</servlet-name>
+        <url-pattern>/RecAIPFascicoloSync</url-pattern>
+    </servlet-mapping>
+    <!-- end EVO#13993 -->
     <servlet>
         <servlet-name>RecProveConservSrvlt</servlet-name>
         <servlet-class>it.eng.parer.restWS.RecProveConservSrvlt</servlet-class>
@@ -262,11 +213,22 @@
         <servlet-name>RecProveConservSrvlt</servlet-name>
         <url-pattern>/RecDIPProveConservSync</url-pattern>
     </servlet-mapping>
-    
+    <servlet>
+        <servlet-name>HealthSrvlt</servlet-name>
+        <servlet-class>it.eng.parer.restWS.HealthSrvlt</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HealthSrvlt</servlet-name>
+        <url-pattern>/actuator/health</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>60</session-timeout>
+        <cookie-config>
+           <http-only>${web.session-config.cookie-config.http-only}</http-only>
+           <secure>${web.session-config.cookie-config.secure}</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
     </session-config>
-    
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>JSP webapp</web-resource-name>
@@ -282,10 +244,14 @@
     </error-page>
     <error-page>
         <error-code>403</error-code>
-        <location>/notAuthorizedError.jsp</location>
+        <location>/jsp/login/notAuthorized.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/jsp/notAllowedError.jsp</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>
-        <location>/genericError.jsp</location>
+        <location>/jsp/genericError.jsp</location>
     </error-page>
 </web-app>

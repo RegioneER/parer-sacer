@@ -16,6 +16,8 @@
     <Section Description="" Legend="Parametri di versamento" LoadOpened="true" Name="ParametriSection" ShowButton="false"/>
     <Section Description="" Legend="Controlli e conservazione" LoadOpened="true" Name="ControlliSection" ShowButton="false"/>
     <Section Description="" Legend="Fascicoli selezionati per l'annullamento" LoadOpened="true" Name="FascicoliToRichAnnulVersSection" ShowButton="true"/>
+    <Section Name="versioniXsdMetadatiProfiloFascicoloSection" Description="" Legend=""  ShowButton="false" LoadOpened="true"/>
+    <Section Name="versioniXsdMetadatiProfiloArkSection" Description="" Legend=""  ShowButton="false" LoadOpened="true"/>
 
     <!-- Filtri di ricerca semplice dei Fascicoli -->
     <Fields Description="Filtri fascicoli ricerca semplice" Name="FiltriFascicoliRicercaSemplice">
@@ -25,7 +27,9 @@
         <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
         <Input Description="Numero da" Name="cd_key_fascicolo_da" Type="STRING"/>
         <Input Description="Numero a" Name="cd_key_fascicolo_a" Type="STRING"/>
-        <ComboBox Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="INTEGER"/>
+        <ComboBox Description="Tipo fascicolo" Name="id_tipo_fascicolo" Type="INTEGER" Trigger="true"/>
+        <ComboBox Description="Tipi xsd" Name="id_modello_xsd_fascicolo" Type="INTEGER" Trigger="true"/>
+        <ComboBox Description="Versioni xsd" Name="cd_xsd" Type="STRING"/>
         <Input Description="Oggetto" Name="ds_oggetto_fascicolo" Type="STRING"/>
         <Input Description="Data apertura da" Name="dt_ape_fasciolo_da" Type="DATE"/>
         <Input Description="Data apertura a" Name="dt_ape_fasciolo_a" Type="DATE"/>
@@ -56,6 +60,7 @@
         <ComboBox Description="Forza classificazione" Name="fl_forza_contr_classif" Type="STRING"/>
         <ComboBox Description="Forza numero" Name="fl_forza_contr_numero" Type="STRING"/>
         <ComboBox Description="Forza collegamento" Name="fl_forza_contr_colleg" Type="STRING"/>
+        <ComboBox Description="Versione servizio versamento" Name="cd_versione_ws" Type="STRING"/>
         <Input Description="Data acquisizione da" Name="ts_vers_fascicolo_da" Type="DATE"/>
         <Input Description="Ora" MaxLength="2" Name="ore_ts_vers_fascicolo_da" Type="INTEGER"/>
         <Input Description="Ora" MaxLength="2" Name="minuti_ts_vers_fascicolo_da" Type="INTEGER"/>
@@ -115,22 +120,23 @@
     </List>
 
     <!-- Dettaglio dei Fascicoli -->
+    <!-- Tab -->
     <Tab Description="Dettaglio Fascicolo" Name="FascicoliDettaglioTabs">
+        <!-- Tab in alto -->
         <TabElement Description="Informazioni principali" Name="InfoPrincipaliFascicolo"/>
+        <TabElement Description="Contenuto" Name="ContenutoFascicolo"/>
+        <TabElement Description="Profilo generale" Name="ProfiloGeneraleFascicolo"/>
+        <TabElement Description="Profilo archivistico" Name="ProfiloArchivisticoFascicolo"/>                                
+        <TabElement Description="Profilo normativo" Name="ProfiloNormativoFascicolo"/>
+        <TabElement Description="Profilo specifico" Name="ProfiloSpecificoFascicolo"/>                
+    </Tab>
+    <Tab Description="Dettaglio Fascicolo" Name="FascicoliDettaglioBottomTabs">        
+        <!-- Tab in basso -->
         <TabElement Description="Informazioni versamento" Name="InfoVersamentoFascicolo"/>
         <TabElement Description="Indice SIP" Name="XMLRichiestaFascicolo"/>
-        <TabElement Description="Rapporto di versamento" Name="XMLRapportoFascicolo"/>
-        <TabElement Description="File Fascicolo" Name="XMLMetaFileFascicolo"/>
+        <TabElement Description="Rapporto di versamento" Name="XMLRapportoFascicolo"/>        
         <TabElement Description="Indice AIP" Name="XMLMetaIndiceAipFascicolo"/>
     </Tab>
-    <Section Description="" Legend="Versatore" Name="VersatoreSection" LoadOpened="true" ShowButton="false"/>
-    <Section Description="" Legend="Soggetto Produttore" Name="SoggProduttoreSection" LoadOpened="false" ShowButton="true"/>
-    <Section Description="" Legend="Fascicolo" Name="FascicoloDettSection" LoadOpened="true" ShowButton="true"/>
-    <Section Description="" Legend="Segnatura archivistica" Name="SegnaturaArchivisticaSection" LoadOpened="true" ShowButton="true"/>
-    <Section Description="" Legend="Fascicolo di appartenenza" Name="FascicoloAppartenenzaDettSection" LoadOpened="true" ShowButton="false" BorderHidden="true"/>
-    <Section Description="" Legend="Composizione" Name="ComposizioneSection" LoadOpened="true" ShowButton="false"/>
-    <Section Description="" Legend="Note" Name="NoteSection" LoadOpened="false" ShowButton="true"/>
-    <Section Description="" Legend="Versatore" Name="InfoVersatoreSection" LoadOpened="true" ShowButton="false"/>
     <Tab Description="Liste Dettaglio Fascicolo" Name="FascicoliDettaglioListsTabs">
         <TabElement Description="Unità documentarie" Name="UnitaDocumentarie"/>
         <TabElement Description="Amministrazioni partecipanti" Name="AmministrazioniPartecipanti"/>
@@ -140,13 +146,37 @@
         <TabElement Description="Collegamenti" Name="Collegamenti"/>
         <TabElement Description="Elenchi di versamento" Name="ElvFascicoli"/>
     </Tab>
+    <!-- Section -->
+    <Section Description="" Legend="Unità documentarie" LoadOpened="true" Name="UnitaDocumentarieSection" ShowButton="false"/>
+    <Section Description="" Legend="Sottofascicoli" LoadOpened="true" Name="SottofascicoliSection" ShowButton="false"/>
+    <Section Description="" Legend="Soggetti" LoadOpened="true" Name="SoggettiSection" ShowButton="false"/>
+    <Section Description="" Legend="Eventi" LoadOpened="true" Name="EventiSection" ShowButton="false"/>
+    <Section Description="" Legend="Fascicoli collegati" Name="FascicoliCollegatiSection" LoadOpened="true" ShowButton="false"/>
+    <Section Description="" Legend="Attributi" Name="AttributiFascicoloSection" LoadOpened="true" ShowButton="false"/>
+    
+    
+    <Section Description="" Legend="Versatore" Name="VersatoreSection" LoadOpened="true" ShowButton="false"/>
+    <Section Description="" Legend="Soggetto Produttore" Name="SoggProduttoreSection" LoadOpened="false" ShowButton="true"/>
+    <Section Description="" Legend="Fascicolo" Name="FascicoloDettSection" LoadOpened="true" ShowButton="true"/>    
+    <Section Description="" Legend="Fascicolo di appartenenza" Name="FascicoloAppartenenzaDettSection" LoadOpened="true" ShowButton="false" BorderHidden="true"/>
+    <Section Description="" Legend="Composizione" Name="ComposizioneSection" LoadOpened="true" ShowButton="false"/>
+    <Section Description="" Legend="Note" Name="NoteSection" LoadOpened="false" ShowButton="true"/>
+    <Section Description="" Legend="Versatore" Name="InfoVersatoreSection" LoadOpened="true" ShowButton="false"/>
+    <Section Description="" Legend="Dettaglio XSD" Name="XsdMetadatiSegnaturaSection" LoadOpened="false" ShowButton="true"/>
+    <Section Description="" Legend="Dettaglio XSD" Name="XsdMetadatiProfiloSection" LoadOpened="false" ShowButton="true"/>
+    <Section Name="xsdAttribProfiloSection" Description="" Legend="Elenco attributi"  ShowButton="false" LoadOpened="true"/>
+    
+    <!-- Campi di dettaglio dei Fascicoli -->
     <Fields Description="Dettaglio fascicolo" Name="FascicoloDetail">
+        <Input Description="ID fascicolo" Name="id_fascicolo" Type="INTEGER" Hidden="true"/>
         <Input Description="Ambiente" Name="nm_ambiente" Type="STRING"/>
         <Input Description="Ente" Name="nm_ente" Type="STRING"/>
         <Input Description="Struttura" Name="nm_strut" Type="STRING"/>
         <Input Description="Ambiente" Name="nm_ambiente_ente_convenz" Type="STRING"/>
         <Input Description="Codice" Name="cd_ente_convenz" Type="STRING"/>
         <Input Description="Denominazione" Name="nm_ente_convenz" Type="STRING"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_fascicolo_titolo" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_fascicolo_titolo" Type="STRING"/>
         <Input Description="Anno" MaxLength="4" Name="aa_fascicolo" Type="INTEGER"/>
         <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
         <Input Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="STRING"/>
@@ -154,13 +184,15 @@
         <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>
         <Input Description="Data chiusura" Name="dt_chiu_fascicolo" Type="DATE"/>
         <Input Description="Amministrazione titolare" Name="ammin_titol" Type="STRING"/>
+        <Input Description="Versione profilo" Name="versione_profilo" Type="STRING"/>
         <Input Description="Procedimento amministrativo" Name="proc_ammin" Type="STRING"/>
         <Input Description="Tempo di conservazione" MaxLength="4" Name="ni_aa_conservazione" Type="INTEGER"/>
         <Input Description="Livello di riservatezza" Name="cd_livello_riserv" Type="STRING"/>
         <Input Description="Data versamento" Name="ts_ini_ses" Type="DATE"/>
+        <Input Description="Urn" Name="urn_fas" Type="STRING"/>
         <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
         <Input Description="Stato generazione indice AIP" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
-        <Input Description="Indice classificazione" Name="cd_composito_voce_titol" Type="STRING"/>
+        <Input Description="Classificazione" Name="indice_classif" Type="STRING"/>
         <Input Description="Descrizione" Name="label_tree" Type="STRING" Readonly="true"/>
         <Input Description="Anno" MaxLength="4" Name="aa_fascicolo_padre" Type="INTEGER"/>
         <Input Description="Numero" Name="cd_key_fascicolo_padre" Type="STRING"/>
@@ -181,10 +213,14 @@
         <ComboBox Description="Forza classificazione" Name="fl_forza_contr_classif" Type="STRING"/>
         <ComboBox Description="Forza numero" Name="fl_forza_contr_numero" Type="STRING"/>
         <ComboBox Description="Forza collegamento" Name="fl_forza_contr_colleg" Type="STRING"/>
-        <Input Description="Versione profilo generale" Name="cd_xsd_profilo" Type="STRING"/>
-        <Input Description="Versione profilo archivistico" Name="cd_xsd_segnatura" Type="STRING"/>
+        <Input Description="Versione profilo" Name="cd_xsd_profilo" Type="STRING"/>
+        <Input Description="Versione profilo" Name="cd_xsd_segnatura" Type="STRING"/>
+        <Input Description="Versione profilo" Name="cd_xsd_normativo" Type="STRING"/>
+        <Input Description="Versione profilo" Name="cd_xsd_specifico" Type="STRING"/>
         <CheckBox Name="fl_default_profilo" Description="Standard" Type="STRING"/>
         <CheckBox Name="fl_default_segnatura" Description="Standard" Type="STRING"/>
+        <CheckBox Name="fl_default_normativo" Description="Standard" Type="STRING"/>
+        <CheckBox Name="fl_default_specifico" Description="Standard" Type="STRING"/>
         <Input Description="Urn indice SIP" Name="ds_urn_xml_sip" Type="STRING"/>
         <Input Description="Hash SIP" Name="ds_hash_xml_sip" Type="STRING"/>
         <Input Description="Algoritmo" Name="ds_algo_hash_xml_sip" Type="STRING"/>
@@ -195,8 +231,20 @@
         <Input Description="Algoritmo" Name="ds_algo_hash_xml_rapp" Type="STRING"/>
         <Input Description="Encoding" Name="cd_encoding_hash_xml_rapp" Type="STRING"/>
         <TextArea Description="" Name="bl_xml_vers_rapp" Rows="500" Cols="500" MaxLength="1000000000" Type="STRING"/>
-        <Input Name="ds_abilitazione_ud" Description="Messaggio abilitazioni" Type="STRING"/>
-    </Fields>
+        <Input Name="ds_abilitazione_ud" Description="Messaggio abilitazioni" Type="STRING"/>        
+        <TextArea Description="" Name="bl_xml_normativo" Rows="500" Cols="500" MaxLength="1000000000" Type="STRING"/>
+        <!-- Bottone Scarica AIP fascicolo -->
+        <Button Description="Scarica AIP fascicolo" Name="scarica_xml_unisincro_fasc" Type="STRING"/>
+        <Button Description="Scarica XSD" Name="scarica_xsd_profilo_generale" Type="STRING" />
+        <Button Description="Scarica profilo generale" Name="scarica_profilo_generale" Type="STRING" />
+        <Button Description="Scarica XSD" Name="scarica_xsd_profilo_archivistico" Type="STRING" />
+        <Button Description="Scarica profilo archivistico" Name="scarica_profilo_archivistico" Type="STRING" />
+        <Button Description="Scarica XSD" Name="scarica_xsd_profilo_normativo" Type="STRING" />
+        <Button Description="Scarica profilo normativo" Name="scarica_profilo_normativo" Type="STRING" />
+        <Button Description="Scarica XSD" Name="scarica_xsd_profilo_specifico" Type="STRING" />
+        <Button Description="Scarica profilo specifico" Name="scarica_profilo_specifico" Type="STRING" />
+        <Button Description="Scarica metadati" Name="scarica_external_metadata" Type="STRING" />
+    </Fields>    
     <Fields Description="Dettaglio File fascicolo" Name="MetaFileFascicoloDetail">
         <Input Description="Urn originale" Name="ds_urn_file_fascicolo" Type="STRING"/>
         <Input Description="Urn normalizzato" Name="ds_urn_normaliz_file_fascicolo" Type="STRING"/>
@@ -208,13 +256,13 @@
     <Fields Description="Dettaglio Indice AIP del fascicolo" Name="MetaIndiceAipFascicoloDetail">
         <Input Description="Urn originale" Name="ds_urn_aip_fascicolo" Type="STRING"/>
         <Input Description="Urn normalizzato" Name="ds_urn_normaliz_aip_fascicolo" Type="STRING"/>
-        <Input Description="Hash" Name="hash_personalizzato" Type="STRING"/>
+        <Input Description="Hash" Name="hash_personalizzato" Type="STRING"/>        
+        <Input Description="Algoritmo" Name="algoritmo_personalizzato" Type="STRING"/>
+        <Input Description="Encoding" Name="cd_encoding_hash_aip_fascicolo" Type="STRING"/>
         <Input Description="Ente conservatore" Name="nm_ente_conserv" Type="STRING"/>
-<!--        <Input Description="Hash AIP" Name="ds_hash_file" Type="STRING"/>
-        <Input Description="Algoritmo" Name="ds_algo_hash_file" Type="STRING"/>
-        <Input Description="Encoding" Name="cd_encoding_hash_file" Type="STRING"/>-->
         <TextArea Description="" Name="bl_file_ver_indice_aip" Rows="500" Cols="500" MaxLength="1000000000" Type="STRING"/>
     </Fields>
+    <!-- Liste di dettaglio dei Fascicoli -->    
     <List Name="UnitaDocList" Description="Unita documentarie del fascicolo">
         <Input Name="id_unita_doc" Description="ID Unita Documentaria" Type="INTEGER" Hidden="true"/>
         <Input Name="cd_registro_key_unita_doc" Description="Registro" Type="STRING"/>
@@ -222,32 +270,32 @@
         <Input Name="cd_key_unita_doc" Description="Numero" Type="STRING"/>
         <Input Name="nm_tipo_unita_doc" Description="Tipo unità documentaria" Type="STRING"/>
         <Input Name="nm_tipo_doc" Description="Tipo documento principale" Type="STRING"/>
-        <Input Name="dt_creazione" Description="Data versamento" Type="DATE"/>
-        <Input Name="ti_stato_conservazione" Description="Stato conservazione" Type="STRING"/>
+        <Input Name="dt_reg_unita_doc" Description="Data dell'UD" Type="DATE"/>
+        <Input Name="ni_posizione" Description="Posizione UD nel fascicolo" Type="INTEGER"/>
+        <!--<Input Name="ti_stato_conservazione" Description="Stato conservazione" Type="STRING"/>-->
         <CheckBox Name="annullata" Description="Versamento annullato" Type="STRING" Readonly="true" />
     </List>
-    <List Name="AmministrazioniPartecList" Description="Amministrazioni partecipanti del fascicolo">
-        <Input Name="ti_codice_ammin_partec" Description="Tipo codice" Type="STRING"/>
-        <Input Name="cd_ammin_partec" Description="Codice IPA" Type="STRING"/>
-        <Input Name="ds_ammin_partec" Description="Descrizione" Type="STRING"/>
+    <List Name="SottofascicoliList" Description="Sottofascicoli">
+        <Input Name="aa_key_unita_doc" Description="Anno" Type="INTEGER" MaxLength="4"/>
+        <Input Name="cd_key_unita_doc" Description="Numero" Type="STRING"/>
+        <Input Description="Oggetto" Name="ds_oggetto_fascicolo" Type="STRING"/>
+        <Input Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="STRING"/>        
+        <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>
+        <Input Description="Data chiusura" Name="dt_chiu_fascicolo" Type="DATE"/>
+        <Input Description="Data versamento" Name="ts_ini_ses" Type="DATE"/>
     </List>
     <List Name="SoggettiCoinvoltiList" Description="Soggetti coinvolti del fascicolo">
-        <Input Name="ti_rapp" Description="Tipo rapporto" Type="STRING"/>
-        <Input Name="nm_nome_sog" Description="Nome" Type="STRING"/>
-        <Input Name="nm_cogn_sog" Description="Cognome" Type="STRING"/>
-        <Input Name="ds_denom_sog" Description="Denominazione" Type="STRING"/>
-        <Input Name="ti_cd_sog" Description="Tipo identificativo" Type="STRING"/>
-        <Input Name="cd_sog" Description="Identificativo" Type="STRING"/>
+        <Input Name="denominazione" Description="Denominazione" Type="STRING"/>
+        <Input Name="ti_sog" Description="Tipo persona" Type="STRING"/>
+        <Input Name="ti_rapp" Description="Ruolo" Type="STRING"/>
+        <Input Name="cd_sog" Description="Identificativo generico" Type="STRING"/>        
+        <Input Name="ti_cd_sog" Description="Identificativo IPA" Type="STRING"/>        
+        <Input Name="evento_soggetto" Description="Evento soggetto" Type="STRING"/>        
     </List>
-    <List Name="ResponsabiliList" Description="Responsabili del fascicolo">
-        <Input Name="ti_resp" Description="Responsabilità" Type="STRING"/>
-        <Input Name="nm_nome_resp" Description="Nome" Type="STRING"/>
-        <Input Name="nm_cogn_resp" Description="Cognome" Type="STRING"/>
-        <Input Name="ti_cd_resp" Description="Tipo identificativo" Type="STRING"/>
-        <Input Name="cd_resp" Description="Identificativo" Type="STRING"/>
-    </List>
-    <List Name="UOResponsabiliList" Description="Responsabili UO del fascicolo">
-        <Input Name="cd_uni_org_resp" Description="Unità organizzativa responsabile" Type="STRING"/>
+    <List Name="EventiList" Description="Eventi">
+        <Input Name="ds_denom_evento" Description="Denominazione" Type="STRING"/>
+        <Input Description="Data inizio" Name="ts_apertura" Type="DATE"/>
+        <Input Description="Data fine" Name="ts_chiusura" Type="DATE"/>
     </List>
     <List Name="CollegamentiList" Description="Collegamenti del fascicolo">
         <Input Name="aa_fascicolo_link" Description="Anno" MaxLength="4" Type="INTEGER"/>
@@ -255,7 +303,12 @@
         <Input Name="ds_link" Description="Descrizione" Type="STRING"/>
         <CheckBox Name="fl_link" Description="Risolto" Type="STRING" Readonly="true"/>
         <Input Name="id_fascicolo_link" Description="ID fascicolo link" Type="INTEGER" Hidden="true"/>
+    </List>    
+    <List Description="Dati specifici fascicolo" Name="DatiSpecificiFascicoloList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Chiave" Name="nm_attrib_dati_spec" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
     </List>
+    
     <!-- Lista elenchi di versamento del fascicolo -->
     <List Name="ElvFascicoliList" Description="Lista elenchi di versamento del fascicolo">
         <Input Name="id_elenco_vers_fasc"  Description="ID elenco" Type="INTEGER"/>
@@ -299,5 +352,17 @@
         <Input Name="nt_annul" Description="Motivazione" Type="STRING"/>
         <Input Name="scarica_xml_rich" Description="Richiesta annullamento" Type="STRING" />
         <Input Name="scarica_xml_risp" Description="Esito annullamento" Type="STRING" />
+    </List>
+    
+    <!-- Lista valore attributi fascicolo - generale -->
+    <List Description="Valore attributi fascicolo" Name="ValoriAttribFascicoliList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Chiave" Name="nm_attrib_fascicolo" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
+    </List>
+    
+    <!-- Lista valore attributi fascicolo - generale -->
+    <List Description="Valore attributi fascicolo" Name="ValoriAttribFascicoliArkList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Chiave" Name="nm_attrib_fascicolo" Type="STRING"/>
+        <Input Description="Valore" Name="dl_valore" Type="STRING"/>
     </List>
 </Form>

@@ -1,4 +1,51 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.serie.ejb;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.helper.RegistroHelper;
@@ -34,15 +81,18 @@ import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.SerSerie;
 import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.serie.helper.TipoSerieHelper;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.util.LogParam;
+import it.eng.parer.serie.helper.TipoSerieHelper;
 import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecRowBean;
 import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecTableBean;
 import it.eng.parer.slite.gen.tablebean.DecCampoInpUdRowBean;
 import it.eng.parer.slite.gen.tablebean.DecCampoInpUdTableBean;
+import it.eng.parer.slite.gen.tablebean.DecCampoInpUdTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.DecCampoOutSelUdRowBean;
 import it.eng.parer.slite.gen.tablebean.DecCampoOutSelUdTableBean;
+import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdAttbRowBean;
 import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdAttbTableBean;
 import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdRowBean;
 import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdTableBean;
@@ -59,9 +109,6 @@ import it.eng.parer.slite.gen.tablebean.DecTipoSerieRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoSerieTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoSerieUdRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoSerieUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecCampoInpUdTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.DecCampoOutSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecFiltroSelUdAttbRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
 import it.eng.parer.web.dto.DecFiltroSelUdAttbBean;
 import it.eng.parer.web.dto.DecFiltroSelUdDatoBean;
@@ -73,33 +120,8 @@ import it.eng.spagoLite.db.base.BaseTableInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Stateless
 @LocalBean
 @Interceptors({ TransactionInterceptor.class })
@@ -830,7 +852,7 @@ public class TipoSerieEjb {
              * Controllo se la mia mappa online contiene ancora i valori presenti su DB Se non li contiene, significa
              * che sono stati eleminati, e dunque vanno eliminati da DB
              */
-            Iterator itDB = mappaPresentiDB.entrySet().iterator();
+            Iterator<Entry<BigDecimal, Map<String, BigDecimal>>> itDB = mappaPresentiDB.entrySet().iterator();
             while (itDB.hasNext()) {
                 Map.Entry entryDB = (Map.Entry) itDB.next();
                 // Se la coppia nmTipoDoc-idFiltroSelUd non è più presente online...
@@ -1317,6 +1339,17 @@ public class TipoSerieEjb {
         return tipoSerieHelper.getDecAttribDatiSpecTableBean(idTipoEntita, tipoEntitaSacer);
     }
 
+    /**
+     * @deprecated
+     * 
+     * @param idTipoSerie
+     *            id del tipo serie
+     * @param tipoEntitaSacer
+     *            tipo di entità
+     * 
+     * @return {@link DecAttribDatiSpecTableBean}
+     */
+    @Deprecated
     public DecAttribDatiSpecTableBean getDecAttribDatiSpecTableBeanForTipoSerie(BigDecimal idTipoSerie,
             Constants.TipoEntitaSacer tipoEntitaSacer) {
         DecAttribDatiSpecTableBean result = new DecAttribDatiSpecTableBean();

@@ -1,40 +1,54 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.migrazioneObjectStorage.helper;
 
-import it.eng.parer.entity.OrgSubPartition;
-import it.eng.parer.entity.OstMigrazStrutMese;
-import it.eng.parer.entity.OstMigrazSubPart;
-import it.eng.parer.helper.GenericHelper;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.OrgSubPartition;
 import it.eng.parer.entity.OstMigrazFile;
-import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.entity.OstMigrazStrutMese;
+import it.eng.parer.entity.OstMigrazSubPart;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.OstVChkUsoTb;
 import it.eng.parer.viewEntity.OstVLisStrutMmBlob;
 import it.eng.parer.viewEntity.OstVLisSubpartBlobByIstz;
-import java.util.ArrayList;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.LockModeType;
-import javax.persistence.TypedQuery;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "VerificaMigrazioneSubPartizioneHelper")
 @LocalBean
 public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(VerificaMigrazioneSubPartizioniHelper.class);
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
@@ -42,7 +56,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
     public List<OstMigrazSubPart> getOstMigrazSubPartList(List<String> tiStato, String niFile) {
         String queryStr = "SELECT migrazSubPart FROM OstStatoMigrazSubPart statoMigrazSubPart "
                 + "JOIN statoMigrazSubPart.ostMigrazSubPart migrazSubPart "
-                + "WHERE statoMigrazSubPart.tiStato IN :tiStato "
+                + "WHERE statoMigrazSubPart.tiStato IN (:tiStato) "
                 + "AND statoMigrazSubPart.idStatoMigrazSubPart = migrazSubPart.idStatoMigrazSubPartCor ";
         if (niFile != null) {
             queryStr += String.format("AND migrazSubPart.%s > 0 ", niFile);
@@ -55,14 +69,14 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
     public List<OstMigrazSubPart> getOstMigrazSubPartListByStateOrdered(List<String> tiStato, int numeroJob) {
         String queryStr = "SELECT migrazSubPart FROM OstStatoMigrazSubPart statoMigrazSubPart "
                 + "JOIN statoMigrazSubPart.ostMigrazSubPart migrazSubPart "
-                + "WHERE statoMigrazSubPart.tiStato IN :tiStato "
+                + "WHERE statoMigrazSubPart.tiStato IN (:tiStato) "
                 + "AND statoMigrazSubPart.idStatoMigrazSubPart = migrazSubPart.idStatoMigrazSubPartCor "
                 + "AND migrazSubPart.niIstanzaJobProducer = :niIstanzaJobProducer "
                 + "AND migrazSubPart.niFileDaMigrare > 0 "
                 + "ORDER BY migrazSubPart.mmMax, migrazSubPart.niFileDaMigrare DESC, migrazSubPart.niFileMigrazInCorso";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("tiStato", tiStato);
-        query.setParameter("niIstanzaJobProducer", numeroJob);
+        query.setParameter("niIstanzaJobProducer", bigDecimalFromInteger(numeroJob));
         return query.getResultList();
     }
 
@@ -137,7 +151,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         query.setParameter("idMigrazSubPart", idMigrazSubPart);
         query.setParameter("tiStatoCor", tiStatoCor);
         query.setParameter("numMaxErr", numMaxErr);
-        return (List<OstMigrazFile>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<OstMigrazSubPart> getOstMigrazSubPartPerPartizStatoCorrList(String tipoPartizione,
@@ -151,7 +165,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("tiStato", tiStatoCorrente);
         query.setParameter("tiPartition", tipoPartizione);
-        query.setParameter("numeroJob", numeroJob);
+        query.setParameter("numeroJob", bigDecimalFromInteger(numeroJob));
         return query.getResultList();
     }
 
@@ -164,7 +178,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
 
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("tiStato", tiStato);
-        nmTablespace = (List<String>) query.getResultList();
+        nmTablespace = query.getResultList();
         return nmTablespace;
     }
 
@@ -197,7 +211,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
                 + "WHERE migrazSubPart.nmTablespace = :nmTablespace ";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("nmTablespace", nmTablespace);
-        return (List<OstMigrazSubPart>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<BigDecimal> getOstVLisFileBlobIdByStrutMeseBetweenDate(BigDecimal idStrut, Date data1, Date data2) {
@@ -225,24 +239,6 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         return query.getResultList();
     }
 
-    /*
-     * public List<OstMigrazStrutMese> getOstMigrazStrutMeseByOrgSubPartition(OstMigrazSubPart ostMigrazSubPart) {
-     * String queryString = "SELECT migraz " + "FROM OstMigrazStrutMese migraz, OrgStrut strut " +
-     * "WHERE migraz.idStrut=strut.idStrut " + "AND migraz.ostMigrazSubPart=:ostMigrazSubPart " +
-     * "ORDER BY strut.idStrut, migraz.mmVers ";
-     * 
-     * Query query = entityManager.createQuery(queryString); query.setParameter("ostMigrazSubPart", ostMigrazSubPart);
-     * return query.getResultList(); }
-     */
-    /*
-     * public List<AroContenutoComp> getAroContenutoCompByOstMigrazStrutMese(OstMigrazStrutMese ostMigrazStrutMese) {
-     * String queryString = "SELECT comp " + "FROM AroContenutoComp comp " + "WHERE comp.idStrut=:idStrut " +
-     * "AND comp.mmVers=:mmVers " +
-     * "AND comp.aroCompDoc.idCompDoc NOT IN (SELECT obj.aroCompDoc.idCompDoc FROM AroCompObjectStorage obj WHERE obj.aroCompDoc=comp.aroCompDoc) "
-     * ; Query query = entityManager.createQuery(queryString); query.setParameter("idStrut",
-     * ostMigrazStrutMese.getIdStrut()); query.setParameter("mmVers", ostMigrazStrutMese.getMmVers()); return
-     * query.getResultList(); }
-     */
     public boolean existsNoMigrazFileWithTiCausaleNoMigraz(OstMigrazSubPart ostMigrazSubPart,
             String tiCausaleNoMigraz) {
         String queryString = "SELECT no " + "FROM OstNoMigrazFile no " + "WHERE no.ostMigrazSubPart=:ostMigrazSubPart "
@@ -251,19 +247,15 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         query.setParameter("ostMigrazSubPart", ostMigrazSubPart);
         query.setParameter("tiCausaleNoMigraz", tiCausaleNoMigraz);
         query.setMaxResults(1);
-        List l = query.getResultList();
-        if (l.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        List<?> l = query.getResultList();
+        return !l.isEmpty();
     }
 
     public List<OstVLisSubpartBlobByIstz> getSubPartitionByMesiAntecedenti(int numeroIstanzaJob) {
         String queryString = "SELECT vista FROM OstVLisSubpartBlobByIstz vista WHERE vista.niIstanzaJobPrepara=:numeroIstanzaJob "
                 + "ORDER BY vista.mmMax ASC, vista.numRows DESC";
         Query query = entityManager.createQuery(queryString);
-        query.setParameter("numeroIstanzaJob", numeroIstanzaJob);
+        query.setParameter("numeroIstanzaJob", bigDecimalFromInteger(numeroIstanzaJob));
         return query.getResultList();
     }
 
@@ -282,7 +274,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
     }
 
     public List<OstVLisStrutMmBlob> getStrutturaMesePerSubPartizione(BigDecimal idSubPartition) {
-        String queryString = "select a from OstVLisStrutMmBlob a WHERE a.idSubPartition=:idSubPartition";
+        String queryString = "select a from OstVLisStrutMmBlob a WHERE a.id.idSubPartition=:idSubPartition";
         Query query = entityManager.createQuery(queryString);
         query.setParameter("idSubPartition", idSubPartition);
         return query.getResultList();
@@ -300,7 +292,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
                 + "WHERE chkUsoTb.nmTablespace = :nmTablespace ";
         Query query = entityManager.createQuery(queryString);
         query.setParameter("nmTablespace", nmTablespace);
-        List<OstVChkUsoTb> chkList = (List<OstVChkUsoTb>) query.getResultList();
+        List<OstVChkUsoTb> chkList = query.getResultList();
         if (!chkList.isEmpty()) {
             return chkList.get(0).getFlOk().equals("1");
         }
@@ -311,10 +303,10 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         String queryString = "SELECT  sum(mig.niFileDaMigrare), sum(mig.niFileMigrazInCorso), sum(mig.niFileMigrazInErrore) "
                 + "FROM    OstMigrazSubPart mig, OstStatoMigrazSubPart stato "
                 + "WHERE   stato.idStatoMigrazSubPart=mig.idStatoMigrazSubPartCor "
-                + "AND     stato.tiStato IN :listaStatiSubPartizioni";
+                + "AND     stato.tiStato IN (:listaStatiSubPartizioni)";
         Query query = entityManager.createQuery(queryString);
         query.setParameter("listaStatiSubPartizioni", listaStatiSubPartizioni);
-        return (List<Object[]>) query.getResultList();
+        return query.getResultList();
     }
 
     /*
@@ -329,7 +321,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
                 it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato.MIGRAZ_IN_CORSO.name());
         query.setParameter("stato2",
                 it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato.MIGRAZ_IN_ERRORE.name());
-        return (List<OstMigrazSubPart>) query.getResultList();
+        return query.getResultList();
     }
 
     /*
@@ -337,7 +329,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
      */
 
     public long getCountComponentsSubPartAndState(OstMigrazSubPart ostMigrazSubPart, String tiStato) {
-        ArrayList<String> al = new ArrayList();
+        ArrayList<String> al = new ArrayList<>();
         al.add(tiStato);
         return getCountComponentsSubPartAndState(ostMigrazSubPart, al);
     }
@@ -347,15 +339,15 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         String queryString = "SELECT  count(ost_file) " + "FROM    OstMigrazFile ost_file "
                 + "WHERE   ost_file.ostMigrazSubPart=:ostMigrazSubPart ";
         if (tiStato != null) {
-            queryString += "AND     ost_file.tiStatoCor IN :tiStato";
+            queryString += "AND     ost_file.tiStatoCor IN (:tiStato)";
         }
         Query query = entityManager.createQuery(queryString);
         query.setParameter("ostMigrazSubPart", ostMigrazSubPart);
         if (tiStato != null) {
             query.setParameter("tiStato", tiStato);
         }
-        List<Long> lista = (List<Long>) query.getResultList();
-        if (lista != null && lista.size() > 0) {
+        List<Long> lista = query.getResultList();
+        if (lista != null && !lista.isEmpty()) {
             Object ogg = lista.get(0);
             if (ogg != null) {
                 ret = (Long) ogg;
@@ -365,14 +357,14 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void eliminaMigrazioneFileInNewTransaction(long id) throws ParerInternalError {
+    public void eliminaMigrazioneFileInNewTransaction(long id) {
         Query q = getEntityManager().createQuery("DELETE FROM OstMigrazFile f WHERE f.idMigrazFile=:id");
         q.setParameter("id", id);
         q.executeUpdate();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void eliminaNoMigrazioneFileInNewTransaction(long id) throws ParerInternalError {
+    public void eliminaNoMigrazioneFileInNewTransaction(long id) {
         Query q = getEntityManager().createQuery("DELETE FROM OstNoMigrazFile f WHERE f.idNoMigrazFile=:id");
         q.setParameter("id", id);
         q.executeUpdate();
@@ -385,7 +377,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         String qString = "SELECT  f.idMigrazFile FROM    OstMigrazFile f WHERE   f.ostMigrazSubPart=:ostMigrazSubPart";
         Query query = entityManager.createQuery(qString);
         query.setParameter("ostMigrazSubPart", ostMigrazSubPart);
-        return (List<Long>) query.getResultList();
+        return query.getResultList();
     }
 
     /*
@@ -395,7 +387,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         String qString = "SELECT  f.idNoMigrazFile FROM    OstNoMigrazFile f WHERE   f.ostMigrazSubPart=:ostMigrazSubPart";
         Query query = entityManager.createQuery(qString);
         query.setParameter("ostMigrazSubPart", ostMigrazSubPart);
-        return (List<Long>) query.getResultList();
+        return query.getResultList();
     }
 
     /*
@@ -407,7 +399,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
                 + ") conten " + "where not exists (select * from aro_comp_object_storage comp_objsto "
                 + "		   where comp_objsto.id_comp_doc = conten.id_comp_strut_doc)";
         Query query = entityManager.createNativeQuery(qString);
-        return (List<BigDecimal>) query.getResultList();
+        return query.getResultList();
     }
 
     /*
@@ -419,8 +411,8 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
         String qString = "select count(*) " + "from aro_contenuto_comp subpartition (" + codiceIdentificativoPartizione
                 + ") conten ";
         Query query = entityManager.createNativeQuery(qString);
-        List<Long> lista = (List<Long>) query.getResultList();
-        if (lista != null && lista.size() > 0) {
+        List<Long> lista = query.getResultList();
+        if (lista != null && !lista.isEmpty()) {
             Object ogg = lista.get(0);
             if (ogg != null) {
                 ret = (BigDecimal) ogg;
@@ -436,7 +428,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
     private OstMigrazSubPart findOstMigrazSubPartByOrgSubPartition(BigDecimal idSubPartition, boolean withLock) {
         String qString = "SELECT o FROM OstMigrazSubPart o WHERE o.orgSubPartition.idSubPartition=:idSubPartition";
         Query query = entityManager.createQuery(qString);
-        query.setParameter("idSubPartition", idSubPartition);
+        query.setParameter("idSubPartition", longFromBigDecimal(idSubPartition));
         if (withLock) {
             query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
         }

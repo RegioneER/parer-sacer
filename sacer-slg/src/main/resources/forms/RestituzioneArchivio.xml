@@ -37,9 +37,10 @@
         <Input Name="errori" Description="Aip in errore" Type="INTEGER" />
         <Input Name="estratti_totali" Description="% aip estratti" Type="INTEGER" />
         <Input Name="sum_dim" Description="Dimesione aip estratti (MegaByte)" Type="INTEGER"/>
-        <Input Name="max_dt_estrazione" Description="Data ultima estrazione" Type="DATE"/>
+        <Input Name="max_dt_estrazione" Description="Data ultima estrazione" Type="DATETIME"/>
         <Input Name="ti_stato" Description="Stato corrente" Type="STRING"/>
         <Input Name="priorita" Description="priorita" Type="INTEGER"/>
+        <Input Name="ts_inizio" Description="Data creazione" Type="DATE" Hidden="true"/>
     </List>
     
     <!-- DETTAGLIO RICHIESTE -->
@@ -79,12 +80,13 @@
         <Button Name="annullaRichiesta" Description="Annulla" Type="STRING"/>
         <Button Name="rielaboraRichiesta" Description="Rielabora errori" Type="STRING"/>
         <Button Name="verificaRichiesta" Description="Verifica" Type="STRING"/>
+        <Button Name="restituzioneRichiesta" Description="Restituisci" Type="STRING"/>
     </ButtonList>
     
     <!-- CAMBIO STATO RICHIESTA -->
     <Section Name="cambioStatoSection" Description="" Legend="Stato da assumere" ShowButton="false" LoadOpened="true"/>
     <Fields Name="CambioStatoRichiesta" Description="Cambio stato">
-        <Input Name="id_rich_rest_arch" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_rich_rest_arch" Description="Id richiesta" Type="INTEGER" Hidden="true"/>               
         <Input Name="ti_stato_rich_rest_arch" Description="Stato da assumere" Type="STRING" Required="true"/>
         <Input Name="ds_nota_rich_rest_arch" Description="Note" Type="STRING" MaxLength="300" />
         <Button Name="confermaCambioStato" Description="Cambia stato" Type="STRING"/>

@@ -334,8 +334,7 @@
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl"/>
         <Input Type="STRING" Description="Issuer CRL" Name="issuer_crl"/>
         <Input Type="INTEGER" Description="Serial number certificato" Name="serial_ca_crl"/>
-        <Input Type="INTEGER" Description="CRL usata" Name="serial_crl"/>
-        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl"/>
+        <Input Type="DATETIME" Description="Scadenza CRL" Name="dt_scad_crl"/>
         <Input Type="STRING" Description="Controllo OCSP" Name="esito_ocsp"/>
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_ocsp"/>
         <Input Type="STRING" Description="Responder OCSP" Name="issuer_certif_ocsp"/>
@@ -346,9 +345,8 @@
     <List Name="CertificatiCAList"  Description="Lista Certificati CA per controllo CATENA_TRUSTED" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
         <Input Type="STRING" Description="Issuer" Name="dl_dn_issuer_certif_ca"/>
         <Input Type="INTEGER" Description="Serial number" Name="ni_serial_certif_ca" GroupingDecimal="true" />
-        <Input Type="DATETIME" Description="Validità da" Name="dt_ini_val_certif_ca"/>
-        <Input Type="DATETIME" Description="Validità a" Name="dt_fin_val_certif_ca"/>
-        <Input Type="INTEGER" Description="CRL usata" Name="ni_serial_crl" GroupingDecimal="true" />
+        <Input Type="DATETIME" Description="Ultima Validità da" Name="dt_ini_val_certif_ca"/>
+        <Input Type="DATETIME" Description="Ultima Validità a" Name="dt_fin_val_certif_ca"/>
         <Input Type="DATETIME" Description="Data scadenza CRL" Name="dt_scad_crl"/>
         <Input Type="STRING" Description="OCSP responder usato" Name="dl_dn_issuer_certif_ocsp" />
         <Input Type="INTEGER" Description="OCSP responder serial number" Name="ni_serial_certif_ocsp" GroupingDecimal="true"  />
@@ -358,8 +356,8 @@
     <List Name="CertificatiCAOCSPList"  Description="Lista Certificati CA per controllo OCSP" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true">
         <Input Type="STRING" Description="Issuer" Name="dl_dn_issuer_certif_ca"/>
         <Input Type="INTEGER" Description="Serial number" Name="ni_serial_certif_ca" GroupingDecimal="true" />
-        <Input Type="DATETIME" Description="Validità da" Name="dt_ini_val_certif_ca"/>
-        <Input Type="DATETIME" Description="Validità a" Name="dt_fin_val_certif_ca"/>
+        <Input Type="DATETIME" Description="Ultima Validità da" Name="dt_ini_val_certif_ca"/>
+        <Input Type="DATETIME" Description="Ultima Validità a" Name="dt_fin_val_certif_ca"/>
         <Input Type="STRING" Description="OCSP responder usato" Name="dl_dn_issuer_certif_ocsp" />
         <Input Type="INTEGER" Description="OCSP responder serial number" Name="ni_serial_certif_ocsp" GroupingDecimal="true"  />
         <Input Type="DATETIME" Description="Certificato OCSP responder valido da" Name="dt_ini_val_certif_ocsp"/>
@@ -430,8 +428,7 @@
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl"/>
         <Input Type="STRING" Description="CRL usata" Name="issuer_crl"/>
         <Input Type="INTEGER" Description="Numero seriale certificato" Name="serial_ca_crl"/>
-        <Input Type="INTEGER" Description="Numero seriale CRL" Name="serial_crl"/>
-        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl"/>
+        <Input Type="DATETIME" Description="Scadenza CRL" Name="dt_scad_crl"/>
         <Input Type="STRING" Description="Controllo OCSP" Name="esito_ocsp"/>
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_ocsp"/>
         <Input Type="STRING" Description="Responder OCSP" Name="issuer_certif_ocsp"/>
@@ -447,8 +444,7 @@
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl_dt_vers"/>
         <Input Type="STRING" Description="CRL usata" Name="issuer_crl_dt_vers"/>
         <Input Type="INTEGER" Description="Numero seriale certificato" Name="serial_ca_crl_dt_vers"/>
-        <Input Type="INTEGER" Description="Numero seriale CRL" Name="serial_crl_dt_vers"/>
-        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl_dt_vers"/>
+        <Input Type="DATETIME" Description="Scadenza CRL" Name="dt_scad_crl_dt_vers"/>
         <Input Type="STRING" Description="Controllo OCSP" Name="esito_ocsp_dt_vers"/>
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_ocsp_dt_vers"/>
         <Input Type="STRING" Description="Responder OCSP" Name="issuer_certif_ocsp_dt_vers"/>
@@ -462,8 +458,7 @@
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_certificato_vol"/>
         <Input Type="STRING" Description="Controllo CRL" Name="esito_crl_vol"/>
         <Input Type="STRING" Description="Descrizione" Name="msg_esito_crl_vol"/>
-        <Input Type="INTEGER" Description="CRL usata" Name="serial_crl_vol"/>
-        <Input Type="DATETIME" Description="Scade il" Name="dt_scad_crl_vol"/>
+        <Input Type="DATETIME" Description="Scadenza CRL" Name="dt_scad_crl_vol"/>
     </Fields>    
     
     <!-- Lista certificati CA usati per controllo CATENA_TRUSTED della firma -->		

@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.async.ejb;
 
 import it.eng.parer.async.helper.AsyncHelper;
@@ -9,7 +26,6 @@ import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.viewEntity.VrsVVersFallitiDaNorisol;
 import it.eng.parer.viewEntity.VrsVVersFallitiDaVerif;
-import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -70,29 +86,6 @@ public class CalcoloMonitoraggioAsync {
         return false;
     }
 
-    public boolean calcolaChiaveUdDoc(MonitoraggioFiltriListaVersFallitiBean paramBean) {
-        /*
-         * Verifica che non sia già attivo un calcolo chiave per la struttura data come parametro, nel qual caso
-         * rilancia all'action un eccezione
-         */
-        Long idLock;
-        try {
-            asyncHelper.initLockPerStrut(JobConstants.JobEnum.CALCOLA_CHIAVE_UD_DOC.name(),
-                    paramBean.getIdStrut().longValue());
-            idLock = asyncHelper.getLock(JobConstants.JobEnum.CALCOLA_CHIAVE_UD_DOC.name(),
-                    paramBean.getIdStrut().longValue());
-            if (idLock != null) {
-                jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CALCOLA_CHIAVE_UD_DOC.name(),
-                        JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null, paramBean.getIdStrut().longValue());
-                context.getBusinessObject(CalcoloMonitoraggioAsync.class).eseguiCalcoloChiaveUdDoc(paramBean, idLock);
-                return true;
-            }
-        } catch (Exception e) {
-            // INUTILI in quanto intercettati
-        }
-        return false;
-    }
-
     public boolean verificaVersamentiFallitiAsincrono(BigDecimal idStrut, Date ultimaRegistrazione) {
         /*
          * Verifica che non sia già attivo un verifica versamenti falliti, nel qual caso rilancia all'action
@@ -118,15 +111,9 @@ public class CalcoloMonitoraggioAsync {
     @Asynchronous
     public void eseguiCalcoloStruttura(Long idLock) throws ParerInternalError {
         try {
-            log.info(CalcoloMonitoraggioAsync.class.getSimpleName() + " --- Chiamata asincrona per calcolo struttura");
-            // log.debug("Ricerco le sessioni errate recuperabili tramite User");
-            // List<Long> listaSessioniVers = calcoloHelper.getListaSessioniVersByUsr(true, flVerificato);
-            // log.debug("Trovate " + listaSessioniVers.size() + " sessioni errate recuperabili tramite UsrUser");
-            // for (Long idSes : listaSessioniVers) {
-            // calcoloHelper.calcolaStrutturaByUsr(idSes);
-            // }
+            log.info("{} --- Chiamata asincrona per calcolo struttura", CalcoloMonitoraggioAsync.class.getSimpleName());
             log.debug("Ricerco le sessioni errate rimanenti (non recuperabili tramite User) NON VERIFICATE");
-            List<Long> listaSessioniVers = calcoloHelper.getListaSessioniVersByUsr(false, "0");
+            List<Long> listaSessioniVers = calcoloHelper.getListaSessioniVersByUsr();
             /*
              * Se non ho trovato record dei quali calcolare la struttura versante, tento con la seconda via ovvero
              * cercando nel file XML di richiesta le informazioni mancanti
@@ -136,37 +123,12 @@ public class CalcoloMonitoraggioAsync {
             }
             asyncHelper.writeEndLogLock(idLock, JobConstants.JobEnum.CALCOLA_STRUTTURA.name(),
                     JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-            log.info(CalcoloMonitoraggioAsync.class.getSimpleName()
-                    + " --- FINE chiamata asincrona per calcolo struttura");
+            log.info("{} --- FINE chiamata asincrona per calcolo struttura",
+                    CalcoloMonitoraggioAsync.class.getSimpleName());
         } catch (Exception e) {
             throw new ParerInternalError(ParerErrorSeverity.ERROR,
                     new AsyncException("Eccezione imprevista durante la fase di calcolo struttura",
                             JobConstants.JobEnum.CALCOLA_STRUTTURA.name(), idLock, null, e));
-        }
-    }
-
-    @Asynchronous
-    public void eseguiCalcoloChiaveUdDoc(MonitoraggioFiltriListaVersFallitiBean paramBean, Long idLock)
-            throws ParerInternalError {
-        try {
-            log.info(CalcoloMonitoraggioAsync.class.getSimpleName()
-                    + " --- Chiamata asincrona per calcolo chiave unita doc / documento");
-            log.debug("Ricerco i versamenti falliti in funzione dei filtri in input");
-            List<Object[]> tb = calcoloHelper.getSessioniSenzaChiave(paramBean);
-            log.debug("Trovati " + tb.size() + " record");
-            for (Object[] row : tb) {
-                calcoloHelper.calcolaChiaveUdDoc(row);
-            }
-
-            asyncHelper.writeEndLogLock(idLock, JobConstants.JobEnum.CALCOLA_CHIAVE_UD_DOC.name(),
-                    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null, paramBean.getIdStrut().longValue());
-            log.info(CalcoloMonitoraggioAsync.class.getSimpleName()
-                    + " --- FINE chiamata asincrona per calcolo chiave unita doc / documento");
-        } catch (Exception e) {
-            throw new ParerInternalError(ParerErrorSeverity.ERROR,
-                    new AsyncException("Eccezione imprevista durante la fase di calcolo chiave unita doc / documento",
-                            JobConstants.JobEnum.CALCOLA_CHIAVE_UD_DOC.name(), idLock,
-                            paramBean.getIdStrut().longValue(), e));
         }
     }
 
@@ -180,19 +142,21 @@ public class CalcoloMonitoraggioAsync {
     public void verificaVersamentiFalliti(Long idStrut, Long idLock, Date ultimaRegistrazione)
             throws ParerInternalError {
         try {
-            log.info(CalcoloMonitoraggioAsync.class.getSimpleName()
-                    + " --- Chiamata asincrona per verifica versamenti falliti per la struttura " + idStrut);
-            log.info("Ricerco i versamenti falliti non risolti e non verificati per la struttura " + idStrut
-                    + " con data apertura successiva a " + ultimaRegistrazione.toString());
+            log.info("{} --- Chiamata asincrona per verifica versamenti falliti per la struttura {}",
+                    CalcoloMonitoraggioAsync.class.getSimpleName(), idStrut);
+            log.info(
+                    "Ricerco i versamenti falliti non risolti e non verificati per la struttura {} con data apertura successiva a {}",
+                    idStrut, ultimaRegistrazione);
             List<VrsVVersFallitiDaVerif> listaVersFallitiDaVerif = calcoloHelper.getListaVersFallitiDaVerif(idStrut,
                     ultimaRegistrazione);
-            log.info("Trovati " + listaVersFallitiDaVerif.size()
-                    + " versamenti falliti non risolti e non verificati per la struttura " + idStrut);
+            log.info("Trovati {} versamenti falliti non risolti e non verificati per la struttura {}",
+                    listaVersFallitiDaVerif.size(), idStrut);
             for (VrsVVersFallitiDaVerif versFallitoDaVerif : listaVersFallitiDaVerif) {
                 calcoloHelper.impostaVersamentoFallitoVerif(versFallitoDaVerif.getIdSessioneVers().longValue());
             }
-            log.info("Ricerco i versamenti falliti non risolti, verificati e risolubili per la struttura " + idStrut
-                    + " con data apertura successiva a " + ultimaRegistrazione.toString());
+            log.info(
+                    "Ricerco i versamenti falliti non risolti, verificati e risolubili per la struttura {} con data apertura successiva a {}",
+                    idStrut, ultimaRegistrazione);
             List<VrsVVersFallitiDaNorisol> listaVersFallitiDaNorisol = calcoloHelper
                     .getListaVersFallitiDaNorisol(idStrut, ultimaRegistrazione);
             for (VrsVVersFallitiDaNorisol versFallitoNorisol : listaVersFallitiDaNorisol) {
@@ -200,8 +164,8 @@ public class CalcoloMonitoraggioAsync {
             }
             asyncHelper.writeEndLogLock(idLock, JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
                     JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null, idStrut);
-            log.info(CalcoloMonitoraggioAsync.class.getSimpleName()
-                    + " --- FINE chiamata asincrona per verifica versamenti falliti per la struttura " + idStrut);
+            log.info("{} --- FINE chiamata asincrona per verifica versamenti falliti per la struttura {}",
+                    CalcoloMonitoraggioAsync.class.getSimpleName(), idStrut);
         } catch (Exception e) {
             throw new ParerInternalError(ParerErrorSeverity.ERROR, new AsyncException(
                     "Eccezione imprevista durante la fase di verifica versamenti falliti per la struttura " + idStrut,

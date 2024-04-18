@@ -1,4 +1,30 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.ejb;
+
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Set;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 
 import it.eng.parer.slite.gen.form.MonitoraggioSinteticoForm;
 import it.eng.parer.slite.gen.viewbean.MonVChkCntAggRowBean;
@@ -74,15 +100,6 @@ import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.helper.MonitoraggioSinteticoHelper;
 import it.eng.spagoLite.db.base.BaseRowInterface;
-import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -92,13 +109,16 @@ import org.slf4j.LoggerFactory;
 @LocalBean
 public class MonitoraggioSinteticoEjb {
 
+    public static final String VIEW_ID_TIPO_UNITA_DOC = "view.id.idTipoUnitaDoc";
+    public static final String VIEW_ID_STRUT = "view.id.idStrut";
+    public static final String VIEW_ID_ENTE = "view.id.idEnte";
+    public static final String VIEW_ID_USER_IAM = "view.id.idUserIam";
+    public static final String VIEW_ID_AMBIENTE = "view.id.idAmbiente";
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioHelper")
     private MonitoraggioHelper monitoraggioHelper;
 
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioSinteticoHelper")
     private MonitoraggioSinteticoHelper monitSintHelper;
-
-    private static final Logger logger = LoggerFactory.getLogger(MonitoraggioSinteticoEjb.class);
 
     public enum fieldSetToPopulate {
 
@@ -118,6 +138,8 @@ public class MonitoraggioSinteticoEjb {
             BigDecimal idEnte, BigDecimal idStrut, BigDecimal idTipoUnitaDoc, Set<String> fieldsWithCnt) {
         LinkedHashMap<String, BaseRowInterface> map = new LinkedHashMap<>();
 
+        System.out.println("Inizio calcoli");
+
         // Caricamento dati unità doc versate
         MonVChkCntUdRowBean rowBeanUd;
         if (fieldsWithCnt.contains(fieldSetToPopulate.UNITA_DOC_VERSATE.name())
@@ -134,6 +156,7 @@ public class MonitoraggioSinteticoEjb {
 
         map.put(MonitoraggioSinteticoForm.UnitaDocVersate.NAME, rowBeanUd);
 
+        System.out.println("Fine calcolo ud versate");
         MonVChkCntDocRowBean rowBeanDoc;
         if (fieldsWithCnt.contains(fieldSetToPopulate.DOC_AGGIUNTI.name())
                 || fieldsWithCnt.contains(fieldSetToPopulate.DOC_AGGIUNTI_B30.name())) {
@@ -146,6 +169,7 @@ public class MonitoraggioSinteticoEjb {
                     fieldSetToPopulate.DOC_AGGIUNTI));
         }
         map.put(MonitoraggioSinteticoForm.DocAggiunti.NAME, rowBeanDoc);
+        System.out.println("Fine calcolo doc versati");
 
         MonVChkCntVersRowBean rowBeanVers = new MonVChkCntVersRowBean();
         MonVChkCntAggRowBean rowBeanAgg = new MonVChkCntAggRowBean();
@@ -162,6 +186,7 @@ public class MonitoraggioSinteticoEjb {
                 rowBeanVers.entityToRowBean(buildQueryChk(idUtente, idAmbiente, idEnte, idStrut, idTipoUnitaDoc,
                         fieldSetToPopulate.VERS_FALLITI));
             }
+            System.out.println("Fine calcolo versamenti falliti");
 
             if (fieldsWithCnt.contains(fieldSetToPopulate.AGGIUNTE_DOC_FALLITE.name())
                     || fieldsWithCnt.contains(fieldSetToPopulate.AGGIUNTE_DOC_FALLITE_B30.name())) {
@@ -174,6 +199,8 @@ public class MonitoraggioSinteticoEjb {
                         fieldSetToPopulate.AGGIUNTE_DOC_FALLITE));
             }
 
+            System.out.println("Fine calcolo aggiunte doc fallite");
+
             if (fieldsWithCnt.contains(fieldSetToPopulate.UNITA_DOC_VERS_FALLITI.name())) {
                 rowBeanUdNonVers = (MonVChkCntUdNonversRowBean) calcolaTot(idUtente, idAmbiente, idEnte, idStrut,
                         idTipoUnitaDoc, fieldSetToPopulate.UNITA_DOC_VERS_FALLITI, false);
@@ -182,6 +209,8 @@ public class MonitoraggioSinteticoEjb {
                         fieldSetToPopulate.UNITA_DOC_VERS_FALLITI));
             }
 
+            System.out.println("Fine calcolo ud derivanti da versamenti falliti");
+
             if (fieldsWithCnt.contains(fieldSetToPopulate.DOC_AGGIUNTI_VERS_FALLITI.name())) {
                 rowBeanDocNonVers = (MonVChkCntDocNonversRowBean) calcolaTot(idUtente, idAmbiente, idEnte, idStrut,
                         idTipoUnitaDoc, fieldSetToPopulate.DOC_AGGIUNTI_VERS_FALLITI, false);
@@ -189,6 +218,8 @@ public class MonitoraggioSinteticoEjb {
                 rowBeanDocNonVers.entityToRowBean(buildQueryChk(idUtente, idAmbiente, idEnte, idStrut, idTipoUnitaDoc,
                         fieldSetToPopulate.DOC_AGGIUNTI_VERS_FALLITI));
             }
+
+            System.out.println("Fine calcolo documenti derivanti da aggiunte fallite");
         }
         map.put(MonitoraggioSinteticoForm.VersamentiFalliti.NAME, rowBeanVers);
         map.put(MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NAME, rowBeanAgg);
@@ -204,6 +235,9 @@ public class MonitoraggioSinteticoEjb {
             rowBeanUdAnnul.entityToRowBean(buildQueryChk(idUtente, idAmbiente, idEnte, idStrut, idTipoUnitaDoc,
                     fieldSetToPopulate.UNITA_DOC_ANNUL));
         }
+
+        System.out.println("Fine calcolo versamenti annullati o in corso di annullamento");
+
         map.put(MonitoraggioSinteticoForm.UnitaDocAnnul.NAME, rowBeanUdAnnul);
 
         return map;
@@ -236,7 +270,7 @@ public class MonitoraggioSinteticoEjb {
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
 
-            paramString = "view.idTipoUnitaDoc = :param1";
+            paramString = VIEW_ID_TIPO_UNITA_DOC + " = :param1";
             param1 = idTipoUnitaDoc;
         } else if (idStrut != null) {
             switch (fieldSetToBuild) {
@@ -264,7 +298,7 @@ public class MonitoraggioSinteticoEjb {
             default:
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
-            paramString = "view.idStrut = :param1";
+            paramString = VIEW_ID_STRUT + " = :param1";
             param1 = idStrut;
         } else if (idEnte != null) {
             switch (fieldSetToBuild) {
@@ -292,7 +326,7 @@ public class MonitoraggioSinteticoEjb {
             default:
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
-            paramString = "view.idEnte = :param1 AND view.idUserIam = :param2";
+            paramString = VIEW_ID_ENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
             param1 = idEnte;
             param2 = idUtente;
         } else if (idAmbiente != null) {
@@ -321,7 +355,7 @@ public class MonitoraggioSinteticoEjb {
             default:
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
-            paramString = "view.idAmbiente = :param1 AND view.idUserIam = :param2";
+            paramString = VIEW_ID_AMBIENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
             param1 = idAmbiente;
             param2 = idUtente;
         } else {
@@ -388,9 +422,6 @@ public class MonitoraggioSinteticoEjb {
         Object obj = buildQueryChk(idUtente, idAmbiente, idEnte, idStrut, idTipoUnitaDoc, type);
         BaseRowInterface rowBean = null;
         String view = null;
-        String paramString = null;
-        BigDecimal param1 = null;
-        Long param2 = null;
         switch (type) {
         case UNITA_DOC_VERSATE:
             rowBean = new MonVChkCntUdRowBean();
@@ -544,32 +575,35 @@ public class MonitoraggioSinteticoEjb {
         default:
             throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo totali");
         }
+        String paramString = null;
+        BigDecimal param1 = null;
+        Long param2 = null;
         if (idTipoUnitaDoc != null) {
             switch (type) {
             case UNITA_DOC_ANNUL:
-                paramString = "view.idTipoUnitaDoc = :param1";
+                paramString = VIEW_ID_TIPO_UNITA_DOC + " = :param1";
                 param1 = idTipoUnitaDoc;
                 break;
             default:
-                paramString = "view.idTipoUnitaDoc = :param1 AND view.idStrut = :param2";
+                paramString = VIEW_ID_TIPO_UNITA_DOC + " = :param1 AND " + VIEW_ID_STRUT + " = :param2";
                 param1 = idTipoUnitaDoc;
                 param2 = idStrut.longValue();
                 break;
             }
         } else if (idStrut != null) {
-            paramString = "view.idStrut = :param1";
+            paramString = VIEW_ID_STRUT + " = :param1";
             param1 = idStrut;
         } else if (idEnte != null) {
-            paramString = "view.idEnte = :param1 AND view.idUserIam = :param2";
+            paramString = VIEW_ID_ENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
             param1 = idEnte;
             param2 = idUtente;
         } else if (idAmbiente != null) {
-            paramString = "view.idAmbiente = :param1 AND view.idUserIam = :param2";
+            paramString = VIEW_ID_AMBIENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
             param1 = idAmbiente;
             param2 = idUtente;
         }
 
-        List resultList = monitSintHelper.getMonVCnt(view, paramString, param1, param2);
+        List<?> resultList = monitSintHelper.getMonVCnt(view, paramString, param1, param2);
         /*
          * Per ogni record della lista calcolo i totali necessari a completare il rowBean
          */
@@ -616,43 +650,43 @@ public class MonitoraggioSinteticoEjb {
             BaseRowInterface rowBean) throws IllegalArgumentException {
         if (row instanceof MonVCntUdTipoUd) {
             MonVCntUdTipoUd entity = (MonVCntUdTipoUd) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoUd();
+            tiDtCreazione = entity.getMonVCntUdTipoUdId().getTiDtCreazione();
+            tiStato = entity.getMonVCntUdTipoUdId().getTiStatoUd();
             ni = entity.getNiUd();
         } else if (row instanceof MonVCntUdStrut) {
             MonVCntUdStrut entity = (MonVCntUdStrut) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoUd();
+            tiDtCreazione = entity.getMonVCntUdStrutId().getTiDtCreazione();
+            tiStato = entity.getMonVCntUdStrutId().getTiStatoUd();
             ni = entity.getNiUd();
         } else if (row instanceof MonVCntUdEnte) {
             MonVCntUdEnte entity = (MonVCntUdEnte) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoUd();
+            tiDtCreazione = entity.getMonVCntUdEnteId().getTiDtCreazione();
+            tiStato = entity.getMonVCntUdEnteId().getTiStatoUd();
             ni = entity.getNiUd();
         } else if (row instanceof MonVCntUdAmb) {
             MonVCntUdAmb entity = (MonVCntUdAmb) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoUd();
+            tiDtCreazione = entity.getMonVCntUdAmbId().getTiDtCreazione();
+            tiStato = entity.getMonVCntUdAmbId().getTiStatoUd();
             ni = entity.getNiUd();
         } else if (row instanceof MonVCntUdTipoUdB30) {
             MonVCntUdTipoUdB30 entity = (MonVCntUdTipoUdB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoUd();
+            tiStato = entity.getMonVCntUdTipoUdB30Id().getTiStatoUd();
             ni = entity.getNiUd();
         } else if (row instanceof MonVCntUdStrutB30) {
             MonVCntUdStrutB30 entity = (MonVCntUdStrutB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoUd();
+            tiStato = entity.getMonVCntUdStrutB30Id().getTiStatoUd();
             ni = entity.getNiUd();
         } else if (row instanceof MonVCntUdEnteB30) {
             MonVCntUdEnteB30 entity = (MonVCntUdEnteB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoUd();
+            tiStato = entity.getMonVCntUdEnteB30Id().getTiStatoUd();
             ni = entity.getNiUd();
         } else if (row instanceof MonVCntUdAmbB30) {
             MonVCntUdAmbB30 entity = (MonVCntUdAmbB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoUd();
+            tiStato = entity.getMonVCntUdAmbB30Id().getTiStatoUd();
             ni = entity.getNiUd();
         } else {
             throw new IllegalArgumentException(
@@ -705,43 +739,43 @@ public class MonitoraggioSinteticoEjb {
             BaseRowInterface rowBean) throws IllegalArgumentException {
         if (row instanceof MonVCntDocTipoUd) {
             MonVCntDocTipoUd entity = (MonVCntDocTipoUd) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoDoc();
+            tiDtCreazione = entity.getMonVCntDocTipoUdId().getTiDtCreazione();
+            tiStato = entity.getMonVCntDocTipoUdId().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else if (row instanceof MonVCntDocStrut) {
             MonVCntDocStrut entity = (MonVCntDocStrut) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoDoc();
+            tiDtCreazione = entity.getMonVCntDocStrutId().getTiDtCreazione();
+            tiStato = entity.getMonVCntDocStrutId().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else if (row instanceof MonVCntDocEnte) {
             MonVCntDocEnte entity = (MonVCntDocEnte) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoDoc();
+            tiDtCreazione = entity.getMonVCntDocEnteId().getTiDtCreazione();
+            tiStato = entity.getMonVCntDocEnteId().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else if (row instanceof MonVCntDocAmb) {
             MonVCntDocAmb entity = (MonVCntDocAmb) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoDoc();
+            tiDtCreazione = entity.getMonVCntDocAmbId().getTiDtCreazione();
+            tiStato = entity.getMonVCntDocAmbId().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else if (row instanceof MonVCntDocTipoUdB30) {
             MonVCntDocTipoUdB30 entity = (MonVCntDocTipoUdB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoDoc();
+            tiStato = entity.getMonVCntDocTipoUdB30Id().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else if (row instanceof MonVCntDocStrutB30) {
             MonVCntDocStrutB30 entity = (MonVCntDocStrutB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoDoc();
+            tiStato = entity.getMonVCntDocStrutB30Id().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else if (row instanceof MonVCntDocEnteB30) {
             MonVCntDocEnteB30 entity = (MonVCntDocEnteB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoDoc();
+            tiStato = entity.getMonVCntDocEnteB30Id().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else if (row instanceof MonVCntDocAmbB30) {
             MonVCntDocAmbB30 entity = (MonVCntDocAmbB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoDoc();
+            tiStato = entity.getMonVCntDocAmbB30Id().getTiStatoDoc();
             ni = entity.getNiDoc();
         } else {
             throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo totali documenti aggiunti");
@@ -794,33 +828,33 @@ public class MonitoraggioSinteticoEjb {
             BigDecimal totOggi, BaseRowInterface rowBean, BigDecimal totTrentaGg, BigDecimal totB30Gg) {
         if (row instanceof MonVCntVersStrut) {
             MonVCntVersStrut entity = (MonVCntVersStrut) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoVers();
+            tiDtCreazione = entity.getMonVCntVersStrutId().getTiDtCreazione();
+            tiStato = entity.getMonVCntVersStrutId().getTiStatoVers();
             ni = entity.getNiVers();
         } else if (row instanceof MonVCntVersEnte) {
             MonVCntVersEnte entity = (MonVCntVersEnte) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoVers();
+            tiDtCreazione = entity.getMonVCntVersEnteId().getTiDtCreazione();
+            tiStato = entity.getMonVCntVersEnteId().getTiStatoVers();
             ni = entity.getNiVers();
         } else if (row instanceof MonVCntVersAmb) {
             MonVCntVersAmb entity = (MonVCntVersAmb) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoVers();
+            tiDtCreazione = entity.getMonVCntVersAmbId().getTiDtCreazione();
+            tiStato = entity.getMonVCntVersAmbId().getTiStatoVers();
             ni = entity.getNiVers();
         } else if (row instanceof MonVCntVersStrutB30) {
             MonVCntVersStrutB30 entity = (MonVCntVersStrutB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoVers();
+            tiStato = entity.getMonVCntVersStrutB30Id().getTiStatoVers();
             ni = entity.getNiVers();
         } else if (row instanceof MonVCntVersEnteB30) {
             MonVCntVersEnteB30 entity = (MonVCntVersEnteB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoVers();
+            tiStato = entity.getMonVCntVersEnteB30Id().getTiStatoVers();
             ni = entity.getNiVers();
         } else if (row instanceof MonVCntVersAmbB30) {
             MonVCntVersAmbB30 entity = (MonVCntVersAmbB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoVers();
+            tiStato = entity.getMonVCntVersAmbB30Id().getTiStatoVers();
             ni = entity.getNiVers();
         } else {
             throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo totali versamenti falliti");
@@ -881,33 +915,33 @@ public class MonitoraggioSinteticoEjb {
             BigDecimal totOggi, BaseRowInterface rowBean, BigDecimal totTrentaGg, BigDecimal totB30gg) {
         if (row instanceof MonVCntAggStrut) {
             MonVCntAggStrut entity = (MonVCntAggStrut) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoVers();
+            tiDtCreazione = entity.getMonVCntAggStrutId().getTiDtCreazione();
+            tiStato = entity.getMonVCntAggStrutId().getTiStatoVers();
             ni = entity.getNiAgg();
         } else if (row instanceof MonVCntAggEnte) {
             MonVCntAggEnte entity = (MonVCntAggEnte) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoVers();
+            tiDtCreazione = entity.getMonVCntAggEnteId().getTiDtCreazione();
+            tiStato = entity.getMonVCntAggEnteId().getTiStatoVers();
             ni = entity.getNiAgg();
         } else if (row instanceof MonVCntAggAmb) {
             MonVCntAggAmb entity = (MonVCntAggAmb) row;
-            tiDtCreazione = entity.getTiDtCreazione();
-            tiStato = entity.getTiStatoVers();
+            tiDtCreazione = entity.getMonVCntAggAmbId().getTiDtCreazione();
+            tiStato = entity.getMonVCntAggAmbId().getTiStatoVers();
             ni = entity.getNiAgg();
         } else if (row instanceof MonVCntAggStrutB30) {
             MonVCntAggStrutB30 entity = (MonVCntAggStrutB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoVers();
+            tiStato = entity.getMonVCntAggStrutB30Id().getTiStatoVers();
             ni = entity.getNiAgg();
         } else if (row instanceof MonVCntAggEnteB30) {
             MonVCntAggEnteB30 entity = (MonVCntAggEnteB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoVers();
+            tiStato = entity.getMonVCntAggEnteB30Id().getTiStatoVers();
             ni = entity.getNiAgg();
         } else if (row instanceof MonVCntAggAmbB30) {
             MonVCntAggAmbB30 entity = (MonVCntAggAmbB30) row;
             tiDtCreazione = "B30";
-            tiStato = entity.getTiStatoVers();
+            tiStato = entity.getMonVCntAggAmbB30Id().getTiStatoVers();
             ni = entity.getNiAgg();
         } else {
             throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo totali aggiunte fallite");
@@ -968,15 +1002,15 @@ public class MonitoraggioSinteticoEjb {
             BaseRowInterface rowBean) {
         if (row instanceof MonVCntUdNonversStrut) {
             MonVCntUdNonversStrut entity = (MonVCntUdNonversStrut) row;
-            tiStato = entity.getTiStatoUdNonvers();
+            tiStato = entity.getMonVCntUdNonversStrutId().getTiStatoUdNonvers();
             ni = entity.getNiUdNonvers();
         } else if (row instanceof MonVCntUdNonversEnte) {
             MonVCntUdNonversEnte entity = (MonVCntUdNonversEnte) row;
-            tiStato = entity.getTiStatoUdNonvers();
+            tiStato = entity.getMonVCntUdNonversEnteId().getTiStatoUdNonvers();
             ni = entity.getNiUdNonvers();
         } else if (row instanceof MonVCntUdNonversAmb) {
             MonVCntUdNonversAmb entity = (MonVCntUdNonversAmb) row;
-            tiStato = entity.getTiStatoUdNonvers();
+            tiStato = entity.getMonVCntUdNonversAmbId().getTiStatoUdNonvers();
             ni = entity.getNiUdNonvers();
         } else {
             throw new IllegalArgumentException(
@@ -1000,15 +1034,15 @@ public class MonitoraggioSinteticoEjb {
             BaseRowInterface rowBean) {
         if (row instanceof MonVCntDocNonversStrut) {
             MonVCntDocNonversStrut entity = (MonVCntDocNonversStrut) row;
-            tiStato = entity.getTiStatoDocNonvers();
+            tiStato = entity.getMonVCntDocNonversStrutId().getTiStatoDocNonvers();
             ni = entity.getNiDocNonvers();
         } else if (row instanceof MonVCntDocNonversEnte) {
             MonVCntDocNonversEnte entity = (MonVCntDocNonversEnte) row;
-            tiStato = entity.getTiStatoDocNonvers();
+            tiStato = entity.getMonVCntDocNonversEnteId().getTiStatoDocNonvers();
             ni = entity.getNiDocNonvers();
         } else if (row instanceof MonVCntDocNonversAmb) {
             MonVCntDocNonversAmb entity = (MonVCntDocNonversAmb) row;
-            tiStato = entity.getTiStatoDocNonvers();
+            tiStato = entity.getMonVCntDocNonversAmbId().getTiStatoDocNonvers();
             ni = entity.getNiDocNonvers();
         } else {
             throw new IllegalArgumentException(
@@ -1032,19 +1066,19 @@ public class MonitoraggioSinteticoEjb {
             BaseRowInterface rowBean) {
         if (row instanceof MonVCntUdAnnulTipoUd) {
             MonVCntUdAnnulTipoUd entity = (MonVCntUdAnnulTipoUd) row;
-            tiStato = entity.getTiStatoAnnul();
+            tiStato = entity.getMonVCntUdAnnulTipoUdId().getTiStatoAnnul();
             ni = entity.getNiAnnul();
         } else if (row instanceof MonVCntUdAnnulStrut) {
             MonVCntUdAnnulStrut entity = (MonVCntUdAnnulStrut) row;
-            tiStato = entity.getTiStatoAnnul();
+            tiStato = entity.getMonVCntUdAnnulStrutId().getTiStatoAnnul();
             ni = entity.getNiAnnul();
         } else if (row instanceof MonVCntUdAnnulEnte) {
             MonVCntUdAnnulEnte entity = (MonVCntUdAnnulEnte) row;
-            tiStato = entity.getTiStatoAnnul();
+            tiStato = entity.getMonVCntUdAnnulEnteId().getTiStatoAnnul();
             ni = entity.getNiAnnul();
         } else if (row instanceof MonVCntUdAnnulAmb) {
             MonVCntUdAnnulAmb entity = (MonVCntUdAnnulAmb) row;
-            tiStato = entity.getTiStatoAnnul();
+            tiStato = entity.getMonVCntUdAnnulAmbId().getTiStatoAnnul();
             ni = entity.getNiAnnul();
         } else {
             throw new IllegalArgumentException(

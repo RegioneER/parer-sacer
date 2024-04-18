@@ -29,6 +29,10 @@
                 <sl:newLine />
                 <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.HH_STATO_ELENCO_IN_CODA_JMS%>" colSpan="2"/>
                 <sl:newLine />
+                <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.TI_VALID_ELENCO%>" colSpan="2"/>                
+                <sl:newLine />
+                <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.TI_MOD_VALID_ELENCO%>" colSpan="2"/>                
+                <sl:newLine />
                 <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.TI_GEST_ELENCO%>" colSpan="2"/>                
                 <sl:newLine />
                 <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.DT_CREAZIONE_ELENCO_DA%>" colSpan="2" controlWidth="w20" />

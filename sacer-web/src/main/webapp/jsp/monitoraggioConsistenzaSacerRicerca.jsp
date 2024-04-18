@@ -5,6 +5,15 @@
     <sl:head  title="Monitoraggio - Esame consistenza SACER" >
         <script type="text/javascript">
             $(document).ready(function () {
+                $("[name='operation__scaricaReport']").click(function() {
+                        $('.overlay').hide();
+                    }); 
+                    
+                    $("[name='operation__scaricaReportSintetico']").click(function() {
+                        $('.overlay').hide();
+                    }); 
+                
+                
                 $('#ConsistenzaSacerList tr').each(
                         function (index) {
                             var elemento = $(this).find('td:eq(4), td:eq(5)');

@@ -39,8 +39,14 @@
             <sl:newLine skipLine="true"/>
 
             <slf:section name="<%=StrutTipoStrutForm.FormatiAmmissibiliTab.NAME%>" styleClass="importantContainer"> 
+                <slf:lblField name="<%=StrutTipoStrutForm.FiltriFormatoFileDoc.NM_FORMATO_FILE_STANDARD%>" colSpan="2" labelWidth="w20" controlWidth="w40" />
+                <sl:newLine />   
+                <slf:lblField name="<%=StrutTipoStrutForm.FiltriFormatoFileDoc.NM_MIMETYPE_FILE%>" colSpan="2" labelWidth="w20" controlWidth="w40" />
+                <sl:newLine />   
+                <slf:lblField  name="<%=StrutTipoStrutForm.FiltriFormatoFileDoc.RICERCA_FORMATO_BUTTON%>" colSpan="4" />
+               <sl:newLine skipLine="true"/>
                 <slf:listNavBar name="<%= StrutTipoStrutForm.FormatoFileDocList.NAME%>" pageSizeRelated="true"/>
-<slf:list name="<%= StrutTipoStrutForm.FormatoFileDocList.NAME%>" />
+                <slf:list name="<%= StrutTipoStrutForm.FormatoFileDocList.NAME%>" />
                 <slf:listNavBar  name="<%= StrutTipoStrutForm.FormatoFileDocList.NAME%>" />
                 <sl:newLine skipLine="true"/>
             </slf:section>
@@ -50,7 +56,7 @@
             <sl:newLine skipLine="true"/>
             <slf:section name="<%=StrutTipoStrutForm.FormatiAmmessiTab.NAME%>" styleClass="importantContainer"> 
                 <slf:listNavBar name="<%= StrutTipoStrutForm.SelectFormatoFileAmmessoList.NAME%>" pageSizeRelated="true"/>
-<slf:list name="<%= StrutTipoStrutForm.SelectFormatoFileAmmessoList.NAME%>" />
+                <slf:list name="<%= StrutTipoStrutForm.SelectFormatoFileAmmessoList.NAME%>" />
                 <slf:listNavBar  name="<%= StrutTipoStrutForm.SelectFormatoFileAmmessoList.NAME%>" />
             </slf:section>
 

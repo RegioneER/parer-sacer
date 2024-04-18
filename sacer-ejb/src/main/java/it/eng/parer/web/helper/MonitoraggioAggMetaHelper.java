@@ -1,4 +1,45 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AroWarnUpdUnitaDoc;
 import it.eng.parer.entity.DecClasseErrSacer;
@@ -8,6 +49,8 @@ import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VrsErrSesUpdUnitaDocErr;
 import it.eng.parer.entity.VrsErrSesUpdUnitaDocKo;
 import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
+import it.eng.parer.exception.SacerRuntimeException;
+import it.eng.parer.exception.ParerErrorCategory.SacerErrorCategory;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.AroVLisUpdCompUnitaDoc;
 import it.eng.parer.viewEntity.AroVLisUpdDocUnitaDoc;
@@ -23,33 +66,12 @@ import it.eng.parer.viewEntity.MonVLisUpdUdInterface;
 import it.eng.parer.viewEntity.MonVLisUpdUdKo;
 import it.eng.parer.viewEntity.MonVLisUpdUdKoByErr;
 import it.eng.parer.viewEntity.MonVLisUpdUdKoInterface;
-import it.eng.parer.viewEntity.VrsVModifUpdUdKo;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class MonitoraggioAggMetaHelper extends GenericHelper {
@@ -59,7 +81,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CHK_UPD_UD_COR_BY_AMB = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_ambiente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ambiente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ambiente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud = trunc(sysdate) " + "	), " + "	tmp_upd_ud_da_elab_elenco as "
             + "	(select upd_da_elab.ti_stato_upd_elenco_vers  " + "	 from tmp_abil_key_ud abil_key_ud "
             + "	 join ELV_UPD_UD_DA_ELAB_ELENCO upd_da_elab "
@@ -78,13 +100,13 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_upd_ud_da_elab_elenco upd_da_elab "
             + "				where upd_da_elab.ti_stato_upd_elenco_vers = 'NON_SELEZ_SCHED' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_upd_nosel_sched_cor " + "from ORG_AMBIENTE amb "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where amb.id_ambiente = ?2 "
-            + "and usr.id_user_iam = ?1 ";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where amb.id_ambiente = :due "
+            + "and usr.id_user_iam = :uno ";
 
     String MON_CHK_UPD_UD_COR_BY_ENTE = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_ente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud = trunc(sysdate) " + "	), " + "	tmp_upd_ud_da_elab_elenco as "
             + "	(select upd_da_elab.ti_stato_upd_elenco_vers  " + "	 from tmp_abil_key_ud abil_key_ud "
             + "	 join ELV_UPD_UD_DA_ELAB_ELENCO upd_da_elab "
@@ -103,16 +125,16 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_upd_ud_da_elab_elenco upd_da_elab "
             + "				where upd_da_elab.ti_stato_upd_elenco_vers = 'NON_SELEZ_SCHED' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_upd_nosel_sched_cor " + "from ORG_ENTE ente "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where ente.id_ente = ?2 "
-            + "and usr.id_user_iam = ?1 ";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where ente.id_ente = :due "
+            + "and usr.id_user_iam = :uno ";
 
     String MON_CHK_UPD_UD_COR_BY_STRUT = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_strut = ?2 " + "	 and id_user_iam_cor = ?1 "
-            + "	 and dt_last_upd_ud = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8	"
-            + "	 and id_tipo_unita_doc = ?4	" + "	 and id_registro_unita_doc = ?5	"
-            + "	 and id_tipo_doc_princ = ?6	" + "	), " + "	tmp_upd_ud_da_elab_elenco as "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_strut = :due " + "	 and id_user_iam_cor = :uno "
+            + "	 and dt_last_upd_ud = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN :sette AND :otto	"
+            + "	 and id_tipo_unita_doc = :quattro	" + "	 and id_registro_unita_doc = :cinque	"
+            + "	 and id_tipo_doc_princ = :sei	" + "	), " + "	tmp_upd_ud_da_elab_elenco as "
             + "	(select upd_da_elab.ti_stato_upd_elenco_vers  " + "	 from tmp_abil_key_ud abil_key_ud "
             + "	 join ELV_UPD_UD_DA_ELAB_ELENCO upd_da_elab "
             + "		on ( upd_da_elab.id_strut = abil_key_ud.id_strut "
@@ -130,13 +152,13 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_upd_ud_da_elab_elenco upd_da_elab "
             + "				where upd_da_elab.ti_stato_upd_elenco_vers = 'NON_SELEZ_SCHED' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_upd_nosel_sched_cor " + "from ORG_STRUT strut "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where strut.id_strut = ?2 "
-            + "and usr.id_user_iam = ?1 ";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where strut.id_strut = :due "
+            + "and usr.id_user_iam = :uno ";
 
     String MON_CNT_UPD_UD_NOCOR_BY_AMB = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_ambiente, " + "	  id_strut, " + "      aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ " + "	 from MON_V_ABIL_KEY_TOTAL_UD "
-            + "	 where id_ambiente = ?2 " + "	 and id_user_iam_cor = ?1 " + "	) " + "select "
+            + "	 where id_ambiente = :due " + "	 and id_user_iam_cor = :uno " + "	) " + "select "
             + " abil_key_ud.id_ambiente, " + " conta_upd_ud.ti_stato_udp_ud, " + " case "
             + "	when conta_upd_ud.dt_rif_conta between trunc (sysdate - 30) and trunc(sysdate - 1)  "
             + "		then '30gg' " + " when conta_upd_ud.dt_rif_conta = trunc(sysdate) " + "         then 'oggi' "
@@ -151,8 +173,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_NOCOR_BY_ENTE = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_ente, " + "	  id_strut, " + "      aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ " + "	 from MON_V_ABIL_KEY_TOTAL_UD "
-            + "	 where id_ente = ?2 " + "	 and id_user_iam_cor = ?1 " + "	) " + "select " + " abil_key_ud.id_ente, "
-            + " conta_upd_ud.ti_stato_udp_ud, " + " case "
+            + "	 where id_ente = :due " + "	 and id_user_iam_cor = :uno " + "	) " + "select "
+            + " abil_key_ud.id_ente, " + " conta_upd_ud.ti_stato_udp_ud, " + " case "
             + "	when conta_upd_ud.dt_rif_conta between trunc (sysdate - 30) and trunc(sysdate - 1)  "
             + "		then '30gg' " + " when conta_upd_ud.dt_rif_conta = trunc(sysdate) " + "         then 'oggi' "
             + "		else 'before30gg' " + " end ti_dt_creazione, " + " sum (conta_upd_ud.ni_ses_upd_ud) ni_upd_ud "
@@ -166,10 +188,10 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_NOCOR_BY_STRUT = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_strut, " + "      aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ " + "	 from MON_V_ABIL_KEY_TOTAL_UD "
-            + "	 where id_strut = ?2 " + "	 and id_user_iam_cor = ?1 " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8 "
-            + "	 and id_tipo_unita_doc = ?4 " + "	 and id_registro_unita_doc = ?5 "
-            + "	 and id_tipo_doc_princ = ?6 " + "	) " + "select " + " abil_key_ud.id_strut, "
-            + " abil_key_ud.aa_key_unita_doc, " + " abil_key_ud.id_tipo_unita_doc, "
+            + "	 where id_strut = :due " + "	 and id_user_iam_cor = :uno "
+            + "	 and aa_key_unita_doc BETWEEN :sette AND :otto " + "	 and id_tipo_unita_doc = :quattro "
+            + "	 and id_registro_unita_doc = :cinque " + "	 and id_tipo_doc_princ = :sei " + "	) " + "select "
+            + " abil_key_ud.id_strut, " + " abil_key_ud.aa_key_unita_doc, " + " abil_key_ud.id_tipo_unita_doc, "
             + " abil_key_ud.id_registro_unita_doc, " + " abil_key_ud.id_tipo_doc_princ, "
             + " conta_upd_ud.ti_stato_udp_ud, " + " case "
             + "	when conta_upd_ud.dt_rif_conta between trunc (sysdate - 30) and trunc(sysdate - 1)  "
@@ -187,7 +209,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CHK_UPD_UD_KO_COR_BY_AMB = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ambiente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud_ko "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	), " + "	tmp_ses_upd_unita_ko as  "
             + "	(select ses_ko.ti_stato_ses_upd_ko " + "	 from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "	 join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "		on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
@@ -206,13 +228,13 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_ses_upd_unita_ko ses_ko "
             + "				where ses_ko.ti_stato_ses_upd_ko = 'NON_VERIFICATO' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_upd_ko_noverif_cor " + "from ORG_AMBIENTE amb "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where amb.id_ambiente = ?2 "
-            + "and usr.id_user_iam = ?1 ";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where amb.id_ambiente = :due "
+            + "and usr.id_user_iam = :uno ";
 
     String MON_CHK_UPD_UD_KO_COR_BY_ENTE = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud_ko "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	), " + "	tmp_ses_upd_unita_ko as  "
             + "	(select ses_ko.ti_stato_ses_upd_ko " + "	 from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "	 join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "		on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
@@ -231,16 +253,16 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_ses_upd_unita_ko ses_ko "
             + "				where ses_ko.ti_stato_ses_upd_ko = 'NON_VERIFICATO' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_upd_ko_noverif_cor " + "from ORG_ENTE ente "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where ente.id_ente = ?2 "
-            + "and usr.id_user_iam = ?1 ";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where ente.id_ente = :due "
+            + "and usr.id_user_iam = :uno ";
 
     String MON_CHK_UPD_UD_KO_COR_BY_STRUT = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud_ko "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = ?2 " + "	 and id_user_iam_cor = ?1 "
-            + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8 "
-            + "	 and id_tipo_unita_doc = ?4 " + "	 and id_registro_unita_doc = ?5 "
-            + "	 and id_tipo_doc_princ = ?6 " + "	 ), " + "	tmp_ses_upd_unita_ko as  "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = :due " + "	 and id_user_iam_cor = :uno "
+            + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN :sette AND :otto "
+            + "	 and id_tipo_unita_doc = :quattro " + "	 and id_registro_unita_doc = :cinque "
+            + "	 and id_tipo_doc_princ = :sei " + "	 ), " + "	tmp_ses_upd_unita_ko as  "
             + "	(select ses_ko.ti_stato_ses_upd_ko " + "	 from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "	 join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "		on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
             + "		and ses_ko.id_tipo_unita_doc = abil_key_ud_ko.id_tipo_unita_doc "
@@ -258,13 +280,13 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_ses_upd_unita_ko ses_ko "
             + "				where ses_ko.ti_stato_ses_upd_ko = 'NON_VERIFICATO' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_upd_ko_noverif_cor " + "from ORG_STRUT strut "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where strut.id_strut = ?2 "
-            + "and usr.id_user_iam = ?1 ";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + "where strut.id_strut = :due "
+            + "and usr.id_user_iam = :uno ";
 
     String MON_CNT_UPD_UD_KO_NOCOR_BY_AMB = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ambiente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO "
-            + "	 where id_ambiente = ?2 " + "	 and id_user_iam_cor = ?1 " + "	) " + "select "
+            + "	 where id_ambiente = :due " + "	 and id_user_iam_cor = :uno " + "	) " + "select "
             + " abil_key_ud_ko.id_ambiente, " + " conta_upd_ud_ko.ti_stato_udp_ud_ko, " + " case "
             + "	when conta_upd_ud_ko.dt_rif_conta between trunc (sysdate - 30) and trunc(sysdate - 1)  "
             + "		then '30gg' " + " when conta_upd_ud_ko.dt_rif_conta = trunc(sysdate) " + "         then 'oggi' "
@@ -281,7 +303,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_KO_NOCOR_BY_ENTE = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO "
-            + "	 where id_ente = ?2 " + "	 and id_user_iam_cor = ?1 " + "	) " + "select "
+            + "	 where id_ente = :due " + "	 and id_user_iam_cor = :uno " + "	) " + "select "
             + " abil_key_ud_ko.id_ente, " + " conta_upd_ud_ko.ti_stato_udp_ud_ko, " + " case "
             + "	when conta_upd_ud_ko.dt_rif_conta between trunc (sysdate - 30) and trunc(sysdate - 1)  "
             + "		then '30gg' " + " when conta_upd_ud_ko.dt_rif_conta = trunc(sysdate) " + "         then 'oggi' "
@@ -298,12 +320,12 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_KO_NOCOR_BY_STRUT = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO "
-            + "	 where id_strut = ?2 " + "	 and id_user_iam_cor = ?1 " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8 "
-            + "	 and id_tipo_unita_doc = ?4 " + "	 and id_registro_unita_doc = ?5 "
-            + "	 and id_tipo_doc_princ = ?6 " + "	) " + "select " + " abil_key_ud_ko.id_strut, "
-            + " abil_key_ud_ko.aa_key_unita_doc, " + " abil_key_ud_ko.id_tipo_unita_doc, "
-            + " abil_key_ud_ko.id_registro_unita_doc, " + " abil_key_ud_ko.id_tipo_doc_princ, "
-            + " conta_upd_ud_ko.ti_stato_udp_ud_ko, " + " case "
+            + "	 where id_strut = :due " + "	 and id_user_iam_cor = :uno "
+            + "	 and aa_key_unita_doc BETWEEN :sette AND :otto " + "	 and id_tipo_unita_doc = :quattro "
+            + "	 and id_registro_unita_doc = :cinque " + "	 and id_tipo_doc_princ = :sei " + "	) " + "select "
+            + " abil_key_ud_ko.id_strut, " + " abil_key_ud_ko.aa_key_unita_doc, "
+            + " abil_key_ud_ko.id_tipo_unita_doc, " + " abil_key_ud_ko.id_registro_unita_doc, "
+            + " abil_key_ud_ko.id_tipo_doc_princ, " + " conta_upd_ud_ko.ti_stato_udp_ud_ko, " + " case "
             + "	when conta_upd_ud_ko.dt_rif_conta between trunc (sysdate - 30) and trunc(sysdate - 1)  "
             + "		then '30gg' " + " when conta_upd_ud_ko.dt_rif_conta = trunc(sysdate) " + "         then 'oggi' "
             + "		else 'before30gg' " + " end ti_dt_creazione, "
@@ -322,7 +344,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_COR_BY_AMB = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_ambiente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ambiente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ambiente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud = trunc(sysdate) " + "	) " + "select " + " abil_key_ud.id_ambiente, "
             + " 'TOTALE' ti_stato_upd_ud, " + " count(*) ni_upd_ud " + "from tmp_abil_key_ud abil_key_ud "
             + "join ARO_UPD_UNITA_DOC upd " + "	on (upd.id_strut = abil_key_ud.id_strut "
@@ -346,7 +368,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_COR_BY_ENTE = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_ente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_ente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud = trunc(sysdate) " + "	) " + "select " + " abil_key_ud.id_ente, "
             + " 'TOTALE' ti_stato_upd_ud, " + " count(*) ni_upd_ud " + "from tmp_abil_key_ud abil_key_ud "
             + "join ARO_UPD_UNITA_DOC upd " + "	on (upd.id_strut = abil_key_ud.id_strut "
@@ -369,10 +391,10 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_COR_BY_STRUT = "with tmp_abil_key_ud as " + "	(select " + "	  id_key_total_ud, "
             + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_strut = ?2 " + "	 and id_user_iam_cor = ?1 "
-            + "	 and dt_last_upd_ud = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8 "
-            + "	 and id_tipo_unita_doc = ?4 " + "	 and id_registro_unita_doc = ?5 "
-            + "	 and id_tipo_doc_princ = ?6 " + "	) " + "select " + " abil_key_ud.id_strut, "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD " + "	 where id_strut = :due " + "	 and id_user_iam_cor = :uno "
+            + "	 and dt_last_upd_ud = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN :sette AND :otto "
+            + "	 and id_tipo_unita_doc = :quattro " + "	 and id_registro_unita_doc = :cinque "
+            + "	 and id_tipo_doc_princ = :sei " + "	) " + "select " + " abil_key_ud.id_strut, "
             + " abil_key_ud.aa_key_unita_doc, " + " abil_key_ud.id_tipo_unita_doc, "
             + " abil_key_ud.id_registro_unita_doc, " + " abil_key_ud.id_tipo_doc_princ, "
             + " 'TOTALE' ti_stato_upd_ud, " + " count(*) ni_upd_ud " + "from tmp_abil_key_ud abil_key_ud "
@@ -403,7 +425,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_KO_COR_BY_AMB = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ambiente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud_ko "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	) " + "select " + " abil_key_ud_ko.id_ambiente, "
             + " ses_ko.ti_stato_ses_upd_ko, " + " count(*) ni_upd_ud_ko " + "from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "	on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
@@ -418,7 +440,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_KO_COR_BY_ENTE = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud_ko "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = ?2 " + "	 and id_user_iam_cor = ?1 "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = :due " + "	 and id_user_iam_cor = :uno "
             + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	) " + "select " + " abil_key_ud_ko.id_ente, "
             + " ses_ko.ti_stato_ses_upd_ko, " + " count(*) ni_upd_ud_ko " + "from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "	on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
@@ -433,10 +455,10 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UPD_UD_KO_COR_BY_STRUT = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "	  dt_last_upd_ud_ko "
-            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = ?2 " + "	 and id_user_iam_cor = ?1 "
-            + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8 "
-            + "	 and id_tipo_unita_doc = ?4 " + "	 and id_registro_unita_doc = ?5 "
-            + "	 and id_tipo_doc_princ = ?6 " + "	) " + "select " + " abil_key_ud_ko.id_strut, "
+            + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = :due " + "	 and id_user_iam_cor = :uno "
+            + "	 and dt_last_upd_ud_ko = trunc(sysdate) " + "	 and aa_key_unita_doc BETWEEN :sette AND :otto "
+            + "	 and id_tipo_unita_doc = :quattro " + "	 and id_registro_unita_doc = :cinque "
+            + "	 and id_tipo_doc_princ = :sei " + "	) " + "select " + " abil_key_ud_ko.id_strut, "
             + " abil_key_ud_ko.aa_key_unita_doc, " + " abil_key_ud_ko.id_tipo_unita_doc, "
             + " abil_key_ud_ko.id_registro_unita_doc, " + " abil_key_ud_ko.id_tipo_doc_princ,	"
             + " ses_ko.ti_stato_ses_upd_ko, " + " count(*) ni_upd_ud_ko " + "from tmp_abil_key_ud_ko abil_key_ud_ko "
@@ -455,8 +477,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CHK_UD_UPD_KO_BY_AMB = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ambiente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "       " + "	  dt_last_upd_ud_ko "
-            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = ?2 "
-            + "	 and id_user_iam_cor = ?1 " + "	), " + "       " + "    tmp_ses_upd_unita_ko as "
+            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = :due "
+            + "	 and id_user_iam_cor = :uno " + "	), " + "       " + "    tmp_ses_upd_unita_ko as "
             + "    (select ses_ko.ti_stato_ses_upd_ko " + "     from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "     join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "       on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
             + "       and ses_ko.id_tipo_unita_doc = abil_key_ud_ko.id_tipo_unita_doc "
@@ -476,13 +498,13 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "				where ses_ko.ti_stato_ses_upd_ko = 'NON_VERIFICATO' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_ud_upd_ko_noverif " + " "
             + "from ORG_AMBIENTE amb " + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + " "
-            + "where amb.id_ambiente = ?2 " + "and usr.id_user_iam = ?1 ";
+            + "where amb.id_ambiente = :due " + "and usr.id_user_iam = :uno ";
 
     String MON_CHK_UD_UPD_KO_BY_ENTE = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "       " + "	  dt_last_upd_ud_ko "
-            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = ?2 "
-            + "	 and id_user_iam_cor = ?1 " + "	), " + "       " + "    tmp_ses_upd_unita_ko as "
+            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = :due "
+            + "	 and id_user_iam_cor = :uno " + "	), " + "       " + "    tmp_ses_upd_unita_ko as "
             + "    (select ses_ko.ti_stato_ses_upd_ko " + "     from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "     join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "       on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
             + "       and ses_ko.id_tipo_unita_doc = abil_key_ud_ko.id_tipo_unita_doc "
@@ -501,16 +523,16 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_ses_upd_unita_ko ses_ko "
             + "				where ses_ko.ti_stato_ses_upd_ko = 'NON_VERIFICATO' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_ud_upd_ko_noverif " + " " + "from ORG_ENTE ente "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + " " + "where ente.id_ente = ?2 "
-            + "and usr.id_user_iam = ?1 ";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + " " + "where ente.id_ente = :due "
+            + "and usr.id_user_iam = :uno ";
 
     String MON_CHK_UD_UPD_KO_BY_STRUT = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "       " + "	  dt_last_upd_ud_ko "
-            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = ?2 "
-            + "	 and id_user_iam_cor = ?1 " + "	  " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8 "
-            + "	 and id_tipo_unita_doc = ?4 " + "	 and id_registro_unita_doc = ?5 "
-            + "	 and id_tipo_doc_princ = ?6 " + "      " + "	), " + "       " + "    tmp_ses_upd_unita_ko as "
+            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = :due "
+            + "	 and id_user_iam_cor = :uno " + "	  " + "	 and aa_key_unita_doc BETWEEN :sette AND :otto "
+            + "	 and id_tipo_unita_doc = :quattro " + "	 and id_registro_unita_doc = :cinque "
+            + "	 and id_tipo_doc_princ = :sei " + "      " + "	), " + "       " + "    tmp_ses_upd_unita_ko as "
             + "    (select ses_ko.ti_stato_ses_upd_ko " + "     from tmp_abil_key_ud_ko abil_key_ud_ko "
             + "     join VRS_SES_UPD_UNITA_DOC_KO ses_ko " + "       on (ses_ko.id_strut = abil_key_ud_ko.id_strut "
             + "       and ses_ko.id_tipo_unita_doc = abil_key_ud_ko.id_tipo_unita_doc "
@@ -529,14 +551,14 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             + "	when exists (select *  " + "				from tmp_ses_upd_unita_ko ses_ko "
             + "				where ses_ko.ti_stato_ses_upd_ko = 'NON_VERIFICATO' " + "				) "
             + "			then '1' " + "			else '0' " + "end fl_ud_upd_ko_noverif " + " " + "from ORG_STRUT strut "
-            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + " " + "where strut.id_strut = ?2 "
-            + "and usr.id_user_iam = ?1";
+            + "join IAM_USER usr " + "	on (usr.id_user_iam > 0) " + " " + "where strut.id_strut = :due "
+            + "and usr.id_user_iam = :uno";
 
     String MON_CNT_UD_UPD_KO_BY_AMB = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ambiente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "       " + "	  dt_last_upd_ud_ko "
-            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = ?2 "
-            + "	 and id_user_iam_cor = ?1 " + "	), " + "       " + "    tmp_upd_unita_doc_ko as "
+            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ambiente = :due "
+            + "	 and id_user_iam_cor = :uno " + "	), " + "       " + "    tmp_upd_unita_doc_ko as "
             + "    (select distinct  " + "       abil_key_ud_ko.id_ambiente,  " + "        "
             + "       upd_ud_ko.id_strut, " + "       upd_ud_ko.cd_registro_key_unita_doc, "
             + "       upd_ud_ko.aa_key_unita_doc, " + "       upd_ud_ko.cd_key_unita_doc, " + "       "
@@ -555,8 +577,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UD_UPD_KO_BY_ENTE = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_ente, " + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "       " + "	  dt_last_upd_ud_ko "
-            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = ?2 "
-            + "	 and id_user_iam_cor = ?1 " + "	), " + "       " + "    tmp_upd_unita_doc_ko as "
+            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_ente = :due "
+            + "	 and id_user_iam_cor = :uno " + "	), " + "       " + "    tmp_upd_unita_doc_ko as "
             + "    (select distinct  " + "       abil_key_ud_ko.id_ente,  " + "        " + "       upd_ud_ko.id_strut, "
             + "       upd_ud_ko.cd_registro_key_unita_doc, " + "       upd_ud_ko.aa_key_unita_doc, "
             + "       upd_ud_ko.cd_key_unita_doc, " + "       " + "       ses_ko.ti_stato_ses_upd_ko "
@@ -575,10 +597,10 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     String MON_CNT_UD_UPD_KO_BY_STRUT = "with tmp_abil_key_ud_ko as " + "	(select " + "	  id_key_total_ud_ko, "
             + "	  id_strut, " + "	  aa_key_unita_doc, " + "      id_tipo_unita_doc, "
             + "      id_registro_unita_doc, " + "      id_tipo_doc_princ, " + "       " + "	  dt_last_upd_ud_ko "
-            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = ?2 "
-            + "	 and id_user_iam_cor = ?1 " + " " + "	 and aa_key_unita_doc BETWEEN ?7 AND ?8 "
-            + "	 and id_tipo_unita_doc = ?4 " + "	 and id_registro_unita_doc = ?5 "
-            + "	 and id_tipo_doc_princ = ?6 " + "      " + "	), " + "       " + "    tmp_upd_unita_doc_ko as "
+            + "	   " + "	 from MON_V_ABIL_KEY_TOTAL_UD_KO " + "	 where id_strut = :due "
+            + "	 and id_user_iam_cor = :uno " + " " + "	 and aa_key_unita_doc BETWEEN :sette AND :otto "
+            + "	 and id_tipo_unita_doc = :quattro " + "	 and id_registro_unita_doc = :cinque "
+            + "	 and id_tipo_doc_princ = :sei " + "      " + "	), " + "       " + "    tmp_upd_unita_doc_ko as "
             + "    (select distinct  " + "        " + "       upd_ud_ko.id_strut, "
             + "       upd_ud_ko.cd_registro_key_unita_doc, " + "       upd_ud_ko.aa_key_unita_doc as aa_key_ud, "
             + "       upd_ud_ko.cd_key_unita_doc, " + "        " + "       abil_key_ud_ko.aa_key_unita_doc, "
@@ -778,9 +800,9 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
 
     public List<Object[]> getMonV(String viewName, BigDecimal param1, BigDecimal param2) {
         Query query = getEntityManager().createNativeQuery(viewName);
-        query.setParameter(1, param1);
+        query.setParameter("uno", param1);
         if (param2 != null) {
-            query.setParameter(2, param2);
+            query.setParameter("due", param2);
         }
         return query.getResultList();
     }
@@ -789,38 +811,38 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             BigDecimal param4, BigDecimal param5, BigDecimal param6) {
         String queryStr = viewName;
         if (param3 == null) {
-            queryStr = StringUtils.replace(queryStr, "and aa_key_unita_doc BETWEEN ?7 AND ?8", " ");
+            queryStr = StringUtils.replace(queryStr, "and aa_key_unita_doc BETWEEN :sette AND :otto", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud.aa_key_unita_doc,", " ");
         }
         if (param4 == null) {
-            queryStr = StringUtils.replace(queryStr, "and id_tipo_unita_doc = ?4", " ");
+            queryStr = StringUtils.replace(queryStr, "and id_tipo_unita_doc = :quattro", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud.id_tipo_unita_doc,", " ");
         }
         if (param5 == null) {
-            queryStr = StringUtils.replace(queryStr, "and id_registro_unita_doc = ?5", " ");
+            queryStr = StringUtils.replace(queryStr, "and id_registro_unita_doc = :cinque", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud.id_registro_unita_doc,", " ");
         }
         if (param6 == null) {
-            queryStr = StringUtils.replace(queryStr, "and id_tipo_doc_princ = ?6", " ");
+            queryStr = StringUtils.replace(queryStr, "and id_tipo_doc_princ = :sei", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud.id_tipo_doc_princ,", " ");
         }
         Query query = getEntityManager().createNativeQuery(queryStr);
-        query.setParameter(1, param1);
+        query.setParameter("uno", param1);
         if (param2 != null) {
-            query.setParameter(2, param2);
+            query.setParameter("due", param2);
         }
         if (param3 != null) {
-            query.setParameter(7, param3.get(0));
-            query.setParameter(8, param3.get(1));
+            query.setParameter("sette", param3.get(0));
+            query.setParameter("otto", param3.get(1));
         }
         if (param4 != null) {
-            query.setParameter(4, param4);
+            query.setParameter("quattro", param4);
         }
         if (param5 != null) {
-            query.setParameter(5, param5);
+            query.setParameter("cinque", param5);
         }
         if (param6 != null) {
-            query.setParameter(6, param6);
+            query.setParameter("sei", param6);
         }
         return query.getResultList();
     }
@@ -830,38 +852,38 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
             BigDecimal param4, BigDecimal param5, BigDecimal param6) {
         String queryStr = viewName;
         if (param3 == null) {
-            queryStr = StringUtils.replace(queryStr, "and aa_key_unita_doc BETWEEN ?7 AND ?8", " ");
+            queryStr = StringUtils.replace(queryStr, "and aa_key_unita_doc BETWEEN :sette AND :otto", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud_ko.aa_key_unita_doc,", " ");
         }
         if (param4 == null) {
-            queryStr = StringUtils.replace(queryStr, "and id_tipo_unita_doc = ?4", " ");
+            queryStr = StringUtils.replace(queryStr, "and id_tipo_unita_doc = :quattro", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud_ko.id_tipo_unita_doc,", " ");
         }
         if (param5 == null) {
-            queryStr = StringUtils.replace(queryStr, "and id_registro_unita_doc = ?5", " ");
+            queryStr = StringUtils.replace(queryStr, "and id_registro_unita_doc = :cinque", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud_ko.id_registro_unita_doc,", " ");
         }
         if (param6 == null) {
-            queryStr = StringUtils.replace(queryStr, "and id_tipo_doc_princ = ?6", " ");
+            queryStr = StringUtils.replace(queryStr, "and id_tipo_doc_princ = :sei", " ");
             queryStr = StringUtils.replace(queryStr, "abil_key_ud_ko.id_tipo_doc_princ,", " ");
         }
         Query query = getEntityManager().createNativeQuery(queryStr);
-        query.setParameter(1, param1);
+        query.setParameter("uno", param1);
         if (param2 != null) {
-            query.setParameter(2, param2);
+            query.setParameter("due", param2);
         }
         if (param3 != null) {
-            query.setParameter(7, param3.get(0));
-            query.setParameter(8, param3.get(1));
+            query.setParameter("sette", param3.get(0));
+            query.setParameter("otto", param3.get(1));
         }
         if (param4 != null) {
-            query.setParameter(4, param4);
+            query.setParameter("quattro", param4);
         }
         if (param5 != null) {
-            query.setParameter(5, param5);
+            query.setParameter("cinque", param5);
         }
         if (param6 != null) {
-            query.setParameter(6, param6);
+            query.setParameter("sei", param6);
         }
         return query.getResultList();
     }
@@ -1114,15 +1136,19 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 dataA.set(Calendar.MILLISECOND, 0);
                 d2 = dataA.getTime();
                 // Per forzare l'indice su ORACLE!
-                Expression es1 = cb.function("TRUNC", Date.class, entity.get("tsIniSes"));
-                Expression es2 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
+                Expression<Date> es1 = cb.function("TRUNC", Date.class, entity.get("tsIniSes"));
+                Expression<Date> es2 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
                         cb.parameter(String.class, "d1"), cb.parameter(String.class, "f1")));
-                Expression es3 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
+                Expression<Date> es3 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
                         cb.parameter(String.class, "d2"), cb.parameter(String.class, "f2")));
                 condizioni.add(cb.between(es1, es2, es3));
             }
             if (tiStatoSes != null && (!tiStatoSes.isEmpty())) {
-                condizioni.add(cb.equal(entity.get("tiStatoSes"), tiStatoSes));
+                CriteriaBuilder.In<String> inClause = cb.in(entity.get("tiStatoSes"));
+                for (String stato : tiStatoSes) {
+                    inClause.value(stato);
+                }
+                condizioni.add(inClause);
             }
             if (idErr != null) {
                 condizioni.add(cb.equal(entity.get("idErrSacer"), idErr));
@@ -1213,10 +1239,10 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 dataA.set(Calendar.MILLISECOND, 0);
                 d2 = dataA.getTime();
                 // Per forzare l'indice su ORACLE!
-                Expression es1 = cb.function("TRUNC", Date.class, entity.get("tsIniSes"));
-                Expression es2 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
+                Expression<Date> es1 = cb.function("TRUNC", Date.class, entity.get("tsIniSes"));
+                Expression<Date> es2 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
                         cb.parameter(String.class, "d1"), cb.parameter(String.class, "f1")));
-                Expression es3 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
+                Expression<Date> es3 = cb.function("TRUNC", Date.class, cb.function("TO_DATE", String.class,
                         cb.parameter(String.class, "d2"), cb.parameter(String.class, "f2")));
                 condizioni.add(cb.between(es1, es2, es3));
             }
@@ -1240,7 +1266,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 condizioni.add(cb.equal(entity.get("cdKeyUnitaDoc"), rangeNumeroDa));
             }
             cq.where(condizioni.toArray(new Predicate[] {}));
-            TypedQuery q = getEntityManager().createQuery(cq);
+            TypedQuery<?> q = getEntityManager().createQuery(cq);
             if (dateValidate != null) {
                 q.setParameter("d1", sf.format(d1));
                 q.setParameter("d2", sf.format(d2));
@@ -1250,10 +1276,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
 
             result = q.getResultList();
         } catch (RuntimeException ex) {
-            log.error(
-                    "Errore nell'estrazione della lista delle unità documentarie derivanti da aggiornamenti metadati falliti",
-                    ex);
-            throw ex;
+            throw new SacerRuntimeException(ex, SacerErrorCategory.INTERNAL_ERROR);
         }
         return result;
     }
@@ -1292,7 +1315,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
 
         try {
             Query query = getEntityManager().createNamedQuery("DecErrSacer.findByIdClasse", DecErrSacer.class);
-            query.setParameter("idClasse", idClasse);
+            query.setParameter("idClasse", longFromBigDecimal(idClasse));
             result = query.getResultList();
         } catch (RuntimeException ex) {
             log.error("Errore nell'estrazione delle DecErrSacer per l'id [{}]", ex);
@@ -1304,7 +1327,24 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     public List<VrsErrSesUpdUnitaDocKo> getVrsErrSesUpdUnitaDocKoList(BigDecimal idSesUpdUnitaDocKo) {
         String queryStr = "SELECT u FROM VrsErrSesUpdUnitaDocKo u WHERE u.vrsSesUpdUnitaDocKo.idSesUpdUnitaDocKo = :idSesUpdUnitaDocKo ORDER BY u.pgErr";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idSesUpdUnitaDocKo", idSesUpdUnitaDocKo);
+        query.setParameter("idSesUpdUnitaDocKo", longFromBigDecimal(idSesUpdUnitaDocKo));
+        List<VrsErrSesUpdUnitaDocKo> lista = query.getResultList();
+        return lista;
+    }
+
+    public List<Long> getVrsSesUpdUnitaDocKoList(BigDecimal idUpdUnitaDocKo) {
+        String queryStr = "SELECT u.idSesUpdUnitaDocKo FROM VrsSesUpdUnitaDocKo u WHERE u.vrsUpdUnitaDocKo.idUpdUnitaDocKo = :idUpdUnitaDocKo ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idUpdUnitaDocKo", longFromBigDecimal(idUpdUnitaDocKo));
+        List<Long> lista = query.getResultList();
+        return lista;
+    }
+
+    public List<VrsErrSesUpdUnitaDocKo> getVrsErrSesUpdUnitaDocKoList(List<Long> idSesUpdUnitaDocKoList) {
+        String queryStr = "SELECT u FROM VrsErrSesUpdUnitaDocKo u WHERE u.vrsSesUpdUnitaDocKo.idSesUpdUnitaDocKo IN :idSesUpdUnitaDocKoList "
+                + "ORDER BY u.tiErr, u.vrsSesUpdUnitaDocKo.tsFineSes ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idSesUpdUnitaDocKoList", idSesUpdUnitaDocKoList);
         List<VrsErrSesUpdUnitaDocKo> lista = query.getResultList();
         return lista;
     }
@@ -1312,7 +1352,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     public List<VrsErrSesUpdUnitaDocErr> getVrsErrSesUpdUnitaDocErrList(BigDecimal idSesUpdUnitaDocErr) {
         String queryStr = "SELECT u FROM VrsErrSesUpdUnitaDocErr u WHERE u.vrsSesUpdUnitaDocErr.idSesUpdUnitaDocErr = :idSesUpdUnitaDocErr ORDER BY u.pgErr";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idSesUpdUnitaDocErr", idSesUpdUnitaDocErr);
+        query.setParameter("idSesUpdUnitaDocErr", longFromBigDecimal(idSesUpdUnitaDocErr));
         List<VrsErrSesUpdUnitaDocErr> lista = query.getResultList();
         return lista;
     }
@@ -1344,7 +1384,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     public List<AroWarnUpdUnitaDoc> getAroWarnUpdUnitaDocList(BigDecimal idUpdUnitaDoc) {
         String queryStr = "SELECT u FROM AroWarnUpdUnitaDoc u WHERE u.aroUpdUnitaDoc.idUpdUnitaDoc = :idUpdUnitaDoc ORDER BY u.pgWarn";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idUpdUnitaDoc", idUpdUnitaDoc);
+        query.setParameter("idUpdUnitaDoc", longFromBigDecimal(idUpdUnitaDoc));
         List<AroWarnUpdUnitaDoc> lista = query.getResultList();
         return lista;
     }
@@ -1388,23 +1428,6 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
         return null;
     }
 
-    public VrsVModifUpdUdKo getVrsVModifUpdUdKo(BigDecimal idStrut, String cdRegistroKeyUnitaDoc,
-            BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc) {
-        String queryStr = "SELECT u FROM VrsVModifUpdUdKo u " + "WHERE u.idStrut = :idStrut "
-                + "AND u.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc " + "AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc "
-                + "AND u.cdKeyUnitaDoc = :cdKeyUnitaDoc ";
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
-        query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
-        query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
-        List<VrsVModifUpdUdKo> lista = query.getResultList();
-        if (lista != null && !lista.isEmpty()) {
-            return lista.get(0);
-        }
-        return null;
-    }
-
     public List<OrgStrut> getStruttureVersantiPerAggMeta() {
         List<OrgStrut> result = null;
         try {
@@ -1422,9 +1445,9 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     }
 
     public int deleteMonContaSesUpdUd(long idStrut, Date data) {
-        String queryStr = "DELETE FROM MonContaSesUpdUd contaSesUpdUd "
-                + "WHERE contaSesUpdUd.monKeyTotalUd.orgStrut.idStrut = :idStrut "
-                + "AND contaSesUpdUd.dtRifConta = :data ";
+        String queryStr = "DELETE FROM MonContaSesUpdUd c " + " WHERE c IN "
+                + " (SELECT contaSesUpdUd FROM MonContaSesUpdUd contaSesUpdUd WHERE contaSesUpdUd.monKeyTotalUd.orgStrut.idStrut = :idStrut "
+                + " AND contaSesUpdUd.dtRifConta = :data)";
         Query q = getEntityManager().createQuery(queryStr);
         q.setParameter("idStrut", idStrut);
         q.setParameter("data", data);
@@ -1434,9 +1457,10 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
     }
 
     public int deleteMonContaSesUpdUdKo(long idStrut, Date data) {
-        String queryStr = "DELETE FROM MonContaSesUpdUdKo contaSesUpdUdKo "
+        String queryStr = "DELETE FROM MonContaSesUpdUdKo cko "
+                + "WHERE cko in (SELECT contaSesUpdUdKo FROM MonContaSesUpdUdKo contaSesUpdUdKo "
                 + "WHERE contaSesUpdUdKo.monKeyTotalUdKo.orgStrut.idStrut = :idStrut "
-                + "AND contaSesUpdUdKo.dtRifConta = :data ";
+                + "AND contaSesUpdUdKo.dtRifConta = :data)";
         Query q = getEntityManager().createQuery(queryStr);
         q.setParameter("idStrut", idStrut);
         q.setParameter("data", data);
@@ -1445,9 +1469,6 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
         return i;
     }
 
-    // COUNT(m.idFascicolo) FROM FasFascicolo f JOIN f.orgStrut strut WHERE FUNC('trunc', f.tsIniSes,
-    // 'DD')=FUNC('to_date',FUNC('to_char',:data,'DD/MM/YYYY'),'DD/MM/YYYY') GROUP BY f.orgStrut.idStrut,
-    // f.decTipoFascicolo.idTipoFascicolo, f.aaFascicolo, f.iamUser.idUserIam";
     public List<Object[]> getAggMetaPerCalcoloContenuto(long idStrut, Date data) {
         String queryStr = "SELECT updUnitaDoc.iamUser.idUserIam, keyTotalUd.idKeyTotalUd, updUnitaDoc.decTipoUnitaDoc.idTipoUnitaDoc, updUnitaDoc.decRegistroUnitaDoc.idRegistroUnitaDoc, "
                 + "updUnitaDoc.decTipoDocPrinc.idTipoDoc, updUnitaDoc.aaKeyUnitaDoc, updUnitaDoc.orgStrut.idStrut, keyTotalUd.orgSubStrut.idSubStrut, "
@@ -1459,9 +1480,9 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "AND updUnitaDoc.decRegistroUnitaDoc.idRegistroUnitaDoc=keyTotalUd.decRegistroUnitaDoc.idRegistroUnitaDoc "
                 + "AND updUnitaDoc.decTipoDocPrinc.idTipoDoc=keyTotalUd.decTipoDocPrinc.idTipoDoc "
                 + "AND updUnitaDoc.aaKeyUnitaDoc=keyTotalUd.aaKeyUnitaDoc "
-                + "AND FUNC('trunc', updUnitaDoc.tsIniSes) = FUNC('trunc', :data) "
-                + "AND FUNC('trunc', updUnitaDoc.tsIniSes) = FUNC('trunc', keyTotalUd.dtLastUpdUd) "
-                + "AND updUnitaDoc.tiStatoUpdElencoVers IN :valori "
+                + "AND TRUNC(updUnitaDoc.tsIniSes) = TRUNC(:data) "
+                + "AND TRUNC(updUnitaDoc.tsIniSes) = TRUNC(keyTotalUd.dtLastUpdUd) "
+                + "AND updUnitaDoc.tiStatoUpdElencoVers IN (:valori) "
                 + "GROUP BY updUnitaDoc.iamUser.idUserIam,keyTotalUd.idKeyTotalUd, updUnitaDoc.decTipoUnitaDoc.idTipoUnitaDoc, updUnitaDoc.decRegistroUnitaDoc.idRegistroUnitaDoc, "
                 + "updUnitaDoc.decTipoDocPrinc.idTipoDoc, updUnitaDoc.aaKeyUnitaDoc, updUnitaDoc.orgStrut.idStrut, keyTotalUd.orgSubStrut.idSubStrut, "
                 + "updUnitaDoc.tiStatoUpdElencoVers ";
@@ -1485,67 +1506,58 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "AND updUnitaDoc.decRegistroUnitaDoc.idRegistroUnitaDoc=keyTotalUd.decRegistroUnitaDoc.idRegistroUnitaDoc "
                 + "AND updUnitaDoc.decTipoDocPrinc.idTipoDoc=keyTotalUd.decTipoDocPrinc.idTipoDoc "
                 + "AND updUnitaDoc.aaKeyUnitaDoc=keyTotalUd.aaKeyUnitaDoc "
-                + "AND FUNC('trunc', updUnitaDoc.tsIniSes) = FUNC('trunc', :data) "
-                + "AND FUNC('trunc', updUnitaDoc.tsIniSes) = FUNC('trunc', keyTotalUd.dtLastUpdUd) "
-                // + "AND updUnitaDoc.tiStatoUpdElencoVers NOT IN :valori "
+                + "AND TRUNC( updUnitaDoc.tsIniSes) = TRUNC( :data) "
+                + "AND TRUNC( updUnitaDoc.tsIniSes) = TRUNC( keyTotalUd.dtLastUpdUd) "
                 + "GROUP BY updUnitaDoc.iamUser.idUserIam,keyTotalUd.idKeyTotalUd, updUnitaDoc.decTipoUnitaDoc.idTipoUnitaDoc, updUnitaDoc.decRegistroUnitaDoc.idRegistroUnitaDoc, "
                 + "updUnitaDoc.decTipoDocPrinc.idTipoDoc, updUnitaDoc.aaKeyUnitaDoc, updUnitaDoc.orgStrut.idStrut, keyTotalUd.orgSubStrut.idSubStrut, "
                 + "'TOTALE' ";
         Query q2 = getEntityManager().createQuery(queryStr2);
         q2.setParameter("idStrut", idStrut);
         q2.setParameter("data", data);
-        // q2.setParameter("valori", valori);
         lista.addAll(q2.getResultList());
         return lista;
     }
 
-    public List<Object[]> getAggMetaPerCalcoloContenuto2(long idStrut, Date data) {
-        String queryStr = "select " + "      key_tot.id_key_total_ud " + "	 upd.id_strut, " + "	 ud.id_sub_strut, "
-                + "	 upd.id_tipo_unita_doc, " + "	 upd.id_registro_unita_doc, " + "	 upd.id_tipo_doc_princ, "
-                + "	 upd.aa_key_unita_doc, " + "	 upd.ti_stato_upd_elenco_vers ti_stato_upd_ud, "
-                + "	 trunc(upd.ts_ini_ses) dt_upd_ud, " + "	 count(*) ni_ses_upd_ud " + "	from ARO_UPD_UNITA_DOC upd "
-                + "	join ARO_UNITA_DOC ud " + "		on (ud.id_unita_doc = upd.id_unita_doc "
-                + "		and ud.dt_annul = to_date('31/12/2444', 'dd/mm/yyyy')) " + "join MON_KEY_TOTAL_UD key_tot "
-                + "on (key_tot.id_strut = upd.id_strut " + "and key_tot.id_sub_strut = ud.id_sub_strut "
-                + "and key_tot.id_tipo_unita_doc = upd.id_tipo_unita_doc  "
-                + "and key_tot.id_registro_unita_doc = upd.id_registro_unita_doc  "
-                + "and key_tot.id_tipo_doc_princ = upd.id_tipo_doc_princ  "
-                + "and key_tot.aa_key_unita_doc = upd.aa_key_unita_doc) "
-                + "	where upd.ti_stato_upd_elenco_vers in ('IN_ATTESA_SCHED', 'NON_SELEZ_SCHED') "
-                + "	and trunc(upd.ts_ini_ses) <= trunc(?1) " + " and upd.id_strut = ?2 "
-                + "	group by upd.id_strut, ud.id_sub_strut, upd.id_tipo_unita_doc, upd.id_registro_unita_doc, upd.id_tipo_doc_princ, "
-                + "			 upd.aa_key_unita_doc, upd.ti_stato_upd_elenco_vers, trunc(upd.ts_ini_ses)";
-        Query q = getEntityManager().createNativeQuery(queryStr);
-        q.setParameter(2, idStrut);
-        q.setParameter(1, data);
-        // List<AroUpdUDTiStatoUpdElencoVers> valori = new ArrayList<AroUpdUDTiStatoUpdElencoVers>();
-        // valori.add(AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED);
-        // valori.add(AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
-        // q.setParameter("valori", valori);
-        List<Object[]> lista = new ArrayList<>();
-        lista.addAll(q.getResultList());
-
-        String queryStr2 = "select " + "      key_tot.id_key_total_ud " + "	 upd.id_strut, " + "	 ud.id_sub_strut, "
-                + "	 upd.id_tipo_unita_doc, " + "	 upd.id_registro_unita_doc, " + "	 upd.id_tipo_doc_princ, "
-                + "	 upd.aa_key_unita_doc, " + "	 'TOTALE' ti_stato_upd_ud, "
-                + "	 trunc(upd.ts_ini_ses) dt_upd_ud, " + "	 count(*) ni_ses_upd_ud " + "	from ARO_UPD_UNITA_DOC upd "
-                + "	join ARO_UNITA_DOC ud " + "		on (ud.id_unita_doc = upd.id_unita_doc "
-                + "		and ud.dt_annul = to_date('31/12/2444', 'dd/mm/yyyy')) " + "join MON_KEY_TOTAL_UD key_tot "
-                + "on (key_tot.id_strut = upd.id_strut " + "and key_tot.id_sub_strut = ud.id_sub_strut "
-                + "and key_tot.id_tipo_unita_doc = upd.id_tipo_unita_doc  "
-                + "and key_tot.id_registro_unita_doc = upd.id_registro_unita_doc  "
-                + "and key_tot.id_tipo_doc_princ = upd.id_tipo_doc_princ  "
-                + "and key_tot.aa_key_unita_doc = upd.aa_key_unita_doc) " + "	and trunc(upd.ts_ini_ses) <= trunc(?1) "
-                + " and upd.id_strut = ?2 "
-                + "	group by upd.id_strut, ud.id_sub_strut, upd.id_tipo_unita_doc, upd.id_registro_unita_doc, upd.id_tipo_doc_princ, "
-                + "			 upd.aa_key_unita_doc, 'TOTALE', trunc(upd.ts_ini_ses)";
-        Query q2 = getEntityManager().createNativeQuery(queryStr2);
-        q2.setParameter(2, idStrut);
-        q2.setParameter(1, data);
-        // q2.setParameter("valori", valori);
-        lista.addAll(q2.getResultList());
-        return lista;
-    }
+    /*
+     * public List<Object[]> getAggMetaPerCalcoloContenuto2(long idStrut, Date data) { String queryStr = "select " +
+     * "      key_tot.id_key_total_ud " + "	 upd.id_strut, " + "	 ud.id_sub_strut, " + "	 upd.id_tipo_unita_doc, " +
+     * "	 upd.id_registro_unita_doc, " + "	 upd.id_tipo_doc_princ, " + "	 upd.aa_key_unita_doc, " +
+     * "	 upd.ti_stato_upd_elenco_vers ti_stato_upd_ud, " + "	 trunc(upd.ts_ini_ses) dt_upd_ud, " +
+     * "	 count(*) ni_ses_upd_ud " + "	from ARO_UPD_UNITA_DOC upd " + "	join ARO_UNITA_DOC ud " +
+     * "		on (ud.id_unita_doc = upd.id_unita_doc " +
+     * "		and ud.dt_annul = to_date('31/12/2444', 'dd/mm/yyyy')) " + "join MON_KEY_TOTAL_UD key_tot " +
+     * "on (key_tot.id_strut = upd.id_strut " + "and key_tot.id_sub_strut = ud.id_sub_strut " +
+     * "and key_tot.id_tipo_unita_doc = upd.id_tipo_unita_doc  " +
+     * "and key_tot.id_registro_unita_doc = upd.id_registro_unita_doc  " +
+     * "and key_tot.id_tipo_doc_princ = upd.id_tipo_doc_princ  " +
+     * "and key_tot.aa_key_unita_doc = upd.aa_key_unita_doc) " +
+     * "	where upd.ti_stato_upd_elenco_vers in ('IN_ATTESA_SCHED', 'NON_SELEZ_SCHED') " +
+     * "	and trunc(upd.ts_ini_ses) <= trunc(:uno) " + " and upd.id_strut = :due " +
+     * "	group by upd.id_strut, ud.id_sub_strut, upd.id_tipo_unita_doc, upd.id_registro_unita_doc, upd.id_tipo_doc_princ, "
+     * + "			 upd.aa_key_unita_doc, upd.ti_stato_upd_elenco_vers, trunc(upd.ts_ini_ses)"; Query q =
+     * getEntityManager().createNativeQuery(queryStr); q.setParameter(2, idStrut); q.setParameter(1, data); //
+     * List<AroUpdUDTiStatoUpdElencoVers> valori = new ArrayList<AroUpdUDTiStatoUpdElencoVers>(); //
+     * valori.add(AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED); //
+     * valori.add(AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED); // q.setParameter("valori", valori); List<Object[]>
+     * lista = new ArrayList<>(); lista.addAll(q.getResultList());
+     * 
+     * String queryStr2 = "select " + "      key_tot.id_key_total_ud " + "	 upd.id_strut, " + "	 ud.id_sub_strut, "
+     * + "	 upd.id_tipo_unita_doc, " + "	 upd.id_registro_unita_doc, " + "	 upd.id_tipo_doc_princ, " +
+     * "	 upd.aa_key_unita_doc, " + "	 'TOTALE' ti_stato_upd_ud, " + "	 trunc(upd.ts_ini_ses) dt_upd_ud, " +
+     * "	 count(*) ni_ses_upd_ud " + "	from ARO_UPD_UNITA_DOC upd " + "	join ARO_UNITA_DOC ud " +
+     * "		on (ud.id_unita_doc = upd.id_unita_doc " +
+     * "		and ud.dt_annul = to_date('31/12/2444', 'dd/mm/yyyy')) " + "join MON_KEY_TOTAL_UD key_tot " +
+     * "on (key_tot.id_strut = upd.id_strut " + "and key_tot.id_sub_strut = ud.id_sub_strut " +
+     * "and key_tot.id_tipo_unita_doc = upd.id_tipo_unita_doc  " +
+     * "and key_tot.id_registro_unita_doc = upd.id_registro_unita_doc  " +
+     * "and key_tot.id_tipo_doc_princ = upd.id_tipo_doc_princ  " +
+     * "and key_tot.aa_key_unita_doc = upd.aa_key_unita_doc) " + "	and trunc(upd.ts_ini_ses) <= trunc(:uno) " +
+     * " and upd.id_strut = :due " +
+     * "	group by upd.id_strut, ud.id_sub_strut, upd.id_tipo_unita_doc, upd.id_registro_unita_doc, upd.id_tipo_doc_princ, "
+     * + "			 upd.aa_key_unita_doc, 'TOTALE', trunc(upd.ts_ini_ses)"; Query q2 =
+     * getEntityManager().createNativeQuery(queryStr2); q2.setParameter(2, idStrut); q2.setParameter(1, data); //
+     * q2.setParameter("valori", valori); lista.addAll(q2.getResultList()); return lista; }
+     */
 
     public List<Object[]> getAggMetaPerCalcoloContenuto3(long idStrut, Date data) {
         String queryStr = "select " + " key_tot.id_key_total_ud, " + " tmp.ti_stato_upd_ud, " + " tmp.dt_upd_ud, "
@@ -1556,7 +1568,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "	join ARO_UNITA_DOC ud " + "		on (ud.id_unita_doc = upd.id_unita_doc "
                 + "		and ud.dt_annul = to_date('31/12/2444', 'dd/mm/yyyy')) "
                 + "	where upd.ti_stato_upd_elenco_vers in ('IN_ATTESA_SCHED', 'NON_SELEZ_SCHED') "
-                + "and trunc(upd.ts_ini_ses) = trunc(?1) " + "                and upd.id_strut = ?2 "
+                + "and trunc(upd.ts_ini_ses) = trunc(:uno) " + "                and upd.id_strut = :due "
                 + "	group by upd.id_strut, ud.id_sub_strut, upd.id_tipo_unita_doc, upd.id_registro_unita_doc, upd.id_tipo_doc_princ, "
                 + "			 upd.aa_key_unita_doc, upd.ti_stato_upd_elenco_vers, trunc(upd.ts_ini_ses) " + "	 "
                 + "	UNION " + "	select " + "	 upd.id_strut, " + "	 ud.id_sub_strut, "
@@ -1565,7 +1577,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "	 trunc(upd.ts_ini_ses) dt_upd_ud, " + "	 count(*) ni_ses_upd_ud " + "	from ARO_UPD_UNITA_DOC upd "
                 + "	join ARO_UNITA_DOC ud " + "		on (ud.id_unita_doc = upd.id_unita_doc "
                 + "		and ud.dt_annul = to_date('31/12/2444', 'dd/mm/yyyy')) "
-                + "and trunc(upd.ts_ini_ses) = trunc(?1) " + "                and upd.id_strut = ?2 "
+                + "and trunc(upd.ts_ini_ses) = trunc(:uno) " + "                and upd.id_strut = :due "
                 + "	group by upd.id_strut, ud.id_sub_strut, upd.id_tipo_unita_doc, upd.id_registro_unita_doc, upd.id_tipo_doc_princ, "
                 + "			 upd.aa_key_unita_doc, 'TOTALE', trunc(upd.ts_ini_ses) " + "	) tmp "
                 + "	join MON_KEY_TOTAL_UD key_tot " + "		on (key_tot.id_strut = tmp.id_strut "
@@ -1591,8 +1603,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "AND sesUpdUnitaDocKo.decRegistroUnitaDoc.idRegistroUnitaDoc=keyTotalUdKo.decRegistroUnitaDoc.idRegistroUnitaDoc "
                 + "AND sesUpdUnitaDocKo.decTipoDocPrinc.idTipoDoc=keyTotalUdKo.decTipoDocPrinc.idTipoDoc "
                 + "AND sesUpdUnitaDocKo.aaKeyUnitaDoc=keyTotalUdKo.aaKeyUnitaDoc "
-                + "AND FUNC('trunc', sesUpdUnitaDocKo.tsIniSes) = FUNC('trunc', :data) "
-                + "AND FUNC('trunc', sesUpdUnitaDocKo.tsIniSes) = FUNC('trunc', keyTotalUdKo.dtLastUpdUdKo) "
+                + "AND TRUNC( sesUpdUnitaDocKo.tsIniSes) = TRUNC( :data) "
+                + "AND TRUNC( sesUpdUnitaDocKo.tsIniSes) = TRUNC( keyTotalUdKo.dtLastUpdUdKo) "
                 + "GROUP BY sesUpdUnitaDocKo.tiStatoSesUpdKo,keyTotalUdKo.idKeyTotalUdKo, sesUpdUnitaDocKo.decTipoUnitaDoc.idTipoUnitaDoc, sesUpdUnitaDocKo.decRegistroUnitaDoc.idRegistroUnitaDoc, "
                 + "sesUpdUnitaDocKo.decTipoDocPrinc.idTipoDoc, sesUpdUnitaDocKo.aaKeyUnitaDoc, sesUpdUnitaDocKo.orgStrut.idStrut, "
                 + "sesUpdUnitaDocKo.tiStatoSesUpdKo ";
@@ -1610,8 +1622,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "	 upd_ko.id_registro_unita_doc, " + "	 upd_ko.id_tipo_doc_princ, "
                 + "	 upd_ko.aa_key_unita_doc, " + "	 upd_ko.ti_stato_ses_upd_ko ti_stato_udp_ud_ko, "
                 + "	 trunc(upd_ko.ts_ini_ses) dt_upd_ud_ko, " + "	 count(*) ni_ses_upd_ud_ko "
-                + "	from VRS_SES_UPD_UNITA_DOC_KO upd_ko " + "	where trunc(upd_ko.ts_ini_ses) = trunc(?2) "
-                + "                and upd_ko.id_strut = ?1 "
+                + "	from VRS_SES_UPD_UNITA_DOC_KO upd_ko " + "	where trunc(upd_ko.ts_ini_ses) = trunc(:due) "
+                + "                and upd_ko.id_strut = :uno "
                 + "	group by upd_ko.id_strut, upd_ko.id_tipo_unita_doc, upd_ko.id_registro_unita_doc, upd_ko.id_tipo_doc_princ, "
                 + "			 upd_ko.aa_key_unita_doc, upd_ko.ti_stato_ses_upd_ko, trunc(upd_ko.ts_ini_ses) "
                 + "	) tmp " + "	join MON_KEY_TOTAL_UD_KO key_tot_ko " + "		on (key_tot_ko.id_strut = tmp.id_strut "

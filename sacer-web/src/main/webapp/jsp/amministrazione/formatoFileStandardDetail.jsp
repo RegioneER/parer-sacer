@@ -40,7 +40,11 @@
                 <slf:lblField name="<%=FormatiForm.FormatoFileStandard.NI_PUNTEGGIO_TOTALE%>" colSpan="4" controlWidth="w40"/>
                 <sl:newLine />   
                 <slf:lblField name="<%=FormatiForm.FormatoFileStandard.FL_FORMATO_CONCAT%>" colSpan="4" controlWidth="w40"/>
-                <sl:newLine />   
+                <sl:newLine />
+                <slf:lblField name="<%=FormatiForm.FormatoFileStandard.NT_IDONEITA%>" colSpan="4" controlWidth="w40"/>
+                <sl:newLine />
+                <slf:lblField name="<%=FormatiForm.FormatoFileStandard.DT_VALUTAZIONE_FORMATO%>" colSpan="4" controlWidth="w40"/>
+                <sl:newLine />
                 <sl:newLine skipLine="true"/>
             </slf:fieldSet >
             

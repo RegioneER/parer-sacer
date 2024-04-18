@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.ejb;
 
 import it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.helper.TipoRappresentazioneHelper;
@@ -227,6 +244,10 @@ public class TipoRappresentazioneEjb {
         if (!param.isTransactionActive()) {
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
         }
+
+        // Rimuovo via codice la relazione con i formati
+        helper.updateDecTipoRapprCompToDelete(idStrut);
+
         List<ObjectsToLogBefore> listaOggettiDaLoggare = sacerLogEjb.logBefore(param.getTransactionLogContext(),
                 param.getNomeApplicazione(), param.getNomeUtente(), param.getNomeAzione(),
                 SacerLogConstants.TIPO_OGGETTO_TIPO_RAPPRESENTAZIONE_COMPONENTE, new BigDecimal(idTipoRapprComp),
@@ -237,7 +258,7 @@ public class TipoRappresentazioneEjb {
         helper.removeEntity(tipoRapprComp, true);
         sacerLogEjb.logAfter(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), listaOggettiDaLoggare, param.getNomePagina());
-        logger.info("Cancellazione tipo unità documentaria " + nmTipoRapprComp + " della struttura " + idStrut
+        logger.info("Cancellazione tipo rappresentazione componente " + nmTipoRapprComp + " della struttura " + idStrut
                 + " avvenuta con successo!");
     }
 

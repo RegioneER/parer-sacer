@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.helper;
 
 import it.eng.parer.entity.DecImageTrasform;
@@ -5,6 +22,10 @@ import it.eng.parer.entity.DecTipoRapprComp;
 import it.eng.parer.entity.DecTrasformTipoRappr;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.ws.dto.CSVersatore;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,8 +45,6 @@ import org.slf4j.LoggerFactory;
 @LocalBean
 public class TipoRappresentazioneHelper extends GenericHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(TipoRappresentazioneHelper.class);
-
     public DecTipoRapprComp getDecTipoRapprCompByName(String nmTipoRapprComp, BigDecimal idStrut) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT tipoRapprComp FROM DecTipoRapprComp tipoRapprComp WHERE tipoRapprComp.nmTipoRapprComp = :nmTipoRapprComp");
@@ -37,7 +56,7 @@ public class TipoRappresentazioneHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
 
         query.setParameter("nmTipoRapprComp", nmTipoRapprComp);
@@ -65,16 +84,14 @@ public class TipoRappresentazioneHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
         }
 
-        List<DecTipoRapprComp> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
     public boolean checkRelationsAreEmptyForDecTipoRapprComp(long idTipoRapprComp) {
@@ -92,15 +109,14 @@ public class TipoRappresentazioneHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "Select t from DecTrasformTipoRappr t where t.decTipoRapprComp.idTipoRapprComp=:idTipoRapprComp");
         query.setParameter("idTipoRapprComp", idTipoRapprComp);
-        List<DecTrasformTipoRappr> result = query.getResultList();
-        return result;
+        return query.getResultList();
     }
 
     public List<DecImageTrasform> retrieveDecImageTrasformList(BigDecimal idTrasformTipoRappr) {
         List<DecImageTrasform> result;
         String sQuery = "Select t from DecImageTrasform t where t.decTrasformTipoRappr.idTrasformTipoRappr=:idTrasformTipoRappr";
         Query query = getEntityManager().createQuery(sQuery);
-        query.setParameter("idTrasformTipoRappr", idTrasformTipoRappr);
+        query.setParameter("idTrasformTipoRappr", longFromBigDecimal(idTrasformTipoRappr));
         result = query.getResultList();
 
         return result;
@@ -113,7 +129,7 @@ public class TipoRappresentazioneHelper extends GenericHelper {
                 + " join strut.orgEnte ente" + " join ente.orgAmbiente amb"
                 + " where dit.idImageTrasform=:idImageTrasform";
         Query query = getEntityManager().createQuery(sQuery);
-        query.setParameter("idImageTrasform", idImageTrasform);
+        query.setParameter("idImageTrasform", longFromBigDecimal(idImageTrasform));
         List<Object[]> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             result = new CSVersatore();
@@ -132,7 +148,7 @@ public class TipoRappresentazioneHelper extends GenericHelper {
                 + " join ttr.decTipoRapprComp dtrc" + " join dtrc.orgStrut strut" + " join strut.orgEnte ente"
                 + " join ente.orgAmbiente amb" + " where ttr.idTrasformTipoRappr=:idTrasformTipoRappr";
         Query query = getEntityManager().createQuery(sQuery);
-        query.setParameter("idTrasformTipoRappr", idTrasformTipoRappr);
+        query.setParameter("idTrasformTipoRappr", longFromBigDecimal(idTrasformTipoRappr));
         List<Object[]> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             result = new CSVersatore();
@@ -150,11 +166,22 @@ public class TipoRappresentazioneHelper extends GenericHelper {
         String sQuery = "Select t from DecImageTrasform t where t.nmImageTrasform=:nmImageTrasform AND t.decTrasformTipoRappr.idTrasformTipoRappr = :idTrasformTipoRappr";
         Query query = getEntityManager().createQuery(sQuery);
         query.setParameter("nmImageTrasform", nmImageTrasform);
-        query.setParameter("idTrasformTipoRappr", idTrasformTipoRappr);
+        query.setParameter("idTrasformTipoRappr", longFromBigDecimal(idTrasformTipoRappr));
         List<DecImageTrasform> lista = query.getResultList();
         if (lista != null && !lista.isEmpty()) {
             result = lista.get(0);
         }
         return result;
     }
+
+    public void updateDecTipoRapprCompToDelete(long idStrut) {
+        String queryStr = "UPDATE DecTipoRapprComp tipo "
+                + "SET tipo.decFormatoFileDocCont = null, tipo.decFormatoFileDocConv = null, tipo.decFormatoFileStandard = null "
+                + "WHERE tipo.orgStrut.idStrut = :idStrut ";
+        Query q = getEntityManager().createQuery(queryStr);
+        q.setParameter("idStrut", idStrut);
+        q.executeUpdate();
+        getEntityManager().flush();
+    }
+
 }

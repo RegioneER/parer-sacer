@@ -1,16 +1,65 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.fascicoli.ejb;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.xml.datatype.DatatypeConfigurationException;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.elencoVersFascicoli.ejb.IndiceElencoVersFascJobEjb;
 import it.eng.parer.elencoVersFascicoli.ejb.IndiceElencoVersFascXsdEjb;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
 import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums.FileTypeEnum;
-import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.DecCriterioRaggrFasc;
 import it.eng.parer.entity.ElvElencoVersFasc;
-import it.eng.parer.entity.ElvStatoElencoVersFasc;
 import it.eng.parer.entity.ElvElencoVersFascDaElab;
 import it.eng.parer.entity.ElvFileElencoVersFasc;
+import it.eng.parer.entity.ElvStatoElencoVersFasc;
+import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.FasStatoConservFascicolo;
 import it.eng.parer.entity.FasStatoFascicoloElenco;
 import it.eng.parer.entity.FasUnitaDocFascicolo;
@@ -19,11 +68,11 @@ import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.OrgAmbiente;
 import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
 import it.eng.parer.entity.constraint.ElvFascDaElabElenco.TiStatoFascDaElab;
+import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
-import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
-import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
 import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
 import it.eng.parer.entity.constraint.HsmElencoFascSesFirma.TiEsitoFirmaElencoFasc;
 import it.eng.parer.fascicoli.helper.ElenchiVersFascicoliHelper;
@@ -48,45 +97,17 @@ import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.xml.datatype.DatatypeConfigurationException;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 @Stateless
 @LocalBean
 public class ElenchiVersFascicoliEjb {
@@ -792,8 +813,8 @@ public class ElenchiVersFascicoliEjb {
         versatore.setEnte(nmEnte);
         versatore.setStruttura(nmStrut);
         // sistema (new URN)
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         versatore.setSistemaConservazione(sistema);
         // salvo ORIGINALE
         final String urnElencoIndiceAIPFirmato = MessaggiWSFormat.formattaUrnElencoIndiciAIPFascicoliFirmati(
@@ -1010,8 +1031,8 @@ public class ElenchiVersFascicoliEjb {
     public String buildUrnIndiceElencoVersFascicoli(ElvElencoVersFasc elenco, String nomeStruttura,
             String nomeStrutturaNorm, String nomeEnte, String nomeEnteNorm) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         String ente = (nomeEnte == null) ? nomeEnteNorm : nomeEnte;
         String struttura = (nomeStruttura == null) ? nomeStrutturaNorm : nomeStruttura;
         return MessaggiWSFormat.formattaUrnIndiceElencoVersFascicoli(sistema, ente, struttura,
@@ -1021,8 +1042,8 @@ public class ElenchiVersFascicoliEjb {
     public String buildUrnIndiceElencoVersFascicoliFirmati(ElvElencoVersFasc elenco, String nomeStruttura,
             String nomeStrutturaNorm, String nomeEnte, String nomeEnteNorm) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         String ente = (nomeEnte == null) ? nomeEnteNorm : nomeEnte;
         String struttura = (nomeStruttura == null) ? nomeStrutturaNorm : nomeStruttura;
         return MessaggiWSFormat.formattaUrnIndiceElencoVersFascicoliFirmati(sistema, ente, struttura,
@@ -1032,8 +1053,8 @@ public class ElenchiVersFascicoliEjb {
     public void calcolaUrnElenco(ElvElencoVersFasc elenco, String nomeStruttura, String nomeStrutturaNorm,
             String nomeEnte, String nomeEnteNorm) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String nomeSistema = configurationHelper.getValoreParamApplic("SISTEMA_CONSERVAZIONE", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeSistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         // Calcola URN originale
         String urnOriginale = MessaggiWSFormat.formattaUrnElencoVersFascicoli(nomeSistema, nomeEnte, nomeStruttura,
                 sdf.format(elenco.getTsCreazioneElenco()), String.format("%d", elenco.getIdElencoVersFasc()));

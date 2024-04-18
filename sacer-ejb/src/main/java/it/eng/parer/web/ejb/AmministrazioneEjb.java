@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.ejb;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -15,6 +33,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.AplValParamApplicMulti;
@@ -36,11 +56,10 @@ import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.web.helper.AmministrazioneHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.Transform;
+import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -944,25 +963,25 @@ public class AmministrazioneEjb {
      * @return String utente
      */
     public String getHsmUsername(long idUserIamCor, BigDecimal idAmbiente) {
-        AplParamApplic paramApplic = configurationHelper.getParamApplic("HSM_USERNAME");
+        AplParamApplic paramApplic = configurationHelper.getParamApplic(CostantiDB.ParametroAppl.HSM_USERNAME);
         UsrUser user = amministrazioneHelper.findById(UsrUser.class, idUserIamCor);
         String hsmUser = null;
         // Ricavo le coppie di valori multipli del parametro HASM_USERNAME sull'ambiente
         List<AplValParamApplicMulti> listaCoppieValoriHsmUsername = amministrazioneHelper
                 .getAplValParamApplicMultiList(BigDecimal.valueOf(paramApplic.getIdParamApplic()), idAmbiente);
-        Map<String, String> mappaUserHsm = new HashMap();
+        Map<String, String> mappaUserHsm = new HashMap<>();
         for (AplValParamApplicMulti valParamApplicMulti : listaCoppieValoriHsmUsername) {
             // Splitto la coppia: il primo valore sarà lo user applicativo, il secondo lo user hsm
             String[] chiaveValore = valParamApplicMulti.getDsValoreParamApplic().split(",");
             mappaUserHsm.put(chiaveValore[0], chiaveValore[1]);
         }
         // Controllo se l'utente corrente è presente come user applicativo in una delle coppie
-        Iterator it = mappaUserHsm.entrySet().iterator();
+        Iterator<Entry<String, String>> it = mappaUserHsm.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry) it.next();
-            String chiave = (String) entry.getKey();
+            Entry<String, String> entry = it.next();
+            String chiave = entry.getKey();
             if (chiave.equals(user.getNmUserid())) {
-                hsmUser = (String) entry.getValue();
+                hsmUser = entry.getValue();
                 break;
             }
         }

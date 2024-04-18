@@ -1,22 +1,39 @@
-package it.eng.parer.web.action;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package it.eng.parer.web.action;
 
 import it.eng.hsm.beans.HSMUser;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.ejb.SottoStruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.ejb.TipoStrutturaDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
+import it.eng.parer.common.signature.Signature;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.ElencoStatusEnum;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.FileTypeEnum;
 import it.eng.parer.entity.constraint.ElvElencoVer;
+import it.eng.parer.entity.constraint.ElvStatoElencoVer;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiSessioneFirma;
+import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipSignatureSessionEjb;
 import it.eng.parer.firma.crypto.ejb.ElencoSignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
@@ -29,49 +46,13 @@ import it.eng.parer.slite.gen.form.ElenchiVersamentoForm;
 import it.eng.parer.slite.gen.form.ElenchiVersamentoForm.FiltriElenchiDaFirmare;
 import it.eng.parer.slite.gen.form.MonitoraggioForm;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
-import it.eng.parer.slite.gen.tablebean.DecCriterioRaggrTableBean;
-import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoCompDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoStrutDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.ElvElencoVerRowBean;
-import it.eng.parer.slite.gen.tablebean.ElvElencoVerTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgSubStrutTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisDocIamTableBean;
-import it.eng.parer.slite.gen.viewbean.ElvVLisElencoVersStatoRowBean;
-import it.eng.parer.slite.gen.viewbean.ElvVLisElencoVersStatoTableBean;
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.ejb.TipoStrutturaDocEjb;
-import it.eng.parer.slite.gen.viewbean.ElvVLisElencoVersStatoTableDescriptor;
-import it.eng.parer.common.signature.Signature;
-import it.eng.parer.entity.constraint.ElvStatoElencoVer;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.slite.gen.tablebean.ElvStatoElencoVerTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocRowBean;
-import it.eng.parer.slite.gen.viewbean.ElvVLisUpdUdRowBean;
-import it.eng.parer.slite.gen.viewbean.ElvVLisUpdUdTableBean;
-import it.eng.parer.slite.gen.viewbean.ElvVListaCompElvRowBean;
-import it.eng.parer.slite.gen.viewbean.ElvVListaCompElvTableBean;
-import it.eng.parer.slite.gen.viewbean.ElvVRicElencoVersTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.*;
+import it.eng.parer.slite.gen.viewbean.*;
 import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.ejb.CriteriRaggruppamentoEjb;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
-import it.eng.parer.web.helper.AggiornamentiHelper;
-import it.eng.parer.web.helper.ComponentiHelper;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.web.helper.MonitoraggioHelper;
-import it.eng.parer.web.helper.UnitaDocumentarieHelper;
+import it.eng.parer.web.helper.*;
 import it.eng.parer.web.util.ActionEnums;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.validator.ElenchiVersamentoValidator;
@@ -92,21 +73,19 @@ import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
 import it.eng.spagoLite.security.SuppressLogging;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.zip.ZipOutputStream;
-import javax.ejb.EJB;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.zip.ZipOutputStream;
 
 /**
  *
@@ -178,7 +157,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
     public void initOnClick() throws EMFError {
     }
 
-    private void initComboFiltriComponenti(BigDecimal idStrut) throws EMFError {
+    private void initComboFiltriComponenti(BigDecimal idStrut) {
         if (idStrut == null) {
             idStrut = getIdStrutCorrente();
         }
@@ -269,6 +248,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                         && evEjb.retrieveFileIndiceElenco(idElencoVers.longValue(),
                                 ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name()) != null)) {
             getForm().getDettaglioElenchiVersamentoButtonList().getScaricaElencoIndiciAipButton().setEditMode();
+            getForm().getDettaglioElenchiVersamentoButtonList().getScaricaElencoIndiciAipButton()
+                    .setDisableHourGlass(true);
         }
 
     }
@@ -339,15 +320,17 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                      * Carico la lista degli elenchi di versamento da firmare: quelli della struttura dell'utente e con
                      * stato CHIUSO
                      */
-                    ElvVLisElencoVersStatoTableBean elenchiTableBean = (ElvVLisElencoVersStatoTableBean) evEjb
-                            .getElenchiDaFirmareTableBean(strut.getBigDecimal("id_ambiente"), strut.getIdEnte(),
-                                    strut.getIdStrut(),
-                                    getForm().getFiltriElenchiDaFirmare().getId_elenco_vers().parse(),
-                                    getForm().getFiltriElenchiDaFirmare().getElenchi_con_note().parse(),
-                                    getForm().getFiltriElenchiDaFirmare().getFl_elenco_fisc().parse(),
-                                    getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco().parse(),
-                                    dateCreazioneElencoValidate, getUser().getIdUtente(),
-                                    ElencoEnums.ElencoStatusEnum.CHIUSO);
+                    ArrayList<String> al = new ArrayList();
+                    String appoggio = getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco().parse();
+                    if (appoggio != null) {
+                        al.add(appoggio);
+                    }
+                    ElvVLisElencoVersStatoTableBean elenchiTableBean = evEjb.getElenchiDaFirmareTableBean(
+                            strut.getBigDecimal("id_ambiente"), strut.getIdEnte(), strut.getIdStrut(),
+                            getForm().getFiltriElenchiDaFirmare().getId_elenco_vers().parse(),
+                            getForm().getFiltriElenchiDaFirmare().getElenchi_con_note().parse(),
+                            getForm().getFiltriElenchiDaFirmare().getFl_elenco_fisc().parse(), al,
+                            dateCreazioneElencoValidate, getUser().getIdUtente(), ElencoEnums.ElencoStatusEnum.CHIUSO);
                     /*
                      * Filtro gli elenchi mediante tipo validazione = FIRMA/NO_FIRMA e modalità di validazione = MANUALE
                      */
@@ -418,7 +401,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
         getSession().setAttribute("idStrutRif", idStrut);
 
-        Button validaBtn = (Button) getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton();
+        Button validaBtn = getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton();
         if (validaBtn.isHidden()) {
             getSession().setAttribute("tiValidElenco", ElvElencoVer.TiValidElenco.FIRMA.name());
         } else {
@@ -502,8 +485,15 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         // Imposto le varie combo/multiselect dei FILTRI di ricerca Elenchi di Versamento
         getForm().getFiltriElenchiVersamento().getTi_stato_elenco().setDecodeMap(ComboGetter.getMappaSortedGenericEnum(
                 "ti_stato_elenco", ElencoEnums.ElencoStatusEnum.getComboMappaStatoElencoRicerca()));
+
+        getForm().getFiltriElenchiVersamento().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
+        getForm().getFiltriElenchiVersamento().getTi_mod_valid_elenco()
+                .setDecodeMap(ComboGetter.getMappaTiModValidElenco());
+
+        boolean flSigilloAttivo = Boolean.parseBoolean(
+                configurationHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO, idAmbiente));
         getForm().getFiltriElenchiVersamento().getTi_gest_elenco()
-                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio());
+                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
         getForm().getFiltriElenchiVersamento().getFl_elenco_standard()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriElenchiVersamento().getFl_elenco_firmato()
@@ -546,8 +536,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 getForm().getFiltriElenchiVersamento().getNm_criterio_raggr().setDecodeMap(mappaCriteri);
                 getForm().getFiltriElenchiVersamento().getCd_registro_key_unita_doc().setDecodeMap(mappaRegistro);
             } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-                logger.warn("Funzionalità non implementata per la sezione "
-                        + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+                logger.warn("Funzionalità non implementata per la sezione {}",
+                        ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
             }
         }
     }
@@ -680,9 +670,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         String lista = getTableName();
         String azione = getNavigationEvent();
 
-        BigDecimal idStruttura = getForm().getElenchiVersamentoDetail().getId_strut().parse();
-
         if (!azione.equals(ListAction.NE_DETTAGLIO_DELETE)) {
+            BigDecimal idStruttura = getForm().getElenchiVersamentoDetail().getId_strut().parse();
             /* Ricavo i tipi dato cui l'utente è abilitato */
             Set<Object> registriAbilitatiSet = getForm().getComponentiFiltri().getCd_registro_key_unita_doc()
                     .getDecodeMap().keySet();
@@ -984,7 +973,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         if (rowNmElenco != null && !rowNmElenco.equals(nmElenco)
                 && evEjb.existNomeElenco(nmElenco, getIdStrutCorrente())) {
             getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                    "Nome elenco di versamento già esistente per la struttura utilizzata"));
+                    "Nome elenco di versamento già esistente per la struttura utilizzata"));
             /* Se non va bene, reimposto il valore precedente nella casella di testo del nome elenco */
             getForm().getElenchiVersamentoDetail().getNm_elenco().setValue(rowNmElenco);
         }
@@ -1312,7 +1301,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         /* Campo note prese da dettaglio */
         String noteDettaglio = getForm().getElenchiVersamentoDetail().getNt_indice_elenco().parse();
         /* Campo note preso da finestra pop-up */
-        String notePopUp = (String) getRequest().getParameter("Nt_indice_elenco");
+        String notePopUp = getRequest().getParameter("Nt_indice_elenco");
 
         /* Verifico se ci sono state modifiche sulle note indice elenco */
         List<ElencoEnums.OpTypeEnum> modifica = new ArrayList<>();
@@ -1400,7 +1389,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         if (!getMessageBox().hasError()) {
             // Elimino a video gli elenchi cancellati su DB in quanto contenenti solo ud annullate
             idElencoVersRigheTotali.removeAll(idElencoVersRigheCancellate);
-            ElvVLisElencoVersStatoTableBean elenchiRimanenti = (ElvVLisElencoVersStatoTableBean) evEjb
+            ElvVLisElencoVersStatoTableBean elenchiRimanenti = evEjb
                     .getElenchiDaFirmareTableBean(idElencoVersRigheTotali, getUser().getIdUtente());
             getForm().getElenchiVersamentoSelezionatiList().setTable(elenchiRimanenti);
 
@@ -1645,7 +1634,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         String nmStrut = getForm().getElenchiVersamentoDetail().getNm_strut().parse();
         String filesSuffix = nmAmbiente + "_" + nmEnte + "_" + nmStrut + "_" + idElencoVers;
         /* Comincio a costruire lo zippone */
-        String nomeZippone = "indice_elenco_" + StringUtils.defaultString(filesSuffix).replaceAll(" ", "_");
+        String nomeZippone = "indice_elenco_" + StringUtils.defaultString(filesSuffix).replace(" ", "_");
         getResponse().setContentType("application/zip");
         getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeZippone + ".zip");
         try (ZipOutputStream out = new ZipOutputStream(getServletOutputStream());) {
@@ -1767,8 +1756,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             registroUnitaDocCombo = (ComboBox) campi.getComponent("cd_registro_key_unita_doc");
             criterioRaggrCombo = (ComboBox) campi.getComponent("nm_criterio_raggr");
         } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-            logger.warn("Funzionalità non implementata per la sezione "
-                    + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+            logger.warn("Funzionalità non implementata per la sezione {}",
+                    ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
         }
 
         // Azzero i valori preimpostati delle varie combo
@@ -1783,8 +1772,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 criterioRaggrCombo.setValue("");
             }
         } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-            logger.warn("Funzionalità non implementata per la sezione "
-                    + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+            logger.warn("Funzionalità non implementata per la sezione {}",
+                    ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
         }
 
         BigDecimal idAmbiente = (!ambienteCombo.getValue().equals("") ? new BigDecimal(ambienteCombo.getValue())
@@ -1810,8 +1799,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                         criterioRaggrCombo.setDecodeMap(new DecodeMap());
                     }
                 } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-                    logger.warn("Funzionalità non implementata per la sezione "
-                            + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+                    logger.warn("Funzionalità non implementata per la sezione {}",
+                            ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
                 }
             }
         } else {
@@ -1825,8 +1814,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     criterioRaggrCombo.setDecodeMap(new DecodeMap());
                 }
             } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-                logger.warn("Funzionalità non implementata per la sezione "
-                        + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+                logger.warn("Funzionalità non implementata per la sezione {}",
+                        ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
 
             }
         }
@@ -1846,8 +1835,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             registroUnitaDocCombo = (ComboBox) campi.getComponent("cd_registro_key_unita_doc");
             criterioRaggrCombo = (ComboBox) campi.getComponent("nm_criterio_raggr");
         } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-            logger.warn("Funzionalità non implementata per la sezione "
-                    + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+            logger.warn("Funzionalità non implementata per la sezione {}",
+                    ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
         }
 
         // Azzero i valori preimpostati delle varie combo
@@ -1861,8 +1850,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 criterioRaggrCombo.setValue("");
             }
         } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-            logger.warn("Funzionalità non implementata per la sezione "
-                    + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+            logger.warn("Funzionalità non implementata per la sezione {}",
+                    ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
         }
 
         BigDecimal idEnte = (!enteCombo.getValue().equals("") ? new BigDecimal(enteCombo.getValue()) : null);
@@ -1885,8 +1874,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     criterioRaggrCombo.setDecodeMap(new DecodeMap());
                 }
             } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-                logger.warn("Funzionalità non implementata per la sezione "
-                        + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+                logger.warn("Funzionalità non implementata per la sezione {}",
+                        ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
             }
         } else {
             strutCombo.setDecodeMap(new DecodeMap());
@@ -1898,8 +1887,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     criterioRaggrCombo.setDecodeMap(new DecodeMap());
                 }
             } else if (sezione.equals(ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP)) {
-                logger.warn("Funzionalità non implementata per la sezione "
-                        + ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
+                logger.warn("Funzionalità non implementata per la sezione {}",
+                        ActionEnums.SezioneElenchi.RICERCA_ELENCHI_INDICI_AIP.name());
             }
         }
         return campi;
@@ -1950,7 +1939,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
      * @throws EMFError
      *             errore generico
      */
-    private void initFiltriElenchiDaFirmare(BigDecimal idStruttura) throws EMFError {
+    private void initFiltriElenchiDaFirmare(BigDecimal idStruttura) {
         // Azzero i filtri
         getForm().getFiltriElenchiDaFirmare().reset();
         // Ricavo id struttura, ente ed ambiente attuali
@@ -1994,8 +1983,12 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         // Combo elenchi con note, flag fiscale e gestione elenco indici aip
         getForm().getFiltriElenchiDaFirmare().getElenchi_con_note().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getFiltriElenchiDaFirmare().getFl_elenco_fisc().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        boolean flSigilloAttivo = Boolean.parseBoolean(
+                configurationHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO, idAmbiente));
+        flSigilloAttivo = false; // FORZATO PERCHE' NON è ancora implementata la modifica a questa funzione! (basterà
+                                 // cancellare questa riga!
         getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco()
-                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio());
+                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
         // Imposto la combo tipo validazione e, se vuota, il valore di default
         getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
         if (getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().getValues() == null
@@ -2027,8 +2020,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
         getSession().setAttribute("idStrutRif", idStrut);
         if (idStrut == null) {
-            // Rimuovo l'attributo idStrutRif (se presente in sessione vuol dire che si riferisce ad una struttura
-            // selezionata precedentemente)
+            // Rimuovo l'attributo idStrutRif. Se presente in sessione vuol dire che si riferisce ad una struttura
+            // selezionata precedentemente
             getSession().removeAttribute("idStrutRif");
             // Traccio in sessione un attributo specifico
             getSession().setAttribute("isStrutNull", true);
@@ -2037,8 +2030,11 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         BigDecimal idElencoVers = getForm().getFiltriElenchiDaFirmare().getId_elenco_vers().parse();
         String presenzaNote = getForm().getFiltriElenchiDaFirmare().getElenchi_con_note().parse();
         String flElencoFisc = getForm().getFiltriElenchiDaFirmare().getFl_elenco_fisc().parse();
-        String tiGestElenco = getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco().parse();
-
+        ArrayList<String> tiGestElenco = new ArrayList();
+        String appoggio = getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco().parse();
+        if (appoggio != null) {
+            tiGestElenco.add(appoggio);
+        }
         if (getForm().getFiltriElenchiDaFirmare().validate(getMessageBox())) {
             if (!getMessageBox().hasError()) {
                 ElenchiVersamentoValidator elenchiValidator = new ElenchiVersamentoValidator(getMessageBox());
@@ -2059,10 +2055,9 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                      * Carico la lista degli elenchi di versamento da firmare: quelli della struttura dell'utente e con
                      * stato CHIUSO
                      */
-                    ElvVLisElencoVersStatoTableBean elenchiTableBean = (ElvVLisElencoVersStatoTableBean) evEjb
-                            .getElenchiDaFirmareTableBean(idAmbiente, idEnte, idStrut, idElencoVers, presenzaNote,
-                                    flElencoFisc, tiGestElenco, dateCreazioneElencoValidate, getUser().getIdUtente(),
-                                    ElencoEnums.ElencoStatusEnum.CHIUSO);
+                    ElvVLisElencoVersStatoTableBean elenchiTableBean = evEjb.getElenchiDaFirmareTableBean(idAmbiente,
+                            idEnte, idStrut, idElencoVers, presenzaNote, flElencoFisc, tiGestElenco,
+                            dateCreazioneElencoValidate, getUser().getIdUtente(), ElencoEnums.ElencoStatusEnum.CHIUSO);
                     /*
                      * Filtro gli elenchi mediante tipo validazione = FIRMA/NO_FIRMA e modalità di validazione =
                      * MANUALE/AUTOMATICA
@@ -2113,7 +2108,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             }
         }
 
-        Button validaBtn = (Button) getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton();
+        Button validaBtn = getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton();
         if (validaBtn.isHidden()) {
             getSession().setAttribute("tiValidElenco", ElvElencoVer.TiValidElenco.FIRMA.name());
         } else {
@@ -2226,7 +2221,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
                     // Elimino a video gli elenchi cancellati su DB in quanto contenenti solo ud annullate
                     idElencoVersRigheTotali.removeAll(idElencoVersRigheCancellate);
-                    ElvVLisElencoVersStatoTableBean elenchiRimanenti = (ElvVLisElencoVersStatoTableBean) evEjb
+                    ElvVLisElencoVersStatoTableBean elenchiRimanenti = evEjb
                             .getElenchiDaFirmareTableBean(idElencoVersRigheTotali, getUser().getIdUtente());
                     getForm().getElenchiVersamentoSelezionatiList().setTable(elenchiRimanenti);
 
@@ -2317,12 +2312,11 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         }
     }
 
-    private ElvElencoVerTableBean checkElenchiVersamentoToSign() throws EMFError {
+    private ElvElencoVerTableBean checkElenchiVersamentoToSign() {
         ElvElencoVerTableBean result = null;
 
         if (getForm().getElenchiVersamentoSelezionatiList().getTable().isEmpty()) {
-            Button validaBtn = (Button) getForm().getListaElenchiVersamentoDaFirmareButtonList()
-                    .getValidaElenchiButton();
+            Button validaBtn = getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton();
             String tiValidMsg = "";
             if (validaBtn.isHidden()) {
                 tiValidMsg = "firmare";
@@ -2332,9 +2326,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             getMessageBox().addMessage(
                     new Message(MessageLevel.ERR, "Selezionare almeno un elenco di versamento da " + tiValidMsg));
         } else {
-            boolean verificaPartizioni = Boolean
-                    .parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI,
-                            null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+
             List<String> organizNoPartitionList = new ArrayList<>();
             ElvElencoVerTableBean elenchiDaFirmare = new ElvElencoVerTableBean();
             /* Per ogni elenco di versamento da firmare selezionato, eseguo i controlli */
@@ -2356,17 +2348,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     if (!areAllElenchiNonPresentiFirmati) {
                         logger.warn("Non tutti gli elenchi sono firmati!");
 
-                    }
-                }
-
-                // Se è necessaria la verifica della partizione
-                if (verificaPartizioni) {
-                    // Controllo se non esiste
-                    if (struttureEjb.checkPartizioni(elencoVista.getIdStrut(), new Date(),
-                            CostantiDB.TiPartition.FILE_ELENCHI_VERS.name()).equals("0")) {
-                        // if(elencoVista.getIdStrut().compareTo(new BigDecimal("524"))==0){
-                        organizNoPartitionList.add(elencoVista.getNmAmbiente() + " - " + elencoVista.getNmEnte() + " - "
-                                + elencoVista.getNmStrut());
                     }
                 }
             }
@@ -2394,9 +2375,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         if (getForm().getElenchiIndiciAipSelezionatiList().getTable().isEmpty()) {
             getMessageBox().addError("Selezionare almeno un elenco indice AIP da firmare");
         } else {
-            boolean verificaPartizioni = Boolean
-                    .parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI,
-                            null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
             List<String> organizNoPartitionList = new ArrayList<>();
             ElvElencoVerTableBean elenchiDaFirmare = new ElvElencoVerTableBean();
             /* Per ogni elenco di versamento da firmare selezionato, eseguo i controlli */
@@ -2405,16 +2383,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 BigDecimal idElencoVers = elencoVista.getIdElencoVers();
                 ElvElencoVerRowBean elencoVers = evEjb.getElvElencoVersRowBean(idElencoVers);
                 elenchiDaFirmare.add(elencoVers);
-                // Se è necessaria la verifica della partizione
-                if (verificaPartizioni) {
-                    // Controllo se non esiste
-                    if (struttureEjb.checkPartizioni(elencoVista.getIdStrut(), new Date(),
-                            CostantiDB.TiPartition.FILE_ELENCHI_VERS.name()).equals("0")) {
-                        // if(elencoVista.getIdStrut().compareTo(new BigDecimal("524"))==0){
-                        organizNoPartitionList.add(elencoVista.getNmAmbiente() + " - " + elencoVista.getNmEnte() + " - "
-                                + elencoVista.getNmStrut());
-                    }
-                }
             }
             // Se ho delle strutture la cui "verifica partizione" non è andata a buon fine per i file degli elenchi...
             if (!organizNoPartitionList.isEmpty()) {
@@ -2528,7 +2496,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         String nmStrut = getForm().getElenchiVersamentoDetail().getNm_strut().parse();
         String filesSuffix = nmAmbiente + "_" + nmEnte + "_" + nmStrut + "_" + idElencoVers;
         /* Comincio a costruire lo zippone */
-        String nomeZippone = "ElencoIndiciAIP_" + StringUtils.defaultString(filesSuffix).replaceAll(" ", "_");
+        String nomeZippone = "ElencoIndiciAIP_" + StringUtils.defaultString(filesSuffix).replace(" ", "_");
         getResponse().setContentType("application/zip");
         getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeZippone + ".zip");
         ZipOutputStream out = new ZipOutputStream(getServletOutputStream());
@@ -2613,14 +2581,14 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                              * Carico la lista degli elenchi di versamento da firmare: quelli della struttura
                              * dell'utente e con stato ELENCO_INDICI_AIP_CREATO
                              */
-                            ElvVLisElencoVersStatoTableBean elenchiTableBean = (ElvVLisElencoVersStatoTableBean) evEjb
-                                    .getElenchiDaFirmareTableBean(strut.getBigDecimal("id_ambiente"), strut.getIdEnte(),
-                                            strut.getIdStrut(), null,
-                                            getForm().getFiltriElenchiDaFirmare().getElenchi_con_note().parse(),
-                                            getForm().getFiltriElenchiDaFirmare().getFl_elenco_fisc().parse(),
-                                            getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco().parse(),
-                                            dateCreazioneElencoIdxAipValidate, getUser().getIdUtente(),
-                                            ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO);
+                            List<String> tiGestElenco = getForm().getFiltriElenchiIndiciAipDaFirmare()
+                                    .getTi_gest_elenco().parse();
+                            ElvVLisElencoVersStatoTableBean elenchiTableBean = evEjb.getElenchiDaFirmareTableBean(
+                                    strut.getBigDecimal("id_ambiente"), strut.getIdEnte(), strut.getIdStrut(), null,
+                                    getForm().getFiltriElenchiDaFirmare().getElenchi_con_note().parse(),
+                                    getForm().getFiltriElenchiDaFirmare().getFl_elenco_fisc().parse(), tiGestElenco,
+                                    dateCreazioneElencoIdxAipValidate, getUser().getIdUtente(),
+                                    ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO);
                             getForm().getElenchiIndiciAipDaFirmareList().setTable(elenchiTableBean);
                             getForm().getElenchiIndiciAipDaFirmareList().getTable().setPageSize(10);
                             getForm().getElenchiIndiciAipDaFirmareList().getTable().first();
@@ -2677,7 +2645,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         forwardToPublisher(Application.Publisher.LISTA_ELENCHI_INDICI_AIP_SELECT);
     }
 
-    private boolean isMarcaButtonVisible(long idUser) throws EMFError {
+    private boolean isMarcaButtonVisible(long idUser) {
         boolean signActive = elencoIndiciAipSignSessionEjb.hasUserActiveSessions(getUser().getIdUtente());
 
         return !signActive && evEjb.getElenchiIndiciAipToMark(idUser);
@@ -2705,12 +2673,12 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         BigDecimal idStrut = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_strut().parse();
         BigDecimal idElencoVers = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_elenco_vers().parse();
         String flElencoFisc = getForm().getFiltriElenchiIndiciAipDaFirmare().getFl_elenco_fisc().parse();
-        String tiGestElenco = getForm().getFiltriElenchiIndiciAipDaFirmare().getTi_gest_elenco().parse();
+        List<String> tiGestElenco = getForm().getFiltriElenchiIndiciAipDaFirmare().getTi_gest_elenco().parse();
 
         getSession().setAttribute("idStrutRif", idStrut);
         if (idStrut == null) {
-            // Rimuovo l'attributo idStrutRif (se presente in sessione vuol dire che si riferisce ad una struttura
-            // selezionata precedentemente)
+            // Rimuovo l'attributo idStrutRif se presente in sessione vuol dire che si riferisce ad una struttura
+            // selezionata precedentemente
             getSession().removeAttribute("idStrutRif");
             // Traccio in sessione un attributo specifico
             getSession().setAttribute("isStrutNull", true);
@@ -2738,10 +2706,10 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                      * Carico la lista degli elenchi di versamento da firmare: quelli della struttura dell'utente e con
                      * stato ELENCO_INDICI_AIP_CREATO
                      */
-                    ElvVLisElencoVersStatoTableBean elenchiTableBean = (ElvVLisElencoVersStatoTableBean) evEjb
-                            .getElenchiDaFirmareTableBean(idAmbiente, idEnte, idStrut, idElencoVers, null, flElencoFisc,
-                                    tiGestElenco, dateCreazioneElencoIdxAipValidate, getUser().getIdUtente(),
-                                    ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO);
+                    ElvVLisElencoVersStatoTableBean elenchiTableBean = evEjb.getElenchiDaFirmareTableBean(idAmbiente,
+                            idEnte, idStrut, idElencoVers, null, flElencoFisc, tiGestElenco,
+                            dateCreazioneElencoIdxAipValidate, getUser().getIdUtente(),
+                            ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO);
                     getForm().getElenchiIndiciAipDaFirmareList().setTable(elenchiTableBean);
                     getForm().getElenchiIndiciAipDaFirmareList().getTable().setPageSize(10);
                     getForm().getElenchiIndiciAipDaFirmareList().getTable().first();
@@ -2839,8 +2807,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
                     getRequest().setAttribute("customElenchiVersamentoSelect", true);
 
-                    // String user =
-                    // configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_USERNAME);
                     getForm().getFiltriElenchiIndiciAipDaFirmare().getUser().setValue(hsmUserName);
                     getForm().getFiltriElenchiIndiciAipDaFirmare().getUser().setViewMode();
                 } else {
@@ -2897,9 +2863,12 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         // Combo flag fiscale e gestione elenco indici aip
         getForm().getFiltriElenchiIndiciAipDaFirmare().getFl_elenco_fisc()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        boolean flSigilloAttivo = true;
         getForm().getFiltriElenchiIndiciAipDaFirmare().getTi_gest_elenco()
-                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio());
-
+                .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
+        String[] appo = { CostantiDB.TiGestElencoCriterio.FIRMA.name(),
+                CostantiDB.TiGestElencoCriterio.MARCA_FIRMA.name() };
+        getForm().getFiltriElenchiIndiciAipDaFirmare().getTi_gest_elenco().setValues(appo);
         // Imposto i filtri in editMode
         getForm().getFiltriElenchiIndiciAipDaFirmare().setEditMode();
     }
@@ -3046,7 +3015,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         BigDecimal idStrut = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_strut().parse();
 
         try {
-            evEjb.marcaturaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, getUser().getIdUtente());
+            evEjb.marcaturaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, getUser().getIdUtente(), false);
             getMessageBox().addInfo(
                     "Il processo di firma (inclusa eventuale marcatura temporale) degli Elenchi Indici AIP è terminata correttamente");
             loadListaElenchiIndiciAipDaFirmare();
@@ -3067,7 +3036,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
         try {
             try {
-                evEjb.marcaturaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, getUser().getIdUtente());
+                evEjb.marcaturaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, getUser().getIdUtente(), false);
                 result.put("status", "OK");
                 result.put("info",
                         "Il processo di firma (inclusa eventuale marcatura temporale) degli Elenchi Indici AIP è terminata correttamente");

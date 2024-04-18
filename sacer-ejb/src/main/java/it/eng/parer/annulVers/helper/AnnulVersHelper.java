@@ -1,47 +1,50 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.annulVers.helper;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-
-import org.apache.commons.lang3.StringUtils;
-
 import it.eng.parer.annulVers.dto.RicercaRichAnnulVersBean;
-import it.eng.parer.entity.AroDoc;
-import it.eng.parer.entity.AroErrRichAnnulVers;
-import it.eng.parer.entity.AroItemRichAnnulVers;
-import it.eng.parer.entity.AroRichAnnulVers;
-import it.eng.parer.entity.AroStatoRichAnnulVers;
-import it.eng.parer.entity.AroUpdUnitaDoc;
-import it.eng.parer.entity.DecTipoDoc;
+import it.eng.parer.entity.*;
 import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
 import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.viewEntity.AroVLisItemRichAnnvrs;
-import it.eng.parer.viewEntity.AroVLisStatoRichAnnvrs;
-import it.eng.parer.viewEntity.AroVRicRichAnnvrs;
-import it.eng.parer.viewEntity.ElvVLisElencoFascAnnul;
-import it.eng.parer.viewEntity.ElvVLisElencoUdAnnul;
-import it.eng.parer.viewEntity.ElvVLisFascAnnulByElenco;
-import it.eng.parer.viewEntity.ElvVLisUdAnnulByElenco;
-import it.eng.parer.viewEntity.VolVLisUdAnnulByVolume;
-import it.eng.parer.viewEntity.VolVLisVolumeUdAnnul;
+import it.eng.parer.viewEntity.*;
 import it.eng.parer.ws.utils.CostantiDB;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+import java.math.BigDecimal;
+import java.util.*;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class AnnulVersHelper extends GenericHelper {
+
+    private static final Logger logger = LoggerFactory.getLogger(AnnulVersHelper.class);
 
     /**
      * Verifica l'esistenza di una richiesta di annullamento con codice <code>cdRichAnnulVers</code> per la struttura
@@ -58,7 +61,7 @@ public class AnnulVersHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(r) FROM AroRichAnnulVers r WHERE r.cdRichAnnulVers = :cdRichAnnulVers AND r.orgStrut.idStrut = :idStrut");
         query.setParameter("cdRichAnnulVers", cdRichAnnulVers);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         Long count = (Long) query.getSingleResult();
         return count > 0L;
     }
@@ -158,8 +161,7 @@ public class AnnulVersHelper extends GenericHelper {
         query.setParameter("tiCreazione", tiCreazione); // CostantiDB.TipoCreazioneDoc.AGGIUNTA_DOCUMENTO.name()
         query.setParameter("dtVersFrom", from.getTime());
         query.setParameter("dtVersTo", to.getTime());
-        Long docs = (Long) query.getSingleResult();
-        return docs;
+        return (Long) query.getSingleResult();
     }
 
     /**
@@ -195,8 +197,7 @@ public class AnnulVersHelper extends GenericHelper {
                 + "OR (statoRichAnnulVer.tiStatoRichAnnulVers = 'COMUNICATA_A_SACER') ";
 
         Query query = getEntityManager().createQuery(queryStr);
-        List<AroRichAnnulVers> richiesteAnnulList = (List<AroRichAnnulVers>) query.getResultList();
-        return richiesteAnnulList;
+        return query.getResultList();
     }
 
     /**
@@ -255,96 +256,19 @@ public class AnnulVersHelper extends GenericHelper {
      * @return lista oggetti di tipo {@link VolVLisVolumeUdAnnul}
      */
     public List<VolVLisVolumeUdAnnul> retrieveVolVLisVolumeUdAnnul(long idRichAnnulVers) {
-        Query query = getEntityManager()
-                .createQuery("SELECT vol FROM VolVLisVolumeUdAnnul vol WHERE vol.idRichAnnulVers = :idRichAnnulVers ");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        List<VolVLisVolumeUdAnnul> volumiConservsList = query.getResultList();
-        return volumiConservsList;
+        Query query = getEntityManager().createQuery(
+                "SELECT vol FROM VolVLisVolumeUdAnnul vol WHERE vol.id.idRichAnnulVers = :idRichAnnulVers ");
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        return query.getResultList();
     }
 
     public List<VolVLisUdAnnulByVolume> retrieveVolVLisUdAnnulByVolume(long idRichAnnulVers, long idVolumeConserv) {
         Query query = getEntityManager().createQuery(
                 "SELECT vol FROM VolVLisUdAnnulByVolume vol WHERE vol.idRichAnnulVers = :idRichAnnulVers AND vol.idVolumeConserv = :idVolumeConserv");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        query.setParameter("idVolumeConserv", idVolumeConserv);
-        List<VolVLisUdAnnulByVolume> udAnnuls = query.getResultList();
-        return udAnnuls;
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        query.setParameter("idVolumeConserv", bigDecimalFromLong(idVolumeConserv));
+        return query.getResultList();
     }
-
-    // /**
-    // * Ricavo gli item della richiesta corrente con stato DA_ANNULLARE_IN_SACER il cui stato relativo al processo di
-    // * inclusione in un elenco vale gli stati passati come parametro
-    // *
-    // * @param idRichAnnulVers, l'id della richiesta corrente
-    // * @param tiStatoElencoVers, gli stati ud/fasc
-    // * @param tiItemRichAnnulVers
-    // * @return
-    // */
-    // public List<AroItemRichAnnulVers> getItem(long idRichAnnulVers, CostantiDB.TiItemRichAnnulVers
-    // tiItemRichAnnulVers, String... tiStatoElencoVers) {
-    // List<AroItemRichAnnulVers> itemList;
-    // StringBuilder queryStr = new StringBuilder("SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers
-    // ");
-    //
-    // if (tiItemRichAnnulVers.equals(CostantiDB.TiItemRichAnnulVers.UNI_DOC)) {
-    // queryStr.append("JOIN itemRichAnnulVers.aroUnitaDoc unitaDoc ");
-    // } else if (tiItemRichAnnulVers.equals(CostantiDB.TiItemRichAnnulVers.FASC)) {
-    // queryStr.append("JOIN itemRichAnnulVers.fasFascicolo fascicolo ");
-    // }
-    //
-    // queryStr.append("JOIN itemRichAnnulVers.aroRichAnnulVers richAnnulVers "
-    // + "WHERE richAnnulVers.idRichAnnulVers = :idRichAnnulVers "
-    // + "AND itemRichAnnulVers.tiItemRichAnnulVers = :tiItemRichAnnulVers "
-    // + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ");
-    //
-    // if (tiStatoElencoVers != null && tiStatoElencoVers.length > 0) {
-    // if (tiItemRichAnnulVers.equals(CostantiDB.TiItemRichAnnulVers.UNI_DOC)) {
-    // if (tiStatoElencoVers.length > 1) {
-    // queryStr.append("AND unitaDoc.tiStatoUdElencoVers IN :tiStatoElencoVers ");
-    // } else {
-    // queryStr.append("AND unitaDoc.tiStatoUdElencoVers = :tiStatoElencoVers ");
-    // }
-    // } else if (tiItemRichAnnulVers.equals(CostantiDB.TiItemRichAnnulVers.FASC)) {
-    // if (tiStatoElencoVers.length > 1) {
-    // queryStr.append("AND fascicolo.tiStatoFascElencoVers IN :tiStatoElencoVers ");
-    // } else {
-    // queryStr.append("AND fascicolo.tiStatoFascElencoVers = :tiStatoElencoVers ");
-    // }
-    // }
-    // }
-    //
-    // Query query = getEntityManager().createQuery(queryStr.toString());
-    // query.setParameter("idRichAnnulVers", idRichAnnulVers);
-    // query.setParameter("tiItemRichAnnulVers", tiItemRichAnnulVers.name());
-    // if (tiStatoElencoVers != null && tiStatoElencoVers.length > 0) {
-    //
-    // List<String> statiList = new ArrayList<>();
-    // List<FasFascicolo.TiStatoFascElencoVers> statiListEnum = new ArrayList<>();
-    //
-    // if (tiItemRichAnnulVers.equals(CostantiDB.TiItemRichAnnulVers.UNI_DOC)) {
-    // statiList = Arrays.asList(tiStatoElencoVers);
-    // } else {
-    // for (String tistato : tiStatoElencoVers) {
-    // statiListEnum.add(FasFascicolo.TiStatoFascElencoVers.valueOf(tistato));
-    // }
-    // }
-    //
-    // //List<Enum> statiList = Arrays.asList(FasFascicolo.TiStatoFascElencoVers.valueOf(tiStatoElencoVers));
-    // if (statiList.size() > 1) {
-    // query.setParameter("tiStatoElencoVers", statiList);
-    // } else {
-    // query.setParameter("tiStatoElencoVers", statiList.get(0));
-    // }
-    //
-    // if (statiListEnum.size() > 1) {
-    // query.setParameter("tiStatoElencoVers", statiListEnum);
-    // } else {
-    // query.setParameter("tiStatoElencoVers", statiListEnum.get(0));
-    // }
-    // }
-    // itemList = (List<AroItemRichAnnulVers>) query.getResultList();
-    // return itemList;
-    // }
 
     /**
      * Ricavo gli item della richiesta corrente di tipo UNI_DOC con stato DA_ANNULLARE_IN_SACER il cui stato relativo al
@@ -358,33 +282,35 @@ public class AnnulVersHelper extends GenericHelper {
      * @return litsa oggetti di tipo {@link AroItemRichAnnulVers}
      */
     public List<AroItemRichAnnulVers> getItem(long idRichAnnulVers, String... tiStatoUdElencoVers) {
-        List<AroItemRichAnnulVers> itemList;
         StringBuilder queryStr = new StringBuilder(
                 "SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers "
-                        + "JOIN itemRichAnnulVers.aroUnitaDoc unitaDoc "
+                        + "JOIN FETCH itemRichAnnulVers.aroUnitaDoc unitaDoc "
                         + "JOIN itemRichAnnulVers.aroRichAnnulVers richAnnulVers "
                         + "WHERE richAnnulVers.idRichAnnulVers = :idRichAnnulVers "
                         + "AND itemRichAnnulVers.tiItemRichAnnulVers = 'UNI_DOC' "
                         + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ");
         if (tiStatoUdElencoVers != null && tiStatoUdElencoVers.length > 0) {
             if (tiStatoUdElencoVers.length > 1) {
-                queryStr.append("AND unitaDoc.tiStatoUdElencoVers IN :tiStatoUdElencoVers ");
+                queryStr.append("AND unitaDoc.tiStatoUdElencoVers IN (:tiStatoUdElencoVers) ");
             } else {
                 queryStr.append("AND unitaDoc.tiStatoUdElencoVers = :tiStatoUdElencoVers ");
             }
         }
+        logger.debug("Query ricerca AroItemRichAnnullVers: {}", queryStr);
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
         if (tiStatoUdElencoVers != null && tiStatoUdElencoVers.length > 0) {
             List<String> statiList = Arrays.asList(tiStatoUdElencoVers);
             if (statiList.size() > 1) {
+                logger.debug("Ricerco gli AroItemRichAnnulVers con tiStatoUdElencoVers={}",
+                        StringUtils.join(statiList, ","));
                 query.setParameter("tiStatoUdElencoVers", statiList);
             } else {
+                logger.debug("Ricerco gli AroItemRichAnnulVers con tiStatoUdElencoVers={}", statiList.get(0));
                 query.setParameter("tiStatoUdElencoVers", statiList.get(0));
             }
         }
-        itemList = (List<AroItemRichAnnulVers>) query.getResultList();
-        return itemList;
+        return query.getResultList();
     }
 
     /**
@@ -400,7 +326,6 @@ public class AnnulVersHelper extends GenericHelper {
      * @return lista elementi di tipo AroUpdUnitaDoc
      */
     public List<AroUpdUnitaDoc> getUpdItem(long idRichAnnulVers, AroUpdUDTiStatoUpdElencoVers... tiStatoUdElencoVers) {
-        List<AroUpdUnitaDoc> itemList;
         StringBuilder queryStr = new StringBuilder("SELECT updUnitaDocs FROM AroItemRichAnnulVers itemRichAnnulVers "
                 + "JOIN itemRichAnnulVers.aroUnitaDoc unitaDoc " + "JOIN unitaDoc.aroUpdUnitaDocs updUnitaDocs "
                 + "JOIN itemRichAnnulVers.aroRichAnnulVers richAnnulVers "
@@ -409,25 +334,27 @@ public class AnnulVersHelper extends GenericHelper {
                 + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ");
         if (tiStatoUdElencoVers != null && tiStatoUdElencoVers.length > 0) {
             if (tiStatoUdElencoVers.length > 1) {
-                queryStr.append("AND updUnitaDocs.tiStatoUpdElencoVers IN :tiStatoUpdElencoVers ");
+                queryStr.append("AND updUnitaDocs.tiStatoUpdElencoVers IN (:tiStatoUpdElencoVers) ");
             } else {
                 queryStr.append("AND updUnitaDocs.tiStatoUpdElencoVers = :tiStatoUpdElencoVers ");
             }
         }
         // order by last update
-        // queryStr.append("ORDER BY updUnitaDocs.pgUpdUnitaDoc DESC ");
+        logger.debug("ricerca di AroUpdUnitaDoc con query {}", queryStr);
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
         if (tiStatoUdElencoVers != null && tiStatoUdElencoVers.length > 0) {
             List<AroUpdUDTiStatoUpdElencoVers> statiList = Arrays.asList(tiStatoUdElencoVers);
             if (statiList.size() > 1) {
                 query.setParameter("tiStatoUpdElencoVers", statiList);
+                logger.debug("Ricerco gli AroUpdUnitaDoc con tiStatoUpdElencoVers={}",
+                        StringUtils.join(statiList, ","));
             } else {
                 query.setParameter("tiStatoUpdElencoVers", statiList.get(0));
+                logger.debug("Ricerco gli AroUpdUnitaDoc con tiStatoUpdElencoVers={}", statiList.get(0));
             }
         }
-        itemList = (List<AroUpdUnitaDoc>) query.getResultList();
-        return itemList;
+        return query.getResultList();
     }
 
     /**
@@ -443,7 +370,6 @@ public class AnnulVersHelper extends GenericHelper {
      */
     public List<AroItemRichAnnulVers> getItemFasc(long idRichAnnulVers,
             TiStatoFascElencoVers... tiStatoFascElencoVers) {
-        List<AroItemRichAnnulVers> itemList;
         StringBuilder queryStr = new StringBuilder(
                 "SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers "
                         + "JOIN itemRichAnnulVers.fasFascicolo fascicolo "
@@ -453,7 +379,7 @@ public class AnnulVersHelper extends GenericHelper {
                         + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ");
         if (tiStatoFascElencoVers != null && tiStatoFascElencoVers.length > 0) {
             if (tiStatoFascElencoVers.length > 1) {
-                queryStr.append("AND fascicolo.tiStatoFascElencoVers IN :tiStatoFascElencoVers ");
+                queryStr.append("AND fascicolo.tiStatoFascElencoVers IN (:tiStatoFascElencoVers) ");
             } else {
                 queryStr.append("AND fascicolo.tiStatoFascElencoVers = :tiStatoFascElencoVers ");
             }
@@ -468,8 +394,7 @@ public class AnnulVersHelper extends GenericHelper {
                 query.setParameter("tiStatoFascElencoVers", statiList.get(0));
             }
         }
-        itemList = (List<AroItemRichAnnulVers>) query.getResultList();
-        return itemList;
+        return query.getResultList();
     }
 
     /**
@@ -494,58 +419,28 @@ public class AnnulVersHelper extends GenericHelper {
                 + "AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' ");
         if (tiStatoDocElencoVers != null) {
             if (tiStatoDocElencoVers.length > 1) {
-                queryStr.append("AND doc.tiStatoDocElencoVers IN :tiStatoDocElencoVers ");
+                queryStr.append("AND doc.tiStatoDocElencoVers IN (:tiStatoDocElencoVers) ");
             } else {
                 queryStr.append("AND doc.tiStatoDocElencoVers = :tiStatoDocElencoVers ");
             }
         }
+        logger.debug(" recupero documenti aggiunti con query {}", queryStr);
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
         if (tiStatoDocElencoVers != null) {
             List<String> statiList = Arrays.asList(tiStatoDocElencoVers);
             if (statiList.size() > 1) {
+                logger.debug(" recupero documenti aggiunti con tiStatoDocElencoVers {}",
+                        StringUtils.join(statiList, ","));
                 query.setParameter("tiStatoDocElencoVers", statiList);
             } else {
+                logger.debug(" recupero documenti aggiunti con tiStatoDocElencoVers {}", statiList.get(0));
                 query.setParameter("tiStatoDocElencoVers", statiList.get(0));
             }
         }
-        List<AroDoc> docList = (List<AroDoc>) query.getResultList();
-        return docList;
+        return query.getResultList();
     }
 
-    // public List<ElvElencoVer> getElenchiItem(long idRichAnnulVers) {
-    // String queryStr = "SELECT DISTINCT elencoVers FROM AroItemRichAnnulVers itemRichAnnulVers "
-    // + "JOIN itemRichAnnulVers.aroUnitaDoc unitaDoc "
-    // + "JOIN unitaDoc.elvElencoVer elencoVers "
-    // + "JOIN itemRichAnnulVers.aroRichAnnulVers richAnnulVers "
-    // + "WHERE unitaDoc.tiStatoUdElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_FIRMATO') "
-    // + "AND elencoVers.tiStatoElenco IN ('CHIUSO', 'FIRMATO') "
-    // + "AND itemRichAnnulVers.tiItemRichAnnulVers = 'UNI_DOC' "
-    // + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
-    // + "AND richAnnulVers.idRichAnnulVers = :idRichAnnulVers ";
-    // Query query = getEntityManager().createQuery(queryStr);
-    // query.setParameter("idRichAnnulVers", idRichAnnulVers);
-    // List<ElvElencoVer> elenchiList = (List<ElvElencoVer>) query.getResultList();
-    // return elenchiList;
-    // }
-    //
-    // public List<ElvElencoVer> getElenchiDocAggiunti(long idRichAnnulVers) {
-    // String queryStr = "SELECT DISTINCT elencoVers FROM AroItemRichAnnulVers itemRichAnnulVers "
-    // + "JOIN itemRichAnnulVers.aroUnitaDoc unitaDoc "
-    // + "JOIN unitaDoc.aroDocs doc "
-    // + "JOIN doc.elvElencoVer elencoVers "
-    // + "JOIN itemRichAnnulVers.aroRichAnnulVers richAnnulVers "
-    // + "WHERE doc.tiStatoDocElencoVers IN ('IN_ELENCO_CHIUSO', 'IN_ELENCO_FIRMATO') "
-    // + "AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
-    // + "AND elencoVers.tiStatoElenco IN ('CHIUSO', 'FIRMATO') "
-    // + "AND itemRichAnnulVers.tiItemRichAnnulVers = 'UNI_DOC' "
-    // + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
-    // + "AND richAnnulVers.idRichAnnulVers = :idRichAnnulVers ";
-    // Query query = getEntityManager().createQuery(queryStr);
-    // query.setParameter("idRichAnnulVers", idRichAnnulVers);
-    // List<ElvElencoVer> elenchiList = (List<ElvElencoVer>) query.getResultList();
-    // return elenchiList;
-    // }
     /**
      * Ritorna la lista dei elenchi a cui appartengono gli item (della richiesta corrente) di tipo UNI_DOC con stato
      * DA_ANNULLARE_IN_SACER, il cui stato vale IN_ELENCO_CHIUSO o IN_ELENCO_VALIDATO unito agli elenchi a cui
@@ -558,27 +453,25 @@ public class AnnulVersHelper extends GenericHelper {
      * @return lista elementi di tipo ElvVLisElencoUdAnnul
      */
     public List<ElvVLisElencoUdAnnul> retrieveElvVLisElencoUdAnnuls(long idRichAnnulVers) {
-        Query query = getEntityManager()
-                .createQuery("SELECT elv FROM ElvVLisElencoUdAnnul elv WHERE elv.idRichAnnulVers = :idRichAnnulVers ");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        List<ElvVLisElencoUdAnnul> elenchi = query.getResultList();
-        return elenchi;
+        Query query = getEntityManager().createQuery(
+                "SELECT elv FROM ElvVLisElencoUdAnnul elv WHERE elv.id.idRichAnnulVers = :idRichAnnulVers ");
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        return query.getResultList();
     }
 
     public List<ElvVLisUdAnnulByElenco> retrieveElvVLisUdAnnulByElenco(long idRichAnnulVers, long idElencoVers) {
         Query query = getEntityManager().createQuery(
                 "SELECT elv FROM ElvVLisUdAnnulByElenco elv WHERE elv.idRichAnnulVers = :idRichAnnulVers AND elv.idElencoVers = :idElencoVers");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        query.setParameter("idElencoVers", idElencoVers);
-        List<ElvVLisUdAnnulByElenco> udAnnuls = query.getResultList();
-        return udAnnuls;
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        query.setParameter("idElencoVers", bigDecimalFromLong(idElencoVers));
+        return query.getResultList();
     }
 
     public void updateUnitaDocumentarieItem(long idRichAnnulVers, Date dtAnnul, String tiAnnul,
             String tiStatoConservazione, String ntAnnul) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroUnitaDoc unitaDoc SET unitaDoc.dtAnnul = :dtAnnul, unitaDoc.tiAnnul = :tiAnnul, unitaDoc.tiStatoConservazione = :tiStatoConservazione, unitaDoc.ntAnnul = :ntAnnul "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc = unitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ) ");
+                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = unitaDoc.idUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ) ");
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.setParameter("dtAnnul", dtAnnul);
         q.setParameter("tiAnnul", tiAnnul);
@@ -590,7 +483,13 @@ public class AnnulVersHelper extends GenericHelper {
     public void updateUpdUnitaDocumentarieItem(long idRichAnnulVers, Date dtAnnul, String ntAnnul) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroUpdUnitaDoc updUnitaDoc SET updUnitaDoc.dtAnnul = :dtAnnul, updUnitaDoc.ntAnnul = :ntAnnul "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc.aroUpdUnitaDocs = updUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ) ");
+                        + "WHERE updUnitaDoc.idUpdUnitaDoc IN (" + "SELECT aroUpdUnitaDoc.idUpdUnitaDoc "
+                        + "FROM AroItemRichAnnulVers itemRichAnnulVers "
+                        + "JOIN itemRichAnnulVers.aroUnitaDoc  aroUnitaDoc "
+                        + "JOIN aroUnitaDoc.aroUpdUnitaDocs aroUpdUnitaDoc "
+                        + "WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
+                        + "AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER')");
+
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.setParameter("dtAnnul", dtAnnul);
         q.setParameter("ntAnnul", ntAnnul);
@@ -600,7 +499,7 @@ public class AnnulVersHelper extends GenericHelper {
     public void updateCollegamentiUd(long idRichAnnulVers) {
         Query q = getEntityManager()
                 .createQuery("UPDATE AroLinkUnitaDoc linkUnitaDoc SET linkUnitaDoc.aroUnitaDocLink = null "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc = linkUnitaDoc.aroUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
+                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = linkUnitaDoc.aroUnitaDoc.idUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.executeUpdate();
     }
@@ -608,7 +507,7 @@ public class AnnulVersHelper extends GenericHelper {
     public void updateDocumentiUdItem(Long idRichAnnulVers, Date dtAnnul, String tiAnnul, String ntAnnul) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroDoc doc SET doc.dtAnnul = :dtAnnul, doc.tiAnnul = :tiAnnul, doc.ntAnnul = :ntAnnul "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc = doc.aroUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
+                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = doc.aroUnitaDoc.idUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.setParameter("dtAnnul", dtAnnul);
         q.setParameter("tiAnnul", tiAnnul);
@@ -658,9 +557,9 @@ public class AnnulVersHelper extends GenericHelper {
         String clause = " AND ";
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicRichAnnvrs ("
                 + "r.cdRichAnnulVers,r.dsRichAnnulVers,r.dtCreazioneRichAnnulVers,r.flAnnulPing,r.flImmediata,r.flNonAnnul,"
-                + "r.idAmbiente,r.idEnte,r.idRichAnnulVers,r.idStrut,r.idUserIam,r.niItem,r.niItemNonAnnul,"
+                + "r.idAmbiente,r.idEnte,r.id.idRichAnnulVers,r.idStrut,r.id.idUserIam,r.niItem,r.niItemNonAnnul,"
                 + "r.niItemPing,r.nmAmbiente,r.nmEnte,r.nmStrut,r.ntRichAnnulVers,r.tiCreazioneRichAnnulVers,r.tiStatoRichAnnulVersCor)"
-                + " FROM AroVRicRichAnnvrs r WHERE r.idUserIam = :idUserIam AND r.idAmbiente = :idAmbiente ");
+                + " FROM AroVRicRichAnnvrs r WHERE r.id.idUserIam = :idUserIam AND r.idAmbiente = :idAmbiente ");
         if (filtri.getId_ente() != null) {
             queryStr.append(clause).append("r.idEnte = :idEnte ");
         }
@@ -680,7 +579,7 @@ public class AnnulVersHelper extends GenericHelper {
             if (filtri.getTi_stato_rich_annul_vers_cor().size() == 1) {
                 queryStr.append(clause).append("r.tiStatoRichAnnulVersCor = :tiStatoRichAnnulVersCor ");
             } else {
-                queryStr.append(clause).append("r.tiStatoRichAnnulVersCor IN :tiStatoRichAnnulVersCor ");
+                queryStr.append(clause).append("r.tiStatoRichAnnulVersCor IN (:tiStatoRichAnnulVersCor) ");
             }
         }
         if (filtri.getDt_creazione_rich_annul_vers_da() != null) {
@@ -720,7 +619,7 @@ public class AnnulVersHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idAmbiente", filtri.getId_ambiente());
-        query.setParameter("idUserIam", idUser);
+        query.setParameter("idUserIam", bigDecimalFromLong(idUser));
 
         if (filtri.getId_ente() != null) {
             query.setParameter("idEnte", filtri.getId_ente());
@@ -777,38 +676,39 @@ public class AnnulVersHelper extends GenericHelper {
         if (StringUtils.isNotBlank(filtri.getTi_rich_annul_vers())) {
             query.setParameter("tiRichAnnulVers", filtri.getTi_rich_annul_vers());
         }
-        return (List<AroVRicRichAnnvrs>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<AroVLisItemRichAnnvrs> getAroVLisItemRichAnnvrs(BigDecimal idRichAnnulVers) {
         Query query = getEntityManager().createQuery(
                 "SELECT a FROM AroVLisItemRichAnnvrs a WHERE a.idRichAnnulVers = :idRichAnnulVers ORDER BY a.pgItemRichAnnulVers");
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        List<AroVLisItemRichAnnvrs> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<AroVLisStatoRichAnnvrs> getAroVLisStatoRichAnnvrs(BigDecimal idRichAnnulVers) {
         Query query = getEntityManager().createQuery(
                 "SELECT a FROM AroVLisStatoRichAnnvrs a WHERE a.idRichAnnulVers = :idRichAnnulVers ORDER BY a.pgStatoRichAnnulVers");
         query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        List<AroVLisStatoRichAnnvrs> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public Long countAroItemRichAnnulVers(BigDecimal idRichAnnulVers, String... tiStato) {
-        List<String> statiList = Arrays.asList(tiStato);
+        List<String> statiList = new ArrayList<>();
+        if (tiStato.length > 0) {
+            statiList = Arrays.asList(tiStato);
+        }
         StringBuilder queryStr = new StringBuilder(
                 "SELECT COUNT(i) FROM AroItemRichAnnulVers i WHERE i.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers ");
         if (!statiList.isEmpty()) {
             if (statiList.size() == 1) {
                 queryStr.append("AND i.tiStatoItem = :tiStatoItem ");
             } else {
-                queryStr.append("AND i.tiStatoItem IN :tiStatoItem ");
+                queryStr.append("AND i.tiStatoItem IN (:tiStatoItem) ");
             }
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
+        query.setParameter("idRichAnnulVers", longFromBigDecimal(idRichAnnulVers));
         if (!statiList.isEmpty()) {
             if (statiList.size() == 1) {
                 query.setParameter("tiStatoItem", statiList.get(0));
@@ -816,8 +716,7 @@ public class AnnulVersHelper extends GenericHelper {
                 query.setParameter("tiStatoItem", statiList);
             }
         }
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
     // </editor-fold>
 
@@ -830,16 +729,17 @@ public class AnnulVersHelper extends GenericHelper {
      *            il tipo di errore da eliminare
      */
     public void deleteAroErrRichAnnulVers(long idRichAnnulVers, String... tiErrRichAnnulVers) {
-        StringBuilder queryStr = new StringBuilder("DELETE FROM AroErrRichAnnulVers errRichAnnulVers "
+        StringBuilder selectStr = new StringBuilder("SELECT errRichAnnulVers FROM AroErrRichAnnulVers errRichAnnulVers "
                 + "WHERE errRichAnnulVers.aroItemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers ");
         if (tiErrRichAnnulVers != null) {
             if (tiErrRichAnnulVers.length > 1) {
-                queryStr.append("AND errRichAnnulVers.tiErr IN :tiErrRichAnnulVers ");
+                selectStr.append("AND errRichAnnulVers.tiErr IN (:tiErrRichAnnulVers) ");
             } else {
-                queryStr.append("AND errRichAnnulVers.tiErr = :tiErrRichAnnulVers ");
+                selectStr.append("AND errRichAnnulVers.tiErr = :tiErrRichAnnulVers ");
             }
         }
-        Query q = getEntityManager().createQuery(queryStr.toString());
+        String deleteStr = "DELETE FROM AroErrRichAnnulVers e WHERE e IN (" + selectStr + ")";
+        Query q = getEntityManager().createQuery(deleteStr);
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         if (tiErrRichAnnulVers != null) {
             List<String> asList = Arrays.asList(tiErrRichAnnulVers);
@@ -871,7 +771,7 @@ public class AnnulVersHelper extends GenericHelper {
                 + "AND abilTipoDato.idTipoDatoApplic = :idTipoDatoApplic ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUserIam", idUserIam);
-        query.setParameter("idTipoDatoApplic", idTipoDatoApplic);
+        query.setParameter("idTipoDatoApplic", bigDecimalFromLong(idTipoDatoApplic));
         query.setParameter("nmClasseTipoDato", nmClasseTipoDato);
         return (Long) query.getSingleResult() > 0L;
     }
@@ -892,8 +792,7 @@ public class AnnulVersHelper extends GenericHelper {
                         + "WHERE itemRichAnnulVers.idItemRichAnnulVers = :idItemRichAnnulVers AND errRichAnnulVers.tiGravita = :tiGravita");
         query.setParameter("idItemRichAnnulVers", idItemRichAnnulVers);
         query.setParameter("tiGravita", tiGravita);
-        List<AroErrRichAnnulVers> lista = (List<AroErrRichAnnulVers>) query.getResultList();
-        return lista;
+        return query.getResultList();
     }
 
     public boolean isUdAnnullata(long idUnitaDoc) {
@@ -940,7 +839,7 @@ public class AnnulVersHelper extends GenericHelper {
                         + "WHERE statoRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers "
                         + "ORDER BY statoRichAnnulVers.pgStatoRichAnnulVers ASC ");
         q.setParameter("idRichAnnulVers", idRichAnnulVers.longValue());
-        List<AroStatoRichAnnulVers> listaStati = (List<AroStatoRichAnnulVers>) q.getResultList();
+        List<AroStatoRichAnnulVers> listaStati = q.getResultList();
         return listaStati.get(0).getIamUser().getIdUserIam();
     }
 
@@ -950,37 +849,35 @@ public class AnnulVersHelper extends GenericHelper {
                         + "JOIN itemRichAnnulVers.aroUnitaDoc unitaDoc "
                         + "JOIN itemRichAnnulVers.aroRichAnnulVers richAnnulVers "
                         + "JOIN richAnnulVers.aroStatoRichAnnulVers statoRichAnnulVers "
-                        + "WHERE unitaDoc.idUnitaDoc IN :idUnitaDocList "
+                        + "WHERE unitaDoc.idUnitaDoc IN (:idUnitaDocList) "
                         + "AND statoRichAnnulVers.tiStatoRichAnnulVers = 'EVASA' "
                         + "ORDER BY statoRichAnnulVers.dtRegStatoRichAnnulVers DESC ");
 
         q.setParameter("idUnitaDocList", idUnitaDocList);
-        List<AroStatoRichAnnulVers> listaStati = (List<AroStatoRichAnnulVers>) q.getResultList();
+        List<AroStatoRichAnnulVers> listaStati = q.getResultList();
         return listaStati.get(0);
     }
 
     public List<ElvVLisElencoFascAnnul> retrieveElvVLisElencoFascAnnul(long idRichAnnulVers) {
         Query query = getEntityManager().createQuery(
-                "SELECT elv FROM ElvVLisElencoFascAnnul elv WHERE elv.idRichAnnulVers = :idRichAnnulVers ");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        List<ElvVLisElencoFascAnnul> elenchi = query.getResultList();
-        return elenchi;
+                "SELECT elv FROM ElvVLisElencoFascAnnul elv WHERE elv.id.idRichAnnulVers = :idRichAnnulVers ");
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        return query.getResultList();
     }
 
     public List<ElvVLisElencoFascAnnul> retrieveElvVLisElencoFascAnnul(long idRichAnnulVers, long idElencoVersFasc) {
         Query query = getEntityManager().createQuery(
-                "SELECT elv FROM ElvVLisElencoFascAnnul elv WHERE elv.idRichAnnulVers = :idRichAnnulVers AND elv.idElencoVersFasc = :idElencoVersFasc");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
-        List<ElvVLisElencoFascAnnul> fasAnnuls = query.getResultList();
-        return fasAnnuls;
+                "SELECT elv FROM ElvVLisElencoFascAnnul elv WHERE elv.id.idRichAnnulVers = :idRichAnnulVers AND elv.id.idElencoVersFasc = :idElencoVersFasc");
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        query.setParameter("idElencoVersFasc", bigDecimalFromLong(idElencoVersFasc));
+        return query.getResultList();
     }
 
     public void updateFascicoliItem(long idRichAnnulVers, Date dtAnnull, TiStatoConservazione tiStatoConservazione,
             String ntAnnul) {
         Query q = getEntityManager().createQuery(
                 "UPDATE FasFascicolo fascicolo SET fascicolo.dtAnnull = :dtAnnull, fascicolo.tiStatoConservazione = :tiStatoConservazione, fascicolo.ntAnnul = :ntAnnul "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.fasFascicolo = fascicolo AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ) ");
+                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.fasFascicolo.idFascicolo = fascicolo.idFascicolo AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ) ");
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.setParameter("dtAnnull", dtAnnull);
         q.setParameter("tiStatoConservazione", tiStatoConservazione);
@@ -991,7 +888,7 @@ public class AnnulVersHelper extends GenericHelper {
     public void updateCollegamentiFasc(long idRichAnnulVers) {
         Query q = getEntityManager()
                 .createQuery("UPDATE FasLinkFascicolo linkFascicolo SET linkFascicolo.fasFascicoloLink = null "
-                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.fasFascicolo = linkFascicolo.fasFascicolo AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
+                        + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.fasFascicolo.idFascicolo = linkFascicolo.fasFascicolo.idFascicolo AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER') ");
         q.setParameter("idRichAnnulVers", idRichAnnulVers);
         q.executeUpdate();
     }
@@ -1011,7 +908,7 @@ public class AnnulVersHelper extends GenericHelper {
                         + "JOIN itemRichAnnulVers_2.aroRichAnnulVers richAnnulVers_2 "
                         + "JOIN udFasc_2.fasFascicolo fasc_2 " + "JOIN udFasc_2.aroUnitaDoc ud_2 "
                         + "WHERE richAnnulVers_2.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_2.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
-                        + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2 = ud "
+                        + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2.idUnitaDoc = ud.idUnitaDoc "
                         + "AND fasc_2.dtAnnull = :defaultAnnull) "
                         + "AND EXISTS (SELECT eleDaElab FROM ElvElencoVersDaElab eleDaElab "
                         + "JOIN eleDaElab.elvElencoVer elenco " + "WHERE elenco = ud.elvElencoVer)");
@@ -1046,7 +943,7 @@ public class AnnulVersHelper extends GenericHelper {
                         + "JOIN itemRichAnnulVers_2.aroRichAnnulVers richAnnulVers_2 "
                         + "JOIN udFasc_2.fasFascicolo fasc_2 " + "JOIN udFasc_2.aroUnitaDoc ud_2 "
                         + "WHERE richAnnulVers_2.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_2.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
-                        + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2 = ud "
+                        + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2.idUnitaDoc = ud.idUnitaDoc "
                         + "AND fasc_2.dtAnnull = :defaultAnnull )"
                         + "AND NOT EXISTS (SELECT eleDaElab FROM ElvElencoVersDaElab eleDaElab "
                         + "JOIN eleDaElab.elvElencoVer elenco " + "WHERE elenco = ud.elvElencoVer)");
@@ -1072,10 +969,9 @@ public class AnnulVersHelper extends GenericHelper {
             long idElencoVersFasc) {
         Query query = getEntityManager().createQuery(
                 "SELECT elv FROM ElvVLisFascAnnulByElenco elv WHERE elv.idRichAnnulVers = :idRichAnnulVers AND elv.idElencoVersFasc = :idElencoVersFasc");
-        query.setParameter("idRichAnnulVers", idRichAnnulVers);
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
-        List<ElvVLisFascAnnulByElenco> fascAnnuls = query.getResultList();
-        return fascAnnuls;
+        query.setParameter("idRichAnnulVers", bigDecimalFromLong(idRichAnnulVers));
+        query.setParameter("idElencoVersFasc", bigDecimalFromLong(idElencoVersFasc));
+        return query.getResultList();
     }
 
     public String getXmlRichAnnulVersByTipo(Long idRichAnnulVers, CostantiDB.TiXmlRichAnnulVers tiXmlRichAnnulVers) {

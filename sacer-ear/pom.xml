@@ -4,10 +4,9 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>7.3.2-SNAPSHOT</version>
+        <version>9.2.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>it.eng.parer</groupId>
     <artifactId>sacer-jboss-ear</artifactId>    
     <packaging>ear</packaging>
     <name>sacer-ear</name>
@@ -50,7 +49,6 @@
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-middle</artifactId>       
         </dependency>
-        
         <dependency>
             <groupId>org.springframework.security.extensions</groupId>
             <artifactId>spring-security-saml2-core</artifactId>
@@ -65,8 +63,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>sacer-jpa-el</artifactId>   
-            <classifier>sacer-job</classifier>                         
+            <artifactId>sacer-jboss-jpa</artifactId>
         </dependency>
         <!-- Incluso per l'ejb del logging applicativo -->
         <dependency>
@@ -77,6 +74,11 @@
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-sl-slg</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.eng.parer</groupId>
+            <artifactId>spagofat-paginator-ejb</artifactId>
+            <type>ejb</type>
         </dependency>
         <!-- Tutto ciò che segue viene fornito da jboss.  -->
         <dependency>
@@ -97,7 +99,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
@@ -118,7 +119,6 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>ooxml-schemas</artifactId>
         </dependency>
-       
     </dependencies>   
     <build>
         <finalName>sacer-${project.version}</finalName>
@@ -128,8 +128,7 @@
                 <artifactId>maven-ear-plugin</artifactId>
                 <configuration>
                     <!-- DISABILITATO: Skinny WAR non supportato da NetBeans https://netbeans.org/bugzilla/show_bug.cgi?id=213960 -->                    
-                    <!-- <skinnyWars>true</skinnyWars> -->
-                    <classifier>${build.env}</classifier> 
+                    <classifier>${build.env}</classifier>
                     <modules>                         
                         <ejbModule>
                             <groupId>${project.groupId}</groupId>
@@ -143,6 +142,10 @@
                             <groupId>${project.groupId}</groupId>
                             <artifactId>spagofat-timer-wrapper-ejb</artifactId>                                                                                      
                         </ejbModule>
+                        <ejbModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>spagofat-paginator-ejb</artifactId>                                                                                      
+                        </ejbModule>
                         <webModule>                            
                             <groupId>${project.groupId}</groupId>
                             <artifactId>sacer-jboss-web</artifactId>                                                           
@@ -151,7 +154,7 @@
                     </modules>   
                     <archive>                                  
                         <manifestEntries>
-                            <App-Name>Sacer @application.xml_env@</App-Name>
+                            <App-Name>Sacer</App-Name>
                             <App-Version>${project.version}</App-Version>
                             <App-BuildDate>${maven.build.timestamp}</App-BuildDate>
                             <Logging-Profile>SACER</Logging-Profile>
@@ -159,7 +162,7 @@
                     </archive>
                     <version>6</version>
                     <defaultLibBundleDir>lib</defaultLibBundleDir>     
-                    <filtering>true</filtering>               
+                    <filtering>true</filtering>      
                 </configuration>
             </plugin>
             <plugin>

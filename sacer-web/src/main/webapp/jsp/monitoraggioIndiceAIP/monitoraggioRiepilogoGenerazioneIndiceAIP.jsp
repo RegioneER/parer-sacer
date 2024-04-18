@@ -8,9 +8,34 @@
             $(document).ready(function () {
                 $('#MonitoraggioIndiceAIPList tr').each(
                         function (index) {
-                            var elemento = $(this).find('td:eq(1), td:eq(2), td:eq(3)');
+                            var elemento = $(this).find('td:eq(2), td:eq(3), td:eq(4)');
                             elemento.css({"text-align": "right"});
-                        });
+                            
+                            // Mostra/nascondi icona link ud
+                            var elemento1 = $(this).find('td:eq(0)').children().text();                            
+                            if(elemento1 !== 'IN_CODA_VERIFICA_FIRMA_DT_VERS'
+                            && elemento1 !== 'IN_CODA_INDICE_AIP_DA_ELAB'
+                            && elemento1 !== 'ESEGUITA_VERIFICA_FIRMA_DT_VERS'){
+                            var elemento2 = $(this).find('td:eq(5)');                            
+                                elemento2.empty();
+                            }
+                            
+                            // Mostra/nascondi link stati
+                            
+                            var colonna1 = $(this).find('td:eq(0)');
+                            //alert(colonna1);
+                            if($("#Id_strut").val()!==""){
+                                //alert('sono dentro if');
+                                //alert('id strut è '+$("#Id_strut option:selected").val());
+                                                            
+                                var test = colonna1.children().text();
+                                //alert(test);
+                                colonna1.children().remove();
+                                colonna1.text(test);
+                            }
+                                
+                            
+                });
             });
         </script>
     </sl:head>

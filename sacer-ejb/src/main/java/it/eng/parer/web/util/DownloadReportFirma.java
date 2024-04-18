@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.util;
 
 import java.util.Date;
@@ -20,7 +37,6 @@ import it.eng.parer.ws.recupero.dto.ParametriParser;
 import it.eng.parer.ws.recupero.dto.ParametriRecupero;
 import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
-import it.eng.parer.ws.recupero.ejb.RecuperoSync;
 import it.eng.parer.ws.recupero.utils.RecuperoZipGen;
 import it.eng.parer.ws.recupero.utils.XmlDateUtility;
 import it.eng.parer.ws.utils.AvanzamentoWs;
@@ -37,15 +53,11 @@ public class DownloadReportFirma {
 
     private static Logger logger = LoggerFactory.getLogger(DownloadReportFirma.class.getName());
 
-    RispostaWSRecupero rispostaWs;
-    RecuperoExt recuperoExt;
-    RecuperoSync recuperoSync;
+    @EJB
+    private RecuperoZipGen tmpGen;
 
     @EJB
     ControlliWS controlliWS;
-
-    public DownloadReportFirma() {
-    }
 
     public void recuperaReportFirma(RispostaWSRecupero rispostaWs, RecuperoExt rec, String path) {
         StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
@@ -53,8 +65,7 @@ public class DownloadReportFirma {
 
         if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
             try {
-                RecuperoZipGen tmpGen = new RecuperoZipGen(rispostaWs);
-                tmpGen.generaZipReportFirma(path, rec);
+                tmpGen.generaZipReportFirma(path, rec, rispostaWs);
                 tmpAvanzamentoWs.resetFase();
             } catch (Exception e) {
                 rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
@@ -113,22 +124,7 @@ public class DownloadReportFirma {
         }
     }
 
-    public RispostaWSRecupero getRispostaWs() {
-        return rispostaWs;
-    }
-
-    public void setRispostaWs(RispostaWSRecupero rispostaWs) {
-        this.rispostaWs = rispostaWs;
-    }
-
-    public RecuperoExt getRecuperoExt() {
-        return recuperoExt;
-    }
-
-    public void setRecuperoExt(RecuperoExt recuperoExt) {
-        this.recuperoExt = recuperoExt;
-    }
-
+    @SuppressWarnings("unchecked")
     protected RispostaControlli loadWsVersions(RecuperoExt ext) {
         RispostaControlli rs = controlliWS.loadWsVersions(ext.getDescrizione());
         // if positive ...

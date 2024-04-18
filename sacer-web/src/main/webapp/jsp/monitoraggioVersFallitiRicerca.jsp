@@ -3,11 +3,17 @@
 
 <sl:html>
     <sl:head  title="Monitoraggio - Lista versamenti falliti" >
-        <script type="text/javascript" src="<c:url value="/js/sips/customCalcChiaveUDMessageBox.js"/>" ></script>
         <script type='text/javascript' src="<c:url value="/js/sips/customCheckBoxSesVerif.js"/>" ></script>
         <script type='text/javascript'>
             $(document).ready(function() {
                 checkVerificati = $('table.list td > input[name="Fl_sessione_err_verif"]:checked');
+
+                $(document).bind('keypress', function (e) {
+                    if (e.keyCode == 13) {
+                        e.preventDefault();
+                        $("input[name='operation__ricercaVers']").trigger('click');
+                    }
+                });
             });
         </script>
     </sl:head>
@@ -16,12 +22,6 @@
         <sl:menu />
         <sl:content>
             <slf:messageBox  />
-            <!--    Bottoni per custom MessageBox in caso javascript sia disabilitato -->
-            <div class="pulsantieraMB">
-                <sl:pulsantiera >
-                    <slf:buttonList name="<%= MonitoraggioForm.VersamentiFallitiCustomMessageButtonList.NAME%>"/>
-                </sl:pulsantiera>
-            </div>
             <sl:newLine skipLine="true"/>
 
             <sl:contentTitle title="LISTA VERSAMENTI FALLITI"/>
@@ -99,7 +99,6 @@
             <sl:newLine skipLine="true" />
 
             <sl:pulsantiera>
-                <slf:lblField name="<%=MonitoraggioForm.CalcolaChiaveUD.CALCOLA_CHIAVE_UNITA_DOC%>" colSpan="2"/>
                 <slf:buttonList name="<%=MonitoraggioForm.SalvaVerificaButtonList.NAME%>">
                     <slf:lblField name="<%=MonitoraggioForm.SalvaVerificaButtonList.SALVA_VERIFICA_VERSAMENTO%>" colSpan="2"/>
                 </slf:buttonList>

@@ -1,8 +1,39 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.recupero.utils;
+
+import java.io.StringReader;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSVersatore;
@@ -22,19 +53,9 @@ import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.xml.versReqStato.Recupero;
-import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
 import it.eng.parer.ws.xml.versRespStato.ECEsitoPosNegType;
+import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
 import it.eng.spagoLite.security.User;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -55,6 +76,15 @@ public class RecuperoPrsr {
     ControlliRecupero controlliRecupero = null;
     // singleton ejb - cache dei JAXBContext
     XmlContextCache xmlContextCache = null;
+
+    // MAC#29602
+    private CSVersatore tagCSVersatore = new CSVersatore();
+    private CSChiave tagCSChiave = new CSChiave();
+    private String descChiaveUd = "";
+
+    private static final List<String> LISTA_ABIL_TIPO_DATO_UD = Arrays.asList("REGISTRO", "TIPO_UNITA_DOC",
+            "SUB_STRUTTURA");
+    // end MAC#29602
 
     public RispostaWSRecupero getRispostaWs() {
         return rispostaWs;
@@ -101,6 +131,20 @@ public class RecuperoPrsr {
                 unmarshaller.setEventHandler(validationHandler);
                 parsedUnitaDoc = (Recupero) unmarshaller.unmarshal(tmpReader);
                 recupero.setStrutturaRecupero(parsedUnitaDoc);
+
+                // MAC#29602
+                tagCSVersatore.setAmbiente(parsedUnitaDoc.getVersatore().getAmbiente());
+                tagCSVersatore.setEnte(parsedUnitaDoc.getVersatore().getEnte());
+                tagCSVersatore.setStruttura(parsedUnitaDoc.getVersatore().getStruttura());
+                //
+                // memorizzo la chiave in una variabile di appoggio per usarla in diverse parti dell'elaborazione
+                tagCSChiave.setAnno(parsedUnitaDoc.getChiave().getAnno().longValue());
+                tagCSChiave.setNumero(parsedUnitaDoc.getChiave().getNumero());
+                tagCSChiave.setTipoRegistro(parsedUnitaDoc.getChiave().getTipoRegistro());
+                descChiaveUd = MessaggiWSFormat.formattaChiaveUd(tagCSChiave);
+                recupero.getParametriRecupero().setDescUnitaDoc(descChiaveUd);
+                // end MAC#29602
+
             } catch (UnmarshalException e) {
                 ValidationEvent event = validationHandler.getFirstErrorValidationEvent();
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
@@ -325,6 +369,40 @@ public class RecuperoPrsr {
                         .get(RispostaControlli.ValuesOnrMap.CD_KEY_NORMALIZED.name()));
             }
         }
+
+        // MAC#29602
+        // verifica se l'utente di riferimento nella richiesta di recupero è abilitato ai tipi di dato dell'ud
+        // se non lo è rende un errore ed esce
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            rispostaControlli.reset();
+            // if (recupero.getParametriRecupero().getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC) {
+            for (String classeTipoDatoUd : LISTA_ABIL_TIPO_DATO_UD) {
+                rispostaControlli = controlliEjb.checkTipoDatoUdIamUserOrganizzazione(
+                        recupero.getParametriRecupero().getDescUnitaDoc(), recupero.getParametriRecupero().getUtente(),
+                        recupero.getParametriRecupero().getIdUnitaDoc(), classeTipoDatoUd);
+                if (!rispostaControlli.isrBoolean()) {
+                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                    rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                    myEsito.getEsitoChiamataWS().setCredenzialiOperatore(ECEsitoPosNegType.NEGATIVO);
+                    break;
+                }
+            }
+            // }
+        }
+        // verifica se l'utente di riferimento nella richiesta di recupero è abilitato ai tipi di dato dei documenti
+        // dell'ud
+        // se non lo è rende un errore ed esce
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            rispostaControlli = controlliEjb.checkTipoDatoDocsIamUserOrganizzazioneByUd(
+                    recupero.getParametriRecupero().getDescUnitaDoc(), recupero.getParametriRecupero().getUtente(),
+                    recupero.getParametriRecupero().getIdUnitaDoc());
+            if (!rispostaControlli.isrBoolean()) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                myEsito.getEsitoChiamataWS().setCredenzialiOperatore(ECEsitoPosNegType.NEGATIVO);
+            }
+        }
+        // end MAC#29602
 
         // verifica struttura cessata
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {

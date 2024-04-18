@@ -1,28 +1,30 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.ejb;
 
-import it.eng.parer.entity.AplParamApplic;
-import it.eng.parer.entity.AroUnitaDoc;
-import it.eng.parer.entity.DecParteNumeroRegistro;
-import it.eng.parer.entity.OrgAmbiente;
-import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.ws.dto.CSChiave;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.Costanti;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.StatoConservazioneUnitaDoc;
-import it.eng.parer.ws.utils.KeyOrdUtility;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
-import it.eng.parer.ws.versamento.dto.ConfigRegAnno;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -35,17 +37,41 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.paginator.util.HibernateUtils;
+import it.eng.parer.entity.AplParamApplic;
+import it.eng.parer.entity.AroUnitaDoc;
+import it.eng.parer.entity.DecParteNumeroRegistro;
+import it.eng.parer.entity.FasFascicolo;
+import it.eng.parer.entity.OrgAmbiente;
+import it.eng.parer.entity.OrgEnte;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.dto.CSChiave;
+import it.eng.parer.ws.dto.CSChiaveFasc;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.utils.Costanti;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.CostantiDB.StatoConservazioneUnitaDoc;
+import it.eng.parer.ws.utils.KeyOrdUtility;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
+import it.eng.parer.ws.versamento.dto.ConfigRegAnno;
+
 /**
  *
  * @author Pagani_S (iniziata)
  * @author Fioravanti_F
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ControlliSemantici")
 @LocalBean
 @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
 public class ControlliSemantici {
 
     private static final Logger log = LoggerFactory.getLogger(ControlliSemantici.class);
+    public static final String ERRORE_TABELLA_DECODIFICA = "Eccezione nella lettura  della tabella di decodifica ";
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
@@ -62,17 +88,25 @@ public class ControlliSemantici {
         CARICA, CONSIDERA_ASSENTE
     }
 
+    // EVO#13993
+    public enum TipiGestioneFASCAnnullati {
+
+        CARICA, CONSIDERA_ASSENTE
+    }
+    // end EVO#13993
+
     public RispostaControlli caricaDefaultDaDBParametriApplic(String tipoPar) {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrLong(-1);
         rispostaControlli.setrBoolean(false);
 
-        HashMap<String, String> tmpDefaults = new HashMap<String, String>();
+        HashMap<String, String> tmpDefaults = new HashMap<>();
 
         // lista entity JPA ritornate dalle Query
         List<AplParamApplic> tmpAplParamApplic = null;
 
+        final String methodName = "ControlliSemantici.caricaDefaultDaDBParametriApplic: ";
         try {
             // carico i parametri applicativi
             String queryStr = "select tpa " + "from AplParamApplic tpa " + "where tpa.tiParamApplic = :tiParamApplicIn";
@@ -84,23 +118,22 @@ public class ControlliSemantici {
             if (!tmpAplParamApplic.isEmpty()) {
                 for (AplParamApplic tud : tmpAplParamApplic) {
                     // Prendo l'unico valore presente, quello di tipo APPLIC
-                    tmpDefaults.put(tud.getNmParamApplic(), configurationHelper.getValoreParamApplic(
-                            tud.getNmParamApplic(), null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+                    tmpDefaults.put(tud.getNmParamApplic(),
+                            configurationHelper.getValoreParamApplicByApplic(tud.getNmParamApplic()));
                 }
                 rispostaControlli.setrObject(tmpDefaults);
                 rispostaControlli.setrBoolean(true);
             } else {
                 rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli.setDsErr(
-                        MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, "ControlliSemantici.caricaDefaultDaDB: "
-                                + "Applicativo chiamante non correttamente configurato nella tabella AplParamApplic"));
-                log.error("ControlliSemantici.caricaDefaultDaDB: "
-                        + "Applicativo chiamante non correttamente configurato nella tabella AplParamApplic");
+                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, methodName
+                        + "Applicativo chiamante non correttamente configurato nella tabella AplParamApplic"));
+                log.error("{} Applicativo chiamante non correttamente configurato nella tabella AplParamApplic",
+                        methodName);
             }
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "ControlliSemantici.caricaDefaultDaDB: " + e.getMessage()));
+            rispostaControlli
+                    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, methodName + e.getMessage()));
             log.error("Eccezione nella lettura  della tabella AplParamApplic ", e);
         }
 
@@ -127,6 +160,7 @@ public class ControlliSemantici {
         List<OrgAmbiente> orgAmbienteS = null;
 
         // lancio query di controllo
+        final String methodName = "ControlliSemantici.checkIdStrut: ";
         try {
             // controllo ambiente
             String queryStr = "select amb " + "from OrgAmbiente amb " + "where amb.nmAmbiente =  :nmAmbienteIn";
@@ -138,6 +172,9 @@ public class ControlliSemantici {
             if (orgAmbienteS.isEmpty()) {
                 switch (tipows) {
                 case VERSAMENTO_RECUPERO:
+                    // EVO#13993
+                case VERSAMENTO_RECUPERO_FASC:
+                    // end EVO#13993
                     rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_001);
                     rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_001, amb));
                     break;
@@ -151,9 +188,9 @@ public class ControlliSemantici {
             // too many rows
             if (orgAmbienteS.size() > 1) {
                 rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                        "ControlliSemantici.checkIdStrut: " + "Ambiente duplicato"));
-                log.error("ControlliSemantici.checkIdStrut: " + "Ambiente duplicato");
+                rispostaControlli.setDsErr(
+                        MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, methodName + "Ambiente duplicato"));
+                log.error("{} Ambiente duplicato", methodName);
                 return rispostaControlli;
             }
             for (OrgAmbiente a : orgAmbienteS) {
@@ -171,6 +208,9 @@ public class ControlliSemantici {
             if (orgEnteS.isEmpty()) {
                 switch (tipows) {
                 case VERSAMENTO_RECUPERO:
+                    // EVO#13993
+                case VERSAMENTO_RECUPERO_FASC:
+                    // end EVO#13993
                     rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_002);
                     rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_002, ente));
                     break;
@@ -184,9 +224,9 @@ public class ControlliSemantici {
             // too many rows
             if (orgEnteS.size() > 1) {
                 rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                        "ControlliSemantici.checkIdStrut: " + "Ente duplicato"));
-                log.error("ControlliSemantici.checkIdStrut: " + "Ente duplicato");
+                rispostaControlli
+                        .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, methodName + "Ente duplicato"));
+                log.error("{} Ente duplicato", methodName);
                 return rispostaControlli;
             }
             for (OrgEnte e : orgEnteS) {
@@ -204,6 +244,9 @@ public class ControlliSemantici {
             if (orgStrutS.isEmpty()) {
                 switch (tipows) {
                 case VERSAMENTO_RECUPERO:
+                    // EVO#13993
+                case VERSAMENTO_RECUPERO_FASC:
+                    // end EVO#13993
                     rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_003);
                     rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_003, strut));
                     break;
@@ -217,12 +260,15 @@ public class ControlliSemantici {
             // too many rows
             if (orgStrutS.size() > 1) {
                 rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                        "ControlliSemantici.checkIdStrut: " + "Struttura duplicata"));
-                log.error("ControlliSemantici.checkIdStrut: " + "Struttura duplicata");
+                rispostaControlli.setDsErr(
+                        MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, methodName + "Struttura duplicata"));
+                log.error("{} Struttura duplicata", methodName);
                 return rispostaControlli;
             }
-            if (tipows == Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO
+            if ((tipows == Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO
+                    // EVO#13993
+                    || tipows == Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO_FASC)
+                    // end EVO#13993
                     && orgStrutS.get(0).getFlTemplate().equals("1")) {
                 rispostaControlli.setCodErr(MessaggiWSBundle.UD_001_015);
                 rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_001_015, strut));
@@ -232,9 +278,9 @@ public class ControlliSemantici {
             rispostaControlli.setrLong(orgStrutS.get(0).getIdStrut());
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "ControlliSemantici.checkIdStrut: " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella di decodifica ", e);
+            rispostaControlli
+                    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, methodName + e.getMessage()));
+            log.error(ERRORE_TABELLA_DECODIFICA, e);
         }
 
         return rispostaControlli;
@@ -264,12 +310,12 @@ public class ControlliSemantici {
             javax.persistence.Query query = entityManager.createQuery(queryStr, AroUnitaDoc.class);
             query.setParameter("idStrutIn", idStruttura);
             query.setParameter("cdKeyUnitaDocIn", numero);
-            query.setParameter("aaKeyUnitaDocIn", anno);
+            query.setParameter("aaKeyUnitaDocIn", HibernateUtils.bigDecimalFrom(anno));
             query.setParameter("cdRegistroKeyUnitaDocIn", tipoReg);
             unitaDocS = query.getResultList();
 
             // chiave già presente (uno o più righe trovate, mi interessa solo l'ultima - più recente)
-            if (unitaDocS.size() > 0) {
+            if (!unitaDocS.isEmpty()) {
                 StatoConservazioneUnitaDoc scud = StatoConservazioneUnitaDoc
                         .valueOf(unitaDocS.get(0).getTiStatoConservazione());
                 if (scud == StatoConservazioneUnitaDoc.ANNULLATA
@@ -320,11 +366,91 @@ public class ControlliSemantici {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "ControlliSemantici.checkChiave: " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella di decodifica ", e);
+            log.error(ERRORE_TABELLA_DECODIFICA, e);
         }
 
         return rispostaControlli;
     }
+
+    // EVO#13993
+    public RispostaControlli checkChiaveFasc(CSChiaveFasc key, long idStruttura, TipiGestioneFASCAnnullati tgfasca) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrLong(-1);
+        rispostaControlli.setrBoolean(false);
+
+        // prendo i paramentri dell'xml
+        String numero = key.getNumero();
+        Integer anno = key.getAnno();
+
+        // lista entity JPA ritornate dalle Query
+        List<FasFascicolo> ffS = null;
+
+        // lancio query di controllo
+        try {
+            // ricavo i fascicoli presenti in base ai parametri impostati
+            String queryStr = "select ff " + "from FasFascicolo ff " + "where ff.orgStrut.idStrut = :idStrutIn "
+                    + " and ff.cdKeyFascicolo = :cdKeyFascicoloIn " + " and ff.aaFascicolo = :aaFascicoloIn "
+                    + " order by ff.dtApeFascicolo desc";
+
+            javax.persistence.Query query = entityManager.createQuery(queryStr, FasFascicolo.class);
+            query.setParameter("idStrutIn", idStruttura);
+            query.setParameter("cdKeyFascicoloIn", numero);
+            query.setParameter("aaFascicoloIn", BigDecimal.valueOf(anno));
+            ffS = query.getResultList();
+
+            // chiave fasc già presente (uno o più righe trovate, mi interessa solo l'ultima - più recente)
+            if (!ffS.isEmpty()) {
+                TiStatoConservazione scff = ffS.get(0).getTiStatoConservazione();
+                if (scff.equals(TiStatoConservazione.ANNULLATO)
+                        && tgfasca == TipiGestioneFASCAnnullati.CONSIDERA_ASSENTE) {
+                    // commuto l'errore in FASCICOLO annullato e rendo true come risposta: in pratica come se non
+                    // avesse trovato il fascicolo ma con un errore diverso: è lo stesso comportamento della vecchia
+                    // versione
+                    // del metodo
+                    rispostaControlli.setCodErr(MessaggiWSBundle.UD_012_002);
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_012_002,
+                            MessaggiWSFormat.formattaUrnPartFasc(key)));
+                    rispostaControlli.setrBoolean(true);
+                } else {
+                    // gestione normale: ho trovato il FASCICOLO e non è annullato.
+                    // Oppure è annullato e voglio caricarlo lo stesso (il solo caso è nel ws recupero stato FASC)
+                    // intanto rendo l'errore di chiave già presente
+                    rispostaControlli.setCodErr(MessaggiWSBundle.UD_002_001);
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.UD_002_001,
+                            MessaggiWSFormat.formattaUrnPartFasc(key)));
+
+                    rispostaControlli.setrLong(ffS.get(0).getIdFascicolo());
+                    //
+                    rispostaControlli.setrStringExtended(ffS.get(0).getDecTipoFascicolo().getNmTipoFascicolo());
+                    // salvo lo stato conservazione
+                    rispostaControlli.setrObject(scff);
+                    // **************
+                    // EXTENDED VALUES
+                    // **************
+                    // recupero chiave normalizzata del fascicolo (se esiste)
+                    rispostaControlli.getrMap().put(RispostaControlli.ValuesOnrMap.CD_KEY_NORMALIZED.name(),
+                            ffS.get(0).getCdKeyFascicolo());
+                }
+                return rispostaControlli;
+            }
+
+            // Chiave del fascicolo non trovata
+            rispostaControlli.setCodErr(MessaggiWSBundle.RECFAS_001_002);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.RECFAS_001_002,
+                    MessaggiWSFormat.formattaUrnPartFasc(key)));
+            rispostaControlli.setrBoolean(true);
+
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "ControlliSemantici.checkChiaveFasc: " + e.getMessage()));
+            log.error(ERRORE_TABELLA_DECODIFICA, e);
+        }
+
+        return rispostaControlli;
+    }
+    // end EVO#13993
 
     // chiamata anche dal job, rende la configurazione per validare i numeri/chiave
     // in base all'anno del registro
@@ -336,7 +462,7 @@ public class ControlliSemantici {
                 + "order by t.niParteNumeroRegistro";
         javax.persistence.Query query = entityManager.createQuery(queryStr);
         query.setParameter("idAaRegistroUnitaDoc", idAaRegistroUnitaDoc);
-        List<DecParteNumeroRegistro> tmpLstP = (List<DecParteNumeroRegistro>) query.getResultList();
+        List<DecParteNumeroRegistro> tmpLstP = query.getResultList();
 
         for (DecParteNumeroRegistro tmpParte : tmpLstP) {
             ConfigRegAnno.ParteRegAnno tmpPRanno = tmpConfAnno.aggiungiParte();

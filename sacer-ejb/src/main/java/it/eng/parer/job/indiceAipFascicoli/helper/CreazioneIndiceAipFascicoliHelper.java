@@ -1,20 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipFascicoli.helper;
 
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.DecModelloXsdFascicolo;
-import it.eng.parer.entity.ElvElencoVersFasc;
-import it.eng.parer.entity.FasAipFascicoloDaElab;
-import it.eng.parer.entity.FasContenVerAipFascicolo;
-import it.eng.parer.entity.FasFascicolo;
-import it.eng.parer.entity.FasFileMetaVerAipFasc;
-import it.eng.parer.entity.FasMetaVerAipFascicolo;
-import it.eng.parer.entity.FasSipVerAipFascicolo;
-import it.eng.parer.entity.FasUdAipFascicoloDaElab;
-import it.eng.parer.entity.FasVerAipFascicolo;
-import it.eng.parer.entity.FasXmlVersFascicolo;
-import it.eng.parer.entity.FasXsdMetaVerAipFasc;
-import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.*;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.ElvVLisIxAipFascByEle;
@@ -46,7 +52,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,16 +59,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless(mappedName = "CreazioneIndiceAipFascicoliHelper")
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
 public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
 
     private static final Logger log = LoggerFactory.getLogger(CreazioneIndiceAipFascicoliHelper.class);
-    /**
-     * Numero massimo di record da estrarre. Definito su <strong>APL_PARAM_APPLIC</strong>.
-     */
-    private static final String MAX_FETCH_INDICE_AIP_FASC = "MAX_FETCH_INDICE_AIP_FASC";
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
@@ -85,8 +87,8 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         String queryStr = "SELECT u.idAipFascicoloDaElab FROM FasAipFascicoloDaElab u "
                 + "ORDER BY u.dtCreazioneDaElab, u.fasFascicolo.idFascicolo, u.pgCreazioneDaElab ";
         TypedQuery<Long> query = entityManager.createQuery(queryStr, Long.class);
-        String maxResultString = configurationHelper.getValoreParamApplic(MAX_FETCH_INDICE_AIP_FASC, null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String maxResultString = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_FETCH_INDICE_AIP_FASC);
         query.setMaxResults(getMaxFetchIndiceAipFascicolo(maxResultString));
 
         return query.getResultList();
@@ -102,8 +104,8 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
     private static int getMaxFetchIndiceAipFascicolo(String maxResultString) {
         final int defaultMaxIndice = 100000;
         if (maxResultString == null || maxResultString.isEmpty()) {
-            log.warn("Creazione Indice AIP fascicolo - Parametro di configurazione " + MAX_FETCH_INDICE_AIP_FASC
-                    + " uso il default.");
+            log.warn("Creazione Indice AIP fascicolo - Parametro di configurazione "
+                    + CostantiDB.ParametroAppl.MAX_FETCH_INDICE_AIP_FASC + " uso il default.");
             return defaultMaxIndice;
         }
         int maxResult = 0;
@@ -112,7 +114,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         } catch (NumberFormatException e) {
             log.warn(
                     "Creazione Indice AIP fascicolo - Eccezione durante la conversione del parametro di configurazione "
-                            + MAX_FETCH_INDICE_AIP_FASC + " uso il default.");
+                            + CostantiDB.ParametroAppl.MAX_FETCH_INDICE_AIP_FASC + " uso il default.");
         }
         return maxResult == 0 ? defaultMaxIndice : maxResult;
     }
@@ -131,7 +133,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
                 + "ORDER BY u.pgVerAipFascicolo DESC ";
         javax.persistence.Query query = entityManager.createQuery(queryStr);
         query.setParameter("idFascicolo", idFascicolo);
-        fasVerAipFascicoloList = (List<FasVerAipFascicolo>) query.getResultList();
+        fasVerAipFascicoloList = query.getResultList();
         if (fasVerAipFascicoloList != null && !fasVerAipFascicoloList.isEmpty()) {
             return fasVerAipFascicoloList.get(0).getPgVerAipFascicolo().intValue();
         } else {
@@ -157,7 +159,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         try {
             String queryStr;
             Query query;
-            List<FasVerAipFascicolo> fasVerAipFascicoloList = new ArrayList();
+            List<FasVerAipFascicolo> fasVerAipFascicoloList;
             if (tiCreazione.equals("ANTICIPATO")) {
                 // Ricavo l'ultima versione dell'AIP di tipo "ANTICIPATO" (cdVerAip che comincia per 0.)"
                 queryStr = "SELECT u FROM FasVerAipFascicolo u " + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo "
@@ -199,6 +201,118 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         return versione;
     }
 
+    // MEV#26576
+    /**
+     * Ricava la nuova versione dell'indice AIP v2.0 che mi appresto a creare
+     *
+     * @param idFascicolo
+     *            id unita doc
+     * @param tiCreazione
+     *            tipo creazione
+     * 
+     * @return la nuova versione
+     * 
+     * @throws ParerInternalError
+     *             errore generico
+     */
+    @Deprecated
+    public String getVersioneIndiceAIPV2(Long idFascicolo, String tiCreazione) throws ParerInternalError {
+        String versione = null;
+        try {
+            String queryStr;
+            Query query;
+            List<FasVerAipFascicolo> fasVerAipFascicoloList;
+            // if (tiCreazione.equals("ARCHIVIO")) {
+            // Ricavo l'ultima versione dell'AIP di tipo "ARCHIVIO" (cdVerAip che comincia per 2.)"
+            queryStr = "SELECT u FROM FasVerAipFascicolo u " + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo "
+                    + "AND u.cdVerAip LIKE '2.%' " + "ORDER BY u.pgVerAipFascicolo DESC ";
+            query = entityManager.createQuery(queryStr);
+            query.setParameter("idFascicolo", idFascicolo);
+            fasVerAipFascicoloList = query.getResultList();
+            if (!fasVerAipFascicoloList.isEmpty()) {
+                // Scompatto il campo cdVerAip
+                String[] numbers = fasVerAipFascicoloList.get(0).getCdVerAip().split("[.]");
+                int minorNumber = Integer.parseInt(numbers[1]);
+                versione = "2.".concat(Integer.toString(++minorNumber));
+            } else {
+                // Se non ho risultati significa che sto inserendo la prima versione
+                versione = "2.0";
+            }
+            // }
+        } catch (NumberFormatException e) {
+            log.error("Eccezione durante il recupero della versione AIP v2.0", e);
+            throw new ParerInternalError(e);
+        }
+        return versione;
+    }
+
+    /**
+     * Recupera xml del tipo passato relativo al versamento del fascicolo
+     *
+     * @param idFascicolo
+     *            id fascicolo
+     * @param tiXmlVers
+     *            tipo xml versamento
+     * 
+     * @return xml di versamento per AIP fascicolo
+     */
+    public FasXmlVersFascicolo getFasXmlVersFascicolo(Long idFascicolo, String tiXmlVers) {
+
+        String queryStr = "SELECT u FROM FasXmlVersFascicolo u "
+                + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo AND u.tiXmlVers = :tiXmlVers";
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idFascicolo", idFascicolo);
+        query.setParameter("tiXmlVers", tiXmlVers);
+
+        return (FasXmlVersFascicolo) query.getSingleResult();
+    }
+    // end MEV#26576
+
+    // MEV#29589
+    /**
+     * Ricava la nuova versione dei metadati del fascicolo AIP v2.0 che mi appresto a creare
+     *
+     * @param idFascicolo
+     *            id unita doc
+     * @param tiCreazione
+     *            tipo creazione
+     * 
+     * @return la nuova versione
+     * 
+     * @throws ParerInternalError
+     *             errore generico
+     */
+    public String getVersioneMetadatiAIPV2(Long idFascicolo, String tiCreazione) throws ParerInternalError {
+        String versione = null;
+        try {
+            String queryStr;
+            Query query;
+            List<FasVerAipFascicolo> fasVerAipFascicoloList;
+            // if (tiCreazione.equals("ARCHIVIO")) {
+            // Ricavo l'ultima versione dell'AIP di tipo "ARCHIVIO" (cdVerAip che comincia per 1.)"
+            queryStr = "SELECT u FROM FasVerAipFascicolo u " + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo "
+                    + "AND u.cdVerAip LIKE '1.%' " + "ORDER BY u.pgVerAipFascicolo DESC ";
+            query = entityManager.createQuery(queryStr);
+            query.setParameter("idFascicolo", idFascicolo);
+            fasVerAipFascicoloList = query.getResultList();
+            if (!fasVerAipFascicoloList.isEmpty()) {
+                // Scompatto il campo cdVerAip
+                String[] numbers = fasVerAipFascicoloList.get(0).getCdVerAip().split("[.]");
+                int minorNumber = Integer.parseInt(numbers[1]);
+                versione = "2.".concat(Integer.toString(++minorNumber));
+            } else {
+                // Se non ho risultati significa che sto inserendo la prima versione dei metadati del fascicolo
+                versione = "2.0";
+            }
+            // }
+        } catch (NumberFormatException e) {
+            log.error("Eccezione durante il recupero della versione metadati AIP v2.0", e);
+            throw new ParerInternalError(e);
+        }
+        return versione;
+    }
+    // end MEV#29589
+
     /**
      * Metodo transazionale per la registrazione dell'indice AIP attraverso la memorizzazione dei record nelle apposite
      * entity.
@@ -217,9 +331,6 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FasVerAipFascicolo registraAIP(FasAipFascicoloDaElab fascDaElab, int progressivoVersione,
             String codiceVersione, String sistemaConservazione) {
-        // FasFascicolo fasFascicolo =
-        // context.getBusinessObject(CreazioneIndiceAipFascicoliHelper.class).findById(FasFascicolo.class,
-        // fascDaElab.getFasFascicolo().getIdFascicolo());
         // Chiamata locale, è giusto che partecipi alla stessa transazione. Non occorre che passi dal proxy EJB.
         FasFascicolo fasFascicolo = entityManager.find(FasFascicolo.class,
                 fascDaElab.getFasFascicolo().getIdFascicolo());
@@ -239,8 +350,8 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         /* Inserisco FAS_VER_AIP_FASCICOLO */
         FasVerAipFascicolo verAipFascicolo = new FasVerAipFascicolo();
         verAipFascicolo.setFasFascicolo(fasFascicolo);
-        verAipFascicolo.setFasContenVerAipFascicolos(new ArrayList());
-        verAipFascicolo.setFasMetaVerAipFascicolos(new ArrayList());
+        verAipFascicolo.setFasContenVerAipFascicolos(new ArrayList<>());
+        verAipFascicolo.setFasMetaVerAipFascicolos(new ArrayList<>());
         verAipFascicolo.setPgVerAipFascicolo(new BigDecimal(progressivoVersione));
         verAipFascicolo.setCdVerAip(codiceVersione);
         verAipFascicolo.setDtCreazione(new Date());
@@ -284,21 +395,14 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         }
 
         // Determino lo xml di richiesta del versamento del fascicolo
-        FasXmlVersFascicolo fasXmlVersFascicoloRich = (FasXmlVersFascicolo) CollectionUtils
-                .find(fasFascicolo.getFasXmlVersFascicolos(), new Predicate() {
-                    @Override
-                    public boolean evaluate(final Object object) {
-                        return ((FasXmlVersFascicolo) object).getTiXmlVers().equals("RICHIESTA");
-                    }
-                });
+        FasXmlVersFascicolo fasXmlVersFascicoloRich = (FasXmlVersFascicolo) CollectionUtils.find(
+                fasFascicolo.getFasXmlVersFascicolos(),
+                object -> ((FasXmlVersFascicolo) object).getTiXmlVers().equals("RICHIESTA"));
+
         // Determino lo xml di risposta del versamento del fascicolo
-        FasXmlVersFascicolo fasXmlVersFascicoloRisp = (FasXmlVersFascicolo) CollectionUtils
-                .find(fasFascicolo.getFasXmlVersFascicolos(), new Predicate() {
-                    @Override
-                    public boolean evaluate(final Object object) {
-                        return ((FasXmlVersFascicolo) object).getTiXmlVers().equals("RISPOSTA");
-                    }
-                });
+        FasXmlVersFascicolo fasXmlVersFascicoloRisp = (FasXmlVersFascicolo) CollectionUtils.find(
+                fasFascicolo.getFasXmlVersFascicolos(),
+                object -> ((FasXmlVersFascicolo) object).getTiXmlVers().equals("RISPOSTA"));
 
         /* Inserisco FAS_SIP_VER_AIP_FASCICOLO */
         FasSipVerAipFascicolo sipVerFascicolo = new FasSipVerAipFascicolo();
@@ -327,7 +431,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         Query query = entityManager.createQuery("SELECT lisIxAipFascByEle FROM ElvVLisIxAipFascByEle lisIxAipFascByEle "
                 + "WHERE lisIxAipFascByEle.idElencoVersFasc = :idElencoVersFasc "
                 + "ORDER BY lisIxAipFascByEle.cdKeyOrd");
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
+        query.setParameter("idElencoVersFasc", bigDecimalFromLong(idElencoVersFasc));
         return query.getResultList();
     }
 
@@ -353,11 +457,41 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
 
         Query q = getEntityManager().createQuery(queryStr);
         q.setParameter("idAmbiente", idAmbiente);
-        q.setParameter("tiModelloXsd", tiModelloXsd);
+        q.setParameter("tiModelloXsd", TiModelloXsd.valueOf(tiModelloXsd));
         q.setParameter("filterDate", Calendar.getInstance().getTime());
-        List<DecModelloXsdFascicolo> modelli = (List<DecModelloXsdFascicolo>) q.getResultList();
-        return modelli;
+        return q.getResultList();
     }
+
+    // MEV#26576
+    /**
+     * Ricava il modello xsd attivo per l'ambiente di appartenenza della struttura a cui il fascicolo appartiene e per
+     * la versione del modello xsd corrispondente a quella del servizio di versamento fascicolo, con il tipo
+     * "AIP_UNISYNCRO"
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param tiModelloXsd
+     *            tipo modello
+     * @param cdVersioneXml
+     *            versione del servizio di versamento fascicolo
+     * 
+     * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
+     */
+    public List<DecModelloXsdFascicolo> retrieveIdModelliDaElaborareV2(long idAmbiente, String tiModelloXsd,
+            String cdVersioneXml) {
+        String queryStr = "SELECT modello " + "FROM DecModelloXsdFascicolo modello "
+                + "WHERE modello.orgAmbiente.idAmbiente = :idAmbiente " + "AND modello.tiModelloXsd = :tiModelloXsd "
+                + "AND modello.dtIstituz <= :filterDate AND modello.dtSoppres >= :filterDate "
+                + "AND modello.cdXsd = :cdVersioneXml";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        q.setParameter("idAmbiente", idAmbiente);
+        q.setParameter("tiModelloXsd", TiModelloXsd.valueOf(tiModelloXsd));
+        q.setParameter("filterDate", Calendar.getInstance().getTime());
+        q.setParameter("cdVersioneXml", cdVersioneXml);
+        return q.getResultList();
+    }
+    // end MEV#26576
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FasMetaVerAipFascicolo registraFasMetaVerAipFascicolo(FasVerAipFascicolo verAipFascicolo, String hash,

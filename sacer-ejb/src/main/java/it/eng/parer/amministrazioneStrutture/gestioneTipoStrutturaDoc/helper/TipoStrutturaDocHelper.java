@@ -1,12 +1,25 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.helper;
 
-import it.eng.parer.entity.DecFormatoFileAmmesso;
-import it.eng.parer.entity.DecTipoCompDoc;
-import it.eng.parer.entity.DecTipoRapprAmmesso;
-import it.eng.parer.entity.DecTipoRapprComp;
-import it.eng.parer.entity.DecTipoStrutDoc;
-import it.eng.parer.entity.DecTipoStrutUnitaDoc;
+import it.eng.parer.entity.*;
 import it.eng.parer.helper.GenericHelper;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -14,8 +27,6 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper delle tipologie di struttura documento
@@ -26,8 +37,6 @@ import org.slf4j.LoggerFactory;
 @LocalBean
 public class TipoStrutturaDocHelper extends GenericHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(TipoStrutturaDocHelper.class);
-
     public DecTipoStrutDoc getDecTipoStrutDocByName(String nmTipoStrutDoc, BigDecimal idStrut) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT tipoStrutDoc FROM DecTipoStrutDoc tipoStrutDoc WHERE tipoStrutDoc.nmTipoStrutDoc = :nmTipoStrutDoc");
@@ -37,7 +46,7 @@ public class TipoStrutturaDocHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
 
         query.setParameter("nmTipoStrutDoc", nmTipoStrutDoc);
@@ -65,23 +74,21 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
         }
 
-        List<DecTipoStrutDoc> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
     public DecTipoCompDoc getDecTipoCompDocByName(String nmTipoCompDoc, BigDecimal idTipoStrutDoc) {
         Query query = getEntityManager().createQuery("SELECT tipoCompDoc FROM DecTipoCompDoc tipoCompDoc "
                 + "WHERE tipoCompDoc.nmTipoCompDoc = :nmTipoCompDoc and tipoCompDoc.decTipoStrutDoc.idTipoStrutDoc = :tipostrut");
         query.setParameter("nmTipoCompDoc", nmTipoCompDoc);
-        query.setParameter("tipostrut", idTipoStrutDoc);
+        query.setParameter("tipostrut", longFromBigDecimal(idTipoStrutDoc));
         List<DecTipoCompDoc> list = query.getResultList();
         if (list.isEmpty()) {
             return null;
@@ -97,7 +104,7 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("nmTipoCompDoc", nmTipoCompDoc);
         query.setParameter("nmTipoStrutDoc", nmTipoStrutDoc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<DecTipoCompDoc> list = query.getResultList();
         if (list.isEmpty()) {
             return null;
@@ -120,16 +127,14 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idTipoStrutDoc != null) {
-            query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
+            query.setParameter("idTipoStrutDoc", longFromBigDecimal(idTipoStrutDoc));
         }
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
         }
 
-        List<DecTipoCompDoc> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoCompDoc> getDecTipoCompDocList(Long idStrut, Date data, Long idTipoStrutDoc) {
@@ -139,18 +144,21 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         query.setParameter("idStrut", idStrut);
         query.setParameter("idTipoStrutDoc", idTipoStrutDoc);
         query.setParameter("data", data);
-        List<DecTipoCompDoc> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoCompDoc> getDecTipoCompDocListByStrut(BigDecimal idStrut) {
         Query query = getEntityManager().createQuery("SELECT tipoCompDoc FROM DecTipoCompDoc tipoCompDoc "
                 + "WHERE tipoCompDoc.decTipoStrutDoc.orgStrut.idStrut = :idStrut");
 
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
 
-        List<DecTipoCompDoc> list = query.getResultList();
-        return list;
+        return query.getResultList();
+    }
+
+    public List<DecTipoCompDoc> getDecTipoCompDocList() {
+        Query query = getEntityManager().createQuery("SELECT tipoCompDoc FROM DecTipoCompDoc tipoCompDoc ");
+        return query.getResultList();
     }
 
     public List<DecTipoStrutUnitaDoc> getDecTipoStrutUnitaDocList(BigDecimal idTipoUnitaDoc, boolean filterValid) {
@@ -167,14 +175,13 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idTipoUnitaDoc != null) {
-            query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+            query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
         }
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
         }
-        List<DecTipoStrutUnitaDoc> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public DecTipoStrutUnitaDoc getDecTipoStrutUnitaDocByName(BigDecimal idStrut, String nmTipoUnitaDoc,
@@ -186,7 +193,7 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("nmTipoStrutUnitaDoc", nmTipoStrutUnitaDoc);
         query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<DecTipoStrutUnitaDoc> list = query.getResultList();
         if (list.isEmpty()) {
             return null;
@@ -195,9 +202,9 @@ public class TipoStrutturaDocHelper extends GenericHelper {
     }
 
     public void deleteDecFormatoFileAmmessoList(List<BigDecimal> idFormatoFileAmmessoList) {
-        Query q = getEntityManager().createQuery(
-                "DELETE FROM DecFormatoFileAmmesso u " + "WHERE u.idFormatoFileAmmesso IN :idFormatoFileAmmessoList ");
-        q.setParameter("idFormatoFileAmmessoList", idFormatoFileAmmessoList);
+        Query q = getEntityManager().createQuery("DELETE FROM DecFormatoFileAmmesso u "
+                + "WHERE u.idFormatoFileAmmesso IN (:idFormatoFileAmmessoList) ");
+        q.setParameter("idFormatoFileAmmessoList", longListFrom(idFormatoFileAmmessoList));
         q.executeUpdate();
         getEntityManager().flush();
     }
@@ -266,16 +273,15 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idStrut", idStrut);
         query.setParameter("data", data);
-        List<DecTipoRapprComp> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public DecFormatoFileAmmesso getDecFormatoFileAmmesso(BigDecimal idTipoCompDoc, BigDecimal idFormatoFileDoc) {
         String queryStr = "SELECT formatoFileAmmesso FROM DecFormatoFileAmmesso formatoFileAmmesso WHERE formatoFileAmmesso.decFormatoFileDoc.idFormatoFileDoc = :idFormatoFileDoc AND "
                 + "formatoFileAmmesso.decTipoCompDoc.idTipoCompDoc=:idTipoCompDoc";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idTipoCompDoc", idTipoCompDoc);
-        query.setParameter("idFormatoFileDoc", idFormatoFileDoc);
+        query.setParameter("idTipoCompDoc", longFromBigDecimal(idTipoCompDoc));
+        query.setParameter("idFormatoFileDoc", longFromBigDecimal(idFormatoFileDoc));
         List<DecFormatoFileAmmesso> list = query.getResultList();
 
         if (list.isEmpty()) {
@@ -283,4 +289,5 @@ public class TipoStrutturaDocHelper extends GenericHelper {
         }
         return list.get(0);
     }
+
 }

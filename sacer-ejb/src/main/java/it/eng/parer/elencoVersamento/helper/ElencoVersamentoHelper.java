@@ -1,11 +1,74 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.elencoVersamento.helper;
 
+import static java.util.stream.Collectors.toList;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.jpa.QueryHints;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.rometools.utils.Strings;
+
+import it.eng.paginator.util.HibernateUtils;
 import it.eng.parer.elencoVersamento.utils.AggiornamentoInElenco;
 import it.eng.parer.elencoVersamento.utils.ComponenteDaVerificare;
 import it.eng.parer.elencoVersamento.utils.ComponenteInElenco;
-import it.eng.parer.elencoVersamento.utils.UnitaDocumentariaInElenco;
 import it.eng.parer.elencoVersamento.utils.DocUdObj;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.elencoVersamento.utils.PayLoad;
+import it.eng.parer.elencoVersamento.utils.UnitaDocumentariaInElenco;
 import it.eng.parer.elencoVersamento.utils.UpdDocUdObj;
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroCompIndiceAipDaElab;
@@ -44,17 +107,21 @@ import it.eng.parer.entity.constraint.ElvUpdUdDaElabElenco.ElvUpdUdDaElabTiStato
 import it.eng.parer.entity.constraint.HsmElencoSessioneFirma.TiEsitoFirmaElenco;
 import it.eng.parer.entity.constraint.MonContaSesUpdUd;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
+import it.eng.parer.entity.inheritance.oop.ElvUdDocUpdDaElabElenco;
 import it.eng.parer.exception.ParerNoResultException;
-import it.eng.parer.viewEntity.ElvVLisElencoDaMarcare;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.dto.SessioneVersamentoExt;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.viewEntity.ElvVChkAddDocAgg;
+import it.eng.parer.viewEntity.ElvVChkAddDocAggNoEleCor;
 import it.eng.parer.viewEntity.ElvVChkAddUpdUd;
+import it.eng.parer.viewEntity.ElvVChkAddUpdUdNoEleCor;
 import it.eng.parer.viewEntity.ElvVChkUnaUdAnnul;
 import it.eng.parer.viewEntity.ElvVLisAllUdByElenco;
-import it.eng.parer.viewEntity.ElvVLisElencoVersStato;
+import it.eng.parer.viewEntity.ElvVLisElencoDaMarcare;
 import it.eng.parer.viewEntity.ElvVLisModifByUd;
 import it.eng.parer.viewEntity.ElvVLisUdByStato;
+import it.eng.parer.viewEntity.ElvVSelUdDocUpdByCrit;
 import it.eng.parer.viewEntity.OrgVLisStrutPerEle;
 import it.eng.parer.volume.utils.DatiSpecQueryParams;
 import it.eng.parer.volume.utils.ReturnParams;
@@ -62,60 +129,30 @@ import it.eng.parer.web.dto.DecCriterioAttribBean;
 import it.eng.parer.web.dto.DecCriterioDatiSpecBean;
 import it.eng.parer.web.dto.DefinitoDaBean;
 import it.eng.parer.web.util.Constants;
-import it.eng.parer.ws.dto.CSChiave;
-import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import javax.ejb.EJBException;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Agati_D feat. Gilioli_P
  */
+@SuppressWarnings(value = { "unchecked", "rawtypes" })
 @Stateless(mappedName = "ElencoVersamentoHelper")
 @LocalBean
 public class ElencoVersamentoHelper extends GenericHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElencoVersamentoHelper.class);
+    public static final String JAVAX_PERSISTENCE_FETCHGRAPH = "javax.persistence.fetchgraph";
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager em;
+
+    @EJB
+    private ObjectStorageService objectStorageService;
 
     public List<Long> retrieveElenchiScadutiDaProcessare(long idStrut) {
         Date systemDate = new Date();
@@ -124,9 +161,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "WHERE (elencoDaElab.tiStatoElenco = 'APERTO' " + "AND elencoVers.dtScadChius < :systemDate "
                 + "AND elencoDaElab.idStrut = :idStrut)");
         q.setParameter("systemDate", systemDate);
-        q.setParameter("idStrut", idStrut);
-        List<Long> elenchi = q.getResultList();
-        return elenchi;
+        q.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        return q.getResultList();
     }
 
     public List<Long> retrieveElenchiVuotiDaProcessare(long idStrut) {
@@ -135,167 +171,47 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "WHERE (elencoDaElab.tiStatoElenco = 'APERTO' " + "AND elencoVers.niUnitaDocVersElenco = 0 "
                 + "AND elencoVers.niDocAggElenco = 0 " + "AND elencoVers.niUpdUnitaDoc = 0 "
                 + "AND elencoDaElab.idStrut = :idStrut)");
-        q.setParameter("idStrut", idStrut);
-        List<Long> elenchi = q.getResultList();
-        return elenchi;
+        q.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        return q.getResultList();
     }
 
     public List<OrgStrut> retrieveStrutture() {
         Query q = em.createQuery("SELECT s FROM OrgStrut s ORDER BY s.idStrut");
-        List<OrgStrut> strutture = q.getResultList();
-        return strutture;
+        return q.getResultList();
     }
 
     public List<OrgStrut> retrieveStruttureByAmb(BigDecimal idAmbiente) {
         Query q = em.createQuery("SELECT s FROM OrgStrut s " + "WHERE s.orgEnte.orgAmbiente.idAmbiente = :idAmbiente "
                 + "ORDER BY s.idStrut");
-        q.setParameter("idAmbiente", idAmbiente);
-        List<OrgStrut> strutture = q.getResultList();
-        return strutture;
+        q.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
+        return q.getResultList();
     }
 
     public List<OrgAmbiente> retrieveAmbienti() {
         Query q = em.createQuery("SELECT a FROM OrgAmbiente a ORDER BY a.idAmbiente");
-        List<OrgAmbiente> ambienti = q.getResultList();
-        return ambienti;
+        return q.getResultList();
     }
 
     public List<OrgVLisStrutPerEle> retrieveStrutturePerEle() {
         Query q = em.createQuery("SELECT s FROM OrgVLisStrutPerEle s ORDER BY s.flPresenzaElencoFisc DESC, s.idStrut");
-        List<OrgVLisStrutPerEle> strutture = q.getResultList();
-        return strutture;
+        return q.getResultList();
     }
 
-    public List<DecCriterioRaggr> retrieveCriterioByStrut(OrgStrut struttura, Date jobStartDate) throws ParseException {
-        Query q = em.createQuery("SELECT cr " + "FROM DecCriterioRaggr cr " + "WHERE cr.orgStrut = :struttura "
-                + "AND cr.dtIstituz <= :jobStartDate " + "AND cr.dtSoppres > :jobStartDate " + "ORDER BY cr.dtIstituz");
-        q.setParameter("struttura", struttura);
-        q.setParameter("jobStartDate", jobStartDate);
-        List<DecCriterioRaggr> criteriRaggr = q.getResultList();
-        return criteriRaggr;
-    }
+    public List<DecCriterioRaggr> retrieveCriterioByStrut(OrgStrut struttura, Date jobStartDate) {
+        StringBuilder queryStr = new StringBuilder("SELECT cr " + "FROM DecCriterioRaggr cr "
+                + "JOIN FETCH cr.decCriterioFiltroMultiplos crm " + "WHERE cr.orgStrut = :struttura ");
+        if (jobStartDate != null) {
+            queryStr.append("AND cr.dtIstituz <= :jobStartDate " + "AND cr.dtSoppres > :jobStartDate ");
+        }
+        queryStr.append("ORDER BY cr.dtIstituz");
 
-    // MEV#27169
-    public List<DecCriterioRaggr> retrieveCriterioByFilters(OrgStrut struttura, Date dtCreazione,
-            BigDecimal idTipoUnitaDoc, BigDecimal idRegistroUnitaDoc, BigDecimal idRegistroRangeUnitaDoc,
-            String cdKeyUnitaDoc, String flUnitaDocFirmato, String tiEsitoVerifFirme, String tiConservazione,
-            String nmSistemaMigraz, String flForzaAccettazione, String flForzaConservazione, String dlOggettoUnitaDoc,
-            Date dtRegUnitaDoc, BigDecimal idTipoDoc, String dlDoc, String dsAutoreDoc) throws ParseException {
-        Query q = em.createQuery("SELECT crit " + "FROM DecCriterioRaggr crit " + "WHERE crit.orgStrut = :struttura "
-                + "AND crit.dtIstituz <= :dtCreazione " + "AND crit.dtSoppres > :dtCreazione "
-                // filtro sul tipo unita doc
-                + "AND ((crit.flFiltroTipoUnitaDoc = '1' AND EXISTS (SELECT mult FROM DecCriterioFiltroMultiplo mult "
-                + "WHERE mult.decCriterioRaggr.idCriterioRaggr = crit.idCriterioRaggr "
-                + "AND mult.tiFiltroMultiplo = 'TIPO_UNI_DOC' "
-                + "AND mult.decTipoUnitaDoc.idTipoUnitaDoc = :idTipoUnitaDoc)) "
-                + "OR crit.flFiltroTipoUnitaDoc = '0') "
-                // filtro su registro chiave
-                + "AND ((crit.flFiltroRegistroKey = '1' AND EXISTS (SELECT mult FROM DecCriterioFiltroMultiplo mult "
-                + "WHERE mult.decCriterioRaggr.idCriterioRaggr = crit.idCriterioRaggr "
-                + "AND mult.tiFiltroMultiplo = 'REGISTRO_UNI_DOC' "
-                + "AND mult.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc)) "
-                + "OR crit.flFiltroRegistroKey = '0') "
-                // filtro su numero chiave
-                + "AND ((crit.cdKeyUnitaDoc IS NOT NULL " + "AND crit.cdKeyUnitaDoc = :cdKeyUnitaDoc) "
-                + "OR crit.cdKeyUnitaDoc IS NULL) "
-                // filtro su range registro chiave
-                + "AND ((crit.flFiltroRangeRegistroKey = '1' AND EXISTS (SELECT mult FROM DecCriterioFiltroMultiplo mult "
-                + "WHERE mult.decCriterioRaggr.idCriterioRaggr = crit.idCriterioRaggr "
-                + "AND mult.tiFiltroMultiplo = 'RANGE_REGISTRO_UNI_DOC' "
-                + "AND mult.decRegistroRangeUnitaDoc.idRangeUnitaDoc = :idRegistroRangeUnitaDoc)) "
-                + "OR crit.flFiltroRangeRegistroKey = '0') "
-                // filtro su range numero chiave
-                + "AND ((crit.cdKeyUnitaDocDa IS NOT NULL AND crit.cdKeyUnitaDocA IS NOT NULL "
-                + "AND FUNC('lpad', crit.cdKeyUnitaDocDa, 12, '0') <= FUNC('lpad', :cdKeyUnitaDoc, 12, '0')"
-                + "AND FUNC('lpad', crit.cdKeyUnitaDocA, 12, '0') >= FUNC('lpad', :cdKeyUnitaDoc, 12, '0')) "
-                + "OR (crit.cdKeyUnitaDocDa IS NOT NULL AND crit.cdKeyUnitaDocA IS NULL "
-                + "AND FUNC('lpad', crit.cdKeyUnitaDocDa, 12, '0') <= FUNC('lpad', :cdKeyUnitaDoc, 12, '0')"
-                + "AND 'zzzzzzzzzzzz' >= FUNC('lpad', :cdKeyUnitaDoc, 12, '0')) "
-                + "OR (crit.cdKeyUnitaDocDa IS NULL AND crit.cdKeyUnitaDocA IS NOT NULL "
-                + "AND '000000000000' <= FUNC('lpad', :cdKeyUnitaDoc, 12, '0') "
-                + "AND FUNC('lpad', crit.cdKeyUnitaDocA, 12, '0') >= FUNC('lpad', :cdKeyUnitaDoc, 12, '0')) "
-                + "OR (crit.cdKeyUnitaDocDa IS NULL AND crit.cdKeyUnitaDocA IS NULL)) "
-                // filtro su firmato
-                + "AND ((crit.flUnitaDocFirmato IS NOT NULL " + "AND crit.flUnitaDocFirmato = :flUnitaDocFirmato) "
-                + "OR crit.flUnitaDocFirmato IS NULL) "
-                // filtro su esito verifica firme
-                + "AND ((crit.flFiltroTiEsitoVerifFirme = '1' AND EXISTS (SELECT mult FROM DecCriterioFiltroMultiplo mult "
-                + "WHERE mult.decCriterioRaggr.idCriterioRaggr = crit.idCriterioRaggr "
-                + "AND mult.tiFiltroMultiplo = 'TIPO_ESITO_VERIF_FIRME' "
-                + "AND mult.tiEsitoVerifFirme = :tiEsitoVerifFirme)) " + "OR crit.flFiltroTiEsitoVerifFirme = '0') "
-                // filtro su data creazione
-                + "AND ((crit.dtCreazioneUnitaDocDa IS NOT NULL AND crit.dtCreazioneUnitaDocA IS NOT NULL "
-                + "AND FUNC('to_char', crit.dtCreazioneUnitaDocA, 'hh24:mi:ss') != '00:00:00' "
-                + "AND :dtCreazione BETWEEN crit.dtCreazioneUnitaDocDa, AND crit.dtCreazioneUnitaDocA, IS NOT NULL) "
-                + "OR (crit.dtCreazioneUnitaDocDa IS NOT NULL AND crit.dtCreazioneUnitaDocA IS NOT NULL "
-                + "AND FUNC('to_char', crit.dtCreazioneUnitaDocA, 'hh24:mi:ss') = '00:00:00' "
-                + "AND crit.dtCreazioneUnitaDocDa <= :dtCreazione "
-                + "AND FUNC('to_date', FUNC('to_char', crit.dtCreazioneUnitaDocA, 'yyyy/mm/dd') || '23:59:59', 'yyyy/mm/dd hh24:mi:ss') >= :dtCreazione) "
-                + "OR (crit.dtCreazioneUnitaDocDa IS NOT NULL AND crit.dtCreazioneUnitaDocA IS NULL "
-                + "AND crit.dtCreazioneUnitaDocDa <= :dtCreazione " + "CURRENT_DATE >= :dtCreazione) "
-                + "OR (crit.dtCreazioneUnitaDocDa IS NOT NULL AND crit.dtCreazioneUnitaDocA IS NOT NULL "
-                + "AND FUNC('to_char', crit.dtCreazioneUnitaDocA, 'hh24:mi:ss') != '00:00:00' "
-                + "AND FUNC('to_date', '2000/01/01', 'yyyy/dd/mm') <= :dtCreazione "
-                + "AND crit.dtCreazioneUnitaDocA >= :dtCreazione) "
-                + "OR (crit.dtCreazioneUnitaDocDa IS NULL AND crit.dtCreazioneUnitaDocA IS NOT NULL "
-                + "AND FUNC('to_char', crit.dtCreazioneUnitaDocA, 'hh24:mi:ss') = '00:00:00' "
-                + "AND FUNC('to_date', '2000/01/01', 'yyyy/dd/mm') <= :dtCreazione "
-                + "AND FUNC('to_date', FUNC('to_char', crit.dtCreazioneUnitaDocA, 'yyyy/mm/dd') || '23:59:59', 'yyyy/mm/dd hh24:mi:ss') >= :dtCreazione) "
-                + "OR (crit.dtCreazioneUnitaDocDa IS NULL AND crit.dtCreazioneUnitaDocA IS NULL)) "
-                // filtro su tipo conservazione
-                + "AND ((crit.tiConservazione IS NOT NULL " + "AND crit.tiConservazione = :tiConservazione) "
-                + "OR crit.tiConservazione IS NULL) "
-                // filtro su sistema di migrazione
-                + "AND ((crit.flFiltroSistemaMigraz = '1' AND EXISTS (SELECT mult FROM DecCriterioFiltroMultiplo mult "
-                + "WHERE mult.decCriterioRaggr.idCriterioRaggr = crit.idCriterioRaggr "
-                + "AND mult.tiFiltroMultiplo = 'SISTEMA_MIGRAZ' " + "AND mult.nmSistemaMigraz = :nmSistemaMigraz)) "
-                + "OR crit.flFiltroSistemaMigraz = '0') "
-                // filtro su forza accettazione
-                + "AND ((crit.flForzaAccettazione IS NOT NULL "
-                + "AND crit.flForzaAccettazione = :flForzaAccettazione) " + "OR crit.flForzaAccettazione IS NULL) "
-                // filtro su forza conservazione
-                + "AND ((crit.flForzaConservazione IS NOT NULL "
-                + "AND crit.flForzaConservazione = :flForzaConservazione) " + "OR crit.flForzaConservazione IS NULL) "
-                // filtro su oggetto unità doc
-                + "AND ((crit.dlOggettoUnitaDoc IS NOT NULL "
-                + "AND :dlOggettoUnitaDoc like '%' || crit.dlOggettoUnitaDoc || '%') "
-                + "OR crit.dlOggettoUnitaDoc IS NULL) "
-                // filtro su data registrazione unita doc
-                + "AND ((crit.dtRegUnitaDocDa IS NOT NULL AND crit.dtRegUnitaDocA IS NOT NULL "
-                + "AND :dtRegUnitaDoc BETWEEN crit.dtRegUnitaDocDa AND crit.dtRegUnitaDocA) "
-                + "OR (crit.dtRegUnitaDocDa IS NULL AND crit.dtRegUnitaDocA IS NULL)) "
-                // filtro su tipo documento
-                + "AND ((crit.flFiltroTipoDoc = '1' AND EXISTS (SELECT mult FROM DecCriterioFiltroMultiplo mult "
-                + "WHERE mult.decCriterioRaggr.idCriterioRaggr = crit.idCriterioRaggr "
-                + "AND mult.tiFiltroMultiplo = 'TIPO_DOC' " + "AND mult.decTipoDoc.idTipoDoc = :idTipoDoc)) "
-                + "OR crit.flFiltroTipoDoc = '0') "
-                // filtro su descrizione doc
-                + "AND ((crit.dlDoc IS NOT NULL " + "AND :dlDoc like '%' || crit.dlDoc || '%') "
-                + "OR crit.dlDoc IS NULL) "
-                // filtro su autore doc
-                + "AND ((crit.dsAutoreDoc IS NOT NULL " + "AND :dsAutoreDoc like '%' || crit.dsAutoreDoc || '%') "
-                + "OR crit.dsAutoreDoc IS NULL) " + "ORDER BY crit.dtIstituz");
+        Query q = em.createQuery(queryStr.toString());
         q.setParameter("struttura", struttura);
-        q.setParameter("dtCreazione", dtCreazione);
-        q.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        q.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
-        q.setParameter("idRegistroRangeUnitaDoc", idRegistroRangeUnitaDoc);
-        q.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
-        q.setParameter("flUnitaDocFirmato", flUnitaDocFirmato);
-        q.setParameter("tiEsitoVerifFirme", tiEsitoVerifFirme);
-        q.setParameter("tiConservazione", tiConservazione);
-        q.setParameter("nmSistemaMigraz", nmSistemaMigraz);
-        q.setParameter("flForzaAccettazione", flForzaAccettazione);
-        q.setParameter("flForzaConservazione", flForzaConservazione);
-        q.setParameter("dlOggettoUnitaDoc", dlOggettoUnitaDoc);
-        q.setParameter("dtRegUnitaDoc", dtRegUnitaDoc);
-        q.setParameter("idTipoDoc", idTipoDoc);
-        q.setParameter("dlDoc", dlDoc);
-        q.setParameter("dsAutoreDoc", dsAutoreDoc);
-        List<DecCriterioRaggr> criteriRaggr = q.getResultList();
-        return criteriRaggr;
+        if (jobStartDate != null) {
+            q.setParameter("jobStartDate", jobStartDate);
+        }
+        return q.getResultList();
     }
-    // end MEV#27169
 
     public ElvElencoVer retrieveElencoByCriterio(DecCriterioRaggr criterio, BigDecimal aaKeyUnitaDoc,
             OrgStrut struttura) throws ParerNoResultException {
@@ -315,13 +231,12 @@ public class ElencoVersamentoHelper extends GenericHelper {
             }
 
             Query q = em.createQuery(queryStr.toString());
-            q.setParameter("idCriterio", criterio.getIdCriterioRaggr());
-            q.setParameter("idStruttura", struttura.getIdStrut());
+            q.setParameter("idCriterio", BigDecimal.valueOf(criterio.getIdCriterioRaggr()));
+            q.setParameter("idStruttura", BigDecimal.valueOf(struttura.getIdStrut()));
             if (tuttiAnniChiaveUdNulli) {
                 q.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
             }
-            ElvElencoVer elenco = (ElvElencoVer) q.getSingleResult();
-            return elenco;
+            return (ElvElencoVer) q.getSingleResult();
         } catch (NoResultException ex) {
             throw new ParerNoResultException();
         }
@@ -333,30 +248,27 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param criterio
      *            raggruppamento
-     * 
+     *
      * @return lista oggetti di tipo {@link UpdDocUdObj}
      */
     public List<UpdDocUdObj> retrieveUpdDocUdToProcess(DecCriterioRaggr criterio) {
         StringBuilder queryStr = new StringBuilder(
-                "SELECT DISTINCT u.idUnitaDoc, u.idDoc, u.idUpdUnitaDoc, u.aaKeyUnitaDoc, u.dtCreazione, u.tiEle "
-                        + "FROM ElvVSelUdDocUpdByCrit u " + "WHERE u.idCriterioRaggr = :idCriterio");
+                "SELECT DISTINCT u.id.idUnitaDoc, u.id.idDoc, u.id.idUpdUnitaDoc, u.aaKeyUnitaDoc, u.dtCreazione, u.tiEle "
+                        + "FROM ElvVSelUdDocUpdByCrit u " + "WHERE u.id.idCriterioRaggr = :idCriterio");
 
         if (criterio.getAaKeyUnitaDoc() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc ");
         } else if (criterio.getAaKeyUnitaDocDa() != null || criterio.getAaKeyUnitaDocA() != null) {
-            // if (criterio.getAaKeyUnitaDocDa() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc >= :aaKeyUnitaDocDa ");
-            // }
-            // if (criterio.getAaKeyUnitaDocA() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc <= :aaKeyUnitaDocA ");
-            // }
         }
-        // TIP: fdilorenzo, DEFINISCE L'ORDINAMENTO CON CUI DEVONO ESSERE ELABORATI GLI OGGETTI VERSATI (A SUPPORTO
+        // TIP: fdilorenzo, DEFINISCE L'ORDINAMENTO CON CUI DEVONO ESSERE ELABORATI GLI
+        // OGGETTI VERSATI (A SUPPORTO
         // DELLA LOGICA DEFINITA IN ANALISI)
         queryStr.append(" ORDER BY u.tiEle");
 
         Query q = em.createQuery(queryStr.toString());
-        q.setParameter("idCriterio", criterio.getIdCriterioRaggr());
+        q.setParameter("idCriterio", BigDecimal.valueOf(criterio.getIdCriterioRaggr()));
 
         if (criterio.getAaKeyUnitaDoc() != null) {
             q.setParameter("aaKeyUnitaDoc", criterio.getAaKeyUnitaDoc());
@@ -364,17 +276,17 @@ public class ElencoVersamentoHelper extends GenericHelper {
             if (criterio.getAaKeyUnitaDocDa() != null) {
                 q.setParameter("aaKeyUnitaDocDa", criterio.getAaKeyUnitaDocDa());
             } else {
-                q.setParameter("aaKeyUnitaDocDa", 2000);
+                q.setParameter("aaKeyUnitaDocDa", BigDecimal.valueOf(2000));
             }
             if (criterio.getAaKeyUnitaDocA() != null) {
                 q.setParameter("aaKeyUnitaDocA", criterio.getAaKeyUnitaDocA());
             } else {
-                q.setParameter("aaKeyUnitaDocA", Calendar.getInstance().get(Calendar.YEAR));
+                q.setParameter("aaKeyUnitaDocA", BigDecimal.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
             }
         }
 
-        List<Object[]> updDocUdObjectList = (List<Object[]>) q.getResultList();
-        List<UpdDocUdObj> updDocUdObjSet = new ArrayList<UpdDocUdObj>();
+        List<Object[]> updDocUdObjectList = q.getResultList();
+        List<UpdDocUdObj> updDocUdObjSet = new ArrayList<>();
 
         for (Object[] updDocUdObject : updDocUdObjectList) {
             Constants.TipoEntitaSacer tipoEntitaSacer = (updDocUdObject[5].equals("01_UNI_DOC"))
@@ -391,12 +303,13 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     /**
-     * Seleziona le unità documentarie che soddisfano il criterio di raggruppamento passato come parametro ritornandole
-     * sotto forma di insieme DocUdObj
+     *
+     * /** Seleziona le unità documentarie che soddisfano il criterio di raggruppamento passato come parametro
+     * ritornandole sotto forma di insieme DocUdObj
      *
      * @param criterio
      *            raggruppamento
-     * 
+     *
      * @return lista oggetti di tipo {@link DocUdObj}
      */
     public List<DocUdObj> retrieveUnitaDocToProcess(DecCriterioRaggr criterio) {
@@ -407,12 +320,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
         if (criterio.getAaKeyUnitaDoc() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc ");
         } else if (criterio.getAaKeyUnitaDocDa() != null || criterio.getAaKeyUnitaDocA() != null) {
-            // if (criterio.getAaKeyUnitaDocDa() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc >= :aaKeyUnitaDocDa ");
-            // }
-            // if (criterio.getAaKeyUnitaDocA() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc <= :aaKeyUnitaDocA ");
-            // }
+
         }
 
         queryStr.append(" ORDER BY u.dtCreazione");
@@ -435,8 +345,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
             }
         }
 
-        List<Object[]> unitaDocObjectList = (List<Object[]>) q.getResultList();
-        List<DocUdObj> docUdObjSet = new ArrayList<DocUdObj>();
+        List<Object[]> unitaDocObjectList = q.getResultList();
+        List<DocUdObj> docUdObjSet = new ArrayList<>();
 
         for (Object[] unitaDocObject : unitaDocObjectList) {
             docUdObjSet.add(new DocUdObj((BigDecimal) unitaDocObject[0], Constants.TipoEntitaSacer.UNI_DOC,
@@ -454,12 +364,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
         if (criterio.getAaKeyUnitaDoc() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc ");
         } else if (criterio.getAaKeyUnitaDocDa() != null || criterio.getAaKeyUnitaDocA() != null) {
-            // if (criterio.getAaKeyUnitaDocDa() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc >= :aaKeyUnitaDocDa ");
-            // }
-            // if (criterio.getAaKeyUnitaDocA() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc <= :aaKeyUnitaDocA ");
-            // }
         }
         queryStr.append(" ORDER BY u.dtCreazione");
 
@@ -480,8 +386,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 q.setParameter("aaKeyUnitaDocA", Calendar.getInstance().get(Calendar.YEAR));
             }
         }
-        List<Object[]> docObjectList = (List<Object[]>) q.getResultList();
-        List<DocUdObj> docUdObjSet = new ArrayList<DocUdObj>();
+        List<Object[]> docObjectList = q.getResultList();
+        List<DocUdObj> docUdObjSet = new ArrayList<>();
 
         for (Object[] docObject : docObjectList) {
             docUdObjSet.add(new DocUdObj((BigDecimal) docObject[0], Constants.TipoEntitaSacer.DOC,
@@ -491,6 +397,15 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return docUdObjSet;
     }
 
+    /**
+     * @deprecated non viene usato da nessuno
+     *
+     * @param criterio
+     *            criteri dell'unità documentaria
+     *
+     * @return lista di {@link DocUdObj}
+     */
+    @Deprecated
     public List<DocUdObj> retrieveUpdToProcess(DecCriterioRaggr criterio) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT DISTINCT u.idUpdUnitaDoc, u.aaKeyUnitaDoc, u.dtCreazione  " + "FROM ElvVSelUdDocUpdByCrit u "
@@ -499,12 +414,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
         if (criterio.getAaKeyUnitaDoc() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc ");
         } else if (criterio.getAaKeyUnitaDocDa() != null || criterio.getAaKeyUnitaDocA() != null) {
-            // if (criterio.getAaKeyUnitaDocDa() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc >= :aaKeyUnitaDocDa ");
-            // }
-            // if (criterio.getAaKeyUnitaDocA() != null) {
             queryStr.append(" AND u.aaKeyUnitaDoc <= :aaKeyUnitaDocA ");
-            // }
         }
         queryStr.append(" ORDER BY u.dtCreazione, upd.pgUpdUnitaDoc");
 
@@ -525,8 +436,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 q.setParameter("aaKeyUnitaDocA", Calendar.getInstance().get(Calendar.YEAR));
             }
         }
-        List<Object[]> updObjectList = (List<Object[]>) q.getResultList();
-        List<DocUdObj> docUdObjSet = new ArrayList<DocUdObj>();
+        List<Object[]> updObjectList = q.getResultList();
+        List<DocUdObj> docUdObjSet = new ArrayList<>();
 
         for (Object[] updObject : updObjectList) {
             docUdObjSet.add(new DocUdObj((BigDecimal) updObject[0], Constants.TipoEntitaSacer.UPD,
@@ -537,9 +448,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     // METODI RIFATTI DA PAOLO DOPO MODIFICHE LOGICA DI SANDRO
-    // (AGGIUNGO RIFLESSIONE A GENNAIO 2017: STIAMO PARLANDO DI QUALCOSA FATTO CIRCA 4 ANNI FA... PENSIERI,
+    // (AGGIUNGO RIFLESSIONE A GENNAIO 2017: STIAMO PARLANDO DI QUALCOSA FATTO CIRCA
+    // 4 ANNI FA... PENSIERI,
     // IMPLEMENTAZIONI, OPERE E OMISSIONI ERANO STATE DETTATE DA DIVERSI FATTORI...
-    // QUESTO COMMENTO VALE COME "PROMEMORIA" PER CHI UN DOMANI AVESSE DA "RIDIRE" SU EVENTUALI TECNICHE DI SVILUPPO
+    // QUESTO COMMENTO VALE COME "PROMEMORIA" PER CHI UN DOMANI AVESSE DA "RIDIRE"
+    // SU EVENTUALI TECNICHE DI SVILUPPO
     // CERTAMENTE MIGLIORABILI)
     private String buildClauseExists(String conjunctionWord, int entityNameSuffix, int indiceidattribds,
             String operatore, String filtro, String initialBracket, String from, String where, String entitaSacer,
@@ -561,7 +474,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return clauseExists.toString();
     }
 
-    public ReturnParams buildQueryForDatiSpec(List datiSpecList) {
+    public ReturnParams buildQueryForDatiSpec(List<Object> datiSpecList) {
         ReturnParams retParams = new ReturnParams();
         StringBuilder queryStr = new StringBuilder();
         // UTILIZZO DEI DATI SPECIFICI
@@ -571,10 +484,10 @@ public class ElencoVersamentoHelper extends GenericHelper {
         int indiceidattribds = 0;
         List<DatiSpecQueryParams> mappone = new ArrayList<>();
         List<DefinitoDaBean> listaDefinitoDa = new ArrayList<>();
-        Set<String> insiemeTipiUnitaDoc = new HashSet();
-        Set<String> insiemeTipiDoc = new HashSet();
-        Set<String> insiemeSistemiMigrazUniDoc = new HashSet();
-        Set<String> insiemeSistemiMigrazDoc = new HashSet();
+        Set<String> insiemeTipiUnitaDoc = new HashSet<>();
+        Set<String> insiemeTipiDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazUniDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazDoc = new HashSet<>();
 
         // Per ogni dato specifico
         for (Object datiSpecObj : datiSpecList) {
@@ -666,7 +579,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                             // (---1---) aggiungo il predicato alla query
                             String initialBracket = "";
                             String from = "AroVRicDatiSpec";
-                            String where = ".idUnitaDoc = u.idUnitaDoc";
+                            String where = ".idUnitaDoc = u.id.idUnitaDoc";
                             String entitaSacer = "'UNI_DOC'";
                             String and1 = ".idAttribDatiSpec = :idattribdatispecin";
                             String and2 = "";
@@ -949,59 +862,68 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
     public void setNonElabSched(OrgStrut struttura, LogJob logJob) {
         /* Set ud non selezionate da schedulatore */
-        // 1) aggiorno tutte le unità documentarie (tabella ARO_UNITA_DOC) presenti nella tabella
+        // 1) aggiorno tutte le unità documentarie (tabella ARO_UNITA_DOC) presenti
+        // nella tabella
         // ELV_UD_VERS_DA_ELAB_ELENCO
-        // (che è filtrata mediante la struttura corrente e con data creazione inferiore alla data di inizio della
+        // (che è filtrata mediante la struttura corrente e con data creazione inferiore
+        // alla data di inizio della
         // creazione automatica degli elenchi
         // e con stato = IN_ATTESA_SCHED), assegnando stato = NON_SELEZ_SCHED
         Query q1 = em.createQuery("UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :nonSelezSched "
                 + "WHERE EXISTS (" + "SELECT udDaElab "
-                + "FROM ElvUdVersDaElabElenco udDaElab JOIN udDaElab.aroUnitaDoc ud1 " + "WHERE ud1 = ud "
-                + "AND udDaElab.idStrut = :idStrut " + "AND udDaElab.dtCreazione < :startJobTime "
-                + "AND udDaElab.tiStatoUdDaElab = :inAttesaSched)");
+                + "FROM ElvUdVersDaElabElenco udDaElab JOIN udDaElab.aroUnitaDoc ud1 "
+                + "WHERE ud1.idUnitaDoc = ud.idUnitaDoc " + "AND udDaElab.idStrut = :idStrut "
+                + "AND udDaElab.dtCreazione < :startJobTime " + "AND udDaElab.tiStatoUdDaElab = :inAttesaSched)");
         q1.setParameter("startJobTime", logJob.getDtRegLogJob());
-        q1.setParameter("idStrut", struttura.getIdStrut());
+        q1.setParameter("idStrut", BigDecimal.valueOf(struttura.getIdStrut()));
         q1.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
         q1.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
         int updated1 = q1.executeUpdate();
-        LOG.debug("CAV - Trovate " + updated1 + " unità documentarie non schedulate relative alla struttura '"
-                + struttura.getNmStrut() + "'. Assegno 'NON_ELAB_SCHED'");
+        LOG.debug(
+                "CAV - Trovate {} unità documentarie non schedulate relative alla struttura '{}'. Assegno 'NON_ELAB_SCHED'",
+                updated1, struttura.getNmStrut());
 
-        // 2)aggiorno tutte le unità documentarie (tabella ELV_UD_VERS_DA_ELAB_ELENCO) appartenenti alla struttura
+        // 2)aggiorno tutte le unità documentarie (tabella ELV_UD_VERS_DA_ELAB_ELENCO)
+        // appartenenti alla struttura
         // corrente
-        // e presenti nella coda da elaborare con data creazione inferiore alla data di inizio della creazione
+        // e presenti nella coda da elaborare con data creazione inferiore alla data di
+        // inizio della creazione
         // automatica degli elenchi
         // e con stato = IN_ATTESA_SCHED, assegnando stato = NON_SELEZ_SCHED
         Query q2 = em.createQuery("UPDATE ElvUdVersDaElabElenco udDaElab SET udDaElab.tiStatoUdDaElab = :nonSelezSched "
                 + "WHERE udDaElab.dtCreazione < :startJobTime " + "AND udDaElab.idStrut = :idStrut "
                 + "AND udDaElab.tiStatoUdDaElab = :inAttesaSched");
         q2.setParameter("startJobTime", logJob.getDtRegLogJob());
-        q2.setParameter("idStrut", struttura.getIdStrut());
+        q2.setParameter("idStrut", BigDecimal.valueOf(struttura.getIdStrut()));
         q2.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
         q2.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
         int updated2 = q2.executeUpdate();
-        LOG.debug("CAV - Trovate nella coda di elaborazione " + updated2
-                + " unità documentarie non schedulate relative alla struttura '" + struttura.getNmStrut()
-                + "'. Assegno 'NON_ELAB_SCHED'");
+        LOG.debug(
+                "CAV - Trovate nella coda di elaborazione {} unità documentarie non schedulate relative alla struttura '{}'. Assegno 'NON_ELAB_SCHED'",
+                updated2, struttura.getNmStrut());
 
         /* Set doc non selezionati da schedulatore */
-        // 1)aggiorno tutti documenti (tabella ARO_DOC) presenti nella tabella ELV_DOC_AGG_DA_ELAB_ELENCO
-        // (che è filtrata mediante la struttura corrente e con data creazione inferiore alla data di inizio della
+        // 1)aggiorno tutti documenti (tabella ARO_DOC) presenti nella tabella
+        // ELV_DOC_AGG_DA_ELAB_ELENCO
+        // (che è filtrata mediante la struttura corrente e con data creazione inferiore
+        // alla data di inizio della
         // creazione automatica degli elenchi
         // e con stato = IN_ATTESA_SCHED), assegnando stato = NON_SELEZ_SCHED
         Query q3 = em.createQuery("UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = :nonSelezSched " + "WHERE EXISTS ("
                 + "SELECT docDaElab " + "FROM ElvDocAggDaElabElenco docDaElab JOIN docDaElab.aroDoc doc1 "
-                + "WHERE doc1 = doc " + "AND docDaElab.idStrut = :idStrut "
+                + "WHERE doc1.idDoc = doc.idDoc " + "AND docDaElab.idStrut = :idStrut "
                 + "AND docDaElab.dtCreazione < :startJobTime " + "AND docDaElab.tiStatoDocDaElab = :inAttesaSched)");
         q3.setParameter("startJobTime", logJob.getDtRegLogJob());
-        q3.setParameter("idStrut", struttura.getIdStrut());
+        q3.setParameter("idStrut", BigDecimal.valueOf(struttura.getIdStrut()));
         q3.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
         q3.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
         int updated3 = q3.executeUpdate();
-        LOG.debug("CAV - Trovati " + updated3 + " documenti non schedulati relativi alla struttura '"
-                + struttura.getNmStrut() + "'. Assegno 'NON_ELAB_SCHED'");
-        // 2)aggiorno tutti i documenti (tabella ELV_DOC_DA_ELAB_ELENCO_AGG) appartenenti alla struttura corrente
-        // e presenti nella coda da elaborare con data creazione inferiore alla data di inizio della creazione
+        LOG.debug("CAV - Trovati {} documenti non schedulati relativi alla struttura '{}'. Assegno 'NON_ELAB_SCHED'",
+                updated3, struttura.getNmStrut());
+        // 2)aggiorno tutti i documenti (tabella ELV_DOC_DA_ELAB_ELENCO_AGG)
+        // appartenenti alla struttura corrente
+        // e presenti nella coda da elaborare con data creazione inferiore alla data di
+        // inizio della creazione
         // automatica degli elenchi
         // e con stato = IN_ATTESA_SCHED, assegnando stato = NON_SELEZ_SCHED
         Query q4 = em
@@ -1009,38 +931,46 @@ public class ElencoVersamentoHelper extends GenericHelper {
                         + "WHERE docDaElab.dtCreazione < :startJobTime " + "AND docDaElab.idStrut = :idStrut "
                         + "AND docDaElab.tiStatoDocDaElab = :inAttesaSched");
         q4.setParameter("startJobTime", logJob.getDtRegLogJob());
-        q4.setParameter("idStrut", struttura.getIdStrut());
+        q4.setParameter("idStrut", BigDecimal.valueOf(struttura.getIdStrut()));
         q4.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
         q4.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
         int updated4 = q4.executeUpdate();
-        LOG.debug("CAV - Trovati nella coda di elaborazione " + updated4
-                + " documenti non schedulati relative alla struttura '" + struttura.getNmStrut()
-                + "'. Assegno 'NON_ELAB_SCHED'");
+        LOG.debug(
+                "CAV - Trovati nella coda di elaborazione {} documenti non schedulati relative alla struttura '{}'. Assegno 'NON_ELAB_SCHED'",
+                updated4, struttura.getNmStrut());
 
         /* Set upd non selezionati da schedulatore */
-        // 1)aggiorno tutti gli aggiornamenti metadati per unità doc (tabella ARO_UPD_UNITA_DOC) presenti nella tabella
+        // 1)aggiorno tutti gli aggiornamenti metadati per unità doc (tabella
+        // ARO_UPD_UNITA_DOC) presenti nella tabella
         // ELV_UPD_UD_DA_ELAB_ELENCO
-        // (che è filtrata mediante la struttura corrente e con data creazione inferiore alla data di inizio della
+        // (che è filtrata mediante la struttura corrente e con data creazione inferiore
+        // alla data di inizio della
         // creazione automatica degli elenchi
         // e con stato = IN_ATTESA_SCHED), assegnando stato = NON_SELEZ_SCHED
         Query q5 = em.createQuery("UPDATE AroUpdUnitaDoc upd SET upd.tiStatoUpdElencoVers = :nonSelezSched "
                 + "WHERE EXISTS (" + "SELECT updDaElab "
-                + "FROM ElvUpdUdDaElabElenco updDaElab JOIN updDaElab.aroUpdUnitaDoc upd1 " + "WHERE upd1 = upd "
-                + "AND updDaElab.orgStrut.idStrut = :idStrut " + "AND updDaElab.dtCreazione < :startJobTime "
+                + "FROM ElvUpdUdDaElabElenco updDaElab JOIN updDaElab.aroUpdUnitaDoc upd1 "
+                + "WHERE upd1.idUpdUnitaDoc = upd.idUpdUnitaDoc " + "AND updDaElab.orgStrut.idStrut = :idStrut "
+                + "AND updDaElab.dtCreazione < :startJobTime "
                 + "AND updDaElab.tiStatoUpdElencoVers = :inAttesaSched)");
         q5.setParameter("startJobTime", logJob.getDtRegLogJob());
         q5.setParameter("idStrut", struttura.getIdStrut());
         q5.setParameter("nonSelezSched", AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
         q5.setParameter("inAttesaSched", ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
         int updated5 = q5.executeUpdate();
-        LOG.debug("CAV - Trovati " + updated5 + " aggiornamenti metadati non schedulati relativi alla struttura '"
-                + struttura.getNmStrut() + "'. Assegno 'NON_ELAB_SCHED'");
+        LOG.debug(
+                "CAV - Trovati {} aggiornamenti metadati non schedulati relativi alla struttura '{}'. Assegno 'NON_ELAB_SCHED'",
+                updated5, struttura.getNmStrut());
 
-        // 2) il sistema raggruppa gli aggiornamenti metadati per unità doc (tabella ELV_UPD_UD_DA_ELAB_ELENCO)
-        // appartenenti alla struttura corrente e con data creazione minore o uguale alla data di inizio della creazione
+        // 2) il sistema raggruppa gli aggiornamenti metadati per unità doc (tabella
+        // ELV_UPD_UD_DA_ELAB_ELENCO)
+        // appartenenti alla struttura corrente e con data creazione minore o uguale
+        // alla data di inizio della creazione
         // automatica degli elenchi - 1 gg
-        // e con stato = IN_ATTESA_SCHED; il raggruppamento e’ fatto per data creazione (senza ora, minuti e secondi)
-        // + identificatore della struttura, della sub struttura, del tipo unità doc, del registro e del tipo documento
+        // e con stato = IN_ATTESA_SCHED; il raggruppamento e’ fatto per data creazione
+        // (senza ora, minuti e secondi)
+        // + identificatore della struttura, della sub struttura, del tipo unità doc,
+        // del registro e del tipo documento
         // e per ogni gruppo si contano i record
         Query q5bis = em.createQuery("SELECT updDaElab.dtCreazione, updDaElab.orgStrut.idStrut, "
                 + "updDaElab.orgSubStrut.idSubStrut, updDaElab.decTipoUnitaDoc.idTipoUnitaDoc, "
@@ -1052,32 +982,33 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(logJob.getDtRegLogJob());
-        // calendar.set(Calendar.HOUR_OF_DAY, 0);
-        // calendar.set(Calendar.MINUTE, 0);
-        // calendar.set(Calendar.SECOND, 0);
-        // calendar.set(Calendar.MILLISECOND, 0);
         calendar.add(Calendar.DATE, -1);
 
         q5bis.setParameter("startJobTime", calendar.getTime());
         q5bis.setParameter("idStrut", struttura.getIdStrut());
         q5bis.setParameter("inAttesaSched", ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
         List<Object[]> l = q5bis.getResultList();
-        LOG.debug("CAV - Trovati " + l.size()
-                + " raggruppamenti di aggiornamenti metadati non schedulati relativi alla struttura '"
-                + struttura.getNmStrut());
+        LOG.debug(
+                "CAV - Trovati {} raggruppamenti di aggiornamenti metadati non schedulati relativi alla struttura '{}'",
+                l.size(), struttura.getNmStrut());
 
-        if (l != null && !l.isEmpty()) {
+        if (!l.isEmpty()) {
             for (Iterator<Object[]> iterator = l.iterator(); iterator.hasNext();) {
                 Object[] ogg = iterator.next();
                 Date dtRifConta = (Date) ogg[0];
-                BigDecimal idStrut = new BigDecimal((long) ogg[1]), idSubStrut = new BigDecimal((long) ogg[2]);
-                BigDecimal idTipoUnitaDoc = new BigDecimal((long) ogg[3]),
-                        idRegistroUnitaDoc = new BigDecimal((long) ogg[4]), idTipoDoc = new BigDecimal((long) ogg[5]),
-                        aaKeyUnitaDoc = (BigDecimal) ogg[6], conteggio = new BigDecimal((long) ogg[7]);
+                Long idStrut = (long) ogg[1];
+                Long idSubStrut = (long) ogg[2];
+                Long idTipoUnitaDoc = (long) ogg[3];
+                Long idRegistroUnitaDoc = (long) ogg[4];
+                Long idTipoDoc = (long) ogg[5];
+                BigDecimal aaKeyUnitaDoc = (BigDecimal) ogg[6];
+                Long conteggio = (long) ogg[7];
 
-                // 3a) il sistema determina il record di MON_KEY_TOTAL_UD identificato da identificatore della
+                // 3a) il sistema determina il record di MON_KEY_TOTAL_UD identificato da
+                // identificatore della
                 // struttura,
-                // della sub struttura, del tipo unità doc, del registro e del tipo documento, del gruppo corrente
+                // della sub struttura, del tipo unità doc, del registro e del tipo documento,
+                // del gruppo corrente
                 Query q5ter = em.createQuery("SELECT keyTotalUd FROM MonKeyTotalUd keyTotalUd "
                         + "WHERE keyTotalUd.orgStrut.idStrut = :idStrut "
                         + "AND keyTotalUd.orgSubStrut.idSubStrut = :idSubStrut "
@@ -1095,28 +1026,32 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
                 MonKeyTotalUd key = (MonKeyTotalUd) q5ter.getSingleResult();
 
-                // 3b) il sistema aggiorna il record di MON_CONTA_SES_UPD_UD identificato dall’identificatore della
+                // 3b) il sistema aggiorna il record di MON_CONTA_SES_UPD_UD identificato
+                // dall’identificatore della
                 // chiave di totalizzazione,
-                // dalla data del gruppo e dal tipo stato = IN_ATTESA_SCHED, sottraendo il numero riportato dal gruppo
+                // dalla data del gruppo e dal tipo stato = IN_ATTESA_SCHED, sottraendo il
+                // numero riportato dal gruppo
                 Query q5quater = em.createQuery(
                         "UPDATE MonContaSesUpdUd conta SET conta.niSesUpdUd = conta.niSesUpdUd - :conteggio "
                                 + "WHERE conta.monKeyTotalUd.idKeyTotalUd = :idKeyTotalUd "
                                 + "AND conta.dtRifConta = :dtRifConta " + "AND conta.tiStatoUdpUd = :inAttesaSched ");
-                q5quater.setParameter("conteggio", conteggio);
+                q5quater.setParameter("conteggio", BigDecimal.valueOf(conteggio));
                 q5quater.setParameter("dtRifConta", dtRifConta);
                 q5quater.setParameter("idKeyTotalUd", key.getIdKeyTotalUd());
                 q5quater.setParameter("inAttesaSched", MonContaSesUpdUd.TiStatoUdpUdMonContaSesUpdUd.IN_ATTESA_SCHED);
 
                 q5quater.executeUpdate();
 
-                // 3c) il sistema aggiorna il record di MON_CONTA_SES_UPD_UD identificato dall’identificatore della
-                // chiave di totalizzazione, dalla data del gruppo e dal tipo stato = NON_SELEZ_SCHED, sommando il
+                // 3c) il sistema aggiorna il record di MON_CONTA_SES_UPD_UD identificato
+                // dall’identificatore della
+                // chiave di totalizzazione, dalla data del gruppo e dal tipo stato =
+                // NON_SELEZ_SCHED, sommando il
                 // numero riportato dal gruppo
                 Query q5quintus = em.createQuery(
                         "UPDATE MonContaSesUpdUd conta SET conta.niSesUpdUd = conta.niSesUpdUd + :conteggio "
                                 + "WHERE conta.monKeyTotalUd.idKeyTotalUd = :idKeyTotalUd "
                                 + "AND conta.dtRifConta = :dtRifConta " + "AND conta.tiStatoUdpUd = :inAttesaSched ");
-                q5quintus.setParameter("conteggio", conteggio);
+                q5quintus.setParameter("conteggio", BigDecimal.valueOf(conteggio));
                 q5quintus.setParameter("dtRifConta", dtRifConta);
                 q5quintus.setParameter("idKeyTotalUd", key.getIdKeyTotalUd());
                 q5quintus.setParameter("inAttesaSched", MonContaSesUpdUd.TiStatoUdpUdMonContaSesUpdUd.NON_SELEZ_SCHED);
@@ -1125,9 +1060,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
             }
         }
 
-        // 5)aggiorno tutti gli aggiornamenti metadati per unità doc (tabella ELV_UPD_UD_DA_ELAB_ELENCO) appartenenti
+        // 5)aggiorno tutti gli aggiornamenti metadati per unità doc (tabella
+        // ELV_UPD_UD_DA_ELAB_ELENCO) appartenenti
         // alla struttura corrente
-        // e presenti nella coda da elaborare con data creazione inferiore alla data di inizio della creazione
+        // e presenti nella coda da elaborare con data creazione inferiore alla data di
+        // inizio della creazione
         // automatica degli elenchi
         // e con stato = IN_ATTESA_SCHED, assegnando stato = NON_SELEZ_SCHED
         Query q6 = em.createQuery(
@@ -1139,9 +1076,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
         q6.setParameter("nonSelezSched", ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
         q6.setParameter("inAttesaSched", ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
         int updated6 = q6.executeUpdate();
-        LOG.debug("CAV - Trovati nella coda di elaborazione " + updated6
-                + " aggiornamenti metadati non schedulati relative alla struttura '" + struttura.getNmStrut()
-                + "'. Assegno 'NON_ELAB_SCHED'");
+        LOG.debug("CAV - Trovati"
+                + " nella coda di elaborazione {} aggiornamenti metadati non schedulati relative alla struttura '{}'. Assegno 'NON_ELAB_SCHED'",
+                updated6, struttura.getNmStrut());
     }
 
     // MEV#27169
@@ -1149,16 +1086,18 @@ public class ElencoVersamentoHelper extends GenericHelper {
         switch (tiEntitaSacer) {
         case UNI_DOC:
             /* Set ud non selezionata da schedulatore */
-            // 1) aggiorno l'unità documentaria (tabella ARO_UNITA_DOC) presente nella tabella
+            // 1) aggiorno l'unità documentaria (tabella ARO_UNITA_DOC) presente nella
+            // tabella
             // ELV_UD_VERS_DA_ELAB_ELENCO
-            // (che è filtrata mediante id_unita_doc corrente e con stato = IN_ATTESA_SCHED), assegnando stato =
+            // (che è filtrata mediante id_unita_doc corrente e con stato =
+            // IN_ATTESA_SCHED), assegnando stato =
             // NON_SELEZ_SCHED
-            Query q1 = em
-                    .createQuery("UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :nonSelezSched " + "WHERE EXISTS ("
-                            + "SELECT udDaElab " + "FROM ElvUdVersDaElabElenco udDaElab JOIN udDaElab.aroUnitaDoc ud1 "
-                            + "WHERE ud1 = ud " + "AND udDaElab.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-                            + "AND udDaElab.tiStatoUdDaElab = :inAttesaSched)");
-            q1.setParameter("idUnitaDoc", id);
+            Query q1 = em.createQuery("UPDATE AroUnitaDoc ud SET ud.tiStatoUdElencoVers = :nonSelezSched "
+                    + "WHERE EXISTS (" + "SELECT udDaElab "
+                    + "FROM ElvUdVersDaElabElenco udDaElab JOIN udDaElab.aroUnitaDoc ud1 "
+                    + "WHERE ud1.idUnitaDoc = ud.idUnitaDoc " + "AND udDaElab.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                    + "AND udDaElab.tiStatoUdDaElab = :inAttesaSched)");
+            q1.setParameter("idUnitaDoc", longFromBigDecimal(id));
             q1.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
             q1.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
             q1.executeUpdate();
@@ -1166,14 +1105,16 @@ public class ElencoVersamentoHelper extends GenericHelper {
                     "Trovata unità documentaria %s non schedulata relativa alla struttura %s. Assegno 'NON_SELEZ_SCHED'",
                     id, struttura.getNmStrut()));
 
-            // 2) aggiorno l'unità documentaria (tabella ELV_UD_VERS_DA_ELAB_ELENCO) appartenente alla struttura
+            // 2) aggiorno l'unità documentaria (tabella ELV_UD_VERS_DA_ELAB_ELENCO)
+            // appartenente alla struttura
             // corrente
-            // e presente nella coda da elaborare con stato = IN_ATTESA_SCHED, assegnando stato = NON_SELEZ_SCHED
+            // e presente nella coda da elaborare con stato = IN_ATTESA_SCHED, assegnando
+            // stato = NON_SELEZ_SCHED
             Query q2 = em
                     .createQuery("UPDATE ElvUdVersDaElabElenco udDaElab SET udDaElab.tiStatoUdDaElab = :nonSelezSched "
                             + "WHERE udDaElab.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                             + "AND udDaElab.tiStatoUdDaElab = :inAttesaSched");
-            q2.setParameter("idUnitaDoc", id);
+            q2.setParameter("idUnitaDoc", longFromBigDecimal(id));
             q2.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
             q2.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
             q2.executeUpdate();
@@ -1183,27 +1124,32 @@ public class ElencoVersamentoHelper extends GenericHelper {
             break;
         case DOC:
             /* Set doc non selezionato da schedulatore */
-            // 1)aggiorno il documento (tabella ARO_DOC) presente nella tabella ELV_DOC_AGG_DA_ELAB_ELENCO
-            // (che è filtrata mediante id_doc corrente e con stato = IN_ATTESA_SCHED), assegnando stato =
+            // 1)aggiorno il documento (tabella ARO_DOC) presente nella tabella
+            // ELV_DOC_AGG_DA_ELAB_ELENCO
+            // (che è filtrata mediante id_doc corrente e con stato = IN_ATTESA_SCHED),
+            // assegnando stato =
             // NON_SELEZ_SCHED
-            Query q3 = em.createQuery("UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = :nonSelezSched "
-                    + "WHERE EXISTS (" + "SELECT docDaElab "
-                    + "FROM ElvDocAggDaElabElenco docDaElab JOIN docDaElab.aroDoc doc1 " + "WHERE doc1 = doc "
-                    + "AND docDaElab.aroDoc.idDoc = :idDoc " + "AND docDaElab.tiStatoDocDaElab = :inAttesaSched)");
-            q3.setParameter("idDoc", id);
+            Query q3 = em
+                    .createQuery("UPDATE AroDoc doc SET doc.tiStatoDocElencoVers = :nonSelezSched " + "WHERE EXISTS ("
+                            + "SELECT docDaElab " + "FROM ElvDocAggDaElabElenco docDaElab JOIN docDaElab.aroDoc doc1 "
+                            + "WHERE doc1.idDoc = doc.idDoc " + "AND docDaElab.aroDoc.idDoc = :idDoc "
+                            + "AND docDaElab.tiStatoDocDaElab = :inAttesaSched)");
+            q3.setParameter("idDoc", longFromBigDecimal(id));
             q3.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
             q3.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
             q3.executeUpdate();
             LOG.debug(String.format(
                     "Trovato documento %s non schedulato relativo alla struttura %s. Assegno 'NON_SELEZ_SCHED'", id,
                     struttura.getNmStrut()));
-            // 2)aggiorno il documento (tabella ELV_DOC_DA_ELAB_ELENCO_AGG) appartenente alla struttura corrente
-            // e presente nella coda da elaborare con stato = IN_ATTESA_SCHED, assegnando stato = NON_SELEZ_SCHED
+            // 2)aggiorno il documento (tabella ELV_DOC_DA_ELAB_ELENCO_AGG) appartenente
+            // alla struttura corrente
+            // e presente nella coda da elaborare con stato = IN_ATTESA_SCHED, assegnando
+            // stato = NON_SELEZ_SCHED
             Query q4 = em.createQuery(
                     "UPDATE ElvDocAggDaElabElenco docDaElab SET docDaElab.tiStatoDocDaElab = :nonSelezSched "
                             + "WHERE docDaElab.aroDoc.idDoc = :idDoc "
                             + "AND docDaElab.tiStatoDocDaElab = :inAttesaSched");
-            q4.setParameter("idDoc", id);
+            q4.setParameter("idDoc", longFromBigDecimal(id));
             q4.setParameter("nonSelezSched", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
             q4.setParameter("inAttesaSched", ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name());
             q4.executeUpdate();
@@ -1213,16 +1159,19 @@ public class ElencoVersamentoHelper extends GenericHelper {
             break;
         case UPD:
             /* Set upd non selezionato da schedulatore */
-            // 1)aggiorno l'aggiornamento metadati per unità doc (tabella ARO_UPD_UNITA_DOC) presente nella tabella
+            // 1)aggiorno l'aggiornamento metadati per unità doc (tabella ARO_UPD_UNITA_DOC)
+            // presente nella tabella
             // ELV_UPD_UD_DA_ELAB_ELENCO
-            // (che è filtrata mediante id_upd_unita_doc corrente e con stato = IN_ATTESA_SCHED), assegnando stato =
+            // (che è filtrata mediante id_upd_unita_doc corrente e con stato =
+            // IN_ATTESA_SCHED), assegnando stato =
             // NON_SELEZ_SCHED
             Query q5 = em.createQuery("UPDATE AroUpdUnitaDoc upd SET upd.tiStatoUpdElencoVers = :nonSelezSched "
                     + "WHERE EXISTS (" + "SELECT updDaElab "
-                    + "FROM ElvUpdUdDaElabElenco updDaElab JOIN updDaElab.aroUpdUnitaDoc upd1 " + "WHERE upd1 = upd "
+                    + "FROM ElvUpdUdDaElabElenco updDaElab JOIN updDaElab.aroUpdUnitaDoc upd1 "
+                    + "WHERE upd1.idUpdUnitaDoc = upd.idUpdUnitaDoc "
                     + "AND updDaElab.aroUpdUnitaDoc.idUpdUnitaDoc = :idUpdUnitaDoc "
                     + "AND updDaElab.tiStatoUpdElencoVers = :inAttesaSched)");
-            q5.setParameter("idUpdUnitaDoc", id);
+            q5.setParameter("idUpdUnitaDoc", longFromBigDecimal(id));
             q5.setParameter("nonSelezSched", AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
             q5.setParameter("inAttesaSched", ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
             q5.executeUpdate();
@@ -1230,14 +1179,16 @@ public class ElencoVersamentoHelper extends GenericHelper {
                     "Trovato aggiornamento metadati %s non schedulato relativo alla struttura %s. Assegno 'NON_SELEZ_SCHED'",
                     id, struttura.getNmStrut()));
 
-            // 5)aggiorno l'aggiornamento metadati per unità doc (tabella ELV_UPD_UD_DA_ELAB_ELENCO) appartenente
+            // 5)aggiorno l'aggiornamento metadati per unità doc (tabella
+            // ELV_UPD_UD_DA_ELAB_ELENCO) appartenente
             // alla struttura corrente
-            // e presente nella coda da elaborare con stato = IN_ATTESA_SCHED, assegnando stato = NON_SELEZ_SCHED
+            // e presente nella coda da elaborare con stato = IN_ATTESA_SCHED, assegnando
+            // stato = NON_SELEZ_SCHED
             Query q6 = em.createQuery(
                     "UPDATE ElvUpdUdDaElabElenco updDaElab SET updDaElab.tiStatoUpdElencoVers = :nonSelezSched "
                             + "WHERE updDaElab.aroUpdUnitaDoc.idUpdUnitaDoc = :idUpdUnitaDoc "
                             + "AND updDaElab.tiStatoUpdElencoVers = :inAttesaSched");
-            q6.setParameter("idUpdUnitaDoc", id);
+            q6.setParameter("idUpdUnitaDoc", longFromBigDecimal(id));
             q6.setParameter("nonSelezSched", ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
             q6.setParameter("inAttesaSched", ElvUpdUdDaElabTiStatoUpdElencoVers.IN_ATTESA_SCHED);
             q6.executeUpdate();
@@ -1255,7 +1206,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param unitaDoc
      *            Unità documentaria della quale si vuole il numero di documenti
-     * 
+     *
      * @return Il numero di documenti
      */
     public long countDocsInUnitaDocCustom(BigDecimal unitaDoc) {
@@ -1263,11 +1214,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "AND doc.tiCreazione = :TIPO_CREAZIONE";
 
         Query q = em.createQuery(query);
-        q.setParameter("unitaDoc", unitaDoc);
+        q.setParameter("unitaDoc", longFromBigDecimal(unitaDoc));
         q.setParameter("TIPO_CREAZIONE", "VERSAMENTO_UNITA_DOC"); // TODO: inserire ENUM
 
-        long numDocsInUd = ((Long) q.getSingleResult()).longValue();
-        LOG.debug("ADV - Trovati '" + numDocsInUd + "' documenti all'interno dell'unità  documentale " + unitaDoc);
+        long numDocsInUd = ((Long) q.getSingleResult());
+        LOG.debug("ADV - Trovati '{}' documenti all'interno dell'unità  documentale {}", numDocsInUd, unitaDoc);
         return numDocsInUd;
     }
 
@@ -1276,20 +1227,20 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idCrit
      *            criterio per il quale si vuole il numero di elenchi
-     * 
+     *
      * @return Il numero di elenchi
      */
     public long countElenchiGgByCritNonAperti(BigDecimal idCrit) {
         String query = "SELECT count(elenco) " + "FROM ElvElencoVer elenco "
                 + "WHERE elenco.decCriterioRaggr.idCriterioRaggr = :idCrit " + "AND elenco.tiStatoElenco != 'APERTO' "
-                + "AND FUNC('TRUNC', elenco.dtCreazioneElenco) = FUNC('TRUNC', :dataOdierna)";
+                + "AND TRUNC( elenco.dtCreazioneElenco) = TRUNC( :dataOdierna)";
 
         Query q = em.createQuery(query);
-        q.setParameter("idCrit", idCrit);
+        q.setParameter("idCrit", longFromBigDecimal(idCrit));
         q.setParameter("dataOdierna", new Date());
 
         long numElenchiGg = ((Long) q.getSingleResult());
-        LOG.debug("ADV - Trovati '" + numElenchiGg + "' elenchi creati con il criterio " + idCrit + " nel giorno");
+        LOG.debug("ADV - Trovati '{}' elenchi creati con il criterio {} nel giorno", numElenchiGg, idCrit);
         return numElenchiGg;
     }
 
@@ -1298,20 +1249,20 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idCrit
      *            criterio per il quale si vuole il numero di elenchi
-     * 
+     *
      * @return Il numero di elenchi
      */
     public long countElenchiGgByCritAperti(BigDecimal idCrit) {
         String query = "SELECT count(elenco) " + "FROM ElvElencoVer elenco "
                 + "WHERE elenco.decCriterioRaggr.idCriterioRaggr = :idCrit " + "AND elenco.tiStatoElenco = 'APERTO' "
-                + "AND FUNC('TRUNC', elenco.dtCreazioneElenco) = FUNC('TRUNC', :dataOdierna)";
+                + "AND TRUNC( elenco.dtCreazioneElenco) = TRUNC( :dataOdierna)";
 
         Query q = em.createQuery(query);
-        q.setParameter("idCrit", idCrit);
+        q.setParameter("idCrit", longFromBigDecimal(idCrit));
         q.setParameter("dataOdierna", new Date());
 
         long numElenchiGg = ((Long) q.getSingleResult());
-        LOG.debug("ADV - Trovati '" + numElenchiGg + "' elenchi creati con il criterio " + idCrit + " nel giorno");
+        LOG.debug("ADV - Trovati '{}' elenchi creati con il criterio {} nel giorno", numElenchiGg, idCrit);
         return numElenchiGg;
     }
 
@@ -1319,8 +1270,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         Query q = em.createQuery("SELECT comp " + "FROM AroDoc doc " + "JOIN doc.aroStrutDocs aroStrutDoc "
                 + "JOIN aroStrutDoc.aroCompDocs comp " + "WHERE comp.aroCompDoc is null " + "AND doc.idDoc = :idDoc");
         q.setParameter("idDoc", doc.getIdDoc());
-        List<AroCompDoc> comps = q.getResultList();
-        return comps;
+        return q.getResultList();
     }
 
     /**
@@ -1329,7 +1279,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param unitaDocId
      *            id unita doc
-     * 
+     *
      * @return entity AroUnitaDoc
      */
     public Object numCompsAndSizeInUnitaDocCustom(BigDecimal unitaDocId) {
@@ -1337,10 +1287,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "FROM AroUnitaDoc unitaDoc " + "JOIN unitaDoc.aroDocs doc " + "JOIN doc.aroStrutDocs strutDoc "
                 + "JOIN strutDoc.aroCompDocs comp " + "WHERE doc.aroUnitaDoc.idUnitaDoc = :unitaDocId "
                 + "AND doc.tiCreazione = :TIPO_CREAZIONE");
-        q.setParameter("unitaDocId", unitaDocId);
-        q.setParameter("TIPO_CREAZIONE", "VERSAMENTO_UNITA_DOC"); // TODO: inserire ENUM
-        Object result = q.getSingleResult();
-        return result;
+        q.setParameter("unitaDocId", longFromBigDecimal(unitaDocId));
+        q.setParameter("TIPO_CREAZIONE", CostantiDB.TipoCreazioneDoc.VERSAMENTO_UNITA_DOC.name());
+        return q.getSingleResult();
     }
 
     /**
@@ -1349,31 +1298,29 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param docId
      *            id documento
-     * 
+     *
      * @return entity AroDoc
      */
     public Object numCompsAndSizeInDoc(BigDecimal docId) {
         Query q = em.createQuery("SELECT count(comp.idCompDoc), SUM(comp.niSizeFileCalc) " + "FROM AroDoc doc "
                 + "JOIN doc.aroStrutDocs strutDoc " + "JOIN strutDoc.aroCompDocs comp " + "WHERE doc.idDoc = :docId");
-        q.setParameter("docId", docId);
-        Object result = q.getSingleResult();
-        return result;
+        q.setParameter("docId", longFromBigDecimal(docId));
+        return q.getSingleResult();
     }
 
     public void deleteUdDocFromQueue(AroUnitaDoc ud) {
-        ElvUdVersDaElabElenco UdVersDaElab;
+        ElvUdVersDaElabElenco udVersDaElab;
         Query q = em.createQuery(
                 "select udVersDaElab from ElvUdVersDaElabElenco udVersDaElab where udVersDaElab.aroUnitaDoc.idUnitaDoc = :idUnitaDoc");
         q.setParameter("idUnitaDoc", ud.getIdUnitaDoc());
         try {
-            UdVersDaElab = (ElvUdVersDaElabElenco) q.getSingleResult();
+            udVersDaElab = (ElvUdVersDaElabElenco) q.getSingleResult();
         } catch (NoResultException ex) {
-            UdVersDaElab = null;
+            udVersDaElab = null;
         }
-        if (UdVersDaElab != null) {
-            em.remove(UdVersDaElab);
-            LOG.debug("ADV - Eliminata unità documentaria con id = " + ud.getIdUnitaDoc()
-                    + " dalla coda di elaborazione");
+        if (udVersDaElab != null) {
+            em.remove(udVersDaElab);
+            LOG.debug("ADV - Eliminata unità documentaria con id = {} dalla coda di elaborazione", ud.getIdUnitaDoc());
         }
 
     }
@@ -1390,7 +1337,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         }
         if (docAggDaElab != null) {
             em.remove(docAggDaElab);
-            LOG.debug("ADV - Eliminato il documento con id = " + doc.getIdDoc() + " dalla coda di elaborazione");
+            LOG.debug("ADV - Eliminato il documento con id = {} dalla coda di elaborazione", doc.getIdDoc());
         }
     }
 
@@ -1406,29 +1353,25 @@ public class ElencoVersamentoHelper extends GenericHelper {
         }
         if (updUdDaElab != null) {
             em.remove(updUdDaElab);
-            LOG.debug("ADV - Eliminato l'aggiornamento metadati con id = " + upd.getIdUpdUnitaDoc()
-                    + " dalla coda di elaborazione");
+            LOG.debug("ADV - Eliminato l'aggiornamento metadati con id = {} dalla coda di elaborazione",
+                    upd.getIdUpdUnitaDoc());
         }
     }
 
     public List<AroDoc> retrieveDocsInElenco(ElvElencoVer elenco) {
-        List<AroDoc> docList = elenco.getAroDocs();
-        return docList;
+        return elenco.getAroDocs();
     }
 
     public List<AroUnitaDoc> retrieveUdDocsInElenco(ElvElencoVer elenco) {
-        List<AroUnitaDoc> udDocsList = elenco.getAroUnitaDocs();
-        return udDocsList;
+        return elenco.getAroUnitaDocs();
     }
 
     public List<AroUpdUnitaDoc> retrieveUpdsInElenco(ElvElencoVer elenco) {
-        List<AroUpdUnitaDoc> updList = elenco.getAroUpdUnitaDocs();
-        return updList;
+        return elenco.getAroUpdUnitaDocs();
     }
 
     public ElvElencoVer retrieveElencoById(Long idElenco) {
-        ElvElencoVer elenco = em.find(ElvElencoVer.class, idElenco);
-        return elenco;
+        return em.find(ElvElencoVer.class, idElenco);
     }
 
     public void writeLogElencoVers(ElvElencoVer elenco, OrgStrut struttura, Long user, String tipoOper, AroDoc doc,
@@ -1442,7 +1385,6 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     public void writeLogElencoVers(ElvElencoVer elenco, OrgStrut struttura, Long user, String tipoOper) {
-        // writeLogElencoVers(elenco, struttura, tipoOper, null, null, null);
         writeLogElencoVers(elenco, struttura, user, tipoOper, null, null, null, null);
     }
 
@@ -1464,13 +1406,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
         logElenco.setNmElenco(elenco.getNmElenco());
         if (doc != null) {
             // TODO: controllare perche il campo sotto non c'è
-            // logElenco.setIdDoc(new BigDecimal(doc.getIdDoc()));
             logElenco.setPgDoc(doc.getPgDoc());
             logElenco.setTiDoc(doc.getTiDoc());
         }
         if (upd != null) {
             // TODO: controllare perche il campo sotto non c'è
-            // logElenco.setIdUpd(new BigDecimal(upd.getIdUpdUnitaDoc()));
             logElenco.setPgUpdUnitaDoc(upd.getPgUpdUnitaDoc());
         }
         if (unitaDoc != null) {
@@ -1486,21 +1426,396 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     public OrgStrut retrieveOrgStrutByid(BigDecimal idStrut) {
-        OrgStrut orgStrut = em.find(OrgStrut.class, idStrut.longValue());
-        return orgStrut;
+        return em.find(OrgStrut.class, idStrut.longValue());
     }
 
     public LogJob retrieveLogJobByid(long idLogJob) {
-        LogJob logJob = em.find(LogJob.class, idLogJob);
-        return logJob;
+        return em.find(LogJob.class, idLogJob);
     }
 
     // MEV#27169
     public DecCriterioRaggr retrieveDecCriterioRaggrByid(BigDecimal idCriterio) {
-        DecCriterioRaggr criterioRaggr = em.find(DecCriterioRaggr.class, idCriterio.longValue());
-        return criterioRaggr;
+        return em.find(DecCriterioRaggr.class, idCriterio.longValue());
     }
     // end MEV#27169
+
+    // MEV#27891
+    /**
+     * Elementi non selezionati da scheduler da processare inclusi nella coda degli elenchi da elaborare corrente sia
+     * come ud versate sia come doc aggiunti sia come aggiornamenti metadati.
+     *
+     * @param idStrut
+     *            idStrut
+     * @param rowNum
+     *            rowNum
+     * 
+     * @return List - Insieme di elementi ordinati
+     */
+    public List<PayLoad> retrieveUdDocUpdToVerify(long idStrut, int rowNum) {
+
+        TypedQuery<PayLoad> q1 = em.createQuery("SELECT NEW it.eng.parer.elencoVersamento.utils.PayLoad"
+                + "(udDaElab.aroUnitaDoc.idUnitaDoc, udDaElab.idStrut, 'UNI_DOC', udDaElab.tiStatoUdDaElab, udDaElab.aaKeyUnitaDoc, udDaElab.dtCreazione) "
+                + "FROM ElvUdVersDaElabElenco udDaElab " + "WHERE udDaElab.idStrut = :idStrut "
+                + "AND udDaElab.tiStatoUdDaElab =  :tiStato ", PayLoad.class);
+
+        TypedQuery<PayLoad> q2 = em.createQuery("SELECT NEW it.eng.parer.elencoVersamento.utils.PayLoad"
+                + "(docDaElab.aroDoc.idDoc, docDaElab.idStrut, 'DOC', docDaElab.tiStatoDocDaElab, docDaElab.aaKeyUnitaDoc, docDaElab.dtCreazione) "
+                + "FROM ElvDocAggDaElabElenco docDaElab " + "WHERE docDaElab.idStrut = :idStrut "
+                + "AND docDaElab.tiStatoDocDaElab =  :tiStato ", PayLoad.class);
+
+        TypedQuery<PayLoad> q3 = em.createQuery("SELECT NEW it.eng.parer.elencoVersamento.utils.PayLoad"
+                + "(updDaElab.aroUpdUnitaDoc.idUpdUnitaDoc, updDaElab.orgStrut.idStrut, 'UPD', updDaElab.tiStatoUpdElencoVers, updDaElab.aaKeyUnitaDoc, updDaElab.dtCreazione) "
+                + "FROM ElvUpdUdDaElabElenco updDaElab " + "WHERE updDaElab.orgStrut.idStrut = :idStrut "
+                + "AND updDaElab.tiStatoUpdElencoVers =  :tiStato ", PayLoad.class);
+
+        q1.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        q1.setParameter("tiStato", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+        q2.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        q2.setParameter("tiStato", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+        q3.setParameter("idStrut", idStrut);
+        q3.setParameter("tiStato", ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+
+        List<PayLoad> list = new ArrayList<>();
+
+        q1.setMaxResults(rowNum);
+        List<PayLoad> l1 = q1.getResultList();
+        list.addAll(l1);
+        if (list.size() < rowNum) {
+            q2.setMaxResults(rowNum - list.size());
+            List<PayLoad> l2 = q2.getResultList();
+            list.addAll(l2);
+        }
+        if (list.size() < rowNum) {
+            q3.setMaxResults(rowNum - list.size());
+            List<PayLoad> l3 = q3.getResultList();
+            list.addAll(l3);
+        }
+
+        return list;
+
+    }
+
+    public Long countUdDaElabToValidate(long idStrut) {
+
+        String queryStr = "SELECT COUNT(*) " + "FROM ElvUdVersDaElabElenco udDaElab "
+                + "WHERE udDaElab.idStrut = :idStrut " + "AND udDaElab.tiStatoUdDaElab =  :tiStatoUdDaElab";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        query.setParameter("tiStatoUdDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        return (Long) query.getSingleResult();
+    }
+
+    public Long countDocDaElabToValidate(long idStrut) {
+
+        String queryStr = "SELECT COUNT(*) " + "FROM ElvDocAggDaElabElenco docDaElab "
+                + "WHERE docDaElab.idStrut = :idStrut " + "AND docDaElab.tiStatoDocDaElab =  :tiStatoDocDaElab";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        query.setParameter("tiStatoDocDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        return (Long) query.getSingleResult();
+    }
+
+    public Long countUpdDaElabToValidate(long idStrut) {
+
+        String queryStr = "SELECT COUNT(*) " + "FROM ElvUpdUdDaElabElenco updDaElab "
+                + "WHERE updDaElab.orgStrut.idStrut = :idStrut "
+                + "AND updDaElab.tiStatoUpdElencoVers =  :tiStatoUpdElencoVers";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("tiStatoUpdElencoVers", ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+
+        return (Long) query.getSingleResult();
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveUdToValidate(long idStrut, int maxResult) {
+
+        String queryStr = "SELECT udDaElab " + "FROM ElvUdVersDaElabElenco udDaElab "
+                + "WHERE udDaElab.idStrut = :idStrut " + "AND udDaElab.tiStatoUdDaElab = :tiStatoUdDaElab "
+                + "ORDER BY udDaElab.idUdVersDaElabElenco";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+        query.setMaxResults(maxResult);
+
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        query.setParameter("tiStatoUdDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        return query.getResultStream();
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveUdToValidateInParallel(long idStrut, int maxResult) {
+
+        String queryStr = "SELECT udDaElab " + "FROM ElvUdVersDaElabElenco udDaElab "
+                + "WHERE udDaElab.idStrut = :idStrut " + "AND udDaElab.tiStatoUdDaElab = :tiStatoUdDaElab "
+                + "ORDER BY udDaElab.idUdVersDaElabElenco";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+
+        EntityGraph<ElvUdVersDaElabElenco> entityGraph = em.createEntityGraph(ElvUdVersDaElabElenco.class);
+        entityGraph.addSubgraph("aroUnitaDoc").addAttributeNodes("aroDocs");
+        query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        query.setParameter("tiStatoUdDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        return query.getResultStream().limit(maxResult);
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveUdToValidateInParallelLessThan1k(long idStrut, int maxResult) {
+
+        // Get primary keys with LIMIT and OFFSET
+        String queryStr = "SELECT udDaElab.idUdVersDaElabElenco " + "FROM ElvUdVersDaElabElenco udDaElab "
+                + "WHERE udDaElab.idStrut = :idStrut " + "AND udDaElab.tiStatoUdDaElab = :tiStatoUdDaElab "
+                + "ORDER BY udDaElab.idUdVersDaElabElenco";
+
+        Query q1 = em.createQuery(queryStr);
+        q1.setHint(QueryHints.HINT_READONLY, true);
+        q1.setHint(QueryHints.HINT_CACHEABLE, true);
+        q1.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+        q1.setMaxResults(maxResult);
+
+        q1.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        q1.setParameter("tiStatoUdDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        // Get entities with associations
+        queryStr = "SELECT udDaElab " + "FROM ElvUdVersDaElabElenco udDaElab "
+                + "WHERE udDaElab.idUdVersDaElabElenco IN (:ids)";
+
+        Query q2 = em.createQuery(queryStr);
+        q2.setHint(QueryHints.HINT_READONLY, true);
+        q2.setHint(QueryHints.HINT_CACHEABLE, true);
+        q2.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+
+        EntityGraph<ElvUdVersDaElabElenco> entityGraph = em.createEntityGraph(ElvUdVersDaElabElenco.class);
+        entityGraph.addSubgraph("aroUnitaDoc").addAttributeNodes("aroDocs");
+        q2.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+
+        q2.setParameter("ids", q1.getResultStream().collect(toList()));
+
+        return q2.getResultStream();
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveDocToValidate(long idStrut, int maxResult) {
+
+        String queryStr = "SELECT docDaElab " + "FROM ElvDocAggDaElabElenco docDaElab "
+                + "WHERE docDaElab.idStrut = :idStrut " + "AND docDaElab.tiStatoDocDaElab = :tiStatoDocDaElab "
+                + "ORDER BY docDaElab.idDocAggDaElabElenco";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+        query.setMaxResults(maxResult);
+
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        query.setParameter("tiStatoDocDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        return query.getResultStream();
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveDocToValidateInParallel(long idStrut, int maxResult) {
+
+        String queryStr = "SELECT docDaElab " + "FROM ElvDocAggDaElabElenco docDaElab "
+                + "WHERE docDaElab.idStrut = :idStrut " + "AND docDaElab.tiStatoDocDaElab = :tiStatoDocDaElab "
+                + "ORDER BY docDaElab.idDocAggDaElabElenco";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+
+        EntityGraph<ElvDocAggDaElabElenco> entityGraph = em.createEntityGraph(ElvDocAggDaElabElenco.class);
+        entityGraph.addSubgraph("aroDoc").addAttributeNodes("aroUnitaDoc");
+        entityGraph.addSubgraph("aroDoc").addSubgraph("aroUnitaDoc").addAttributeNodes("aroDocs");
+        query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        query.setParameter("tiStatoDocDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        return query.getResultStream().limit(maxResult);
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveDocToValidateInParallelLessThan1k(long idStrut, int maxResult) {
+
+        // Get primary keys with LIMIT and OFFSET
+        String queryStr = "SELECT docDaElab.idDocAggDaElabElenco " + "FROM ElvDocAggDaElabElenco docDaElab "
+                + "WHERE docDaElab.idStrut = :idStrut " + "AND docDaElab.tiStatoDocDaElab = :tiStatoDocDaElab "
+                + "ORDER BY docDaElab.idDocAggDaElabElenco";
+
+        Query q1 = em.createQuery(queryStr);
+        q1.setHint(QueryHints.HINT_READONLY, true);
+        q1.setHint(QueryHints.HINT_CACHEABLE, true);
+        q1.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+        q1.setMaxResults(maxResult);
+
+        q1.setParameter("idStrut", bigDecimalFromLong(idStrut));
+        q1.setParameter("tiStatoDocDaElab", ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+
+        // Get entities with associations
+        queryStr = "SELECT docDaElab " + "FROM ElvDocAggDaElabElenco docDaElab "
+                + "WHERE docDaElab.idDocAggDaElabElenco IN (:ids)";
+
+        Query q2 = em.createQuery(queryStr);
+        q2.setHint(QueryHints.HINT_READONLY, true);
+        q2.setHint(QueryHints.HINT_CACHEABLE, true);
+        q2.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+
+        EntityGraph<ElvDocAggDaElabElenco> entityGraph = em.createEntityGraph(ElvDocAggDaElabElenco.class);
+        entityGraph.addSubgraph("aroDoc").addAttributeNodes("aroUnitaDoc");
+        entityGraph.addSubgraph("aroDoc").addSubgraph("aroUnitaDoc").addAttributeNodes("aroDocs");
+        q2.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+
+        q2.setParameter("ids", q1.getResultStream().collect(toList()));
+
+        return q2.getResultStream();
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveUpdToValidate(long idStrut, int maxResult) {
+
+        String queryStr = "SELECT updDaElab " + "FROM ElvUpdUdDaElabElenco updDaElab "
+                + "WHERE updDaElab.orgStrut.idStrut = :idStrut "
+                + "AND updDaElab.tiStatoUpdElencoVers =  :tiStatoUpdElencoVers "
+                + "ORDER BY updDaElab.idUpdUdDaElabElenco";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+        query.setMaxResults(maxResult);
+
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("tiStatoUpdElencoVers", ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+
+        return query.getResultStream();
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveUpdToValidateInParallel(long idStrut, int maxResult) {
+
+        String queryStr = "SELECT updDaElab " + "FROM ElvUpdUdDaElabElenco updDaElab "
+                + "WHERE updDaElab.orgStrut.idStrut = :idStrut "
+                + "AND updDaElab.tiStatoUpdElencoVers =  :tiStatoUpdElencoVers "
+                + "ORDER BY updDaElab.idUpdUdDaElabElenco";
+
+        Query query = em.createQuery(queryStr);
+        query.setHint(QueryHints.HINT_READONLY, true);
+        query.setHint(QueryHints.HINT_CACHEABLE, true);
+        query.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+
+        EntityGraph<ElvUpdUdDaElabElenco> entityGraph = em.createEntityGraph(ElvUpdUdDaElabElenco.class);
+        entityGraph.addSubgraph("aroUpdUnitaDoc").addAttributeNodes("aroUnitaDoc");
+        entityGraph.addSubgraph("aroUpdUnitaDoc").addSubgraph("aroUnitaDoc").addAttributeNodes("aroDocs");
+        query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+
+        query.setParameter("idStrut", idStrut);
+        query.setParameter("tiStatoUpdElencoVers", ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+
+        return query.getResultStream().limit(maxResult);
+    }
+
+    public Stream<ElvUdDocUpdDaElabElenco> retrieveUpdToValidateInParallelLessThan1k(long idStrut, int maxResult) {
+
+        // Get primary keys with LIMIT and OFFSET
+        String queryStr = "SELECT updDaElab.idUpdUdDaElabElenco " + "FROM ElvUpdUdDaElabElenco updDaElab "
+                + "WHERE updDaElab.orgStrut.idStrut = :idStrut "
+                + "AND updDaElab.tiStatoUpdElencoVers =  :tiStatoUpdElencoVers "
+                + "ORDER BY updDaElab.idUpdUdDaElabElenco";
+
+        Query q1 = em.createQuery(queryStr);
+        q1.setHint(QueryHints.HINT_READONLY, true);
+        q1.setHint(QueryHints.HINT_CACHEABLE, true);
+        q1.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+        q1.setMaxResults(maxResult);
+
+        q1.setParameter("idStrut", idStrut);
+        q1.setParameter("tiStatoUpdElencoVers", ElvUpdUdDaElabTiStatoUpdElencoVers.NON_SELEZ_SCHED);
+
+        // Get entities with associations
+        queryStr = "SELECT updDaElab " + "FROM ElvUpdUdDaElabElenco updDaElab "
+                + "WHERE updDaElab.idUpdUdDaElabElenco IN (:ids)";
+
+        Query q2 = em.createQuery(queryStr);
+        q2.setHint(QueryHints.HINT_READONLY, true);
+        q2.setHint(QueryHints.HINT_CACHEABLE, true);
+        q2.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("1000"));
+
+        EntityGraph<ElvUpdUdDaElabElenco> entityGraph = em.createEntityGraph(ElvUpdUdDaElabElenco.class);
+        entityGraph.addSubgraph("aroUpdUnitaDoc").addAttributeNodes("aroUnitaDoc");
+        entityGraph.addSubgraph("aroUpdUnitaDoc").addSubgraph("aroUnitaDoc").addAttributeNodes("aroDocs");
+        q2.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+
+        q2.setParameter("ids", q1.getResultStream().collect(toList()));
+
+        return q2.getResultStream();
+    }
+
+    /**
+     * Stream delle unità documentarie, dei documenti aggiunti e degli aggiornamenti metadati che soddisfano il criterio
+     * di raggruppamento passato come parametro
+     *
+     * @param criterio
+     *            raggruppamento
+     * @param maxResult
+     *            rownum
+     *
+     * @return stream di oggetti di tipo {@link ElvVSelUdDocUpdByCrit}
+     */
+    public Stream<ElvVSelUdDocUpdByCrit> streamUpdDocUdToProcess(DecCriterioRaggr criterio, int maxResult) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT u FROM ElvVSelUdDocUpdByCrit u " + "WHERE u.id.idCriterioRaggr = :idCriterio");
+
+        if (criterio.getAaKeyUnitaDoc() != null) {
+            queryStr.append(" AND u.aaKeyUnitaDoc = :aaKeyUnitaDoc ");
+        } else if (criterio.getAaKeyUnitaDocDa() != null || criterio.getAaKeyUnitaDocA() != null) {
+            queryStr.append(" AND u.aaKeyUnitaDoc >= :aaKeyUnitaDocDa ");
+            queryStr.append(" AND u.aaKeyUnitaDoc <= :aaKeyUnitaDocA ");
+        }
+        // tip: fdilorenzo, definisce l'ordinamento con cui devono essere elaborati gli oggetti versati (a supporto
+        // della logica definita in analisi)
+        queryStr.append(" ORDER BY u.tiEle");
+
+        Query q = em.createQuery(queryStr.toString());
+        q.setHint(QueryHints.HINT_READONLY, true);
+        q.setHint(QueryHints.HINT_CACHEABLE, true);
+        q.setHint(QueryHints.HINT_FETCH_SIZE, Integer.valueOf("100"));
+        q.setParameter("idCriterio", BigDecimal.valueOf(criterio.getIdCriterioRaggr()));
+
+        if (criterio.getAaKeyUnitaDoc() != null) {
+            q.setParameter("aaKeyUnitaDoc", criterio.getAaKeyUnitaDoc());
+        } else if (criterio.getAaKeyUnitaDocDa() != null || criterio.getAaKeyUnitaDocA() != null) {
+            if (criterio.getAaKeyUnitaDocDa() != null) {
+                q.setParameter("aaKeyUnitaDocDa", criterio.getAaKeyUnitaDocDa());
+            } else {
+                q.setParameter("aaKeyUnitaDocDa", BigDecimal.valueOf(2000));
+            }
+            if (criterio.getAaKeyUnitaDocA() != null) {
+                q.setParameter("aaKeyUnitaDocA", criterio.getAaKeyUnitaDocA());
+            } else {
+                q.setParameter("aaKeyUnitaDocA", BigDecimal.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+            }
+        }
+
+        return q.getResultStream();
+    }
+    // end MEV#27891
 
     public long retrieveUserIdByUsername(String username) {
         IamUser user;
@@ -1514,19 +1829,12 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return user.getIdUserIam();
     }
 
-    public ElvElencoVer writeNewElenco(ElvElencoVer elenco) {
-        elenco = em.merge(elenco);
-        return elenco;
-    }
-
     public AroUnitaDoc retrieveUnitaDocById(long idUnitaDoc) {
-        AroUnitaDoc unitaDoc = em.find(AroUnitaDoc.class, idUnitaDoc);
-        return unitaDoc;
+        return em.find(AroUnitaDoc.class, idUnitaDoc);
     }
 
     public AroUnitaDoc retrieveAndLockUnitaDocById(long idUnitaDoc) {
-        AroUnitaDoc unitaDoc = em.find(AroUnitaDoc.class, idUnitaDoc, LockModeType.PESSIMISTIC_WRITE);
-        return unitaDoc;
+        return em.find(AroUnitaDoc.class, idUnitaDoc, LockModeType.PESSIMISTIC_WRITE);
     }
 
     public void lockElenco(ElvElencoVer elenco) {
@@ -1538,13 +1846,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     public AroDoc retrieveDocById(long idDoc) {
-        AroDoc doc = em.find(AroDoc.class, idDoc);
-        return doc;
+        return em.find(AroDoc.class, idDoc);
     }
 
     public AroUpdUnitaDoc retrieveUpdById(long idUpdUnitaDoc) {
-        AroUpdUnitaDoc upd = em.find(AroUpdUnitaDoc.class, idUpdUnitaDoc);
-        return upd;
+        return em.find(AroUpdUnitaDoc.class, idUpdUnitaDoc);
     }
 
     public void lockDoc(AroDoc doc) {
@@ -1568,13 +1874,14 @@ public class ElencoVersamentoHelper extends GenericHelper {
         em.detach(doc);
     }
 
-    public void detachAroCompDoc(AroCompDoc compDoc) {
-        em.detach(compDoc);
+    // MAC#28020
+    public boolean containsElenco(ElvElencoVer elenco) {
+        return em.contains(elenco);
     }
+    // end MAC#28020
 
     public DecCriterioRaggr retrieveCriterioByid(long idCriterio) {
-        DecCriterioRaggr criterio = em.find(DecCriterioRaggr.class, idCriterio);
-        return criterio;
+        return em.find(DecCriterioRaggr.class, idCriterio);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -1594,7 +1901,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            - data di firma dell'elenco corrente
      * @param hasDocumentiAggiunti
      *            - true se ci sono documenti aggiunti
-     * 
+     *
      * @return entità AroIndiceAipUdDaElab
      */
     public AroIndiceAipUdDaElab registraInAroIndiceAipUdDaElab(AroUnitaDoc unitaDoc, long idElenco, Date dataCreazione,
@@ -1636,7 +1943,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            - id di AroCompDoc
      * @param aroIndiceAipUdDaElab
      *            - entity AroIndiceAipUdDaElab
-     * 
+     *
      * @return aroCompIndiceAipDaElab entità salvata
      */
     public AroCompIndiceAipDaElab registraInAroCompIndiceAipUdDaElab(long idCompDoc,
@@ -1656,7 +1963,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            - id di AroUpdUnitaDoc
      * @param aroIndiceAipUdDaElab
      *            - entity AroIndiceAipUdDaElab
-     * 
+     *
      * @return aroUpdUdIndiceAipDaElab entità salvata
      */
     public AroUpdUdIndiceAipDaElab registraInAroUpdUdIndiceAipUdDaElab(long idUpdUnitaDoc,
@@ -1669,10 +1976,10 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return aroUpdUdIndiceAipDaElab;
     }
 
-    public boolean checkUdAnnullataByElenco(ElvElencoVer elenco) throws ParseException {
+    public boolean checkUdAnnullataByElenco(ElvElencoVer elenco) {
         boolean annullata = false;
         Query q = em.createQuery("select ud " + "from ElvVChkUnaUdAnnul ud " + "where ud.idElencoVers = :idElv");
-        q.setParameter("idElv", elenco.getIdElencoVers());
+        q.setParameter("idElv", BigDecimal.valueOf(elenco.getIdElencoVers()));
         ElvVChkUnaUdAnnul unaUdAnnul = (ElvVChkUnaUdAnnul) q.getSingleResult();
         if ("1".equals(unaUdAnnul.getFlUnaUdVersAnnul()) || "1".equals(unaUdAnnul.getFlUnaUdDocAggAnnul())
                 || "1".equals(unaUdAnnul.getFlUnaUdUpdUdAnnul())) {
@@ -1692,7 +1999,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         if (dataAnnullamento.getTime() != defaultAnnullamento.getTime()) {
             annullata = true;
         }
-        LOG.debug("Unità documentaria: '" + ud.getIdUnitaDoc() + "' annullata: " + annullata);
+        LOG.debug("Unità documentaria: '{}' annullata: {}", ud.getIdUnitaDoc(), annullata);
         return annullata;
     }
 
@@ -1707,21 +2014,21 @@ public class ElencoVersamentoHelper extends GenericHelper {
         if (dataAnnullamento.getTime() != defaultAnnullamento.getTime()) {
             annullato = true;
         }
-        LOG.debug("Documento: '" + doc.getIdDoc() + "' annullato: " + annullato);
+        LOG.debug("Documento: '{}' annullato: {}", doc.getIdDoc(), annullato);
         return annullato;
     }
 
     public boolean checkFreeSpaceElenco(ElvElencoVer elenco, long numComps) {
         boolean udOk = false;
-        long freeSpace = elenco.getNiMaxComp().intValue() - (elenco.getNiCompVersElenco().intValue()
+        long freeSpace = elenco.getNiMaxComp().longValue() - (elenco.getNiCompVersElenco().longValue()
                 + elenco.getNiCompAggElenco().intValue() + elenco.getNiUpdUnitaDoc().intValue());
         if (numComps <= freeSpace) {
             udOk = true;
         }
-        LOG.debug("Ok = " + udOk + " Num comp da inserire: " + numComps + "; spazio libero: " + freeSpace
-                + " --> NiMaxComp: " + elenco.getNiMaxComp().intValue() + ", NiCompVersElenco: "
-                + elenco.getNiCompVersElenco().intValue() + ", NiCompAggElenco: "
-                + elenco.getNiCompAggElenco().intValue() + ", NiUpdUnitaDoc: " + elenco.getNiUpdUnitaDoc().intValue());
+        LOG.debug(
+                "Ok = {} Num comp da inserire: {}; spazio libero: {} --> NiMaxComp: {}, NiCompVersElenco: {}, NiCompAggElenco: {}, NiUpdUnitaDoc: {}",
+                udOk, numComps, freeSpace, elenco.getNiMaxComp().intValue(), elenco.getNiCompVersElenco().intValue(),
+                elenco.getNiCompAggElenco().intValue(), elenco.getNiUpdUnitaDoc().intValue());
         return udOk;
     }
 
@@ -1733,19 +2040,19 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id della struttura
      * @param statoElenco
      *            stato dell'elenco {@link it.eng.parer.elencoVersamento.utils.ElencoEnums}
-     * 
+     *
      * @return lista di elenchi da elaborare.
      */
     public List<ElvElencoVersDaElab> retrieveElenchi(long idStrut, ElencoEnums.ElencoStatusEnum... statoElenco) {
         TypedQuery<ElvElencoVersDaElab> q = em.createQuery(
                 "SELECT elencoDaElab " + "FROM ElvElencoVersDaElab elencoDaElab JOIN FETCH elencoDaElab.elvElencoVer "
-                        + "WHERE elencoDaElab.tiStatoElenco IN :statiElenco " + "AND elencoDaElab.idStrut = :idStrut "
+                        + "WHERE elencoDaElab.tiStatoElenco IN (:statiElenco) " + "AND elencoDaElab.idStrut = :idStrut "
                         + "ORDER BY elencoDaElab.elvElencoVer.flElencoFisc DESC, " + "elencoDaElab.aaKeyUnitaDoc DESC, "
                         + "elencoDaElab.elvElencoVer.dtFirmaIndice",
                 ElvElencoVersDaElab.class);
-        List<ElencoEnums.ElencoStatusEnum> statiList = Arrays.asList(statoElenco);
+        List<String> statiList = Arrays.stream(statoElenco).map(Enum::name).collect(Collectors.toList());
         q.setParameter("statiElenco", statiList);
-        q.setParameter("idStrut", idStrut);
+        q.setParameter("idStrut", bigDecimalFromLong(idStrut));
 
         return q.getResultList();
     }
@@ -1761,7 +2068,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            valore stato
      * @param numGiorni
      *            numero giorni
-     * 
+     *
      * @return Set - insieme di id <strong>distinti</strong>
      */
     public List<BigDecimal> retrieveUdVersOrAggOrUpdInElencoValidate(long idElenco, String stato, int numGiorni) {
@@ -1773,10 +2080,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
         Query q = em.createQuery("SELECT DISTINCT e.idUnitaDoc FROM ElvVLisUdByStato e "
                 + "WHERE e.idElencoVers = :idElenco AND e.tiStatoUd = :stato "
                 + "AND (e.tsLastResetStato IS NULL OR e.tsLastResetStato < :dateToLookBefore) ");
-        q.setParameter("idElenco", idElenco);
+        q.setParameter("idElenco", bigDecimalFromLong(idElenco));
         q.setParameter("stato", stato);
         q.setParameter("dateToLookBefore", dateToLookBefore);
-        // List<BigDecimal> uds = q.getResultList();
 
         return q.getResultList();
     }
@@ -1787,7 +2093,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElenco
      *            id dell'elenco validato.
-     * 
+     *
      * @return Set - insieme di id <strong>distinti</strong>
      */
     public Collection<Long> retrieveUdVersOrAggInElencoValidate(long idElenco) {
@@ -1801,11 +2107,13 @@ public class ElencoVersamentoHelper extends GenericHelper {
         // </editor-fold>
         TypedQuery<Long> q1 = em.createQuery(
                 "SELECT ud.idUnitaDoc " + "FROM AroUnitaDoc ud " + " WHERE ud.elvElencoVer.idElencoVers = :idElenco "
-                        + " AND ud.dtAnnul = {d '2444-12-31'} " + " AND ud.tiStatoUdElencoVers = 'IN_ELENCO_VALIDATO' ",
+                        + " AND ud.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
+                        + " AND ud.tiStatoUdElencoVers = 'IN_ELENCO_VALIDATO' ",
                 Long.class);
 
         TypedQuery<Long> q2 = em.createQuery("SELECT DISTINCT doc.aroUnitaDoc.idUnitaDoc " + "FROM AroDoc doc "
-                + " WHERE doc.elvElencoVer.idElencoVers = :idElenco " + " AND doc.dtAnnul = {d '2444-12-31'}"
+                + " WHERE doc.elvElencoVer.idElencoVers = :idElenco "
+                + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy')"
                 + " AND doc.tiStatoDocElencoVers = 'IN_ELENCO_VALIDATO' ", Long.class);
         q1.setParameter("idElenco", idElenco);
         q2.setParameter("idElenco", idElenco);
@@ -1825,7 +2133,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            idElenco
      * @param idUd
      *            idUnitaDoc
-     * 
+     *
      * @return Set - Insieme di elementi distint
      */
     public Collection<ComponenteDaVerificare> retrieveCompsToVerify(long idElenco, long idUd) {
@@ -1851,8 +2159,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
                         + "(comp.idCompDoc, ud.dtCreazione, comp.flCompFirmato) " + "FROM AroCompDoc comp "
                         + "JOIN comp.aroStrutDoc strutDoc " + "JOIN strutDoc.aroDoc doc " + "JOIN doc.aroUnitaDoc ud "
                         + "WHERE ud.idUnitaDoc = :idUd " + "AND doc.tiCreazione = 'VERSAMENTO_UNITA_DOC' "
-                        + "AND ud.elvElencoVer.idElencoVers = :idElenco " + "AND doc.dtAnnul = {d '2444-12-31'} "
-                        + "AND ((comp.flCompFirmato = '0') " + "OR (comp.flCompFirmato = '1' "
+                        + "AND ud.elvElencoVer.idElencoVers = :idElenco "
+                        + "AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') " + "AND ((comp.flCompFirmato = '0') "
+                        + "OR (comp.flCompFirmato = '1' "
                         + "AND NOT EXISTS (SELECT verif FROM AroVerifFirmaDtVer verif "
                         + "JOIN verif.aroFirmaComp firma " + "WHERE firma.aroCompDoc.idCompDoc = comp.idCompDoc))) ",
                 ComponenteDaVerificare.class);
@@ -1862,8 +2171,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
                         + "(comp.idCompDoc, doc.dtCreazione, comp.flCompFirmato)" + "FROM AroCompDoc comp "
                         + "JOIN comp.aroStrutDoc strutDoc " + "JOIN strutDoc.aroDoc doc "
                         + "WHERE doc.aroUnitaDoc.idUnitaDoc = :idUd " + "AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
-                        + "AND doc.elvElencoVer.idElencoVers = :idElenco " + "AND doc.dtAnnul = {d '2444-12-31'} "
-                        + "AND ((comp.flCompFirmato = '0') " + "OR (comp.flCompFirmato = '1' "
+                        + "AND doc.elvElencoVer.idElencoVers = :idElenco "
+                        + "AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') " + "AND ((comp.flCompFirmato = '0') "
+                        + "OR (comp.flCompFirmato = '1' "
                         + "AND NOT EXISTS (SELECT verif FROM AroVerifFirmaDtVer verif "
                         + "JOIN verif.aroFirmaComp firma " + "WHERE firma.aroCompDoc.idCompDoc = comp.idCompDoc))) ",
                 ComponenteDaVerificare.class);
@@ -1885,7 +2195,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id dell'elenco
-     * 
+     *
      * @return insieme di id Ud distinti.
      */
     public Set<UnitaDocumentariaInElenco> retrieveUdInElenco(long idElencoVers) {
@@ -1903,7 +2213,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
         TypedQuery<UnitaDocumentariaInElenco> q1 = em.createQuery(
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.UnitaDocumentariaInElenco (ud.idUnitaDoc, false) "
                         + " FROM AroUnitaDoc ud " + " WHERE ud.elvElencoVer.idElencoVers = :idElencoVers "
-                        + " AND ud.dtAnnul = {d '2444-12-31'} " + " AND ud.tiStatoUdElencoVers = :firmeVerificate ",
+                        + " AND ud.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
+                        + " AND ud.tiStatoUdElencoVers = :firmeVerificate ",
                 UnitaDocumentariaInElenco.class);
         q1.setParameter("idElencoVers", idElencoVers);
         q1.setParameter("firmeVerificate", ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name());
@@ -1911,8 +2222,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
         TypedQuery<UnitaDocumentariaInElenco> q2 = em.createQuery(
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.UnitaDocumentariaInElenco (doc.aroUnitaDoc.idUnitaDoc, true) "
                         + " FROM AroDoc doc " + " WHERE doc.elvElencoVer.idElencoVers = :idElencoVers "
-                        + " AND doc.dtAnnul = {d '2444-12-31'} " + " AND doc.tiStatoDocElencoVers = :firmeVerificate "
-                        + " AND NOT EXISTS (  " + "     SELECT udVers " + "       FROM AroUnitaDoc udVers "
+                        + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
+                        + " AND doc.tiStatoDocElencoVers = :firmeVerificate " + " AND NOT EXISTS (  "
+                        + "     SELECT udVers " + "       FROM AroUnitaDoc udVers "
                         + "       WHERE udVers.elvElencoVer.idElencoVers = doc.elvElencoVer.idElencoVers"
                         + "       AND  udVers.idUnitaDoc = doc.aroUnitaDoc.idUnitaDoc ) ",
                 UnitaDocumentariaInElenco.class);
@@ -1934,24 +2246,23 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id dell'elenco
      * @param idUd
      *            id dell'unità documentaria
-     * 
+     *
      * @return insieme di id Ud distinti.
      */
     public ElvVLisUdByStato retrieveUdInElencoByStato(long idUd, long idElenco) {
         Query q = em.createQuery("SELECT DISTINCT e " + "FROM ElvVLisUdByStato e " + "WHERE e.idElencoVers = :idElenco "
                 + "AND e.idUnitaDoc = :idUd " + "AND e.tiStatoUd = 'IN_CODA_JMS_INDICE_AIP_DA_ELAB' ");
-        q.setParameter("idElenco", idElenco);
-        q.setParameter("idUd", idUd);
-        ElvVLisUdByStato ud = (ElvVLisUdByStato) q.getSingleResult();
-        return ud;
+        q.setParameter("idElenco", bigDecimalFromLong(idElenco));
+        q.setParameter("idUd", bigDecimalFromLong(idUd));
+        return (ElvVLisUdByStato) q.getSingleResult();
     }
 
     public boolean checkStatoElencoUdPerLeFasi(long idUd, long idElenco, String statoElencoUd) {
         boolean statiOk = false;
         Query q = em.createQuery("select e " + "from ElvVLisUdByStato e " + "where e.idElencoVers = :idElenco "
                 + "and e.idUnitaDoc = :idUd");
-        q.setParameter("idElenco", idElenco);
-        q.setParameter("idUd", idUd);
+        q.setParameter("idElenco", bigDecimalFromLong(idElenco));
+        q.setParameter("idUd", bigDecimalFromLong(idUd));
         ElvVLisUdByStato udInElenco = (ElvVLisUdByStato) q.getSingleResult();
         if (statoElencoUd.equals(udInElenco.getTiStatoElencoVers())
                 && statoElencoUd.equals(udInElenco.getTiStatoUd())) {
@@ -1963,8 +2274,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
     public boolean checkStatoAllUdInElencoPerLeFasi(long idElenco, String... stato) {
         boolean statiOk = false;
         Query q = em.createQuery("select count(e) " + "from ElvVLisUdByStato e " + "where e.idElencoVers = :idElenco "
-                + "and not exists (select e1 from ElvVLisUdByStato e1 where e1.idElencoVers = e.idElencoVers and e1.tiStatoUd NOT IN :stato)");
-        q.setParameter("idElenco", idElenco);
+                + "and not exists (select e1 from ElvVLisUdByStato e1 where e1.idElencoVers = e.idElencoVers and e1.tiStatoUd NOT IN (:stato))");
+        q.setParameter("idElenco", bigDecimalFromLong(idElenco));
         q.setParameter("stato", Arrays.asList(stato));
         long numUdInElenco = ((Long) q.getSingleResult());
         if (numUdInElenco > 0L) {
@@ -1979,8 +2290,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
         boolean statiOk = false;
         Query q = em.createQuery("select e " + "from ElvVLisUdByStato e " + "where e.idElencoVers = :idElenco "
                 + "and e.tiStatoElencoVers = 'IN_CODA_JMS_VERIFICA_FIRME_DT_VERS' "
-                + "and not exists (select e1 from ElvVLisUdByStato e1 where e1.idElencoVers = e.idElencoVers and e1.tiStatoUd NOT IN :stato)");
-        q.setParameter("idElenco", idElenco);
+                + "and not exists (select e1 from ElvVLisUdByStato e1 where e1.idElencoVers = e.idElencoVers and e1.tiStatoUd NOT IN (:stato))");
+        q.setParameter("idElenco", BigDecimal.valueOf(idElenco));
         q.setParameter("stato", Arrays.asList(stato));
         List<ElvVLisUdByStato> udInElencoList = q.getResultList();
         if (!udInElencoList.isEmpty()) {
@@ -1995,7 +2306,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         Query q = em.createQuery("select e " + "from ElvVLisUdByStato e " + "where e.idElencoVers = :idElenco "
                 + "and e.tiStatoElencoVers = 'IN_CODA_JMS_INDICE_AIP_DA_ELAB' "
                 + "and not exists (select e1 from ElvVLisUdByStato e1 where e1.idElencoVers = e.idElencoVers and e1.tiStatoUd NOT IN :stato)");
-        q.setParameter("idElenco", idElenco);
+        q.setParameter("idElenco", HibernateUtils.bigDecimalFrom(idElenco));
         q.setParameter("stato", Arrays.asList(stato));
         List<ElvVLisUdByStato> udInElencoList = q.getResultList();
         if (!udInElencoList.isEmpty()) {
@@ -2014,7 +2325,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id unita doc
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return insieme di componenti in elenco distinti
      */
     public Set<ComponenteInElenco> retrieveComponentiInElenco(long idUnitaDoc, long idElencoVers) {
@@ -2034,21 +2345,21 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * 'AGGIUNTA_DOCUMENTO' and doc.dt_annul = '31/12/2444'
          */
         // </editor-fold>
-        TypedQuery<ComponenteInElenco> q1 = em.createQuery(
-                "SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
+        TypedQuery<ComponenteInElenco> q1 = em
+                .createQuery("SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
                         + " FROM AroCompDoc comp JOIN comp.aroStrutDoc strut JOIN strut.aroDoc doc JOIN doc.aroUnitaDoc ud "
                         + " WHERE doc.tiCreazione = 'VERSAMENTO_UNITA_DOC' " + " AND ud.idUnitaDoc = :idUnitaDoc "
-                        + " AND ud.elvElencoVer.idElencoVers = :idElencoVers" + " AND doc.dtAnnul = {d '2444-12-31'} ",
-                ComponenteInElenco.class);
+                        + " AND ud.elvElencoVer.idElencoVers = :idElencoVers"
+                        + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') ", ComponenteInElenco.class);
         q1.setParameter("idUnitaDoc", idUnitaDoc);
         q1.setParameter("idElencoVers", idElencoVers);
-        TypedQuery<ComponenteInElenco> q2 = em.createQuery(
-                "SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
+        TypedQuery<ComponenteInElenco> q2 = em
+                .createQuery("SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
                         + " FROM AroCompDoc comp JOIN comp.aroStrutDoc strut JOIN strut.aroDoc doc"
                         + " WHERE doc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                         + " AND doc.elvElencoVer.idElencoVers = :idElencoVers"
-                        + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' " + " AND doc.dtAnnul = {d '2444-12-31'} ",
-                ComponenteInElenco.class);
+                        + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
+                        + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy')  ", ComponenteInElenco.class);
 
         q2.setParameter("idUnitaDoc", idUnitaDoc);
         q2.setParameter("idElencoVers", idElencoVers);
@@ -2067,7 +2378,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id unita doc
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return insieme di componenti in elenco distinti
      */
     public Set<AggiornamentoInElenco> retrieveAggiornamentiInElenco(long idUnitaDoc, long idElencoVers) {
@@ -2082,7 +2393,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.AggiornamentoInElenco(upd.idUpdUnitaDoc, upd.pgUpdUnitaDoc) "
                         + " FROM AroUpdUnitaDoc upd " + " WHERE upd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                         + " AND upd.elvElencoVer.idElencoVers = :idElencoVers "
-                        + " AND upd.dtAnnul = {d '2444-12-31'} ",
+                        + " AND upd.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') ",
                 AggiornamentoInElenco.class);
         query.setParameter("idUnitaDoc", idUnitaDoc);
         query.setParameter("idElencoVers", idElencoVers);
@@ -2111,12 +2422,10 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * '31/12/2444'
          */
         // </editor-fold>
-        TypedQuery<Date> query = em.createQuery(
-                "SELECT min(doc.dtCreazione) " + " FROM AroDoc doc "
-                        + " WHERE doc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-                        + " AND doc.elvElencoVer.idElencoVers = :idElencoVers "
-                        + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' " + " AND doc.dtAnnul = {d '2444-12-31'}",
-                Date.class);
+        TypedQuery<Date> query = em.createQuery("SELECT MIN(doc.dtCreazione) " + " FROM AroDoc doc "
+                + " WHERE doc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + " AND doc.elvElencoVer.idElencoVers = :idElencoVers " + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
+                + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy')", Date.class);
         query.setParameter("idUnitaDoc", idUnitaDoc);
         query.setParameter("idElencoVers", idElencoVers);
         Date minDate = null;
@@ -2141,7 +2450,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            data creazione minima
      * @param idElencoVersCorrente
      *            id elenco versamento corrente
-     * 
+     *
      * @return lista di elementi DISTINTI
      */
     public Set<Long> retrieveDocNonInElenco(long idUnitaDocCorrente, Date dataCreazioneMinima,
@@ -2167,25 +2476,27 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
         TypedQuery<Long> q1 = em.createQuery("SELECT doc.idDoc " + " FROM AroDoc doc JOIN doc.aroUnitaDoc ud"
                 + " WHERE doc.tiCreazione = 'VERSAMENTO_UNITA_DOC' " + " AND ud.idUnitaDoc = :idUnitaDocCorrente "
-                + " AND doc.dtAnnul = {d '2444-12-31'} "
+                + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
                 /*
                  * Non dobbiamo valutare la data minima per l'ud perché deve essere già entrata (e potrebbe essere la
                  * stessa dei documenti aggiunti) come accaduto nel caso della mac #11925
                  */
                 // + " AND ud.dtCreazione < :dataCreazioneMinima"
-                // l'UNITA DOCUMENTARIA non è associata ad un elenco oppure l'elenco è diverso da quello attuale
+                // l'UNITA DOCUMENTARIA non è associata ad un elenco oppure l'elenco è diverso
+                // da quello attuale
                 + " AND (ud.elvElencoVer IS NULL "
                 + "      OR (ud.elvElencoVer IS NOT NULL AND ud.elvElencoVer.idElencoVers != :idElencoVersCorrente AND ud.tiStatoUdElencoVers NOT IN ('IN_ELENCO_IN_CODA_INDICE_AIP', 'IN_ELENCO_CON_INDICI_AIP_GENERATI', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA', 'IN_ELENCO_COMPLETATO'))"
                 + "      ) ", Long.class);
         q1.setParameter("idUnitaDocCorrente", idUnitaDocCorrente);
-        // q1.setParameter("dataCreazioneMinima", dataCreazioneMinima);
         q1.setParameter("idElencoVersCorrente", idElencoVersCorrente);
 
         TypedQuery<Long> q2 = em.createQuery(
                 "SELECT doc.idDoc " + " FROM AroDoc doc " + " WHERE doc.aroUnitaDoc.idUnitaDoc = :idUnitaDocCorrente "
-                        + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' " + " AND doc.dtAnnul = {d '2444-12-31'} "
+                        + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
+                        + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
                         + " AND doc.dtCreazione < :dataCreazioneMinima"
-                        // il DOCUMENTO non è associato ad un elenco oppure l'elenco è diverso da quello attuale
+                        // il DOCUMENTO non è associato ad un elenco oppure l'elenco è diverso da quello
+                        // attuale
                         + " AND ( doc.elvElencoVer IS NULL "
                         + "       OR (doc.elvElencoVer IS NOT NULL AND  doc.elvElencoVer.idElencoVers != :idElencoVersCorrente AND doc.tiStatoDocElencoVers NOT IN ('IN_ELENCO_IN_CODA_INDICE_AIP', 'IN_ELENCO_CON_INDICI_AIP_GENERATI', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA', 'IN_ELENCO_COMPLETATO')) "
                         + "     ) ",
@@ -2219,11 +2530,10 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * and upd.dt_annul = '31/12/2444'
          */
         // </editor-fold>
-        TypedQuery<BigDecimal> query = em.createQuery(
-                "SELECT min(upd.pgUpdUnitaDoc) " + " FROM AroUpdUnitaDoc upd "
-                        + " WHERE upd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-                        + " AND upd.elvElencoVer.idElencoVers = :idElencoVers " + " AND upd.dtAnnul = {d '2444-12-31'}",
-                BigDecimal.class);
+        TypedQuery<BigDecimal> query = em.createQuery("SELECT min(upd.pgUpdUnitaDoc) " + " FROM AroUpdUnitaDoc upd "
+                + " WHERE upd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + " AND upd.elvElencoVer.idElencoVers = :idElencoVers "
+                + " AND upd.dtAnnul = to_date('31/12/2444','dd/mm/yyyy')", BigDecimal.class);
         query.setParameter("idUnitaDoc", idUnitaDoc);
         query.setParameter("idElencoVers", idElencoVers);
         BigDecimal minPg = null;
@@ -2250,7 +2560,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id elenco versamento corrente
      * @param tiStatoUpdElencoVers
      *            stato aggiornamento versamento elenco
-     * 
+     *
      * @return lista di elementi DISTINTI
      */
     public Set<Long> retrieveUpdNonInElenco(long idUnitaDocCorrente, BigDecimal pgMinimoUpdInElenco,
@@ -2270,10 +2580,12 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
         TypedQuery<Long> query = em.createQuery("SELECT upd.idUpdUnitaDoc "
                 + " FROM AroUpdUnitaDoc upd JOIN upd.aroUnitaDoc ud" + " WHERE ud.idUnitaDoc = :idUnitaDocCorrente "
-                + " AND upd.dtAnnul = {d '2444-12-31'} " + " AND upd.pgUpdUnitaDoc < :pgMinimoUpdInElenco"
-                // l'UNITA DOCUMENTARIA non è associata ad un elenco oppure l'elenco è diverso da quello attuale
+                + " AND upd.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
+                + " AND upd.pgUpdUnitaDoc < :pgMinimoUpdInElenco"
+                // l'UNITA DOCUMENTARIA non è associata ad un elenco oppure l'elenco è diverso
+                // da quello attuale
                 + " AND (upd.elvElencoVer IS NULL "
-                + "      OR (upd.elvElencoVer IS NOT NULL AND upd.elvElencoVer.idElencoVers != :idElencoVersCorrente AND upd.tiStatoUpdElencoVers NOT IN :tiStatoUpdElencoVers)"
+                + "      OR (upd.elvElencoVer IS NOT NULL AND upd.elvElencoVer.idElencoVers != :idElencoVersCorrente AND upd.tiStatoUpdElencoVers NOT IN (:tiStatoUpdElencoVers))"
                 + "      ) ", Long.class);
         query.setParameter("idUnitaDocCorrente", idUnitaDocCorrente);
         query.setParameter("pgMinimoUpdInElenco", pgMinimoUpdInElenco);
@@ -2294,7 +2606,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id unità doc
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return Lista di elementi distinti (in base all'id componente)
      */
     public Set<ComponenteInElenco> retrieveCompInElenco(long idUnitaDoc, long idElencoVers) {
@@ -2323,13 +2635,13 @@ public class ElencoVersamentoHelper extends GenericHelper {
          */
         // </editor-fold>
 
-        TypedQuery<ComponenteInElenco> q1 = em.createQuery(
-                "SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
+        TypedQuery<ComponenteInElenco> q1 = em
+                .createQuery("SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
                         + " FROM AroCompDoc comp JOIN comp.aroStrutDoc strut JOIN strut.aroDoc doc"
                         + " WHERE doc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                         + " AND doc.elvElencoVer.idElencoVers = :idElencoVers"
-                        + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' " + " AND doc.dtAnnul = {d '2444-12-31'} ",
-                ComponenteInElenco.class);
+                        + " AND doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' "
+                        + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy')  ", ComponenteInElenco.class);
         q1.setParameter("idUnitaDoc", idUnitaDoc);
         q1.setParameter("idElencoVers", idElencoVers);
 
@@ -2337,7 +2649,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
                         + " FROM AroCompDoc comp JOIN comp.aroStrutDoc strut JOIN strut.aroDoc doc JOIN doc.aroUnitaDoc ud "
                         + " WHERE doc.tiCreazione = 'VERSAMENTO_UNITA_DOC' " + " AND ud.idUnitaDoc = :idUnitaDoc "
-                        + " AND doc.dtAnnul = {d '2444-12-31'} "
+                        + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy')  "
                         + " AND ud.tiStatoUdElencoVers IN ('IN_ELENCO_IN_CODA_INDICE_AIP', 'IN_ELENCO_CON_INDICI_AIP_GENERATI', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA', 'IN_ELENCO_COMPLETATO') ",
                 ComponenteInElenco.class);
         q2.setParameter("idUnitaDoc", idUnitaDoc);
@@ -2346,7 +2658,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.ComponenteInElenco(comp.idCompDoc) "
                         + " FROM AroCompDoc comp JOIN comp.aroStrutDoc strut JOIN strut.aroDoc doc JOIN doc.aroUnitaDoc ud "
                         + " WHERE doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' " + " AND ud.idUnitaDoc = :idUnitaDoc "
-                        + " AND doc.dtAnnul = {d '2444-12-31'} "
+                        + " AND doc.dtAnnul = to_date('31/12/2444','dd/mm/yyyy')  "
                         + " AND doc.tiStatoDocElencoVers IN ('IN_ELENCO_IN_CODA_INDICE_AIP', 'IN_ELENCO_CON_INDICI_AIP_GENERATI', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO', 'IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA', 'IN_ELENCO_COMPLETATO') ",
                 ComponenteInElenco.class);
         q3.setParameter("idUnitaDoc", idUnitaDoc);
@@ -2368,7 +2680,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id elenco versamento
      * @param tiStatoUpdElencoVers
      *            elenco stati aggiornamento
-     * 
+     *
      * @return Lista di elementi distinti (in base all'id aggiornamento)
      */
     public Set<AggiornamentoInElenco> retrieveUpdInElenco(long idUnitaDoc, long idElencoVers,
@@ -2392,7 +2704,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
         TypedQuery<AggiornamentoInElenco> q1 = em.createQuery(
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.AggiornamentoInElenco(upd.idUpdUnitaDoc, upd.pgUpdUnitaDoc) "
                         + " FROM AroUpdUnitaDoc upd " + " WHERE upd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-                        + " AND upd.elvElencoVer.idElencoVers = :idElencoVers" + " AND upd.dtAnnul = {d '2444-12-31'} ",
+                        + " AND upd.elvElencoVer.idElencoVers = :idElencoVers"
+                        + " AND upd.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') ",
                 AggiornamentoInElenco.class);
         q1.setParameter("idUnitaDoc", idUnitaDoc);
         q1.setParameter("idElencoVers", idElencoVers);
@@ -2400,8 +2713,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
         TypedQuery<AggiornamentoInElenco> q2 = em.createQuery(
                 "SELECT NEW it.eng.parer.elencoVersamento.utils.AggiornamentoInElenco(upd.idUpdUnitaDoc, upd.pgUpdUnitaDoc) "
                         + " FROM AroUpdUnitaDoc upd JOIN upd.aroUnitaDoc ud " + " WHERE ud.idUnitaDoc = :idUnitaDoc "
-                        + " AND upd.dtAnnul = {d '2444-12-31'} "
-                        + " AND upd.tiStatoUpdElencoVers IN :tiStatoUpdElencoVers ",
+                        + " AND upd.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') "
+                        + " AND upd.tiStatoUpdElencoVers IN (:tiStatoUpdElencoVers) ",
                 AggiornamentoInElenco.class);
         q2.setParameter("idUnitaDoc", idUnitaDoc);
         List<AroUpdUDTiStatoUpdElencoVers> statiList = Arrays.asList(tiStatoUpdElencoVers);
@@ -2414,63 +2727,6 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return result;
     }
 
-    /**
-     * Il sistema determina i componenti dell'unità doc con id = idUd versati prima della data dtCreazione per i quali,
-     * ancorché firmati, non è definita la verifica firme alla data versamento e per i quali il documento è in un elenco
-     * o l'ud è in un elenco.
-     *
-     * @param idUd
-     *            id unita doc
-     * @param dtCreazione
-     *            creazione
-     * 
-     * @return lista id
-     */
-    @Deprecated
-    public List<Long> retrieveCompsOlderThan(Long idUd, Date dtCreazione) {
-
-        String jpql1 = "SELECT comp.idCompDoc " + "FROM AroCompDoc comp " + "JOIN comp.aroStrutDoc strutDoc "
-                + "JOIN strutDoc.aroDoc doc " + "JOIN doc.aroUnitaDoc ud " + "WHERE ud.idUnitaDoc = :idUd "
-                + "AND doc.dtCreazione <= :dtCreazione " + "AND doc.dtAnnul = {d '2444-12-31'} "
-                + " AND comp.flCompFirmato = '1' " + " AND NOT EXISTS ( " + " SELECT verif.idVerifFirmaDtVers "
-                + " FROM AroVerifFirmaDtVer verif  " + " JOIN verif.aroFirmaComp firma "
-                + " WHERE firma.aroCompDoc.idCompDoc = comp.idCompDoc )" + " AND (doc.elvElencoVer IS NOT NULL "
-                + " OR ud.elvElencoVer IS NOT NULL)";
-        Query q1;
-        q1 = em.createQuery(jpql1);
-        q1.setParameter("dtCreazione", dtCreazione);
-        q1.setParameter("idUd", idUd);
-        return q1.getResultList();
-    }
-
-    /**
-     * Il sistema determina i componenti dell'unità doc versati prima in data pari o inferiore alla data di creazione
-     * minima dei componenti dell'unità doc presenti nell'elenco e non presenti nel nuovo indice da elaborare
-     * 
-     * @param idUd
-     *            id unita doc
-     * @param dtCreazione
-     *            data creazione
-     * @param idIndiceAipDaElab
-     *            id indice aip da elaborare
-     * 
-     * @return lista id elaborati
-     *
-     */
-    @Deprecated
-    public List<Long> retrieveCompsNotInLastAipIndexDaElab(Long idUd, Date dtCreazione, Long idIndiceAipDaElab) {
-        Query q1 = em.createQuery("SELECT comp.idCompDoc " + "FROM AroCompDoc comp JOIN comp.aroStrutDoc strutDoc "
-                + "JOIN strutDoc.aroDoc doc JOIN doc.aroUnitaDoc ud " + "WHERE ud.idUnitaDoc = :idUd "
-                + "AND doc.dtCreazione <= :dtCreazione " + "AND doc.dtAnnul = {d '2444-12-31'} " + "AND NOT EXISTS ("
-                + " SELECT compIxDaElab FROM AroCompIndiceAipDaElab compIxDaElab "
-                + "WHERE compIxDaElab.aroIndiceAipUdDaElab.idIndiceAipDaElab = :idIndiceAipDaElab "
-                + "AND compIxDaElab.aroCompDoc.idCompDoc = comp.idCompDoc " + ")");
-        q1.setParameter("dtCreazione", dtCreazione);
-        q1.setParameter("idUd", idUd);
-        q1.setParameter("idIndiceAipDaElab", idIndiceAipDaElab);
-        return q1.getResultList();
-    }
-
     public List<Long> retrieveIdElenchiDaElaborare(BigDecimal idStrut, String statoElenco) {
         Query q = em.createQuery(
                 "SELECT elenco.idElencoVers " + "FROM ElvElencoVer elenco JOIN elenco.elvElencoVersDaElabs elDaElab "
@@ -2478,8 +2734,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                         + "ORDER BY elenco.dtCreazioneElenco");
         q.setParameter("idStrut", idStrut);
         q.setParameter("statoElenco", statoElenco);
-        List<Long> idElenchi = q.getResultList();
-        return idElenchi;
+        return q.getResultList();
     }
 
     public List<Long> retrieveIdElenchiDaValidare(BigDecimal idStrut, String statoElenco,
@@ -2500,24 +2755,24 @@ public class ElencoVersamentoHelper extends GenericHelper {
         q.setParameter("tiValidElencoCriterio", TiValidElencoCriterio.FIRMA);
         q.setFirstResult(0);
         q.setMaxResults(Integer.valueOf(numMaxElenchiDaValidare));
-        List<Long> idElenchi = q.getResultList();
-        return idElenchi;
+        return q.getResultList();
     }
 
     public List<BigDecimal> retrieveUdInElencoByElencoIdList(long idElencoVers) {
-        String queryStr = "SELECT lisUdByElenco.idUnitaDoc FROM ElvVLisAllUdByElenco lisUdByElenco "
-                + "WHERE lisUdByElenco.idElencoVers = :idElencoVers";
+        String queryStr = "SELECT lisUdByElenco.id.idUnitaDoc FROM ElvVLisAllUdByElenco lisUdByElenco "
+                + "WHERE lisUdByElenco.id.idElencoVers = :idElencoVers";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("idElencoVers", bigDecimalFromLong(idElencoVers));
         return query.getResultList();
     }
 
     public ElvVLisAllUdByElenco retrieveElvVLisAllUdByElenco(long idElencoVers, long idUnitaDoc) {
         String queryStr = "SELECT lisUdByElenco FROM ElvVLisAllUdByElenco lisUdByElenco "
-                + "WHERE lisUdByElenco.idElencoVers = :idElencoVers " + "AND lisUdByElenco.idUnitaDoc = :idUnitaDoc ";
+                + "WHERE lisUdByElenco.id.idElencoVers = :idElencoVers "
+                + "AND lisUdByElenco.id.idUnitaDoc = :idUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idElencoVers", idElencoVers);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idElencoVers", bigDecimalFromLong(idElencoVers));
+        query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
         return (ElvVLisAllUdByElenco) query.getSingleResult();
     }
 
@@ -2526,7 +2781,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return entity AroVerIndiceAipUd
      */
     public AroVerIndiceAipUd getUltimaVersioneIndiceAip(long idUnitaDoc) {
@@ -2534,7 +2789,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 "SELECT u FROM AroVerIndiceAipUd u " + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                         + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' " + "ORDER BY u.pgVerIndiceAip DESC ");
         q.setParameter("idUnitaDoc", idUnitaDoc);
-        List<AroVerIndiceAipUd> lista = (List<AroVerIndiceAipUd>) q.getResultList();
+        List<AroVerIndiceAipUd> lista = q.getResultList();
         if (!lista.isEmpty()) {
             return lista.get(0);
         }
@@ -2574,7 +2829,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id unita doc
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return il valore del numero di reset oppure 0 se questo ancora non esiste
      */
     public BigDecimal getNiResetStatoUnitaDocInElenco(long idUnitaDoc, long idElencoVers) {
@@ -2583,7 +2838,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "AND ud.elvElencoVer.idElencoVers = :idElencoVers";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc).setParameter("idElencoVers", idElencoVers);
-        resetList = (List<BigDecimal>) query.getResultList();
+        resetList = query.getResultList();
         if (resetList != null && !resetList.isEmpty() && resetList.get(0) != null) {
             return resetList.get(0);
         } else {
@@ -2599,7 +2854,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id unita doc
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return il valore del numero di reset oppure 0 se questo ancora non esiste
      */
     public BigDecimal getNiResetStatoDocInElenco(long idUnitaDoc, long idElencoVers) {
@@ -2609,7 +2864,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "AND doc.elvElencoVer.idElencoVers = :idElencoVers";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc).setParameter("idElencoVers", idElencoVers);
-        resetList = (List<BigDecimal>) query.getResultList();
+        resetList = query.getResultList();
         if (resetList != null && !resetList.isEmpty() && resetList.get(0) != null) {
             return resetList.get(0);
         } else {
@@ -2625,7 +2880,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            id unita doc
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return il valore del numero di reset oppure 0 se questo ancora non esiste
      */
     public BigDecimal getNiResetStatoUpdInElenco(long idUnitaDoc, long idElencoVers) {
@@ -2634,7 +2889,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "AND upd.elvElencoVer.idElencoVers = :idElencoVers";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc).setParameter("idElencoVers", idElencoVers);
-        resetList = (List<BigDecimal>) query.getResultList();
+        resetList = query.getResultList();
         if (resetList != null && !resetList.isEmpty() && resetList.get(0) != null) {
             return resetList.get(0);
         } else {
@@ -2673,7 +2928,6 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
         // Dovrebbe essere sempre un risultato...
         for (AroUnitaDoc aroUnitaDoc : query.getResultList()) {
-            // aroUnitaDoc.setTiStatoUdElencoVers(StatoElenco.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name());
             aroUnitaDoc.setTiStatoUdElencoVers(stato);
             if (tsStatoElencoVers != null) {
                 aroUnitaDoc.setTsStatoElencoVers(tsStatoElencoVers);
@@ -2716,7 +2970,6 @@ public class ElencoVersamentoHelper extends GenericHelper {
         query.setParameter("idUnitaDoc", idUnitaDoc).setParameter("idElencoVers", idElencoVers);
 
         for (AroDoc aroDoc : query.getResultList()) {
-            // aroDoc.setTiStatoDocElencoVers(StatoElenco.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS.name());
             aroDoc.setTiStatoDocElencoVers(stato);
             if (tsStatoElencoVers != null) {
                 aroDoc.setTsStatoElencoVers(tsStatoElencoVers);
@@ -2754,7 +3007,6 @@ public class ElencoVersamentoHelper extends GenericHelper {
         query.setParameter("idUnitaDoc", idUnitaDoc).setParameter("idElencoVers", idElencoVers);
 
         for (AroUpdUnitaDoc aroUpdUnitaDoc : query.getResultList()) {
-            // aroUpdUnitaDoc.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_FIRME_VERIFICATE_DT_VERS);
             aroUpdUnitaDoc.setTiStatoUpdElencoVers(AroUpdUDTiStatoUpdElencoVers.valueOf(stato));
             if (tsStatoElencoVers != null) {
                 aroUpdUnitaDoc.setTsStatoElencoVers(tsStatoElencoVers);
@@ -2775,7 +3027,6 @@ public class ElencoVersamentoHelper extends GenericHelper {
      */
     public void aggiornaElencoCorrente(long idElencoVers, ElencoEnums.ElencoStatusEnum stato) {
         ElvElencoVer elencoCorrente = em.find(ElvElencoVer.class, idElencoVers);
-        // elencoCorrente.setTiStatoElenco(StatoElenco.FIRME_VERIFICATE_DT_VERS.name());
         elencoCorrente.setTiStatoElenco(stato.name());
         em.persist(elencoCorrente);
     }
@@ -2815,11 +3066,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     public ElvElencoVersDaElab retrieveElencoInQueue(ElvElencoVer elenco) {
-        ElvElencoVersDaElab elencoVersDaElab = null;
         Query q = em.createQuery("SELECT elencoVersDaElab " + "FROM ElvElencoVersDaElab elencoVersDaElab "
                 + "WHERE elencoVersDaElab.elvElencoVer.idElencoVers = :idElenco");
         q.setParameter("idElenco", elenco.getIdElencoVers());
-        // try {
         return (ElvElencoVersDaElab) q.getSingleResult();
     }
 
@@ -2828,9 +3077,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "WHERE elencoInError.elvElencoVer.idElencoVers = :idElenco " + "AND elencoInError.tiEsito = :esito");
         q.setParameter("idElenco", elenco.getIdElencoVers());
         q.setParameter("esito", esito);
-        List<HsmElencoSessioneFirma> hsmElencoSessioneFirma = q.getResultList();
-
-        return hsmElencoSessioneFirma;
+        return q.getResultList();
     }
 
     /**
@@ -2845,7 +3092,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         List<AroUnitaDoc> uds = retrieveUdDocsInElenco(elenco);
         for (AroUnitaDoc ud : uds) {
             ud.setTiStatoUdElencoVers(status);
-            LOG.debug(" - Assegnato alla unità documentaria '" + ud.getIdUnitaDoc() + "' lo stato " + status);
+            LOG.debug(" - Assegnato alla unità documentaria '{}' lo stato {}", ud.getIdUnitaDoc(), status);
         }
     }
 
@@ -2861,7 +3108,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         List<AroDoc> docs = retrieveDocsInElenco(elenco);
         for (AroDoc doc : docs) {
             doc.setTiStatoDocElencoVers(status);
-            LOG.debug(" - Assegnato al doc '" + doc.getIdDoc() + "' lo stato " + status);
+            LOG.debug(" - Assegnato al doc '{}' lo stato {}", doc.getIdDoc(), status);
         }
     }
 
@@ -2877,13 +3124,12 @@ public class ElencoVersamentoHelper extends GenericHelper {
         List<AroUpdUnitaDoc> upds = retrieveUpdsInElenco(elenco);
         for (AroUpdUnitaDoc upd : upds) {
             upd.setTiStatoUpdElencoVers(status);
-            LOG.debug(" - Assegnata la upd '" + upd.getIdUpdUnitaDoc() + "' lo stato " + status);
+            LOG.debug(" - Assegnata la upd '{}' lo stato {}", upd.getIdUpdUnitaDoc(), status);
         }
     }
 
     public void deleteElvElencoVer(BigDecimal idElencoVers) {
         em.remove(em.find(ElvElencoVer.class, idElencoVers.longValue()));
-        // em.flush();
     }
 
     public void deleteElvElencoVersFasc(BigDecimal idElencoVersFasc) {
@@ -2922,7 +3168,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
         updVersDaElab.setAroUpdUnitaDoc(aroUpdUnitaDoc);
         updVersDaElab.setOrgStrut(aroUpdUnitaDoc.getOrgStrut());
         // MAC#22942
-        // Identificatore della sub struttura pari al valore definito sull’unità doc in aggiornamento
+        // Identificatore della sub struttura pari al valore definito sull’unità doc in
+        // aggiornamento
         updVersDaElab.setOrgSubStrut(aroUpdUnitaDoc.getAroUnitaDoc().getOrgSubStrut());
         // end MAC#22942
         updVersDaElab.setDecRegistroUnitaDoc(aroUpdUnitaDoc.getDecRegistroUnitaDoc());
@@ -2940,7 +3187,12 @@ public class ElencoVersamentoHelper extends GenericHelper {
         String queryStr = "SELECT u FROM ElvElencoVersDaElab u " + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers ";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers);
-        return (ElvElencoVersDaElab) query.getResultList().get(0);
+        final List<ElvElencoVersDaElab> resultList = query.getResultList();
+        if (resultList.isEmpty()) {
+            throw new NoResultException(
+                    "Nessun ElvElencoVersDaElab trovato per elvElencoVer.idElencoVers " + idElencoVers);
+        }
+        return resultList.get(0);
     }
 
     public byte[] retrieveFileIndiceElenco(long idElencoVers, String tiFileElencoVers) {
@@ -2949,7 +3201,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers);
         query.setParameter("tiFileElencoVers", tiFileElencoVers);
-        List list = query.getResultList();
+        List<ElvFileElencoVer> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
             return (byte[]) query.getResultList().get(0);
         } else {
@@ -2959,7 +3211,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
     public List<ElvFileElencoVer> retrieveFileIndiceElenco(long idElencoVers, String... tiFileElencoVers) {
         String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVer(u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVer u "
-                + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers AND u.tiFileElencoVers IN :tiFileElencoVers";
+                + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers AND u.tiFileElencoVers IN (:tiFileElencoVers)";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers);
         query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
@@ -2968,11 +3220,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
     public ElvFileElencoVer getFileIndiceElenco(long idElencoVers, String tiFileElencoVers) {
         String queryStr = "SELECT u FROM ElvFileElencoVer u " + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers "
-                + "AND u.tiFileElencoVers IN :tiFileElencoVers";
+                + "AND u.tiFileElencoVers IN (:tiFileElencoVers)";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers);
         query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
-        List<ElvFileElencoVer> elencoList = (List<ElvFileElencoVer>) query.getResultList();
+        List<ElvFileElencoVer> elencoList = query.getResultList();
         if (!elencoList.isEmpty()) {
             return elencoList.get(0);
         } else {
@@ -2987,7 +3239,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         Query query = getEntityManager()
                 .createQuery("SELECT a FROM ElvUrnElencoVers a WHERE a.elvElencoVers.idElencoVers = :idElencoVers");
         query.setParameter("idElencoVers", idElencoVers);
-        return (List<ElvUrnElencoVers>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<AroDoc> retrieveDocVersList(AroUnitaDoc ud) {
@@ -3011,10 +3263,16 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     public List<AroUnitaDoc> retrieveUdsModifDocAggUpdInElenco(long idElenco) {
-        Query q = em.createQuery("SELECT DISTINCT ud " + "FROM ElvVLisUdModifElenco e, AroUnitaDoc ud "
-                + "WHERE e.idElencoVers = :idElenco " + "AND e.idUnitaDoc = ud.idUnitaDoc " + "ORDER BY e.dtVersMin");
-        q.setParameter("idElenco", idElenco);
-        return q.getResultList();
+        Query q = em.createQuery("SELECT DISTINCT ud.idUnitaDoc,e.dtVersMin "
+                + "FROM ElvVLisUdModifElenco e, AroUnitaDoc ud " + "WHERE e.idElencoVers = :idElenco "
+                + "AND e.idUnitaDoc = ud.idUnitaDoc " + "ORDER BY e.dtVersMin");
+        q.setParameter("idElenco", bigDecimalFromLong(idElenco));
+        List<AroUnitaDoc> uds = new ArrayList<>();
+        for (Object[] o : (List<Object[]>) q.getResultList()) {
+            Long idUnitaDoc = (Long) o[0];
+            uds.add(em.find(AroUnitaDoc.class, idUnitaDoc));
+        }
+        return uds;
     }
 
     public List<AroDoc> retrieveDocAggList(AroUnitaDoc ud, long idElenco) {
@@ -3029,10 +3287,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
     public List<ElvVLisModifByUd> retrieveDocAggUpdList(AroUnitaDoc ud, long idElenco) {
         Query q = em.createQuery("SELECT e " + "FROM ElvVLisModifByUd e " + "WHERE e.idUnitaDoc = :idUnitaDoc "
                 + "AND e.idElencoVers = :idElenco " + "ORDER BY e.dtVers");
-        q.setParameter("idElenco", idElenco);
-        q.setParameter("idUnitaDoc", ud.getIdUnitaDoc());
-        List<ElvVLisModifByUd> modifs = q.getResultList();
-        return modifs;
+        q.setParameter("idElenco", bigDecimalFromLong(idElenco));
+        q.setParameter("idUnitaDoc", BigDecimal.valueOf(ud.getIdUnitaDoc()));
+        return q.getResultList();
     }
 
     /**
@@ -3040,7 +3297,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return long risultato count
      */
     public long contaUdVersate(Long idElencoVers) {
@@ -3057,11 +3314,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVersFasc
      *            id elenco versamento fascicolo
-     * 
+     *
      * @return long risultato count
      */
     public long contaFascVersati(Long idElencoVersFasc) {
-        String queryStr = "SELECT COUNT(ud) " + "FROM FasFascicolo fascicolo "
+        String queryStr = "SELECT COUNT(fascicolo) " + "FROM FasFascicolo fascicolo "
                 + "WHERE fascicolo.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc ";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
@@ -3074,7 +3331,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return long risultato count
      */
     public long contaDocVersati(Long idElencoVers) {
@@ -3092,7 +3349,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return lista oggetti di tipo {@link AroCompDoc}
      */
     public Object[] contaCompVersati(Long idElencoVers) {
@@ -3111,7 +3368,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return long risultato count
      */
     public long contaUdModificatePerDocAggiunti(Long idElencoVers) {
@@ -3129,14 +3386,14 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return long risultato count
      */
     public long contaUdModificatePerByDocAggiuntiByUpd(Long idElencoVers) {
         String queryStr = "SELECT e.niUnitaDocModElenco " + "FROM ElvVCountUdModif e "
                 + "WHERE e.idElencoVers = :idElencoVers ";
         Query query = em.createQuery(queryStr);
-        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("idElencoVers", bigDecimalFromLong(idElencoVers));
         BigDecimal num = (BigDecimal) query.getSingleResult();
         return num != null ? num.longValue() : 0L;
     }
@@ -3146,7 +3403,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return long risultato count
      */
     public long contaDocAggiunti(Long idElencoVers) {
@@ -3163,7 +3420,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return long risultato count
      */
     public long contaUpdUd(Long idElencoVers) {
@@ -3180,7 +3437,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return lista oggetti di tipo {@link AroCompDoc}
      */
     public Object[] contaCompPerDocAggiunti(Long idElencoVers) {
@@ -3196,12 +3453,11 @@ public class ElencoVersamentoHelper extends GenericHelper {
         Query q = em.createQuery(
                 "SELECT elencoVers.idElencoVers FROM ElvElencoVersDaElab elencoDaElab JOIN elencoDaElab.elvElencoVer elencoVers WHERE elencoDaElab.tiStatoElenco = :tiStatoElenco ORDER BY elencoDaElab.idStrut, elencoVers.dtCreazioneElenco");
         q.setParameter("tiStatoElenco", tiStatoElenco);
-        List<Long> elenchi = q.getResultList();
-        return elenchi;
+        return q.getResultList();
     }
 
     public List<ElvVLisElencoDaMarcare> retrieveElenchiIndiciAipDaMarcare(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, long idUserIam, String tiGestElenco) {
+            BigDecimal idStrut, long idUserIam, List<String> tiGestElenco) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT elenchi FROM ElvVLisElencoDaMarcare elenchi WHERE elenchi.idUserIam = :idUserIam ");
         if (idStrut != null) {
@@ -3213,12 +3469,12 @@ public class ElencoVersamentoHelper extends GenericHelper {
         if (idAmbiente != null) {
             queryStr.append("AND ").append("elenchi.idAmbiente = :idAmbiente ");
         }
-        if (StringUtils.isNotBlank(tiGestElenco)) {
-            queryStr.append("AND ").append("elenchi.tiGestElenco = :tiGestElenco ");
+        if (tiGestElenco != null && !tiGestElenco.isEmpty()) {
+            queryStr.append("AND ").append("elenchi.tiGestElenco IN(:tiGestElenco) ");
         }
 
         Query q = em.createQuery(queryStr.toString());
-        q.setParameter("idUserIam", idUserIam);
+        q.setParameter("idUserIam", bigDecimalFromLong(idUserIam));
         if (idStrut != null) {
             q.setParameter("idStrut", idStrut);
         }
@@ -3228,7 +3484,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         if (idAmbiente != null) {
             q.setParameter("idAmbiente", idAmbiente);
         }
-        if (StringUtils.isNotBlank(tiGestElenco)) {
+        if (tiGestElenco != null && !tiGestElenco.isEmpty()) {
             q.setParameter("tiGestElenco", tiGestElenco);
         }
         return q.getResultList();
@@ -3240,7 +3496,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElenco
      *            id dell'elenco validato.
-     * 
+     *
      * @return Set - insieme di id <strong>distinti</strong>
      */
     public Set<Long> retrieveUdVersOrAggInElenco(long idElenco) {
@@ -3271,7 +3527,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return true/false
      */
     public boolean existUdVersDocAggAnnullati(BigDecimal idElencoVers) {
@@ -3299,29 +3555,29 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "WHERE unitadoc.elvElencoVer.idElencoVers = :idElencoVers ";
         Query queryUd = em.createQuery(queryUdStr);
         queryUd.setParameter("idElencoVers", idElencoVers.longValue());
-        return (List<AroUnitaDoc>) queryUd.getResultList();
+        return queryUd.getResultList();
     }
 
     public List<AroDoc> getDocAggiuntiElenco(BigDecimal idElencoVers) {
         String queryUdStr = "SELECT doc FROM AroDoc doc WHERE doc.elvElencoVer.idElencoVers = :idElencoVers ";
         Query queryUd = em.createQuery(queryUdStr);
         queryUd.setParameter("idElencoVers", idElencoVers.longValue());
-        return (List<AroDoc>) queryUd.getResultList();
+        return queryUd.getResultList();
     }
 
     public List<AroUpdUnitaDoc> getUpdMetadatiElenco(BigDecimal idElencoVers) {
         String queryUdStr = "SELECT upd FROM AroUpdUnitaDoc upd WHERE upd.elvElencoVer.idElencoVers = :idElencoVers ";
         Query queryUd = em.createQuery(queryUdStr);
         queryUd.setParameter("idElencoVers", idElencoVers.longValue());
-        return (List<AroUpdUnitaDoc>) queryUd.getResultList();
+        return queryUd.getResultList();
     }
 
     public ElvVChkAddDocAgg retrieveElvVChkAddDocAggByIdDocAggByIdElenco(long idDoc, long idElencoVers) {
         try {
             Query query = getEntityManager().createNamedQuery("ElvVChkAddDocAgg.findByIdDocIdElenco",
                     ElvVChkAddDocAgg.class);
-            query.setParameter("idDoc", idDoc);
-            query.setParameter("idElencoVersCor", idElencoVers);
+            query.setParameter("idDoc", bigDecimalFromLong(idDoc));
+            query.setParameter("idElencoVersCor", bigDecimalFromLong(idElencoVers));
             return (ElvVChkAddDocAgg) query.getSingleResult();
         } catch (RuntimeException ex) {
             LOG.error("Errore nell'estrazione di ElvVChkAddDocAgg", ex);
@@ -3329,18 +3585,43 @@ public class ElencoVersamentoHelper extends GenericHelper {
         }
     }
 
+    // MAC#28020
+    public ElvVChkAddDocAggNoEleCor retrieveElvVChkAddDocAggNoEleCorByIdDoc(long idDoc) {
+        try {
+            Query query = em.createNamedQuery("ElvVChkAddDocAggNoEleCor.findByIdDoc", ElvVChkAddDocAggNoEleCor.class);
+            query.setParameter("idDoc", bigDecimalFromLong(idDoc));
+            return (ElvVChkAddDocAggNoEleCor) query.getSingleResult();
+        } catch (RuntimeException ex) {
+            LOG.error("Errore nell'estrazione di ElvVChkAddDocAggNoEleCor", ex);
+            throw ex;
+        }
+    }
+    // end MAC#28020
+
     public ElvVChkAddUpdUd retrieveElvVChkAddUpdUdByIdUpdUdByIdElenco(long idUpdUnitaDoc, long idElencoVers) {
         try {
-            Query query = getEntityManager().createNamedQuery("ElvVChkAddUpdUd.findByIdUpdIdElenco",
-                    ElvVChkAddUpdUd.class);
-            query.setParameter("idUpdUnitaDoc", idUpdUnitaDoc);
-            query.setParameter("idElencoVersCor", idElencoVers);
+            Query query = em.createNamedQuery("ElvVChkAddUpdUd.findByIdUpdIdElenco", ElvVChkAddUpdUd.class);
+            query.setParameter("idUpdUnitaDoc", bigDecimalFromLong(idUpdUnitaDoc));
+            query.setParameter("idElencoVersCor", bigDecimalFromLong(idElencoVers));
             return (ElvVChkAddUpdUd) query.getSingleResult();
         } catch (RuntimeException ex) {
             LOG.error("Errore nell'estrazione di ElvVChkAddUpdUd", ex);
             throw ex;
         }
     }
+
+    // MAC#28020
+    public ElvVChkAddUpdUdNoEleCor retrieveElvVChkAddUpdUdNoEleCorByIdUpdUd(long idUpdUnitaDoc) {
+        try {
+            Query query = em.createNamedQuery("ElvVChkAddUpdUdNoEleCor.findByIdUpd", ElvVChkAddUpdUdNoEleCor.class);
+            query.setParameter("idUpdUnitaDoc", bigDecimalFromLong(idUpdUnitaDoc));
+            return (ElvVChkAddUpdUdNoEleCor) query.getSingleResult();
+        } catch (RuntimeException ex) {
+            LOG.error("Errore nell'estrazione di ElvVChkAddUpdUdNoEleCor", ex);
+            throw ex;
+        }
+    }
+    // end MAC#28020
 
     public List<SessioneVersamentoExt> leggiXmlVersamentiElencoDaUnitaDoc(long idUnitaDoc, String baseUrnUnitaDoc)
             throws ParerNoResultException {
@@ -3350,17 +3631,18 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * recupero la sessione relativa al versamento originale dell'UD. per ora non ho bisogno di conoscerne l'elenco
          * dei documenti
          */
-        LOG.debug("Ricavo la sessione di versamento per l'UD id=" + idUnitaDoc);
+        LOG.debug("Ricavo la sessione di versamento per l'UD id={}", idUnitaDoc);
         String queryStr = "select t from VrsSessioneVers t " + "where t.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                 + "and t.aroDoc is null " + "and t.tiStatoSessioneVers = 'CHIUSA_OK' "
                 + "and t.tiSessioneVers = 'VERSAMENTO' ";
 
-        javax.persistence.Query query = getEntityManager().createQuery(queryStr);
+        javax.persistence.Query query = em.createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc);
 
         List<VrsSessioneVers> vsv = query.getResultList();
-        if (vsv.size() > 0) {
+        if (!vsv.isEmpty()) {
             SessioneVersamentoExt sveVersamentoOrig = new SessioneVersamentoExt();
+            sveVersamentoOrig.setIdUnitaDoc(vsv.get(0).getAroUnitaDoc().getIdUnitaDoc());
             sveVersamentoOrig.setIdSessioneVers(vsv.get(0).getIdSessioneVers());
             sveVersamentoOrig.setDataSessioneVers(vsv.get(0).getDtChiusura());
             sveVersamentoOrig.setTipoSessione(Constants.TipoSessione.valueOf(vsv.get(0).getTiSessioneVers()));
@@ -3372,25 +3654,32 @@ public class ElencoVersamentoHelper extends GenericHelper {
                     + "where xml.vrsDatiSessioneVers.vrsSessioneVers.idSessioneVers = :idSessioneVers "
                     + "and xml.vrsDatiSessioneVers.tiDatiSessioneVers = 'XML_DOC' ";
 
-            query = getEntityManager().createQuery(queryStr);
+            query = em.createQuery(queryStr);
             query.setParameter("idSessioneVers", sveVersamentoOrig.getIdSessioneVers());
+
+            // Nota: dato che il tipo sessione è 'VERSAMENTO' si recuparano i metadata dell'unita documentaria (e non
+            // del documento)
+            // vedi : 't.tiSessioneVers = 'VERSAMENTO' nella query sopra
+            Map<String, String> xmlVersamentoOs = objectStorageService
+                    .getObjectSipUnitaDoc(sveVersamentoOrig.getIdUnitaDoc());
 
             List<VrsXmlDatiSessioneVers> vxdsv = query.getResultList();
             for (VrsXmlDatiSessioneVers xml : vxdsv) {
                 SessioneVersamentoExt.DatiXml tmpDatiXml = new SessioneVersamentoExt().new DatiXml();
                 tmpDatiXml.setTipoXmlDati(xml.getTiXmlDati());
                 tmpDatiXml.setVersione(xml.getCdVersioneXml());
-                tmpDatiXml.setXml(xml.getBlXml());
+                // Il backend ORA è Object storage ma l'xml è già stato migrato? il controllo
+                // sul null serve a questo
+                if (!xmlVersamentoOs.isEmpty() && Strings.isNull(xml.getBlXml())) {
+                    tmpDatiXml.setXml(xmlVersamentoOs.get(xml.getTiXmlDati()));
+                } else {
+                    tmpDatiXml.setXml(xml.getBlXml());
+                }
                 // EVO#16486
                 // Recupero lo urn ORIGINALE dalla tabella VRS_URN_XML_SESSIONE_VERS (EVO#16486)
-                VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils
-                        .find(xml.getVrsUrnXmlSessioneVers(), new Predicate() {
-                            @Override
-                            public boolean evaluate(final Object object) {
-                                return ((VrsUrnXmlSessioneVers) object).getTiUrn()
-                                        .equals(TiUrnXmlSessioneVers.ORIGINALE);
-                            }
-                        });
+                VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils.find(
+                        xml.getVrsUrnXmlSessioneVers(),
+                        object -> ((VrsUrnXmlSessioneVers) object).getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE));
                 if (urnXmlSessioneVers != null) {
                     tmpDatiXml.setUrn(urnXmlSessioneVers.getDsUrn());
                 } else {
@@ -3458,7 +3747,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 + "ORDER BY statoElencoVers.pgStatoElencoVers DESC ";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers.longValue());
-        List<BigDecimal> risultato = (List<BigDecimal>) query.getResultList();
+        List<BigDecimal> risultato = query.getResultList();
         if (!risultato.isEmpty()) {
             return risultato.get(0);
         }
@@ -3469,7 +3758,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
         String queryStr = "SELECT tiEveStatoElencoVers.idTiEveStatoElencoVers FROM DecTiEveStatoElencoVers tiEveStatoElencoVers "
                 + "WHERE tiEveStatoElencoVers.cdTiEveStatoElencoVers = :cdTiEveStatoElencoVers ";
 
-        Query query = getEntityManager().createQuery(queryStr);
+        Query query = em.createQuery(queryStr);
         query.setParameter("cdTiEveStatoElencoVers", cdTiEveStatoElencoVers);
         List<Long> list = query.getResultList();
         if (list != null && !list.isEmpty()) {
@@ -3479,26 +3768,13 @@ public class ElencoVersamentoHelper extends GenericHelper {
         }
     }
 
-    public List<ElvVLisElencoVersStato> getElenchiFiscaliStrutturaAperti(long idStrut, int anno) {
-        String queryStr = "SELECT lisElencoVersStato FROM ElvVLisElencoVersStato lisElencoVersStato "
-                + "WHERE lisElencoVersStato.idStrut = :idStrut " + "AND lisElencoVersStato.flElencoFisc = '1' "
-                + "AND lisElencoVersStato.tiStatoElenco = 'APERTO' "
-                + "AND lisElencoVersStato.tiStatoElenco = 'APERTO' ";
-
-        Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("idStrut", idStrut);
-        return query.getResultList();
-
-    }
-
     public List<ElvElencoVer> getElenchiFiscaliByStrutturaAperti(long idStrut, int anno) {
         Query query = em.createQuery("SELECT elenco FROM ElvElencoVer elenco " + "JOIN elenco.orgStrut strut "
                 + "WHERE strut.idStrut = :idStrut " + "AND elenco.flElencoFisc = '1' "
                 + "AND elenco.tiStatoElenco = 'APERTO' "
                 + "AND EXISTS (SELECT unitaDoc.idUnitaDoc FROM AroUnitaDoc unitaDoc "
                 + "WHERE unitaDoc.elvElencoVer = elenco " + "AND unitaDoc.aaKeyUnitaDoc = :anno) ");
-        query.setParameter("anno", anno);
+        query.setParameter("anno", bigDecimalFromInteger(anno));
         query.setParameter("idStrut", idStrut);
         return query.getResultList();
     }
@@ -3514,5 +3790,20 @@ public class ElencoVersamentoHelper extends GenericHelper {
         List<ElvStatoElencoVer> stati = query.getResultList();
         return stati != null && !stati.isEmpty();
     }
+
+    // MAC#28509
+    public List<ElvElencoVer> getElenchiFiscaliSoloDocAggMdByStrutturaAperti(long idStrut, int anno) {
+        Query query = em.createQuery("SELECT elenco FROM ElvElencoVer elenco " + "JOIN elenco.orgStrut strut "
+                + "WHERE strut.idStrut = :idStrut " + "AND elenco.flElencoFisc = '1' "
+                + "AND elenco.tiStatoElenco = 'APERTO' " + "AND (EXISTS (SELECT doc FROM AroDoc doc "
+                + "WHERE doc.tiCreazione = 'AGGIUNTA_DOCUMENTO' " + "AND doc.elvElencoVer = elenco "
+                + "AND doc.aroUnitaDoc.aaKeyUnitaDoc = :anno " + "AND doc.aroUnitaDoc.elvElencoVer != elenco) "
+                + "OR EXISTS (SELECT aggMd FROM AroUpdUnitaDoc aggMd " + "WHERE aggMd.elvElencoVer = elenco "
+                + "AND aggMd.aroUnitaDoc.aaKeyUnitaDoc = :anno " + "AND aggMd.aroUnitaDoc.elvElencoVer != elenco))");
+        query.setParameter("anno", bigDecimalFromInteger(anno));
+        query.setParameter("idStrut", idStrut);
+        return query.getResultList();
+    }
+    // end MAC#28509
 
 }

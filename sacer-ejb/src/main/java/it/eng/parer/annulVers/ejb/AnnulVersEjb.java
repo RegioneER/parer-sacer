@@ -1,39 +1,23 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.annulVers.ejb;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-
 import com.csvreader.CsvReader;
-
 import it.eng.parer.annulVers.dto.FascBean;
 import it.eng.parer.annulVers.dto.RicercaRichAnnulVersBean;
 import it.eng.parer.annulVers.dto.UnitaDocBean;
@@ -41,29 +25,7 @@ import it.eng.parer.annulVers.helper.AnnulVersHelper;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.AroDoc;
-import it.eng.parer.entity.AroErrRichAnnulVers;
-import it.eng.parer.entity.AroFileRichAnnulVers;
-import it.eng.parer.entity.AroItemRichAnnulVers;
-import it.eng.parer.entity.AroRichAnnulVers;
-import it.eng.parer.entity.AroStatoRichAnnulVers;
-import it.eng.parer.entity.AroUnitaDoc;
-import it.eng.parer.entity.AroUpdUnitaDoc;
-import it.eng.parer.entity.AroXmlRichAnnulVers;
-import it.eng.parer.entity.DecTipoDoc;
-import it.eng.parer.entity.ElvElencoVer;
-import it.eng.parer.entity.ElvElencoVersFasc;
-import it.eng.parer.entity.ElvElencoVersFascAnnul;
-import it.eng.parer.entity.ElvElencoVersUdAnnul;
-import it.eng.parer.entity.FasFascicolo;
-import it.eng.parer.entity.FasStatoConservFascicolo;
-import it.eng.parer.entity.IamUser;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.SerVerSerie;
-import it.eng.parer.entity.VolAppartDocVolume;
-import it.eng.parer.entity.VolAppartUnitaDocVolume;
-import it.eng.parer.entity.VolVolumeConserv;
-import it.eng.parer.entity.VolVolumeVersUdAnnul;
+import it.eng.parer.entity.*;
 import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
 import it.eng.parer.entity.constraint.FasStatoConservFascicolo.TiStatoConservazione;
@@ -73,23 +35,8 @@ import it.eng.parer.fascicoli.helper.FascicoliHelper;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.serie.helper.SerieHelper;
-import it.eng.parer.slite.gen.viewbean.AroVLisItemRichAnnvrsTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisStatoRichAnnvrsTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicRichAnnvrsRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicRichAnnvrsTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisRichAnnvrsRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisStatoRichAnnvrsRowBean;
-import it.eng.parer.viewEntity.AroVLisItemRichAnnvrs;
-import it.eng.parer.viewEntity.AroVLisStatoRichAnnvrs;
-import it.eng.parer.viewEntity.AroVRicRichAnnvrs;
-import it.eng.parer.viewEntity.AroVVisRichAnnvrs;
-import it.eng.parer.viewEntity.AroVVisStatoRichAnnvrs;
-import it.eng.parer.viewEntity.ElvVLisElencoFascAnnul;
-import it.eng.parer.viewEntity.ElvVLisElencoUdAnnul;
-import it.eng.parer.viewEntity.ElvVLisFascAnnulByElenco;
-import it.eng.parer.viewEntity.ElvVLisUdAnnulByElenco;
-import it.eng.parer.viewEntity.VolVLisUdAnnulByVolume;
-import it.eng.parer.viewEntity.VolVLisVolumeUdAnnul;
+import it.eng.parer.slite.gen.viewbean.*;
+import it.eng.parer.viewEntity.*;
 import it.eng.parer.web.helper.ComponentiHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.Constants;
@@ -101,39 +48,28 @@ import it.eng.parer.ws.xml.esitoRichAnnullVers.EsitoRichiestaAnnullamentoVersame
 import it.eng.parer.ws.xml.richAnnullVers.RichiestaAnnullamentoVersamenti;
 import it.eng.parer.ws.xml.richAnnullVers.TipoVersamentoType;
 import it.eng.parer.ws.xml.richAnnullVers.VersamentoDaAnnullareType;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import javax.ejb.*;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationException;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**
  *
@@ -145,6 +81,7 @@ import org.slf4j.LoggerFactory;
 public class AnnulVersEjb {
 
     private static final Logger logger = LoggerFactory.getLogger(AnnulVersEjb.class);
+    private static final String LOG_MESSAGE_ANNULLA_UD = "Annullamento Versamenti Unit\u00E0 Documentarie --- ";
 
     @Resource
     private SessionContext context;
@@ -166,6 +103,8 @@ public class AnnulVersEjb {
     private SerieHelper serieHelper;
     @EJB
     private FascicoliHelper fascicoliHelper;
+    @PersistenceContext(unitName = "ParerJPA")
+    private EntityManager entityManager;
 
     // <editor-fold defaultstate="collapsed" desc="Creazione richiesta annullamento
     // versamenti">
@@ -183,7 +122,7 @@ public class AnnulVersEjb {
     public boolean checkCsvHeaders(byte[] fileByteArray) throws IOException {
         boolean result = true;
         /* Recupero il CSVReader */
-        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), Charset.forName("UTF-8"));
+        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), StandardCharsets.UTF_8);
         csvReader.setSkipEmptyRecords(true);
         try {
             if (csvReader.readHeaders()) {
@@ -220,7 +159,7 @@ public class AnnulVersEjb {
     public boolean checkCsvHeadersFasc(byte[] fileByteArray) throws IOException {
         boolean result = true;
         /* Recupero il CSVReader */
-        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), Charset.forName("UTF-8"));
+        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), StandardCharsets.UTF_8);
         csvReader.setSkipEmptyRecords(true);
         try {
             if (csvReader.readHeaders()) {
@@ -335,7 +274,7 @@ public class AnnulVersEjb {
                 if (fileByteArray != null) {
                     AroFileRichAnnulVers fileRich = new AroFileRichAnnulVers();
                     fileRich.setTiFile(CostantiDB.TipoFileRichAnnulVers.FILE_UD_ANNUL.name());
-                    fileRich.setBlFile(new String(fileByteArray, Charset.forName("UTF-8")));
+                    fileRich.setBlFile(new String(fileByteArray, StandardCharsets.UTF_8));
                     rich.addAroFileRichAnnulVer(fileRich);
 
                     // Preparo gli item e gli eventuali errori in ARO_ITEM_RICH_ANNUL_VERS e
@@ -346,7 +285,7 @@ public class AnnulVersEjb {
                 if (fileByteArray != null) {
                     AroFileRichAnnulVers fileRich = new AroFileRichAnnulVers();
                     fileRich.setTiFile(CostantiDB.TipoFileRichAnnulVers.FILE_FASC_ANNUL.name());
-                    fileRich.setBlFile(new String(fileByteArray, Charset.forName("UTF-8")));
+                    fileRich.setBlFile(new String(fileByteArray, StandardCharsets.UTF_8));
                     rich.addAroFileRichAnnulVer(fileRich);
 
                     // Preparo gli item e gli eventuali errori in ARO_ITEM_RICH_ANNUL_VERS e
@@ -415,10 +354,6 @@ public class AnnulVersEjb {
         AroRichAnnulVers rich = new AroRichAnnulVers();
         try {
             OrgStrut strut = helper.findById(OrgStrut.class, idStrut);
-            IamUser user = helper.findById(IamUser.class, idUserIam);
-            if (user.getAroStatoRichAnnulVers() == null) {
-                user.setAroStatoRichAnnulVers(new ArrayList<>());
-            }
 
             // Inizializzo la richiesta creata dal WS
             rich = initAroRichAnnulVers(cdRichAnnulVers, dsRichAnnulVers, ntRichAnnulVers, tiRichAnnulVers, dtCreazione,
@@ -479,7 +414,7 @@ public class AnnulVersEjb {
      *            il file csv in byte[]
      * @param idUserIam
      *            id utente che ha creato la richiesta (ovvero colui che ha definito il primo stato)
-     * 
+     *
      * @throws IOException
      *             eccezione di tipo IO
      * @throws ParerUserError
@@ -489,21 +424,19 @@ public class AnnulVersEjb {
     public void handleCsvRecords(AroRichAnnulVers rich, byte[] fileByteArray, long idUserIam)
             throws IOException, ParerUserError {
         /* Recupero il CSVReader */
-        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), Charset.forName("UTF-8"));
+        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), StandardCharsets.UTF_8);
         csvReader.setSkipEmptyRecords(true);
         try {
             if (csvReader.readHeaders()) {
-                logger.debug(AnnulVersEjb.class.getSimpleName() + " --- Eseguo il parsing del file csv");
+                logger.debug("Eseguo il parsing del file csv");
                 List<String> headers = Arrays.asList(csvReader.getHeaders());
                 List<String> headersCorretti = new ArrayList<>();
                 // Ottengo gli header corretti ignorando il case,
                 // per cercare di produrre in lettura delle righe meno cicli possibili
                 for (String header : headers) {
-                    if (header.equalsIgnoreCase(CostantiDB.NomeCampo.REGISTRO.name())) {
-                        headersCorretti.add(header);
-                    } else if (header.equalsIgnoreCase(CostantiDB.NomeCampo.ANNO.name())) {
-                        headersCorretti.add(header);
-                    } else if (header.equalsIgnoreCase(CostantiDB.NomeCampo.NUMERO.name())) {
+                    if (header.equalsIgnoreCase(CostantiDB.NomeCampo.REGISTRO.name())
+                            || header.equalsIgnoreCase(CostantiDB.NomeCampo.ANNO.name())
+                            || header.equalsIgnoreCase(CostantiDB.NomeCampo.NUMERO.name())) {
                         headersCorretti.add(header);
                     }
                 }
@@ -605,7 +538,7 @@ public class AnnulVersEjb {
      *            il file csv in byte[]
      * @param idUserIam
      *            id utente che ha creato la richiesta (ovvero colui che ha definito il primo stato)
-     * 
+     *
      * @throws IOException
      *             errore generico di tipo IO
      * @throws ParerUserError
@@ -615,19 +548,18 @@ public class AnnulVersEjb {
     public void handleCsvRecordsFasc(AroRichAnnulVers rich, byte[] fileByteArray, long idUserIam)
             throws IOException, ParerUserError {
         /* Recupero il CSVReader */
-        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), Charset.forName("UTF-8"));
+        CsvReader csvReader = new CsvReader(new ByteArrayInputStream(fileByteArray), StandardCharsets.UTF_8);
         csvReader.setSkipEmptyRecords(true);
         try {
             if (csvReader.readHeaders()) {
-                logger.debug(AnnulVersEjb.class.getSimpleName() + " --- Eseguo il parsing del file csv");
+                logger.debug("Eseguo il parsing del file csv");
                 List<String> headers = Arrays.asList(csvReader.getHeaders());
                 List<String> headersCorretti = new ArrayList<>();
                 // Ottengo gli header corretti ignorando il case,
                 // per cercare di produrre in lettura delle righe meno cicli possibili
                 for (String header : headers) {
-                    if (header.equalsIgnoreCase(CostantiDB.NomeCampo.ANNO.name())) {
-                        headersCorretti.add(header);
-                    } else if (header.equalsIgnoreCase(CostantiDB.NomeCampo.NUMERO.name())) {
+                    if (header.equalsIgnoreCase(CostantiDB.NomeCampo.ANNO.name())
+                            || header.equalsIgnoreCase(CostantiDB.NomeCampo.NUMERO.name())) {
                         headersCorretti.add(header);
                     }
                 }
@@ -723,20 +655,24 @@ public class AnnulVersEjb {
      *            la richiesta di annullamento
      * @param versamentiDaAnnullare
      *            versamenti da annullare
-     * @param IdUserIam
+     * @param idUserIam
      *            id user IAM
-     * 
-     * @throws IOException
-     *             errore generico di tipo IO
+     *
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void handleXmlRecords(AroRichAnnulVers rich,
-            RichiestaAnnullamentoVersamenti.VersamentiDaAnnullare versamentiDaAnnullare, long IdUserIam)
-            throws IOException {
+            RichiestaAnnullamentoVersamenti.VersamentiDaAnnullare versamentiDaAnnullare, long idUserIam) {
         int progressivoItem = 1;
         Set<UnitaDocBean> udsInRich = new HashSet<>();
         Set<FascBean> fascsInRich = new HashSet<>();
+        logger.info("handleXmlRecords elabora {} elementi - INIZIO",
+                versamentiDaAnnullare.getVersamentoDaAnnullare().size());
         for (VersamentoDaAnnullareType versamentoDaAnnullare : versamentiDaAnnullare.getVersamentoDaAnnullare()) {
+            entityManager.flush();
+            entityManager.clear();
+            logger.debug(" {} - elaborazione [{}-{}-{}-{}] - INIZIO ***", progressivoItem,
+                    versamentoDaAnnullare.getAnno(), versamentoDaAnnullare.getTipoVersamento(),
+                    versamentoDaAnnullare.getTipoRegistro(), versamentoDaAnnullare.getNumero());
             String registro = versamentoDaAnnullare.getTipoRegistro();
             long annoInt = versamentoDaAnnullare.getAnno();
             String numero = versamentoDaAnnullare.getNumero();
@@ -753,6 +689,7 @@ public class AnnulVersEjb {
                  * restituendo esso false, verrebbe eseguita la porzione di codice presente nell'else
                  */
                 if (udsInRich.add(new UnitaDocBean(idStrut, registro, anno, numero))) {
+                    // Creo la AroItemRichAnnulVers figlia della AroRichAnnulVers
                     AroItemRichAnnulVers item = createAroItemRichAnnulVers(rich, registro, anno, numero,
                             progressivoItem, CostantiDB.TipiEntitaSacer.UNI_DOC.name(),
                             CostantiDB.StatoItemRichAnnulVers.NON_ANNULLABILE.name());
@@ -763,7 +700,7 @@ public class AnnulVersEjb {
                         AroUnitaDoc ud = helper.findById(AroUnitaDoc.class, idUnitaDoc);
                         item.setAroUnitaDoc(ud);
                         // Già qui, controllo l'unità doc definita nella richiesta e che sto trattando
-                        controlloItemDaAnnullare(item, IdUserIam);
+                        controlloItemDaAnnullare(item, idUserIam);
                     } else {
                         // Se non esiste una ud non annullata, allora controllo se esiste in generale
                         if (udHelper.existAroUnitaDoc(idStrut, registro, anno, numero)) {
@@ -784,6 +721,7 @@ public class AnnulVersEjb {
                     }
                     progressivoItem++;
                 } else {
+                    // UD già presente nella richiesta, non la posso annullare due volte
                     AroItemRichAnnulVers item = createAroItemRichAnnulVers(rich, registro, anno, numero,
                             progressivoItem, CostantiDB.TipiEntitaSacer.UNI_DOC.name(),
                             CostantiDB.StatoItemRichAnnulVers.NON_ANNULLABILE.name());
@@ -805,7 +743,7 @@ public class AnnulVersEjb {
                         FasFascicolo fasc = helper.findById(FasFascicolo.class, idFasc);
                         item.setFasFascicolo(fasc);
                         // Già qui, controllo il fascicolo definito nella richiesta e che sto trattando
-                        controlloItemDaAnnullare(item, IdUserIam);
+                        controlloItemDaAnnullare(item, idUserIam);
                     } else {
                         // Se non esiste un fascicolo non annullato, allora controllo se esiste in generale
                         if (fascicoliHelper.existsFascicolo(idStrut, anno, numero)) {
@@ -835,7 +773,13 @@ public class AnnulVersEjb {
                 }
                 // end MEV#26446
             }
+            logger.debug(" {} - elaborazione [{}-{}-{}-{}] - FINE ***", progressivoItem,
+                    versamentoDaAnnullare.getAnno(), versamentoDaAnnullare.getTipoVersamento(),
+                    versamentoDaAnnullare.getTipoRegistro(), versamentoDaAnnullare.getNumero());
+
         }
+        logger.info("handleXmlRecords - FINE");
+
     }
 
     /**
@@ -1120,15 +1064,14 @@ public class AnnulVersEjb {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Annullamento versamenti">
-    public void annullamentoVersamenti() throws ParerInternalError {
+    public void annullamentoVersamenti() {
         /*
          * Determino le richieste con stato CHIUSA per le quali non sia definito un item con stato DA_ANNULLARE_IN_PING
          * oppure le richieste con stato COMUNICATA A SACER, purché non immediate
          */
         List<AroRichAnnulVers> richiesteAnnullamento = helper.getRichiesteAnnullamentoVersamentoDaElab();
-        logger.info(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Sono state ricavate: "
-                + richiesteAnnullamento.size() + " richieste da elaborare");
+        logger.info("{} Sono state ricavate: {} richieste da elaborare", LOG_MESSAGE_ANNULLA_UD,
+                richiesteAnnullamento.size());
 
         for (AroRichAnnulVers richiestaAnnullamento : richiesteAnnullamento) {
             // Determino l'utente che ha definito lo stato corrente della richiesta
@@ -1142,8 +1085,7 @@ public class AnnulVersEjb {
          */
         jobHelper.writeAtomicLogJob(JobConstants.JobEnum.EVASIONE_RICH_ANNUL_VERS.name(),
                 JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-        logger.info(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Esecuzione job terminata con successo!");
+        logger.info("{} Esecuzione job terminata con successo!", LOG_MESSAGE_ANNULLA_UD);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -1160,16 +1102,14 @@ public class AnnulVersEjb {
             for (AroItemRichAnnulVers itemRichAnnulVers : richiestaAnnullamento.getAroItemRichAnnulVers()) {
                 // Controllo che l'item esista per loccarlo
                 if (itemRichAnnulVers.getAroUnitaDoc() != null) {
-                    AroUnitaDoc unitaDoc = helper.findByIdWithLock(AroUnitaDoc.class,
-                            itemRichAnnulVers.getAroUnitaDoc().getIdUnitaDoc());
+                    helper.findByIdWithLock(AroUnitaDoc.class, itemRichAnnulVers.getAroUnitaDoc().getIdUnitaDoc());
                 }
             }
         } else if (richiestaAnnullamento.getTiRichAnnulVers().equals(CostantiDB.TiRichAnnulVers.FASCICOLI.name())) {
             for (AroItemRichAnnulVers itemRichAnnulVers : richiestaAnnullamento.getAroItemRichAnnulVers()) {
                 // Controllo che l'item esista per loccarlo
                 if (itemRichAnnulVers.getFasFascicolo() != null) {
-                    FasFascicolo fascicolo = helper.findByIdWithLock(FasFascicolo.class,
-                            itemRichAnnulVers.getFasFascicolo().getIdFascicolo());
+                    helper.findByIdWithLock(FasFascicolo.class, itemRichAnnulVers.getFasFascicolo().getIdFascicolo());
                 }
             }
         }
@@ -1177,8 +1117,8 @@ public class AnnulVersEjb {
         // Se la richiesta ha stato corrente CHIUSA
         if (statoRichAnnulVers.getTiStatoRichAnnulVers().equals(CostantiDB.StatoRichAnnulVers.CHIUSA.name())) {
             proseguiAnnullamento = true;
-            logger.debug(AnnulVersEjb.class.getSimpleName()
-                    + " --- Annullamento Versamenti - Verifica della richiesta con stato CHIUSA");
+            logger.debug("{} --- Annullamento Versamenti - Verifica della richiesta con stato CHIUSA",
+                    AnnulVersEjb.class.getSimpleName());
 
             // Elimino tutti gli errori rilevati sugli item della richiesta, tranne quelli
             // di tipo ITEM_NON_ESISTE e
@@ -1189,7 +1129,6 @@ public class AnnulVersEjb {
             List<AroItemRichAnnulVers> itemRichAnnulVersList = richiestaAnnullamento.getAroItemRichAnnulVers();
             for (AroItemRichAnnulVers item : itemRichAnnulVersList) {
                 // Assumo lock esclusivo sull'unità doc definita nell'item della richiesta
-                // evHelper.lockUnitaDoc(item.getAroUnitaDoc());
                 item.setTiStatoItem(CostantiDB.StatoItemRichAnnulVers.NON_ANNULLABILE.name());
 
                 /*
@@ -1217,6 +1156,8 @@ public class AnnulVersEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void evasioneRichiestaAnnullamento(AroRichAnnulVers richiestaAnnullamento) {
+        richiestaAnnullamento = entityManager.find(AroRichAnnulVers.class, richiestaAnnullamento.getIdRichAnnulVers(),
+                LockModeType.PESSIMISTIC_WRITE);
         if (richiestaAnnullamento.getTiRichAnnulVers().equals(CostantiDB.TiRichAnnulVers.UNITA_DOC.name())) {
             evadiAnnullamentoVersamentiUnitaDoc(richiestaAnnullamento);
         } else if (richiestaAnnullamento.getTiRichAnnulVers().equals(CostantiDB.TiRichAnnulVers.FASCICOLI.name())) {
@@ -1227,24 +1168,29 @@ public class AnnulVersEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void evadiAnnullamentoVersamentiUnitaDoc(AroRichAnnulVers richiestaAnnullamento) {
         long idRichAnnulVers = richiestaAnnullamento.getIdRichAnnulVers();
+        logger.debug("{} Id richiesta annullamento versamento {}", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         AroStatoRichAnnulVers statoRichAnnulVers = helper.findById(AroStatoRichAnnulVers.class,
                 richiestaAnnullamento.getIdStatoRichAnnulVersCor());
-        logger.info("Evasione richiesta ID: " + idRichAnnulVers);
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Procedo ad evadere la richiesta avente id:"
-                + idRichAnnulVers);
+        logger.info("{} Evasione richiesta ID: {}", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
+        logger.debug("{} Procedo ad evadere la richiesta avente id:{}", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
+        logger.debug("{} tiStatoRichAnnulVers={} dtRegStatoRichAnnulVers={}", LOG_MESSAGE_ANNULLA_UD,
+                statoRichAnnulVers.getTiStatoRichAnnulVers(), statoRichAnnulVers.getDtRegStatoRichAnnulVers());
         // Definisco come data di annullamento la data corrente
         Calendar cal = Calendar.getInstance();
         Date dataAnnullamento = cal.getTime();
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
         String dtString = df.format(dataAnnullamento);
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Gestione dei volumi di conservazione della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} Gestione dei volumi di conservazione della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD,
+                idRichAnnulVers);
         List<VolVLisVolumeUdAnnul> volumiList = helper.retrieveVolVLisVolumeUdAnnul(idRichAnnulVers);
+        logger.debug("{} Trovati {} volumi", LOG_MESSAGE_ANNULLA_UD, volumiList.size());
         // Per ogni appartenenza dell'unit\u00E0 doc al volume
         for (VolVLisVolumeUdAnnul vols : volumiList) {
-            VolVolumeConserv volume = helper.findById(VolVolumeConserv.class, vols.getIdVolumeConserv());
+            logger.debug("{} Elaboro il volume con idRichAnnulVers={} idVolumeConserv={}", LOG_MESSAGE_ANNULLA_UD,
+                    vols.getVolVLisVolumeUdAnnulId().getIdRichAnnulVers(),
+                    vols.getVolVLisVolumeUdAnnulId().getIdVolumeConserv());
+            VolVolumeConserv volume = helper.findById(VolVolumeConserv.class,
+                    vols.getVolVLisVolumeUdAnnulId().getIdVolumeConserv());
             if (StringUtils.isBlank(vols.getNtVolumeChiuso()) || !vols.getNtVolumeChiuso().contains(
                     "Nel volume sono presenti unit\u00E0 documentarie di cui \u00E8 stato annullato il versamento")) {
                 // Aggiorno la nota del volume
@@ -1259,7 +1205,7 @@ public class AnnulVersEjb {
              * doc in esso presenti ed annullate
              */
             List<VolVLisUdAnnulByVolume> uds = helper.retrieveVolVLisUdAnnulByVolume(idRichAnnulVers,
-                    vols.getIdVolumeConserv().longValue());
+                    vols.getVolVLisVolumeUdAnnulId().getIdVolumeConserv().longValue());
             for (VolVLisUdAnnulByVolume udAnnulInVolume : uds) {
                 VolVolumeVersUdAnnul volVolumeVersUdAnnul = new VolVolumeVersUdAnnul();
                 AroUnitaDoc ud = helper.findById(AroUnitaDoc.class, udAnnulInVolume.getIdUnitaDoc());
@@ -1277,27 +1223,36 @@ public class AnnulVersEjb {
                             + "Versamento del documento annullato in data " + dtString).trim());
                 }
             }
-        }
+            logger.debug("{} Fine elaborazione del volume con idRichAnnulVers={} idVolumeConserv={}",
+                    LOG_MESSAGE_ANNULLA_UD, vols.getVolVLisVolumeUdAnnulId().getIdRichAnnulVers(),
+                    vols.getVolVLisVolumeUdAnnulId().getIdVolumeConserv());
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Gestione degli item della richiesta avente id: "
-                + idRichAnnulVers);
+        }
+        logger.debug("{} Fine della gestione dei volumi di conservazione della richiesta avente id: {}",
+                LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
+
+        logger.debug("{} Gestione degli item della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         /*
          * Ricavo gli item di tipo UNI_DOC con stato DA_ANNULLARE_IN_SACER il cui stato relativo al processo di
          * inclusione in un elenco vale IN_ATTESA_MEMORIZZAZIONE, IN_ATTESA_SCHED, NON_SELEZ_SCHED
          */
-        List<AroItemRichAnnulVers> item1List = helper.getItem(idRichAnnulVers,
+        List<AroItemRichAnnulVers> aroItemRichAnnulVersList = helper.getItem(idRichAnnulVers,
                 ElencoEnums.UdDocStatusEnum.IN_ATTESA_MEMORIZZAZIONE.name(),
                 ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name(), ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
-        for (AroItemRichAnnulVers item1 : item1List) {
+        for (AroItemRichAnnulVers aroItemRichAnnulVers : aroItemRichAnnulVersList) {
             // Cancello l'ud dalla coda di costruzione elenchi
-            helper.deleteElvUdVersDaElabElenco(item1.getAroUnitaDoc().getIdUnitaDoc());
+            logger.debug("{} AroItemRichAnnulVers con idItemRichAnnulVers={}", LOG_MESSAGE_ANNULLA_UD,
+                    aroItemRichAnnulVers.getIdItemRichAnnulVers());
+            logger.debug("{} Procedo alla cancellazione dalla coda di costruzione elenchi di idUnitaDoc={}",
+                    LOG_MESSAGE_ANNULLA_UD, aroItemRichAnnulVers.getAroUnitaDoc().getIdUnitaDoc());
+            helper.deleteElvUdVersDaElabElenco(aroItemRichAnnulVers.getAroUnitaDoc().getIdUnitaDoc());
             // Annullo lo stato relativo al processo di inclusione in un elenco dell'ud
-            item1.getAroUnitaDoc().setTiStatoUdElencoVers(null);
+            logger.debug("{} Metto a null tiStatoUdElencoVers di idItemRichAnnulVers={}", LOG_MESSAGE_ANNULLA_UD,
+                    aroItemRichAnnulVers.getIdItemRichAnnulVers());
+            aroItemRichAnnulVers.getAroUnitaDoc().setTiStatoUdElencoVers(null);
         }
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Gestione dei documenti aggiunti degli item della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} Gestione dei documenti aggiunti degli item della richiesta avente id: {}",
+                LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         /*
          * Ricavo i documenti aggiunti degli item di tipo UNI_DOC (quindi sto considerando l'item essere un'unit\u00E0
          * doc e ne cerco i documenti aggiunti) con stato DA_ANNULLARE_IN_SACER il cui stato relativo al processo di
@@ -1306,35 +1261,45 @@ public class AnnulVersEjb {
         List<AroDoc> docList = helper.getDocAggiunti(idRichAnnulVers,
                 ElencoEnums.UdDocStatusEnum.IN_ATTESA_MEMORIZZAZIONE.name(),
                 ElencoEnums.UdDocStatusEnum.IN_ATTESA_SCHED.name(), ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+        logger.debug("{} - trovati {} AroDoc di documenti aggiunti ", LOG_MESSAGE_ANNULLA_UD, docList.size());
         for (AroDoc doc : docList) {
             // Cancello i documenti aggiunti alla coda di costruzione elenchi
+            logger.debug("{} AroDoc con idDoc={}", LOG_MESSAGE_ANNULLA_UD, doc.getIdDoc());
+            logger.debug("{} Procedo alla cancellazione dalla coda di costruzione elenchi di idDoc={}",
+                    LOG_MESSAGE_ANNULLA_UD, doc.getIdDoc());
             helper.deleteElvDocAggDaElabElenco(doc.getIdDoc());
             // Annullo lo stato relativo al processo di inclusione in un elenco del
             // documento
+            logger.debug("{} Metto a null tiStatoUdElencoVers idDoc={}", LOG_MESSAGE_ANNULLA_UD, doc.getIdDoc());
             doc.setTiStatoDocElencoVers(null);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Aggiornamenti Versamenti Unit\u00E0 Documentarie - Gestione degli item della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug(
+                "{} - Annullamento Aggiornamenti Versamenti Unit\u00E0 Documentarie - Gestione degli item della richiesta avente id: {}",
+                LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
 
         /*
          * il sistema determina gli aggiornamenti unità doc degli item (della richiesta corrente) di tipo UNI_DOC con
          * stato DA_ANNULLARE_IN_SACER, il cui stato relativo al processo di inclusione in un elenco vale
          * IN_ATTESA_SCHED, NON_SELEZ_SCHED
          */
-        List<AroUpdUnitaDoc> itemUpd1List = helper.getUpdItem(idRichAnnulVers,
+        List<AroUpdUnitaDoc> aroUpdUnitaDocList = helper.getUpdItem(idRichAnnulVers,
                 AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED, AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED);
-        for (AroUpdUnitaDoc item1 : itemUpd1List) {
+        logger.debug("{} - trovati {} AroUpdUnitaDoc", LOG_MESSAGE_ANNULLA_UD, aroUpdUnitaDocList.size());
+        for (AroUpdUnitaDoc aroUpdUnitaDoc : aroUpdUnitaDocList) {
+            logger.debug("{} AroUpdUnitaDoc con idUpdUnitaDoc={}", LOG_MESSAGE_ANNULLA_UD,
+                    aroUpdUnitaDoc.getIdUpdUnitaDoc());
             // Cancello l'ud dalla coda di costruzione elenchi
-            helper.deleteElvUpdUdDaElabElenco(item1.getIdUpdUnitaDoc());
+            logger.debug("{} Procedo alla cancellazione dalla coda di costruzione elenchi di idUpdUnitaDoc={}",
+                    LOG_MESSAGE_ANNULLA_UD, aroUpdUnitaDoc.getIdUpdUnitaDoc());
+            helper.deleteElvUpdUdDaElabElenco(aroUpdUnitaDoc.getIdUpdUnitaDoc());
             // Annullo lo stato relativo al processo di inclusione in un elenco dell'ud
-            item1.setTiStatoUpdElencoVers(null);
+            logger.debug("{} Metto a null tiStatoUpdElencoVers idUpdUnitaDoc={}", LOG_MESSAGE_ANNULLA_UD,
+                    aroUpdUnitaDoc.getIdUpdUnitaDoc());
+            aroUpdUnitaDoc.setTiStatoUpdElencoVers(null);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Gestione degli item della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} - Gestione degli item della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         /*
          * Ricavo gli item di tipo UNI_DOC con stato DA_ANNULLARE_IN_SACER il cui stato relativo al processo di
          * inclusione in un elenco vale IN_ELENCO_APERTO o IN_ELENCO_DA_CHIUDERE
@@ -1343,18 +1308,30 @@ public class AnnulVersEjb {
                 ElencoEnums.UdDocStatusEnum.IN_ELENCO_APERTO.name(),
                 ElencoEnums.UdDocStatusEnum.IN_ELENCO_DA_CHIUDERE.name());
         Set<Long> idElencoVersApertiODaChiudereSet = new HashSet<>();
-        for (AroItemRichAnnulVers item2 : item2List) {
+        logger.debug("{} - trovati {} AroItemRichAnnulVers", LOG_MESSAGE_ANNULLA_UD, item2List.size());
+        for (AroItemRichAnnulVers aroItemRichAnnulVers : item2List) {
+            logger.debug("{} - AroItemRichAnnulVers con idItemRichAnnulVers={}", LOG_MESSAGE_ANNULLA_UD,
+                    aroItemRichAnnulVers.getIdItemRichAnnulVers());
             // Registro l'elenco di appartenenza in una lista elenchi
-            idElencoVersApertiODaChiudereSet.add(item2.getAroUnitaDoc().getElvElencoVer().getIdElencoVers());
-            // Cancello l'ud dall'elenco (annullo la FK verso l'elenco) ed annullo lo stato
-            // relativo al processo di
-            // inclusione in un elenco dell'unit\u00E0 doc.
-            item2.getAroUnitaDoc().setElvElencoVer(null);
-            item2.getAroUnitaDoc().setTiStatoUdElencoVers(null);
+            if (aroItemRichAnnulVers.getAroUnitaDoc().getElvElencoVer() == null) {
+                logger.warn(
+                        "{} - AroItemRichAnnulVers idItemRichAnnulVers={} ha idElvElencoVer nullo e tiStatoUdElencoVers={}, lo escludo dall'elaborazione",
+                        LOG_MESSAGE_ANNULLA_UD, aroItemRichAnnulVers.getIdItemRichAnnulVers(),
+                        aroItemRichAnnulVers.getAroUnitaDoc().getTiStatoUdElencoVers());
+            } else {
+                idElencoVersApertiODaChiudereSet
+                        .add(aroItemRichAnnulVers.getAroUnitaDoc().getElvElencoVer().getIdElencoVers());
+                // Cancello l'ud dall'elenco (annullo la FK verso l'elenco) ed annullo lo stato
+                // relativo al processo di
+                // inclusione in un elenco dell'unit\u00E0 doc.
+                logger.debug("{} - cancello idUnitaDoc {} dall'elenco: metto a null ElvElencoVer e tiStatoUdElencoVers",
+                        LOG_MESSAGE_ANNULLA_UD, aroItemRichAnnulVers.getAroUnitaDoc().getIdUnitaDoc());
+                aroItemRichAnnulVers.getAroUnitaDoc().setElvElencoVer(null);
+                aroItemRichAnnulVers.getAroUnitaDoc().setTiStatoUdElencoVers(null);
+            }
         }
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Gestione dei documenti aggiunti degli item della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} - Gestione dei documenti aggiunti degli item della richiesta avente id: {}",
+                LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         /*
          * Ricavo i documenti aggiunti degli item di tipo UNI_DOC (quindi sto considerando l'item essere un'unit\u00E0
          * doc e ne cerco i documenti aggiunti) con stato DA_ANNULLARE_IN_SACER il cui stato relativo al processo di
@@ -1371,9 +1348,9 @@ public class AnnulVersEjb {
             doc.setTiStatoDocElencoVers(null);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Aggiornamenti Versamenti Unit\u00E0 Documentarie - Gestione degli item aggiornati della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug(
+                "{} - Annullamento Aggiornamenti Versamenti Unit\u00E0 Documentarie - Gestione degli item aggiornati della richiesta avente id: {}",
+                LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         /*
          * Il sistema determina gli aggiornamenti unità doc degli item (della richiesta corrente) di tipo UNI_DOC con
          * stato DA_ANNULLARE_IN_SACER, il cui stato relativo al processo di inclusione in un elenco vale
@@ -1390,18 +1367,15 @@ public class AnnulVersEjb {
             item2.setTiStatoUpdElencoVers(null);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Ricalcolo totali elenco della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} - Ricalcolo totali elenco della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD,
+                idRichAnnulVers);
         // Per ogni elenco con stato APERTO definito nella lista, ricalcolo tutto
         for (Long idElencoVersAperto : idElencoVersApertiODaChiudereSet) {
             context.getBusinessObject(AnnulVersEjb.class).updateTotaliElenco(idElencoVersAperto,
                     statoRichAnnulVers.getIamUser().getIdUserIam(), dtString);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Gestione elenchi della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} - Gestione elenchi della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         /*
          * Il sistema determina gli elenchi con stato = CHIUSO o VALIDATO a cui appartengono gli item (della richiesta
          * corrente) di tipo UNI_DOC con stato DA_ANNULLARE_IN_SACER, il cui stato relativo al processo di inclusione in
@@ -1411,7 +1385,8 @@ public class AnnulVersEjb {
          */
         List<ElvVLisElencoUdAnnul> elenchiItem = helper.retrieveElvVLisElencoUdAnnuls(idRichAnnulVers);
         for (ElvVLisElencoUdAnnul elencoItem : elenchiItem) {
-            ElvElencoVer elenco = helper.findById(ElvElencoVer.class, elencoItem.getIdElencoVers());
+            ElvElencoVer elenco = helper.findById(ElvElencoVer.class,
+                    elencoItem.getElvVLisElencoUdAnnulId().getIdElencoVers());
             if (StringUtils.isBlank(elencoItem.getNtElencoChiuso()) || !elencoItem.getNtElencoChiuso().contains(
                     "Nell'elenco sono presenti unit\u00E0 documentarie o documenti aggiunti di cui \u00E8 stato annullato il versamento")) {
                 elenco.setNtElencoChiuso(((StringUtils.isNotBlank(elencoItem.getNtElencoChiuso())
@@ -1422,7 +1397,7 @@ public class AnnulVersEjb {
             // il sistema registra in ELV_ELENCO_VERS_UD_ANNUL l'insieme delle unità doc in
             // esso presenti ed annullate
             List<ElvVLisUdAnnulByElenco> uds = helper.retrieveElvVLisUdAnnulByElenco(idRichAnnulVers,
-                    elencoItem.getIdElencoVers().longValue());
+                    elencoItem.getElvVLisElencoUdAnnulId().getIdElencoVers().longValue());
             for (ElvVLisUdAnnulByElenco udAnnulInElenco : uds) {
                 ElvElencoVersUdAnnul elencoVersUdAnnul = new ElvElencoVersUdAnnul();
                 AroUnitaDoc ud = helper.findById(AroUnitaDoc.class, udAnnulInElenco.getIdUnitaDoc());
@@ -1433,9 +1408,8 @@ public class AnnulVersEjb {
             }
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Modifica ud, doc e collegamenti della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} - Modifica ud, doc e collegamenti della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD,
+                idRichAnnulVers);
         // Modifico le ud corrispondenti agli item
         helper.updateUnitaDocumentarieItem(idRichAnnulVers, dataAnnullamento,
                 CostantiDB.TipoAnnullamentoUnitaDoc.ANNULLAMENTO.name(),
@@ -1449,10 +1423,14 @@ public class AnnulVersEjb {
         helper.updateDocumentiUdItem(idRichAnnulVers, dataAnnullamento,
                 CostantiDB.TipoAnnullamentoUnitaDoc.ANNULLAMENTO.name(), richiestaAnnullamento.getNtRichAnnulVers());
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - Registro il nuovo stato della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("{} Registro il nuovo stato della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD,
+                idRichAnnulVers);
         // Registra il nuovo stato della richiesta
+        TypedQuery<AroStatoRichAnnulVers> query = entityManager.createQuery(
+                "SELECT a FROM AroStatoRichAnnulVers a WHERE a.aroRichAnnulVers = :aroRichAnnulVers",
+                AroStatoRichAnnulVers.class);
+        query.setParameter("aroRichAnnulVers", richiestaAnnullamento);
+        richiestaAnnullamento.setAroStatoRichAnnulVers(query.getResultList());
         AroStatoRichAnnulVers statoRichAnnulVersNew = context.getBusinessObject(AnnulVersEjb.class)
                 .createAroStatoRichAnnulVers(richiestaAnnullamento, CostantiDB.StatoRichAnnulVers.EVASA.name(),
                         Calendar.getInstance().getTime(), null, statoRichAnnulVers.getIamUser());
@@ -1484,10 +1462,8 @@ public class AnnulVersEjb {
         // Modifico gli item assegnando stato ANNULLATA
         helper.updateStatoItemList(idRichAnnulVers, CostantiDB.StatoItemRichAnnulVers.ANNULLATO.name());
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Unit\u00E0 Documentarie - richiesta avente id: " + idRichAnnulVers
-                + " elaborata con successo!");
-        logger.info("Fine evasione richiesta ID: " + idRichAnnulVers);
+        logger.debug("{} - richiesta avente id: {} elaborata con successo!", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
+        logger.info("Fine evasione richiesta ID: {}", idRichAnnulVers);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -1495,19 +1471,17 @@ public class AnnulVersEjb {
         long idRichAnnulVers = richiestaAnnullamento.getIdRichAnnulVers();
         AroStatoRichAnnulVers statoRichAnnulVers = helper.findById(AroStatoRichAnnulVers.class,
                 richiestaAnnullamento.getIdStatoRichAnnulVersCor());
-        logger.info("Evasione richiesta ID: " + idRichAnnulVers);
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Procedo ad evadere la richiesta avente id:"
-                + idRichAnnulVers);
+        logger.info("Evasione richiesta ID: {}", idRichAnnulVers);
+        logger.debug("Annullamento Versamenti Fascicoli - Procedo ad evadere la richiesta avente id: {}",
+                idRichAnnulVers);
         // Definisco come data di annullamento la data corrente
         Calendar cal = Calendar.getInstance();
         Date dataAnnullamento = cal.getTime();
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
         String dtString = df.format(dataAnnullamento);
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Gestione degli item della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("Annullamento Versamenti Fascicoli - Gestione degli item della richiesta avente id: {}",
+                idRichAnnulVers);
         /*
          * Ricavo gli item (della richiesta corrente) di tipo FASC con stato DA_ANNULLARE_IN_SACER, il cui stato
          * relativo al processo di inclusione in un elenco vale IN_ATTESA_SCHED, NON_SELEZ_SCHED
@@ -1522,9 +1496,8 @@ public class AnnulVersEjb {
             item1.getFasFascicolo().setTiStatoFascElencoVers(null);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Gestione degli item della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("Annullamento Versamenti Fascicoli - Gestione degli item della richiesta avente id: {}",
+                idRichAnnulVers);
         /*
          * Ricavo gli item di tipo FASC con stato DA_ANNULLARE_IN_SACER il cui stato relativo al processo di inclusione
          * in un elenco vale IN_ELENCO_APERTO o IN_ELENCO_DA_CHIUDERE
@@ -1543,9 +1516,8 @@ public class AnnulVersEjb {
             item2.getFasFascicolo().setTiStatoFascElencoVers(null);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Ricalcolo totali elenco della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("Annullamento Versamenti Fascicoli - Ricalcolo totali elenco della richiesta avente id: {}",
+                idRichAnnulVers);
         // Per ogni elenco con stato APERTO o DA_CHIUDERE definito nella lista,
         // ricalcolo tutto
         for (Long idElencoVersFascAperto : idElencoVersFascApertiODaChiudereSet) {
@@ -1553,9 +1525,8 @@ public class AnnulVersEjb {
                     statoRichAnnulVers.getIamUser().getIdUserIam(), dtString);
         }
 
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Gestione elenchi della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("Annullamento Versamenti Fascicoli - Gestione elenchi della richiesta avente id: {} ",
+                idRichAnnulVers);
         /*
          * Il sistema determina gli elenchi con stato = CHIUSO o FIRMA_IN_CORSO o FIRMATO o IN_CODA_CREAZIONE_AIP o
          * AIP_CREATI o ELENCO_INDICI_AIP_CREATO o ELENCO_INDICI_AIP_FIRMA_IN_CORSO o COMPLETATO, a cui appartengono gli
@@ -1566,7 +1537,8 @@ public class AnnulVersEjb {
          */
         List<ElvVLisElencoFascAnnul> elenchiItem = helper.retrieveElvVLisElencoFascAnnul(idRichAnnulVers);
         for (ElvVLisElencoFascAnnul elencoItem : elenchiItem) {
-            ElvElencoVersFasc elenco = helper.findById(ElvElencoVersFasc.class, elencoItem.getIdElencoVersFasc());
+            ElvElencoVersFasc elenco = helper.findById(ElvElencoVersFasc.class,
+                    elencoItem.getElvVLisElencoFascAnnulId().getIdElencoVersFasc());
 
             if (StringUtils.isBlank(elencoItem.getNtElencoChiuso()) || !elencoItem.getNtElencoChiuso()
                     .contains("Nell'elenco sono presenti fascicoli di cui \u00E8 stato annullato il versamento")) {
@@ -1578,7 +1550,7 @@ public class AnnulVersEjb {
             // Il sistema registra in ELV_ELENCO_VERS_FASC_ANNUL l’insieme dei fascicoli in
             // esso presenti ed annullati
             List<ElvVLisFascAnnulByElenco> fascAnnulInElenco = helper.retrieveElvVLisFascAnnulByElenco(idRichAnnulVers,
-                    elencoItem.getIdElencoVersFasc().longValue());
+                    elencoItem.getElvVLisElencoFascAnnulId().getIdElencoVersFasc().longValue());
             for (ElvVLisFascAnnulByElenco fasc : fascAnnulInElenco) {
                 ElvElencoVersFascAnnul elencoVersFascAnnul = new ElvElencoVersFascAnnul();
                 FasFascicolo fascicolo = helper.findById(FasFascicolo.class, fasc.getIdFascicolo());
@@ -1595,10 +1567,10 @@ public class AnnulVersEjb {
          */
         List<AroItemRichAnnulVers> item3List = helper.getItemFasc(idRichAnnulVers);
         for (AroItemRichAnnulVers item : item3List) {
-            FasStatoConservFascicolo statoConvervFascicolo = context.getBusinessObject(AnnulVersEjb.class)
-                    .createFasStatoConservFascicolo(item.getFasFascicolo(), dataAnnullamento,
-                            it.eng.parer.entity.constraint.FasStatoConservFascicolo.TiStatoConservazione.ANNULLATO,
-                            statoRichAnnulVers.getIamUser());
+            context.getBusinessObject(AnnulVersEjb.class).createFasStatoConservFascicolo(item.getFasFascicolo(),
+                    dataAnnullamento,
+                    it.eng.parer.entity.constraint.FasStatoConservFascicolo.TiStatoConservazione.ANNULLATO,
+                    statoRichAnnulVers.getIamUser());
         }
 
         /*
@@ -1606,9 +1578,9 @@ public class AnnulVersEjb {
          * assegnando data di annullamento, stato conservazione = ANNULLATA, note su annullamento = causale definita
          * dalla richiesta
          */
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Modifica fascicoli e collegamenti della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug(
+                "Annullamento Versamenti Fascicoli - Modifica fascicoli e collegamenti della richiesta avente id: {}",
+                idRichAnnulVers);
         // Modifico i fascicoli corrispondenti agli item
         helper.updateFascicoliItem(idRichAnnulVers, dataAnnullamento,
                 it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione.ANNULLATO,
@@ -1616,8 +1588,8 @@ public class AnnulVersEjb {
         // Modifico i collegamenti ai fascicoli corrispondenti agli item
         helper.updateCollegamentiFasc(idRichAnnulVers);
         // MAC#22156
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Aggiorna le unit\u00E0 doc appartenenti ai fascicoli della richiesta, assegnando stato = AIP_GENERATO o AIP_FIRMATO, purch\u00E8 tali unit\u00E0 doc non appartengano ad altro fascicolo con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO");
+        logger.debug(
+                "Annullamento Versamenti Fascicoli - Aggiorna le unit\u00E0 doc appartenenti ai fascicoli della richiesta, assegnando stato = AIP_GENERATO o AIP_FIRMATO, purch\u00E8 tali unit\u00E0 doc non appartengano ad altro fascicolo con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO");
         helper.updateStatoConsAipGeneratoAroUnitaDocWithoutOtherFascicolos(idRichAnnulVers,
                 Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                         CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()));
@@ -1625,9 +1597,8 @@ public class AnnulVersEjb {
                 Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                         CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()));
         // end MAC#22156
-        logger.debug(AnnulVersEjb.class.getSimpleName()
-                + " --- Annullamento Versamenti Fascicoli - Registro il nuovo stato della richiesta avente id: "
-                + idRichAnnulVers);
+        logger.debug("Annullamento Versamenti Fascicoli - Registro il nuovo stato della richiesta avente id: {}",
+                idRichAnnulVers);
         // Registra il nuovo stato della richiesta
         AroStatoRichAnnulVers statoRichAnnulVersNew = context.getBusinessObject(AnnulVersEjb.class)
                 .createAroStatoRichAnnulVers(richiestaAnnullamento, CostantiDB.StatoRichAnnulVers.EVASA.name(),
@@ -1642,10 +1613,9 @@ public class AnnulVersEjb {
         // Modifico gli item assegnando stato ANNULLATO
         helper.updateStatoItemList(idRichAnnulVers, CostantiDB.StatoItemRichAnnulVers.ANNULLATO.name());
 
-        logger.debug(
-                AnnulVersEjb.class.getSimpleName() + " --- Annullamento Versamenti Fascicoli - richiesta avente id: "
-                        + idRichAnnulVers + " elaborata con successo!");
-        logger.info("Fine evasione richiesta ID: " + idRichAnnulVers);
+        logger.debug("Annullamento Versamenti Fascicoli - richiesta avente id: {} elaborata con successo!",
+                idRichAnnulVers);
+        logger.info("Fine evasione richiesta ID: {}", idRichAnnulVers);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -1702,7 +1672,7 @@ public class AnnulVersEjb {
     public AroStatoRichAnnulVers insertAroStatoRichAnnulVers(AroRichAnnulVers richAnnulVers,
             String tiStatoRichAnnulVers, Date dtRegStatoRichAnnulVers, String dsNotaRichAnnulVers, long idUser) {
         AroStatoRichAnnulVers statoRichAnnulVers = new AroStatoRichAnnulVers();
-        logger.info("Eseguo il salvataggio dello stato richiesta annullamento pari a " + tiStatoRichAnnulVers);
+        logger.info("Eseguo il salvataggio dello stato richiesta annullamento pari a {}", tiStatoRichAnnulVers);
         statoRichAnnulVers.setPgStatoRichAnnulVers(
                 helper.getUltimoProgressivoStatoRichiesta(richAnnulVers.getIdRichAnnulVers()).add(BigDecimal.ONE));
         statoRichAnnulVers.setTiStatoRichAnnulVers(tiStatoRichAnnulVers);
@@ -1711,6 +1681,9 @@ public class AnnulVersEjb {
         statoRichAnnulVers.setIamUser(helper.findById(IamUser.class, idUser));
         richAnnulVers.addAroStatoRichAnnulVers(statoRichAnnulVers);
         helper.insertEntity(statoRichAnnulVers, true);
+        richAnnulVers.setIdStatoRichAnnulVersCor(BigDecimal.valueOf(statoRichAnnulVers.getIdStatoRichAnnulVers()));
+        helper.mergeEntity(richAnnulVers);
+        helper.getEntityManager().flush();
         return statoRichAnnulVers;
     }
 
@@ -1734,7 +1707,7 @@ public class AnnulVersEjb {
      *            id utente che ha eseguito la ricerca
      * @param filtri
      *            parametri della richiesta
-     * 
+     *
      * @return tablebean
      */
     public AroVRicRichAnnvrsTableBean getAroVRicRichAnnvrsTableBean(long idUser, RicercaRichAnnulVersBean filtri) {
@@ -1742,10 +1715,11 @@ public class AnnulVersEjb {
         List<AroVRicRichAnnvrs> list = helper.retrieveAroVRicRichAnnvrs(idUser, filtri);
         if (list != null && !list.isEmpty()) {
             try {
-                for (AroVRicRichAnnvrs record : list) {
-                    AroVRicRichAnnvrsRowBean row = (AroVRicRichAnnvrsRowBean) Transform.entity2RowBean(record);
-                    row.setString("amb_ente_strut",
-                            record.getNmAmbiente() + " - " + record.getNmEnte() + " - " + record.getNmStrut());
+                for (AroVRicRichAnnvrs aroVRicRichAnnvrs : list) {
+                    AroVRicRichAnnvrsRowBean row = (AroVRicRichAnnvrsRowBean) Transform
+                            .entity2RowBean(aroVRicRichAnnvrs);
+                    row.setString("amb_ente_strut", aroVRicRichAnnvrs.getNmAmbiente() + " - "
+                            + aroVRicRichAnnvrs.getNmEnte() + " - " + aroVRicRichAnnvrs.getNmStrut());
                     table.add(row);
                 }
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
@@ -1762,7 +1736,7 @@ public class AnnulVersEjb {
      *
      * @param idRichAnnulVers
      *            id della richiesta
-     * 
+     *
      * @return rowBean della vista
      */
     public AroVVisRichAnnvrsRowBean getAroVVisRichAnnvrsRowBean(BigDecimal idRichAnnulVers) {
@@ -1827,7 +1801,7 @@ public class AnnulVersEjb {
      *            id della richiesta
      * @param idUserIam
      *            utente corrente
-     * 
+     *
      * @throws ParerUserError
      *             Errore imprevisto
      */
@@ -1860,7 +1834,7 @@ public class AnnulVersEjb {
      *            richiesta annullamento versamento
      * @param idUserIam
      *            utente corrente
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -1890,7 +1864,7 @@ public class AnnulVersEjb {
      *            id utente presente nell'xml di richiesta
      * @param isFromPreIngest
      *            true o false a seconda che la richiesta provenga o meno da PreIngest
-     * 
+     *
      * @throws it.eng.parer.exception.ParerUserError
      *             Errore imprevisto
      */
@@ -1899,6 +1873,7 @@ public class AnnulVersEjb {
             throws ParerUserError {
         // Assumo lock esclusivo sulla richiesta
         AroRichAnnulVers rich = helper.findByIdWithLock(AroRichAnnulVers.class, idRichAnnulVers);
+        int progressivo = 0;
         try {
             // Elimino tutti gli errori rilevati sugli item della richiesta, tranne quelli
             // di tipo ITEM_NON_ESISTE,
@@ -1906,6 +1881,11 @@ public class AnnulVersEjb {
             helper.deleteAroErrRichAnnulVers(idRichAnnulVers.longValue(),
                     CostantiDB.TipoErrRichAnnulVers.getStatiControlloItem());
             for (AroItemRichAnnulVers item : rich.getAroItemRichAnnulVers()) {
+                progressivo++;
+                entityManager.flush();
+                entityManager.clear();
+                item = entityManager.merge(item);
+                logger.debug("{} - elaborazione AroItemRichAnnulVers - INIZIO", progressivo);
                 if (item.getAroUnitaDoc() != null) {
                     // Assumo lock esclusivo sull'unità doc definita nell'item della richiesta
                     evHelper.lockUnitaDoc(item.getAroUnitaDoc());
@@ -1927,6 +1907,7 @@ public class AnnulVersEjb {
                     controlloItemDaAnnullare(item, idUserIam);
                     // end MEV#26446
                 }
+                logger.debug("{} - elaborazione AroItemRichAnnulVers - FINE", progressivo);
             }
         } catch (Exception e) {
             String messaggio = "Eccezione imprevista durante il controllo dei versamenti ";
@@ -1952,7 +1933,7 @@ public class AnnulVersEjb {
      *            flag 1/0 (true/false)
      * @param idStrut
      *            struttura di riferimento della richiesta
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generazione
      */
@@ -1999,7 +1980,7 @@ public class AnnulVersEjb {
      *            id user Iam
      * @param tiRichAnnulVers
      *            tipo richiesta annullamento
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2013,7 +1994,7 @@ public class AnnulVersEjb {
                 if (tiRichAnnulVers.equals("UNITA_DOC")) {
                     AroFileRichAnnulVers fileRich = new AroFileRichAnnulVers();
                     fileRich.setTiFile(CostantiDB.TipoFileRichAnnulVers.FILE_UD_ANNUL.name());
-                    fileRich.setBlFile(new String(fileByteArray, Charset.forName("UTF-8")));
+                    fileRich.setBlFile(new String(fileByteArray, StandardCharsets.UTF_8));
                     richAnnulVers.addAroFileRichAnnulVer(fileRich);
 
                     context.getBusinessObject(AnnulVersEjb.class).handleCsvRecords(richAnnulVers, fileByteArray,
@@ -2021,7 +2002,7 @@ public class AnnulVersEjb {
                 } else if (tiRichAnnulVers.equals("FASCICOLI")) {
                     AroFileRichAnnulVers fileRich = new AroFileRichAnnulVers();
                     fileRich.setTiFile(CostantiDB.TipoFileRichAnnulVers.FILE_FASC_ANNUL.name());
-                    fileRich.setBlFile(new String(fileByteArray, Charset.forName("UTF-8")));
+                    fileRich.setBlFile(new String(fileByteArray, StandardCharsets.UTF_8));
                     richAnnulVers.addAroFileRichAnnulVer(fileRich);
 
                     context.getBusinessObject(AnnulVersEjb.class).handleCsvRecordsFasc(richAnnulVers, fileByteArray,
@@ -2043,7 +2024,7 @@ public class AnnulVersEjb {
      *
      * @param idRichAnnulVers
      *            id della richiesta
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2067,7 +2048,7 @@ public class AnnulVersEjb {
      *            id della richiesta
      * @param idItemRichAnnulVers
      *            id dell'item da eliminare
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2099,7 +2080,7 @@ public class AnnulVersEjb {
      *            stato da assumere
      * @param dsNotaRichAnnulVers
      *            nota utente
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2130,7 +2111,7 @@ public class AnnulVersEjb {
      *            id della richiesta
      * @param statiRichiesta
      *            stati da verificare
-     * 
+     *
      * @return true se la richiesta ha stato uguale a uno di quelli in elenco
      */
     public boolean checkStatoRichiesta(BigDecimal idRichAnnulVers, String... statiRichiesta) {
@@ -2164,12 +2145,11 @@ public class AnnulVersEjb {
      *            id della richiesta di annullamento
      * @param statiItems
      *            stati da controllare
-     * 
+     *
      * @return il numero di items
      */
     public Long countItemsInRichAnnulVers(BigDecimal idRichAnnulVers, String... statiItems) {
-        Long count = helper.countAroItemRichAnnulVers(idRichAnnulVers, statiItems);
-        return count;
+        return helper.countAroItemRichAnnulVers(idRichAnnulVers, statiItems);
     }
 
     /**
@@ -2177,12 +2157,11 @@ public class AnnulVersEjb {
      *
      * @param idRichAnnulVers
      *            id richiesta annullamento
-     * 
+     *
      * @return il numero di items
      */
     public Long countItemsInRichAnnulVers(BigDecimal idRichAnnulVers) {
-        Long count = helper.countAroItemRichAnnulVers(idRichAnnulVers, new String[] {});
-        return count;
+        return helper.countAroItemRichAnnulVers(idRichAnnulVers);
     }
 
     public boolean isUdInRichAnnulVers(BigDecimal idUnitaDoc) {
@@ -2284,7 +2263,7 @@ public class AnnulVersEjb {
     }
 
     public String marshallaEsitoRichiestaAnnullamentoVersamenti(EsitoRichiestaAnnullamentoVersamenti esito)
-            throws IOException, MarshalException, ValidationException, JAXBException {
+            throws JAXBException {
         StringWriter sw = new StringWriter();
         Marshaller marshaller = xmlContextCache.getEsitoAnnVersCtx_EsitoRichiestaAnnullamentoVersamenti()
                 .createMarshaller();

@@ -1,68 +1,77 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb;
 
-import it.eng.parer.job.allineamentoEntiConvenzionati.ejb.AllineamentoEntiConvenzionatiEjb;
-import it.eng.parer.aop.TransactionInterceptor;
-import it.eng.parer.entity.IamOrganizDaReplic;
-import it.eng.parer.entity.OrgAmbiente;
-import it.eng.parer.grantedEntity.OrgAmbitoTerrit;
-import it.eng.parer.entity.OrgCategEnte;
-import it.eng.parer.entity.OrgCategStrut;
-import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbitoTerritRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbitoTerritTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgCategEnteRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgCategEnteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgCategStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
-import it.eng.parer.slite.gen.viewbean.OrgVRicAmbienteTableBean;
-import it.eng.parer.slite.gen.viewbean.OrgVRicEnteRowBean;
-import it.eng.parer.slite.gen.viewbean.OrgVRicEnteTableBean;
-import it.eng.parer.viewEntity.OrgVRicAmbiente;
-import it.eng.parer.viewEntity.OrgVRicEnte;
-import it.eng.parer.viewEntity.UsrVAbilAmbSacerXstrut;
-import it.eng.parer.viewEntity.UsrVAbilEnteSacerXstrut;
-import it.eng.parer.viewEntity.UsrVChkCreaAmbSacer;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.CorrispondenzePingHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
+import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.AplValParamApplicMulti;
 import it.eng.parer.entity.AplValoreParamApplic;
 import it.eng.parer.entity.IamEnteConvenzDaAllinea;
+import it.eng.parer.entity.IamOrganizDaReplic;
+import it.eng.parer.entity.OrgAmbiente;
+import it.eng.parer.entity.OrgCategEnte;
+import it.eng.parer.entity.OrgCategStrut;
+import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStoricoEnteAmbiente;
 import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.grantedEntity.OrgAmbitoTerrit;
 import it.eng.parer.grantedEntity.SIOrgAccordoEnte;
 import it.eng.parer.grantedEntity.SIOrgAmbienteEnteConvenz;
-import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.grantedEntity.SIUsrOrganizIam;
 import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
 import it.eng.parer.grantedViewEntity.OrgVTreeAmbitoTerrit;
 import it.eng.parer.grantedViewEntity.UsrVAbilAmbEnteConvenz;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.job.allineamentoEntiConvenzionati.ejb.AllineamentoEntiConvenzionatiEjb;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.ejb.common.helper.ParamApplicHelper;
 import it.eng.parer.sacerlog.util.LogParam;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicRowBean;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
-import it.eng.parer.slite.gen.tablebean.SIOrgEnteConvenzOrgRowBean;
-import it.eng.parer.slite.gen.tablebean.SIOrgEnteConvenzOrgTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgAmbitoTerritRowBean;
+import it.eng.parer.slite.gen.tablebean.OrgAmbitoTerritTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgCategEnteRowBean;
+import it.eng.parer.slite.gen.tablebean.OrgCategEnteTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgCategStrutTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgStoricoEnteAmbienteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgStoricoEnteAmbienteTableBean;
+import it.eng.parer.slite.gen.tablebean.SIOrgEnteConvenzOrgRowBean;
+import it.eng.parer.slite.gen.tablebean.SIOrgEnteConvenzOrgTableBean;
 import it.eng.parer.slite.gen.viewbean.OrgVRicAmbienteRowBean;
+import it.eng.parer.slite.gen.viewbean.OrgVRicAmbienteTableBean;
+import it.eng.parer.slite.gen.viewbean.OrgVRicEnteRowBean;
+import it.eng.parer.slite.gen.viewbean.OrgVRicEnteTableBean;
+import it.eng.parer.viewEntity.OrgVRicAmbiente;
+import it.eng.parer.viewEntity.OrgVRicEnte;
+import it.eng.parer.viewEntity.UsrVAbilAmbSacerXstrut;
 import it.eng.parer.viewEntity.UsrVAbilAmbXente;
+import it.eng.parer.viewEntity.UsrVAbilEnteSacerXstrut;
 import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.helper.AmministrazioneHelper;
 import it.eng.parer.web.helper.UserHelper;
@@ -77,14 +86,24 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless
 @LocalBean
@@ -110,6 +129,8 @@ public class AmbienteEjb {
     private AmministrazioneHelper amministrazioneHelper;
     @EJB
     private UserHelper userHelper;
+    @EJB
+    private CorrispondenzePingHelper corrispondenzeHelper;
 
     @Resource
     private SessionContext context;
@@ -122,7 +143,7 @@ public class AmbienteEjb {
      *            row bean dati ente
      * @param idUtente
      *            id utente
-     * 
+     *
      * @return OrgVRicEnteTableBean
      */
     public OrgVRicEnteTableBean getOrgEnteTableBean(OrgEnteRowBean enteRowBean, long idUtente) {
@@ -175,7 +196,7 @@ public class AmbienteEjb {
      *            id ambiente
      * @param nmAmbiente
      *            nome ambiente
-     * 
+     *
      * @return OrgAmbienteRowBean
      */
     private OrgAmbienteRowBean getOrgAmbiente(BigDecimal idAmbiente, String nmAmbiente) {
@@ -212,12 +233,11 @@ public class AmbienteEjb {
      *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return ambienteRowBean il risultato della ricerca
      */
     public OrgAmbienteRowBean getOrgAmbienteRowBean(BigDecimal idAmbiente) {
-        OrgAmbienteRowBean ambienteRowBean = getOrgAmbiente(idAmbiente, null);
-        return ambienteRowBean;
+        return getOrgAmbiente(idAmbiente, null);
     }
 
     /**
@@ -225,12 +245,11 @@ public class AmbienteEjb {
      *
      * @param nmAmbiente
      *            nome ambiente
-     * 
+     *
      * @return ambienteRowBean il risultato della ricerca
      */
     public OrgAmbienteRowBean getOrgAmbienteRowBean(String nmAmbiente) {
-        OrgAmbienteRowBean ambienteRowBean = getOrgAmbiente(BigDecimal.ZERO, nmAmbiente);
-        return ambienteRowBean;
+        return getOrgAmbiente(BigDecimal.ZERO, nmAmbiente);
     }
 
     /**
@@ -241,7 +260,7 @@ public class AmbienteEjb {
      *            id ente
      * @param nmEnte
      *            nome ente
-     * 
+     *
      * @return enteRowBean il risultato della ricerca
      */
     private OrgEnteRowBean getOrgEnte(BigDecimal idEnte, String nmEnte, BigDecimal idAmbiente) {
@@ -272,12 +291,11 @@ public class AmbienteEjb {
      *            nome ente
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return enteRowBean il risultato della ricerca
      */
     public OrgEnteRowBean getOrgEnteRowBean(String nmEnte, BigDecimal idAmbiente) {
-        OrgEnteRowBean enteRowBean = getOrgEnte(BigDecimal.ZERO, nmEnte, idAmbiente);
-        return enteRowBean;
+        return getOrgEnte(BigDecimal.ZERO, nmEnte, idAmbiente);
 
     }
 
@@ -286,12 +304,11 @@ public class AmbienteEjb {
      *
      * @param idEnte
      *            id ente
-     * 
+     *
      * @return enteRowBean il risultato della ricerca
      */
     public OrgEnteRowBean getOrgEnteRowBean(BigDecimal idEnte) {
-        OrgEnteRowBean enteRowBean = getOrgEnte(idEnte, null, null);
-        return enteRowBean;
+        return getOrgEnte(idEnte, null, null);
 
     }
 
@@ -340,8 +357,7 @@ public class AmbienteEjb {
          * N.B.: La replica va fatta solo se la modifica ha modificato il nome o la descrizione dell'ambiente e in
          * questo caso non servono controlli perchè la modifica può SOLO modificare o nome o descrizione...
          */
-        IamOrganizDaReplic replic = ambienteHelper.insertEntityIamOrganizDaReplic(ambiente, tiOper);
-        return replic;
+        return ambienteHelper.insertEntityIamOrganizDaReplic(ambiente, tiOper);
     }
 
     private void manageParametriPerAmbiente(AplParamApplicTableBean paramApplicTableBean,
@@ -500,7 +516,7 @@ public class AmbienteEjb {
         } else {
             orgAmbiente = ambienteHelper.findById(OrgAmbiente.class, enteRowBean.getIdAmbiente());
             if (orgAmbiente.getOrgEntes() == null) {
-                orgAmbiente.setOrgEntes(new ArrayList<OrgEnte>());
+                orgAmbiente.setOrgEntes(new ArrayList<>());
             }
             if (ambienteHelper.getOrgEnteByName(enteRowBean.getNmEnte(), null) != null) {
                 throw new ParerUserError("Nome ente gi\u00E0 presente all'interno dell'intero sistema</br>");
@@ -534,22 +550,6 @@ public class AmbienteEjb {
         return replic;
     }
 
-    private boolean checkSovrapposizioneDate(Date dtIniValAppartAmbienteDb, Date dtFinValAppartAmbienteDb,
-            Date dtIniValAppartAmbiente, Date dtFinValAppartAmbiente) {
-        boolean check = false;
-        // Se la data di decorrenza o quella di scadenza accordo, ricadono all'interno di un intervallo già esistente
-        if ((dtIniValAppartAmbienteDb.compareTo(dtIniValAppartAmbiente) <= 0
-                && dtFinValAppartAmbienteDb.compareTo(dtIniValAppartAmbiente) >= 0)
-                || (dtIniValAppartAmbienteDb.compareTo(dtFinValAppartAmbiente) <= 0
-                        && dtFinValAppartAmbienteDb.compareTo(dtFinValAppartAmbiente) >= 0)
-                // oppure se l'intevallo del nuovo accordo si sovrappone totalmente ad un intervallo già esistente
-                || (dtIniValAppartAmbienteDb.compareTo(dtIniValAppartAmbiente) >= 0
-                        && dtFinValAppartAmbienteDb.compareTo(dtFinValAppartAmbiente) <= 0)) {
-            check = true;
-        }
-        return check;
-    }
-
     public void deleteOrgAmbiente(BigDecimal idAmbiente) throws ParerUserError {
         AmbienteEjb me = context.getBusinessObject(AmbienteEjb.class);
         IamOrganizDaReplic replic = me.deleteAmbiente(idAmbiente);
@@ -563,10 +563,15 @@ public class AmbienteEjb {
             throw new ParerUserError(
                     "Eliminazione ambiente non riuscita: esistono elementi ancora associati all'ambiente</br>");
         }
+
+        if (corrispondenzeHelper.checkPingRelations(GenericHelper.longFromBigDecimal(idAmbiente), 2)) {
+            throw new ParerUserError(
+                    "Eliminazione dell'ambiente non consentita. Sono presenti corrispondenze con versatori di Ping</br>");
+        }
+
         ambienteHelper.removeEntity(ambiente, true);
 
-        IamOrganizDaReplic replic = ambienteHelper.insertEntityIamOrganizDaReplic(ambiente, ApplEnum.TiOperReplic.CANC);
-        return replic;
+        return ambienteHelper.insertEntityIamOrganizDaReplic(ambiente, ApplEnum.TiOperReplic.CANC);
     }
 
     public void deleteOrgEnte(BigDecimal idEnte) throws ParerUserError {
@@ -582,10 +587,15 @@ public class AmbienteEjb {
             throw new ParerUserError(
                     "Eliminazione ente non riuscita: esistono strutture ancora associati all'ente</br>");
         }
+
+        if (corrispondenzeHelper.checkPingRelations(GenericHelper.longFromBigDecimal(idEnte), 1)) {
+            throw new ParerUserError(
+                    "Eliminazione dell'ente non consentita. Sono presenti corrispondenze con versatori di Ping</br>");
+        }
+
         ambienteHelper.removeEntity(ente, true);
 
-        IamOrganizDaReplic replic = ambienteHelper.insertEntityIamOrganizDaReplic(ente, ApplEnum.TiOperReplic.CANC);
-        return replic;
+        return ambienteHelper.insertEntityIamOrganizDaReplic(ente, ApplEnum.TiOperReplic.CANC);
     }
 
     public OrgAmbitoTerritTableBean getOrgAmbitoTerritTableBean(String tipo) {
@@ -850,8 +860,7 @@ public class AmbienteEjb {
     }
 
     public boolean isCreaAmbienteActive(long idUser, String nmApplic) {
-        UsrVChkCreaAmbSacer record = ambienteHelper.getUsrVChkCreaAmbSacer(idUser, nmApplic);
-        return record.getFlCreaAmbiente().equals("1");
+        return ambienteHelper.getUsrVChkCreaAmbSacer(idUser, nmApplic).getFlCreaAmbiente().equals("1");
     }
 
     public BaseTableInterface getAmbientiAbilitatiPerEnte(long idUser, String nmApplic) {
@@ -859,7 +868,7 @@ public class AmbienteEjb {
         List<UsrVAbilAmbXente> ambientiAbilitati = ambienteHelper.getAmbientiAbilitatiPerEnte(idUser, nmApplic);
         for (UsrVAbilAmbXente ambiente : ambientiAbilitati) {
             BaseRow row = new BaseRow();
-            row.setBigDecimal("id_ambiente", ambiente.getIdOrganizApplic());
+            row.setBigDecimal("id_ambiente", ambiente.getUsrVAbilAmbXenteId().getIdOrganizApplic());
             row.setString("nm_ambiente", ambiente.getNmOrganiz());
             row.setString("ds_ambiente", ambiente.getDsOrganiz());
             table.add(row);
@@ -873,7 +882,7 @@ public class AmbienteEjb {
         List<UsrVAbilAmbSacerXstrut> ambientiAbilitati = ambienteHelper.getAmbientiAbilitatiPerStrut(idUser, nmApplic);
         for (UsrVAbilAmbSacerXstrut ambiente : ambientiAbilitati) {
             BaseRow row = new BaseRow();
-            row.setBigDecimal("id_ambiente", ambiente.getIdOrganizApplic());
+            row.setBigDecimal("id_ambiente", ambiente.getUsrVAbilAmbSacerXstrutId().getIdOrganizApplic());
             row.setString("nm_ambiente", ambiente.getNmOrganiz());
             row.setString("ds_ambiente", ambiente.getDsOrganiz());
             table.add(row);
@@ -889,7 +898,7 @@ public class AmbienteEjb {
                 idAmbiente, tipoDefTemplateEnte);
         for (UsrVAbilEnteSacerXstrut ente : entiAbilitati) {
             BaseRow row = new BaseRow();
-            row.setBigDecimal("id_ente", ente.getIdOrganizApplic());
+            row.setBigDecimal("id_ente", ente.getUsrVAbilEnteSacerXstrutId().getIdOrganizApplic());
             row.setString("nm_ente", ente.getNmOrganiz());
             row.setString("ds_ente", ente.getDsOrganiz());
             row.setString("nmDs", ente.getNmOrganiz() + ", " + ente.getDsOrganiz());
@@ -908,7 +917,8 @@ public class AmbienteEjb {
         for (UsrVAbilEnteSacerXstrut enteAbil : entiAbilitati) {
             // MEV#20463: filtro gli enti validi alla data, (La validità di un ente e’ definita dall’intervallo “Data
             // inizio validità” e “Data fine validità”, estremi compresi)
-            OrgEnte ente = ambienteHelper.findById(OrgEnte.class, enteAbil.getIdOrganizApplic().longValue());
+            OrgEnte ente = ambienteHelper.findById(OrgEnte.class,
+                    enteAbil.getUsrVAbilEnteSacerXstrutId().getIdOrganizApplic().longValue());
             if (!ente.getDtIniVal().after(currentDate) && !ente.getDtFineVal().before(currentDate)) {
                 BaseRow row = new BaseRow();
                 row.setBigDecimal("id_ente", BigDecimal.valueOf(ente.getIdEnte()));
@@ -929,9 +939,9 @@ public class AmbienteEjb {
      *            id utente abilitato
      * @param nmAmbiente
      *            nome ambiente da ricercare
-     * 
+     *
      * @return tableBean corrispondente ai criteri di ricerca
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -942,13 +952,11 @@ public class AmbienteEjb {
         try {
             for (OrgVRicAmbiente ambiente : listaAmbienti) {
                 // trasformo la lista in un tableBean
-                OrgVRicAmbienteRowBean ambienteRowBean = new OrgVRicAmbienteRowBean();
-                ambienteRowBean = (OrgVRicAmbienteRowBean) Transform.entity2RowBean(ambiente);
+                OrgVRicAmbienteRowBean ambienteRowBean = (OrgVRicAmbienteRowBean) Transform.entity2RowBean(ambiente);
                 ambienteRowBean.setString("nm_ente_conserv",
                         ambienteHelper.findById(SIOrgEnteSiam.class, ambiente.getIdEnteConverv()).getNmEnteSiam());
                 ambienteRowBean.setString("nm_ente_gestore",
                         ambienteHelper.findById(SIOrgEnteSiam.class, ambiente.getIdEnteGestore()).getNmEnteSiam());
-                // ambientiTableBean = (OrgVRicAmbienteTableBean) Transform.entities2TableBean(listaAmbienti);
                 ambientiTableBean.add(ambienteRowBean);
             }
         } catch (Exception e) {
@@ -999,7 +1007,7 @@ public class AmbienteEjb {
      *            id ambiente
      * @param filterValid
      *            true/false
-     * 
+     *
      * @return OrgEnteTableBean
      */
     public OrgEnteTableBean getEntiAbilitatiNoTemplate(long idUser, long idAmbiente, Boolean filterValid) {
@@ -1017,10 +1025,30 @@ public class AmbienteEjb {
      *            id ambiente
      * @param filterValid
      *            true/false
-     * 
+     *
      * @return OrgEnteTableBean
      */
-    public OrgEnteTableBean getEntiAbilitati(long idUser, long idAmbiente, Boolean filterValid) {
+    public OrgEnteTableBean getEntiAbilitati(long idUser, Long idAmbiente, Boolean filterValid) {
+        OrgEnteTableBean entiTableBean = new OrgEnteTableBean();
+        List<OrgEnte> listaEnti = ambienteHelper.retrieveOrgEnteAbil(idUser, idAmbiente, null, null, filterValid,
+                (String[]) null);
+        return transformOrgEnteList(listaEnti, entiTableBean);
+        // trasformo la lista in un tableBean
+    }
+
+    /**
+     * Recupera l'ente in base all'ambiente (a sua volta recuperato in base alle abilitazioni)
+     *
+     * @param idUser
+     *            id utente
+     * @param idAmbiente
+     *            id ambiente
+     * @param filterValid
+     *            true/false
+     *
+     * @return OrgEnteTableBean
+     */
+    public OrgEnteTableBean getEntiAbilitati(long idUser, List<BigDecimal> idAmbiente, Boolean filterValid) {
         OrgEnteTableBean entiTableBean = new OrgEnteTableBean();
         List<OrgEnte> listaEnti = ambienteHelper.retrieveOrgEnteAbil(idUser, idAmbiente, null, null, filterValid,
                 (String[]) null);
@@ -1042,13 +1070,38 @@ public class AmbienteEjb {
      *            id categoria ente (lista)
      * @param filterValid
      *            true/false
-     * 
+     *
      * @return OrgEnteTableBean
      */
     public OrgEnteTableBean getEntiAbilitatiAmbitoCateg(long idUser, BigDecimal idAmbiente,
             List<BigDecimal> idAmbitoTerritList, List<BigDecimal> idCategEnteList, Boolean filterValid) {
         OrgEnteTableBean entiTableBean = new OrgEnteTableBean();
         List<OrgEnte> listaEnti = ambienteHelper.retrieveOrgEnteAbil(idUser, idAmbiente.longValue(), idAmbitoTerritList,
+                idCategEnteList, filterValid);
+        return transformOrgEnteList(listaEnti, entiTableBean);
+    }
+
+    /**
+     * Recupera l'ente in base all'ambiente, agli ambiti territoriali e alle categorie enti (a sua volta recuperato in
+     * base alle abilitazioni)
+     *
+     * @param idUser
+     *            id utente
+     * @param idAmbiente
+     *            id ambiente
+     * @param idAmbitoTerritList
+     *            id ambito territoriale (lista)
+     * @param idCategEnteList
+     *            id categoria ente (lista)
+     * @param filterValid
+     *            true/false
+     *
+     * @return OrgEnteTableBean
+     */
+    public OrgEnteTableBean getEntiAbilitatiAmbitoCateg(long idUser, List<BigDecimal> idAmbiente,
+            List<BigDecimal> idAmbitoTerritList, List<BigDecimal> idCategEnteList, Boolean filterValid) {
+        OrgEnteTableBean entiTableBean = new OrgEnteTableBean();
+        List<OrgEnte> listaEnti = ambienteHelper.retrieveOrgEnteAbil(idUser, idAmbiente, idAmbitoTerritList,
                 idCategEnteList, filterValid);
         return transformOrgEnteList(listaEnti, entiTableBean);
     }
@@ -1095,7 +1148,7 @@ public class AmbienteEjb {
      *            id utente corrente
      * @param idAmbienteEnteConvenz
      *            id ambiente convenzionato
-     * 
+     *
      * @return BaseTable
      */
     public BaseTable getSIOrgEnteConvenzTableBean(long idUserUamCor, BigDecimal idAmbienteEnteConvenz) {
@@ -1124,7 +1177,7 @@ public class AmbienteEjb {
      *            id utente corrente
      * @param idAmbienteEnteConvenz
      *            id ambiente convenzionato
-     * 
+     *
      * @return BaseTable
      */
     public BaseTable getSIOrgEnteConvenzAccordoValidoTableBean(long idUserUamCor, BigDecimal idAmbienteEnteConvenz) {
@@ -1152,9 +1205,9 @@ public class AmbienteEjb {
      *
      * @param idEnteConvenz
      *            l'id dell'ente convenzionato da recuperare su DB
-     * 
+     *
      * @return il rowbean contenente il le date
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1190,7 +1243,8 @@ public class AmbienteEjb {
             try {
                 for (UsrVAbilAmbEnteConvenz abilAmbEnteConvenz : abilAmbEnteConvenzList) {
                     BaseRow riga = new BaseRow();
-                    riga.setBigDecimal("id_ambiente_ente_convenz", abilAmbEnteConvenz.getIdAmbienteEnteConvenz());
+                    riga.setBigDecimal("id_ambiente_ente_convenz",
+                            abilAmbEnteConvenz.getUsrVAbilAmbEnteConvenzId().getIdAmbienteEnteConvenz());
                     riga.setString("nm_ambiente_ente_convenz", abilAmbEnteConvenz.getNmAmbienteEnteConvenz());
                     abilAmbEnteConvenzTableBean.add(riga);
                 }
@@ -1270,7 +1324,7 @@ public class AmbienteEjb {
         try {
             for (OrgVRicEnteConvenzByEsterno ricEnteConvenz : ricEnteConvenzList) {
                 BaseRow riga = new BaseRow();
-                riga.setBigDecimal("id_ente_gestore", ricEnteConvenz.getIdEnteConvenz());
+                riga.setBigDecimal("id_ente_gestore", ricEnteConvenz.getId().getIdEnteConvenz());
                 riga.setString("nm_ente_gestore", ricEnteConvenz.getNmEnteConvenz());
                 ricEnteConvenzTableBean.add(riga);
             }
@@ -1299,19 +1353,6 @@ public class AmbienteEjb {
         return ricEnteConvenzTableBean;
     }
 
-    public BaseRow getEnteConservatore(BigDecimal idEnteSiamGestore) {
-        BaseRow riga = null;
-        // Ricerco l’ente convenzionato avente id_ente_siam = id_ente_siam scelto come gestore
-        // e da esso ricerco l'accordo valido alla data. Una volta trovato l'accordo, ricavo l'ente convenz conserv
-        SIOrgEnteSiam enteConvenzConserv = ambienteHelper.getEnteConvenzConserv(idEnteSiamGestore);
-        if (enteConvenzConserv != null) {
-            riga = new BaseRow();
-            riga.setBigDecimal("id_ente_siam", BigDecimal.valueOf(enteConvenzConserv.getIdEnteSiam()));
-            riga.setString("nm_ente_siam", enteConvenzConserv.getNmEnteSiam());
-        }
-        return riga;
-    }
-
     public BaseTable getEntiConservatori(long idUserIamCor, BigDecimal idEnteSiamGestore) {
         BaseTable tabella = new BaseTable();
         List<SIOrgEnteSiam> entiConvenzConserv = ambienteHelper.getEnteConvenzConservList(idUserIamCor,
@@ -1332,11 +1373,10 @@ public class AmbienteEjb {
     }
 
     private void updateOrgStrutWithMostRecenteEnteConvenz(OrgStrut strut) {
-        List<SIOrgEnteConvenzOrg> siEnteConvenzOrgList = ambienteHelper
-                .retrieveSIOrgEnteConvenzOrg(BigDecimal.valueOf(strut.getIdStrut()));
-        strut.setIdEnteConvenz(BigDecimal.valueOf(siEnteConvenzOrgList.get(0).getSiOrgEnteConvenz().getIdEnteSiam()));
-        strut.setDtIniVal(siEnteConvenzOrgList.get(0).getDtIniVal());
-        strut.setDtFineVal(siEnteConvenzOrgList.get(0).getDtFineVal());
+        SIOrgEnteConvenzOrg siEnteConvenzOrg = getOrgEnteConvenzOrgMostRecent(BigDecimal.valueOf(strut.getIdStrut()));
+        strut.setIdEnteConvenz(BigDecimal.valueOf(siEnteConvenzOrg.getSiOrgEnteConvenz().getIdEnteSiam()));
+        strut.setDtIniVal(siEnteConvenzOrg.getDtIniVal());
+        strut.setDtFineVal(siEnteConvenzOrg.getDtFineVal());
     }
 
     /**
@@ -1354,9 +1394,9 @@ public class AmbienteEjb {
      *            data inizio validita
      * @param dtFineVal
      *            data fine validita
-     * 
+     *
      * @return BigDecimal
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1393,9 +1433,9 @@ public class AmbienteEjb {
      *            data inizio validita
      * @param dtFineVal
      *            data fine validita
-     * 
+     *
      * @return BigDecimal
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1427,7 +1467,7 @@ public class AmbienteEjb {
      *            tramite ParerUserError (del metodo alignsEnteConvenzToIam) ed essendo stato un creato un nuovo
      *            contesto transazionale (REQUIRES_NEW) la rollback avrebbe effetto solo sulla replica (non voglio
      *            rollbackare tutto...)
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1456,9 +1496,9 @@ public class AmbienteEjb {
      *            data inizio validità
      * @param dtFineVal
      *            data fine validità
-     * 
+     *
      * @return IamEnteConvenzDaAllinea
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1504,11 +1544,10 @@ public class AmbienteEjb {
 
             // Salvo in ORG_STRUT l'ente convenzionato associato se è quello più recente
             OrgStrut strut = ambienteHelper.findById(OrgStrut.class, idStrut);
-            List<SIOrgEnteConvenzOrg> siEnteConvenzOrgList = ambienteHelper.retrieveSIOrgEnteConvenzOrg(idStrut);
-            strut.setIdEnteConvenz(
-                    BigDecimal.valueOf(siEnteConvenzOrgList.get(0).getSiOrgEnteConvenz().getIdEnteSiam()));
-            strut.setDtIniVal(siEnteConvenzOrgList.get(0).getDtIniVal());
-            strut.setDtFineVal(siEnteConvenzOrgList.get(0).getDtFineVal());
+            SIOrgEnteConvenzOrg siEnteConvenzOrg = getOrgEnteConvenzOrgMostRecent(idStrut);
+            strut.setIdEnteConvenz(BigDecimal.valueOf(siEnteConvenzOrg.getSiOrgEnteConvenz().getIdEnteSiam()));
+            strut.setDtIniVal(siEnteConvenzOrg.getDtIniVal());
+            strut.setDtFineVal(siEnteConvenzOrg.getDtFineVal());
             //
             ambienteHelper.getEntityManager().flush();
 
@@ -1545,9 +1584,9 @@ public class AmbienteEjb {
      *            data inizio validità
      * @param dtFineVal
      *            data fine validità
-     * 
+     *
      * @return L'oggetto IamOrganizDaReplic con cui eseguire la replica a SacerIam
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1672,9 +1711,7 @@ public class AmbienteEjb {
                 BigDecimal.valueOf(siOrgEnteConvenzOrg.getSiUsrOrganizIam().getIdOrganizApplic()),
                 param.getNomePagina());
 
-        IamEnteConvenzDaAllinea enteConvenzDaAllinea = struttureEjb.insertIamEnteConvenzDaAllinea(idEnteConvenz,
-                nmEnteConvenz);
-        return enteConvenzDaAllinea;
+        return struttureEjb.insertIamEnteConvenzDaAllinea(idEnteConvenz, nmEnteConvenz);
     }
 
     public boolean showInsertButton(long idUserIam) {
@@ -1696,7 +1733,7 @@ public class AmbienteEjb {
             for (OrgStrut strutDB : enteDB.getOrgStruts()) {
                 if (strutDB.getIdEnteConvenz() != null) {
                     OrgVRicEnteConvenzByEsterno ricEnteConvenz = ambienteHelper
-                            .findViewById(OrgVRicEnteConvenzByEsterno.class, strutDB.getIdEnteConvenz());
+                            .findOrgVRicEnteConvenzByEsterno(strutDB.getIdEnteConvenz());
                     if ((ricEnteConvenz.getIdEnteGestore().compareTo(ambienteNuovo.getIdEnteGestore()) != 0)
                             || (ricEnteConvenz.getIdEnteConserv().compareTo(ambienteNuovo.getIdEnteConserv()) != 0)) {
                         throw new ParerUserError(
@@ -1726,8 +1763,8 @@ public class AmbienteEjb {
         List<OrgStoricoEnteAmbiente> list = ambienteHelper.getOrgStoricoEnteAmbienteList(idEnte);
         try {
             for (OrgStoricoEnteAmbiente storico : list) {
-                OrgStoricoEnteAmbienteRowBean rowBean = new OrgStoricoEnteAmbienteRowBean();
-                rowBean = (OrgStoricoEnteAmbienteRowBean) Transform.entity2RowBean(storico);
+                OrgStoricoEnteAmbienteRowBean rowBean = (OrgStoricoEnteAmbienteRowBean) Transform
+                        .entity2RowBean(storico);
                 rowBean.setString("nm_ambiente", storico.getOrgAmbiente().getNmAmbiente());
                 tableBean.add(rowBean);
             }
@@ -1762,4 +1799,49 @@ public class AmbienteEjb {
         // Gestione parametri multipli
         manageParametriMultipliPerAmbiente(parametriMultipliAmbiente, ambiente);
     }
+
+    /**
+     * Data una struttura in input, viene recuperato l'ente convenzionato associato con data più recente
+     * 
+     * @param idStrut
+     *            struttura per la quale ricercare l'associazione con ente convenzionato più recente
+     * 
+     * @return entity {@link SIOrgEnteConvenzOrg}
+     */
+    public SIOrgEnteConvenzOrg getOrgEnteConvenzOrgMostRecent(BigDecimal idStrut) {
+        // Recupero tutte le associazioni ente convenzionato - struttura SACER
+        List<SIOrgEnteConvenzOrg> associazioniStrutturaEnteConvenzionatoList = ambienteHelper
+                .retrieveSIOrgEnteConvenzOrg(idStrut);
+        // Trasformo la lista in mappa: chiave --> la più recente ha la data di inizio validità più vicina alla data
+        // corrente, valore --> id_ente_convenz_org
+        Map<Date, Long> mappa = new HashMap<>();
+
+        for (SIOrgEnteConvenzOrg associazioneStrutturaEnteConvenzionato : associazioniStrutturaEnteConvenzionatoList) {
+            mappa.put(associazioneStrutturaEnteConvenzionato.getDtIniVal(),
+                    associazioneStrutturaEnteConvenzionato.getIdEnteConvenzOrg());
+        }
+
+        final long now = System.currentTimeMillis();
+
+        // Get date closest to "now"
+        Date closest = Collections.min(mappa.keySet(), new Comparator<Date>() {
+            public int compare(Date d1, Date d2) {
+                long diff1 = Math.abs(d1.getTime() - now);
+                long diff2 = Math.abs(d2.getTime() - now);
+                return Long.compare(diff1, diff2);
+            }
+        });
+
+        // Restituisco il record di interesse
+        for (SIOrgEnteConvenzOrg associazioneStrutturaEnteConvenzionato : associazioniStrutturaEnteConvenzionatoList) {
+            if (associazioneStrutturaEnteConvenzionato.getDtIniVal().compareTo(closest) == 0) {
+                return associazioneStrutturaEnteConvenzionato;
+            }
+        }
+
+        // errore
+        return null;
+
+    }
+
 }

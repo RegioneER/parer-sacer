@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>it.eng.parer</groupId>
     <artifactId>sacer-jboss</artifactId>
-    <version>7.3.2-SNAPSHOT</version>
+    <version>9.2.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -11,22 +10,37 @@
     <parent>
         <groupId>it.eng.parer</groupId>
         <artifactId>parer-pom</artifactId>
-        <version>3.0.16</version>
+        <version>5.2.0</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Skiptests by default : esecuzione su CI -->
+        <!-- Skiptests by default : esecuzione su CI 2.6.0-->
         <skipTests>true</skipTests>
-        <!-- Questa è la versione del modulo sacer-jpa-el che dovrà essere inclusa nel progetto -->
-        <sacer.jpamodule.version>1.5.2</sacer.jpamodule.version>
         <!-- Questa è la versione del modulo sacer-xml che dovrà essere inclusa nel progetto -->
-        <sacer.xmlmodule.version>2.2.17</sacer.xmlmodule.version>
+        <sacer.xmlmodule.version>2.8.0</sacer.xmlmodule.version>
         <!-- spagofat bom -->
-        <spagofat.version>4.1.27</spagofat.version>
-        <verificafirma-eidas-beans.version>1.2.0</verificafirma-eidas-beans.version>
-        <verificafirma-crypto-beans.version>1.0.1</verificafirma-crypto-beans.version>
-        <sacerws-client.version>3.0.2</sacerws-client.version>
-        <parer-retry.version>2.0.3</parer-retry.version>
+        <spagofat.version>5.12.0</spagofat.version>
+        <verificafirma-eidas-beans.version>1.9.0</verificafirma-eidas-beans.version>
+        <verificafirma-crypto-beans.version>1.3.0</verificafirma-crypto-beans.version>
+        <parer-retry.version>2.1.0</parer-retry.version>
+        <idp-jaas-rdbms.version>0.0.9</idp-jaas-rdbms.version>
+        <!-- hsm -->
+        <client-hsm.version>1.0.2</client-hsm.version>
+        <!-- third party lib -->
+        <org.apache.wss4j.version>2.2.4</org.apache.wss4j.version>
+        <blob-info.version>1.0.0</blob-info.version>
+        <software.amazon.awssdk.version>2.20.87</software.amazon.awssdk.version>  
+        <xadisk.version>1.2.2.5</xadisk.version>
+        <ojdbc7.version>12.1.0.1</ojdbc7.version>
+        <naming-java.version>0.8</naming-java.version>
+        <javacsv.version>2.0</javacsv.version>
+        <avalon-framework.version>4.2.0</avalon-framework.version>
+        <saxon-he.version>9.6.0-5</saxon-he.version>
+        <asm-debug-all.version>4.1</asm-debug-all.version>
+        <javax.mail.version>1.4.7</javax.mail.version>
+        <ooxml-schemas.version>1.4</ooxml-schemas.version>
+        <pdf-box.version>2.0.28</pdf-box.version>
+        <fop.version>1.1</fop.version>              
     </properties>
 
     <distributionManagement>
@@ -58,6 +72,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>sacer-jboss-jpa</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>sacer-jboss-web</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
@@ -76,15 +95,8 @@
             <!-- dipendenze parer -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>sacer-jpa-el</artifactId>
-                <version>${sacer.jpamodule.version}</version>
-                <classifier>sacer-job</classifier>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>sacer-jpa-el</artifactId>
-                <version>${sacer.jpamodule.version}</version>
-                <classifier>weaved</classifier>
+                <artifactId>sacer-jboss-jpa</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>it.eng.parer</groupId>
@@ -94,7 +106,7 @@
             <dependency>
                 <groupId>it.eng.parer</groupId>
                 <artifactId>blob-info</artifactId>
-                <version>0.0.5</version>
+                <version>${blob-info.version}</version>
             </dependency>
             <dependency>
                 <groupId>it.eng.parer</groupId>
@@ -112,35 +124,30 @@
             <dependency>
                 <groupId>directory-naming</groupId>
                 <artifactId>naming-java</artifactId>
-                <version>0.8</version>
+                <version>${naming-java.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.oracle</groupId>
                 <artifactId>ojdbc7</artifactId>
-                <version>12.1.0.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.persistence</groupId>
-                <artifactId>javax.persistence</artifactId>
-                <version>2.0.0</version>
+                <version>${ojdbc7.version}</version>
             </dependency>
             <!-- Fork di Xadisk del parer -->
             <dependency>
                 <groupId>net.java.xadisk</groupId>
                 <artifactId>xadisk</artifactId>
-                <version>1.2.2.5</version>
+                <version>${xadisk.version}</version>
             </dependency>
             <!-- HSM -->
             <dependency>
                 <groupId>it.eng.parer</groupId>
                 <artifactId>client-hsm</artifactId>
-                <version>1.0.2</version>
+                <version>${client-hsm.version}</version>
             </dependency>
             <!-- Questo è il modulo di login dell'IDP, usato come libreria per le funzioni di logging -->
             <dependency>
                 <groupId>it.eng.parer</groupId>
                 <artifactId>idp-jaas-rdbms</artifactId>
-                <version>0.0.9</version>
+                <version>${idp-jaas-rdbms.version}</version>
             </dependency>
             <!-- Fine dipendenze parer -->
             <dependency>
@@ -185,17 +192,10 @@
                 <artifactId>httpmime</artifactId>
                 <version>${httpmime.version}</version>
             </dependency>
-             <dependency>
+            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>${httpcore.version}</version>
-            </dependency>
-            <!-- Glassfish -->
-            <dependency>
-                <groupId>org.glassfish.main.persistence</groupId>
-                <artifactId>eclipselink-wrapper</artifactId>
-                <version>3.1.2.2</version>
-                <type>pom</type>
             </dependency>
             <!-- Tika -->
             <dependency>
@@ -205,15 +205,33 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.tika</groupId>
-                <artifactId>tika-parsers</artifactId>
+                <artifactId>tika-parsers-standard-package</artifactId>
                 <version>${tika.version}</version>
+				<exclusions>
+	                <exclusion>
+	                    <groupId>org.ow2.asm</groupId>
+	                    <artifactId>asm</artifactId>
+	                </exclusion>
+	                <exclusion>
+	                    <groupId>org.apache.cxf</groupId>
+	                    <artifactId>cxf-rt-rs-client</artifactId>
+	                </exclusion>
+	                 <exclusion>
+	                	  <groupId>org.bouncycastle</groupId>
+	                	  <artifactId>bcprov-jdk18on</artifactId>
+	                  </exclusion>
+	                 <exclusion>
+	                 	<groupId>org.bouncycastle</groupId>
+	                 	<artifactId>bcmail-jdk18on</artifactId>
+	                 </exclusion>
+           		 </exclusions>                
             </dependency>
             
             <!-- Altro -->
             <dependency>
                 <groupId>net.sourceforge.javacsv</groupId>
                 <artifactId>javacsv</artifactId>
-                <version>2.0</version>
+                <version>${javacsv.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
@@ -245,17 +263,17 @@
             <dependency>
                 <groupId>avalon-framework</groupId>
                 <artifactId>avalon-framework-api</artifactId>
-                <version>4.2.0</version>
+                <version>${avalon-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>avalon-framework</groupId>
                 <artifactId>avalon-framework-impl</artifactId>
-                <version>4.2.0</version>
+                <version>${avalon-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
-                <version>9.6.0-5</version>
+                <version>${saxon-he.version}</version>
             </dependency>
             <dependency>
                 <groupId>xalan</groupId>
@@ -263,50 +281,61 @@
                 <version>${xalan.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-debug-all</artifactId>
-                <version>4.1</version>
-            </dependency>
-            <!-- JBoss BOM -->
-            <dependency>
-                <groupId>org.jboss.bom.eap</groupId>
-                <artifactId>jboss-javaee-6.0-with-tools</artifactId>
-                <version>6.4.0.GA</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <version>${asm-debug-all.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee-6.0</artifactId>
-                <type>pom</type>
-                <version>${jboss-javaee-6.0.version}</version>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+                <version>${javax.mail.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
             <!-- Forniti da Jboss, vedi jboss-deployment-structure.xml -->
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http</artifactId>
-                <version>${cxf-api.version}</version>
+                <version>${cxf-rt.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-jaxws</artifactId>
-                <version>${cxf-api.version}</version>
+                <version>${cxf-rt.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-ws-security</artifactId>
-                <version>${cxf-api.version}</version>
+                <version>${cxf-rt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-ws-security-common</artifactId>
+                <version>${org.apache.wss4j.version}</version>
+	            <exclusions>
+	                <exclusion>
+	                    <groupId>org.opensaml</groupId>
+	                    <artifactId>opensaml-saml-impl</artifactId>
+	                </exclusion>
+	                <exclusion>
+	                    <groupId>org.opensaml</groupId>
+	                    <artifactId>opensaml-xacml-impl</artifactId>
+	                </exclusion>
+	                <exclusion>
+	                    <groupId>org.opensaml</groupId>
+	                    <artifactId>opensaml-xacml-saml-impl</artifactId>
+	                </exclusion>
+	            </exclusions>                
             </dependency>
             <!-- AWS -->
             <dependency>
-                <groupId>com.amazonaws</groupId>
-                <artifactId>aws-java-sdk-bom</artifactId>
-                <version>${aws-java-sdk-bom.version}</version>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${software.amazon.awssdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -332,92 +361,90 @@
             <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
-                <version>2.3.0</version>
+                <version>${jaxb.version}</version>
                 <scope>provided</scope>				
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-core</artifactId>
-                <version>2.3.0</version>
+                <version>${jaxb.version}</version>
                 <scope>provided</scope>								
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>2.3.0</version>
+                <version>${jaxb.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.sun.activation</groupId>
                 <artifactId>javax.activation</artifactId>
-                <version>1.2.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>2.3.2</version>
+                <version>${javax.activation.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>javax.activation-api</artifactId>
-                <version>1.2.0</version>
+                <version>${javax.activation.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${jaxb-runtime.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
-                <version>1.3.2</version>
+                <version>${javax.annotation-api.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>javax.xml.soap</groupId>
                 <artifactId>javax.xml.soap-api</artifactId>
-                <version>1.4.0</version>
+                <version>${javax.xml.soap-api.version}</version>
                 <scope>provided</scope>
             </dependency> 
-            
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>ooxml-schemas</artifactId>
-                <version>1.4</version>    
+                <version>${ooxml-schemas.version}</version>    
             </dependency>
-
+			<!-- OWASP -->
+            <dependency>
+                <groupId>org.owasp.esapi</groupId>
+                <artifactId>esapi</artifactId>
+                <version>${owasp.version}</version>
+                <exclusions>
+	            	<exclusion>
+	            		<groupId>org.apache.xmlgraphics</groupId>
+	            		<artifactId>batik-css</artifactId>
+	            	</exclusion>
+	            	<exclusion>
+	            		<groupId>xerces</groupId>
+	            		<artifactId>xercesImpl</artifactId>
+	            	</exclusion>
+	            	<exclusion>
+	            		<groupId>log4j</groupId>
+	            		<artifactId>log4j</artifactId>
+	            	</exclusion>
+	            </exclusions>
+            </dependency>            
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>4.1.2</version>    
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>5.0.15.RELEASE</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.16</version>
-                </plugin>
-                <plugin>
-                    <groupId>pl.project13.maven</groupId>
-                    <artifactId>git-commit-id-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
-             <!-- artifact disponibile attraverso compilazione del singolo TAG pubblicato -->
-             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -450,6 +477,7 @@
     </reporting>
 
     <modules>
+        <module>sacer-jpa</module>
         <module>sacer-slg</module>
         <module>sacer-ejb</module>
         <module>sacer-web</module>

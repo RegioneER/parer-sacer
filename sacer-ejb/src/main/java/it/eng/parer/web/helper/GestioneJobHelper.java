@@ -1,16 +1,27 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
 
-import it.eng.parer.entity.DecJob;
-import it.eng.parer.entity.DecJobFoto;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.job.helper.JobHelper;
-import it.eng.parer.viewEntity.LogVLisSched;
-import it.eng.parer.viewEntity.LogVVisLastSched;
-import it.eng.spagoCore.error.EMFError;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -19,28 +30,39 @@ import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import it.eng.parer.entity.DecJob;
+import it.eng.parer.entity.DecJobFoto;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.job.helper.JobHelper;
+import it.eng.parer.viewEntity.LogVLisSched;
+import it.eng.parer.viewEntity.LogVVisLastSched;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class GestioneJobHelper extends GenericHelper {
 
     private static final Logger log = LoggerFactory.getLogger(GestioneJobHelper.class);
+    public static final String STATO_IN_ESECUZIONE = "IN_ESECUZIONE";
 
     @EJB
     private JobHelper jobHelper;
 
     public GestioneJobHelper() {
+        // empty
     }
 
-    public List<Object[]> getDecJobList(String nmAmbito, String dsJob, List<String> tiStatoList) throws EMFError {
+    public List<Object[]> getDecJobList(String nmAmbito, String dsJob, List<String> tiStatoList) {
         String whereWord = "AND ";
         StringBuilder queryStr = new StringBuilder(
-                "SELECT u.nm_job, u.ds_Job, u.dt_Prossima_Attivazione, lastSched.nm_job, lastSched.dt_reg_log_job_ini, lastSched.fl_job_attivo, lastSched.last_exec_ok, u.nm_ambito, u.ni_ord_exec, u.ti_stato_timer FROM Dec_Job u LEFT JOIN Log_V_Vis_Last_Sched lastSched "
-                        + "ON(u.nm_job = lastSched.nm_job) " + "WHERE u.ds_Job IS NOT NULL ");
+                "SELECT u.nm_job, u.ds_Job, u.dt_Prossima_Attivazione, lastSched.nm_job as nm_job_last, lastSched.dt_reg_log_job_ini, lastSched.fl_job_attivo, lastSched.last_exec_ok, u.nm_ambito, u.ni_ord_exec, u.ti_stato_timer, u.ti_sched_job FROM Dec_Job u LEFT JOIN Log_V_Vis_Last_Sched lastSched "
+                        + "ON(CASE " + "WHEN u.nm_job = 'ALLINEAMENTO_LOG' then 'ALLINEAMENTO_LOG_SACER' "
+                        + "WHEN u.nm_job = 'INIZIALIZZAZIONE_LOG' then 'INIZIALIZZAZIONE_LOG_SACER' "
+                        + "ELSE u.nm_job END = lastSched.nm_job) " + "WHERE u.ds_Job IS NOT NULL ");
 
         if (StringUtils.isNotBlank(nmAmbito)) {
             queryStr.append(whereWord).append("u.nm_ambito = ?1 ");
@@ -56,18 +78,16 @@ public class GestioneJobHelper extends GenericHelper {
             if (tiStatoList.contains("ATTIVO") && !tiStatoList.contains("DISATTIVO")) {
                 queryStr.append(whereWord).append(
                         "u.dt_Prossima_Attivazione IS NOT NULL AND (u.ti_Stato_Timer IN ('ATTIVO') OR u.ti_Stato_Timer IS NULL) ");
-                if (tiStatoList.contains("IN_ESECUZIONE")) {
+                if (tiStatoList.contains(STATO_IN_ESECUZIONE)) {
                     queryStr.append("OR lastSched.fl_Job_Attivo = '1' ");
                 }
             } else if (!tiStatoList.contains("ATTIVO") && tiStatoList.contains("DISATTIVO")) {
-                // queryStr.append(whereWord).append("u.dt_Prossima_Attivazione IS NULL AND (u.ti_Stato_Timer IN
-                // ('ATTIVO', 'INATTIVO') OR u.ti_Stato_Timer IS NULL) ");
                 queryStr.append(whereWord)
                         .append("(u.dt_Prossima_Attivazione IS NULL OR u.ti_Stato_Timer IN ('ESECUZIONE_SINGOLA')) ");
-                if (tiStatoList.contains("IN_ESECUZIONE")) {
+                if (tiStatoList.contains(STATO_IN_ESECUZIONE)) {
                     queryStr.append("OR lastSched.fl_Job_Attivo = '1' ");
                 }
-            } else if (tiStatoList.contains("IN_ESECUZIONE")) {
+            } else if (tiStatoList.contains(STATO_IN_ESECUZIONE)) {
                 queryStr.append("AND lastSched.fl_Job_Attivo = '1' ");
             }
         }
@@ -84,9 +104,18 @@ public class GestioneJobHelper extends GenericHelper {
             query.setParameter(2, "%" + dsJob.toUpperCase() + "%");
         }
 
-        return (List<Object[]>) query.getResultList();
+        return query.getResultList();
     }
 
+    /**
+     * @deprecated funzionalità in disuso, andrà eliminato col passaggio definitivo alla nuova gestione dei job
+     * 
+     * @param nmJob
+     *            nome del job
+     * 
+     * @return true se l'ultima esecuzione è andata buon fine, false altrimenti
+     */
+    @Deprecated
     public boolean isUltimaEsecuzioneJobOK(String nmJob) {
         String queryStr = "SELECT u FROM LogVVisSched u " + "WHERE u.nmJob = :nmJob "
                 + "ORDER BY u.dtRegLogJobIni DESC ";
@@ -106,26 +135,30 @@ public class GestioneJobHelper extends GenericHelper {
     }
 
     public List<Object[]> getDecJobListPerAmm() {
-        String queryStr = "SELECT u.nm_job, u.ds_Job, u.dt_Prossima_Attivazione, lastSched.nm_job, lastSched.dt_reg_log_job_ini, lastSched.fl_job_attivo, u.ti_stato_timer FROM Dec_Job u LEFT JOIN Log_V_Vis_Last_Sched lastSched "
-                + "ON(u.nm_job = lastSched.nm_job) WHERE u.ds_Job IS NOT NULL ORDER BY u.nm_job ";
+        String queryStr = "SELECT u.nm_job, u.ds_Job, u.dt_Prossima_Attivazione, lastSched.nm_job as nm_job_last, lastSched.dt_reg_log_job_ini, lastSched.fl_job_attivo, u.ti_stato_timer FROM Dec_Job u LEFT JOIN Log_V_Vis_Last_Sched lastSched "
+                + "ON(CASE " + "WHEN u.nm_job = 'ALLINEAMENTO_LOG' then 'ALLINEAMENTO_LOG_SACER' "
+                + "WHEN u.nm_job = 'INIZIALIZZAZIONE_LOG' then 'INIZIALIZZAZIONE_LOG_SACER' "
+                + "ELSE u.nm_job END = lastSched.nm_job) WHERE u.ds_Job IS NOT NULL ORDER BY u.nm_job ";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createNativeQuery(queryStr);
 
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        return (List<Object[]>) query.getResultList();
+        return query.getResultList();
 
     }
 
     public List<Object[]> getDecJobFotoListPerAmm() {
         String queryStr = "SELECT u.nm_job_foto, u.ds_Job_foto, u.dt_Prossima_Attivazione_foto, lastSched.nm_job, lastSched.dt_reg_log_job_ini, lastSched.fl_job_attivo, u.ti_stato_timer_foto FROM Dec_Job_Foto u LEFT JOIN Log_V_Vis_Last_Sched lastSched "
-                + "ON(u.nm_job_foto = lastSched.nm_job) WHERE u.ds_Job_foto IS NOT NULL ORDER BY u.nm_job_foto ";
+                + "ON(CASE " + "WHEN u.nm_job_foto = 'ALLINEAMENTO_LOG' then 'ALLINEAMENTO_LOG_SACER' "
+                + "WHEN u.nm_job_foto = 'INIZIALIZZAZIONE_LOG' then 'INIZIALIZZAZIONE_LOG_SACER' "
+                + "ELSE u.nm_job_foto END = lastSched.nm_job) WHERE u.ds_Job_foto IS NOT NULL ORDER BY u.nm_job_foto ";
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createNativeQuery(queryStr);
 
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        return (List<Object[]>) query.getResultList();
+        return query.getResultList();
 
     }
 
@@ -150,7 +183,7 @@ public class GestioneJobHelper extends GenericHelper {
     public List<String> getAmbitoJob() {
         String queryStr = "SELECT DISTINCT u.nmAmbito from DecJob u " + "ORDER BY u.nmAmbito";
         Query query = getEntityManager().createQuery(queryStr);
-        return (List<String>) query.getResultList();
+        return query.getResultList();
 
     }
 
@@ -190,19 +223,19 @@ public class GestioneJobHelper extends GenericHelper {
         // e aggiunto un altro nuovo, ma il rimosso deve figurare! Quindi li devo confrontare per nome
         String queryStr = "SELECT u.nmJob from DecJob u WHERE u.dsJob IS NOT NULL ";
         Query query = getEntityManager().createQuery(queryStr);
-        List<String> jobList = (List<String>) query.getResultList();
+        List<String> jobList = query.getResultList();
 
         String queryStr2 = "SELECT u.nmJobFoto from DecJobFoto u ";
         Query query2 = getEntityManager().createQuery(queryStr2);
-        List<String> jobFotoList = (List<String>) query2.getResultList();
+        List<String> jobFotoList = query2.getResultList();
 
-        Set<String> jobSet = new HashSet<String>(jobList);
-        Set<String> jobFotoSet = new HashSet<String>(jobFotoList);
+        Set<String> jobSet = new HashSet<>(jobList);
+        Set<String> jobFotoSet = new HashSet<>(jobFotoList);
         // Job non presenti nella foto, ma in DEC_JOB
         jobSet.removeAll(jobFotoSet);
 
-        Set<String> jobSet2 = new HashSet<String>(jobList);
-        Set<String> jobFotoSet2 = new HashSet<String>(jobFotoList);
+        Set<String> jobSet2 = new HashSet<>(jobList);
+        Set<String> jobFotoSet2 = new HashSet<>(jobFotoList);
         // Job presenti nella foto, ma NON in DEC_JOB
         jobFotoSet2.removeAll(jobSet2);
 
@@ -219,19 +252,19 @@ public class GestioneJobHelper extends GenericHelper {
         // e aggiunto un altro nuovo, ma il rimosso deve figurare! Quindi li devo confrontare per nome
         String queryStr = "SELECT u.nmJob from DecJob u WHERE u.dsJob IS NOT NULL ";
         Query query = getEntityManager().createQuery(queryStr);
-        List<String> jobList = (List<String>) query.getResultList();
+        List<String> jobList = query.getResultList();
 
         String queryStr2 = "SELECT u.nmJobFoto from DecJobFoto u WHERE u.dsJobFoto IS NOT NULL ";
         Query query2 = getEntityManager().createQuery(queryStr2);
-        List<String> jobFotoList = (List<String>) query2.getResultList();
+        List<String> jobFotoList = query2.getResultList();
 
-        Set<String> jobSet = new HashSet<String>(jobList);
-        Set<String> jobFotoSet = new HashSet<String>(jobFotoList);
+        Set<String> jobSet = new HashSet<>(jobList);
+        Set<String> jobFotoSet = new HashSet<>(jobFotoList);
         // Job non presenti nella foto, ma in DEC_JOB
         jobSet.removeAll(jobFotoSet);
 
-        Set<String> jobSet2 = new HashSet<String>(jobList);
-        Set<String> jobFotoSet2 = new HashSet<String>(jobFotoList);
+        Set<String> jobSet2 = new HashSet<>(jobList);
+        Set<String> jobFotoSet2 = new HashSet<>(jobFotoList);
         // Job presenti nella foto, ma NON in DEC_JOB
         jobFotoSet2.removeAll(jobSet2);
 
@@ -251,9 +284,9 @@ public class GestioneJobHelper extends GenericHelper {
 
     public void copyToFoto() {
         String queryStr = "SELECT job FROM DecJob job WHERE job.dsJob IS NOT NULL "
-                + "AND (job.tiStatoTimer IN ('ATTIVO', 'INATTIVO') OR job.tiStatoTimer IS NULL); ";
+                + "AND (job.tiStatoTimer IN ('ATTIVO', 'INATTIVO') OR job.tiStatoTimer IS NULL) ";
         Query query = getEntityManager().createQuery(queryStr);
-        List<DecJob> jobList = (List<DecJob>) query.getResultList();
+        List<DecJob> jobList = query.getResultList();
 
         Calendar c = Calendar.getInstance();
         Date dataOdierna = c.getTime();
@@ -285,11 +318,9 @@ public class GestioneJobHelper extends GenericHelper {
     public void copyFromFoto() {
         String queryStr = "SELECT jobFoto FROM DecJobFoto jobFoto ";
         Query query = getEntityManager().createQuery(queryStr);
-        List<DecJobFoto> jobFotoList = (List<DecJobFoto>) query.getResultList();
+        List<DecJobFoto> jobFotoList = query.getResultList();
 
-        jobFotoList.forEach(jobFoto -> {
-            copyFromFoto(jobFoto.getIdJobFoto());
-        });
+        jobFotoList.forEach(jobFoto -> copyFromFoto(jobFoto.getIdJobFoto()));
     }
 
     public void copyFromFoto(long idJobFoto) {
@@ -348,7 +379,13 @@ public class GestioneJobHelper extends GenericHelper {
         Query query2 = getEntityManager().createQuery(queryStr2);
         Long numJobFoto = (Long) query2.getSingleResult();
 
-        return numJob == numJobFoto;
+        return Objects.equals(numJob, numJobFoto);
+    }
+
+    public DecJob getDecJobByName(String nmJob) {
+        Query q = getEntityManager().createQuery("SELECT job FROM DecJob job WHERE job.nmJob = :nmJob");
+        q.setParameter("nmJob", nmJob);
+        return (DecJob) q.getSingleResult();
     }
 
 }

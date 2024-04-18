@@ -1,5 +1,46 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAip.helper;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.rometools.utils.Strings;
+
+import it.eng.paginator.util.HibernateUtils;
 import it.eng.parer.entity.AroArchivSec;
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroDoc;
@@ -11,18 +52,15 @@ import it.eng.parer.entity.AroUpdCompUnitaDoc;
 import it.eng.parer.entity.AroUpdDocUnitaDoc;
 import it.eng.parer.entity.AroUpdLinkUnitaDoc;
 import it.eng.parer.entity.AroUpdUnitaDoc;
-import it.eng.parer.entity.AroUrnVerIndiceAipUd;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.AroVersIniArchivSec;
 import it.eng.parer.entity.AroVersIniComp;
 import it.eng.parer.entity.AroVersIniDatiSpec;
 import it.eng.parer.entity.AroVersIniDoc;
 import it.eng.parer.entity.AroVersIniLinkUnitaDoc;
-import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
-import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec;
 import it.eng.parer.entity.AroVersIniUnitaDoc;
 import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.VolVolumeConserv;
+import it.eng.parer.entity.VolAppartUnitaDocVolume;
 import it.eng.parer.entity.VrsSessioneVers;
 import it.eng.parer.entity.VrsUrnXmlSessioneVers;
 import it.eng.parer.entity.VrsXmlDatiSessioneVers;
@@ -30,43 +68,38 @@ import it.eng.parer.entity.VrsXmlModelloSessioneVers;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiUsoXsdAroUpdDatiSpecUnitaDoc;
-import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
+import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
+import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec;
 import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.dto.SessioneVersamentoExt;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.viewEntity.AroVLisaipudSistemaMigraz;
 import it.eng.parer.viewEntity.AroVVisCompAip;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
-import java.util.ArrayList;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Fioravanti_F
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ControlliRecIndiceAip")
 @LocalBean
 @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
 public class ControlliRecIndiceAip {
 
     private static final Logger log = LoggerFactory.getLogger(ControlliRecIndiceAip.class);
+    public static final String JAVAX_PERSISTENCE_FETCHGRAPH = "javax.persistence.fetchgraph";
+
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
+
+    @EJB
+    private ObjectStorageService objectStorageService;
 
     public RispostaControlli leggiXmlVersamentiAip(long idAroIndiceAipUdDaElab) {
         RispostaControlli rispostaControlli;
@@ -81,7 +114,7 @@ public class ControlliRecIndiceAip {
          * recupero la sessione relativa al versamento originale dell'UD. per ora non ho bisogno di conoscerne l'elenco
          * dei documenti
          */
-        log.debug("Ricavo la sessione di versamento per l'UD id=" + udDaElab.getAroUnitaDoc().getIdUnitaDoc());
+        log.debug("Ricavo la sessione di versamento per l'UD id={}", udDaElab.getAroUnitaDoc().getIdUnitaDoc());
         String queryStr = "select t from VrsSessioneVers t " + "where t.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                 + "and t.aroDoc is null " + "and t.tiStatoSessioneVers = 'CHIUSA_OK' "
                 + "and t.tiSessioneVers = 'VERSAMENTO' ";
@@ -90,8 +123,9 @@ public class ControlliRecIndiceAip {
         query.setParameter("idUnitaDoc", udDaElab.getAroUnitaDoc().getIdUnitaDoc());
 
         List<VrsSessioneVers> vsv = query.getResultList();
-        if (vsv.size() > 0) {
+        if (!vsv.isEmpty()) {
             SessioneVersamentoExt sveVersamentoOrig = new SessioneVersamentoExt();
+            sveVersamentoOrig.setIdUnitaDoc(vsv.get(0).getAroUnitaDoc().getIdUnitaDoc());
             sveVersamentoOrig.setIdSessioneVers(vsv.get(0).getIdSessioneVers());
             sveVersamentoOrig.setDataSessioneVers(vsv.get(0).getDtChiusura());
             sveVersamentoOrig.setTipoSessione(Constants.TipoSessione.valueOf(vsv.get(0).getTiSessioneVers()));
@@ -106,24 +140,26 @@ public class ControlliRecIndiceAip {
                     + "join acd.aroCompIndiceAipDaElabs acdi "
                     + "where acdi.aroIndiceAipUdDaElab.idIndiceAipDaElab = :idIndiceAipDaElabIn "
                     + "order by ad.dtCreazione, ad.niOrdDoc, ad.pgDoc ";
-
+            EntityGraph<AroDoc> entityGraph = entityManager.createEntityGraph(AroDoc.class);
+            entityGraph.addAttributeNodes("decTipoDoc");
             query = entityManager.createQuery(queryStr);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             query.setParameter("idIndiceAipDaElabIn", udDaElab.getIdIndiceAipDaElab());
             List<AroDoc> ads = query.getResultList();
             for (AroDoc tmpAd : ads) {
                 if (tmpAd.getTiCreazione().equals(CostantiDB.TipoCreazioneDoc.AGGIUNTA_DOCUMENTO.name())) {
-                    log.debug("Ricavo la sessione di versamento del documento aggiunto id=" + tmpAd.getIdDoc());
+                    log.debug("Ricavo la sessione di versamento del documento aggiunto id={}", tmpAd.getIdDoc());
                     /*
                      * per ogni doc trovato, ricavo la sessione di versamento e la accodo alla collection
                      */
                     queryStr = "select t from VrsSessioneVers t " + "where t.aroDoc.idDoc = :idDoc "
                             + "and t.tiStatoSessioneVers = 'CHIUSA_OK' ";
-
                     query = entityManager.createQuery(queryStr);
                     query.setParameter("idDoc", tmpAd.getIdDoc());
                     vsv = query.getResultList();
-                    if (vsv.size() > 0) {
+                    if (!vsv.isEmpty()) {
                         SessioneVersamentoExt sveAggiunta = new SessioneVersamentoExt();
+                        sveAggiunta.setIdDoc(vsv.get(0).getAroDoc().getIdDoc());
                         sveAggiunta.setIdSessioneVers(vsv.get(0).getIdSessioneVers());
                         sveAggiunta.setDataSessioneVers(vsv.get(0).getDtChiusura());
                         sveAggiunta.setTipoSessione(Constants.TipoSessione.valueOf(vsv.get(0).getTiSessioneVers()));
@@ -150,20 +186,34 @@ public class ControlliRecIndiceAip {
                 query = entityManager.createQuery(queryStr);
                 query.setParameter("idSessioneVers", tmpsvExt.getIdSessioneVers());
 
+                // xml from O.S.
+                Map<String, String> xmlVersamentoOs = Collections.emptyMap();
+                if (tmpsvExt.getTipoSessione().equals(Constants.TipoSessione.VERSAMENTO)
+                        && !Objects.isNull(tmpsvExt.getIdUnitaDoc())) {
+                    xmlVersamentoOs = objectStorageService.getObjectSipUnitaDoc(tmpsvExt.getIdUnitaDoc());
+                }
+                if (tmpsvExt.getTipoSessione().equals(Constants.TipoSessione.AGGIUNGI_DOCUMENTO)
+                        && !Objects.isNull(tmpsvExt.getIdDoc())) {
+                    xmlVersamentoOs = objectStorageService.getObjectSipDoc(tmpsvExt.getIdDoc());
+                }
+
                 List<VrsXmlDatiSessioneVers> vxdsv = query.getResultList();
+
                 for (VrsXmlDatiSessioneVers xml : vxdsv) {
                     SessioneVersamentoExt.DatiXml tmpDatiXml = new SessioneVersamentoExt().new DatiXml();
                     tmpDatiXml.setTipoXmlDati(xml.getTiXmlDati());
                     tmpDatiXml.setVersione(xml.getCdVersioneXml());
-                    tmpDatiXml.setXml(xml.getBlXml());
+                    // Il backend ORA è Object storage ma l'xml è già stato migrato? il controllo
+                    // sul null serve a
+                    // questo
+                    if (!xmlVersamentoOs.isEmpty() && Strings.isNull(xml.getBlXml())) {
+                        tmpDatiXml.setXml(xmlVersamentoOs.get(xml.getTiXmlDati()));
+                    } else {
+                        tmpDatiXml.setXml(xml.getBlXml());
+                    }
                     VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils
-                            .find(xml.getVrsUrnXmlSessioneVers(), new Predicate() {
-                                @Override
-                                public boolean evaluate(final Object object) {
-                                    return ((VrsUrnXmlSessioneVers) object).getTiUrn()
-                                            .equals(TiUrnXmlSessioneVers.ORIGINALE);
-                                }
-                            });
+                            .find(xml.getVrsUrnXmlSessioneVers(), object -> ((VrsUrnXmlSessioneVers) object).getTiUrn()
+                                    .equals(TiUrnXmlSessioneVers.ORIGINALE));
                     if (urnXmlSessioneVers != null) {
                         tmpDatiXml.setUrn(urnXmlSessioneVers.getDsUrn());
                     } else {
@@ -199,17 +249,17 @@ public class ControlliRecIndiceAip {
          * recupero la sessione relativa al versamento originale dell'UD. per ora non ho bisogno di conoscerne l'elenco
          * dei documenti
          */
-        log.debug("Ricavo la sessione di versamento per l'UD id=" + idUnitaDoc);
+        log.debug("Ricavo la sessione di versamento per l'UD id={}", idUnitaDoc);
         String queryStr = "select t from VrsSessioneVers t " + "where t.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                 + "and t.aroDoc is null " + "and t.tiStatoSessioneVers = 'CHIUSA_OK' "
                 + "and t.tiSessioneVers = 'VERSAMENTO' ";
-
-        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        Query query = entityManager.createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc);
 
         List<VrsSessioneVers> vsv = query.getResultList();
-        if (vsv.size() > 0) {
+        if (!vsv.isEmpty()) {
             SessioneVersamentoExt sveVersamentoOrig = new SessioneVersamentoExt();
+            sveVersamentoOrig.setIdUnitaDoc(vsv.get(0).getAroUnitaDoc().getIdUnitaDoc());
             sveVersamentoOrig.setIdSessioneVers(vsv.get(0).getIdSessioneVers());
             sveVersamentoOrig.setDataSessioneVers(vsv.get(0).getDtChiusura());
             sveVersamentoOrig.setTipoSessione(Constants.TipoSessione.valueOf(vsv.get(0).getTiSessioneVers()));
@@ -223,10 +273,13 @@ public class ControlliRecIndiceAip {
             query = entityManager.createQuery(
                     "SELECT DISTINCT ad FROM AroStrutDoc strutDoc JOIN strutDoc.aroDoc ad JOIN ad.aroUnitaDoc ud JOIN strutDoc.aroCompDocs cd where ud.idUnitaDoc = :idUnitaDoc order by ad.dtCreazione, ad.niOrdDoc, ad.pgDoc ");
             query.setParameter("idUnitaDoc", idUnitaDoc);
+            EntityGraph<AroDoc> entityGraph = entityManager.createEntityGraph(AroDoc.class);
+            entityGraph.addAttributeNodes("decTipoDoc");
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             List<AroDoc> ads = query.getResultList();
             for (AroDoc tmpAd : ads) {
                 if (tmpAd.getTiCreazione().equals(CostantiDB.TipoCreazioneDoc.AGGIUNTA_DOCUMENTO.name())) {
-                    log.debug("Ricavo la sessione di versamento del documento aggiunto id=" + tmpAd.getIdDoc());
+                    log.debug("Ricavo la sessione di versamento del documento aggiunto id={}", tmpAd.getIdDoc());
                     /*
                      * per ogni doc trovato, ricavo la sessione di versamento e la accodo alla collection
                      */
@@ -236,8 +289,9 @@ public class ControlliRecIndiceAip {
                     query = entityManager.createQuery(queryStr);
                     query.setParameter("idDoc", tmpAd.getIdDoc());
                     vsv = query.getResultList();
-                    if (vsv.size() > 0) {
+                    if (!vsv.isEmpty()) {
                         SessioneVersamentoExt sveAggiunta = new SessioneVersamentoExt();
+                        sveAggiunta.setIdDoc(vsv.get(0).getAroDoc().getIdDoc());
                         sveAggiunta.setIdSessioneVers(vsv.get(0).getIdSessioneVers());
                         sveAggiunta.setDataSessioneVers(vsv.get(0).getDtChiusura());
                         sveAggiunta.setTipoSessione(Constants.TipoSessione.valueOf(vsv.get(0).getTiSessioneVers()));
@@ -264,20 +318,34 @@ public class ControlliRecIndiceAip {
                 query = entityManager.createQuery(queryStr);
                 query.setParameter("idSessioneVers", tmpsvExt.getIdSessioneVers());
 
+                // xml from O.S.
+                Map<String, String> xmlVersamentoOs = Collections.emptyMap();
+                if (tmpsvExt.getTipoSessione().equals(Constants.TipoSessione.VERSAMENTO)
+                        && !Objects.isNull(tmpsvExt.getIdUnitaDoc())) {
+                    xmlVersamentoOs = objectStorageService.getObjectSipUnitaDoc(tmpsvExt.getIdUnitaDoc());
+                }
+                if (tmpsvExt.getTipoSessione().equals(Constants.TipoSessione.AGGIUNGI_DOCUMENTO)
+                        && !Objects.isNull(tmpsvExt.getIdDoc())) {
+                    xmlVersamentoOs = objectStorageService.getObjectSipDoc(tmpsvExt.getIdDoc());
+                }
+
                 List<VrsXmlDatiSessioneVers> vxdsv = query.getResultList();
                 for (VrsXmlDatiSessioneVers xml : vxdsv) {
                     SessioneVersamentoExt.DatiXml tmpDatiXml = new SessioneVersamentoExt().new DatiXml();
                     tmpDatiXml.setTipoXmlDati(xml.getTiXmlDati());
                     tmpDatiXml.setVersione(xml.getCdVersioneXml());
-                    tmpDatiXml.setXml(xml.getBlXml());
+                    // Il backend ORA è Object storage ma l'xml è già stato migrato? il controllo
+                    // sul null serve a
+                    // questo
+                    if (!xmlVersamentoOs.isEmpty() && Strings.isNull(xml.getBlXml())) {
+                        tmpDatiXml.setXml(xmlVersamentoOs.get(xml.getTiXmlDati()));
+                    } else {
+                        tmpDatiXml.setXml(xml.getBlXml());
+                    }
+
                     VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils
-                            .find(xml.getVrsUrnXmlSessioneVers(), new Predicate() {
-                                @Override
-                                public boolean evaluate(final Object object) {
-                                    return ((VrsUrnXmlSessioneVers) object).getTiUrn()
-                                            .equals(TiUrnXmlSessioneVers.ORIGINALE);
-                                }
-                            });
+                            .find(xml.getVrsUrnXmlSessioneVers(), object -> ((VrsUrnXmlSessioneVers) object).getTiUrn()
+                                    .equals(TiUrnXmlSessioneVers.ORIGINALE));
                     if (urnXmlSessioneVers != null) {
                         tmpDatiXml.setUrn(urnXmlSessioneVers.getDsUrn());
                     } else {
@@ -313,14 +381,17 @@ public class ControlliRecIndiceAip {
         try {
 
             String queryStr = "select xms from VrsXmlModelloSessioneVers xms "
-                    + "join xms.decUsoModelloXsdUniDoc.decModelloXsdUd modello_xsd "
+                    + "join xms.decUsoModelloXsdUniDoc uso_modello " + "join uso_modello.decModelloXsdUd modello_xsd "
                     + "join xms.vrsDatiSessioneVers dati_ses " + "join dati_ses.vrsSessioneVers ses "
                     + "where modello_xsd.tiUsoModelloXsd = :tiUsoModelloXsd "
                     + "and modello_xsd.tiModelloXsd = :tiModelloXsdUd " + "and dati_ses.tiDatiSessioneVers = 'XML_DOC' "
                     + "and ses.aroUnitaDoc.idUnitaDoc = :idUnitaDoc " + "and ses.aroDoc is null "
                     + "and ses.tiStatoSessioneVers = 'CHIUSA_OK' " + "and ses.tiSessioneVers = 'VERSAMENTO' ";
-
+            EntityGraph<VrsXmlModelloSessioneVers> entityGraph = entityManager
+                    .createEntityGraph(VrsXmlModelloSessioneVers.class);
+            entityGraph.addSubgraph("decUsoModelloXsdUniDoc").addAttributeNodes("decModelloXsdUd");
             javax.persistence.Query query = entityManager.createQuery(queryStr);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
             query.setParameter("tiModelloXsdUd", tiModelloXsdUd);
             query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -355,7 +426,6 @@ public class ControlliRecIndiceAip {
             query.setParameter("idUnitaDoc", idUnitaDoc);
             List<AroUpdUnitaDoc> upds = query.getResultList();
             for (AroUpdUnitaDoc tmpUpd : upds) {
-                // if (tmpUpd.getTipoUpdUnitaDoc().equals("METADATI")) {
                 queryStr = "select xml from AroXmlUpdUnitaDoc xml "
                         + "where xml.aroUpdUnitaDoc.idUpdUnitaDoc = :idUpdUnitaDoc ";
 
@@ -363,7 +433,6 @@ public class ControlliRecIndiceAip {
                 query.setParameter("idUpdUnitaDoc", tmpUpd.getIdUpdUnitaDoc());
 
                 xmlupds.addAll(query.getResultList());
-                // }
             }
             rispostaControlli.setrObject(xmlupds);
             rispostaControlli.setrBoolean(true);
@@ -428,32 +497,6 @@ public class ControlliRecIndiceAip {
         return rispostaControlli;
     }
 
-    public RispostaControlli leggiAroUrnVerIndiceAipUnitaDoc(long idUnitaDoc, TiUrnVerIxAipUd tiUrn) {
-        RispostaControlli rispostaControlli;
-        rispostaControlli = new RispostaControlli();
-        rispostaControlli.setrBoolean(false);
-        AroUrnVerIndiceAipUd urnVerIndiceAipUd = null;
-
-        try {
-            String queryStr = "select uviau " + "from AroUrnVerIndiceAipUd uviau "
-                    + " join uviau.aroVerIndiceAipUd viau " + " join viau.aroIndiceAipUd iau "
-                    + " join iau.aroUnitaDoc ud " + "where ud.idUnitaDoc = :idUnitaDoc " + " and uviau.tiUrn = :tiUrn";
-
-            javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idUnitaDoc", idUnitaDoc);
-            query.setParameter("tiUrn", tiUrn);
-            urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) query.getSingleResult();
-            rispostaControlli.setrObject(urnVerIndiceAipUd);
-            rispostaControlli.setrBoolean(true);
-        } catch (Exception e) {
-            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione ControlliRecIndiceAip.leggiAroUrnVerIndiceAipUnitaDoc " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella AroUrnVerIndiceAipUd ", e);
-        }
-        return rispostaControlli;
-    }
-
     public RispostaControlli leggiFascicoliSecVersIniUnitaDoc(long idVersIniUnitaDoc) {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
@@ -472,7 +515,7 @@ public class ControlliRecIndiceAip {
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione ControlliRecIndiceAip.leggiFascicoliSecUpd " + e.getMessage()));
+                    "Eccezione ControlliRecIndiceAip.leggiFascicoliSecVersIniUnitaDoc " + e.getMessage()));
             log.error("Eccezione nella lettura della tabella AroVersIniArchivSec ", e);
         }
         return rispostaControlli;
@@ -495,7 +538,6 @@ public class ControlliRecIndiceAip {
                     + "WHERE updInCoda.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc) ";
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
             lstUpd = query.getResultList();
             AroUpdUnitaDoc upd;
@@ -542,13 +584,15 @@ public class ControlliRecIndiceAip {
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
         List<AroLinkUnitaDoc> lstLinkUD;
-
         try {
             String queryStr = "select ud " + "from AroLinkUnitaDoc ud "
                     + "where ud.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ";
-
+            EntityGraph<AroLinkUnitaDoc> entityGraph = entityManager.createEntityGraph(AroLinkUnitaDoc.class);
+            entityGraph.addSubgraph("aroUnitaDoc").addSubgraph("orgStrut").addSubgraph("orgEnte")
+                    .addAttributeNodes("orgAmbiente");
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             lstLinkUD = query.getResultList();
             rispostaControlli.setrObject(lstLinkUD);
             rispostaControlli.setrBoolean(true);
@@ -570,9 +614,13 @@ public class ControlliRecIndiceAip {
         try {
             String queryStr = "select updLink " + "from AroVersIniLinkUnitaDoc updLink "
                     + "join updLink.aroVersIniUnitaDoc viud " + "where viud.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ";
-
+            EntityGraph<AroVersIniLinkUnitaDoc> entityGraph = entityManager
+                    .createEntityGraph(AroVersIniLinkUnitaDoc.class);
+            entityGraph.addSubgraph("aroVersIniUnitaDoc").addSubgraph("aroUnitaDoc").addSubgraph("orgStrut")
+                    .addSubgraph("orgEnte").addAttributeNodes("orgAmbiente");
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             lstLinkUDVersIniUpd = query.getResultList();
             rispostaControlli.setrObject(lstLinkUDVersIniUpd);
             rispostaControlli.setrBoolean(true);
@@ -594,8 +642,11 @@ public class ControlliRecIndiceAip {
         try {
             String queryStr = "select updLink " + "from AroUpdLinkUnitaDoc updLink "
                     + "where updLink.aroUpdUnitaDoc.idUpdUnitaDoc = :idUpdUnitaDoc ";
-
-            javax.persistence.Query query = entityManager.createQuery(queryStr);
+            EntityGraph<AroUpdLinkUnitaDoc> entityGraph = entityManager.createEntityGraph(AroUpdLinkUnitaDoc.class);
+            entityGraph.addSubgraph("aroUpdUnitaDoc").addSubgraph("orgStrut").addSubgraph("orgEnte")
+                    .addAttributeNodes("orgAmbiente");
+            Query query = entityManager.createQuery(queryStr);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             query.setParameter("idUpdUnitaDoc", idUpdUnitaDoc);
             lstLinkUDUpd = query.getResultList();
             rispostaControlli.setrObject(lstLinkUDUpd);
@@ -629,6 +680,8 @@ public class ControlliRecIndiceAip {
             case SUB_COMP:
                 tmpTipoEntita = "uxsd.aroCompDoc.idCompDoc";
                 break;
+            default:
+                throw new IllegalArgumentException("Tipo entità " + tipoEntitySacer + " non prevista");
             }
 
             String queryStr = String
@@ -683,7 +736,6 @@ public class ControlliRecIndiceAip {
                             + "and vids.tiEntitaSacer = :tipoEntitySacer " + "and %s = :idEntitySacer ", tmpTipoEntita);
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query = entityManager.createQuery(queryStr);
             query.setParameter("tipoUsoAttr", tipoUsoAttr);
             query.setParameter("tipoEntitySacer", tipoEntitySacer);
             query.setParameter("idEntitySacer", idEntitySacer);
@@ -727,7 +779,6 @@ public class ControlliRecIndiceAip {
                     tmpTipoEntita);
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query = entityManager.createQuery(queryStr);
             query.setParameter("tipoUsoAttr", tipoUsoAttr);
             query.setParameter("tipoEntitySacer", tipoEntitySacer);
             query.setParameter("idEntitySacerUpd", idEntitySacerUpd);
@@ -752,9 +803,11 @@ public class ControlliRecIndiceAip {
 
         try {
             String queryStr = "select acd from AroCompDoc acd " + "where acd.aroCompDoc = :aroCompDoc";
-
+            EntityGraph<AroCompDoc> entityGraph = entityManager.createEntityGraph(AroCompDoc.class);
+            entityGraph.addAttributeNodes("aroCompDoc"); // carico anche il padre
             query = entityManager.createQuery(queryStr);
             query.setParameter("aroCompDoc", compPadre);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             lstDatiF = query.getResultList();
             rispostaControlli.setrObject(lstDatiF);
             rispostaControlli.setrBoolean(true);
@@ -770,7 +823,7 @@ public class ControlliRecIndiceAip {
     public RispostaControlli getVersioneSacer() {
         RispostaControlli rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
-        String appVersion = it.eng.spagoCore.configuration.ConfigSingleton.get_appVersion();
+        String appVersion = it.eng.spagoCore.configuration.ConfigSingleton.getInstance().getAppVersion();
         rispostaControlli.setrString(appVersion);
         rispostaControlli.setrBoolean(true);
         return rispostaControlli;
@@ -785,6 +838,9 @@ public class ControlliRecIndiceAip {
                     + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                     + "ORDER BY u.pgVerIndiceAip DESC ";
             Query query = entityManager.createQuery(queryStr);
+            EntityGraph<AroVerIndiceAipUd> entityGraph = entityManager.createEntityGraph(AroVerIndiceAipUd.class);
+            entityGraph.addAttributeNodes("aroUrnVerIndiceAipUds");
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             query.setParameter("idUnitaDoc", idUnitaDoc);
             List<AroVerIndiceAipUd> versioniPrecedenti = query.getResultList();
             rispostaControlli.setrObject(versioniPrecedenti);
@@ -793,7 +849,7 @@ public class ControlliRecIndiceAip {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione durante il recupero delle versioni precedenti dell'AIP " + e.getMessage()));
-            log.error("Eccezione durante il recupero delle versioni precedenti dell'AIP " + e);
+            log.error("Eccezione durante il recupero delle versioni precedenti dell'AIP", e);
         }
         return rispostaControlli;
     }
@@ -803,10 +859,11 @@ public class ControlliRecIndiceAip {
         RispostaControlli rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
         try {
-            // Ricavo tutte le versioni precedenti dell'AIP provenienti da altri conservatori
+            // Ricavo tutte le versioni precedenti dell'AIP provenienti da altri
+            // conservatori
             String queryStr = "SELECT u FROM AroVLisaipudSistemaMigraz u " + "WHERE u.idUnitaDoc = :idUnitaDoc ";
             Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idUnitaDoc", idUnitaDoc);
+            query.setParameter("idUnitaDoc", GenericHelper.bigDecimalFromLong(idUnitaDoc));
             List<AroVLisaipudSistemaMigraz> versioniPrecedentiExternal = query.getResultList();
             rispostaControlli.setrObject(versioniPrecedentiExternal);
             rispostaControlli.setrBoolean(true);
@@ -816,8 +873,8 @@ public class ControlliRecIndiceAip {
                     "Eccezione durante il recupero delle versioni precedenti dell'AIP provenienti da altri conservatori "
                             + e.getMessage()));
             log.error(
-                    "Eccezione durante il recupero delle versioni precedenti dell'AIP provenienti da altri conservatori "
-                            + e);
+                    "Eccezione durante il recupero delle versioni precedenti dell'AIP provenienti da altri conservatori ",
+                    e);
         }
         return rispostaControlli;
     }
@@ -829,19 +886,25 @@ public class ControlliRecIndiceAip {
             /*
              * Determina i volumi di conservazione a cui appartiene l’unita doc.
              */
-            String queryStr = "select t  from VolAppartUnitaDocVolume audv " + "join audv.volVolumeConserv t "
+            String queryStr = "select audv from VolAppartUnitaDocVolume audv "
                     + "where audv.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ";
+            EntityGraph<VolAppartUnitaDocVolume> entityGraph = entityManager
+                    .createEntityGraph(VolAppartUnitaDocVolume.class);
+            entityGraph.addSubgraph("volVolumeConserv").addSubgraph("orgStrut").addSubgraph("orgEnte")
+                    .addAttributeNodes("orgAmbiente");
             Query query = entityManager.createQuery(queryStr);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
             query.setParameter("idUnitaDoc", idUnitaDoc);
-            List<VolVolumeConserv> listaVolumiConserv = query.getResultList();
-            rispostaControlli.setrObject(listaVolumiConserv);
+            List<VolAppartUnitaDocVolume> listaVolumiConserv = query.getResultList();
+            rispostaControlli.setrObject(listaVolumiConserv.stream().map(VolAppartUnitaDocVolume::getVolVolumeConserv)
+                    .collect(Collectors.toList()));
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione durante il recupero dei volumi a cui appartiene l’unita documentaria "
                             + e.getMessage()));
-            log.error("Eccezione durante il recupero dei volumi a cui appartiene l’unita documentaria " + e);
+            log.error("Eccezione durante il recupero dei volumi a cui appartiene l’unita documentaria ", e);
         }
         return rispostaControlli;
     }
@@ -867,7 +930,7 @@ public class ControlliRecIndiceAip {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecIndiceAip.leggiComponentiDocumento AroDoc " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella dei componenti doc" + e);
+            log.error("Eccezione nella lettura  della tabella dei componenti doc", e);
         }
         return rispostaControlli;
     }
@@ -883,7 +946,7 @@ public class ControlliRecIndiceAip {
             String queryStr = "SELECT u FROM AroVVisCompAip u " + "WHERE u.idCompDoc = :idCompDoc ";
 
             query = entityManager.createQuery(queryStr);
-            query.setParameter("idCompDoc", idCompDoc);
+            query.setParameter("idCompDoc", HibernateUtils.bigDecimalFrom(idCompDoc));
             lstDati = query.getResultList();
             AroVVisCompAip comp;
             if (!lstDati.isEmpty()) {
@@ -895,7 +958,7 @@ public class ControlliRecIndiceAip {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecIndiceAip.leggiComponentiDaVista " + e.getMessage()));
-            log.error("Eccezione nella lettura della vista dei componenti " + e);
+            log.error("Eccezione nella lettura della vista dei componenti ", e);
         }
         return rispostaControlli;
     }
@@ -926,7 +989,7 @@ public class ControlliRecIndiceAip {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecIndiceAip.leggiComponenteDaVersIniUpd " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella AroVersIniComp " + e);
+            log.error("Eccezione nella lettura della tabella AroVersIniComp ", e);
         }
         return rispostaControlli;
     }
@@ -957,7 +1020,7 @@ public class ControlliRecIndiceAip {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecIndiceAip.leggiComponenteDaUpd " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella AroUpdCompUnitaDoc " + e);
+            log.error("Eccezione nella lettura della tabella AroUpdCompUnitaDoc ", e);
         }
         return rispostaControlli;
     }
@@ -987,7 +1050,7 @@ public class ControlliRecIndiceAip {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecIndiceAip.leggiDocumentoDaVersIniUpd " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella AroVersIniDoc " + e);
+            log.error("Eccezione nella lettura della tabella AroVersIniDoc ", e);
         }
         return rispostaControlli;
     }
@@ -1017,7 +1080,7 @@ public class ControlliRecIndiceAip {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecIndiceAip.leggiDocumentoDaUpd " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella AroUpdDocUnitaDoc " + e);
+            log.error("Eccezione nella lettura della tabella AroUpdDocUnitaDoc ", e);
         }
         return rispostaControlli;
     }
@@ -1026,7 +1089,6 @@ public class ControlliRecIndiceAip {
         RispostaControlli rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
         List<AroIndiceAipUd> lstIndice;
-        List<AroVerIndiceAipUd> lstVerIndice;
         javax.persistence.Query query;
 
         try {
@@ -1037,15 +1099,20 @@ public class ControlliRecIndiceAip {
             query.setParameter("idUnitaDoc", idUnitaDoc);
             lstIndice = query.getResultList();
             if (!lstIndice.isEmpty()) {
-                lstVerIndice = lstIndice.get(0).getAroVerIndiceAipUds();
-                rispostaControlli.setrObject(lstVerIndice);
+                queryStr = "SELECT u FROM AroVerIndiceAipUd u " + "WHERE u.aroIndiceAipUd = :aroIndiceAipUd ";
+                query = entityManager.createQuery(queryStr);
+                EntityGraph<AroVerIndiceAipUd> entityGraph = entityManager.createEntityGraph(AroVerIndiceAipUd.class);
+                entityGraph.addAttributeNodes("aroUrnVerIndiceAipUds");
+                query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+                query.setParameter("aroIndiceAipUd", lstIndice.get(0));
+                rispostaControlli.setrObject(query.getResultList());
             }
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecIndiceAip.getPrecedentiVersioniIndiciAip " + e.getMessage()));
-            log.error("Eccezione nella lettura delle precedenti versioni indici AIP " + e);
+            log.error("Eccezione nella lettura delle precedenti versioni indici AIP ", e);
         }
         return rispostaControlli;
     }

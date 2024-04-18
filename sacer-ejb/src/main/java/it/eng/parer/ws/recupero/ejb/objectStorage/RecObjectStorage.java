@@ -1,31 +1,35 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
 package it.eng.parer.ws.recupero.ejb.objectStorage;
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.services.s3.model.S3Object;
-
-import it.eng.parer.entity.AroCompObjectStorage;
-import it.eng.parer.entity.FirReport;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
-import it.eng.parer.objectstorage.ejb.AwsClientServices;
-import it.eng.parer.objectstorage.ejb.ReportvfAwsClientServices;
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 
 /**
  *
@@ -38,99 +42,66 @@ public class RecObjectStorage {
 
     private static final Logger log = LoggerFactory.getLogger(RecObjectStorage.class);
 
-    @PersistenceContext(unitName = "ParerJPA")
-    private EntityManager entityManager;
+    private static final String LOG_EXCEPTION_OS = "Eccezione gestione object storage su stream ";
 
     @EJB
-    private AwsClientServices awsClient;
+    private ObjectStorageService objectStorageService;
 
-    @EJB
-    private ReportvfAwsClientServices reportVfawsClient;
-
-    private RispostaControlli recuperaObjectStorageCompSuStream(long idCompDoc, OutputStream outputStream) {
-        RispostaControlli rc = new RispostaControlli();
-        rc.setrLong(-1);
-        rc.setrBoolean(false);
-
-        AroCompObjectStorage tmpAroCompObjS = null;
+    private boolean recuperaObjectStorageCompSuStream(long idCompDoc, OutputStream outputStream) {
+        boolean rc = false;
 
         try {
-            // recupero AroCompObjectStorage
-            String queryStr = "select t from AroCompObjectStorage t " + "where t.aroCompDoc.idCompDoc = :idCompDoc ";
-            javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idCompDoc", idCompDoc);
+            objectStorageService.getObjectComponente(idCompDoc, outputStream);
+            rc = true;
+        } catch (Exception e) {
 
-            List<AroCompObjectStorage> lstObjectStorage = query.getResultList();
-            if (lstObjectStorage.size() == 1) {
-                tmpAroCompObjS = lstObjectStorage.get(0);
-                rc.setrLong(0);
-            }
-            // AroCompObjectStorage founded
-            if (tmpAroCompObjS != null && rc.getrLong() != -1) {
-                rc = awsClient.getS3Object(tmpAroCompObjS.getNmTenant(), tmpAroCompObjS.getNmBucket(),
-                        tmpAroCompObjS.getCdKeyFile());
-
-                if (rc.isrBoolean()) {
-                    S3Object tmpS3Object = (S3Object) rc.getrObject();
-                    IOUtils.copyLarge(tmpS3Object.getObjectContent(), outputStream);
-                } else {
-                    return rc; // SdkClientException
-                }
-            }
-            //
-            rc.setrBoolean(true);
-        } catch (IOException e) {
-            rc.setrBoolean(false);
-            rc.setCodErr(MessaggiWSBundle.ERR_666);
-            rc.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione RecObjectStorage.recuperaObjectAndCopySuStream " + e.getMessage()));
-            log.error("Eccezione gestione object storage su stream ", e);
+            log.error(LOG_EXCEPTION_OS, e);
         }
 
         return rc;
     }
 
-    private RispostaControlli recuperaObjectStorageReportvfSuStream(long idCompDoc, OutputStream outputStream) {
-        RispostaControlli rc = new RispostaControlli();
-        rc.setrLong(-1);
-        rc.setrBoolean(false);
+    private boolean recuperaObjectStorageReportvfSuStream(long idCompDoc, OutputStream outputStream) {
+        boolean rc = false;
 
         try {
-            // recupero FirReport
-            String queryStr = "select t from FirReport t " + "where t.aroCompDoc.idCompDoc = :idCompDoc ";
-            javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idCompDoc", idCompDoc);
+            objectStorageService.getObjectReportvf(idCompDoc, outputStream);
+            rc = true;
+        } catch (Exception e) {
+            log.error(LOG_EXCEPTION_OS, e);
 
-            FirReport firReport = (FirReport) query.getSingleResult();
-            // FirReport founded
-            if (firReport != null) {
-                rc.setrLong(0);
-                rc = reportVfawsClient.getS3Object(firReport.getNmBucket(), firReport.getCdKeyFile());
+        }
+        return rc;
 
-                if (rc.isrBoolean()) {
-                    S3Object tmpS3Object = (S3Object) rc.getrObject();
-                    rc.setrObject(tmpS3Object);
-                    IOUtils.copyLarge(tmpS3Object.getObjectContent(), outputStream);
-                } else {
-                    return rc; // SdkClientException
-                }
-            }
-            //
-            rc.setrBoolean(true);
-        } catch (IOException e) {
-            rc.setrBoolean(false);
-            rc.setCodErr(MessaggiWSBundle.ERR_666);
-            rc.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione RecObjectStorage.recuperaObjectAndCopySuStream " + e.getMessage()));
-            log.error("Eccezione gestione object storage su stream ", e);
+    }
+
+    // MEV#30395
+    private boolean recuperaObjectStorageIndiceAipUdSuStream(long idVerIndiceAip, OutputStream outputStream) {
+        boolean rc = false;
+
+        try {
+            objectStorageService.getObjectIndiceAipUd(idVerIndiceAip, outputStream);
+            rc = true;
+        } catch (Exception e) {
+
+            log.error(LOG_EXCEPTION_OS, e);
         }
 
         return rc;
     }
+    // end MEV#30395
 
-    public RispostaControlli recuperaObjectStorageSuStream(RecuperoDocBean dto) {
-        RispostaControlli rc = new RispostaControlli();
-        // Nota : va diffenziato per tipo
+    /**
+     * Recupera il tipo oggetto identificato nel dto.
+     *
+     * @param dto
+     *            report verifica oppure componente
+     *
+     * @return true se l'oggetto è stato scritto sull'output stream del dto, false altrimenti
+     */
+    public boolean recuperaObjectStorageSuStream(RecuperoDocBean dto) {
+
+        boolean rc = false;
         switch (dto.getTipo()) {
         case COMP_DOC:
             rc = this.recuperaObjectStorageCompSuStream(dto.getId(), dto.getOs());
@@ -138,11 +109,16 @@ public class RecObjectStorage {
         case REPORTVF:
             rc = this.recuperaObjectStorageReportvfSuStream(dto.getId(), dto.getOs());
             break;
+        // MEV#30395
+        case INDICE_AIP:
+            rc = this.recuperaObjectStorageIndiceAipUdSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV#30395
         default:
+            log.warn("Tipo oggetto {} non supportato", dto.getTipo());
             break;
         }
 
         return rc;
     }
-
 }

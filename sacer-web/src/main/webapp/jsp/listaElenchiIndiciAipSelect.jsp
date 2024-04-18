@@ -226,7 +226,7 @@
                 <sl:newLine />
                 <slf:lblField colSpan="4" name="<%=ElenchiVersamentoForm.FiltriElenchiIndiciAipDaFirmare.FL_ELENCO_FISC %>" />
                 <sl:newLine />
-                <slf:lblField colSpan="4" name="<%=ElenchiVersamentoForm.FiltriElenchiIndiciAipDaFirmare.TI_GEST_ELENCO %>" />
+                <slf:lblField colSpan="2" name="<%=ElenchiVersamentoForm.FiltriElenchiIndiciAipDaFirmare.TI_GEST_ELENCO %>" />
                 <sl:newLine />
                 <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiIndiciAipDaFirmare.DT_CREAZIONE_ELENCO_IDX_AIP_DA%>" controlWidth="w70" colSpan="1"/>
                 <slf:doubleLblField name="<%=ElenchiVersamentoForm.FiltriElenchiIndiciAipDaFirmare.ORE_DT_CREAZIONE_ELENCO_IDX_AIP_DA%>" name2="<%=ElenchiVersamentoForm.FiltriElenchiIndiciAipDaFirmare.MINUTI_DT_CREAZIONE_ELENCO_IDX_AIP_DA%>" controlWidth="w20" controlWidth2="w20" colSpan="1"/>

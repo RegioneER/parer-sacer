@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.fascicoli.dto;
 
 import java.math.BigDecimal;
@@ -16,6 +33,8 @@ public class RicercaFascicoliBean {
     private String cd_key_fascicolo_da;
     private String cd_key_fascicolo_a;
     private BigDecimal nm_tipo_fascicolo;
+    private String ti_modello_xsd;
+    private String cd_xsd;
     private String ds_oggetto_fascicolo;
     private Date dt_ape_fasciolo_da;
     private Date dt_ape_fasciolo_a;
@@ -49,6 +68,7 @@ public class RicercaFascicoliBean {
     private String fl_forza_contr_classif;
     private String fl_forza_contr_numero;
     private String fl_forza_contr_colleg;
+    private String cd_versione_ws;
 
     private Date ts_vers_fascicolo_da;
     private Date ts_vers_fascicolo_a;
@@ -113,6 +133,22 @@ public class RicercaFascicoliBean {
 
     public void setNm_tipo_fascicolo(BigDecimal nm_tipo_fascicolo) {
         this.nm_tipo_fascicolo = nm_tipo_fascicolo;
+    }
+
+    public String getTi_modello_xsd() {
+        return ti_modello_xsd;
+    }
+
+    public void setTi_modello_xsd(String ti_modello_xsd) {
+        this.ti_modello_xsd = ti_modello_xsd;
+    }
+
+    public String getCd_xsd() {
+        return cd_xsd;
+    }
+
+    public void setCd_xsd(String cd_xsd) {
+        this.cd_xsd = cd_xsd;
     }
 
     public String getDs_oggetto_fascicolo() {
@@ -394,4 +430,13 @@ public class RicercaFascicoliBean {
     public void setTi_stato_fasc_elenco_vers(String ti_stato_fasc_elenco_vers) {
         this.ti_stato_fasc_elenco_vers = ti_stato_fasc_elenco_vers;
     }
+
+    public String getCd_versione_ws() {
+        return cd_versione_ws;
+    }
+
+    public void setCd_versione_ws(String cd_versione_ws) {
+        this.cd_versione_ws = cd_versione_ws;
+    }
+
 }

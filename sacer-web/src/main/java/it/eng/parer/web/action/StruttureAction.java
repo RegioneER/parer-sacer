@@ -1,7 +1,25 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.helper.FormatoFileDocHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard.ejb.FormatoFileStandardEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.ejb.SistemaMigrazioneEjb;
@@ -18,7 +36,6 @@ import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTitolario.ejb.StrutTitolariEjb;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AroRichiestaRa;
-import it.eng.parer.entity.constraint.SIOrgEnteSiam.TiEnteConvenz;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
 import it.eng.parer.firma.crypto.verifica.VerFormatiEnums;
@@ -50,12 +67,14 @@ import it.eng.parer.slite.gen.form.TrasformatoriForm;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicRowBean;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicTableBean;
 import it.eng.parer.slite.gen.tablebean.AplSistemaMigrazTableBean;
+import it.eng.parer.slite.gen.tablebean.DecAaTipoFascicoloTableBean;
 import it.eng.parer.slite.gen.tablebean.DecCategTipoUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecCategTipoUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocTableDescriptor;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileStandardTableBean;
+import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableDescriptor;
 import it.eng.parer.slite.gen.tablebean.DecTipoCompDocRowBean;
@@ -70,6 +89,8 @@ import it.eng.parer.slite.gen.tablebean.DecTipoRapprAmmessoTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoRapprCompRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoRapprCompTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoRapprCompTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.DecTipoSerieRowBean;
+import it.eng.parer.slite.gen.tablebean.DecTipoStrutDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoStrutDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoStrutDocTableDescriptor;
 import it.eng.parer.slite.gen.tablebean.DecTipoStrutUnitaDocTableBean;
@@ -93,8 +114,11 @@ import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgSubStrutRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgUsoSistemaMigrazRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgUsoSistemaMigrazTableBean;
+import it.eng.parer.slite.gen.tablebean.SIOrgEnteConvenzOrgRowBean;
+import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVRicCriterioRaggrTableBean;
 import it.eng.parer.slite.gen.viewbean.OrgVRicEnteTableBean;
 import it.eng.parer.slite.gen.viewbean.OrgVRicStrutRowBean;
@@ -104,6 +128,7 @@ import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.ejb.CriteriRaggruppamentoEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
+import it.eng.parer.web.helper.CriteriRaggrHelper;
 import it.eng.parer.web.util.ActionUtils;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
@@ -125,6 +150,7 @@ import it.eng.spagoLite.form.fields.SingleValueField;
 import it.eng.spagoLite.form.fields.impl.CheckBox;
 import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
+import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
 import java.io.IOException;
@@ -132,6 +158,7 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -146,7 +173,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.ejb.EJB;
@@ -161,11 +187,25 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class StruttureAction extends StruttureAbstractAction {
 
-    private static final Logger logger = LoggerFactory.getLogger(StruttureAction.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(StruttureAction.class.getName());
+    private static final String ERRORE_CARICAMENTO_STRUTTURA = "Errore durante il caricamento della struttura";
+    private static final String WARN_VALORE_STRUTTURA_ASSENTE = "Valore sulla struttura non presente: nessuna cancellazione effettuata";
+    private static final String ECCEZIONE_IMPORT_TIPO_UD = "Eccezione nell'import del tipo unità documentaria";
+    private static final String ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_SUCCESSIVA_FINE = "Errore di compilazione form: la data di inizio validità è successiva a quella di fine validità</br>";
+    private static final String ERRORE_COMPILAZIONE_DATA_FINE_VALIDITA_ASSENTE = "Errore di compilazione form: data fine validità non inserita</br>";
+    private static final String ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_ASSENTE = "Errore di compilazione form: data inizio validità non inserita</br>";
+    private static final String ERRORE_COMPILAZIONE_ENTE_CONVENZIONATO_ASSENTE = "Errore di compilazione form: ente convenzionato non inserito</br>";
+    private static final String ERRORE_COMPILAZIONE_AMBIENTE_ASSENTE = "Errore di compilazione form: ambiente ente convenzionato non inserito</br>";
+    private static final String ERRORE_COMPILAZIONE_STRUTTURA_ASSENTE = "Errore di compilazione form: Nome struttura non inserito</br>";
+    private static final String ERRORE_SELEZIONE_ENTE_RIFERIMENTO = "Selezionare un ente di riferimento</br>";
+    private static final String ECCEZIONE_GENERICA = "Eccezione";
+    private static final String PARAMETER_ID_AMBIENTE = "idAmbiente";
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioHelper")
     private MonitoraggioHelper monitoraggioHelper;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configurationHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/FormatoFileDocHelper")
+    private FormatoFileDocHelper formatoFileDocHelper;
     @EJB(mappedName = "java:app/Parer-ejb/StruttureEjb")
     private StruttureEjb struttureEjb;
     @EJB(mappedName = "java:app/Parer-ejb/AmbienteEjb")
@@ -178,6 +218,8 @@ public class StruttureAction extends StruttureAbstractAction {
     private SpringTikaSingleton singleton;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/CriteriRaggrHelper")
+    private CriteriRaggrHelper crHelper;
     @EJB(mappedName = "java:app/sacerlog-ejb/SacerLogEjb")
     private SacerLogEjb sacerLogEjb;
     @EJB(mappedName = "java:app/Parer-ejb/SistemaMigrazioneEjb")
@@ -232,9 +274,9 @@ public class StruttureAction extends StruttureAbstractAction {
         if (isMultipart) {
             // Wizard di inserimento parametri in Dettaglio Struttura
             if (getLastPublisher().equals(Application.Publisher.IMPORTA_PARAMETRI_WIZARD)) {
-                int size10Mb = 10 * WebConstants.FILESIZE * WebConstants.FILESIZE;
+                int size100Mb = 100 * WebConstants.FILESIZE * WebConstants.FILESIZE;
                 try {
-                    String[] a = getForm().getImportaParametri().postMultipart(getRequest(), size10Mb);
+                    String[] a = getForm().getImportaParametri().postMultipart(getRequest(), size100Mb);
                     if (a != null) {
                         String operationMethod = a[0];
                         String[] navigationParams = Arrays.copyOfRange(a, 1, a.length);
@@ -245,16 +287,16 @@ public class StruttureAction extends StruttureAbstractAction {
 
                 } catch (FileUploadException | NoSuchMethodException | SecurityException | IllegalAccessException
                         | IllegalArgumentException | InvocationTargetException ex) {
-                    logger.error("Errore nell'invocazione del metodo di navigazione wizard :"
+                    log.error("Errore nell'invocazione del metodo di navigazione wizard :"
                             + ExceptionUtils.getRootCauseMessage(ex), ex);
                     getMessageBox().addError(ExceptionUtils.getRootCauseMessage(ex));
                     goBack();
                 }
             } // Pagina di Importa Struttura
             else if (getLastPublisher().equals(Application.Publisher.IMPORTA_STRUTTURA)) {
-                int size10Mb = 10 * WebConstants.FILESIZE * WebConstants.FILESIZE;
+                int size100Mb = 100 * WebConstants.FILESIZE * WebConstants.FILESIZE;
                 try {
-                    String[] a = getForm().getInsStruttura().postMultipart(getRequest(), size10Mb);
+                    String[] a = getForm().getInsStruttura().postMultipart(getRequest(), size100Mb);
                     if (a != null) {
                         String operationMethod = a[0];
                         Method method = StruttureAction.class.getMethod(operationMethod);
@@ -263,8 +305,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
                 } catch (FileUploadException | NoSuchMethodException | SecurityException | IllegalAccessException
                         | IllegalArgumentException | InvocationTargetException ex) {
-                    logger.error(
-                            "Errore nella procedura di importa struttura :" + ExceptionUtils.getRootCauseMessage(ex),
+                    log.error("Errore nella procedura di importa struttura :" + ExceptionUtils.getRootCauseMessage(ex),
                             ex);
                     getMessageBox().addError("Errore nella procedura di importa struttura");
                     goBack();
@@ -461,19 +502,19 @@ public class StruttureAction extends StruttureAbstractAction {
         /*
          * La procedura esce dalla funzione di modifica/inserimento? tolgo l'asterisco dalle descrizioni dei campi
          */
-        String cd_description = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
-        String ds_description = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
-        cd_description = (cd_description.startsWith("*") ? cd_description.substring(1) : cd_description);
-        ds_description = (ds_description.startsWith("*") ? ds_description.substring(1) : ds_description);
-        getForm().getCategorieEnti().getCd_categ_ente().setDescription(cd_description);
-        getForm().getCategorieEnti().getDs_categ_ente().setDescription(ds_description);
+        String cdDescription = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
+        String dsDescription = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
+        cdDescription = (cdDescription.startsWith("*") ? cdDescription.substring(1) : cdDescription);
+        dsDescription = (dsDescription.startsWith("*") ? dsDescription.substring(1) : dsDescription);
+        getForm().getCategorieEnti().getCd_categ_ente().setDescription(cdDescription);
+        getForm().getCategorieEnti().getDs_categ_ente().setDescription(dsDescription);
 
-        cd_description = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
-        ds_description = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
-        cd_description = (cd_description.startsWith("*") ? cd_description.substring(1) : cd_description);
-        ds_description = (ds_description.startsWith("*") ? ds_description.substring(1) : ds_description);
-        getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cd_description);
-        getForm().getCategorieStrutture().getDs_categ_strut().setDescription(ds_description);
+        cdDescription = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
+        dsDescription = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
+        cdDescription = (cdDescription.startsWith("*") ? cdDescription.substring(1) : cdDescription);
+        dsDescription = (dsDescription.startsWith("*") ? dsDescription.substring(1) : dsDescription);
+        getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cdDescription);
+        getForm().getCategorieStrutture().getDs_categ_strut().setDescription(dsDescription);
 
         if (publisher.equals(Application.Publisher.CREA_STRUTTURA)
                 && getForm().getInsStruttura().getStatus().toString().equals("insert")) {
@@ -516,8 +557,8 @@ public class StruttureAction extends StruttureAbstractAction {
      */
     @Override
     public void saveDettaglio() throws EMFError {
-        String cd_description;
-        String ds_description;
+        String cdDescription;
+        String dsDescription;
         String publisher = getLastPublisher();
         StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
         switch (publisher) {
@@ -550,21 +591,21 @@ public class StruttureAction extends StruttureAbstractAction {
             break;
         case Application.Publisher.CATEGORIE_STRUTTURE_DETAIL:
             salvaCategStrut();
-            cd_description = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
-            ds_description = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
-            cd_description = (cd_description.startsWith("*") ? cd_description.substring(1) : cd_description);
-            ds_description = (ds_description.startsWith("*") ? ds_description.substring(1) : ds_description);
-            getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cd_description);
-            getForm().getCategorieStrutture().getDs_categ_strut().setDescription(ds_description);
+            cdDescription = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
+            dsDescription = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
+            cdDescription = (cdDescription.startsWith("*") ? cdDescription.substring(1) : cdDescription);
+            dsDescription = (dsDescription.startsWith("*") ? dsDescription.substring(1) : dsDescription);
+            getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cdDescription);
+            getForm().getCategorieStrutture().getDs_categ_strut().setDescription(dsDescription);
             break;
         case Application.Publisher.CATEGORIE_ENTI_DETAIL:
             salvaCategEnti();
-            cd_description = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
-            ds_description = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
-            cd_description = (cd_description.startsWith("*") ? cd_description.substring(1) : cd_description);
-            ds_description = (ds_description.startsWith("*") ? ds_description.substring(1) : ds_description);
-            getForm().getCategorieEnti().getCd_categ_ente().setDescription(cd_description);
-            getForm().getCategorieEnti().getDs_categ_ente().setDescription(ds_description);
+            cdDescription = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
+            dsDescription = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
+            cdDescription = (cdDescription.startsWith("*") ? cdDescription.substring(1) : cdDescription);
+            dsDescription = (dsDescription.startsWith("*") ? dsDescription.substring(1) : dsDescription);
+            getForm().getCategorieEnti().getCd_categ_ente().setDescription(cdDescription);
+            getForm().getCategorieEnti().getDs_categ_ente().setDescription(dsDescription);
             break;
         case Application.Publisher.ASSOCIAZIONE_TIPO_RAPPR_COMP_TIPO_COMP:
             salvaTipoCompAmmesso();
@@ -579,7 +620,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /**
-     * Metodo per il salvataggio e la modifica di un'entità "Struttura"
+     * Metodo per il salvataggio e la modifica di un'entità "Struttura"
      *
      * @throws EMFError
      *             errore generico
@@ -595,7 +636,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
             // Controllo nome struttura
             if (struttura.getNm_strut().parse() == null) {
-                getMessageBox().addError("Errore di compilazione form: Nome struttura non inserito</br>");
+                getMessageBox().addError(ERRORE_COMPILAZIONE_STRUTTURA_ASSENTE);
             } else {
                 // Controllo che il nome struttura rispetti
                 Matcher m = strutPattern.matcher(struttura.getNm_strut().parse());
@@ -611,7 +652,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
             // Controllo su selezione ente
             if (getForm().getInsStruttura().getId_ente_rif().parse() == null) {
-                getMessageBox().addError("Selezionare un ente di riferimento</br>");
+                getMessageBox().addError(ERRORE_SELEZIONE_ENTE_RIFERIMENTO);
             }
 
             // Controllo sulle date di validità della struttura
@@ -622,24 +663,22 @@ public class StruttureAction extends StruttureAbstractAction {
 
             if (!struttura.getStatus().equals(Status.update)) {
                 if ((struttura.getId_ambiente_ente_convenz().parse() == null)) {
-                    getMessageBox()
-                            .addError("Errore di compilazione form: ambiente ente convenzionato non inserito</br>");
+                    getMessageBox().addError(ERRORE_COMPILAZIONE_AMBIENTE_ASSENTE);
                 }
                 if ((struttura.getId_ente_convenz().parse() == null)) {
-                    getMessageBox().addError("Errore di compilazione form: ente convenzionato non inserito</br>");
+                    getMessageBox().addError(ERRORE_COMPILAZIONE_ENTE_CONVENZIONATO_ASSENTE);
                 }
                 if ((struttura.getDt_ini_val().parse() == null)) {
-                    getMessageBox().addError("Errore di compilazione form: data inizio validità non inserita</br>");
+                    getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_ASSENTE);
                 }
                 if ((struttura.getDt_fine_val().parse() == null)) {
-                    getMessageBox().addError("Errore di compilazione form: data fine validità non inserita</br>");
+                    getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_FINE_VALIDITA_ASSENTE);
                 }
 
                 if (struttura.getDt_fine_val().parse() != null && struttura.getDt_ini_val().parse() != null) {
                     // Controllo sulle date dell'ente convenzionato
                     if (struttura.getDt_ini_val().parse().after(struttura.getDt_fine_val().parse())) {
-                        getMessageBox().addError(
-                                "Errore di compilazione form: la data di inizio validità è successiva a quella di fine validità</br>");
+                        getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_SUCCESSIVA_FINE);
                     }
                 }
             }
@@ -658,9 +697,9 @@ public class StruttureAction extends StruttureAbstractAction {
                 while (iterator.hasNext()) {
                     Entry<String, String[]> next = iterator.next();
                     String key = next.getKey();
-                    if (key.contains("Fl_") & !"fl_template".equalsIgnoreCase(key)
-                            & !"fl_archivio_restituito".equalsIgnoreCase(key) & !"fl_cessato".equalsIgnoreCase(key)
-                            & !key.contains("trigger")) {
+                    if (key.contains("Fl_") && !"fl_template".equalsIgnoreCase(key)
+                            && !"fl_archivio_restituito".equalsIgnoreCase(key) && !"fl_cessato".equalsIgnoreCase(key)
+                            && !key.contains("trigger")) {
                         ((CheckBox<String>) struttura.getComponent(key)).setChecked(true);
                         strutRowBean.setObject(key, "1");
                     }
@@ -669,8 +708,8 @@ public class StruttureAction extends StruttureAbstractAction {
                 while (iterator.hasNext()) {
                     Entry<String, String[]> next = iterator.next();
                     String key = next.getKey();
-                    if (key.contains("Fl_") & !"fl_archivio_restituito".equalsIgnoreCase(key)
-                            & !"fl_cessato".equalsIgnoreCase(key) & !key.contains("trigger")) {
+                    if (key.contains("Fl_") && !"fl_archivio_restituito".equalsIgnoreCase(key)
+                            && !"fl_cessato".equalsIgnoreCase(key) && !key.contains("trigger")) {
                         ((CheckBox<String>) struttura.getComponent(key)).setChecked(true);
                         strutRowBean.setObject(key, "1");
                     }
@@ -714,13 +753,12 @@ public class StruttureAction extends StruttureAbstractAction {
                     // Esegue controllo sul numero componenti struttura e procede con il salvataggio
                     // Codice aggiutnivo per il logging
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     checkNumCompAndSalvaStruttura(param, struttura, strutRowBean, TipoSalvataggio.STRUTTURA, null, null,
                             null);
-                } catch (NoSuchFieldException | IOException | EMFError e) {
+                } catch (EMFError e) {
                     getSession().setAttribute("id_struttura_lavorato", null);
                     getMessageBox().addError(e.getMessage());
                 } catch (ParerUserError ne) {
@@ -742,7 +780,6 @@ public class StruttureAction extends StruttureAbstractAction {
      *
      * @throws EMFError
      *             errore generico
-     * @throws IncoherenceException
      * @throws IOException
      * @throws NoSuchFieldException
      * @throws ParerUserError
@@ -750,7 +787,7 @@ public class StruttureAction extends StruttureAbstractAction {
     private void checkNumCompAndSalvaStruttura(LogParam param, InsStruttura struttura, OrgStrutRowBean strutRowBean,
             TipoSalvataggio tipoSalvataggio, AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws EMFError, ParerUserError {
         switchTipoSalvataggio(param, struttura, strutRowBean, tipoSalvataggio, parametriAmministrazioneStruttura,
                 parametriConservazioneStruttura, parametriGestioneStruttura);
     }
@@ -770,11 +807,6 @@ public class StruttureAction extends StruttureAbstractAction {
                 switch (tipoSalvataggio) {
                 case STRUTTURA:
                     determinaPublisher = SpagoliteLogUtil.getPageName(this);
-                    if (getForm().getStruttureList().getStatus().equals(Status.insert)) {
-                        azione = SpagoliteLogUtil.getToolbarInsert();
-                    } else {
-                        azione = SpagoliteLogUtil.getToolbarUpdate();
-                    }
                     azione = null; // DA DEFINIRE da dove puo' arrivare
                     break;
 
@@ -794,8 +826,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 }
 
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), determinaPublisher, azione);
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 switchTipoSalvataggio(param, (InsStruttura) sa[0], (OrgStrutRowBean) sa[1], tipoSalvataggio,
@@ -808,7 +839,7 @@ public class StruttureAction extends StruttureAbstractAction {
             String[] errorParts = e.getDescription().split(";");
             customizeErrorMessage(errorParts);
             forwardToPublisher(getLastPublisher());
-        } catch (EMFError | IOException | NoSuchFieldException ex) {
+        } catch (EMFError ex) {
             getMessageBox().addError(ex.getMessage());
             forwardToPublisher(getLastPublisher());
         }
@@ -840,7 +871,7 @@ public class StruttureAction extends StruttureAbstractAction {
     private void switchTipoSalvataggio(LogParam param, InsStruttura struttura, OrgStrutRowBean strutRowBean,
             TipoSalvataggio tipoSalvataggio, AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws EMFError, ParerUserError {
         switch (tipoSalvataggio) {
         case STRUTTURA:
             // logging non implementato
@@ -900,7 +931,7 @@ public class StruttureAction extends StruttureAbstractAction {
     private void eseguiDuplicaNonStandard(LogParam param, InsStruttura struttura, OrgStrutRowBean strutRowBean,
             AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws EMFError, ParerUserError {
         if (struttura.getStatus().equals(Status.insert)) {
             strutRowBean.setIdEnte(struttura.getId_ente_rif().parse());
             try {
@@ -928,7 +959,7 @@ public class StruttureAction extends StruttureAbstractAction {
     private void eseguiImportaNonStandard(LogParam param, InsStruttura struttura, OrgStrutRowBean strutRowBean,
             AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws EMFError, ParerUserError {
         if (getForm().getInsStruttura().getStatus().equals(Status.insert)) {
             try {
                 strutRowBean.setIdEnte(struttura.getId_ente_rif().parse());
@@ -964,7 +995,7 @@ public class StruttureAction extends StruttureAbstractAction {
     private void eseguiDuplicaImportaStandard(LogParam param, InsStruttura struttura, OrgStrutRowBean strutRowBean,
             TipoSalvataggio tipoSalvataggio, AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws EMFError, ParerUserError {
         boolean isFromImporta = tipoSalvataggio == TipoSalvataggio.IMPORTA_STANDARD;
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
         if (getForm().getInsStruttura().getStatus().equals(Status.insert)) {
@@ -1009,8 +1040,7 @@ public class StruttureAction extends StruttureAbstractAction {
               // per altre eventuali eccezioni invece non deve ricaricare il dettaglio
             catch (ParerUserError e) {
                 // Se è presente l'id strut, significa che l'importa/duplica è andato a buon fine e quindi l'errore
-                // riguarda
-                // la parte relativa ai tipi serie
+                // riguarda la parte relativa ai tipi serie
                 if (strutRowBean.getIdStrut() != null) {
                     setDettaglioStrutturaViewMode();
                 }
@@ -1081,31 +1111,35 @@ public class StruttureAction extends StruttureAbstractAction {
         InsStruttura struttura = getForm().getInsStruttura();
         struttura.post(getRequest());
         if (struttura.getNm_strut().parse() == null) {
-            getMessageBox().addError("Errore di compilazione form: Nome struttura non inserito</br>");
+            getMessageBox().addError(ERRORE_COMPILAZIONE_STRUTTURA_ASSENTE);
         }
+
+        if (struttura.getDs_strut().parse() == null) {
+            getMessageBox().addError("Errore di compilazione form: Descrizione struttura non inserito</br>");
+        }
+
         // controllo su selezione ente
         if (getForm().getInsStruttura().getId_ente_rif().parse() == null
                 && getForm().getStruttureList().getStatus().equals(Status.insert)) {
-            getMessageBox().addError("Selezionare un ente di riferimento</br>");
+            getMessageBox().addError(ERRORE_SELEZIONE_ENTE_RIFERIMENTO);
         }
         if ((struttura.getId_ambiente_ente_convenz().parse() == null)) {
-            getMessageBox().addError("Errore di compilazione form: ambiente ente convenzionato non inserito</br>");
+            getMessageBox().addError(ERRORE_COMPILAZIONE_AMBIENTE_ASSENTE);
         }
         if ((struttura.getId_ente_convenz().parse() == null)) {
-            getMessageBox().addError("Errore di compilazione form: ente convenzionato non inserito</br>");
+            getMessageBox().addError(ERRORE_COMPILAZIONE_ENTE_CONVENZIONATO_ASSENTE);
         }
         if ((struttura.getDt_ini_val().parse() == null)) {
-            getMessageBox().addError("Errore di compilazione form: data inizio validità non inserita</br>");
+            getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_ASSENTE);
         }
         if ((struttura.getDt_fine_val().parse() == null)) {
-            getMessageBox().addError("Errore di compilazione form: data fine validità non inserita</br>");
+            getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_FINE_VALIDITA_ASSENTE);
         }
 
         if (struttura.getDt_fine_val().parse() != null && struttura.getDt_ini_val().parse() == null) {
             // Controllo sulle date dell'ente convenzionato
             if (struttura.getDt_ini_val().parse().after(struttura.getDt_fine_val().parse())) {
-                getMessageBox().addError(
-                        "Errore di compilazione form: la data di inizio validità è successiva a quella di fine validità</br>");
+                getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_SUCCESSIVA_FINE);
             }
         }
         // Controllo valorizzazione parametri fascicolo in caso di flag gestione fascicoli settato
@@ -1139,8 +1173,7 @@ public class StruttureAction extends StruttureAbstractAction {
             try {
                 /* Codice aggiuntivo per il logging... */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), publisherPerLogging, buttonActionNamePerLogging);
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 checkNumCompAndSalvaStruttura(param, struttura, strutRowBean, tipoSalvataggio,
@@ -1152,9 +1185,6 @@ public class StruttureAction extends StruttureAbstractAction {
                 String[] errorParts = e.getDescription().split(";");
                 customizeErrorMessage(errorParts);
                 forwardToPublisher(Application.Publisher.CREA_STRUTTURA);
-            } catch (IOException e) {
-                getMessageBox().addError("Errore inaspettato: " + ExceptionUtils.getRootCauseMessage(e));
-                forwardToPublisher(Application.Publisher.STRUTTURA_RICERCA);
             } catch (Exception e) {
                 getMessageBox().addError("Errore inaspettato: " + ExceptionUtils.getRootCauseMessage(e));
                 forwardToPublisher(Application.Publisher.STRUTTURA_RICERCA);
@@ -1174,44 +1204,39 @@ public class StruttureAction extends StruttureAbstractAction {
         InsStruttura struttura = getForm().getInsStruttura();
         // Post dei valori a video e popolamento rowBean contenente i campi di struttura e parametri fascicolo
         struttura.post(getRequest());
-        /*
-         * getForm().getParametriAmministrazioneStrutturaList().post(getRequest());
-         * getForm().getParametriConservazioneStrutturaList().post(getRequest());
-         * getForm().getParametriGestioneStrutturaList().post(getRequest());
-         */
+
         struttura.copyToBean(strutRowBean);
 
         // Controllo completezza dati
         if (struttura.validate(getMessageBox())) {
 
             if (getForm().getInsStruttura().getId_ente_rif().parse() == null) {
-                getMessageBox().addError("Selezionare un ente di riferimento</br>");
+                getMessageBox().addError(ERRORE_SELEZIONE_ENTE_RIFERIMENTO);
             }
 
             if (struttura.getNm_strut().parse() == null) {
-                getMessageBox().addError("Errore di compilazione form: Nome struttura non inserito</br>");
+                getMessageBox().addError(ERRORE_COMPILAZIONE_STRUTTURA_ASSENTE);
             }
 
             if (struttura.getDs_strut().parse() == null) {
                 getMessageBox().addError("Errore di compilazione form: Descrizione struttura non inserito</br>");
             }
             if ((struttura.getId_ambiente_ente_convenz().parse() == null)) {
-                getMessageBox().addError("Errore di compilazione form: ambiente ente convenzionato non inserito</br>");
+                getMessageBox().addError(ERRORE_COMPILAZIONE_AMBIENTE_ASSENTE);
             }
             if ((struttura.getId_ente_convenz().parse() == null)) {
-                getMessageBox().addError("Errore di compilazione form: ente convenzionato non inserito</br>");
+                getMessageBox().addError(ERRORE_COMPILAZIONE_ENTE_CONVENZIONATO_ASSENTE);
             }
             if ((struttura.getDt_ini_val().parse() == null)) {
-                getMessageBox().addError("Errore di compilazione form: data inizio validità non inserita</br>");
+                getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_ASSENTE);
             }
             if ((struttura.getDt_fine_val().parse() == null)) {
-                getMessageBox().addError("Errore di compilazione form: data fine validità non inserita</br>");
+                getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_FINE_VALIDITA_ASSENTE);
             }
             if (struttura.getDt_fine_val().parse() != null && struttura.getDt_ini_val().parse() == null) {
                 // Controllo sulle date dell'ente convenzionato
                 if (struttura.getDt_ini_val().parse().after(struttura.getDt_fine_val().parse())) {
-                    getMessageBox().addError(
-                            "Errore di compilazione form: la data di inizio validità è successiva a quella di fine validità</br>");
+                    getMessageBox().addError(ERRORE_COMPILAZIONE_DATA_INIZIO_VALIDITA_SUCCESSIVA_FINE);
                 }
             }
         }
@@ -1234,9 +1259,9 @@ public class StruttureAction extends StruttureAbstractAction {
         /////////////////
         if (getMessageBox().isEmpty()) {
             try {
-                LogParam param = SpagoliteLogUtil
-                        .getLogParam(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null,
-                                null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC), getUser().getUsername());
+                LogParam param = SpagoliteLogUtil.getLogParam(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                        getUser().getUsername());
                 TipoSalvataggio tipoSalvataggio = isFromImporta ? TipoSalvataggio.IMPORTA_STANDARD
                         : TipoSalvataggio.DUPLICA_STANDARD;
                 checkNumCompAndSalvaStruttura(param, struttura, strutRowBean, tipoSalvataggio,
@@ -1247,9 +1272,6 @@ public class StruttureAction extends StruttureAbstractAction {
             } catch (ParerUserError e) {
                 String[] errorParts = e.getDescription().split(";");
                 customizeErrorMessage(errorParts);
-                forwardToPublisher(toPublisher);
-            } catch (NoSuchFieldException | IOException ne) {
-                getMessageBox().addError("Errore nella copia della nuova struttura");
                 forwardToPublisher(toPublisher);
             }
         } else {
@@ -1317,8 +1339,7 @@ public class StruttureAction extends StruttureAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getTipoRapprComp().getStatus().equals(Status.insert)) {
@@ -1466,8 +1487,7 @@ public class StruttureAction extends StruttureAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                     SpagoliteLogUtil.getToolbarSave(getForm().getInsStruttura().getStatus().equals(Status.update)));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1500,8 +1520,8 @@ public class StruttureAction extends StruttureAbstractAction {
         }
         boolean isUpdate = action.equals(NE_DETTAGLIO_INSERT);
 
-        String cd_description;
-        String ds_description;
+        String cdDescription;
+        String dsDescription;
         // Registro unita doc.: passa all'altra action
         if (getForm().getRegistroUnitaDocList().getName().equals(lista)
                 && action.equals(ListAction.NE_DETTAGLIO_VIEW)) {
@@ -1573,7 +1593,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 string.append("&idStrut=").append(idStrut);
                 string.append("&cessato=").append(getForm().getInsStruttura().getFl_cessato().parse());
                 // form = form nuova
-                BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+                BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
 
                 form.getStrutRif().getNm_strut().setValue(rowBean.getString("nm_strut"));
                 form.getStrutRif().getDs_strut().setValue(rowBean.getString("ds_strut"));
@@ -1606,7 +1626,7 @@ public class StruttureAction extends StruttureAbstractAction {
             } else {
                 getSession().removeAttribute("FromTrasformTipoRapprList");
             }
-            BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+            BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
             form.getStrutRif().getNm_strut().setValue(rowBean.getString("nm_strut"));
             form.getStrutRif().getDs_strut().setValue(rowBean.getString("ds_strut"));
             OrgEnteRowBean enteTemp = struttureEjb.getOrgEnteRowBean(rowBean.getBigDecimal("id_ente"));
@@ -1639,30 +1659,30 @@ public class StruttureAction extends StruttureAbstractAction {
             } else if (getForm().getTipoCompAmmessoDaTipoRapprCompList().getName().equals(lista)) {
                 forwardToPublisher(Application.Publisher.ASSOCIAZIONE_TIPO_RAPPR_COMP_TIPO_COMP);
             } else if (getForm().getCategorieStruttureList().getName().equals(lista)) {
-                cd_description = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
-                ds_description = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
+                cdDescription = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
+                dsDescription = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
                 if (isUpdate) {
-                    cd_description = (cd_description.contains(("*")) ? cd_description : "*".concat(cd_description));
-                    ds_description = (ds_description.contains(("*")) ? ds_description : "*".concat(ds_description));
+                    cdDescription = (cdDescription.contains(("*")) ? cdDescription : "*".concat(cdDescription));
+                    dsDescription = (dsDescription.contains(("*")) ? dsDescription : "*".concat(dsDescription));
                 } else {
-                    cd_description = (cd_description.startsWith("*") ? cd_description.substring(1) : cd_description);
-                    ds_description = (ds_description.startsWith("*") ? ds_description.substring(1) : ds_description);
+                    cdDescription = (cdDescription.startsWith("*") ? cdDescription.substring(1) : cdDescription);
+                    dsDescription = (dsDescription.startsWith("*") ? dsDescription.substring(1) : dsDescription);
                 }
-                getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cd_description);
-                getForm().getCategorieStrutture().getDs_categ_strut().setDescription(ds_description);
+                getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cdDescription);
+                getForm().getCategorieStrutture().getDs_categ_strut().setDescription(dsDescription);
                 forwardToPublisher(Application.Publisher.CATEGORIE_STRUTTURE_DETAIL);
             } else if (getForm().getCategorieEntiList().getName().equals(lista)) {
-                cd_description = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
-                ds_description = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
+                cdDescription = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
+                dsDescription = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
                 if (isUpdate) {
-                    cd_description = (cd_description.contains(("*")) ? cd_description : "*".concat(cd_description));
-                    ds_description = (ds_description.contains(("*")) ? ds_description : "*".concat(ds_description));
+                    cdDescription = (cdDescription.contains(("*")) ? cdDescription : "*".concat(cdDescription));
+                    dsDescription = (dsDescription.contains(("*")) ? dsDescription : "*".concat(dsDescription));
                 } else {
-                    cd_description = (cd_description.startsWith("*") ? cd_description.substring(1) : cd_description);
-                    ds_description = (ds_description.startsWith("*") ? ds_description.substring(1) : ds_description);
+                    cdDescription = (cdDescription.startsWith("*") ? cdDescription.substring(1) : cdDescription);
+                    dsDescription = (dsDescription.startsWith("*") ? dsDescription.substring(1) : dsDescription);
                 }
-                getForm().getCategorieEnti().getCd_categ_ente().setDescription(cd_description);
-                getForm().getCategorieEnti().getDs_categ_ente().setDescription(ds_description);
+                getForm().getCategorieEnti().getCd_categ_ente().setDescription(cdDescription);
+                getForm().getCategorieEnti().getDs_categ_ente().setDescription(dsDescription);
                 forwardToPublisher(Application.Publisher.CATEGORIE_ENTI_DETAIL);
             }
         }
@@ -1684,6 +1704,7 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getInsStruttura().getFl_cessato().setViewMode();
             getForm().getInsStruttura().getFl_template().setViewMode();
             getForm().getImportaParametri().getImportaParametriButton().setViewMode();
+            getForm().getInsStruttura().getEliminaFormatiSpecifici().setViewMode();
             if (struttureEjb.hasAroUnitaDoc(idStrut)) {
                 getForm().getInsStruttura().getNm_strut().setViewMode();
             }
@@ -1725,7 +1746,7 @@ public class StruttureAction extends StruttureAbstractAction {
                         setEditModeParametriGestione();
                     }
                     forwardToPublisher(Application.Publisher.PARAMETRI_STRUTTURA);
-                } catch (Throwable ex) {
+                } catch (Exception ex) {
                     getMessageBox().addError("Errore durante il caricamento dei parametri");
                 }
             }
@@ -1771,8 +1792,7 @@ public class StruttureAction extends StruttureAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                         SpagoliteLogUtil.getToolbarDelete());
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1838,8 +1858,7 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getInsStruttura().clear();
             DecodeMap mappaAmbienti = new DecodeMap();
             BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC));
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
             ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
             ambienteTableBean.sort();
             mappaAmbienti.populatedMap(ambienteTableBean, "id_ambiente", "nm_ambiente");
@@ -1877,10 +1896,9 @@ public class StruttureAction extends StruttureAbstractAction {
             // Inizializzo il campo relativo al numero massimo di componenti
             for (AplParamApplicRowBean row : (AplParamApplicTableBean) getForm()
                     .getParametriConservazioneStrutturaList().getTable()) {
-                if (row.getNmParamApplic().equals("NUM_MAX_COMP_CRITERIO_RAGGR")) {
-                    row.setString("ds_valore_param_applic_strut_cons",
-                            configurationHelper.getValoreParamApplic("NUM_MAX_COMP_CRITERIO_RAGGR_WARN", null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+                if (row.getNmParamApplic().equals(CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR)) {
+                    row.setString("ds_valore_param_applic_strut_cons", configurationHelper
+                            .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR_WARN));
                     break;
                 }
             }
@@ -1897,7 +1915,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
             // Precompilo le date
             Calendar data = Calendar.getInstance();
-            SimpleDateFormat formatter = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+            SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
             Date today = data.getTime();
             String todayString = formatter.format(today);
             getForm().getInsStruttura().getDt_ini_val_strut().setValue(todayString);
@@ -1921,7 +1939,7 @@ public class StruttureAction extends StruttureAbstractAction {
         } else if (lista.equals(getForm().getTipoRapprCompList().getName())) {
             getForm().getTipoRapprComp().setEditMode();
             getForm().getTipoRapprComp().clear();
-            BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+            BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
             getForm().getInsStruttura().getStruttura()
                     .setValue(rowBean.getString("nm_strut") + " - " + rowBean.getString("ds_strut"));
             getForm().getInsStruttura().getNm_strut().setHidden(false);
@@ -1929,7 +1947,7 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getInsStruttura().getId_ente().setHidden(false);
 
             Calendar data = Calendar.getInstance();
-            SimpleDateFormat formatter = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+            SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
             Date today = data.getTime();
             String string = formatter.format(today);
 
@@ -2221,12 +2239,10 @@ public class StruttureAction extends StruttureAbstractAction {
      * @throws EMFError
      *             errore generico
      */
-    private void initStrutComboBox(BigDecimal idAmbienteEnteConvenz) throws EMFError {
+    private void initStrutComboBox(BigDecimal idAmbienteEnteConvenz) {
 
         BaseTableInterface orgEnteTableBean = ambienteEjb.getEntiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
-                null, null, null);
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC), null, null, null);
         DecodeMap mappaEnti = new DecodeMap();
         orgEnteTableBean.addSortingRule("nm_ente", SortingRule.ASC);
         orgEnteTableBean.sort();
@@ -2388,6 +2404,7 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getInsStruttura().getView_nm_ente().setViewMode();
         getForm().getInsStruttura().getScaricaStruttura().setViewMode();
         getForm().getImportaParametri().getImportaParametriButton().setViewMode();
+        getForm().getInsStruttura().getEliminaFormatiSpecifici().setViewMode();
         getForm().getInsStruttura().getFl_cessato().setViewMode();
         getForm().getInsStruttura().getFl_template().setViewMode();
         if (getForm().getInsStruttura().getId_ente_convenz().parse() == null) {
@@ -2470,12 +2487,12 @@ public class StruttureAction extends StruttureAbstractAction {
     @Override
     public void updateCategorieStruttureList() throws EMFError {
         getForm().getCategorieStrutture().setEditMode();
-        String cd_description = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
-        String ds_description = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
-        cd_description = (cd_description.contains(("*")) ? cd_description : "*".concat(cd_description));
-        ds_description = (ds_description.contains(("*")) ? ds_description : "*".concat(ds_description));
-        getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cd_description);
-        getForm().getCategorieStrutture().getDs_categ_strut().setDescription(ds_description);
+        String cdDescription = getForm().getCategorieStrutture().getCd_categ_strut().getDescription();
+        String dsDescription = getForm().getCategorieStrutture().getDs_categ_strut().getDescription();
+        cdDescription = (cdDescription.contains(("*")) ? cdDescription : "*".concat(cdDescription));
+        dsDescription = (dsDescription.contains(("*")) ? dsDescription : "*".concat(dsDescription));
+        getForm().getCategorieStrutture().getCd_categ_strut().setDescription(cdDescription);
+        getForm().getCategorieStrutture().getDs_categ_strut().setDescription(dsDescription);
 
         getForm().getCategorieStrutture().setStatus(Status.update);
         getForm().getCategorieStruttureList().setStatus(Status.update);
@@ -2484,12 +2501,12 @@ public class StruttureAction extends StruttureAbstractAction {
     @Override
     public void updateCategorieEntiList() throws EMFError {
         getForm().getCategorieEnti().setEditMode();
-        String cd_description = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
-        String ds_description = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
-        cd_description = (cd_description.contains(("*")) ? cd_description : "*".concat(cd_description));
-        ds_description = (ds_description.contains(("*")) ? ds_description : "*".concat(ds_description));
-        getForm().getCategorieEnti().getCd_categ_ente().setDescription(cd_description);
-        getForm().getCategorieEnti().getDs_categ_ente().setDescription(ds_description);
+        String cdDescription = getForm().getCategorieEnti().getCd_categ_ente().getDescription();
+        String dsDescription = getForm().getCategorieEnti().getDs_categ_ente().getDescription();
+        cdDescription = (cdDescription.contains(("*")) ? cdDescription : "*".concat(cdDescription));
+        dsDescription = (dsDescription.contains(("*")) ? dsDescription : "*".concat(dsDescription));
+        getForm().getCategorieEnti().getCd_categ_ente().setDescription(cdDescription);
+        getForm().getCategorieEnti().getDs_categ_ente().setDescription(dsDescription);
 
         getForm().getCategorieEnti().setStatus(Status.update);
         getForm().getCategorieEntiList().setStatus(Status.update);
@@ -2503,14 +2520,13 @@ public class StruttureAction extends StruttureAbstractAction {
      */
     @Override
     public void deleteStruttureList() throws EMFError {
-        BaseRowInterface strutRowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface strutRowBean = getForm().getStruttureList().getTable().getCurrentRow();
         try {
             /*
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.STRUTTURA_RICERCA.equalsIgnoreCase(param.getNomePagina())) {
                 StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
@@ -2558,8 +2574,7 @@ public class StruttureAction extends StruttureAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (Application.Publisher.CREA_STRUTTURA.equalsIgnoreCase(param.getNomePagina())) {
                 StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
@@ -2748,7 +2763,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 postLoad();
             }
         } catch (EMFError ex) {
-            logger.error("Eccezione", ex);
+            log.error(ECCEZIONE_GENERICA, ex);
             getMessageBox().addError("Eccezione inattesa nel caricamento della pagina");
         }
     }
@@ -2769,7 +2784,7 @@ public class StruttureAction extends StruttureAbstractAction {
         }
     }
 
-    public void duplicaStrutturaOperation() throws EMFError, NoSuchFieldException {
+    public void duplicaStrutturaOperation() {
         // carico la maschera di compilazione con tutti i dati tranne ds e nm
         getForm().getCheckDuplicaStruttura().getCheck_sost_strut().setHidden(false);
         String riga = getRequest().getParameter("riga");
@@ -2790,7 +2805,7 @@ public class StruttureAction extends StruttureAbstractAction {
         forwardToPublisher(Application.Publisher.DUPLICA_STRUTTURA);
     }
 
-    public void duplicaFormatoOperation() throws EMFError, NoSuchFieldException {
+    public void duplicaFormatoOperation() throws EMFError {
 
         boolean isCessata = getForm().getInsStruttura().getFl_cessato().parse().equals("1");
         if (isCessata) {
@@ -2808,7 +2823,7 @@ public class StruttureAction extends StruttureAbstractAction {
             StringBuilder string = new StringBuilder("?operation=duplicaFormato" + "&table="
                     + StrutFormatoFileForm.FormatoFileDocList.NAME + "&riga=" + row.toString());
             form.getFormatoFileDocList().setTable(getForm().getFormatoFileDocList().getTable());
-            BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+            BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
             BigDecimal idStrut = rowBean.getBigDecimal("id_strut");
 
             form.getIdList().getId_strut().setValue(idStrut.toString());
@@ -2878,25 +2893,25 @@ public class StruttureAction extends StruttureAbstractAction {
         List<String> tipoDefTemplateEnte = Arrays.asList(CostantiDB.TipoDefTemplateEnte.NO_TEMPLATE.name(),
                 CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_ENTE.name());
         TipoSalvataggio tipoSalvataggio = (TipoSalvataggio) getSession().getAttribute(SES_ATTRIB_SALVATAGGIO);
-        if (tipoSalvataggio != null && !tipoSalvataggio.equals("")) {
-            if (tipoSalvataggio.equals("struttura")) {
-                tipoDefTemplateEnte = Arrays.asList(CostantiDB.TipoDefTemplateEnte.NO_TEMPLATE.name(),
-                        CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_ENTE.name(),
-                        CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_AMBIENTE.name());
-            }
+        if (tipoSalvataggio != null && tipoSalvataggio.equals(TipoSalvataggio.STRUTTURA)) {
+            tipoDefTemplateEnte = Arrays.asList(CostantiDB.TipoDefTemplateEnte.NO_TEMPLATE.name(),
+                    CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_ENTE.name(),
+                    CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_AMBIENTE.name());
+
         }
 
         DecodeMap mappaEnti = new DecodeMap();
         BaseTableInterface orgEnteTableBean = ambienteEjb.getEntiValidiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
-                null, getForm().getInsStruttura().getId_ambiente_rif().parse(), tipoDefTemplateEnte);
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC), null,
+                getForm().getInsStruttura().getId_ambiente_rif().parse(), tipoDefTemplateEnte);
         orgEnteTableBean.addSortingRule("nm_ente", SortingRule.ASC);
         orgEnteTableBean.sort();
 
         mappaEnti.populatedMap(orgEnteTableBean, "id_ente", "nmDs");
         getForm().getInsStruttura().getId_ente_rif().setDecodeMap(mappaEnti);
-        getForm().getInsStruttura().getId_ente_rif().setValue("" + idEnte);
+        if (idEnte != null) {
+            getForm().getInsStruttura().getId_ente_rif().setValue("" + idEnte);
+        }
     }
 
     @Override
@@ -2910,10 +2925,9 @@ public class StruttureAction extends StruttureAbstractAction {
         calendar.set(2444, 11, 31, 0, 0, 0);
 
         Date dtSoppress = calendar.getTime();
-        DateFormat formato = new SimpleDateFormat(WebConstants.DATE_FORMAT_TIMESTAMP_TYPE);
+        DateFormat formato = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
 
-        String dtSoppressString = formato.format(dtSoppress);
-        return dtSoppressString;
+        return formato.format(dtSoppress);
     }
 
     @Override
@@ -2983,8 +2997,7 @@ public class StruttureAction extends StruttureAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             param.setNomeAzione(SpagoliteLogUtil.getButtonActionName(this.getForm(), this.getForm().getInsStruttura(),
@@ -3010,7 +3023,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void scaricaStruttura() throws EMFError {
-        BaseRowInterface row = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface row = getForm().getStruttureList().getTable().getCurrentRow();
         String ente = getForm().getInsStruttura().getView_nm_ente().parse();
         String filename = ente + "-" + row.getString("nm_strut");
 
@@ -3032,7 +3045,7 @@ public class StruttureAction extends StruttureAbstractAction {
         } catch (Exception e) {
             getMessageBox()
                     .addMessage(new Message(MessageLevel.ERR, "Errore nella generazione dell'xml della struttura"));
-            logger.error("Errore nel marshalling", e);
+            log.error("Errore nel marshalling", e);
         }
     }
 
@@ -3059,6 +3072,7 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getInsStruttura().getCheck_includi_formati().setEditMode();
         getForm().getInsStruttura().getCheck_includi_tipi_fascicolo().setEditMode();
         getForm().getInsStruttura().getCheck_mantieni_date_fine_validita().setEditMode();
+        getForm().getInsStruttura().getCheck_includi_sistemi_migraz().setEditMode();
     }
 
     @Override
@@ -3071,8 +3085,7 @@ public class StruttureAction extends StruttureAbstractAction {
         try {
             DecodeMap mappaAmbienti = new DecodeMap();
             BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC));
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
             ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
             ambienteTableBean.sort();
             mappaAmbienti.populatedMap(ambienteTableBean, "id_ambiente", "nm_ambiente");
@@ -3113,7 +3126,7 @@ public class StruttureAction extends StruttureAbstractAction {
             importOrgStrutXml();
 
         } catch (JAXBException ex) {
-            logger.error("Eccezione", ex);
+            log.error(ECCEZIONE_GENERICA, ex);
         }
     }
 
@@ -3125,12 +3138,14 @@ public class StruttureAction extends StruttureAbstractAction {
         String checkIncludiTipiFascicolo = getForm().getInsStruttura().getCheck_includi_tipi_fascicolo().parse();
         String checkMantieniDateFineValidita = getForm().getInsStruttura().getCheck_mantieni_date_fine_validita()
                 .parse();
+        String checkIncludiSistemiMigraz = getForm().getInsStruttura().getCheck_includi_sistemi_migraz().parse();
         SalvaStrutturaDto salva = new SalvaStrutturaDto();
         salva.setCheckIncludiCriteri(checkIncludiCriteri.equals("1"));
         salva.setCheckIncludiElementiDisattivi(checkIncludiElementiDisattivi.equals("1"));
         salva.setCheckIncludiFormati(checkIncludiFormati.equals("1"));
         salva.setCheckIncludiTipiFascicolo(checkIncludiTipiFascicolo.equals("1"));
         salva.setCheckMantieniDateFineValidita(checkMantieniDateFineValidita.equals("1"));
+        salva.setCheckIncludiSistemiMigraz(checkIncludiSistemiMigraz.equals("1"));
         return salva;
     }
 
@@ -3209,7 +3224,7 @@ public class StruttureAction extends StruttureAbstractAction {
             // Se è tutto a posto, procedo ad elaborare il file
             if (!getMessageBox().hasError()) {
                 byte[] fileByteArray = getForm().getInsStruttura().getBl_xml_strut().getFileBytes();
-                String xmlString = new String(fileByteArray, "UTF-8");
+                String xmlString = new String(fileByteArray, StandardCharsets.UTF_8);
 
                 String mime = singleton.detectMimeType(fileByteArray);
                 if (!mime.equals(VerFormatiEnums.XML_MIME) && !mime.equals(VerFormatiEnums.TEXT_PLAIN_MIME)) {
@@ -3250,7 +3265,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 forwardToPublisher(Application.Publisher.IMPORTA_STRUTTURA);
             }
         } catch (Exception ex) {
-            logger.error("Eccezione nell'upload dei file", ex);
+            log.error("Eccezione nell'upload dei file", ex);
             getMessageBox().addError("Eccezione nell'upload dei file", ex);
             getForm().getInsStruttura().setViewMode();
             getForm().getInsStruttura().clear();
@@ -3263,7 +3278,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
     private void loadlists(BigDecimal idStrut, boolean isFirst) throws EMFError {
         if (idStrut != null) {
-            HashMap<String, Integer> indMap = new HashMap();
+            HashMap<String, Integer> indMap = new HashMap<>();
 
             if (!isFirst) {
                 // Imposto gli indici di riga correnti da mantenere
@@ -3278,14 +3293,10 @@ public class StruttureAction extends StruttureAbstractAction {
                 if (getForm().getTipoDocList().getTable() != null) {
                     indMap.put("tipoDoc", getForm().getTipoDocList().getTable().getCurrentRowIndex());
                     indMap.put("tipoDocPS", getForm().getTipoDocList().getTable().getPageSize());
-                }
+                } //
                 if (getForm().getTipoFascicoloList().getTable() != null) {
                     indMap.put("tipoFascicolo", getForm().getTipoFascicoloList().getTable().getCurrentRowIndex());
                     indMap.put("tipoFascicoloPS", getForm().getTipoFascicoloList().getTable().getPageSize());
-                }
-                if (getForm().getFormatoFileDocList().getTable() != null) {
-                    indMap.put("formatoFileDoc", getForm().getFormatoFileDocList().getTable().getCurrentRowIndex());
-                    indMap.put("formatoFileDocPS", getForm().getFormatoFileDocList().getTable().getPageSize());
                 }
                 if (getForm().getTipoStrutDocList().getTable() != null) {
                     indMap.put("tipoStrutDoc", getForm().getTipoStrutDocList().getTable().getCurrentRowIndex());
@@ -3320,6 +3331,10 @@ public class StruttureAction extends StruttureAbstractAction {
                     indMap.put("enteConvenz", getForm().getEnteConvenzOrgList().getTable().getCurrentRowIndex());
                     indMap.put("enteConvenzPS", getForm().getEnteConvenzOrgList().getTable().getPageSize());
                 }
+                if (getForm().getCorrispondenzePingList().getTable() != null) {
+                    indMap.put("corrPing", getForm().getCorrispondenzePingList().getTable().getCurrentRowIndex());
+                    indMap.put("corrPingPS", getForm().getCorrispondenzePingList().getTable().getPageSize());
+                }
             }
 
             // Lista registri
@@ -3331,7 +3346,7 @@ public class StruttureAction extends StruttureAbstractAction {
                     SortingRule.ASC);
             registroUnitaDocTableBean.sort();
 
-            // Lista tipi Unità  Documentaria
+            // Lista tipi Unità Documentaria
             DecTipoUnitaDocTableBean tipoUnitaTableBean = tipoUnitaDocEjb.getDecTipoUnitaDocTableBean(idStrut,
                     getForm().getTipoUnitaDocList().isFilterValidRecords());
 
@@ -3347,33 +3362,13 @@ public class StruttureAction extends StruttureAbstractAction {
             tipoDocTableBean.sort();
 
             // Lista tipi fascicolo
-            DecTipoFascicoloTableBean tipoFascicoloTableBean = tipoFascicoloEjb.getTipiFascicoloAbilitati(
-                    getUser().getIdUtente(), idStrut, getForm().getTipoFascicoloList().isFilterValidRecords());
+            DecTipoFascicoloTableBean tipoFascicoloTableBean = tipoFascicoloEjb.getDecTipoFascicoloList(idStrut,
+                    getForm().getTipoFascicoloList().isFilterValidRecords());
             getForm().getTipoFascicoloList().setTable(tipoFascicoloTableBean);
             tipoFascicoloTableBean.addSortingRule(DecTipoFascicoloTableDescriptor.COL_NM_TIPO_FASCICOLO,
                     SortingRule.ASC);
             tipoFascicoloTableBean.sort();
-            if (!tipoFascicoloTableBean.isEmpty()) {
-                getForm().getTipoFascicoloTab().setLoadOpened(true);
-            } else {
-                getForm().getTipoFascicoloTab().setLoadOpened(false);
-            }
-
-            // Lista formati versabili
-            DecFormatoFileDocTableBean formatoFileDocTableBean = formatoFileDocEjb
-                    .getDecFormatoFileDocTableBean(idStrut, getForm().getFormatoFileDocList().isFilterValidRecords());
-
-            getForm().getFormatoFileDocList().setTable(formatoFileDocTableBean);
-            getForm().getFormatoFileDocList().setStatus(Status.view);
-            getForm().getFormatoFileDocList().getTable()
-                    .addSortingRule(DecFormatoFileDocTableDescriptor.COL_NM_FORMATO_FILE_DOC, SortingRule.ASC);
-            getForm().getFormatoFileDocList().getTable().sort();
-
-            if ("1".equals(getForm().getInsStruttura().getFl_cessato().parse())) {
-                getForm().getFormatoFileDocButtonList().getEliminaTuttiFormatiFileDoc().setViewMode();
-            } else {
-                getForm().getFormatoFileDocButtonList().getEliminaTuttiFormatiFileDoc().setEditMode();
-            }
+            getForm().getTipoFascicoloTab().setLoadOpened(!tipoFascicoloTableBean.isEmpty());
 
             // Lista strutture documento
             DecTipoStrutDocTableBean tipoStrutDocTableBean = tipoStrutDocEjb.getDecTipoStrutDocTableBean(idStrut,
@@ -3429,22 +3424,25 @@ public class StruttureAction extends StruttureAbstractAction {
                 getMessageBox().addError(ex.getMessage());
             }
 
+            getForm().getCorrispondenzePingList().setTable(struttureEjb.retrieveOrgVCorrPingList(idStrut));
+            getForm().getCorrispondenzePingList().getTable().addSortingRule("nm_vers", SortingRule.DESC);
+            getForm().getCorrispondenzePingList().getTable().sort();
+
             getForm().getRegistroUnitaDocList().getTable().first();
             getForm().getTipoUnitaDocList().getTable().first();
             getForm().getTipoDocList().getTable().first();
             getForm().getTipoFascicoloList().getTable().first();
-            getForm().getFormatoFileDocList().getTable().first();
             getForm().getTipoStrutDocList().getTable().first();
             getForm().getTipoRapprCompList().getTable().first();
             getForm().getTitolariList().getTable().first();
             getForm().getSubStrutList().getTable().first();
             getForm().getTipologieSerieList().getTable().first();
             getForm().getSistemiMigrazioneList().getTable().first();
+            getForm().getCorrispondenzePingList().getTable().first();
             getForm().getRegistroUnitaDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getTipoUnitaDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getTipoDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getTipoFascicoloList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-            getForm().getFormatoFileDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getTipoStrutDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getTipoRapprCompList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getCriteriRaggruppamentoList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
@@ -3452,6 +3450,7 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getTipologieSerieList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getSubStrutList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
             getForm().getSistemiMigrazioneList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+            getForm().getCorrispondenzePingList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
 
             // Apro le prime section
             getForm().getRegistriTab().setLoadOpened(true);
@@ -3461,6 +3460,7 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getParametriAmministrazioneSection().setLoadOpened(false);
             getForm().getParametriConservazioneSection().setLoadOpened(false);
             getForm().getParametriGestioneSection().setLoadOpened(false);
+            getForm().getCorrispondenzePingSection().setLoadOpened(false);
 
             if (!indMap.isEmpty()) {
                 if (getForm().getRegistroUnitaDocList().getTable() != null && indMap.containsKey("registroUnitaDoc")) {
@@ -3478,10 +3478,6 @@ public class StruttureAction extends StruttureAbstractAction {
                 if (getForm().getTipoFascicoloList().getTable() != null && indMap.containsKey("tipoFascicolo")) {
                     getForm().getTipoFascicoloList().getTable().setCurrentRowIndex(indMap.get("tipoFascicolo"));
                     getForm().getTipoFascicoloList().getTable().setPageSize(indMap.get("tipoFascicoloPS"));
-                }
-                if (getForm().getFormatoFileDocList().getTable() != null && indMap.containsKey("formatoFileDoc")) {
-                    getForm().getFormatoFileDocList().getTable().setCurrentRowIndex(indMap.get("formatoFileDoc"));
-                    getForm().getFormatoFileDocList().getTable().setPageSize(indMap.get("formatoFileDocPS"));
                 }
                 if (getForm().getTipoStrutDocList().getTable() != null && indMap.containsKey("tipoStrutDoc")) {
                     getForm().getTipoStrutDocList().getTable().setCurrentRowIndex(indMap.get("tipoStrutDoc"));
@@ -3515,6 +3511,10 @@ public class StruttureAction extends StruttureAbstractAction {
                     getForm().getEnteConvenzOrgList().getTable().setCurrentRowIndex(indMap.get("enteConvenz"));
                     getForm().getEnteConvenzOrgList().getTable().setPageSize(indMap.get("enteConvenzPS"));
                 }
+                if (getForm().getCorrispondenzePingList().getTable() != null && indMap.containsKey("corrPing")) {
+                    getForm().getCorrispondenzePingList().getTable().setCurrentRowIndex(indMap.get("corrPing"));
+                    getForm().getCorrispondenzePingList().getTable().setPageSize(indMap.get("corrPingPS"));
+                }
             }
 
             if ("1".equals(getForm().getInsStruttura().getFl_cessato().parse())) {
@@ -3522,7 +3522,6 @@ public class StruttureAction extends StruttureAbstractAction {
                 getForm().getTipoUnitaDocList().setUserOperations(true, false, false, false);
                 getForm().getTipoDocList().setUserOperations(true, false, false, false);
                 getForm().getTipoFascicoloList().setUserOperations(true, false, false, false);
-                getForm().getFormatoFileDocList().setUserOperations(true, false, false, false);
                 getForm().getTipoStrutDocList().setUserOperations(true, false, false, false);
                 getForm().getTipoRapprCompList().setUserOperations(true, false, false, false);
                 getForm().getCriteriRaggruppamentoList().setUserOperations(true, false, false, false);
@@ -3531,12 +3530,12 @@ public class StruttureAction extends StruttureAbstractAction {
                 getForm().getSubStrutList().setUserOperations(true, false, false, false);
                 getForm().getSistemiMigrazioneList().setUserOperations(true, false, false, false);
                 getForm().getEnteConvenzOrgList().setUserOperations(true, false, false, false);
+                getForm().getCorrispondenzePingList().setUserOperations(true, false, false, false);
             } else {
                 getForm().getRegistroUnitaDocList().setUserOperations(true, true, true, true);
                 getForm().getTipoUnitaDocList().setUserOperations(true, true, true, true);
                 getForm().getTipoDocList().setUserOperations(true, true, true, true);
                 getForm().getTipoFascicoloList().setUserOperations(true, true, true, true);
-                getForm().getFormatoFileDocList().setUserOperations(true, true, true, true);
                 getForm().getTipoStrutDocList().setUserOperations(true, true, true, true);
                 getForm().getTipoRapprCompList().setUserOperations(true, true, true, true);
                 getForm().getCriteriRaggruppamentoList().setUserOperations(true, true, true, true);
@@ -3545,6 +3544,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 getForm().getSubStrutList().setUserOperations(true, true, true, true);
                 getForm().getSistemiMigrazioneList().setUserOperations(true, true, true, true);
                 getForm().getEnteConvenzOrgList().setUserOperations(true, true, true, true);
+                getForm().getCorrispondenzePingList().setUserOperations(true, true, true, true);
             }
         }
     }
@@ -3559,7 +3559,7 @@ public class StruttureAction extends StruttureAbstractAction {
          * Propago l'idStruttura che ho salvato in memoria, per passarlo con la nuova form che porterò nella nuova
          * action
          */
-        BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
         BigDecimal idStrut = rowBean.getBigDecimal("id_strut");
         form.getIdList().getId_strut().setValue(idStrut.toString());
 
@@ -3614,7 +3614,7 @@ public class StruttureAction extends StruttureAbstractAction {
          * Propago l'idStruttura che ho salvato in memoria, per passarlo con la nuova form che porterò nella nuova
          * action
          */
-        BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
         BigDecimal idStrut = rowBean.getBigDecimal("id_strut");
         form.getIdList().getId_strut().setValue(idStrut.toString());
 
@@ -3711,8 +3711,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
             DecodeMap mappaAmbienti = new DecodeMap();
             BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC));
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
             ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
             ambienteTableBean.sort();
             mappaAmbienti.populatedMap(ambienteTableBean, "id_ambiente", "nm_ambiente");
@@ -3746,7 +3745,7 @@ public class StruttureAction extends StruttureAbstractAction {
     private void precompilaDateDuplicaImporta() {
         // Precompilo le date inizio e fine della struttura e dell'ente convenzionato
         Calendar data = Calendar.getInstance();
-        SimpleDateFormat formatter = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+        SimpleDateFormat formatter = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         Date today = data.getTime();
         String todayString = formatter.format(today);
         getForm().getInsStruttura().getDt_ini_val_strut().setValue(todayString);
@@ -3756,7 +3755,7 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getInsStruttura().getDt_fine_val_strut().setValue(endWorldString);
     }
 
-    public void sostituisciStrutturaOperation() throws EMFError {
+    public void sostituisciStrutturaOperation() {
 
         getMessageBox().clear();
         // carico la maschera di compilazione con tutti i dati tranne ds e nm
@@ -3764,8 +3763,7 @@ public class StruttureAction extends StruttureAbstractAction {
         Integer nr = Integer.parseInt(riga);
         getForm().getStruttureList().getTable().setCurrentRowIndex(nr);
 
-        if (struttureEjb
-                .isStrutUsedForVers((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())) {
+        if (struttureEjb.isStrutUsedForVers(getForm().getStruttureList().getTable().getCurrentRow())) {
             getMessageBox().addError("Struttura utilizzata per versamenti, impossibile sostituire");
         }
 
@@ -3780,7 +3778,7 @@ public class StruttureAction extends StruttureAbstractAction {
                     row.setString("ds_valore_param_applic_strut_cons", "true");
                 }
             }
-            populateComboStrut((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow());
+            populateComboStrut(getForm().getStruttureList().getTable().getCurrentRow());
             getSession().setAttribute("idStrutToSub",
                     ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
                             .getBigDecimal("id_strut"));
@@ -3789,15 +3787,13 @@ public class StruttureAction extends StruttureAbstractAction {
         }
     }
 
-    public void populateComboStrut(BaseRowInterface strutRowBean) throws EMFError {
+    public void populateComboStrut(BaseRowInterface strutRowBean) {
 
         OrgEnteRowBean orgEnteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getBigDecimal("id_ente"));
         // Combo
         DecodeMap mappaEnti = new DecodeMap();
         BaseTableInterface orgEnteTableBean = ambienteEjb.getEntiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
-                null, null, null);
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC), null, null, null);
         orgEnteTableBean.addSortingRule("nm_ente", SortingRule.ASC);
         orgEnteTableBean.sort();
         mappaEnti.populatedMap(orgEnteTableBean, "id_ente", "nm_ente");
@@ -3806,8 +3802,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
         DecodeMap mappaAmbienti = new DecodeMap();
         BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
         mappaAmbienti.populatedMap(ambienteTableBean, "id_ambiente", "nm_ambiente");
@@ -3819,7 +3814,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     @Secure(action = "Menu.Amministrazione.GestioneAmbitoTerritoriale")
-    public void gestioneAmbitoTerritoriale() throws EMFError {
+    public void gestioneAmbitoTerritoriale() {
 
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Amministrazione.GestioneAmbitoTerritoriale");
@@ -3830,7 +3825,7 @@ public class StruttureAction extends StruttureAbstractAction {
         BaseTable bt = new BaseTable();
         BaseRow br = new BaseRow();
 
-        for (Enum tipo : WebConstants.TipoAmbitoTerritoriale.values()) {
+        for (Enum<WebConstants.TipoAmbitoTerritoriale> tipo : WebConstants.TipoAmbitoTerritoriale.values()) {
             br.setString("ti_ambito_territ", tipo.name());
             bt.add(br);
         }
@@ -3844,7 +3839,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     @Secure(action = "Menu.Amministrazione.GestioneCategorieTipoUd")
-    public void gestioneCategorieTipoUd() throws EMFError {
+    public void gestioneCategorieTipoUd() {
 
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Amministrazione.GestioneCategorieTipoUd");
@@ -3947,7 +3942,7 @@ public class StruttureAction extends StruttureAbstractAction {
                     getForm().getAmbitoTerritoriale().getTi_ambito_territ().setValue("REGIONE_STATO");
                 }
             } catch (EMFError ex) {
-                logger.error("Eccezione", ex);
+                log.error(ECCEZIONE_GENERICA, ex);
                 getForm().getAmbitoTerritoriale().clear();
             }
             getForm().getAmbitoTerritoriale().getId_to_update()
@@ -3963,7 +3958,7 @@ public class StruttureAction extends StruttureAbstractAction {
             try {
                 getForm().getCategorieTipoUd().copyFromBean(categTipoUnitaDocRowBean);
             } catch (EMFError ex) {
-                logger.error("Eccezione", ex);
+                log.error(ECCEZIONE_GENERICA, ex);
                 getForm().getCategorieTipoUd().clear();
             }
             getForm().getCategorieTipoUd().getId_to_update()
@@ -4070,7 +4065,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     @Secure(action = "Menu.Amministrazione.GestioneCategorieStrutture")
-    public void ricercaCategorieStrutture() throws EMFError {
+    public void ricercaCategorieStrutture() {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Amministrazione.GestioneCategorieStrutture");
         getForm().getCategorieStrutture().clear();
@@ -4148,7 +4143,7 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     @Secure(action = "Menu.Amministrazione.GestioneCategorieEnti")
-    public void ricercaCategorieEnti() throws EMFError {
+    public void ricercaCategorieEnti() {
 
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Amministrazione.GestioneCategorieEnti");
@@ -4182,7 +4177,7 @@ public class StruttureAction extends StruttureAbstractAction {
         OrgStrutTableBean strutTableBean = struttureEjb.getOrgStrutTableBean(null, null, null, true);
         if (!strutTableBean.isEmpty()) {
             Iterator<OrgStrutRowBean> iter = strutTableBean.iterator();
-            lista = new ArrayList<String>();
+            lista = new ArrayList<>();
             while (iter.hasNext()) {
                 OrgStrutRowBean orgStrutRowBean = iter.next();
                 lista.add(orgStrutRowBean.getIdStrut().toString());
@@ -4327,7 +4322,44 @@ public class StruttureAction extends StruttureAbstractAction {
             getMessageBox().addError("La struttura \u00E8 di tipo template, impossibile eliminare le sottostrutture");
             forwardToPublisher(getLastPublisher());
         } else {
-            redirectToSubStrutPage(NE_DETTAGLIO_DELETE);
+            BigDecimal idInserito = (BigDecimal) getSession().getAttribute("elementoInserito");
+            if (getForm().getSubStrutList().getTable().size() == 1 && idInserito == null) {
+                getMessageBox()
+                        .addError("\u00C8 obbligatoria la presenza di almeno una sottostruttura per ogni struttura");
+                forwardToPublisher(getLastPublisher());
+            } else {
+                BigDecimal idSubStrut = idInserito != null ? idInserito
+                        : ((OrgSubStrutRowBean) getForm().getSubStrutList().getTable().getCurrentRow()).getIdSubStrut();
+                if (idSubStrut == null) {
+                    getMessageBox().addError(
+                            "Errore inaspettato. Ritentare il caricamento e la modifica della sottostruttura");
+                } else {
+                    if (subStrutEjb.existUdInSubStrut(idSubStrut)) {
+                        getMessageBox().addError(
+                                "Impossibile eliminare la sottostruttura: esiste almeno un elemento associato ad essa");
+                    } else {
+                        try {
+                            // Codice aggiuntivo per il logging
+                            LogParam param = SpagoliteLogUtil.getLogParam(
+                                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+                            param.setNomeAzione(
+                                    SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getSubStrutList()));
+                            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+                            subStrutEjb.deleteOrgSubStrut(param, idSubStrut.longValue(), false);
+                            getMessageBox().addInfo("Sottostruttura eliminata con successo");
+                            getMessageBox().setViewMode(MessageBox.ViewMode.plain);
+                            getSession().removeAttribute("elementoInserito");
+                            getForm().getVisStrutture().setEditMode();
+                            initRicercaStruttureCombo();
+                            forwardToPublisher(getLastPublisher());
+                        } catch (ParerUserError ex) {
+                            getMessageBox().addError(ex.getDescription());
+                            forwardToPublisher(getLastPublisher());
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -4352,7 +4384,28 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteTipologieSerieList() throws EMFError {
-        redirectToTipologiaSeriaPage(getNavigationEvent());
+        getMessageBox().clear();
+        DecTipoSerieRowBean tipoSerieRowBean;
+        tipoSerieRowBean = (DecTipoSerieRowBean) getForm().getTipologieSerieList().getTable().getCurrentRow();
+        int rowIndex = getForm().getTipologieSerieList().getTable().getCurrentRowIndex();
+        try {
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            param.setNomeAzione(
+                    SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getTipologieSerieList()));
+            tipoSerieEjb.deleteDecTipoSerie(param, tipoSerieRowBean.getIdTipoSerie().longValue());
+            getForm().getTipologieSerieList().getTable().remove(rowIndex);
+            getMessageBox().addMessage(new Message(Message.MessageLevel.INF, "Tipologia serie eliminata con successo"));
+            forwardToPublisher(getLastPublisher());
+        } catch (ParerUserError ex) {
+            getMessageBox().addError(ex.getDescription());
+            forwardToPublisher(getLastPublisher());
+        }
     }
 
     private void redirectToTitolarioPage(String action) throws EMFError {
@@ -4409,14 +4462,13 @@ public class StruttureAction extends StruttureAbstractAction {
                 form);
     }
 
-    private StrutTipiForm prepareRedirectToStrutTipi() throws EMFError {
+    private StrutTipiForm prepareRedirectToStrutTipi() {
         StrutTipiForm form = new StrutTipiForm();
-        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
-                .getBigDecimal("id_strut");
+        BigDecimal idStrut = (getForm().getStruttureList().getTable().getCurrentRow()).getBigDecimal("id_strut");
         /* Mi porto dietro nella idList l'id della struttura cui faccio riferimento */
         form.getIdList().getId_strut().setValue(idStrut.toString());
         /* Recupero la struttura */
-        BaseRowInterface strutBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface strutBean = getForm().getStruttureList().getTable().getCurrentRow();
         /* Setto dei valori che potranno tornarmi utili in StrutTipi */
         form.getStrutRif().getNm_strut().setValue(strutBean.getString("nm_strut"));
         form.getStrutRif().getDs_strut().setValue(strutBean.getString("ds_strut"));
@@ -4429,10 +4481,10 @@ public class StruttureAction extends StruttureAbstractAction {
         return form;
     }
 
-    private StrutTipiFascicoloForm prepareRedirectToStrutTipiFascicolo() throws EMFError {
+    private StrutTipiFascicoloForm prepareRedirectToStrutTipiFascicolo() {
         StrutTipiFascicoloForm form = new StrutTipiFascicoloForm();
         /* Recupero la struttura */
-        BaseRowInterface strutBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface strutBean = getForm().getStruttureList().getTable().getCurrentRow();
         /* Setto dei valori che potranno tornarmi utili in StrutTipiFascicolo */
         form.getStrutRif().getId_strut().setValue(strutBean.getBigDecimal("id_strut").toPlainString());
         form.getStrutRif().getNm_strut().setValue(strutBean.getString("nm_strut"));
@@ -4456,7 +4508,7 @@ public class StruttureAction extends StruttureAbstractAction {
         // salvo l'idStrut in modo da poterlo propagare più avanti se necessario
         form.getIdList().getId_strut().setValue(idStrut.toString());
 
-        BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
         form.getStrutRif().getNm_strut().setValue(rowBean.getString("nm_strut"));
         form.getStrutRif().getDs_strut().setValue(rowBean.getString("ds_strut"));
         OrgEnteRowBean enteTemp = struttureEjb.getOrgEnteRowBean(rowBean.getBigDecimal("id_ente"));
@@ -4469,13 +4521,12 @@ public class StruttureAction extends StruttureAbstractAction {
     private StrutFormatoFileForm prepareRedirectToStrutFormatoFile() throws EMFError {
         StrutFormatoFileForm form = new StrutFormatoFileForm();
 
-        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
-                .getBigDecimal("id_strut");
+        BigDecimal idStrut = getForm().getStruttureList().getTable().getCurrentRow().getBigDecimal("id_strut");
 
         // salvo l'idStrut in modo da poterlo propagare più avanti se necessario
         form.getIdList().getId_strut().setValue(idStrut.toString());
 
-        BaseRowInterface rowBean = (BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow();
+        BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
         form.getStrutRif().getNm_strut().setValue(rowBean.getString("nm_strut"));
         form.getStrutRif().getDs_strut().setValue(rowBean.getString("ds_strut"));
         OrgEnteRowBean enteTemp = struttureEjb.getOrgEnteRowBean(rowBean.getBigDecimal("id_ente"));
@@ -4545,6 +4596,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 getForm().getTipoStrutDocList().getTable(), getNavigationEvent());
     }
 
+    // Publisher
     private void redirectToFormatoFileDocPage() throws EMFError {
         StrutFormatoFileForm form = prepareRedirectToStrutFormatoFile();
         form.getFormatoFileDocList().setFilterValidRecords(getForm().getFormatoFileDocList().isFilterValidRecords());
@@ -4585,7 +4637,38 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteRegistroUnitaDocList() throws EMFError {
-        redirectToRegistroPage();
+        getMessageBox().clear();
+        DecRegistroUnitaDocRowBean registroUnitaDocRowBean = (DecRegistroUnitaDocRowBean) getForm()
+                .getRegistroUnitaDocList().getTable().getCurrentRow();
+        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                .getBigDecimal("id_strut");
+
+        try {
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setNomeAzione(
+                    SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getRegistroUnitaDocList()));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            registroEjb.deleteDecRegistroUnitaDoc(param, registroUnitaDocRowBean.getIdRegistroUnitaDoc().longValue());
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.INF, "Registro Unita' Documentaria eliminato con successo"));
+            // Reload list
+            DecRegistroUnitaDocTableBean registroUnitaDocTableBean = registroEjb.getDecRegistroUnitaDocTableBean(
+                    idStrut, getForm().getRegistroUnitaDocList().isFilterValidRecords());
+
+            getForm().getRegistroUnitaDocList().setTable(registroUnitaDocTableBean);
+            getForm().getRegistroUnitaDocList().getTable().first();
+            getForm().getRegistroUnitaDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+            forwardToPublisher(getLastPublisher());
+
+        } catch (ParerUserError e) {
+            getMessageBox().addError(e.getDescription());
+            forwardToPublisher(getLastPublisher());
+        }
     }
 
     @Override
@@ -4595,7 +4678,37 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteTipoUnitaDocList() throws EMFError {
-        redirectToTipologiaUnitaDocPage();
+        getMessageBox().clear();
+        BigDecimal idTipoUnitaDoc = ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable()
+                .getCurrentRow()).getIdTipoUnitaDoc();
+
+        if (getMessageBox().isEmpty()) {
+            try {
+                /*
+                 * Codice aggiuntivo per il logging...
+                 */
+                LogParam param = SpagoliteLogUtil.getLogParam(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                        getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+                param.setNomeAzione(
+                        SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getTipoUnitaDocList()));
+                param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+                tipoUnitaDocEjb.deleteDecTipoUnitaDoc(param, idTipoUnitaDoc.longValue());
+                getMessageBox()
+                        .addMessage(new Message(MessageLevel.INF, "Tipo Unita' Documentaria eliminato con successo"));
+                BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                        .getBigDecimal("id_strut");
+                DecTipoUnitaDocTableBean tipoUnitaDocTableBean = tipoUnitaDocEjb.getDecTipoUnitaDocTableBean(idStrut,
+                        getForm().getTipoUnitaDocList().isFilterValidRecords());
+                getForm().getTipoUnitaDocList().setTable(tipoUnitaDocTableBean);
+                getForm().getTipoUnitaDocList().getTable().first();
+                getForm().getTipoUnitaDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+                forwardToPublisher(getLastPublisher());
+            } catch (ParerUserError e) {
+                getMessageBox().addError(e.getDescription());
+                forwardToPublisher(getLastPublisher());
+            }
+        }
     }
 
     @Override
@@ -4605,7 +4718,34 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteTipoDocList() throws EMFError {
-        redirectToTipoDocPage();
+        getMessageBox().clear();
+        DecTipoDocRowBean tipoDocRowBean = (DecTipoDocRowBean) getForm().getTipoDocList().getTable().getCurrentRow();
+        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                .getBigDecimal("id_strut");
+
+        try {
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getTipoDocList()));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            tipoDocEjb.deleteDecTipoDoc(param, tipoDocRowBean.getIdTipoDoc().longValue());
+            getMessageBox().addMessage(new Message(MessageLevel.INF, "Tipo Documento eliminato con successo"));
+            // Reload list
+            DecTipoDocTableBean tipoDocTableBean = tipoDocEjb.getDecTipoDocTableBean(idStrut,
+                    getForm().getRegistroUnitaDocList().isFilterValidRecords());
+
+            getForm().getTipoDocList().setTable(tipoDocTableBean);
+            getForm().getTipoDocList().getTable().first();
+            getForm().getTipoDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+            forwardToPublisher(getLastPublisher());
+        } catch (ParerUserError e) {
+            getMessageBox().addError(e.getDescription());
+            forwardToPublisher(getLastPublisher());
+        }
     }
 
     @Override
@@ -4623,10 +4763,38 @@ public class StruttureAction extends StruttureAbstractAction {
     public void deleteTipoFascicoloList() throws EMFError {
         String nmTipoFascicolo = ((DecTipoFascicoloTableBean) getForm().getTipoFascicoloList().getTable())
                 .getCurrentRow().getNmTipoFascicolo();
+        BaseRowInterface currentRow = getForm().getTipoFascicoloList().getTable().getCurrentRow();
+        BigDecimal idTipoFascicolo = currentRow.getBigDecimal("id_tipo_fascicolo");
+        int riga = getForm().getTipoFascicoloList().getTable().getCurrentRowIndex();
+
         if (nmTipoFascicolo.equals("Tipo fascicolo sconosciuto")) {
-            getMessageBox().addError("Attenzione: il tipo fascicolo sconosciuto non può essere eliminato");
-        } else {
-            redirectToTipoFascicoloPage();
+            getMessageBox().addError("Attenzione: il tipo fascicolo sconosciuto non pu\u00F2 essere eliminato");
+        }
+
+        if (!getMessageBox().hasError() && idTipoFascicolo != null) {
+            try {
+                if (!getMessageBox().hasError()) {
+                    /*
+                     * Codice aggiuntivo per il logging...
+                     */
+                    LogParam param = SpagoliteLogUtil.getLogParam(
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                            getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+                    param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+                    param.setNomeAzione(
+                            SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getTipoFascicoloList()));
+                    // Elimino il record da DB e dalla lista online
+                    tipoFascicoloEjb.deleteDecTipoFascicolo(param, idTipoFascicolo);
+                    // Rimuovo la riga dalla lista online
+                    getForm().getTipoFascicoloList().getTable().remove(riga);
+                    getMessageBox().addInfo("Tipo fascicolo eliminato con successo");
+                    getMessageBox().setViewMode(ViewMode.plain);
+                    forwardToPublisher(getLastPublisher());
+                }
+            } catch (ParerUserError ex) {
+                getMessageBox().addError(ex.getDescription());
+                forwardToPublisher(getLastPublisher());
+            }
         }
     }
 
@@ -4637,7 +4805,37 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteTipoStrutDocList() throws EMFError {
-        redirectToTipoStrutDocPage();
+        getMessageBox().clear();
+
+        DecTipoStrutDocRowBean tipoStrutDocRowBean;
+        DecTipoCompDocRowBean tipoCompDocRowBean = new DecTipoCompDocRowBean();
+        tipoStrutDocRowBean = (DecTipoStrutDocRowBean) getForm().getTipoStrutDocList().getTable().getCurrentRow();
+
+        tipoCompDocRowBean.setIdTipoStrutDoc(tipoCompDocRowBean.getIdTipoStrutDoc());
+        try {
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            tipoStrutDocEjb.deleteDecTipoStrutDoc(param, tipoStrutDocRowBean.getIdTipoStrutDoc().longValue());
+            getMessageBox().addMessage(new Message(MessageLevel.INF, "Struttura documento eliminata con successo"));
+            BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                    .getBigDecimal("id_strut");
+            DecTipoStrutDocTableBean tipoStrutDocTableBean = tipoStrutDocEjb.getDecTipoStrutDocTableBean(idStrut,
+                    (getForm().getTipoStrutDocList().isFilterValidRecords() == null ? false
+                            : getForm().getTipoStrutDocList().isFilterValidRecords()));
+            getForm().getTipoStrutDocList().setTable(tipoStrutDocTableBean);
+            getForm().getTipoStrutDocList().getTable().first();
+            getForm().getTipoStrutDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+            forwardToPublisher(getLastPublisher());
+        } catch (ParerUserError ex) {
+            getMessageBox().addError(ex.getDescription());
+            forwardToPublisher(getLastPublisher());
+        }
     }
 
     @Override
@@ -4647,7 +4845,36 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteFormatoFileDocList() throws EMFError {
-        redirectToFormatoFileDocPage();
+        DecFormatoFileDocRowBean formatoFileDocRowBean = (DecFormatoFileDocRowBean) getForm().getFormatoFileDocList()
+                .getTable().getCurrentRow();
+        if (getMessageBox().isEmpty()) {
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            param.setNomeAzione(
+                    SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getFormatoFileDocList()));
+            try {
+                formatoFileDocEjb.deleteDecFormatoFileDoc(param,
+                        formatoFileDocRowBean.getIdFormatoFileDoc().longValue());
+                getMessageBox()
+                        .addMessage(new Message(Message.MessageLevel.INF, "Formato ammesso eliminato con successo"));
+                DecFormatoFileDocTableBean formatoFileDocTableBean = formatoFileDocEjb.getDecFormatoFileDocTableBean(
+                        formatoFileDocRowBean.getIdStrut(), getForm().getFormatoFileDocList().isFilterValidRecords());
+
+                getForm().getFormatoFileDocList().setTable(formatoFileDocTableBean);
+                getForm().getFormatoFileDocList().getTable().first();
+                getForm().getFormatoFileDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+
+                forwardToPublisher(getLastPublisher());
+
+            } catch (ParerUserError e) {
+                forwardToPublisher(getLastPublisher());
+            }
+        }
     }
 
     @Override
@@ -4657,9 +4884,33 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteCriteriRaggruppamentoList() throws EMFError {
-        redirectToCreaCriterioRaggrPage();
+        try {
+            DecVRicCriterioRaggrRowBean row = (DecVRicCriterioRaggrRowBean) getForm().getCriteriRaggruppamentoList()
+                    .getTable().getCurrentRow();
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            param.setNomeAzione(
+                    SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getCriteriRaggruppamentoList()));
+
+            if (crHelper.deleteDecCriterioRaggr(param, row.getIdStrut(), row.getNmCriterioRaggr())) {
+                getMessageBox()
+                        .addMessage(new Message(MessageLevel.INF, "Criterio di raggruppamento eliminato con successo"));
+                getMessageBox().setViewMode(ViewMode.plain);
+                getForm().getVisStrutture().setEditMode();
+                initRicercaStruttureCombo();
+                forwardToPublisher(getLastPublisher());
+            }
+        } catch (ParerUserError ex) {
+            forwardToPublisher(getLastPublisher());
+        }
     }
 
+    // DETTAGLIO
     /**
      * Inizializza le combo ambiente/ente/struttura del DETTAGLIO DI UN CRITERIO di raggruppamento, ricavando i valori
      * da una struttura impostata
@@ -4692,7 +4943,7 @@ public class StruttureAction extends StruttureAbstractAction {
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.FALSE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error("Errore in ricerca ambiente", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -4728,6 +4979,7 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getStrutFlags().setLoadOpened(false);
         // Rimetto visibile il bottone di esporta
         getForm().getInsStruttura().getScaricaStruttura().setEditMode();
+        getForm().getInsStruttura().getScaricaStruttura().setDisableHourGlass(true);
         if ("1".equals(getForm().getInsStruttura().getFl_cessato().parse())) {
             getForm().getImportaParametri().getImportaParametriButton().setViewMode();
         } else {
@@ -4735,6 +4987,8 @@ public class StruttureAction extends StruttureAbstractAction {
         }
         // Bottone log eventi
         getForm().getInsStruttura().getLogEventi().setEditMode();
+
+        getForm().getInsStruttura().getEliminaFormatiSpecifici().setEditMode();
     }
 
     @Override
@@ -4982,8 +5236,7 @@ public class StruttureAction extends StruttureAbstractAction {
              */
             StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.ASSOCIAZIONE_TIPO_RAPPR_COMP_TIPO_COMP)) {
                 param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
@@ -5037,8 +5290,7 @@ public class StruttureAction extends StruttureAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 BigDecimal idTipoRapprComp = getForm().getTipoRapprComp().getId_tipo_rappr_comp().parse();
@@ -5155,7 +5407,7 @@ public class StruttureAction extends StruttureAbstractAction {
     @Override
     public void importaParametriDaRicercaButton() throws EMFError {
         // Ricavo gli id delle strutture da trattare
-        Map<BigDecimal, String> struttureDaElaborare = new HashMap();
+        Map<BigDecimal, String> struttureDaElaborare = new HashMap<>();
         getForm().getStruttureList().post(getRequest());
         OrgVRicStrutTableBean strutTableBean = (OrgVRicStrutTableBean) getForm().getStruttureList().getTable();
         for (OrgVRicStrutRowBean strutRowBean : strutTableBean) {
@@ -5200,17 +5452,20 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     /**
-     * Carica il secondo step: - carico la prima combo con le tipologie unità documentarie
+     * Carica il secondo step: - carico la combo con le tipologie unità documentarie e la combo con i tipi fascicolo
      *
      * @throws EMFError
      *             errore generico
      */
     @Override
     public void inserimentoWizardPasso2OnEnter() throws EMFError {
-        // Setto i valori di tipologie unità documentarie ricavati dall'xml
         UUID uuid = (UUID) getSession().getAttribute("uuid");
+        // Setto i valori di tipologie unità documentarie ricavati dall'xml
         getForm().getImportaParametri().getNm_tipo_unita_doc().setDecodeMap(getTipiUdDaXmlDecodeMap(uuid));
         getForm().getImportaParametri().getNm_tipo_unita_doc().clear();
+        // Setto i valori di tipi fascicolo ricavati dall'xml
+        getForm().getImportaParametri().getNm_tipo_fascicolo().setDecodeMap(getTipiFascicoloDaXmlDecodeMap(uuid));
+        getForm().getImportaParametri().getNm_tipo_fascicolo().clear();
         forwardToPublisher(Application.Publisher.IMPORTA_PARAMETRI_WIZARD);
     }
 
@@ -5270,7 +5525,7 @@ public class StruttureAction extends StruttureAbstractAction {
                     getMessageBox().addError("Selezionare un tipo unità documentaria");
                 }
             } catch (EMFError e) {
-                logger.error("Eccezione nell'import del tipo unità documentaria", e);
+                log.error(ECCEZIONE_IMPORT_TIPO_UD, e);
                 getMessageBox().addError("Attenzione: errore durante l'import del Tipo Unità Documentaria");
                 result = false;
             } catch (ParerUserError e) {
@@ -5278,7 +5533,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 customizeErrorMessage(errorParts);
                 forwardToPublisher(Application.Publisher.CREA_STRUTTURA);
             } catch (Exception e) {
-                logger.error("Eccezione nell'import del tipo unità documentaria", e);
+                log.error(ECCEZIONE_IMPORT_TIPO_UD, e);
                 getMessageBox().addError(ExceptionUtils.getRootCauseMessage(e));
                 result = false;
             }
@@ -5330,6 +5585,35 @@ public class StruttureAction extends StruttureAbstractAction {
         return mappaTipiUd;
     }
 
+    /**
+     * Popola la combo Periodi tipo fascicolo in base alla scelta di Tipo Fascicolo
+     *
+     * @return JSONObject
+     *
+     * @throws EMFError
+     *             errore generico
+     */
+    @Override
+    public JSONObject triggerImportaParametriNm_tipo_fascicoloOnTrigger() throws EMFError {
+        getForm().getImportaParametri().post(getRequest());
+        List<String> nmTipoFascicoloList = getForm().getImportaParametri().getNm_tipo_fascicolo().parse();
+        UUID uuid = (UUID) getSession().getAttribute("uuid");
+        if (nmTipoFascicoloList.size() == 1) {
+            getForm().getImportaParametri().getAa_tipo_fascicolo()
+                    .setDecodeMap(getAaTipoFascicoloDaTipoFascicoloDecodeMap(uuid, nmTipoFascicoloList.get(0)));
+        } else {
+            getForm().getImportaParametri().getAa_tipo_fascicolo().setDecodeMap(new DecodeMap());
+        }
+        return getForm().getImportaParametri().asJSON();
+    }
+
+    private DecodeMap getTipiFascicoloDaXmlDecodeMap(UUID uuid) {
+        DecodeMap mappaTipiFascicolo = new DecodeMap();
+        DecTipoFascicoloTableBean tipoFascicoloTableBean = struttureEjb.getTipiFascicoloDaXmlImportato(uuid);
+        mappaTipiFascicolo.populatedMap(tipoFascicoloTableBean, "nm_tipo_fascicolo", "nm_tipo_fascicolo");
+        return mappaTipiFascicolo;
+    }
+
     private DecodeMap getTipiStrutUdDaTipoUdDecodeMap(UUID uuid, String nmTipoUnitaDoc) {
         DecTipoStrutUnitaDocTableBean decTipoStrutUnitaDocTableBean = struttureEjb.getTipiStrutUdDaXmlImportato(uuid,
                 nmTipoUnitaDoc);
@@ -5337,6 +5621,14 @@ public class StruttureAction extends StruttureAbstractAction {
         mappaTipiStrutUd.populatedMap(decTipoStrutUnitaDocTableBean, "nm_tipo_strut_unita_doc",
                 "nm_tipo_strut_unita_doc");
         return mappaTipiStrutUd;
+    }
+
+    private DecodeMap getAaTipoFascicoloDaTipoFascicoloDecodeMap(UUID uuid, String nmTipoFascicolo) {
+        DecAaTipoFascicoloTableBean aATipoFascicoloTableBean = struttureEjb.getAaTipoFascicoloDaXmlImportato(uuid,
+                nmTipoFascicolo);
+        DecodeMap mappaAaTipoFascicolo = new DecodeMap();
+        mappaAaTipoFascicolo.populatedMap(aATipoFascicoloTableBean, "aa_ini_tipo_fascicolo", "descrizione_periodo");
+        return mappaAaTipoFascicolo;
     }
 
     /**
@@ -5357,7 +5649,7 @@ public class StruttureAction extends StruttureAbstractAction {
             }
 
             byte[] fileByteArray = getForm().getImportaParametri().getXml_parametri().getFileBytes();
-            String xmlString = new String(fileByteArray, "UTF-8");
+            String xmlString = new String(fileByteArray, StandardCharsets.UTF_8);
 
             if (!getMessageBox().hasError()) {
                 String mime = singleton.detectMimeType(fileByteArray);
@@ -5372,7 +5664,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 result = true;
             }
         } catch (Exception ex) {
-            logger.error("Eccezione nell'upload del file", ex);
+            log.error("Eccezione nell'upload del file", ex);
             getMessageBox().addError("Si \u00E8 verificata un'eccezione nell'upload del file", ex);
         }
         return result;
@@ -5390,7 +5682,7 @@ public class StruttureAction extends StruttureAbstractAction {
             eseguiImportaParametri(existRegistriDaImportareConFlTipoSerieMultAlzato);
 
         } catch (ParerUserError e) {
-            logger.error("Eccezione nell'import del tipo unità documentaria", e);
+            log.error(ECCEZIONE_IMPORT_TIPO_UD, e);
             getMessageBox().addError(e.getDescription());
             forwardToPublisher(Application.Publisher.IMPORTA_PARAMETRI_WIZARD);
         }
@@ -5410,8 +5702,15 @@ public class StruttureAction extends StruttureAbstractAction {
         String nmStrutturaCorrente = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
                 .getString("nm_strut");
         String importareRegistri = getForm().getImportaParametri().getCheck_includi_registri().parse();
+        String importareSistemiMigraz = getForm().getImportaParametri().getCheck_includi_sistemi_migraz().parse();
+        String importareFormatiComponente = getForm().getImportaParametri().getCheck_includi_formati_componente()
+                .parse();
 
-        Map<BigDecimal, String> struttureDaElaborare = new HashMap();
+        List<String> tipoFascicoloDaImportareList = getForm().getImportaParametri().getNm_tipo_fascicolo().parse();
+        BigDecimal aaTipoFascicoloDaImportare = getForm().getImportaParametri().getAa_tipo_fascicolo().parse();
+        String sovrascriviPeriodi = getForm().getImportaParametri().getCheck_sovrascrivi_periodi().parse();
+
+        Map<BigDecimal, String> struttureDaElaborare = new HashMap<>();
 
         if (getSession().getAttribute("struttureDaElaborarePerImportaParametri") != null) {
             struttureDaElaborare = (HashMap) getSession().getAttribute("struttureDaElaborarePerImportaParametri");
@@ -5425,16 +5724,22 @@ public class StruttureAction extends StruttureAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this), SpagoliteLogUtil.getToolbarInsert());
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
         try {
+            // Controllo che almeno un tipo ud o almeno un tipo fascicolo siano stati selezionati
+            if (tipoUdDaImportareList.isEmpty() && tipoFascicoloDaImportareList.isEmpty()) {
+                throw new ParerUserError("Attenzione: è necessario selezionare almeno un tipo ud o un tipo fascicolo");
+            }
+
             for (String tipoUdDaImportare : tipoUdDaImportareList) {
+                log.info("Importa parametri - Inizio importazione tipo ud {}", tipoUdDaImportare);
                 // Eseguo l'import
                 Object[] report = struttureEjb.eseguiImportTipoUd(param, struttureDaElaborare, uuid, tipoUdDaImportare,
-                        tipoStrutUdDaImportare, importareRegistri, importareCriteri,
-                        existRegistriDaImportareConFlTipoSerieMultAlzato);
+                        tipoStrutUdDaImportare, importareRegistri, importareCriteri, importareSistemiMigraz,
+                        existRegistriDaImportareConFlTipoSerieMultAlzato, importareFormatiComponente);
+                log.info("Importa parametri - Fine importazione tipo ud {}", tipoUdDaImportare);
 
                 // Preparo il report
                 getMessageBox().addInfo(
@@ -5444,28 +5749,83 @@ public class StruttureAction extends StruttureAbstractAction {
                 Set<String> strutErrorSuModello = (Set<String>) report[1];
                 strutErrorGenerico.addAll(strutErrorSuModello);
                 Map<String, String> strutErrorTipiSerie = (Map<String, String>) report[2];
+                Set<String> strutErrorSisMigr = (Set<String>) report[3];
 
                 getMessageBox().addInfo("Numero delle strutture su cui l'operazione è andata a buon fine: "
                         + (struttureDaElaborare.size() - strutErrorGenerico.size()) + "<br>");
                 getMessageBox().addInfo("Numero delle strutture su cui l'operazione è andata in errore: "
                         + strutErrorGenerico.size() + "<br>");
-                if (strutErrorGenerico.size() > 0) {
+                if (!strutErrorGenerico.isEmpty()) {
                     getMessageBox().addInfo("Strutture su cui l'operazione è andata in errore: <br>");
                     for (String strutErr : strutErrorGenerico) {
                         getMessageBox().addInfo("- " + strutErr + "<br>");
                     }
                 }
 
-                if (strutErrorTipiSerie.size() > 0) {
+                if (!strutErrorTipiSerie.isEmpty()) {
                     getMessageBox()
                             .addInfo("Strutture dove non è stato possibile eseguire la creazione dei tipi serie: <br>");
                     for (Map.Entry<String, String> strutErrTS : strutErrorTipiSerie.entrySet()) {
                         getMessageBox().addInfo("- " + strutErrTS.getKey() + "<br>");
                     }
                 }
+
+                if (!strutErrorSisMigr.isEmpty()) {
+                    getMessageBox().addInfo(
+                            "Attenzione: i seguenti sistemi di migrazione non sono stati importati in quanto non presenti a sistema: <br>");
+                    for (String strutErr : strutErrorSisMigr) {
+                        getMessageBox().addInfo("- " + strutErr + "<br>");
+                    }
+                }
+
             }
 
-            getMessageBox().setViewMode(ViewMode.plain);
+            // TIPI FASCICOLO
+            for (String tipoFascicoloDaImportare : tipoFascicoloDaImportareList) {
+                log.info("Importa parametri - Inizio importazione tipo fascicolo {}", tipoFascicoloDaImportare);
+
+                // Controllo che le strutture appartengano tutte allo stesso ambiente SACER come controllo per
+                // l'importazione massiva dei tipi fascicolo
+                String errore = struttureEjb.checkAppartenenzaAmbiente(struttureDaElaborare);
+
+                // Controllo i modelli xsd periodo tipi fascicolo in base all'ambiente di questa nuova struttura
+                if (errore.equals("")) {
+                    try {
+                        struttureEjb.checkAndSetModelliXsdTipiFascicoloStrutturaImpParam(uuid, idStrutturaCorrente,
+                                tipoFascicoloDaImportare);
+                    } catch (ParerUserError e) {
+                        String[] errorParts = e.getDescription().split(";");
+                        customizeErrorMessage(errorParts);
+                    }
+                }
+
+                if (errore.equals("") && !getMessageBox().hasWarning()) {
+                    // Eseguo l'import dei tipi fascicolo
+                    Object[] report = struttureEjb.eseguiImportTipoFascicolo(param, struttureDaElaborare, uuid,
+                            tipoFascicoloDaImportare, aaTipoFascicoloDaImportare, sovrascriviPeriodi);
+                    Set<String> strutErrorGenerico = (Set<String>) report[0];
+                    // Preparo il report
+                    getMessageBox().addInfo(
+                            "Esecuzione dell’importazione del tipo fascicolo " + tipoFascicoloDaImportare + "<br>");
+                    getMessageBox()
+                            .addInfo("Numero delle strutture selezionate: " + struttureDaElaborare.size() + "<br>");
+                    getMessageBox().addInfo("Numero delle strutture su cui l'operazione è andata a buon fine: "
+                            + (struttureDaElaborare.size() - strutErrorGenerico.size()) + "<br>");
+                    getMessageBox().addInfo("Numero delle strutture su cui l'operazione è andata in errore: "
+                            + strutErrorGenerico.size() + "<br>");
+                    if (!strutErrorGenerico.isEmpty()) {
+                        getMessageBox().addInfo("Strutture su cui l'operazione è andata in errore: <br>");
+                        for (String strutErr : strutErrorGenerico) {
+                            getMessageBox().addInfo("- " + strutErr + "<br>");
+                        }
+                    }
+                } else {
+                    getMessageBox().addInfo(errore + "<br>");
+                }
+                log.info("Importa parametri - Fine importazione tipo fascicolo {}", tipoFascicoloDaImportare);
+            }
+
+            getMessageBox().setViewMode(ViewMode.alert);
             // Se sono arrivato da ricerca strutture, al termine dell'import torno in ricerca strutture
             if (getSession().getAttribute("struttureDaElaborarePerImportaParametri") != null) {
                 forwardToPublisher(Application.Publisher.STRUTTURA_RICERCA);
@@ -5486,6 +5846,7 @@ public class StruttureAction extends StruttureAbstractAction {
     private void loadStruttura(BigDecimal idStrut) throws EMFError, ParerUserError {
         getForm().getInsStruttura().setViewMode();
         getForm().getInsStruttura().getScaricaStruttura().setEditMode();
+        getForm().getInsStruttura().getScaricaStruttura().setDisableHourGlass(true);
         if (getLastPublisher().equals(Application.Publisher.STRUTTURA_RICERCA)) {
             getForm().getInsStruttura().getImportaStruttura().setEditMode();
             getForm().getInsStruttura().getCreaStruttureTemplate().setEditMode();
@@ -5504,13 +5865,10 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getInsStruttura().copyFromBean(strutRowBean);
         boolean isStrutturaTemplate = "1".equals(strutRowBean.getFlTemplate());
         getForm().getInsStruttura().getScaricaStruttura().setHidden(isStrutturaTemplate);
+        getForm().getInsStruttura().getEliminaFormatiSpecifici().setEditMode();
 
         // Flag partizionamenti
         getForm().getInsStruttura().getPartiz_complet().setValue(struttureEjb.partitionOK(strutRowBean.getIdStrut()));
-        getForm().getInsStruttura().getPartiz_upd_complet()
-                .setValue(struttureEjb.partitionUpdOK(strutRowBean.getIdStrut()));
-        getForm().getInsStruttura().getPartiz_fascic_complet()
-                .setValue(struttureEjb.partitionFascOK(strutRowBean.getIdStrut()));
 
         if (strutRowBean.getIdCategStrut() != null) {
             getForm().getInsStruttura().getId_categ_strut().setValue(strutRowBean.getIdCategStrut().toString());
@@ -5539,8 +5897,7 @@ public class StruttureAction extends StruttureAbstractAction {
 
         DecodeMap mappaAmbienti = new DecodeMap();
         BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
         mappaAmbienti.populatedMap(ambienteTableBean, "id_ambiente", "nm_ambiente");
@@ -5685,8 +6042,7 @@ public class StruttureAction extends StruttureAbstractAction {
         // Ricavo gli ambienti cui l'utente è abilitato
         DecodeMap mappaAmbienti = new DecodeMap();
         BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
         mappaAmbienti.populatedMap(ambienteTableBean, "id_ambiente", "nm_ambiente");
@@ -5714,10 +6070,10 @@ public class StruttureAction extends StruttureAbstractAction {
         String nmEnteSelezionato = null;
 
         if (Boolean.parseBoolean(isFromAjax)) {
-            idAmbienteSelezionato = !((String) getRequest().getParameter("idAmbiente")).equals("")
-                    ? new BigDecimal(getRequest().getParameter("idAmbiente")) : null;
+            idAmbienteSelezionato = !(getRequest().getParameter(PARAMETER_ID_AMBIENTE)).equals("")
+                    ? new BigDecimal(getRequest().getParameter(PARAMETER_ID_AMBIENTE)) : null;
             nmAmbienteSelezionato = getRequest().getParameter("nmAmbiente");
-            idEnteSelezionato = !((String) getRequest().getParameter("idEnte")).equals("")
+            idEnteSelezionato = !(getRequest().getParameter("idEnte")).equals("")
                     ? new BigDecimal(getRequest().getParameter("idEnte")) : null;
             nmEnteSelezionato = getRequest().getParameter("nmEnte");
         } else {
@@ -5764,9 +6120,8 @@ public class StruttureAction extends StruttureAbstractAction {
                         idEnteSelezionato != null ? idEnteSelezionato.longValue() : null,
                         idEnteSelezionato != null ? null : CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_AMBIENTE.name());
 
-                int numMassimoStruttureTemplateCreabili = Integer
-                        .parseInt((String) configurationHelper.getValoreParamApplic("NUM_MAX_STRUT_TEMPLATE", null,
-                                null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+                int numMassimoStruttureTemplateCreabili = Integer.parseInt(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_STRUT_TEMPLATE));
 
                 int numStruttureTemplateDaCreare = numMassimoStruttureTemplateCreabili
                         - numStruttureTemplateGiaPresenti;
@@ -5854,8 +6209,8 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     @Override
-    public void eliminaTuttiFormatiFileDoc() throws Throwable {
-        List<String> formatiDaEliminare = new ArrayList<String>();
+    public void eliminaTuttiFormatiFileDoc() {
+        List<String> formatiDaEliminare = new ArrayList<>();
         BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
                 .getBigDecimal("id_strut");
         DecFormatoFileDocTableBean formatoFileDocTB = (DecFormatoFileDocTableBean) getForm().getFormatoFileDocList()
@@ -5866,8 +6221,7 @@ public class StruttureAction extends StruttureAbstractAction {
         // Aggiunto per il logging
         StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                 SpagoliteLogUtil.getButtonActionName(form, form.getFormatoFileDocButtonList(),
                         form.getFormatoFileDocButtonList().getEliminaTuttiFormatiFileDoc().getName()));
@@ -5890,9 +6244,9 @@ public class StruttureAction extends StruttureAbstractAction {
         forwardToPublisher(Application.Publisher.CREA_STRUTTURA);
     }
 
-    public void triggerStruttureTemplateCreatorByJavaScript() throws EMFError {
-        BigDecimal idAmbienteSelezionato = !((String) getRequest().getParameter("idAmbiente")).equals("")
-                ? new BigDecimal(getRequest().getParameter("idAmbiente")) : null;
+    public void triggerStruttureTemplateCreatorByJavaScript() {
+        BigDecimal idAmbienteSelezionato = !(getRequest().getParameter(PARAMETER_ID_AMBIENTE)).equals("")
+                ? new BigDecimal(getRequest().getParameter(PARAMETER_ID_AMBIENTE)) : null;
         getForm().getStruttureTemplateCreator().getId_ente_strutture_template().setDecodeMap(new DecodeMap());
         if (idAmbienteSelezionato != null) {
             // Setto la combo degli enti
@@ -5926,7 +6280,7 @@ public class StruttureAction extends StruttureAbstractAction {
         forwardToPublisher(getLastPublisher());
     }
 
-    public void duplicaRegistroOperation() throws EMFError, NoSuchFieldException {
+    public void duplicaRegistroOperation() throws EMFError {
         boolean isCessata = getForm().getInsStruttura().getFl_cessato().parse().equals("1");
         if (isCessata) {
             getMessageBox().addError("La struttura \u00E8 cessata, impossibile duplicare il registro");
@@ -5977,8 +6331,8 @@ public class StruttureAction extends StruttureAbstractAction {
         DecTipoRapprCompRowBean bean = (DecTipoRapprCompRowBean) getForm().getTipoRapprCompList().getTable()
                 .getCurrentRow();
         GestioneLogEventiForm form = new GestioneLogEventiForm();
-        form.getOggettoDetail().getNmApp().setValue(configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        form.getOggettoDetail().getNmApp()
+                .setValue(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         form.getOggettoDetail().getNm_tipo_oggetto()
                 .setValue(SacerLogConstants.TIPO_OGGETTO_TIPO_RAPPRESENTAZIONE_COMPONENTE);
         form.getOggettoDetail().getIdOggetto().setValue(bean.getIdTipoRapprComp().toString());
@@ -5990,8 +6344,8 @@ public class StruttureAction extends StruttureAbstractAction {
     public void logEventi() throws EMFError {
         BaseRowInterface bean = getForm().getStruttureList().getTable().getCurrentRow();
         GestioneLogEventiForm form = new GestioneLogEventiForm();
-        form.getOggettoDetail().getNmApp().setValue(configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        form.getOggettoDetail().getNmApp()
+                .setValue(configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         form.getOggettoDetail().getNm_tipo_oggetto().setValue(SacerLogConstants.TIPO_OGGETTO_STRUTTURA);
         form.getOggettoDetail().getIdOggetto().setValue(bean.getBigDecimal("id_strut").toString());
         redirectToAction(it.eng.parer.sacerlog.slite.gen.Application.Actions.GESTIONE_LOG_EVENTI,
@@ -6002,37 +6356,32 @@ public class StruttureAction extends StruttureAbstractAction {
     protected void postLoad() {
         super.postLoad();
         Object ogg = getForm();
-        try {
-            if (ogg instanceof StruttureForm) {
-                StruttureForm form = (StruttureForm) ogg;
-                if (form.getStruttureList().getStatus().equals(Status.view)) {
-                    form.getInsStruttura().getLogEventi().setEditMode();
-                } else {
-                    form.getInsStruttura().getLogEventi().setViewMode();
-                }
+        if (ogg instanceof StruttureForm) {
+            StruttureForm form = (StruttureForm) ogg;
+            if (form.getStruttureList().getStatus().equals(Status.view)) {
+                form.getInsStruttura().getLogEventi().setEditMode();
+            } else {
+                form.getInsStruttura().getLogEventi().setViewMode();
+            }
 
-                // MEV#21353
-                if (form.getStruttureList().getStatus().equals(Status.view)
-                        || form.getStruttureList().getStatus().equals(Status.update)) {
-                    if (form.getStruttureList().getTable() != null && !form.getStruttureList().getTable().isEmpty()) {
-                        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable()
-                                .getCurrentRow()).getBigDecimal("id_strut");
-                        BigDecimal idAmbiente = struttureEjb.getOrgAmbienteRowBeanByIdStrut(idStrut).getIdAmbiente();
-                        // Se esiste una richiesta di restituzione archivio con stati passati in ingresso
-                        // oppure il parametro è valorizzato a
-                        String abilitaFlArkRestituitoNoRich = configurationHelper.getValoreParamApplic(
-                                "ABILITA_FL_ARK_RESTITUITO_NO_RICH", idAmbiente, idStrut, null, null,
-                                CostantiDB.TipoAplVGetValAppart.STRUT);
-                        if (restArchEjb.checkRichRestArchByStatoExisting(idStrut,
-                                Arrays.asList(AroRichiestaRa.AroRichiestaTiStato.ESTRATTO,
-                                        AroRichiestaRa.AroRichiestaTiStato.VERIFICATO))
-                                || Boolean.parseBoolean(abilitaFlArkRestituitoNoRich)) {
-                            form.getInsStruttura().getFl_archivio_restituito().setHidden(false);
-                            form.getInsStruttura().getFl_cessato().setHidden(false);
-                        } else {
-                            form.getInsStruttura().getFl_archivio_restituito().setHidden(true);
-                            form.getInsStruttura().getFl_cessato().setHidden(true);
-                        }
+            // MEV#21353
+            if (form.getStruttureList().getStatus().equals(Status.view)
+                    || form.getStruttureList().getStatus().equals(Status.update)) {
+                if (form.getStruttureList().getTable() != null && !form.getStruttureList().getTable().isEmpty()) {
+                    BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                            .getBigDecimal("id_strut");
+                    BigDecimal idAmbiente = struttureEjb.getOrgAmbienteRowBeanByIdStrut(idStrut).getIdAmbiente();
+                    // Se esiste una richiesta di restituzione archivio con stati ESTRATTO o VERIFICATO o RESTITUITO
+                    // oppure il parametro è valorizzato a true
+                    String abilitaFlArkRestituitoNoRich = configurationHelper.getValoreParamApplicByStrut(
+                            CostantiDB.ParametroAppl.ABILITA_FL_ARK_RESTITUITO_NO_RICH, idAmbiente, idStrut);
+                    if (restArchEjb.checkRichRestArchByStatoExisting(idStrut,
+                            Arrays.asList(AroRichiestaRa.AroRichiestaTiStato.ESTRATTO,
+                                    AroRichiestaRa.AroRichiestaTiStato.VERIFICATO,
+                                    AroRichiestaRa.AroRichiestaTiStato.RESTITUITO))
+                            || Boolean.parseBoolean(abilitaFlArkRestituitoNoRich)) {
+                        form.getInsStruttura().getFl_archivio_restituito().setHidden(false);
+                        form.getInsStruttura().getFl_cessato().setHidden(false);
                     } else {
                         form.getInsStruttura().getFl_archivio_restituito().setHidden(true);
                         form.getInsStruttura().getFl_cessato().setHidden(true);
@@ -6041,21 +6390,21 @@ public class StruttureAction extends StruttureAbstractAction {
                     form.getInsStruttura().getFl_archivio_restituito().setHidden(true);
                     form.getInsStruttura().getFl_cessato().setHidden(true);
                 }
+            } else {
+                form.getInsStruttura().getFl_archivio_restituito().setHidden(true);
+                form.getInsStruttura().getFl_cessato().setHidden(true);
+            }
 
-                if (getForm().getStruttureList().getStatus().equals(Status.view)) {
-                    if (form.getStruttureList().getTable() != null && !form.getStruttureList().getTable().isEmpty()) {
-                        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable()
-                                .getCurrentRow()).getBigDecimal("id_strut");
-                        OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(idStrut, null);
-                        boolean isStrutturaTemplate = "1".equals(strutRowBean.getFlTemplate());
-                        boolean isStrutturaCessata = "1".equals(strutRowBean.getFlCessato());
-                        if (!isStrutturaTemplate && !isStrutturaCessata) {
-                            getForm().getInsStruttura().getCessaStruttura().setEditMode();
-                            getForm().getInsStruttura().getCessaStruttura().setHidden(false);
-                        } else {
-                            getForm().getInsStruttura().getCessaStruttura().setViewMode();
-                            getForm().getInsStruttura().getCessaStruttura().setHidden(true);
-                        }
+            if (getForm().getStruttureList().getStatus().equals(Status.view)) {
+                if (form.getStruttureList().getTable() != null && !form.getStruttureList().getTable().isEmpty()) {
+                    BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                            .getBigDecimal("id_strut");
+                    OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(idStrut, null);
+                    boolean isStrutturaTemplate = "1".equals(strutRowBean.getFlTemplate());
+                    boolean isStrutturaCessata = "1".equals(strutRowBean.getFlCessato());
+                    if (!isStrutturaTemplate && !isStrutturaCessata) {
+                        getForm().getInsStruttura().getCessaStruttura().setEditMode();
+                        getForm().getInsStruttura().getCessaStruttura().setHidden(false);
                     } else {
                         getForm().getInsStruttura().getCessaStruttura().setViewMode();
                         getForm().getInsStruttura().getCessaStruttura().setHidden(true);
@@ -6064,9 +6413,10 @@ public class StruttureAction extends StruttureAbstractAction {
                     getForm().getInsStruttura().getCessaStruttura().setViewMode();
                     getForm().getInsStruttura().getCessaStruttura().setHidden(true);
                 }
+            } else {
+                getForm().getInsStruttura().getCessaStruttura().setViewMode();
+                getForm().getInsStruttura().getCessaStruttura().setHidden(true);
             }
-        } catch (EMFError ex) {
-            getMessageBox().addError("Errore durante il ricaricamento dei dati");
         }
     }
 
@@ -6150,7 +6500,37 @@ public class StruttureAction extends StruttureAbstractAction {
 
     @Override
     public void deleteEnteConvenzOrgList() throws EMFError {
-        redirectToEnteConvenzPage(NE_DETTAGLIO_DELETE);
+        SIOrgEnteConvenzOrgRowBean row = (SIOrgEnteConvenzOrgRowBean) getForm().getEnteConvenzOrgList().getTable()
+                .getCurrentRow();
+        BigDecimal idEnteConvenzOrg = row.getIdEnteConvenzOrg();
+        int riga = getForm().getEnteConvenzOrgList().getTable().getCurrentRowIndex();
+        // Controllo che l'associazione non sia l'unica presente. In tal caso, l'eliminazione non è consentita
+        if (getForm().getEnteConvenzOrgList().getTable().size() == 1) {
+            getMessageBox().addError(
+                    "La struttura è associata ad un solo ente convenzionato. Non è possibile eseguire l'eliminazione");
+        }
+
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
+        if (!getMessageBox().hasError() && idEnteConvenzOrg != null) {
+            try {
+                ambienteEjb.deleteEnteConvenzOrg(param, idEnteConvenzOrg);
+                getForm().getEnteConvenzOrgList().getTable().remove(riga);
+
+                getMessageBox().addInfo("Associazione all'ente convenzionato eliminata con successo");
+                getMessageBox().setViewMode(MessageBox.ViewMode.plain);
+            } catch (ParerUserError ex) {
+                getMessageBox().addError(ex.getDescription());
+                forwardToPublisher(getLastPublisher());
+            }
+        }
+        forwardToPublisher(getLastPublisher());
     }
 
     @Override
@@ -6178,7 +6558,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 form);
     }
 
-    public void loadStrutDaMenu() throws EMFError {
+    public void loadStrutDaMenu() {
         StruttureForm form = new StruttureForm();
         BigDecimal idStrut = getUser().getIdOrganizzazioneFoglia();
         OrgStrutRowBean row = struttureEjb.getOrgStrutRowBean(idStrut);
@@ -6231,12 +6611,12 @@ public class StruttureAction extends StruttureAbstractAction {
                 getMessageBox().setViewMode(ViewMode.plain);
             }
         } else {
-            getMessageBox().addWarning("Valore sulla struttura non presente: nessuna cancellazione effettuata");
+            getMessageBox().addWarning(WARN_VALORE_STRUTTURA_ASSENTE);
         }
         try {
             loadStruttura(getForm().getStruttureList().getTable().getCurrentRow().getBigDecimal("id_strut"));
         } catch (ParerUserError ex) {
-            getMessageBox().addError("Errore durante il caricamento della struttura");
+            getMessageBox().addError(ERRORE_CARICAMENTO_STRUTTURA);
         }
         forwardToPublisher(Application.Publisher.CREA_STRUTTURA);
     }
@@ -6266,12 +6646,12 @@ public class StruttureAction extends StruttureAbstractAction {
                 getMessageBox().setViewMode(ViewMode.plain);
             }
         } else {
-            getMessageBox().addWarning("Valore sulla struttura non presente: nessuna cancellazione effettuata");
+            getMessageBox().addWarning(WARN_VALORE_STRUTTURA_ASSENTE);
         }
         try {
             loadStruttura(getForm().getStruttureList().getTable().getCurrentRow().getBigDecimal("id_strut"));
         } catch (ParerUserError ex) {
-            getMessageBox().addError("Errore durante il caricamento della struttura");
+            getMessageBox().addError(ERRORE_CARICAMENTO_STRUTTURA);
         }
         forwardToPublisher(Application.Publisher.CREA_STRUTTURA);
     }
@@ -6302,12 +6682,12 @@ public class StruttureAction extends StruttureAbstractAction {
                 getMessageBox().setViewMode(ViewMode.plain);
             }
         } else {
-            getMessageBox().addWarning("Valore sulla struttura non presente: nessuna cancellazione effettuata");
+            getMessageBox().addWarning(WARN_VALORE_STRUTTURA_ASSENTE);
         }
         try {
             loadStruttura(getForm().getStruttureList().getTable().getCurrentRow().getBigDecimal("id_strut"));
         } catch (ParerUserError ex) {
-            getMessageBox().addError("Errore durante il caricamento della struttura");
+            getMessageBox().addError(ERRORE_CARICAMENTO_STRUTTURA);
         }
         forwardToPublisher(Application.Publisher.CREA_STRUTTURA);
     }
@@ -6444,4 +6824,91 @@ public class StruttureAction extends StruttureAbstractAction {
         }
         return paramApplicTableBean;
     }
+
+    @Override
+    public void eliminaFormatiSpecifici() throws EMFError {
+        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                .getBigDecimal("id_strut");
+        DecFormatoFileDocTableBean formatiPersonalizzatiTableBean = formatoFileDocEjb
+                .getDecFormatoFileDocSpecifici(idStrut);
+        getForm().getFormatoFileDocSpecificoList().setTable(formatiPersonalizzatiTableBean);
+        getForm().getFormatoFileDocSpecificoList().getTable().setPageSize(WebConstants.FORMATI_PAGE_SIZE);
+        getForm().getFormatoFileDocSpecificoList().getTable()
+                .addSortingRule(DecFormatoFileDocTableDescriptor.COL_NM_FORMATO_FILE_DOC, SortingRule.ASC);
+        getForm().getFormatoFileDocSpecificoList().getTable().sort();
+        getForm().getFormatoFileDocSpecificoList().getTable().first();
+
+        forwardToPublisher(Application.Publisher.FORMATI_SPECIFICI_DETAIL);
+    }
+
+    @Override
+    public void deleteFormatoFileDocSpecificoList() throws EMFError {
+        DecFormatoFileDocRowBean formatoFileDocSpecificoRowBean = (DecFormatoFileDocRowBean) getForm()
+                .getFormatoFileDocSpecificoList().getTable().getCurrentRow();
+        int index = getForm().getFormatoFileDocSpecificoList().getTable().getCurrentRowIndex();
+        BigDecimal idFormatoFileDoc = formatoFileDocSpecificoRowBean.getBigDecimal("id_formato_file_doc");
+        if (formatoFileDocHelper.checkRelationsAreEmptyForDecFormatoFileDoc(idFormatoFileDoc.longValue())) {
+            getMessageBox().addError(
+                    "Impossibile eliminare il formato specifico: esiste almeno un componente versato con esso</br>");
+            SessionManager.removeLastExecutionHistory(getSession());
+        }
+        if (!getMessageBox().hasError() && (formatoFileDocHelper
+                .checkRelationsAreEmptyForDecFormatoFileDocConv(idFormatoFileDoc.longValue())
+                || formatoFileDocHelper.checkRelationsAreEmptyForDecFormatoFileDocCont(idFormatoFileDoc.longValue()))) {
+            getMessageBox().addError(
+                    "Impossibile eliminare il formato specifico: esiste almeno un tipo rappresentazione componente associato ad esso</br>");
+            SessionManager.removeLastExecutionHistory(getSession());
+        }
+
+        try {
+            if (!getMessageBox().hasError()) {
+                if (!formatoFileDocHelper.existsFormatoSpecificoAmmesso(idFormatoFileDoc.longValue())) {
+                    eseguiCancellazioneFormatoSpecifico(idFormatoFileDoc, index);
+                } else {
+                    getRequest().setAttribute("customDeleteFormatiSpecifici", true);
+                    String messaggio = "Attenzione: esiste almeno un tipo componente che annovera tra i suoi formati ammessi il formato specifico. "
+                            + "Confermare la cancellazione?";
+                    getRequest().setAttribute("messaggioDeleteFormatiSpecifici", messaggio);
+                    getMessageBox().setViewMode(ViewMode.alert);
+                }
+            }
+        } catch (ParerUserError e) {
+            getMessageBox().addError(e.getDescription());
+        }
+        forwardToPublisher(getLastPublisher());
+
+    }
+
+    public void confermaCancFormatoSpecifico() {
+        DecFormatoFileDocRowBean formatoFileDocSpecificoRowBean = (DecFormatoFileDocRowBean) getForm()
+                .getFormatoFileDocSpecificoList().getTable().getCurrentRow();
+        int index = getForm().getFormatoFileDocSpecificoList().getTable().getCurrentRowIndex();
+        BigDecimal idFormatoFileDoc = formatoFileDocSpecificoRowBean.getBigDecimal("id_formato_file_doc");
+        try {
+            eseguiCancellazioneFormatoSpecifico(idFormatoFileDoc, index);
+        } catch (ParerUserError e) {
+            getMessageBox().addError(e.getDescription());
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    public void annullaCancFormatoSpecifico() {
+        forwardToPublisher(getLastPublisher());
+    }
+
+    private void eseguiCancellazioneFormatoSpecifico(BigDecimal idFormatoFileDoc, int index) throws ParerUserError {
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
+                SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getFormatoFileDocSpecificoList()));
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        formatoFileDocEjb.deleteDecFormatoFileDocSpecifico(param, idFormatoFileDoc.longValue());
+        getForm().getFormatoFileDocSpecificoList().getTable().remove(index);
+        getMessageBox().addInfo("Formato specifico eliminato con successo!");
+        SessionManager.removeLastExecutionHistory(getSession());
+    }
+
 }

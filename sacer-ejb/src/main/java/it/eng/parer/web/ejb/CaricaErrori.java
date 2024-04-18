@@ -1,8 +1,22 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.ejb;
 
-import it.eng.spagoLite.db.base.row.BaseRow;
-import it.eng.spagoLite.db.base.table.BaseTable;
-import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -10,15 +24,21 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
+import javax.ejb.Singleton;
 import javax.ejb.Startup;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.spagoLite.db.base.row.BaseRow;
+import it.eng.spagoLite.db.base.table.BaseTable;
+import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 
 /**
  *
@@ -37,9 +57,9 @@ public class CaricaErrori {
     private static Logger logger = LoggerFactory.getLogger(CaricaErrori.class.getName());
     DecodeMap mappaClasseErrore = new DecodeMap();
     // Creo le 3 mappe ordinate che conterranno i vari livelli di codifica errore
-    SortedMap<String, String> classeErroreMap = new TreeMap();
-    SortedMap<String, String> sottoClasseErroreMap = new TreeMap();
-    SortedMap<String, String> codiceErroreMap = new TreeMap();
+    SortedMap<String, String> classeErroreMap = new TreeMap<>();
+    SortedMap<String, String> sottoClasseErroreMap = new TreeMap<>();
+    SortedMap<String, String> codiceErroreMap = new TreeMap<>();
 
     @PostConstruct
     protected void initSingleton() {
@@ -49,7 +69,7 @@ public class CaricaErrori {
         try {
             tmpStream = this.getClass().getClassLoader().getResourceAsStream("/descrizione_errori.properties");
             props.load(tmpStream);
-            Enumeration enumeratore = props.keys();
+            Enumeration<Object> enumeratore = props.keys();
             while (enumeratore.hasMoreElements()) {
                 Object obj = enumeratore.nextElement();
                 String[] items = ((String) obj).split("-");
@@ -64,7 +84,7 @@ public class CaricaErrori {
                 }
             }
             // Inizializzo la lista della classe errore che verrà subito caricata
-            Iterator iteratore = classeErroreMap.keySet().iterator();
+            Iterator<String> iteratore = classeErroreMap.keySet().iterator();
             while (iteratore.hasNext()) {
                 String codice = (String) iteratore.next();
                 BaseRow riga = new BaseRow();
@@ -123,7 +143,7 @@ public class CaricaErrori {
     public DecodeMap filtraSottoclasse(String classe) {
         BaseTable tabellaSottoClasse = new BaseTable();
         DecodeMap mappaSottoClasseErrore = new DecodeMap();
-        Iterator iteratore = sottoClasseErroreMap.keySet().iterator();
+        Iterator<String> iteratore = sottoClasseErroreMap.keySet().iterator();
         while (iteratore.hasNext()) {
             String codice = (String) iteratore.next();
             String[] items = codice.split("-");
@@ -141,9 +161,9 @@ public class CaricaErrori {
     public DecodeMap filtraCodice(String sottoClasse) {
         BaseTable tabellaCodice = new BaseTable();
         DecodeMap mappaCodiceErrore = new DecodeMap();
-        Iterator iteratore = codiceErroreMap.keySet().iterator();
+        Iterator<String> iteratore = codiceErroreMap.keySet().iterator();
         while (iteratore.hasNext()) {
-            String codice = (String) iteratore.next();
+            String codice = iteratore.next();
             String[] items = codice.split("-");
             String sc = "";
 

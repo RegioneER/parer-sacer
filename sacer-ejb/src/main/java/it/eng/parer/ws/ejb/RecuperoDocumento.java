@@ -1,3 +1,19 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
 package it.eng.parer.ws.ejb;
 
@@ -13,9 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
-import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.ws.recupero.ejb.objectStorage.RecObjectStorage;
 import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
+import it.eng.parer.ws.recupero.ejb.oracleClb.RecClbOracle;
 
 /**
  *
@@ -35,7 +52,13 @@ public class RecuperoDocumento {
     RecBlbOracle recBlbOracle;
     //
     @EJB
+    RecClbOracle recClbOracle;
+    //
+    @EJB
     RecObjectStorage recObjectStorage;
+    //
+    @EJB
+    ObjectStorageService objectStorageService;
 
     /**
      * Passaggio di un wrapper con l'oggetto interessato dall'object storing
@@ -43,17 +66,23 @@ public class RecuperoDocumento {
      * @param dto
      *            dot recupero
      * 
-     * @return RispostaControlli risposta con esito controlli
+     * @return true se è andato tutto bene, false altrimenti
      */
-    public RispostaControlli callRecuperoDocSuStream(RecuperoDocBean dto) {
+    public boolean callRecuperoDocSuStream(RecuperoDocBean dto) {
         // verifica esistenza object storage
-        if (this.existInObjectStorage(dto)) {
-            log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from ObjectStorage, doc = " + dto);
+        if (existInObjectStorage(dto)) {
+            log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from ObjectStorage, doc = {}", dto);
             return recObjectStorage.recuperaObjectStorageSuStream(dto);
         }
-        log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from BlbOracle, doc = " + dto);
+        log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from BlbOracle, doc = {}", dto);
         // default (ASIS : pre object storage)
-        return recBlbOracle.recuperaBlobCompSuStream(dto.getId(), dto.getOs(), dto.getTabellaBlobDaLeggere());
+        // MEV#30395
+        if (dto.getTabellaBlobDaLeggere() != null) {
+            return recBlbOracle.recuperaBlobCompSuStream(dto.getId(), dto.getOs(), dto.getTabellaBlobDaLeggere());
+        } else {
+            return recClbOracle.recuperaClobDataSuStream(dto.getId(), dto.getOs(), dto.getTabellaClobDaLeggere());
+        }
+        // end MEV#30395
     }
 
     private boolean existInObjectStorage(RecuperoDocBean doc) {
@@ -61,11 +90,16 @@ public class RecuperoDocumento {
 
         switch (doc.getTipo()) {
         case COMP_DOC:
-            result = this.compInObjectStorage(doc.getId());
+            result = objectStorageService.isComponenteOnOs(doc.getId());
             break;
         case REPORTVF:
-            result = this.reportvfInObjectStorage(doc.getId());
+            result = objectStorageService.isReportvfOnOsByIdCompDoc(doc.getId());
             break;
+        // MEV#30395
+        case INDICE_AIP:
+            result = objectStorageService.isIndiceAipOnOs(doc.getId());
+            break;
+        // end MEV#30395
         default:
             break;
         }
@@ -73,23 +107,4 @@ public class RecuperoDocumento {
         return result;
     }
 
-    private boolean compInObjectStorage(long id) {
-        // recupero AroCompObjectStorage
-        String queryStr = "select count(os) from AroCompObjectStorage os "
-                + "where os.aroCompDoc.idCompDoc = :idCompDoc ";
-        javax.persistence.Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idCompDoc", id);
-        long tmpNumOs = (Long) query.getSingleResult();
-        return tmpNumOs > 0;
-    }
-
-    private boolean reportvfInObjectStorage(long id) {
-        // recupero AroCompObjectStorage
-        String queryStr = "select count(f) from FirReport f "
-                + "where f.aroCompDoc.idCompDoc = :idCompDoc and f.nmBucket is not null and f.cdKeyFile is not null ";
-        javax.persistence.Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idCompDoc", id);
-        long tmpNumOs = (Long) query.getSingleResult();
-        return tmpNumOs > 0;
-    }
 }

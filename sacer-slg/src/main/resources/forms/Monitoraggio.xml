@@ -202,17 +202,6 @@
     <Section Name="ChiaveSection" Description="" Legend="Chiave Unità Documentaria" LoadOpened="true"/>
     <Section Name="VersatoreSection" Description="" Legend="Versatore" LoadOpened="true"/>
 
-    <!-- Bottone per calcolo chiave unità documentaria da xml -->
-    <Fields Name="CalcolaChiaveUD" Description="Calcola chiave unità documentaria" >
-        <Button Name="calcolaChiaveUnitaDoc" Description="Calcola chiave unità documentaria e chiave documento" Type="STRING" />
-    </Fields>
-
-    <!-- Bottoni per confermare o annullare il calcolo della struttura versante -->
-    <ButtonList Name="VersamentiFallitiCustomMessageButtonList" Description="MessageBox" >
-        <Button Secure="false" Name="confermaCalcolaChiaveUD"  Description="OK" Type="STRING"  />
-        <Button Secure="false" Name="annullaCalcolaChiaveUD"  Description="Annulla" Type="STRING"  />
-    </ButtonList>
-
     <!-- Filtri versamenti -->
     <Fields Name="FiltriVersamenti" Description="Filtri Versamenti" >
         <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
@@ -235,7 +224,7 @@
         <ComboBox  Type="STRING" Description="Verificato" Name="versamento_ses_err_verif" Trigger="true" />
         <ComboBox  Type="STRING" Description="Non risolubile" Name="versamento_ses_err_non_risolub" />
         <Button Name="ricercaVers" Description="Ricerca" Type="STRING" />
-        <Button Name="verificaAutomatica" Description="Verifica automatica" Type="STRING" />
+        <Button Name="verificaAutomatica" Description="Verifica automatica" Type="STRING" />        
     </Fields>
     
     <Fields Name="FiltriVerificaVersamenti" Description="Filtri Verifica Versamenti" >
@@ -342,9 +331,25 @@
         <ComboBox  Type="STRING" Description="Codice errore" Name="codice_errore" />        
         <ComboBox  Type="STRING" Description="Verificato" Name="fl_verif" />
         <ComboBox  Type="STRING" Description="Non risolubile" Name="fl_non_risolub" />
+        <Input  Type="DATE" Description="Data di primo versamento da" Name="giorno_first_vers_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_first_vers_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_first_vers_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di primo versamento a" Name="giorno_first_vers_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_first_vers_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_first_vers_a" MaxLength="2"/>        
+        <Input  Type="DATE" Description="Data di ultimo versamento da" Name="giorno_last_vers_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_last_vers_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_last_vers_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di ultimo versamento a" Name="giorno_last_vers_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_last_vers_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_last_vers_a" MaxLength="2"/>        
+        <Input  Type="DATE" Description="Data di primo versamento da validato" Name="giorno_first_vers_da_validato"/>
+        <Input  Type="DATE" Description="Data di primo versamento a validato" Name="giorno_first_vers_a_validato"/>
+        <Input  Type="DATE" Description="Data di ultimo versamento da validato" Name="giorno_last_vers_da_validato"/>
+        <Input  Type="DATE" Description="Data di ultimo versamento a validato" Name="giorno_last_vers_a_validato"/>
         <Button Name="ricercaDocumentiDerivantiDaVersFalliti" Description="Ricerca" Type="STRING" />
         <Button Name="verificaVersamentiFalliti" Description="Verifica automatica" Type="STRING" />
-        
+        <Button Description="Scarica contenuto" Name="downloadContenuto" Type="STRING"/>
     </Fields>
 
     <Fields Name="FiltriUdDocDerivantiDaVersFallitiUlteriori" Description="Filtri unità documentarie / documenti derivanti da versamenti falliti ulteriori" >
@@ -363,7 +368,7 @@
     </Tab>
 
     <!-- Lista unità documentarie / documenti derivanti da versamenti falliti -->
-    <List Name="DocumentiDerivantiDaVersFallitiList" Description="Lista unità documentarie / documenti derivanti da versamenti falliti" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+<!--    <List Name="DocumentiDerivantiDaVersFallitiList" Description="Lista unità documentarie / documenti derivanti da versamenti falliti" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
         <Input  Type="STRING" Description="Struttura" Name="struttura" Required="true"/>
         <Input  Type="INTEGER" Description="Id struttura" Name="id_strut" Required="true" Hidden="true"/>
         <Input  Type="STRING" Description="Chiave unità documentarie" Name="chiave_ud" Required="true"/>
@@ -376,7 +381,23 @@
         <Input  Type="STRING" Description="Codice errore" Name="cd_err"/>
         <CheckBox  Type="STRING" Description="Verificato" Name="fl_verif" Required="true" Readonly="true"/>
         <CheckBox  Type="STRING" Description="Non risolubile" Name="fl_non_risolub" Readonly="true"/>
-    </List>
+    </List>-->
+    
+     <List Name="DocumentiDerivantiDaVersFallitiList" Description="Lista unità documentarie / documenti derivanti da versamenti falliti" hideInsertButton="true" hideDeleteButton="true" hideUpdateButton="true">
+         <Input  Type="STRING" Description="Struttura" Name="nm_strut" Required="true"/>        
+        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" Required="true" />
+        <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" Required="true" />
+        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc" Required="true" />        
+        <Input  Type="DATETIME" Description="Data primo versamento" Name="dt_first_ses_err"/>
+        <Input  Type="DATETIME" Description="Data ultimo versamento" Name="dt_last_ses_err"/>        
+        <Input  Type="STRING" Description="Classe errore ultima sessione versamento" Name="cl_err_last"/>
+        <Input  Type="STRING" Description="Codice errore ultima sessione versamento" Name="cd_err_last"/>
+        <Input  Type="STRING" Description="Descrizione ultima sessione versamento" Name="ds_err_last"/>
+                
+        <CheckBox  Type="STRING" Description="Diversi" Name="fl_diversi_err" Required="true" Readonly="true"/>
+        <Input  Type="STRING" Description="Verificato" Name="fl_verif" Required="true" Readonly="true"/>
+        <Input  Type="STRING" Description="Non risolubile" Name="fl_non_risolub" Readonly="true"/>
+    </List>       
 
     <!-- Documento non versato -->
     <Fields Name="DocumentiDerivantiDaVersFallitiDetail" Description="Unità documentarie / documento derivante da versamenti falliti" >
@@ -627,24 +648,24 @@
 
     <!-- Filtri contenuto sacer -->
     <Fields Name="FiltriContenutoSacer" Description="Filtri Contenuto Sacer" >
-        <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <MultiSelect Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" />
         
         <!-- Ambito territoriale -->
         <MultiSelect Type="INTEGER" Description="Regione/stato" Name="id_ambito_territ_livello_1" Trigger="true" />
         <MultiSelect Type="INTEGER" Description="Province" Name="id_ambito_territ_livello_2" Trigger="true" />
         <MultiSelect Type="INTEGER" Description="Forme associate" Name="id_ambito_territ_livello_3" Trigger="true" />
         
-        <MultiSelect Type="INTEGER" Description="Categorie enti" Name="id_categ_ente" Trigger="true"/>
-        <MultiSelect Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
-        <MultiSelect Type="INTEGER" Description="Categorie strutture" Name="id_categ_strut" Trigger="true" />
-        <MultiSelect Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true"/>
-        <MultiSelect Type="INTEGER" Description="Sotto struttura" Name="id_sub_strut" />
-        <MultiSelect Type="INTEGER" Description="Registro" Name="id_registro_unita_doc"/>
+        <MultiSelect Type="INTEGER" Description="Categorie enti" Name="id_categ_ente" Trigger="true" WithSearchComp="true"/>
+        <MultiSelect Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" WithSearchComp="true"/>
+        <MultiSelect Type="INTEGER" Description="Categorie strutture" Name="id_categ_strut" Trigger="true" WithSearchComp="true"/>
+        <MultiSelect Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" WithSearchComp="true"/>
+        <MultiSelect Type="INTEGER" Description="Sotto struttura" Name="id_sub_strut" WithSearchComp="true"/>
+        <MultiSelect Type="INTEGER" Description="Registro" Name="id_registro_unita_doc" WithSearchComp="true"/>
         <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
-        <ComboBox Type="INTEGER" Description="Categoria tipo unità documentaria" Name="id_categ_tipo_unita_doc" Trigger="true" />
-        <ComboBox Type="INTEGER" Description="Sottocategoria" Name="id_sottocateg_tipo_unita_doc" />
-        <MultiSelect Type="INTEGER" Description="Tipo unità documentaria" Name="id_tipo_unita_doc"/>
-        <MultiSelect Type="INTEGER" Description="Tipo documento principale" Name="id_tipo_doc"/>
+        <MultiSelect Type="INTEGER" Description="Categoria tipo unità documentaria" Name="id_categ_tipo_unita_doc" Trigger="true" />
+        <MultiSelect Type="INTEGER" Description="Sottocategoria" Name="id_sottocateg_tipo_unita_doc" />
+        <MultiSelect Type="INTEGER" Description="Tipo unità documentaria" Name="id_tipo_unita_doc" WithSearchComp="true"/>
+        <MultiSelect Type="INTEGER" Description="Tipo documento principale" Name="id_tipo_doc" WithSearchComp="true"/>
         <Input Type="DATE" Description="Data riferimento da" Name="dt_rif_da" Required="true"/>
         <Input Type="DATE" Description="Data riferimento a" Name="dt_rif_a" Required="true"/>       
         <Button Name="ricercaContenutoSacer" Description="Ricerca" Type="STRING" />
@@ -685,6 +706,7 @@
     <!-- Filtri schedulazioni job -->
     <Fields Name="FiltriJobSchedulati" Description="Filtri Schedulazioni Job" >
         <ComboBox  Type="STRING" Description="Job" Name="nm_job" Required="true" Trigger="true" />
+        <CheckBox Type="STRING" Description="Storico" Name="storico" />
         <ComboBox  Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
         <ComboBox  Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
         <ComboBox  Type="INTEGER" Description="Struttura" Name="id_strut" />
@@ -695,12 +717,17 @@
         <Input  Type="INTEGER" Description="Orario" Name="ore_dt_reg_log_job_a" />
         <Input  Type="INTEGER" Description="Orario" Name="minuti_dt_reg_log_job_a" />
         <Button Name="ricercaJobSchedulati" Description="Ricerca" Type="STRING" />
-        <Button Name="pulisciJobSchedulati" Description="Pulisci" Type="STRING" />
+        <Button Name="pulisciJobSchedulati" Description="Pulisci" Type="STRING" />        
+        <Button Name="gestioneJobPage" Description="Gestione Job" Type="STRING" />        
     </Fields>
 
     <!-- Stato job -->
-    <Fields Name="StatoJob" Description="Stato Job" >
+    <Fields Name="InformazioniJob" Description="Stato Job" >
+        <Button Name="startJobSchedulati" Description="Start" Type="STRING" />
+        <Button Name="stopJobSchedulati" Description="Stop" Type="STRING" />
+        <Button Name="esecuzioneSingolaJobSchedulati" Description="Esecuzione singola" Type="STRING" />
         <CheckBox  Type="STRING" Description="Attivo" Name="attivo" />
+        <Input  Type="STRING" Description="Nota" Name="fl_data_accurata" />        
         <Input  Type="DATETIME" Description="Da" Name="dt_reg_log_job_ini" />
         <Input  Type="DATETIME" Description="Prossima attivazione" Name="dt_prossima_attivazione" />
     </Fields>
@@ -823,7 +850,7 @@
     
     <!-- Filtri consistenza sacer -->
     <Fields Name="FiltriConsistenzaSacer" Description="Filtri Consistenza Sacer" >
-        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <MultiSelect Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
         <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" />
         <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
         <Input Type="DATE" Description="Data riferimento da" Name="dt_rif_da" Required="true"/>

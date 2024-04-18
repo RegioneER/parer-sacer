@@ -1,4 +1,42 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.ejb;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.DecCriterioFiltroMultiplo;
@@ -7,8 +45,8 @@ import it.eng.parer.entity.DecRegistroUnitaDoc;
 import it.eng.parer.entity.DecTipoDoc;
 import it.eng.parer.entity.DecTipoUnitaDoc;
 import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.constraint.DecCriterioRaggr.TiValidElencoCriterio;
 import it.eng.parer.entity.constraint.DecCriterioRaggr.TiModValidElencoCriterio;
+import it.eng.parer.entity.constraint.DecCriterioRaggr.TiValidElencoCriterio;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
@@ -23,28 +61,10 @@ import it.eng.parer.web.dto.CriterioRaggrStandardBean;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.CriteriRaggrHelper;
 import it.eng.parer.web.util.ApplEnum;
-import it.eng.parer.web.util.Transform;
-import it.eng.spagoCore.error.EMFError;
-import java.lang.reflect.InvocationTargetException;
 import it.eng.parer.web.util.Constants.TipoDato;
+import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import it.eng.spagoCore.error.EMFError;
 
 /**
  *
@@ -113,8 +133,8 @@ public class CriteriRaggruppamentoEjb {
             numeroCondizioniSoddisfatte++;
         }
 
-        String numMaxCompCriterioRaggrWarn = configurationHelper.getValoreParamApplic(
-                "NUM_MAX_COMP_CRITERIO_RAGGR_WARN", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String numMaxCompCriterioRaggrWarn = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR_WARN);
         if (bean.getNiMaxComp() != null
                 && bean.getNiMaxComp().compareTo(new BigDecimal(numMaxCompCriterioRaggrWarn)) == 0) {
             numeroCondizioniSoddisfatte++;
@@ -166,8 +186,8 @@ public class CriteriRaggruppamentoEjb {
     public long getNumMaxCompDaStruttura(BigDecimal idStrut) {
         OrgStrut strut = crHelper.findById(OrgStrut.class, idStrut);
         BigDecimal idAmbiente = BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente());
-        return Integer.parseInt(configurationHelper.getValoreParamApplic("NUM_MAX_COMP_CRITERIO_RAGGR", idAmbiente,
-                idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT));
+        return Integer.parseInt(configurationHelper.getValoreParamApplicByStrut(
+                CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR, idAmbiente, idStrut));
     }
 
     public DecVRicCriterioRaggrTableBean getCriteriRaggrByIdStrut(BigDecimal idStrut, boolean isFilterValid) {
@@ -428,21 +448,21 @@ public class CriteriRaggruppamentoEjb {
     }
 
     public DecCriterioRaggrRowBean getDecCriterioRaggrRowBean(BigDecimal idStrut, String nmCriterioRaggr) {
-        DecCriterioRaggr crit = crHelper.getDecCriterioRaggr(idStrut, nmCriterioRaggr);
+        DecCriterioRaggr crit = crHelper.getDecCriterioRaggrByStrutturaCorrenteAndCriterio(idStrut, nmCriterioRaggr);
         DecCriterioRaggrRowBean row = null;
         if (crit != null) {
             try {
                 row = (DecCriterioRaggrRowBean) Transform.entity2RowBean(crit);
                 // Info ambiente
-                String tiGestElencoNoStd = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_NOSTD",
-                        BigDecimal.valueOf(crit.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut,
-                        null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-                String tiGestElencoStdFisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_FISC",
-                        BigDecimal.valueOf(crit.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut,
-                        null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-                String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_NOFISC",
-                        BigDecimal.valueOf(crit.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut,
-                        null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+                String tiGestElencoNoStd = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD,
+                        BigDecimal.valueOf(crit.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut);
+                String tiGestElencoStdFisc = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC,
+                        BigDecimal.valueOf(crit.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut);
+                String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC,
+                        BigDecimal.valueOf(crit.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()), idStrut);
                 row.setString("ti_gest_elenco_std_nofisc", tiGestElencoStdNofisc);
                 row.setString("ti_gest_elenco_nostd", tiGestElencoNoStd);
                 row.setString("ti_gest_elenco_std_fisc", tiGestElencoStdFisc);

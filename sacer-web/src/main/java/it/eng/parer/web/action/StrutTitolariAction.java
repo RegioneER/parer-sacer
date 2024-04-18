@@ -1,44 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
-import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.slite.gen.Application;
-import it.eng.parer.slite.gen.action.StrutTitolariAbstractAction;
-import it.eng.parer.slite.gen.form.StrutTitolariForm;
-import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
-import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTitolRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.DecVTreeTitolRowBean;
-import it.eng.parer.slite.gen.viewbean.DecVTreeTitolTableBean;
-import it.eng.parer.titolario.xml.CreaTitolario;
-import it.eng.parer.titolario.xml.LivelloType;
-import it.eng.parer.titolario.xml.ModificaTitolario;
-import it.eng.parer.titolario.xml.TipoFormatoLivelloType;
-import it.eng.parer.titolario.xml.TitolarioType;
-import it.eng.parer.web.util.ComboGetter;
-import it.eng.parer.web.util.WebConstants;
-import it.eng.parer.ws.ejb.XmlContextCache;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.versamento.dto.FileBinario;
-import it.eng.parer.amministrazioneStrutture.gestioneTitolario.dto.Voce;
-import it.eng.parer.amministrazioneStrutture.gestioneTitolario.ejb.StrutTitolariCheck;
-import it.eng.parer.amministrazioneStrutture.gestioneTitolario.ejb.StrutTitolariEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneTitolario.utils.AttributesTitolario;
-import it.eng.parer.web.util.ActionUtils;
-import it.eng.parer.xml.utils.XmlUtils;
-import it.eng.spagoCore.error.EMFError;
-import it.eng.spagoLite.actions.form.ListAction;
-import it.eng.spagoLite.db.base.BaseRowInterface;
-import it.eng.spagoLite.db.base.BaseTableInterface;
-import it.eng.spagoLite.db.base.row.BaseRow;
-import it.eng.spagoLite.db.base.sorting.SortingRule;
-import it.eng.spagoLite.db.base.table.BaseTable;
-import it.eng.spagoLite.db.oracle.decode.DecodeMap;
-import it.eng.spagoLite.form.base.BaseElements.Status;
-import it.eng.spagoLite.form.wizard.Wizard;
-import it.eng.spagoLite.message.MessageBox;
-import it.eng.spagoLite.security.Secure;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,26 +42,68 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+
 import javax.ejb.EJB;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.codehaus.jettison.json.JSONObject;
 import org.xml.sax.SAXException;
+
+import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTitolario.dto.Voce;
+import it.eng.parer.amministrazioneStrutture.gestioneTitolario.ejb.StrutTitolariCheck;
+import it.eng.parer.amministrazioneStrutture.gestioneTitolario.ejb.StrutTitolariEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTitolario.utils.AttributesTitolario;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.slite.gen.Application;
+import it.eng.parer.slite.gen.action.StrutTitolariAbstractAction;
+import it.eng.parer.slite.gen.form.StrutTitolariForm;
+import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
+import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
+import it.eng.parer.slite.gen.tablebean.DecTitolRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.DecVTreeTitolRowBean;
+import it.eng.parer.slite.gen.viewbean.DecVTreeTitolTableBean;
+import it.eng.parer.titolario.xml.CreaTitolario;
+import it.eng.parer.titolario.xml.LivelloType;
+import it.eng.parer.titolario.xml.ModificaTitolario;
+import it.eng.parer.titolario.xml.TipoFormatoLivelloType;
+import it.eng.parer.titolario.xml.TitolarioType;
+import it.eng.parer.web.util.ActionUtils;
+import it.eng.parer.web.util.ComboGetter;
+import it.eng.parer.web.util.WebConstants;
+import it.eng.parer.ws.ejb.XmlContextCache;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.versamento.dto.FileBinario;
+import it.eng.parer.xml.utils.XmlUtils;
+import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.error.EMFError;
+import it.eng.spagoLite.actions.form.ListAction;
+import it.eng.spagoLite.db.base.BaseRowInterface;
+import it.eng.spagoLite.db.base.BaseTableInterface;
+import it.eng.spagoLite.db.base.row.BaseRow;
+import it.eng.spagoLite.db.base.sorting.SortingRule;
+import it.eng.spagoLite.db.base.table.BaseTable;
+import it.eng.spagoLite.db.oracle.decode.DecodeMap;
+import it.eng.spagoLite.form.base.BaseElements.Status;
+import it.eng.spagoLite.form.wizard.Wizard;
+import it.eng.spagoLite.message.MessageBox;
+import it.eng.spagoLite.security.Secure;
 
 /**
  *
@@ -159,21 +183,16 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
 
             // maximum size that will be stored in memory
             factory.setSizeThreshold(sizeMb);
-            Properties props = new Properties();
-            try {
-                props.load(this.getClass().getClassLoader().getResourceAsStream("/Sacer.properties"));
-            } catch (IOException ex) {
-                throw new EMFError(EMFError.BLOCKING, "Errore nel caricamento delle impostazioni per l'upload", ex);
-            }
             // the location for saving data that is larger than
-            factory.setRepository(new File(props.getProperty("loadXsdApp.upload.directory")));
+            factory.setRepository(
+                    new File(ConfigSingleton.getInstance().getStringValue(LOAD_XSD_APP_UPLOAD_DIR.name())));
             // Create a new file upload handler
             ServletFileUpload upload = new ServletFileUpload(factory);
             // maximum size before a FileUploadException will be thrown
-            upload.setSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxRequestSize")));
-            upload.setFileSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxFileSize")));
-            List items = upload.parseRequest(getRequest());
-            Iterator iter = items.iterator();
+            upload.setSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_REQUEST_SIZE.name()));
+            upload.setFileSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_FILE_SIZE.name()));
+            List<FileItem> items = upload.parseRequest(getRequest());
+            Iterator<FileItem> iter = items.iterator();
 
             DiskFileItem tmpFileItem = null;
 
@@ -451,6 +470,7 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
             getForm().getTitolarioDetail().getChiudiTitolario().setEditMode();
         }
         getForm().getTitolarioDetail().getEsportaTitolario().setEditMode();
+        getForm().getTitolarioDetail().getEsportaTitolario().setDisableHourGlass(true);
 
         getForm().getTitolarioDetail().getValidaTitolario()
                 .setHidden(row.getTiStatoTitol().equals(CostantiDB.StatoTitolario.VALIDATO.name()));

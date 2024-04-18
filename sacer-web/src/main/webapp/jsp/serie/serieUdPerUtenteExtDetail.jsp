@@ -39,6 +39,8 @@
                         <slf:lblField name="<%=SerieUdPerUtentiExtForm.SerieDetail.DT_INIZIO_SEL_SERIE%>" width="w40" controlWidth="w20" labelWidth="w50"/>
                         <slf:lblField name="<%=SerieUdPerUtentiExtForm.SerieDetail.DT_FINE_SEL_SERIE%>" width="w40" controlWidth="w20" labelWidth="w50"/>
                         <sl:newLine />
+                        <slf:lblField name="<%=SerieUdPerUtentiExtForm.SerieDetail.URN_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
+                        <sl:newLine />
                         <slf:lblField name="<%=SerieUdPerUtentiExtForm.SerieDetail.TI_STATO_VER_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>
                         <sl:newLine />
                         <slf:lblField name="<%=SerieUdPerUtentiExtForm.SerieDetail.TI_STATO_SERIE%>" width="w100" controlWidth="w40" labelWidth="w20"/>

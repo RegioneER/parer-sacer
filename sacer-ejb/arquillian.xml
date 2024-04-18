@@ -15,9 +15,8 @@
         Alternatively, the configuration below can be uncommented. -->
         
         <configuration>
-            <property name="jbossHome">/var/home/lorenzo/Progetti/jbosseap</property> 
-            <!-- <property name="jbossHome">/home/mbertuzzi/workspace/jbosseap</property> -->
-            <property name="javaHome">/usr/lib/jvm/jre-1.8.0</property>
+            <property name="jbossHome">/home/mbertuzzi/projects/jboss-eap-7</property>
+            <property name="javaHome">/usr/lib/jvm/java-1.11.0-openjdk-amd64</property>
             <!--<property name="javaVmArguments">-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=y</property>-->
             <property name="allowConnectingToRunningServer">true</property>
         </configuration>

@@ -1,3 +1,19 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
 /*
  * (written by Francesco Fioravanti)
@@ -7,6 +23,7 @@ package it.eng.parer.ws.utils;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -730,6 +747,11 @@ public class MessaggiWSBundle {
      * Unità Documentaria {0}: La data dell''unità documentaria è un dato di profilo configurato come obbligatorio
      */
     public static final String UD_014_002 = "UD-014-002";
+
+    /**
+     * Unità Documentaria {0}: L''utente non è abilitato al tipo dato {1}
+     */
+    public static final String UD_019_001 = "UD-019-001";
 
     /**
      * Il parametro {0} non \u00e8 stato configurato
@@ -1538,5 +1560,15 @@ public class MessaggiWSBundle {
      * Utente che attiva il servizio non riconosciuto o non abilitato
      */
     public static final String SERVIZI_USR_005 = "SERVIZI-USR-005";
+
+    /**
+     * Recupero fascicolo di cui non è ancora stato prodotto il codice AIP
+     */
+    public static final String RECFAS_001_001 = "RECFAS-001-001";
     // </editor-fold>
+
+    /**
+     * Recupero fascicolo con chiave inesistente
+     */
+    public static final String RECFAS_001_002 = "RECFAS-001-002";
 }

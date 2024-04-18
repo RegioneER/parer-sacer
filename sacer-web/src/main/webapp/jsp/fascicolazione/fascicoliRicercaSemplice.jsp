@@ -34,7 +34,12 @@
                     <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.CD_KEY_FASCICOLO_DA%>" />
                     <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.CD_KEY_FASCICOLO_A%>" />
                     <sl:newLine />
-                    <slf:lblField colSpan="2" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.NM_TIPO_FASCICOLO%>" />
+                    <sl:newLine />
+
+                    <slf:lblField colSpan="2" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.ID_TIPO_FASCICOLO%>" />
+                    <slf:lblField colSpan="2" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.ID_MODELLO_XSD_FASCICOLO%>" />
+                    <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.CD_XSD%>" />
+                    <sl:newLine />
                     <sl:newLine />
                     <slf:lblField colSpan="2" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.DS_OGGETTO_FASCICOLO%>" controlWidth="w100" />
                     <sl:newLine />
@@ -110,6 +115,7 @@
                     <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.FL_FORZA_CONTR_NUMERO%>" />
                     <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.FL_FORZA_CONTR_COLLEG%>" />
                     <sl:newLine />
+                    <slf:lblField colSpan="1" name="<%=FascicoliForm.FiltriFascicoliRicercaSemplice.CD_VERSIONE_WS%>" />
                 </slf:section>
                 <sl:newLine />
 

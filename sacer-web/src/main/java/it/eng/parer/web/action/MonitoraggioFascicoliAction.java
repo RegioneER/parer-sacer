@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -20,11 +37,7 @@ import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm;
 import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm.DettaglioSessFascKo;
 import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm.FiltriFascicoli;
 import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm.RiepilogoVersamentiFascicoli;
-import it.eng.parer.slite.gen.tablebean.DecTipoFascicoloTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.VrsSesFascicoloKoTableBean;
+import it.eng.parer.slite.gen.tablebean.*;
 import it.eng.parer.slite.gen.viewbean.MonVChkCntFascRowBean;
 import it.eng.parer.slite.gen.viewbean.MonVLisFascKoRowBean;
 import it.eng.parer.slite.gen.viewbean.MonVLisFascKoTableBean;
@@ -48,17 +61,6 @@ import it.eng.spagoLite.form.base.BaseForm;
 import it.eng.spagoLite.form.fields.SingleValueField;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.security.Secure;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Set;
-import javax.ejb.EJB;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
@@ -68,6 +70,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.codehaus.jettison.json.JSONObject;
 import org.joda.time.DateTime;
+
+import javax.ejb.EJB;
+import java.io.*;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Set;
 
 /**
  *
@@ -760,8 +770,8 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             File fileToDownload = new File(path);
             if (fileToDownload.exists()) {
                 /*
-                 * Definiamo l'output previsto che sarà  un file in formato zip di cui si occuperà  la servlet per fare
-                 * il download
+                 * Definiamo l'output previsto che sarà un file in formato zip di cui si occuperà la servlet per fare il
+                 * download
                  */
                 OutputStream outUD = getServletOutputStream();
                 getResponse()
@@ -822,6 +832,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             getForm().getCalcolaTotaliButtonList().getCalcTotFascicoliVersFallitiButton().setEditMode();
             getForm().getCalcolaTotaliButtonList().getCalcTotFascicoliVersatiButton().setEditMode();
             getForm().getDettaglioVersamentoKo().getScaricaXmlVersButton().setEditMode();
+            getForm().getDettaglioVersamentoKo().getScaricaXmlVersButton().setDisableHourGlass(true);
             // Imposto le combo in editMode
             getForm().getRiepilogoVersamentiFascicoli().setEditMode();
             getForm().getCalcolaTotaliButtonList().setEditMode();
@@ -865,6 +876,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
                 getForm().getDettaglioSessFascKo().getCd_key_fascicolo().setViewMode();
             }
             getForm().getDettaglioSessFascKo().getScaricaXmlVersSessKoButton().setEditMode();
+            getForm().getDettaglioSessFascKo().getScaricaXmlVersSessKoButton().setDisableHourGlass(true);
         }
     }
 
@@ -912,7 +924,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
     }
 
     private void redirectToPage(final String action, BaseForm form, String listToPopulate, BaseTableInterface<?> table,
-            String event) throws EMFError {
+            String event) {
         ((it.eng.spagoLite.form.list.List<SingleValueField<?>>) form.getComponent(listToPopulate)).setTable(table);
         redirectToAction(action, "?operation=listNavigationOnClick&navigationEvent=" + event + "&table="
                 + listToPopulate + "&riga=" + table.getCurrentRowIndex(), form);

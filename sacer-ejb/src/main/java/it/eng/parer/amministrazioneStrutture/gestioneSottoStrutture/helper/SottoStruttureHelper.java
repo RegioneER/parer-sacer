@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.helper;
 
 import it.eng.parer.entity.OrgCampoValSubStrut;
@@ -6,15 +23,14 @@ import it.eng.parer.entity.OrgSubStrut;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.utils.CostantiDB;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper di gestione delle sottostrutture
@@ -25,8 +41,6 @@ import org.slf4j.LoggerFactory;
 @LocalBean
 public class SottoStruttureHelper extends GenericHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(SottoStruttureHelper.class);
-
     public List<OrgSubStrut> getOrgSubStrut(String nmSubStrut, BigDecimal idStrut) {
         StringBuilder queryStr = new StringBuilder(
                 "Select subStrut FROM OrgSubStrut subStrut WHERE subStrut.orgStrut.idStrut = :idStrut");
@@ -35,7 +49,7 @@ public class SottoStruttureHelper extends GenericHelper {
         }
         queryStr.append(" ORDER BY subStrut.nmSubStrut");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         if (nmSubStrut != null) {
             query.setParameter("nmSubStrut", nmSubStrut);
         }
@@ -45,7 +59,7 @@ public class SottoStruttureHelper extends GenericHelper {
     public int countUdInSubStrut(BigDecimal idSubStrut) {
         Query query = getEntityManager().createQuery(
                 "SELECT count(ud) FROM AroUnitaDoc ud JOIN ud.orgSubStrut subStrut WHERE subStrut.idSubStrut = :idSubStrut");
-        query.setParameter("idSubStrut", idSubStrut);
+        query.setParameter("idSubStrut", longFromBigDecimal(idSubStrut));
         Long count = (Long) query.getSingleResult();
         return count.intValue();
     }
@@ -58,12 +72,9 @@ public class SottoStruttureHelper extends GenericHelper {
                 + "WHERE tipoUnitaDoc.orgStrut.idStrut = :idStrut " + "AND campo.orgSubStrut.idSubStrut = :idSubStrut "
                 + "ORDER BY tipoUnitaDoc.nmTipoUnitaDoc ";
 
-        // if (filterValid) {
-        // queryStr += " AND regola.dtIstituz <= :filterDate AND regola.dtSoppres >= :filterDate ";
-        // }
         Query query = this.getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        query.setParameter("idSubStrut", idSubStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        query.setParameter("idSubStrut", longFromBigDecimal(idSubStrut));
         return query.getResultList();
     }
 
@@ -80,6 +91,8 @@ public class SottoStruttureHelper extends GenericHelper {
             tmpTipoDato = "regola.decTipoDoc.idTipoDoc";
             tmpNmTipoDato = "regola.decTipoUnitaDoc.nmTipoUnitaDoc";
             break;
+        default:
+            break;
         }
 
         String queryStr = String.format("SELECT regola FROM OrgRegolaValSubStrut regola " + "WHERE %s = :id ",
@@ -90,7 +103,7 @@ public class SottoStruttureHelper extends GenericHelper {
         queryStr += " ORDER BY " + tmpNmTipoDato;
 
         Query query = this.getEntityManager().createQuery(queryStr);
-        query.setParameter("id", id);
+        query.setParameter("id", longFromBigDecimal(id));
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
@@ -101,7 +114,7 @@ public class SottoStruttureHelper extends GenericHelper {
     public List<OrgCampoValSubStrut> getOrgCampoValSubStrut(BigDecimal idRegolaValSubStrut) {
         Query query = getEntityManager().createQuery(
                 "SELECT campo FROM OrgCampoValSubStrut campo WHERE campo.orgRegolaValSubStrut.idRegolaValSubStrut = :idRegolaValSubStrut");
-        query.setParameter("idRegolaValSubStrut", idRegolaValSubStrut);
+        query.setParameter("idRegolaValSubStrut", longFromBigDecimal(idRegolaValSubStrut));
 
         return query.getResultList();
     }
@@ -120,10 +133,10 @@ public class SottoStruttureHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idRegolaValSubStrut != null) {
-            query.setParameter("idRegolaValSubStrut", idRegolaValSubStrut);
+            query.setParameter("idRegolaValSubStrut", longFromBigDecimal(idRegolaValSubStrut));
         }
-        query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
-        query.setParameter("idTipoDoc", idTipoDoc);
+        query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
+        query.setParameter("idTipoDoc", longFromBigDecimal(idTipoDoc));
         query.setParameter("dtIstituz", dtIstituz);
         query.setParameter("dtSoppres", dtSoppres);
         Long count = (Long) query.getSingleResult();
@@ -138,7 +151,7 @@ public class SottoStruttureHelper extends GenericHelper {
                 + "AND regola.decTipoDoc.orgStrut.idStrut = :idStrut ");
         query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
         query.setParameter("nmTipoDoc", nmTipoDoc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         return (long) query.getSingleResult() > 0;
     }
 
@@ -187,9 +200,9 @@ public class SottoStruttureHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idCampoValSubStrut != null) {
-            query.setParameter("idCampoValSubStrut", idCampoValSubStrut);
+            query.setParameter("idCampoValSubStrut", longFromBigDecimal(idCampoValSubStrut));
         }
-        query.setParameter("idRegolaValSubStrut", idRegolaValSubStrut);
+        query.setParameter("idRegolaValSubStrut", longFromBigDecimal(idRegolaValSubStrut));
         query.setParameter("tiCampo", tiCampo);
         query.setParameter("nmCampo", nmCampo);
         switch (campo) {
@@ -197,10 +210,10 @@ public class SottoStruttureHelper extends GenericHelper {
             break;
         case DATO_SPEC_DOC_PRINC:
         case DATO_SPEC_UNI_DOC:
-            query.setParameter("idAttribDatiSpec", idRecord);
+            query.setParameter("idAttribDatiSpec", longFromBigDecimal(idRecord));
             break;
         case SUB_STRUT:
-            query.setParameter("idSubStrut", idRecord);
+            query.setParameter("idSubStrut", longFromBigDecimal(idRecord));
             break;
         }
 
@@ -211,7 +224,7 @@ public class SottoStruttureHelper extends GenericHelper {
     public void deleteRegole(BigDecimal idTipoDoc) {
         String queryStr = "DELETE FROM OrgRegolaValSubStrut u WHERE u.decTipoDoc.idTipoDoc = :idTipoDoc";
         Query q = getEntityManager().createQuery(queryStr);
-        q.setParameter("idTipoDoc", idTipoDoc);
+        q.setParameter("idTipoDoc", longFromBigDecimal(idTipoDoc));
         q.executeUpdate();
         getEntityManager().flush();
     }
@@ -226,7 +239,6 @@ public class SottoStruttureHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUtente", idUtente);
         query.setParameter("idstrut", idStruttura);
-        List<OrgSubStrut> listaSubStrut = query.getResultList();
-        return listaSubStrut;
+        return query.getResultList();
     }
 }

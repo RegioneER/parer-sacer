@@ -1,24 +1,41 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.calcoloConsistenza.ejb;
 
-import it.eng.parer.entity.TmpStrutCalcConsistNew;
-import it.eng.parer.exception.ParerErrorSeverity;
-import it.eng.parer.exception.ParerInternalError;
-import it.eng.parer.job.helper.JobHelper;
-import it.eng.parer.job.utils.JobConstants;
-import it.eng.parer.web.util.Constants;
 import java.text.SimpleDateFormat;
 import java.time.Month;
 import java.time.YearMonth;
 import java.util.Calendar;
 import java.util.Date;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.exception.ParerErrorSeverity;
+import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.job.helper.JobHelper;
+import it.eng.parer.job.utils.JobConstants;
+import it.eng.parer.web.util.Constants;
 
 /**
  *
@@ -58,8 +75,10 @@ public class CalcoloConsistenzaEjb {
          *
          ********************************************
          */
-        log.debug("Calcolo Consistenza - Inserimento totali per l'intervallo temporale "
-                + formattaData.format(dtRifContaDateDa) + " - " + formattaData.format(dtRifContaDateA));
+        if (log.isDebugEnabled()) {
+            log.debug("Calcolo Consistenza - Inserimento totali per l'intervallo temporale {} " + " - {} ",
+                    formattaData.format(dtRifContaDateDa), formattaData.format(dtRifContaDateA));
+        }
 
         // 1° giro scompattando mese per mese l'intero periodo
         if (firstTime) {
@@ -97,8 +116,6 @@ public class CalcoloConsistenzaEjb {
                 } else {
                     for (Month month : Month.values()) {
                         YearMonth ym = YearMonth.of(i, month);
-                        System.out.println("Mese: " + month + ", anno: " + ym.getYear() + " e' lungo "
-                                + ym.lengthOfMonth() + " giorni");
 
                         Calendar da = Calendar.getInstance();
                         Calendar a = Calendar.getInstance();
@@ -116,12 +133,11 @@ public class CalcoloConsistenzaEjb {
             // 2° giro, prendo l'intero intervallo
             try {
                 // Inserisco i totali
-                ccHelper.insertTotaliPerGiorno7(firstTime, dtRifContaDateDa, dtRifContaDateA);
+                ccHelper.insertTotaliPerGiornoOptimized(firstTime, dtRifContaDateDa, dtRifContaDateA);
             } catch (Exception ex) {
                 String errore = "Calcolo Consistenza - Errore durante il calcolo " + "per l'intervallo temporale "
                         + formattaData.format(dtRifContaDa.getTime()) + " - "
                         + formattaData.format(dtRifContaA.getTime());
-                log.error(errore, ex);
                 throw new ParerInternalError(ParerErrorSeverity.ERROR, errore, ex);
             }
         }
@@ -130,15 +146,6 @@ public class CalcoloConsistenzaEjb {
         jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CALCOLO_CONSISTENZA.name(),
                 JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
         log.info("Calcolo Consistenza - Esecuzione job terminata con successo!");
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void salvaStatoErrore(TmpStrutCalcConsistNew strutCalcConsist) {
-        strutCalcConsist.setTiStatoElab(TmpStrutCalcConsistNew.TiStatoElab.ELABORAZIONE_KO.name());
-    }
-
-    public Date getMinDateStrutPerCalcolo(long idStrut) {
-        return ccHelper.getMinDateStrutPerCalcolo(idStrut);
     }
 
     private void setCalendarDay(YearMonth ym, Calendar c, boolean isDa) {

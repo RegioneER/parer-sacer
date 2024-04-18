@@ -3,6 +3,7 @@
     Created on : 30-mag-2011, 14.48.16
     Author     : Quaranta_M
 --%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="java.util.Properties" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
@@ -250,8 +251,7 @@
 
 
         </style>
-        <script type="text/javascript" src='<c:url value="/js/jQuery/jquery-1.8.3.min.js" />'></script>
-        <script type="text/javascript" src='<c:url value="/js/jQuery/jquery-ui-1.9.2.custom.min.js" />'></script>
+        <script type="text/javascript" src='<c:url value="/webjars/jquery/3.6.4/jquery.min.js" />'></script>
         <script type="text/javascript" src='<c:url value="/js/jQuery/snowfall.min.jquery.js" />'></script>
     </head>
     <body>
@@ -355,6 +355,10 @@
                 <a href="ProvaRecUDConvPdf.jsp">Lancia la pagina di Recupero Sincrono componente con conversione PDF...</a>
                 <br/>
                 <a href="ProvaRecDipEsibizione.jsp">Lancia la pagina di Recupero Sincrono DIP per Esibizione...</a>
+                <br/>
+                <a href="ProvaRecStatoOggetto.jsp">Lancia la pagina di Recupero Stato Oggetto di PING...</a>
+                <br/>
+                <a href="ProvaRecAIPFascicolo.jsp">Lancia la pagina di recupero AIP del fascicolo...</a>
             </div>
 
             <div id="others" class="tab">

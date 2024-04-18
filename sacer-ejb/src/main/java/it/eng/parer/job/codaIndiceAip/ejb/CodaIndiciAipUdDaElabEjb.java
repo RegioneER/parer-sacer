@@ -1,28 +1,34 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.codaIndiceAip.ejb;
 
-import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
-import it.eng.parer.elencoVersamento.utils.ElencoEnums.OpTypeEnum;
-import it.eng.parer.entity.ElvElencoVersDaElab;
-import it.eng.parer.job.helper.JobHelper;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.constraint.ElvStatoElencoVer;
-import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
-import it.eng.parer.viewEntity.OrgVLisStrutPerEle;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.ws.utils.CostantiDB;
-import java.math.BigDecimal;
-import java.util.Date;
-import javax.annotation.Resource;
-import javax.ejb.EJBException;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -30,6 +36,21 @@ import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums.OpTypeEnum;
+import it.eng.parer.entity.ElvElencoVersDaElab;
+import it.eng.parer.entity.constraint.ElvStatoElencoVer;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.job.helper.JobHelper;
+import it.eng.parer.viewEntity.OrgVLisStrutPerEle;
+import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.utils.CostantiDB;
 
 @Stateless
 @LocalBean
@@ -49,25 +70,24 @@ public class CodaIndiciAipUdDaElabEjb {
     private CodaIndiciAipUdDaElabEjb me;
     @EJB
     private ElenchiVersamentoEjb evEjb;
+    @EJB
+    private GenericHelper genericHelper;
 
     @Resource(mappedName = "jms/ProducerConnectionFactory")
     private ConnectionFactory connectionFactory;
-    @Resource(mappedName = "jms/IndiciAIPUDDaElabQueue")
+    @Resource(mappedName = "jms/queue/IndiciAIPUDDaElabQueue")
     private Queue queue;
-
-    public CodaIndiciAipUdDaElabEjb() {
-    }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void codaIndiciAipUdDaElab() throws Exception {
         LOG.info(JOB_NAME + " - Coda indici aip unità documentarie da elaborare...");
 
-        int numMaxUdInCodaFase2 = Integer.parseInt(configurationHelper.getValoreParamApplic(
-                "NUM_MAX_UD_IN_CODA_GENERA_AIP", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        int numMaxUdInCodaFase2 = Integer.parseInt(configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_UD_IN_CODA_GENERA_AIP));
         Integer totMessiInCodaFase2 = 0;
 
-        int numGgResetStatoInElenco = Integer.parseInt(configurationHelper.getValoreParamApplic(
-                "NUM_GG_RESET_STATO_IN_ELENCO", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        int numGgResetStatoInElenco = Integer.parseInt(configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_GG_RESET_STATO_IN_ELENCO));
 
         List<OrgVLisStrutPerEle> strutture = evHelper.retrieveStrutturePerEle();
         for (OrgVLisStrutPerEle struttura : strutture) {
@@ -99,14 +119,15 @@ public class CodaIndiciAipUdDaElabEjb {
 
         // elaboro gli elenchi
         for (ElvElencoVersDaElab elencoDaElab : elenchiPerAip) {
+            genericHelper.detachEntity(elencoDaElab);
+            genericHelper.detachEntity(elencoDaElab.getElvElencoVer());
             // MEV#26288
             if (evHelper.checkStatoAllUdInElencoPerCodaIndiceAipDaElab(elencoDaElab.getElvElencoVer().getIdElencoVers(),
                     ElencoEnums.UdDocStatusEnum.IN_ELENCO_IN_CODA_INDICE_AIP.name(),
                     ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_INDICI_AIP_GENERATI.name())) {
                 me.aggiornaElencoFase2(elencoDaElab.getElvElencoVer().getIdElencoVers(),
                         elencoDaElab.getIdElencoVersDaElab());
-            }
-            // end MEV#26288
+            } // end MEV#26288
             else if (totMessiInCoda < numMax) {
                 // MAC #18167
                 me.processaElencoPerLeFasi(elencoDaElab,
@@ -123,7 +144,7 @@ public class CodaIndiciAipUdDaElabEjb {
                         me.elaboraUdPerLeFasi(idUd.longValue(), elencoDaElab,
                                 ElencoEnums.ElencoStatusEnum.IN_CODA_JMS_INDICE_AIP_DA_ELAB.name());
                         totMessiInCoda++; // Incrementa il contatore che non deve superare il numero massimo configurato
-                                          // su DB
+                        // su DB
                         almenoUnaUd = true;
                     } else {
                         LOG.info(JOB_NAME + " - struttura id " + idStruttura + ": processate " + totMessiInCoda
@@ -160,7 +181,7 @@ public class CodaIndiciAipUdDaElabEjb {
     public void processaElencoPerLeFasi(ElvElencoVersDaElab elencoDaElab, String stato) {
         // Rilegge L'elenco in questa nuova transazione altrimenti la modifica non la salva
         // perché l'elenco appartiene ad un altro contesto transazionale
-        ElvElencoVersDaElab elencoDaElabInNuovaTransazione = evHelper.findById(ElvElencoVersDaElab.class,
+        ElvElencoVersDaElab elencoDaElabInNuovaTransazione = genericHelper.findById(ElvElencoVersDaElab.class,
                 elencoDaElab.getIdElencoVersDaElab());
         if (evEjb.soloUdAnnul(BigDecimal.valueOf(elencoDaElabInNuovaTransazione.getElvElencoVer().getIdElencoVers()))) {
             elencoDaElabInNuovaTransazione.getElvElencoVer()
@@ -177,7 +198,7 @@ public class CodaIndiciAipUdDaElabEjb {
                     ElvStatoElencoVer.TiStatoElenco.COMPLETATO, null);
             // end MEV#22934
             // Elimina l’elenco dalla coda degli elenchi da elaborare
-            evHelper.removeEntity(elencoDaElabInNuovaTransazione, true);
+            genericHelper.removeEntity(elencoDaElabInNuovaTransazione, true);
         } else {
             // CAMBIA LO STATO e setta il timestamp
             elencoDaElabInNuovaTransazione.setTiStatoElenco(stato);

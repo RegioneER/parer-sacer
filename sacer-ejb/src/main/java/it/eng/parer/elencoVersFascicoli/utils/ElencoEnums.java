@@ -1,7 +1,25 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.elencoVersFascicoli.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 
 /**
@@ -28,7 +46,7 @@ public class ElencoEnums {
         INIZIO_CREA_INDICE, INIZIO_VERIF_FIRME, ERR_VERIF_FIRME, SET_ELENCO_DA_CHIUDERE, RECUPERA_ELENCO_APERTO,
         RECUPERA_ELENCO_SCADUTO, RECUPERA_ELENCO_IN_ERRORE, SET_ELENCO_IN_ERRORE, SET_ELENCO_APERTO,
         VERIFICA_VERS_FALLITI, DEF_NOTE_INDICE_ELENCO, DEF_NOTE_ELENCO_CHIUSO, START_CREA_ELENCO_INDICI_AIP_FASC,
-        END_CREA_ELENCO_INDICI_AIP_FASC, FIRMA_ELENCO_INDICI_AIP, FIRMA_ELENCO_INDICI_AIP_IN_CORSO,
+        END_CREA_ELENCO_INDICI_AIP_FASC, ELENCO_INDICI_AIP, FIRMA_ELENCO_INDICI_AIP, FIRMA_ELENCO_INDICI_AIP_IN_CORSO,
         FIRMA_ELENCO_INDICI_AIP_FALLITA, FIRMA_IN_CORSO, FIRMA_IN_CORSO_FALLITA, MARCA_ELENCO_INDICI_AIP_FALLITA,
         MARCA_ELENCO_INDICI_AIP
     }

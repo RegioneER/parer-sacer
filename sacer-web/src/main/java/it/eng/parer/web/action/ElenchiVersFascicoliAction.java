@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import java.math.BigDecimal;
@@ -94,7 +111,9 @@ import it.eng.spagoLite.security.SuppressLogging;
  */
 public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractAction {
 
-    private static Logger logger = LoggerFactory.getLogger(ElenchiVersFascicoliAction.class.getName());
+    private static final String ERRORE_RICERCA_AMBIENTE = "Errore in ricerca ambiente";
+    private static final String ECCEZIONE_GENERICA = "Eccezione";
+    private static Logger log = LoggerFactory.getLogger(ElenchiVersFascicoliAction.class.getName());
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioHelper")
     private MonitoraggioHelper monitoraggioHelper;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
@@ -147,7 +166,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
     public void initOnClick() throws EMFError {
     }
 
-    private void initComboFiltriFascicoli(BigDecimal idStrut) throws EMFError {
+    private void initComboFiltriFascicoli(BigDecimal idStrut) {
         if (idStrut == null) {
             idStrut = getIdStrutCorrente();
         }
@@ -158,42 +177,12 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         DecodeMap mappaTipoFascicolo = DecodeMap.Factory.newInstance(tmpTableBeanTipoFasc, "id_tipo_fascicolo",
                 "nm_tipo_fascicolo");
 
-        // TODO: verificare
-        /*
-         * // Imposto i valori della combo FORMATO_FILE_DOC ricavati dalla tabella DEC_FORMATO_FILE_DOC
-         * DecFormatoFileDocTableBean tmpTableBeanFormatoFileDoc =
-         * formatoFileDocEjb.getDecFormatoFileDocTableBean(idStrut); DecodeMap mappaFormatoFileDoc = new DecodeMap();
-         * mappaFormatoFileDoc.populatedMap(tmpTableBeanFormatoFileDoc, "nm_formato_file_doc", "nm_formato_file_doc");
-         */
         // TODO: verificare, Imposto le varie combo dei FILTRI di ricerca Fascicoli
         getForm().getFascicoliFiltri().getId_tipo_fascicolo().setDecodeMap(mappaTipoFascicolo);
-        /*
-         * getForm().getComponentiFiltri().getNm_formato_file_vers().setDecodeMap(mappaFormatoFileDoc);
-         * getForm().getComponentiFiltri().getTi_esito_contr_conforme().setDecodeMap(ComboGetter.
-         * getMappaSortedGenericEnum("stato", VolumeEnums.ControlloConformitaEnum.values()));
-         * getForm().getComponentiFiltri().getTi_esito_verif_firme_vers().setDecodeMap(ComboGetter.
-         * getMappaSortedGenericEnum("ti_esito_verif_firme", VolumeEnums.StatoVerifica.values()));
-         * getForm().getComponentiFiltri().getFl_comp_firmato().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
-         * getForm().getComponentiFiltri().getCd_registro_key_unita_doc().setDecodeMap(mappaRegistro);
-         * getForm().getComponentiFiltri().getFl_forza_accettazione().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo()
-         * );
-         * getForm().getComponentiFiltri().getFl_forza_conservazione().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo(
-         * ));
-         * getForm().getComponentiFiltri().getDs_algo_hash_file_calc().setDecodeMap(ComboGetter.getMappaHashAlgorithm())
-         * ;
-         * getForm().getComponentiFiltri().getCd_encoding_hash_file_calc().setDecodeMap(ComboGetter.getMappaHashEncoding
-         * ()); getForm().getComponentiFiltri().getTi_esito_contr_formato_file().setDecodeMap(ComboGetter.
-         * getMappaSortedGenericEnum("ti_esito_verif_formato_vers", VolumeEnums.StatoFormatoVersamento.values()));
-         */
     }
 
     private void initBottoniPaginaDettaglioElencoVersFascicoli(BigDecimal idElencoVersFasc, String tiStato) {
         getForm().getDettaglioElenchiVersFascicoliButtonList().setViewMode();
-        // TODO: verificare
-        /*
-         * getForm().getDettaglioElenchiVersFascicoliButtonList().getListaOperazioniElencoButton().setHidden(false);
-         * getForm().getDettaglioElenchiVersFascicoliButtonList().getListaOperazioniElencoButton().setEditMode();
-         */
         getForm().getElenchiVersFascicoliList().setUserOperations(true, true, false, true);
         getForm().getListaFascicoliButtonList().setViewMode();
         /* Se i fascicoli sono eliminabili dall'elenco di versamento, mostro il bottone */
@@ -217,6 +206,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                 || tiStato.equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMA_IN_CORSO.name())
                 || tiStato.equals(ElencoEnums.ElencoStatusEnum.COMPLETATO.name())) {
             getForm().getDettaglioElenchiVersFascicoliButtonList().getScaricaIndiceElencoButton().setEditMode();
+            getForm().getDettaglioElenchiVersFascicoliButtonList().getScaricaIndiceElencoButton()
+                    .setDisableHourGlass(true);
         }
         if (tiStato.equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO.name())
                 || tiStato.equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMA_IN_CORSO.name())
@@ -224,6 +215,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                         && evfEjb.retrieveFileIndiceElenco(idElencoVersFasc.longValue(),
                                 ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name()) != null)) {
             getForm().getDettaglioElenchiVersFascicoliButtonList().getScaricaElencoIdxAipFascBtn().setEditMode();
+            getForm().getDettaglioElenchiVersFascicoliButtonList().getScaricaElencoIdxAipFascBtn()
+                    .setDisableHourGlass(true);
         }
 
     }
@@ -288,7 +281,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                      * Carico la lista degli elenchi di versamento fascicoli da firmare: quelli della struttura
                      * dell'utente e con stato CHIUSO
                      */
-                    ElvVRicElencoFascByStatoTableBean elenchiVersFascicoliTableBean = (ElvVRicElencoFascByStatoTableBean) evfEjb
+                    ElvVRicElencoFascByStatoTableBean elenchiVersFascicoliTableBean = evfEjb
                             .getElenchiVersFascicoliDaFirmareTableBean(strut.getBigDecimal("id_ambiente"),
                                     strut.getIdEnte(), strut.getIdStrut(),
                                     getForm().getFiltriElenchiVersFascDaFirmare().getId_elenco_vers_fasc().parse(),
@@ -341,7 +334,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         getForm().getElenchiVersFascicoliList().setUserOperations(true, false, false, false);
 
         getSession().setAttribute("idStrutRif", idStrut);
-        // getSession().setAttribute(VolumiAttributes.TIPOLISTA.name(), TipoListaAttribute.FIRMA.name());
         forwardToPublisher(Application.Publisher.LISTA_ELENCHI_VERS_FASCICOLI_SELECT);
     }
 
@@ -357,12 +349,10 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         getUser().getMenu().select("Menu.Fascicoli.RicercaElenchiVersFascicoli");
         /* Azzero i filtri e la lista risultato della form di ricerca */
         getForm().getFiltriElenchiVersFascicoli().reset();
-        // TODO, verificare: getForm().getComponentiFiltri().reset();
         getForm().getElenchiVersFascicoliList().clear();
         getForm().getElenchiVersFascicoliList().setUserOperations(true, true, false, true);
         /* Inizializzo le combo di ricerca */
         initComboRicercaElenchi();
-        // TODO: verificare, initComboFiltriFascicoli(null);
         /* Imposto tutti i filtri in edit mode */
         getForm().getFiltriElenchiVersFascicoli().setEditMode();
         getForm().getFascicoliFiltri().setEditMode();
@@ -398,7 +388,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error(ERRORE_RICERCA_AMBIENTE, ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -438,7 +428,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      * @throws EMFError
      *             errore generico
      */
-    public void checkUniqueStrutInCombo(BigDecimal idStrut, Enum sezione) throws EMFError {
+    public void checkUniqueStrutInCombo(BigDecimal idStrut, Enum<ActionEnums.SezioneElenchiVersFascicoli> sezione)
+            throws EMFError {
         if (idStrut != null) {
             // Ricavo tutti i Criteri di Raggruppamento Fascicoli per la struttura passata in input
             DecCriterioRaggrFascTableBean tmpTableBeanCriteri = criteriRaggrFascicoliEjb
@@ -475,7 +466,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      * @throws EMFError
      *             errore generico
      */
-    public void checkUniqueEnteInCombo(BigDecimal idEnte, Enum sezione) throws EMFError {
+    public void checkUniqueEnteInCombo(BigDecimal idEnte, Enum<ActionEnums.SezioneElenchiVersFascicoli> sezione)
+            throws EMFError {
         if (idEnte != null) {
             // Ricavo il TableBean relativo alle strutture dipendenti dall'ente scelto
             OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
@@ -487,9 +479,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                 getForm().getFiltriElenchiVersFascicoli().getId_strut().setDecodeMap(mappaStrut);
             } else if (sezione.equals(ActionEnums.SezioneElenchiVersFascicoli.RICERCA_ELENCHI_VERS_FASC_DA_FIRMARE)) {
                 getForm().getFiltriElenchiVersFascDaFirmare().getId_strut().setDecodeMap(mappaStrut);
-            } else if (sezione.equals(ActionEnums.SezioneElenchiVersFascicoli.RICERCA_ELENCHI_VERS_FASC_INDICI_AIP)) {
-                // TODO, verificare
-                // getForm().getFiltriElenchiIndiciAipDaFirmare().getId_strut().setDecodeMap(mappaStrut);
             }
 
             // Se la combo struttura ha un solo valore presente, lo imposto e faccio controllo su di essa
@@ -501,10 +490,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                         .equals(ActionEnums.SezioneElenchiVersFascicoli.RICERCA_ELENCHI_VERS_FASC_DA_FIRMARE)) {
                     getForm().getFiltriElenchiVersFascDaFirmare().getId_strut()
                             .setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
-                } else if (sezione
-                        .equals(ActionEnums.SezioneElenchiVersFascicoli.RICERCA_ELENCHI_VERS_FASC_INDICI_AIP)) {
-                    // TODO, verificare
-                    // getForm().getFiltriElenchiIndiciAipDaFirmare().getId_strut().setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
                 }
             }
         }
@@ -777,8 +762,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 
         if (!azione.equals(ListAction.NE_DETTAGLIO_DELETE)) {
             /* Ricavo i tipi dato cui l'utente è abilitato */
-            // Set<Object> tipiFascicoloAbilitatiSet =
-            // getForm().getFascicoliFiltri().getId_tipo_fascicolo().getDecodeMap().keySet();
             Set<Object> tipiFascicoloAbilitatiSet = DecodeMap.Factory
                     .newInstance(tipoFascicoloEjb.getTipiFascicoloAbilitati(getIdUtenteCorrente(), idStruttura, true),
                             "id_tipo_fascicolo", "nm_tipo_fascicolo")
@@ -932,20 +915,17 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             operList.add(ElencoEnums.OpTypeEnum.DEF_NOTE_INDICE_ELENCO);
         }
 
-        if (getForm().getElenchiVersFascicoliDetail().validate(getMessageBox())) {
-            if (!getMessageBox().hasError()) {
-                try {
-                    evfEjb.saveNote(getIdUtenteCorrente(), idElencoVersFasc, ntIndiceElenco, ntElencoChiuso, operList);
-                    getMessageBox().addInfo("Elenco di versamento fascicoli modificato con successo");
-                    // getMessageBox().setViewMode(ViewMode.plain);
-                    initBottoniPaginaDettaglioElencoVersFascicoli(idElencoVersFasc, rowTiStato);
-                    setElencoVersFascicoliListAndDetailViewMode();
+        if (getForm().getElenchiVersFascicoliDetail().validate(getMessageBox()) && !getMessageBox().hasError()) {
+            try {
+                evfEjb.saveNote(getIdUtenteCorrente(), idElencoVersFasc, ntIndiceElenco, ntElencoChiuso, operList);
+                getMessageBox().addInfo("Elenco di versamento fascicoli modificato con successo");
+                initBottoniPaginaDettaglioElencoVersFascicoli(idElencoVersFasc, rowTiStato);
+                setElencoVersFascicoliListAndDetailViewMode();
 
-                    reloadElenchiVersFascicoliList(getForm().getFiltriElenchiVersFascicoli());
-                    forwardToPublisher(Application.Publisher.ELENCHI_VERS_FASCICOLI_DETAIL);
-                } catch (Exception e) {
-                    getMessageBox().addMessage(new Message(MessageLevel.ERR, e.getMessage()));
-                }
+                reloadElenchiVersFascicoliList(getForm().getFiltriElenchiVersFascicoli());
+                forwardToPublisher(Application.Publisher.ELENCHI_VERS_FASCICOLI_DETAIL);
+            } catch (Exception e) {
+                getMessageBox().addMessage(new Message(MessageLevel.ERR, e.getMessage()));
             }
         }
 
@@ -985,14 +965,14 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                 try {
                     reloadElenchiVersFascicoliList(getForm().getFiltriElenchiVersFascicoli());
                 } catch (EMFError ex) {
-                    logger.error(ex.getDescription(), ex);
+                    log.error(ex.getDescription(), ex);
                 }
             } else if (publisherName.equals(Application.Publisher.ELENCHI_VERS_FASCICOLI_DETAIL)) {
                 try {
                     dettaglioElencoVersFascicoli(
                             getForm().getElenchiVersFascicoliDetail().getId_elenco_vers_fasc().parse());
                 } catch (EMFError ex) {
-                    logger.error(ex.getDescription(), ex);
+                    log.error(ex.getDescription(), ex);
                 }
             }
         }
@@ -1148,16 +1128,12 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 
             if (!getMessageBox().hasError()) {
                 // La validazione non ha riportato errori.
-                boolean chiave = false;
                 boolean range = false;
 
                 /*
                  * Controllo dove sono stati inseriti i filtri tra la chiave fascicolo singola e la chiave fascicolo per
                  * range
                  */
-                if (result.getAa_fascicolo() != null || result.getCd_key_fascicolo() != null) {
-                    chiave = true;
-                }
                 if (result.getAa_fascicolo_da() != null || result.getAa_fascicolo_a() != null
                         || result.getCd_key_fascicolo_da() != null || result.getCd_key_fascicolo_a() != null) {
                     range = true;
@@ -1220,7 +1196,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         /* Campo note prese da dettaglio */
         String noteDettaglio = getForm().getElenchiVersFascicoliDetail().getNt_indice_elenco().parse();
         /* Campo note preso da finestra pop-up */
-        String notePopUp = (String) getRequest().getParameter("Nt_indice_elenco");
+        String notePopUp = getRequest().getParameter("Nt_indice_elenco");
 
         /* Verifico se ci sono state modifiche sulle note indice elenco */
         List<ElencoEnums.OpTypeEnum> modifica = new ArrayList<>();
@@ -1232,7 +1208,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             evfEjb.manualClosingElenco(getIdUtenteCorrente(), idElencoVersFasc, modifica, notePopUp);
             getMessageBox().addInfo("Elenco di versamento fascicolo chiuso con successo!");
         } catch (Exception e) {
-            logger.error("Eccezione", e);
+            log.error(ECCEZIONE_GENERICA, e);
             getMessageBox().addMessage(new Message(Message.MessageLevel.ERR, "Errore durante la chiusura dell'elenco"));
         } finally {
             /*
@@ -1244,14 +1220,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         }
     }
 
-    // TODO: verificare
-    /*
-     * @Override public void listaOperazioniElencoButton() throws Throwable { MonitoraggioForm form = new
-     * MonitoraggioForm(); BigDecimal idElencoVers = getForm().getElenchiVersamentoDetail().getId_elenco_vers().parse();
-     * BigDecimal idStrut = getIdStrutCorrente(); redirectToAction(Application.Actions.MONITORAGGIO,
-     * "?operation=ricercaOperazioniElenchiDaDettaglioElenco&idElencoPerMon=" + idElencoVers + "&idStrutPerMon=" +
-     * idStrut + "&eseguiForward=true", form); }
-     */
     /**
      * Bottone "+" della "Lista elenchi di versamento fascicoli da firmare" per spostare un elenco da questa lista a
      * quella degli elenchi selezionati pronti per essere firmati
@@ -1349,8 +1317,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
     @Override
     public void scaricaIndiceElencoButton() throws Throwable {
         BigDecimal idElencoVersFasc = getForm().getElenchiVersFascicoliDetail().getId_elenco_vers_fasc().parse();
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         String nmEnte = getForm().getElenchiVersFascicoliDetail().getNm_ente().parse();
         String nmStrut = getForm().getElenchiVersFascicoliDetail().getNm_strut().parse();
         String filesPrefix = sistema + "_" + nmEnte.replaceAll(" ", "_") + "_" + nmStrut.replaceAll(" ", "_")
@@ -1367,7 +1335,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             out.close();
             freeze();
         } catch (Exception e) {
-            logger.error("Eccezione", e);
+            log.error(ECCEZIONE_GENERICA, e);
             getMessageBox().addError("Errore nel recupero dei file delle prove di conservazione");
             forwardToPublisher(getLastPublisher());
         }
@@ -1388,7 +1356,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
     private void reloadElenchiVersFascicoliList(
             ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli filtriElenchiVersFascicoli) throws EMFError {
         int paginaCorrente = getForm().getElenchiVersFascicoliList().getTable().getCurrentPageIndex();
-        int inizio = getForm().getElenchiVersFascicoliList().getTable().getFirstRowPageIndex();
+        getForm().getElenchiVersFascicoliList().getTable().getFirstRowPageIndex();
         int pageSize = getForm().getElenchiVersFascicoliList().getTable().getPageSize();
 
         boolean chiave = false;
@@ -1468,11 +1436,11 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      * @throws EMFError
      *             errore generico
      */
-    private void initFiltriElenchiVersFascicoliDaFirmare(BigDecimal idStruttura) throws EMFError {
+    private void initFiltriElenchiVersFascicoliDaFirmare(BigDecimal idStruttura) {
         // Azzero i filtri
         getForm().getFiltriElenchiVersFascDaFirmare().reset();
         // Ricavo id struttura, ente ed ambiente attuali
-        BigDecimal idStrut = getUser().getIdOrganizzazioneFoglia();
+        getUser().getIdOrganizzazioneFoglia();
         BigDecimal idEnte = monitoraggioHelper.getIdEnte(idStruttura);
         BigDecimal idAmbiente = monitoraggioHelper.getIdAmbiente(idEnte);
 
@@ -1492,7 +1460,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error(ERRORE_RICERCA_AMBIENTE, ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -1535,51 +1503,48 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 
         getSession().setAttribute("idStrutRif", idStrut);
         if (idStrut == null) {
-            // Rimuovo l'attributo idStrutRif (se presente in sessione vuol dire che si riferisce ad una struttura
-            // selezionata precedentemente)
+            // Rimuovo l'attributo idStrutRif se presente in sessione vuol dire che si riferisce ad una struttura
+            // selezionata precedentemente
             getSession().removeAttribute("idStrutRif");
             // Traccio in sessione un attributo specifico
             getSession().setAttribute("isStrutNull", true);
         }
 
-        if (getForm().getFiltriElenchiVersFascDaFirmare().validate(getMessageBox())) {
+        if (getForm().getFiltriElenchiVersFascDaFirmare().validate(getMessageBox()) && !getMessageBox().hasError()) {
+            FascicoliValidator fascicoliValidator = new FascicoliValidator(getMessageBox());
+            // Valido i filtri data creazione elenco fascicoli da - a restituendo le date comprensive di orario
+            Date[] dateCreazioneElencoFascValidate = fascicoliValidator.validaDate(
+                    getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_da().parse(),
+                    getForm().getFiltriElenchiVersFascDaFirmare().getOre_ts_creazione_elenco_da().parse(),
+                    getForm().getFiltriElenchiVersFascDaFirmare().getMinuti_ts_creazione_elenco_da().parse(),
+                    getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_a().parse(),
+                    getForm().getFiltriElenchiVersFascDaFirmare().getOre_ts_creazione_elenco_a().parse(),
+                    getForm().getFiltriElenchiVersFascDaFirmare().getMinuti_ts_creazione_elenco_a().parse(),
+                    getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_da().getHtmlDescription(),
+                    getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_a().getHtmlDescription());
             if (!getMessageBox().hasError()) {
-                FascicoliValidator fascicoliValidator = new FascicoliValidator(getMessageBox());
-                // Valido i filtri data creazione elenco fascicoli da - a restituendo le date comprensive di orario
-                Date[] dateCreazioneElencoFascValidate = fascicoliValidator.validaDate(
-                        getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_da().parse(),
-                        getForm().getFiltriElenchiVersFascDaFirmare().getOre_ts_creazione_elenco_da().parse(),
-                        getForm().getFiltriElenchiVersFascDaFirmare().getMinuti_ts_creazione_elenco_da().parse(),
-                        getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_a().parse(),
-                        getForm().getFiltriElenchiVersFascDaFirmare().getOre_ts_creazione_elenco_a().parse(),
-                        getForm().getFiltriElenchiVersFascDaFirmare().getMinuti_ts_creazione_elenco_a().parse(),
-                        getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_da().getHtmlDescription(),
-                        getForm().getFiltriElenchiVersFascDaFirmare().getTs_creazione_elenco_a().getHtmlDescription());
-                if (!getMessageBox().hasError()) {
-                    /*
-                     * Carico la lista degli elenchi di versamento fascicoli da firmare: quelli della struttura
-                     * dell'utente e con stato CHIUSO
-                     */
-                    ElvVRicElencoFascByStatoTableBean elenchiVersFascicoliTableBean = (ElvVRicElencoFascByStatoTableBean) evfEjb
-                            .getElenchiVersFascicoliDaFirmareTableBean(idAmbiente, idEnte, idStrut, idElencoVersFasc,
-                                    presenzaNote, ElencoEnums.ElencoStatusEnum.CHIUSO, dateCreazioneElencoFascValidate,
-                                    getUser().getIdUtente());
-                    getForm().getElenchiVersFascicoliDaFirmareList().setTable(elenchiVersFascicoliTableBean);
-                    getForm().getElenchiVersFascicoliDaFirmareList().getTable().setPageSize(10);
-                    getForm().getElenchiVersFascicoliDaFirmareList().getTable().first();
-                    getForm().getElenchiVersFascicoliDaFirmareList().getTable().addSortingRule(
-                            getForm().getElenchiVersFascicoliDaFirmareList().getTs_creazione_elenco().getName(),
-                            SortingRule.ASC);
-                    /* Inizializzo la lista degli elenchi di versamento fascicoli selezionati */
-                    getForm().getElenchiVersFascicoliSelezionatiList()
-                            .setTable(new ElvVRicElencoFascByStatoTableBean());
-                    getForm().getElenchiVersFascicoliSelezionatiList().getTable().setPageSize(10);
-                    getForm().getElenchiVersFascicoliSelezionatiList().getTable().addSortingRule(
-                            getForm().getElenchiVersFascicoliSelezionatiList().getTs_creazione_elenco().getName(),
-                            SortingRule.ASC);
-                    /* Rendo visibili i bottoni delle operazioni sulla lista che mi interessano */
-                    getForm().getListaElenchiVersFascDaFirmareButtonList().setEditMode();
-                }
+                /*
+                 * Carico la lista degli elenchi di versamento fascicoli da firmare: quelli della struttura dell'utente
+                 * e con stato CHIUSO
+                 */
+                ElvVRicElencoFascByStatoTableBean elenchiVersFascicoliTableBean = evfEjb
+                        .getElenchiVersFascicoliDaFirmareTableBean(idAmbiente, idEnte, idStrut, idElencoVersFasc,
+                                presenzaNote, ElencoEnums.ElencoStatusEnum.CHIUSO, dateCreazioneElencoFascValidate,
+                                getUser().getIdUtente());
+                getForm().getElenchiVersFascicoliDaFirmareList().setTable(elenchiVersFascicoliTableBean);
+                getForm().getElenchiVersFascicoliDaFirmareList().getTable().setPageSize(10);
+                getForm().getElenchiVersFascicoliDaFirmareList().getTable().first();
+                getForm().getElenchiVersFascicoliDaFirmareList().getTable().addSortingRule(
+                        getForm().getElenchiVersFascicoliDaFirmareList().getTs_creazione_elenco().getName(),
+                        SortingRule.ASC);
+                /* Inizializzo la lista degli elenchi di versamento fascicoli selezionati */
+                getForm().getElenchiVersFascicoliSelezionatiList().setTable(new ElvVRicElencoFascByStatoTableBean());
+                getForm().getElenchiVersFascicoliSelezionatiList().getTable().setPageSize(10);
+                getForm().getElenchiVersFascicoliSelezionatiList().getTable().addSortingRule(
+                        getForm().getElenchiVersFascicoliSelezionatiList().getTs_creazione_elenco().getName(),
+                        SortingRule.ASC);
+                /* Rendo visibili i bottoni delle operazioni sulla lista che mi interessano */
+                getForm().getListaElenchiVersFascDaFirmareButtonList().setEditMode();
             }
         }
 
@@ -1673,7 +1638,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                     // Elimino a video gli elenchi di versamento fascicoli cancellati su DB in quanto contenenti almeno
                     // un fascicolo annullato
                     idElencoVersFascRigheTotali.removeAll(idElencoVersFascRigheCancellate);
-                    ElvVRicElencoFascByStatoTableBean elenchiRimanenti = (ElvVRicElencoFascByStatoTableBean) evfEjb
+                    ElvVRicElencoFascByStatoTableBean elenchiRimanenti = evfEjb
                             .getElenchiVersFascicoliDaFirmareTableBean(idElencoVersFascRigheTotali,
                                     getUser().getIdUtente());
                     getForm().getElenchiVersFascicoliSelezionatiList().setTable(elenchiRimanenti);
@@ -1687,8 +1652,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                     if (getForm().getElenchiVersFascicoliSelezionatiList().getTable().size() > 0) {
                         /* Richiedo le credenziali del HSM utilizzando apposito popup */
                         getRequest().setAttribute("customElenchiVersFascicoliSelect", true);
-                        // String user =
-                        // configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_USERNAME);
                         getForm().getFiltriElenchiVersFascDaFirmare().getUser().setValue(hsmUserName);
                         getForm().getFiltriElenchiVersFascDaFirmare().getUser().setViewMode();
                     }
@@ -1758,7 +1721,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                 result.put("error", errorList);
             }
         } catch (JSONException ex) {
-            logger.error("Errore inatteso nella gestione del metodo asincrono per il recupero e la firma dei file", ex);
+            log.error("Errore inatteso nella gestione del metodo asincrono per il recupero e la firma dei file", ex);
             getMessageBox().addError("Errore inatteso nel recupero e firma dei file");
         }
         if (!getMessageBox().hasError()) {
@@ -1775,9 +1738,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             getMessageBox().addMessage(
                     new Message(MessageLevel.ERR, "Selezionare almeno un elenco di versamento fascicoli da firmare"));
         } else {
-            boolean verificaPartizioni = Boolean
-                    .parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI,
-                            null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
             List<String> organizNoPartitionList = new ArrayList<>();
             ElvElencoVersFascTableBean elenchiDaFirmare = new ElvElencoVersFascTableBean();
             /* Per ogni elenco di versamento fascicoli da firmare selezionato, eseguo i controlli */
@@ -1792,37 +1752,9 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                      * Controllo se tutti gli elenchi di versamento fascicoli con data chiusura precedente non presenti
                      * nei selezionati sono stati firmati
                      */
-                    boolean areAllElenchiNonPresentiFirmati = evfEjb
-                            .areAllElenchiNonPresentiFirmati(
-                                    (ElvVRicElencoFascByStatoTableBean) getForm()
-                                            .getElenchiVersFascicoliSelezionatiList().getTable(),
-                                    elencoVersFasc.getDtScadChius(), elencoVersFasc.getIdStrut());
-                    if (!areAllElenchiNonPresentiFirmati) {
-                        // if (getForm().getElenchiVersFascicoliSelezionatiList().getTable().size() == 1) {
-                        // getMessageBox().addError("L'elenco di versamento fascicoli contiene delle modifiche a
-                        // fascicoli precedentemente versati; "
-                        // + "\u00E8 necessario firmare tutti gli elenchi aventi data di chiusura precedente alla data
-                        // di chiusura dell'elenco selezionato");
-                        // } else {
-                        // getMessageBox().addError("Almeno un elenco di versamento fascicoli tra quelli selezionati
-                        // contiene delle modifiche a fascicoli precedentemente versati; "
-                        // + "\u00E8 necessario firmare tutti gli elenchi aventi data di chiusura precedente alla data
-                        // di chiusura degli elenchi selezionati");
-                        // }
-                        // break;
-                    }
-                }
-
-                // Se è necessaria la verifica della partizione
-                if (verificaPartizioni) {
-                    // Controllo se non esiste
-                    if (struttureEjb
-                            .checkPartizioni(elencoVista.getIdStrut(), new Date(),
-                                    CostantiDB.TiPartition.FILE_ELENCO_VERS_FASC.name())
-                            .equals("0") && !struttureEjb.checkPartizioniDataCorDefinito(elencoVista.getIdStrut())) {
-                        organizNoPartitionList.add(elencoVista.getNmAmbiente() + " - " + elencoVista.getNmEnte() + " - "
-                                + elencoVista.getNmStrut());
-                    }
+                    evfEjb.areAllElenchiNonPresentiFirmati((ElvVRicElencoFascByStatoTableBean) getForm()
+                            .getElenchiVersFascicoliSelezionatiList().getTable(), elencoVersFasc.getDtScadChius(),
+                            elencoVersFasc.getIdStrut());
                 }
             }
             // Se ho delle strutture la cui "verifica partizione" non è andata a buon fine per i file degli elenchi di
@@ -1850,9 +1782,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         if (getForm().getElenchiIndiciAipFascSelezionatiList().getTable().isEmpty()) {
             getMessageBox().addError("Selezionare almeno un elenco indice AIP fascicolo da firmare");
         } else {
-            boolean verificaPartizioni = Boolean
-                    .parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI,
-                            null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
             List<String> organizNoPartitionList = new ArrayList<>();
             ElvElencoVersFascTableBean elenchiDaFirmare = new ElvElencoVersFascTableBean();
             /* Per ogni elenco di versamento fascicolo da firmare selezionato, eseguo i controlli */
@@ -1867,36 +1796,9 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                      * Controllo se tutti gli elenchi con data chiusura precedente non presenti nei selezionati sono
                      * stati firmati
                      */
-                    boolean areAllElenchiNonPresentiFirmati = evfEjb
-                            .areAllElenchiNonPresentiFirmati(
-                                    (ElvVRicElencoFascByStatoTableBean) getForm()
-                                            .getElenchiIndiciAipFascSelezionatiList().getTable(),
-                                    elencoVersFasc.getDtScadChius(), elencoVersFasc.getIdStrut());
-                    if (!areAllElenchiNonPresentiFirmati) {
-                        // if (getForm().getElenchiVersFascicoliSelezionatiList().getTable().size() == 1) {
-                        // getMessageBox().addError("L'elenco di versamento fascicoli contiene delle modifiche a
-                        // fascicoli precedentemente versati; "
-                        // + "\u00E8 necessario firmare tutti gli elenchi aventi data di chiusura precedente alla data
-                        // di chiusura dell'elenco selezionato");
-                        // } else {
-                        // getMessageBox().addError("Almeno un elenco di versamento fascicoli tra quelli selezionati
-                        // contiene delle modifiche a fascicoli precedentemente versati; "
-                        // + "\u00E8 necessario firmare tutti gli elenchi aventi data di chiusura precedente alla data
-                        // di chiusura degli elenchi selezionati");
-                        // }
-                        // break;
-                    }
-                }
-
-                // Se è necessaria la verifica della partizione
-                if (verificaPartizioni) {
-                    // Controllo se non esiste
-                    if (struttureEjb.checkPartizioni(elencoVista.getIdStrut(), new Date(),
-                            CostantiDB.TiPartition.FILE_ELENCO_VERS_FASC.name()).equals("0")) {
-                        // if(elencoVista.getIdStrut().compareTo(new BigDecimal("524"))==0){
-                        organizNoPartitionList.add(elencoVista.getNmAmbiente() + " - " + elencoVista.getNmEnte() + " - "
-                                + elencoVista.getNmStrut());
-                    }
+                    evfEjb.areAllElenchiNonPresentiFirmati((ElvVRicElencoFascByStatoTableBean) getForm()
+                            .getElenchiIndiciAipFascSelezionatiList().getTable(), elencoVersFasc.getDtScadChius(),
+                            elencoVersFasc.getIdStrut());
                 }
             }
             // Se ho delle strutture la cui "verifica partizione" non è andata a buon fine per i file degli elenchi...
@@ -2005,8 +1907,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
     @Override
     public void scaricaElencoIdxAipFascBtn() throws Throwable {
         BigDecimal idElencoVersFasc = getForm().getElenchiVersFascicoliDetail().getId_elenco_vers_fasc().parse();
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         String nmEnte = getForm().getElenchiVersFascicoliDetail().getNm_ente().parse();
         String nmStrut = getForm().getElenchiVersFascicoliDetail().getNm_strut().parse();
         String filesPrefix = sistema + "_" + nmEnte.replaceAll(" ", "_") + "_" + nmStrut.replaceAll(" ", "_")
@@ -2023,7 +1925,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             out.close();
             freeze();
         } catch (Exception e) {
-            logger.error("Eccezione", e);
+            log.error(ECCEZIONE_GENERICA, e);
             getMessageBox().addError("Errore nel recupero dei file degli indici AIP fascicoli");
             forwardToPublisher(getLastPublisher());
         }
@@ -2097,7 +1999,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                              * Carico la lista degli elenchi di versamento fascicoli da firmare: quelli della struttura
                              * dell'utente e con stato ELENCO_INDICI_AIP_CREATO
                              */
-                            ElvVRicElencoFascByStatoTableBean elenchiTableBean = (ElvVRicElencoFascByStatoTableBean) evfEjb
+                            ElvVRicElencoFascByStatoTableBean elenchiTableBean = evfEjb
                                     .getElenchiVersFascicoliDaFirmareTableBean(strut.getBigDecimal("id_ambiente"),
                                             strut.getIdEnte(), strut.getIdStrut(), null, null,
                                             ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO,
@@ -2178,8 +2080,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 
         getSession().setAttribute("idStrutRif", idStrut);
         if (idStrut == null) {
-            // Rimuovo l'attributo idStrutRif (se presente in sessione vuol dire che si riferisce ad una struttura
-            // selezionata precedentemente)
+            // Rimuovo l'attributo idStrutRif se presente in sessione vuol dire che si riferisce ad una struttura
+            // selezionata precedentemente
             getSession().removeAttribute("idStrutRif");
             // Traccio in sessione un attributo specifico
             getSession().setAttribute("isStrutNull", true);
@@ -2210,7 +2112,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                      * Carico la lista degli elenchi di versamento fascicoli da firmare: quelli della struttura
                      * dell'utente e con stato ELENCO_INDICI_AIP_CREATO
                      */
-                    ElvVRicElencoFascByStatoTableBean elenchiTableBean = (ElvVRicElencoFascByStatoTableBean) evfEjb
+                    ElvVRicElencoFascByStatoTableBean elenchiTableBean = evfEjb
                             .getElenchiVersFascicoliDaFirmareTableBean(idAmbiente, idEnte, idStrut, idElencoVersFasc,
                                     null, ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO,
                                     dateCreazioneElencoIdxAipFascValidate, getUser().getIdUtente());
@@ -2317,7 +2219,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                     // Elimino a video gli elenchi indici AIP fascicoli cancellati su DB in quanto contenenti solo
                     // fascicoli annullati
                     idElencoVersFascRigheTotali.removeAll(idElencoVersFascRigheCancellate);
-                    ElvVRicElencoFascByStatoTableBean elenchiRimanenti = (ElvVRicElencoFascByStatoTableBean) evfEjb
+                    ElvVRicElencoFascByStatoTableBean elenchiRimanenti = evfEjb
                             .getElenchiVersFascicoliDaFirmareTableBean(idElencoVersFascRigheTotali,
                                     getUser().getIdUtente());
                     getForm().getElenchiIndiciAipFascSelezionatiList().setTable(elenchiRimanenti);
@@ -2331,8 +2233,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                     if (getForm().getElenchiIndiciAipFascSelezionatiList().getTable().size() > 0) {
                         /* Richiedo le credenziali del HSM utilizzando apposito popup */
                         getRequest().setAttribute("customElenchiVersFascicoliSelect", true);
-                        // String user =
-                        // configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_USERNAME);
                         getForm().getFiltriElenchiIndiciAipFascDaFirmare().getUser().setValue(hsmUserName);
                         getForm().getFiltriElenchiIndiciAipFascDaFirmare().getUser().setViewMode();
                     }
@@ -2369,7 +2269,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error(ERRORE_RICERCA_AMBIENTE, ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -2505,7 +2405,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                 result.put("error", errorList);
             }
         } catch (JSONException ex) {
-            logger.error("Errore inatteso nella gestione del metodo asincrono per il recupero e la firma dei file", ex);
+            log.error("Errore inatteso nella gestione del metodo asincrono per il recupero e la firma dei file", ex);
             getMessageBox().addError("Errore inatteso nel recupero e firma dei file");
         }
         if (!getMessageBox().hasError()) {
@@ -2610,7 +2510,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
     }
 
     private void redirectToPage(final String action, BaseForm form, String listToPopulate, BaseTableInterface<?> table,
-            String event) throws EMFError {
+            String event) {
         ((it.eng.spagoLite.form.list.List<SingleValueField<?>>) form.getComponent(listToPopulate)).setTable(table);
         redirectToAction(action, "?operation=listNavigationOnClick&navigationEvent=" + event + "&table="
                 + listToPopulate + "&riga=" + table.getCurrentRowIndex(), form);

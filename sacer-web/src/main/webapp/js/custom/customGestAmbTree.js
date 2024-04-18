@@ -8,8 +8,8 @@ var name;
                
 var tree = $("#tree_GestAmbTree");
                               
-tree.bind("select_node.jstree", function () {
-    name =  $.jstree._focused().get_text();
+tree.bind("select_node.jstree", function (e, data) {
+    name =  data.node.text;
     window.location = "Strutture.html?operation=loadNode&nodeName="+name; 
 //name= selectedObj[0].textContent;
 //selectedObj.attr("id") + selectedObj.attr("data"));

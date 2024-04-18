@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.ejb;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
@@ -7,6 +24,7 @@ import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.AplValoreParamApplic;
 import it.eng.parer.entity.DecAaTipoFascicolo;
+import it.eng.parer.entity.DecAttribDatiSpec;
 import it.eng.parer.entity.DecAttribFascicolo;
 import it.eng.parer.entity.DecCriterioRaggrFasc;
 import it.eng.parer.entity.DecErrAaTipoFascicolo;
@@ -16,9 +34,11 @@ import it.eng.parer.entity.DecParteNumeroFascicolo;
 import it.eng.parer.entity.DecSelCriterioRaggrFasc;
 import it.eng.parer.entity.DecTipoFascicolo;
 import it.eng.parer.entity.DecUsoModelloXsdFasc;
+import it.eng.parer.entity.DecXsdDatiSpec;
 import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.IamOrganizDaReplic;
 import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.AplValoreParamApplic.TiAppart;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.exception.ParerWarningException;
 import it.eng.parer.fascicoli.ejb.FascicoliEjb;
@@ -49,7 +69,6 @@ import it.eng.parer.slite.gen.tablebean.DecUsoModelloXsdFascRowBean;
 import it.eng.parer.slite.gen.tablebean.DecUsoModelloXsdFascTableBean;
 import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.ejb.AmministrazioneEjb;
-import it.eng.parer.web.helper.AmministrazioneHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.ApplEnum;
 import it.eng.parer.web.util.Constants;
@@ -69,6 +88,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -117,8 +137,6 @@ public class TipoFascicoloEjb {
     private StruttureEjb struttureEjb;
     @EJB
     private FascicoliEjb fascicoliEjb;
-    @EJB
-    private AmministrazioneHelper amministrazioneHelper;
     @EJB
     private AmministrazioneEjb amministrazioneEjb;
     @EJB
@@ -173,6 +191,29 @@ public class TipoFascicoloEjb {
             boolean isFilterValid) {
         DecTipoFascicoloTableBean tipoFascicoloTableBean = new DecTipoFascicoloTableBean();
         List<DecTipoFascicolo> list = helper.getTipiFascicoloAbilitati(idUtente, idStrut, isFilterValid);
+        try {
+            if (!list.isEmpty()) {
+                for (DecTipoFascicolo tipo : list) {
+                    DecTipoFascicoloRowBean tipoDocRow = (DecTipoFascicoloRowBean) Transform.entity2RowBean(tipo);
+                    if (tipo.getDtIstituz().before(new Date()) && tipo.getDtSoppres().after(new Date())) {
+                        tipoDocRow.setObject("fl_attivo", "1");
+                    } else {
+                        tipoDocRow.setObject("fl_attivo", "0");
+                    }
+                    tipoFascicoloTableBean.add(tipoDocRow);
+                }
+            }
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                | NoSuchMethodException | InvocationTargetException e) {
+            logger.error(e.getMessage(), e);
+            throw new IllegalStateException("Errore durante il recupero dei tipi fascicolo");
+        }
+        return tipoFascicoloTableBean;
+    }
+
+    public DecTipoFascicoloTableBean getDecTipoFascicoloList(BigDecimal idStrut, boolean isFilterValid) {
+        DecTipoFascicoloTableBean tipoFascicoloTableBean = new DecTipoFascicoloTableBean();
+        List<DecTipoFascicolo> list = helper.getDecTipoFascicoloList(idStrut, isFilterValid);
         try {
             if (!list.isEmpty()) {
                 for (DecTipoFascicolo tipo : list) {
@@ -284,6 +325,22 @@ public class TipoFascicoloEjb {
                 aaTipoFascicoloRowBean.setString("aa_tipo_fascicolo_esempio", calcolaEsempio(parti));
                 aaTipoFascicoloRowBean.setString("controllo_formato_da_list",
                         helper.getDecVChkFmtNumeroFascForPeriodo(aaTipoFascicoloRowBean.getIdAaTipoFascicolo()));
+
+                // xsd_modelli_ammessi
+                StringBuilder tmpBuilder = new StringBuilder();
+                List<DecUsoModelloXsdFasc> usoModelloXsdFasc = aaTipoFascicolo.getDecUsoModelloXsdFascs();
+                if (usoModelloXsdFasc != null && !usoModelloXsdFasc.isEmpty()) {
+                    Set<String> dsXsdUn = new HashSet<>();
+                    for (int index = 0; index < usoModelloXsdFasc.size(); index++) {
+                        DecUsoModelloXsdFasc row = usoModelloXsdFasc.get(index);
+                        dsXsdUn.add(row.getDecModelloXsdFascicolo().getTiModelloXsd().toString() + "_v"
+                                + row.getDecModelloXsdFascicolo().getCdXsd());
+                    }
+                    tmpBuilder.append(dsXsdUn.stream().distinct().collect(Collectors.joining("; ")));
+                }
+
+                aaTipoFascicoloRowBean.setString("xsd_modelli_ammessi", tmpBuilder.toString());
+
                 aaTipoFascicoloTableBean.add(aaTipoFascicoloRowBean);
             }
         } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
@@ -489,21 +546,10 @@ public class TipoFascicoloEjb {
             }
 
             // Salvo in automatico il periodo di validità
-            // OrgStrutConfigFascicolo strutConfigFascicolo = helper.getOrgStrutConfigFascicoloByIdStrut(idStrut);
-            // if (strutConfigFascicolo != null) {
             DecAaTipoFascicolo aaTipoFascicolo = new DecAaTipoFascicolo();
             aaTipoFascicolo.setAaIniTipoFascicolo(BigDecimal.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
             aaTipoFascicolo.setAaFinTipoFascicolo(BigDecimal.valueOf(2444));
 
-            // aaTipoFascicolo.setFlAbilitaContrClassif(strutConfigFascicolo.getFlAbilitaContrClassif());
-            // aaTipoFascicolo.setFlAbilitaContrColleg(strutConfigFascicolo.getFlAbilitaContrColleg());
-            // aaTipoFascicolo.setFlAbilitaContrNumero(strutConfigFascicolo.getFlAbilitaContrNumero());
-            // aaTipoFascicolo.setFlAccettaContrClassifNeg(strutConfigFascicolo.getFlAccettaContrClassifNeg());
-            // aaTipoFascicolo.setFlAccettaContrCollegNeg(strutConfigFascicolo.getFlAccettaContrCollegNeg());
-            // aaTipoFascicolo.setFlAccettaContrNumeroNeg(strutConfigFascicolo.getFlAccettaContrNumeroNeg());
-            // aaTipoFascicolo.setFlForzaContrClassif(strutConfigFascicolo.getFlForzaContrClassif());
-            // aaTipoFascicolo.setFlForzaContrColleg(strutConfigFascicolo.getFlForzaContrColleg());
-            // aaTipoFascicolo.setFlForzaContrNumero(strutConfigFascicolo.getFlForzaContrNumero());
             aaTipoFascicolo.setFlUpdFmtNumero("0");
             aaTipoFascicolo.setNiCharPadParteClassif(BigDecimal.valueOf(3));
             aaTipoFascicolo.setDecTipoFascicolo(tipoFascicolo);
@@ -529,37 +575,19 @@ public class TipoFascicoloEjb {
             aaTipoFascicolo.getDecParteNumeroFascicolos().add(parteNumeroFascicolo);
 
             long idAmbiente = tipoFascicolo.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
+
             // Ricerca modello PROFILO_GENERALE_FASCICOLO nel repository
             List<DecModelloXsdFascicolo> modelloXsdFascicoloList = helper.retrieveDecModelloXsdFascicolo(
-                    BigDecimal.valueOf(idAmbiente), new Date(), "1", CostantiDB.TiUsoModelloXsd.VERS.name(),
-                    CostantiDB.TiModelloXsd.PROFILO_GENERALE_FASCICOLO.name());
+                    BigDecimal.valueOf(idAmbiente), new Date(), "1", CostantiDB.TiUsoModelloXsd.VERS.name());
             if (!modelloXsdFascicoloList.isEmpty()) {
-                if (modelloXsdFascicoloList.size() == 1) {
+                for (DecModelloXsdFascicolo decModelloXsdFascicolo : modelloXsdFascicoloList) {
                     // Salva in automatico l'associazione tra il periodo di validità creato e il modello xsd trovato
-                    insertDecUsoModelloXsdFasc(aaTipoFascicolo, modelloXsdFascicoloList.get(0), "1", dtIstituz,
-                            dtSoppres);
-                } else {
-                    throw new ParerUserError(
-                            "Errore: nell'ambiente sono stati trovati più modelli xsd di default per i metadati di profilo documento");
+                    insertDecUsoModelloXsdFasc(aaTipoFascicolo, decModelloXsdFascicolo, "1", dtIstituz, dtSoppres);
                 }
+
             } else {
                 throw new ParerUserError(
-                        "Attenzione: sull'ambiente non è stato definito l'xsd di default per i metadati di profilo documento");
-            }
-
-            // Ricerca modello PROFILO_ARCHIVISTICO_FASCICOLO nel repository
-            modelloXsdFascicoloList = helper.retrieveDecModelloXsdFascicolo(BigDecimal.valueOf(idAmbiente), new Date(),
-                    "1", CostantiDB.TiUsoModelloXsd.VERS.name(),
-                    CostantiDB.TiModelloXsd.PROFILO_ARCHIVISTICO_FASCICOLO.name());
-            if (!modelloXsdFascicoloList.isEmpty()) {
-                if (modelloXsdFascicoloList.size() == 1) {
-                    // Salva in automatico l'associazione tra il periodo di validità creato e il modello xsd trovato
-                    insertDecUsoModelloXsdFasc(aaTipoFascicolo, modelloXsdFascicoloList.get(0), "1", dtIstituz,
-                            dtSoppres);
-                } else {
-                    throw new ParerUserError(
-                            "Errore: nell'ambiente sono stati trovati più modelli xsd di default per i metadati di profilo archivistico");
-                }
+                        "Attenzione: sull'ambiente non sono presenti xsd per i metadati di profilo fascicolo");
             }
             // }
 
@@ -612,78 +640,71 @@ public class TipoFascicoloEjb {
         DecTipoFascicolo tipoFascicolo = helper.findById(DecTipoFascicolo.class, idTipoFascicolo);
 
         // Controllo esistenza criterio di raggruppamento
-        String warnMsg = "creazione automatica del criterio di raggruppamento standard non eseguita";
-        if (helper.existsDecCriterioRaggrFascStandard(idStrut, idTipoFascicolo)) {
-            throw new ParerWarningException("Attenzione: un criterio di raggruppamento standard per il tipo fascicolo '"
-                    + nmTipoFascicolo + "' è già presente nella struttura; " + warnMsg);
-        }
-
-        if (fascicoliEjb.existNomeCriterio(nmTipoFascicolo, idStrut)) {
-            throw new ParerWarningException("Attenzione: un criterio di raggruppamento denominato '" + nmTipoFascicolo
-                    + "' è già presente nella struttura; " + warnMsg);
-        }
-
         Long idCriterioRaggrFasc = null;
-        try {
-            Calendar now = Calendar.getInstance();
-            now.set(Calendar.HOUR, 0);
-            now.set(Calendar.MINUTE, 0);
-            now.set(Calendar.SECOND, 0);
-            now.set(Calendar.MILLISECOND, 0);
-            Date dtIstituzCritRaggr = now.getTime();
-            Calendar cal = Calendar.getInstance();
-            cal.set(2444, Calendar.DECEMBER, 31);
-            cal.set(Calendar.HOUR, 0);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
-            Date dtSoppresCritRaggr = cal.getTime();
+        if (!helper.existsDecCriterioRaggrFascStandard(idStrut, idTipoFascicolo)
+                && !fascicoliEjb.existNomeCriterio(nmTipoFascicolo, idStrut)) {
 
-            // Setto il numero di giorni di scadenza chiusura con il valore definito sulla struttura corrente
-            long numGgScadChius = fascicoliEjb.getNumGgScadCriterioFascStd(idStrut);
-            // Setto il numero massimo fascicoli
-            long numMaxFasc = fascicoliEjb.getNumFascCriterioStd(idStrut);
+            try {
+                Calendar now = Calendar.getInstance();
+                now.set(Calendar.HOUR, 0);
+                now.set(Calendar.MINUTE, 0);
+                now.set(Calendar.SECOND, 0);
+                now.set(Calendar.MILLISECOND, 0);
+                Date dtIstituzCritRaggr = now.getTime();
+                Calendar cal = Calendar.getInstance();
+                cal.set(2444, Calendar.DECEMBER, 31);
+                cal.set(Calendar.HOUR, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                Date dtSoppresCritRaggr = cal.getTime();
 
-            DecCriterioRaggrFasc criterioRaggrFasc = new DecCriterioRaggrFasc();
-            criterioRaggrFasc.setOrgStrut(struttura);
-            criterioRaggrFasc.setNmCriterioRaggr(nmTipoFascicolo);
-            criterioRaggrFasc.setDsCriterioRaggr("Tipologia di fascicolo " + nmTipoFascicolo);
-            criterioRaggrFasc.setDtIstituz(dtIstituzCritRaggr);
-            criterioRaggrFasc.setDtSoppres(dtSoppresCritRaggr);
-            criterioRaggrFasc.setNiTempoScadChius(new BigDecimal(numGgScadChius));
-            criterioRaggrFasc.setTiTempoScadChius(VolumeEnums.TimeTypeEnum.GIORNI.name());
-            criterioRaggrFasc.setNiMaxFasc(new BigDecimal(numMaxFasc));
-            criterioRaggrFasc.setFlFiltroTipoFascicolo("1");
-            criterioRaggrFasc.setFlCriterioRaggrStandard("1");
-            criterioRaggrFasc.setFlFiltroVoceTitol("0");
-            criterioRaggrFasc.setFlFiltroSistemaMigraz("0");
-            criterioRaggrFasc.setDecSelCriterioRaggrFascicoli(new ArrayList<DecSelCriterioRaggrFasc>());
-            helper.insertEntity(criterioRaggrFasc, true);
+                // Setto il numero di giorni di scadenza chiusura con il valore definito sulla struttura corrente
+                long numGgScadChius = fascicoliEjb.getNumGgScadCriterioFascStd(idStrut);
+                // Setto il numero massimo fascicoli
+                long numMaxFasc = fascicoliEjb.getNumFascCriterioStd(idStrut);
 
-            DecSelCriterioRaggrFasc decSelCriterioRaggrFasc = new DecSelCriterioRaggrFasc();
-            decSelCriterioRaggrFasc.setDecTipoFascicolo(tipoFascicolo);
-            decSelCriterioRaggrFasc.setDecCriterioRaggrFasc(criterioRaggrFasc);
-            decSelCriterioRaggrFasc.setTiSel(ApplEnum.TipoSelCriteriRaggrFasc.TIPO_FASCICOLO.name());
-            helper.insertEntity(decSelCriterioRaggrFasc, true);
-            criterioRaggrFasc.getDecSelCriterioRaggrFascicoli().add(decSelCriterioRaggrFasc);
+                DecCriterioRaggrFasc criterioRaggrFasc = new DecCriterioRaggrFasc();
+                criterioRaggrFasc.setOrgStrut(struttura);
+                criterioRaggrFasc.setNmCriterioRaggr(nmTipoFascicolo);
+                criterioRaggrFasc.setDsCriterioRaggr("Tipologia di fascicolo " + nmTipoFascicolo);
+                criterioRaggrFasc.setDtIstituz(dtIstituzCritRaggr);
+                criterioRaggrFasc.setDtSoppres(dtSoppresCritRaggr);
+                criterioRaggrFasc.setNiTempoScadChius(new BigDecimal(numGgScadChius));
+                criterioRaggrFasc.setTiTempoScadChius(VolumeEnums.TimeTypeEnum.GIORNI.name());
+                criterioRaggrFasc.setNiMaxFasc(new BigDecimal(numMaxFasc));
+                criterioRaggrFasc.setFlFiltroTipoFascicolo("1");
+                criterioRaggrFasc.setFlCriterioRaggrStandard("1");
+                criterioRaggrFasc.setFlFiltroVoceTitol("0");
+                criterioRaggrFasc.setFlFiltroSistemaMigraz("0");
+                criterioRaggrFasc.setDecSelCriterioRaggrFascicoli(new ArrayList<DecSelCriterioRaggrFasc>());
+                helper.insertEntity(criterioRaggrFasc, true);
 
-            idCriterioRaggrFasc = criterioRaggrFasc.getIdCriterioRaggrFasc();
+                DecSelCriterioRaggrFasc decSelCriterioRaggrFasc = new DecSelCriterioRaggrFasc();
+                decSelCriterioRaggrFasc.setDecTipoFascicolo(tipoFascicolo);
+                decSelCriterioRaggrFasc.setDecCriterioRaggrFasc(criterioRaggrFasc);
+                decSelCriterioRaggrFasc.setTiSel(ApplEnum.TipoSelCriteriRaggrFasc.TIPO_FASCICOLO.name());
+                helper.insertEntity(decSelCriterioRaggrFasc, true);
+                criterioRaggrFasc.getDecSelCriterioRaggrFascicoli().add(decSelCriterioRaggrFasc);
 
-            logger.debug("Salvataggio automatico del criterio di raggruppamento standard per il tipo fascicolo "
-                    + nmTipoFascicolo + " completato");
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGR_FASC,
-                    new BigDecimal(idCriterioRaggrFasc), param.getNomePagina());
+                idCriterioRaggrFasc = criterioRaggrFasc.getIdCriterioRaggrFasc();
 
-            return idCriterioRaggrFasc;
-        } catch (Exception ex) {
-            logger.error(
-                    "Errore imprevisto durante il salvataggio automatico del criterio di raggruppamento standard : "
-                            + ExceptionUtils.getRootCauseMessage(ex),
-                    ex);
-            throw new ParerUserError(
-                    "Errore imprevisto durante il salvataggio automatico del criterio di raggruppamento standard");
+                logger.debug("Salvataggio automatico del criterio di raggruppamento standard per il tipo fascicolo "
+                        + nmTipoFascicolo + " completato");
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGR_FASC,
+                        new BigDecimal(idCriterioRaggrFasc), param.getNomePagina());
+
+            } catch (Exception ex) {
+                logger.error(
+                        "Errore imprevisto durante il salvataggio automatico del criterio di raggruppamento standard : "
+                                + ExceptionUtils.getRootCauseMessage(ex),
+                        ex);
+                throw new ParerUserError(
+                        "Errore imprevisto durante il salvataggio automatico del criterio di raggruppamento standard");
+            }
         }
+        return idCriterioRaggrFasc;
     }
 
     @TransactionAttribute(value = TransactionAttributeType.REQUIRED)
@@ -850,9 +871,9 @@ public class TipoFascicoloEjb {
 
         List<DecSelCriterioRaggrFasc> criteriAssociati = struttureHelper
                 .getRelationsWithCriteriRaggrFascicolo(idTipoFascicolo.longValue(), Constants.TipoDato.TIPO_FASCICOLO);
+        List<Long> criteriRaggrFascDaEliminare = new ArrayList<>();
+        List<Long> criteriRaggrFascDaModificare = new ArrayList<>();
         if (!criteriAssociati.isEmpty()) {
-            List<Long> criteriRaggrFascDaEliminare = new ArrayList<>();
-            List<Long> criteriRaggrFascDaModificare = new ArrayList<>();
             for (DecSelCriterioRaggrFasc criterioAssociato : criteriAssociati) {
                 long idCriterioRaggrFasc = criterioAssociato.getDecCriterioRaggrFasc().getIdCriterioRaggrFasc();
                 boolean existsRelationsWithElenchiForCriterioRaggrFasc = struttureHelper
@@ -883,9 +904,26 @@ public class TipoFascicoloEjb {
                 param.getNomePagina());
         // Rimozione a cascata
         helper.removeEntity(tipoFascicolo, true);
+
+        /* Eseguo dei controlli in caso abbia eliminato dei criteri raggruppamento fascicolo */
+        List<ObjectsToLogBefore> listaBeforeModifyingCriteriRaggrFascEliminati = new ArrayList<>();
+        if (listaBeforeModifying != null) {
+            for (ObjectsToLogBefore obj : listaBeforeModifying) {
+                if (obj.getTipoOggetto().equals("Criterio raggruppamento fascicoli")) {
+                    for (Long criterioRaggrFascDaEliminare : criteriRaggrFascDaEliminare) {
+                        if (!obj.getIdOggetto().contains(BigDecimal.valueOf(criterioRaggrFascDaEliminare))) {
+                            listaBeforeModifyingCriteriRaggrFascEliminati.add(obj);
+                        }
+                    }
+                } else {
+                    listaBeforeModifyingCriteriRaggrFascEliminati.add(obj);
+                }
+            }
+        }
+
         /* Foto dopo eliminazione di eventuali disassociazioni */
         sacerLogEjb.logAfter(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                param.getNomeAzione(), listaBeforeModifying, param.getNomePagina());
+                param.getNomeAzione(), listaBeforeModifyingCriteriRaggrFascEliminati, param.getNomePagina());
     }
 
     /**
@@ -1019,38 +1057,33 @@ public class TipoFascicoloEjb {
         return esempio;
     }
 
-    public DecUsoModelloXsdFascTableBean getVersioniXsdMetadati(BigDecimal idAaTipoFascicolo,
-            CostantiDB.TiModelloXsd tiModelloXsd) {
+    public DecUsoModelloXsdFascTableBean getVersioniXsdMetadati(BigDecimal idAaTipoFascicolo) {
         DecUsoModelloXsdFascTableBean usoModelloXsdFascTableBean = new DecUsoModelloXsdFascTableBean();
         List<DecUsoModelloXsdFasc> usoModelloXsdFascList = helper.getDecUsoModelloXsdFascList(idAaTipoFascicolo, null,
                 null);
         for (DecUsoModelloXsdFasc usoModelloXsdFasc : usoModelloXsdFascList) {
-            if (usoModelloXsdFasc.getDecModelloXsdFascicolo().getTiModelloXsd().equals(tiModelloXsd.name())) {
-                DecUsoModelloXsdFascRowBean usoModelloXsdFascRowBean = new DecUsoModelloXsdFascRowBean();
-                usoModelloXsdFascRowBean.setBigDecimal("id_uso_modello_xsd_fasc",
-                        BigDecimal.valueOf(usoModelloXsdFasc.getIdUsoModelloXsdFasc()));
-                usoModelloXsdFascRowBean.setBigDecimal("id_modello_xsd_fascicolo",
-                        BigDecimal.valueOf(usoModelloXsdFasc.getDecModelloXsdFascicolo().getIdModelloXsdFascicolo()));
-                usoModelloXsdFascRowBean.setBigDecimal("id_aa_tipo_fascicolo",
-                        BigDecimal.valueOf(usoModelloXsdFasc.getDecAaTipoFascicolo().getIdAaTipoFascicolo()));
-                usoModelloXsdFascRowBean.setString("cd_xsd", usoModelloXsdFasc.getDecModelloXsdFascicolo().getCdXsd());
-                usoModelloXsdFascRowBean.setString("ds_xsd", usoModelloXsdFasc.getDecModelloXsdFascicolo().getDsXsd());
-                usoModelloXsdFascRowBean.setString("ti_modello_xsd",
-                        usoModelloXsdFasc.getDecModelloXsdFascicolo().getTiModelloXsd());
-                usoModelloXsdFascRowBean.setFlStandard(usoModelloXsdFasc.getFlStandard());
-                usoModelloXsdFascRowBean.setObject("dt_istituz",
-                        new Timestamp(usoModelloXsdFasc.getDtIstituz().getTime()));
-                usoModelloXsdFascRowBean.setObject("dt_soppres",
-                        new Timestamp(usoModelloXsdFasc.getDtSoppres().getTime()));
-                if (usoModelloXsdFasc.getDecModelloXsdFascicolo().getDtIstituz().before(new Date())
-                        && usoModelloXsdFasc.getDecModelloXsdFascicolo().getDtSoppres().after(new Date())) {
-                    usoModelloXsdFascRowBean.setString("fl_attivo", "1");
-                } else {
-                    usoModelloXsdFascRowBean.setString("fl_attivo", "0");
-                }
-
-                usoModelloXsdFascTableBean.add(usoModelloXsdFascRowBean);
+            DecUsoModelloXsdFascRowBean usoModelloXsdFascRowBean = new DecUsoModelloXsdFascRowBean();
+            usoModelloXsdFascRowBean.setBigDecimal("id_uso_modello_xsd_fasc",
+                    BigDecimal.valueOf(usoModelloXsdFasc.getIdUsoModelloXsdFasc()));
+            usoModelloXsdFascRowBean.setBigDecimal("id_modello_xsd_fascicolo",
+                    BigDecimal.valueOf(usoModelloXsdFasc.getDecModelloXsdFascicolo().getIdModelloXsdFascicolo()));
+            usoModelloXsdFascRowBean.setBigDecimal("id_aa_tipo_fascicolo",
+                    BigDecimal.valueOf(usoModelloXsdFasc.getDecAaTipoFascicolo().getIdAaTipoFascicolo()));
+            usoModelloXsdFascRowBean.setString("cd_xsd", usoModelloXsdFasc.getDecModelloXsdFascicolo().getCdXsd());
+            usoModelloXsdFascRowBean.setString("ds_xsd", usoModelloXsdFasc.getDecModelloXsdFascicolo().getDsXsd());
+            usoModelloXsdFascRowBean.setString("ti_modello_xsd",
+                    usoModelloXsdFasc.getDecModelloXsdFascicolo().getTiModelloXsd().name());
+            usoModelloXsdFascRowBean.setFlStandard(usoModelloXsdFasc.getFlStandard());
+            usoModelloXsdFascRowBean.setObject("dt_istituz", new Timestamp(usoModelloXsdFasc.getDtIstituz().getTime()));
+            usoModelloXsdFascRowBean.setObject("dt_soppres", new Timestamp(usoModelloXsdFasc.getDtSoppres().getTime()));
+            if (usoModelloXsdFasc.getDecModelloXsdFascicolo().getDtIstituz().before(new Date())
+                    && usoModelloXsdFasc.getDecModelloXsdFascicolo().getDtSoppres().after(new Date())) {
+                usoModelloXsdFascRowBean.setString("fl_attivo", "1");
+            } else {
+                usoModelloXsdFascRowBean.setString("fl_attivo", "0");
             }
+
+            usoModelloXsdFascTableBean.add(usoModelloXsdFascRowBean);
         }
         return usoModelloXsdFascTableBean;
     }
@@ -1080,11 +1113,7 @@ public class TipoFascicoloEjb {
             usoModelloXsdFascRowBean.setString("cd_xsd", usoModelloXsdFasc.getDecModelloXsdFascicolo().getCdXsd());
             usoModelloXsdFascRowBean.setString("ds_xsd", usoModelloXsdFasc.getDecModelloXsdFascicolo().getDsXsd());
             usoModelloXsdFascRowBean.setString("ti_modello_xsd",
-                    usoModelloXsdFasc.getDecModelloXsdFascicolo().getTiModelloXsd());
-            usoModelloXsdFascRowBean.setObject("dt_istituz",
-                    new Timestamp(usoModelloXsdFasc.getDecModelloXsdFascicolo().getDtIstituz().getTime()));
-            usoModelloXsdFascRowBean.setObject("dt_soppres",
-                    new Timestamp(usoModelloXsdFasc.getDecModelloXsdFascicolo().getDtSoppres().getTime()));
+                    usoModelloXsdFasc.getDecModelloXsdFascicolo().getTiModelloXsd().name());
             XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
             String xmlFormatted = formatter
                     .prettyPrintWithDOM3LS(usoModelloXsdFasc.getDecModelloXsdFascicolo().getBlXsd());
@@ -1130,17 +1159,17 @@ public class TipoFascicoloEjb {
     }
 
     public DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBean(BigDecimal idAmbiente, Date data,
-            String flDefault, String tiUsoModelloXsd, String tiModelloXsd) {
+            String flDefault, String tiUsoModelloXsd) {
         DecModelloXsdFascicoloTableBean modelloXsdFascicoloTableBean = new DecModelloXsdFascicoloTableBean();
         List<DecModelloXsdFascicolo> modelloXsdFascicoloList = helper.retrieveDecModelloXsdFascicolo(idAmbiente, data,
-                flDefault, tiUsoModelloXsd, tiModelloXsd);
+                flDefault, tiUsoModelloXsd);
         try {
             for (DecModelloXsdFascicolo modelloXsdFascicolo : modelloXsdFascicoloList) {
                 DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = new DecModelloXsdFascicoloRowBean();
                 modelloXsdFascicoloRowBean = (DecModelloXsdFascicoloRowBean) Transform
                         .entity2RowBean(modelloXsdFascicolo);
-                modelloXsdFascicoloRowBean.setString("codice_descrizione",
-                        modelloXsdFascicolo.getCdXsd() + " - " + modelloXsdFascicolo.getDsXsd());
+                // modelloXsdFascicoloRowBean.setString("codice_descrizione",
+                // modelloXsdFascicolo.getCdXsd() + " - " + modelloXsdFascicolo.getDsXsd());
                 modelloXsdFascicoloTableBean.add(modelloXsdFascicoloRowBean);
             }
         } catch (Exception e) {
@@ -1216,6 +1245,50 @@ public class TipoFascicoloEjb {
                 BigDecimal.valueOf(idTipoFascicolo), param.getNomePagina());
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void deleteDecParteNumeroFascicolo(LogParam param, BigDecimal idParteNumeroFascicolo) throws ParerUserError {
+        logger.debug("Eseguo l'eliminazione della parte " + idParteNumeroFascicolo);
+
+        DecParteNumeroFascicolo parteNumeroFascicolo = helper.findById(DecParteNumeroFascicolo.class,
+                idParteNumeroFascicolo);
+        Long idTipoFascicolo = parteNumeroFascicolo.getDecAaTipoFascicolo().getDecTipoFascicolo().getIdTipoFascicolo();
+
+        // Rimozione a cascata
+        helper.removeEntity(parteNumeroFascicolo, true);
+
+        sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_FASCICOLO,
+                BigDecimal.valueOf(idTipoFascicolo), param.getNomePagina());
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void deleteDecUsoModelloXsdFasc(LogParam param, BigDecimal idUsoModelloXsdFasc) throws ParerUserError {
+        logger.debug("Eseguo l'eliminazione del modello xsd " + idUsoModelloXsdFasc);
+
+        DecUsoModelloXsdFasc usoModelloXsdFascicolo = helper.findById(DecUsoModelloXsdFasc.class, idUsoModelloXsdFasc);
+        Long idTipoFascicolo = usoModelloXsdFascicolo.getDecAaTipoFascicolo().getDecTipoFascicolo()
+                .getIdTipoFascicolo();
+
+        List<DecAttribFascicolo> list = helper.retrieveDecAttribFascicoloList(
+                BigDecimal.valueOf(usoModelloXsdFascicolo.getDecModelloXsdFascicolo().getIdModelloXsdFascicolo()),
+                BigDecimal.valueOf(usoModelloXsdFascicolo.getDecAaTipoFascicolo().getIdAaTipoFascicolo()));
+        for (DecAttribFascicolo attr : list) {
+            DecModelloXsdAttribFascicolo toRemoveModXsd = helper.getDecXsdAttribFascicoloByAttrib(
+                    BigDecimal.valueOf(attr.getIdAttribFascicolo()),
+                    BigDecimal.valueOf(usoModelloXsdFascicolo.getDecModelloXsdFascicolo().getIdModelloXsdFascicolo()));
+            helper.removeEntity(toRemoveModXsd, true);
+            DecAttribFascicolo toRemove = helper.findById(DecAttribFascicolo.class, attr.getIdAttribFascicolo());
+            helper.removeEntity(toRemove, true);
+        }
+
+        // Rimozione a cascata
+        helper.removeEntity(usoModelloXsdFascicolo, true);
+
+        sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_FASCICOLO,
+                BigDecimal.valueOf(idTipoFascicolo), param.getNomePagina());
+    }
+
     /**
      * Metodo di eliminazione di un criterio di raggruppamento fascicoli
      *
@@ -1246,6 +1319,61 @@ public class TipoFascicoloEjb {
         helper.removeEntity(critRaggrFasc, true);
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void saveDecParteNumeroFascicolo(LogParam param, BigDecimal idTipoFascicolo,
+            DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean, DecParteNumeroFascicoloRowBean parteRowBean)
+            throws ParerUserError {
+        //
+        DecAaTipoFascicolo aaTipoFascicolo = helper.findById(DecAaTipoFascicolo.class,
+                aaTipoFascicoloRowBean.getIdAaTipoFascicolo());
+
+        logger.info("Inserisco o aggiorno le parti");
+        if (parteRowBean.getIdParteNumeroFascicolo() != null) {
+            DecParteNumeroFascicolo parte = new DecParteNumeroFascicolo();
+            parte = helper.findById(DecParteNumeroFascicolo.class, parteRowBean.getIdParteNumeroFascicolo());
+            updateParteNumeroFascicolo(parte, parteRowBean);
+        } else {
+            DecParteNumeroFascicolo parte = new DecParteNumeroFascicolo();
+            updateParteNumeroFascicolo(parte, parteRowBean);
+
+            aaTipoFascicolo.addDecParteNumeroFascicolo(parte);
+        }
+
+        sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_FASCICOLO, idTipoFascicolo,
+                param.getNomePagina());
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void saveDecModelloXsdFascicolo(LogParam param, BigDecimal idTipoFascicolo,
+            DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean,
+            DecUsoModelloXsdFascRowBean metadatiProfiloFascicoloRowBean) throws ParerUserError {
+
+        //
+        DecAaTipoFascicolo aaTipoFascicolo = helper.findById(DecAaTipoFascicolo.class,
+                aaTipoFascicoloRowBean.getIdAaTipoFascicolo());
+
+        logger.info("Inserisco o aggiorno i metadati di tipo profilo fascicolo del periodo considerato");
+
+        if (metadatiProfiloFascicoloRowBean.getIdUsoModelloXsdFasc() != null) {
+            DecUsoModelloXsdFasc meta = helper.findById(DecUsoModelloXsdFasc.class,
+                    metadatiProfiloFascicoloRowBean.getIdUsoModelloXsdFasc());
+            meta.setDecModelloXsdFascicolo(helper.findById(DecModelloXsdFascicolo.class,
+                    metadatiProfiloFascicoloRowBean.getIdModelloXsdFascicolo()));
+            meta.setDtIstituz(metadatiProfiloFascicoloRowBean.getDtIstituz());
+            meta.setDtSoppres(metadatiProfiloFascicoloRowBean.getDtSoppres());
+
+            aaTipoFascicolo.addDecUsoModelloXsdFasc(meta);
+            saveXsdAttribList(meta, metadatiProfiloFascicoloRowBean);
+        } else {
+            inserisciMetadatiProfilo(metadatiProfiloFascicoloRowBean, aaTipoFascicolo);
+        }
+
+        sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_FASCICOLO, idTipoFascicolo,
+                param.getNomePagina());
+    }
+
     /**
      * Modifica periodo validità tipo fascicolo
      *
@@ -1253,29 +1381,13 @@ public class TipoFascicoloEjb {
      *            parametri per il logging
      * @param aaTipoFascicoloRowBean
      *            bean riga anno tipo fascicolo
-     * @param metadatiProfiloFascicoloTableBean
-     *            bean metadati profilo fascicolo
-     * @param metadatiProfiloArchivisticoTableBean
-     *            bean metadati profilo archivistico
-     * @param idMetadatiFascicoloEliminati
-     *            id metadati fascicolo eliminati
-     * @param idMetadatiArchivisticoEliminati
-     *            id metadata profilo archivistico eliminato
-     * @param parti
-     *            decodifica parte
-     * @param idPartiEliminate
-     *            id parte eliminata
      *
      * @throws ParerUserError
      *             errore generico
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void saveDecAaTipoFascicolo(LogParam param, DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean,
-            DecUsoModelloXsdFascTableBean metadatiProfiloFascicoloTableBean,
-            Set<BigDecimal> idMetadatiFascicoloEliminati,
-            DecUsoModelloXsdFascTableBean metadatiProfiloArchivisticoTableBean,
-            Set<BigDecimal> idMetadatiArchivisticoEliminati, DecParteNumeroFascicoloTableBean parti,
-            Set<BigDecimal> idPartiEliminate) throws ParerUserError {
+    public void saveDecAaTipoFascicolo(LogParam param, DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean)
+            throws ParerUserError {
         //
         DecAaTipoFascicolo aaTipoFascicolo = helper.findById(DecAaTipoFascicolo.class,
                 aaTipoFascicoloRowBean.getIdAaTipoFascicolo());
@@ -1311,106 +1423,13 @@ public class TipoFascicoloEjb {
             }
         }
 
-        /* Elimino i metadati e le parti da eliminare */
-        if (idMetadatiFascicoloEliminati != null && !idMetadatiFascicoloEliminati.isEmpty()) {
-            logger.info("Elimino i metadati profilo fascicolo eliminati");
-            for (BigDecimal idMeta : idMetadatiFascicoloEliminati) {
-                DecUsoModelloXsdFasc meta = helper.findById(DecUsoModelloXsdFasc.class, idMeta);
-                helper.removeEntity(meta, true);
-            }
-        }
-
-        if (idMetadatiArchivisticoEliminati != null && !idMetadatiArchivisticoEliminati.isEmpty()) {
-            logger.info("Elimino i metadati profilo archivistico eliminati");
-            for (BigDecimal idMeta : idMetadatiArchivisticoEliminati) {
-                DecUsoModelloXsdFasc meta = helper.findById(DecUsoModelloXsdFasc.class, idMeta);
-                helper.removeEntity(meta, true);
-            }
-        }
-
-        if (idPartiEliminate != null && !idPartiEliminate.isEmpty()) {
-            logger.info("Elimino le parti eliminate");
-            for (BigDecimal idParte : idPartiEliminate) {
-                DecParteNumeroFascicolo parte = helper.findById(DecParteNumeroFascicolo.class, idParte);
-                helper.removeEntity(parte, true);
-            }
-        }
-
         // Salvo la modifica del range di validit\u00E0 del tipo fascicolo
         logger.info("Salvo il periodo di validit\u00E0 del tipo fascicolo");
         aaTipoFascicolo.setAaIniTipoFascicolo(aaTipoFascicoloRowBean.getAaIniTipoFascicolo());
         aaTipoFascicolo.setAaFinTipoFascicolo(aaTipoFascicoloRowBean.getAaFinTipoFascicolo());
         aaTipoFascicolo.setFlUpdFmtNumero("1");
         aaTipoFascicolo.setNiCharPadParteClassif(aaTipoFascicoloRowBean.getNiCharPadParteClassif());
-        // aaTipoFascicolo.setFlAbilitaContrClassif(aaTipoFascicoloRowBean.getFlAbilitaContrClassif());
-        // aaTipoFascicolo.setFlAbilitaContrColleg(aaTipoFascicoloRowBean.getFlAbilitaContrColleg());
-        // aaTipoFascicolo.setFlAbilitaContrNumero(aaTipoFascicoloRowBean.getFlAbilitaContrNumero());
-        // aaTipoFascicolo.setFlAccettaContrClassifNeg(aaTipoFascicoloRowBean.getFlAccettaContrClassifNeg());
-        // aaTipoFascicolo.setFlAccettaContrCollegNeg(aaTipoFascicoloRowBean.getFlAccettaContrCollegNeg());
-        // aaTipoFascicolo.setFlAccettaContrNumeroNeg(aaTipoFascicoloRowBean.getFlAccettaContrNumeroNeg());
-        // aaTipoFascicolo.setFlForzaContrClassif(aaTipoFascicoloRowBean.getFlForzaContrClassif());
-        // aaTipoFascicolo.setFlForzaContrColleg(aaTipoFascicoloRowBean.getFlForzaContrColleg());
-        // aaTipoFascicolo.setFlForzaContrNumero(aaTipoFascicoloRowBean.getFlForzaContrNumero());
 
-        logger.info("Inserisco o aggiorno i metadati di tipo profilo fascicolo del periodo considerato");
-        for (DecUsoModelloXsdFascRowBean row : metadatiProfiloFascicoloTableBean) {
-            if (row.getIdUsoModelloXsdFasc() != null) {
-                DecUsoModelloXsdFasc meta = helper.findById(DecUsoModelloXsdFasc.class, row.getIdUsoModelloXsdFasc());
-                meta.setFlStandard(row.getFlStandard());
-                meta.setDecModelloXsdFascicolo(
-                        helper.findById(DecModelloXsdFascicolo.class, row.getIdModelloXsdFascicolo()));
-                meta.setDtIstituz(row.getDtIstituz());
-                meta.setDtSoppres(row.getDtSoppres());
-
-                aaTipoFascicolo.addDecUsoModelloXsdFasc(meta);
-
-                saveXsdAttribList(meta, row);
-            } else {
-                inserisciMetadatiProfilo(row, aaTipoFascicolo);
-            }
-        }
-
-        logger.info("Inserisco o aggiorno i metadati di tipo profilo archivistico del periodo considerato");
-        for (DecUsoModelloXsdFascRowBean row : metadatiProfiloArchivisticoTableBean) {
-            if (row.getIdUsoModelloXsdFasc() != null) {
-                DecUsoModelloXsdFasc meta = helper.findById(DecUsoModelloXsdFasc.class, row.getIdUsoModelloXsdFasc());
-                meta.setFlStandard(row.getFlStandard());
-                meta.setDecModelloXsdFascicolo(
-                        helper.findById(DecModelloXsdFascicolo.class, row.getIdModelloXsdFascicolo()));
-                meta.setDtIstituz(row.getDtIstituz());
-                meta.setDtSoppres(row.getDtSoppres());
-
-                aaTipoFascicolo.addDecUsoModelloXsdFasc(meta);
-
-                saveXsdAttribList(meta, row);
-            } else {
-                inserisciMetadatiProfilo(row, aaTipoFascicolo);
-            }
-        }
-
-        logger.info("Inserisco o aggiorno le parti");
-        for (DecParteNumeroFascicoloRowBean row : parti) {
-            if (row.getIdParteNumeroFascicolo() != null) {
-                DecParteNumeroFascicolo parte = helper.findById(DecParteNumeroFascicolo.class,
-                        row.getIdParteNumeroFascicolo());
-                updateParteNumeroFascicolo(parte, row);
-            } else {
-                DecParteNumeroFascicolo parte = new DecParteNumeroFascicolo();
-                updateParteNumeroFascicolo(parte, row);
-
-                aaTipoFascicolo.addDecParteNumeroFascicolo(parte);
-            }
-        }
-
-        // // Gestione parametri amministrazione
-        // manageParametriPerAaTipoFascicolo(parametriAmministrazioneAaTipoFasc,
-        // "ds_valore_param_applic_aa_tipo_fascicolo_amm", aaTipoFascicolo);
-        // // Gestione parametri conservazione
-        // manageParametriPerAaTipoFascicolo(parametriConservazioneAaTipoFasc,
-        // "ds_valore_param_applic_aa_tipo_fascicolo_cons", aaTipoFascicolo);
-        // // Gestione parametri gestione
-        // manageParametriPerAaTipoFascicolo(parametriGestioneAaTipoFasc,
-        // "ds_valore_param_applic_aa_tipo_fascicolo_gest", aaTipoFascicolo);
         sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_FASCICOLO,
                 new BigDecimal(tipoFascicolo.getIdTipoFascicolo()), param.getNomePagina());
@@ -1453,23 +1472,19 @@ public class TipoFascicoloEjb {
      *            id tipo fascicolo
      * @param aaTipoFascicoloRowBean
      *            bean con anno tipo fascicolo
-     * @param metadatiProfiloArchivistico
-     *            decodifica metadati profilo archivistico
-     * @param metadatiProfiloFascicolo
-     *            decodifica metadati profilo fascicolo
-     * @param parti
-     *            decodifica parti numero fascicolo
+     * @param dtIstituz
+     *            data inizio
+     * @param dtSoppres
+     *            data fine
      *
-     * @return BigDecimal pk anno tipo fascicolo
+     * @return BigDecimal pk periodo validazione fascicolo
      *
      * @throws ParerUserError
      *             errore generico
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public BigDecimal saveDecAaTipoFascicolo(LogParam param, BigDecimal idTipoFascicolo,
-            DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean, DecUsoModelloXsdFascTableBean metadatiProfiloFascicolo,
-            DecUsoModelloXsdFascTableBean metadatiProfiloArchivistico, DecParteNumeroFascicoloTableBean parti)
-            throws ParerUserError {
+            DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean, Date dtIstituz, Date dtSoppres) throws ParerUserError {
         DecAaTipoFascicolo aaTipoFascicolo = new DecAaTipoFascicolo();
         DecTipoFascicolo tipoFascicolo = helper.findById(DecTipoFascicolo.class, idTipoFascicolo);
 
@@ -1482,70 +1497,47 @@ public class TipoFascicoloEjb {
         aaTipoFascicolo.setAaFinTipoFascicolo(aaTipoFascicoloRowBean.getAaFinTipoFascicolo());
         aaTipoFascicolo.setFlUpdFmtNumero("1");
         aaTipoFascicolo.setNiCharPadParteClassif(aaTipoFascicoloRowBean.getNiCharPadParteClassif());
-        // aaTipoFascicolo.setFlAbilitaContrClassif(aaTipoFascicoloRowBean.getFlAbilitaContrClassif());
-        // aaTipoFascicolo.setFlAbilitaContrColleg(aaTipoFascicoloRowBean.getFlAbilitaContrColleg());
-        // aaTipoFascicolo.setFlAbilitaContrNumero(aaTipoFascicoloRowBean.getFlAbilitaContrNumero());
-        // aaTipoFascicolo.setFlAccettaContrClassifNeg(aaTipoFascicoloRowBean.getFlAccettaContrClassifNeg());
-        // aaTipoFascicolo.setFlAccettaContrCollegNeg(aaTipoFascicoloRowBean.getFlAccettaContrCollegNeg());
-        // aaTipoFascicolo.setFlAccettaContrNumeroNeg(aaTipoFascicoloRowBean.getFlAccettaContrNumeroNeg());
-        // aaTipoFascicolo.setFlForzaContrClassif(aaTipoFascicoloRowBean.getFlForzaContrClassif());
-        // aaTipoFascicolo.setFlForzaContrColleg(aaTipoFascicoloRowBean.getFlForzaContrColleg());
-        // aaTipoFascicolo.setFlForzaContrNumero(aaTipoFascicoloRowBean.getFlForzaContrNumero());
-
         aaTipoFascicolo.setDecTipoFascicolo(tipoFascicolo);
         tipoFascicolo.getDecAaTipoFascicolos().add(aaTipoFascicolo);
 
-        logger.info("Inserisco i metadati di tipo profilo fascicolo e archivistico del periodo considerato");
+        logger.info("Inserisco i metadati di tipo profilo fascicolo del periodo considerato");
         if (aaTipoFascicolo.getDecUsoModelloXsdFascs() == null) {
-            aaTipoFascicolo.setDecUsoModelloXsdFascs(new ArrayList<DecUsoModelloXsdFasc>());
+            aaTipoFascicolo.setDecUsoModelloXsdFascs(new ArrayList<>());
         }
 
         logger.info("Inserisco le parti");
         if (aaTipoFascicolo.getDecParteNumeroFascicolos() == null) {
-            aaTipoFascicolo.setDecParteNumeroFascicolos(new ArrayList<DecParteNumeroFascicolo>());
-        }
-
-        for (DecParteNumeroFascicoloRowBean row : parti) {
-            DecParteNumeroFascicolo parte = new DecParteNumeroFascicolo();
-            updateParteNumeroFascicolo(parte, row);
-
-            aaTipoFascicolo.addDecParteNumeroFascicolo(parte);
+            aaTipoFascicolo.setDecParteNumeroFascicolos(new ArrayList<>());
         }
         helper.insertEntity(aaTipoFascicolo, true);
 
-        for (DecUsoModelloXsdFascRowBean row : metadatiProfiloFascicolo) {
-            inserisciMetadatiProfilo(row, aaTipoFascicolo);
+        // Salva in automatico la parte di default
+        DecParteNumeroFascicolo parteNumeroFascicolo = new DecParteNumeroFascicolo();
+        parteNumeroFascicolo.setNiParteNumero(BigDecimal.ONE);
+        parteNumeroFascicolo.setNmParteNumero("DEFAULT");
+        parteNumeroFascicolo.setDsParteNumero("DEFAULT");
+        parteNumeroFascicolo.setTiCharParte("GENERICO");
+        parteNumeroFascicolo.setNiMinCharParte(BigDecimal.ONE);
+        parteNumeroFascicolo.setTiPadParte("NO_RIEMPI");
+        parteNumeroFascicolo.setDecAaTipoFascicolo(aaTipoFascicolo);
+        helper.insertEntity(parteNumeroFascicolo, true);
+        aaTipoFascicolo.getDecParteNumeroFascicolos().add(parteNumeroFascicolo);
+
+        long idAmbiente = tipoFascicolo.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
+
+        List<DecModelloXsdFascicolo> modelloXsdFascicoloList = helper.retrieveDecModelloXsdFascicolo(
+                BigDecimal.valueOf(idAmbiente), new Date(), "1", CostantiDB.TiUsoModelloXsd.VERS.name());
+        if (!modelloXsdFascicoloList.isEmpty()) {
+            for (DecModelloXsdFascicolo decModelloXsdFascicolo : modelloXsdFascicoloList) {
+                // Salva in automatico l'associazione tra il periodo di validità creato e il modello xsd trovato
+                insertDecUsoModelloXsdFasc(aaTipoFascicolo, decModelloXsdFascicolo, "1", dtIstituz, dtSoppres);
+            }
+
+        } else {
+            throw new ParerUserError(
+                    "Attenzione: sull'ambiente non sono presenti xsd per i metadati di profilo fascicolo");
         }
 
-        for (DecUsoModelloXsdFascRowBean row : metadatiProfiloArchivistico) {
-            inserisciMetadatiProfilo(row, aaTipoFascicolo);
-        }
-
-        // // Gestione parametri
-        // for (AplParamApplicRowBean paramApplicRowBean : parametriAmministrazioneAaTipoFasc) {
-        // if (paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_amm") != null &&
-        // !paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_amm").equals("")) {
-        // amministrazioneEjb.insertAplValoreParamApplic(null, null, null, aaTipoFascicolo,
-        // paramApplicRowBean.getIdParamApplic(), "PERIODO_TIPO_FASC",
-        // paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_amm"));
-        // }
-        // }
-        // for (AplParamApplicRowBean paramApplicRowBean : parametriConservazioneAaTipoFasc) {
-        // if (paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_cons") != null &&
-        // !paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_cons").equals("")) {
-        // amministrazioneEjb.insertAplValoreParamApplic(null, null, null, aaTipoFascicolo,
-        // paramApplicRowBean.getIdParamApplic(), "PERIODO_TIPO_FASC",
-        // paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_cons"));
-        // }
-        // }
-        // for (AplParamApplicRowBean paramApplicRowBean : parametriGestioneAaTipoFasc) {
-        // if (paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_gest") != null &&
-        // !paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_gest").equals("")) {
-        // amministrazioneEjb.insertAplValoreParamApplic(null, null, null, aaTipoFascicolo,
-        // paramApplicRowBean.getIdParamApplic(), "PERIODO_TIPO_FASC",
-        // paramApplicRowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_gest"));
-        // }
-        // }
         // Logging
         sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_FASCICOLO, idTipoFascicolo,
@@ -1556,13 +1548,12 @@ public class TipoFascicoloEjb {
     private void inserisciMetadatiProfilo(DecUsoModelloXsdFascRowBean row, DecAaTipoFascicolo aaTipoFascicolo)
             throws ParerUserError {
         DecUsoModelloXsdFasc meta = new DecUsoModelloXsdFasc();
-        meta.setFlStandard(row.getFlStandard());
+        meta.setFlStandard("1");
         meta.setDecModelloXsdFascicolo(helper.findById(DecModelloXsdFascicolo.class, row.getIdModelloXsdFascicolo()));
         meta.setDtIstituz(row.getDtIstituz());
         meta.setDtSoppres(row.getDtSoppres());
 
         aaTipoFascicolo.addDecUsoModelloXsdFasc(meta);
-
         saveXsdAttribList(meta, row);
     }
 
@@ -1573,19 +1564,11 @@ public class TipoFascicoloEjb {
         newAaTipoFascicolo.setAaFinTipoFascicolo(aaFinTipoFascicolo);
         newAaTipoFascicolo.setFlUpdFmtNumero(row.getFlUpdFmtNumero());
         newAaTipoFascicolo.setNiCharPadParteClassif(row.getNiCharPadParteClassif());
-        // newAaTipoFascicolo.setFlAbilitaContrClassif(row.getFlAbilitaContrClassif());
-        // newAaTipoFascicolo.setFlAbilitaContrColleg(row.getFlAbilitaContrColleg());
-        // newAaTipoFascicolo.setFlAbilitaContrNumero(row.getFlAbilitaContrNumero());
-        // newAaTipoFascicolo.setFlAccettaContrClassifNeg(row.getFlAccettaContrClassifNeg());
-        // newAaTipoFascicolo.setFlAccettaContrCollegNeg(row.getFlAccettaContrCollegNeg());
-        // newAaTipoFascicolo.setFlAccettaContrNumeroNeg(row.getFlAccettaContrNumeroNeg());
-        // newAaTipoFascicolo.setFlForzaContrClassif(row.getFlForzaContrClassif());
-        // newAaTipoFascicolo.setFlForzaContrColleg(row.getFlForzaContrColleg());
-        // newAaTipoFascicolo.setFlForzaContrNumero(row.getFlForzaContrNumero());
+
         newAaTipoFascicolo.setDecTipoFascicolo(tipoFascicolo);
         tipoFascicolo.getDecAaTipoFascicolos().add(newAaTipoFascicolo);
         if (newAaTipoFascicolo.getDecParteNumeroFascicolos() == null) {
-            newAaTipoFascicolo.setDecParteNumeroFascicolos(new ArrayList<DecParteNumeroFascicolo>());
+            newAaTipoFascicolo.setDecParteNumeroFascicolos(new ArrayList<>());
         }
 
         for (DecParteNumeroFascicolo parte : row.getDecParteNumeroFascicolos()) {
@@ -1650,107 +1633,97 @@ public class TipoFascicoloEjb {
             BigDecimal idAaTipoFascicolo) {
         DecAaTipoFascicolo periodo = struttureHelper.findById(DecAaTipoFascicolo.class, idAaTipoFascicolo);
 
-        AplParamApplic flAbilitaContrClassif = configurationHelper.getParamApplic("FL_ABILITA_CONTR_CLASSIF");
-        // String valoreFlAbilitaContrClassif = configurationHelper.getValoreParamApplic("FL_ABILITA_CONTR_CLASSIF",
-        // idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valoreFlAbilitaContrClassif = configurationHelper.getAplValoreParamApplic("FL_ABILITA_CONTR_CLASSIF",
-                "STRUT", null, idStrut, null, null);
+        AplParamApplic flAbilitaContrClassif = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_ABILITA_CONTR_CLASSIF);
+        String valoreFlAbilitaContrClassif = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_ABILITA_CONTR_CLASSIF, TiAppart.STRUT.name(), null, idStrut, null, null);
 
-        AplParamApplic flAbilitaContrColleg = configurationHelper.getParamApplic("FL_ABILITA_CONTR_COLLEG");
-        // String valoreFlAbilitaContrColleg = configurationHelper.getValoreParamApplic("FL_ABILITA_CONTR_COLLEG",
-        // idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valoreFlAbilitaContrColleg = configurationHelper.getAplValoreParamApplic("FL_ABILITA_CONTR_COLLEG",
-                "STRUT", null, idStrut, null, null);
+        AplParamApplic flAbilitaContrColleg = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_ABILITA_CONTR_COLLEG);
+        String valoreFlAbilitaContrColleg = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_ABILITA_CONTR_COLLEG, TiAppart.STRUT.name(), null, idStrut, null, null);
 
-        AplParamApplic flAbilitaContrNumero = configurationHelper.getParamApplic("FL_ABILITA_CONTR_NUMERO");
-        // String valoreFlAbilitaContrNumero = configurationHelper.getValoreParamApplic("FL_ABILITA_CONTR_NUMERO",
-        // idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valoreFlAbilitaContrNumero = configurationHelper.getAplValoreParamApplic("FL_ABILITA_CONTR_NUMERO",
-                "STRUT", null, idStrut, null, null);
+        AplParamApplic flAbilitaContrNumero = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_ABILITA_CONTR_NUMERO);
+        String valoreFlAbilitaContrNumero = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_ABILITA_CONTR_NUMERO, TiAppart.STRUT.name(), null, idStrut, null, null);
 
-        AplParamApplic flAccettaContrClassifNeg = configurationHelper.getParamApplic("FL_ACCETTA_CONTR_CLASSIF_NEG");
-        // String valoreFlAccettaContrClassifNeg =
-        // configurationHelper.getValoreParamApplic("FL_ACCETTA_CONTR_CLASSIF_NEG", idAmbiente, idStrut, null, null,
-        // CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valoreFlAccettaContrClassifNeg = configurationHelper
-                .getAplValoreParamApplic("FL_ACCETTA_CONTR_CLASSIF_NEG", "STRUT", null, idStrut, null, null);
+        AplParamApplic flAccettaContrClassifNeg = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_ACCETTA_CONTR_CLASSIF_NEG);
+        String valoreFlAccettaContrClassifNeg = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_ACCETTA_CONTR_CLASSIF_NEG, TiAppart.STRUT.name(), null, idStrut, null,
+                null);
 
-        AplParamApplic flAccettaContrCollegfNeg = configurationHelper.getParamApplic("FL_ACCETTA_CONTR_COLLEG_NEG_FAS");
-        // String valorelAccettaContrCollegfNeg =
-        // configurationHelper.getValoreParamApplic("FL_ACCETTA_CONTR_COLLEG_NEG", idAmbiente, idStrut, null, null,
-        // CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valorelAccettaContrCollegfNeg = configurationHelper
-                .getAplValoreParamApplic("FL_ACCETTA_CONTR_COLLEG_NEG_FAS", "STRUT", null, idStrut, null, null);
+        AplParamApplic flAccettaContrCollegfNeg = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_ACCETTA_CONTR_COLLEG_NEG_FAS);
+        String valorelAccettaContrCollegfNeg = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_ACCETTA_CONTR_COLLEG_NEG_FAS, TiAppart.STRUT.name(), null, idStrut, null,
+                null);
 
-        AplParamApplic flAccettaContrNumerofNeg = configurationHelper.getParamApplic("FL_ACCETTA_CONTR_NUMERO_NEG");
-        // String valorelAccettaContrNumerofNeg =
-        // configurationHelper.getValoreParamApplic("FL_ACCETTA_CONTR_NUMERO_NEG", idAmbiente, idStrut, null, null,
-        // CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valorelAccettaContrNumerofNeg = configurationHelper
-                .getAplValoreParamApplic("FL_ACCETTA_CONTR_NUMERO_NEG", "STRUT", null, idStrut, null, null);
+        AplParamApplic flAccettaContrNumerofNeg = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_ACCETTA_CONTR_NUMERO_NEG);
+        String valorelAccettaContrNumerofNeg = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_ACCETTA_CONTR_NUMERO_NEG, TiAppart.STRUT.name(), null, idStrut, null, null);
 
-        AplParamApplic flForzaContrClassif = configurationHelper.getParamApplic("FL_FORZA_CONTR_CLASSIF");
-        // String valoreFlForzaContrClassif = configurationHelper.getValoreParamApplic("FL_FORZA_CONTR_CLASSIF",
-        // idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valoreFlForzaContrClassif = configurationHelper.getAplValoreParamApplic("FL_FORZA_CONTR_CLASSIF",
-                "STRUT", null, idStrut, null, null);
+        AplParamApplic flForzaContrClassif = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_FORZA_CONTR_CLASSIF);
+        String valoreFlForzaContrClassif = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_FORZA_CONTR_CLASSIF, TiAppart.STRUT.name(), null, idStrut, null, null);
 
-        AplParamApplic flForzaContrColleg = configurationHelper.getParamApplic("FL_FORZA_CONTR_COLLEG");
-        // String valoreFlForzaContrColleg = configurationHelper.getValoreParamApplic("FL_FORZA_CONTR_COLLEG",
-        // idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valoreFlForzaContrColleg = configurationHelper.getAplValoreParamApplic("FL_FORZA_CONTR_COLLEG", "STRUT",
-                null, idStrut, null, null);
+        AplParamApplic flForzaContrColleg = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_FORZA_CONTR_COLLEG);
+        String valoreFlForzaContrColleg = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_FORZA_CONTR_COLLEG, TiAppart.STRUT.name(), null, idStrut, null, null);
 
-        AplParamApplic flForzaContrNumero = configurationHelper.getParamApplic("FL_FORZA_CONTR_NUMERO");
-        // String valoreFlForzaContrNumero = configurationHelper.getValoreParamApplic("FL_FORZA_CONTR_NUMERO",
-        // idAmbiente, idStrut, null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-        String valoreFlForzaContrNumero = configurationHelper.getAplValoreParamApplic("FL_FORZA_CONTR_NUMERO", "STRUT",
-                null, idStrut, null, null);
+        AplParamApplic flForzaContrNumero = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.FL_FORZA_CONTR_NUMERO);
+        String valoreFlForzaContrNumero = configurationHelper.getAplValoreParamApplic(
+                CostantiDB.ParametroAppl.FL_FORZA_CONTR_NUMERO, TiAppart.STRUT.name(), null, idStrut, null, null);
 
         if (valoreFlAbilitaContrClassif != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flAbilitaContrClassif.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valoreFlAbilitaContrClassif);
+                    BigDecimal.valueOf(flAbilitaContrClassif.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valoreFlAbilitaContrClassif);
         }
         if (valoreFlAbilitaContrColleg != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flAbilitaContrColleg.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valoreFlAbilitaContrColleg);
+                    BigDecimal.valueOf(flAbilitaContrColleg.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valoreFlAbilitaContrColleg);
         }
         if (valoreFlAbilitaContrNumero != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flAbilitaContrNumero.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valoreFlAbilitaContrNumero);
+                    BigDecimal.valueOf(flAbilitaContrNumero.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valoreFlAbilitaContrNumero);
         }
         if (valoreFlAccettaContrClassifNeg != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flAccettaContrClassifNeg.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valoreFlAccettaContrClassifNeg);
+                    BigDecimal.valueOf(flAccettaContrClassifNeg.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valoreFlAccettaContrClassifNeg);
         }
         if (valorelAccettaContrCollegfNeg != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flAccettaContrCollegfNeg.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valorelAccettaContrCollegfNeg);
+                    BigDecimal.valueOf(flAccettaContrCollegfNeg.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valorelAccettaContrCollegfNeg);
         }
         if (valorelAccettaContrNumerofNeg != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flAccettaContrNumerofNeg.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valorelAccettaContrNumerofNeg);
+                    BigDecimal.valueOf(flAccettaContrNumerofNeg.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valorelAccettaContrNumerofNeg);
         }
         if (valoreFlForzaContrClassif != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flForzaContrClassif.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valoreFlForzaContrClassif);
+                    BigDecimal.valueOf(flForzaContrClassif.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valoreFlForzaContrClassif);
         }
         if (valoreFlForzaContrColleg != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flForzaContrColleg.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valoreFlForzaContrColleg);
+                    BigDecimal.valueOf(flForzaContrColleg.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valoreFlForzaContrColleg);
         }
         if (valoreFlForzaContrNumero != null) {
             amministrazioneEjb.insertAplValoreParamApplic(null, null, null, periodo,
-                    BigDecimal.valueOf(flForzaContrNumero.getIdParamApplic()), "PERIODO_TIPO_FASC",
-                    valoreFlForzaContrNumero);
+                    BigDecimal.valueOf(flForzaContrNumero.getIdParamApplic()),
+                    CostantiDB.ParametroAppl.PERIODO_TIPO_FASC, valoreFlForzaContrNumero);
         }
     }
 
@@ -1781,34 +1754,27 @@ public class TipoFascicoloEjb {
 
     private void saveXsdAttribList(DecUsoModelloXsdFasc meta, DecUsoModelloXsdFascRowBean xsdFascRowBean)
             throws ParerUserError {
-
-        List<String> attributes = parseStringaXsd(meta.getDecModelloXsdFascicolo().getTiUsoModelloXsd(),
+        List<String> attributes = parseStringaXsd(meta.getDecModelloXsdFascicolo().getTiModelloXsd().name(),
                 meta.getDecModelloXsdFascicolo().getBlXsd());
-        if (attributes.isEmpty()) {
+        if (CostantiDB.TiModelloXsd.PROFILO_SPECIFICO_FASCICOLO.name()
+                .equals(meta.getDecModelloXsdFascicolo().getTiModelloXsd().name()) && attributes.isEmpty()) {
             throw new ParerUserError("File Xsd non contenente attributi.</br>");
         }
-
         int order = 1;
         List<String> dbAttributes = helper.getNmAttribFascList(xsdFascRowBean.getIdAaTipoFascicolo(), null);
         /*
          * Salvo la lista degli attributi uno a uno Controllo che l'attributo non ci sia gi\u00E0, se c'\u00E8 non
          * importa inserirlo, devo solo inserire il nuovo riferimento in DecXsdAttribFascicolo
          */
-        List<String> controlList = new ArrayList<String>();
-
         for (String attr : attributes) {
             BigDecimal idAttribFascicolo = null;
             if (!dbAttributes.contains(attr)) {
                 idAttribFascicolo = salvaAttribFascicolo(attr, meta);
-            } else {
-                dbAttributes.remove(attr);
             }
-
             // inserisco nella lista dei riferimenti
             if (idAttribFascicolo != null) {
                 insertDecModelloXsdAttribFasc(meta, idAttribFascicolo, order);
             }
-            controlList.add(attr);
             order = order + 5;
         }
     }
@@ -1829,7 +1795,7 @@ public class TipoFascicoloEjb {
 
         attribFascicolo.setDecAaTipoFascicolo(meta.getDecAaTipoFascicolo());
         attribFascicolo.setDecTipoFascicolo(meta.getDecAaTipoFascicolo().getDecTipoFascicolo());
-        attribFascicolo.setTiUsoAttrib(meta.getDecModelloXsdFascicolo().getTiUsoModelloXsd());
+        attribFascicolo.setTiUsoAttrib(meta.getDecModelloXsdFascicolo().getTiUsoModelloXsd().name());
         attribFascicolo.setNmAttribFascicolo(attribute);
         attribFascicolo.setDsAttribFascicolo(attribute);
 
@@ -1857,70 +1823,31 @@ public class TipoFascicoloEjb {
      *
      * @param tiUsoModelloXsd
      * @param stringaFile
-     *
+     * 
      * @return List xsd attributes
-     *
+     * 
      * @throws ParerUserError
      */
-    private List<String> parseStringaXsd(String tiUsoModelloXsd, String stringaFile) throws ParerUserError {
+    private List<String> parseStringaXsd(String tiModelloXsd, String stringaFile) throws ParerUserError {
 
-        List<String> attributes = new ArrayList<String>();
-
+        List<String> attributes = new ArrayList<>();
         ByteArrayInputStream bais = null;
-
         if (!stringaFile.isEmpty()) {
             bais = new ByteArrayInputStream(stringaFile.getBytes());
-
         }
-
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
-            DocumentBuilder db;
-            db = dbf.newDocumentBuilder();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(bais);
 
-            Document doc;
-
-            doc = db.parse(bais);
-            String tagName = (CostantiDB.TiModelloXsd.AIP_UNISYNCRO.name().equals(tiUsoModelloXsd)) ? "schema"
-                    : "element";
-            NodeList nl = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, tagName);
-
-            for (int it = 0; it < nl.getLength(); it++) {
-                Node n = nl.item(it);
-
-                NamedNodeMap map = n.getAttributes();
-                if (!CostantiDB.TiModelloXsd.AIP_UNISYNCRO.name().equals(tiUsoModelloXsd)) {
-                    if (!(map.getNamedItem("name").getNodeValue().equals("DatiSpecifici"))
-                            && !(map.getNamedItem("name").getNodeValue().equals("Fascicolo"))
-                            && !(map.getNamedItem("name").getNodeValue().equals("MetadatiIntegratiSelfDescription"))
-                            && (map.getNamedItem("name").getNodeValue().equals("ProfiloGeneraleFascicolo") || map
-                                    .getNamedItem("name").getNodeValue().equals("ProfiloArchivisticoFascicolo"))) {
-                        NodeList nodecl = ((Element) n).getElementsByTagName("xs:complexType");
-                        if (nodecl != null) {
-                            Node nodec = nodecl.item(0);
-                            NodeList nc = nodec.getChildNodes();
-                            Element cE = (Element) nc;
-                            NodeList eL = cE.getElementsByTagName("xs:element");
-                            for (int c = 0; c < eL.getLength(); c++) {
-                                Node child = eL.item(c);
-
-                                NamedNodeMap mapchild = child.getAttributes();
-                                String tmpAttrname = mapchild.getNamedItem("name").getNodeValue();
-                                if (tmpAttrname.trim().equals(tmpAttrname)) {
-                                    attributes.add(tmpAttrname);
-                                } else {
-                                    throw new ParerUserError("Operazione non effettuata: il tag [" + tmpAttrname
-                                            + "] del documento XSD che si sta cercando di caricare "
-                                            + "non può iniziare o terminare con caratteri di spaziatura</br>");
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (!(map.getNamedItem("targetNamespace").getNodeValue()
-                            .equals("http://www.uni.com/U3011/sincro/"))) {
-                        String tmpAttrname = map.getNamedItem("targetNamespace").getNodeValue();
+            NodeList allElements = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "element");
+            if (CostantiDB.TiModelloXsd.PROFILO_SPECIFICO_FASCICOLO.name().equals(tiModelloXsd)) {
+                for (int it = 0; it < allElements.getLength(); it++) {
+                    Element element = (Element) allElements.item(it);
+                    if (!element.getAttributes().getNamedItem("name").getNodeValue().equals("ProfiloSpecifico")
+                            && element.hasAttribute("type")) {
+                        String tmpAttrname = element.getAttributes().getNamedItem("name").getNodeValue();
                         if (tmpAttrname.trim().equals(tmpAttrname)) {
                             attributes.add(tmpAttrname);
                         } else {
@@ -1931,6 +1858,7 @@ public class TipoFascicoloEjb {
                     }
                 }
             }
+
         } catch (SAXException e) {
             throw new ParerUserError("Operazione non effettuata: file non ben formato " + e.toString() + "</br>");
         } catch (IOException e) {
@@ -1939,17 +1867,15 @@ public class TipoFascicoloEjb {
             throw new ParerUserError(
                     "Errore ParserConfiguration - Operazione non effettuata: " + e.toString() + "</br>");
         }
-
         return attributes;
     }
 
     /**
-     *
      * @param idXsdFascicolo
      *            id Xsd fascicolo
      * @param idAaTipoFascicolo
      *            id Aa tipo fascicolo
-     *
+     * 
      * @return DecAttribFascicoloTableBean
      */
     public DecAttribFascicoloTableBean getDecAttribFascicoloTableBeanFromXsd(BigDecimal idXsdFascicolo,
@@ -1972,12 +1898,11 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     *
      * @param row
      *            DecAttribFascicolo rowbean
      * @param xsdFascicoloRowBean
      *            DecUsoModelloXsdFasc rowbean
-     *
+     * 
      * @return DecModelloXsdAttribFascicolo
      */
     public DecModelloXsdAttribFascicolo getDecModelloXsdAttribFascicolo(DecAttribFascicoloRowBean row,
@@ -1990,10 +1915,9 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     *
      * @param idAttribFascicolo
      *            id Attributo fascicolo
-     *
+     * 
      * @return row bean DecAttribFascicolo
      */
     public DecAttribFascicoloRowBean getDecAttribFascRowBean(BigDecimal idAttribFascicolo) {
@@ -2013,10 +1937,9 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     *
      * @param idAttribFascicolo
      *            id Attributo fascicolo
-     *
+     * 
      * @return DecModelloXsdAttribFascicoloRowBean
      */
     public DecModelloXsdAttribFascicoloRowBean getDecModelloXsdAttribFascicoloRowBeanByAttrib(
@@ -2036,12 +1959,11 @@ public class TipoFascicoloEjb {
     }
 
     /**
-     *
      * @param idAaTipoFascicolo
      *            id periodo validita fascicolo
      * @param idModelloXsdFascicolo
      *            id modello xsd fascicolo
-     *
+     * 
      * @return DecUsoModelloXsdFascRowBean
      */
     public DecUsoModelloXsdFascRowBean getDecUsoModelloXsdFascRowBeanByAttrib(BigDecimal idAaTipoFascicolo,
@@ -2057,5 +1979,34 @@ public class TipoFascicoloEjb {
         }
 
         return usoModelloXsdFascRowBean;
+    }
+
+    /**
+     *
+     * @param tiModelloXsd
+     *            modello xsd
+     *
+     * @return TableBean DecModelloXsdFascicolo
+     */
+    public DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBeanByTiModelloXsd(String tiModelloXsd) {
+        DecModelloXsdFascicoloTableBean decModelloXsdFascicoloTableBean = new DecModelloXsdFascicoloTableBean();
+        try {
+
+            List<DecModelloXsdFascicolo> modelliXsdFascicolo = helper
+                    .getDecModelloXsdFascicoloByTiModelloXsd(tiModelloXsd);
+            if (modelliXsdFascicolo != null && !modelliXsdFascicolo.isEmpty()) {
+
+                for (DecModelloXsdFascicolo modelloXsdFascicolo : modelliXsdFascicolo) {
+                    DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = new DecModelloXsdFascicoloRowBean();
+                    modelloXsdFascicoloRowBean = (DecModelloXsdFascicoloRowBean) Transform
+                            .entity2RowBean(modelloXsdFascicolo);
+                    decModelloXsdFascicoloTableBean.add(modelloXsdFascicoloRowBean);
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return decModelloXsdFascicoloTableBean;
     }
 }

@@ -1,25 +1,44 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.elencoVersamento.helper;
 
-import it.eng.parer.elencoVersamento.utils.ElencoEnums.*;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums.DocTypeEnum;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.VolVolumeConserv;
 import it.eng.parer.viewEntity.VolVCntUdDocCompTipoUd;
+import org.apache.commons.lang3.StringUtils;
+import java.math.BigDecimal;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.ejb.Stateless;
-import javax.ejb.LocalBean;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  *
  * @author Agati_D
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless(mappedName = "IndiceElencoVersHelper")
 @LocalBean
 public class IndiceElencoVersHelper {
@@ -30,40 +49,16 @@ public class IndiceElencoVersHelper {
         Query q = em.createQuery("SELECT appUnitaDoc.aroUnitaDoc " + "FROM VolAppartUnitaDocVolume appUnitaDoc "
                 + "WHERE appUnitaDoc.volVolumeConserv.idVolumeConserv = :idVolume");
         q.setParameter("idVolume", volume.getIdVolumeConserv());
-        List<AroUnitaDoc> unitaDocs = q.getResultList();
-        return unitaDocs;
+        return q.getResultList();
     }
-
-    // //TODO vedere perche non è stata eliminata
-    // public List<String> getTipologieInVol(VolVolumeConserv volume) {
-    // //SELECT distinct tipo_ud.NM_TIPO_UNITA_DOC
-    // //FROM VOL_VOLUME_CONSERV vol, VOL_APPART_UNITA_DOC_VOLUME appart, ARO_UNITA_DOC ud, DEC_TIPO_UNITA_DOC tipo_ud
-    // //where vol.ID_VOLUME_CONSERV = appart.ID_VOLUME_CONSERV
-    // //and appart.ID_UNITA_DOC = ud.ID_UNITA_DOC
-    // //and ud.ID_TIPO_UNITA_DOC = tipo_ud.ID_TIPO_UNITA_DOC
-    // //and vol.ID_VOLUME_CONSERV = 1085
-    //
-    // String SELECT_DISTINCT_TIPO_UD_STM = "SELECT distinct(tipoUd.nmTipoUnitaDoc) "
-    // + "FROM VolVolumeCOnserv vol "
-    // + "JOIN vol.volAppartUnitaDocVolumes appartUd "
-    // + "JOIN appartUd.aroUnitaDoc ud "
-    // + "JOIN ud.decTipoUnitaDoc tipoUd "
-    // + "WHERE tipoUd.idVolumeConserv = :idVolume";
-    //
-    // Query q = em.createQuery(SELECT_DISTINCT_TIPO_UD_STM);
-    // q.setParameter("idVolume", volume.getIdVolumeConserv());
-    // List<String> tipiUd = q.getResultList();
-    // return tipiUd;
-    // }
 
     public List<VolVCntUdDocCompTipoUd> getContenutoSinteticoElenco(VolVolumeConserv volume) {
         String SELECT_CONTENUTO_SINTETICO_ELENCO_STM = "SELECT contSint " + "FROM VolVCntUdDocCompTipoUd contSint "
                 + "WHERE contSint.idVolumeConserv = :idVolume";
 
         Query q = em.createQuery(SELECT_CONTENUTO_SINTETICO_ELENCO_STM);
-        q.setParameter("idVolume", volume.getIdVolumeConserv());
-        List<VolVCntUdDocCompTipoUd> riepilogoContenutoSinteticoElenco = q.getResultList();
-        return riepilogoContenutoSinteticoElenco;
+        q.setParameter("idVolume", BigDecimal.valueOf(volume.getIdVolumeConserv()));
+        return q.getResultList();
     }
 
     public String getTipologieDocumentoPrincipaleElv(ElvElencoVer elenco) {
@@ -107,10 +102,10 @@ public class IndiceElencoVersHelper {
     }
 
     public String getUtentiVersatori(ElvElencoVer elenco) {
-        String SELECT_USR_STM = "SELECT usr.nmUserid " + "FROM ElvVSelUsrIndiceElenco usr "
-                + "WHERE usr.idElencoVers = :idElencoVers";
+        String SELECT_USR_STM = "SELECT usr.id.nmUserid " + "FROM ElvVSelUsrIndiceElenco usr "
+                + "WHERE usr.id.idElencoVers = :idElencoVers";
         Query q = em.createQuery(SELECT_USR_STM);
-        q.setParameter("idElencoVers", elenco.getIdElencoVers());
+        q.setParameter("idElencoVers", BigDecimal.valueOf(elenco.getIdElencoVers()));
         List<String> utentiVersatori = q.getResultList();
         return convertListToString(utentiVersatori);
     }
@@ -189,8 +184,7 @@ public class IndiceElencoVersHelper {
                 + "WHERE ud.elvElencoVer.idElencoVers = :idElencoVers";
         Query q = em.createQuery(SELECT_STM);
         q.setParameter("idElencoVers", elenco.getIdElencoVers());
-        Object dataVersamentoInizialeUdVersate = q.getSingleResult();
-        return dataVersamentoInizialeUdVersate;
+        return q.getSingleResult();
     }
 
     public Object retrieveDateVersamentoDocAgg(ElvElencoVer elenco) {
@@ -198,8 +192,7 @@ public class IndiceElencoVersHelper {
                 + "WHERE doc.elvElencoVer.idElencoVers = :idElencoVers";
         Query q = em.createQuery(SELECT_STM);
         q.setParameter("idElencoVers", elenco.getIdElencoVers());
-        Object dataVersamentoInizialeDocAgg = q.getSingleResult();
-        return dataVersamentoInizialeDocAgg;
+        return q.getSingleResult();
     }
 
     public Object retrieveDateVersamentoUpd(ElvElencoVer elenco) {
@@ -207,242 +200,6 @@ public class IndiceElencoVersHelper {
                 + "WHERE upd.elvElencoVer.idElencoVers = :idElencoVers";
         Query q = em.createQuery(SELECT_STM);
         q.setParameter("idElencoVers", elenco.getIdElencoVers());
-        Object dataVersamentoInizialeUpd = q.getSingleResult();
-        return dataVersamentoInizialeUpd;
+        return q.getSingleResult();
     }
-
 }
-
-// public ListaCRL retrieveListaCRL(VolVolumeConserv volume) {
-// String SELECT_LISTA_CRL =
-// "select distinct " +
-// "issuer.dl_dn_issuer_certif_ca issuerCRL, " +
-// "crl.ni_serial_crl numSerialeCRL, " +
-// "'CRL_' || to_char(crl.id_crl) nomeFileCRL " +
-// "from VOL_VOLUME_CONSERV vol " +
-// "join VOL_APPART_UNITA_DOC_VOLUME app_ud " +
-// "on (app_ud.id_volume_conserv = vol.id_volume_conserv) " +
-// "join VOL_APPART_DOC_VOLUME app_doc " +
-// "on (app_doc.id_appart_unita_doc_volume = app_ud.id_appart_unita_doc_volume) " +
-// "join VOL_APPART_COMP_VOLUME app_comp " +
-// "on (app_comp.id_appart_doc_volume = app_doc.id_appart_doc_volume) " +
-// "join ARO_FIRMA_COMP firma " +
-// "on (firma.id_comp_doc = app_comp.id_comp_doc) " +
-// "join ARO_CONTR_FIRMA_COMP contr_CRL " +
-// "on (contr_CRL.id_firma_comp = firma.id_firma_comp " +
-// "and contr_CRL.ti_contr = 'CRL') " +
-// "join FIR_CRL crl " +
-// "on (crl.id_crl = contr_CRL.id_crl_usata) " +
-// "join FIR_CERTIF_CA cert " +
-// "on (cert.id_certif_ca = crl.id_certif_ca) " +
-// "join FIR_ISSUER issuer " +
-// "on (issuer.id_issuer = cert.id_issuer) " +
-// "where vol.id_volume_conserv = ? " +
-// "UNION " +
-// "select distinct " +
-// "issuer.dl_dn_issuer_certif_ca issuerCRL, " +
-// "crl.ni_serial_crl numSerialeCRL, " +
-// "'CRL_' || to_char(crl.id_crl) nomeFileCRL " +
-// "from VOL_VOLUME_CONSERV vol " +
-// "join VOL_APPART_UNITA_DOC_VOLUME app_ud " +
-// "on (app_ud.id_volume_conserv = vol.id_volume_conserv) " +
-// "join VOL_APPART_DOC_VOLUME app_doc " +
-// "on (app_doc.id_appart_unita_doc_volume = app_ud.id_appart_unita_doc_volume) " +
-// "join VOL_APPART_COMP_VOLUME app_comp " +
-// "on (app_comp.id_appart_doc_volume = app_doc.id_appart_doc_volume) " +
-// "join ARO_FIRMA_COMP firma " +
-// "on (firma.id_comp_doc = app_comp.id_comp_doc) " +
-// "join ARO_CONTR_FIRMA_COMP contr_CATENA " +
-// "on (contr_CATENA.id_firma_comp = firma.id_firma_comp " +
-// "and contr_CATENA.ti_contr = 'CATENA_TRUSTED') " +
-// "join ARO_USO_CERTIF_CA_CONTR_COMP uso_cert " +
-// "on (uso_cert.id_contr_firma_comp = contr_CATENA.id_contr_firma_comp) " +
-// "join FIR_CRL crl " +
-// "on (crl.id_crl = uso_cert.id_crl_usata) " +
-// "join FIR_CERTIF_CA cert " +
-// "on (cert.id_certif_ca = crl.id_certif_ca) " +
-// "join FIR_ISSUER issuer " +
-// "on (issuer.id_issuer = cert.id_issuer) " +
-// "where vol.id_volume_conserv = ? " +
-// "order by 3";
-// Query q = em.createNativeQuery(SELECT_LISTA_CRL);
-// q.setParameter(1, volume.getIdVolumeConserv());
-// q.setParameter(2, volume.getIdVolumeConserv());
-// List<Object> crlObjectList = q.getResultList();
-//
-// ListaCRL listaCRL = null;
-// if(crlObjectList.size() > 0) {
-// listaCRL = new ListaCRL();
-// for(Object crlObject : crlObjectList) {
-// CRL crl = new CRL();
-// Object[] arr = (Object[])crlObject;
-// crl.setIssuerCRL((String)arr[0]);
-// //TODO: controllare se questo if è necessario
-// if(arr[1] != null) {
-// crl.setNumSerialeCRL(((BigDecimal)arr[1]).longValue());
-// }
-// crl.setNomeFileCRL((String)arr[2]);
-// listaCRL.addCRL(crl);
-// }
-// }
-// return listaCRL;
-// }
-
-// public ListaCertificatiCA retrieveListaCertificatiCA(VolVolumeConserv volume) {
-// String SELECT_LISTA_CERTIFICATI_CA =
-// "select distinct " +
-// "issuer.dl_dn_issuer_certif_ca issuerCertificatoCA, " +
-// "cert.ni_serial_certif_ca numSerialeCertificatoCA, " +
-// "'CERTIF_CA_' || to_char(cert.id_certif_ca) nomeFileCertificatoCA " +
-// "from VOL_VOLUME_CONSERV vol " +
-// "join VOL_APPART_UNITA_DOC_VOLUME app_ud " +
-// "on (app_ud.id_volume_conserv = vol.id_volume_conserv) " +
-// "join VOL_APPART_DOC_VOLUME app_doc " +
-// "on (app_doc.id_appart_unita_doc_volume = app_ud.id_appart_unita_doc_volume) " +
-// "join VOL_APPART_COMP_VOLUME app_comp " +
-// "on (app_comp.id_appart_doc_volume = app_doc.id_appart_doc_volume) " +
-// "join ARO_FIRMA_COMP firma " +
-// "on (firma.id_comp_doc = app_comp.id_comp_doc) " +
-// "join ARO_CONTR_FIRMA_COMP contr_CATENA " +
-// "on (contr_CATENA.id_firma_comp = firma.id_firma_comp " +
-// "and contr_CATENA.ti_contr = 'CATENA_TRUSTED') " +
-// "join ARO_USO_CERTIF_CA_CONTR_COMP uso_cert " +
-// "on (uso_cert.id_contr_firma_comp = contr_CATENA.id_contr_firma_comp) " +
-// "join FIR_CERTIF_CA cert " +
-// "on (cert.id_certif_ca = uso_cert.id_certif_ca) " +
-// "join FIR_ISSUER issuer " +
-// "on (issuer.id_issuer = cert.id_issuer) " +
-// "where vol.id_volume_conserv = ? " +
-// "order by 3";
-// Query q = em.createNativeQuery(SELECT_LISTA_CERTIFICATI_CA);
-// q.setParameter(1, volume.getIdVolumeConserv());
-// List<Object> certificatoObjectCAList = q.getResultList();
-//
-// ListaCertificatiCA listaCertificatiCA = null;
-// if(certificatoObjectCAList.size() > 0) {
-// listaCertificatiCA = new ListaCertificatiCA();
-// for(Object certificatoObjectCA : certificatoObjectCAList) {
-// CertificatoCAListaCertCA certificatoCA = new CertificatoCAListaCertCA();
-// Object[] arr = (Object[])certificatoObjectCA;
-// certificatoCA.setIssuerCerificatoCA((String)arr[0]);
-// certificatoCA.setNumSerialeCertificatoCA(((BigDecimal)arr[1]).longValue());
-// certificatoCA.setNomeFileCertificatoCA((String)arr[2]);
-// listaCertificatiCA.addCertificatoCAListaCertCA(certificatoCA);
-// }
-// }
-// return listaCertificatiCA;
-// }
-
-// //DA SPOSTARE IN VOLUME HELPER
-// public List<AroUnitaDoc> retrieveUdInVolumePerTipologia(VolVolumeConserv volume, String tipologia) {
-//
-// String SELECT_UNITA_DOC_IN_VOL_PER_TIPOLOGIA_STM = "SELECT appartUd.aroUnitaDoc "
-// + "FROM VolVolumeCOnserv vol "
-// + "JOIN vol.volAppartUnitaDocVolumes appartUd "
-// + "JOIN appartUd.aroUnitaDoc ud "
-// + "JOIN ud.decTipoUnitaDoc tipoUd "
-// + "WHERE vol.idVolumeConserv = :idVolume "
-// + "AND tipoUd.nmTipoUnitaDoc = :tipologia";
-//
-//// String SELECT_NUM_UNITA_DOC_IN_VOL_PER_TIPOLOGIA_STM = "SELECT count(appartUd) "
-//// + "FROM VolVolumeCOnserv vol "
-//// + "JOIN vol.volAppartUnitaDocVolumes appartUd "
-//// + "JOIN appartUd.aroUnitaDoc ud "
-//// + "JOIN ud.decTipoUnitaDoc tipoUd "
-//// + "WHERE vol.idVolumeConserv = :idVolume "
-//// + "AND tipoUd.nmTipoUnitaDoc = :tipologia";
-//
-// Query q = em.createQuery(SELECT_UNITA_DOC_IN_VOL_PER_TIPOLOGIA_STM);
-// q.setParameter("idVolume", volume.getIdVolumeConserv());
-// q.setParameter("tipologia", tipologia);
-// List<AroUnitaDoc> udInVolumePerTipo = q.getResultList();
-// return udInVolumePerTipo;
-// }
-//
-// //DA SPOSTARE IN VOLUME HELPER
-// public long countNumUdInVolumePerTipologia(VolVolumeConserv volume, String tipologia) {
-// List<AroUnitaDoc> UdInVolPerTipo = retrieveUdInVolumePerTipologia(volume, tipologia);
-// return UdInVolPerTipo.size();
-// }
-//
-// public long countNumDocInVolumePerTipologia(VolVolumeConserv volume, String tipologia) {
-// long docCount = 0;
-// List<AroUnitaDoc> UdInVolPerTipo = retrieveUdInVolumePerTipologia(volume, tipologia);
-// for(AroUnitaDoc ud : UdInVolPerTipo) {
-// docCount = docCount + ud.getAroDocs().size();
-// }
-// return docCount;
-// }
-//
-// public long countNumCompInVolumePerTipologia(VolVolumeConserv volume, String tipologia) {
-// throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools |
-// Templates.
-// }
-
-// //DA SPOSTARE IN VOLUME HELPER
-// public List<String> countNumDocInUdTipologia(VolVolumeConserv volume, String tipologia) {
-//
-// String SELECT_UNITA_DOC_IN_VOL_PER_TIPOLOGIA_STM = "SELECT appartUd.aroUnitaDoc "
-// + "FROM VolVolumeCOnserv vol "
-// + "JOIN vol.volAppartUnitaDocVolumes appartUd "
-// + "JOIN appartUd.aroUnitaDoc ud "
-// + "JOIN ud.decTipoUnitaDoc tipoUd "
-// + "WHERE vol.idVolumeConserv = :idVolume "
-// + "AND tipoUd.nmTipoUnitaDoc = :tipologia";
-//
-//// String SELECT_NUM_UNITA_DOC_IN_VOL_PER_TIPOLOGIA_STM = "SELECT count(appartUd) "
-//// + "FROM VolVolumeCOnserv vol "
-//// + "JOIN vol.volAppartUnitaDocVolumes appartUd "
-//// + "JOIN appartUd.aroUnitaDoc ud "
-//// + "JOIN ud.decTipoUnitaDoc tipoUd "
-//// + "WHERE vol.idVolumeConserv = :idVolume "
-//// + "AND tipoUd.nmTipoUnitaDoc = :tipologia";
-//
-// Query q = em.createQuery(SELECT_UNITA_DOC_IN_VOL_PER_TIPOLOGIA_STM);
-// q.setParameter("idVolume", volume.getIdVolumeConserv());
-// q.setParameter("tipologia", tipologia);
-// List<String> udInVolumePerTipo = q.getResultList();
-// return udInVolumePerTipo;
-// }
-
-// -------------------------------------------------
-
-// //DA SPOSTARE IN VOLUME HELPER
-// public long countNumUdInVolume(VolVolumeConserv volume) {
-// String SELECT_NUM_UNITA_DOC_IN_VOL_STM = "SELECT count(appart) "
-// + "FROM VolVolumeCOnserv vol JOIN vol.volAppartUnitaDocVolumes appart "
-// + "WHERE vol.idVolumeConserv = :idVolume";
-//
-// Query q = em.createQuery(SELECT_NUM_UNITA_DOC_IN_VOL_STM);
-// q.setParameter("idVolume", volume.getIdVolumeConserv());
-// long numUdInVolume = ((Long) q.getSingleResult()).longValue();
-// return numUdInVolume;
-// }
-//
-// //DA SPOSTARE IN VOLUME HELPER
-// public long countNumDocInVolume(VolVolumeConserv volume) {
-// String SELECT_NUM_DOC_IN_VOL_STM = "SELECT count(appartDoc) "
-// + "FROM VolVolumeCOnserv vol JOIN vol.volAppartUnitaDocVolumes appartUd JOIN appartUd.volAppartDocVolumes appartDoc "
-// + "WHERE vol.idVolumeConserv = :idVolume";
-//
-// Query q = em.createQuery(SELECT_NUM_DOC_IN_VOL_STM);
-// q.setParameter("idVolume", volume.getIdVolumeConserv());
-// long numDocInVolume = ((Long) q.getSingleResult()).longValue();
-// return numDocInVolume;
-// }
-//
-// //DA SPOSTARE IN VOLUME HELPER
-// public long countNumCompInVolume(VolVolumeConserv volume) {
-// String SELECT_NUM_COMP_IN_VOL_STM = "SELECT count(appartComp) "
-// + "FROM VolVolumeCOnserv vol "
-// + "JOIN vol.volAppartUnitaDocVolumes appartUd "
-// + "JOIN appartUd.volAppartDocVolumes appartDoc "
-// + "JOIN appartDoc.volAppartCompVolumes appartComp "
-// + "WHERE vol.idVolumeConserv = :idVolume";
-//
-// Query q = em.createQuery(SELECT_NUM_COMP_IN_VOL_STM);
-// q.setParameter("idVolume", volume.getIdVolumeConserv());
-// long numCompInVolume = ((Long) q.getSingleResult()).longValue();
-// return numCompInVolume;
-// }
-//

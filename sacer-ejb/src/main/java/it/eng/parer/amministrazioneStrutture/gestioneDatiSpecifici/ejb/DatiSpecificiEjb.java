@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
@@ -84,7 +101,7 @@ public class DatiSpecificiEjb {
      *            entita
      * @param nmSistemaMigraz
      *            sistema migrazione
-     * 
+     *
      * @return il tableBean contenente la lista
      */
     public DecXsdDatiSpecTableBean getDecXsdDatiSpecTableBean(BigDecimal idStrut, String tiUsoXsd, String tiEntitaSacer,
@@ -164,7 +181,7 @@ public class DatiSpecificiEjb {
         String type = "";
         if (tipoDoc != null) {
             if (tipoDoc.getDecXsdDatiSpecs() == null) {
-                tipoDoc.setDecXsdDatiSpecs(new ArrayList<DecXsdDatiSpec>());
+                tipoDoc.setDecXsdDatiSpecs(new ArrayList<>());
             }
             xsdDatiSpecRowBean.setTiEntitaSacer("DOC");
             type = "documento";
@@ -172,7 +189,7 @@ public class DatiSpecificiEjb {
 
         if (tipoUnitaDoc != null) {
             if (tipoUnitaDoc.getDecXsdDatiSpecs() == null) {
-                tipoUnitaDoc.setDecXsdDatiSpecs(new ArrayList<DecXsdDatiSpec>());
+                tipoUnitaDoc.setDecXsdDatiSpecs(new ArrayList<>());
             }
             xsdDatiSpecRowBean.setTiEntitaSacer("UNI_DOC");
             type = "unit\u00E0 documentaria";
@@ -180,7 +197,7 @@ public class DatiSpecificiEjb {
 
         if (tipoCompDoc != null) {
             if (tipoCompDoc.getDecXsdDatiSpecs() == null) {
-                tipoCompDoc.setDecXsdDatiSpecs(new ArrayList<DecXsdDatiSpec>());
+                tipoCompDoc.setDecXsdDatiSpecs(new ArrayList<>());
             }
             if (tipoCompDoc.getTiUsoCompDoc().equals("CONTENUTO")) {
                 xsdDatiSpecRowBean.setTiEntitaSacer("COMP");
@@ -259,7 +276,7 @@ public class DatiSpecificiEjb {
          * Salvo la lista degli attributi uno a uno Controllo che l'attributo non ci sia gi\u00E0, se c'\u00E8 non
          * importa inserirlo, devo solo inserire il nuovo riferimento in DecXsdAttribDatiSpec
          */
-        List<String> controlList = new ArrayList<String>();
+        List<String> controlList = new ArrayList<>();
 
         for (String attr : attributes) {
 
@@ -369,7 +386,7 @@ public class DatiSpecificiEjb {
      *
      * @param attribute
      * @param order
-     * 
+     *
      * @throws EMFError
      *
      */
@@ -397,19 +414,19 @@ public class DatiSpecificiEjb {
 
         if (tipoUnitaDoc != null) {
             if (tipoUnitaDoc.getDecAttribDatiSpecs() == null) {
-                tipoUnitaDoc.setDecAttribDatiSpecs(new ArrayList<DecAttribDatiSpec>());
+                tipoUnitaDoc.setDecAttribDatiSpecs(new ArrayList<>());
             }
             attribDatiSpecRowBean.setTiEntitaSacer("UNI_DOC");
         }
         if (tipoDoc != null) {
             if (tipoDoc.getDecAttribDatiSpecs() == null) {
-                tipoDoc.setDecAttribDatiSpecs(new ArrayList<DecAttribDatiSpec>());
+                tipoDoc.setDecAttribDatiSpecs(new ArrayList<>());
             }
             attribDatiSpecRowBean.setTiEntitaSacer("DOC");
         }
         if (tipoCompDoc != null) {
             if (tipoCompDoc.getDecAttribDatiSpecs() == null) {
-                tipoCompDoc.setDecAttribDatiSpecs(new ArrayList<DecAttribDatiSpec>());
+                tipoCompDoc.setDecAttribDatiSpecs(new ArrayList<>());
             }
             if (tipoCompDoc.getTiUsoCompDoc().equals("CONTENUTO")) {
                 attribDatiSpecRowBean.setTiEntitaSacer("COMP");
@@ -556,7 +573,7 @@ public class DatiSpecificiEjb {
         if (attributes.isEmpty()) {
             throw new ParerUserError("File Xsd non contenente attributi.</br>");
         }
-        List<String> dbAttributes = new ArrayList<String>();
+        List<String> dbAttributes = new ArrayList<>();
 
         attribDatiSpecRowBean.setIdStrut(xsdDatiSpecRowBean.getIdStrut());
         // se \u00E8 un attributo di xsd di migrazione
@@ -582,9 +599,27 @@ public class DatiSpecificiEjb {
             dbAttributes.add(row.getNmAttribDatiSpec());
         }
 
-        if (xsdInUse && !CollectionUtils.disjunction(attributes, dbAttributes).isEmpty()) {
-            throw new ParerUserError("La lista di attributi non corrisponde con la lista presente.");
+        // MEV #16859 --> l'aggiunta di attributi facoltativi deve essere permessa
+        if (xsdInUse) {
+            if (attributes.containsAll(dbAttributes)) {
+                // Ricavo la lista di elementi "aggiunti" nell'xsd che si sta caricando
+                List<String> elementiAggiunti = (List<String>) CollectionUtils.subtract(attributes, dbAttributes);
+                // Verifico l'obbligatorietà
+                for (String elementoAggiunto : elementiAggiunti) {
+                    if (getMinOccursStringaXsd(blXsdTipoDoc, elementoAggiunto).equals("1")) {
+                        throw new ParerUserError(
+                                "Si sta tentando di aggiungere un attributo obbligatorio: impossibile procedere.");
+                    }
+                }
+            } else {
+                // ko
+                throw new ParerUserError("La lista di attributi non corrisponde con la lista presente.");
+            }
         }
+
+        // if (xsdInUse && !CollectionUtils.disjunction(attributes, dbAttributes).isEmpty()) {
+        // throw new ParerUserError("La lista di attributi non corrisponde con la lista presente.");
+        // }
 
         // se non in uso, cancello la lista associata a questo XSD
         if (!xsdInUse && !campiInUso) {
@@ -609,7 +644,7 @@ public class DatiSpecificiEjb {
         }
 
         // TODO: cancellare i controlli sugli attributi soppressi
-        List<String> controlList = new ArrayList<String>();
+        List<String> controlList = new ArrayList<>();
         int order = 1;
 
         for (String attr : attributes) {
@@ -637,11 +672,24 @@ public class DatiSpecificiEjb {
                     insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order);
                 }
                 // se Xsd in uso, allora devo semplicemente aggiornare il numero ordine (unica modifica consentita)
+                // MEV #16859: ora devo poter consentire non solo l'aggiornamento del numero d'ordine, ma anche
+                // l'inserimento di un attributo facoltativo
             } else {
+                // MEV #16859
+                BigDecimal idAttribDatiSpec = null;
+                // se \u00E8 nuovo
+                if (!dbAttributes.contains(attr)) {
+                    // inserisco e ricavo id per inserire anche il riferimento
+                    idAttribDatiSpec = salvaAttribDatiSpec(attr, attribDatiSpecRowBean);
 
-                attribDatiSpecRowBean.setNmAttribDatiSpec(attr);
-                updateDecAttribDatiSpec(attribDatiSpecRowBean, idXsdDatiSpec, order);
-                // rimuovo dalla lista degli attributi nel DB
+                    insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order);
+                }
+                // fine MEV #16859
+                else {
+                    attribDatiSpecRowBean.setNmAttribDatiSpec(attr);
+                    updateDecAttribDatiSpec(attribDatiSpecRowBean, idXsdDatiSpec, order);
+                    // rimuovo dalla lista degli attributi nel DB
+                }
 
             }
             dbAttributes.remove(attr);
@@ -678,7 +726,7 @@ public class DatiSpecificiEjb {
 
     public List<String> parseStringaXsd(String stringaFile) throws ParerUserError {
 
-        List<String> attributes = new ArrayList<String>();
+        List<String> attributes = new ArrayList<>();
 
         ByteArrayInputStream bais = null;
 
@@ -729,6 +777,55 @@ public class DatiSpecificiEjb {
         }
 
         return attributes;
+    }
+
+    public String getMinOccursStringaXsd(String stringaFile, String attributo) throws ParerUserError {
+        ByteArrayInputStream bais = null;
+        // Setto a 1 il valore di minOccurs in quanto valore di default se non presente nell'XSD
+        String minOccurs = "1";
+        boolean trovato = false;
+
+        if (!stringaFile.isEmpty()) {
+            bais = new ByteArrayInputStream(stringaFile.getBytes());
+        }
+
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            DocumentBuilder db;
+            db = dbf.newDocumentBuilder();
+
+            Document doc;
+
+            doc = db.parse(bais);
+            NodeList nl = doc.getElementsByTagNameNS(XMLConstants.W3C_XML_SCHEMA_NS_URI, "element");
+            for (int it = 0; it < nl.getLength(); it++) {
+                Node n = nl.item(it);
+                NamedNodeMap map = n.getAttributes();
+                String tmpAttrname = map.getNamedItem("name").getNodeValue();
+                if (tmpAttrname.equals(attributo)) {
+                    trovato = true;
+                    if (map.getNamedItem("minOccurs") != null) {
+                        minOccurs = map.getNamedItem("minOccurs").getNodeValue();
+                    }
+                    break;
+                }
+            }
+        } catch (SAXException e) {
+            throw new ParerUserError("Operazione non effettuata: file non ben formato " + e.toString() + "</br>");
+        } catch (IOException e) {
+            throw new ParerUserError("Errore IO - Operazione non effettuata: " + e.toString() + "</br>");
+        } catch (ParserConfigurationException e) {
+            throw new ParerUserError(
+                    "Errore ParserConfiguration - Operazione non effettuata: " + e.toString() + "</br>");
+        }
+
+        if (trovato) {
+            return minOccurs;
+        } else {
+            throw new ParerUserError("Operazione non effettuata: il tag [" + attributo
+                    + "] del documento XSD che si sta cercando di caricare " + "non è stato trovato</br>");
+        }
     }
 
     public DecXsdAttribDatiSpecRowBean getDecXsdAttribDatiSpecRowBeanByAttrib(BigDecimal idAttribDatiSpec,

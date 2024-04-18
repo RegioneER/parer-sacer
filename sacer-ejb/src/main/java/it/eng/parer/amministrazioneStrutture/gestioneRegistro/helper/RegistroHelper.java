@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneRegistro.helper;
 
 import java.math.BigDecimal;
@@ -44,22 +61,21 @@ public class RegistroHelper extends GenericHelper {
      * 
      * @return true se esiste
      */
-    public boolean checkRegistroUnitaDoc(String nmCampo, String valoreCampo, BigDecimal idStrut,
+    public boolean checkRegistroUnitaDocByCampoStringa(String nmCampo, String valoreCampo, BigDecimal idStrut,
             BigDecimal idRegistroUnitaDoc) {
         Date now = Calendar.getInstance().getTime();
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(reg) FROM DecRegistroUnitaDoc reg WHERE reg.orgStrut.idStrut = :idStrut AND reg."
                         + nmCampo + " = :valoreCampo AND reg.dtIstituz <= :filterDate AND reg.dtSoppres >= :filterDate"
                         + (idRegistroUnitaDoc != null ? " AND reg.idRegistroUnitaDoc != :idRegistroUnitaDoc" : ""));
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("valoreCampo", valoreCampo);
         query.setParameter("filterDate", now);
         if (idRegistroUnitaDoc != null) {
-            query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
+            query.setParameter("idRegistroUnitaDoc", longFromBigDecimal(idRegistroUnitaDoc));
         }
         Long count = (Long) query.getSingleResult();
-        boolean regs = count > 0L;
-        return regs;
+        return count > 0L;
     }
 
     /**
@@ -76,7 +92,7 @@ public class RegistroHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT registroUnitaDoc FROM DecRegistroUnitaDoc registroUnitaDoc WHERE registroUnitaDoc.cdRegistroUnitaDoc = :cdRegistroUnitaDoc AND registroUnitaDoc.orgStrut.idStrut=:idStrut");
         query.setParameter("cdRegistroUnitaDoc", cdRegistroUnitaDoc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<DecRegistroUnitaDoc> list = query.getResultList();
         if (list.isEmpty()) {
             return null;
@@ -95,7 +111,7 @@ public class RegistroHelper extends GenericHelper {
     public List<DecAaRegistroUnitaDoc> getDecAARegistroUnitaDocList(BigDecimal idRegistro) {
         Query query = getEntityManager().createQuery(
                 "SELECT aaReg FROM DecAaRegistroUnitaDoc aaReg WHERE aaReg.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistro ORDER BY aaReg.aaMinRegistroUnitaDoc");
-        query.setParameter("idRegistro", idRegistro);
+        query.setParameter("idRegistro", longFromBigDecimal(idRegistro));
         List<DecAaRegistroUnitaDoc> list = query.getResultList();
         if (list.isEmpty()) {
             return null;
@@ -115,8 +131,7 @@ public class RegistroHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT decParte FROM DecParteNumeroRegistro decParte WHERE decParte.decAaRegistroUnitaDoc.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc ORDER BY decParte.niParteNumeroRegistro ASC");
         query.setParameter("idAaRegistroUnitaDoc", idAaRegistroUnitaDoc);
-        List<DecParteNumeroRegistro> list = query.getResultList();
-        return list;
+        return query.getResultList();
 
     }
 
@@ -143,16 +158,15 @@ public class RegistroHelper extends GenericHelper {
         queryStr.append(
                 " AND iatd.nmClasseTipoDato = 'REGISTRO' AND iatd.iamAbilOrganiz.iamUser.idUserIam = :idUtente ");
         if (!idStrutturaList.isEmpty()) {
-            queryStr.append("AND u.orgStrut.idStrut IN :idStrutturaList ");
+            queryStr.append("AND u.orgStrut.idStrut IN (:idStrutturaList) ");
         }
         queryStr.append("ORDER BY u.cdRegistroUnitaDoc");
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idUtente", idUtente);
         if (!idStrutturaList.isEmpty()) {
-            query.setParameter("idStrutturaList", idStrutturaList);
+            query.setParameter("idStrutturaList", longListFrom(idStrutturaList));
         }
-        List<DecRegistroUnitaDoc> listaRegistri = query.getResultList();
-        return listaRegistri;
+        return query.getResultList();
     }
 
     public List<DecRegistroUnitaDoc> retrieveDecRegistroUnitaDocsFromTipoSerie(BigDecimal idStrut,
@@ -160,13 +174,12 @@ public class RegistroHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT DISTINCT tipoSerieUd.decRegistroUnitaDoc FROM DecTipoSerieUd tipoSerieUd JOIN tipoSerieUd.decTipoSerie tipoSerie WHERE tipoSerie.orgStrut.idStrut = :idStrut AND tipoSerie.dtIstituz <= :filterDate AND tipoSerie.dtSoppres >= :filterDate "
                         + (idTipoSerie != null ? " AND tipoSerie.idTipoSerie = :idTipoSerie " : ""));
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("filterDate", Calendar.getInstance().getTime());
         if (idTipoSerie != null) {
-            query.setParameter("idTipoSerie", idTipoSerie);
+            query.setParameter("idTipoSerie", longFromBigDecimal(idTipoSerie));
         }
-        List<DecRegistroUnitaDoc> listaRegistri = query.getResultList();
-        return listaRegistri;
+        return query.getResultList();
     }
 
     public List<DecRegistroUnitaDoc> retrieveDecRegistroUnitaDocList(long idStrut, boolean filterValid) {
@@ -186,26 +199,24 @@ public class RegistroHelper extends GenericHelper {
             query.setParameter("filterDate", now);
         }
 
-        List<DecRegistroUnitaDoc> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public long countDecRegistroUnitaDoc(BigDecimal idModelloTipoSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(registro) FROM DecRegistroUnitaDoc registro WHERE registro.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        Long count = (Long) query.getSingleResult();
-        return count;
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        return (Long) query.getSingleResult();
     }
 
     public String getDecVChkFmtNumeroForRegistro(long idRegistroUnitaDoc) {
         String queryStr = "SELECT COUNT(check), check.flFmtNumeroOk FROM DecVChkFmtNumero check "
                 + "WHERE check.idRegistroUnitaDoc = :idRegistroUnitaDoc " + "GROUP BY check.flFmtNumeroOk ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
+        query.setParameter("idRegistroUnitaDoc", bigDecimalFromLong(idRegistroUnitaDoc));
         List<Object[]> list = query.getResultList();
         String risultato = "1";
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             for (Object[] obj : list) {
                 if (obj[1] != null) {
                     if (((String) obj[1]).equals("0")) {
@@ -227,15 +238,14 @@ public class RegistroHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT MAX(tipoSerieUd.decRegistroUnitaDoc.niAnniConserv) FROM DecTipoSerieUd tipoSerieUd JOIN tipoSerieUd.decTipoSerie tipoSerie WHERE tipoSerie.idTipoSerie = :idTipoSerie",
                 BigDecimal.class);
-        query.setParameter("idTipoSerie", idTipoSerie);
-        BigDecimal result = (BigDecimal) query.getSingleResult();
-        return result;
+        query.setParameter("idTipoSerie", longFromBigDecimal(idTipoSerie));
+        return (BigDecimal) query.getSingleResult();
     }
 
     public DecAaRegistroUnitaDoc getDecAARegistroUnitaDoc(BigDecimal idAaRegistroUnitaDoc) {
         Query query = getEntityManager().createQuery("SELECT aaReg " + "FROM DecAaRegistroUnitaDoc aaReg "
                 + "WHERE aaReg.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc");
-        query.setParameter("idAaRegistroUnitaDoc", idAaRegistroUnitaDoc);
+        query.setParameter("idAaRegistroUnitaDoc", longFromBigDecimal(idAaRegistroUnitaDoc));
         List<DecAaRegistroUnitaDoc> list = query.getResultList();
         if (list.isEmpty()) {
             return null;
@@ -248,7 +258,7 @@ public class RegistroHelper extends GenericHelper {
                 + "WHERE m.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc "
                 + "AND m.aaUnitaDocRegistro BETWEEN :dataInizio AND :dataFine ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idRegistroUnitaDoc", idRegistro);
+        query.setParameter("idRegistroUnitaDoc", longFromBigDecimal(idRegistro));
         query.setParameter("dataInizio", dataInizio);
         if (dataFine == null) {
             query.setParameter("dataFine", 9999);
@@ -268,9 +278,9 @@ public class RegistroHelper extends GenericHelper {
         }
         Query query = getEntityManager().createQuery(queryStr);
         if (idAaRegistroUnitaDoc != null) {
-            query.setParameter("idAaRegistroUnitaDoc", idAaRegistroUnitaDoc);
+            query.setParameter("idAaRegistroUnitaDoc", longFromBigDecimal(idAaRegistroUnitaDoc));
         }
-        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
+        query.setParameter("idRegistroUnitaDoc", longFromBigDecimal(idRegistroUnitaDoc));
         query.setParameter("aaMinRegistroUnitaDoc", aaMinRegistroUnitaDoc);
         query.setParameter("aaMaxRegistroUnitaDoc",
                 aaMaxRegistroUnitaDoc != null ? aaMaxRegistroUnitaDoc : new BigDecimal(9999));
@@ -281,10 +291,9 @@ public class RegistroHelper extends GenericHelper {
     public List<DecErrAaRegistroUnitaDoc> getDecErrAaRegistroUnitaDocList(BigDecimal idAaRegistroUnitaDoc) {
         Query query = getEntityManager().createQuery(
                 "SELECT err FROM DecErrAaRegistroUnitaDoc err WHERE err.decAaRegistroUnitaDoc.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc ORDER BY err.aaRegistroUnitaDoc");
-        query.setParameter("idAaRegistroUnitaDoc", idAaRegistroUnitaDoc);
+        query.setParameter("idAaRegistroUnitaDoc", longFromBigDecimal(idAaRegistroUnitaDoc));
 
-        List<DecErrAaRegistroUnitaDoc> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public boolean existsRegistroUnitaDoc(BigDecimal idStrut, String cdRegistroUnitaDoc) {
@@ -292,15 +301,15 @@ public class RegistroHelper extends GenericHelper {
                 + "WHERE u.cdRegistroUnitaDoc = :cdRegistroUnitaDoc " + "AND u.orgStrut.idStrut = :idStrut ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("cdRegistroUnitaDoc", cdRegistroUnitaDoc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         return (long) query.getSingleResult() > 0;
     }
 
     public boolean checkUnitaDocInDecAaRegUnitaDoc(BigDecimal idAaRegistroUnitaDoc, BigDecimal annoDa, BigDecimal annoA,
             Long idRegistroUnitaDoc, String cdRegistroKeyUnitaDoc, List<Long> subStruts) {
         Query query = getEntityManager().createQuery(
-                "SELECT a FROM DecAaRegistroUnitaDoc a WHERE a.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc AND EXISTS ( SELECT ud FROM AroUnitaDoc ud WHERE ud.orgSubStrut.idSubStrut IN :subStruts AND ud.aaKeyUnitaDoc BETWEEN :annoDa AND :annoA AND ud.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc AND ud.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc )");
-        query.setParameter("idAaRegistroUnitaDoc", idAaRegistroUnitaDoc);
+                "SELECT a FROM DecAaRegistroUnitaDoc a WHERE a.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc AND EXISTS ( SELECT ud FROM AroUnitaDoc ud WHERE ud.orgSubStrut.idSubStrut IN (:subStruts) AND ud.aaKeyUnitaDoc BETWEEN :annoDa AND :annoA AND ud.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc AND ud.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc )");
+        query.setParameter("idAaRegistroUnitaDoc", longFromBigDecimal(idAaRegistroUnitaDoc));
         query.setParameter("subStruts", subStruts);
         query.setParameter("annoDa", annoDa);
         query.setParameter("annoA", annoA);
@@ -315,17 +324,15 @@ public class RegistroHelper extends GenericHelper {
     public Long countPeriodiValiditaConControlloConsec(BigDecimal idRegistroUnitaDoc) {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(DISTINCT aaReg.idAaRegistroUnitaDoc) FROM DecParteNumeroRegistro parte JOIN parte.decAaRegistroUnitaDoc aaReg WHERE aaReg.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc AND NOT EXISTS(SELECT noConsec FROM DecParteNumeroRegistro noConsec WHERE noConsec.tiParte='PROGR' AND noConsec.decAaRegistroUnitaDoc.idAaRegistroUnitaDoc = aaReg.idAaRegistroUnitaDoc )");
-        query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
-        Long count = (Long) query.getSingleResult();
-        return count;
+        query.setParameter("idRegistroUnitaDoc", longFromBigDecimal(idRegistroUnitaDoc));
+        return (Long) query.getSingleResult();
     }
 
     public List<DecVLisTiUniDocAms> getDecVLisTiUniDocAmsByStrutByRegistriList(List<BigDecimal> idRegistri) {
         Query query = getEntityManager().createQuery("SELECT  tuda " + "FROM DecVLisTiUniDocAms tuda "
-                + "WHERE tuda.idRegistroUnitaDoc IN :listaIdRegistri ");
+                + "WHERE tuda.idRegistroUnitaDoc IN (:listaIdRegistri) ");
         query.setParameter("listaIdRegistri", idRegistri);
-        List<DecVLisTiUniDocAms> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoUnitaDocAmmesso> getDecTipoUnitaDocAmmessoByRegistro(Long idRegistroUnitaDoc) {
@@ -336,7 +343,6 @@ public class RegistroHelper extends GenericHelper {
         if (idRegistroUnitaDoc != null) {
             queryStr.append(whereWord)
                     .append("tipoUnitaDocAmmesso.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc ");
-            whereWord = "AND ";
         }
 
         Query query = getEntityManager().createQuery(queryStr.toString());
@@ -345,9 +351,7 @@ public class RegistroHelper extends GenericHelper {
             query.setParameter("idRegistroUnitaDoc", idRegistroUnitaDoc);
         }
 
-        List<DecTipoUnitaDocAmmesso> list = query.getResultList();
-
-        return list;
+        return query.getResultList();
     }
 
     public boolean existRegistriNonFiscaliAssociati(long idTipoUnitaDoc, long idRegistroUnitaDocExcluded) {
@@ -384,9 +388,9 @@ public class RegistroHelper extends GenericHelper {
         }
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("cdRegistroNormaliz", cdRegistroNormaliz);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         if (idRegistroUnitaDocExcluded != null) {
-            query.setParameter("idRegistroUnitaDocExcluded", idRegistroUnitaDocExcluded);
+            query.setParameter("idRegistroUnitaDocExcluded", longFromBigDecimal(idRegistroUnitaDocExcluded));
         }
         return !query.getResultList().isEmpty();
     }
@@ -400,7 +404,7 @@ public class RegistroHelper extends GenericHelper {
                 + "AND tipoStrutUdReg.decRegistroUnitaDoc.cdRegistroUnitaDoc = :cdRegistroUnitaDoc "
                 + "AND tipoStrutUdReg.decRegistroUnitaDoc.orgStrut.idStrut = :idStrutCorrente ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrutCorrente", idStrutCorrente);
+        query.setParameter("idStrutCorrente", longFromBigDecimal(idStrutCorrente));
         query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
         query.setParameter("nmTipoStrutUnitaDoc", nmTipoStrutUnitaDoc);
         query.setParameter("cdRegistroUnitaDoc", cdRegistroUnitaDoc);
@@ -412,6 +416,26 @@ public class RegistroHelper extends GenericHelper {
         }
 
         return tipoStrutUdReg;
+    }
+
+    /**
+     * Restituisce le date di primo e ultimo versamento per un determinato registro
+     *
+     * @param idRegistroUnitaDoc
+     *            id del registro di cui ricavare le date di primo e ultimo versamento
+     *
+     * @return array di oggetti di tipo date, null se record non presente in quanto non ancora effettuato versamenti per
+     *         quel registro
+     */
+    public Object[] retrieveDateFirstLastVersRegistro(long idRegistroUnitaDoc) {
+        Query q = getEntityManager().createQuery("SELECT mon.dtErog, mon.dtLastErog FROM MonVLisRegistroDtVer mon "
+                + "WHERE mon.idRegistroUnitaDoc = :idRegistroUnitaDoc ");
+        q.setParameter("idRegistroUnitaDoc", bigDecimalFromLong(idRegistroUnitaDoc));
+        List<Object[]> lista = q.getResultList();
+        if (!lista.isEmpty()) {
+            return lista.get(0);
+        }
+        return null;
     }
 
 }

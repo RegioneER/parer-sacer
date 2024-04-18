@@ -11,12 +11,15 @@
         <Input Type="INTEGER" Description="Punteggio  interoperabilità" Name="ni_punteggio_totale" />
         <CheckBox Type="STRING" Description="File Concatenabile" Name="fl_formato_concat" />
         <ComboBox Name="ti_esito_contr_formato" Description="Tipo esito controllo formato" Type="STRING" />
+        <TextArea Type="STRING" Description="Note idoneità" Name="nt_idoneita" Rows="10" Cols="10" MaxLength="500" />
+        <Input Description="Data valutazione" Name="dt_valutazione_formato" Type="DATE"/>
     </Fields>
     
     <Fields Name="VisFormatoFileStandard" Description="Registro dei formati" >
         <Input Type="STRING" Description="Nome o estensione formato" Name="nm_formato_file_standard" />
         <ComboBox Type="STRING" Description="Mimetype" Name="nm_mimetype_file" WithSearchComp="true" />
         <Button Name="visFormatoButton" Description="Ricerca Formato" Type="STRING"/>
+        <Button Name="extractCsvButton" Description="Estrai excel" Type="STRING"/>
     </Fields>
      
     <Fields Name="EstensioneFile" Description="Estensione File" >
@@ -25,13 +28,16 @@
     </Fields>
     
     <Fields Name="FormatoFileBusta" Description="Formato File Busta" >
-        <ComboBox Name="ti_formato_firma_marca" Description="Tipo Formato Firma" Type="STRING" />
+        <Input Type="INTEGER" Description="ID formato file busta" Name="id_formato_file_busta" Hidden="true"/>
+        <ComboBox Name="ti_formato_firma_marca" Description="Tipo Formato Firma" Type="STRING" Trigger="true" />
+        <Input Name="ds_formato_firma_marca" Description="Descrizione Formato Firma" Type="STRING" />
     </Fields>
     
     <Fields Name="ParametroValutazione" Description="Valutazione formato" >
         <Input Type="STRING" Description="Parametro" Name="nm_formato_gruppo_proprieta" />
         <ComboBox Type="INTEGER"  Name="id_proprieta" Description="Valutazione" Trigger="true" />
         <Input Type="INTEGER" Description="Punteggio" Name="ni_punteggio" />
+        <TextArea Name="nt_punteggio_valutazione" Description="Note" Type="STRING" Rows="10" Cols="10" MaxLength="500" />
     </Fields>
     
      <!-- Liste per visualizzazione -->
@@ -44,12 +50,37 @@
         <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />
         <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
         <Input Type="INTEGER" Description="Punteggio  interoperabilità" Name="ni_punteggio_totale" />
+        <Input Type="STRING" Description="Note idoneità" Name="nt_idoneita" />
+    </List> 
+    
+    <List Name="FormatoFileStandardListExcel" Description="Formato File Standard List"  >
+        <Input Type="STRING" Description="Nome" Name="nm_formato_file_standard" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
+        <Input Type="STRING" Description="Codice Versione" Name="cd_versione" />
+        <Input Type="STRING" Description="Copyright" Name="ds_copyright" />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
+        <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+        <Input Type="INTEGER" Description="Punteggio  interoperabilità" Name="ni_punteggio_totale" />
+        <Input Type="STRING" Description="Note idoneità" Name="nt_idoneita" />
+        <Input Type="INTEGER" Description="De facto - De iure" Name="natura" />
+        <Input Type="INTEGER" Description="Aperto - Chiuso" Name="apertura" />
+        <Input Type="INTEGER" Description="Non Properietario - Proprietario libero - Proprietario limitato a lettura - Proprietario limitato" Name="proprietario" />
+        <Input Type="INTEGER" Description="Estendibile - Non estendibile" Name="estendibilita" />
+        <Input Type="INTEGER" Description="Livello 1 - Livello 2 - Livello 3 - Livello 4 - Livello 5" Name="livello_modello_metadati" />
+        <Input Type="INTEGER" Description="Non robusto - Parzialmente robusto - Robusto" Name="robustezza" />
+        <Input Type="INTEGER" Description="Dipendente da dispositivo - Indipendente da dispositivo" Name="dipendenza_dal_dispositivo" />
+        <Input Type="INTEGER" Description="Retrocompatibile - Compatibile in avanti" Name="compatibilita" />
+        <Input Type="INTEGER" Description="Testuale - Binario" Name="contenuto" />
+        <Input Description="Data valutazione" Name="dt_valutazione_formato" Type="DATE"/>
     </List> 
     
      <List Name="FormatoFileParametriValutazioneList" Description="Punteggi interoperabilità" hideDetailButton="true"   hideDeleteButton="true">
         <Input Type="STRING" Description="Parametro" Name="nm_formato_gruppo_proprieta" />
         <Input Type="STRING" Description="Valutazione" Name="nm_formato_proprieta" />
         <Input Type="INTEGER" Description="Punteggio" Name="ni_punteggio" />
+        <Input Type="STRING" Description="Note" Name="nt_punteggio_valutazione" />
+        <Input Type="INTEGER" Description="Flag interoperabilità" Name="flg_interoperabilita" Hidden="true"/>
     </List>
     
     <List Name="EstensioneFileList" Description="Formato"  >
@@ -59,8 +90,9 @@
     </List> 
     
     <List Name="FormatoFileBustaList" Description="Formato"  >
+        <Input Type="INTEGER" Description="ID formato file busta" Name="id_formato_file_busta" Hidden="true"/>
         <Input Type="STRING" Description="Codice" Name="ti_formato_firma_marca" />
-        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_firma_marca" />
     </List> 
     
     <Tab Name="DecFormatoFileStandardTab" Description="DecFormatoFileStandardTab">

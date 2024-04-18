@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
     <persistence-unit name="ParerJPA" transaction-type="JTA">
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>jdbc/SacerJobDs</jta-data-source>
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <jta-data-source>jboss/datasources/SacerJobDs</jta-data-source>
         <!-- Classi del modulo di logging applicativo -->
         <class>it.eng.parer.sacerlog.entity.LogOggettoEvento</class>
         <class>it.eng.parer.sacerlog.entity.LogFotoOggettoEvento</class>
@@ -33,23 +33,19 @@
         <class>it.eng.parer.sacerlog.viewEntity.LogVUsrAbilOrganiz</class>
 
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <!--<shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>-->
         <shared-cache-mode>NONE</shared-cache-mode>
         <properties>
-            <property name="eclipselink.target-server" value="id.au.ringerc.as7.eclipselinkintegration.JBossAS7ServerPlatform"/>
-            <property name="eclipselink.target-database" value="Oracle"/>
-            <property name="eclipselink.logging.logger" value="ServerLogger" />
-            <!-- Logging -->
-            <property name="eclipselink.logging.level" value="FINE"/>
-            <property name="eclipselink.logging.timestamp" value="false"/>
-            <property name="eclipselink.logging.session" value="false"/>
-            <property name="eclipselink.logging.thread" value="false"/>
-            <property name="eclipselink.logging.parameters" value="true"/>
-            <property name="eclipselink.session-event-listener" value="it.eng.paginator.eclipselink.ListSessionListener"/>
-            <property name="eclipselink.session.customizer" value="it.eng.sequences.eclipselink.NonMonotonicSequenceGenerator"/>
+            <!-- Hibernate properties -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
+            <property name="hibernate.format_sql" value="false"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.generate_statistics" value="false"/>
+            <property name="hibernate.id.new_generator_mappings" value="true"/>
+            <property name="hibernate.session.events.log" value="false"/>
+            <property name="hibernate.ejb.interceptor.session_scoped" value="it.eng.paginator.hibernate.OracleSqlInterceptor"/>
+
         </properties>
-        
-        <!--<mapping-file>META-INF/xmldbNativeQueries/xmlQueries.xml</mapping-file>-->
+
         
     </persistence-unit>
 </persistence>

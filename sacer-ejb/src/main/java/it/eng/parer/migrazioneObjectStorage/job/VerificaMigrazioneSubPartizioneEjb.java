@@ -1,4 +1,36 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.migrazioneObjectStorage.job;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.OstMigrazFile;
 import it.eng.parer.entity.OstMigrazSubPart;
@@ -10,18 +42,6 @@ import it.eng.parer.migrazioneObjectStorage.helper.VerificaMigrazioneSubPartizio
 import it.eng.parer.migrazioneObjectStorage.utils.MsgUtil;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.ws.utils.CostantiDB;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -87,7 +107,7 @@ public class VerificaMigrazioneSubPartizioneEjb {
         // mofificato dal prof.
         me.verificaSubPartizioniMigrate();
 
-        List<String> tiStato = new ArrayList();
+        List<String> tiStato = new ArrayList<>();
         tiStato.add(it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato.TBS_NON_ELIMINABILE.name());
         if (!vmspHelper.getOstMigrazSubPartList(tiStato, null).isEmpty()) {
             errori.append(MsgUtil.getMessage(OST_005));
@@ -108,13 +128,13 @@ public class VerificaMigrazioneSubPartizioneEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void verificaSubPartizioniInCorsoDiMigrazione() {
-        List<String> tiStato = new ArrayList();
+        List<String> tiStato = new ArrayList<>();
         tiStato.add(it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato.MIGRAZ_IN_CORSO.name());
         tiStato.add(it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato.MIGRAZ_IN_ERRORE.name());
         List<OstMigrazSubPart> migrazSubPartList = vmspHelper.getOstMigrazSubPartList(tiStato, "niFileMigrazInCorso");
 
-        String numGgMigrazInCorso = configurationHelper.getValoreParamApplic("NUM_GG_MIGRAZ_IN_CORSO", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String numGgMigrazInCorso = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_GG_MIGRAZ_IN_CORSO);
         for (OstMigrazSubPart migrazSubPart : migrazSubPartList) {
             /* Determino i file della subpartizione */
             List<OstMigrazFile> migrazFileList = vmspHelper.getOstMigrazFileBeforeNumGiorni(
@@ -171,12 +191,11 @@ public class VerificaMigrazioneSubPartizioneEjb {
     public boolean verificaSubPartizioniInErroreDiMigrazione() {
         int contaFileResettati = 0;
 
-        List<String> tiStato = new ArrayList();
+        List<String> tiStato = new ArrayList<>();
         tiStato.add(it.eng.parer.entity.constraint.OstStatoMigrazSubPart.TiStato.MIGRAZ_IN_ERRORE.name());
         List<OstMigrazSubPart> migrazSubPartList = vmspHelper.getOstMigrazSubPartList(tiStato, null);
 
-        String numMaxErr = configurationHelper.getValoreParamApplic("NUM_MAX_ERR", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String numMaxErr = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_ERR);
         for (OstMigrazSubPart migrazSubPart : migrazSubPartList) {
             /* Determino i file della subpartizione */
             List<OstMigrazFile> migrazFileList = vmspHelper.getOstMigrazFilePerNumErrori(
@@ -292,7 +311,7 @@ public class VerificaMigrazioneSubPartizioneEjb {
         ostMigrazSubPart.setNiFileMigrati(new BigDecimal(totMigrati));
         ostMigrazSubPart.setNiFileMigrazInCorso(new BigDecimal(totMigrazInCorso));
         ostMigrazSubPart.setNiFileMigrazInErrore(new BigDecimal(totMigrazInErrore));
-        ArrayList<String> al = new ArrayList();
+        ArrayList<String> al = new ArrayList<>();
         al.add(it.eng.parer.entity.constraint.OstMigrazFile.TiStatoCor.DA_MIGRARE.name());
         al.add(it.eng.parer.entity.constraint.OstMigrazFile.TiStatoCor.MIGRAZ_IN_CORSO.name());
         al.add(it.eng.parer.entity.constraint.OstMigrazFile.TiStatoCor.MIGRAZ_IN_ERRORE.name());

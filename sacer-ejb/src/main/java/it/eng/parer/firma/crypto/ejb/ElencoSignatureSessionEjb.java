@@ -1,4 +1,37 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.firma.crypto.ejb;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.net.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.common.signature.SignatureSession;
 import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
@@ -14,23 +47,10 @@ import it.eng.parer.entity.constraint.HsmElencoSessioneFirma.TiEsitoFirmaElenco;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiEsitoSessioneFirma;
 import it.eng.parer.firma.crypto.helper.ElenchiSignatureHelper;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.net.util.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Manages the signature session of <code>Elenco</code>
@@ -49,6 +69,8 @@ public class ElencoSignatureSessionEjb implements SignatureSessionEjb {
     private ElenchiVersamentoEjb elencoEjb;
     @EJB
     private ElenchiSignatureHelper signHlp;
+    @EJB
+    private GenericHelper genericHelper;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -64,7 +86,7 @@ public class ElencoSignatureSessionEjb implements SignatureSessionEjb {
 
         for (BigDecimal elencoId : request.getFiles()) {
             // Changes the elenco status to FIRMA_IN_CORSO
-            ElvElencoVer elenco = elencoHlp.findByIdWithLock(ElvElencoVer.class, elencoId);
+            ElvElencoVer elenco = genericHelper.findByIdWithLock(ElvElencoVer.class, elencoId);
 
             // Checks if the elenco status is CHIUSO
             if (elenco.getTiStatoElenco().equals(ElencoStatusEnum.CHIUSO.name())) {
@@ -101,12 +123,10 @@ public class ElencoSignatureSessionEjb implements SignatureSessionEjb {
             byte[] hashFileSbustato = DigestUtils.sha256(fileSbustato);
             byte[] hashFileOriginale;
 
-            ElvElencoVer elenco = elencoHlp.findById(ElvElencoVer.class, idFile);
+            ElvElencoVer elenco = genericHelper.findById(ElvElencoVer.class, idFile);
             // EVO#16486
             List<ElvFileElencoVer> elencoIndice = elencoHlp.retrieveFileIndiceElenco(idFile,
                     new String[] { ElencoEnums.FileTypeEnum.INDICE.name() });
-            // FIXME : BASE64 e SHA-256 questa combinazione non può verificarsi allo SHA segue un encoding hexBinary
-            // (mai base64)
             if (elencoIndice.get(0).getCdEncodingHashFile() != null
                     && elencoIndice.get(0).getCdEncodingHashFile().equals(TipiEncBinari.BASE64.descrivi())
                     && elencoIndice.get(0).getDsAlgoHashFile() != null
@@ -162,7 +182,7 @@ public class ElencoSignatureSessionEjb implements SignatureSessionEjb {
         elencoSession.setCdErr(codError);
         elencoSession.setDsErr(descrError);
 
-        ElvElencoVer elenco = elencoHlp.findByIdWithLock(ElvElencoVer.class, idFile);
+        ElvElencoVer elenco = genericHelper.findByIdWithLock(ElvElencoVer.class, idFile);
         elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.CHIUSO.name());
         ElvElencoVersDaElab elencoDaElab = elencoHlp.getElvElencoVersDaElabByIdElencoVers(elenco.getIdElencoVers());
         elencoDaElab.setTiStatoElenco(ElencoStatusEnum.CHIUSO.name());

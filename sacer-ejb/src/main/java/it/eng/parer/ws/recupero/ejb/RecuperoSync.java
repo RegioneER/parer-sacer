@@ -1,10 +1,26 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.recupero.ejb;
 
-import it.eng.parer.entity.AroVerIndiceAipUd;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -55,6 +71,9 @@ public class RecuperoSync {
     //
     @EJB
     private ControlliRecupero controlliRecupero;
+
+    @EJB
+    private RecuperoZipGen recuperoZipGen;
 
     private static final Logger log = LoggerFactory.getLogger(RecuperoSync.class);
     //
@@ -260,8 +279,8 @@ public class RecuperoSync {
             // EVO#20972
             if (recupero.getParametriRecupero().getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO
                     || recupero.getParametriRecupero()
-                            .getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO_V2)
-            // end EVO#20972
+                            .getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO_V2) // end
+                                                                                                         // EVO#20972
             {
                 RispostaControlli rc = controlliRecupero
                         .contaXMLIndiceAIP(recupero.getParametriRecupero().getIdUnitaDoc());
@@ -295,8 +314,7 @@ public class RecuperoSync {
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             salvaSessioneRecupero = true;
             try {
-                RecuperoZipGen tmpGen = new RecuperoZipGen(rispostaWs);
-                tmpGen.generaZipOggetto(path, recupero, tentaRecuperoDIP);
+                recuperoZipGen.generaZipOggetto(path, recupero, tentaRecuperoDIP, rispostaWs);
                 tmpAvanzamentoWs.resetFase();
             } catch (Exception e) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
@@ -355,8 +373,7 @@ public class RecuperoSync {
 
         if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
             try {
-                RecuperoZipGen tmpGen = new RecuperoZipGen(rispostaWs);
-                tmpGen.generaZipProveCons(path, rec);
+                recuperoZipGen.generaZipProveCons(path, rec, rispostaWs);
                 tmpAvanzamentoWs.resetFase();
             } catch (Exception e) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
@@ -383,8 +400,7 @@ public class RecuperoSync {
 
         if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
             try {
-                RecuperoZipGen tmpGen = new RecuperoZipGen(rispostaWs);
-                tmpGen.generaZipRapportiVers(path, rec);
+                recuperoZipGen.generaZipRapportiVers(path, rec, rispostaWs);
                 tmpAvanzamentoWs.resetFase();
             } catch (Exception e) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
@@ -399,6 +415,7 @@ public class RecuperoSync {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected RispostaControlli loadWsVersions(RecuperoExt ext) {
         RispostaControlli rs = myControlliWs.loadWsVersions(ext.getDescrizione());
         // if positive ...

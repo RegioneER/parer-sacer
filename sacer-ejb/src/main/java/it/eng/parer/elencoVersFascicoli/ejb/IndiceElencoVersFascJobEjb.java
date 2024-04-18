@@ -1,20 +1,27 @@
-package it.eng.parer.elencoVersFascicoli.ejb;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
-import it.eng.parer.entity.LogJob;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.job.helper.JobHelper;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.HashCalculator;
-import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+package it.eng.parer.elencoVersFascicoli.ejb;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -23,23 +30,32 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-import org.apache.commons.codec.digest.DigestUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
+import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
 import it.eng.parer.entity.ElvElencoVersFasc;
 import it.eng.parer.entity.ElvElencoVersFascDaElab;
 import it.eng.parer.entity.ElvStatoElencoVersFasc;
+import it.eng.parer.entity.LogJob;
 import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
-import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
+import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
+import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
+import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.viewEntity.ElvVCreaIxElencoFasc;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
+import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import org.apache.commons.codec.binary.Hex;
 
 /**
  *
@@ -74,10 +90,6 @@ public class IndiceElencoVersFascJobEjb {
     public void buildIndex(LogJob logJob) throws Exception {
         log.info("Indice Elenco Versamento Fascicoli - Creazione automatica indici elenchi fascicoli...");
         List<OrgStrut> strutture = elencoHelper.retrieveStrutture();
-
-        // LinkedList<OrgStrut> strutture = new LinkedList<>();
-        // strutture.add(elencoHelper.retrieveOrgStrutByid(new BigDecimal("3323")));
-        // strutture.add(elencoHelper.retrieveOrgStrutByid(new BigDecimal("41")));
         for (OrgStrut struttura : strutture) {
             manageStrut(struttura.getIdStrut(), logJob.getIdLogJob());
         }
@@ -94,25 +106,8 @@ public class IndiceElencoVersFascJobEjb {
          */
         List<Long> elenchiDaChiudere = elencoHelper.retrieveIdElenchiDaElaborare(idStrut,
                 TiStatoElencoFascDaElab.DA_CHIUDERE);
-        log.info("Indice Elenco Versamento Fascicoli - struttura id " + idStrut + ": trovati "
-                + elenchiDaChiudere.size() + " elenchi DA_CHIUDERE da processare");
-
-        /*
-         * Se per la struttura versante la lista degli elenchi da chiudere non è vuota e se il parametro
-         * VERIFICA_PARTIZIONI vale true
-         */
-        String verificaPartizioni = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        if (!elenchiDaChiudere.isEmpty() && Boolean.parseBoolean(verificaPartizioni)
-                && struttureEjb.checkPartizioni(new BigDecimal(idStruttura), new Date(),
-                        CostantiDB.TiPartition.FILE_ELENCO_VERS_FASC.name()).equals("0")
-                && !struttureEjb.checkPartizioniDataCorDefinito(new BigDecimal(idStruttura))) {
-            OrgStrut strut = elencoHelper.retrieveOrgStrutByid(idStrut);
-            throw new ParerUserError("La partizione di tipo FILE_ELENCO_VERS_FASC per la data corrente e la struttura "
-                    + strut.getOrgEnte().getOrgAmbiente().getNmAmbiente() + "-" + strut.getOrgEnte().getNmEnte() + "-"
-                    + strut.getNmStrut() + " non è definita");
-        }
+        log.info("Indice Elenco Versamento Fascicoli - struttura id {}: trovati {} elenchi DA_CHIUDERE da processare",
+                idStrut, elenchiDaChiudere.size());
 
         IndiceElencoVersFascJobEjb indiceElencoVersFascEjbRef1 = context
                 .getBusinessObject(IndiceElencoVersFascJobEjb.class);
@@ -123,16 +118,13 @@ public class IndiceElencoVersFascJobEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void manageIndexAtomic(long idElenco, long idStruttura, long idLogJob) throws Exception {
-        LogJob logJob = elencoHelper.retrieveLogJobByid(idLogJob);
         OrgStrut struttura = elencoHelper.retrieveOrgStrutByid(new BigDecimal(idStruttura));
         ElvElencoVersFasc elenco = elencoHelper.retrieveElencoById(idElenco);
         elencoHelper.lockElenco(elenco);
-        // TODO: verificare, elencoHelper.writeLogElencoVers(elenco, struttura,
-        // ElencoEnums.OpTypeEnum.CREA_INDICE_ELENCO.name(), logJob);
-        manageIndex(elenco, struttura, logJob);
+        manageIndex(elenco, struttura);
     }
 
-    public void manageIndex(ElvElencoVersFasc elenco, OrgStrut struttura, LogJob logJob) throws Exception {
+    public void manageIndex(ElvElencoVersFasc elenco, OrgStrut struttura) throws Exception {
         OrgEnte ente = struttura.getOrgEnte();
         String nomeStruttura = struttura.getNmStrut();
         String nomeStrutturaNorm = struttura.getCdStrutNormaliz();
@@ -160,8 +152,6 @@ public class IndiceElencoVersFascJobEjb {
         elencoHelper.setStatoFascicoloElenco(elenco, TiStatoFascElenco.IN_ELENCO_CHIUSO);
         // assegno ad ogni fascicolo appartenente all'elenco stato = IN_ELENCO_CHIUSO
         elencoHelper.setFasFascicoliStatus(elenco, TiStatoFascElencoVers.IN_ELENCO_CHIUSO);
-        // TODO: verificare, elencoHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(),
-        // OpTypeEnum.CHIUSURA_ELENCO.name(), logJob);
     }
 
     public void buildIndexFile(ElvElencoVersFasc elenco, String nomeStruttura, String nomeStrutturaNorm,
@@ -169,8 +159,9 @@ public class IndiceElencoVersFascJobEjb {
         calcolaUrnElenco(elenco, nomeStruttura, nomeStrutturaNorm, nomeEnte, nomeEnteNorm);
         byte[] indexFile = null;
         // creo il file .xml
-        log.info("Indice Elenco Versamento Fascicoli - creazione indice per elenco id '" + elenco.getIdElencoVersFasc()
-                + "' appartenente alla struttura '" + elenco.getOrgStrut().getIdStrut() + "'");
+        log.info(
+                "Indice Elenco Versamento Fascicoli - creazione indice per elenco id '{}' appartenente alla struttura '{}'",
+                elenco.getIdElencoVersFasc(), elenco.getOrgStrut().getIdStrut());
         indexFile = indiceEjb.createIndex(elenco, false);
         // calcolo l'hash SHA-256 del file .xml
         String hashXmlIndice = new HashCalculator().calculateHashSHAX(indexFile, TipiHash.SHA_256).toHexBinary();
@@ -188,15 +179,13 @@ public class IndiceElencoVersFascJobEjb {
         elencoHelper.storeFileIntoElenco(elenco, indexFile, ElencoEnums.FileTypeEnum.INDICE_ELENCO.name(), new Date(),
                 hashXmlIndice, TipiHash.SHA_256.descrivi(), TipiEncBinari.HEX_BINARY.descrivi(), urnXmlIndice,
                 urnXmlIndiceNormaliz, ElencoEnums.ElencoInfo.VERSIONE_ELENCO.message());
-        // TODO: verificare, elencoHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(),
-        // OpTypeEnum.CREA_INDICE_ELENCO.name(), logJob);
     }
 
     public void calcolaUrnElenco(ElvElencoVersFasc elenco, String nomeStruttura, String nomeStrutturaNorm,
             String nomeEnte, String nomeEnteNorm) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String nomeSistema = configurationHelper.getValoreParamApplic("SISTEMA_CONSERVAZIONE", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeSistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         // Calcola URN originale
         String urnOriginale = MessaggiWSFormat.formattaUrnElencoVersFascicoli(nomeSistema, nomeEnte, nomeStruttura,
                 sdf.format(elenco.getTsCreazioneElenco()), String.format("%d", elenco.getIdElencoVersFasc()));

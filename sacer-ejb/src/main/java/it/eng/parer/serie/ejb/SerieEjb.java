@@ -1,6 +1,71 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.serie.ejb;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import javax.annotation.Resource;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.naming.NamingException;
+import javax.persistence.LockTimeoutException;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.MarshalException;
+import javax.xml.bind.ValidationException;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.net.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.csvreader.CsvReader;
+
 import it.eng.parer.common.signature.Digest;
 import it.eng.parer.crypto.model.ParerTST;
 import it.eng.parer.entity.AroUdAppartVerSerie;
@@ -122,63 +187,18 @@ import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.web.util.XmlPrettyPrintFormatter;
 import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
 import it.eng.parer.ws.utils.CostantiDB.TipoCreazioneSerie;
 import it.eng.parer.ws.utils.CostantiDB.TipoFileVerSerie;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.Future;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-import javax.annotation.Resource;
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.naming.NamingException;
-import javax.persistence.LockTimeoutException;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
-import javax.xml.bind.ValidationException;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.commons.net.util.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import it.eng.spagoLite.message.MessageBox;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -596,8 +616,8 @@ public class SerieEjb {
             BigDecimal idStrut = BigDecimal.valueOf(verSerie.getSerSerie().getOrgStrut().getIdStrut());
             BigDecimal idAmbiente = BigDecimal
                     .valueOf(verSerie.getSerSerie().getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
-            String nmUserId = configurationHelper.getValoreParamApplic("USERID_CREAZIONE_SERIE", idAmbiente, idStrut,
-                    null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+            String nmUserId = configurationHelper
+                    .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.USERID_CREAZIONE_SERIE, idAmbiente, idStrut);
             IamUser userCreazioneSerie = userHelper.findIamUser(nmUserId);
             long idUser = userCreazioneSerie.getIdUserIam();
             String result = context.getBusinessObject(SerieEjb.class)
@@ -1736,7 +1756,8 @@ public class SerieEjb {
                 row = (SerVVisSerieUdRowBean) Transform.entity2RowBean(serie);
                 if (StringUtils.isNotBlank(row.getBlFileIxAip())) {
                     XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
-                    String xmlFormatted = formatter.prettyPrintWithDOM3LS(row.getBlFileIxAip());
+                    String xmlFormatted = formatter
+                            .prettyPrintWithDOM3LS(new String(serie.getBlFileIxAip(), Charset.forName("UTF-8")));
                     row.setBlFileIxAip(xmlFormatted);
                 }
                 // EVO#16486
@@ -2047,7 +2068,7 @@ public class SerieEjb {
             try {
                 boolean deleteSerie = serie.getSerVerSeries().size() == 1;
                 SerVerSerie verSerie = helper.findById(SerVerSerie.class, idVerSerie);
-                helper.removeEntity(verSerie, true);
+                helper.removeEntity(verSerie, false);
                 if (deleteSerie) {
                     helper.removeEntity(serie, true);
                 } else {
@@ -2161,15 +2182,19 @@ public class SerieEjb {
         }
     }
 
-    public boolean checkVersione(BigDecimal idVerSerie, String... statiVersione) {
+    public boolean checkVersione(MessageBox messageBox, BigDecimal idVerSerie, String... statiVersione) {
         boolean result = true;
         try {
             checkStatoSerie(idVerSerie, statiVersione);
         } catch (ParerUserError ex) {
-            logger.error(ex.getDescription());
+            handleParerUserError(messageBox, ex);
             result = false;
         }
         return result;
+    }
+
+    public boolean checkVersione(BigDecimal idVerSerie, String... statiVersione) {
+        return checkVersione(null, idVerSerie, statiVersione);
     }
 
     public void checkStatoSerie(BigDecimal idVerSerie, String... statiVersione) throws ParerUserError {
@@ -2201,17 +2226,30 @@ public class SerieEjb {
         return result;
     }
 
-    public boolean checkContenuto(BigDecimal idVerSerie, boolean checkContenutoCalc, boolean checkContenutoAcq,
-            boolean checkContenutoEff, String... statoContenuto) {
+    public boolean checkContenuto(MessageBox messageBox, BigDecimal idVerSerie, boolean checkContenutoCalc,
+            boolean checkContenutoAcq, boolean checkContenutoEff, String... statoContenuto) {
         boolean result = true;
         try {
             checkStatoContenutoSerie(idVerSerie, checkContenutoCalc, checkContenutoAcq, checkContenutoEff,
                     statoContenuto);
         } catch (ParerUserError ex) {
-            logger.error(ex.getDescription());
+            handleParerUserError(messageBox, ex);
             result = false;
         }
         return result;
+    }
+
+    private void handleParerUserError(MessageBox messageBox, ParerUserError ex) {
+        if (messageBox != null) {
+            messageBox.addError(ex.getDescription());
+        }
+        logger.error(ex.getDescription());
+    }
+
+    public boolean checkContenuto(BigDecimal idVerSerie, boolean checkContenutoCalc, boolean checkContenutoAcq,
+            boolean checkContenutoEff, String... statoContenuto) {
+        return checkContenuto(null, idVerSerie, checkContenutoCalc, checkContenutoAcq, checkContenutoEff,
+                statoContenuto);
     }
 
     public void checkStatoContenutoSerie(BigDecimal idVerSerie, boolean checkContenutoCalc, boolean checkContenutoAcq,
@@ -2282,8 +2320,18 @@ public class SerieEjb {
 
     public SerVLisUdAppartSerieTableBean getSerVLisUdAppartSerieTableBean(BigDecimal idContenutoVerSerie,
             RicercaUdAppartBean parametri) {
+        return helper.getSerVLisUdAppartSerie(idContenutoVerSerie, parametri,
+                list -> getSerVLisUdAppartSerieTableBeanFrom(list), true);
+    }
+
+    public SerVLisUdAppartSerieTableBean getSerVLisUdAppartSerieTableBeanForDownload(BigDecimal idContenutoVerSerie,
+            RicercaUdAppartBean parametri) {
+        return helper.getSerVLisUdAppartSerie(idContenutoVerSerie, parametri,
+                list -> getSerVLisUdAppartSerieTableBeanFrom(list), false);
+    }
+
+    private SerVLisUdAppartSerieTableBean getSerVLisUdAppartSerieTableBeanFrom(List<SerVLisUdAppartSerie> list) {
         SerVLisUdAppartSerieTableBean table = new SerVLisUdAppartSerieTableBean();
-        List<SerVLisUdAppartSerie> list = helper.getSerVLisUdAppartSerie(idContenutoVerSerie, parametri);
         if (list != null && !list.isEmpty()) {
             try {
                 table = (SerVLisUdAppartSerieTableBean) Transform.entities2TableBean(list);
@@ -2313,8 +2361,18 @@ public class SerieEjb {
 
     public SerVLisErrFileSerieUdTableBean getSerVLisErrFileSerieUdTableBean(BigDecimal idVerSerie,
             String tiScopoFileInputVerSerie) {
+        return helper.getSerVLisErrFileSerieUd(idVerSerie, tiScopoFileInputVerSerie,
+                list -> getSerVLisErrFileSerieUdTableBeanFrom(list), true);
+    }
+
+    public SerVLisErrFileSerieUdTableBean getSerVLisErrFileSerieUdTableBeanForDownload(BigDecimal idVerSerie,
+            String tiScopoFileInputVerSerie) {
+        return helper.getSerVLisErrFileSerieUd(idVerSerie, tiScopoFileInputVerSerie,
+                list -> getSerVLisErrFileSerieUdTableBeanFrom(list), true);
+    }
+
+    private SerVLisErrFileSerieUdTableBean getSerVLisErrFileSerieUdTableBeanFrom(List<SerVLisErrFileSerieUd> list) {
         SerVLisErrFileSerieUdTableBean table = new SerVLisErrFileSerieUdTableBean();
-        List<SerVLisErrFileSerieUd> list = helper.getSerVLisErrFileSerieUd(idVerSerie, tiScopoFileInputVerSerie);
         if (list != null && !list.isEmpty()) {
             try {
                 table = (SerVLisErrFileSerieUdTableBean) Transform.entities2TableBean(list);
@@ -2902,8 +2960,8 @@ public class SerieEjb {
             BigDecimal idStrut = BigDecimal.valueOf(verSerie.getSerSerie().getOrgStrut().getIdStrut());
             BigDecimal idAmbiente = BigDecimal
                     .valueOf(verSerie.getSerSerie().getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
-            String nmUserId = configurationHelper.getValoreParamApplic("USERID_CREAZIONE_SERIE", idAmbiente, idStrut,
-                    null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+            String nmUserId = configurationHelper
+                    .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.USERID_CREAZIONE_SERIE, idAmbiente, idStrut);
             IamUser userCreazioneSerie = userHelper.findIamUser(nmUserId);
             long idUser = userCreazioneSerie.getIdUserIam();
             String result = context.getBusinessObject(SerieEjb.class)
@@ -3103,8 +3161,8 @@ public class SerieEjb {
             BigDecimal idStrut = BigDecimal.valueOf(verSerie.getSerSerie().getOrgStrut().getIdStrut());
             BigDecimal idAmbiente = BigDecimal
                     .valueOf(verSerie.getSerSerie().getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
-            String nmUserId = configurationHelper.getValoreParamApplic("USERID_CREAZIONE_SERIE", idAmbiente, idStrut,
-                    null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+            String nmUserId = configurationHelper
+                    .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.USERID_CREAZIONE_SERIE, idAmbiente, idStrut);
             IamUser userCreazioneSerie = userHelper.findIamUser(nmUserId);
             long idUser = userCreazioneSerie.getIdUserIam();
             String result = context.getBusinessObject(SerieEjb.class)
@@ -3201,7 +3259,7 @@ public class SerieEjb {
                 }
                 for (SerVSelUdNovers ud : udNoVers) {
                     context.getBusinessObject(SerieEjb.class).createSerUdNonVersErr(errContenuto,
-                            ud.getIdUnitaDocNonVers());
+                            ud.getSerVSelUdNoversId().getIdUnitaDocNonVers());
                 }
             }
         }
@@ -3416,7 +3474,7 @@ public class SerieEjb {
                         List<SerVBucoNumerazioneUd> listaBuchiNum = helper
                                 .getSerVBucoNumerazioneUd(contenuto.getIdContenutoVerSerie());
                         for (SerVBucoNumerazioneUd buco : listaBuchiNum) {
-                            BigDecimal pgUdSerIniBuco = buco.getPgUdSerIniBuco();
+                            BigDecimal pgUdSerIniBuco = buco.getSerVBucoNumerazioneUdId().getPgUdSerIniBuco();
                             BigDecimal pgUdSerFinBuco = buco.getPgUdSerFinBuco();
                             List<SerLacunaConsistVerSerie> lacuneList = helper.getSerLacunaConsistVerSerie(
                                     new BigDecimal(consistenza.getIdConsistVerSerie()),
@@ -3464,7 +3522,8 @@ public class SerieEjb {
                                             pgUdSerIniBuco, pgUdSerFinBuco);
                                     for (SerVSelUdNoversBuco ud : udNonVersate) {
                                         context.getBusinessObject(SerieEjb.class).createSerUdNonVersErr(
-                                                serErrContenutoVerSerie, ud.getIdUnitaDocNonVers());
+                                                serErrContenutoVerSerie,
+                                                ud.getSerVSelUdNoversBucoId().getIdUnitaDocNonVers());
                                     }
                                 }
                             }
@@ -3671,7 +3730,7 @@ public class SerieEjb {
             List<SerVBucoNumerazioneUd> listaBuchiNum = helper
                     .getSerVBucoNumerazioneUd(contenuto.getIdContenutoVerSerie());
             for (SerVBucoNumerazioneUd buco : listaBuchiNum) {
-                BigDecimal pgUdSerIniBuco = buco.getPgUdSerIniBuco();
+                BigDecimal pgUdSerIniBuco = buco.getSerVBucoNumerazioneUdId().getPgUdSerIniBuco();
                 BigDecimal pgUdSerFinBuco = buco.getPgUdSerFinBuco();
                 String dlErr = "Le unit\u00E0 documentarie con progressivo compreso nell'intervallo "
                         + pgUdSerIniBuco.toPlainString() + "-" + pgUdSerFinBuco.toPlainString()
@@ -3699,7 +3758,7 @@ public class SerieEjb {
                             pgUdSerFinBuco);
                     for (SerVSelUdNoversBuco ud : udNonVersate) {
                         context.getBusinessObject(SerieEjb.class).createSerUdNonVersErr(serErrContenutoVerSerie,
-                                ud.getIdUnitaDocNonVers());
+                                ud.getSerVSelUdNoversBucoId().getIdUnitaDocNonVers());
                     }
                 }
                 logger.info(SerieEjb.class.getSimpleName()
@@ -4646,8 +4705,13 @@ public class SerieEjb {
 
     public SerVLisUdAppartVolSerieTableBean getSerVLisUdAppartVolSerieTableBean(BigDecimal idVolVerSerie,
             RicercaUdAppartBean parametri) {
+        return helper.getSerVLisUdAppartVolSerie(idVolVerSerie, parametri,
+                list -> getSerVLisUdAppartVolSerieTableBeanFrom(list));
+    }
+
+    private SerVLisUdAppartVolSerieTableBean getSerVLisUdAppartVolSerieTableBeanFrom(
+            List<SerVLisUdAppartVolSerie> list) {
         SerVLisUdAppartVolSerieTableBean table = new SerVLisUdAppartVolSerieTableBean();
-        List<SerVLisUdAppartVolSerie> list = helper.getSerVLisUdAppartVolSerie(idVolVerSerie, parametri);
         if (list != null && !list.isEmpty()) {
             try {
                 table = (SerVLisUdAppartVolSerieTableBean) Transform.entities2TableBean(list);
@@ -5093,7 +5157,16 @@ public class SerieEjb {
         SerSerie serie = helper.findByIdWithLock(SerSerie.class, idSerie);
         AroUnitaDoc ud = helper.findByIdWithLock(AroUnitaDoc.class, idUnitaDoc);
         logger.debug("Richiamo metodo di creazione prima versione dell'indice AIP dell'unita doc in formato UNISINCRO");
-        elabIndiceAip.gestisciIndiceAip(ud.getIdUnitaDoc());
+        // MEV#30395
+        BigDecimal idAmbiente = BigDecimal.valueOf(ud.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
+        String sincroVersion = configurationHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.UNISINCRO_VERSION,
+                idAmbiente);
+        if (!"2.0".equals(sincroVersion)) {
+            elabIndiceAip.gestisciIndiceAipOs(ud.getIdUnitaDoc());
+        } else {
+            elabIndiceAip.gestisciIndiceAipV2Os(ud.getIdUnitaDoc());
+        }
+        // end MEV#30395
         // AGGIORNAMENTO STATO INCONSISTENTE
         // logger.debug("Indice AIP creato, imposto lo stato dell'ud a VERSAMENTO_IN_ARCHIVIO");
         // ud.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
@@ -5313,8 +5386,8 @@ public class SerieEjb {
                 CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
         /* Urn firma */
         String versioneSerie = verSerieDaElab.getSerVerSerie().getCdVerSerie();
-        final String sistema = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null, TipoAplVGetValAppart.APPLIC);
+        final String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         CSVersatore csVersatore = new CSVersatore();
         csVersatore.setAmbiente(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte()
                 .getOrgAmbiente().getNmAmbiente());
@@ -5323,7 +5396,6 @@ public class SerieEjb {
         // sistema (new URN)
         csVersatore.setSistemaConservazione(sistema);
         String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
-
         // Ricavo lo stesso cdVerXsdFile del file unisincro
         String cdVerXsdFile = verSerieDaElab.getSerVerSerie().getSerFileVerSeries().get(0).getCdVerXsdFile();
         /* Registra nella tabella SER_FILE_VER_SERIE */
@@ -5452,9 +5524,8 @@ public class SerieEjb {
 
             /* Urn marca */
             String versioneSerie = verSerieDaElab.getSerVerSerie().getCdVerSerie();
-            final String sistema = configurationHelper.getValoreParamApplic(
-                    CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                    TipoAplVGetValAppart.APPLIC);
+            final String sistema = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
             CSVersatore csVersatore = new CSVersatore();
             csVersatore.setAmbiente(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte()
                     .getOrgAmbiente().getNmAmbiente());

@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -16,8 +33,8 @@ import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +53,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author fioravanti_f
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ControlliMonitor")
 @LocalBean
 @TransactionAttribute(value = TransactionAttributeType.REQUIRED)
@@ -270,11 +288,16 @@ public class ControlliMonitor {
 
         try {
             // date
-            DateFormat dateFormat = new SimpleDateFormat(Costanti.TPI_DATA_PATH_FMT_STRING);
-            String dataInizioParam = configurationHelper.getValoreParamApplic(
-                    CostantiDB.ParametroAppl.TPI_DATA_INIZIO_CONTROLLO_NUM_FILE_ARK, null, null, null, null,
-                    CostantiDB.TipoAplVGetValAppart.APPLIC);
-            Date dataInizio = dateFormat.parse(dataInizioParam);
+
+            // MAC#27666
+            // DateFormat dateFormat = new SimpleDateFormat(Costanti.TPI_DATA_PATH_FMT_STRING);
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(Costanti.TPI_DATA_PATH_FMT_STRING);
+            // end MAC#27666
+            String dataInizioParam = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TPI_DATA_INIZIO_CONTROLLO_NUM_FILE_ARK);
+            // MAC#27666
+            LocalDate dataInizio = LocalDate.from(dateFormat.parse(dataInizioParam));
+            // end MAC#27666
 
             String queryStr = "select v from VrsPathDtVers v "
                     + "where v.vrsDtVers.dtVers < CURRENT_DATE and v.vrsDtVers.dtVers >= :dtVers "

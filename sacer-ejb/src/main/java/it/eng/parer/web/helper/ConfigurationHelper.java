@@ -1,45 +1,63 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
 
-import it.eng.parer.entity.AplParamApplic;
-import it.eng.parer.entity.constraint.AplValoreParamApplic.TiAppart;
-import it.eng.parer.exception.ParamApplicNotFoundException;
-import it.eng.parer.web.helper.dto.AplVGetValParamDto;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
+import static it.eng.parer.helper.GenericHelper.bigDecimalFromLong;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.entity.AplParamApplic;
+import it.eng.parer.entity.constraint.AplValoreParamApplic.TiAppart;
+import it.eng.parer.exception.ParamApplicNotFoundException;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.web.helper.dto.AplVGetValParamDto;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
+
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class ConfigurationHelper {
 
-    public static final String URL_ASSOCIAZIONE_UTENTE_CF = "URL_ASSOCIAZIONE_UTENTE_CF";
-    public static final String URL_BACK_ASSOCIAZIONE_UTENTE_CF = "URL_BACK_ASSOCIAZIONE_UTENTE_CF";
-
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
-
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
     /**
      * Default constructor.
      */
     private static final Logger log = LoggerFactory.getLogger(ConfigurationHelper.class.getName());
+    public static final String URL_BACK_ASSOCIAZIONE_UTENTE_CF = "URL_BACK_ASSOCIAZIONE_UTENTE_CF";
 
     public Map<String, String> getConfiguration() {
         String queryStr = "SELECT paramApplic.nmParamApplic, valoreParamApplic.dsValoreParamApplic "
@@ -48,38 +66,11 @@ public class ConfigurationHelper {
         Query query = entityManager.createQuery(queryStr);
 
         List<Object[]> configurazioni = query.getResultList();
-        Map<String, String> config = new HashMap<String, String>();
+        Map<String, String> config = new HashMap<>();
         for (Object[] configurazione : configurazioni) {
             config.put((String) configurazione[0], (String) configurazione[1]);
         }
         return config;
-    }
-
-    public Map<String, String> getTSAParams() {
-        String queryStr = "SELECT config FROM AplParamApplic config where config.tiParamApplic = 'Firma e Marca' AND config.flAppartApplic = '1' ";
-        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = entityManager.createQuery(queryStr);
-
-        List<AplParamApplic> configurazioni = query.getResultList();
-        Map<String, String> config = new HashMap<>();
-        for (AplParamApplic configurazione : configurazioni) {
-            config.put(configurazione.getNmParamApplic(), getValoreParamApplic(configurazione.getNmParamApplic(), null,
-                    null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
-        }
-        return config;
-    }
-
-    public String getValoreParamApplic(String nmParamApplic) {
-        String queryStr = "SELECT u.dsValoreParamApplic FROM AplParamApplic u "
-                + "WHERE u.nmParamApplic = :nmParamApplic ";
-        javax.persistence.Query query = entityManager.createQuery(queryStr);
-        query.setParameter("nmParamApplic", nmParamApplic);
-        List<String> paramList = (List<String>) query.getResultList();
-        if (paramList != null && !paramList.isEmpty()) {
-            return paramList.get(0);
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -97,7 +88,7 @@ public class ConfigurationHelper {
      *            id anno tipo fascicolo
      * @param getVal
      *            entity tipo TipoAplVGetValAppart
-     *
+     * 
      * @return mappa chiave/valore di tipo String
      */
     public Map<String, String> getParamApplicMapValue(List<String> nmParamApplicList, BigDecimal idAmbiente,
@@ -106,10 +97,10 @@ public class ConfigurationHelper {
         Map<String, String> mappaAgenti = new HashMap<>();
         if (!nmParamApplicList.isEmpty()) {
             String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
-                    + "WHERE paramApplic.nmParamApplic IN :nmParamApplicList ";
+                    + "WHERE paramApplic.nmParamApplic IN (:nmParamApplicList) ";
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("nmParamApplicList", nmParamApplicList);
-            List<AplParamApplic> paramApplicList = (List<AplParamApplic>) query.getResultList();
+            List<AplParamApplic> paramApplicList = query.getResultList();
             for (AplParamApplic paramApplic : paramApplicList) {
                 mappaAgenti.put(paramApplic.getNmParamApplic(), getValoreParamApplic(paramApplic.getNmParamApplic(),
                         idAmbiente, idStrut, idTipoUnitaDoc, idAaTipoFascicolo, getVal));
@@ -126,7 +117,7 @@ public class ConfigurationHelper {
                 + "FROM AplValoreParamApplic valoreParamApplic " + "JOIN valoreParamApplic.aplParamApplic paramApplic "
                 + "WHERE paramApplic.nmParamApplic = 'NM_APPLIC' ";
         javax.persistence.Query query = entityManager.createQuery(queryStr);
-        List<String> paramList = (List<String>) query.getResultList();
+        List<String> paramList = query.getResultList();
         if (paramList != null && !paramList.isEmpty()) {
             return paramList.get(0);
         } else {
@@ -159,19 +150,19 @@ public class ConfigurationHelper {
         query.setParameter("tiAppart", tiAppart);
 
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
         }
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", GenericHelper.longFromBigDecimal(idStrut));
         }
         if (idTipoUnitaDoc != null) {
-            query.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+            query.setParameter("idTipoUnitaDoc", GenericHelper.longFromBigDecimal(idTipoUnitaDoc));
         }
         if (idAaTipoFascicolo != null) {
-            query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
+            query.setParameter("idAaTipoFascicolo", GenericHelper.longFromBigDecimal(idAaTipoFascicolo));
         }
 
-        List<String> paramList = (List<String>) query.getResultList();
+        List<String> paramList = query.getResultList();
         if (paramList != null && !paramList.isEmpty()) {
             return paramList.get(0);
         } else {
@@ -184,7 +175,7 @@ public class ConfigurationHelper {
                 + "WHERE paramApplic.nmParamApplic = :nmParamApplic ";
         javax.persistence.Query query = entityManager.createQuery(queryStr);
         query.setParameter("nmParamApplic", nmParamApplic);
-        List<AplParamApplic> paramList = (List<AplParamApplic>) query.getResultList();
+        List<AplParamApplic> paramList = query.getResultList();
         if (paramList != null && !paramList.isEmpty()) {
             return paramList.get(0);
         } else {
@@ -199,11 +190,11 @@ public class ConfigurationHelper {
 
     /**
      * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
-     * <em>APPLIC</em> {@link TipoAplVGetValAppart#APPLIC} .
+     * <em>APPLIC</em> {@link TipoAplVGetValAppart#APPLIC}
      *
      * @param nmParamApplic
      *            codice del parametro
-     *
+     * 
      * @return valore del parametro filtrato per tipologia <em>APPLIC</em> .
      */
     public String getValoreParamApplicByApplic(String nmParamApplic) {
@@ -213,7 +204,87 @@ public class ConfigurationHelper {
     }
 
     /**
+     * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
+     * <em>AMBIENTE</em> {@link TipoAplVGetValAppart#AMBIENTE}
      *
+     * @param nmParamApplic
+     *            codice del parametro
+     * @param idAmbiente
+     *            id ambiente
+     * 
+     * 
+     * @return valore del parametro filtrato per tipologia <em>AMBIENTE</em> .
+     */
+    public String getValoreParamApplicByAmb(String nmParamApplic, BigDecimal idAmbiente) {
+        return getValoreParamApplic(nmParamApplic, idAmbiente, BigDecimal.valueOf(Integer.MIN_VALUE),
+                BigDecimal.valueOf(Integer.MIN_VALUE), BigDecimal.valueOf(Integer.MIN_VALUE),
+                TipoAplVGetValAppart.AMBIENTE);
+    }
+
+    /**
+     * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
+     * <em>STRUT</em> {@link TipoAplVGetValAppart#STRUT}
+     *
+     * @param nmParamApplic
+     *            codice del parametro
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * 
+     * 
+     * @return valore del parametro filtrato per tipologia <em>STRUT</em> .
+     */
+    public String getValoreParamApplicByStrut(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut) {
+        return getValoreParamApplic(nmParamApplic, idAmbiente, idStrut, BigDecimal.valueOf(Integer.MIN_VALUE),
+                BigDecimal.valueOf(Integer.MIN_VALUE), TipoAplVGetValAppart.STRUT);
+    }
+
+    /**
+     * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
+     * <em>TIPOUNITADOC</em> {@link TipoAplVGetValAppart#TIPOUNITADOC}
+     *
+     * @param nmParamApplic
+     *            codice del parametro
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idTipoUnitaDoc
+     *            id tipologia unità documentaria
+     * 
+     * @return valore del parametro filtrato per tipologia <em>TIPOUNITADOC</em> .
+     */
+    public String getValoreParamApplicByTipoUd(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idTipoUnitaDoc) {
+        return getValoreParamApplic(nmParamApplic, idAmbiente, idStrut, idTipoUnitaDoc,
+                BigDecimal.valueOf(Integer.MIN_VALUE), TipoAplVGetValAppart.TIPOUNITADOC);
+    }
+
+    /**
+     * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
+     * <em>AATIPOFASCICOLO</em> {@link TipoAplVGetValAppart#AATIPOFASCICOLO}
+     *
+     * @param nmParamApplic
+     *            codice del parametro
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idAaTipoFascicolo
+     *            id tipologia anno fascicolo
+     * 
+     * @return valore del parametro filtrato per tipologia <em>AATIPOFASCICOLO</em> .
+     */
+    public String getValoreParamApplicByAaTipoFasc(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo) {
+        return getValoreParamApplic(nmParamApplic, idAmbiente, idStrut, BigDecimal.valueOf(Integer.MIN_VALUE),
+                idAaTipoFascicolo, TipoAplVGetValAppart.AATIPOFASCICOLO);
+    }
+
+    /**
+     * Restituisce il valore del parametro configurato
+     * 
      * @param nmParamApplic
      *            nome parametro applicativo
      * @param idAmbiente
@@ -226,11 +297,10 @@ public class ConfigurationHelper {
      *            id anno tipo fascicolo
      * @param tipoAplVGetValAppart
      *            entity TipoAplVGetValAppart
-     *
+     * 
      * @return valore parametro
      */
-    @SuppressWarnings("unchecked")
-    public String getValoreParamApplic(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
+    private String getValoreParamApplic(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
             BigDecimal idTipoUnitaDoc, BigDecimal idAaTipoFascicolo, TipoAplVGetValAppart tipoAplVGetValAppart) {
 
         long id = Integer.MIN_VALUE;// su questo id non troverò alcun elemento value sicuramente null
@@ -278,11 +348,8 @@ public class ConfigurationHelper {
             queryStr = StringSubstitutor.replace(queryStrTempl, queryData);
             break;
         case STRUT:
-            //
             id = idStrut != null ? idStrut.longValue() : Integer.MIN_VALUE;
-            //
             tiAppart = TiAppart.STRUT;
-            //
             queryData.put(APLVGETVALPARAMBYCOL, "getvalParam.dsValoreParamApplic, getvalParam.tiAppart");
             queryData.put(APLVGETVALPARAMBY, "AplVGetvalParamByStrut");
             queryData.put(FLAPLPARAMAPPLICAPPART, "flAppartStrut");
@@ -322,7 +389,7 @@ public class ConfigurationHelper {
             query.setParameter("flAppart", "1");// fixed
             // solo nel caso in cui contenga la condition sull'ID
             if (StringUtils.isNotBlank(queryData.get(IDAPLVGETVALPARAMBY))) {
-                query.setParameter("id", id);
+                query.setParameter("id", bigDecimalFromLong(id));
             }
             // get result
             result = query.getResultList();
@@ -363,7 +430,6 @@ public class ConfigurationHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private String getDsValoreParamApplicByTiAppart(String nmParamApplic, List<AplVGetValParamDto> result,
             final TiAppart tiAppart) {
         // get entity from list
@@ -376,14 +442,14 @@ public class ConfigurationHelper {
         }
 
         /* questa condizione non dovrebbe mai verificarsi */
-        if (tiAppart.name().equals(TiAppart.APPLIC.name()) && (resultFiltered == null || resultFiltered.isEmpty())) {
+        if (tiAppart.name().equals(TiAppart.APPLIC.name()) && resultFiltered.isEmpty()) {
             // thorws Exception
             final String msg = "Parametro " + nmParamApplic + " non definito o non valorizzato";
             log.error(msg);
             throw new ParamApplicNotFoundException(msg, nmParamApplic);
         }
 
-        if (resultFiltered == null || resultFiltered.isEmpty()) {
+        if (resultFiltered.isEmpty()) {
             TiAppart nextTiAppart = null;
             switch (tiAppart) {
             case PERIODO_TIPO_FASC:
@@ -403,10 +469,6 @@ public class ConfigurationHelper {
         } else {
             return resultFiltered.get(0).getDsValoreParamApplic();// expected one
         }
-    }
-
-    public String getUrlAssociazioneUtenteCf() {
-        return getValoreParamApplicByApplic(URL_ASSOCIAZIONE_UTENTE_CF);
     }
 
     public String getUrlBackAssociazioneUtenteCf() {

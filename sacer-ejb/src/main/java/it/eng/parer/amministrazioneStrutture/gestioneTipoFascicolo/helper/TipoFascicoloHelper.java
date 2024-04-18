@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.helper;
 
 import it.eng.parer.entity.DecAaTipoFascicolo;
@@ -7,11 +24,18 @@ import it.eng.parer.entity.DecErrAaTipoFascicolo;
 import it.eng.parer.entity.DecModelloXsdAttribFascicolo;
 import it.eng.parer.entity.DecModelloXsdFascicolo;
 import it.eng.parer.entity.DecParteNumeroFascicolo;
+import it.eng.parer.entity.DecSelCriterioRaggrFasc;
 import it.eng.parer.entity.DecTipoFascicolo;
 import it.eng.parer.entity.DecUsoModelloXsdFasc;
-import it.eng.parer.entity.DecXsdAttribDatiSpec;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.web.util.Constants;
+import it.eng.parer.ws.utils.CostantiDB;
+import org.springframework.util.StringUtils;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +45,9 @@ import javax.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiUsoModelloXsd;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -29,8 +56,6 @@ import org.springframework.util.StringUtils;
 @Stateless
 @LocalBean
 public class TipoFascicoloHelper extends GenericHelper {
-
-    private static final Logger logger = LoggerFactory.getLogger(TipoFascicoloHelper.class);
 
     public List<DecTipoFascicolo> getDecTipoFascicoloList(BigDecimal idStrut, boolean filterValid) {
         StringBuilder queryStr = new StringBuilder("SELECT tipoFascicolo FROM DecTipoFascicolo tipoFascicolo ");
@@ -42,28 +67,26 @@ public class TipoFascicoloHelper extends GenericHelper {
         if (filterValid) {
             queryStr.append(whereClause)
                     .append("tipoFascicolo.dtIstituz <= :filterDate AND tipoFascicolo.dtSoppres >= :filterDate ");
-            whereClause = " AND ";
         }
 
         queryStr.append("ORDER BY tipoFascicolo.nmTipoFascicolo ");
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
         }
-        List<DecTipoFascicolo> list = (List<DecTipoFascicolo>) query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecTipoFascicolo> getTipiFascicoloAbilitati(long idUtente, BigDecimal idStrut, boolean filterValid) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT tipoFascicolo FROM DecTipoFascicolo tipoFascicolo, IamAbilTipoDato iatd "
                         + "WHERE iatd.idTipoDatoApplic = tipoFascicolo.idTipoFascicolo "
-                        + "AND iatd.nmClasseTipoDato = 'TIPO_FASCICOLO' "
+                        + "AND iatd.nmClasseTipoDato = '" + Constants.TipoDato.TIPO_FASCICOLO + "' "
                         + "AND iatd.iamAbilOrganiz.iamUser.idUserIam = :idUtente ");
         if (idStrut != null) {
             queryStr.append("AND tipoFascicolo.orgStrut.idStrut = :idStrut ");
@@ -76,14 +99,13 @@ public class TipoFascicoloHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idUtente", idUtente);
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
         }
-        List<DecTipoFascicolo> list = (List<DecTipoFascicolo>) query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     /*
@@ -94,7 +116,7 @@ public class TipoFascicoloHelper extends GenericHelper {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT tipoFascicolo FROM DecTipoFascicolo tipoFascicolo, IamAbilTipoDato iatd "
                         + "WHERE iatd.idTipoDatoApplic = tipoFascicolo.idTipoFascicolo "
-                        + "AND iatd.nmClasseTipoDato = 'TIPO_FASCICOLO' "
+                        + "AND iatd.nmClasseTipoDato = '" + Constants.TipoDato.TIPO_FASCICOLO + "' "
                         + "AND tipoFascicolo.idTipoFascicolo = :idTipoFascicolo "
                         + "AND iatd.iamAbilOrganiz.iamUser.idUserIam = :idUtente ");
         if (idStrut != null) {
@@ -106,17 +128,17 @@ public class TipoFascicoloHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idUtente", idUtente);
         if (idStrut != null) {
-            query.setParameter("idStrut", idStrut);
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (idTipoFascicolo != null) {
-            query.setParameter("idTipoFascicolo", idTipoFascicolo);
+            query.setParameter("idTipoFascicolo", longFromBigDecimal(idTipoFascicolo));
         }
         if (filterValid) {
             Date now = Calendar.getInstance().getTime();
             query.setParameter("filterDate", now);
         }
-        List<DecTipoFascicolo> list = (List<DecTipoFascicolo>) query.getResultList();
-        return (list != null && !list.isEmpty()) ? true : false;
+        List<DecTipoFascicolo> list = query.getResultList();
+        return (list != null && !list.isEmpty());
     }
 
     public DecAaTipoFascicolo getLastDecAaTipoFascicolo(BigDecimal idTipoFascicolo) {
@@ -126,7 +148,7 @@ public class TipoFascicoloHelper extends GenericHelper {
                             + "WHERE aaTipoFascicolo.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo "
                             + "ORDER BY aaTipoFascicolo.aaIniTipoFascicolo DESC ");
             query.setParameter("idTipoFascicolo", idTipoFascicolo.longValue());
-            List<DecAaTipoFascicolo> aaTipoFascicoloList = (List<DecAaTipoFascicolo>) query.getResultList();
+            List<DecAaTipoFascicolo> aaTipoFascicoloList = query.getResultList();
             if (!aaTipoFascicoloList.isEmpty()) {
                 return aaTipoFascicoloList.get(0);
             }
@@ -141,15 +163,13 @@ public class TipoFascicoloHelper extends GenericHelper {
         String whereClause = " WHERE ";
         if (idTipoFascicolo != null) {
             queryStr.append(whereClause).append("aaTipoFascicolo.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo ");
-            whereClause = " AND ";
         }
         queryStr.append("ORDER BY aaTipoFascicolo.aaIniTipoFascicolo DESC ");
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idTipoFascicolo != null) {
-            query.setParameter("idTipoFascicolo", idTipoFascicolo);
+            query.setParameter("idTipoFascicolo", longFromBigDecimal(idTipoFascicolo));
         }
-        List<DecAaTipoFascicolo> list = (List<DecAaTipoFascicolo>) query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecCriterioRaggrFasc> getDecCriterioRaggrFascList(BigDecimal idTipoFascicolo) {
@@ -165,10 +185,9 @@ public class TipoFascicoloHelper extends GenericHelper {
         queryStr.append("ORDER BY critRaggrFasc.dtIstituz DESC ");
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idTipoFascicolo != null) {
-            query.setParameter("idTipoFascicolo", idTipoFascicolo);
+            query.setParameter("idTipoFascicolo", longFromBigDecimal(idTipoFascicolo));
         }
-        List<DecCriterioRaggrFasc> list = (List<DecCriterioRaggrFasc>) query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public boolean existsDecTipoFascicoloCaseInsensitive(BigDecimal idStrut, String nmTipoFascicolo) {
@@ -190,30 +209,15 @@ public class TipoFascicoloHelper extends GenericHelper {
                             + "AND selCritRaggrFasc.decCriterioRaggrFasc.flCriterioRaggrStandard = '1' "
                             + "AND selCritRaggrFasc.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo ");
             query.setParameter("idStrut", idStrut.longValue());
-            query.setParameter("idTipoFascicolo", idTipoFascicolo);
+            query.setParameter("idTipoFascicolo", longFromBigDecimal(idTipoFascicolo));
             return (Long) query.getSingleResult() > 0L;
         } else {
             throw new IllegalArgumentException("Identificativo struttura e/o id tipo fascicolo nulli");
         }
     }
 
-    // public OrgStrutConfigFascicolo getOrgStrutConfigFascicoloByIdStrut(BigDecimal idStrut) {
-    // if (idStrut != null) {
-    // Query query = getEntityManager().createQuery("SELECT strutConfigFascicolo FROM OrgStrutConfigFascicolo
-    // strutConfigFascicolo WHERE strutConfigFascicolo.orgStrut.idStrut = :idStrut");
-    // query.setParameter("idStrut", idStrut.longValue());
-    // List<OrgStrutConfigFascicolo> strutConfigFascicoloList = (List<OrgStrutConfigFascicolo>) query.getResultList();
-    // if (!strutConfigFascicoloList.isEmpty()) {
-    // return strutConfigFascicoloList.get(0);
-    // }
-    // return null;
-    // } else {
-    // throw new IllegalArgumentException("Parametro idStrut nullo");
-    // }
-    // }
-
     public List<DecModelloXsdFascicolo> retrieveDecModelloXsdFascicolo(BigDecimal idAmbiente, Date data,
-            String flDefault, String tiUsoModelloXsd, String tiModelloXsd) {
+            String flDefault, String tiUsoModelloXsd) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT modelloXsdFascicolo FROM DecModelloXsdFascicolo modelloXsdFascicolo ");
         String whereClause = " WHERE ";
@@ -234,10 +238,7 @@ public class TipoFascicoloHelper extends GenericHelper {
             queryStr.append(whereClause).append("modelloXsdFascicolo.tiUsoModelloXsd = :tiUsoModelloXsd ");
             whereClause = " AND ";
         }
-        if (!StringUtils.isEmpty(tiModelloXsd)) {
-            queryStr.append(whereClause).append("modelloXsdFascicolo.tiModelloXsd = :tiModelloXsd ");
-            whereClause = " AND ";
-        }
+        queryStr.append(whereClause).append("modelloXsdFascicolo.tiModelloXsd IN( :tiModelloXsd )");
 
         Query query = getEntityManager().createQuery(queryStr.toString());
 
@@ -251,13 +252,17 @@ public class TipoFascicoloHelper extends GenericHelper {
             query.setParameter("flDefault", flDefault);
         }
         if (!StringUtils.isEmpty(tiUsoModelloXsd)) {
-            query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+            query.setParameter("tiUsoModelloXsd", TiUsoModelloXsd.valueOf(tiUsoModelloXsd));
         }
-        if (!StringUtils.isEmpty(tiModelloXsd)) {
+        final List<it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd> tiModelloXsd = Arrays
+                .stream(CostantiDB.TiModelloXsdProfilo.values())
+                .map(c -> it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.valueOf(c.name()))
+                .collect(Collectors.toList());
+        if (tiModelloXsd != null && !tiModelloXsd.isEmpty()) {
             query.setParameter("tiModelloXsd", tiModelloXsd);
+
         }
-        List<DecModelloXsdFascicolo> list = (List<DecModelloXsdFascicolo>) query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public List<DecParteNumeroFascicolo> getDecParteNumeroFascicoloList(BigDecimal idAaTipoFascicolo) {
@@ -266,7 +271,7 @@ public class TipoFascicoloHelper extends GenericHelper {
                 + "ORDER BY parteNumeroFascicolo.niParteNumero ASC ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo.longValue());
-        return (List<DecParteNumeroFascicolo>) query.getResultList();
+        return query.getResultList();
     }
 
     public String getDecVChkFmtNumeroFascForPeriodo(BigDecimal idAaTipoFascicolo) {
@@ -283,29 +288,15 @@ public class TipoFascicoloHelper extends GenericHelper {
         }
     }
 
-    public List<DecErrAaTipoFascicolo> getDecErrAaTipoFascicoloList(BigDecimal idAaTipoFascicolo) {
-        if (idAaTipoFascicolo != null) {
-            String queryStr = "SELECT errAaTipoFascicolo FROM DecErrAaTipoFascicolo errAaTipoFascicolo "
-                    + "WHERE errAaTipoFascicolo.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo "
-                    + "ORDER BY errAaTipoFascicolo.aaTipoFascicolo DESC ";
-            Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
-            List<DecErrAaTipoFascicolo> list = (List<DecErrAaTipoFascicolo>) query.getResultList();
-            return list;
-        } else {
-            throw new IllegalArgumentException("Parametro idAaTipoFascicolo nullo");
-        }
-    }
-
     public DecErrAaTipoFascicolo getDecErrAaTipoFascicolo(BigDecimal idAaTipoFascicolo, Integer aaFascicolo) {
         if (idAaTipoFascicolo != null && aaFascicolo != null) {
             String queryStr = "SELECT errAaTipoFascicolo FROM DecErrAaTipoFascicolo errAaTipoFascicolo "
                     + "WHERE errAaTipoFascicolo.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo "
                     + "AND errAaTipoFascicolo.aaFascicolo = :aaFascicolo ";
             Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
-            query.setParameter("aaFascicolo", aaFascicolo);
-            List<DecErrAaTipoFascicolo> list = (List<DecErrAaTipoFascicolo>) query.getResultList();
+            query.setParameter("idAaTipoFascicolo", longFromBigDecimal(idAaTipoFascicolo));
+            query.setParameter("aaFascicolo", bigDecimalFromInteger(aaFascicolo));
+            List<DecErrAaTipoFascicolo> list = query.getResultList();
             if (!list.isEmpty()) {
                 return list.get(0);
             } else {
@@ -333,22 +324,21 @@ public class TipoFascicoloHelper extends GenericHelper {
         }
         if (flStandard != null) {
             queryStr.append(whereWord).append("usoModelloXsdFasc.flStandard = :flStandard ");
-            whereWord = " AND ";
         }
 
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (idAaTipoFascicolo != null) {
-            query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
+            query.setParameter("idAaTipoFascicolo", longFromBigDecimal(idAaTipoFascicolo));
         }
         if (idModelloXsdFascicolo != null) {
-            query.setParameter("idModelloXsdFascicolo", idModelloXsdFascicolo);
+            query.setParameter("idModelloXsdFascicolo", longFromBigDecimal(idModelloXsdFascicolo));
         }
         if (flStandard != null) {
             query.setParameter("flStandard", flStandard);
         }
 
-        return (List<DecUsoModelloXsdFasc>) query.getResultList();
+        return query.getResultList();
     }
 
     public boolean existPeriodiValiditaSovrappostiFascicoli(BigDecimal idAaTipoFascicoloExcluded,
@@ -368,7 +358,7 @@ public class TipoFascicoloHelper extends GenericHelper {
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idAaTipoFascicoloExcluded != null) {
-            query.setParameter("idAaTipoFascicoloExcluded", idAaTipoFascicoloExcluded);
+            query.setParameter("idAaTipoFascicoloExcluded", longFromBigDecimal(idAaTipoFascicoloExcluded));
         }
         query.setParameter("idTipoFascicolo", idTipoFascicolo.longValue());
         query.setParameter("aaIniTipoFascicolo", aaIniTipoFascicolo);
@@ -387,9 +377,9 @@ public class TipoFascicoloHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
 
-        query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
+        query.setParameter("idAaTipoFascicolo", longFromBigDecimal(idAaTipoFascicolo));
         if (idTipoFascicolo != null) {
-            query.setParameter("idTipoFascicolo", idTipoFascicolo);
+            query.setParameter("idTipoFascicolo", longFromBigDecimal(idTipoFascicolo));
         }
 
         return query.getResultList();
@@ -399,8 +389,8 @@ public class TipoFascicoloHelper extends GenericHelper {
             BigDecimal idAaTipoFascicolo) {
         Query query = getEntityManager().createQuery(
                 "SELECT attribFascicolo FROM DecModelloXsdAttribFascicolo xsdAttrib JOIN xsdAttrib.decAttribFascicolo attribFascicolo WHERE xsdAttrib.decModelloXsdFascicolo.idModelloXsdFascicolo = :idXsdFascicolo AND attribFascicolo.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo");
-        query.setParameter("idXsdFascicolo", idXsdFascicolo);
-        query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
+        query.setParameter("idXsdFascicolo", longFromBigDecimal(idXsdFascicolo));
+        query.setParameter("idAaTipoFascicolo", longFromBigDecimal(idAaTipoFascicolo));
         return query.getResultList();
     }
 
@@ -413,8 +403,8 @@ public class TipoFascicoloHelper extends GenericHelper {
                 + "WHERE xsdAttribFascicolo.decAttribFascicolo.idAttribFascicolo = :idAttribFascicolo "
                 + "AND xsdAttribFascicolo.decModelloXsdFascicolo.idModelloXsdFascicolo = :idXsdFascicolo";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idAttribFascicolo", idAttribFascicolo);
-        query.setParameter("idXsdFascicolo", idXsdFascicolo);
+        query.setParameter("idAttribFascicolo", longFromBigDecimal(idAttribFascicolo));
+        query.setParameter("idXsdFascicolo", longFromBigDecimal(idXsdFascicolo));
         List<DecModelloXsdAttribFascicolo> list = query.getResultList();
 
         if (list.isEmpty()) {
@@ -435,7 +425,7 @@ public class TipoFascicoloHelper extends GenericHelper {
         String queryStr = "SELECT modelloXsdAttribFascicolo FROM DecModelloXsdAttribFascicolo modelloXsdAttribFascicolo "
                 + "WHERE modelloXsdAttribFascicolo.decAttribFascicolo.idAttribFascicolo = :idAttribFascicolo ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idAttribFascicolo", idAttribFascicolo);
+        query.setParameter("idAttribFascicolo", longFromBigDecimal(idAttribFascicolo));
         List<DecModelloXsdAttribFascicolo> list = query.getResultList();
 
         if (list.isEmpty()) {
@@ -460,15 +450,109 @@ public class TipoFascicoloHelper extends GenericHelper {
                 + "WHERE usoModelloXsdFasc.decAaTipoFascicolo.idAaTipoFascicolo = :idAaTipoFascicolo "
                 + "AND  usoModelloXsdFasc.decModelloXsdFascicolo.idModelloXsdFascicolo = :idModelloXsdFascicolo";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
-        query.setParameter("idModelloXsdFascicolo", idModelloXsdFascicolo);
+        query.setParameter("idAaTipoFascicolo", longFromBigDecimal(idAaTipoFascicolo));
+        query.setParameter("idModelloXsdFascicolo", longFromBigDecimal(idModelloXsdFascicolo));
         List<DecUsoModelloXsdFasc> list = query.getResultList();
 
         if (list.isEmpty()) {
             return null;
         }
         return (list.get(0));
+    }
 
+    public DecTipoFascicolo findDecTipoFascicolo(Long idTipoFascicolo) {
+        return getEntityManager().find(DecTipoFascicolo.class, idTipoFascicolo);
+    }
+
+    /**
+     * 
+     * @param tiModelloXsd
+     *            tipo modello xsd
+     * 
+     * @return lista di elementi di tipo DecModelloXsdFascicolo
+     */
+    public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloByTiModelloXsd(String tiModelloXsd) {
+
+        List<DecModelloXsdFascicolo> result = null;
+
+        String queryStr = "SELECT modelloXsdFasc FROM DecModelloXsdFascicolo modelloXsdFasc WHERE modelloXsdFasc.tiModelloXsd = :tiModelloXsd";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("tiModelloXsd",
+                it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.valueOf(tiModelloXsd));
+
+        result = query.getResultList();
+
+        return result;
+
+    }
+
+    /**
+     * Ritorna l'oggetto DecTipoFascicolo dato il tipo fascicolo e la struttura di riferimento
+     *
+     * @param nmTipoFascicolo
+     *            nome tipo fascicolo
+     * @param idStrut
+     *            id struttura
+     *
+     * @return l'oggetto DecTipoFascicolo o null se inesistente
+     */
+    public DecTipoFascicolo getDecTipoFascicoloByName(String nmTipoFascicolo, BigDecimal idStrut) {
+        Query query = getEntityManager().createQuery("SELECT tipoFascicolo FROM DecTipoFascicolo tipoFascicolo "
+                + "WHERE UPPER(tipoFascicolo.nmTipoFascicolo) = :nmTipoFascicolo AND tipoFascicolo.orgStrut.idStrut=:idStrut");
+        query.setParameter("nmTipoFascicolo", nmTipoFascicolo.toUpperCase());
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        List<DecTipoFascicolo> list = query.getResultList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public DecAaTipoFascicolo getDecAaTipoFascicoloByAaIni(BigDecimal idStrut, String nmTipoFascicolo,
+            BigDecimal aaIniTipoFascicolo) {
+        String queryStr = "SELECT aaTipoFascicolo FROM DecAaTipoFascicolo aaTipoFascicolo "
+                + "WHERE aaTipoFascicolo.aaIniTipoFascicolo = :aaIniTipoFascicolo "
+                + "AND aaTipoFascicolo.decTipoFascicolo.nmTipoFascicolo = :nmTipoFascicolo "
+                + "AND aaTipoFascicolo.decTipoFascicolo.orgStrut.idStrut = :idStrut ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("aaIniTipoFascicolo", aaIniTipoFascicolo);
+        query.setParameter("nmTipoFascicolo", nmTipoFascicolo);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        List<DecAaTipoFascicolo> list = query.getResultList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public DecSelCriterioRaggrFasc getDecSelCriterioRaggrFasc(BigDecimal idStrutturaCorrente, String nmCriterioRaggr,
+            String nmTipoFascicolo) {
+        String queryStr = "SELECT selCriterioRaggrFasc FROM DecSelCriterioRaggrFasc selCriterioRaggrFasc "
+                + "WHERE selCriterioRaggrFasc.decCriterioRaggrFasc.nmCriterioRaggr = :nmCriterioRaggr "
+                + "AND selCriterioRaggrFasc.decTipoFascicolo.nmTipoFascicolo = :nmTipoFascicolo "
+                + "AND selCriterioRaggrFasc.decTipoFascicolo.orgStrut.idStrut = :idStrut "
+                + "AND selCriterioRaggrFasc.tiSel = :tiSel ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("nmCriterioRaggr", nmCriterioRaggr);
+        query.setParameter("nmTipoFascicolo", nmTipoFascicolo);
+        query.setParameter("idStrut", longFromBigDecimal(idStrutturaCorrente));
+        query.setParameter("tiSel",
+                it.eng.parer.entity.constraint.DecSelCriterioRaggrFasc.TiSelFasc.TIPO_FASCICOLO.name());
+        List<DecSelCriterioRaggrFasc> list = query.getResultList();
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public void deleteAaTipoFascicolo(List<Long> idAaTipoFascicoloList) {
+        String queryStr = "DELETE FROM DecAaTipoFascicolo aaTipoFascicolo "
+                + "WHERE aaTipoFascicolo.idAaTipoFascicolo IN :idAaTipoFascicoloList ";
+
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idAaTipoFascicoloList", idAaTipoFascicoloList);
+
+        query.executeUpdate();
     }
 
 }

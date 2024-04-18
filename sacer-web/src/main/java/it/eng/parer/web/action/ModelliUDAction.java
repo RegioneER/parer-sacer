@@ -1,4 +1,25 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
+
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -15,7 +36,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -59,6 +79,7 @@ import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.versamento.dto.FileBinario;
+import it.eng.spagoCore.configuration.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseTableInterface;
@@ -128,16 +149,16 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
 
             // maximum size that will be stored in memory
             factory.setSizeThreshold(sizeMb);
-            Properties props = loadProperties();
             // the location for saving data that is larger than
-            factory.setRepository(new File(props.getProperty("loadXsdApp.upload.directory")));
+            factory.setRepository(
+                    new File(ConfigSingleton.getInstance().getStringValue(LOAD_XSD_APP_UPLOAD_DIR.name())));
             // Create a new file upload handler
             ServletFileUpload upload = new ServletFileUpload(factory);
             // maximum size before a FileUploadException will be thrown
-            upload.setSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxRequestSize")));
-            upload.setFileSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxFileSize")));
-            List<?> items = upload.parseRequest(getRequest());
-            Iterator<?> iter = items.iterator();
+            upload.setSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_REQUEST_SIZE.name()));
+            upload.setFileSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_FILE_SIZE.name()));
+            List<FileItem> items = upload.parseRequest(getRequest());
+            Iterator<FileItem> iter = items.iterator();
 
             DiskFileItem tmpFileItem = null;
             DiskFileItem tmpOperation = null;
@@ -318,16 +339,6 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
         }
     }
 
-    private Properties loadProperties() throws EMFError {
-        Properties props = new Properties();
-        try {
-            props.load(this.getClass().getClassLoader().getResourceAsStream("/Sacer.properties"));
-        } catch (IOException ex) {
-            throw new EMFError(EMFError.BLOCKING, "Errore nel caricamento delle impostazioni per l'upload", ex);
-        }
-        return props;
-    }
-
     private FileBinario getFileBinario(DiskFileItem tmpFileItem) {
 
         FileBinario tmpFileBinario;
@@ -377,8 +388,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
 
     private void initModelloXsdUdDetail() {
         BaseTableInterface<?> ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
         getForm().getModelliXsdUdDetail().getId_ambiente()
@@ -504,8 +514,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getModelliXsdUdList().getStatus().equals(Status.insert)) {
@@ -567,8 +576,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                    null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (param.getNomePagina().equals(Application.Publisher.MODELLI_XSD_UD_DETAIL)) {
@@ -604,6 +612,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
                 getForm().getModelliXsdUdDetail().setViewMode();
                 // button edit mode
                 getForm().getModelliXsdUdDetail().getScaricaXsdButton().setEditMode();
+                getForm().getModelliXsdUdDetail().getScaricaXsdButton().setDisableHourGlass(true);
                 forwardToPublisher(Application.Publisher.MODELLI_XSD_UD_DETAIL);
             }
         }
@@ -662,6 +671,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
             getForm().getModelliXsdUdDetail().setViewMode();
             // button edit mode
             getForm().getModelliXsdUdDetail().getScaricaXsdButton().setEditMode();
+            getForm().getModelliXsdUdDetail().getScaricaXsdButton().setDisableHourGlass(true);
             getForm().getModelliXsdUdDetail().setStatus(Status.view);
             getForm().getModelliXsdUdList().setStatus(Status.view);
             postLoad();
@@ -671,10 +681,10 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
         }
     }
 
-    @Secure(action = "Menu.UnitaDocumentarie.ModelliUD")
+    @Secure(action = "Menu.Amministrazione.ModelliUD")
     public void loadListaModelliXsdUd() {
         getUser().getMenu().reset();
-        getUser().getMenu().select("Menu.UnitaDocumentarie.ModelliUD");
+        getUser().getMenu().select("Menu.Amministrazione.ModelliUD");
 
         // Azzero i filtri e la lista risultato della form di ricerca
         getForm().getFiltriModelliXsdUd().reset();
@@ -711,8 +721,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
 
         // Inizializzo le combo settando l'ambiente corrente
         BaseTableInterface<?> ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
 
@@ -828,6 +837,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
             getForm().getModelliXsdUdDetail().getLogEventi().setHidden(false);
             getForm().getModelliXsdUdDetail().getLogEventi().setEditMode();
             getForm().getModelliXsdUdDetail().getScaricaXsdButton().setEditMode();
+            getForm().getModelliXsdUdDetail().getScaricaXsdButton().setDisableHourGlass(true);
         } else {
             getForm().getModelliXsdUdDetail().getScaricaXsdButton().setHidden(true);
             getForm().getModelliXsdUdDetail().getLogEventi().setHidden(true);

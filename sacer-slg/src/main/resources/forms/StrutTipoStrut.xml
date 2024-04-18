@@ -43,8 +43,11 @@
         <Input Type="STRING" Description="Nome componente" Name="nm_tipo_comp_doc" />
         <Input Type="STRING" Description="Descrizione componente" Name="ds_tipo_comp_doc" />
         <ComboBox Name="ti_uso_comp_doc" Description="Tipo uso" Type="STRING" />
-        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" /><!--<Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />-->
         <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
+        <CheckBox Type="STRING" Description="Gestiti" Name="fl_gestiti" />
+        <CheckBox Type="STRING" Description="Idonei" Name="fl_idonei" />
+        <CheckBox Type="STRING" Description="Deprecati" Name="fl_deprecati" />             
     </Fields>
     
     <Fields Name="FormatoFileAmmesso" Description="Formato file ammesso" >
@@ -84,6 +87,7 @@
         <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
         <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
         <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>       
+        <Link Name="dupFormato" Description="" Type="STRING" Target="duplicaFormatoTipoCompOperation" Tooltip="Crea formato specifico" isTargetList="false"/>      
     </List>
     
     <List Name="IdList" Description="Lista id"  >
@@ -100,36 +104,37 @@
         <TabElement Name="DecTipoCompDocXsdDatiSpec" Description="Versioni XSD" /> 
     </Tab>
     
+    <Fields Name="FiltriFormatoFileDoc" Description="Ricerca formati" >
+        <Input Type="STRING" Description="Nome o estensione formato" Name="nm_formato_file_standard" />
+        <ComboBox Type="STRING" Description="Mimetype" Name="nm_mimetype_file" WithSearchComp="true" />
+        <Button Name="ricercaFormatoButton" Description="Ricerca Formati" Type="STRING"/>
+    </Fields>
+    
     <List Name="FormatoFileDocList" Description="Lista formati file documento" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true" >
-        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammissibile" />
-        <!--        <Input Type="STRING" Description="Nome" Name="nm_formato_file_doc"  />
-        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
-        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />-->
+        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammissibile" />        
         <Input Type="STRING" Description="Formato versato ammesso" Name="nm_formato_file_doc" />        
         <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
         <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />
         <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
-        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />        
     </List>
     
     <ButtonList Name="SelectButtonList" Description="">
         <Button Name="selectAmmissibili" Description="Aggiungi" Type="STRING"/>
         <Button Name="deselectAmmessi" Description="Rimuovi" Type="STRING"/>
         <Button Name="select_all" Description="Aggiungi tutti" Type="STRING"/>
-        <Button Name="deselect_all" Description="Rimuovi tutti" Type="STRING"/>
+        <Button Name="deselect_all" Description="Rimuovi tutti" Type="STRING"/>        
     </ButtonList>
     
     <List Name="SelectFormatoFileAmmessoList" Description="" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true" >
-        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammesso" />
-        <!--        <Input Type="STRING" Description="Nome" Name="nm_formato_file_doc" />
-        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
-        <Input Type="STRING" Description="Versione" Name="cd_versione" />-->
+        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammesso" />        
         <Input Type="STRING" Description="Formato versato ammesso" Name="nm_formato_file_doc" />
         <Input Type="STRING" Description="Estensione busta" Name="cd_estensione_file_busta" />
         <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
         <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />
         <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
-        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />        
+        <Input Type="INTEGER" Description="Id formato ammesso" Name="id_formato_file_ammesso" Hidden="true"/>
     </List>
         
     <!-- LISTA VERSIONI XSD -->
@@ -162,7 +167,6 @@
     
     <List Name="TipoRapprCompAmmessoDaTipoCompList" Description="Tipi rappresentazione componente ammesse">
         <Input Name="id_tipo_rappr_comp" Description="Tipo rappresentazione componente" Type="INTEGER" Hidden="true"/>
-        <!--<Input Name="nm_tipo_rappr_comp" Description="Nome" Type="STRING"/>-->
         <Link Name="nm_tipo_rappr_comp" Description="Nome" Type="STRING" Target="loadDettaglioTipoRapprComp" Tooltip="Visualizza Tipo Rappresentazione Componente" isTargetList="false"/>
         <Input Name="ds_tipo_rappr_comp" Description="Descrizione" Type="STRING"/>
         <CheckBox Name="dt_soppres" Description="Attivo" Type="STRING" Readonly="true"/>
@@ -171,5 +175,46 @@
     <Fields Name="TipoRapprCompAmmessoDaTipoComp" Description="Tipo rappresentazione componente ammesso" >
         <ComboBox Name="id_tipo_rappr_comp" Description="Tipo rappresentazione componente" Type="INTEGER" />
     </Fields>
+       
+    <!-- LISTA FORMATI AMMESSI CREAZIONE CONCATENAZIONI -->
+    <List Name="FormatoFileStandardToCompList" Description="Lista formati file standard"  >        
+        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammissibile" />
+        <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />        
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />        
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
+        <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />        
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+    </List> 
+    
+    <List Name="SelectFormatoFileStandardCompList" Description="" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <CheckBox  Type="STRING" Description="" Name="fl_formato_ammesso" />
+        <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />        
+        <Input Type="STRING" Description="Estensione busta" Name="cd_estensione_file_busta" />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />        
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_standard" />
+        <Input Type="STRING" Description="Estensione" Name="cd_estensione_file" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+    </List>
+    
+    <ButtonList Name="SelectConcatButtonList" Description="">
+        <Button Name="selectConcatAmmissibili" Description="Aggiungi" Type="STRING"/>
+        <Button Name="deselectConcatAmmessi" Description="Rimuovi" Type="STRING"/>        
+    </ButtonList>
+    
+    <Fields Name="FormatoFileDoc" Description="Formato file documento" >
+        <Input Type="STRING" Description="Formato" Name="nm_formato_file_doc" MaxLength="100" />
+        <Input Type="STRING" Description="Descrizione formato" Name="ds_formato_file_doc" MaxLength="254" />
+        <Input Type="INTEGER" Description="Punteggio  interoperabilità" Name="ni_punteggio_totale" />
+        <Input Type="STRING" Description="Codice versione" Name="cd_versione" MaxLength="100" />
+        <Input Type="DATE" Description="*Data attivazione" Name="dt_istituz" />
+        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />        
+    </Fields>
+    
+    <Section Name="formatiAmmissibiliComp" Description="" Legend="Formati ammissibili"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="allineamentoFormatiAmmessi" Description="" Legend="Allineamento automatico formati ammessi"  ShowButton="false" LoadOpened="true"/>    
+    <Section Name="formatiConcatenabiliSelezionatiComp" Description="" Legend="Formati concatenabili selezionati"  ShowButton="false" LoadOpened="true"/>   
+    <Section Name="anteprimaFormatiFileDoc" Description="" Legend="Formato ammesso"  ShowButton="false" LoadOpened="true"/>
+    
+    
 
 </Form>

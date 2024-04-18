@@ -1,4 +1,31 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.replicaUtente.ejb;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
+import javax.transaction.UserTransaction;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.integriam.server.ws.Costanti;
 import it.eng.integriam.server.ws.reputente.CancellaUtenteRisposta;
@@ -21,22 +48,12 @@ import it.eng.parer.ws.replicaUtente.utils.CancellaUtenteCheck;
 import it.eng.parer.ws.replicaUtente.utils.InserimentoUtenteCheck;
 import it.eng.parer.ws.replicaUtente.utils.ModificaUtenteCheck;
 import it.eng.parer.ws.utils.WsTransactionManager;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.transaction.UserTransaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Gilioli_P
  */
-@Stateless(mappedName = "ReplicaUtenteEjb")
-@LocalBean
+@Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
 public class ReplicaUtenteEjb implements ReplicaUtenteInterface {
 

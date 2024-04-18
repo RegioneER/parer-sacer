@@ -3,6 +3,7 @@
 <Form Description="StrutTipiFascicolo" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema"
       xsi:noNamespaceSchemaLocation="Form.xsd">
 
+    <Section Name="caricamentoPeriodoValiditaFascicolo" Description="" Legend="Caricamento del periodo di validità del fascicolo"  ShowButton="false" LoadOpened="true"/>
     <Section Name="struttura" Description="" Legend="Struttura"  ShowButton="false" LoadOpened="true"/>
     <Section Name="tipoFascicoloSection" Description="" Legend="Tipo fascicolo"  ShowButton="false" LoadOpened="true"/>
     <Section Name="xsdSection" Description="" Legend="Dettaglio XSD"  ShowButton="false" LoadOpened="true"/>
@@ -14,13 +15,13 @@
     <Section Name="criteriRaggrFascSection" Description="" Legend="Criteri di raggruppamento fascicoli"  ShowButton="false" LoadOpened="true"/>
     <Section Name="periodoValiditaSection" Description="" Legend="Periodo di validità"  ShowButton="false" LoadOpened="true"/>
     <Section Name="xsdMetadatiProfiloFascicoloSection" Description="" Legend="XSD dei Metadati di profilo fascicolo"  ShowButton="false" LoadOpened="true"/>
-    <Section Name="xsdMetadatiProfiloArkSection" Description="" Legend="XSD dei Metadati di profilo archivistico"  ShowButton="false" LoadOpened="true"/>
     <Section Name="erroriPeriodoValiditaSection" Description="" Legend="Riepilogo errori sul periodo di validità del tipo fascicolo"  ShowButton="false" LoadOpened="true"/>
-    <Section Name="versioniXsdMetadatiProfiloFascicoloSection" Description="" Legend="Versioni degli XSD dei metadati di profilo fascicolo"  ShowButton="false" LoadOpened="true"/>
-    <Section Name="versioniXsdMetadatiProfiloArkSection" Description="" Legend="Versioni degli XSD dei metadati di profilo archivistico"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="versioniXsdProfiloFasAmmessiSection" Description="" Legend="Versione XSD profili ammessi"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="versioniXsdMetadatiProfiloFascicoloSection" Description="" Legend="Versione XSD metadati specifici"  ShowButton="false" LoadOpened="true"/>
     <Section Name="listaPartiSection" Description="" Legend="Formato numero - Lista delle parti"  ShowButton="false" LoadOpened="true"/>
     <Section Name="sAttribFascicolo" Description="" Legend="Dettaglio attributo"  ShowButton="false" LoadOpened="true"/>
     <Section Name="xsdAttribFascicoloSection" Description="" Legend="Elenco Metadati"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="formatoNumeroListaPartiSection" Description="" Legend="Formato numero lista parti"  ShowButton="false" LoadOpened="true"/>
        
     <!-- Struttura di riferimento nel dettaglio di una delle liste seguenti -->    
     <Fields Name="StrutRif" Description="Struttura" >
@@ -47,6 +48,7 @@
 
     <Fields Name="AaTipoFascicoloDetail" Description="Periodo di validità tipo fascicolo" >
         <Input Type="INTEGER" Description="Id aa tipo fascicolo" Name="id_aa_tipo_fascicolo" Hidden="true" />
+        <Input Type="INTEGER" Description="Id Tipo fascicolo" Name="id_tipo_fascicolo" Hidden="true" />
         <Input Type="INTEGER" Description="Anno di inizio validità" Name="aa_ini_tipo_fascicolo" MaxLength="4"/>
         <Input Type="INTEGER" Description="Anno di fine validità" Name="aa_fin_tipo_fascicolo" MaxLength="4"/>
 <!--        <ComboBox Type="STRING" Description="Abilita controllo classificazione" Name="fl_abilita_contr_classif" />
@@ -65,14 +67,17 @@
     
     <!-- Dettaglio di un "uso modello xsd fascicolo" -->
     <Fields Name="MetadatiProfiloDetail" Description="Dettaglio XSD" >
+        <Input Type="INTEGER" Description="Id uso modello" Name="id_uso_modello_xsd_fasc" Hidden="true" />
         <Input Type="INTEGER" Description="Id Tipo fascicolo" Name="id_tipo_fascicolo" Hidden="true" />
-        <Input Type="STRING" Description="Tipo modello" Name="ti_modello_xsd" Required="true" />
-        <CheckBox Type="STRING" Description="Standard" Name="fl_standard" />
+        <Input Type="INTEGER" Description="Id aa tipo fascicolo" Name="id_aa_tipo_fascicolo" Hidden="true" />
+        <ComboBox Type="STRING" Description="Tipo xsd" Name="ti_modello_xsd" Required="true" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Versioni di xsd" Name="id_modello_xsd_fascicolo" Required="true" />
         <Input Type="STRING" Description="Codice versione" Name="cd_xsd" />
         <Input Type="STRING" Description="Descrizione versione XSD" Name="ds_xsd" />
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
         <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
         <TextArea Name="bl_xsd" Description="Dettaglio XSD" Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+        <Button Name="visualizzaModelloXsdFascicolo" Description="Visualizza modello" Type="STRING"/>
     </Fields>
     
     <!-- Dettaglio di un "modello xsd fascicolo" -->
@@ -85,6 +90,7 @@
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
         <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
         <TextArea Name="bl_xsd" Description="Dettaglio XSD" Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />
+        <Button Name="scaricaXsdModelliUdButton" Description="Scarica XSD" Type="STRING" />
     </Fields>
     
     <!-- LISTE -->
@@ -102,7 +108,8 @@
         <Input Type="INTEGER" Description="Inizio validità" Name="aa_ini_tipo_fascicolo" />
         <Input Type="INTEGER" Description="Fine validità" Name="aa_fin_tipo_fascicolo" />
         <Input Type="STRING" Description="Formato numero" Name="nm_parte_numero" />
-        <Input Type="STRING" Description="Esempio" Name="aa_tipo_fascicolo_esempio" />
+        <!--Input Type="STRING" Description="Esempio" Name="aa_tipo_fascicolo_esempio" /-->
+        <Input Type="STRING" Description="Profili XSD ammessi" Name="xsd_modelli_ammessi" />
         <CheckBox Type="STRING" Description="Controllo formato numero" Name="controllo_formato_da_list" Readonly="true"/>
     </List>
     
@@ -122,22 +129,12 @@
         <Input Type="STRING" Description="Descrizione errore" Name="ds_err_fmt_numero" />
     </List>
     
-    <List Name="MetadatiProfiloFascicoloList" Description="Metadati di profilo fascicolo" hideInsertButton="true" >
+    <List Name="MetadatiProfiloFascicoloList" Description="Metadati di profilo fascicolo" >
         <Input Type="INTEGER" Description="Id uso modello" Name="id_uso_modello_xsd_fasc" Hidden="true" />
         <Input Type="INTEGER" Description="Id modello" Name="id_modello_xsd_fascicolo" Hidden="true" />
         <Input Type="INTEGER" Description="Id aa tipo fascicolo" Name="id_aa_tipo_fascicolo" Hidden="true" />
-        <Input Type="STRING" Description="Versione" Name="cd_xsd" />
-        <Input Type="STRING" Description="Descrizione" Name="ds_xsd" />
-        <CheckBox Type="STRING" Description="Standard" Name="fl_standard" Readonly="true"/>
-        <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
-        <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
-        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
-    </List>
-
-    <List Name="MetadatiProfiloArkList" Description="Metadati di profilo archivistico" hideInsertButton="true" >
-        <Input Type="INTEGER" Description="Id uso modello" Name="id_uso_modello_xsd_fasc" Hidden="true" />
-        <Input Type="INTEGER" Description="Id modello" Name="id_modello_xsd_fascicolo" Hidden="true" />
-        <Input Type="INTEGER" Description="Id aa tipo fascicolo" Name="id_aa_tipo_fascicolo" Hidden="true" />
+        <Input Type="STRING" Description="Tipo uso modello" Name="ti_uso_modello_xsd" Hidden="true"/>
+        <Input Type="STRING" Description="Tipo modello" Name="ti_modello_xsd" />
         <Input Type="STRING" Description="Versione" Name="cd_xsd" />
         <Input Type="STRING" Description="Descrizione" Name="ds_xsd" />
         <CheckBox Type="STRING" Description="Standard" Name="fl_standard" Readonly="true"/>
@@ -158,8 +155,6 @@
         <!-- <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/> -->
         <!-- <Input Type="CLOB" Description="Xsd Tipo Doc" Name="bl_xsd_tipo_doc" /> -->
     </List>
-    
-    
     
     <List Name="ParteNumeroFascicoloList" Description="Lista delle parti del periodo di validità del tipo fascicolo" >
         <Input Name="id_parte_numero_fascicolo" Description="" Type="INTEGER" Hidden="true"/>
@@ -185,23 +180,13 @@
         <Input Name="dt_soppres" Description="Data disattivazione" Type="DATE"/>
     </List>
             
-    <Wizard Name="InserimentoPeriodoValiditaWizard" Description="Caricamento del periodo di validità del fascicolo">
+    <!--Wizard Name="InserimentoPeriodoValiditaWizard" Description="Caricamento del periodo di validità del fascicolo">
         <Step Name="DettaglioPeriodoStep" Description=""/>
         <Step Name="XsdMetadatiProfiloFascStep" Description=""/>
         <Step Name="XsdMetadatiProfiloArkStep" Description=""/>
         <Step Name="PartiStep" Description=""/>
-    </Wizard>
-    
-    <Fields Name="MetadatiProfilo" Description="Metadati profilo">        
-        <ComboBox Type="STRING" Description="Tipo xsd" Name="ti_modello_xsd" Required="true" Readonly="true" />
-        <ComboBox Type="INTEGER" Description="Versioni di xsd" Name="id_modello_xsd_fascicolo" Required="true" />
-        <CheckBox Name="fl_standard_field" Type="STRING" Description="Standard" Required="true" />
-        <Input Name="dt_istituz" Description="Data attivazione" Type="DATE" />
-        <Input Name="dt_soppres" Description="Data disattivazione" Type="DATE"/>
-        <Button Name="visualizzaModelloXsdFascicolo" Description="Visualizza modello" Type="STRING"/>
-        <Button Name="addMetadatiProfiloFascicolo" Description="Aggiungi alla lista" Type="STRING"/>
-        <Button Name="addMetadatiProfiloArk" Description="Aggiungi alla lista" Type="STRING"/>
-    </Fields>
+    </Wizard-->
+
     
     <Fields Name="ParteNumeroFascicoloDetail" Description="Definizione parti">
         <Input Name="id_parte_numero_fascicolo" Description="" Type="INTEGER" Hidden="true"/>
@@ -288,6 +273,4 @@
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
         <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
     </Fields>
-
-
 </Form>

@@ -1,7 +1,29 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.ejb.SistemaMigrazioneEjb;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.sacer.util.SacerLogConstants;
+import it.eng.parer.sacerlog.ejb.SacerLogEjb;
+import it.eng.parer.sacerlog.slite.gen.form.GestioneLogEventiForm;
+import it.eng.parer.sacerlog.util.LogParam;
+import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.AmministrazioneAbstractAction;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicRowBean;
@@ -11,8 +33,10 @@ import it.eng.parer.slite.gen.tablebean.AplSistemaMigrazRowBean;
 import it.eng.parer.slite.gen.tablebean.AplSistemaMigrazTableBean;
 import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.helper.AmministrazioneHelper;
+import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
+import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseRowInterface;
@@ -44,6 +68,12 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
 
     @EJB(mappedName = "java:app/Parer-ejb/SistemaMigrazioneEjb")
     private SistemaMigrazioneEjb sistemaMigrazioneEjb;
+
+    @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
+    private ConfigurationHelper configHelper;
+
+    @EJB(mappedName = "java:app/sacerlog-ejb/SacerLogEjb")
+    private SacerLogEjb sacerLogEjb;
 
     @Override
     public String getControllerName() {
@@ -83,6 +113,7 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getConfiguration().getEdit_config().setViewMode();
         getForm().getConfiguration().getAdd_config().setViewMode();
         getForm().getConfiguration().getSave_config().setViewMode();
+        getForm().getConfiguration().getLogEventiRegistroParametri().setEditMode();
 
         // Carico la lista dei configurazioni
         forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
@@ -247,7 +278,19 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         AplParamApplicRowBean row = (AplParamApplicRowBean) getForm().getConfigurationList().getTable().getCurrentRow();
         int deletedRowIndex = getForm().getConfigurationList().getTable().getCurrentRowIndex();
         getForm().getConfigurationList().getTable().remove(deletedRowIndex);
-        if (row.getIdParamApplic() != null && amministrazioneHelper.deleteAplParamApplicRowBean(row)) {
+
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC), getUser().getUsername(),
+                SpagoliteLogUtil.getPageName(this));
+
+        param.setNomeAzione(
+                SpagoliteLogUtil.getDetailActionNameDelete(this.getForm(), this.getForm().getConfigurationList()));
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+
+        if (row.getIdParamApplic() != null && amministrazioneHelper.deleteAplParamApplicRowBean(param, row)) {
             getMessageBox().addInfo("Configurazione eliminata con successo");
             getMessageBox().setViewMode(ViewMode.plain);
         }
@@ -265,16 +308,10 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         String tiParamApplicName = getForm().getConfigurationList().getTi_param_applic().getName();
         String tiGestioneParamName = getForm().getConfigurationList().getTi_gestione_param().getName();
         String nmParamApplicName = getForm().getConfigurationList().getNm_param_applic().getName();
-        String dmParamApplicName = getForm().getConfigurationList().getDm_param_applic().getName();
         String dsParamApplicName = getForm().getConfigurationList().getDs_param_applic().getName();
         String dsListaValoriAmmessiName = getForm().getConfigurationList().getDs_lista_valori_ammessi().getName();
         String dsValoreParamApplicName = getForm().getConfigurationList().getDs_valore_param_applic().getName();
         String flAppartApplicName = getForm().getConfigurationList().getFl_appart_applic().getName();
-        String flAppartAmbienteName = getForm().getConfigurationList().getFl_appart_ambiente().getName();
-        String flAppartStrutName = getForm().getConfigurationList().getFl_appart_strut().getName();
-        String flAppartTipoUnitaDocName = getForm().getConfigurationList().getFl_appart_tipo_unita_doc().getName();
-        String flAppartAaTipoFascicoloName = getForm().getConfigurationList().getFl_appart_aa_tipo_fascicolo()
-                .getName();
         String tiValoreParamApplic = getForm().getConfigurationList().getTi_valore_param_applic().getName();
         Set<Integer> completeRows = new HashSet<Integer>();
         Set<String> nmParamApplicSet = new HashSet<String>();
@@ -294,9 +331,7 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
             String flAppartApplicValue = r.getString(flAppartApplicName);
             if (StringUtils.isNotBlank(tiParamApplicValue) && StringUtils.isNotBlank(tiGestioneParamValue)
                     && StringUtils.isNotBlank(nmParamApplicValue) && StringUtils.isNotBlank(dsParamApplicValue)
-                    && StringUtils.isNotBlank(tiValoreParamApplicValue)// &&
-                                                                       // StringUtils.isNotBlank(dsValoreValue)
-            ) {
+                    && StringUtils.isNotBlank(tiValoreParamApplicValue)) {
                 if (StringUtils.isNotBlank(dsValoreParamApplicValue)) {
                     if (flAppartApplicValue.equals("1")) {
                         completeRows.add(i);
@@ -337,6 +372,14 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         }
 
         if (!getMessageBox().hasError()) {
+            // Codice aggiuntivo per il logging
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            param.setNomeAzione(SpagoliteLogUtil.getButtonActionName(this.getForm(), this.getForm().getConfiguration(),
+                    this.getForm().getConfiguration().getSave_config().getName()));
+
             for (Integer rowIndex : completeRows) {
                 AplParamApplicRowBean row = ((AplParamApplicTableBean) getForm().getConfigurationList().getTable())
                         .getRow(rowIndex);
@@ -352,6 +395,9 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
                 }
             }
             if (!getMessageBox().hasError()) {
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_REGISTRO_PARAMETRI, BigDecimal.ZERO,
+                        param.getNomePagina());
                 getMessageBox().addInfo("Configurazione salvata con successo");
                 getMessageBox().setViewMode(ViewMode.plain);
 
@@ -709,6 +755,18 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getDettaglioSistemaMigrazione().setEditMode();
         getForm().getSistemiMigrazioneList().setStatus(Status.update);
         getForm().getDettaglioSistemaMigrazione().setStatus(Status.update);
+    }
+
+    @Override
+    public void logEventiRegistroParametri() throws EMFError {
+        // BaseRowInterface bean = getForm().getConfigurationList().getTable().getCurrentRow();
+        GestioneLogEventiForm form = new GestioneLogEventiForm();
+        form.getOggettoDetail().getNmApp()
+                .setValue(configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
+        form.getOggettoDetail().getNm_tipo_oggetto().setValue(SacerLogConstants.TIPO_OGGETTO_REGISTRO_PARAMETRI);
+        form.getOggettoDetail().getIdOggetto().setValue(BigDecimal.ZERO.toString());
+        redirectToAction(it.eng.parer.sacerlog.slite.gen.Application.Actions.GESTIONE_LOG_EVENTI,
+                "?operation=inizializzaLogEventi", form);
     }
 
 }

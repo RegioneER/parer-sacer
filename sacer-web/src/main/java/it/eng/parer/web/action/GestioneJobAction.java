@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.jboss.timer.service.JbossTimerEjb;
@@ -9,7 +26,6 @@ import it.eng.parer.slite.gen.form.MonitoraggioForm;
 import it.eng.parer.slite.gen.viewbean.LogVVisLastSchedRowBean;
 import it.eng.parer.web.ejb.GestioneJobEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.web.helper.GestioneJobHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.WebConstants;
@@ -47,13 +63,12 @@ import org.slf4j.LoggerFactory;
  */
 public class GestioneJobAction extends GestioneJobAbstractAction {
 
+    public static final String FROM_SCHEDULAZIONI_JOB = "fromSchedulazioniJob";
+
     private final Logger LOG = LoggerFactory.getLogger(GestioneJobAction.class.getName());
 
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioHelper")
     private MonitoraggioHelper monitoraggioHelper;
-
-    @EJB(mappedName = "java:app/Parer-ejb/GestioneJobHelper")
-    private GestioneJobHelper gestioneJobHelper;
 
     @EJB(mappedName = "java:app/JbossTimerWrapper-ejb/JbossTimerEjb")
     private JbossTimerEjb jbossTimerEjb;
@@ -359,8 +374,7 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="UI Gestione job per l'inizializzazione dei LOG">
-        String nomeApplicazione = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeApplicazione = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
         dataAttivazioneJob = getActivationDateJob(
                 it.eng.parer.sacerlog.job.Constants.NomiJob.INIZIALIZZAZIONE_LOG.name() + "_" + nomeApplicazione);
         StatoJob inizializzazioneLog = new StatoJob(
@@ -780,7 +794,7 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
      *
      * @author Snidero_L
      */
-    private static final class StatoJob {
+    public static final class StatoJob {
 
         private final String nomeJob;
         private final Input<String> flagDataAccurata;
@@ -882,7 +896,7 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
 
     @Override
     public void elencoOnClick() throws EMFError {
-        throw new UnsupportedOperationException("Not supported yet.");
+        goBack();
     }
 
     @Override
@@ -892,7 +906,13 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
 
     @Override
     public void reloadAfterGoBack(String publisherName) {
-        getSession().removeAttribute("backToRicercaJob");
+        try {
+            ricercaGestioneJob();
+        } catch (EMFError ex) {
+            LOG.error(ex.getDescription());
+            getMessageBox().addError("Errore durante il caricamento dell'elenco dei JOB");
+        }
+
     }
     // </editor-fold>
 
@@ -1468,32 +1488,28 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
     // <editor-fold defaultstate="collapsed" desc="Methods to manage AllineamentoLog schedulation">
     @Override
     public void startOnceInizializzazioneLog() throws EMFError {
-        String nomeApplicazione = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeApplicazione = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
         esegui(it.eng.parer.sacerlog.job.Constants.NomiJob.INIZIALIZZAZIONE_LOG.name(), "Inizializzazione Log",
                 nomeApplicazione, OPERAZIONE.ESECUZIONE_SINGOLA);
     }
 
     @Override
     public void startAllineamentoLog() throws EMFError {
-        String nomeApplicazione = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeApplicazione = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
         esegui(it.eng.parer.sacerlog.job.Constants.NomiJob.ALLINEAMENTO_LOG.name(), "Allineamento Log",
                 nomeApplicazione, OPERAZIONE.START);
     }
 
     @Override
     public void startOnceAllineamentoLog() throws EMFError {
-        String nomeApplicazione = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeApplicazione = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
         esegui(it.eng.parer.sacerlog.job.Constants.NomiJob.ALLINEAMENTO_LOG.name(), "Allineamento Log",
                 nomeApplicazione, OPERAZIONE.ESECUZIONE_SINGOLA);
     }
 
     @Override
     public void stopAllineamentoLog() throws EMFError {
-        String nomeApplicazione = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeApplicazione = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
         esegui(it.eng.parer.sacerlog.job.Constants.NomiJob.ALLINEAMENTO_LOG.name(), "Allineamento Log",
                 nomeApplicazione, OPERAZIONE.STOP);
     }
@@ -1836,15 +1852,22 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
     public void ricercaGestioneJob() throws EMFError {
         getForm().getGestioneJobRicercaFiltri().getRicercaGestioneJob().setDisableHourGlass(true);
         GestioneJobRicercaFiltri filtri = getForm().getGestioneJobRicercaFiltri();
-        if (getRequest().getAttribute("fromLink") == null && (getRequest().getAttribute("fromListaPrinc") == null)) {
-            filtri.post(getRequest());
+
+        if (getRequest().getAttribute("fromLink") == null && getRequest().getAttribute("fromListaPrinc") == null) {
+            if (getSession().getAttribute(FROM_SCHEDULAZIONI_JOB) != null) {
+                getSession().removeAttribute(FROM_SCHEDULAZIONI_JOB);
+            } else {
+                filtri.post(getRequest());
+            }
         }
+
         popolaInformazioniJob();
         if (filtri.validate(getMessageBox())) {
             BaseTable jobTB = gestioneJobEjb.getDecJobTableBean(filtri);
             getForm().getGestioneJobRicercaList().setTable(jobTB);
             getForm().getGestioneJobRicercaList().getTable().setPageSize(100);
             getForm().getGestioneJobRicercaList().getTable().first();
+
         }
         forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
     }
@@ -1926,12 +1949,12 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         BaseTable tabella = (BaseTable) getForm().getGestioneJobRicercaList().getTable();
 
         if (tabella != null) {
-            ArrayList<Object[]> listaSelezionati = new ArrayList<Object[]>();
-            ArrayList<Object[]> listaNonSelezionati = new ArrayList<Object[]>();
+            ArrayList<Object[]> listaSelezionati = new ArrayList<>();
+            ArrayList<Object[]> listaNonSelezionati = new ArrayList<>();
+            ArrayList<Object[]> listaNoTimer = new ArrayList<>();
             boolean almenoUnoSel = false;
             for (int i = 0; i < tabella.size(); i++) {
-                BaseRow riga = new BaseRow();
-                riga = tabella.getRow(i);
+                BaseRow riga = tabella.getRow(i);
                 if (riga.getString("job_selezionati").equals("1")) {
                     almenoUnoSel = true;
                     Object[] jobDaValutare = new Object[3];
@@ -1939,7 +1962,11 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
                     jobDaValutare[1] = riga.getString("nm_job");
                     jobDaValutare[2] = riga.getString("ds_job");
                     if (riga.getString("stato_job").equals("DISATTIVO")) {
-                        listaSelezionati.add(jobDaValutare);
+                        if (riga.getString("ti_sched_job").equals("NO_TIMER")) {
+                            listaNoTimer.add(jobDaValutare);
+                        } else {
+                            listaSelezionati.add(jobDaValutare);
+                        }
                     } else {
                         listaNonSelezionati.add(jobDaValutare);
                     }
@@ -1966,6 +1993,16 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
                     message = message + "<br>Non sono stati schedulati i seguenti job: <br><br>"
                             + jobNonSchedulatiString + "<br> in quanto in stato già ATTIVO o IN_ELABORAZIONE<br>";
                 }
+
+                String jobNoTimerString = "";
+                for (Object[] obj : listaNoTimer) {
+                    jobNoTimerString = jobNoTimerString + (String) obj[1] + "<br>";
+                }
+                if (!jobNoTimerString.equals("")) {
+                    message = message + "<br>Non sono stati schedulati i seguenti job: <br><br>" + jobNoTimerString
+                            + "<br> in quanto di tipo NO_TIMER. Per essi è possibile lanciare solo l'ESECUZIONE SINGOLA<br>";
+                }
+
                 getMessageBox().clear();
                 getMessageBox().setViewMode(ViewMode.alert);
                 getMessageBox()
@@ -1987,12 +2024,12 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         BaseTable tabella = (BaseTable) getForm().getGestioneJobRicercaList().getTable();
 
         if (tabella != null) {
-            ArrayList<Object[]> listaSelezionati = new ArrayList<Object[]>();
-            ArrayList<Object[]> listaNonSelezionati = new ArrayList<Object[]>();
+            ArrayList<Object[]> listaSelezionati = new ArrayList<>();
+            ArrayList<Object[]> listaNonSelezionati = new ArrayList<>();
+            ArrayList<Object[]> listaNoTimer = new ArrayList<>();
             boolean almenoUnoSel = false;
             for (int i = 0; i < tabella.size(); i++) {
-                BaseRow riga = new BaseRow();
-                riga = tabella.getRow(i);
+                BaseRow riga = tabella.getRow(i);
                 if (riga.getString("job_selezionati").equals("1")) {
                     almenoUnoSel = true;
                     Object[] jobDaValutare = new Object[3];
@@ -2000,7 +2037,11 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
                     jobDaValutare[1] = riga.getString("nm_job");
                     jobDaValutare[2] = riga.getString("ds_job");
                     if (riga.getString("stato_job").equals("ATTIVO")) {
-                        listaSelezionati.add(jobDaValutare);
+                        if (riga.getString("ti_sched_job").equals("NO_TIMER")) {
+                            listaNoTimer.add(jobDaValutare);
+                        } else {
+                            listaSelezionati.add(jobDaValutare);
+                        }
                     } else {
                         listaNonSelezionati.add(jobDaValutare);
                     }
@@ -2028,6 +2069,15 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
                             + "<br> in quanto in stato già DISATTIVO o IN_ESECUZIONE<br>";
                 }
 
+                String jobNoTimerString = "";
+                for (Object[] obj : listaNoTimer) {
+                    jobNoTimerString = jobNoTimerString + (String) obj[1] + "<br>";
+                }
+                if (!jobNoTimerString.equals("")) {
+                    message = message + "<br>Non sono stati stoppati i seguenti job: <br><br>" + jobNoTimerString
+                            + "<br> in quanto di tipo NO_TIMER<br>";
+                }
+
                 getMessageBox().clear();
                 getMessageBox().setViewMode(ViewMode.alert);
                 getMessageBox()
@@ -2049,12 +2099,11 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         BaseTable tabella = (BaseTable) getForm().getGestioneJobRicercaList().getTable();
 
         if (tabella != null) {
-            ArrayList<Object[]> listaSelezionati = new ArrayList<Object[]>();
-            ArrayList<Object[]> listaNonSelezionati = new ArrayList<Object[]>();
+            ArrayList<Object[]> listaSelezionati = new ArrayList<>();
+            ArrayList<Object[]> listaNonSelezionati = new ArrayList<>();
             boolean almenoUnoSel = false;
             for (int i = 0; i < tabella.size(); i++) {
-                BaseRow riga = new BaseRow();
-                riga = tabella.getRow(i);
+                BaseRow riga = tabella.getRow(i);
                 if (riga.getString("job_selezionati").equals("1")) {
                     almenoUnoSel = true;
                     Object[] jobDaValutare = new Object[3];
@@ -2190,7 +2239,7 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         c.set(Calendar.MILLISECOND, 0);
         DateFormat f = new SimpleDateFormat("dd/MM/yyyy");
         form.getFiltriJobSchedulati().getDt_reg_log_job_da().setValue(f.format(c.getTime()));
-        getSession().setAttribute("fromRicercaJob", true);
+        getSession().setAttribute("fromGestioneJob", true);
         return form;
     }
 
@@ -2198,9 +2247,10 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
     private void redirectToPage(final String action, BaseForm form, String listToPopulate, BaseTableInterface<?> table,
             String event) throws EMFError {
         ((it.eng.spagoLite.form.list.List<SingleValueField<?>>) form.getComponent(listToPopulate)).setTable(table);
-        redirectToAction(action, "?operation=ricercaJobSchedulatiDaGestioneJob", form);
+        redirectToAction(action, "?operation=ricercaJobSchedulati", form);
     }
 
+    // public
     public void startGestioneJobOperation() throws EMFError {
         // Recupero la riga sulla quale ho cliccato Start
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -2210,8 +2260,6 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         startGestioneJobOperation(riga, nmJob, dsJob);
         getRequest().setAttribute("fromListaPrinc", true);
         ricercaGestioneJob();
-
-        // forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
     }
 
     public void startGestioneJobOperation(int riga, String nmJob, String dsJob) throws EMFError {
@@ -2229,7 +2277,6 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         stopGestioneJobOperation(riga, nmJob, dsJob);
         getRequest().setAttribute("fromListaPrinc", true);
         ricercaGestioneJob();
-        // forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
     }
 
     public void stopGestioneJobOperation(int riga, String nmJob, String dsJob) throws EMFError {
@@ -2247,8 +2294,6 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         esecuzioneSingolaGestioneJobOperation(riga, nmJob, dsJob);
         getRequest().setAttribute("fromListaPrinc", true);
         ricercaGestioneJob();
-
-        // forwardToPublisher(Application.Publisher.GESTIONE_JOB_RICERCA);
     }
 
     public void esecuzioneSingolaGestioneJobOperation(int riga, String nmJob, String dsJob) throws EMFError {
@@ -2268,6 +2313,8 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         String[] attivi = new String[1];
         attivi[0] = "ATTIVO";
         getRequest().setAttribute("fromLink", true);
+        getForm().getGestioneJobRicercaFiltri().getDs_job().setValue("");
+        getForm().getGestioneJobRicercaFiltri().getNm_ambito().setValue("");
         getForm().getGestioneJobRicercaFiltri().getTi_stato_job().setValues(attivi);
         ricercaGestioneJob();
         forwardToPublisher(getLastPublisher());
@@ -2278,6 +2325,8 @@ public class GestioneJobAction extends GestioneJobAbstractAction {
         String[] disattivi = new String[1];
         disattivi[0] = "DISATTIVO";
         getRequest().setAttribute("fromLink", true);
+        getForm().getGestioneJobRicercaFiltri().getDs_job().setValue("");
+        getForm().getGestioneJobRicercaFiltri().getNm_ambito().setValue("");
         getForm().getGestioneJobRicercaFiltri().getTi_stato_job().setValues(disattivi);
         ricercaGestioneJob();
         forwardToPublisher(getLastPublisher());

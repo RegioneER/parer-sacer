@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
@@ -27,6 +44,7 @@ import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.security.Secure;
 import java.math.BigDecimal;
+import java.util.List;
 import javax.ejb.EJB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +117,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         getForm().getMonitoraggioIndiceAIPList().getTable().first();
         getForm().getMonitoraggioIndiceAIPList().getTable().addSortingRule(
                 getForm().getMonitoraggioIndiceAIPList().getCd_ti_eve_stato_elenco_vers().getName(), SortingRule.ASC);
+        getForm().getMonitoraggioIndiceAIPList().getTable().sort();
     }
 
     @Override
@@ -153,6 +172,9 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             BigDecimal niGgStato = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().parse();
             // Calcolo subito la lista senza filtri
             calcolaRiepilogoProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut, niGgStato);
+            if (idStrut != null) {
+                getRequest().setAttribute("struttura", true);
+            }
         }
         forwardToPublisher(Application.Publisher.MONITORAGGIO_RIEPILOGO_GENERAZIONE_INDICE_AIP);
     }
@@ -481,6 +503,10 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         String cdTiEveStatoElencoVers = ((BaseTable) getForm().getMonitoraggioIndiceAIPList().getTable()).getRow(riga)
                 .getString("cd_ti_eve_stato_elenco_vers");
 
+        // Setto il tab di default
+        getForm().getElenchiMonitoraggioIndiceAIPTabs()
+                .setCurrentTab(getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaUdVersate());
+
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (cdTiEveStatoElencoVers != null && (cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
                 || cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
@@ -525,6 +551,9 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
     public void linkLoadListaUdDaElenco() throws EMFError {
         BigDecimal niGgStato = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        getForm().getElenchiMonitoraggioIndiceAIPTabs()
+                .setCurrentTab(getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaUdVersate());
+
         String cdTiEveStatoElencoVers = getForm().getFiltriElenchiMonitoraggioIndiceAIP()
                 .getCd_ti_eve_stato_elenco_vers().parse();
         String fiscale = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getFl_elenco_fisc().parse();
@@ -671,13 +700,21 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         getForm().getFiltriUdMonitoraggioIndiceAIP().getFl_elenco_fisc().setValue(fiscali);
 
-        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaUdIndiceAIP(idAmbiente, idEnte, idStrut,
+        List<BaseTable> tabelle = monitIndiceAIPEjb.calcolaTotaliListaUdIndiceAIP(idAmbiente, idEnte, idStrut,
                 cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, niGgStato, cdTiEveStatoElencoVers, fiscali,
                 idElencoVers, tiStatoUdElencoVers);
 
-        getForm().getUdMonitoraggioIndiceAIPList().setTable(tabella);
+        getForm().getUdMonitoraggioIndiceAIPList().setTable(tabelle.get(0));
         getForm().getUdMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getUdMonitoraggioIndiceAIPList().getTable().first();
+
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().setTable(tabelle.get(1));
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().setPageSize(10);
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().first();
+
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().setTable(tabelle.get(2));
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().setPageSize(10);
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().first();
     }
 
     @Override
@@ -697,16 +734,29 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
     public void saveDettaglio() throws EMFError {
     }
 
+    // getTableName
     @Override
     public void dettaglioOnClick() throws EMFError {
 
-        if (getTableName().equals(getForm().getUdMonitoraggioIndiceAIPList().getName())) {
+        if (getTableName().equals(getForm().getUdMonitoraggioIndiceAIPList().getName())
+                || getTableName().equals(getForm().getUdAggiornateMonitoraggioIndiceAIPList().getName())
+                || getTableName().equals(getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getName())) {
             // VISUALIZZA UNITA' DOCUMENTARIA DA LISTA UNITA' DOCUMENTARIE PER PROCESSO GENERAZIONE INDICE AIP
             UnitaDocumentarieForm form = new UnitaDocumentarieForm();
             AroVVisUnitaDocIamTableBean udTableBean = new AroVVisUnitaDocIamTableBean();
             Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
-            BigDecimal idUnitaDoc = getForm().getUdMonitoraggioIndiceAIPList().getTable().getRow(riga)
-                    .getBigDecimal("id_unita_doc");
+            BigDecimal idUnitaDoc = BigDecimal.ZERO;
+
+            if (getTableName().equals(getForm().getUdMonitoraggioIndiceAIPList().getName())) {
+                idUnitaDoc = getForm().getUdMonitoraggioIndiceAIPList().getTable().getRow(riga)
+                        .getBigDecimal("id_unita_doc");
+            } else if (getTableName().equals(getForm().getUdAggiornateMonitoraggioIndiceAIPList().getName())) {
+                idUnitaDoc = getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().getRow(riga)
+                        .getBigDecimal("id_unita_doc");
+            } else if (getTableName().equals(getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getName())) {
+                idUnitaDoc = getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().getRow(riga)
+                        .getBigDecimal("id_unita_doc");
+            }
 
             AroVVisUnitaDocIamRowBean udRowBean = new AroVVisUnitaDocIamRowBean();
             udRowBean.setIdUnitaDoc(idUnitaDoc);
@@ -998,10 +1048,10 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
     private void calcolaUdProcessoGenerazioneIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
             String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal niGgStato,
             String cdTiEveStatoElencoVers, String flElencoFisc, BigDecimal idElencoVers, String tiStatoUdElencoVers) {
-        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaUdIndiceAIP(idAmbiente, idEnte, idStrut,
+        List<BaseTable> tabelle = monitIndiceAIPEjb.calcolaTotaliListaUdIndiceAIP(idAmbiente, idEnte, idStrut,
                 cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, niGgStato, cdTiEveStatoElencoVers, flElencoFisc,
                 idElencoVers, tiStatoUdElencoVers);
-        getForm().getUdMonitoraggioIndiceAIPList().setTable(tabella);
+        getForm().getUdMonitoraggioIndiceAIPList().setTable(tabelle.get(0));
         getForm().getUdMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getUdMonitoraggioIndiceAIPList().getTable().first();
         getForm().getUdMonitoraggioIndiceAIPList().getTable().addSortingRule(
@@ -1010,6 +1060,28 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
                 getForm().getUdMonitoraggioIndiceAIPList().getAa_key_unita_doc().getName(), SortingRule.ASC);
         getForm().getUdMonitoraggioIndiceAIPList().getTable().addSortingRule(
                 getForm().getUdMonitoraggioIndiceAIPList().getCd_key_unita_doc().getName(), SortingRule.ASC);
+
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().setTable(tabelle.get(1));
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().setPageSize(10);
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().first();
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().addSortingRule(
+                getForm().getUdAggiornateMonitoraggioIndiceAIPList().getCd_registro_key_unita_doc().getName(),
+                SortingRule.ASC);
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().addSortingRule(
+                getForm().getUdAggiornateMonitoraggioIndiceAIPList().getAa_key_unita_doc().getName(), SortingRule.ASC);
+        getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().addSortingRule(
+                getForm().getUdAggiornateMonitoraggioIndiceAIPList().getCd_key_unita_doc().getName(), SortingRule.ASC);
+
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().setTable(tabelle.get(2));
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().setPageSize(10);
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().first();
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().addSortingRule(
+                getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getCd_registro_key_unita_doc().getName(),
+                SortingRule.ASC);
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().addSortingRule(
+                getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getAa_key_unita_doc().getName(), SortingRule.ASC);
+        getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().addSortingRule(
+                getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getCd_key_unita_doc().getName(), SortingRule.ASC);
     }
 
     @Override
@@ -1046,4 +1118,26 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         }
         return getForm().getFiltriUdMonitoraggioIndiceAIP().asJSON();
     }
+
+    @Override
+    public void tabListaDocumentiAggiuntiOnClick() throws EMFError {
+        getForm().getElenchiMonitoraggioIndiceAIPTabs()
+                .setCurrentTab(getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaDocumentiAggiunti());
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
+    }
+
+    @Override
+    public void tabListaUdAggiornateOnClick() throws EMFError {
+        getForm().getElenchiMonitoraggioIndiceAIPTabs()
+                .setCurrentTab(getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaUdAggiornate());
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
+    }
+
+    @Override
+    public void tabListaUdVersateOnClick() throws EMFError {
+        getForm().getElenchiMonitoraggioIndiceAIPTabs()
+                .setCurrentTab(getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaUdVersate());
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
+    }
+
 }

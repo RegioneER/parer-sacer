@@ -10,6 +10,7 @@
     <Section Description="" Legend="Profilo archivistico" LoadOpened="false" Name="ProfiloArchivistico" ShowButton="true"/>
     <Section Description="" Legend="Composizione" LoadOpened="false" Name="Composizione" ShowButton="true"/>
     <Section Description="" Legend="Collegamenti" Name="FiltriCollegamenti" ShowButton="true"/>
+    <Section Description="" Legend="Firmatario" Name="FiltriFirmatari" ShowButton="true"/>
     <Section Description="" Legend="Componenti" Name="FiltriComponenti" ShowButton="true"/>
     <Section Description="" Legend="Unità documentaria collegata" Name="UnitaDocCollegata"/>
     <Section Description="" Legend="Unità documentaria e documento" LoadOpened="true" Name="UDRicercaSection" ShowButton="true"/>
@@ -53,10 +54,15 @@
         <ComboBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Type="STRING"/>
         <ComboBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Type="STRING"/>
         <ComboBox Description="Forzatura collegamenti" Name="fl_forza_collegamento" Type="STRING"/>
+        <!--<ComboBox Description="Forzatura hash" Name="fl_forza_hash" Type="STRING"/>
+        <ComboBox Description="Forzatura formato numero" Name="fl_forza_fmt_numero" Type="STRING"/>
+        <ComboBox Description="Forzatura formato file" Name="fl_forza_fmt_file" Type="STRING"/>-->
+        <ComboBox Description="Versione servizio versamento" Name="cd_versione_ws" Type="STRING"/>
         <Input Description="Versamento annullato documenti" Hidden="true" Name="fl_doc_annul" Type="STRING"/>
         <Input Description="Versamento annullato unità documentarie" Hidden="true" Name="fl_unita_doc_annul" Type="STRING"/>
         <ComboBox Description="Elemento" Name="ti_doc" Type="STRING"/>
         <ComboBox Description="Documenti aggiunti" Name="fl_doc_aggiunti" Type="STRING"/>
+        <ComboBox Description="Aggiornamento metadati" Name="fl_agg_meta" Type="STRING"/>
         <ComboBox Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
         <ComboBox Description="Tipo documento" Name="nm_tipo_doc" Type="INTEGER" Trigger="true" />
         <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>
@@ -96,10 +102,15 @@
         <ComboBox Description="Forzatura accettazione" Name="fl_forza_accettazione" Type="STRING"/>
         <ComboBox Description="Forzatura conservazione" Name="fl_forza_conservazione" Type="STRING"/>
         <ComboBox Description="Forzatura collegamenti" Name="fl_forza_collegamento" Type="STRING"/>
+        <!--<ComboBox Description="Forzatura hash" Name="fl_forza_hash" Type="STRING"/>
+        <ComboBox Description="Forzatura formato numero" Name="fl_forza_fmt_numero" Type="STRING"/>
+        <ComboBox Description="Forzatura formato file" Name="fl_forza_fmt_file" Type="STRING"/>-->
+        <ComboBox Description="Versione servizio versamento" Name="cd_versione_ws" Type="STRING"/>
         <Input Description="Documenti annullati" Hidden="true" Name="fl_doc_annul" Type="STRING"/>
         <Input Description="Versamenti unità documentarie annullate" Hidden="true" Name="fl_unita_doc_annul" Type="STRING"/>
         <ComboBox Description="Elemento" Name="ti_doc" Type="STRING"/>
         <ComboBox Description="Documenti aggiunti" Name="fl_doc_aggiunti" Type="STRING"/>
+        <ComboBox Description="Aggiornamento metadati" Name="fl_agg_meta" Type="STRING"/>
         <MultiSelect Description="Sistemi di migrazione" Name="nm_sistema_migraz" Trigger="true" Type="STRING"/>
         <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_sm" Readonly="true" Type="STRING"/>
         <ComboBox Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
@@ -188,6 +199,13 @@
         <ComboBox Description="Tipo supporto" Name="ti_supporto_comp" Type="STRING"/>
         <ComboBox Description="Tipo rappresentazione" Name="nm_tipo_rappr_comp" Type="INTEGER"/>
         <Input Description="ID componente versato" Name="ds_id_comp_vers" Type="STRING"/>
+    </Fields>
+    <!-- Filtri su Firmatari di ricerca Unità Documentarie Avanzata -->
+    <Fields Description="Filtri Firmatari" Name="FiltriFirmatariUnitaDocumentarie">
+        <!--<ComboBox Description="Con firmatario" Name="con_firmatario" Trigger="true" Type="STRING"/>        -->
+        <Input Description="CD firmatario" Name="cd_firmatario" Type="STRING"/>                
+        <Input Description="Nome firmatario" Name="nm_firmatario" Type="STRING"/>        
+        <Input Description="Cognome firmatario" Name="nm_cognome_firmatario" Type="STRING"/>
     </Fields>
     <List Description="Lista definito da dati specifici" Name="TotaleDefinitoDaList" hideDeleteButton="true" hideDetailButton="true" hideInsertButton="true" hideUpdateButton="true">
         <Input Description="Tipo entità Sacer" Name="ti_entita_sacer" Type="STRING"/>
@@ -350,9 +368,7 @@
         <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_risp_ud" Rows="500" Type="STRING"/>
         <TextArea Cols="500" Description="" MaxLength="1000000000" Name="bl_xml_rapp_ud" Rows="500" Type="STRING"/>
         <!-- Profilo normativo -->
-        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="profilo_normativo" Rows="500" Type="STRING"/>
-        <!-- Note -->
-        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="nt_unita_doc" Rows="500" Type="STRING"/>
+        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="profilo_normativo" Rows="500" Type="STRING"/>        
         <!-- Bottone Scarica Componenti FILE -->
         <Button Description="Scarica file unità documentaria" Name="scarica_comp_file_ud" Type="STRING"/>
         <!-- Bottone Scarica DIP esibizione ud -->
@@ -524,8 +540,7 @@
         <TabElement Description="PI SIP unità documentaria" Name="XMLIndiceUD"/>
         <TabElement Description="Esito versamento SIP" Name="XMLRispostaUD"/>
         <TabElement Description="Rapporto di versamento" Name="XMLRapportoUD"/>
-        <TabElement Description="Profilo normativo" Name="ProfiloNormativoUD"/>
-        <TabElement Description="Note" Name="NoteUD"/>
+        <TabElement Description="Profilo normativo" Name="ProfiloNormativoUD"/>        
         <TabElement Description="Indice AIP" Name="UltimoIndiceAIP"/>        
     </Tab>
     <Tab Description="Liste Dettaglio Unità Documentaria" Name="UnitaDocumentarieDettaglioListsTabs">
@@ -635,9 +650,7 @@
         <Input Description="Motivo annullamento unità documentaria" Name="nt_annul_unita_doc" Type="STRING"/>
         <Input Description="Motivo annullamento documento" Name="nt_annul_doc" Type="STRING"/>
         <!-- Bottone scarica DIP documento -->
-        <Button Description="Scarica DIP" Name="scarica_dip_doc" Type="STRING"/>
-        <!-- Note -->
-        <TextArea Cols="500" Description="" MaxLength="1000000000" Name="nt_doc" Rows="500" Type="STRING"/>
+        <Button Description="Scarica DIP" Name="scarica_dip_doc" Type="STRING"/>        
     </Fields>
     <!-- PAGINA versione indice AIP -->
     <Fields Description="Dettaglio versione indice AIP" Name="VersioneIndiceAIPDetail">
@@ -714,8 +727,7 @@
         <TabElement Description="Informazioni versamento" Name="InfoVersamento"/>
         <TabElement Description="Indice SIP documento" Name="XMLRichiestaDoc"/>
         <TabElement Description="Esito versamento SIP documento" Name="XMLRispostaDoc"/>
-        <TabElement Description="Rapporto di versamento" Name="XMLRapportoDoc"/>
-        <TabElement Description="Note" Name="NoteDoc"/>
+        <TabElement Description="Rapporto di versamento" Name="XMLRapportoDoc"/>        
     </Tab>
     <Tab Description="Liste Dettaglio Documenti" Name="DocumentiDettaglioListsTabs">
         <TabElement Description="Componenti" Name="ListaComponenti"/>
@@ -759,6 +771,7 @@
         <CheckBox Description="Aggiornamento fascicolo principale" Name="fl_upd_fascicolo_princ" Readonly="true" Type="STRING"/>
         <CheckBox Description="Aggiornamento fascicoli secondari" Name="fl_upd_fascicoli_sec" Readonly="true" Type="STRING"/>
         <CheckBox Description="Aggiornamento profilo unità documentaria" Name="fl_upd_profilo_unita_doc" Readonly="true" Type="STRING"/>
+        <CheckBox Description="Aggiornamento profilo normativo" Name="fl_upd_profilo_normativo" Readonly="true" Type="STRING"/>
         <CheckBox Description="Aggiornamento collegamenti" Name="fl_upd_link_unita_doc" Readonly="true" Type="STRING"/>
         <CheckBox Description="Aggiornamento dati specifici" Name="fl_upd_dati_spec" Readonly="true" Type="STRING"/>
         <CheckBox Description="Aggiornamento dati specifici di migrazione" Name="fl_upd_dati_spec_migraz" Readonly="true" Type="STRING"/>

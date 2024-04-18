@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
@@ -339,6 +356,7 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
                 AroVVisUpdUnitaDocRowBean rb = monitAggMetaEjb.getAroVVisUpdUnitaDocRowBean(idUpdUnitaDoc);
                 getForm().getDettaglioAggMeta().copyFromBean(rb);
                 getForm().getDettaglioAggMeta().getScaricaXmlAggButton().setEditMode();
+                getForm().getDettaglioAggMeta().getScaricaXmlAggButton().setDisableHourGlass(true);
 
                 // Mi posiziono sul tab principale
                 getForm().getAggMetaTabs().setCurrentTab(getForm().getAggMetaTabs().getInformazioniPrincipaliAggMeta());
@@ -355,9 +373,8 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
                     getForm().getDettaglioAggMeta().getBl_xml_risp().setValue(xmlrisp);
                 }
 
-                String sistemaConservazione = configHelper.getValoreParamApplic(
-                        CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String sistemaConservazione = configHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
 
                 CSVersatore tmpVers = new CSVersatore();
                 tmpVers.setSistemaConservazione(sistemaConservazione);
@@ -423,6 +440,7 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
         getForm().getDettaglioAggMetaFallito().setStatus(Status.view);
         getForm().getDettaglioAggMetaFallito().setViewMode();
         getForm().getDettaglioAggMetaFallito().getScaricaXmlAggFallitoButton().setEditMode();
+        getForm().getDettaglioAggMetaFallito().getScaricaXmlAggFallitoButton().setDisableHourGlass(true);
 
         // Mi posiziono sul tab principale
         getForm().getAggMetaFallitiTabs()
@@ -457,6 +475,7 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
         getForm().getDettaglioUnitaDocAggMetaFallito().setStatus(Status.view);
         getForm().getDettaglioUnitaDocAggMetaFallito().setViewMode();
         getForm().getDettaglioUnitaDocAggMetaFallito().getScaricaXmlAggFallitoLastButton().setEditMode();
+        getForm().getDettaglioUnitaDocAggMetaFallito().getScaricaXmlAggFallitoLastButton().setDisableHourGlass(true);
 
         // Mi posiziono sul tab principale
         getForm().getUnitaDocAggMetaFallitiTabs()
@@ -474,9 +493,13 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
             getForm().getDettaglioUnitaDocAggMetaFallito().getBl_xml_risp_last().setValue(xmlrisplast);
         }
 
+        // VrsSesUpdUnitaDocKoTableBean t1
+
         // Ulteriori errori
+        List<Long> idSesUpdUnitaDocKoList = monitAggMetaEjb.ricercaVrsSesUpdUnitaDocKo(rb.getIdUpdUnitaDocKo());
+
         VrsErrSesUpdUnitaDocKoTableBean tl = monitAggMetaEjb
-                .ricercaVersamentiErrSesUpdUnitaDocKo(rb.getIdSesUpdUdKoLast());
+                .ricercaVersamentiErrSesUpdUnitaDocKo(idSesUpdUnitaDocKoList);
         getForm().getUlterioriErroriUnitaDocAggMetaFallitiList().setTable(tl);
         getForm().getUlterioriErroriUnitaDocAggMetaFallitiList().getTable().first();
         getForm().getUlterioriErroriUnitaDocAggMetaFallitiList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
@@ -492,6 +515,7 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
         getForm().getDettaglioAggMetaErrato().setStatus(Status.view);
         getForm().getDettaglioAggMetaErrato().setViewMode();
         getForm().getDettaglioAggMetaErrato().getScaricaXmlAggErratoButton().setEditMode();
+        getForm().getDettaglioAggMetaErrato().getScaricaXmlAggErratoButton().setDisableHourGlass(true);
 
         // Mi posiziono sul tab principale
         getForm().getAggMetaErratiTabs()
@@ -940,20 +964,6 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
     }
 
     @Override
-    public void tabIndiceSipAggiornamentoUnitaDocAggFallitiOnClick() throws EMFError {
-        getForm().getUnitaDocAggMetaFallitiTabs()
-                .setCurrentTab(getForm().getUnitaDocAggMetaFallitiTabs().getIndiceSipAggiornamentoUnitaDocAggFalliti());
-        forwardToPublisher(Application.Publisher.DETTAGLIO_UNITA_DOC_AGG_META_FALLITO);
-    }
-
-    @Override
-    public void tabEsitoNegativoVersamentoUnitaDocAggFallitiOnClick() throws EMFError {
-        getForm().getUnitaDocAggMetaFallitiTabs().setCurrentTab(
-                getForm().getUnitaDocAggMetaFallitiTabs().getEsitoNegativoVersamentoUnitaDocAggFalliti());
-        forwardToPublisher(Application.Publisher.DETTAGLIO_UNITA_DOC_AGG_META_FALLITO);
-    }
-
-    @Override
     public void tabListaUlterioriErroriUnitaDocAggFallitiOnClick() throws EMFError {
         getForm().getUnitaDocAggMetaFallitiTabs()
                 .setCurrentTab(getForm().getUnitaDocAggMetaFallitiTabs().getListaUlterioriErroriUnitaDocAggFalliti());
@@ -1077,8 +1087,8 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
             File fileToDownload = new File(path);
             if (fileToDownload.exists()) {
                 /*
-                 * Definiamo l'output previsto che sarà  un file in formato zip di cui si occuperà  la servlet per fare
-                 * il download
+                 * Definiamo l'output previsto che sarà un file in formato zip di cui si occuperà la servlet per fare il
+                 * download
                  */
                 OutputStream outUD = getServletOutputStream();
                 getResponse()

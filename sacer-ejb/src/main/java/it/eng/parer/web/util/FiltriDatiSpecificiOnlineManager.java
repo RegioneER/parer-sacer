@@ -1,4 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.util;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecRowBean;
 import it.eng.parer.web.dto.DecCriterioAttribBean;
@@ -9,20 +31,22 @@ import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.BaseTableInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("rawtypes")
 public class FiltriDatiSpecificiOnlineManager {
     // Metodo utilizzato per costruire l'interfaccia on-line sulla base
     // della lista di bean in memoria
+
+    private FiltriDatiSpecificiOnlineManager() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static BaseTableInterface listBean2TableBeanPostAdd(List<DecCriterioDatiSpecBean> listaDatiSpec) {
-        BaseTableInterface tabellaDatiSpec = new BaseTable();
+        BaseTableInterface<?> tabellaDatiSpec = new BaseTable();
         for (DecCriterioDatiSpecBean datoSpec : listaDatiSpec) {
             BaseRowInterface rigaDatoSpec = new BaseRow();
             rigaDatoSpec.setString("nm_attrib_dati_spec", datoSpec.getNmAttribDatiSpec());
@@ -57,7 +81,7 @@ public class FiltriDatiSpecificiOnlineManager {
                                     ? " (" + definitoRow.getDsListaVersioniXsd() + ")" : "");
                 }
                 newRow.setString("definito_da_record", rigaDefinitoDa);
-                ((BaseTableInterface) rigaDatoSpec.getObject(Values.SUB_LIST)).add(newRow);
+                ((BaseTableInterface<?>) rigaDatoSpec.getObject(Values.SUB_LIST)).add(newRow);
             }
             tabellaDatiSpec.add(rigaDatoSpec);
         }
@@ -65,11 +89,11 @@ public class FiltriDatiSpecificiOnlineManager {
     }
 
     public static BaseTableInterface listBean2TableBeanPostRemove(List<DecCriterioDatiSpecBean> listaDatiSpec) {
-        BaseTableInterface tabellaDatiSpec = new BaseTable();
-        Iterator it = listaDatiSpec.iterator();
+        BaseTableInterface<?> tabellaDatiSpec = new BaseTable();
+        Iterator<DecCriterioDatiSpecBean> it = listaDatiSpec.iterator();
         while (it.hasNext()) {
-            DecCriterioDatiSpecBean datoSpecRow = (DecCriterioDatiSpecBean) it.next();
-            if (datoSpecRow.getDecCriterioAttribs().size() > 0) {
+            DecCriterioDatiSpecBean datoSpecRow = it.next();
+            if (!datoSpecRow.getDecCriterioAttribs().isEmpty()) {
                 BaseRowInterface rigaDatoSpec = new BaseRow();
                 rigaDatoSpec.setString("nm_attrib_dati_spec", datoSpecRow.getNmAttribDatiSpec());
                 rigaDatoSpec.setString("ti_oper", datoSpecRow.getTiOper());
@@ -103,7 +127,7 @@ public class FiltriDatiSpecificiOnlineManager {
                                         ? " (" + definitoRow.getDsListaVersioniXsd() + ")" : "");
                     }
                     newRow.setString("definito_da_record", rigaDefinitoDa);
-                    ((BaseTableInterface) rigaDatoSpec.getObject(Values.SUB_LIST)).add(newRow);
+                    ((BaseTableInterface<?>) rigaDatoSpec.getObject(Values.SUB_LIST)).add(newRow);
                 }
 
                 tabellaDatiSpec.add(rigaDatoSpec);
@@ -117,7 +141,7 @@ public class FiltriDatiSpecificiOnlineManager {
     public static void insertFiltroDatoSpecifico(DecAttribDatiSpecRowBean rigaDatoSpecifico,
             List<DecCriterioDatiSpecBean> listaDatiSpecOnLine, DecCriterioAttribBean criterioAttrib) {
         boolean giaPresente = false;
-        List<DecCriterioAttribBean> totaleDefinitoDaList = new ArrayList();
+        List<DecCriterioAttribBean> totaleDefinitoDaList = new ArrayList<>();
         // Controllo se il dato specifico che sto trattando è già stato inserito
         // nella Lista Dati Specifici presentata a video
         if (!listaDatiSpecOnLine.isEmpty()) {

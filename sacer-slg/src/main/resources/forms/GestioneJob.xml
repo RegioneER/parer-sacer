@@ -439,7 +439,7 @@
     
     <Fields Name="GestioneJobRicercaFiltri" Description="Ricerca Job" >
         <ComboBox Type="STRING" Description="Ambito" Name="nm_ambito" />        
-        <Input Type="STRING" Description="Descrizione Job" Name="ds_job" />        
+        <Input Type="STRING" Description="Descrizione Job" Name="ds_job" />                
         <MultiSelect Type="STRING" Description="Stato" Name="ti_stato_job" />
         <Button Description="Ricerca" Name="ricercaGestioneJob" Type="STRING"/>
         <Button Description="Start massivo" Name="startMassivoGestioneJob" Type="STRING"/>
@@ -452,7 +452,7 @@
         <Input Type="STRING" Description="Ambito" Name="nm_ambito" />        
         <Input Type="INTEGER" Description="Ord. esecuzione" Name="ni_ord_exec" />        
         <Input Type="STRING" Description="Nome" Name="nm_job" Hidden="true"/>        
-        <Link Type="STRING" Description="Descrizione Job" Name="ds_job" Target="apriVisualizzaSchedulazioniJob" Tooltip="Vai a Visualizza Schedulazioni Job" isTargetList="false"/>        
+        <Link Type="STRING" Description="Descrizione Job" Name="ds_job" Target="apriVisualizzaSchedulazioniJob" Tooltip="Vai a Visualizza Schedulazioni Job" isTargetList="false" />        
         <Input Type="STRING" Description="Stato" Name="stato_job" />        
         <CheckBox Type="STRING" Description="Ultima esecuzione OK" Name="last_exec_ok" Readonly="true" />        
         <Input Type="DATETIME" Description="Data ultima esecuzione" Name="dt_ultima_esecuzione" />
@@ -460,6 +460,7 @@
         <Link Name="startGestioneJob" Description="Start" Type="STRING" Target="startGestioneJobOperation" Tooltip="Start Job" isTargetList="false" VisibilityProperty="operazione_job_start"/> <!-- Name="startGestioneJob" -->
         <Link Name="stopGestioneJob" Description="Stop" Type="STRING" Target="stopGestioneJobOperation" Tooltip="Stop Job" isTargetList="false" VisibilityProperty="operazione_job_stop"/> <!-- stopGestioneJob -->
         <Link Name="esecuzioneSingolaGestioneJob" Description="Esec. singola" Type="STRING" Target="esecuzioneSingolaGestioneJobOperation" Tooltip="Esecuzione singola Job" isTargetList="false" VisibilityProperty="operazione_job_single"/> <!-- esecuzioneSingolaGestioneJob -->
+        <Input Type="STRING" Description="Descrizione linkabile" Name="ds_linkabile" Hidden="true"/>        
     </List>
     
     <List Name="GestioneJobListPerAmm" Description="Lista Job per foto" >

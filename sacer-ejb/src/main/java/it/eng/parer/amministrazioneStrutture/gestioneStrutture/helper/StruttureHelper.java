@@ -1,41 +1,42 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import it.eng.parer.entity.*;
+import it.eng.parer.grantedEntity.OrgAmbitoTerrit;
+import it.eng.parer.grantedEntity.SIOrgAccordoEnte;
+import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
+import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.job.allineamentoEntiConvenzionati.utils.CostantiAllineaEntiConv;
+import it.eng.parer.viewEntity.*;
+import it.eng.parer.web.util.Constants;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
-
-import org.apache.commons.lang3.StringUtils;
-
-import it.eng.parer.entity.DecCriterioFiltroMultiplo;
-import it.eng.parer.entity.DecSelCriterioRaggrFasc;
-import it.eng.parer.entity.IamEnteConvenzDaAllinea;
-import it.eng.parer.entity.OrgCategStrut;
-import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.OrgSubStrut;
-import it.eng.parer.grantedEntity.OrgAmbitoTerrit;
-import it.eng.parer.grantedEntity.SIOrgAccordoEnte;
-import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
-import it.eng.parer.grantedEntity.SIOrgEnteSiam;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.job.allineamentoEntiConvenzionati.utils.CostantiAllineaEntiConv;
-import it.eng.parer.viewEntity.OrgVChkStrutPartition;
-import it.eng.parer.viewEntity.OrgVChkStrutPartitionUpd;
-import it.eng.parer.viewEntity.OrgVChkStrutPartitionFasc;
-import it.eng.parer.viewEntity.OrgVChkTimePartitionFasc;
-import it.eng.parer.viewEntity.OrgVRicStrut;
-import it.eng.parer.web.util.Constants;
-import it.eng.spagoCore.error.EMFError;
+import javax.persistence.TypedQuery;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Stateless
 @LocalBean
@@ -78,7 +79,7 @@ public class StruttureHelper extends GenericHelper {
             queryStr.append(" AND strut.orgEnte.orgAmbiente.idAmbiente=:idAmbiente");
         }
         if (isTemplate != null) {
-            if (isTemplate) {
+            if (Boolean.TRUE.equals(isTemplate)) {
                 queryStr.append(" AND ente.tipoDefTemplateEnte IN ('TEMPLATE_DEF_AMBIENTE','TEMPLATE_DEF_ENTE')");
             } else {
                 queryStr.append(" AND ente.tipoDefTemplateEnte IN ('NO_TEMPLATE','TEMPLATE_DEF_ENTE')");
@@ -92,15 +93,14 @@ public class StruttureHelper extends GenericHelper {
         }
 
         if (idEnte != null && idEnte.compareTo(BigDecimal.ZERO) != 0) {
-            query.setParameter("idEnte", idEnte);
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idAmbiente != null && idAmbiente.compareTo(BigDecimal.ZERO) != 0) {
-            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
 
-        List<OrgStrut> listStrut = query.getResultList();
         // getEntityManager().unwrap(JpagetEntityManager().class)
-        return listStrut;
+        return query.getResultList();
     }
 
     /**
@@ -121,15 +121,14 @@ public class StruttureHelper extends GenericHelper {
 
     public List<OrgVRicStrut> retrieveOrgVRicStrutList(String nmStrut, BigDecimal idEnte, BigDecimal idAmbiente,
             Boolean isTemplate, String partizionata, String nmSistemaVersante, BigDecimal idAmbitoTerrit,
-            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz, long idUserIamCor)
-            throws EMFError {
+            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz, long idUserIamCor) {
 
         StringBuilder queryStr = new StringBuilder(
                 "SELECT DISTINCT new it.eng.parer.viewEntity.OrgVRicStrut(ricStrut.idAmbiente, "
-                        + "ricStrut.nmAmbiente, ricStrut.idEnte, ricStrut.nmEnte, ricStrut.idStrut, ricStrut.nmStrut, ricStrut.dsStrut, "
+                        + "ricStrut.nmAmbiente, ricStrut.idEnte, ricStrut.nmEnte, ricStrut.id.idStrut, ricStrut.nmStrut, ricStrut.dsStrut, "
                         + "ricStrut.flTemplate, ricStrut.flPartOk, ricStrut.idAmbitoTerrit, ricStrut.tiAmbitoTerrit, ricStrut.dsTreeCdAmbitoTerrit, "
                         + "ricStrut.dsTreeIdAmbitoTerrit, ricStrut.idCategEnte, ricStrut.cdCategEnte) "
-                        + "FROM OrgVRicStrut ricStrut " + "WHERE ricStrut.idUserIamCor = :idUserIamCor ");
+                        + "FROM OrgVRicStrut ricStrut " + "WHERE ricStrut.id.idUserIamCor = :idUserIamCor ");
 
         if (StringUtils.isNotBlank(nmStrut)) {
             queryStr.append(" AND UPPER(ricStrut.nmStrut) LIKE :nmStrut");
@@ -164,7 +163,7 @@ public class StruttureHelper extends GenericHelper {
 
         queryStr.append(" ORDER BY ricStrut.nmStrut ASC, ricStrut.nmEnte ASC ");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idUserIamCor", idUserIamCor);
+        query.setParameter("idUserIamCor", bigDecimalFromLong(idUserIamCor));
 
         if (StringUtils.isNotBlank(nmStrut)) {
             query.setParameter("nmStrut", "%" + nmStrut.toUpperCase() + "%");
@@ -179,7 +178,7 @@ public class StruttureHelper extends GenericHelper {
             query.setParameter("partizionata", partizionata);
         }
         if (isTemplate != null) {
-            query.setParameter("flTemplate", isTemplate ? "1" : "0");
+            query.setParameter("flTemplate", Boolean.TRUE.equals(isTemplate) ? "1" : "0");
         }
         if (StringUtils.isNotBlank(nmSistemaVersante)) {
             query.setParameter("nmSistemaVersante", "%" + nmSistemaVersante.toUpperCase() + "%");
@@ -197,8 +196,7 @@ public class StruttureHelper extends GenericHelper {
             query.setParameter("idEnteConvenz", idEnteConvenz);
         }
 
-        List<OrgVRicStrut> listStrut = (List<OrgVRicStrut>) query.getResultList();
-        return listStrut;
+        return query.getResultList();
     }
 
     /**
@@ -247,7 +245,7 @@ public class StruttureHelper extends GenericHelper {
             queryStr.append(
                     " AND NOT EXISTS (SELECT d FROM DecUsoModelloTipoSerie d WHERE d.orgStrut.idStrut = strut.idStrut AND d.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie )");
         }
-        if (filterValid) {
+        if (Boolean.TRUE.equals(filterValid)) {
             queryStr.append(" AND strut.flCessato = '0' ");
         }
         queryStr.append(" ORDER BY ente.nmEnte, strut.nmStrut");
@@ -261,20 +259,19 @@ public class StruttureHelper extends GenericHelper {
         }
 
         if (idEnte != null && idEnte.compareTo(BigDecimal.ZERO) != 0) {
-            query.setParameter("idEnte", idEnte);
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idAmbiente != null && idAmbiente.compareTo(BigDecimal.ZERO) != 0) {
-            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idModelloTipoSerie != null) {
-            query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
+            query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
         }
         if (isTemplate != null) {
-            query.setParameter("flTemplate", isTemplate ? "1" : "0");
+            query.setParameter("flTemplate", Boolean.TRUE.equals(isTemplate) ? "1" : "0");
         }
 
-        List<OrgStrut> listStrut = query.getResultList();
-        return listStrut;
+        return query.getResultList();
     }
 
     public List<OrgStrut> retrieveOrgStrutList(long idUtente, Collection<BigDecimal> idEntiSet,
@@ -286,25 +283,24 @@ public class StruttureHelper extends GenericHelper {
         }
         queryStr.append("WHERE iao.idOrganizApplic = strut.idStrut AND iao.iamUser.idUserIam = :idUtente ");
         if (idEntiSet != null && !idEntiSet.isEmpty()) {
-            queryStr.append("AND strut.orgEnte.idEnte IN :idEnte ");
+            queryStr.append("AND strut.orgEnte.idEnte IN (:idEnte) ");
         }
         if (idCategStrutList != null && !idCategStrutList.isEmpty()) {
-            queryStr.append("AND categStrut.idCategStrut IN :idCategStrutList ");
+            queryStr.append("AND categStrut.idCategStrut IN (:idCategStrutList) ");
         }
         queryStr.append("ORDER BY ente.nmEnte, strut.nmStrut");
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idUtente", idUtente);
         if (idEntiSet != null && !idEntiSet.isEmpty()) {
-            query.setParameter("idEnte", idEntiSet);
+            query.setParameter("idEnte", longListFrom(idEntiSet));
         }
         if (idCategStrutList != null && !idCategStrutList.isEmpty()) {
-            query.setParameter("idCategStrutList", idCategStrutList);
+            query.setParameter("idCategStrutList", longListFrom(idCategStrutList));
         }
-        List<OrgStrut> listStrut = query.getResultList();
-        return listStrut;
+        return query.getResultList();
     }
 
-    public OrgStrut updateOrgStrut(OrgStrut strut, Boolean refresh) {
+    public OrgStrut updateOrgStrut(OrgStrut strut) {
         OrgStrut updStrut = findById(OrgStrut.class, strut.getIdStrut());
 
         String dsStrut = strut.getDsStrut();
@@ -350,7 +346,7 @@ public class StruttureHelper extends GenericHelper {
     public Long getidStrutFromIdTipoStrutUnitaDoc(BigDecimal idTipoStrutUnitaDoc) {
         String queryStr = "SELECT tipoStrutUnitaDoc.decTipoUnitaDoc.orgStrut.idStrut FROM DecTipoStrutUnitaDoc tipoStrutUnitaDoc WHERE tipoStrutUnitaDoc.idTipoStrutUnitaDoc = :idTipoStrutUnitaDoc";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idTipoStrutUnitaDoc", idTipoStrutUnitaDoc);
+        query.setParameter("idTipoStrutUnitaDoc", longFromBigDecimal(idTipoStrutUnitaDoc));
 
         List<Long> list = query.getResultList();
 
@@ -366,7 +362,7 @@ public class StruttureHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("nmStrut", nmStrut);
         if (idEnte != null) {
-            query.setParameter("idEnte", idEnte);
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         List<OrgStrut> strutList = query.getResultList();
         if (strutList.isEmpty()) {
@@ -388,6 +384,18 @@ public class StruttureHelper extends GenericHelper {
         return strutList.get(0);
     }
 
+    public AplSistemaMigraz getAplSistemaMigrazByName(String nmSistemaMigraz) {
+        String queryStr = "SELECT sistemaMigraz FROM AplSistemaMigraz sistemaMigraz "
+                + " WHERE sistemaMigraz.nmSistemaMigraz = :nmSistemaMigraz ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("nmSistemaMigraz", nmSistemaMigraz);
+        List<AplSistemaMigraz> strutList = query.getResultList();
+        if (strutList.isEmpty()) {
+            return null;
+        }
+        return strutList.get(0);
+    }
+
     public void deleteOrgStrutRelations(OrgStrut oldStrut) {
 
         long idStrut = oldStrut.getIdStrut();
@@ -398,7 +406,7 @@ public class StruttureHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idStrut", idStrut);
 
-        int r = query.executeUpdate();
+        query.executeUpdate();
 
         // cancello tipoUd
         queryStr = new StringBuilder(
@@ -406,14 +414,14 @@ public class StruttureHelper extends GenericHelper {
 
         query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idStrut", idStrut);
-        r = query.executeUpdate();
+        query.executeUpdate();
 
         // cancello tipoDoc
         queryStr = new StringBuilder("DELETE FROM DecTipoDoc tipoDoc " + "WHERE tipoDoc.orgStrut.idStrut = :idStrut");
 
         query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idStrut", idStrut);
-        r = query.executeUpdate();
+        query.executeUpdate();
 
         // cancello tipoStrutDoc
         queryStr = new StringBuilder(
@@ -421,7 +429,7 @@ public class StruttureHelper extends GenericHelper {
 
         query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idStrut", idStrut);
-        r = query.executeUpdate();
+        query.executeUpdate();
 
         // cancello formatoDoc
         queryStr = new StringBuilder(
@@ -429,7 +437,7 @@ public class StruttureHelper extends GenericHelper {
 
         query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idStrut", idStrut);
-        r = query.executeUpdate();
+        query.executeUpdate();
 
         // cancello tipoRappr
         queryStr = new StringBuilder(
@@ -437,9 +445,7 @@ public class StruttureHelper extends GenericHelper {
 
         query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idStrut", idStrut);
-        r = query.executeUpdate();
-
-        return;
+        query.executeUpdate();
 
     }
 
@@ -478,7 +484,7 @@ public class StruttureHelper extends GenericHelper {
         }
         Query query = getEntityManager().createQuery(queryStr);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (tipoDefTemplateEnte != null) {
             query.setParameter("tipoDefTemplateEnte", tipoDefTemplateEnte);
@@ -510,7 +516,7 @@ public class StruttureHelper extends GenericHelper {
                     + "AND strut.orgEnte.orgAmbiente.idAmbiente = :idAmbiente "
                     + "AND strut.orgEnte.tipoDefTemplateEnte = :tipoDefTemplateEnte ";
             Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idAmbiente", idAmbiente);
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
             query.setParameter("tipoDefTemplateEnte", tipoDefTemplateEnte);
             List<OrgStrut> list = query.getResultList();
             // Se non ho strutture template partizionate, provo con le non part
@@ -519,7 +525,7 @@ public class StruttureHelper extends GenericHelper {
                         + "AND strut.orgEnte.orgAmbiente.idAmbiente = :idAmbiente "
                         + "AND strut.orgEnte.tipoDefTemplateEnte = :tipoDefTemplateEnte ";
                 Query query2 = getEntityManager().createQuery(queryStr2);
-                query2.setParameter("idAmbiente", idAmbiente);
+                query2.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
                 query2.setParameter("tipoDefTemplateEnte", tipoDefTemplateEnte);
                 List<OrgStrut> list2 = query2.getResultList();
                 if (!list2.isEmpty()) {
@@ -548,14 +554,14 @@ public class StruttureHelper extends GenericHelper {
                     + "WHERE strut.flTemplate = '1' " + "AND strut.orgEnte.idEnte = :idEnte "
                     + "AND strut.idStrut = chk.idStrut " + "AND chk.flPartOk = '1' ";
             Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idEnte", idEnte);
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
             List<OrgStrut> list = query.getResultList();
             // Se non ho strutture template partizionate, provo con le non part
             if (list.isEmpty()) {
                 String queryStr2 = "SELECT strut FROM OrgStrut strut " + "WHERE strut.flTemplate = '1' "
                         + "AND strut.orgEnte.idEnte = :idEnte ";
                 Query query2 = getEntityManager().createQuery(queryStr2);
-                query2.setParameter("idEnte", idEnte);
+                query2.setParameter("idEnte", longFromBigDecimal(idEnte));
                 List<OrgStrut> list2 = query2.getResultList();
                 if (!list2.isEmpty()) {
                     strut = list2.get(0);
@@ -585,16 +591,16 @@ public class StruttureHelper extends GenericHelper {
                 + "HAVING COUNT(strut) > 0";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUserIam", idUserIam);
-        List<Object[]> strutTemplatePerAmbiente = (List<Object[]>) query.getResultList();
+        List<Object[]> strutTemplatePerAmbiente = query.getResultList();
 
         String queryStr2 = "SELECT count(strut), 'Enti con strutture template definite specificatamente per ente'  "
                 + "FROM OrgStrut strut " + "JOIN strut.orgEnte ente, " + "IamAbilOrganiz abilOrganiz "
                 + "WHERE strut.flTemplate = '1' " + "AND strut.idStrut = abilOrganiz.idOrganizApplic "
                 + "AND abilOrganiz.iamUser.idUserIam = :idUserIam "
-                + "AND ente.tipoDefTemplateEnte = 'TEMPLATE_DEF_ENTE' " + "HAVING COUNT(strut) > 0";
+                + "AND ente.tipoDefTemplateEnte = 'TEMPLATE_DEF_ENTE' " + " GROUP BY 2 " + "HAVING COUNT(strut) > 0";
         Query query2 = getEntityManager().createQuery(queryStr2);
         query2.setParameter("idUserIam", idUserIam);
-        List<Object[]> strutTemplatePerEntiDefEnte = (List<Object[]>) query2.getResultList();
+        List<Object[]> strutTemplatePerEntiDefEnte = query2.getResultList();
 
         strutTemplatePerAmbiente.addAll(strutTemplatePerEntiDefEnte);
         return strutTemplatePerAmbiente;
@@ -635,8 +641,7 @@ public class StruttureHelper extends GenericHelper {
         if (tipoDefTemplateEnte != null) {
             query.setParameter("tipoDefTemplateEnte", tipoDefTemplateEnte);
         }
-        Long singleResult = (Long) query.getSingleResult();
-        return singleResult;
+        return (Long) query.getSingleResult();
     }
 
     /**
@@ -658,17 +663,17 @@ public class StruttureHelper extends GenericHelper {
                 + "HAVING COUNT(strut) > 0";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUserIam", idUserIam);
-        List<Object[]> strutTemplatePerAmbiente = (List<Object[]>) query.getResultList();
+        List<Object[]> strutTemplatePerAmbiente = query.getResultList();
 
         String queryStr2 = "SELECT count(strut), 'Enti con strutture template definite specificatamente per ente'  "
                 + "FROM OrgStrut strut, OrgVChkStrutPartition part " + "JOIN strut.orgEnte ente, "
                 + "IamAbilOrganiz abilOrganiz " + "WHERE strut.idStrut = part.idStrut " + "AND strut.flTemplate = '1' "
                 + "AND part.flPartOk = '1' " + "AND strut.idStrut = abilOrganiz.idOrganizApplic "
                 + "AND abilOrganiz.iamUser.idUserIam = :idUserIam "
-                + "AND ente.tipoDefTemplateEnte = 'TEMPLATE_DEF_ENTE' " + "HAVING COUNT(strut) > 0";
+                + "AND ente.tipoDefTemplateEnte = 'TEMPLATE_DEF_ENTE' " + "GROUP BY 2 " + "HAVING COUNT(strut) > 0";
         Query query2 = getEntityManager().createQuery(queryStr2);
         query2.setParameter("idUserIam", idUserIam);
-        List<Object[]> strutTemplatePerEntiDefEnte = (List<Object[]>) query2.getResultList();
+        List<Object[]> strutTemplatePerEntiDefEnte = query2.getResultList();
 
         strutTemplatePerAmbiente.addAll(strutTemplatePerEntiDefEnte);
 
@@ -722,12 +727,9 @@ public class StruttureHelper extends GenericHelper {
         String queryStr = "SELECT strut " + "FROM OrgStrut strut " + "WHERE EXISTS( SELECT ud " + "FROM AroUnitaDoc ud "
                 + "WHERE ud.orgStrut.idStrut = :idStrut )";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<OrgStrut> list = query.getResultList();
-        if (list.isEmpty()) {
-            return false;
-        }
-        return true;
+        return !list.isEmpty();
     }
 
     public List<DecCriterioFiltroMultiplo> getRelationsWithCriteriRaggruppamento(long idTipoDato,
@@ -745,43 +747,60 @@ public class StruttureHelper extends GenericHelper {
         case TIPO_DOC:
             queryStr.append("WHERE criterioFiltroMultiplo.decTipoDoc.idTipoDoc = :idTipoDato ");
             break;
+        default:
+            break;
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idTipoDato", idTipoDato);
-        List<DecCriterioFiltroMultiplo> criterioFiltroMultiploList = (List<DecCriterioFiltroMultiplo>) query
-                .getResultList();
-        return criterioFiltroMultiploList;
+        return query.getResultList();
     }
 
-    public List<DecSelCriterioRaggrFasc> getRelationsWithCriteriRaggrFascicolo(long idTipoDato,
-            Constants.TipoDato tipoDato) {
+    /**
+     * @param idTipoFascicolo
+     *            id del tipo fasciolo
+     * 
+     * @return Lista di {@link DecSelCriterioRaggrFasc}
+     */
+    public List<DecSelCriterioRaggrFasc> getRelationsByIdTipoFascicolo(long idTipoFascicolo) {
         StringBuilder queryStr = new StringBuilder(
                 "SELECT selCriterioRaggrFasc FROM DecSelCriterioRaggrFasc selCriterioRaggrFasc ");
-        switch (tipoDato) {
-        case TIPO_FASCICOLO:
-            queryStr.append("WHERE selCriterioRaggrFasc.decTipoFascicolo.idTipoFascicolo = :idTipoDato ");
-            break;
-        /*
-         * case VOCE_TITOL: queryStr.append("WHERE selCriterioRaggrFasc.decVoceTitol.idVoceTitol = :idTipoDato ");
-         * break;
-         */
-        }
+        queryStr.append("WHERE selCriterioRaggrFasc.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo ");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idTipoDato", idTipoDato);
-        List<DecSelCriterioRaggrFasc> selCriterioRaggrFascList = (List<DecSelCriterioRaggrFasc>) query.getResultList();
-        return selCriterioRaggrFascList;
+        query.setParameter("idTipoFascicolo", idTipoFascicolo);
+        return query.getResultList();
+    }
+
+    /**
+     * @param idTipoDato
+     *            id del tipo di dato
+     * @param tipoDato
+     *            costante Constants.TipoDato
+     * 
+     * @return Lista di {@link DecSelCriterioRaggrFasc}
+     * 
+     * @deprecated ormai gestisce solo il TIPO_FASCICOLO, quindi meglio usare
+     *             {@link it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper#getRelationsByIdTipoFascicolo
+     *             getRelationsByIdTipoFascicolo}
+     */
+    @Deprecated
+    public List<DecSelCriterioRaggrFasc> getRelationsWithCriteriRaggrFascicolo(long idTipoDato,
+            Constants.TipoDato tipoDato) {
+        if (Constants.TipoDato.TIPO_FASCICOLO.equals(tipoDato)) {
+            return getRelationsByIdTipoFascicolo(idTipoDato);
+        }
+        throw new IllegalStateException("TipoDato " + tipoDato.name() + " non gestito");
     }
 
     public boolean checkManyRelationsAreEmptyForStruttura(long idStrut) {
         String queryStr1 = "SELECT strut FROM OrgStrut strut " + "WHERE strut.idStrut = :idStrut "
-                + "AND NOT EXISTS (SELECT mon FROM MonContaUdDocComp mon WHERE mon.idStrut = strut.idStrut) ";
+                + "AND NOT EXISTS (SELECT mon FROM MonVRicContaUdDocComp mon WHERE mon.idStrut = strut.idStrut) ";
         Query query1 = getEntityManager().createQuery(queryStr1);
         query1.setParameter("idStrut", idStrut);
         List<Object[]> list1 = query1.getResultList();
         // Se ho record, vuol dire che non ho relazioni, quindi proseguo
         if (!list1.isEmpty()) {
             String queryStr2 = "SELECT strut FROM OrgStrut strut " + "WHERE strut.idStrut = :idStrut "
-                    + "AND NOT EXISTS (SELECT unitaDoc FROM AroUnitaDoc unitaDoc WHERE unitaDoc.orgStrut.idStrut = strut.idStrut AND unitaDoc.dtAnnul = FUNC('TRUNC', :dataOdierna)) ";
+                    + "AND NOT EXISTS (SELECT unitaDoc FROM AroUnitaDoc unitaDoc WHERE unitaDoc.orgStrut.idStrut = strut.idStrut AND unitaDoc.dtAnnul = TRUNC( :dataOdierna)) ";
             Query query2 = getEntityManager().createQuery(queryStr2);
             query2.setParameter("idStrut", idStrut);
             query2.setParameter("dataOdierna", new Date());
@@ -790,7 +809,7 @@ public class StruttureHelper extends GenericHelper {
             // Se ho record, vuol dire che non ho relazioni, quindi proseguo
             if (!list2.isEmpty()) {
                 String queryStr3 = "SELECT strut FROM OrgStrut strut " + "WHERE strut.idStrut = :idStrut "
-                        + "AND NOT EXISTS (SELECT sessioneVers FROM VrsSessioneVers sessioneVers WHERE sessioneVers.orgStrut.idStrut = strut.idStrut AND sessioneVers.tiSessioneVers IN ('AGGIUNGI_DOCUMENTO', 'VERSAMENTO') AND sessioneVers.tiStatoSessioneVers = 'CHIUSA_ERR') ";
+                        + "AND NOT EXISTS (SELECT sessioneVers FROM VrsSessioneVersKo sessioneVers WHERE sessioneVers.orgStrut.idStrut = strut.idStrut AND sessioneVers.tiSessioneVers IN ('AGGIUNGI_DOCUMENTO', 'VERSAMENTO')) ";
                 Query query3 = getEntityManager().createQuery(queryStr3);
                 query3.setParameter("idStrut", idStrut);
                 List<Object[]> list3 = query3.getResultList();
@@ -829,27 +848,15 @@ public class StruttureHelper extends GenericHelper {
     }
 
     public String partitionOK(BigDecimal idStrut) {
-        return ((OrgVChkStrutPartition) getEntityManager().find(OrgVChkStrutPartition.class, idStrut)).getFlPartOk();
-    }
-
-    public String partitionUpdOK(BigDecimal idStrut) {
-        return ((OrgVChkStrutPartitionUpd) getEntityManager().find(OrgVChkStrutPartitionUpd.class, idStrut))
-                .getFlPartOk();
-    }
-
-    public String partitionFascOK(BigDecimal idStrut) {
-        return ((OrgVChkStrutPartitionFasc) getEntityManager().find(OrgVChkStrutPartitionFasc.class, idStrut))
-                .getFlPartOk();
+        return getEntityManager().find(OrgVChkStrutPartition.class, idStrut).getFlPartOk();
     }
 
     public String partitionFileEleVersFascOK(BigDecimal idStrut) {
-        return ((OrgVChkTimePartitionFasc) getEntityManager().find(OrgVChkTimePartitionFasc.class, idStrut))
-                .getFlPartFileelevrsfascOk();
+        return getEntityManager().find(OrgVChkTimePartitionFasc.class, idStrut).getFlPartFileelevrsfascOk();
     }
 
     public String partitionFileEleVersFascDataOK(BigDecimal idStrut) {
-        return ((OrgVChkTimePartitionFasc) getEntityManager().find(OrgVChkTimePartitionFasc.class, idStrut))
-                .getFlPartFileelevrsfascDataOk();
+        return getEntityManager().find(OrgVChkTimePartitionFasc.class, idStrut).getFlPartFileelevrsfascDataOk();
     }
 
     public List<Integer> getProgressiviTemplatePresentiSuDB() {
@@ -857,10 +864,9 @@ public class StruttureHelper extends GenericHelper {
         // Recupero le strutture template create in automatico (nome = Template + progressivo)
         Query query = getEntityManager()
                 .createQuery("SELECT strut.nmStrut FROM OrgStrut strut " + "WHERE strut.flTemplate = '1' ");
-        List<String> struttureTemplateList = (List<String>) query.getResultList();
+        List<String> struttureTemplateList = query.getResultList();
         for (String nmStrutturaTemplate : struttureTemplateList) {
-            String[] nomeAndProgressivo = new String[2];
-            nomeAndProgressivo = nmStrutturaTemplate.split(" ", 2);
+            String[] nomeAndProgressivo = nmStrutturaTemplate.split(" ", 2);
             // Controllo che ci siano 2 elementi, che il primo sia uguale a "Template" e che il secondo sia un
             // progressivo
             if (nomeAndProgressivo[0] != null && nomeAndProgressivo[0].equals("Template")
@@ -880,7 +886,7 @@ public class StruttureHelper extends GenericHelper {
         String queryStr = "SELECT check.flFmtNumeroOk FROM DecVChkFmtNumero check "
                 + "WHERE check.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idAaRegistroUnitaDoc", idAaRegistroUnitaDoc);
+        query.setParameter("idAaRegistroUnitaDoc", bigDecimalFromLong(idAaRegistroUnitaDoc));
         String risultato = "2";
         try {
             risultato = (String) query.getSingleResult();
@@ -901,7 +907,7 @@ public class StruttureHelper extends GenericHelper {
                 + "AND partitionStrut.tiPartition = :tiPartition ";
 
         Query query1 = getEntityManager().createQuery(query1Str);
-        query1.setParameter("idStrut", idStrut);
+        query1.setParameter("idStrut", longFromBigDecimal(idStrut));
         query1.setParameter("tiPartition", tiPartition);
         Long result1 = (Long) query1.getSingleResult();
 
@@ -924,30 +930,59 @@ public class StruttureHelper extends GenericHelper {
             query2.setParameter(1, data);
             query2.setParameter(2, tiPartition);
             query2.setParameter(3, idStrut);
-            String res2 = (String) query2.getSingleResult();
-            return res2;
+            return query2.getSingleResult().toString();
         }
     }
 
+    /**
+     * @deprecated MAC#21555
+     * 
+     * @param idUserIam
+     *            id dell'utente
+     * @param idAmbientiSet
+     *            identificativi degli ambienti
+     * 
+     * @return Lista delle strutture abilitate
+     * 
+     * @deprecated
+     */
+    @Deprecated
     public List<BigDecimal> getIdStrutAbilitatiFromAmbienteSet(long idUserIam,
             Set<? extends BigDecimal> idAmbientiSet) {
-        Query query = getEntityManager().createQuery(
-                "SELECT DISTINCT strut.idStrut FROM IamAbilOrganiz iao, OrgStrut strut WHERE strut.orgEnte.orgAmbiente.idAmbiente IN :idAmbiente AND iao.iamUser.idUserIam = :idUtente AND strut.idStrut = iao.idOrganizApplic ORDER BY strut.nmStrut");
+        Query query = getEntityManager()
+                .createQuery("SELECT DISTINCT strut.idStrut " + " FROM IamAbilOrganiz iao, OrgStrut strut "
+                        + " WHERE strut.orgEnte.orgAmbiente.idAmbiente IN (:idAmbiente) "
+                        + " AND iao.iamUser.idUserIam = :idUtente " + " AND strut.idStrut = iao.idOrganizApplic "
+                /* + " ORDER BY strut.nmStrut" */);
         query.setParameter("idUtente", idUserIam);
-        query.setParameter("idAmbiente", idAmbientiSet);
+        query.setParameter("idAmbiente", longListFrom(idAmbientiSet));
 
-        List<BigDecimal> strutList = query.getResultList();
-        return strutList;
+        return query.getResultList();
     }
 
+    /**
+     * @deprecated MAC#21555
+     *
+     * @param idUserIam
+     *            id dell'utente
+     * @param idEntiSet
+     *            gli id degli enti
+     *
+     * @return Lista degli id delle strutture
+     *
+     * @deprecated
+     */
+    @Deprecated
     public List<BigDecimal> getIdStrutAbilitatiFromEnteSet(long idUserIam, Set<? extends BigDecimal> idEntiSet) {
-        Query query = getEntityManager().createQuery(
-                "SELECT DISTINCT strut.idStrut FROM IamAbilOrganiz iao, OrgStrut strut WHERE strut.orgEnte.idEnte IN :idEnte AND iao.iamUser.idUserIam = :idUtente AND strut.idStrut = iao.idOrganizApplic ORDER BY strut.nmStrut");
+        Query query = getEntityManager().createQuery("SELECT DISTINCT strut.idStrut "
+                + " FROM IamAbilOrganiz iao, OrgStrut strut " + " WHERE strut.orgEnte.idEnte IN (:idEnte) "
+                + " AND iao.iamUser.idUserIam = :idUtente " + " AND strut.idStrut = iao.idOrganizApplic "
+        /* + " ORDER BY strut.nmStrut" */
+        );
         query.setParameter("idUtente", idUserIam);
-        query.setParameter("idEnte", idEntiSet);
+        query.setParameter("idEnte", longListFrom(idEntiSet));
 
-        List<BigDecimal> strutList = query.getResultList();
-        return strutList;
+        return query.getResultList();
     }
 
     /**
@@ -962,31 +997,29 @@ public class StruttureHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT iao, os.orgEnte.orgAmbiente.idAmbiente, os.orgEnte.idEnte  FROM IamAbilOrganiz iao, OrgStrut os  WHERE iao.iamUser.idUserIam = :idUtente  AND iao.flOrganizDefault = 1  AND os.idStrut = iao.idOrganizApplic");
         query.setParameter("idUtente", idUtente);
-        List<Object[]> abilStrut = query.getResultList();
-        return abilStrut;
+        return query.getResultList();
     }
 
     public Long countOrgStrut(BigDecimal idEnte) {
         Query query = getEntityManager()
                 .createQuery("SELECT COUNT(strut) FROM OrgStrut strut WHERE strut.orgEnte.idEnte = :idEnte");
-        query.setParameter("idEnte", idEnte);
+        query.setParameter("idEnte", longFromBigDecimal(idEnte));
 
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
 
     public boolean haFigliPresentiInSottoLivelloOnlineList(BigDecimal idPadre,
             List<BigDecimal> figliQualunquePresentiInOnline) {
         String queryStr = "SELECT COUNT(a) " + "FROM OrgAmbitoTerrit a "
                 + "WHERE a.orgAmbitoTerrit.idAmbitoTerrit = :idPadre "
-                + "AND a.idAmbitoTerrit IN :figliQualunquePresentiInOnline ";
+                + "AND a.idAmbitoTerrit IN (:figliQualunquePresentiInOnline) ";
         // Se la lista di figli presenti nell'online è vuota, è ovvio che non avrò figli presenti nell'online
         if (figliQualunquePresentiInOnline.isEmpty()) {
             return false;
         } else {
             Query query = getEntityManager().createQuery(queryStr);
-            query.setParameter("idPadre", idPadre);
-            query.setParameter("figliQualunquePresentiInOnline", figliQualunquePresentiInOnline);
+            query.setParameter("idPadre", longFromBigDecimal(idPadre));
+            query.setParameter("figliQualunquePresentiInOnline", longListFrom(figliQualunquePresentiInOnline));
             return (Long) query.getSingleResult() > 0;
         }
     }
@@ -995,9 +1028,9 @@ public class StruttureHelper extends GenericHelper {
         String queryStr = "SELECT a " + "FROM OrgAmbitoTerrit a "
                 + "WHERE a.orgAmbitoTerrit.idAmbitoTerrit = :idAmbitoTerrit";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idAmbitoTerrit", idAmbitoTerrit);
+        query.setParameter("idAmbitoTerrit", longFromBigDecimal(idAmbitoTerrit));
         List<OrgAmbitoTerrit> list = query.getResultList();
-        List<BigDecimal> idAmbitoTerritList = new ArrayList();
+        List<BigDecimal> idAmbitoTerritList = new ArrayList<>();
         for (OrgAmbitoTerrit ambito : list) {
             idAmbitoTerritList.add(new BigDecimal(ambito.getIdAmbitoTerrit()));
         }
@@ -1008,7 +1041,7 @@ public class StruttureHelper extends GenericHelper {
         String queryStr = "SELECT enteSiam.siOrgAmbienteEnteConvenz.idAmbienteEnteConvenz FROM OrgStrut strut, SIOrgEnteSiam enteSiam "
                 + "WHERE strut.idEnteConvenz = enteSiam.idEnteSiam " + "AND strut.idStrut = :idStrut ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<Long> strutList = query.getResultList();
         if (strutList.isEmpty()) {
             return null;
@@ -1050,12 +1083,12 @@ public class StruttureHelper extends GenericHelper {
             queryStr = queryStr + "AND enteConvenzOrg.idEnteConvenzOrg != :idEnteConvenzOrgDaEscludere ";
         }
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         query.setParameter("nmApplic", nmApplic);
         query.setParameter("dtIniVal", dtIniVal);
         query.setParameter("dtFineVal", dtFineVal);
         if (idEnteConvenzOrg != null) {
-            query.setParameter("idEnteConvenzOrgDaEscludere", idEnteConvenzOrg);
+            query.setParameter("idEnteConvenzOrgDaEscludere", longFromBigDecimal(idEnteConvenzOrg));
         }
         List<SIOrgEnteConvenzOrg> list = query.getResultList();
         return !list.isEmpty();
@@ -1083,7 +1116,7 @@ public class StruttureHelper extends GenericHelper {
                 + "AND accordoEnte.siOrgEnteConvenz = enteSiam) ";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idEnteConvenz", idEnteConvenz);
+        query.setParameter("idEnteConvenz", longFromBigDecimal(idEnteConvenz));
         query.setParameter("dtIniVal", dtIniVal);
         query.setParameter("dtFineVal", dtFineVal);
         List<SIOrgEnteSiam> list = query.getResultList();
@@ -1106,7 +1139,7 @@ public class StruttureHelper extends GenericHelper {
                 + "AND accordoEnte.siOrgEnteConvenz = enteSiam) ";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idEnteConvenz", idEnteConvenz);
+        query.setParameter("idEnteConvenz", longFromBigDecimal(idEnteConvenz));
         query.setParameter("dataOdierna", new Date());
         List<SIOrgEnteSiam> list = query.getResultList();
         return !list.isEmpty();
@@ -1134,7 +1167,7 @@ public class StruttureHelper extends GenericHelper {
                 + "AND accordo.dtDecAccordo <= :dtIniVal AND enteSiam.dtCessazione >= :dtFineVal ";
 
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idEnteConvenz", idEnteConvenz);
+        query.setParameter("idEnteConvenz", longFromBigDecimal(idEnteConvenz));
         query.setParameter("dtIniVal", dtIniVal);
         query.setParameter("dtFineVal", dtFineVal);
         List<SIOrgAccordoEnte> list = query.getResultList();
@@ -1147,8 +1180,7 @@ public class StruttureHelper extends GenericHelper {
                 + "JOIN  accordo.siOrgEnteConvenz enteSiam " + "WHERE enteSiam.idEnteSiam = :idEnteConvenz "
                 + "AND accordo.dtDecAccordo <= :dataOdierna AND accordo.dtFineValidAccordo >= :dataOdierna "
                 + "AND accordo.dtDecAccordo <= :dtIniVal AND enteSiam.dtCessazione >= :dtFineVal ");
-        query.setParameter("idEnteConvenz", idEnteConvenz);
-        // query.setParameter("dataOdierna", new Date());
+        query.setParameter("idEnteConvenz", longFromBigDecimal(idEnteConvenz));
         query.setParameter("dtIniVal", dtIniVal);
         query.setParameter("dtFineVal", dtFineVal);
         List<SIOrgAccordoEnte> accordoList = query.getResultList();
@@ -1173,7 +1205,7 @@ public class StruttureHelper extends GenericHelper {
                 + "JOIN  accordo.siOrgEnteConvenz enteSiam " + "WHERE enteSiam.idEnteSiam = :idEnteConvenz "
                 + "AND accordo.dtDecAccordo <= :dtOdierna AND accordo.dtFineValidAccordo >= :dtOdierna "
                 + "AND accordo.dtDecAccordo <= :dtIniVal AND enteSiam.dtCessazione >= :dtFineVal ");
-        query.setParameter("idEnteConvenz", idEnteConvenz);
+        query.setParameter("idEnteConvenz", longFromBigDecimal(idEnteConvenz));
         query.setParameter("dtOdierna", new Date());
         query.setParameter("dtIniVal", dtIniVal);
         query.setParameter("dtFineVal", dtFineVal);
@@ -1194,20 +1226,18 @@ public class StruttureHelper extends GenericHelper {
                 + "WHERE strut.idStrut = :idStrut " + "AND EXISTS (SELECT strut_valida FROM OrgStrut strut_valida "
                 + "WHERE strut_valida.orgEnte = ente " + "AND strut_valida.flCessato = '0') ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<OrgStrut> list = query.getResultList();
         return !list.isEmpty();
     }
 
     public List<IamEnteConvenzDaAllinea> getIamEnteConvenzDaAllinea() {
-        List<IamEnteConvenzDaAllinea> entiList;
         String queryStr = "SELECT enteConvenzDaAllinea FROM IamEnteConvenzDaAllinea enteConvenzDaAllinea "
                 + "WHERE enteConvenzDaAllinea.tiStatoAllinea "
                 + "IN ('DA_ALLINEARE', 'ALLINEA_IN_TIMEOUT', 'ALLINEA_IN_ERRORE') "
                 + "ORDER BY enteConvenzDaAllinea.dtLogEnteConvenzDaAllinea ";
         javax.persistence.Query query = getEntityManager().createQuery(queryStr);
-        entiList = (List<IamEnteConvenzDaAllinea>) query.getResultList();
-        return entiList;
+        return query.getResultList();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -1252,18 +1282,7 @@ public class StruttureHelper extends GenericHelper {
 
     public List<OrgStrut> retrieveOrgStrutList() {
         Query q = getEntityManager().createQuery("SELECT strut FROM OrgStrut strut ORDER BY strut.nmStrut");
-        List<OrgStrut> strutture = q.getResultList();
-        return strutture;
-    }
-
-    public boolean isEnteConvenzCessato(BigDecimal idEnteConvenz, Date dtIniVal, Date dtFineVal) {
-        Query query = getEntityManager().createQuery("SELECT enteSiam FROM SIOrgEnteSiam enteSiam "
-                + "WHERE enteConvenz.idEnteSiam = :idEnteConvenz " + "AND (enteConvenz.dtCessazione <= :dtIniVal "
-                + "OR enteConvenz.dtCessazione <= :dtFineVal) ");
-        query.setParameter("idEnteConvenz", idEnteConvenz);
-        query.setParameter("dtIniVal", dtIniVal);
-        query.setParameter("dtFineVal", dtFineVal);
-        return !query.getResultList().isEmpty();
+        return q.getResultList();
     }
 
     public boolean existsCdStrutNormaliz(String cdStrutNormaliz, BigDecimal idEnte, BigDecimal idStrutExcluded) {
@@ -1274,9 +1293,9 @@ public class StruttureHelper extends GenericHelper {
         }
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("cdStrutNormaliz", cdStrutNormaliz);
-        query.setParameter("idEnte", idEnte);
+        query.setParameter("idEnte", longFromBigDecimal(idEnte));
         if (idStrutExcluded != null) {
-            query.setParameter("idStrutExcluded", idStrutExcluded);
+            query.setParameter("idStrutExcluded", longFromBigDecimal(idStrutExcluded));
         }
         return !query.getResultList().isEmpty();
     }
@@ -1299,6 +1318,50 @@ public class StruttureHelper extends GenericHelper {
     public List<String> getFunzioneParametri() {
         Query query = getEntityManager().createQuery(
                 "SELECT DISTINCT paramApplic.tiParamApplic FROM AplParamApplic paramApplic ORDER BY paramApplic.tiParamApplic");
+        return query.getResultList();
+    }
+
+    public OrgVRicEnteConvenzByEsterno findOrgVRicEnteConvenzByEsternoByEnte(BigDecimal idEnteConvenz) {
+        final String parmIdEnte = "idEnte";
+        TypedQuery<OrgVRicEnteConvenzByEsterno> query = getEntityManager().createQuery(
+                "SELECT o FROM OrgVRicEnteConvenzByEsterno o WHERE o.id.idEnteConvenz=:" + parmIdEnte,
+                OrgVRicEnteConvenzByEsterno.class);
+        query.setParameter(parmIdEnte, idEnteConvenz);
+        query.setMaxResults(1);
+        query.setFirstResult(0);
+        return query.getSingleResult();
+    }
+
+    public List<OrgStrut> getOrgStrutList() {
+        Query q = getEntityManager().createQuery("SELECT strut FROM OrgStrut strut");
+        return q.getResultList();
+    }
+
+    public List<Long> getIdStrutList() {
+        Query q = getEntityManager().createQuery("SELECT strut.idStrut FROM OrgStrut strut");
+        return q.getResultList();
+    }
+
+    public List<Long> getIdTipoStrutDocList() {
+        Query q = getEntityManager()
+                .createQuery("SELECT tipoStrutDoc.idTipoStrutDoc FROM DecTipoStrutDoc tipoStrutDoc ");
+        return q.getResultList();
+    }
+
+    public List<BigDecimal> getIdFormatoFileDocList(long idFormatoFileStandard) {
+        Query q = getEntityManager().createNativeQuery("SELECT  doc.id_formato_file_doc "
+                + "FROM    DEC_FORMATO_FILE_DOC doc "
+                + "JOIN    dec_uso_formato_file_standard uso ON (uso.id_formato_file_doc=doc.id_formato_file_doc) "
+                + "JOIN    dec_formato_file_standard std ON (uso.id_formato_file_standard=std.id_formato_file_standard) "
+                + "WHERE   std.id_formato_file_standard = :idFormatoFileStandard ");
+        q.setParameter("idFormatoFileStandard", idFormatoFileStandard);
+        return q.getResultList();
+    }
+
+    public List<OrgStrut> retrieveOrgStrutByEnteConvenz(BigDecimal idEnteConvenz) {
+        String queryStr = "SELECT strut FROM OrgStrut strut WHERE strut.idEnteConvenz = :idEnteConvenz ";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idEnteConvenz", idEnteConvenz);
         return query.getResultList();
     }
 

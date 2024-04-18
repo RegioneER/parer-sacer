@@ -6,6 +6,7 @@
     <!-- configurazione della sicurezza (Spring Security + SAML ) -->
     <import resource="classpath:security/securityContext.xml"/>
     
-    <!-- RESTful JAX-WS services -->
+    <!-- RESTful JAX-WS services
     <bean id="docounter" class="it.eng.parer.restWS.DocCounter"/>
+     -->
 </beans>

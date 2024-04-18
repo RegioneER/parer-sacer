@@ -1,20 +1,27 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipSerieUd.helper;
 
-import it.eng.parer.entity.AroUdAppartVerSerie;
-import it.eng.parer.entity.AroVerIndiceAipUd;
-import it.eng.parer.entity.SerIxVolVerSerie;
-import it.eng.parer.viewEntity.SerVCreaIxVolSerieUd;
-import it.eng.parer.viewEntity.SerVLisUdAppartVolSerie;
-import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-import it.eng.parer.entity.SerVerSerie;
-import it.eng.parer.entity.SerVolVerSerie;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
@@ -23,8 +30,18 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.AroUdAppartVerSerie;
+import it.eng.parer.entity.AroVerIndiceAipUd;
+import it.eng.parer.entity.SerIxVolVerSerie;
+import it.eng.parer.entity.SerVerSerie;
+import it.eng.parer.entity.SerVolVerSerie;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
+import it.eng.parer.viewEntity.SerVCreaIxVolSerieUd;
+import it.eng.parer.viewEntity.SerVLisUdAppartVolSerie;
+import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
+import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 
 /**
  *
@@ -37,20 +54,19 @@ public class CreazioneIndiceVolumeSerieUdHelper extends GenericHelper {
 
     @Resource
     private SessionContext context;
-    private static final Logger log = LoggerFactory.getLogger(CreazioneIndiceVolumeSerieUdHelper.class);
 
     public SerVCreaIxVolSerieUd getSerVCreaIxVolSerieUd(Long idVolVerSerie) {
-        Query query = getEntityManager()
-                .createQuery("SELECT u FROM SerVCreaIxVolSerieUd u WHERE u.idVolVerSerie = :idVolVerSerie ");
-        query.setParameter("idVolVerSerie", idVolVerSerie);
-        return (SerVCreaIxVolSerieUd) query.getSingleResult();
+        // serve per forzare l'aggiornamento anche della vista SerVCreaIxVolSerieUd che usa dati persistiti in
+        // precedenza
+        getEntityManager().flush();
+        return getEntityManager().find(SerVCreaIxVolSerieUd.class, BigDecimal.valueOf(idVolVerSerie));
     }
 
     public List<SerVLisUdAppartVolSerie> getSerVLisUdAppartVolSerie(Long idVolVerSerie) {
         Query query = getEntityManager().createQuery("SELECT u FROM SerVLisUdAppartVolSerie u "
                 + "WHERE u.idVolVerSerie = :idVolVerSerie " + "ORDER BY u.dsKeyOrdUdSerie ASC ");
-        query.setParameter("idVolVerSerie", idVolVerSerie);
-        return (List<SerVLisUdAppartVolSerie>) query.getResultList();
+        query.setParameter("idVolVerSerie", bigDecimalFromLong(idVolVerSerie));
+        return query.getResultList();
     }
 
     public SerVolVerSerie registraVolVerSerie(long idVerSerie) {
@@ -102,8 +118,7 @@ public class CreazioneIndiceVolumeSerieUdHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idVerSerie", idVerSerie);
-        List<AroUdAppartVerSerie> udList = (List<AroUdAppartVerSerie>) query.getResultList();
-        return udList;
+        return query.getResultList();
     }
 
     /**
@@ -145,7 +160,7 @@ public class CreazioneIndiceVolumeSerieUdHelper extends GenericHelper {
     public AroVDtVersMaxByUnitaDoc getAroVDtVersMaxByUd(long idUnitaDoc) {
         String queryStr = "SELECT aro FROM AroVDtVersMaxByUnitaDoc aro WHERE aro.idUnitaDoc = :idUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idUnitaDoc", BigDecimal.valueOf(idUnitaDoc));
         List<AroVDtVersMaxByUnitaDoc> lista = query.getResultList();
         if (!lista.isEmpty()) {
             return lista.get(0);

@@ -1,9 +1,40 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.helper;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.AplValParamApplicMulti;
 import it.eng.parer.entity.AplValoreParamApplic;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.sacer.util.SacerLogConstants;
+import it.eng.parer.sacerlog.ejb.SacerLogEjb;
+import it.eng.parer.sacerlog.util.LogParam;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicRowBean;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicTableBean;
 import it.eng.parer.slite.gen.tablebean.AplParamApplicTableDescriptor;
@@ -11,32 +42,25 @@ import it.eng.parer.web.util.Transform;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import java.math.BigDecimal;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Session Bean implementation class AmministrazioneHelper Contiene i metodi, per la gestione della persistenza su DB
  * per le operazioni CRUD
  *
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class AmministrazioneHelper extends GenericHelper {
 
-    /**
-     * Default constructor.
-     */
     public AmministrazioneHelper() {
+        /* Default constructor */
     }
 
     private static final Logger log = LoggerFactory.getLogger(AmministrazioneHelper.class.getName());
-    // @PersistenceContext(unitName = "ParerJPA")
-    // private EntityManager em;
+
+    @EJB
+    private SacerLogEjb sacerLogEjb;
 
     /**
      * Metodo che ritorna i tipi di parametri di configurazione dell'applicazione
@@ -45,7 +69,7 @@ public class AmministrazioneHelper extends GenericHelper {
      */
     public BaseTable getConfigurationTypes() {
         String queryStr = "SELECT DISTINCT config.tiParamApplic FROM AplParamApplic config ";
-        Query q = getEntityManager().createQuery(queryStr.toString());
+        Query q = getEntityManager().createQuery(queryStr);
         List<String> params = q.getResultList();
         BaseTable tb = new BaseTable();
         if (params != null && !params.isEmpty()) {
@@ -88,59 +112,34 @@ public class AmministrazioneHelper extends GenericHelper {
         return tb;
     }
 
-    // /**
-    // * Esegue il salvataggio del rowBean del parametro di configurazione
-    // *
-    // * @param row il rowBean da salvare su DB
-    // * @return true in mancanza di eccezioni
-    // */
-    // public boolean saveConfiguration(AplParamApplicRowBean row) {
-    // boolean result = false;
-    // AplParamApplic config;
-    // boolean newRow;
-    // try {
-    // if (row.getIdParamApplic() != null) {
-    // config = getEntityManager().find(AplParamApplic.class, row.getIdParamApplic().longValue());
-    // newRow = false;
-    // } else {
-    // config = new AplParamApplic();
-    // newRow = true;
-    // }
-    //
-    // config.setNmParamApplic(row.getNmParamApplic());
-    // config.setDsParamApplic(row.getDsParamApplic());
-    // //config.setDsValoreParamApplic(row.getDsValoreParamApplic());
-    // config.setTiParamApplic(row.getTiParamApplic());
-    //
-    // if (newRow) {
-    // getEntityManager().persist(config);
-    // }
-    // result = true;
-    // getEntityManager().flush();
-    // } catch (Exception ex) {
-    // log.error(ex.getMessage());
-    // }
-    // return result;
-    // }
     /**
      * Rimuove la riga di parametri definita nel rowBean
      *
+     * @param param
+     *            oggetto {@link LogParam}
      * @param row
      *            il parametro da eliminare
      * 
      * @return true se eliminato con successo
      */
-    public boolean deleteAplParamApplicRowBean(AplParamApplicRowBean row) {
+    public boolean deleteAplParamApplicRowBean(LogParam param, AplParamApplicRowBean row) {
         AplParamApplic config;
         boolean result = false;
         try {
-            config = (AplParamApplic) getEntityManager().find(AplParamApplic.class, row.getIdParamApplic().longValue());
+            config = getEntityManager().find(AplParamApplic.class, row.getIdParamApplic().longValue());
             // Rimuovo il record
             getEntityManager().remove(config);
             getEntityManager().flush();
+
+            // Loggo l'intera struttura che sto per cancellare
+            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_REGISTRO_PARAMETRI, BigDecimal.ZERO,
+                    param.getNomePagina());
+
             result = true;
         } catch (Exception ex) {
             log.error(ex.getMessage());
+            throw ex;
         }
         return result;
     }
@@ -196,7 +195,6 @@ public class AmministrazioneHelper extends GenericHelper {
         }
         if (flAppartAaTipoFascicolo != null) {
             queryStr.append(whereWord).append("paramApplic.flAppartAaTipoFascicolo = :flAppartAaTipoFascicolo ");
-            whereWord = "AND ";
         }
         queryStr.append("ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic ");
         Query q = getEntityManager().createQuery(queryStr.toString());
@@ -221,8 +219,7 @@ public class AmministrazioneHelper extends GenericHelper {
         if (flAppartAaTipoFascicolo != null) {
             q.setParameter("flAppartAaTipoFascicolo", flAppartAaTipoFascicolo);
         }
-        List<AplParamApplic> params = (List<AplParamApplic>) q.getResultList();
-        return params;
+        return q.getResultList();
     }
 
     public boolean existsAplParamApplic(String nmParamApplic, BigDecimal idParamApplic) {
@@ -230,7 +227,7 @@ public class AmministrazioneHelper extends GenericHelper {
                 + "WHERE paramApplic.nmParamApplic = :nmParamApplic "
                 + "AND paramApplic.idParamApplic != :idParamApplic ");
         q.setParameter("nmParamApplic", nmParamApplic);
-        q.setParameter("idParamApplic", idParamApplic);
+        q.setParameter("idParamApplic", longFromBigDecimal(idParamApplic));
         return !q.getResultList().isEmpty();
     }
 
@@ -254,23 +251,16 @@ public class AmministrazioneHelper extends GenericHelper {
      */
     public List<String> getTiParamApplic() {
         String queryStr = "SELECT DISTINCT config.tiParamApplic FROM AplParamApplic config ORDER BY config.tiParamApplic ";
-        Query q = getEntityManager().createQuery(queryStr.toString());
-        List<String> params = q.getResultList();
-        return params;
+        Query q = getEntityManager().createQuery(queryStr);
+        return q.getResultList();
     }
 
     public List<AplParamApplic> getAplParamApplicListAmbiente(List<String> funzione) {
-        // Query q = getEntityManager().createQuery("SELECT paramApplic FROM AplParamApplic paramApplic "
-        // + "WHERE paramApplic.flAppartAmbiente = '1' "
-        // + "AND paramApplic.flMulti = '0' "
-        // + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic");
-        // List<AplParamApplic> lista = q.getResultList();
-        // return lista;
-
-        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic " + "WHERE paramApplic.flMulti = '0' ";
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartAmbiente = '1' ";
 
         if (funzione != null && !funzione.isEmpty()) {
-            queryStr = queryStr + "AND paramApplic.tiParamApplic IN :funzione ";
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
         }
         queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
 
@@ -278,8 +268,7 @@ public class AmministrazioneHelper extends GenericHelper {
         if (funzione != null && !funzione.isEmpty()) {
             q.setParameter("funzione", funzione);
         }
-        List<AplParamApplic> lista = q.getResultList();
-        return lista;
+        return q.getResultList();
 
     }
 
@@ -288,7 +277,7 @@ public class AmministrazioneHelper extends GenericHelper {
                 + "WHERE paramApplic.flAppartStrut = '1' ";
 
         if (funzione != null && !funzione.isEmpty()) {
-            queryStr = queryStr + "AND paramApplic.tiParamApplic IN :funzione ";
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
         }
         queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
 
@@ -296,8 +285,7 @@ public class AmministrazioneHelper extends GenericHelper {
         if (funzione != null && !funzione.isEmpty()) {
             q.setParameter("funzione", funzione);
         }
-        List<AplParamApplic> lista = q.getResultList();
-        return lista;
+        return q.getResultList();
     }
 
     public List<AplParamApplic> getAplParamApplicListTipoUd(List<String> funzione) {
@@ -305,7 +293,7 @@ public class AmministrazioneHelper extends GenericHelper {
                 + "WHERE paramApplic.flAppartTipoUnitaDoc = '1' ";
 
         if (funzione != null && !funzione.isEmpty()) {
-            queryStr = queryStr + "AND paramApplic.tiParamApplic IN :funzione ";
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
         }
         queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
 
@@ -313,8 +301,7 @@ public class AmministrazioneHelper extends GenericHelper {
         if (funzione != null && !funzione.isEmpty()) {
             q.setParameter("funzione", funzione);
         }
-        List<AplParamApplic> lista = q.getResultList();
-        return lista;
+        return q.getResultList();
     }
 
     public List<AplParamApplic> getAplParamApplicListAaTipoFascicolo(List<String> funzione) {
@@ -322,7 +309,7 @@ public class AmministrazioneHelper extends GenericHelper {
                 + "WHERE paramApplic.flAppartAaTipoFascicolo = '1' ";
 
         if (funzione != null && !funzione.isEmpty()) {
-            queryStr = queryStr + "AND paramApplic.tiParamApplic IN :funzione ";
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
         }
         queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
 
@@ -330,20 +317,19 @@ public class AmministrazioneHelper extends GenericHelper {
         if (funzione != null && !funzione.isEmpty()) {
             q.setParameter("funzione", funzione);
         }
-        List<AplParamApplic> lista = q.getResultList();
-        return lista;
+        return q.getResultList();
     }
 
     public List<AplParamApplic> getAplParamApplicMultiListAmbiente() {
         Query q = getEntityManager().createQuery("SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartAmbiente = '1' " + "AND paramApplic.flMulti = '1' "
                 + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic");
-        List<AplParamApplic> lista = q.getResultList();
-        return lista;
+        return q.getResultList();
     }
 
     public AplValoreParamApplic getAplValoreParamApplic(BigDecimal idParamApplic, String tiAppart,
             BigDecimal idAmbiente, BigDecimal idStrut, BigDecimal idTipoUnitaDoc, BigDecimal idAaTipoFascicolo) {
+
         StringBuilder queryStr = new StringBuilder(
                 "SELECT valoreParamApplic FROM AplValoreParamApplic valoreParamApplic "
                         + "WHERE valoreParamApplic.tiAppart = :tiAppart "
@@ -364,18 +350,18 @@ public class AmministrazioneHelper extends GenericHelper {
 
         Query q = getEntityManager().createQuery(queryStr.toString());
         q.setParameter("tiAppart", tiAppart);
-        q.setParameter("idParamApplic", idParamApplic);
+        q.setParameter("idParamApplic", longFromBigDecimal(idParamApplic));
         if (idAmbiente != null) {
-            q.setParameter("idAmbiente", idAmbiente);
+            q.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idStrut != null) {
-            q.setParameter("idStrut", idStrut);
+            q.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (idTipoUnitaDoc != null) {
-            q.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+            q.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
         }
         if (idAaTipoFascicolo != null) {
-            q.setParameter("idAaTipoFascicolo", idAaTipoFascicolo);
+            q.setParameter("idAaTipoFascicolo", longFromBigDecimal(idAaTipoFascicolo));
         }
         List<AplValoreParamApplic> lista = q.getResultList();
         if (!lista.isEmpty()) {
@@ -396,12 +382,11 @@ public class AmministrazioneHelper extends GenericHelper {
         queryStr.append("ORDER BY valoreParamApplicMulti.dsValoreParamApplic");
 
         Query q = getEntityManager().createQuery(queryStr.toString());
-        q.setParameter("idParamApplic", idParamApplic);
+        q.setParameter("idParamApplic", longFromBigDecimal(idParamApplic));
         if (idAmbiente != null) {
-            q.setParameter("idAmbiente", idAmbiente);
+            q.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
-        List<AplValParamApplicMulti> lista = q.getResultList();
-        return lista;
+        return q.getResultList();
     }
 
     public AplValParamApplicMulti getAplValParamApplicMulti(BigDecimal idParamApplic, BigDecimal idAmbiente,
@@ -412,8 +397,8 @@ public class AmministrazioneHelper extends GenericHelper {
                 + "AND valoreParamApplicMulti.dsValoreParamApplic = :token ";
 
         Query q = getEntityManager().createQuery(queryStr);
-        q.setParameter("idParamApplic", idParamApplic);
-        q.setParameter("idAmbiente", idAmbiente);
+        q.setParameter("idParamApplic", longFromBigDecimal(idParamApplic));
+        q.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         q.setParameter("token", token);
         List<AplValParamApplicMulti> lista = q.getResultList();
         if (!lista.isEmpty()) {
@@ -421,19 +406,5 @@ public class AmministrazioneHelper extends GenericHelper {
         }
         return null;
     }
-    //
-    // public boolean checkParametroMultiploPresente(String nmParamApplic, String dsValoreParamApplic){
-    // String queryStr = "SELECT valParamApplicMulti FROM AplValParamApplicMulti valParamApplicMulti "
-    // + "WHERE valParamApplicMulti.aplParamApplic.nmParamApplic = :nmParamApplic "
-    // + "AND valParamApplicMulti.orgAmbiente.idAmbiente = :idAmbiente "
-    // + "AND valParamApplicMulti.dsValoreParamApplic = :token ";
-    // javax.persistence.Query query = entityManager.createQuery(queryStr);
-    // query.setParameter("nmParamApplic", nmParamApplic);
-    // List<AplParamApplic> paramList = (List<AplParamApplic>) query.getResultList();
-    // if (paramList != null && !paramList.isEmpty()) {
-    // return paramList.get(0);
-    // } else {
-    // return null;
-    // }
-    // }
+
 }

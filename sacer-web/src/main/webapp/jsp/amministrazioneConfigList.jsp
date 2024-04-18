@@ -50,6 +50,8 @@
                 <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_STRUT_COMBO%>" colSpan="2" /><sl:newLine/>                
                 <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_TIPO_UNITA_DOC_COMBO%>" colSpan="2" /><sl:newLine/>                
                 <slf:lblField name="<%= AmministrazioneForm.Configuration.FL_APPART_AA_TIPO_FASCICOLO_COMBO%>" colSpan="2" /><sl:newLine/>                
+                <sl:newLine skipLine="true"/>
+                <slf:lblField name="<%= AmministrazioneForm.Configuration.LOG_EVENTI_REGISTRO_PARAMETRI%>" colSpan="2" /><sl:newLine/>                
             </slf:fieldSet>
             <sl:newLine skipLine="true"/>
             <%--<c:out value="${(sessionScope['###_FORM_CONTAINER']['configurationList']['table']!=null)}"/>

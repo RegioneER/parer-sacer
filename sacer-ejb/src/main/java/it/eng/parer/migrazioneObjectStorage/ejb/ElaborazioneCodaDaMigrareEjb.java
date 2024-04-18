@@ -1,4 +1,39 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.migrazioneObjectStorage.ejb;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.jms.ConnectionFactory;
+import javax.jms.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.blob.info.BlobInfo;
 import it.eng.parer.blob.info.ChiaveDiRecupero;
@@ -35,21 +70,6 @@ import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.CostantiDB.TipoCausaleNoMigraz;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -67,7 +87,7 @@ public class ElaborazioneCodaDaMigrareEjb {
 
     @Resource(mappedName = "jms/ProducerConnectionFactory")
     private ConnectionFactory connectionFactory;
-    @Resource(mappedName = "jms/OggettiDaMigrareQueue")
+    @Resource(mappedName = "jms/queue/OggettiDaMigrareQueue")
     private Queue queue;
     @EJB
     private VerificaMigrazioneSubPartizioniHelper verificaMigrazioneSubPartizioneHelper;
@@ -99,8 +119,8 @@ public class ElaborazioneCodaDaMigrareEjb {
         List<OstVLisSubpartBlobByIstz> lista = verificaMigrazioneSubPartizioneHelper
                 .getSubPartitionByMesiAntecedenti(numeroJob);
         log.info("AGGIUNGI_SUBPARTIZIONI_BLOB elementi estratti[" + lista.size() + "]");
-        int numMaxFileDaElab = Integer.parseInt(configurationHelper.getValoreParamApplic("NUM_MAX_FILE_DA_ELAB", null,
-                null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        int numMaxFileDaElab = Integer.parseInt(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_FILE_DA_ELAB));
         // Per ogni subpartizione determinata fa i vari conteggi per determinare se aggiungere OstMigrazSubPart...
         for (OstVLisSubpartBlobByIstz ostVLisSubpartBlobByIstz : lista) {
             List<String> alStati = new ArrayList<>();
@@ -127,10 +147,10 @@ public class ElaborazioneCodaDaMigrareEjb {
     }
 
     public ContatoriPerMigrazioni aggiungiInCodaDaMigrare(int numeroJob) {
-        long numMaxMessaggiInCodaDaMigrare = Long.parseLong(configurationHelper.getValoreParamApplic(
-                "NUM_MAX_MESSAGGI_CODA_DA_MIGRARE", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
-        long numFileDaMigrare = Long.parseLong(configurationHelper.getValoreParamApplic("NUM_FILE_DA_MIGRARE", null,
-                null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+        long numMaxMessaggiInCodaDaMigrare = Long.parseLong(configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_MESSAGGI_CODA_DA_MIGRARE));
+        long numFileDaMigrare = Long.parseLong(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_FILE_DA_MIGRARE));
         ContatoriPerMigrazioni totalizzatore = new ContatoriPerMigrazioni();
         long totFileConStatoMigrazioneInCorso = verificaMigrazioneSubPartizioneHelper.getCountFileAllPartitionWithState(
                 it.eng.parer.entity.constraint.OstMigrazFile.TiStatoCor.MIGRAZ_IN_CORSO.name());
@@ -299,8 +319,8 @@ public class ElaborazioneCodaDaMigrareEjb {
 
         String codErr = controllaNumeroNormalizzato(ud);
 
-        String nomeSistemaConservazione = configurationHelper.getValoreParamApplic("SISTEMA_CONSERVAZIONE", null, null,
-                null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nomeSistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
 
         // Se non ci sono errori...
         if (codErr == null) {
@@ -430,8 +450,8 @@ public class ElaborazioneCodaDaMigrareEjb {
             mese.setOstMigrazSubPart(mig);
             mese.setDtVersIni(ostVLisStrutMmBlob.getDtVersIni());
             mese.setDtVersFine(ostVLisStrutMmBlob.getDtVersFine());
-            mese.setMmVers(ostVLisStrutMmBlob.getMmVers());
-            mese.setIdStrut(ostVLisStrutMmBlob.getIdStrut());
+            mese.setMmVers(ostVLisStrutMmBlob.getOstVLisStrutMmBlobId().getMmVers());
+            mese.setIdStrut(ostVLisStrutMmBlob.getOstVLisStrutMmBlobId().getIdStrut());
             mese.setFlFileAggiunti(ostVLisStrutMmBlob.getFlFileAggiunti());
             verificaMigrazioneSubPartizioneHelper.getEntityManager().persist(mese);
         }
@@ -516,11 +536,11 @@ public class ElaborazioneCodaDaMigrareEjb {
         migrazFile.setIdOggetto(BigDecimal.valueOf(idCompDoc));
         migrazFile.setTiStatoCor(it.eng.parer.entity.constraint.OstMigrazFile.TiStatoCor.DA_MIGRARE.name());
         migrazFile.setTsRegStatoCor(new Date());
-        String nmTenant = configurationHelper.getValoreParamApplic("TENANT_OBJECT_STORAGE", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nmTenant = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TENANT_OBJECT_STORAGE);
         migrazFile.setNmTenant(nmTenant);
-        String nmBucket = configurationHelper.getValoreParamApplic("BUCKET_OBJECT_STORAGE_COMP", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nmBucket = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.BUCKET_OBJECT_STORAGE_COMP);
         migrazFile.setNmBucket(nmBucket);
         String cdKeyFile = nmTenant + "/" + nmEnteNorm + "/" + nmStrutNorm + "/" + cdRegistroNorm + "/" + anno + "/"
                 + idCompDoc;
@@ -563,11 +583,11 @@ public class ElaborazioneCodaDaMigrareEjb {
         migrazFile.setIdOggetto(BigDecimal.valueOf(idCompDoc));
         migrazFile.setTiStatoCor(it.eng.parer.entity.constraint.OstMigrazFile.TiStatoCor.ERRORE_NORMALIZ.name());
         migrazFile.setTsRegStatoCor(new Date());
-        String nmTenant = configurationHelper.getValoreParamApplic("TENANT_OBJECT_STORAGE", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nmTenant = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TENANT_OBJECT_STORAGE);
         migrazFile.setNmTenant(nmTenant);
-        String nmBucket = configurationHelper.getValoreParamApplic("BUCKET_OBJECT_STORAGE_COMP", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String nmBucket = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.BUCKET_OBJECT_STORAGE_COMP);
         migrazFile.setNmBucket(nmBucket);
         String cdKeyFile = nmTenant + "/" + nmEnteNorm + "/" + nmStrutNorm + "/" + cdRegistroNorm + "/" + anno + "/"
                 + idCompDoc;

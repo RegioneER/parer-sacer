@@ -1,26 +1,45 @@
-package it.eng.parer.migrazioneObjectStorage.helper;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.parer.entity.AroCompHashCalc;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.migrazioneObjectStorage.exception.MigObjStorageCompHashCalcMoreThanOneException;
+package it.eng.parer.migrazioneObjectStorage.helper;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import it.eng.parer.entity.OstMigrazFile;
 
-import javax.persistence.LockModeType;
+import it.eng.parer.entity.AroCompHashCalc;
+import it.eng.parer.entity.OstMigrazFile;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.migrazioneObjectStorage.exception.MigObjStorageCompHashCalcMoreThanOneException;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ConsumerCodaHelper")
 @LocalBean
 public class ConsumerCodaHelper extends GenericHelper {
@@ -37,7 +56,7 @@ public class ConsumerCodaHelper extends GenericHelper {
         query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
         query.setParameter("nmTabellaIdOggetto", nmTabellaIdOggetto);
         query.setParameter("idOggetto", idOggetto);
-        List<OstMigrazFile> migrazFileList = (List<OstMigrazFile>) query.getResultList();
+        List<OstMigrazFile> migrazFileList = query.getResultList();
         if (!migrazFileList.isEmpty()) {
             return migrazFileList.get(0);
         }
@@ -59,7 +78,7 @@ public class ConsumerCodaHelper extends GenericHelper {
         query.setLockMode(LockModeType.PESSIMISTIC_WRITE);
         query.setParameter("idCompDoc", idCompDoc);
         query.setParameter("dsAlgoHashFile", dsAlgoHashFile);
-        List<AroCompHashCalc> compHashCalcList = (List<AroCompHashCalc>) query.getResultList();
+        List<AroCompHashCalc> compHashCalcList = query.getResultList();
         if (!compHashCalcList.isEmpty()) {
             return compHashCalcList.get(0);
         }
@@ -69,8 +88,8 @@ public class ConsumerCodaHelper extends GenericHelper {
     public AroCompHashCalc getAroCompHashCalcByIdOggetto(BigDecimal idOggetto) {
         Query query = entityManager.createQuery("SELECT compHashCalc FROM AroCompHashCalc compHashCalc "
                 + "WHERE compHashCalc.aroCompDoc.idCompDoc = :idOggetto  ");
-        query.setParameter("idOggetto", idOggetto);
-        List<AroCompHashCalc> compHashCalcList = (List<AroCompHashCalc>) query.getResultList();
+        query.setParameter("idOggetto", longFromBigDecimal(idOggetto));
+        List<AroCompHashCalc> compHashCalcList = query.getResultList();
         if (compHashCalcList != null && !compHashCalcList.isEmpty()) {
             if (compHashCalcList.size() != 1) {
                 final String msg = String.format("Per il componente %s sono presenti più di un hash calcolato",

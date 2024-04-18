@@ -1,4 +1,23 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.recuperoreportvf.ejb;
+
+import static it.eng.parer.ws.utils.Costanti.UKNOWN_EXT;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -74,10 +93,10 @@ public class ControlliReportvf {
 
     /**
      * Verifica di esistenza del report di verifica firma per il componente
-     * 
+     *
      * @param idCompDoc
      *            id del componente da verificare
-     * 
+     *
      * @return risposta al controllo effetto (vedi {@link RispostaControlli})
      */
     public RispostaControlli checkReportvfExistenceAndGetZipName(long idCompDoc) {
@@ -157,7 +176,7 @@ public class ControlliReportvf {
             if (tmpCmp.getDecFormatoFileDoc() != null) {
                 tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
             } else {
-                tmpCRec.setEstensioneFile("unknown");
+                tmpCRec.setEstensioneFile(UKNOWN_EXT);
             }
         }
         return generaNomeFile(tmpCmp, tmpCRec);
@@ -178,12 +197,12 @@ public class ControlliReportvf {
 
     /**
      * Generazione del report di verifica firma (recuperato o da object storage o su database come BLOB)
-     * 
+     *
      * @param recupero
      *            classe di appoggio su vengono gestite le informazioni / metadati legate al recupero
      * @param zipDaScaricare
      *            oggetto contenente il "puntatore a file" con lo zip scaricabile del report verifica firma
-     * 
+     *
      * @throws SacerException
      *             eccezione generica
      * @throws IOException
@@ -204,9 +223,9 @@ public class ControlliReportvf {
                     recupero.getParametriRecupero().getIdComponente(), tmpFileWriter,
                     RecBlbOracle.TabellaBlob.FIR_REPORT);
             // recupero
-            RispostaControlli rispostaControlli = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
-            if (!rispostaControlli.isrBoolean()) {
-                throw new SacerException(rispostaControlli.getDsErr(), SacerErrorCategory.INTERNAL_ERROR);
+            boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+            if (!esitoRecupero) {
+                throw new SacerException("Errore non gestito nel recupero del file", SacerErrorCategory.INTERNAL_ERROR);
             }
             // get decserviziovf
             AroCompDoc tmpCompDoc = entityManager.find(AroCompDoc.class,

@@ -1,4 +1,35 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.tpi.ejb;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.RecDtVersRecup;
 import it.eng.parer.entity.RecSessioneRecup;
@@ -13,17 +44,6 @@ import it.eng.tpi.dto.EsitoConnessione;
 import it.eng.tpi.dto.RichiestaTpi;
 import it.eng.tpi.dto.RichiestaTpiInput;
 import it.eng.tpi.util.RichiestaWSTpi;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import org.apache.http.message.BasicNameValuePair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -39,7 +59,10 @@ public class ElaboraSessioniRecuperoJob {
     private JobHelper jobHelper;
     @EJB
     private ElaboraSessioniRecuperoHelper elabRecHelper;
-    SimpleDateFormat requestDateFormat = new SimpleDateFormat("ddMMyyyy");
+    // MAC#27666
+    // private final SimpleDateFormat requestDateFormat = new SimpleDateFormat("ddMMyyyy");
+    private final DateTimeFormatter requestDateFormat = DateTimeFormatter.ofPattern("ddMMyyyy");
+    // end MAC#27666
 
     public void elaboraSessioniRecupero() throws ParerInternalError {
         log.info("{} --- determina le sessioni di recupero con stato = IN_CORSO",
@@ -70,7 +93,10 @@ public class ElaboraSessioniRecuperoJob {
 
                     // il file da recuperare è memorizzato su nastro, nel sistema Tivoli.
                     // invoco il WS dedicato del TPI
-                    Date dataVers = dataRecup.getDtVers();
+                    // MAC#27666
+                    // Date dataVers = dataRecup.getDtVers();
+                    LocalDate dataVers = dataRecup.getDtVers();
+                    // end MAC#27666
                     String dateString = requestDateFormat.format(dataVers);
                     log.info("{} --- chiamo il servizio di retrieve archiviazione per la data {}",
                             JobConstants.JobEnum.ELABORA_SESSIONI_RECUPERO, dateString);

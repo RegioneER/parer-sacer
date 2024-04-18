@@ -1,4 +1,41 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipSerieUd.utils;
+
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_FIRSTNAME;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_LASTNAME;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_TAXCODE;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_FORMALNAME;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_TAXCODE;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.SerVerSerieDaElab;
 import it.eng.parer.job.indiceAipSerieUd.dto.FileQuery_1_Bean;
@@ -22,35 +59,6 @@ import it.eng.parer.serie.xml.serprodResp.MetadatiIntegratiProducerType;
 import it.eng.parer.serie.xml.serprodResp.StrutturaType;
 import it.eng.parer.serie.xml.serselfdescResp.IndiceAIPType;
 import it.eng.parer.serie.xml.serselfdescResp.MetadatiIntegratiSelfDescriptionType;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
-import it.eng.parer.ws.xml.usmainResp.AgentType;
-import it.eng.parer.ws.xml.usmainResp.AgentNameType;
-import it.eng.parer.ws.xml.usmainResp.AgentIDType;
-import it.eng.parer.ws.xml.usmainResp.CreatingApplicationType;
-import it.eng.parer.ws.xml.usmainResp.DescriptionType;
-import it.eng.parer.ws.xml.usmainResp.EmbeddedMetadataType;
-import it.eng.parer.ws.xml.usmainResp.FileType;
-import it.eng.parer.ws.xml.usmainResp.FileGroupType;
-import it.eng.parer.ws.xml.usmainResp.HashType;
-import it.eng.parer.ws.xml.usmainResp.IdentifierType;
-import it.eng.parer.ws.xml.usmainResp.IdCType;
-import it.eng.parer.ws.xml.usmainResp.LawAndRegulationsType;
-import it.eng.parer.ws.xml.usmainResp.MoreInfoType;
-import it.eng.parer.ws.xml.usmainResp.NameAndSurnameType;
-import it.eng.parer.ws.xml.usmainResp.SelfDescriptionType;
-import it.eng.parer.ws.xml.usmainResp.SourceIdCType;
-import it.eng.parer.ws.xml.usmainResp.TimeReferenceType;
-import it.eng.parer.ws.xml.usmainResp.VdCType;
-import it.eng.parer.ws.xml.usmainResp.VdCGroupType;
-import java.util.Date;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import it.eng.parer.serie.xml.servdcResp.AmbitiEContenutoType;
 import it.eng.parer.serie.xml.servdcResp.ConsistenzaType;
 import it.eng.parer.serie.xml.servdcResp.CriterioOrdinamentoType;
@@ -60,18 +68,20 @@ import it.eng.parer.serie.xml.servdcResp.DefinizioniDatoSpecificoType;
 import it.eng.parer.serie.xml.servdcResp.DescrizioneTipologieContenutoType;
 import it.eng.parer.serie.xml.servdcResp.FiltriDatiSpecificiType;
 import it.eng.parer.serie.xml.servdcResp.FiltroDatiSpecificiType;
+import it.eng.parer.serie.xml.servdcResp.FrequenzaPeriodoType;
 import it.eng.parer.serie.xml.servdcResp.LacunaType;
 import it.eng.parer.serie.xml.servdcResp.MetadatiIntegratiVdCType;
 import it.eng.parer.serie.xml.servdcResp.ModalitaAcquisizioneType;
 import it.eng.parer.serie.xml.servdcResp.ModalitaSelezioneType;
 import it.eng.parer.serie.xml.servdcResp.NotaType;
-import it.eng.parer.serie.xml.servdcResp.NoteType;
 import it.eng.parer.serie.xml.servdcResp.NoteConservatoreType;
 import it.eng.parer.serie.xml.servdcResp.NoteProduttoreType;
+import it.eng.parer.serie.xml.servdcResp.NoteType;
+import it.eng.parer.serie.xml.servdcResp.SelezioneType;
 import it.eng.parer.serie.xml.servdcResp.SelezioneUnitaDocumentarieType;
 import it.eng.parer.serie.xml.servdcResp.TempoConservazioneType;
-import it.eng.parer.serie.xml.servdcResp.TipiDocumentoType;
 import it.eng.parer.serie.xml.servdcResp.TipiDocumentoPrincipaleType;
+import it.eng.parer.serie.xml.servdcResp.TipiDocumentoType;
 import it.eng.parer.serie.xml.servdcResp.TipiRegistroType;
 import it.eng.parer.serie.xml.servdcResp.TipiUnitaDocumentariaType;
 import it.eng.parer.serie.xml.servdcResp.TipoDocumentoType;
@@ -80,31 +90,42 @@ import it.eng.parer.serie.xml.servdcResp.TipoUnitaDocumentariaType;
 import it.eng.parer.serie.xml.servdcResp.UnitaDocumentarieMancantiType;
 import it.eng.parer.serie.xml.servdcResp.UnitaDocumentarieNonProdotteType;
 import it.eng.parer.serie.xml.servdcResp.UnitaDocumentariePresentiType;
-import it.eng.parer.serie.xml.servdcResp.FrequenzaPeriodoType;
-import it.eng.parer.serie.xml.servdcResp.SelezioneType;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.Constants;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.recupero.utils.XmlDateUtility;
 import it.eng.parer.ws.utils.Costanti;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_FIRSTNAME;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_LASTNAME;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_TAXCODE;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_FORMALNAME;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_TAXCODE;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
+import it.eng.parer.ws.xml.usmainResp.AgentIDType;
+import it.eng.parer.ws.xml.usmainResp.AgentNameType;
+import it.eng.parer.ws.xml.usmainResp.AgentType;
 import it.eng.parer.ws.xml.usmainResp.AttachedTimeStampType;
+import it.eng.parer.ws.xml.usmainResp.CreatingApplicationType;
+import it.eng.parer.ws.xml.usmainResp.DescriptionType;
+import it.eng.parer.ws.xml.usmainResp.EmbeddedMetadataType;
+import it.eng.parer.ws.xml.usmainResp.FileGroupType;
+import it.eng.parer.ws.xml.usmainResp.FileType;
+import it.eng.parer.ws.xml.usmainResp.HashType;
+import it.eng.parer.ws.xml.usmainResp.IdCType;
+import it.eng.parer.ws.xml.usmainResp.IdentifierType;
+import it.eng.parer.ws.xml.usmainResp.LawAndRegulationsType;
+import it.eng.parer.ws.xml.usmainResp.MoreInfoType;
+import it.eng.parer.ws.xml.usmainResp.NameAndSurnameType;
 import it.eng.parer.ws.xml.usmainResp.ProcessType;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Map;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import it.eng.parer.ws.xml.usmainResp.SelfDescriptionType;
+import it.eng.parer.ws.xml.usmainResp.SourceIdCType;
+import it.eng.parer.ws.xml.usmainResp.TimeReferenceType;
+import it.eng.parer.ws.xml.usmainResp.VdCGroupType;
+import it.eng.parer.ws.xml.usmainResp.VdCType;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings({ "unchecked" })
 public class CreazioneIndiceAipSerieUdUtil {
 
     private static final Logger log = LoggerFactory.getLogger(CreazioneIndiceAipSerieUdUtil.class);
@@ -122,14 +143,9 @@ public class CreazioneIndiceAipSerieUdUtil {
     }
 
     private void setRispostaError() {
-        // log.fatal(
-        // CreazioneIndiceAipSerieUdUtil.class.getSimpleName() + " --- Creazione Indice Aip Versione Serie Ud --- "
-        // + "Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): "
-        // + rispostaControlli.getDsErr());
         log.error(
-                CreazioneIndiceAipSerieUdUtil.class.getSimpleName() + " --- Creazione Indice Aip Versione Serie Ud --- "
-                        + "Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): "
-                        + rispostaControlli.getDsErr());
+                "{} --- Creazione Indice Aip Versione Serie Ud --- {} Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): ",
+                CreazioneIndiceAipSerieUdUtil.class.getSimpleName(), rispostaControlli.getDsErr());
         throw new RuntimeException(rispostaControlli.getCodErr() + " - " + rispostaControlli.getDsErr());
     }
 
@@ -173,8 +189,8 @@ public class CreazioneIndiceAipSerieUdUtil {
         String versioneSerie = verSerieDaElab.getSerVerSerie().getCdVerSerie();
         String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
         String descrizioneSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getDsSerie();
-        final String sistema = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null, TipoAplVGetValAppart.APPLIC);
+        final String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
 
         CSVersatore csVersatore = new CSVersatore();
         csVersatore.setAmbiente(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte()
@@ -206,7 +222,7 @@ public class CreazioneIndiceAipSerieUdUtil {
         creatingApp.setProducer(creatingApplicationProducer);
         rispostaControlli.reset();
         rispostaControlli = controlliIndiceAipSerieUd.getVersioneSacer();
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             creatingApp.setVersion(rispostaControlli.getrString());
@@ -215,8 +231,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
         /* Source IdC */
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getSelfDescriptionQuery_1_Data(idVerSerie);
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getSelfDescriptionQuery1Data(idVerSerie);
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<SelfDescriptionQuery_1_Bean> selfDescriptionQuery1BeanList = (List<SelfDescriptionQuery_1_Bean>) rispostaControlli
@@ -251,8 +267,8 @@ public class CreazioneIndiceAipSerieUdUtil {
         indiceAIP.setFormato("UNI SInCRO (UNI 11386:2010)");
         indiceAIP.setVersioneXSDIndiceAIP("1.0");
         miSelfD.setIndiceAIP(indiceAIP);
-        it.eng.parer.serie.xml.serselfdescResp.ObjectFactory objFct_1 = new it.eng.parer.serie.xml.serselfdescResp.ObjectFactory();
-        extraInfoDescGenerale.setAny(objFct_1.createMetadatiIntegratiSelfDescription(miSelfD));
+        it.eng.parer.serie.xml.serselfdescResp.ObjectFactory objFct1 = new it.eng.parer.serie.xml.serselfdescResp.ObjectFactory();
+        extraInfoDescGenerale.setAny(objFct1.createMetadatiIntegratiSelfDescription(miSelfD));
         moreInfoApplic.setEmbeddedMetadata(extraInfoDescGenerale);
         selfie.setMoreInfo(moreInfoApplic);
 
@@ -290,8 +306,8 @@ public class CreazioneIndiceAipSerieUdUtil {
         EmbeddedMetadataType emdvdc = new EmbeddedMetadataType();
         MetadatiIntegratiVdCType mivdc = new MetadatiIntegratiVdCType();
         this.popolaMetadatiIntegratiVdC(mivdc, idVerSerie);
-        it.eng.parer.serie.xml.servdcResp.ObjectFactory objFct_2 = new it.eng.parer.serie.xml.servdcResp.ObjectFactory();
-        emdvdc.setAny(objFct_2.createMetadatiIntegratiVdC(mivdc));
+        it.eng.parer.serie.xml.servdcResp.ObjectFactory objFct2 = new it.eng.parer.serie.xml.servdcResp.ObjectFactory();
+        emdvdc.setAny(objFct2.createMetadatiIntegratiVdC(mivdc));
         moreInfoVdc.setEmbeddedMetadata(emdvdc);
         vdc.setMoreInfo(moreInfoVdc);
 
@@ -304,8 +320,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
         /* File */
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getFileQuery_1_Data(idVerSerie);
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getFileQuery1Data(idVerSerie);
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<FileQuery_1_Bean> fileQuery1BeanList = (List<FileQuery_1_Bean>) rispostaControlli.getrObject();
@@ -332,8 +348,8 @@ public class CreazioneIndiceAipSerieUdUtil {
                 EmbeddedMetadataType emdfile = new EmbeddedMetadataType();
                 MetadatiIntegratiFileType mifile = new MetadatiIntegratiFileType();
                 this.popolaMetadatiIntegratiFile(mifile, fileQuery1Bean);
-                it.eng.parer.serie.xml.serfileResp.ObjectFactory objFct_3 = new it.eng.parer.serie.xml.serfileResp.ObjectFactory();
-                emdfile.setAny(objFct_3.createMetadatiIntegratiFile(mifile));
+                it.eng.parer.serie.xml.serfileResp.ObjectFactory objFct3 = new it.eng.parer.serie.xml.serfileResp.ObjectFactory();
+                emdfile.setAny(objFct3.createMetadatiIntegratiFile(mifile));
                 moreInfoFile.setEmbeddedMetadata(emdfile);
                 file.setMoreInfo(moreInfoFile);
 
@@ -358,8 +374,8 @@ public class CreazioneIndiceAipSerieUdUtil {
         EmbeddedMetadataType emdproc = new EmbeddedMetadataType();
         MetadatiIntegratiProducerType mip = new MetadatiIntegratiProducerType();
         this.popolaMetadatiIntegratiProducer(mip, verSerieDaElab);
-        it.eng.parer.serie.xml.serprodResp.ObjectFactory objFct_4 = new it.eng.parer.serie.xml.serprodResp.ObjectFactory();
-        emdproc.setAny(objFct_4.createMetadatiIntegratiProducer(mip));
+        it.eng.parer.serie.xml.serprodResp.ObjectFactory objFct4 = new it.eng.parer.serie.xml.serprodResp.ObjectFactory();
+        emdproc.setAny(objFct4.createMetadatiIntegratiProducer(mip));
         moreInfoProc.setEmbeddedMetadata(emdproc);
         primoAgente.setMoreInfo(moreInfoProc);
         processo.getAgent().add(primoAgente);
@@ -413,8 +429,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
     private void popolaMetadatiIntegratiVdC(MetadatiIntegratiVdCType mivdc, long idVerSerie) {
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_1_Data(idVerSerie);
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery1Data(idVerSerie);
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_1_Bean> vdcQuery1BeanList = (List<VdCQuery_1_Bean>) rispostaControlli.getrObject();
@@ -521,8 +537,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
     private void popolaNote(MetadatiIntegratiVdCType mivdc, VdCQuery_1_Bean vdcQuery1Bean) {
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_11_Data(vdcQuery1Bean.getIdVerSerie());
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery11Data(vdcQuery1Bean.getIdVerSerie());
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_11_Bean> vdcQuery11BeanList = (List<VdCQuery_11_Bean>) rispostaControlli.getrObject();
@@ -543,11 +559,11 @@ public class CreazioneIndiceAipSerieUdUtil {
                     }
                 }
 
-                if (noteCons.getNota().size() > 0) {
+                if (!noteCons.getNota().isEmpty()) {
                     note.setNoteConservatore(noteCons);
                 }
 
-                if (noteProd.getNota().size() > 0) {
+                if (!noteProd.getNota().isEmpty()) {
                     note.setNoteProduttore(noteProd);
                 }
                 mivdc.setNote(note);
@@ -582,48 +598,44 @@ public class CreazioneIndiceAipSerieUdUtil {
 
         // Unità documentarie mancanti
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_2_3_Data(idVerSerie,
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery23Data(idVerSerie,
                 CostantiDB.TipoLacuna.MANCANTI.name());
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_2_3_Bean> vdcQuery23BeanList = (List<VdCQuery_2_3_Bean>) rispostaControlli.getrObject();
-            if (vdcQuery23BeanList != null) {
-                if (!vdcQuery23BeanList.isEmpty()) {
-                    UnitaDocumentarieMancantiType udm = new UnitaDocumentarieMancantiType();
+            if (vdcQuery23BeanList != null && !vdcQuery23BeanList.isEmpty()) {
+                UnitaDocumentarieMancantiType udm = new UnitaDocumentarieMancantiType();
 
-                    for (VdCQuery_2_3_Bean vdCQuery23Bean : vdcQuery23BeanList) {
-                        // Aggiungo le lacune
-                        udm.getLacuna()
-                                .add(getLacuna(vdCQuery23Bean.getTiModLacuna(), vdCQuery23Bean.getDlLacuna(),
-                                        vdCQuery23Bean.getNiIniLacuna(), vdCQuery23Bean.getNiFinLacuna(),
-                                        vdCQuery23Bean.getDlNotaLacuna()));
-                    }
-                    consistenza.setUnitaDocumentarieMancanti(udm);
+                for (VdCQuery_2_3_Bean vdCQuery23Bean : vdcQuery23BeanList) {
+                    // Aggiungo le lacune
+                    udm.getLacuna()
+                            .add(getLacuna(vdCQuery23Bean.getTiModLacuna(), vdCQuery23Bean.getDlLacuna(),
+                                    vdCQuery23Bean.getNiIniLacuna(), vdCQuery23Bean.getNiFinLacuna(),
+                                    vdCQuery23Bean.getDlNotaLacuna()));
                 }
+                consistenza.setUnitaDocumentarieMancanti(udm);
             }
         }
         // Unità documentarie non prodotte
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_2_3_Data(idVerSerie,
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery23Data(idVerSerie,
                 CostantiDB.TipoLacuna.NON_PRODOTTE.name());
-        if (rispostaControlli.isrBoolean() == false) {
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_2_3_Bean> vdcQuery23BeanList = (List<VdCQuery_2_3_Bean>) rispostaControlli.getrObject();
-            if (vdcQuery23BeanList != null) {
-                if (!vdcQuery23BeanList.isEmpty()) {
-                    UnitaDocumentarieNonProdotteType udnp = new UnitaDocumentarieNonProdotteType();
+            if (vdcQuery23BeanList != null && !vdcQuery23BeanList.isEmpty()) {
+                UnitaDocumentarieNonProdotteType udnp = new UnitaDocumentarieNonProdotteType();
 
-                    for (VdCQuery_2_3_Bean vdCQuery23Bean : vdcQuery23BeanList) {
-                        // Aggiungo le lacune
-                        udnp.getLacuna()
-                                .add(getLacuna(vdCQuery23Bean.getTiModLacuna(), vdCQuery23Bean.getDlLacuna(),
-                                        vdCQuery23Bean.getNiIniLacuna(), vdCQuery23Bean.getNiFinLacuna(),
-                                        vdCQuery23Bean.getDlNotaLacuna()));
-                    }
-                    consistenza.setUnitaDocumentarieNonProdotte(udnp);
+                for (VdCQuery_2_3_Bean vdCQuery23Bean : vdcQuery23BeanList) {
+                    // Aggiungo le lacune
+                    udnp.getLacuna()
+                            .add(getLacuna(vdCQuery23Bean.getTiModLacuna(), vdCQuery23Bean.getDlLacuna(),
+                                    vdCQuery23Bean.getNiIniLacuna(), vdCQuery23Bean.getNiFinLacuna(),
+                                    vdCQuery23Bean.getDlNotaLacuna()));
                 }
+                consistenza.setUnitaDocumentarieNonProdotte(udnp);
             }
         }
 
@@ -679,8 +691,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
         /* Criterio selezione */
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_4_Data(idVerSerie);
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery4Data(idVerSerie);
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_4_Bean> vdcQuery4BeanList = (List<VdCQuery_4_Bean>) rispostaControlli.getrObject();
@@ -693,8 +705,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
                 // Tipi documento principali
                 rispostaControlli.reset();
-                rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_5_Data(vdcQuery4Bean.getIdTipoSerieUd());
-                if (rispostaControlli.isrBoolean() == false) {
+                rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery5Data(vdcQuery4Bean.getIdTipoSerieUd());
+                if (!rispostaControlli.isrBoolean()) {
                     setRispostaError();
                 } else {
                     List<VdCQuery_5_Bean> vdcQuery5BeanList = (List<VdCQuery_5_Bean>) rispostaControlli.getrObject();
@@ -709,8 +721,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
                 // Filtri dati specifici
                 rispostaControlli.reset();
-                rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_6_Data(vdcQuery4Bean.getIdTipoSerieUd());
-                if (rispostaControlli.isrBoolean() == false) {
+                rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery6Data(vdcQuery4Bean.getIdTipoSerieUd());
+                if (!rispostaControlli.isrBoolean()) {
                     setRispostaError();
                 } else {
                     List<VdCQuery_6_Bean> vdcQuery6BeanList = (List<VdCQuery_6_Bean>) rispostaControlli.getrObject();
@@ -729,8 +741,8 @@ public class CreazioneIndiceAipSerieUdUtil {
                             // Definizioni Dato Specifico
                             rispostaControlli.reset();
                             rispostaControlli = controlliIndiceAipSerieUd
-                                    .getVdCQuery_7_Data(vdcQuery6Bean.getIdFiltroSelUdAttb());
-                            if (rispostaControlli.isrBoolean() == false) {
+                                    .getVdCQuery7Data(vdcQuery6Bean.getIdFiltroSelUdAttb());
+                            if (!rispostaControlli.isrBoolean()) {
                                 setRispostaError();
                             } else {
                                 List<VdCQuery_7_Bean> vdcQuery7BeanList = (List<VdCQuery_7_Bean>) rispostaControlli
@@ -771,8 +783,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
         // Tipi Registro
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_8_Data(vdcQuery1Bean.getIdVerSerie());
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery8Data(vdcQuery1Bean.getIdVerSerie());
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_8_Bean> vdcQuery8BeanList = (List<VdCQuery_8_Bean>) rispostaControlli.getrObject();
@@ -789,8 +801,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
         // Tipi Unità Documentaria
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_9_Data(vdcQuery1Bean.getIdVerSerie());
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery9Data(vdcQuery1Bean.getIdVerSerie());
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_9_Bean> vdcQuery9BeanList = (List<VdCQuery_9_Bean>) rispostaControlli.getrObject();
@@ -807,8 +819,8 @@ public class CreazioneIndiceAipSerieUdUtil {
 
         // Tipi Documento
         rispostaControlli.reset();
-        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery_10_Data(vdcQuery1Bean.getIdVerSerie());
-        if (rispostaControlli.isrBoolean() == false) {
+        rispostaControlli = controlliIndiceAipSerieUd.getVdCQuery10Data(vdcQuery1Bean.getIdVerSerie());
+        if (!rispostaControlli.isrBoolean()) {
             setRispostaError();
         } else {
             List<VdCQuery_10_Bean> vdcQuery10BeanList = (List<VdCQuery_10_Bean>) rispostaControlli.getrObject();

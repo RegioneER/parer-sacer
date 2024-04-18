@@ -1,4 +1,51 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.restWS;
+
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.WS_INSTANCE_NAME;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.WS_STAGING_UPLOAD_DIR;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.MarshalException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.ValidationException;
+
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.restWS.util.RequestPrsr;
 import it.eng.parer.restWS.util.Response405;
@@ -12,36 +59,14 @@ import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
 import it.eng.parer.ws.xml.esitoRichAnnullVers.EsitoRichiestaAnnullamentoVersamenti;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.MarshalException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationException;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.util.Oauth2Srvlt;
 
 /**
  *
  * @author gilioli_p
  */
-public class InvioRichiestaAnnullamentoVersamentiSrvlt extends HttpServlet {
+public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(InvioRichiestaAnnullamentoVersamentiSrvlt.class);
@@ -49,12 +74,12 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends HttpServlet {
     private String instanceName;
     // Percorso del file XSD di risposta
 
-    public InvioRichiestaAnnullamentoVersamentiSrvlt() throws IOException {
-        super();
-        Properties props = new Properties();
-        props.load(this.getClass().getClassLoader().getResourceAsStream("/Sacer.properties"));
-        uploadDir = props.getProperty("recuperoSync.upload.directory");
-        instanceName = props.getProperty("ws.instanceName");
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        // custom
+        uploadDir = ConfigSingleton.getInstance().getStringValue(WS_STAGING_UPLOAD_DIR.name());
+        instanceName = ConfigSingleton.getInstance().getStringValue(WS_INSTANCE_NAME.name());
     }
 
     @Override
@@ -69,7 +94,7 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -127,12 +152,13 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends HttpServlet {
         //
         sessioneFinta.setTmApertura(now);
         // Recupero l'ip del chiamante
-        sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(request));
+        HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(request);
+        sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(wrapper));
         // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
         if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-            // Check that we have a file upload request
-            boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+            // Verifico che la richiesta sia multipart/formdata
+            boolean isMultipart = ServletFileUpload.isMultipartContent(wrapper);
             if (isMultipart) {
                 // Create a factory for disk-based file items
                 DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -151,12 +177,19 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends HttpServlet {
                     tmpPrsrConfig.setLeggindiceMM(false);
                     tmpPrsrConfig.setAvanzamentoWs(tmpAvanzamento);
                     tmpPrsrConfig.setSessioneFinta(sessioneFinta);
-                    tmpPrsrConfig.setRequest(request);
+                    tmpPrsrConfig.setRequest(wrapper);
                     tmpPrsrConfig.setUploadHandler(upload);
                     /*
                      * ///////////////////////// VERIFICA SIGNATURE WS // ////////////////////////
                      */
-                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig);
+
+                    if (isOauth2Request(wrapper)) {
+                        super.doPost(request, response);
+                        fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, super.session.getToken());
+                    } else {
+                        fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig);
+                    }
+
                     //
                     if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.OK) {
                         rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(), rispostaWs.getErrorMessage());
@@ -165,9 +198,9 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends HttpServlet {
                             .setFase("completata").logAvanzamento();
 
                     /*
-                     * ******************************************************************************** fine della
+                     * ***************************************************************************** *** fine della
                      * verifica della struttura/signature del web service. Verifica dei dati effettivamente versati
-                     * ********************************************************************************
+                     * ***************************************************************************** ***
                      */
 
                     /* CONTROLLI UTENTE (RICH_ANN_VERS_001) */
@@ -272,4 +305,5 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends HttpServlet {
     public String getServletInfo() {
         return "Servelet di prova per testare il WS di invio richiesta annullamento versamenti";
     }
+
 }

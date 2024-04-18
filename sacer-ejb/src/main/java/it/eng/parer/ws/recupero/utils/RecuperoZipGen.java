@@ -1,74 +1,86 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
  */
+
 package it.eng.parer.ws.recupero.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.xml.bind.MarshalException;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipExtraField;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.AroFileVerIndiceAipUd;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUrnVerIndiceAipUd;
+import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.DecReportServizioVerificaCompDoc;
 import it.eng.parer.entity.ElvFileElencoVer;
 import it.eng.parer.entity.ElvFileElencoVersFasc;
 import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasUnitaDocFascicolo;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VolFileVolumeConserv;
 import it.eng.parer.entity.VolVolumeConserv;
+import it.eng.parer.entity.VrsSessioneVers;
 import it.eng.parer.entity.VrsUrnXmlSessioneVers;
 import it.eng.parer.entity.VrsXmlDatiSessioneVers;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
-import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
 import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
+import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
+import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.SacerException;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.serie.ejb.SerieEjb;
 import it.eng.parer.viewEntity.AroVLisaipudSistemaMigraz;
 import it.eng.parer.volume.utils.VolumeEnums.FileTypeEnum;
 import it.eng.parer.web.helper.ComponentiHelper;
+import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.BlobObject;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Constants.TiEntitaSacerObjectStorage;
@@ -84,12 +96,12 @@ import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.recupero.ejb.ControlliRecupero;
 import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
+import it.eng.parer.ws.recupero.ejb.oracleClb.RecClbOracle;
 import it.eng.parer.ws.recuperoDip.dto.DatiRecuperoDip;
 import it.eng.parer.ws.recuperoDip.ejb.ControlliRecDip;
 import it.eng.parer.ws.recuperoDip.utils.GestSessRecDip;
 import it.eng.parer.ws.recuperoTpi.ejb.RecuperoCompFS;
 import it.eng.parer.ws.recuperoreportvf.ejb.ControlliReportvf;
-import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
@@ -97,55 +109,24 @@ import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.versamento.dto.FileBinario;
 import it.eng.parer.ws.xml.versReqStato.Recupero;
 import it.eng.parer.ws.xml.versReqStato.TokenFileNameType;
-import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
 import it.eng.parerxml.xsd.FileXSD;
 import it.eng.parerxml.xsd.FileXSDUtil;
-import it.eng.spagoCore.error.EMFError;
-import java.time.ZoneId;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 
 /**
- *
  * @author Fioravanti_F
  */
+@SuppressWarnings("unchecked")
+@Stateless(mappedName = "RecuperoZipGen")
+@LocalBean
 public class RecuperoZipGen {
 
     private static final Logger log = LoggerFactory.getLogger(RecuperoZipGen.class);
-    private RispostaWSRecupero rispostaWs;
-    private RispostaControlli rispostaControlli;
-    private Object object;
-    // l'istanza della request decodificata dall'XML di versamento
-    Recupero parsedUnitaDoc = null;
-    // stateless ejb per la lettura di informazioni relative ai dati da recuperare
-    ControlliRecupero controlliRecupero = null;
-    // stateless ejb per la lettura di blob tramite Oracle JDBC
-    RecBlbOracle recBlbOracle = null;
-    // stateless ejb per la lettura di file estratti da Tivoli
-    RecuperoCompFS recuperoCompFS = null;
-    // singleton ejb - cache dei JAXBContext
-    XmlContextCache xmlContextCache = null;
-    // ejb per recuperare i dati relativi alle prove di conservazione
-    ComponentiHelper componentiHelper = null;
-    // ejb per gestire il recupero DIP dei componenti
-    ControlliRecDip controlliRecDip = null;
-    //
-    FascicoliHelper fasHelper = null;
-    //
-    SerieEjb serieEjb = null;
-    //
-    ElencoVersFascicoliHelper elencoVersFascHelper = null;
-    // stateless ejb per il recupero documento
-    RecuperoDocumento recuperoDocumento = null;
-    // stateless ejb per la lettura di informazioni relative ai dati da recuperare
-    ControlliReportvf controlliReportvf = null;
-
     private static final String DIRECTORY_OUT_DIP = "FileTrasformati";
     private static final String DIRECTORY_REC = "FileVersati";
     private static final String DIRECTORY_AGGR = "Aggregazioni";
     private static final String DIRECTORY_SERIE = "Serie";
     private static final String DIRECTORY_FASC = "Fascicoli";
-    private static final String DIRECTORY_REPORT = "ReportVerificaFirma";
 
     // EVO#20972
     private static final String DIRECTORY_REC_AIPV2 = "file";
@@ -157,55 +138,48 @@ public class RecuperoZipGen {
     private static final String DIRECTORY_FASC_AIPV2 = "fascicoli";
     // end EVO#20972
 
-    // The ZipArchiveEntry.setXxxTime() methods write the time taking into account the local time zone,
-    // so we must first convert the desired timestamp value in the local time zone to have the
-    // same timestamps in the ZIP file when the project is built on another computer in a
+    // The ZipArchiveEntry.setXxxTime() methods write the time taking into account
+    // the local time zone,
+    // so we must first convert the desired timestamp value in the local time zone
+    // to have the
+    // same timestamps in the ZIP file when the project is built on another computer
+    // in a
     // different time zone.
     private static final long DEFAULT_ZIP_TIMESTAMP = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0)
             .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    private static final String ERRORE_GENERAZIONE_ZIP = "Errore nella generazione dello zip da scaricare  ";
+    private static final String ERRORE_SERIALIZZAZIONE_XML = "Errore nella serializzazione dell'XML  ";
 
-    public RispostaWSRecupero getRispostaWs() {
-        return rispostaWs;
-    }
+    @EJB
+    private ControlliRecupero controlliRecupero;
+    @EJB
+    private RecuperoCompFS recuperoCompFS;
+    @EJB
+    private XmlContextCache xmlContextCache;
+    @EJB
+    private UnitaDocumentarieHelper udHelper;
+    @EJB
+    private ComponentiHelper componentiHelper;
+    @EJB
+    private ControlliRecDip controlliRecDip;
+    @EJB
+    private SerieEjb serieEjb;
+    @EJB
+    private FascicoliHelper fasHelper;
+    @EJB
+    private ElencoVersFascicoliHelper elencoVersFascHelper;
+    @EJB
+    private AmbientiHelper ambientiHelper;
+    @EJB
+    private RecuperoDocumento recuperoDocumento;
+    @EJB
+    private ControlliReportvf controlliReportvf;
+    @EJB
+    private ObjectStorageService objectStorageService;
 
-    public RecuperoZipGen(RispostaWSRecupero risp) throws NamingException {
-        rispostaWs = risp;
-        rispostaControlli = new RispostaControlli();
-
-        // recupera l'ejb per la lettura di informazioni, se possibile
-        controlliRecupero = (ControlliRecupero) new InitialContext().lookup("java:module/ControlliRecupero");
-
-        // recupera l'ejb per la lettura di blob tramite Oracle JDBC
-        recBlbOracle = (RecBlbOracle) new InitialContext().lookup("java:module/RecBlbOracle");
-
-        // recupera l'ejb per la lettura di file estratti da Tivoli
-        recuperoCompFS = (RecuperoCompFS) new InitialContext().lookup("java:module/RecuperoCompFS");
-
-        // recupera l'ejb singleton, se possibile
-        xmlContextCache = (XmlContextCache) new InitialContext().lookup("java:module/XmlContextCache");
-
-        // recupera l'ejb relativo alle prove di conservazione
-        componentiHelper = (ComponentiHelper) new InitialContext().lookup("java:module/ComponentiHelper");
-
-        // recupera l'ejb per gestire il recupero DIP dei componenti
-        controlliRecDip = (ControlliRecDip) new InitialContext().lookup("java:module/ControlliRecDip");
-
-        serieEjb = (SerieEjb) new InitialContext().lookup("java:module/SerieEjb");
-
-        fasHelper = (FascicoliHelper) new InitialContext().lookup("java:module/FascicoliHelper");
-
-        elencoVersFascHelper = (ElencoVersFascicoliHelper) new InitialContext()
-                .lookup("java:module/ElencoVersFascicoliHelper");
-
-        // recupera l'ejb per la da Object Storage
-        recuperoDocumento = (RecuperoDocumento) new InitialContext().lookup("java:module/RecuperoDocumento");
-
-        // recupera l'ejb per la lettura di informazioni, se possibile
-        controlliReportvf = (ControlliReportvf) new InitialContext().lookup("java:module/ControlliReportvf");
-    }
-
-    public File getZip(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip) {
-        generaZipOggetto(outputPath, recupero, tentaRecuperoDip);
+    public File getZip(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip,
+            RispostaWSRecupero rispostaWs) {
+        generaZipOggetto(outputPath, recupero, tentaRecuperoDip, rispostaWs);
 
         if (rispostaWs.getRifFileBinario() != null && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
             return rispostaWs.getRifFileBinario().getFileSuDisco();
@@ -215,7 +189,8 @@ public class RecuperoZipGen {
 
     }
 
-    public void generaZipOggetto(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip) {
+    public void generaZipOggetto(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip,
+            RispostaWSRecupero rispostaWs) {
         List<ComponenteRec> lstComp = null;
         String prefisso = null;
         String nomeFileZip = null;
@@ -228,6 +203,7 @@ public class RecuperoZipGen {
         boolean includiIndiceVolumeAIPSerie = false;
         boolean includiIndiceFascicoli = false;
         // EVO#20972
+        boolean includiSessFileVersamentoV2 = false;
         boolean includiSessFileVersUpd = false;
         boolean includiFileIndiceAIPV2 = false;
         boolean includiFileIndiceAIPExt = false;
@@ -237,8 +213,9 @@ public class RecuperoZipGen {
         FileBinario zipDaScaricare = null;
         FileOutputStream tmpOutputStream = null;
         ZipArchiveOutputStream tmpZipOutputStream = null;
-
-        // legge l'elenco dei componenti di tipo file nell'UD, per estrarre i relativi blob
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        // legge l'elenco dei componenti di tipo file nell'UD, per estrarre i relativi
+        // blob
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
@@ -291,7 +268,7 @@ public class RecuperoZipGen {
                 includiFileIndiceAIPExt = true;
                 includiFileIndiceAIPVol = true;
                 includiFileXsdAIPV2 = true;
-                includiSessFileVersamento = true;
+                includiSessFileVersamentoV2 = true;
                 includiSessFileVersUpd = true;
                 recuperaDip = false; // per il recupero AIP non si includono mai i file convertiti
                 includiFirmaMarcaElencoIndiceAIP = true;
@@ -327,7 +304,7 @@ public class RecuperoZipGen {
             }
 
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstComp = (List<ComponenteRec>) rispostaControlli.getrObject();
@@ -344,56 +321,70 @@ public class RecuperoZipGen {
                 tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
 
                 if (recuperaDip && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiComponentiDIP(tmpZipOutputStream, recupero);
+                    this.aggiungiComponentiDIP(tmpZipOutputStream, recupero, rispostaWs);
                 }
 
                 if (recuperaDipEsibizione && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiDipEsibizione(tmpZipOutputStream, recupero);
+                    this.aggiungiDipEsibizione(tmpZipOutputStream, recupero, rispostaWs);
                 }
 
                 if (includiSessFileVersamento && rispostaWs.getSeverity() == SeverityEnum.OK) {
                     this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero, TipiLetturaXml.SOLO_FILE_RECUPERATI,
-                            TipiXmlDaIncludere.TUTTI);
+                            TipiXmlDaIncludere.TUTTI, rispostaWs);
                 }
+
+                // MAC#30890
+                if (includiSessFileVersamentoV2 && rispostaWs.getSeverity() == SeverityEnum.OK) {
+                    this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero, TipiLetturaXml.RECUPERO_PER_ZIP_AIP,
+                            TipiXmlDaIncludere.TUTTI, rispostaWs);
+                }
+                // end MAC#30890
 
                 // EVO#20972
                 if (includiSessFileVersUpd && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiXMLVersamentoUpd(tmpZipOutputStream, recupero);
+                    this.aggiungiXMLVersamentoUpd(tmpZipOutputStream, recupero, rispostaWs);
                 }
 
                 if (includiFileXsdAIPV2 && rispostaWs.getSeverity() == SeverityEnum.OK) {
                     // aggiunge se necessario le varie versioni degli XSD
-                    this.aggiungiFileXmlSchema(tmpZipOutputStream);
+                    this.aggiungiFileXmlSchema(tmpZipOutputStream, rispostaWs);
                 }
                 // end EVO#20972
 
                 if (includiRapportoVersamento && rispostaWs.getSeverity() == SeverityEnum.OK) {
                     this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero, TipiLetturaXml.SOLO_FILE_RECUPERATI,
-                            TipiXmlDaIncludere.SOLO_RAPPORTO_VERSAMENTO);
+                            TipiXmlDaIncludere.SOLO_RAPPORTO_VERSAMENTO, rispostaWs);
                 }
 
-                this.aggiungiFileComponenti(tmpZipOutputStream, recupero, lstComp);
+                this.aggiungiFileComponenti(tmpZipOutputStream, recupero, lstComp, rispostaWs);
 
                 if (includiFileIndiceAIP && rispostaWs.getSeverity() == SeverityEnum.OK) {
                     // aggiunge se necessario le varie versioni dell'indice AIP
-                    this.aggiungiIndiciAipUd(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc());
+                    this.aggiungiIndiciAipUd(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc(),
+                            rispostaWs);
                 }
 
                 // EVO#20972:MEV#20971
                 if (includiFileIndiceAIPV2 && rispostaWs.getSeverity() == SeverityEnum.OK) {
+                    // MEV#30395
                     // aggiunge se necessario le varie versioni dell'indice AIP Unisincro di Sacer
-                    this.aggiungiIndiciAipUdV2(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc());
+                    this.aggiungiIndiciAipUdV2Os(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc(),
+                            rispostaWs);
+                    // end MEV#30395
                 }
 
                 if (includiFileIndiceAIPExt && rispostaWs.getSeverity() == SeverityEnum.OK) {
                     // aggiunge se necessario le varie versioni dell'indice AIP Unisincro di altri
                     // conservatori
-                    this.aggiungiIndiciAipUdExt(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc());
+                    this.aggiungiIndiciAipUdExt(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc(),
+                            rispostaWs);
                 }
 
                 if (includiFileIndiceAIPVol && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    // aggiunge se necessario le varie versioni dell'indice dei Volumi di conservazione di Sacer
-                    this.aggiungiIndiciAipUdVol(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc());
+                    // aggiunge se necessario le varie versioni dell'indice dei Volumi di
+                    // conservazione di Sacer
+                    this.aggiungiIndiciAipUdVol(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc(),
+                            rispostaWs);
                 }
                 // end EVO#20972:MEV#20971
 
@@ -401,27 +392,27 @@ public class RecuperoZipGen {
                     this.aggiungiElencoIndiciAipUd(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc(),
                             it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.FIRMA_ELENCO_INDICI_AIP
                                     .name(),
-                            it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.ELENCO_INDICI_AIP.name());
+                            it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.ELENCO_INDICI_AIP.name(),
+                            rispostaWs);
                     this.aggiungiElencoIndiciAipUd(tmpZipOutputStream, recupero.getParametriRecupero().getIdUnitaDoc(),
                             it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.MARCA_FIRMA_ELENCO_INDICI_AIP
                                     .name(),
-                            null);
+                            null, rispostaWs);
                 }
 
                 if (includiIndiceVolumeAIPSerie && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiIndiciSerie(tmpZipOutputStream, recupero);
+                    this.aggiungiIndiciSerie(tmpZipOutputStream, recupero, rispostaWs);
                 }
 
                 if (includiIndiceFascicoli && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiIndiceFascicoli(tmpZipOutputStream, recupero);
+                    this.aggiungiIndiceFascicoli(tmpZipOutputStream, recupero, rispostaWs);
                 }
 
                 tmpZipOutputStream.flush();
 
             } catch (IOException ex) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_GENERAZIONE_ZIP + ex.getMessage());
                 log.error("Errore nella generazione dello zip da scaricare ", ex);
             } finally {
                 IOUtils.closeQuietly(tmpZipOutputStream);
@@ -454,16 +445,13 @@ public class RecuperoZipGen {
         }
         return entry;
     }
-
     // EVO#20972
-    public File getZipProveCons(String outputPath, RecuperoExt recupero) {
-        switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
-        case PROVE_CONSERV_AIPV2:
-            generaZipProveConsAIPV2(outputPath, recupero);
-            break;
-        default:
-            generaZipProveCons(outputPath, recupero);
-            break;
+
+    public File getZipProveCons(String outputPath, RecuperoExt recupero, RispostaWSRecupero rispostaWs) {
+        if (recupero.getParametriRecupero().getTipoEntitaSacer() == CostantiDB.TipiEntitaRecupero.PROVE_CONSERV_AIPV2) {
+            generaZipProveConsAIPV2(outputPath, recupero, rispostaWs);
+        } else {
+            generaZipProveCons(outputPath, recupero, rispostaWs);
         }
 
         if (rispostaWs.getRifFileBinario() != null && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
@@ -473,17 +461,17 @@ public class RecuperoZipGen {
         }
     }
 
-    public void generaZipProveConsAIPV2(String outputPath, RecuperoExt recupero) {
+    public void generaZipProveConsAIPV2(String outputPath, RecuperoExt recupero, RispostaWSRecupero rispostaWs) {
         VolVolumeConserv volVolumeConserv = null;
         FileBinario zipDaScaricare = null;
         FileOutputStream tmpOutputStream = null;
         ZipArchiveOutputStream tmpZipOutputStream = null;
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero.leggiVolumeConserv(recupero.getParametriRecupero().getIdVolume());
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 volVolumeConserv = (VolVolumeConserv) rispostaControlli.getrObject();
@@ -504,15 +492,9 @@ public class RecuperoZipGen {
 
                 tmpZipOutputStream.flush();
 
-            } catch (IOException ex) {
-                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
-                log.error("Errore nella generazione dello zip da scaricare ", ex);
             } catch (Exception ex) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_GENERAZIONE_ZIP + ex.getMessage());
                 log.error("Errore nella generazione dello zip da scaricare ", ex);
             } finally {
                 IOUtils.closeQuietly(tmpZipOutputStream);
@@ -532,21 +514,21 @@ public class RecuperoZipGen {
     }
     // end EVO#20972
 
-    public void generaZipProveCons(String outputPath, RecuperoExt recupero) {
-        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
-        AvanzamentoWs myAvanzamentoWs = rispostaWs.getAvanzamento();
+    public void generaZipProveCons(String outputPath, RecuperoExt recupero, RispostaWSRecupero rispostaWs) {
+        rispostaWs.getIstanzaEsito();
+        rispostaWs.getAvanzamento();
         List<VolVolumeConserv> volVolumeConserv = null;
         FileBinario zipDaScaricare = null;
         byte[] tmpXmlByteArrProveC = null;
         FileOutputStream tmpOutputStream = null;
         ZipArchiveOutputStream tmpZipOutputStream = null;
         ZipArchiveEntry tmpEntry = null;
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero.leggiVolumiUnitaDoc(recupero.getParametriRecupero().getIdUnitaDoc());
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 volVolumeConserv = (List<VolVolumeConserv>) rispostaControlli.getrObject();
@@ -557,7 +539,7 @@ public class RecuperoZipGen {
         // costruisce la stringa xml relativa all'indice xml delle prove cons
         // costruisce il byte array ben formattato relativo all'indice xml
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            tmpXmlByteArrProveC = this.preparaXMLIndicePC(myEsito);
+            tmpXmlByteArrProveC = this.preparaXMLIndicePC(rispostaWs);
         }
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
@@ -572,7 +554,7 @@ public class RecuperoZipGen {
                 tmpZipOutputStream.write(tmpXmlByteArrProveC);
                 tmpZipOutputStream.closeArchiveEntry();
 
-                if (volVolumeConserv != null && volVolumeConserv.size() > 0) {
+                if (volVolumeConserv != null && !volVolumeConserv.isEmpty()) {
                     for (VolVolumeConserv tmpVolConserv : volVolumeConserv) {
                         this.aggiungiProveConsUd(tmpZipOutputStream, tmpVolConserv);
                     }
@@ -580,15 +562,9 @@ public class RecuperoZipGen {
 
                 tmpZipOutputStream.flush();
 
-            } catch (IOException ex) {
-                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
-                log.error("Errore nella generazione dello zip da scaricare ", ex);
             } catch (Exception ex) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_GENERAZIONE_ZIP + ex.getMessage());
                 log.error("Errore nella generazione dello zip da scaricare ", ex);
             } finally {
                 IOUtils.closeQuietly(tmpZipOutputStream);
@@ -607,13 +583,14 @@ public class RecuperoZipGen {
         }
     }
 
-    public void generaZipRapportiVers(String outputPath, RecuperoExt recupero) {
-        AvanzamentoWs myAvanzamentoWs = rispostaWs.getAvanzamento();
+    public void generaZipRapportiVers(String outputPath, RecuperoExt recupero, RispostaWSRecupero rispostaWs) {
+        rispostaWs.getAvanzamento();
         FileBinario zipDaScaricare = null;
         FileOutputStream tmpOutputStream = null;
         ZipArchiveOutputStream tmpZipOutputStream = null;
+        Map<Long, Map<String, String>> xmlVersamentoOs = new HashMap<>();
 
-        parsedUnitaDoc = recupero.getStrutturaRecupero();
+        Recupero parsedUnitaDoc = recupero.getStrutturaRecupero();
         CSChiave tmpCSChiave = new CSChiave();
         tmpCSChiave.setAnno(parsedUnitaDoc.getChiave().getAnno().longValue());
         tmpCSChiave.setNumero(parsedUnitaDoc.getChiave().getNumero());
@@ -621,20 +598,35 @@ public class RecuperoZipGen {
         rispostaWs.setNomeFile("RV-" + this.calcolaNomeFileZipRV(tmpCSChiave));
 
         zipDaScaricare = new FileBinario();
+        RispostaControlli rispostaControlli = new RispostaControlli();
         try {
             List<VrsXmlDatiSessioneVers> lstVrsXml = null;
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero
                     .leggiXMLSessioneversUd(recupero.getParametriRecupero().getIdUnitaDoc());
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstVrsXml = (List<VrsXmlDatiSessioneVers>) rispostaControlli.getrObject();
             }
+            // load from O.S.
+            if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+                //
+                rispostaControlli = aggiungiXmlDaObjectStorageOnMap(lstVrsXml);
+
+                if (!rispostaControlli.isrBoolean()) {
+                    setRispostaWsError(rispostaWs, rispostaControlli);
+                    rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                } else {
+                    xmlVersamentoOs = (Map<Long, Map<String, String>>) rispostaControlli.getrObject();
+                }
+            }
+            //
             if (rispostaWs.getSeverity() == SeverityEnum.OK) {
                 int fileTrovati = 0;
-                if (lstVrsXml != null && lstVrsXml.size() > 0) {
+                if (lstVrsXml != null && !lstVrsXml.isEmpty()) {
+                    //
                     zipDaScaricare.setFileSuDisco(File.createTempFile("output_", ".zip", new File(outputPath)));
                     tmpOutputStream = new FileOutputStream(zipDaScaricare.getFileSuDisco());
                     tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
@@ -642,8 +634,7 @@ public class RecuperoZipGen {
                     int contaRappVers = 1;
                     for (VrsXmlDatiSessioneVers tmpXml : lstVrsXml) {
                         fileName = null;
-                        switch (tmpXml.getTiXmlDati()) {
-                        case CostantiDB.TipiXmlDati.RAPP_VERS:
+                        if (CostantiDB.TipiXmlDati.RAPP_VERS.equals(tmpXml.getTiXmlDati())) {
                             fileTrovati++;
                             if (tmpXml.getDsUrnXmlVers() != null && !tmpXml.getDsUrnXmlVers().isEmpty()) {
                                 fileName = tmpXml.getDsUrnXmlVers();
@@ -651,14 +642,29 @@ public class RecuperoZipGen {
                                 fileName = String.format("RapportoVersamento%05d", contaRappVers);
                                 contaRappVers++;
                             }
-                            break;
-                        default:
+                        } else {
                             fileName = null;
                         }
                         if (fileName != null) {
                             tmpZipOutputStream.putArchiveEntry(
                                     new ZipArchiveEntry(ComponenteRec.estraiNomeFileCompleto(fileName) + ".xml"));
-                            tmpZipOutputStream.write((byte[]) tmpXml.getBlXml().getBytes("UTF-8"));
+                            // load XML from O.S. vs DB
+                            rispostaControlli = controlliRecupero.findIdSessVersByXmlDatiSessVers(tmpXml);
+                            if (!rispostaControlli.isrBoolean()) {
+                                setRispostaWsError(rispostaWs, rispostaControlli);
+                                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                            } else {
+                                long idSessioneVers = rispostaControlli.getrLong();
+                                // verify if xml on O.S.
+                                if (xmlVersamentoOs.containsKey(idSessioneVers) && tmpXml.getBlXml() == null) {
+                                    Map<String, String> allXml = xmlVersamentoOs.get(idSessioneVers);
+                                    String blXml = allXml.get(tmpXml.getTiXmlDati());
+                                    tmpZipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                } else {
+                                    tmpZipOutputStream.write(tmpXml.getBlXml().getBytes(StandardCharsets.UTF_8));
+                                }
+                            }
+
                             tmpZipOutputStream.closeArchiveEntry();
                         }
                     }
@@ -669,15 +675,9 @@ public class RecuperoZipGen {
                             MessaggiWSFormat.formattaUrnPartUnitaDoc(tmpCSChiave));
                 }
             }
-        } catch (IOException ex) {
-            rispostaWs.setSeverity(SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                    "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
-            log.error("Errore nella generazione dello zip da scaricare ", ex);
         } catch (Exception ex) {
             rispostaWs.setSeverity(SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                    "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_GENERAZIONE_ZIP + ex.getMessage());
             log.error("Errore nella generazione dello zip da scaricare ", ex);
         } finally {
             IOUtils.closeQuietly(tmpZipOutputStream);
@@ -695,17 +695,17 @@ public class RecuperoZipGen {
         }
     }
 
-    public void generaZipSip(String outputPath, RecuperoExt recupero) {
+    public void generaZipSip(String outputPath, RecuperoExt recupero, RispostaWSRecupero rispostaWs) {
         List<ComponenteRec> lstComp = null;
         String prefisso = null;
         String nomeFileZip = null;
         FileBinario zipDaScaricare = null;
         FileOutputStream tmpOutputStream = null;
         ZipArchiveOutputStream tmpZipOutputStream = null;
-        ZipArchiveEntry tmpEntry = null;
 
         // legge l'elenco dei componenti di tipo file nell'UD, per estrarre i relativi
         // blob
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
@@ -721,8 +721,8 @@ public class RecuperoZipGen {
                 break;
             }
 
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstComp = (List<ComponenteRec>) rispostaControlli.getrObject();
@@ -740,17 +740,16 @@ public class RecuperoZipGen {
 
                 if (rispostaWs.getSeverity() == SeverityEnum.OK) {
                     this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero, TipiLetturaXml.RECUPERO_PER_ZIP_SIP,
-                            TipiXmlDaIncludere.TUTTI);
+                            TipiXmlDaIncludere.TUTTI, rispostaWs);
                 }
 
-                this.aggiungiFileComponenti(tmpZipOutputStream, recupero, lstComp);
+                this.aggiungiFileComponenti(tmpZipOutputStream, recupero, lstComp, rispostaWs);
 
                 tmpZipOutputStream.flush();
 
             } catch (IOException ex) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella generazione dello zip da scaricare  " + ex.getMessage());
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_GENERAZIONE_ZIP + ex.getMessage());
                 log.error("Errore nella generazione dello zip da scaricare ", ex);
             } finally {
                 IOUtils.closeQuietly(tmpZipOutputStream);
@@ -783,7 +782,7 @@ public class RecuperoZipGen {
         return tmpString.toString().replace(':', '_');
     }
 
-    private byte[] preparaXMLIndicePC(StatoConservazione myEsito) {
+    private byte[] preparaXMLIndicePC(RispostaWSRecupero rispostaWs) {
         String tmpStringXml = null;
         byte[] tmpXmlByteArr = null;
 
@@ -795,21 +794,10 @@ public class RecuperoZipGen {
             marshaller.marshal(rispostaWs.getIndiceProveConservazione(), tmpStringWriter);
 
             tmpStringXml = tmpStringWriter.toString();
-        } catch (MarshalException ex) {
-            rispostaWs.setSeverity(SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                    "Errore nella serializzazione dell'XML  " + ex.getMessage());
-            log.error("Errore nella serializzazione dell'XML  ", ex);
-        } catch (ValidationException ex) {
-            rispostaWs.setSeverity(SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                    "Errore nella serializzazione dell'XML  " + ex.getMessage());
-            log.error("Errore nella serializzazione dell'XML  ", ex);
         } catch (Exception ex) {
             rispostaWs.setSeverity(SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                    "Errore nella serializzazione dell'XML  " + ex.getMessage());
-            log.error("Errore nella serializzazione dell'XML  ", ex);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_SERIALIZZAZIONE_XML + ex.getMessage());
+            log.error(ERRORE_SERIALIZZAZIONE_XML, ex);
         }
 
         // costruisce il byte array ben formattato relativo all'indice xml
@@ -817,30 +805,25 @@ public class RecuperoZipGen {
             try {
                 XmlPrettyPrintFormatter tmpFormatter = new XmlPrettyPrintFormatter();
                 tmpStringXml = tmpFormatter.prettyPrintWithDOM3LS(tmpStringXml);
-                tmpXmlByteArr = tmpStringXml.getBytes("UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella serializzazione dell'XML  " + ex.getMessage());
-                log.error("Errore nella serializzazione dell'XML  ", ex);
+                tmpXmlByteArr = tmpStringXml.getBytes(StandardCharsets.UTF_8);
             } catch (Exception ex) {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "Errore nella serializzazione dell'XML  " + ex.getMessage());
-                log.error("Errore nella serializzazione dell'XML  ", ex);
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_SERIALIZZAZIONE_XML + ex.getMessage());
+                log.error(ERRORE_SERIALIZZAZIONE_XML, ex);
             }
         }
         return tmpXmlByteArr;
     }
 
     private void aggiungiFileComponenti(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
-            List<ComponenteRec> lstComp) throws IOException {
-
-        HashMap entryGiaInserite = new HashMap();
+            List<ComponenteRec> lstComp, RispostaWSRecupero rispostaWs) throws IOException {
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        Set<String> entryGiaInserite = new HashSet<>();
         TokenFileNameType tipoNomeFile = recupero.getStrutturaRecupero().getChiave().getTipoNomeFile();
         for (ComponenteRec tmpCmp : lstComp) {
             ZipArchiveEntry zae = null;
-            // Se viene passato NIENTE oppure NOME_FILE_URN_SACER si vuole il vecchio comportamento
+            // Se viene passato NIENTE oppure NOME_FILE_URN_SACER si vuole il vecchio
+            // comportamento
             if (tipoNomeFile == null || tipoNomeFile.value().trim().equals("")
                     || tipoNomeFile.equals(TokenFileNameType.NOME_FILE_URN_SACER)) {
                 // EVO#20972
@@ -849,7 +832,6 @@ public class RecuperoZipGen {
                     // Vecchio comportamento
                     zae = new ZipArchiveEntry(DIRECTORY_REC + "/" + tmpCmp.getNomeFilePerZip());
                 } else {
-                    // zae = new ZipArchiveEntry(DIRECTORY_REC_AIPV2 + "/" + tmpCmp.getNomeFilePerZipAIPV2());
                     zae = new ZipArchiveEntry(DIRECTORY_REC_AIPV2 + "/"
                             + it.eng.parer.async.utils.IOUtils.getFilename(
                                     it.eng.parer.async.utils.IOUtils.extractPartUrnName(tmpCmp.getUrnCompleto(), true),
@@ -880,14 +862,12 @@ public class RecuperoZipGen {
                  * Se non si è riusciti a determinare il nome file originale allora prende l'urn originale versato
                  */
                 if (nomeFileOriginaleVersato.equals("")) {
-                    if (urnVersato.startsWith("/")) {
-                        pathCompleto = urnVersato;
-                    } else {
-                        pathCompleto = "/" + urnVersato;
-                    }
+                    // MEV#23698 - Servizi di recupero: problema con urn definito nel nome componente
+                    pathCompleto = aggiungiConSlashInMezzo("", urnVersato);
                 } else {
-                    pathCompleto = "/" + nomeFileOriginaleVersato;
+                    pathCompleto = aggiungiConSlashInMezzo("", nomeFileOriginaleVersato);
                 }
+                pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
                 provaAdInserireEntry(zipOutputStream,
                         DIRECTORY_REC + MessaggiWSFormat.normalizingFileName(pathCompleto), entryGiaInserite);
 
@@ -912,6 +892,8 @@ public class RecuperoZipGen {
                 String pathCompleto = "";
                 if (urnVersato.trim().equals("")) {
                     pathCompleto = "/" + nomeFileOriginaleVersato;
+                    // MEV#23698 - Servizi di recupero: problema con urn definito nel nome componente
+                    pathCompleto = aggiungiConSlashInMezzo("", nomeFileOriginaleVersato);
                 } else {
                     /*
                      * Controllo che il nome del file originario non sia presente nell'urn versato, se esiste si prende
@@ -919,18 +901,16 @@ public class RecuperoZipGen {
                      */
                     if (!nomeFileOriginaleVersato.trim().equals("")) {
                         if (urnVersato.endsWith(nomeFileOriginaleVersato)) {
-                            // Se l'urn versato inizia per "/" no lo aggiunge al path
-                            if (urnVersato.startsWith("/")) {
-                                pathCompleto = urnVersato;
-                            } else {
-                                pathCompleto = "/" + urnVersato;
-                            }
+                            // Se l'urn versato inizia per "/" non lo aggiunge al path
+                            // MEV#23698 - Servizi di recupero: problema con urn definito nel nome componente
+                            pathCompleto = aggiungiConSlashInMezzo("", urnVersato);
                         } else {
-                            // Se l'urn versato inizia per "/" no lo aggiunge al path
+                            // Se l'urn versato inizia per "/" non lo aggiunge al path
+                            // MEV#23698 - Servizi di recupero: problema con urn definito nel nome componente
                             if (urnVersato.startsWith("/")) {
-                                pathCompleto = urnVersato + "/" + nomeFileOriginaleVersato;
+                                pathCompleto = aggiungiConSlashInMezzo(urnVersato, nomeFileOriginaleVersato);
                             } else {
-                                pathCompleto = "/" + urnVersato + "/" + nomeFileOriginaleVersato;
+                                pathCompleto = aggiungiConSlashInMezzo("/" + urnVersato, nomeFileOriginaleVersato);
                             }
                         }
                     } else {
@@ -941,6 +921,7 @@ public class RecuperoZipGen {
                         }
                     }
                 }
+                pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
                 provaAdInserireEntry(zipOutputStream,
                         DIRECTORY_REC + MessaggiWSFormat.normalizingFileName(pathCompleto), entryGiaInserite);
             }
@@ -956,11 +937,18 @@ public class RecuperoZipGen {
                         tmpCmp.getIdCompDoc(), zipOutputStream,
                         RecBlbOracle.TabellaBlob.valueOf(recupero.getTipoSalvataggioFile().name()));
                 // recupero
-                rispostaControlli = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                rispostaControlli.setrBoolean(esitoRecupero);
+                if (!esitoRecupero) {
+                    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+                    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                            "Errore nel recupero dei file per lo zip"));
+                }
+
             }
             zipOutputStream.closeArchiveEntry();
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
                 break; // esce dal ciclo for, se incontra un errore: ormai lo zip è condannato
             }
@@ -968,16 +956,50 @@ public class RecuperoZipGen {
 
     }
 
-    private void provaAdInserireEntry(ZipArchiveOutputStream zipStream, String path, HashMap entryGiaInserite)
+    private String eliminaEventualiDoppiSlash(String path) {
+        if (path != null) {
+            path = path.replaceAll("//", "/");
+        }
+        return path;
+    }
+
+    /*
+     * Aggiunge a var1 il contenuto di var2 gestendo correttamente l'eventuale presenza dello slash iniziale in var2.
+     * Per evitare che i path si costruiscano col doppio slash che quindi provoca strane alberature nello ZIP
+     */
+    private String aggiungiConSlashInMezzo(String var1, String var2) {
+        // MEV#23698 - Servizi di recupero: problema con urn definito nel nome componente
+        // Se var1 (es.:una cartella) è presente in var2 la ignora
+        if (var2.indexOf(var1) > -1) {
+            var1 = "";
+        }
+        int ultimo = var1.lastIndexOf("/");
+        if (ultimo != -1) { // Se non ha trovato slash bypassa! Altrimenti esplode.
+            String porzioneIniziale = var1.substring(0, ultimo);
+            // Se in var2 (nome originale) è presente la porzione (es.:una cartella) azzera var1 e quindi considera solo
+            // var2
+            if (var2.indexOf(porzioneIniziale) > -1) {
+                var1 = "";
+            }
+        }
+        // --
+        if (var2.startsWith("/")) {
+            return var1 + var2;
+        } else {
+            return var1 + "/" + var2;
+        }
+    }
+
+    private void provaAdInserireEntry(ZipArchiveOutputStream zipStream, String path, Set<String> entryGiaInserite)
             throws IOException {
         final int MAX_ITERAZIONI = 1000;
         int i = 0;
         int contatoreCopie = 0;
         String nuovoNomeFile = path;
         for (i = 0; i < MAX_ITERAZIONI; i++) {
-            if (entryGiaInserite.containsKey(nuovoNomeFile)) {
+            if (entryGiaInserite.contains(nuovoNomeFile)) {
                 contatoreCopie++;
-                int posPunto = path.indexOf(".");
+                int posPunto = path.lastIndexOf(".");
                 if (posPunto < 0) {
                     nuovoNomeFile = path + "(" + contatoreCopie + ")";
                 } else {
@@ -988,7 +1010,7 @@ public class RecuperoZipGen {
                 ZipArchiveEntry zipEntry = new ZipArchiveEntry(nuovoNomeFile);
                 this.filterZipEntry(zipEntry);
                 zipStream.putArchiveEntry(zipEntry);
-                entryGiaInserite.put(nuovoNomeFile, null);
+                entryGiaInserite.add(nuovoNomeFile);
                 break;
             }
         }
@@ -999,14 +1021,17 @@ public class RecuperoZipGen {
 
     }
 
-    private void aggiungiIndiciAipUd(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc) throws IOException {
+    private void aggiungiIndiciAipUd(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc,
+            RispostaWSRecupero rispostaWs) throws IOException {
+
+        RispostaControlli rispostaControlli = new RispostaControlli();
         List<AroFileVerIndiceAipUd> lstVrsFileIndice = null;
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero.leggiXMLIndiceAIP(idUnitaDoc);
 
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstVrsFileIndice = (List<AroFileVerIndiceAipUd>) rispostaControlli.getrObject();
@@ -1014,7 +1039,7 @@ public class RecuperoZipGen {
         }
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            if (lstVrsFileIndice != null && lstVrsFileIndice.size() > 0) {
+            if (lstVrsFileIndice != null && !lstVrsFileIndice.isEmpty()) {
                 for (AroFileVerIndiceAipUd fileIndice : lstVrsFileIndice) {
                     // EVO#16486
                     String fileName = "";
@@ -1048,103 +1073,98 @@ public class RecuperoZipGen {
         }
     }
 
-    // EVO#20972
-    private void aggiungiIndiciAipUdV2(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc) throws IOException {
-        List<AroFileVerIndiceAipUd> lstVrsFileIndice = null;
+    // MEV#30395
+    private void aggiungiIndiciAipUdV2Os(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc,
+            RispostaWSRecupero rispostaWs) throws IOException {
+        List<AroVerIndiceAipUd> lstVerIndiceAipUd = null;
         String fileName;
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
-            rispostaControlli = controlliRecupero.leggiXMLIndiceAIPV2(idUnitaDoc);
+            rispostaControlli = controlliRecupero.leggiXMLIndiceAIPV2Os(idUnitaDoc);
 
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
-                lstVrsFileIndice = (List<AroFileVerIndiceAipUd>) rispostaControlli.getrObject();
+                lstVerIndiceAipUd = (List<AroVerIndiceAipUd>) rispostaControlli.getrObject();
             }
         }
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            if (lstVrsFileIndice != null && lstVrsFileIndice.size() > 0) {
+            if (lstVerIndiceAipUd != null && !lstVerIndiceAipUd.isEmpty()) {
                 boolean closeEntry = false;
-                AroFileVerIndiceAipUd fileIndiceLastVers = lstVrsFileIndice.remove(0);
-                if (fileIndiceLastVers.getAroVerIndiceAipUd() != null) {
-                    if (fileIndiceLastVers.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds() != null
-                            && !fileIndiceLastVers.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds().isEmpty()) {
+                AroVerIndiceAipUd verIndiceLastVers = lstVerIndiceAipUd.remove(0);
+
+                // MEV#27035
+                /* Definisco il nome e l'estensione del file */
+                fileName = "PIndexUD.xml";
+                // end MEV#27035
+
+                ZipArchiveEntry verIndiceLastVersZae = new ZipArchiveEntry(fileName);
+                this.filterZipEntry(verIndiceLastVersZae);
+                zipOutputStream.putArchiveEntry(verIndiceLastVersZae);
+
+                // recupero documento blob vs obj storage
+                // build dto per recupero
+                RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(TiEntitaSacerObjectStorage.INDICE_AIP,
+                        verIndiceLastVers.getIdVerIndiceAip(), zipOutputStream, RecClbOracle.TabellaClob.CLOB);
+                // recupero
+                boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                rispostaControlli.setrBoolean(esitoRecupero);
+                closeEntry = true;
+                if (!esitoRecupero) {
+                    throw new IOException("Errore non gestito nel recupero del file");
+                }
+
+                // MEV#20971
+                for (AroVerIndiceAipUd verIndicePrecVers : lstVerIndiceAipUd) {
+                    String urnIxAip;
+                    if (verIndicePrecVers.getAroUrnVerIndiceAipUds() != null
+                            && !verIndicePrecVers.getAroUrnVerIndiceAipUds().isEmpty()) {
                         // Recupero lo urn ORIGINALE
-                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils.find(
-                                fileIndiceLastVers.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds(), new Predicate() {
+                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
+                                .find(verIndicePrecVers.getAroUrnVerIndiceAipUds(), new Predicate() {
                                     @Override
                                     public boolean evaluate(final Object object) {
                                         return ((AroUrnVerIndiceAipUd) object).getTiUrn()
                                                 .equals(TiUrnVerIxAipUd.ORIGINALE);
                                     }
                                 });
-                        fileName = urnVerIndiceAipUd.getDsUrn();
+                        urnIxAip = urnVerIndiceAipUd.getDsUrn();
                     } else {
-                        fileName = fileIndiceLastVers.getAroVerIndiceAipUd().getDsUrn();
+                        urnIxAip = verIndicePrecVers.getDsUrn();
                     }
 
-                    // MEV#25871
-                    // /* Definisco il nome e l'estensione del file */
-                    // fileName = it.eng.parer.async.utils.IOUtils.getFilename(
-                    // it.eng.parer.async.utils.IOUtils.extractPartUrnName(fileName, true),
-                    // it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.XML.getFileExt());
-                    // // end MEV#25871
-
-                    // MEV#27035
+                    /* Definisco la folder relativa al sistema di conservazione */
+                    String folder = it.eng.parer.async.utils.IOUtils.getPath(DIRECTORY_PIX_AIPV2,
+                            StringUtils.capitalize(Constants.SACER.toLowerCase()),
+                            it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
                     /* Definisco il nome e l'estensione del file */
-                    fileName = "PIndexUD.xml";
-                    // end MEV#27035
+                    fileName = it.eng.parer.async.utils.IOUtils.getFilename(
+                            it.eng.parer.async.utils.IOUtils.extractPartUrnName(urnIxAip, true),
+                            it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.XML.getFileExt());
+                    /*
+                     * Definisco il percorso relativo del file rispetto alla posizione dell'indice di conservazione
+                     */
+                    String pathPIndexSource = it.eng.parer.async.utils.IOUtils.getAbsolutePath(folder, fileName,
+                            it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
 
-                    ZipArchiveEntry zae = new ZipArchiveEntry(fileName);
-                    this.filterZipEntry(zae);
-                    zipOutputStream.putArchiveEntry(zae);
-                    zipOutputStream.write(fileIndiceLastVers.getBlFileVerIndiceAip().getBytes("UTF-8"));
+                    ZipArchiveEntry verIndicePrecVersZae = new ZipArchiveEntry(pathPIndexSource);
+                    this.filterZipEntry(verIndicePrecVersZae);
+                    zipOutputStream.putArchiveEntry(verIndicePrecVersZae);
+                    // recupero documento blob vs obj storage
+                    // build dto per recupero
+                    csRecuperoDoc = new RecuperoDocBean(TiEntitaSacerObjectStorage.INDICE_AIP,
+                            verIndicePrecVers.getIdVerIndiceAip(), zipOutputStream, RecClbOracle.TabellaClob.CLOB);
+                    // recupero
+                    esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                    rispostaControlli.setrBoolean(esitoRecupero);
                     closeEntry = true;
-                }
-                // MEV#20971
-                for (AroFileVerIndiceAipUd fileIndicePrecVers : lstVrsFileIndice) {
-                    if (fileIndicePrecVers.getAroVerIndiceAipUd() != null) {
-                        String urnIxAip;
-                        if (fileIndicePrecVers.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds() != null
-                                && !fileIndicePrecVers.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds().isEmpty()) {
-                            // Recupero lo urn ORIGINALE
-                            AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils.find(
-                                    fileIndicePrecVers.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds(),
-                                    new Predicate() {
-                                        @Override
-                                        public boolean evaluate(final Object object) {
-                                            return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                    .equals(TiUrnVerIxAipUd.ORIGINALE);
-                                        }
-                                    });
-                            urnIxAip = urnVerIndiceAipUd.getDsUrn();
-                        } else {
-                            urnIxAip = fileIndicePrecVers.getAroVerIndiceAipUd().getDsUrn();
-                        }
-
-                        /* Definisco la folder relativa al sistema di conservazione */
-                        String folder = it.eng.parer.async.utils.IOUtils.getPath(DIRECTORY_PIX_AIPV2,
-                                StringUtils.capitalize(Constants.SACER.toLowerCase()),
-                                it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
-                        /* Definisco il nome e l'estensione del file */
-                        fileName = it.eng.parer.async.utils.IOUtils.getFilename(
-                                it.eng.parer.async.utils.IOUtils.extractPartUrnName(urnIxAip, true),
-                                it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.XML.getFileExt());
-                        /*
-                         * Definisco il percorso relativo del file rispetto alla posizione dell'indice di conservazione
-                         */
-                        String pathPIndexSource = it.eng.parer.async.utils.IOUtils.getAbsolutePath(folder, fileName,
-                                it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
-
-                        ZipArchiveEntry zae = new ZipArchiveEntry(pathPIndexSource);
-                        this.filterZipEntry(zae);
-                        zipOutputStream.putArchiveEntry(zae);
-                        zipOutputStream.write(fileIndicePrecVers.getBlFileVerIndiceAip().getBytes("UTF-8"));
-                        closeEntry = true;
+                    if (!esitoRecupero) {
+                        throw new IOException("Errore non gestito nel recupero del file");
                     }
+
                 }
                 // end MEV#20971
                 if (closeEntry) {
@@ -1153,19 +1173,20 @@ public class RecuperoZipGen {
             }
         }
     }
-    // end EVO#20972
+    // end MEV#30395
 
     // EVO#20972:MEV#20971
-    private void aggiungiIndiciAipUdExt(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc) throws IOException {
+    private void aggiungiIndiciAipUdExt(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc,
+            RispostaWSRecupero rispostaWs) throws IOException {
         List<AroVLisaipudSistemaMigraz> lstVrsFileIndiceExt = null;
         String fileName;
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero.leggiXMLIndiceAIPExternal(idUnitaDoc);
 
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstVrsFileIndiceExt = (List<AroVLisaipudSistemaMigraz>) rispostaControlli.getrObject();
@@ -1173,7 +1194,7 @@ public class RecuperoZipGen {
         }
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            if (lstVrsFileIndiceExt != null && lstVrsFileIndiceExt.size() > 0) {
+            if (lstVrsFileIndiceExt != null && !lstVrsFileIndiceExt.isEmpty()) {
                 boolean closeEntry = false;
 
                 for (AroVLisaipudSistemaMigraz fileIndicePrecVersExt : lstVrsFileIndiceExt) {
@@ -1190,7 +1211,9 @@ public class RecuperoZipGen {
                     /* Definisco il nome e l'estensione del file */
                     fileName = it.eng.parer.async.utils.IOUtils.getFilename(partChiaveUDAIPExt,
                             it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.ZIP.getFileExt());
-                    /* Definisco il percorso relativo del file rispetto alla posizione dell'indice di conservazione */
+                    /*
+                     * Definisco il percorso relativo del file rispetto alla posizione dell'indice di conservazione
+                     */
                     String pathPIndexSource = it.eng.parer.async.utils.IOUtils.getAbsolutePath(folder, fileName,
                             it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
                     //
@@ -1198,7 +1221,7 @@ public class RecuperoZipGen {
                     rispostaControlli = controlliRecupero
                             .leggiCompFileInUD(fileIndicePrecVersExt.getIdUnitaDocAip().longValue());
                     if (!rispostaControlli.isrBoolean()) {
-                        setRispostaWsError();
+                        setRispostaWsError(rispostaWs, rispostaControlli);
                         rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
                     } else {
                         List<ComponenteRec> lstComp = (List<ComponenteRec>) rispostaControlli.getrObject();
@@ -1222,14 +1245,13 @@ public class RecuperoZipGen {
                                             TiEntitaSacerObjectStorage.COMP_DOC, tmpCmp.getIdCompDoc(), zaos,
                                             RecBlbOracle.TabellaBlob.BLOB);
                                     // recupero
-                                    rispostaControlli = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
-
+                                    boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                                    rispostaControlli.setrBoolean(esitoRecupero);
                                     zaos.closeArchiveEntry();
-
-                                    if (!rispostaControlli.isrBoolean()) {
-                                        setRispostaWsError();
-                                        rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(),
-                                                rispostaControlli.getDsErr());
+                                    if (!esitoRecupero) {
+                                        setRispostaWsError(rispostaWs, rispostaControlli);
+                                        rispostaWs.setEsitoWsError(MessaggiWSBundle.ERR_666, MessaggiWSBundle.getString(
+                                                MessaggiWSBundle.ERR_666, "Errore nel recupero dei file per lo zip"));
                                         break; // esce dal ciclo for, se incontra un errore: ormai lo zip è condannato
                                     }
                                 }
@@ -1262,16 +1284,17 @@ public class RecuperoZipGen {
         }
     }
 
-    private void aggiungiIndiciAipUdVol(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc) throws IOException {
+    private void aggiungiIndiciAipUdVol(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc,
+            RispostaWSRecupero rispostaWs) throws IOException {
         List<VolVolumeConserv> lstVrsFileIndiceVol = null;
         String fileName;
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero.leggiVolumiUnitaDoc(idUnitaDoc);
 
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstVrsFileIndiceVol = (List<VolVolumeConserv>) rispostaControlli.getrObject();
@@ -1279,7 +1302,7 @@ public class RecuperoZipGen {
         }
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            if (lstVrsFileIndiceVol != null && lstVrsFileIndiceVol.size() > 0) {
+            if (lstVrsFileIndiceVol != null && !lstVrsFileIndiceVol.isEmpty()) {
                 boolean closeEntry = false;
 
                 for (VolVolumeConserv fileIndicePrecVersVol : lstVrsFileIndiceVol) {
@@ -1300,7 +1323,9 @@ public class RecuperoZipGen {
                     fileName = it.eng.parer.async.utils.IOUtils.getFilename(
                             it.eng.parer.async.utils.IOUtils.extractPartUrnName(urnIxVolCons, true),
                             it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.ZIP.getFileExt());
-                    /* Definisco il percorso relativo del file rispetto alla posizione dell'indice di conservazione */
+                    /*
+                     * Definisco il percorso relativo del file rispetto alla posizione dell'indice di conservazione
+                     */
                     String pathPIndexSource = it.eng.parer.async.utils.IOUtils.getAbsolutePath(folder, fileName,
                             it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR);
                     //
@@ -1314,11 +1339,6 @@ public class RecuperoZipGen {
 
                             this.aggiungiProveConsUd(zaos, fileIndicePrecVersVol);
 
-                        } catch (IOException ex) {
-                            rispostaWs.setSeverity(SeverityEnum.ERROR);
-                            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                                    "Errore nella generazione dello zip da includere  " + ex.getMessage());
-                            log.error("Errore nella generazione dello zip da includere ", ex);
                         } catch (Exception ex) {
                             rispostaWs.setSeverity(SeverityEnum.ERROR);
                             rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
@@ -1350,7 +1370,8 @@ public class RecuperoZipGen {
     // end EVO#20972:MEV#20971
 
     // EVO#20972
-    private void aggiungiFileXmlSchema(ZipArchiveOutputStream zipOutputStream) throws IOException {
+    private void aggiungiFileXmlSchema(ZipArchiveOutputStream zipOutputStream, RispostaWSRecupero rispostaWs)
+            throws IOException {
         boolean closeEntry = false;
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
 
@@ -1361,7 +1382,8 @@ public class RecuperoZipGen {
                                 xsdMoreInfoSelfDesc.getName(), it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR));
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(FileUtils.readFileToString(xsdMoreInfoSelfDesc, "UTF-8").getBytes());
+                zipOutputStream
+                        .write(FileUtils.readFileToString(xsdMoreInfoSelfDesc, StandardCharsets.UTF_8).getBytes());
                 closeEntry = true;
             }
 
@@ -1372,7 +1394,8 @@ public class RecuperoZipGen {
                                 xsdMoreInfoPVolume.getName(), it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR));
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(FileUtils.readFileToString(xsdMoreInfoPVolume, "UTF-8").getBytes());
+                zipOutputStream
+                        .write(FileUtils.readFileToString(xsdMoreInfoPVolume, StandardCharsets.UTF_8).getBytes());
                 closeEntry = true;
             }
 
@@ -1383,7 +1406,7 @@ public class RecuperoZipGen {
                                 it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR));
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(FileUtils.readFileToString(xsdMoreInfoDoc, "UTF-8").getBytes());
+                zipOutputStream.write(FileUtils.readFileToString(xsdMoreInfoDoc, StandardCharsets.UTF_8).getBytes());
                 closeEntry = true;
             }
 
@@ -1394,7 +1417,7 @@ public class RecuperoZipGen {
                                 it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR));
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(FileUtils.readFileToString(xsdMoreInfoFile, "UTF-8").getBytes());
+                zipOutputStream.write(FileUtils.readFileToString(xsdMoreInfoFile, StandardCharsets.UTF_8).getBytes());
                 closeEntry = true;
             }
 
@@ -1406,7 +1429,7 @@ public class RecuperoZipGen {
                                 it.eng.parer.async.utils.IOUtils.UNIX_FILE_SEPARATOR));
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(FileUtils.readFileToString(xsdPIndexFile, "UTF-8").getBytes());
+                zipOutputStream.write(FileUtils.readFileToString(xsdPIndexFile, StandardCharsets.UTF_8).getBytes());
                 closeEntry = true;
             }
             // end MEV#25921
@@ -1419,17 +1442,18 @@ public class RecuperoZipGen {
     // end EVO#20972
 
     private void aggiungiElencoIndiciAipUd(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc,
-            String tiFileElencoVers1, String tiFileElencoVers2) throws IOException {
+            String tiFileElencoVers1, String tiFileElencoVers2, RispostaWSRecupero rispostaWs) throws IOException {
         ElvFileElencoVer fileElencoVers = null;
         String prefisso = null;
         String estensione = null;
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero.leggiElvFileElencoVers(idUnitaDoc, tiFileElencoVers1,
                     tiFileElencoVers2);
 
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 fileElencoVers = rispostaControlli.getrObject() != null
@@ -1443,6 +1467,7 @@ public class RecuperoZipGen {
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             if (fileElencoVers != null) {
+                controlliRecupero.loadElvElencoVer(fileElencoVers);
                 String nmAmbiente = fileElencoVers.getElvElencoVer().getOrgStrut().getOrgEnte().getOrgAmbiente()
                         .getNmAmbiente();
                 String nmEnte = fileElencoVers.getElvElencoVer().getOrgStrut().getOrgEnte().getNmEnte();
@@ -1458,16 +1483,18 @@ public class RecuperoZipGen {
         }
     }
 
-    private void aggiungiIndiciSerie(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero) throws IOException {
+    private void aggiungiIndiciSerie(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
+            RispostaWSRecupero rispostaWs) throws IOException {
         List<AroUdAppartVerSerie> udAppartVerSerieList = null;
         String prefisso = null;
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero
                     .leggiAroUdAppartVerSerie(recupero.getParametriRecupero().getIdUnitaDoc());
 
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
 
@@ -1478,9 +1505,15 @@ public class RecuperoZipGen {
 
                     for (AroUdAppartVerSerie udAppartVerSerie : udAppartVerSerieList) {
                         boolean closeEntry = false;
+                        // MAC #29539 FIX Hibernate: per evitare l'errore EJBTransactionRolledbackException: - could not
+                        // initialize proxy [it.eng.parer.entity.<ENTITY>] - no Session
+                        // recupero nuovamente l'entity AroUdAppartVerSerie per recuperare i dati da AroUnitaDoc,
+                        // SerVolVerSerie, SerContenutoVerSerie
+                        AroUdAppartVerSerie udAppartInSessione = udHelper.findById(AroUdAppartVerSerie.class,
+                                udAppartVerSerie.getIdUdAppartVerSerie());
 
                         // Creo una cartella con l'urn del codice serie...
-                        String codiceSerie = udAppartVerSerie.getSerContenutoVerSerie().getSerVerSerie().getSerSerie()
+                        String codiceSerie = udAppartInSessione.getSerContenutoVerSerie().getSerVerSerie().getSerSerie()
                                 .getCdCompositoSerie();
                         // EVO#20972
                         String urnZipArchive = (!recupero.getParametriRecupero().getTipoEntitaSacer()
@@ -1488,44 +1521,46 @@ public class RecuperoZipGen {
                                         ? DIRECTORY_AGGR + "/" + DIRECTORY_SERIE + "/" + codiceSerie + "/"
                                         : DIRECTORY_AGGR_AIPV2 + "/" + DIRECTORY_SERIE_AIPV2 + "/" + codiceSerie + "/";
                         // end EVO#20972
-                        String ambiente = udAppartVerSerie.getAroUnitaDoc().getOrgStrut().getOrgEnte().getOrgAmbiente()
-                                .getNmAmbiente();
-                        String ente = udAppartVerSerie.getAroUnitaDoc().getOrgStrut().getOrgEnte().getNmEnte();
-                        String struttura = udAppartVerSerie.getAroUnitaDoc().getOrgStrut().getNmStrut();
+
+                        String ambiente = udAppartInSessione.getAroUnitaDoc().getOrgStrut().getOrgEnte()
+                                .getOrgAmbiente().getNmAmbiente();
+                        String ente = udAppartInSessione.getAroUnitaDoc().getOrgStrut().getOrgEnte().getNmEnte();
+                        String struttura = udAppartInSessione.getAroUnitaDoc().getOrgStrut().getNmStrut();
 
                         // ... all'interno della quale piazzo il file con l'xml dell'indice del volume
                         // della serie...
-                        if (udAppartVerSerie.getSerVolVerSerie() != null) {
+                        if (udAppartInSessione.getSerVolVerSerie() != null) {
                             String urnVol = "IndiceVolumeSerie-" + ambiente + "_" + ente + "_" + struttura + "_"
                                     + codiceSerie + ".xml";
                             ZipArchiveEntry zaeVol = new ZipArchiveEntry(urnZipArchive + urnVol);
                             this.filterZipEntry(zaeVol);
                             zipOutputStream.putArchiveEntry(zaeVol);
-                            zipOutputStream.write(udAppartVerSerie.getSerVolVerSerie().getSerIxVolVerSeries().get(0)
-                                    .getBlIxVol().getBytes());
+                            zipOutputStream.write(udAppartInSessione.getSerVolVerSerie().getSerIxVolVerSeries().get(0)
+                                    .getBlIxVol().getBytes(StandardCharsets.UTF_8));
                             closeEntry = true;
                         }
 
                         // ... e l'indice aip della serie
-                        if (udAppartVerSerie.getSerContenutoVerSerie() != null) {
+                        if (udAppartInSessione.getSerContenutoVerSerie() != null) {
                             byte[] ix = serieEjb.getSerFileVerSerieBlob(
-                                    udAppartVerSerie.getSerContenutoVerSerie().getSerVerSerie().getIdVerSerie(),
+                                    udAppartInSessione.getSerContenutoVerSerie().getSerVerSerie().getIdVerSerie(),
                                     CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO);
                             if (ix != null) {
+                                String xmlContent = new String(ix, StandardCharsets.UTF_8);
                                 prefisso = "IndiceAIPSerie-"
-                                        + udAppartVerSerie.getSerContenutoVerSerie().getSerVerSerie().getCdVerSerie()
-                                        + "_" + ambiente + "_" + ente + "_" + struttura;
+                                        + udAppartInSessione.getSerContenutoVerSerie().getSerVerSerie().getCdVerSerie()
+                                        + "_" + ambiente + "_" + ente + "_" + struttura + "_" + codiceSerie;
                                 ZipArchiveEntry zaeAip = new ZipArchiveEntry(urnZipArchive + prefisso + ".xml.p7m");
                                 this.filterZipEntry(zaeAip);
                                 zipOutputStream.putArchiveEntry(zaeAip);
-                                zipOutputStream.write(ix);
+                                zipOutputStream.write(xmlContent.getBytes(StandardCharsets.UTF_8));
                                 closeEntry = true;
                             }
                         }
 
                         // Se per la versione serie è presente la marca
                         byte[] marcaBlobbo = serieEjb.getSerFileVerSerieBlob(
-                                udAppartVerSerie.getSerContenutoVerSerie().getSerVerSerie().getIdVerSerie(),
+                                udAppartInSessione.getSerContenutoVerSerie().getSerVerSerie().getIdVerSerie(),
                                 CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO);
                         if (marcaBlobbo != null) {
                             ZipArchiveEntry zaeMarca = new ZipArchiveEntry(urnZipArchive + prefisso + ".tsr");
@@ -1543,17 +1578,18 @@ public class RecuperoZipGen {
         }
     }
 
-    private void aggiungiIndiceFascicoli(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero)
-            throws IOException {
+    private void aggiungiIndiceFascicoli(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
+            RispostaWSRecupero rispostaWs) throws IOException {
         List<FasUnitaDocFascicolo> unitaDocFascicoloList = null;
         String prefisso = null;
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero
                     .leggiFasUnitaDocFascicolo(recupero.getParametriRecupero().getIdUnitaDoc());
 
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
 
@@ -1575,10 +1611,11 @@ public class RecuperoZipGen {
                                         : DIRECTORY_AGGR_AIPV2 + "/" + DIRECTORY_FASC_AIPV2 + "/" + annoNumeroFascicolo
                                                 + "/";
                         // end EVO#20972
-                        String ambiente = unitaDocFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte()
-                                .getOrgAmbiente().getNmAmbiente();
-                        String ente = unitaDocFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getNmEnte();
-                        String struttura = unitaDocFascicolo.getFasFascicolo().getOrgStrut().getNmStrut();
+                        OrgStrut strut = ambientiHelper
+                                .findOrgStrutById(unitaDocFascicolo.getFasFascicolo().getOrgStrut().getIdStrut());
+                        String ambiente = strut.getOrgEnte().getOrgAmbiente().getNmAmbiente();
+                        String ente = strut.getOrgEnte().getNmEnte();
+                        String struttura = strut.getNmStrut();
                         BigDecimal anno = unitaDocFascicolo.getFasFascicolo().getAaFascicolo();
                         String numero = MessaggiWSFormat
                                 .bonificaUrnPerNomeFile(unitaDocFascicolo.getFasFascicolo().getCdKeyFascicolo());
@@ -1632,7 +1669,7 @@ public class RecuperoZipGen {
     }
 
     private void aggiungiProveConsUd(ZipArchiveOutputStream zipOutputStream, VolVolumeConserv volume)
-            throws EMFError, IOException {
+            throws IOException {
 
         long idVolume = volume.getIdVolumeConserv();
         // ricavo la lista dei blobbi CRL e Certif
@@ -1647,7 +1684,7 @@ public class RecuperoZipGen {
                 if (tmpObject != null) {
                     fileName = "CRL/CRL_" + tmpObject.id + ".crl";
                     zipOutputStream.putArchiveEntry(new ZipArchiveEntry(prefissoVolume + fileName));
-                    zipOutputStream.write((byte[]) tmpObject.blobbo);
+                    zipOutputStream.write(tmpObject.blobbo);
                     zipOutputStream.closeArchiveEntry();
                 }
             }
@@ -1658,7 +1695,7 @@ public class RecuperoZipGen {
                 if (tmpObject != null) {
                     fileName = "Certificati-Trusted/Certif_Ca_" + tmpObject.id + ".cer";
                     zipOutputStream.putArchiveEntry(new ZipArchiveEntry(prefissoVolume + fileName));
-                    zipOutputStream.write((byte[]) tmpObject.blobbo);
+                    zipOutputStream.write(tmpObject.blobbo);
                     zipOutputStream.closeArchiveEntry();
                 }
             }
@@ -1670,7 +1707,7 @@ public class RecuperoZipGen {
         if (indiceConservXml != null) {
             fileName = "indice_conservazione.xml";
             zipOutputStream.putArchiveEntry(new ZipArchiveEntry(prefissoVolume + fileName));
-            zipOutputStream.write((byte[]) indiceConservXml);
+            zipOutputStream.write(indiceConservXml);
             zipOutputStream.closeArchiveEntry();
         }
 
@@ -1678,7 +1715,7 @@ public class RecuperoZipGen {
         if (indiceConservXml != null) {
             fileName = "indice_conservazione.tsr";
             zipOutputStream.putArchiveEntry(new ZipArchiveEntry(prefissoVolume + fileName));
-            zipOutputStream.write((byte[]) indiceConservXml);
+            zipOutputStream.write(indiceConservXml);
             zipOutputStream.closeArchiveEntry();
         }
 
@@ -1686,7 +1723,7 @@ public class RecuperoZipGen {
         if (indiceConservXml != null) {
             fileName = "firma_indice_conservazione.tsr.p7m";
             zipOutputStream.putArchiveEntry(new ZipArchiveEntry(prefissoVolume + fileName));
-            zipOutputStream.write((byte[]) indiceConservXml);
+            zipOutputStream.write(indiceConservXml);
             zipOutputStream.closeArchiveEntry();
         }
 
@@ -1694,14 +1731,14 @@ public class RecuperoZipGen {
         if (indiceConservXml != null) {
             fileName = "firma_indice_conservazione.tsr";
             zipOutputStream.putArchiveEntry(new ZipArchiveEntry(prefissoVolume + fileName));
-            zipOutputStream.write((byte[]) indiceConservXml);
+            zipOutputStream.write(indiceConservXml);
             zipOutputStream.closeArchiveEntry();
         }
     }
 
     private byte[] recuperaIndiceCons(VolVolumeConserv volume, FileTypeEnum fileType) {
         byte[] file = null;
-        for (VolFileVolumeConserv volFile : volume.getVolFileVolumeConservs()) {
+        for (VolFileVolumeConserv volFile : controlliRecupero.findVolFileVolumeConserv(volume)) {
             if (fileType.toString().equals(volFile.getTiFileVolumeConserv())) {
                 file = volFile.getBlFileVolumeConserv();
             }
@@ -1714,7 +1751,11 @@ public class RecuperoZipGen {
         SOLO_FILE_RECUPERATI, // recupera solo gli XML relativi ai file scaricati (tutti per UD, solo DOC per
         // DOC e
         // COMP)
-        RECUPERO_PER_ZIP_SIP // specifico per recupero ZIP SIP
+        RECUPERO_PER_ZIP_SIP, // specifico per recupero ZIP SIP
+        // MAC#30890
+        RECUPERO_PER_ZIP_AIP // specifico per recupero ZIP AIP
+        // end MAC#30890
+
     }
 
     private enum TipiXmlDaIncludere {
@@ -1722,10 +1763,11 @@ public class RecuperoZipGen {
     }
 
     private void aggiungiXMLVersamentoUd(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
-            TipiLetturaXml tlx, TipiXmlDaIncludere xmlDaIncludere) throws IOException {
+            TipiLetturaXml tlx, TipiXmlDaIncludere xmlDaIncludere, RispostaWSRecupero rispostaWs) throws IOException {
         List<VrsXmlDatiSessioneVers> lstVrsXml = null;
+        Map<Long, Map<String, String>> xmlVersamentoOs = new HashMap<>();
         String fileName;
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             if (tlx == TipiLetturaXml.UD_COMPLETA) {
@@ -1742,6 +1784,11 @@ public class RecuperoZipGen {
                     rispostaControlli = controlliRecupero
                             .leggiXMLSessioneversUd(recupero.getParametriRecupero().getIdUnitaDoc());
                 }
+            } else if (tlx == TipiLetturaXml.RECUPERO_PER_ZIP_AIP) {
+                // MAC#30890
+                rispostaControlli = controlliRecupero
+                        .leggiXmlSessioniVersamentiAip(recupero.getParametriRecupero().getIdUnitaDoc());
+                // end MAC#30890
             } else {
                 if (recupero.getParametriRecupero().getIdDocumento() != null) {
                     rispostaControlli = controlliRecupero
@@ -1752,21 +1799,34 @@ public class RecuperoZipGen {
                 }
             }
 
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstVrsXml = (List<VrsXmlDatiSessioneVers>) rispostaControlli.getrObject();
             }
         }
-
+        // load from O.S.
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            if (lstVrsXml != null && lstVrsXml.size() > 0) {
+            //
+            rispostaControlli = aggiungiXmlDaObjectStorageOnMap(lstVrsXml);
+
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
+                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+            } else {
+                xmlVersamentoOs = (Map<Long, Map<String, String>>) rispostaControlli.getrObject();
+            }
+        }
+        //
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            if (lstVrsXml != null && !lstVrsXml.isEmpty()) {
                 int contaRequest = 1;
                 int contaResponse = 1;
                 int contaIndiceMM = 1;
                 int contaRappVers = 1;
                 int contaBoh = 1;
+
                 // EVO#20972
                 switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
                 case UNI_DOC_UNISYNCRO_V2:
@@ -1774,19 +1834,12 @@ public class RecuperoZipGen {
                     for (VrsXmlDatiSessioneVers tmpXml : lstVrsXml) {
                         // urn
                         // Recupero lo urn ORIGINALE dalla tabella VRS_URN_XML_SESSIONE_VERS
-                        VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils
-                                .find(tmpXml.getVrsUrnXmlSessioneVers(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((VrsUrnXmlSessioneVers) object).getTiUrn()
-                                                .equals(TiUrnXmlSessioneVers.ORIGINALE);
-                                    }
-                                });
+                        VrsUrnXmlSessioneVers urnXmlSessioneVers = controlliRecupero
+                                .findVrsUrnXmlSessioneVersByTiUrn(tmpXml, TiUrnXmlSessioneVers.ORIGINALE);
                         String urnXmlVers = (urnXmlSessioneVers != null) ? urnXmlSessioneVers.getDsUrn()
                                 : tmpXml.getDsUrnXmlVers();
                         /* Definisco la folder relativa al sistema di conservazione */
-                        Constants.TipoSessione tipoSessione = Constants.TipoSessione
-                                .valueOf(tmpXml.getVrsDatiSessioneVers().getVrsSessioneVers().getTiSessioneVers());
+                        Constants.TipoSessione tipoSessione = controlliRecupero.getTipoSessioneFrom(tmpXml);
                         String tmpPath = (tipoSessione.equals(Constants.TipoSessione.VERSAMENTO))
                                 ? urnXmlVers.replaceAll(it.eng.parer.async.utils.IOUtils.extractPartUrnName(urnXmlVers),
                                         "SIP-UD")
@@ -1811,7 +1864,23 @@ public class RecuperoZipGen {
                             ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(pathSip);
                             this.filterZipEntry(zipArchiveEntry);
                             zipOutputStream.putArchiveEntry(zipArchiveEntry);
-                            zipOutputStream.write((byte[]) tmpXml.getBlXml().getBytes("UTF-8"));
+                            // load XML from O.S. vs DB
+                            rispostaControlli = controlliRecupero.findIdSessVersByXmlDatiSessVers(tmpXml);
+                            if (!rispostaControlli.isrBoolean()) {
+                                setRispostaWsError(rispostaWs, rispostaControlli);
+                                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                            } else {
+                                long idSessioneVers = rispostaControlli.getrLong();
+                                // verify if xml on O.S.
+                                if (xmlVersamentoOs.containsKey(idSessioneVers) && tmpXml.getBlXml() == null) {
+                                    Map<String, String> allXml = xmlVersamentoOs.get(idSessioneVers);
+                                    String blXml = allXml.get(tmpXml.getTiXmlDati());
+                                    zipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                } else {
+                                    zipOutputStream.write(tmpXml.getBlXml().getBytes(StandardCharsets.UTF_8));
+                                }
+                            }
+
                             closeEntry = true;
                         }
                     }
@@ -1874,7 +1943,23 @@ public class RecuperoZipGen {
                                     ComponenteRec.estraiNomeFileCompleto(fileName) + ".xml");
                             this.filterZipEntry(zipArchiveEntry);
                             zipOutputStream.putArchiveEntry(zipArchiveEntry);
-                            zipOutputStream.write((byte[]) tmpXml.getBlXml().getBytes("UTF-8"));
+                            // load XML from O.S. vs DB
+                            rispostaControlli = controlliRecupero.findIdSessVersByXmlDatiSessVers(tmpXml);
+                            if (!rispostaControlli.isrBoolean()) {
+                                setRispostaWsError(rispostaWs, rispostaControlli);
+                                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                            } else {
+                                long idSessioneVers = rispostaControlli.getrLong();
+                                // verify if xml on O.S.
+                                if (xmlVersamentoOs.containsKey(idSessioneVers) && tmpXml.getBlXml() == null) {
+                                    Map<String, String> allXml = xmlVersamentoOs.get(idSessioneVers);
+                                    String blXml = allXml.get(tmpXml.getTiXmlDati());
+                                    zipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                } else {
+                                    zipOutputStream.write(tmpXml.getBlXml().getBytes(StandardCharsets.UTF_8));
+                                }
+                            }
+
                             zipOutputStream.closeArchiveEntry();
                         }
                     }
@@ -1885,19 +1970,65 @@ public class RecuperoZipGen {
         }
     }
 
+    /**
+     * Esegui <strong> una volta sola</strong> il caricamento di tutti gli xml legati alle sessioni di versamento
+     * identificate dalla lista di VRS_XML_DATI_SESSIONE_VERS.
+     *
+     * La Map risultante conterrà tutti gli xml identificati dal loro id di sessione.
+     *
+     * Nell'economina computazionale totale della funziona risulterà necessario scorrere due volte la lista di
+     * VRS_XML_DATI_SESSIONE_VERS ma, fortunatamente, sono tutti dati già presenti in memoria.
+     *
+     * @param vrsXmlDatiSessioneVers
+     *            Lista di VRS_XML_DATI_SESSIONE_VERS ottenuti dalla query precedente
+     *
+     * @return file xml (come stringa) identificati dall'id della sessione
+     */
+    private RispostaControlli aggiungiXmlDaObjectStorageOnMap(List<VrsXmlDatiSessioneVers> vrsXmlDatiSessioneVers) {
+        // filter
+        RispostaControlli rispostaControlli = controlliRecupero
+                .findAllSessVersByXmlDatiSessVers(vrsXmlDatiSessioneVers);
+        if (rispostaControlli.isrBoolean()) {
+            Map<Long, Map<String, String>> xmlMapByVrsSessioneVers = new HashMap<>();
+
+            List<VrsSessioneVers> vrsSessioneVerss = (List<VrsSessioneVers>) rispostaControlli.getrObject();
+            // filter on Constants.TipoSessione.VERSAMENTO
+            vrsSessioneVerss.stream()
+                    .filter(vrs -> vrs.getTiSessioneVers().equals(Constants.TipoSessione.VERSAMENTO.name())
+                            && vrs.getAroUnitaDoc() != null)
+                    .forEach(vrs ->
+                    // put on map
+                    xmlMapByVrsSessioneVers.put(vrs.getIdSessioneVers(),
+                            objectStorageService.getObjectSipUnitaDoc(vrs.getAroUnitaDoc().getIdUnitaDoc())));
+
+            // filter on Constants.TipoSessione.AGGIUNGI_DOCUMENTO
+            vrsSessioneVerss.stream()
+                    .filter(vrs -> vrs.getTiSessioneVers().equals(Constants.TipoSessione.AGGIUNGI_DOCUMENTO.name())
+                            && vrs.getAroDoc() != null)
+                    .forEach(vrs ->
+                    // put on map
+                    xmlMapByVrsSessioneVers.put(vrs.getIdSessioneVers(),
+                            objectStorageService.getObjectSipDoc(vrs.getAroDoc().getIdDoc())));
+            // OK
+            rispostaControlli.setrBoolean(true);
+            rispostaControlli.setrObject(xmlMapByVrsSessioneVers);
+        }
+        return rispostaControlli;
+    }
+
     // EVO#20972
-    private void aggiungiXMLVersamentoUpd(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero)
-            throws IOException {
+    private void aggiungiXMLVersamentoUpd(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
+            RispostaWSRecupero rispostaWs) throws IOException {
         List<AroXmlUpdUnitaDoc> lstVrsXmlUpd = null;
         String fileName;
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             rispostaControlli = controlliRecupero
-                    .leggiXMLSessioneversUpd(recupero.getParametriRecupero().getIdUnitaDoc());
+                    .leggiXmlVersamentiAipUpdDaUnitaDoc(recupero.getParametriRecupero().getIdUnitaDoc());
 
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 lstVrsXmlUpd = (List<AroXmlUpdUnitaDoc>) rispostaControlli.getrObject();
@@ -1905,7 +2036,7 @@ public class RecuperoZipGen {
         }
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            if (lstVrsXmlUpd != null && lstVrsXmlUpd.size() > 0) {
+            if (lstVrsXmlUpd != null && !lstVrsXmlUpd.isEmpty()) {
                 switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
                 case UNI_DOC_UNISYNCRO_V2:
                     boolean closeEntry = false;
@@ -1942,7 +2073,7 @@ public class RecuperoZipGen {
                             ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(pathSip);
                             this.filterZipEntry(zipArchiveEntry);
                             zipOutputStream.putArchiveEntry(zipArchiveEntry);
-                            zipOutputStream.write((byte[]) tmpXmlUpd.getBlXml().getBytes("UTF-8"));
+                            zipOutputStream.write(tmpXmlUpd.getBlXml().getBytes(StandardCharsets.UTF_8));
                             closeEntry = true;
                         }
                     }
@@ -1959,14 +2090,13 @@ public class RecuperoZipGen {
     }
     // end EVO#20972
 
-    private void aggiungiComponentiDIP(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero)
-            throws IOException {
+    private void aggiungiComponentiDIP(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
+            RispostaWSRecupero rispostaWs) {
         GestSessRecDip gestSessRecDip = new GestSessRecDip(rispostaWs);
-
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            rispostaControlli = controlliRecDip.contaComponenti(recupero.getParametriRecupero());
-            if (rispostaControlli.isrBoolean() == false) {
-                setRispostaWsError();
+            RispostaControlli rispostaControlli = controlliRecDip.contaComponenti(recupero.getParametriRecupero());
+            if (!rispostaControlli.isrBoolean()) {
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else if (rispostaControlli.getrLong() > 0) {
                 if (rispostaWs.getDatiRecuperoDip() == null) {
@@ -1995,7 +2125,8 @@ public class RecuperoZipGen {
         }
     }
 
-    private void aggiungiDipEsibizione(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero) {
+    private void aggiungiDipEsibizione(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
+            RispostaWSRecupero rispostaWs) {
         RecuperoTxtGen recuperoTxtGen = new RecuperoTxtGen(rispostaWs);
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
@@ -2010,14 +2141,14 @@ public class RecuperoZipGen {
         }
     }
 
-    public void generaZipReportFirma(String outputPath, RecuperoExt recupero) {
+    public void generaZipReportFirma(String outputPath, RecuperoExt recupero, RispostaWSRecupero rispostaWs) {
         FileBinario zipDaScaricare = new FileBinario();
-        parsedUnitaDoc = recupero.getStrutturaRecupero();
+        Recupero parsedUnitaDoc = recupero.getStrutturaRecupero();
         CSChiave tmpCSChiave = new CSChiave();
         tmpCSChiave.setAnno(parsedUnitaDoc.getChiave().getAnno().longValue());
         tmpCSChiave.setNumero(parsedUnitaDoc.getChiave().getNumero());
         tmpCSChiave.setTipoRegistro(parsedUnitaDoc.getChiave().getTipoRegistro());
-
+        RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             rispostaControlli.reset();
             // check report
@@ -2025,7 +2156,7 @@ public class RecuperoZipGen {
                     .checkReportvfExistenceAndGetZipName(recupero.getParametriRecupero().getIdComponente());
             //
             if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError();
+                setRispostaWsError(rispostaWs, rispostaControlli);
                 rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
             } else {
                 String fileReportvfZipName = rispostaControlli.getrString();
@@ -2067,10 +2198,9 @@ public class RecuperoZipGen {
         }
     }
 
-    private void setRispostaWsError() {
+    private void setRispostaWsError(RispostaWSRecupero rispostaWs, RispostaControlli rispostaControlli) {
         rispostaWs.setSeverity(SeverityEnum.ERROR);
         rispostaWs.setErrorCode(rispostaControlli.getCodErr());
         rispostaWs.setErrorMessage(rispostaControlli.getDsErr());
     }
-
 }

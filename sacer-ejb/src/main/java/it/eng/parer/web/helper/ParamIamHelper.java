@@ -1,31 +1,51 @@
-package it.eng.parer.web.helper;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.parer.grantedEntity.constraint.IamValoreParamApplic.TiAppart;
-import it.eng.parer.exception.ParamApplicNotFoundException;
-import it.eng.parer.grantedEntity.IamParamApplic;
-import it.eng.parer.web.helper.dto.IamVGetValParamDto;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.TipoIamVGetValAppart;
+package it.eng.parer.web.helper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StringSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.exception.ParamApplicNotFoundException;
+import it.eng.parer.grantedEntity.IamParamApplic;
+import it.eng.parer.grantedEntity.constraint.IamValoreParamApplic.TiAppart;
+import it.eng.parer.web.helper.dto.IamVGetValParamDto;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.CostantiDB.TipoIamVGetValAppart;
 
 /**
  *
  * @author dilorenzo_f
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class ParamIamHelper {
@@ -60,7 +80,7 @@ public class ParamIamHelper {
                     + "WHERE paramApplic.nmParamApplic IN :nmParamApplicList ";
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("nmParamApplicList", nmParamApplicList);
-            List<IamParamApplic> paramApplicList = (List<IamParamApplic>) query.getResultList();
+            List<IamParamApplic> paramApplicList = query.getResultList();
             for (IamParamApplic paramApplic : paramApplicList) {
                 mappaAgenti.put(paramApplic.getNmParamApplic(), getValoreParamApplic(paramApplic.getNmParamApplic(),
                         idAmbienteEnteConvenz, idEnteSiam, getVal));
@@ -77,7 +97,7 @@ public class ParamIamHelper {
                 + "FROM IamValoreParamApplic valoreParamApplic " + "JOIN valoreParamApplic.iamParamApplic paramApplic "
                 + "WHERE paramApplic.nmParamApplic = 'NM_APPLIC' ";
         javax.persistence.Query query = entityManager.createQuery(queryStr);
-        List<String> paramList = (List<String>) query.getResultList();
+        List<String> paramList = query.getResultList();
         if (paramList != null && !paramList.isEmpty()) {
             return paramList.get(0);
         } else {
@@ -103,7 +123,6 @@ public class ParamIamHelper {
      * 
      * @return valore
      */
-    @SuppressWarnings("unchecked")
     public String getValoreParamApplic(String nmParamApplic, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteSiam,
             TipoIamVGetValAppart tipoIamVGetValAppart) {
 
@@ -136,7 +155,7 @@ public class ParamIamHelper {
             queryData.put(FLAPLPARAMAPPLICAPPART, "flApparteEnte");
             queryData.put(IDAPLVGETVALPARAMBY, "AND getvalParam.idEnteConvenz = :id");
             // replace
-            queryStr = StrSubstitutor.replace(queryStrTempl, queryData);
+            queryStr = StringSubstitutor.replace(queryStrTempl, queryData);
             break;
         case AMBIENTEENTECONVENZ:
             //
@@ -149,7 +168,7 @@ public class ParamIamHelper {
             queryData.put(FLAPLPARAMAPPLICAPPART, "flAppartAmbiente");
             queryData.put(IDAPLVGETVALPARAMBY, "AND getvalParam.idAmbienteEnteConvenz = :id");
             // replace
-            queryStr = StrSubstitutor.replace(queryStrTempl, queryData);
+            queryStr = StringSubstitutor.replace(queryStrTempl, queryData);
             break;
         default:
             //
@@ -160,7 +179,7 @@ public class ParamIamHelper {
             queryData.put(FLAPLPARAMAPPLICAPPART, "flAppartApplic");
             queryData.put(IDAPLVGETVALPARAMBY, "");
             // replace
-            queryStr = StrSubstitutor.replace(queryStrTempl, queryData);
+            queryStr = StringSubstitutor.replace(queryStrTempl, queryData);
             break;
         }
 
@@ -209,7 +228,6 @@ public class ParamIamHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private String getDsValoreParamApplicByTiAppart(String nmParamApplic, List<IamVGetValParamDto> result,
             final TiAppart tiAppart) {
         // get entity from list

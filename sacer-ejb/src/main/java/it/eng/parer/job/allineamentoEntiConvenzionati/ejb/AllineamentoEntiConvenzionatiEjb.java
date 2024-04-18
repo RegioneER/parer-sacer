@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.allineamentoEntiConvenzionati.ejb;
 
 import it.eng.integriam.client.ws.IAMSoapClients;
@@ -77,14 +94,11 @@ public class AllineamentoEntiConvenzionatiEjb {
         boolean replicaOK = true;
 
         /* Ricavo i dati per la chiamata del ws */
-        String url = coHelper.getValoreParamApplic("URL_ALLINEA_ENTE_CONVENZ", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String nmUserid = coHelper.getValoreParamApplic("USERID_REPLICA_ORG", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String cdPsw = coHelper.getValoreParamApplic("PSW_REPLICA_ORG", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String timeoutString = coHelper.getValoreParamApplic("TIMEOUT_ALLINEA_ENTE_CONVENZ", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String url = coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_ALLINEA_ENTE_CONVENZ);
+        String nmUserid = coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_REPLICA_ORG);
+        String cdPsw = coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_REPLICA_ORG);
+        String timeoutString = coHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_ALLINEA_ENTE_CONVENZ);
 
         /* Per ogni registrazione determinata */
         for (IamEnteConvenzDaAllinea enteConvenzDaAllinea : enteConvenzDaAllineaList) {

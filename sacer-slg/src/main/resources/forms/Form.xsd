@@ -225,6 +225,7 @@
 		<complexContent>
 			<extension base="tns:Field">
 				<attribute name="MaxLength" type="int"></attribute>
+                                <attribute name="WithSearchComp" type="boolean"></attribute>
 			</extension>
 		</complexContent>
 	</complexType>

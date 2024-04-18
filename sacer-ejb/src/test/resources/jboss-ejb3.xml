@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
+                  xmlns="http://java.sun.com/xml/ns/javaee"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns:c="urn:clustering:1.0"
+                  xmlns:p="urn:ejb-pool:1.0"
+                  xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+                  version="3.1"
+                  impl-version="2.0">
+
+    <enterprise-beans>
+        <!-- Riferimenti alle code per l'ejb session di AggiornaStatoArchiviazioneHelper -->
+        <session>
+            <ejb-name>AggiornaStatoArchiviazioneHelper</ejb-name>
+            <ejb-class>it.eng.parer.job.tpi.helper.AggiornaStatoArchiviazioneHelper</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/queue/ElenchiDaElabQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/ElenchiDaElabQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+        <!-- Riferimenti alle code per l'ejb session di ElencoVersamentoEjb -->
+        <session>
+            <ejb-name>ElencoVersamentoEjb</ejb-name>
+            <ejb-class>it.eng.parer.elencoVersamento.ejb.ElencoVersamentoEjb</ejb-class>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactory</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactoryNonXA</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsNonXA</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/ProducerConnectionFactoryUntransacted</resource-env-ref-name>
+                <jndi-name>java:/SacerJmsUntransacted</jndi-name>
+            </resource-env-ref>
+            <resource-env-ref>
+                <resource-env-ref-name>jms/queue/ElenchiDaElabQueue</resource-env-ref-name>
+                <jndi-name>java:/jms/queue/ElenchiDaElabQueue</jndi-name>
+            </resource-env-ref>
+        </session>
+    </enterprise-beans>
+    
+</jboss:ejb-jar>

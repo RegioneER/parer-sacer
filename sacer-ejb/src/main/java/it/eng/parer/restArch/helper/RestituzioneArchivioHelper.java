@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.restArch.helper;
 
 import java.math.BigDecimal;
@@ -18,6 +35,7 @@ import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.restArch.dto.RicercaRichRestArchBean;
+import it.eng.parer.viewEntity.AroVChkRaUd;
 import it.eng.parer.viewEntity.AroVLisItemRa;
 import it.eng.parer.viewEntity.AroVRicRichRa;
 import it.eng.parer.web.util.Constants;
@@ -26,6 +44,7 @@ import it.eng.parer.web.util.Constants;
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class RestituzioneArchivioHelper extends GenericHelper {
@@ -36,15 +55,33 @@ public class RestituzioneArchivioHelper extends GenericHelper {
      *
      * @param idEnteConvenz
      *            id ente convenzionato
-     * 
+     *
      * @return true se esiste
      */
     public boolean isRichRestArchExisting(BigDecimal idEnteConvenz) {
         Query query = getEntityManager().createQuery(
                 "SELECT COUNT(r) FROM AroRichiestaRa r " + "WHERE r.orgStrut.idEnteConvenz = :idEnteConvenz "
-                        + "AND r.tsFine IS NOT NULL " + "AND r.tiStato != :tiStato");
+                        + "AND r.tsFine IS NOT NULL " + "AND r.tiStato NOT IN (:tiStato)");
         query.setParameter("idEnteConvenz", idEnteConvenz);
-        query.setParameter("tiStato", AroRichiestaTiStato.ANNULLATO);
+        query.setParameter("tiStato", Arrays.asList(AroRichiestaTiStato.ANNULLATO, AroRichiestaTiStato.RESTITUITO));
+        Long count = (Long) query.getSingleResult();
+        return count > 0L;
+    }
+
+    /**
+     * Verifica l'esistenza di una richiesta di restituzione archivio per l'ente convenzionato
+     * <code>idEnteConvenz</code>
+     *
+     * @param idEnteConvenz
+     *            id ente convenzionato
+     *
+     * @return true se esiste
+     */
+    public boolean isRichRestArchExistingRestituito(BigDecimal idEnteConvenz) {
+        Query query = getEntityManager().createQuery(
+                "SELECT COUNT(r) FROM AroRichiestaRa r " + "WHERE r.orgStrut.idEnteConvenz = :idEnteConvenz "
+                        + "AND r.tsFine IS NOT NULL " + "AND r.tiStato = 'RESTITUITO' AND r.flSvuotaFtp = '1' ");
+        query.setParameter("idEnteConvenz", idEnteConvenz);
         Long count = (Long) query.getSingleResult();
         return count > 0L;
     }
@@ -57,7 +94,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
      *            id ente convenzionato
      * @param tiStato
      *            lista degli stati della richiesta di restituzione archivio
-     * 
+     *
      * @return true se esiste
      */
     public boolean isRichRestArchByStatoExisting(BigDecimal idEnteConvenz, List<AroRichiestaTiStato> tiStato) {
@@ -78,8 +115,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         query.setParameter("tiStato", AroRichiestaTiStato.ANNULLATO);
         query.setParameter("systemDate", systemDate);
         query.setParameter("idEnteConvenz", idEnteConvenz);
-        List<Long> richieste = query.getResultList();
-        return richieste;
+        return query.getResultList();
     }
 
     /**
@@ -88,24 +124,25 @@ public class RestituzioneArchivioHelper extends GenericHelper {
      *
      * @param struttura
      *            entity OrgStrut
-     * 
+     *
      * @return lista oggetti di tipo {@link UdSerFascObj}
      */
     public List<UdSerFascObj> retrieveUdSerFascToProcess(OrgStrut struttura) {
         /*
-         * select * from ARO_V_SEL_UD_SER_FASC_BY_ENTE v where id_rootstrut = 3323 order by id_strut, id_unita_doc;
+         * select * from ARO_V_SEL_UD_SER_FASC_BY_ENTE v where id_rootstrut = 3323 order by id_strut, id_unita_doc
          */
-        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT u.idUnitaDoc, u.idSerie, u.idFascicolo, u.tiEle "
-                + "FROM AroVSelUdSerFascByEnte u " + "WHERE u.idRootstrut = :idRootstrut ");
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT DISTINCT u.id.idUnitaDoc, u.id.idSerie, u.id.idFascicolo, u.tiEle "
+                        + "FROM AroVSelUdSerFascByEnte u " + "WHERE u.id.idRootstrut = :idRootstrut ");
 
         // TIP: fdilorenzo, DEFINISCE L'ORDINAMENTO CON CUI DEVONO ESSERE ELABORATI GLI OGGETTI (A SUPPORTO DELLA LOGICA
         // DEFINITA IN ANALISI)
         queryStr.append("ORDER BY u.tiEle");
 
         Query q = getEntityManager().createQuery(queryStr.toString());
-        q.setParameter("idRootstrut", struttura.getIdStrut());
+        q.setParameter("idRootstrut", BigDecimal.valueOf(struttura.getIdStrut()));
 
-        List<Object[]> udSerFascObjectList = (List<Object[]>) q.getResultList();
+        List<Object[]> udSerFascObjectList = q.getResultList();
         List<UdSerFascObj> udSerFascObjSet = new ArrayList<>();
 
         for (Object[] udSerFascObject : udSerFascObjectList) {
@@ -126,12 +163,13 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         String clause = " WHERE ";
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicRichRa ("
                 + "r.idRichiestaRa, r.nmEnteConvenz, r.nmEnteStrut, r.idEnte, r.idStrut, r.idEnteConvenz, r.totali, r.estratti, r.errori, "
-                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.priorita)" + " FROM AroVRicRichRa r ");
+                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.priorita, r.tsInizio)"
+                + " FROM AroVRicRichRa r ");
         if (idEnteConvenzList != null && !idEnteConvenzList.isEmpty()) {
             if (idEnteConvenzList.size() == 1) {
                 queryStr.append(clause).append("r.idEnteConvenz = :idEnteConvenz ");
             } else {
-                queryStr.append(clause).append("r.idEnteConvenz IN :idEnteConvenz ");
+                queryStr.append(clause).append("r.idEnteConvenz IN (:idEnteConvenz) ");
             }
             clause = " AND ";
         }
@@ -139,17 +177,17 @@ public class RestituzioneArchivioHelper extends GenericHelper {
             if (filtri.getTi_stato_rich_rest_arch_cor().size() == 1) {
                 queryStr.append(clause).append("r.tiStato = :tiStatoRichRestArchCor ");
             } else {
-                queryStr.append(clause).append("r.tiStato IN :tiStatoRichRestArchCor ");
+                queryStr.append(clause).append("r.tiStato IN (:tiStatoRichRestArchCor) ");
             }
         }
-        queryStr.append("ORDER BY r.idRichiestaRa, r.maxDtEstrazione");
+        queryStr.append("ORDER BY r.tsInizio DESC");
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idEnteConvenzList != null && !idEnteConvenzList.isEmpty()) {
             if (idEnteConvenzList.size() == 1) {
-                query.setParameter("idEnteConvenz", idEnteConvenzList.get(0));
+                query.setParameter("idEnteConvenz", BigDecimal.valueOf(idEnteConvenzList.get(0)));
             } else {
-                query.setParameter("idEnteConvenz", idEnteConvenzList);
+                query.setParameter("idEnteConvenz", bigDecimalFromLong(idEnteConvenzList));
             }
         }
         if (!filtri.getTi_stato_rich_rest_arch_cor().isEmpty()) {
@@ -160,7 +198,24 @@ public class RestituzioneArchivioHelper extends GenericHelper {
             }
         }
 
-        return (List<AroVRicRichRa>) query.getResultList();
+        return query.getResultList();
+    }
+
+    /**
+     * Recupero l'elenco delle strutture associate alla richiesta <code>idRichiestaRa</code>
+     * 
+     * @param idRichiestaRa
+     *            l'identificativo della richiesta
+     * 
+     * @return lista oggetti di tipo {@link AroVRicRichRa}
+     */
+    public List<AroVRicRichRa> retrieveAroVRicRichRa(BigDecimal idRichiestaRa) {
+        Query query = getEntityManager().createQuery("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicRichRa ("
+                + "r.idRichiestaRa, r.nmEnteConvenz, r.nmEnteStrut, r.idEnte, r.idStrut, r.idEnteConvenz, r.totali, r.estratti, r.errori, "
+                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.priorita, r.tsInizio)"
+                + " FROM AroVRicRichRa r " + "WHERE r.idRichiestaRa = :idRichiestaRa " + "ORDER BY r.nmEnteStrut ");
+        query.setParameter("idRichiestaRa", idRichiestaRa);
+        return query.getResultList();
     }
 
     public List<Long> retrieveOrgEnteSiamList(RicercaRichRestArchBean filtri) {
@@ -179,23 +234,19 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         }
         if (filtri.getId_ambiente() != null) {
             queryStr.append(andWord).append("ambiente.idAmbiente = :idAmbiente ");
-            andWord = "AND ";
         }
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (filtri.getId_strut() != null) {
-            query.setParameter("idStrut", filtri.getId_strut());
+            query.setParameter("idStrut", longFromBigDecimal(filtri.getId_strut()));
         }
         if (filtri.getId_ente() != null) {
-            query.setParameter("idEnte", filtri.getId_ente());
+            query.setParameter("idEnte", longFromBigDecimal(filtri.getId_ente()));
         }
         if (filtri.getId_ambiente() != null) {
-            query.setParameter("idAmbiente", filtri.getId_ambiente());
+            query.setParameter("idAmbiente", longFromBigDecimal(filtri.getId_ambiente()));
         }
-
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<Long> listaEnteConvenz = query.getResultList();
-        return listaEnteConvenz;
+        return query.getResultList();
     }
 
     public List<AroVLisItemRa> getAroVLisItemRa(BigDecimal idRichRestArch, BigDecimal idStrut) {
@@ -205,8 +256,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
                 + " FROM AroVLisItemRa a WHERE a.idRichiestaRa = :idRichRestArch AND a.idStrut = :idStrut ORDER BY a.anno");
         query.setParameter("idRichRestArch", idRichRestArch);
         query.setParameter("idStrut", idStrut);
-        List<AroVLisItemRa> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     public Long countAroItemRichRestArch(BigDecimal idRichRestArch, TiStatoAroAipRa... tiStato) {
@@ -217,11 +267,11 @@ public class RestituzioneArchivioHelper extends GenericHelper {
             if (statiList.size() == 1) {
                 queryStr.append("AND i.tiStato = :tiStatoItem ");
             } else {
-                queryStr.append("AND i.tiStato IN :tiStatoItem ");
+                queryStr.append("AND i.tiStato IN (:tiStatoItem) ");
             }
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idRichRestArch", idRichRestArch);
+        query.setParameter("idRichRestArch", longFromBigDecimal(idRichRestArch));
         if (!statiList.isEmpty()) {
             if (statiList.size() == 1) {
                 query.setParameter("tiStatoItem", statiList.get(0));
@@ -229,8 +279,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
                 query.setParameter("tiStatoItem", statiList);
             }
         }
-        Long count = (Long) query.getSingleResult();
-        return count;
+        return (Long) query.getSingleResult();
     }
     // </editor-fold>
 
@@ -239,7 +288,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
      *
      * @param idRichRestArch
      *            l'id della richiesta
-     * 
+     *
      * @return lista oggetti di tipo {@link AroAipRestituzioneArchivio}
      */
     public List<AroAipRestituzioneArchivio> retrieveAroErrItemRestArch(long idRichRestArch) {
@@ -252,8 +301,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         q.setParameter("idRichRestArch", idRichRestArch);
         q.setParameter("tiErrItemRestArch", TiStatoAroAipRa.ERRORE);
 
-        List<AroAipRestituzioneArchivio> list = q.getResultList();
-        return list;
+        return q.getResultList();
     }
 
     /**
@@ -261,14 +309,22 @@ public class RestituzioneArchivioHelper extends GenericHelper {
      *
      * @param idRichRestArch
      *            l'id della richiesta
-     * 
+     *
      * @return l'id utente
      */
     public long getIdStrutFirstStateRich(BigDecimal idRichRestArch) {
         Query q = getEntityManager().createQuery("SELECT richRestArch FROM AroRichiestaRa richRestArch "
                 + "WHERE richRestArch.idRichiestaRa = :idRichRestArch ");
         q.setParameter("idRichRestArch", idRichRestArch.longValue());
-        List<AroRichiestaRa> list = (List<AroRichiestaRa>) q.getResultList();
+        List<AroRichiestaRa> list = q.getResultList();
         return list.get(0).getOrgStrut().getIdStrut();
+    }
+
+    public List<AroVChkRaUd> retrieveAroVChkRaUdList(BigDecimal idEnteConvenz) {
+        Query q = getEntityManager().createQuery(
+                "SELECT vista FROM AroVChkRaUd vista " + "WHERE vista.aroVChkRaUdId.idEnteConvenz = :idEnteConvenz ");
+        q.setParameter("idEnteConvenz", idEnteConvenz);
+        List<AroVChkRaUd> list = q.getResultList();
+        return list;
     }
 }

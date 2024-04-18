@@ -1,25 +1,29 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.fascicoli.helper;
 
-import it.eng.parer.web.helper.*;
-import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
-import it.eng.parer.entity.ElvElencoVersFasc;
-import it.eng.parer.entity.ElvElencoVersFasc_;
-import it.eng.parer.entity.ElvStatoElencoVersFasc;
-import it.eng.parer.entity.ElvStatoElencoVersFasc_;
-import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
-import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.slite.gen.form.ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli;
-import it.eng.parer.viewEntity.ElvVRicElencoFascByFas;
-import it.eng.parer.viewEntity.ElvVRicElencoFascByStato;
-import it.eng.parer.viewEntity.ElvVRicElencoFasc;
-import it.eng.parer.web.util.StringPadding;
-import it.eng.spagoCore.error.EMFError;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -30,64 +34,92 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
+import it.eng.parer.entity.ElvElencoVersFasc;
+import it.eng.parer.entity.ElvElencoVersFasc_;
+import it.eng.parer.entity.ElvStatoElencoVersFasc;
+import it.eng.parer.entity.ElvStatoElencoVersFasc_;
+import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
+import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.slite.gen.form.ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli;
+import it.eng.parer.viewEntity.ElvVRicElencoFasc;
+import it.eng.parer.viewEntity.ElvVRicElencoFascByFas;
+import it.eng.parer.viewEntity.ElvVRicElencoFascByStato;
+import it.eng.parer.web.util.StringPadding;
+import it.eng.spagoCore.error.EMFError;
 
 /**
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless
 @LocalBean
 public class ElenchiVersFascicoliHelper extends GenericHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(VolumiHelper.class.getName());
+    private static final Logger log = LoggerFactory.getLogger(ElenchiVersFascicoliHelper.class.getName());
 
     public List<ElvVRicElencoFasc> retrieveElvVRicElencoFascList(long idUserIam,
             FiltriElenchiVersFascicoli filtriElenchiVersFascicoli) throws EMFError {
+        return retrieveElvVRicElencoFascList(idUserIam, new Filtri(filtriElenchiVersFascicoli));
+    }
+
+    public List<ElvVRicElencoFasc> retrieveElvVRicElencoFascList(long idUserIam, Filtri filtri) {
         Query query = createElvVRicElencoFascQuery("SELECT DISTINCT new it.eng.parer.viewEntity.ElvVRicElencoFasc "
-                + "(u.idElencoVersFasc, u.tiStato, u.aaFascicolo, u.niFascVersElenco, u.dlMotivoChius, "
+                + "(u.id.idElencoVersFasc, u.tiStato, u.aaFascicolo, u.niFascVersElenco, u.dlMotivoChius, "
                 + "u.tsCreazioneElenco, u.dtChiusura, u.dtFirma, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
                 + "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo) "
-                + "FROM ElvVRicElencoFasc u WHERE u.idUserIam = :idUserIam ", filtriElenchiVersFascicoli);
-        setElvVRicElencoCommonParameters(filtriElenchiVersFascicoli, query, idUserIam);
+                + "FROM ElvVRicElencoFasc u WHERE u.idUserIam = :idUserIam ", filtri);
+        setElvVRicElencoCommonParameters(query, idUserIam, filtri);
         List<ElvVRicElencoFasc> listaElenchiVersFascicoli = query.getResultList();
         return listaElenchiVersFascicoli;
     }
 
     public List<ElvVRicElencoFascByStato> retrieveElvVRicElencoFascByStatoList(long idUserIam,
             FiltriElenchiVersFascicoli filtriElenchiVersFascicoli) throws EMFError {
+        return retrieveElvVRicElencoFascByStatoList(idUserIam, new Filtri(filtriElenchiVersFascicoli));
+    }
+
+    public List<ElvVRicElencoFascByStato> retrieveElvVRicElencoFascByStatoList(long idUserIam, Filtri filtri) {
         Query query = createElvVRicElencoFascQuery(
                 "SELECT DISTINCT new it.eng.parer.viewEntity.ElvVRicElencoFascByStato "
-                        + "(u.idElencoVersFasc, u.tiStato, u.aaFascicolo, u.niFascVersElenco, u.dlMotivoChius, "
+                        + "(u.id.idElencoVersFasc, u.tiStato, u.aaFascicolo, u.niFascVersElenco, u.dlMotivoChius, "
                         + "u.tsCreazioneElenco, u.dtChiusura, u.dtFirma, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
                         + "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo, u.flAnnull) "
                         + "FROM ElvVRicElencoFascByStato u WHERE u.idUserIam = :idUserIam ",
-                filtriElenchiVersFascicoli);
-        setElvVRicElencoCommonParameters(filtriElenchiVersFascicoli, query, idUserIam);
-        List<ElvVRicElencoFascByStato> listaElenchiVersFascicoli = query.getResultList();
-        return listaElenchiVersFascicoli;
+                filtri);
+        setElvVRicElencoCommonParameters(query, idUserIam, filtri);
+        return query.getResultList();
     }
 
     public List<ElvVRicElencoFascByFas> retrieveElvVRicElencoFascByFasList(long idUserIam,
             FiltriElenchiVersFascicoli filtriElenchiVersFascicoli) throws EMFError {
+        return retrieveElvVRicElencoFascByFasList(idUserIam, new Filtri(filtriElenchiVersFascicoli));
+    }
+
+    public List<ElvVRicElencoFascByFas> retrieveElvVRicElencoFascByFasList(long idUserIam, Filtri filtri) {
         Query query = createElvVRicElencoFascQuery("SELECT DISTINCT new it.eng.parer.viewEntity.ElvVRicElencoFascByFas "
-                + "(u.idElencoVersFasc, u.tiStato, u.aaFascicoloElenco, u.niFascVersElenco, u.dlMotivoChius, "
+                + "(u.id.idElencoVersFasc, u.tiStato, u.aaFascicoloElenco, u.niFascVersElenco, u.dlMotivoChius, "
                 + "u.tsCreazioneElenco, u.dtChiusura, u.dtFirma, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
                 + "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo) "
-                + "FROM ElvVRicElencoFascByFas u WHERE u.idUserIam = :idUserIam ", filtriElenchiVersFascicoli);
+                + "FROM ElvVRicElencoFascByFas u WHERE u.idUserIam = :idUserIam ", filtri);
 
-        setElvVRicElencoCommonParameters(filtriElenchiVersFascicoli, query, idUserIam);
+        setElvVRicElencoCommonParameters(query, idUserIam, filtri);
 
-        BigDecimal idTipoFascicolo = filtriElenchiVersFascicoli.getId_tipo_fascicolo().parse();
-        BigDecimal aaFascicolo = filtriElenchiVersFascicoli.getAa_fascicolo().parse();
-        String cdKeyFascicolo = filtriElenchiVersFascicoli.getCd_key_fascicolo().parse();
-        BigDecimal aaFascicoloDa = filtriElenchiVersFascicoli.getAa_fascicolo_da().parse();
-        BigDecimal aaFascicoloA = filtriElenchiVersFascicoli.getAa_fascicolo_a().parse();
-        String cdKeyFascicoloDa = filtriElenchiVersFascicoli.getCd_key_fascicolo_da().parse();
-        String cdKeyFascicoloA = filtriElenchiVersFascicoli.getCd_key_fascicolo_a().parse();
-        String cdCompositoVoceTitol = filtriElenchiVersFascicoli.getCd_composito_voce_titol().parse();
+        BigDecimal idTipoFascicolo = filtri.getIdTipoFascicolo();
+        BigDecimal aaFascicolo = filtri.getAaFascicolo();
+        String cdKeyFascicolo = filtri.getCdKeyFascicolo();
+        BigDecimal aaFascicoloDa = filtri.getAaFascicoloDa();
+        BigDecimal aaFascicoloA = filtri.getAaFascicoloA();
+        String cdKeyFascicoloDa = filtri.getCdKeyFascicoloDa();
+        String cdKeyFascicoloA = filtri.getCdKeyFascicoloA();
+        String cdCompositoVoceTitol = filtri.getCdCompositoVoceTitol();
         if (idTipoFascicolo != null) {
             query.setParameter("idTipoFascicolo", idTipoFascicolo);
         }
@@ -112,25 +144,17 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
         }
 
         /* ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA DI "ELENCHI DI VERSAMENTO FASCICOLI" */
-        List<ElvVRicElencoFascByFas> listaElenchiVersFascicoli = query.getResultList();
-        return listaElenchiVersFascicoli;
+        return query.getResultList();
     }
 
-    private void setElvVRicElencoCommonParameters(FiltriElenchiVersFascicoli filtriElenchiVersFascicoli, Query query,
-            long idUserIam) throws EMFError {
+    private void setElvVRicElencoCommonParameters(Query query, long idUserIam, Filtri filtri) {
         /* Recupero i campi da assegnare come parametri alla query */
-        BigDecimal idAmbiente = filtriElenchiVersFascicoli.getId_ambiente().parse();
-        BigDecimal idEnte = filtriElenchiVersFascicoli.getId_ente().parse();
-        BigDecimal idStrut = filtriElenchiVersFascicoli.getId_strut().parse();
-        BigDecimal idElencoVersFasc = filtriElenchiVersFascicoli.getId_elenco_vers_fasc().parse();
-        BigDecimal idCriterioRaggrFasc = filtriElenchiVersFascicoli.getId_criterio_raggr_fasc().parse();
-        String tiStato = filtriElenchiVersFascicoli.getTi_stato().parse();
         Date tsCreazioneElencoDa = null;
         Date tsCreazioneElencoA = null;
-        if (filtriElenchiVersFascicoli.getTs_creazione_elenco_da().parse() != null) {
-            tsCreazioneElencoDa = new Date(filtriElenchiVersFascicoli.getTs_creazione_elenco_da().parse().getTime());
-            if (filtriElenchiVersFascicoli.getTs_creazione_elenco_a().parse() != null) {
-                tsCreazioneElencoA = new Date(filtriElenchiVersFascicoli.getTs_creazione_elenco_a().parse().getTime());
+        if (filtri.getCreazioneElencoDa() != null) {
+            tsCreazioneElencoDa = new Date(filtri.getCreazioneElencoDa().getTime());
+            if (filtri.getCreazioneElencoA() != null) {
+                tsCreazioneElencoA = new Date(filtri.getCreazioneElencoA().getTime());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(tsCreazioneElencoA);
                 calendar.add(Calendar.DATE, 1);
@@ -144,38 +168,36 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
             }
         }
 
-        String ntElencoChiuso = filtriElenchiVersFascicoli.getNt_elenco_chiuso().parse();
-        String ntIndiceElenco = filtriElenchiVersFascicoli.getNt_indice_elenco().parse();
-        String flElencoStandard = filtriElenchiVersFascicoli.getFl_elenco_standard().parse();
-
         /* Passaggio dei valori dei parametri di ricerca */
-        query.setParameter("idUserIam", idUserIam);
+        query.setParameter("idUserIam", bigDecimalFromLong(idUserIam));
         query.setParameter("statoChiuso", TiStatoElencoFasc.CHIUSO);
         /* TIP: fdilorenzo, WORKAROUND PER GLI ELENCHI INDICI AIP FASCICOLI */
-        // query.setParameter("statoIdxAipCreato", TiStatoElencoFasc.ELENCO_INDICI_AIP_CREATO);
+        BigDecimal idAmbiente = filtri.getIdAmbiente();
 
         if (idAmbiente != null) {
             query.setParameter("idAmbiente", idAmbiente);
         }
 
-        if (idEnte != null) {
+        BigDecimal idEnte = filtri.getIdEnte();
+        if (filtri.getIdEnte() != null) {
             query.setParameter("idEnte", idEnte);
         }
 
-        if (idStrut != null) {
+        BigDecimal idStrut = filtri.getIdStrut();
+        if (filtri.getIdStrut() != null) {
             query.setParameter("idStrut", idStrut);
         }
 
-        if (idElencoVersFasc != null) {
-            query.setParameter("idElencoVersFasc", idElencoVersFasc);
+        if (filtri.getIdElencoVersFasc() != null) {
+            query.setParameter("idElencoVersFasc", filtri.getIdElencoVersFasc());
         }
 
-        if (idCriterioRaggrFasc != null) {
-            query.setParameter("idCriterioRaggrFasc", idCriterioRaggrFasc);
+        if (filtri.getIdCriterioRaggrFasc() != null) {
+            query.setParameter("idCriterioRaggrFasc", filtri.getIdCriterioRaggrFasc());
         }
 
-        if (tiStato != null) {
-            query.setParameter("tiStato", tiStato);
+        if (filtri.getTiStato() != null) {
+            query.setParameter("tiStato", filtri.getTiStato());
         }
 
         if (tsCreazioneElencoDa != null && tsCreazioneElencoA != null) {
@@ -183,22 +205,21 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
             query.setParameter("tsCreazioneElencoA", tsCreazioneElencoA, TemporalType.TIMESTAMP);
         }
 
-        if (ntElencoChiuso != null) {
-            query.setParameter("ntElencoChiuso", "%" + ntElencoChiuso.toUpperCase() + "%");
+        if (filtri.getNtElencoChiuso() != null) {
+            query.setParameter("ntElencoChiuso", "%" + filtri.getNtElencoChiuso().toUpperCase() + "%");
         }
 
-        if (ntIndiceElenco != null) {
-            query.setParameter("ntIndiceElenco", "%" + ntIndiceElenco.toUpperCase() + "%");
+        if (filtri.getNtIndiceElenco() != null) {
+            query.setParameter("ntIndiceElenco", "%" + filtri.getNtIndiceElenco().toUpperCase() + "%");
         }
 
-        if (StringUtils.isNotBlank(flElencoStandard)) {
-            query.setParameter("flElencoStandard", flElencoStandard);
+        if (StringUtils.isNotBlank(filtri.getFlElencoStandard())) {
+            query.setParameter("flElencoStandard", filtri.getFlElencoStandard());
         }
     }
 
     // TODO: fdilorenzo, refactory per criteria api e metamodels
-    private Query createElvVRicElencoFascQuery(String selectQuery,
-            FiltriElenchiVersFascicoli filtriElenchiVersFascicoli) throws EMFError {
+    private Query createElvVRicElencoFascQuery(String selectQuery, Filtri filtri) {
         String whereWord = "AND ";
         StringBuilder queryStr = new StringBuilder(selectQuery);
 
@@ -208,14 +229,14 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
          * dell'elenco di versamento fascicolo, di più stati CHIUSO, in modo da considerare solo l'ultimo registrato
          */
         queryStr.append(whereWord).append(
-                "((u.dtChiusura IS NULL) OR (u.dtChiusura = (SELECT s.tsStato FROM ElvStatoElencoVersFasc s WHERE s.idStatoElencoVersFasc = u.idStatoElencoVersFascCor AND s.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc)) ");
+                "((u.dtChiusura IS NULL) OR (u.dtChiusura = (SELECT s.tsStato FROM ElvStatoElencoVersFasc s WHERE s.idStatoElencoVersFasc = u.idStatoElencoVersFascCor AND s.elvElencoVersFasc.idElencoVersFasc = u.id.idElencoVersFasc)) ");
         /*
          * Inserimento nella query del filtro per gestire l'eventuale presenza, a seguito di più stati CHIUSO, di
          * molteplici stati FIRMATO, in modo da considerare solo lo stato di chiusura registrato prima della firma
          * dell'elenco di versamento fascicolo
          */
         queryStr.append(
-                "OR ((u.dtFirma IS NOT NULL) AND (u.dtChiusura = (SELECT MAX(s1.tsStato) FROM ElvStatoElencoVersFasc s1 WHERE s1.tiStato = :statoChiuso AND s1.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc)))) ");
+                "OR ((u.dtFirma IS NOT NULL) AND (u.dtChiusura = (SELECT MAX(s1.tsStato) FROM ElvStatoElencoVersFasc s1 WHERE s1.tiStato = :statoChiuso AND s1.elvElencoVersFasc.idElencoVersFasc = u.id.idElencoVersFasc)))) ");
 
         /* TIP: fdilorenzo, WORKAROUND PER GLI ELENCHI INDICI AIP FASCICOLI */
         /*
@@ -227,9 +248,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
          * dell'elenco indice AIP fascicolo, di più stati ELENCO_INDICI_AIP_CREATO, in modo da considerare solo l'ultimo
          * registrato
          */
-        // queryStr.append(whereWord).append("((u.dtCreazioneElencoIxAip IS NULL) OR (u.dtCreazioneElencoIxAip = (SELECT
-        // sIdxAip.tsStato FROM ElvStatoElencoVersFasc sIdxAip WHERE sIdxAip.idStatoElencoVersFasc =
-        // u.idStatoElencoVersFascCor AND sIdxAip.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc)) ");
+
         /*
          * Inserimento nella query del filtro per gestire l'eventuale presenza, a seguito di più stati
          * ELENCO_INDICI_AIP_CREATO, di molteplici stati COMPLETATO, in modo da considerare solo lo stato di creazione
@@ -237,45 +256,42 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
          */
         // queryStr.append("OR ((u.dtFirma IS NOT NULL) AND (u.dtCreazioneElencoIxAip = (SELECT MAX(sIdxAip1.tsStato)
         // FROM ElvStatoElencoVersFasc sIdxAip1 WHERE sIdxAip1.tiStato = :statoIdxAipCreato AND
-        // sIdxAip1.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc)))) ");
 
         /* Inserimento nella query del filtro ID_AMBIENTE */
-        BigDecimal idAmbiente = filtriElenchiVersFascicoli.getId_ambiente().parse();
+        BigDecimal idAmbiente = filtri.getIdAmbiente();
         if (idAmbiente != null) {
             queryStr.append(whereWord).append("u.idAmbiente = :idAmbiente ");
         }
 
         /* Inserimento nella query del filtro ID_ENTE */
-        BigDecimal idEnte = filtriElenchiVersFascicoli.getId_ente().parse();
+        BigDecimal idEnte = filtri.getIdEnte();
         if (idEnte != null) {
             queryStr.append(whereWord).append("u.idEnte = :idEnte ");
         }
 
         /* Inserimento nella query del filtro ID_STRUT */
-        BigDecimal idStrut = filtriElenchiVersFascicoli.getId_strut().parse();
+        BigDecimal idStrut = filtri.getIdStrut();
         if (idStrut != null) {
             queryStr.append(whereWord).append("u.idStrut = :idStrut ");
         }
 
         /* Inserimento nella query del filtro ID ELENCO VERS FASC */
-        BigDecimal idElencoVersFasc = filtriElenchiVersFascicoli.getId_elenco_vers_fasc().parse();
-        if (idElencoVersFasc != null) {
-            queryStr.append(whereWord).append("u.idElencoVersFasc = :idElencoVersFasc ");
+        if (filtri.getIdElencoVersFasc() != null) {
+            queryStr.append(whereWord).append("u.id.idElencoVersFasc = :idElencoVersFasc ");
         }
 
         /* Inserimento nella query del filtro TI_STATO */
-        String tiStato = filtriElenchiVersFascicoli.getTi_stato().parse();
-        if (tiStato != null) {
+        if (filtri.getTiStato() != null) {
             queryStr.append(whereWord).append("u.tiStato = :tiStato ");
         }
 
         /* Inserimento nella query del filtro DATA CREAZIONE DA - A */
         Date tsCreazioneElencoDa = null;
         Date tsCreazioneElencoA = null;
-        if (filtriElenchiVersFascicoli.getTs_creazione_elenco_da().parse() != null) {
-            tsCreazioneElencoDa = new Date(filtriElenchiVersFascicoli.getTs_creazione_elenco_da().parse().getTime());
-            if (filtriElenchiVersFascicoli.getTs_creazione_elenco_a().parse() != null) {
-                tsCreazioneElencoA = new Date(filtriElenchiVersFascicoli.getTs_creazione_elenco_a().parse().getTime());
+        if (filtri.getCreazioneElencoDa() != null) {
+            tsCreazioneElencoDa = new Date(filtri.getCreazioneElencoDa().getTime());
+            if (filtri.getCreazioneElencoA() != null) {
+                tsCreazioneElencoA = new Date(filtri.getCreazioneElencoA().getTime());
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(tsCreazioneElencoA);
                 calendar.add(Calendar.DATE, 1);
@@ -295,70 +311,55 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
         }
 
         /* Inserimento nella query del filtro NT_ELENCO_CHIUSO */
-        String ntElencoChiuso = filtriElenchiVersFascicoli.getNt_elenco_chiuso().parse();
-        if (ntElencoChiuso != null) {
+        if (filtri.getNtElencoChiuso() != null) {
             queryStr.append(whereWord).append("UPPER(u.ntElencoChiuso) LIKE :ntElencoChiuso ");
         }
 
         /* Inserimento nella query del filtro NT_INDICE_ELENCO */
-        String ntIndiceElenco = filtriElenchiVersFascicoli.getNt_indice_elenco().parse();
-        if (ntIndiceElenco != null) {
+        if (filtri.getNtIndiceElenco() != null) {
             queryStr.append(whereWord).append("UPPER(u.ntIndiceElenco) LIKE :ntIndiceElenco ");
         }
 
-        BigDecimal idTipoFascicolo = filtriElenchiVersFascicoli.getId_tipo_fascicolo().parse();
-        if (idTipoFascicolo != null) {
+        if (filtri.getIdTipoFascicolo() != null) {
             queryStr.append(whereWord).append("u.idTipoFascicolo = :idTipoFascicolo ");
         }
 
         /* Inserimento nella query del filtro CHIAVE FASCICOLO */
-        BigDecimal aaFascicolo = filtriElenchiVersFascicoli.getAa_fascicolo().parse();
-        String cdKeyFascicolo = filtriElenchiVersFascicoli.getCd_key_fascicolo().parse();
-
-        if (aaFascicolo != null) {
+        if (filtri.getAaFascicolo() != null) {
             queryStr.append(whereWord).append("u.aaFascicolo = :aaFascicolo ");
         }
 
-        if (cdKeyFascicolo != null) {
+        if (filtri.getCdKeyFascicolo() != null) {
             queryStr.append(whereWord).append("u.cdKeyFascicolo = :cdKeyFascicolo ");
         }
 
         /* Inserimento nella query del filtro CHIAVE FASCICOLO per range */
-        BigDecimal aaFascicoloDa = filtriElenchiVersFascicoli.getAa_fascicolo_da().parse();
-        BigDecimal aaFascicoloA = filtriElenchiVersFascicoli.getAa_fascicolo_a().parse();
-        String cdKeyFascicoloDa = filtriElenchiVersFascicoli.getCd_key_fascicolo_da().parse();
-        String cdKeyFascicoloA = filtriElenchiVersFascicoli.getCd_key_fascicolo_a().parse();
-
-        if (aaFascicoloDa != null && aaFascicoloA != null) {
+        if (filtri.getAaFascicoloDa() != null && filtri.getAaFascicoloA() != null) {
             queryStr.append(whereWord).append("u.aaFascicolo BETWEEN :aaFascicoloDa AND :aaFascicoloA ");
         }
 
-        if (cdKeyFascicoloDa != null && cdKeyFascicoloA != null) {
+        if (filtri.getCdKeyFascicoloDa() != null && filtri.getCdKeyFascicoloA() != null) {
             queryStr.append(whereWord)
-                    .append("FUNC('lpad', u.cdKeyFascicolo, 12, '0') BETWEEN :cdKeyFascicoloDa AND :cdKeyFascicoloA ");
+                    .append("LPAD( u.cdKeyFascicolo, 12, '0') BETWEEN :cdKeyFascicoloDa AND :cdKeyFascicoloA ");
         }
 
-        String cdCompositoVoceTitol = filtriElenchiVersFascicoli.getCd_composito_voce_titol().parse();
-        if (cdCompositoVoceTitol != null) {
+        if (filtri.getCdCompositoVoceTitol() != null) {
             queryStr.append(whereWord).append("u.decVoceTitol.cdCompositoVoceTitol = :cdCompositoVoceTitol ");
         }
 
         /* Inserimento nella query del filtro ID_CRITERIO_RAGGR_FASC */
-        BigDecimal idCriterioRaggrFasc = filtriElenchiVersFascicoli.getId_criterio_raggr_fasc().parse();
-        if (idCriterioRaggrFasc != null) {
+        if (filtri.getIdCriterioRaggrFasc() != null) {
             queryStr.append(whereWord).append("u.idCriterioRaggrFasc = :idCriterioRaggrFasc ");
         }
 
-        String flElencoStandard = filtriElenchiVersFascicoli.getFl_elenco_standard().parse();
-        if (StringUtils.isNotBlank(flElencoStandard)) {
+        if (StringUtils.isNotBlank(filtri.getFlElencoStandard())) {
             queryStr.append(whereWord).append("u.flElencoStandard = :flElencoStandard ");
         }
 
         /* Ordina per idElencoVersFasc decrescente */
-        queryStr.append(" ORDER BY u.idElencoVersFasc DESC");
+        queryStr.append(" ORDER BY u.id.idElencoVersFasc DESC");
         /* CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER */
-        Query query = getEntityManager().createQuery(queryStr.toString());
-        return query;
+        return getEntityManager().createQuery(queryStr.toString());
     }
 
     // TODO: fdilorenzo, refactory per criteria api e metamodels
@@ -375,7 +376,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
          * registrato
          */
         queryStr = queryStr.concat(
-                "AND (u.dtChiusura = (SELECT MAX(s.tsStato) FROM ElvStatoElencoVersFasc s WHERE s.tiStato = :statoChiuso AND s.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc)) ");
+                "AND (u.dtChiusura = (SELECT MAX(s.tsStato) FROM ElvStatoElencoVersFasc s WHERE s.tiStato = :statoChiuso AND s.elvElencoVersFasc.idElencoVersFasc = u.id.idElencoVersFasc)) ");
 
         /* TIP: fdilorenzo, WORKAROUND PER GLI ELENCHI INDICI AIP FASCICOLI */
         /*
@@ -385,7 +386,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
          */
         if (tiStato.equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO)) {
             queryStr = queryStr.concat(
-                    "AND (u.dtCreazioneElencoIxAip = (SELECT MAX(sIdxAip.tsStato) FROM ElvStatoElencoVersFasc sIdxAip WHERE sIdxAip.tiStato = :statoIdxAipCreato AND sIdxAip.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc)) ");
+                    "AND (u.dtCreazioneElencoIxAip = (SELECT MAX(sIdxAip.tsStato) FROM ElvStatoElencoVersFasc sIdxAip WHERE sIdxAip.tiStato = :statoIdxAipCreato AND sIdxAip.elvElencoVersFasc.idElencoVersFasc = u.id.idElencoVersFasc)) ");
         }
 
         if (idAmbiente != null) {
@@ -422,7 +423,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("tiStato", tiStato.name());
-        query.setParameter("idUserIam", idUserIam);
+        query.setParameter("idUserIam", bigDecimalFromLong(idUserIam));
         query.setParameter("statoChiuso", TiStatoElencoFasc.CHIUSO);
         if (tiStato.equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO)) {
             query.setParameter("statoIdxAipCreato", TiStatoElencoFasc.ELENCO_INDICI_AIP_CREATO);
@@ -443,8 +444,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
             query.setParameter("datada", data_da, TemporalType.TIMESTAMP);
             query.setParameter("dataa", data_a, TemporalType.TIMESTAMP);
         }
-        List<ElvVRicElencoFascByStato> listaElenchiVersFascicoli = query.getResultList();
-        return listaElenchiVersFascicoli;
+        return query.getResultList();
     }
 
     public List<ElvVRicElencoFascByStato> getListaElenchiVersFascicoliDaFirmare(List<BigDecimal> idElencoVersFascList,
@@ -452,7 +452,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
         List<ElvVRicElencoFascByStato> listaElenchiVersFascicoli = null;
         if (idElencoVersFascList != null && !idElencoVersFascList.isEmpty() && idUserIam != null) {
             String queryStr = "SELECT u FROM ElvVRicElencoFascByStato u "
-                    + "WHERE u.idElencoVersFasc IN :idElencoVersFascList " + "AND u.idUserIam = :idUserIam";
+                    + "WHERE u.id.idElencoVersFasc IN (:idElencoVersFascList) " + "AND u.idUserIam = :idUserIam";
             /* TIP: fdilorenzo, WORKAROUND PER GLI ELENCHI DI VERSAMENTO FASCICOLI */
             /*
              * Inserimento nella query del filtro per gestire l'eventuale presenza, a seguito di uno o più errori di
@@ -460,7 +460,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
              * registrato
              */
             queryStr = queryStr.concat(" AND ").concat(
-                    "((u.dtChiusura IS NULL) OR (u.dtChiusura = (SELECT MAX(s.tsStato) FROM ElvStatoElencoVersFasc s WHERE s.tiStato = :statoChiuso AND s.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc))) ");
+                    "((u.dtChiusura IS NULL) OR (u.dtChiusura = (SELECT MAX(s.tsStato) FROM ElvStatoElencoVersFasc s WHERE s.tiStato = :statoChiuso AND s.elvElencoVersFasc.idElencoVersFasc = u.id.idElencoVersFasc))) ");
 
             /* TIP: fdilorenzo, WORKAROUND PER GLI ELENCHI INDICI AIP FASCICOLI */
             /*
@@ -469,35 +469,25 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
              * solo l'ultimo registrato
              */
             queryStr = queryStr.concat(" AND ").concat(
-                    "((u.dtCreazioneElencoIxAip IS NULL) OR (u.dtCreazioneElencoIxAip = (SELECT MAX(sIdxAip.tsStato) FROM ElvStatoElencoVersFasc sIdxAip WHERE sIdxAip.tiStato = :statoIdxAipCreato AND sIdxAip.elvElencoVersFasc.idElencoVersFasc = u.idElencoVersFasc))) ");
+                    "((u.dtCreazioneElencoIxAip IS NULL) OR (u.dtCreazioneElencoIxAip = (SELECT MAX(sIdxAip.tsStato) FROM ElvStatoElencoVersFasc sIdxAip WHERE sIdxAip.tiStato = :statoIdxAipCreato AND sIdxAip.elvElencoVersFasc.idElencoVersFasc = u.id.idElencoVersFasc))) ");
 
             Query query = getEntityManager().createQuery(queryStr);
             query.setParameter("idElencoVersFascList", idElencoVersFascList);
             query.setParameter("idUserIam", new BigDecimal(idUserIam));
             query.setParameter("statoChiuso", TiStatoElencoFasc.CHIUSO);
             query.setParameter("statoIdxAipCreato", TiStatoElencoFasc.ELENCO_INDICI_AIP_CREATO);
-            listaElenchiVersFascicoli = (List<ElvVRicElencoFascByStato>) query.getResultList();
+            listaElenchiVersFascicoli = query.getResultList();
         }
         return listaElenchiVersFascicoli;
     }
 
-    // TODO: verificare
-    /*
-     * public long countElencIndiciAipInStates(long idUserIam, List<String> elencoStates) { Query query =
-     * getEntityManager().
-     * createQuery("SELECT COUNT(el) FROM ElvVLisElencoVersStato el WHERE el.idUserIam = :idUser AND el.tiStatoElenco IN :states "
-     * ); query.setParameter("idUser", idUserIam); query.setParameter("states", elencoStates);
-     * 
-     * return (Long) query.getSingleResult(); }
-     */
-
     public boolean isElencoDeletable(BigDecimal idElencoVersFasc) {
         String queryStr = "SELECT sf FROM ElvStatoElencoVersFasc sf "
                 + "WHERE sf.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc "
-                + "AND sf.tiStato IN :statoElencoDeletable "
+                + "AND sf.tiStato IN (:statoElencoDeletable) "
                 + "AND NOT EXISTS (SELECT sf2 FROM ElvStatoElencoVersFasc sf2 "
                 + "WHERE sf2.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc "
-                + "AND sf2.tiStato IN :statoElencoNotDeletable)";
+                + "AND sf2.tiStato IN (:statoElencoNotDeletable))";
         Query query = getEntityManager().createQuery(queryStr);
         List<TiStatoElencoFasc> statoElencoDeletable = new ArrayList<>();
         statoElencoDeletable.add(TiStatoElencoFasc.CHIUSO);
@@ -507,7 +497,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
         statoElencoNotDeletable.add(TiStatoElencoFasc.FIRMATO);
         statoElencoNotDeletable.add(TiStatoElencoFasc.FIRMA_IN_CORSO);
 
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
+        query.setParameter("idElencoVersFasc", longFromBigDecimal(idElencoVersFasc));
         query.setParameter("statoElencoDeletable", statoElencoDeletable);
         query.setParameter("statoElencoNotDeletable", statoElencoNotDeletable);
         return !query.getResultList().isEmpty();
@@ -519,9 +509,9 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
                 + "AND sf.tiStato = :statoElencoClosable "
                 + "AND NOT EXISTS (SELECT sf2 FROM ElvStatoElencoVersFasc sf2 "
                 + "WHERE sf2.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc "
-                + "AND sf2.tiStato IN :statoElencoFascNotClosable)";
+                + "AND sf2.tiStato IN (:statoElencoFascNotClosable))";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
+        query.setParameter("idElencoVersFasc", longFromBigDecimal(idElencoVersFasc));
         query.setParameter("statoElencoClosable", TiStatoElencoFasc.APERTO);
 
         List<TiStatoElencoFasc> statoElencoFascNotClosable = new ArrayList<>();
@@ -533,10 +523,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
         if (elenchi.isEmpty()) {
             return false;
         } else {
-            if (elenchi.get(0).getElvElencoVersFasc().getFasFascicoli().size() > 0) {
-                return true;
-            }
-            return false;
+            return !elenchi.get(0).getElvElencoVersFasc().getFasFascicoli().isEmpty();
         }
     }
 
@@ -577,19 +564,19 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
         if (elenchi.isEmpty()) {
             return false;
         } else {
-            return elenchi.get(0).getElvElencoVersFasc().getFasFascicoli().size() > 0;
+            return !elenchi.get(0).getElvElencoVersFasc().getFasFascicoli().isEmpty();
         }
     }
 
     public boolean areFascDeletables(BigDecimal idElencoVersFasc) {
         String queryStr = "SELECT sf FROM ElvStatoElencoVersFasc sf "
                 + "WHERE sf.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc "
-                + "AND sf.tiStato IN :statoElencoFascDeletables "
+                + "AND sf.tiStato IN (:statoElencoFascDeletables) "
                 + "AND NOT EXISTS (SELECT sf2 FROM ElvStatoElencoVersFasc sf2 "
                 + "WHERE sf2.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc "
                 + "AND sf2.tiStato = :statoElencoFascNotDeletables)";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
+        query.setParameter("idElencoVersFasc", longFromBigDecimal(idElencoVersFasc));
         List<TiStatoElencoFasc> statoElencoFascDeletables = new ArrayList<>();
         statoElencoFascDeletables.add(TiStatoElencoFasc.APERTO);
         statoElencoFascDeletables.add(TiStatoElencoFasc.DA_CHIUDERE);
@@ -599,10 +586,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
         if (elenchi.isEmpty()) {
             return false;
         } else {
-            if (elenchi.get(0).getElvElencoVersFasc().getFasFascicoli().size() > 0) {
-                return true;
-            }
-            return false;
+            return !elenchi.get(0).getElvElencoVersFasc().getFasFascicoli().isEmpty();
         }
     }
 
@@ -610,10 +594,10 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
             BigDecimal idStrut) {
         String queryStr = "SELECT COUNT(elab) FROM ElvElencoVersFascDaElab elab JOIN elab.elvElencoVersFasc u "
                 + "WHERE u.dtScadChius < :dataChiusura "
-                + "AND elab.elvElencoVersFasc.idElencoVersFasc NOT IN :idElencoVersFascSelezionatiList "
+                + "AND elab.elvElencoVersFasc.idElencoVersFasc NOT IN (:idElencoVersFascSelezionatiList) "
                 + "AND elab.tiStato = :tiStato " + "AND elab.idStrut = :idStrut ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idElencoVersFascSelezionatiList", idElencoVersFascSelezionatiList);
+        query.setParameter("idElencoVersFascSelezionatiList", longListFrom(idElencoVersFascSelezionatiList));
         query.setParameter("dataChiusura", dataChiusura);
         query.setParameter("tiStato", TiStatoElencoFascDaElab.CHIUSO);
         query.setParameter("idStrut", idStrut);
@@ -622,23 +606,38 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 
     public boolean existIdElenco(BigDecimal idElencoVersFasc, BigDecimal idStrut) {
         String queryStr = "SELECT u FROM ElvElencoVersFasc u " + "WHERE u.orgStrut.idStrut = :idStrut "
-                + "AND u.idElencoVersFasc = :idElencoVersFasc ";
+                + "AND u.id.idElencoVersFasc = :idElencoVersFasc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idElencoVersFasc", longFromBigDecimal(idElencoVersFasc));
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         return !query.getResultList().isEmpty();
     }
 
+    /**
+     * @deprecated (i parametri idUserIam e operList non vengono mai usati, utilizzare il metodo senza questi parametri
+     * 
+     * @param idUserIam
+     *            NON USATO
+     * @param idElencoVersFasc
+     *            id elenco versamento
+     * @param ntIndiceElenco
+     *            note indice elenco
+     * @param ntElencoChiuso
+     *            note elenco chiuso
+     * @param operList
+     *            NON USATO
+     */
+    @Deprecated
     public void saveNote(Long idUserIam, BigDecimal idElencoVersFasc, String ntIndiceElenco, String ntElencoChiuso,
             List<ElencoEnums.OpTypeEnum> operList) {
+        saveNote(idElencoVersFasc, ntIndiceElenco, ntElencoChiuso);
+    }
+
+    public void saveNote(BigDecimal idElencoVersFasc, String ntIndiceElenco, String ntElencoChiuso) {
         ElvElencoVersFasc elenco = getEntityManager().find(ElvElencoVersFasc.class, idElencoVersFasc.longValue());
         elenco.setNtIndiceElenco(ntIndiceElenco);
         elenco.setNtElencoChiuso(ntElencoChiuso);
         /* TODO: verificare, A seconda di cosa ho modificato, scrivo nel log */
-        /*
-         * for (ElencoEnums.OpTypeEnum oper : operList) { evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(),
-         * idUserIam, oper.name()); }
-         */
     }
 
     public List<ElvStatoElencoVersFasc> retrieveStatiElencoByElencoVersFasc(BigDecimal idElvElencoVersFasc) {
@@ -655,5 +654,204 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
             throw ex;
         }
         return result;
+    }
+
+    static class Filtri {
+        BigDecimal idElencoVersFasc;
+        String tiStato;
+        Timestamp creazioneElencoDa;
+        Timestamp creazioneElencoA;
+        String ntElencoChiuso;
+        String ntIndiceElenco;
+        BigDecimal idTipoFascicolo;
+        BigDecimal aaFascicolo;
+        String cdKeyFascicolo;
+        BigDecimal aaFascicoloDa;
+        BigDecimal aaFascicoloA;
+        String cdKeyFascicoloDa;
+        String cdKeyFascicoloA;
+        String cdCompositoVoceTitol;
+        BigDecimal idCriterioRaggrFasc;
+        String flElencoStandard;
+        private BigDecimal idAmbiente;
+        private BigDecimal idEnte;
+        private BigDecimal idStrut;
+
+        Filtri(FiltriElenchiVersFascicoli filtriElenchiVersFascicoli) throws EMFError {
+            idElencoVersFasc = filtriElenchiVersFascicoli.getId_elenco_vers_fasc().parse();
+            tiStato = filtriElenchiVersFascicoli.getTi_stato().parse();
+            creazioneElencoDa = filtriElenchiVersFascicoli.getTs_creazione_elenco_da().parse();
+            creazioneElencoA = filtriElenchiVersFascicoli.getTs_creazione_elenco_a().parse();
+            ntElencoChiuso = filtriElenchiVersFascicoli.getNt_elenco_chiuso().parse();
+            ntIndiceElenco = filtriElenchiVersFascicoli.getNt_indice_elenco().parse();
+            idTipoFascicolo = filtriElenchiVersFascicoli.getId_tipo_fascicolo().parse();
+            aaFascicolo = filtriElenchiVersFascicoli.getAa_fascicolo().parse();
+            cdKeyFascicolo = filtriElenchiVersFascicoli.getCd_key_fascicolo().parse();
+            aaFascicoloDa = filtriElenchiVersFascicoli.getAa_fascicolo_da().parse();
+            aaFascicoloA = filtriElenchiVersFascicoli.getAa_fascicolo_a().parse();
+            cdKeyFascicoloDa = filtriElenchiVersFascicoli.getCd_key_fascicolo_da().parse();
+            cdKeyFascicoloA = filtriElenchiVersFascicoli.getCd_key_fascicolo_a().parse();
+            cdCompositoVoceTitol = filtriElenchiVersFascicoli.getCd_composito_voce_titol().parse();
+            idCriterioRaggrFasc = filtriElenchiVersFascicoli.getId_criterio_raggr_fasc().parse();
+            flElencoStandard = filtriElenchiVersFascicoli.getFl_elenco_standard().parse();
+            idAmbiente = filtriElenchiVersFascicoli.getId_ambiente().parse();
+            idEnte = filtriElenchiVersFascicoli.getId_ente().parse();
+            idStrut = filtriElenchiVersFascicoli.getId_strut().parse();
+        }
+
+        public BigDecimal getIdElencoVersFasc() {
+            return idElencoVersFasc;
+        }
+
+        void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
+            this.idElencoVersFasc = idElencoVersFasc;
+        }
+
+        public String getTiStato() {
+            return tiStato;
+        }
+
+        void setTiStato(String tiStato) {
+            this.tiStato = tiStato;
+        }
+
+        public Timestamp getCreazioneElencoDa() {
+            return creazioneElencoDa;
+        }
+
+        void setCreazioneElencoDa(Timestamp creazioneElencoDa) {
+            this.creazioneElencoDa = creazioneElencoDa;
+        }
+
+        public Timestamp getCreazioneElencoA() {
+            return creazioneElencoA;
+        }
+
+        void setCreazioneElencoA(Timestamp creazioneElencoA) {
+            this.creazioneElencoA = creazioneElencoA;
+        }
+
+        public String getNtElencoChiuso() {
+            return ntElencoChiuso;
+        }
+
+        void setNtElencoChiuso(String ntElencoChiuso) {
+            this.ntElencoChiuso = ntElencoChiuso;
+        }
+
+        public String getNtIndiceElenco() {
+            return ntIndiceElenco;
+        }
+
+        void setNtIndiceElenco(String ntIndiceElenco) {
+            this.ntIndiceElenco = ntIndiceElenco;
+        }
+
+        public BigDecimal getIdTipoFascicolo() {
+            return idTipoFascicolo;
+        }
+
+        void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
+            this.idTipoFascicolo = idTipoFascicolo;
+        }
+
+        public BigDecimal getAaFascicolo() {
+            return aaFascicolo;
+        }
+
+        void setAaFascicolo(BigDecimal aaFascicolo) {
+            this.aaFascicolo = aaFascicolo;
+        }
+
+        public String getCdKeyFascicolo() {
+            return cdKeyFascicolo;
+        }
+
+        void setCdKeyFascicolo(String cdKeyFascicolo) {
+            this.cdKeyFascicolo = cdKeyFascicolo;
+        }
+
+        public BigDecimal getAaFascicoloDa() {
+            return aaFascicoloDa;
+        }
+
+        void setAaFascicoloDa(BigDecimal aaFascicoloDa) {
+            this.aaFascicoloDa = aaFascicoloDa;
+        }
+
+        public BigDecimal getAaFascicoloA() {
+            return aaFascicoloA;
+        }
+
+        void setAaFascicoloA(BigDecimal aaFascicoloA) {
+            this.aaFascicoloA = aaFascicoloA;
+        }
+
+        public String getCdKeyFascicoloDa() {
+            return cdKeyFascicoloDa;
+        }
+
+        void setCdKeyFascicoloDa(String cdKeyFascicoloDa) {
+            this.cdKeyFascicoloDa = cdKeyFascicoloDa;
+        }
+
+        public String getCdKeyFascicoloA() {
+            return cdKeyFascicoloA;
+        }
+
+        void setCdKeyFascicoloA(String cdKeyFascicoloA) {
+            this.cdKeyFascicoloA = cdKeyFascicoloA;
+        }
+
+        public String getCdCompositoVoceTitol() {
+            return cdCompositoVoceTitol;
+        }
+
+        void setCdCompositoVoceTitol(String cdCompositoVoceTitol) {
+            this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+        }
+
+        public BigDecimal getIdCriterioRaggrFasc() {
+            return idCriterioRaggrFasc;
+        }
+
+        void setIdCriterioRaggrFasc(BigDecimal idCriterioRaggrFasc) {
+            this.idCriterioRaggrFasc = idCriterioRaggrFasc;
+        }
+
+        public String getFlElencoStandard() {
+            return flElencoStandard;
+        }
+
+        void setFlElencoStandard(String flElencoStandard) {
+            this.flElencoStandard = flElencoStandard;
+        }
+
+        Filtri() {
+        }
+
+        public BigDecimal getIdAmbiente() {
+            return idAmbiente;
+        }
+
+        void setIdAmbiente(BigDecimal idAmbiente) {
+            this.idAmbiente = idAmbiente;
+        }
+
+        public BigDecimal getIdEnte() {
+            return idEnte;
+        }
+
+        void setIdEnte(BigDecimal idEnte) {
+            this.idEnte = idEnte;
+        }
+
+        public BigDecimal getIdStrut() {
+            return idStrut;
+        }
+
+        void setIdStrut(BigDecimal idStrut) {
+            this.idStrut = idStrut;
+        }
     }
 }

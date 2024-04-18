@@ -1,4 +1,47 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipSerieUd.ejb;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.naming.NamingException;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUnitaDoc;
@@ -20,33 +63,9 @@ import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.ejb.XmlContextCache;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.naming.NamingException;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.datatype.DatatypeConfigurationException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -71,9 +90,8 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
     public void creaVolumeVerSerie(Long idVerSerie, BigDecimal niUnitaDocVol, BigDecimal numeroTotaleVolumi)
             throws DatatypeConfigurationException, IOException, JAXBException, NoSuchAlgorithmException,
             NamingException, ParseException, ParerInternalError {
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         boolean indiceCreato = false;
         int progressivoVolume = 0;
 
@@ -91,8 +109,8 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
 
         if (!udAppartList.isEmpty()) {
             /* Crea volume per la versione serie */
-            log.info(ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName()
-                    + " --- Creazione Indice Aip Versione Serie Ud --- " + "Creazione Volume Versione Serie ");
+            log.info("{} --- Creazione Indice Aip Versione Serie Ud --- Creazione Volume Versione Serie ",
+                    ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
             SerVolVerSerie volVerSerie = civsudHelper.registraVolVerSerie(idVerSerie);
 
             boolean primaAppartenenzaInserita = false;
@@ -110,9 +128,8 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
                 // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
                 // il sistema aggiorna ARO_UNITA_DOC
                 DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-                String dataInizioParam = configurationHelper.getValoreParamApplic(
-                        CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String dataInizioParam = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
                 Date dataInizio = dateFormat.parse(dataInizioParam);
 
                 // controllo : dtCreazione <= dataInizioCalcNuoviUrn
@@ -163,10 +180,7 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
                     // 3. eseguo registra urn aip pregressi
                     urnHelper.scriviUrnAipUdPreg(udAppart.getAroUnitaDoc(), versatore, chiave);
                 }
-                // if (udAppart.getIdUdAppartVerSerie() ==
-                // udAppart.getSerContenutoVerSerie().getIdFirstUdAppartVerSerie().longValue()) {
                 if (!primaAppartenenzaInserita) {
-                    // volVerSerie.setIdFirstUdAppartVol(new BigDecimal(udAppart.getAroUnitaDoc().getIdUnitaDoc()));
                     volVerSerie.setIdFirstUdAppartVol(new BigDecimal(udAppart.getIdUdAppartVerSerie()));
                     primaAppartenenzaInserita = true;
                 }
@@ -188,7 +202,6 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
                 if (volVerSerie.getNiUnitaDocVol().compareTo(niUnitaDocVol) == 0) {
                     volVerSerie.setIdLastUdAppartVol(new BigDecimal(udAppart.getIdUdAppartVerSerie()));
 
-                    // return volVerSerie.getIdVolVerSerie();
                     progressivoVolume = creaIndice(volVerSerie.getIdVolVerSerie(), numeroTotaleVolumi, ambiente, ente,
                             struttura, volVerSerie.getSerVerSerie().getSerSerie().getCdCompositoSerie(), idStrut);
                     indiceCreato = true;
@@ -203,19 +216,19 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
                         struttura, volVerSerie.getSerVerSerie().getSerSerie().getCdCompositoSerie(), idStrut);
             }
         }
-        // return volVerSerie.getIdVolVerSerie();
-        log.info(ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName()
-                + " --- Creazione Indice Aip Versione Serie Ud --- Volume numero " + progressivoVolume
-                + " e relativo indice creati con successo!");
+        log.info(
+                "{} --- Creazione Indice Aip Versione Serie Ud --- Volume numero {} e relativo indice creati con successo!",
+                ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName(), progressivoVolume);
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public int creaIndice(long idVolVerSerie, BigDecimal numeroTotaleVolumi, String ambiente, String ente,
             String struttura, String cdCompositoSerie, long idStrut) throws NamingException, IOException, JAXBException,
             NoSuchAlgorithmException, DatatypeConfigurationException {
         CreazioneIndiceVolumeSerieUdUtil indiceVolumeSerieUtil = new CreazioneIndiceVolumeSerieUdUtil();
 
-        log.info(ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName()
-                + " --- Creazione Indice Aip Versione Serie Ud --- " + "Creazione XML Volume");
+        log.info("{} --- Creazione Indice Aip Versione Serie Ud --- Creazione XML Volume",
+                ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
 
         // Recupero il volume versione serie per il quale creare l'indice
         SerVCreaIxVolSerieUd creaVol = civsudHelper.getSerVCreaIxVolSerieUd(idVolVerSerie);
@@ -233,11 +246,10 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
         tmpMarshaller.setSchema(xmlContextCache.getSchemaOfcreazioneIndiceVolumeSerie());
 
         /* Calcolo l'hash in SHA-256 ed hexBinary */
-        // String hash = new HashCalculator().calculateHash(tmpWriter.toString()).toHexBinary();
         String hash = new HashCalculator().calculateHashSHAX(tmpWriter.toString(), TipiHash.SHA_256).toHexBinary();
 
-        log.info(ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName()
-                + " --- Creazione Indice Aip Versione Serie Ud --- " + "Registrazione Indice Volume");
+        log.info("{} --- Creazione Indice Aip Versione Serie Ud --- Registrazione Indice Volume",
+                ElaborazioneRigaIndiceVolumeSerieUd.class.getSimpleName());
         /* Persisto nella tabella relativa all'indice volume, vale a dire SER_IX_VOL_VER_SERIE */
         SerIxVolVerSerie serIxVolVerSerie = civsudHelper.registraSerIxVolVerSerie(idVolVerSerie,
                 indiceVolumeSerie.getVersioneXSDIndiceVolumeSerie(), tmpWriter.toString(), hash,
@@ -248,9 +260,8 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
         csv.setEnte(ente);
         csv.setAmbiente(ambiente);
         // sistema (new URN)
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         csv.setSistemaConservazione(sistemaConservazione);
 
         // calcolo parte urn NORMALIZZATO

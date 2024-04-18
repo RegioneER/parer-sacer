@@ -1,6 +1,24 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard.helper;
 
 import it.eng.parer.entity.DecEstensioneFile;
+import it.eng.parer.entity.DecFormatoFileAmmesso;
 import it.eng.parer.entity.DecFormatoFileBusta;
 import it.eng.parer.entity.DecFormatoFileStandard;
 import it.eng.parer.entity.DecFormatoGruppoProprieta;
@@ -8,17 +26,17 @@ import it.eng.parer.entity.DecFormatoProprieta;
 import it.eng.parer.entity.DecFormatoValutazione;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.spagoLite.form.base.BaseElements;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Helper dei formati file standard dell'applicazione
@@ -28,8 +46,6 @@ import org.slf4j.LoggerFactory;
 @Stateless
 @LocalBean
 public class FormatoFileStandardHelper extends GenericHelper {
-
-    private static final Logger logger = LoggerFactory.getLogger(FormatoFileStandardHelper.class);
 
     public List<Object[]> getDecFormatoFileStandardInList(Set<String> formati, BaseElements.Status status,
             BigDecimal idStrut) {
@@ -49,9 +65,9 @@ public class FormatoFileStandardHelper extends GenericHelper {
         }
         if (!formati.isEmpty()) {
             if (status.equals(BaseElements.Status.update)) {
-                queryStr.append(" AND UPPER(formato.nmFormatoFileStandard) IN :nmformati");
+                queryStr.append(" AND UPPER(formato.nmFormatoFileStandard) IN (:nmformati)");
             } else {
-                queryStr.append(" WHERE UPPER(ext.cdEstensioneFile) IN :nmformati ");
+                queryStr.append(" WHERE UPPER(ext.cdEstensioneFile) IN (:nmformati) ");
             }
         }
 
@@ -63,7 +79,7 @@ public class FormatoFileStandardHelper extends GenericHelper {
         if (!formati.isEmpty()) {
             query.setParameter("nmformati", formatiUpperCase);
         }
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         return query.getResultList();
     }
 
@@ -76,7 +92,7 @@ public class FormatoFileStandardHelper extends GenericHelper {
         }
 
         Query query = getEntityManager().createQuery(
-                "SELECT formato,ext.cdEstensioneFile  FROM DecEstensioneFile ext JOIN ext.decFormatoFileStandard formato WHERE formato.flFormatoConcat = '1' AND UPPER(ext.cdEstensioneFile) IN :nmformati ");
+                "SELECT formato,ext.cdEstensioneFile  FROM DecEstensioneFile ext JOIN ext.decFormatoFileStandard formato WHERE formato.flFormatoConcat = '1' AND UPPER(ext.cdEstensioneFile) IN (:nmformati) ");
 
         if (!formati.isEmpty()) {
             query.setParameter("nmformati", formatiUpperCase);
@@ -100,13 +116,12 @@ public class FormatoFileStandardHelper extends GenericHelper {
         }
         if (!formati.isEmpty()) {
             if (status.equals(BaseElements.Status.update)) {
-                queryStr.append(" AND UPPER(formato.nmFormatoFileStandard) NOT IN :nmformati");
+                queryStr.append(" AND UPPER(formato.nmFormatoFileStandard) NOT IN (:nmformati)");
             } else {
-                queryStr.append(" WHERE UPPER(formato.nmFormatoFileStandard) NOT IN :nmformati ");
+                queryStr.append(" WHERE UPPER(formato.nmFormatoFileStandard) NOT IN (:nmformati) ");
             }
         }
 
-        // queryStr.append(" ORDER BY ext.cdEstensioneFile ");
         Query query = getEntityManager().createQuery(queryStr.toString());
 
         if (!formati.isEmpty()) {
@@ -117,8 +132,8 @@ public class FormatoFileStandardHelper extends GenericHelper {
 
     public DecFormatoFileStandard getDecFormatoFileStandardByName(String nmFormato) {
         Query query = getEntityManager().createQuery(
-                "SELECT formato FROM DecFormatoFileStandard formato WHERE formato.nmFormatoFileStandard = :nmFormato");
-        query.setParameter("nmFormato", nmFormato);
+                "SELECT formato FROM DecFormatoFileStandard formato WHERE UPPER(formato.nmFormatoFileStandard) = :nmFormato");
+        query.setParameter("nmFormato", nmFormato.toUpperCase());
         List<DecFormatoFileStandard> list = query.getResultList();
         DecFormatoFileStandard formato = null;
         if (!list.isEmpty()) {
@@ -134,9 +149,8 @@ public class FormatoFileStandardHelper extends GenericHelper {
                         + " estensioneFile.decFormatoFileStandard formatoFileStandard WHERE UPPER(estensioneFile.cdEstensioneFile) = :cdEstensioneFile",
                 String.class);
         query.setParameter("cdEstensioneFile", cdEstensioneFile.toUpperCase());
-        String nmFormatoFileStandard = (String) query.getSingleResult();
 
-        return nmFormatoFileStandard;
+        return (String) query.getSingleResult();
     }
 
     public DecEstensioneFile getDecEstensioneFileByName(String cdEstensioneFile, BigDecimal idFormatoFileStandard) {
@@ -148,7 +162,7 @@ public class FormatoFileStandardHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("cdEstensioneFile", cdEstensioneFile);
         if (idFormatoFileStandard != null) {
-            query.setParameter("idFormatoFileStandard", idFormatoFileStandard);
+            query.setParameter("idFormatoFileStandard", longFromBigDecimal(idFormatoFileStandard));
         }
 
         List<DecEstensioneFile> list = query.getResultList();
@@ -163,8 +177,7 @@ public class FormatoFileStandardHelper extends GenericHelper {
         String whereWord = " WHERE ";
         StringBuilder queryStr = new StringBuilder(
                 "SELECT DISTINCT formatoFileStandard FROM DecFormatoFileStandard formatoFileStandard "
-                        + "LEFT JOIN formatoFileStandard.decEstensioneFiles estensioneFile "
-        /* + "LEFT JOIN  formatoFileStandard.decFormatoValutaziones formatoValutazione " */);
+                        + "LEFT JOIN formatoFileStandard.decEstensioneFiles estensioneFile ");
 
         if (StringUtils.isNotBlank(nmFormatoFileStandard)) {
             queryStr.append(whereWord).append(" (UPPER(formatoFileStandard.nmFormatoFileStandard) LIKE :nmformato "
@@ -174,6 +187,7 @@ public class FormatoFileStandardHelper extends GenericHelper {
         if (StringUtils.isNotBlank(nmMimetypeFile)) {
             queryStr.append(whereWord).append(" formatoFileStandard.nmMimetypeFile = :nmMimetypeFile ");
         }
+        queryStr.append("ORDER BY formatoFileStandard.nmFormatoFileStandard ASC");
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(nmFormatoFileStandard)) {
             query.setParameter("nmformato", "%" + nmFormatoFileStandard.toUpperCase() + "%");
@@ -187,9 +201,8 @@ public class FormatoFileStandardHelper extends GenericHelper {
     public List<DecEstensioneFile> retrieveDecEstensioneFileList(BigDecimal idFormatoFileStandard) {
         Query query = getEntityManager().createQuery(
                 "SELECT estensioneFile FROM DecEstensioneFile estensioneFile WHERE estensioneFile.decFormatoFileStandard.idFormatoFileStandard=:idFormatoFileStandard ORDER BY estensioneFile.cdEstensioneFile");
-        query.setParameter("idFormatoFileStandard", idFormatoFileStandard);
-        List<DecEstensioneFile> list = query.getResultList();
-        return list;
+        query.setParameter("idFormatoFileStandard", longFromBigDecimal(idFormatoFileStandard));
+        return query.getResultList();
 
     }
 
@@ -206,7 +219,7 @@ public class FormatoFileStandardHelper extends GenericHelper {
         query.setParameter("tiFormatoFirmaMarca", tiFormatoFirmaMarca);
 
         if (idFormatoFileStandard != null) {
-            query.setParameter("idFormatoFileStandard", idFormatoFileStandard);
+            query.setParameter("idFormatoFileStandard", longFromBigDecimal(idFormatoFileStandard));
         }
 
         List<DecFormatoFileBusta> list = query.getResultList();
@@ -219,9 +232,8 @@ public class FormatoFileStandardHelper extends GenericHelper {
     public List<DecFormatoFileBusta> getDecFormatoFileBustaList(BigDecimal idFormatoFileStandard) {
         Query query = getEntityManager().createQuery(
                 "SELECT formatoFileBusta FROM DecFormatoFileBusta formatoFileBusta WHERE formatoFileBusta.decFormatoFileStandard.idFormatoFileStandard=:idFormatoFileStandard");
-        query.setParameter("idFormatoFileStandard", idFormatoFileStandard);
-        List<DecFormatoFileBusta> list = query.getResultList();
-        return list;
+        query.setParameter("idFormatoFileStandard", longFromBigDecimal(idFormatoFileStandard));
+        return query.getResultList();
     }
 
     public List<String> getDecFormatoFileStandardNameList(BigDecimal idFormatoFileDoc) {
@@ -229,9 +241,8 @@ public class FormatoFileStandardHelper extends GenericHelper {
                 "SELECT formatoFileStandard.nmFormatoFileStandard FROM DecUsoFormatoFileStandard usoFormatoFileStandard "
                         + "JOIN usoFormatoFileStandard.decFormatoFileStandard formatoFileStandard "
                         + "WHERE usoFormatoFileStandard.decFormatoFileDoc.idFormatoFileDoc = :idFormatoFileDoc ");
-        query.setParameter("idFormatoFileDoc", idFormatoFileDoc.longValue());
-        List<String> list = (List<String>) query.getResultList();
-        return list;
+        query.setParameter("idFormatoFileDoc", longFromBigDecimal(idFormatoFileDoc));
+        return query.getResultList();
     }
 
     public List<DecFormatoGruppoProprieta> getAllDecFormatoGruppoProprieta() {
@@ -250,6 +261,14 @@ public class FormatoFileStandardHelper extends GenericHelper {
         return queryValutazioni.getResultList();
     }
 
+    public List<DecFormatoValutazione> getValutazioniPerFormato(DecFormatoFileStandard formato) {
+        /* cerco le valutazioni effettivamente presenti per questo formato */
+        Query queryValutazioni = getEntityManager().createQuery("SELECT v "
+                + " FROM DecFormatoValutazione v JOIN v.decFormatoFileStandard formato " + " WHERE formato = :formato");
+        queryValutazioni.setParameter("formato", formato);
+        return queryValutazioni.getResultList();
+    }
+
     public List<DecFormatoProprieta> getDecFormatoProprietaByGruppo(Long idGruppoProprieta) {
         Query queryValutazioni = getEntityManager()
                 .createQuery("SELECT p  FROM DecFormatoProprieta p JOIN p.decFormatoGruppoProprieta g "
@@ -259,9 +278,9 @@ public class FormatoFileStandardHelper extends GenericHelper {
     }
 
     public BigDecimal calcolaValutazione(DecFormatoFileStandard formato) {
-        Query query = getEntityManager().createQuery(
-                "SELECT SUM(v.niPunteggio) as totale FROM DecFormatoValutazione v JOIN v.decFormatoFileStandard formato "
-                        + " WHERE formato = :formato");
+        Query query = getEntityManager().createQuery("SELECT SUM(v.niPunteggio) as totale FROM DecFormatoValutazione v "
+                + "JOIN v.decFormatoFileStandard formato " + "WHERE formato = :formato "
+                + "AND v.flgInteroperabilita = 1");
         query.setParameter("formato", formato);
         return (BigDecimal) query.getSingleResult();
     }
@@ -270,6 +289,46 @@ public class FormatoFileStandardHelper extends GenericHelper {
         Query query = getEntityManager().createQuery("SELECT DISTINCT formatoFileStandard.nmMimetypeFile "
                 + "FROM DecFormatoFileStandard formatoFileStandard " + "ORDER BY formatoFileStandard.nmMimetypeFile ");
         return (List<String>) query.getResultList();
+    }//
+
+    public List<DecFormatoFileStandard> getDecFormatoFileStandardList() {
+        Query query = getEntityManager().createQuery("SELECT u FROM DecFormatoFileStandard u ");
+        return (List<DecFormatoFileStandard>) query.getResultList();
     }
 
+    public List<String> getFormatiFileStandardConcatenabili() {
+        Query query = getEntityManager().createQuery(
+                "SELECT u.nmFormatoFileStandard FROM DecFormatoFileStandard u WHERE u.flFormatoConcat = '1' ");
+        return (List<String>) query.getResultList();
+    }
+
+    //
+    public DecFormatoFileAmmesso getDecFormatoFileAmmesso(long idFormatoFileDoc, long idTipoCompDoc) {
+        List<DecFormatoFileAmmesso> formatoFileAmmessoList = new ArrayList<>();
+        Query query = getEntityManager()
+                .createQuery("SELECT formatoFileAmmesso FROM DecFormatoFileAmmesso formatoFileAmmesso "
+                        + "WHERE formatoFileAmmesso.decFormatoFileDoc.idFormatoFileDoc = :idFormatoFileDoc "
+                        + "AND formatoFileAmmesso.decTipoCompDoc.idTipoCompDoc = :idTipoCompDoc ");
+        query.setParameter("idFormatoFileDoc", idFormatoFileDoc);
+        query.setParameter("idTipoCompDoc", idTipoCompDoc);
+
+        formatoFileAmmessoList = (List<DecFormatoFileAmmesso>) query.getResultList();
+        if (!formatoFileAmmessoList.isEmpty()) {
+            return formatoFileAmmessoList.get(0);
+        }
+        return null;
+    }
+
+    public List<Object[]> getFormatoFileBustaList() {
+        Query query = getEntityManager().createQuery(
+                "SELECT busta.tiFormato, busta.dsFormato FROM DecFmtFirBusta busta ORDER BY busta.tiFormato ");
+        return (List<Object[]>) query.getResultList();
+    }
+
+    public Object getDsFormatoFileBusta(String tiFormato) {
+        Query query = getEntityManager()
+                .createQuery("SELECT busta.dsFormato FROM DecFmtFirBusta busta WHERE busta.tiFormato = :tiFormato ");
+        query.setParameter("tiFormato", tiFormato);
+        return query.getSingleResult();
+    }
 }

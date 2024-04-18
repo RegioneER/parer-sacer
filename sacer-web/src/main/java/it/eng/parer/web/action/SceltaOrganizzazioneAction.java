@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
@@ -5,6 +22,8 @@ import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.grantedEntity.UsrUser;
+import it.eng.parer.sacerlog.ejb.helper.SacerLogHelper;
+import it.eng.parer.sacerlog.entity.constraint.ConstLogEventoLoginUser;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.SceltaOrganizzazioneAbstractAction;
 import it.eng.parer.slite.gen.tablebean.IamAbilOrganizRowBean;
@@ -17,6 +36,7 @@ import it.eng.parer.web.helper.UserHelper;
 import it.eng.parer.web.security.SacerAuthenticator;
 import it.eng.parer.web.util.AuditSessionListener;
 import it.eng.parer.web.util.WebConstants;
+import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
@@ -25,6 +45,7 @@ import it.eng.spagoLite.security.auth.PwdUtil;
 import it.eng.util.EncryptionUtil;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +76,8 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
     private UserHelper userHelper;
     @EJB(mappedName = "java:app/Parer-ejb/LoginLogHelper")
     private LoginLogHelper loginLogHelper;
+    @EJB(mappedName = "java:app/sacerlog-ejb/SacerLogHelper")
+    private SacerLogHelper sacerLogHelper;
 
     @Autowired
     private SacerAuthenticator authenticator;
@@ -158,6 +181,20 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
     // MEV#23905 - Associazione utente SPID con anagrafica utenti
     private void gestisciUtenteDaAssociare(User utente) throws EMFError {
         this.freeze();
+        String username = "NON_PRESENTE";
+        /*
+         * MEV#22913 - Logging accessi SPID non autorizzati In caso di utente SPID lo username non c'è ancora perché
+         * deve essere ancora associato Quindi si prende il suo codice fiscale se presente, altrimenti una stringa fissa
+         * come username
+         */
+        if (utente.getCodiceFiscale() != null && !utente.getCodiceFiscale().isEmpty()) {
+            username = utente.getCodiceFiscale().toUpperCase();
+        }
+        sacerLogHelper.insertEventoLoginUser(username, getIpClient(), new Date(),
+                ConstLogEventoLoginUser.TipoEvento.BAD_CF.name(),
+                "SACER - " + ConstLogEventoLoginUser.DS_EVENTO_BAD_CF_SPID, utente.getCognome(), utente.getNome(),
+                utente.getCodiceFiscale(), utente.getExternalId(), utente.getEmail());
+
         String retURL = configHelper.getUrlBackAssociazioneUtenteCf();
         String salt = Base64.encodeBase64URLSafeString(PwdUtil.generateSalt());
         byte[] cfCriptato = EncryptionUtil.aesCrypt(utente.getCodiceFiscale(), EncryptionUtil.Aes.BIT_256);
@@ -169,10 +206,10 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
 
         String hmac = EncryptionUtil.getHMAC(retURL + ":" + utente.getCodiceFiscale() + ":" + salt);
         try {
-            this.getResponse()
-                    .sendRedirect(configHelper.getUrlAssociazioneUtenteCf() + "?r="
-                            + Base64.encodeBase64URLSafeString(retURL.getBytes()) + "&h=" + hmac + "&s=" + salt + "&f="
-                            + f + "&c=" + c + "&n=" + n);
+            this.getResponse().sendRedirect(
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_ASSOCIAZIONE_UTENTE_CF)
+                            + "?r=" + Base64.encodeBase64URLSafeString(retURL.getBytes()) + "&h=" + hmac + "&s=" + salt
+                            + "&f=" + f + "&c=" + c + "&n=" + n);
         } catch (IOException ex) {
             throw new EMFError("ERROR", "Errore nella sendRedirect verso Iam");
         }

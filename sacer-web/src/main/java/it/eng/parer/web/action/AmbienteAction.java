@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.exception.ParerUserError;
@@ -98,8 +115,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
             getForm().getInsEnte().setEditMode();
             getForm().getInsEnte().clear();
 
-            String nmApplic = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                    CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String nmApplic = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
             BaseTableInterface ambienti = ambienteEjb.getAmbientiAbilitatiPerEnte(getUser().getIdUtente(), nmApplic);
             DecodeMap mappaAmbienti = new DecodeMap();
             ambienti.addSortingRule("nm_ambiente", SortingRule.ASC);
@@ -119,12 +135,12 @@ public class AmbienteAction extends AmbienteAbstractAction {
                     .setValue(CostantiDB.TipoDefTemplateEnte.NO_TEMPLATE.name());
 
             // Date precompilate
-            String dataOdierna = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            String dataOdierna = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
             getForm().getInsEnte().getDt_ini_val_appart_ambiente().setValue(dataOdierna);
             getForm().getInsEnte().getDt_ini_val().setValue(dataOdierna);
             Calendar cal = Calendar.getInstance();
             cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
-            String dataFine = new SimpleDateFormat("dd-MM-yyyy").format(cal.getTime());
+            String dataFine = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
             getForm().getInsEnte().getDt_fin_val_appart_ambiente().setValue(dataFine);
             getForm().getInsEnte().getDt_fine_val().setValue(dataFine);
 
@@ -138,11 +154,11 @@ public class AmbienteAction extends AmbienteAbstractAction {
             initAmbienteCombo();
 
             // Date precompilate
-            String dataOdierna = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+            String dataOdierna = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
             getForm().getInsAmbiente().getDt_ini_val().setValue(dataOdierna);
             Calendar cal = Calendar.getInstance();
             cal.set(2444, Calendar.DECEMBER, 31, 0, 0, 0);
-            String dataFine = new SimpleDateFormat("dd-MM-yyyy").format(cal.getTime());
+            String dataFine = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
             getForm().getInsAmbiente().getDt_fin_val().setValue(dataFine);
 
             getForm().getInsAmbiente().setStatus(Status.insert);
@@ -243,8 +259,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
                     BigDecimal idEnte = ((OrgVRicEnteRowBean) getForm().getEntiList().getTable().getCurrentRow())
                             .getIdEnte();
                     // popolo combo
-                    String nmApplic = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC);
+                    String nmApplic = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
                     BaseTableInterface ambienti = ambienteEjb.getAmbientiAbilitatiPerEnte(getUser().getIdUtente(),
                             nmApplic);
                     DecodeMap mappaAmbienti = new DecodeMap();
@@ -751,8 +766,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
             if ((action.equals(NE_DETTAGLIO_UPDATE) || action.equals(NE_DETTAGLIO_DELETE))
                     && !getForm().getEntiList().getTable().isEmpty()) {
                 String nmEnte = ((OrgVRicEnteRowBean) getForm().getEntiList().getTable().getCurrentRow()).getNmEnte();
-                String nmApplic = configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String nmApplic = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
                 if (ambienteEjb.getEntiAbilitatiPerStrut(getUser().getIdUtente(), nmApplic, nmEnte, null, null)
                         .isEmpty()) {
                     abilitato = false;
@@ -810,15 +824,12 @@ public class AmbienteAction extends AmbienteAbstractAction {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Amministrazione.Ambienti");
         getForm().getVisAmbiente().setEditMode();
-        getForm().getAmbientiList().setHideInsertButton(
-                !ambienteEjb.isCreaAmbienteActive(getUser().getIdUtente(), configHelper.getValoreParamApplic(
-                        "NM_APPLIC", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC)));
-        getForm().getAmbientiList().setHideUpdateButton(
-                !ambienteEjb.isCreaAmbienteActive(getUser().getIdUtente(), configHelper.getValoreParamApplic(
-                        "NM_APPLIC", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC)));
-        getForm().getAmbientiList().setHideDeleteButton(
-                !ambienteEjb.isCreaAmbienteActive(getUser().getIdUtente(), configHelper.getValoreParamApplic(
-                        "NM_APPLIC", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC)));
+        getForm().getAmbientiList().setHideInsertButton(!ambienteEjb.isCreaAmbienteActive(getUser().getIdUtente(),
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC)));
+        getForm().getAmbientiList().setHideUpdateButton(!ambienteEjb.isCreaAmbienteActive(getUser().getIdUtente(),
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC)));
+        getForm().getAmbientiList().setHideDeleteButton(!ambienteEjb.isCreaAmbienteActive(getUser().getIdUtente(),
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC)));
         visAmbienteButton();
     }
 
@@ -850,6 +861,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
         getForm().getVisEnte().getId_ambiente().setDecodeMap(mappaAmbienti);
         getForm().getVisEnte().getTipo_def_template_ente()
                 .setDecodeMap(ComboGetter.getMappaTipoDefTemplateEnte(CostantiDB.TipoDefTemplateEnte.values()));
+        getForm().getVisEnte().getTipo_def_template_ente().setValue(CostantiDB.TipoDefTemplateEnte.NO_TEMPLATE.name());
 
         OrgCategEnteTableBean categTable = ambienteEjb.getOrgCategEnteTableBean(null);
         DecodeMap mappaCateg = new DecodeMap();
@@ -1037,8 +1049,8 @@ public class AmbienteAction extends AmbienteAbstractAction {
             insEnte.setStatus(Status.update);
             getForm().getEntiList().setStatus(Status.update);
 
-            BaseTableInterface ambienti = ambienteEjb.getAmbientiAbilitatiPerEnte(getUser().getIdUtente(), configHelper
-                    .getValoreParamApplic("NM_APPLIC", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+            BaseTableInterface ambienti = ambienteEjb.getAmbientiAbilitatiPerEnte(getUser().getIdUtente(),
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
             DecodeMap mappaAmbienti = new DecodeMap();
 
             mappaAmbienti.populatedMap(ambienti, "id_ambiente", "nm_ambiente");
@@ -1078,8 +1090,8 @@ public class AmbienteAction extends AmbienteAbstractAction {
             insEnte.setStatus(Status.update);
             getForm().getEntiList().setStatus(Status.update);
 
-            BaseTableInterface ambienti = ambienteEjb.getAmbientiAbilitatiPerEnte(getUser().getIdUtente(), configHelper
-                    .getValoreParamApplic("NM_APPLIC", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
+            BaseTableInterface ambienti = ambienteEjb.getAmbientiAbilitatiPerEnte(getUser().getIdUtente(),
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
             DecodeMap mappaAmbienti = new DecodeMap();
 
             mappaAmbienti.populatedMap(ambienti, "id_ambiente", "nm_ambiente");

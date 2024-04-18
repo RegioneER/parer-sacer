@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.richiestaAnnullamentoVersamenti.ejb;
 
 import java.io.IOException;
@@ -51,7 +68,6 @@ import it.eng.parer.ws.xml.esitoRichAnnullVers.EsitoRichiestaType;
 import it.eng.parer.ws.xml.esitoRichAnnullVers.VersamentoDaAnnullareType;
 import it.eng.parer.ws.xml.richAnnullVers.TipoVersamentoType;
 import it.eng.spagoLite.security.User;
-import javax.xml.bind.JAXBElement;
 
 /**
  *
@@ -93,9 +109,12 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
         }
 
         try {
+            log.info("Registro la richiesta {}",
+                    ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getCodice());
             // Apro transazione e registro le richieste
             Long idRichiesta = context.getBusinessObject(InvioRichiestaAnnullamentoVersamentiEjb.class)
                     .registraRichieste(rispostaWs, ravExt);
+            log.info("richiesta registrata");
             // Chiusa transazione
             if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR && idRichiesta != null) {
                 AroRichAnnulVers richAnnulVers = ravHelper.findById(AroRichAnnulVers.class, idRichiesta);
@@ -109,9 +128,11 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
                         flRichiestaPing = ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta()
                                 .isRichiestaDaPreIngest();
                     }
+                    log.info("evasione richiesta annullamento ... ");
                     context.getBusinessObject(InvioRichiestaAnnullamentoVersamentiEjb.class)
                             .evasioneRichiestaAnnullamento(idRichiesta, ravExt.getUser().getIdUtente(),
                                     flRichiestaPing);
+                    log.info("... evasa");
                     // Chiusa transazione
                     // Conto il numero di item presenti nella richiesta e quelli presenti nella richiesta con stato
                     // NON_ANNULLABILE
@@ -159,100 +180,6 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
             log.error("Errore nella fase di generazione dell'XML di risposta del EJB ", e);
         }
     }
-
-    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    // public Long registraRichieste(RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs,
-    // InvioRichiestaAnnullamentoVersamentiExt ravExt) throws ParerUserError {
-    // Long idRichiesta = null;
-    // if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
-    // User user = ravExt.getUser();
-    // Long idStrut = ravExt.getIdStrut();
-    // String codice = ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getCodice();
-    // String descrizione = ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getDescrizione();
-    // String note = ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getMotivazione();
-    // // flImmediata è un parametro facoltativo che dunque, in caso non venga inviato, di default risulta essere false
-    // boolean flImmediata = ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isImmediata();
-    // boolean flForzaAnnul = false;
-    // boolean flRichiestaPing = false;
-    // if (ravExt.getModificatoriWS().contains(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING)) {
-    // flForzaAnnul = ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isForzaAnnullamento();
-    // flRichiestaPing = ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isRichiestaDaPreIngest();
-    // }
-    //
-    // log.info(InvioRichiestaAnnullamentoVersamentiEjb.class.getSimpleName() + " --- Apertura transazione richiesta
-    // annullamento versamenti unità documentarie");
-    //
-    // // Determino se esiste un'altra richiesta con stato corrente pari a INVIO_FALLITO, e in caso la cancello
-    // ravHelper.deleteRichiestaSePresente(ravExt.getIdStrut(),
-    // ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getCodice());
-    //
-    // // Registro la richiesta di annullamento con i relativi item, eseguendo infine i controlli sulle unità
-    // documentarie
-    // AroRichAnnulVers richAnnulVers = avEjb.insertRichAnnulVers(user.getIdUtente(), idStrut, codice, descrizione,
-    // note, ravExt.getDataElaborazione(), flImmediata, flForzaAnnul, flRichiestaPing, ravExt);
-    //
-    //// /*
-    //// * Se la richiesta proviene da PreIngest, il sistema aggiorna tutti gli item con stato = DA_ANNULLARE_IN_PING,
-    // assegnando DA_ANNULLARE_IN_SACER
-    //// *
-    //// *
-    //// * Dato che successivamente dovrei verificare se ci sono item DA_ANNULLARE_IN_PING e me li sto scorrendo già
-    //// * adesso, se il caso non è RichiestaPing (punto in cui starei invertendo lo stato), mi tengo un booleano
-    //// * per indicarmi che effettivamente HO item DA_ANNULLARE_IN_PING e dopo gestirò la logica di conseguenza
-    //// */
-    //// boolean presentiDaAnnulInPing = false;
-    //// for (AroItemRichAnnulVers aroItemRichAnnulVers : richAnnulVers.getAroItemRichAnnulVers()) {
-    //// if
-    // (aroItemRichAnnulVers.getTiStatoItem().equals(CostantiDB.StatoItemRichAnnulVers.DA_ANNULLARE_IN_PING.name())) {
-    //// if (flRichiestaPing) {
-    //// aroItemRichAnnulVers.setTiStatoItem(CostantiDB.StatoItemRichAnnulVers.DA_ANNULLARE_IN_SACER.name());
-    //// } else {
-    //// presentiDaAnnulInPing = true;
-    //// break;
-    //// }
-    //// }
-    //// }
-    // boolean presentiDaAnnulInPing = false;
-    // for (AroItemRichAnnulVers aroItemRichAnnulVers : richAnnulVers.getAroItemRichAnnulVers()) {
-    // if (aroItemRichAnnulVers.getTiStatoItem().equals(CostantiDB.StatoItemRichAnnulVers.DA_ANNULLARE_IN_PING.name()))
-    // {
-    // presentiDaAnnulInPing = true;
-    // break;
-    // }
-    // }
-    //
-    // // Se la richiesta proviene da PreIngest il sistema elimina tutti gli errori di tipo DA_ANNULLARE_IN_PING per
-    // tutte le unità doc
-    // if (flRichiestaPing) {
-    // avHelper.deleteAroErrRichAnnulVers(richAnnulVers.getIdRichAnnulVers(),
-    // CostantiDB.TipoErrRichAnnulVers.DA_ANNULLARE_IN_PING);
-    // }
-    //
-    // // Conto il numero di item presenti nella richiesta e quelli presenti nella richiesta con stato NON_ANNULLABILE
-    // Long numeroItems = avEjb.countItemsInRichAnnulVers(new BigDecimal(richAnnulVers.getIdRichAnnulVers()));
-    // Long numeroItemsNonAnnullabili = avEjb.countItemsInRichAnnulVers(new
-    // BigDecimal(richAnnulVers.getIdRichAnnulVers()), CostantiDB.StatoItemRichAnnulVers.NON_ANNULLABILE.name());
-    //
-    // // Ora eseguo altri controlli post elaborazione
-    // String statoRichiesta = checkPostElaborazione(rispostaWs, numeroItems, numeroItemsNonAnnullabili, flImmediata,
-    // presentiDaAnnulInPing);
-    //
-    // // Registro lo STATO della richiesta
-    // AroStatoRichAnnulVers statoRichAnnulVers = avEjb.insertAroStatoRichAnnulVers(richAnnulVers, statoRichiesta,
-    // ravExt.getDataElaborazione(), null, user.getIdUtente());
-    // richAnnulVers.setIdStatoRichAnnulVersCor(new BigDecimal(statoRichAnnulVers.getIdStatoRichAnnulVers()));
-    // log.info(InvioRichiestaAnnullamentoVersamentiEjb.class.getSimpleName() + " --- Inserimento richiesta annullamento
-    // versamenti unità documentarie completata con successo: inseriti " + numeroItems + " item di cui " +
-    // numeroItemsNonAnnullabili + " con stato NON_ANNULLABILE ");
-    // log.info(InvioRichiestaAnnullamentoVersamentiEjb.class.getSimpleName() + " --- Registro su DB gli XML di
-    // richiesta ed esito annullamento versamenti unità documentarie");
-    // // Registro l'XML ricevuto e quello di risposta
-    // avEjb.createAroXmlRichAnnulVers(richAnnulVers, CostantiDB.TiXmlRichAnnulVers.RICHIESTA.name(),
-    // ravExt.getXmlRichiesta(), ravExt.getRichiestaAnnullamentoVersamenti().getVersioneXmlRichiesta());
-    // idRichiesta = richAnnulVers.getIdRichAnnulVers();
-    // }
-    // return idRichiesta;
-    // }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long registraRichieste(RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs,
@@ -340,13 +267,18 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
             // Se la richiesta proviene da PreIngest il sistema elimina tutti gli errori di tipo DA_ANNULLARE_IN_PING
             // per tutte le unità doc
             if (flRichiestaPing) {
+                // PERFORMANCE ma se sono appena stati creati da insertRichAnnulVers non poteva evitare di farlo
+                // basandosi proprio su
+                // flRichiestaPing che ha come parametro di input ???
                 avHelper.deleteAroErrRichAnnulVers(richAnnulVers.getIdRichAnnulVers(),
                         CostantiDB.TipoErrRichAnnulVers.DA_ANNULLARE_IN_PING.name());
             }
 
             // Conto il numero di item presenti nella richiesta e quelli presenti nella richiesta con stato
             // NON_ANNULLABILE
+            // PERFORMANCE perché torniamo su DB
             Long numeroItems = avEjb.countItemsInRichAnnulVers(new BigDecimal(richAnnulVers.getIdRichAnnulVers()));
+            // PERFORMANCE ancora su DB ?
             Long numeroItemsNonAnnullabili = avEjb.countItemsInRichAnnulVers(
                     new BigDecimal(richAnnulVers.getIdRichAnnulVers()),
                     CostantiDB.StatoItemRichAnnulVers.NON_ANNULLABILE.name());
@@ -356,9 +288,8 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
                     flImmediata, presentiDaAnnulInPing, tiRichAnnulVers);
 
             // Registro lo STATO della richiesta
-            AroStatoRichAnnulVers statoRichAnnulVers = avEjb.insertAroStatoRichAnnulVers(richAnnulVers, statoRichiesta,
-                    ravExt.getDataElaborazione(), null, user.getIdUtente());
-            richAnnulVers.setIdStatoRichAnnulVersCor(new BigDecimal(statoRichAnnulVers.getIdStatoRichAnnulVers()));
+            avEjb.insertAroStatoRichAnnulVers(richAnnulVers, statoRichiesta, ravExt.getDataElaborazione(), null,
+                    user.getIdUtente());
             log.info(InvioRichiestaAnnullamentoVersamentiEjb.class.getSimpleName()
                     + " --- Inserimento richiesta annullamento versamenti " + partMsg
                     + " completata con successo: inseriti " + numeroItems + " item di cui " + numeroItemsNonAnnullabili
@@ -485,11 +416,17 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void evasioneRichiestaAnnullamento(Long idRichAnnulVers, long idUserIam, boolean isFromPreingest)
             throws ParerUserError {
+        log.debug("locking AroRichAnnulVers {} ...", idRichAnnulVers);
         AroRichAnnulVers richiestaAnnullamento = ravHelper.findByIdWithLock(AroRichAnnulVers.class, idRichAnnulVers);
+        log.debug("... locked");
         // Controlli item
+        log.debug("controlloItemWsRichiestaAnnul - INIZIO");
         avEjb.controlloItemWsRichiestaAnnul(BigDecimal.valueOf(idRichAnnulVers), idUserIam, isFromPreingest);
+        log.debug("controlloItemWsRichiestaAnnul - FINE");
         // Evasione richiesta
+        log.debug("evasioneRichiestaAnnullamento - INIZIO");
         avEjb.evasioneRichiestaAnnullamento(richiestaAnnullamento);
+        log.debug("evasioneRichiestaAnnullamento - FINE");
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -498,23 +435,33 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
         return avEjb.createAroXmlRichAnnulVers(richAnnulVers, tiXmlRichAnnulVers, blXmlRichAnnulVers, cdVersioneXml);
     }
 
+    /**
+     * Inizializza la risposta WS ed effettua contestualmente un controllo sulla versione impostata nella richiesta
+     * 
+     * @param rispostaWs
+     *            Risposta di cui inizializzare i campi
+     * @param ravExt
+     *            Richiesta esterna originale
+     * @param now
+     *            data da impostare come data dell'esito della risposta
+     */
     public void initRispostaWs(RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs,
             InvioRichiestaAnnullamentoVersamentiExt ravExt, Date now) {
         log.debug("Inizializzazione Risposta WS Invio Richiesta Annullamento Versamenti");
-
-        RispostaControlli rs = this.loadWsVersions(ravExt);
 
         /* Setto rispostaWS ed Esito in POSITIVO */
         rispostaWs.setSeverity(SeverityEnum.OK);
         rispostaWs.setErrorCode("");
         rispostaWs.setErrorMessage("");
         rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(new EsitoRichiestaAnnullamentoVersamenti());
-        // Imposto l'esito della risposta di default POSITIVO
+        RispostaControlli rs = this.loadWsVersions(ravExt);
+        // Se il controllo sulla versione è ha dato esito positivo metto a POSITIVO anche la risposta generale
         if (rs.isrBoolean()) {
             rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().setEsitoRichiesta(new EsitoRichiestaType());
             rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getEsitoRichiesta()
                     .setCodiceEsito(CodiceEsitoType.POSITIVO);
         } else {
+            // qualcosa non va sulle versioni
             rispostaWs.setSeverity(SeverityEnum.ERROR);
             rispostaWs.setEsitoWsError(rs.getCodErr(), rs.getDsErr());
         }
@@ -620,5 +567,4 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
         }
         return rs;
     }
-
 }

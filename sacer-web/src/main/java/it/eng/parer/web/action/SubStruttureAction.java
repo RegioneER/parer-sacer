@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.ejb.SottoStruttureEjb;
@@ -103,8 +120,7 @@ public class SubStruttureAction extends SubStruttureAbstractAction {
             BigDecimal idStrut = getForm().getStrutRif().getId_strut().parse();
             // Codice aggiuntivo per il logging
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             if (getForm().getSubStrutList().getStatus().equals(Status.insert)) {
@@ -256,8 +272,7 @@ public class SubStruttureAction extends SubStruttureAbstractAction {
                         try {
                             // Codice aggiuntivo per il logging
                             LogParam param = SpagoliteLogUtil.getLogParam(
-                                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                            null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                             if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.SUB_STRUT_DETAIL)) {
                                 param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());

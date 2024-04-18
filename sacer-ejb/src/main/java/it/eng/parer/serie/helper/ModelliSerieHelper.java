@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.serie.helper;
 
 import java.math.BigDecimal;
@@ -23,6 +40,7 @@ import it.eng.parer.web.util.Constants;
  *
  * @author Bonora_L
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless
 @LocalBean
 public class ModelliSerieHelper extends GenericHelper {
@@ -59,8 +77,7 @@ public class ModelliSerieHelper extends GenericHelper {
         if (filterValid) {
             query.setParameter("filterDate", Calendar.getInstance().getTime());
         }
-        List<DecModelloTipoSerie> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     /**
@@ -82,12 +99,11 @@ public class ModelliSerieHelper extends GenericHelper {
         }
         queryStr.append("ORDER BY m.nmModelloTipoSerie");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         if (filterValid) {
             query.setParameter("filterDate", Calendar.getInstance().getTime());
         }
-        List<DecModelloTipoSerie> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     /**
@@ -104,7 +120,7 @@ public class ModelliSerieHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(
                 "SELECT m FROM DecModelloTipoSerie m WHERE m.nmModelloTipoSerie = :nmModelloTipoSerie AND m.orgAmbiente.idAmbiente = :idAmbiente");
         query.setParameter("nmModelloTipoSerie", nmModelloTipoSerie);
-        query.setParameter("idAmbiente", idAmbiente);
+        query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         List<DecModelloTipoSerie> list = query.getResultList();
         DecModelloTipoSerie modello = null;
         if (!list.isEmpty()) {
@@ -124,9 +140,8 @@ public class ModelliSerieHelper extends GenericHelper {
     public List<DecNotaModelloTipoSerie> retrieveDecNotaModelloTipoSerie(BigDecimal idModelloTipoSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT n FROM DecNotaModelloTipoSerie n WHERE n.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie ORDER BY n.dtNotaTipoSerie DESC");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        List<DecNotaModelloTipoSerie> list = query.getResultList();
-        return list;
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        return query.getResultList();
     }
 
     /**
@@ -159,12 +174,11 @@ public class ModelliSerieHelper extends GenericHelper {
         }
         queryStr.append("ORDER BY c.tiCampo, c.pgOrdCampo");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
         if (tiCampo != null) {
             query.setParameter("tiCampo", tiCampo);
         }
-        List<DecModelloCampoInpUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     /**
@@ -182,7 +196,7 @@ public class ModelliSerieHelper extends GenericHelper {
     public DecModelloCampoInpUd getDecModelloCampoInpUd(BigDecimal idModelloTipoSerie, String tiCampo, String nmCampo) {
         Query query = getEntityManager().createQuery(
                 "SELECT c FROM DecModelloCampoInpUd c WHERE c.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie AND c.tiCampo = :tiCampo AND c.nmCampo = :nmCampo ");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
         query.setParameter("tiCampo", tiCampo);
         query.setParameter("nmCampo", nmCampo);
         List<DecModelloCampoInpUd> list = query.getResultList();
@@ -202,7 +216,7 @@ public class ModelliSerieHelper extends GenericHelper {
     public void deleteAllDecModelloCampoInpUd(BigDecimal idModelloTipoSerie) {
         Query q = getEntityManager().createQuery(
                 "DELETE FROM DecModelloCampoInpUd d WHERE d.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        q.setParameter("idModelloTipoSerie", idModelloTipoSerie);
+        q.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
         q.executeUpdate();
     }
 
@@ -217,9 +231,8 @@ public class ModelliSerieHelper extends GenericHelper {
     public List<DecModelloOutSelUd> retrieveDecModelloOutSelUd(BigDecimal idModelloTipoSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT o FROM DecModelloOutSelUd o WHERE o.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        List<DecModelloOutSelUd> list = query.getResultList();
-        return list;
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        return query.getResultList();
     }
 
     /**
@@ -239,12 +252,11 @@ public class ModelliSerieHelper extends GenericHelper {
             queryStr.append("AND c.tiCampo = :tiCampo ");
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idModelloOutSelUd", idModelloOutSelUd);
+        query.setParameter("idModelloOutSelUd", longFromBigDecimal(idModelloOutSelUd));
         if (tiCampo != null) {
             query.setParameter("tiCampo", tiCampo);
         }
-        List<DecModelloCampoOutSelUd> list = query.getResultList();
-        return list;
+        return query.getResultList();
     }
 
     /**
@@ -256,7 +268,7 @@ public class ModelliSerieHelper extends GenericHelper {
     public void deleteAllDecModelloCampoOutSelUd(BigDecimal idModelloOutSelUd) {
         Query q = getEntityManager().createQuery(
                 "DELETE FROM DecModelloCampoOutSelUd d WHERE d.decModelloOutSelUd.idModelloOutSelUd = :idModelloOutSelUd");
-        q.setParameter("idModelloOutSelUd", idModelloOutSelUd);
+        q.setParameter("idModelloOutSelUd", longFromBigDecimal(idModelloOutSelUd));
         q.executeUpdate();
     }
 
@@ -271,9 +283,8 @@ public class ModelliSerieHelper extends GenericHelper {
     public List<DecModelloFiltroTiDoc> retrieveDecModelloFiltroTiDoc(BigDecimal idModelloTipoSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT f FROM DecModelloFiltroTiDoc f WHERE f.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        List<DecModelloFiltroTiDoc> list = query.getResultList();
-        return list;
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        return query.getResultList();
     }
 
     /**
@@ -285,7 +296,7 @@ public class ModelliSerieHelper extends GenericHelper {
     public void deleteAllDecModelloFiltroTiDoc(BigDecimal idModelloTipoSerie) {
         Query q = getEntityManager().createQuery(
                 "DELETE FROM DecModelloFiltroTiDoc d WHERE d.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        q.setParameter("idModelloTipoSerie", idModelloTipoSerie);
+        q.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
         q.executeUpdate();
     }
 
@@ -300,9 +311,8 @@ public class ModelliSerieHelper extends GenericHelper {
     public List<DecModelloFiltroSelUdattb> retrieveDecModelloFiltroSelUdattb(BigDecimal idModelloTipoSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT f FROM DecModelloFiltroSelUdattb f WHERE f.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        List<DecModelloFiltroSelUdattb> list = query.getResultList();
-        return list;
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        return query.getResultList();
     }
 
     /**
@@ -314,7 +324,7 @@ public class ModelliSerieHelper extends GenericHelper {
     public void deleteAllDecModelloFiltroSelUdattb(BigDecimal idModelloTipoSerie) {
         Query q = getEntityManager().createQuery(
                 "DELETE FROM DecModelloFiltroSelUdattb d WHERE d.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        q.setParameter("idModelloTipoSerie", idModelloTipoSerie);
+        q.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
         q.executeUpdate();
     }
 
@@ -329,9 +339,8 @@ public class ModelliSerieHelper extends GenericHelper {
     public List<DecUsoModelloTipoSerie> retrieveDecUsoModelloTipoSerie(BigDecimal idModelloTipoSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT u FROM DecUsoModelloTipoSerie u WHERE u.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        List<DecUsoModelloTipoSerie> list = query.getResultList();
-        return list;
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        return query.getResultList();
     }
 
     /**
@@ -347,16 +356,16 @@ public class ModelliSerieHelper extends GenericHelper {
     public BigDecimal getMaxPgDecNotaModelloSerie(BigDecimal idModelloTipoSerie, BigDecimal idTipoNotaSerie) {
         Query query = getEntityManager().createQuery(
                 "SELECT MAX(d.pgNotaTipoSerie) FROM DecNotaModelloTipoSerie d WHERE d.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie AND d.decTipoNotaSerie.idTipoNotaSerie = :idTipoNotaSerie ");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        query.setParameter("idTipoNotaSerie", idTipoNotaSerie);
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        query.setParameter("idTipoNotaSerie", longFromBigDecimal(idTipoNotaSerie));
         return (BigDecimal) query.getSingleResult();
     }
 
     public boolean existDecUsoModelloTipoSerie(BigDecimal idModelloTipoSerie, BigDecimal idStrut) {
         Query query = getEntityManager().createQuery(
                 "SELECT d FROM DecUsoModelloTipoSerie d WHERE d.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie AND d.orgStrut.idStrut = :idStrut");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        query.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<DecUsoModelloTipoSerie> list = query.getResultList();
         return !list.isEmpty();
     }
@@ -371,26 +380,19 @@ public class ModelliSerieHelper extends GenericHelper {
         case TIPO_DOC:
             queryStr.append("WHERE modelloTipoSerie.decTipoDoc.idTipoDoc = :idTipoDato ");
             break;
+        default:
+            break;
         }
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idTipoDato", idTipoDato);
         return (Long) query.getSingleResult() > 0;
     }
 
-    // public void deleteDecModelloCampoOutSelUd(long idModelloCampoOutSelUd) {
-    // Query q = getEntityManager().createQuery("DELETE FROM DecModelloCampoOutSelUd d WHERE d.idModelloCampoOutSelUd =
-    // :idModelloCampoOutSelUd");
-    // q.setParameter("idModelloCampoOutSelUd", idModelloCampoOutSelUd);
-    // q.executeUpdate();
-    // getEntityManager().flush();
-    // }
-
     public List<DecModelloFiltroTiDoc> getDecModelloFiltroTiDoc(BigDecimal idModelloTipoSerie) {
         Query query = getEntityManager()
                 .createQuery("SELECT modelloFiltroTiDoc FROM DecModelloFiltroTiDoc modelloFiltroTiDoc "
                         + "WHERE modelloFiltroTiDoc.decModelloTipoSerie.idModelloTipoSerie = :idModelloTipoSerie");
-        query.setParameter("idModelloTipoSerie", idModelloTipoSerie);
-        List<DecModelloFiltroTiDoc> list = query.getResultList();
-        return list;
+        query.setParameter("idModelloTipoSerie", longFromBigDecimal(idModelloTipoSerie));
+        return query.getResultList();
     }
 }

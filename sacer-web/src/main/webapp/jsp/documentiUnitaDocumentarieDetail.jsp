@@ -171,13 +171,7 @@
                     <slf:field name="<%=UnitaDocumentarieForm.DocumentiUnitaDocumentarieDetail.BL_XML_RAPP_DOC%>" colSpan="4" controlWidth="w100"/>
                 </slf:fieldSet>
             </slf:tab>
-
-            <slf:tab  name="<%= UnitaDocumentarieForm.DocumentiDettaglioTabs.NAME%>" tabElement="NoteDoc">
-                <slf:fieldSet  borderHidden="false">
-                    <slf:field name="<%=UnitaDocumentarieForm.DocumentiUnitaDocumentarieDetail.NT_DOC%>" colSpan="4" controlWidth="w100"/>
-                </slf:fieldSet>
-            </slf:tab>
-
+            
             <sl:newLine skipLine="true"/>
             <slf:fieldSet borderHidden="false">
                 <slf:lblField name="<%=UnitaDocumentarieForm.DocumentiUnitaDocumentarieDetail.SCARICA_COMP_FILE_DOC%>" colSpan="3" />

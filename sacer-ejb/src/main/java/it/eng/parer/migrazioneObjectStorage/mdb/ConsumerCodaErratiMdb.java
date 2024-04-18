@@ -1,17 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.migrazioneObjectStorage.mdb;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import it.eng.parer.blob.info.BlobInfo;
-import it.eng.parer.blob.info.ErroreInfo;
-import it.eng.parer.blob.info.ErroreInfo.TipologiaErrore;
-import it.eng.parer.blob.info.MigrazioneInfo;
-import it.eng.parer.blob.info.PayLoad;
-import it.eng.parer.entity.OstMigrazFile;
-import it.eng.parer.entity.OstMigrazFileErr;
-import it.eng.parer.migrazioneObjectStorage.helper.ConsumerCodaHelper;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
@@ -25,9 +34,21 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.eng.parer.blob.info.BlobInfo;
+import it.eng.parer.blob.info.ErroreInfo;
+import it.eng.parer.blob.info.ErroreInfo.TipologiaErrore;
+import it.eng.parer.blob.info.MigrazioneInfo;
+import it.eng.parer.blob.info.PayLoad;
+import it.eng.parer.entity.OstMigrazFile;
+import it.eng.parer.entity.OstMigrazFileErr;
+import it.eng.parer.migrazioneObjectStorage.helper.ConsumerCodaHelper;
 
 /**
  *
@@ -36,7 +57,7 @@ import org.slf4j.LoggerFactory;
 @MessageDriven(name = "ConsumerCodaErratiMdb", activationConfig = {
         @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-        @ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/OggettiInErroreQueue") })
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/queue/OggettiInErroreQueue") })
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
 public class ConsumerCodaErratiMdb implements MessageListener {

@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
@@ -66,7 +83,6 @@ public class EntiConvenzionatiAction extends EntiConvenzionatiAbstractAction {
                 SIOrgEnteConvenzOrgRowBean enteConvenzOrgRowBean = ambienteEjb
                         .getSIOrgEnteConvenzOrgRowBean(idEnteConvenzOrg);
 
-                // BigDecimal idAmbienteEnteConvenz = currentRow.getBigDecimal("id_ambiente_ente_convenz");
                 // Ricavo il TableBean relativo agli enti convenzionati
                 BaseTable enteConvenzTableBean = ambienteEjb
                         .getSIOrgEnteSiamTableBean(enteConvenzOrgRowBean.getBigDecimal("id_ambiente_ente_convenz"));
@@ -136,8 +152,7 @@ public class EntiConvenzionatiAction extends EntiConvenzionatiAbstractAction {
                          * Codice aggiuntivo per il logging...
                          */
                         LogParam param = SpagoliteLogUtil.getLogParam(
-                                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                         if (getForm().getEnteConvenzOrg().getStatus().equals(BaseElements.Status.insert)) {
@@ -302,8 +317,7 @@ public class EntiConvenzionatiAction extends EntiConvenzionatiAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
         if (Application.Publisher.CREA_STRUTTURA.equalsIgnoreCase(param.getNomePagina())) {

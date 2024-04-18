@@ -2,19 +2,34 @@
 <%@ include file="../../include.jsp"%>
 
 <sl:html>
-    <sl:head title="Dettaglio Fascicolo" />
-      
+    <sl:head title="Dettaglio Fascicolo" >   
+        <script type="text/javascript">
+            $(document).ready(function () {
+               // Personalizzo graficamente i campi anno e numero
+               $('#Aa_fascicolo_titolo').css({"color": "#000000", "font-size": "13px", "text-align": "left"});
+               $("label[for='Aa_fascicolo_titolo']").css({"color": "#000000", "font-size": "13px","text-align": "left", "font-weight": "bold"});
+               $('#Cd_key_fascicolo_titolo').css({"color": "#000000", "font-size": "13px","text-align": "left"});
+               $("label[for='Cd_key_fascicolo_titolo']").css({"color": "#000000", "font-size": "13px","text-align": "left", "font-weight": "bold"});
+            });
+        </script>
+    </sl:head>    
+
     <sl:body>
         <sl:header changeOrganizationBtnDescription="Cambia struttura" />
         <sl:menu />
         <sl:content>
             <slf:messageBox/>
+            <sl:newLine skipLine="true"/>     
+            <fieldset class="noborder" style="padding: 5px;">
+            <font size="3"><b><slf:field name="<%=FascicoliForm.FascicoloDetail.DS_OGGETTO_FASCICOLO%>" colSpan="4" /></b></font>
+            <sl:newLine skipLine="true"/>            
+            <slf:lblField name="<%=FascicoliForm.FascicoloDetail.AA_FASCICOLO_TITOLO%>" colSpan="1" labelWidth="w1" controlWidth="w50" />
+            <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_KEY_FASCICOLO_TITOLO%>" colSpan="2" labelWidth="w1" controlWidth="w90" />
             <sl:newLine skipLine="true"/>
-            <sl:contentTitle title="Dettaglio fascicolo"/>
+            <slf:field name="<%=FascicoliForm.FascicoloDetail.URN_FAS%>" colSpan="4" />
+            </fieldset>
             <sl:newLine skipLine="true"/>
-
             <slf:listNavBarDetail name="<%= FascicoliForm.FascicoliList.NAME%>" />
-
             <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="InfoPrincipaliFascicolo">
                 <slf:fieldSet borderHidden="false">
                     <slf:section name="<%=FascicoliForm.VersatoreSection.NAME%>" styleClass="importantContainer">
@@ -22,16 +37,6 @@
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NM_ENTE%>"  colSpan="3" controlWidth="w100"/>
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NM_STRUT%>"  colSpan="3" controlWidth="w100"/>
                     </slf:section>
-
-                    <%--
-                    <slf:section name="<%=FascicoliForm.SoggProduttoreSection.NAME%>" styleClass="importantContainer">
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NM_AMBIENTE_ENTE_CONVENZ%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_ENTE_CONVENZ%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NM_ENTE_CONVENZ%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                    </slf:section>
-                    --%>
 
                     <slf:section name="<%=FascicoliForm.FascicoloDettSection.NAME%>" styleClass="importantContainer">
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.AA_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
@@ -45,45 +50,14 @@
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.DT_APE_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
                         <sl:newLine />
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.DT_CHIU_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.AMMIN_TITOL%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.PROC_AMMIN%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NI_AA_CONSERVAZIONE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_LIVELLO_RISERV%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
+                        <sl:newLine />                        
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.TS_INI_SES%>" width="w100" labelWidth="w15" controlWidth="w70"/>
+                        <sl:newLine />
+                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.URN_FAS%>" width="w100" labelWidth="w15" controlWidth="w70"/>
                         <sl:newLine />
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.TI_STATO_CONSERVAZIONE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
                         <sl:newLine />
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.TI_STATO_FASC_ELENCO_VERS%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                    </slf:section>
-
-                    <slf:section name="<%=FascicoliForm.SegnaturaArchivisticaSection.NAME%>" styleClass="importantContainer">
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_COMPOSITO_VOCE_TITOL%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:label name="<%=FascicoliForm.FascicoloDetail.LABEL_TREE%>" labelWidth="w15"/>
-                        <slf:tree name="<%=FascicoliForm.TreeClassif.NAME%>" additionalJsonParams="\"core\" : { \"expand_selected_onload\" : true }"/>
-                        <script type="text/javascript">
-                            var tree = $("#tree_TreeClassif");
-
-                            tree.prev("div.skipLine").remove();
-                            tree.css({'display': "flex"});
-                            tree.on('loaded.jstree', function () {
-                                tree.jstree('open_all');
-                            });
-                        </script>
-                        <sl:newLine />
-
-                        <slf:section name="<%=FascicoliForm.FascicoloAppartenenzaDettSection.NAME%>" styleClass="importantContainer">
-                            <slf:lblField name="<%=FascicoliForm.FascicoloDetail.AA_FASCICOLO_PADRE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                            <sl:newLine />
-                            <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_KEY_FASCICOLO_PADRE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                            <sl:newLine />
-                            <slf:lblField name="<%=FascicoliForm.FascicoloDetail.DS_OGGETTO_FASCICOLO_PADRE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        </slf:section>
                     </slf:section>
 
                     <slf:section name="<%=FascicoliForm.ComposizioneSection.NAME%>" styleClass="importantContainer">
@@ -112,7 +86,111 @@
                 </slf:fieldSet>
             </slf:tab>
 
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="InfoVersamentoFascicolo">
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="ContenutoFascicolo">
+                <slf:fieldSet borderHidden="false">
+                    <slf:field name="<%=FascicoliForm.FascicoloDetail.DS_ABILITAZIONE_UD%>" colSpan="4" controlWidth="w100"/>
+                    <script type="text/javascript">
+                        var nota = $("#Ds_abilitazione_ud");
+                        nota.css({
+                            'color': "red"
+                        });
+                    </script>
+                    <sl:newLine skipLine="true"/>
+                    <slf:section name="<%=FascicoliForm.UnitaDocumentarieSection.NAME%>" styleClass="importantContainer">
+                    <slf:listNavBar name="<%= FascicoliForm.UnitaDocList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= FascicoliForm.UnitaDocList.NAME%>" />
+                    <slf:listNavBar  name="<%= FascicoliForm.UnitaDocList.NAME%>" />
+                    </slf:section>
+                    <%-- TODO: da decommentare quanto verranno gestiti i SOTTOSFASCICOLI <sl:newLine skipLine="true"/>
+                    <slf:section name="<%=FascicoliForm.SottofascicoliSection.NAME%>" styleClass="importantContainer">
+                    <slf:listNavBar name="<%= FascicoliForm.SottofascicoliList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= FascicoliForm.SottofascicoliList.NAME%>" />
+                    <slf:listNavBar  name="<%= FascicoliForm.SottofascicoliList.NAME%>" />
+                    </slf:section>--%>
+                </slf:fieldSet>
+            </slf:tab>
+
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="ProfiloGeneraleFascicolo">
+                <slf:fieldSet borderHidden="false">
+                <sl:newLine skipLine="true"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_XSD_PROFILO%>" colSpan="1" />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_DEFAULT_PROFILO%>" colSpan="1"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_XSD_PROFILO_GENERALE%>" colSpan="1"  />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_PROFILO_GENERALE%>" colSpan="1"  />
+                <sl:newLine />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.PROC_AMMIN%>" colSpan="2"/>                    
+                <sl:newLine />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_LIVELLO_RISERV%>" colSpan="2"/>
+                <sl:newLine skipLine="true"/>
+                <slf:section name="<%=FascicoliForm.SoggettiSection.NAME%>" styleClass="importantContainer">
+                    <slf:listNavBar name="<%= FascicoliForm.SoggettiCoinvoltiList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= FascicoliForm.SoggettiCoinvoltiList.NAME%>" />
+                    <slf:listNavBar  name="<%= FascicoliForm.SoggettiCoinvoltiList.NAME%>" />
+                </slf:section>
+                <sl:newLine skipLine="true"/>
+                <slf:section name="<%=FascicoliForm.EventiSection.NAME%>" styleClass="importantContainer">
+                    <slf:listNavBar name="<%= FascicoliForm.EventiList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= FascicoliForm.EventiList.NAME%>" />
+                    <slf:listNavBar  name="<%= FascicoliForm.EventiList.NAME%>" />
+                </slf:section>    
+                </slf:fieldSet>
+            </slf:tab>
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="ProfiloArchivisticoFascicolo">
+                <slf:fieldSet borderHidden="false">
+                <sl:newLine skipLine="true"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_XSD_SEGNATURA%>" colSpan="1" />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_DEFAULT_SEGNATURA%>" colSpan="1"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_XSD_PROFILO_ARCHIVISTICO%>" colSpan="1"  />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_PROFILO_ARCHIVISTICO%>" colSpan="1"  />
+                <sl:newLine />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.INDICE_CLASSIF%>" colSpan="2"/>                    
+                <sl:newLine />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_LIVELLO_RISERV%>" colSpan="2"/>
+                <sl:newLine />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NI_AA_CONSERVAZIONE%>" colSpan="2"/>
+                <sl:newLine skipLine="true"/>
+                <slf:section name="<%=FascicoliForm.FascicoliCollegatiSection.NAME%>" styleClass="importantContainer">
+                    <slf:listNavBar name="<%= FascicoliForm.CollegamentiList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= FascicoliForm.CollegamentiList.NAME%>" />
+                    <slf:listNavBar  name="<%= FascicoliForm.CollegamentiList.NAME%>" />
+                </slf:section>   
+                </slf:fieldSet>
+            </slf:tab>
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="ProfiloNormativoFascicolo">
+            <script src="<c:url value='/js/help/inithighlightingjs.js' />" type="text/javascript"></script>   
+                <slf:fieldSet borderHidden="false">
+                <sl:newLine skipLine="true"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_XSD_NORMATIVO%>" colSpan="1" />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_DEFAULT_NORMATIVO%>" colSpan="1"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_XSD_PROFILO_NORMATIVO%>" colSpan="1"  />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_PROFILO_NORMATIVO%>" colSpan="1"  />
+                <sl:newLine skipLine="true"/>
+                <slf:field name="<%=FascicoliForm.FascicoloDetail.BL_XML_NORMATIVO%>" colSpan="4" controlWidth="w100"/>
+                </slf:fieldSet>
+            </slf:tab>
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="ProfiloSpecificoFascicolo">
+                <slf:fieldSet borderHidden="false">
+                <sl:newLine skipLine="true"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_XSD_SPECIFICO%>" colSpan="1" />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_DEFAULT_SPECIFICO%>" colSpan="1"/>
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_XSD_PROFILO_SPECIFICO%>" colSpan="1"  />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_PROFILO_SPECIFICO%>" colSpan="1"  />
+                <sl:newLine skipLine="true"/>
+                <slf:section name="<%=FascicoliForm.AttributiFascicoloSection.NAME%>" styleClass="importantContainer">
+                    <slf:listNavBar name="<%= FascicoliForm.DatiSpecificiFascicoloList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= FascicoliForm.DatiSpecificiFascicoloList.NAME%>" />
+                    <slf:listNavBar  name="<%= FascicoliForm.DatiSpecificiFascicoloList.NAME%>" />
+                </slf:section>  
+                </slf:fieldSet>
+            </slf:tab>
+
+            <sl:newLine skipLine="true"/>
+            <slf:fieldSet borderHidden="true">
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_XML_UNISINCRO_FASC%>" width="w20" labelWidth="w40" controlWidth="w60"  />
+            </slf:fieldSet>
+            <sl:newLine skipLine="true"/>    
+
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioBottomTabs.NAME%>" tabElement="InfoVersamentoFascicolo">
                 <slf:fieldSet borderHidden="false">
                     <slf:section name="<%=FascicoliForm.InfoVersatoreSection.NAME%>" styleClass="importantContainer">
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_VERSIONE_XML_SIP%>" width="w80" labelWidth="w30" controlWidth="w70"/>
@@ -133,18 +211,12 @@
                         <sl:newLine />
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_FORZA_CONTR_NUMERO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
                         <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_FORZA_CONTR_COLLEG%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_XSD_PROFILO%>" colSpan="1"/>
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_DEFAULT_PROFILO%>" colSpan="1"/>
-                        <sl:newLine />
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_XSD_SEGNATURA%>" colSpan="1"/>
-                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_DEFAULT_SEGNATURA%>" colSpan="1"/>
+                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.FL_FORZA_CONTR_COLLEG%>" width="w100" labelWidth="w15" controlWidth="w70"/>                        
                     </slf:section>
                 </slf:fieldSet>
             </slf:tab>
 
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="XMLRichiestaFascicolo">
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioBottomTabs.NAME%>" tabElement="XMLRichiestaFascicolo">
                 <script src="<c:url value='/js/help/inithighlightingjs.js' />" type="text/javascript"></script>   
                 <slf:fieldSet borderHidden="false">
                     <slf:section name="<%=FascicoliForm.InfoVersatoreSection.NAME%>" styleClass="noborder">
@@ -161,7 +233,7 @@
                 </slf:fieldSet>
             </slf:tab>
 
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="XMLRapportoFascicolo">
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioBottomTabs.NAME%>" tabElement="XMLRapportoFascicolo">
                 <script src="<c:url value='/js/help/inithighlightingjs.js' />" type="text/javascript"></script>   
                 <slf:fieldSet borderHidden="false" >
                     <slf:section name="<%=FascicoliForm.InfoVersatoreSection.NAME%>" styleClass="noborder">
@@ -179,26 +251,7 @@
                 </slf:fieldSet>
             </slf:tab>
 
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="XMLMetaFileFascicolo">
-                <script src="<c:url value='/js/help/inithighlightingjs.js' />" type="text/javascript"></script>   
-                <slf:fieldSet borderHidden="false">
-                    <slf:section name="<%=FascicoliForm.InfoVersatoreSection.NAME%>" styleClass="noborder">
-                        <slf:lblField name="<%=FascicoliForm.MetaFileFascicoloDetail.DS_URN_FILE_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaFileFascicoloDetail.DS_URN_NORMALIZ_FILE_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaFileFascicoloDetail.DS_HASH_FILE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaFileFascicoloDetail.DS_ALGO_HASH_FILE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaFileFascicoloDetail.CD_ENCODING_HASH_FILE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine skipLine="true"/>
-                        <slf:field name="<%=FascicoliForm.MetaFileFascicoloDetail.BL_FILE_VER_INDICE_AIP%>" colSpan="4" controlWidth="w100"/>
-                    </slf:section>
-                </slf:fieldSet>
-            </slf:tab>
-
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioTabs.NAME%>" tabElement="XMLMetaIndiceAipFascicolo">
+            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioBottomTabs.NAME%>" tabElement="XMLMetaIndiceAipFascicolo">
                 <script src="<c:url value='/js/help/inithighlightingjs.js' />" type="text/javascript"></script>   
                 <slf:fieldSet borderHidden="false">
                     <slf:section name="<%=FascicoliForm.InfoVersatoreSection.NAME%>" styleClass="noborder">
@@ -206,83 +259,19 @@
                         <sl:newLine skipLine="true"/>
                         <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.DS_URN_NORMALIZ_AIP_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
                         <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.HASH_PERSONALIZZATO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
+                        <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.HASH_PERSONALIZZATO%>" width="w100" labelWidth="w15" controlWidth="w70"/>                        
+                        <sl:newLine skipLine="true"/>                        
+                        <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.ALGORITMO_PERSONALIZZATO%>" width="w100" labelWidth="w15" controlWidth="w70"/>                        
                         <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.NM_ENTE_CONSERV%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <%--<slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.DS_HASH_FILE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.DS_ALGO_HASH_FILE%>" width="w100" labelWidth="w15" controlWidth="w70"/>
-                        <sl:newLine skipLine="true"/>
-                        <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.CD_ENCODING_HASH_FILE%>" width="w100" labelWidth="w15" controlWidth="w70"/>--%>
+                        <slf:lblField name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.CD_ENCODING_HASH_AIP_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>                        
                         <sl:newLine skipLine="true"/>
                         <slf:field name="<%=FascicoliForm.MetaIndiceAipFascicoloDetail.BL_FILE_VER_INDICE_AIP%>" colSpan="4" controlWidth="w100"/>
+                        <sl:newLine skipLine="true"/>
+                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.SCARICA_EXTERNAL_METADATA%>" colSpan="1"  />
                     </slf:section>
                 </slf:fieldSet>
             </slf:tab>
 
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioListsTabs.NAME%>" tabElement="UnitaDocumentarie">
-                <slf:fieldSet borderHidden="false">
-                    <slf:field name="<%=FascicoliForm.FascicoloDetail.DS_ABILITAZIONE_UD%>" colSpan="4" controlWidth="w100"/>
-                    <script type="text/javascript">
-                            var nota = $("#Ds_abilitazione_ud");
-                            nota.css({
-                                'color': "red"
-                            });
-                    </script>
-                    <sl:newLine skipLine="true"/>
-                    <slf:listNavBar name="<%= FascicoliForm.UnitaDocList.NAME%>" pageSizeRelated="true"/>
-                    <slf:list name="<%= FascicoliForm.UnitaDocList.NAME%>" />
-                    <slf:listNavBar  name="<%= FascicoliForm.UnitaDocList.NAME%>" />
-                </slf:fieldSet>
-            </slf:tab>
-
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioListsTabs.NAME%>" tabElement="AmministrazioniPartecipanti">
-                <slf:fieldSet borderHidden="false">
-                    <slf:listNavBar name="<%= FascicoliForm.AmministrazioniPartecList.NAME%>" pageSizeRelated="true"/>
-                    <slf:list name="<%= FascicoliForm.AmministrazioniPartecList.NAME%>" />
-                    <slf:listNavBar  name="<%= FascicoliForm.AmministrazioniPartecList.NAME%>" />
-                </slf:fieldSet>
-            </slf:tab>
-
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioListsTabs.NAME%>" tabElement="SoggettiCoinvolti">
-                <slf:fieldSet borderHidden="false">
-                    <slf:listNavBar name="<%= FascicoliForm.SoggettiCoinvoltiList.NAME%>" pageSizeRelated="true"/>
-                    <slf:list name="<%= FascicoliForm.SoggettiCoinvoltiList.NAME%>" />
-                    <slf:listNavBar  name="<%= FascicoliForm.SoggettiCoinvoltiList.NAME%>" />
-                </slf:fieldSet>
-            </slf:tab>
-
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioListsTabs.NAME%>" tabElement="Responsabili">
-                <slf:fieldSet borderHidden="false">
-                    <slf:listNavBar name="<%= FascicoliForm.ResponsabiliList.NAME%>" pageSizeRelated="true"/>
-                    <slf:list name="<%= FascicoliForm.ResponsabiliList.NAME%>" />
-                    <slf:listNavBar  name="<%= FascicoliForm.ResponsabiliList.NAME%>" />
-                </slf:fieldSet>
-            </slf:tab>
-
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioListsTabs.NAME%>" tabElement="UOResponsabili">
-                <slf:fieldSet borderHidden="false">
-                    <slf:listNavBar name="<%= FascicoliForm.UOResponsabiliList.NAME%>" pageSizeRelated="true"/>
-                    <slf:list name="<%= FascicoliForm.UOResponsabiliList.NAME%>" />
-                    <slf:listNavBar  name="<%= FascicoliForm.UOResponsabiliList.NAME%>" />
-                </slf:fieldSet>
-            </slf:tab>
-
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioListsTabs.NAME%>" tabElement="Collegamenti">
-                <slf:fieldSet borderHidden="false">
-                    <slf:listNavBar name="<%= FascicoliForm.CollegamentiList.NAME%>" pageSizeRelated="true"/>
-                    <slf:list name="<%= FascicoliForm.CollegamentiList.NAME%>" />
-                    <slf:listNavBar  name="<%= FascicoliForm.CollegamentiList.NAME%>" />
-                </slf:fieldSet>
-            </slf:tab>
-
-            <slf:tab  name="<%= FascicoliForm.FascicoliDettaglioListsTabs.NAME%>" tabElement="ElvFascicoli">
-                <slf:fieldSet borderHidden="false">
-                    <slf:listNavBar name="<%= FascicoliForm.ElvFascicoliList.NAME%>" pageSizeRelated="true"/>
-                    <slf:list name="<%= FascicoliForm.ElvFascicoliList.NAME%>" />
-                    <slf:listNavBar  name="<%= FascicoliForm.ElvFascicoliList.NAME%>" />
-                </slf:fieldSet>
-            </slf:tab>
         </sl:content>
         <sl:footer />
     </sl:body>

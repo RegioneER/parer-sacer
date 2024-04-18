@@ -1,4 +1,25 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
+
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
 
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.ejb.TipoRappresentazioneEjb;
@@ -29,6 +50,7 @@ import it.eng.parer.ws.xml.versRespStato.ECEsitoExtType;
 import it.eng.parer.ws.xml.versRespStato.ECEsitoPosNegType;
 import it.eng.parer.ws.xml.versRespStato.EsitoChiamataWSType;
 import it.eng.parer.ws.xml.versRespStato.EsitoGenericoType;
+import it.eng.spagoCore.configuration.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import static it.eng.spagoLite.actions.form.ListAction.NE_DETTAGLIO_INSERT;
 import it.eng.spagoLite.form.base.BaseElements.Status;
@@ -124,6 +146,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                     }
                     // end TODO
                     getForm().getTrasformTipoRappr().getScaricaTrasformatore().setEditMode();
+                    getForm().getTrasformTipoRappr().getScaricaTrasformatore().setDisableHourGlass(true);
                     String stato = trasformTipoRapprRowBean.getTiStatoFileTrasform();
                     // TODO: VERIFICARE
                     if (StringUtils.isNotBlank(cessato) && "1".equals(cessato)) {
@@ -165,6 +188,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
 
                 if (!action.equals(NE_DETTAGLIO_INSERT)) {
                     getForm().getImageTrasform().getScaricaFileImgTrasformatore().setEditMode();
+                    getForm().getImageTrasform().getScaricaFileImgTrasformatore().setDisableHourGlass(true);
                     // TODO: VERIFICARE
                     if (StringUtils.isNotBlank(cessato) && "1".equals(cessato)) {
                         getForm().getImageTrasform().getCaricaFileImgTrasformatore().setViewMode();
@@ -237,8 +261,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
              */
             TrasformatoriForm form = (TrasformatoriForm) SpagoliteLogUtil.getForm(this);
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.TRASFORM_TIPO_RAPPR_DETAIL)) {
                 param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(form, form.getImageTrasformList()));
@@ -280,8 +303,8 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
             File fileToDownload = new File(path);
             if (fileToDownload.exists()) {
                 /*
-                 * Definiamo l'output previsto che sarà  un file in formato zip di cui si occuperà  la servlet per fare
-                 * il download
+                 * Definiamo l'output previsto che sarà un file in formato zip di cui si occuperà la servlet per fare il
+                 * download
                  */
                 OutputStream outUD = getServletOutputStream();
                 getResponse().setContentType(StringUtils.isBlank(contentType) ? "application/zip" : contentType);
@@ -356,6 +379,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                 getForm().getTrasformTipoRappr().getTestTrasformatore().setEditMode();
                 getForm().getTrasformTipoRappr().getCaricaFileTrasformatore().setEditMode();
                 getForm().getTrasformTipoRappr().getScaricaTrasformatore().setEditMode();
+                getForm().getTrasformTipoRappr().getScaricaTrasformatore().setDisableHourGlass(true);
                 String stato = trasformTipoRapprRowBean.getTiStatoFileTrasform();
                 if (!CostantiDB.StatoFileTrasform.ERRATO.name().equals(stato)) {
                     getForm().getTrasformTipoRappr().getSbloccaFileTrasformatore().setEditMode();
@@ -380,6 +404,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                 getForm().getImageTrasform().copyFromBean(imageTrasformTipoRapprRowBean);
                 getForm().getImageTrasform().getCaricaFileImgTrasformatore().setEditMode();
                 getForm().getImageTrasform().getScaricaFileImgTrasformatore().setEditMode();
+                getForm().getImageTrasform().getScaricaFileImgTrasformatore().setDisableHourGlass(true);
 
             } catch (EMFError ex) {
                 logger.error("Errore nel reloadAfterGoBack di TrasformatoriAction per il publisher :" + publisher, ex);
@@ -529,21 +554,16 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
 
             // maximum size that will be stored in memory
             factory.setSizeThreshold(sizeMb);
-            Properties props = new Properties();
-            try {
-                props.load(this.getClass().getClassLoader().getResourceAsStream("/Sacer.properties"));
-            } catch (IOException ex) {
-                throw new EMFError(EMFError.BLOCKING, "Errore nel caricamento delle impostazioni per l'upload", ex);
-            }
             // the location for saving data that is larger than
-            factory.setRepository(new File(props.getProperty("loadXsdApp.upload.directory")));
+            factory.setRepository(
+                    new File(ConfigSingleton.getInstance().getStringValue(LOAD_XSD_APP_UPLOAD_DIR.name())));
             // Create a new file upload handler
             ServletFileUpload upload = new ServletFileUpload(factory);
             // maximum size before a FileUploadException will be thrown
-            upload.setSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxRequestSize")));
-            upload.setFileSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxFileSize")));
-            List items = upload.parseRequest(getRequest());
-            Iterator iter = items.iterator();
+            upload.setSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_REQUEST_SIZE.name()));
+            upload.setFileSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_FILE_SIZE.name()));
+            List<FileItem> items = upload.parseRequest(getRequest());
+            Iterator<FileItem> iter = items.iterator();
 
             DiskFileItem tmpFileItem = null;
             TrasformatoriForm.TrasformTipoRappr trasform = getForm().getTrasformTipoRappr();
@@ -567,7 +587,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                         isFromCaricaImmagine = "true".equals(item.getString());
 
                     }
-                    // nell'eventualità  che si voglia permettere di modificare un'altro dei campi rimasti, scommentare
+                    // nell'eventualità che si voglia permettere di modificare un'altro dei campi rimasti, scommentare
                     // il relativo else if.
                     // else if
                     // (item.getFieldName().equals(getForm().getTrasformTipoRappr().getTi_stato_file_trasform().getName()))
@@ -654,6 +674,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                 getForm().getImageTrasform().copyFromBean(trasformTipoRapprRowBean);
 
                 getForm().getImageTrasform().getScaricaFileImgTrasformatore().setEditMode();
+                getForm().getImageTrasform().getScaricaFileImgTrasformatore().setDisableHourGlass(true);
                 getForm().getImageTrasform().getCaricaFileImgTrasformatore().setEditMode();
                 getMessageBox().addInfo("File dell'immagine caricato con successo.");
                 forwardToPublisher(Application.Publisher.IMAGE_TRASFORM_DETAIL);
@@ -675,6 +696,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
             getForm().getTrasformTipoRappr().getTestTrasformatore().setEditMode();
             getForm().getTrasformTipoRappr().getCaricaFileTrasformatore().setEditMode();
             getForm().getTrasformTipoRappr().getScaricaTrasformatore().setEditMode();
+            getForm().getTrasformTipoRappr().getScaricaTrasformatore().setDisableHourGlass(isImageInsert);
             getMessageBox().addInfo("File del trasformatore caricato con successo.");
 
             forwardToPublisher(Application.Publisher.TRASFORM_TIPO_RAPPR_DETAIL);
@@ -764,8 +786,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
          * Codice aggiuntivo per il logging...
          */
         LogParam param = SpagoliteLogUtil.getLogParam(
-                configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC),
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
         TrasformatoriForm form2 = (TrasformatoriForm) SpagoliteLogUtil.getForm(this);
@@ -820,8 +841,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                             SpagoliteLogUtil.getToolbarUpdate());
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -874,8 +894,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null,
-                                    null, null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     TrasformatoriForm form2 = (TrasformatoriForm) SpagoliteLogUtil.getForm(this);
@@ -910,6 +929,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                     getForm().getImageTrasform().setStatus(Status.view);
                     getForm().getImageTrasformList().setStatus(Status.view);
                     getForm().getImageTrasform().getScaricaFileImgTrasformatore().setEditMode();
+                    getForm().getImageTrasform().getScaricaFileImgTrasformatore().setDisableHourGlass(true);
                     getForm().getImageTrasform().getCaricaFileImgTrasformatore().setEditMode();
 
                     // goBack();
@@ -1113,8 +1133,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             TrasformatoriForm form2 = (TrasformatoriForm) SpagoliteLogUtil.getForm(this);
@@ -1144,8 +1163,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                     .getCurrentRow();
             BigDecimal idTipoRapprComp = bean.getIdTipoRapprComp();
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                     SpagoliteLogUtil.getButtonActionName(form2, form2.getTrasformTipoRappr(),
                             form2.getTrasformTipoRappr().getSbloccaFileTrasformatore().getName()));
@@ -1167,6 +1185,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
             getForm().getTrasformTipoRappr().getTestTrasformatore().setEditMode();
             getForm().getTrasformTipoRappr().getCaricaFileTrasformatore().setEditMode();
             getForm().getTrasformTipoRappr().getScaricaTrasformatore().setEditMode();
+            getForm().getTrasformTipoRappr().getScaricaTrasformatore().setDisableHourGlass(true);
             String stato = trasformTipoRapprRowBean.getTiStatoFileTrasform();
             if (!CostantiDB.StatoFileTrasform.ERRATO.name().equals(stato)) {
                 getForm().getTrasformTipoRappr().getSbloccaFileTrasformatore().setEditMode();
@@ -1207,8 +1226,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
                  */
                 TrasformatoriForm form2 = (TrasformatoriForm) SpagoliteLogUtil.getForm(this);
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                         SpagoliteLogUtil.getToolbarInsert());
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1242,6 +1260,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
 
                 getForm().getImageTrasform().copyFromBean(trasformTipoRapprRowBean);
                 getForm().getImageTrasform().getScaricaFileImgTrasformatore().setEditMode();
+                getForm().getImageTrasform().getScaricaFileImgTrasformatore().setDisableHourGlass(true);
                 getForm().getImageTrasform().getCaricaFileImgTrasformatore().setEditMode();
                 // getForm().getTrasformTipoRappr().getScaricaTrasformatore().setViewMode();
 

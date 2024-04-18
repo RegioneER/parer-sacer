@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.elencoVersamento.ejb;
 
 import it.eng.parer.elenco.xml.indice.*;
@@ -15,6 +32,7 @@ import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.elencoVersamento.helper.IndiceElencoVersHelper;
 import it.eng.parer.entity.AroUpdUnitaDoc;
 import it.eng.parer.exception.ParerNoResultException;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.dto.SessioneVersamentoExt;
 import it.eng.parer.job.dto.SessioneVersamentoExt.DatiXml;
 import it.eng.parer.viewEntity.ElvVLisModifByUd;
@@ -68,6 +86,8 @@ public class IndiceElencoVersXsdEjb {
     private UnitaDocumentarieHelper unitaDocumentarieHelper;
     @EJB
     private ConfigurationHelper configurationHelper;
+    @EJB
+    private GenericHelper genericHelper;
 
     public byte[] createIndex(ElvElencoVer elenco, boolean manualClosing) throws ParerNoResultException {
         log.debug("createIndex");
@@ -96,8 +116,8 @@ public class IndiceElencoVersXsdEjb {
         // EVO#16486
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         // sistema (new URN)
-        String sistema = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         // calcolo urn ORIGINALE
         // urn:<sistema>:<nome ente>:<nome struttura>:ElencoVers-UD-<data creazione>-<id elenco>
         String urnElenco = MessaggiWSFormat.formattaUrnElencoVersamento(sistema, ente, nomeStruttura,
@@ -505,14 +525,14 @@ public class IndiceElencoVersXsdEjb {
             switch (modif.getTiModif()) {
             case "DOC_AGG":
                 // creo elemento DocumentoAggiunto
-                AroDoc doc = elencoHelper.findById(AroDoc.class, modif.getIdModif());
+                AroDoc doc = genericHelper.findById(AroDoc.class, modif.getIdModif());
                 DocumentoAggiuntoType documentoUdAggiornata = buildDocUdAggiornata(doc, modif.getDsUrnModif(),
                         modif.getDsUrnRappVers(), modif.getDtVers());
                 aggiornamentiUdAggiornata.setDocumentoAggiunto(documentoUdAggiornata);
                 break;
             case "UPD_UD":
                 // creo elemento AggiornamentoUnitaDocumentari
-                AroUpdUnitaDoc upd = elencoHelper.findById(AroUpdUnitaDoc.class, modif.getIdModif());
+                AroUpdUnitaDoc upd = genericHelper.findById(AroUpdUnitaDoc.class, modif.getIdModif());
                 AggiornamentoUnitaDocumetariaType aggiornamentoUdAggiornata = buildUpdUdAggiornata(upd,
                         modif.getDsUrnModif(), modif.getDsUrnRappVers(), modif.getDtVers(), modif.getDsHashRappVers(),
                         modif.getDsAlgoHashRappVers(), modif.getCdEncodingHashRappVers());

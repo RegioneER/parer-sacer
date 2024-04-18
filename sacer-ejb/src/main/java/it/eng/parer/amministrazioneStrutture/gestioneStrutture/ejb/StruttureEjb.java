@@ -1,7 +1,23 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb;
 
 import it.eng.integriam.client.ws.IAMSoapClients;
-import it.eng.parer.job.allineamentoEntiConvenzionati.ejb.AllineamentoEntiConvenzionatiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
@@ -15,6 +31,7 @@ import it.eng.parer.amministrazioneStrutture.gestioneStrutture.EntitaValida;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.SalvaStrutturaDto;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.CorrispondenzePingHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.helper.TipoDocumentoHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.ejb.TipoFascicoloEjb;
@@ -25,59 +42,16 @@ import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.helper.Tip
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.helper.TipoUnitaDocHelper;
 import it.eng.parer.aop.TransactionInterceptor;
-import it.eng.parer.entity.AplParamApplic;
-import it.eng.parer.entity.AplSistemaVersante;
-import it.eng.parer.entity.AplValoreParamApplic;
-import it.eng.parer.entity.AroCompDoc;
-import it.eng.parer.entity.DecAaRegistroUnitaDoc;
-import it.eng.parer.entity.DecAttribDatiSpec;
-import it.eng.parer.entity.DecCategTipoUnitaDoc;
-import it.eng.parer.entity.DecCriterioFiltroMultiplo;
-import it.eng.parer.entity.DecCriterioRaggr;
-import it.eng.parer.entity.DecEstensioneFile;
-import it.eng.parer.entity.DecFormatoFileAmmesso;
-import it.eng.parer.entity.DecFormatoFileDoc;
-import it.eng.parer.entity.DecFormatoFileStandard;
-import it.eng.parer.entity.DecImageTrasform;
-import it.eng.parer.entity.DecModelloTipoSerie;
-import it.eng.parer.entity.DecParteNumeroRegistro;
-import it.eng.parer.entity.DecRegistroUnitaDoc;
-import it.eng.parer.entity.DecTipoCompDoc;
-import it.eng.parer.entity.DecTipoDoc;
-import it.eng.parer.entity.DecTipoDocAmmesso;
-import it.eng.parer.entity.DecTipoFascicolo;
-import it.eng.parer.entity.DecTipoRapprAmmesso;
-import it.eng.parer.entity.DecTipoRapprComp;
-import it.eng.parer.entity.DecTipoSerie;
-import it.eng.parer.entity.DecTipoStrutDoc;
-import it.eng.parer.entity.DecTipoStrutDocAmmesso;
-import it.eng.parer.entity.DecTipoStrutUdReg;
-import it.eng.parer.entity.DecTipoStrutUdSisVer;
-import it.eng.parer.entity.DecTipoStrutUdXsd;
-import it.eng.parer.entity.DecTipoStrutUnitaDoc;
-import it.eng.parer.entity.DecTipoUnitaDoc;
-import it.eng.parer.entity.DecTipoUnitaDocAmmesso;
-import it.eng.parer.entity.DecTrasformTipoRappr;
-import it.eng.parer.entity.DecUsoFormatoFileStandard;
-import it.eng.parer.entity.DecXsdAttribDatiSpec;
-import it.eng.parer.entity.DecXsdDatiSpec;
-import it.eng.parer.entity.IamEnteConvenzDaAllinea;
-import it.eng.parer.entity.IamOrganizDaReplic;
-import it.eng.parer.entity.OrgAmbiente;
-import it.eng.parer.entity.OrgCampoValSubStrut;
-import it.eng.parer.entity.OrgCategStrut;
-import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.entity.OrgRegolaValSubStrut;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.OrgSubStrut;
-import it.eng.parer.entity.OrgTipoServizio;
+import it.eng.parer.entity.*;
+import it.eng.parer.entity.constraint.AplValoreParamApplic.TiAppart;
 import it.eng.parer.entity.constraint.SIOrgEnteSiam.TiEnteConvenz;
 import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.grantedEntity.SIUsrOrganizIam;
 import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
+import it.eng.parer.job.allineamentoEntiConvenzionati.ejb.AllineamentoEntiConvenzionatiEjb;
 import it.eng.parer.job.allineamentoEntiConvenzionati.utils.CostantiAllineaEntiConv;
 import it.eng.parer.job.allineamentoOrganizzazioni.ejb.AllineamentoOrganizzazioniEjb;
 import it.eng.parer.job.helper.JobHelper;
@@ -87,21 +61,13 @@ import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.util.LogParam;
 import it.eng.parer.serie.ejb.TipoSerieEjb;
 import it.eng.parer.serie.helper.ModelliSerieHelper;
-import it.eng.parer.slite.gen.tablebean.AplParamApplicRowBean;
-import it.eng.parer.slite.gen.tablebean.AplParamApplicTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoStrutUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.IamAbilOrganizRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgCategStrutRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgCategStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
+import it.eng.parer.slite.gen.tablebean.*;
+import it.eng.parer.slite.gen.viewbean.*;
 import it.eng.parer.slite.gen.viewbean.OrgVRicStrutRowBean;
 import it.eng.parer.slite.gen.viewbean.OrgVRicStrutTableBean;
 import it.eng.parer.viewEntity.DecVCalcTiServOnTipoUd;
 import it.eng.parer.viewEntity.OrgVRicStrut;
+import it.eng.parer.viewEntity.OrgVCorrPing;
 import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.ejb.StrutCache;
 import it.eng.parer.web.helper.ConfigurationHelper;
@@ -112,40 +78,15 @@ import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.web.util.XmlPrettyPrintFormatter;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -159,6 +100,12 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 import it.eng.integriam.client.ws.calcoloservizierogati.CalcoloServiziErogati;
+import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.helper.SistemaMigrazioneHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.helper.TipoFascicoloHelper;
+import it.eng.parer.entity.AplSistemaMigraz;
+import it.eng.parer.entity.OrgUsoSistemaMigraz;
+import it.eng.parer.fascicoli.helper.CriteriRaggrFascicoliHelper;
+import it.eng.parer.fascicoli.helper.ModelliFascicoliHelper;
 import java.nio.charset.StandardCharsets;
 import javax.xml.ws.BindingProvider;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -171,6 +118,7 @@ import org.slf4j.LoggerFactory;
 public class StruttureEjb {
 
     private static final Logger logger = LoggerFactory.getLogger(StruttureEjb.class);
+    private static final String CALCOLO_SERVIZI_EROGATI_RISPOSTA_NEGATIVA_ENTE_CONVENZIONATO = "Calcolo servizi erogati - Risposta WS negativa per l'ente convenzionato";
 
     @Resource
     private SessionContext context;
@@ -238,6 +186,16 @@ public class StruttureEjb {
     private ConfigurationHelper configurationHelper;
     @EJB
     private CopiaStruttureEjb copiaStruttureEjb;
+    @EJB
+    private SistemaMigrazioneHelper sistemaMigrazioneHelper;
+    @EJB
+    private CorrispondenzePingHelper corrispondenzeHelper;
+    @EJB
+    private ModelliFascicoliHelper modelliFascicoliHelper;
+    @EJB
+    private TipoFascicoloHelper tipoFascicoloHelper;
+    @EJB
+    private CriteriRaggrFascicoliHelper crfHelper;
 
     public enum TiApparType {
 
@@ -259,26 +217,9 @@ public class StruttureEjb {
 
     private static final int NUM_CARATTERI_CODICE_STRUTTURA_NORMALIZZATO = 100;
 
-    public byte[] getOrgStrutXml(BaseRowInterface orgStrutRowBean)
-            throws IOException, NoSuchFieldException, JAXBException {
+    public byte[] getOrgStrutXml(BaseRowInterface orgStrutRowBean) throws IOException, JAXBException {
 
         OrgStrut struttura = struttureHelper.findById(OrgStrut.class, orgStrutRowBean.getBigDecimal("id_strut"));
-        // Taglio gli Xsd di migrazione
-        Iterator i = struttura.getDecAttribDatiSpecs().iterator();
-        while (i.hasNext()) {
-            DecAttribDatiSpec current = (DecAttribDatiSpec) i.next();
-            if (current.getTiUsoAttrib().equals("MIGRAZ")) {
-                i.remove();
-            }
-        }
-
-        i = struttura.getDecXsdDatiSpecs().iterator();
-        while (i.hasNext()) {
-            DecXsdDatiSpec current = (DecXsdDatiSpec) i.next();
-            if (current.getTiUsoXsd().equals("MIGRAZ")) {
-                i.remove();
-            }
-        }
 
         StringWriter sw = new StringWriter();
 
@@ -321,8 +262,7 @@ public class StruttureEjb {
 
     }
 
-    public UUID importXmlOrgStrut(File xmlFile)
-            throws JAXBException, FileNotFoundException, UnsupportedEncodingException {
+    public UUID importXmlOrgStrut(File xmlFile) throws JAXBException, FileNotFoundException {
 
         FileInputStream fis = new FileInputStream(xmlFile);
         InputStreamReader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
@@ -368,7 +308,7 @@ public class StruttureEjb {
      * Gestione AMBIENTI/ENTI/STRUTTURE
      *
      */
-    public OrgAmbienteRowBean getOrgAmbienteRowBean(BigDecimal idAmbiente) throws EMFError {
+    public OrgAmbienteRowBean getOrgAmbienteRowBean(BigDecimal idAmbiente) {
 
         OrgAmbienteRowBean ambienteRowBean = new OrgAmbienteRowBean();
         OrgAmbiente ambiente = struttureHelper.findById(OrgAmbiente.class, idAmbiente);
@@ -381,7 +321,7 @@ public class StruttureEjb {
         return ambienteRowBean;
     }
 
-    public OrgAmbienteRowBean getOrgAmbienteRowBeanByIdStrut(BigDecimal idStrut) throws EMFError {
+    public OrgAmbienteRowBean getOrgAmbienteRowBeanByIdStrut(BigDecimal idStrut) {
 
         OrgAmbienteRowBean ambienteRowBean = new OrgAmbienteRowBean();
         OrgStrut struttura = struttureHelper.findById(OrgStrut.class, idStrut);
@@ -445,9 +385,7 @@ public class StruttureEjb {
 
     public OrgStrutRowBean getOrgStrutRowBean(BigDecimal idStrut, BigDecimal idEnte) {
 
-        OrgStrutRowBean orgStrutRowBean = getOrgStrut(idStrut, null, idEnte);
-
-        return orgStrutRowBean;
+        return getOrgStrut(idStrut, null, idEnte);
     }
 
     public OrgStrutRowBean getOrgStrutRowBean(BigDecimal idStrut) {
@@ -533,8 +471,7 @@ public class StruttureEjb {
 
     public OrgVRicStrutTableBean getOrgVRicStrutTableBean(String nmStrut, BigDecimal idEnte, BigDecimal idAmbiente,
             Boolean isTemplate, String partizionata, String nmSistemaVersante, BigDecimal idAmbitoTerrit,
-            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz, long idUtente)
-            throws EMFError {
+            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz, long idUtente) {
 
         OrgVRicStrutTableBean strutTableBean = new OrgVRicStrutTableBean();
 
@@ -560,8 +497,7 @@ public class StruttureEjb {
     public CopiaStruttureEjb.OrgStrutCopyResult insertOrgStrutImp(LogParam param, OrgStrutRowBean strutRowBean,
             UUID uuid, SalvaStrutturaDto salva, AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
-        String errorMessageTipiSerie = "TIPISERIE;";
+            throws ParerUserError {
         StruttureEjb me = context.getBusinessObject(StruttureEjb.class);
 
         // IMPORTA NON STANDARD
@@ -569,6 +505,7 @@ public class StruttureEjb {
                 TipoOper.IMPORTA_NON_STANDARD, salva, parametriAmministrazioneStruttura,
                 parametriConservazioneStruttura, parametriGestioneStruttura);
         IamOrganizDaReplic replic = result.getIamOrganizDaReplic();
+        String errorMessageTipiSerie = "TIPISERIE;";
 
         // Eseguo la creazione dei tipi serie standard, se possibile
         List<DecRegistroUnitaDoc> registri = registroHelper
@@ -604,7 +541,7 @@ public class StruttureEjb {
     public CopiaStruttureEjb.OrgStrutCopyResult copyOrgStrutRowBean(LogParam param, OrgStrutRowBean strutRowBean,
             BigDecimal idStrut, SalvaStrutturaDto salva, AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws ParerUserError {
         String errorMessageTipiSerie = "TIPISERIE;";
         StruttureEjb me = context.getBusinessObject(StruttureEjb.class);
         // DUPLICA NON STANDARD
@@ -649,7 +586,7 @@ public class StruttureEjb {
     public CopiaStruttureEjb.OrgStrutCopyResult overwriteOrgStrutImp(LogParam param, OrgStrutRowBean strutRowBean,
             UUID uuid, SalvaStrutturaDto salva, AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws ParerUserError {
         String errorMessageTipiSerie = "TIPISERIE;";
         StruttureEjb me = context.getBusinessObject(StruttureEjb.class);
         // IMPORTA STANDARD
@@ -698,7 +635,7 @@ public class StruttureEjb {
             OrgStrutRowBean strutRowBean, SalvaStrutturaDto salva,
             AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws EMFError, IOException, NoSuchFieldException, ParerUserError {
+            throws ParerUserError {
         String errorMessageTipiSerie = "TIPISERIE;";
         StruttureEjb me = context.getBusinessObject(StruttureEjb.class);
         // DUPLICA STANDARD
@@ -797,7 +734,7 @@ public class StruttureEjb {
             }
 
             strut = (OrgStrut) Transform.rowBean2Entity(strutRowBean);
-            strut.setIdStrut(idStrut.intValue());
+            strut.setIdStrut(idStrut.longValue());
             strut.setOrgEnte(ente);
             if (idCategStrut != null) {
                 categStrut = struttureHelper.findById(OrgCategStrut.class, idCategStrut);
@@ -806,9 +743,9 @@ public class StruttureEjb {
 
             strutRowBean.setIdStrut(BigDecimal.valueOf(strut.getIdStrut()));
 
-            struttureHelper.updateOrgStrut(strut, false);
+            struttureHelper.updateOrgStrut(strut);
 
-            if (isStruttureTemplate == false) {
+            if (!isStruttureTemplate) {
                 struttureHelper.getEntityManager().flush();
                 sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                         param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_STRUTTURA,
@@ -832,7 +769,7 @@ public class StruttureEjb {
 
             ente = struttureHelper.findById(OrgEnte.class, strutRowBean.getIdEnte());
             if (ente.getOrgStruts() == null) {
-                ente.setOrgStruts(new ArrayList<OrgStrut>());
+                ente.setOrgStruts(new ArrayList<>());
             }
 
             strut = (OrgStrut) Transform.rowBean2Entity(strutRowBean);
@@ -844,17 +781,22 @@ public class StruttureEjb {
             ente.getOrgStruts().add(strut);
             tiOper = ApplEnum.TiOperReplic.INS;
 
-            controlloAccordoEnteConvenzionatoSuInsStruttura(strutRowBean, ente);
+            controlloAccordoEnteConvenzionatoSuInsStruttura(strutRowBean);
             /*
              * Creo un nuovo record sotto struttura di default
              */
             saveDefaultSubStrut(strut, "1".equals(strutRowBean.getFlTemplate()));
             modificatiNomeDescrizioneEntePapi = true;
-            if (isStruttureTemplate == false) {
+            if (!isStruttureTemplate) {
                 struttureHelper.getEntityManager().flush();
                 sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                         param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_STRUTTURA,
                         new BigDecimal(strut.getIdStrut()), param.getNomePagina());
+            }
+
+            if (!strutRowBean.getFlTemplate().equals("1")) {
+                // Aggiungo tutti i formati a livello di struttura
+                formatoFileDocHelper.insertDecFormatoFileDocStrutturaSpecificaNative(strut.getIdStrut());
             }
         }
 
@@ -868,18 +810,17 @@ public class StruttureEjb {
     /**
      * Controlli sul salvataggio associazione struttura/ente convenzionato in fase di inserimento/importa/duplica
      * struttura come riportato in MAC #26960 (primo punto riferito all'inserimento di una nuova struttura)
-     * 
+     *
      * @param strutRowBean
      * @param ente
-     * 
+     *
      * @throws ParerUserError
      */
-    private void controlloAccordoEnteConvenzionatoSuInsStruttura(OrgStrutRowBean strutRowBean, OrgEnte ente)
-            throws ParerUserError {
+    private void controlloAccordoEnteConvenzionatoSuInsStruttura(OrgStrutRowBean strutRowBean) throws ParerUserError {
         if (strutRowBean.getIdEnteConvenz() != null) {
             /* Controllo sull'ente convenzionato scelto */
-            OrgVRicEnteConvenzByEsterno ricEnteConvenz = struttureHelper.findViewById(OrgVRicEnteConvenzByEsterno.class,
-                    strutRowBean.getIdEnteConvenz());
+            OrgVRicEnteConvenzByEsterno ricEnteConvenz = struttureHelper
+                    .findOrgVRicEnteConvenzByEsternoByEnte(strutRowBean.getIdEnteConvenz());
             if (ricEnteConvenz.getIdEnteGestore() == null) {
                 throw new ParerUserError("Controllare l'accordo dell'ente convenzionato</br>");
             }
@@ -930,7 +871,7 @@ public class StruttureEjb {
                 param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_STRUTTURA, new BigDecimal(idStrut),
                 param.getNomePagina());
 
-        logger.info("Cessazione della struttura " + idStrut + " avvenuta con successo!");
+        logger.info("Cessazione della struttura {} avvenuta con successo!", idStrut);
     }
     // end MEV#20462
 
@@ -1011,7 +952,7 @@ public class StruttureEjb {
             OrgStrutRowBean strutRowBean, TipoOper tipoOper, SalvaStrutturaDto salva,
             AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
-            throws ParerUserError, NoSuchFieldException {
+            throws ParerUserError {
         CopiaStruttureEjb.OrgStrutCopyResult result = null;
         salva.setDataAttuale(new Date());
         OrgStrut strut = null;
@@ -1073,7 +1014,6 @@ public class StruttureEjb {
                                     throw new ParerUserError(
                                             "Si \u00E8 verificato un errore nella procedura di copia. </br>");
                                 }
-                                // copiaCampo.setDecAttribDatiSpec(attrib);
                                 break;
                             case DATO_SPEC_UNI_DOC:
                                 attrib = campo.getDecAttribDatiSpec();
@@ -1087,7 +1027,6 @@ public class StruttureEjb {
                                     throw new ParerUserError(
                                             "Si \u00E8 verificato un errore nella procedura di copia. </br>");
                                 }
-                                // copiaCampo.setDecAttribDatiSpec(attrib);
                                 break;
                             case SUB_STRUT:
                                 List<OrgSubStrut> subStruts = subStrutHelper.getOrgSubStrut(
@@ -1152,24 +1091,16 @@ public class StruttureEjb {
             struttureHelper.deleteOrgStrutRelations(template);
             struttureHelper.getEntityManager().flush();
             // Nuovo codice a fattor comune con l'importa standard/non standard
-            result = impostaDatiStruttura(struttura, template, orgEnte, strutRowBean, salva, true, true,
+            result = impostaDatiStrutturaImpStd(struttura, template, orgEnte, strutRowBean, salva, true, true,
                     parametriAmministrazioneStruttura, parametriConservazioneStruttura, parametriGestioneStruttura);
             strut = result.getOrgStrut();
             strut.setFlTemplate("0");
             struttureHelper.getEntityManager().flush();
-            // Calcolo servizi erogati
-            boolean esitoOK = calcoloServiziErogati(strut.getIdEnteConvenz());
-            if (!esitoOK) {
-                throw new ParerUserError(
-                        "Errore durante il calcolo dei servizi erogati a seguito di importa standard</br>");
-            }
-
-            loggaOggettiStruttura(param, strut);
             strutRowBean.setIdStrut(new BigDecimal(strut.getIdStrut()));
 
-            OrgStrutRowBean APPO = getOrgStrut(new BigDecimal(strut.getIdStrut()), null,
+            OrgStrutRowBean appo = getOrgStrut(new BigDecimal(strut.getIdStrut()), null,
                     new BigDecimal(orgEnte.getIdEnte()));
-            strutRowBean.copyFromBaseRow(APPO);
+            strutRowBean.copyFromBaseRow(appo);
 
             /*
              * Eseguo la copia dei record in orgCampoValSubStrut manualmente Per farlo devo eseguire le seguenti
@@ -1259,9 +1190,10 @@ public class StruttureEjb {
 
             // INIZIO COPIA della struttura
             result = impostaDatiStruttura(struttura, new OrgStrut(), newOrgEnte, strutRowBean, salva, false, false,
-                    parametriAmministrazioneStruttura, parametriConservazioneStruttura, parametriGestioneStruttura);
+                    parametriAmministrazioneStruttura, parametriConservazioneStruttura, parametriGestioneStruttura,
+                    struttura.getFlTemplate());
             strut = result.getOrgStrut();
-            strut.setFlTemplate(struttura.getFlTemplate());
+
             struttureHelper.getEntityManager().flush();
 
             // Calcolo servizi erogati
@@ -1299,37 +1231,16 @@ public class StruttureEjb {
                     }
                 }
             }
-            // controllo che siano presenti nel DB tutti i formati che devo associare alla struttura che importo
-            if (struttura.getDecFormatoFileDocs() != null) {
-                for (DecFormatoFileDoc ffd : struttura.getDecFormatoFileDocs()) {
-                    for (DecUsoFormatoFileStandard duffs : ffd.getDecUsoFormatoFileStandards()) {
-                        DecFormatoFileStandard ffs;
-                        if ((ffs = formatoFileStandardHelper.getDecFormatoFileStandardByName(
-                                duffs.getDecFormatoFileStandard().getNmFormatoFileStandard())) != null) {
-                            duffs.setDecFormatoFileStandard(ffs);
-                        } else {
-                            throw new ParerUserError("Il formato file standard "
-                                    + duffs.getDecFormatoFileStandard().getNmFormatoFileStandard()
-                                    + " non \u00E8 presente nel database.");
-                        }
-                    }
-                }
-            }
             // Nuovo codice a fattor comune con l'importa standard/non standard
             result = impostaDatiStruttura(struttura, new OrgStrut(), orgEnte, strutRowBean, salva, true, false,
-                    parametriAmministrazioneStruttura, parametriConservazioneStruttura, parametriGestioneStruttura);
+                    parametriAmministrazioneStruttura, parametriConservazioneStruttura, parametriGestioneStruttura,
+                    "0");
             strut = result.getOrgStrut();
-            strut.setFlTemplate("0");
             struttureHelper.getEntityManager().flush();
 
-            // Calcolo servizi erogati
-            boolean esitoOK = calcoloServiziErogati(strut.getIdEnteConvenz());
-            if (!esitoOK) {
-                throw new ParerUserError(
-                        "Errore durante il calcolo dei servizi erogati a seguito di importa non  standard</br>");
-            }
             loggaOggettiStruttura(param, strut);
             strutRowBean.setIdStrut(new BigDecimal(strut.getIdStrut()));
+
             strutCache.removeOrgStrut(uuid);
             tiOper = ApplEnum.TiOperReplic.INS;
             // </editor-fold>
@@ -1391,19 +1302,86 @@ public class StruttureEjb {
         // cancello tutte le tabelle associate al template se presenti
         struttureHelper.deleteOrgStrutRelations(template);
         struttureHelper.getEntityManager().flush();
-        result = impostaDatiStruttura(strutturaDaCopiare, template, ente, strutRowBean, salva, isImport, true,
+        result = impostaDatiStrutturaImpStd(strutturaDaCopiare, template, ente, strutRowBean, salva, isImport, true,
                 parametriAmministrazioneStruttura, parametriConservazioneStruttura, parametriGestioneStruttura);
         OrgStrut strut = result.getOrgStrut();
         strut.setFlTemplate("0");
         struttureHelper.getEntityManager().flush();
         loggaOggettiStruttura(param, strut);
         strutRowBean.setIdStrut(new BigDecimal(strut.getIdStrut()));
-        OrgStrutRowBean APPO = getOrgStrut(new BigDecimal(strut.getIdStrut()), null, new BigDecimal(ente.getIdEnte()));
-        strutRowBean.setIdEnte(APPO.getIdEnte());
+        OrgStrutRowBean appo = getOrgStrut(new BigDecimal(strut.getIdStrut()), null, new BigDecimal(ente.getIdEnte()));
+        if (appo != null) {
+            strutRowBean.setIdEnte(appo.getIdEnte());
+        }
         return result;
     }
 
     private CopiaStruttureEjb.OrgStrutCopyResult impostaDatiStruttura(OrgStrut oldStrut, OrgStrut newStrut,
+            OrgEnte orgEnte, OrgStrutRowBean strutRowBean, SalvaStrutturaDto salva, boolean isImport,
+            boolean isStandard, AplParamApplicTableBean parametriAmministrazioneStruttura,
+            AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura,
+            String flTemplate) throws ParerUserError {
+        // Se la struttura NON è template
+        if (!strutRowBean.getFlTemplate().equals("1")) {
+            if (strutRowBean.getCdStrutNormaliz() == null || struttureHelper
+                    .existsCdStrutNormaliz(strutRowBean.getCdStrutNormaliz(), strutRowBean.getIdEnte(), null)) {
+                throw new ParerUserError(
+                        "Il nome normalizzato della struttura non è stato indicato o non è univoco</br>");
+            }
+        }
+
+        // Capire se è giusto che il controllo stia qui!!!
+        controlloAccordoEnteConvenzionatoSuInsStruttura(strutRowBean);
+
+        // NUOVO MOTORE DI COPIA
+        newStrut.setNmStrut(strutRowBean.getNmStrut());
+        newStrut.setDsStrut(strutRowBean.getDsStrut());
+        newStrut.setDtIniVal(strutRowBean.getDtIniVal());
+        newStrut.setDtFineVal(strutRowBean.getDtFineVal());
+        newStrut.setDtIniValStrut(strutRowBean.getDtIniValStrut());
+        newStrut.setDtFineValStrut(strutRowBean.getDtFineValStrut());
+        newStrut.setCdStrutNormaliz(strutRowBean.getCdStrutNormaliz());
+        newStrut.setCdIpa(strutRowBean.getCdIpa());
+        newStrut.setDlNoteStrut(strutRowBean.getDlNoteStrut());
+        newStrut.setFlTemplate(flTemplate);
+        newStrut.setOrgEnte(orgEnte);
+        if (strutRowBean.getIdCategStrut() != null) {
+            newStrut.setOrgCategStrut(struttureHelper.findById(OrgCategStrut.class, strutRowBean.getIdCategStrut()));
+        } else {
+            newStrut.setOrgCategStrut(null);
+        }
+
+        // Aggiungo i valori riguardanti l'ente convenzionato
+        newStrut.setIdEnteConvenz(strutRowBean.getIdEnteConvenz());
+
+        newStrut = formatoFileStandardHelper.getEntityManager().merge(newStrut);
+        formatoFileStandardHelper.getEntityManager().flush();
+
+        if (salva.isCheckIncludiTipiFascicolo()) {
+            // Controllo i modelli xsd periodo tipi fascicolo in base all'ambiente di questa nuova struttura
+            checkAndSetModelliXsdTipiFascicoloStruttura(oldStrut,
+                    new BigDecimal(orgEnte.getOrgAmbiente().getIdAmbiente()));
+        }
+
+        CopiaStruttureEjb.OrgStrutCopyResult result = copiaStruttureEjb.getOrgStrutCopyFromStrut(oldStrut, newStrut,
+                salva, isStandard);
+        newStrut = result.getOrgStrut();
+
+        /* Gestione Parametri */
+        gestisciParametriStruttura(newStrut, parametriAmministrazioneStruttura, result);
+        gestisciParametriStruttura(newStrut, parametriConservazioneStruttura, result);
+        gestisciParametriStruttura(newStrut, parametriGestioneStruttura, result);
+        /* Fine gestione parametri */
+
+        // Controllo e associo i modelli in base all'ambiente di questa nuova struttura
+        checkAndSetModelliTipiSerieStruttura(newStrut, new BigDecimal(orgEnte.getOrgAmbiente().getIdAmbiente()),
+                (isImport ? "importa" : "duplica"));
+        // inutile....
+        result.setOrgStrut(newStrut);
+        return result;
+    }
+
+    private CopiaStruttureEjb.OrgStrutCopyResult impostaDatiStrutturaImpStd(OrgStrut oldStrut, OrgStrut newStrut,
             OrgEnte orgEnte, OrgStrutRowBean strutRowBean, SalvaStrutturaDto salva, boolean isImport,
             boolean isStandard, AplParamApplicTableBean parametriAmministrazioneStruttura,
             AplParamApplicTableBean parametriConservazioneStruttura, AplParamApplicTableBean parametriGestioneStruttura)
@@ -1418,7 +1396,7 @@ public class StruttureEjb {
         }
 
         // Capire se è giusto che il controllo stia qui!!!
-        controlloAccordoEnteConvenzionatoSuInsStruttura(strutRowBean, orgEnte);
+        controlloAccordoEnteConvenzionatoSuInsStruttura(strutRowBean);
 
         // NUOVO MOTORE DI COPIA
         newStrut.setNmStrut(strutRowBean.getNmStrut());
@@ -1427,12 +1405,31 @@ public class StruttureEjb {
         newStrut.setDtFineVal(strutRowBean.getDtFineVal());
         newStrut.setDtIniValStrut(strutRowBean.getDtIniValStrut());
         newStrut.setDtFineValStrut(strutRowBean.getDtFineValStrut());
+        newStrut.setCdStrutNormaliz(strutRowBean.getCdStrutNormaliz());
+        newStrut.setCdIpa(strutRowBean.getCdIpa());
+        newStrut.setFlTemplate("0");
         newStrut.setDlNoteStrut(strutRowBean.getDlNoteStrut());
         newStrut.setOrgEnte(orgEnte);
+        if (strutRowBean.getIdCategStrut() != null) {
+            newStrut.setOrgCategStrut(struttureHelper.findById(OrgCategStrut.class, strutRowBean.getIdCategStrut()));
+        } else {
+            newStrut.setOrgCategStrut(null);
+        }
+
+        // Aggiungo i valori riguardanti l'ente convenzionato
+        newStrut.setIdEnteConvenz(strutRowBean.getIdEnteConvenz());
+
         newStrut = formatoFileStandardHelper.getEntityManager().merge(newStrut);
         formatoFileStandardHelper.getEntityManager().flush();
-        CopiaStruttureEjb.OrgStrutCopyResult result = copiaStruttureEjb.getOrgStrutCopyFromStrut(oldStrut, newStrut,
-                salva, isStandard);
+
+        if (salva.isCheckIncludiTipiFascicolo()) {
+            // Controllo i modelli xsd periodo tipi fascicolo in base all'ambiente di questa nuova struttura
+            checkAndSetModelliXsdTipiFascicoloStruttura(oldStrut,
+                    new BigDecimal(orgEnte.getOrgAmbiente().getIdAmbiente()));
+        }
+
+        CopiaStruttureEjb.OrgStrutCopyResult result = copiaStruttureEjb.getOrgStrutCopyFromStrutImpStd(oldStrut,
+                newStrut, salva, isStandard);
         newStrut = result.getOrgStrut();
 
         /* Gestione Parametri */
@@ -1441,15 +1438,6 @@ public class StruttureEjb {
         gestisciParametriStruttura(newStrut, parametriGestioneStruttura, result);
         /* Fine gestione parametri */
 
-        if (strutRowBean.getIdCategStrut() != null) {
-            newStrut.setOrgCategStrut(struttureHelper.findById(OrgCategStrut.class, strutRowBean.getIdCategStrut()));
-        } else {
-            newStrut.setOrgCategStrut(null);
-        }
-        newStrut.setCdStrutNormaliz(strutRowBean.getCdStrutNormaliz());
-        newStrut.setCdIpa(strutRowBean.getCdIpa());
-        // Aggiungo i valori riguardanti l'ente convenzionato
-        newStrut.setIdEnteConvenz(strutRowBean.getIdEnteConvenz());
         // Controllo e associo i modelli in base all'ambiente di questa nuova struttura
         checkAndSetModelliTipiSerieStruttura(newStrut, new BigDecimal(orgEnte.getOrgAmbiente().getIdAmbiente()),
                 (isImport ? "importa" : "duplica"));
@@ -1465,7 +1453,7 @@ public class StruttureEjb {
     private void gestisciParametriStruttura(OrgStrut newStrut, AplParamApplicTableBean parametri,
             CopiaStruttureEjb.OrgStrutCopyResult result) {
         if (newStrut.getAplValoreParamApplics() == null) {
-            newStrut.setAplValoreParamApplics(new ArrayList());
+            newStrut.setAplValoreParamApplics(new ArrayList<>());
         }
         if (parametri != null && !parametri.isEmpty()) {
             Iterator<AplParamApplicRowBean> it = parametri.iterator();
@@ -1515,7 +1503,7 @@ public class StruttureEjb {
      *            id ambiente nuovo
      * @param infisso
      *            fisso
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1559,6 +1547,179 @@ public class StruttureEjb {
     }
 
     /**
+     * Controlla se i periodi di validità dei tipi fascicolo della nuova struttura hanno associati dei modelli xsd tipo
+     * fascicolo. Nel qual caso verifica che gli stessi siano presenti nel nuovo ambiente della nuova struttura. Se
+     * anche un solo modello xsd non è presente per il nuovo ambiente, viene segnalato errore, al contrario, con tutti i
+     * modelli presenti nella nuova struttura (verificata l'uguaglianza tramite il il tipo modello e la versione codice
+     * xsd) si procede al recupero da DB degli stessi ed associati al periodo tipo fascicolo
+     *
+     * @param strutturaOld
+     *            strutturaOld
+     * @param idAmbienteNuovo
+     *            id ambiente nuovo
+     *
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public void checkAndSetModelliXsdTipiFascicoloStruttura(OrgStrut strutturaOld, BigDecimal idAmbienteNuovo)
+            throws ParerUserError {
+        List<DecTipoFascicolo> tipiFascicoloOld = strutturaOld.getDecTipoFascicolos();
+        boolean eccezione = false;
+
+        List<String[]> listaDatiErroreModelli = new ArrayList<>();
+        Set<String> setModelliErrore = new HashSet<>();
+        if (tipiFascicoloOld != null) {
+            for (DecTipoFascicolo tipoFascicoloNuovo : tipiFascicoloOld) {
+                if (tipoFascicoloNuovo.getDecAaTipoFascicolos() != null) {
+                    for (DecAaTipoFascicolo aaTipoFascicoloNuovo : tipoFascicoloNuovo.getDecAaTipoFascicolos()) {
+                        if (aaTipoFascicoloNuovo.getDecUsoModelloXsdFascs() != null) {
+                            for (DecUsoModelloXsdFasc usoModelloXsdFascNuovo : aaTipoFascicoloNuovo
+                                    .getDecUsoModelloXsdFascs()) {
+                                DecModelloXsdFascicolo modelloXsdFascicoloNuovo = usoModelloXsdFascNuovo
+                                        .getDecModelloXsdFascicolo();
+                                if (modelloXsdFascicoloNuovo != null) {
+                                    DecModelloXsdFascicolo modelloXsdFascicoloNuovoAmbiente = modelliFascicoliHelper
+                                            .getDecModelloXsdFascicolo(idAmbienteNuovo,
+                                                    modelloXsdFascicoloNuovo.getTiModelloXsd().name(),
+                                                    modelloXsdFascicoloNuovo.getTiUsoModelloXsd().name(),
+                                                    modelloXsdFascicoloNuovo.getCdXsd());
+                                    if (modelloXsdFascicoloNuovoAmbiente == null) {
+                                        eccezione = true;
+                                        String[] datiErroreModelli = new String[3];
+                                        datiErroreModelli[0] = tipoFascicoloNuovo.getNmTipoFascicolo();
+                                        datiErroreModelli[1] = modelloXsdFascicoloNuovo.getTiModelloXsd().name();
+                                        datiErroreModelli[2] = modelloXsdFascicoloNuovo.getCdXsd();
+                                        String modelloDaValutare = modelloXsdFascicoloNuovo.getTiModelloXsd().name()
+                                                + "_v" + modelloXsdFascicoloNuovo.getCdXsd();
+                                        if (setModelliErrore.add(modelloDaValutare)) {
+                                            listaDatiErroreModelli.add(datiErroreModelli);
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        if (eccezione) {
+            StringBuilder errorMessage = new StringBuilder();
+            for (String[] datiErroreModelli : listaDatiErroreModelli) {
+                errorMessage.append("Il Tipo fascicolo ").append(datiErroreModelli[0]).append(" referenzia il modello ")
+                        .append(datiErroreModelli[1]).append("_v").append(datiErroreModelli[2]);
+            }
+            throw new ParerUserError(errorMessage.append("Impossibile proseguire").toString());
+        }
+    }
+
+    public void checkAndSetModelliXsdTipiFascicoloStruttura(UUID uuid, BigDecimal idStrutCorrente)
+            throws ParerUserError {
+        // Ricavo la struttura presente nell'XML
+        OrgStrut strutExp = strutCache.getOrgStrut(uuid);
+        OrgStrut strutturaCorrente = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
+
+        checkAndSetModelliXsdTipiFascicoloStruttura(strutExp,
+                new BigDecimal(strutturaCorrente.getOrgEnte().getOrgAmbiente().getIdAmbiente()));
+
+    }
+
+    public void checkAndSetModelliXsdTipiFascicoloStrutturaImpParam(OrgStrut strutturaOld, BigDecimal idAmbienteNuovo,
+            String tipoFascicoloDaImp) throws ParerUserError {
+        List<DecTipoFascicolo> tipiFascicoloOld = strutturaOld.getDecTipoFascicolos();
+        boolean eccezione = false;
+
+        List<String[]> listaDatiErroreModelli = new ArrayList<>();
+        Set<String> setModelliErrore = new HashSet<>();
+        if (tipiFascicoloOld != null) {
+            for (DecTipoFascicolo tipoFascicoloNuovo : tipiFascicoloOld) {
+                if (tipoFascicoloDaImp.equals(tipoFascicoloNuovo.getNmTipoFascicolo())) {
+                    if (tipoFascicoloNuovo.getDecAaTipoFascicolos() != null) {
+                        for (DecAaTipoFascicolo aaTipoFascicoloNuovo : tipoFascicoloNuovo.getDecAaTipoFascicolos()) {
+                            if (aaTipoFascicoloNuovo.getDecUsoModelloXsdFascs() != null) {
+                                for (DecUsoModelloXsdFasc usoModelloXsdFascNuovo : aaTipoFascicoloNuovo
+                                        .getDecUsoModelloXsdFascs()) {
+                                    DecModelloXsdFascicolo modelloXsdFascicoloNuovo = usoModelloXsdFascNuovo
+                                            .getDecModelloXsdFascicolo();
+                                    if (modelloXsdFascicoloNuovo != null) {
+                                        DecModelloXsdFascicolo modelloXsdFascicoloNuovoAmbiente = modelliFascicoliHelper
+                                                .getDecModelloXsdFascicolo(idAmbienteNuovo,
+                                                        modelloXsdFascicoloNuovo.getTiModelloXsd().name(),
+                                                        modelloXsdFascicoloNuovo.getTiUsoModelloXsd().name(),
+                                                        modelloXsdFascicoloNuovo.getCdXsd());
+                                        if (modelloXsdFascicoloNuovoAmbiente == null) {
+                                            eccezione = true;
+                                            String[] datiErroreModelli = new String[3];
+                                            datiErroreModelli[0] = tipoFascicoloNuovo.getNmTipoFascicolo();
+                                            datiErroreModelli[1] = modelloXsdFascicoloNuovo.getTiModelloXsd().name();
+                                            datiErroreModelli[2] = modelloXsdFascicoloNuovo.getCdXsd();
+                                            String modelloDaValutare = modelloXsdFascicoloNuovo.getTiModelloXsd().name()
+                                                    + "_v" + modelloXsdFascicoloNuovo.getCdXsd();
+                                            if (setModelliErrore.add(modelloDaValutare)) {
+                                                listaDatiErroreModelli.add(datiErroreModelli);
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+        if (eccezione) {
+            StringBuilder errorMessage = new StringBuilder();
+            for (String[] datiErroreModelli : listaDatiErroreModelli) {
+                errorMessage.append("Il Tipo fascicolo ").append(datiErroreModelli[0]).append(" referenzia il modello ")
+                        .append(datiErroreModelli[1]).append("_v").append(datiErroreModelli[2])
+                        .append(" che non è presente in questo ambiente;<br>");
+            }
+            throw new ParerUserError(errorMessage.append("Impossibile proseguire.").toString());
+        }
+    }
+
+    public void checkAndSetModelliXsdTipiFascicoloStrutturaImpParam(UUID uuid, BigDecimal idStrutCorrente,
+            String tipoFascicoloDaImp) throws ParerUserError {
+        // Ricavo la struttura presente nell'XML
+        OrgStrut strutExp = strutCache.getOrgStrut(uuid);
+        OrgStrut strutturaCorrente = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
+
+        checkAndSetModelliXsdTipiFascicoloStrutturaImpParam(strutExp,
+                new BigDecimal(strutturaCorrente.getOrgEnte().getOrgAmbiente().getIdAmbiente()), tipoFascicoloDaImp);
+
+    }
+
+    /**
+     * 
+     * @param struttureDaElaborare
+     *            le strutture da elaborare nell'importa parametri massivo
+     * 
+     * @return la stringa con eventuale errore per presenza di strutture appartenenti ad ambienti diversi nell'import
+     *         parametri massivo
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public String checkAppartenenzaAmbiente(Map<BigDecimal, String> struttureDaElaborare) throws ParerUserError {
+        // Scorro le strutture coinvolte nell'importa parametri per verificare se appartengono tutte allo stesso
+        // ambiente
+        Set<Long> idAmbienteSet = new HashSet<>();
+        String errore = "";
+        for (Map.Entry<BigDecimal, String> entry : struttureDaElaborare.entrySet()) {
+            BigDecimal idStrutCorrente = entry.getKey();
+            OrgStrut strut = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
+            idAmbienteSet.add(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente());
+        }
+        if (idAmbienteSet.size() > 1) {
+            errore = "Per l'import dei tipi fascicolo le strutture individuate devono appartenere allo stesso AMBIENTE";
+        }
+        return errore;
+    }
+
+    /**
      * Come il metodo checkAndSetModelliTipiSerieStruttura, volendo si può creare un unico metodo
      *
      * @param idStrutturaCorrente
@@ -1569,7 +1730,7 @@ public class StruttureEjb {
      *            tipo unita doc
      * @param registriImportati
      *            registri
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1640,6 +1801,11 @@ public class StruttureEjb {
                         "Eliminazione della struttura non consentita. E' stato eseguito almeno un versamento di unità documentaria</br>");
             }
 
+            if (corrispondenzeHelper.checkPingRelations(idStrut, 0)) {
+                throw new ParerUserError(
+                        "Eliminazione della struttura non consentita. Sono presenti corrispondenze con versatori di Ping</br>");
+            }
+
             // Elimino tutti i registri
             for (DecRegistroUnitaDoc registroUnitaDoc : struttura.getDecRegistroUnitaDocs()) {
                 registroEjb.deleteRegistroUnitaDocFromStruttura(param, registroUnitaDoc.getIdRegistroUnitaDoc());
@@ -1675,10 +1841,8 @@ public class StruttureEjb {
                 tipoRapprEjb.deleteDecTipoRapprComp(param, tipoRapprComp.getIdTipoRapprComp());
             }
 
-            // Elimino tutti i formati file doc ammessi
-            for (DecFormatoFileDoc formatoFileDoc : struttura.getDecFormatoFileDocs()) {
-                formatoFileDocEjb.deleteDecFormatoFileDoc(param, formatoFileDoc.getIdFormatoFileDoc());
-            }
+            // // Elimino tutti i formati file doc ammessi
+            formatoFileDocHelper.bulkDeleteDecFormatoFileDoc(idStrut);
 
             // Elimino tutti i criteri di raggruppamento
             for (DecCriterioRaggr criterioRaggr : struttura.getDecCriterioRaggrs()) {
@@ -1705,7 +1869,7 @@ public class StruttureEjb {
         // Inserisco il record di replica organizzazione
         IamOrganizDaReplic replic = context.getBusinessObject(StruttureEjb.class)
                 .insertStrutIamOrganizDaReplic(struttura, ApplEnum.TiOperReplic.CANC);
-        logger.info("Cancellazione della struttura " + idStrut + " avvenuta con successo!");
+        logger.info("Cancellazione della struttura {} avvenuta con successo!", idStrut);
         return replic;
     }
 
@@ -1727,10 +1891,7 @@ public class StruttureEjb {
 
     public boolean isStrutUsedForVers(BaseRowInterface orgStrutRowBean) {
         OrgStrut strut = struttureHelper.findById(OrgStrut.class, orgStrutRowBean.getBigDecimal("id_strut"));
-        if (!strut.getVrsSessioneVers().isEmpty()) {
-            return true;
-        }
-        return false;
+        return !strut.getVrsSessioneVers().isEmpty();
     }
 
     /**
@@ -1739,21 +1900,18 @@ public class StruttureEjb {
      * @return OrgStrut
      */
     public OrgStrut getFirstOrgStrutTemplate() {
-        OrgStrut result = struttureHelper.getFirstOrgStrutTemplate();
-        return result;
+        return struttureHelper.getFirstOrgStrutTemplate();
     }
 
     public String countOrgStrutTemplateRaggruppati(long idUserIam) {
         List<Object[]> numStrutTemplatePerAmbiente = struttureHelper.countOrgStrutTemplateRaggruppati(idUserIam);
-        String result = getConteggioAmbientiPerStrutturaFormattati(numStrutTemplatePerAmbiente);
-        return result;
+        return getConteggioAmbientiPerStrutturaFormattati(numStrutTemplatePerAmbiente);
     }
 
     public String countOrgStrutTemplateWithCompletedPartitioningRaggruppati(long idUserIam) {
         List<Object[]> numStrutTemplatePartizionatePerAmbiente = struttureHelper
                 .countOrgStrutTemplateWithCompletedPartitioningRaggruppati(idUserIam);
-        String result = getConteggioAmbientiPerStrutturaFormattati(numStrutTemplatePartizionatePerAmbiente);
-        return result;
+        return getConteggioAmbientiPerStrutturaFormattati(numStrutTemplatePartizionatePerAmbiente);
     }
 
     public long countOrgStrutTemplatePerAmbienteEnte(Long idAmbiente, Long idEnte, String tipoDefTemplateEnte) {
@@ -1865,26 +2023,21 @@ public class StruttureEjb {
     }
 
     public boolean hasAroUnitaDoc(BigDecimal idStrut) {
-        if (struttureHelper.hasAroUnitaDoc(idStrut)) {
-            return true;
-        }
-        return false;
+        return struttureHelper.hasAroUnitaDoc(idStrut);
     }
 
     /**
      * Metodo che esegue la chiamata di allineamento organizzazioni
      *
-     * @param <T>
-     *            oggetto "generico" che estende Serializable
      * @param organizDaReplic
      *            array di record da replicare
-     * 
+     *
      * @throws ParerUserError
      *             Eccezione con rollback in caso di entity diversa dalle suddette o di errore imprevisto da parte
      *             dell'allineamento
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public <T extends Serializable> void replicateToIam(IamOrganizDaReplic... organizDaReplic) throws ParerUserError {
+    public void replicateToIam(IamOrganizDaReplic... organizDaReplic) throws ParerUserError {
         List<IamOrganizDaReplic> orgDaReplic = (organizDaReplic != null ? Arrays.asList(organizDaReplic)
                 : new ArrayList<IamOrganizDaReplic>());
         try {
@@ -1913,17 +2066,14 @@ public class StruttureEjb {
     /**
      * Esegue il metodo dell'ejb per la chiamata al WS di allineamento enti convenzionati
      * 
-     * @param <T>
-     *            oggetto "generico" che estende Serializable
      * @param enteConvenzDaAllineaList
      *            lista IamEnteConvenzDaAllinea
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public <T extends Serializable> void alignsEnteConvenzToIam(List<IamEnteConvenzDaAllinea> enteConvenzDaAllineaList)
-            throws ParerUserError {
+    public void alignsEnteConvenzToIam(List<IamEnteConvenzDaAllinea> enteConvenzDaAllineaList) throws ParerUserError {
         try {
             aecEjb.allineaEntiConvenzionati(enteConvenzDaAllineaList);
         } catch (Exception ex) {
@@ -1941,7 +2091,7 @@ public class StruttureEjb {
      *
      * @param idEnteConvenz
      *            id ente convenzionato
-     * 
+     *
      * @return true/false
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -1949,14 +2099,12 @@ public class StruttureEjb {
         boolean esito = true;
 
         /* Ricavo i dati per la chiamata del ws */
-        String url = configurationHelper.getValoreParamApplic("URL_CALCOLO_SERVIZI_EROGATI", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String nmUserid = configurationHelper.getValoreParamApplic("USERID_REPLICA_ORG", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String cdPsw = configurationHelper.getValoreParamApplic("PSW_REPLICA_ORG", null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
-        String timeoutString = configurationHelper.getValoreParamApplic("TIMEOUT_CALCOLO_SERVIZI_EROGATI", null, null,
-                null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String url = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_CALCOLO_SERVIZI_EROGATI);
+        String nmUserid = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_REPLICA_ORG);
+        String cdPsw = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_REPLICA_ORG);
+        String timeoutString = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_CALCOLO_SERVIZI_EROGATI);
 
         try {
 
@@ -1967,37 +2115,37 @@ public class StruttureEjb {
                 int timeoutCalcoloServiziErog = Integer.parseInt(timeoutString);
                 IAMSoapClients.changeRequestTimeout((BindingProvider) client, timeoutCalcoloServiziErog);
             } else {
-                logger.warn("Il valore personalizzato \"" + timeoutString
-                        + "\" per il parametro TIMEOUT_CALCOLO_SERVIZI_EROGATI non è corretto. Utilizzo il valore predefinito");
+                logger.warn(
+                        "Il valore personalizzato \"{}\" per il parametro TIMEOUT_CALCOLO_SERVIZI_EROGATI non è corretto. Utilizzo il valore predefinito",
+                        timeoutString);
             }
 
             if (client != null) {
-                logger.info("Calcolo servizi erogati - Preparazione attivazione servizio per l'ente convenzionato "
-                        + idEnteConvenz);
+                logger.info("Calcolo servizi erogati - Preparazione attivazione servizio per l'ente convenzionato {}",
+                        idEnteConvenz);
 
                 client.calcoloServiziErogati(idEnteConvenz.intValue());
 
             } else {
                 /* Se il client è null, ci sono stati problemi */
                 esito = false;
-                logger.error(
-                        "Calcolo servizi erogati - Risposta WS negativa per l'ente convenzionato " + idEnteConvenz);
+                logger.error("{} {}", CALCOLO_SERVIZI_EROGATI_RISPOSTA_NEGATIVA_ENTE_CONVENZIONATO, idEnteConvenz);
             }
 
         } catch (SOAPFaultException e) {
             /* Errori di autenticazione */
             esito = false;
-            logger.error("Calcolo servizi erogati - Risposta WS negativa per l'ente convenzionato " + idEnteConvenz
-                    + " - Utente che attiva il servizio non riconosciuto o non abilitato", e);
+            logger.error("{} {} - Utente che attiva il servizio non riconosciuto o non abilitato",
+                    CALCOLO_SERVIZI_EROGATI_RISPOSTA_NEGATIVA_ENTE_CONVENZIONATO, idEnteConvenz, e);
 
         } catch (WebServiceException e) {
             esito = false;
-            logger.error("Calcolo servizi erogati - Risposta WS negativa per l'ente convenzionato " + idEnteConvenz
-                    + " - Il servizio di Calcolo servizi erogati sull'ente convenzionato non risponde");
+            logger.error("{} {} - Il servizio di Calcolo servizi erogati sull'ente convenzionato non risponde",
+                    CALCOLO_SERVIZI_EROGATI_RISPOSTA_NEGATIVA_ENTE_CONVENZIONATO, idEnteConvenz);
 
         } catch (Exception e) {
             esito = false;
-            logger.error("Calcolo servizi erogati - Risposta WS negativa per l'ente convenzionato " + idEnteConvenz, e);
+            logger.error("{} {}", CALCOLO_SERVIZI_EROGATI_RISPOSTA_NEGATIVA_ENTE_CONVENZIONATO, idEnteConvenz, e);
 
         }
         return esito;
@@ -2031,7 +2179,7 @@ public class StruttureEjb {
      *
      * @param uuid
      *            l'oggetto contenente la struttura importata da XML
-     * 
+     *
      * @return il table bean rappresentante i Tipi Unit\u00E0 Documentaria trovati
      */
     public DecTipoUnitaDocTableBean getTipiUdDaXmlImportato(UUID uuid) {
@@ -2058,7 +2206,7 @@ public class StruttureEjb {
      *            l'oggetto contenente la struttura importata da XML
      * @param nmTipoUnitaDoc
      *            il tipo unit\u00E0 documentaria scelto tra quelli presenti nell'XML
-     * 
+     *
      * @return il table bean rappresentante i Tipi Struttura Unit\u00E0 Documentaria trovati
      */
     public DecTipoStrutUnitaDocTableBean getTipiStrutUdDaXmlImportato(UUID uuid, String nmTipoUnitaDoc) {
@@ -2084,6 +2232,66 @@ public class StruttureEjb {
     }
 
     /**
+     * Data una struttura importata da XML, restituisce tutti i Tipi Fascicolo associati ad essa nell'XML stesso
+     *
+     * @param uuid
+     *            l'oggetto contenente la struttura importata da XML
+     *
+     * @return il table bean rappresentante i Tipi Fascicolo trovati
+     */
+    public DecTipoFascicoloTableBean getTipiFascicoloDaXmlImportato(UUID uuid) {
+        OrgStrut strut = strutCache.getOrgStrut(uuid);
+        List<DecTipoFascicolo> tipoFascicoloList = strut.getDecTipoFascicolos();
+        DecTipoFascicoloTableBean tipoFascicoloTableBean = new DecTipoFascicoloTableBean();
+
+        try {
+            if (!tipoFascicoloList.isEmpty()) {
+                tipoFascicoloTableBean = (DecTipoFascicoloTableBean) Transform.entities2TableBean(tipoFascicoloList);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return tipoFascicoloTableBean;
+    }
+
+    /**
+     * Data una struttura importata da XML e uno dei suoi Tipi Fascicolo selezionato tra quelli presenti, restituisce
+     * tutti i Periodi tipo fascicolo associati al tipo fascicolo dell'XML stesso
+     *
+     * @param uuid
+     *            l'oggetto contenente la struttura importata da XML
+     * @param nmTipoFascicolo
+     *            il tipo fascicolo scelto tra quelli presenti nell'XML
+     *
+     * @return il table bean rappresentante i Periodi tipo fascicolo trovati
+     */
+    public DecAaTipoFascicoloTableBean getAaTipoFascicoloDaXmlImportato(UUID uuid, String nmTipoFascicolo) {
+        OrgStrut strut = strutCache.getOrgStrut(uuid);
+        List<DecTipoFascicolo> tipoFascicoloList = strut.getDecTipoFascicolos();
+        DecAaTipoFascicoloTableBean aaTipoFascicoloTableBean = new DecAaTipoFascicoloTableBean();
+
+        for (DecTipoFascicolo tipoFascicolo : tipoFascicoloList) {
+            if (tipoFascicolo.getNmTipoFascicolo().equals(nmTipoFascicolo)) {
+                try {
+                    for (DecAaTipoFascicolo aaTipoFascicolo : tipoFascicolo.getDecAaTipoFascicolos()) {
+                        DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean = (DecAaTipoFascicoloRowBean) Transform
+                                .entity2RowBean(aaTipoFascicolo);
+                        aaTipoFascicoloRowBean.setString("descrizione_periodo", aaTipoFascicolo.getAaIniTipoFascicolo()
+                                + " - " + aaTipoFascicolo.getAaFinTipoFascicolo());
+                        aaTipoFascicoloTableBean.add(aaTipoFascicoloRowBean);
+                    }
+                } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                        | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
+
+        return aaTipoFascicoloTableBean;
+    }
+
+    /**
      * Esegue l'import del tipo unit\u00E0 documentaria preso dall'XML.
      *
      * @param param
@@ -2100,23 +2308,31 @@ public class StruttureEjb {
      *            il flag che mi dice se devo importare anche i registri collegati
      * @param importareCriteri
      *            il flag che mi dice se devo importare anche i criteri di raggruppamento
+     * @param importareSistemiMigraz
+     *            flag 1/0
      * @param existRegistriDaImportareConFlTipoSerieMultAlzato
      *            esiste registro da importare
-     * 
+     *
+     * @param importareFormatiComponente
+     *            flag
+     *
+     *
      * @return report, array di oggetti contenente le liste/mappe con i diversi report
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
     public Object[] eseguiImportTipoUd(LogParam param, Map<BigDecimal, String> struttureDaElaborare, UUID uuid,
             String nmTipoUnitaDocSelezionataDaCombo, String nmTipoStrutUnitaDocSelezionataDaCombo,
-            String importareRegistri, String importareCriteri, boolean existRegistriDaImportareConFlTipoSerieMultAlzato)
+            String importareRegistri, String importareCriteri, String importareSistemiMigraz,
+            boolean existRegistriDaImportareConFlTipoSerieMultAlzato, String importareFormatiComponente)
             throws ParerUserError {
 
         // Preparo le strutture dati per il report
-        Set<String> strutErrorGenerico = new HashSet();
-        Set<String> strutErrorSuModello = new HashSet();
-        Map<String, String> strutErrorTipiSerie = new HashMap();
+        Set<String> strutErrorGenerico = new HashSet<>();
+        Set<String> strutErrorSuModello = new HashSet<>();
+        Map<String, String> strutErrorTipiSerie = new HashMap<>();
+        Set<String> strutErrorSisMigr = new HashSet<>();
 
         // Scorro le strutture coinvolte nell'importa parametri
         for (Map.Entry<BigDecimal, String> entry : struttureDaElaborare.entrySet()) {
@@ -2127,9 +2343,9 @@ public class StruttureEjb {
             StruttureEjb me = context.getBusinessObject(StruttureEjb.class);
             try {
                 // L'import viene eseguito in una nuova transazione
-                organizDaReplic = me.confermaImportazione(param, idStrutCorrente, uuid,
-                        nmTipoUnitaDocSelezionataDaCombo, nmTipoStrutUnitaDocSelezionataDaCombo, importareRegistri,
-                        importareCriteri);
+                me.confermaImportazione(param, idStrutCorrente, uuid, nmTipoUnitaDocSelezionataDaCombo,
+                        nmTipoStrutUnitaDocSelezionataDaCombo, importareRegistri, importareCriteri,
+                        importareSistemiMigraz, importareFormatiComponente);
             } catch (ParerUserError e) {
                 if (e.getDescription().contains(" iniziare o terminare con caratteri di spaziatura")) {
                     throw new ParerUserError(e.getDescription());
@@ -2151,11 +2367,12 @@ public class StruttureEjb {
             if (!existRegistriDaImportareConFlTipoSerieMultAlzato) {
                 // Eseguo, se esistono associazioni registro/tipo ud, la creazione dei tipi serie standard
                 if (tipoUnitaDoc.getDecTipoUnitaDocAmmessos() != null) {
-                    for (DecTipoUnitaDocAmmesso record : tipoUnitaDoc.getDecTipoUnitaDocAmmessos()) {
+                    for (DecTipoUnitaDocAmmesso decTipoUnitaDocAmmesso : tipoUnitaDoc.getDecTipoUnitaDocAmmessos()) {
                         try {
                             BigDecimal idRegistroUnitaDoc = new BigDecimal(
-                                    record.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc());
-                            BigDecimal idTipoUnitaDoc = new BigDecimal(record.getDecTipoUnitaDoc().getIdTipoUnitaDoc());
+                                    decTipoUnitaDocAmmesso.getDecRegistroUnitaDoc().getIdRegistroUnitaDoc());
+                            BigDecimal idTipoUnitaDoc = new BigDecimal(
+                                    decTipoUnitaDocAmmesso.getDecTipoUnitaDoc().getIdTipoUnitaDoc());
                             tipoSerieEjb.createTipoSerieStandardDaRegistroOTipoUdNewTx(param, idRegistroUnitaDoc,
                                     idTipoUnitaDoc);
                         } catch (ParerUserError e) {
@@ -2169,7 +2386,6 @@ public class StruttureEjb {
 
             if (!errorMessageTipiSerie.equals("TIPISERIE;")) {
                 strutErrorTipiSerie.put(nmStrutCorrente, errorMessageTipiSerie);
-                // throw new ParerUserError(errorMessageTipiSerie);
             }
 
             // Controllo per fl_tipo_serie_mult
@@ -2189,22 +2405,25 @@ public class StruttureEjb {
                     me.replicateToIam(organizDaReplic);
                 }
             } catch (ParerUserError e) {
-                logger.error("Errore durante la replica su IAM " + e);
+                logger.error("Errore durante la replica su IAM ", e);
             }
         }
 
         // Preparo il report
-        Object[] report = new Object[3];
+        Object[] report = new Object[4];
         report[0] = strutErrorGenerico;
         report[1] = strutErrorSuModello;
         report[2] = strutErrorTipiSerie;
+        report[3] = strutErrorSisMigr;
         return report;
     }
 
+    // TransactionAttribute
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public IamOrganizDaReplic confermaImportazione(LogParam param, BigDecimal idStrutCorrente, UUID uuid,
+    public Object[] confermaImportazione(LogParam param, BigDecimal idStrutCorrente, UUID uuid,
             String nmTipoUnitaDocSelezionataDaCombo, String nmTipoStrutUnitaDocSelezionataDaCombo,
-            String importareRegistri, String importareCriteri) throws ParerUserError, Exception {
+            String importareRegistri, String importareCriteri, String importareSistemiMigraz,
+            String importareFormatiComponente) throws Exception {
         List<CoppiaRegistri> registriImportati = new ArrayList<>();
 
         Set<BigDecimal> registriDaLoggare = new HashSet<>();
@@ -2215,7 +2434,7 @@ public class StruttureEjb {
         Set<BigDecimal> criteriRaggruppamentoDaLoggare = new HashSet<>();
 
         // Ricavo la struttura presente nell'XML
-        OrgStrut strutExp = (OrgStrut) strutCache.getOrgStrut(uuid);
+        OrgStrut strutExp = strutCache.getOrgStrut(uuid);
         // Ricavo il tipoUnitaDoc presente nell'XML (quello selezionato)
         DecTipoUnitaDoc tipoUnitaDocExp = getDecTipoUnitaDocExpSelected(strutExp, nmTipoUnitaDocSelezionataDaCombo);
 
@@ -2239,6 +2458,35 @@ public class StruttureEjb {
         checkAndSetModelliTipiSerieStrutturaPerImportaParametri(idStrutCorrente, tipoUnitaDocExp, tipoUnitaDoc,
                 registriImportati);
 
+        /////////////////////////////////
+        // IMPORTA FORMATI COMPONENTE ///
+        /////////////////////////////////
+        // Il sistema aggiorna i formati ammessi nel componente importato
+        if (importareFormatiComponente != null && importareFormatiComponente.equals("1")) {
+            OrgStrut strut = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
+            // punto 46 e 47: DEC_TIPO_STRUT_DOC e tipi comp doc
+            strut.setDecTipoStrutDocs(copiaStruttureEjb.determinaDecTipoStrutDocsPerImportaParametri(strutExp,
+                    new Date(), true, true, strut, true));
+
+            // EVO 27925: Allineo nei tipi componente (flag gestiti, idonei, deprecati) eventualmente anche eventuali
+            // formati che non erano presenti nella struttura dell'XML di import
+            /* In base ai flag spuntati, inserisco i formati ammessi */
+            List<DecTipoStrutDoc> tipoStrutDocList = tipoStrutDocHelper.getDecTipoStrutDocList(idStrutCorrente, true);
+
+            if (tipoStrutDocList != null) {
+                for (DecTipoStrutDoc tipoStrutDoc : tipoStrutDocList) {
+                    if (tipoStrutDoc.getDecTipoCompDocs() != null) {
+                        for (DecTipoCompDoc tipoCompDoc : tipoStrutDoc.getDecTipoCompDocs()) {
+                            formatoFileDocEjb.gestisciFormatiAmmessi(BigDecimal.valueOf(tipoCompDoc.getIdTipoCompDoc()),
+                                    tipoCompDoc.getFlGestiti(), tipoCompDoc.getFlIdonei(),
+                                    tipoCompDoc.getFlDeprecati());
+                        }
+                    }
+                }
+            }
+
+        }
+
         ///////////////////////////////////////
         // IMPORTA TIPO STRUTTURA UNITA' DOC //
         ///////////////////////////////////////
@@ -2253,13 +2501,11 @@ public class StruttureEjb {
         }
         List<CoppiaTipiDoc> tipiDocImportati = importaTipoStrutUnitaDoc(idStrutCorrente, decTipoStrutUnitaDocExpList,
                 tipoUnitaDoc, (boolean) obj[1], tipiDocumentoDaLoggare, tipiStrutturaDocumentoDaLoggare,
-                formatiDaLoggare, tipiRappresentazioneComponenteDaLoggare);
+                formatiDaLoggare, tipiRappresentazioneComponenteDaLoggare, importareFormatiComponente);
 
         ////////////////////
         // IMPORTA REGOLE //
         ////////////////////
-        // param.setNomeTipoOggetto(SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA);
-        // importaRegole(param, idStrutCorrente, tipoUnitaDocExp, tipoUnitaDoc);
         importaRegole(idStrutCorrente, tipoUnitaDocExp, tipoUnitaDoc);
 
         ///////////////////////////////////////
@@ -2268,8 +2514,16 @@ public class StruttureEjb {
         // Criteri di raggruppamento contenenti il tipo ud importato,
         // i registri (se importati) e i tipi doc
         if (importareCriteri != null && importareCriteri.equals("1")) {
-            importaCriteriTipoUd(idStrutCorrente, tipoUnitaDocExp, tipoUnitaDoc, registriImportati, tipiDocImportati,
+            importaCriteriTipoUd(idStrutCorrente, tipoUnitaDocExp, registriImportati, tipiDocImportati,
                     criteriRaggruppamentoDaLoggare);
+        }
+
+        ////////////////////////////////
+        // IMPORTA SISTEMI MIGRAZIONE //
+        ////////////////////////////////
+        List<String> nmSisMigrNoImp = null;
+        if (importareSistemiMigraz != null && importareSistemiMigraz.equals("1")) {
+            nmSisMigrNoImp = importaSistemiMigraz(idStrutCorrente, strutExp);
         }
 
         /////////////////////
@@ -2315,7 +2569,7 @@ public class StruttureEjb {
         boolean esitoOK = calcoloServiziErogati(tipoUnitaDoc.getOrgStrut().getIdEnteConvenz());
         if (!esitoOK) {
             throw new ParerUserError(
-                    "Errore durante il calcolo dei servizi erogati a seguito di duplica standard</br>");
+                    "Errore durante il calcolo dei servizi erogati a seguito di importa parametri</br>");
         }
 
         /*
@@ -2324,7 +2578,158 @@ public class StruttureEjb {
          */
         IamOrganizDaReplic organizDaReplic = context.getBusinessObject(StruttureEjb.class)
                 .insertStrutIamOrganizDaReplic(tipoUnitaDoc.getOrgStrut(), ApplEnum.TiOperReplic.MOD);
-        return organizDaReplic;
+
+        Object[] result = new Object[2];
+        result[0] = organizDaReplic;
+        result[1] = nmSisMigrNoImp;
+
+        return result;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Object[] eseguiImportTipoFascicolo(LogParam param, Map<BigDecimal, String> struttureDaElaborare, UUID uuid,
+            String nmTipoFascicoloSelezionatoDaMulti, BigDecimal aaTipoFascicoloSelezionatoDaCombo,
+            String sovrascriviPeriodi) {
+
+        // Preparo le strutture dati per il report
+        Set<String> strutErrorGenerico = new HashSet<>();
+
+        // Scorro le strutture coinvolte nell'importa parametri (parte relativa ai tipi fascicolo)
+        for (Map.Entry<BigDecimal, String> entry : struttureDaElaborare.entrySet()) {
+            BigDecimal idStrutCorrente = entry.getKey();
+            String nmStrutCorrente = entry.getValue();
+
+            StruttureEjb me = context.getBusinessObject(StruttureEjb.class);
+            try {
+                // L'import viene eseguito in una nuova transazione
+                me.confermaImportazioneTipoFascicolo(param, idStrutCorrente, uuid, nmTipoFascicoloSelezionatoDaMulti,
+                        aaTipoFascicoloSelezionatoDaCombo, sovrascriviPeriodi.equals("1"));
+
+            } catch (Exception e) {
+                strutErrorGenerico.add(nmStrutCorrente);
+            }
+        }
+
+        // Preparo il report
+        Object[] report = new Object[1];
+        report[0] = strutErrorGenerico;
+        return report;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public Object[] confermaImportazioneTipoFascicolo(LogParam param, BigDecimal idStrutCorrente, UUID uuid,
+            String nmTipoFascicoloSelezionatoDaMulti, BigDecimal aaTipoFascicoloSelezionatoDaCombo,
+            boolean sovrascriviPeriodo) throws ParerUserError {
+
+        Set<BigDecimal> criteriRaggruppamentoFascDaLoggare = new HashSet<>();
+
+        // Ricavo la struttura presente nell'XML
+        OrgStrut strutExp = strutCache.getOrgStrut(uuid);
+
+        // Ricavo il tipoFascicolo presente nell'XML (quello selezionato)
+        DecTipoFascicolo tipoFascicoloExp = getDecTipoFascicoloExpSelected(strutExp, nmTipoFascicoloSelezionatoDaMulti);
+        Object[] result = new Object[1];
+
+        // IN ATTESA DI SVILUPPO CONTROLLI SOVRASCRIVI PERIODI DI VALIDITA':
+        // CONTROLLO TEMPORANEO PER VERIFICARE CHE IL TIPO FASCICOLO NON ESISTA:
+        // SE ESISTE NON IMPORTO NULLA, AL MOMENTO, VISTO CHE HO TOLTO IL CHECK SOVRASCITI PERIODO
+
+        // Cerco su DB il nmTipoFascicolo selezionato dalla combo
+        DecTipoFascicolo tipoFascicoloDB = tipoFascicoloHelper
+                .getDecTipoFascicoloByName(tipoFascicoloExp.getNmTipoFascicolo(), idStrutCorrente);
+
+        if (tipoFascicoloDB == null) {
+
+            /*
+             * Dichiaro il tipo fascicolo che verrà "decorato" e quindi importato a seguito dei vari controlli
+             */
+            ////////////////////////////
+            // IMPORTA TIPO FASCICOLO //
+            ////////////////////////////
+            Object[] obj = importaTipoFascicolo(idStrutCorrente, tipoFascicoloExp);
+            DecTipoFascicolo tipoFascicolo = (DecTipoFascicolo) obj[0];
+
+            ////////////////////////////////////
+            // IMPORTA PERIODO TIPO FASCICOLO //
+            ////////////////////////////////////
+            // Se ne ho selezionato uno in particolare, importo solo quello
+            List<DecAaTipoFascicolo> aaTipoFascicoloExpList = new ArrayList<>();
+            if (aaTipoFascicoloSelezionatoDaCombo != null) {
+                aaTipoFascicoloExpList
+                        .add(getDecAaTipoFascicoloExpSelected(tipoFascicoloExp, aaTipoFascicoloSelezionatoDaCombo));
+            } // Altrimenti importo tutti quelli dell'XML relativi al tipo fascicolo che sto considerando
+            else {
+                aaTipoFascicoloExpList = tipoFascicoloExp.getDecAaTipoFascicolos();
+            }
+            importaAaTipoFascicolo(idStrutCorrente, aaTipoFascicoloExpList, tipoFascicolo, (boolean) obj[1],
+                    sovrascriviPeriodo);
+
+            ////////////////////////////////////////////
+            // IMPORTA CRITERI DI RAGGRUPPAMENTO FASC //
+            ////////////////////////////////////////////
+            importaCriteriRaggrFasc(idStrutCorrente, tipoFascicoloExp, tipoFascicolo,
+                    criteriRaggruppamentoFascDaLoggare);
+
+            //////////////////////
+            // COMMITT TIPO FASC //
+            //////////////////////
+            boolean tipoFascExists = (boolean) obj[1];
+            if (!tipoFascExists) {
+                struttureHelper.insertEntity(tipoFascicolo, true);
+            } else {
+                struttureHelper.getEntityManager().flush();
+            }
+
+            /*
+             * Eseguo la replica organizzazioni in ogni caso perché ho inserito un nuovo tipo fascicolo
+             */
+            IamOrganizDaReplic organizDaReplic = context.getBusinessObject(StruttureEjb.class)
+                    .insertStrutIamOrganizDaReplic(tipoFascicolo.getOrgStrut(), ApplEnum.TiOperReplic.MOD);
+
+            result[0] = organizDaReplic;
+
+        }
+
+        return result;
+    }
+
+    /**
+     * Esegue l'importazione del solo Tipo fascicolo. Viene verificata l'esistenza dello stesso su DB. Infine viene
+     * eseguito l'import dell'XSD relativo al tipoFascicolo
+     *
+     * @param idStrutCorrente
+     *            la struttura in cui mi trovo e nella quale sto facendo l'import
+     * @param tipoFascicoloExp
+     *            il tipo fascicolo selezionato nella combo
+     *
+     * @return un array di object di lunghezza 2 contenente nel primo campo l'oggetto tipoFascicolo "decorato" dopo la
+     *         fase di importaTipoFascicolo e nel secondo il valore booleano relativo al fatto che il tipoFascicolo
+     *         fosse gi\u00E0 presente su DB
+     *
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public Object[] importaTipoFascicolo(BigDecimal idStrutCorrente, DecTipoFascicolo tipoFascicoloExp)
+            throws ParerUserError {
+        Object[] obj = new Object[2];
+        // Informazione che mi dice se il tipo fascicolo \u00E8 gi\u00E0 presente nel DB
+        obj[1] = true;
+
+        // Cerco su DB il nmTipoFascicolo selezionato dalla combo
+        DecTipoFascicolo tipoFascicolo = tipoFascicoloHelper
+                .getDecTipoFascicoloByName(tipoFascicoloExp.getNmTipoFascicolo(), idStrutCorrente);
+
+        // Se TIPO FASCICOLO NON \u00E8 gi\u00E0 PRESENTE nella struttura
+        if (tipoFascicolo == null) {
+            // Mi appunto l'informazione che il tipoFascicolo non era gi\u00E0 presente
+            obj[1] = false;
+
+            // Inserisco il tipo fascicolo "nuovo"
+            tipoFascicolo = inserisciTipoFascicolo(idStrutCorrente, tipoFascicoloExp);
+        }
+
+        obj[0] = tipoFascicolo;
+        return obj;
     }
 
     /**
@@ -2335,11 +2740,11 @@ public class StruttureEjb {
      *            la struttura in cui mi trovo e nella quale sto facendo l'import
      * @param tipoUnitaDocExp
      *            il tipo unit\u00E0 documentaria selezionato nella combo
-     * 
+     *
      * @return un array di object di lunghezza 2 contenente nel primo campo l'oggetto tipoUnitaDoc "decorato" dopo la
      *         fase di importaTipoUd e nel secondo il valore booleano relativo al fatto che il tipoUnitaDoc fosse
      *         gi\u00E0 presente su DB
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2414,7 +2819,7 @@ public class StruttureEjb {
      *            i tipiUnitaDoc preso da XML @return, l'elenco dei registri importati ex novo
      * @param registriDaLoggare
      *            i registri da loggare
-     * 
+     *
      * @return lista elementi di tipo CoppiaRegistri
      */
     public List<CoppiaRegistri> importaRegistro(BigDecimal idStrutCorrente, DecTipoUnitaDoc tipoUnitaDocExp,
@@ -2445,7 +2850,6 @@ public class StruttureEjb {
             registriDaLoggare.add(new BigDecimal(registroUnitaDoc.getIdRegistroUnitaDoc()));
 
             // Verifico se il registro \u00E8 inserito anche in DEC_TIPO_UNITA_DOC_AMMESSO (relazione tipoUd-registro)
-            // String nmTipoUnitaDocExp = decTipoUnitaDocAmmessoExp.getDecTipoUnitaDoc().getNmTipoUnitaDoc();
             String nmTipoUnitaDocExp = tipoUnitaDoc.getNmTipoUnitaDoc();
             DecTipoUnitaDocAmmesso tipoUnitaDocAmmesso = tipoUnitaDocHelper
                     .getDecTipoUnitaDocAmmessoByName(idStrutCorrente, nmTipoUnitaDocExp, cdRegistroUnitaDocExp);
@@ -2456,6 +2860,82 @@ public class StruttureEjb {
             }
         }
         return registriImportati;
+    }
+
+    public List<String> importaSistemiMigraz(BigDecimal idStrutCorrente, OrgStrut strutExp) {
+        List<OrgUsoSistemaMigraz> usoSistemaMigrazExpList = strutExp.getOrgUsoSistemaMigrazs();
+        List<String> nmSistemiMigrazNoImpList = new ArrayList<>();
+        // Partendo dagli OrgUsoSistemaMigraz presenti nell'XML...
+        for (OrgUsoSistemaMigraz usoSistemaMigrazExp : usoSistemaMigrazExpList) {
+            // Entity DecRegistroUnitaDoc da "decorare"
+            OrgUsoSistemaMigraz usoSis;
+
+            // ... recupero ogni sistema di migrazione presente nell'XML (tramite il tag nmSistemaMigraz)
+            // e ne verifico l'esistenza su DB (tabella APL_SISTEMA_MIGRAZ)
+            AplSistemaMigraz sistemaMigrazExp = usoSistemaMigrazExp.getAplSistemaMigraz();
+            String nmSistemaMigrazExp = sistemaMigrazExp.getNmSistemaMigraz();
+
+            AplSistemaMigraz sistemaMigraz = sistemaMigrazioneHelper.getAplSistemaMigrazByName(nmSistemaMigrazExp);
+
+            // Se il sistema di migrazione NON \u00E8 presente, non proseguo e riporto un messaggio
+            if (sistemaMigraz == null) {
+                nmSistemiMigrazNoImpList.add(nmSistemaMigrazExp);
+            } // altrimenti inserisco la corrispondenza con la struttura in OrgUsoSistemaMigraz
+            else {
+                OrgStrut strutturaCorrente = tipoStrutDocHelper.findById(OrgStrut.class, idStrutCorrente);
+                usoSis = copiaStruttureEjb.cercaOrgUsoSistemaMigraz(sistemaMigraz, strutturaCorrente);
+
+                if (usoSis == null) {
+                    usoSis = new OrgUsoSistemaMigraz();
+                    usoSis.setAplSistemaMigraz(sistemaMigraz);
+                    usoSis.setOrgStrut(strutturaCorrente);
+
+                    // Se ho inserito un'associazione struttura-sistema di migrazione, inserisco i dati spec
+                    // UD
+                    List<DecXsdDatiSpec> listUd = datiSpecHelper.retrieveDecXsdDatiSpecList(
+                            BigDecimal.valueOf(strutExp.getIdStrut()), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                            CostantiDB.TipiEntitaSacer.UNI_DOC.name(), nmSistemaMigrazExp);
+
+                    // DOC
+                    List<DecXsdDatiSpec> listDoc = datiSpecHelper.retrieveDecXsdDatiSpecList(
+                            BigDecimal.valueOf(strutExp.getIdStrut()), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                            CostantiDB.TipiEntitaSacer.DOC.name(), nmSistemaMigrazExp);
+
+                    // COMP
+                    List<DecXsdDatiSpec> listComp = datiSpecHelper.retrieveDecXsdDatiSpecList(
+                            BigDecimal.valueOf(strutExp.getIdStrut()), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                            CostantiDB.TipiEntitaSacer.COMP.name(), nmSistemaMigrazExp);
+
+                    Set<String> setStr = new HashSet<>();
+                    for (DecXsdDatiSpec ds : listUd) {
+
+                        DecXsdDatiSpec dsNew = copiaStruttureEjb.createDecXsdDatiSpec(ds, strutturaCorrente);
+                        if (!setStr.add(dsNew.getCdVersioneXsd())) {
+                            tipoUnitaDocHelper.getEntityManager().persist(dsNew);
+                        }
+                    }
+                    for (DecXsdDatiSpec ds : listDoc) {
+                        DecXsdDatiSpec dsNew = copiaStruttureEjb.createDecXsdDatiSpec(ds, strutturaCorrente);
+                        if (!setStr.add(dsNew.getCdVersioneXsd())) {
+                            tipoUnitaDocHelper.getEntityManager().persist(dsNew);
+                        }
+                    }
+                    for (DecXsdDatiSpec ds : listComp) {
+                        DecXsdDatiSpec dsNew = copiaStruttureEjb.createDecXsdDatiSpec(ds, strutturaCorrente);
+                        if (!setStr.add(dsNew.getCdVersioneXsd())) {
+                            tipoUnitaDocHelper.getEntityManager().persist(dsNew);
+                        }
+                    }
+
+                    tipoUnitaDocHelper.getEntityManager().persist(usoSis);
+                    tipoUnitaDocHelper.getEntityManager().flush();
+
+                    strutturaCorrente.getOrgUsoSistemaMigrazs().add(usoSis);
+                }
+
+            }
+        }
+        return nmSistemiMigrazNoImpList;
     }
 
     private class CoppiaRegistri {
@@ -2504,14 +2984,17 @@ public class StruttureEjb {
      *            formati da loggare
      * @param tipiRappresentazioneComponenteDaLoggare
      *            rappresentazione componente da loggare
-     * 
+     *
+     * @param includereFormatiComponente
+     *            flag
+     *
      * @return l'elenco dei tipi documento importati ex novo
      */
     public List<CoppiaTipiDoc> importaTipoStrutUnitaDoc(BigDecimal idStrutCorrente,
             List<DecTipoStrutUnitaDoc> tipoStrutUnitaDocExpList, DecTipoUnitaDoc tipoUnitaDoc,
             boolean tipoUnitaDocGiaPresente, Set<BigDecimal> tipiDocumetoDaLoggare,
             Set<BigDecimal> tipiStrutturaDocumetoDaLoggare, Set<BigDecimal> formatiDaLoggare,
-            Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare) {
+            Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare, String includereFormatiComponente) {
         List<CoppiaTipiDoc> tipiDocImportati = new ArrayList<>();
         // Per ogni TIPO STRUTTURA UNITA' DOCUMENTARIA
         for (DecTipoStrutUnitaDoc tipoStrutUnitaDocExp : tipoStrutUnitaDocExpList) {
@@ -2544,7 +3027,7 @@ public class StruttureEjb {
                 for (DecTipoStrutDocAmmesso tipoStrutDocAmmessoExp : tipoDocAmmessoExp.getDecTipoDoc()
                         .getDecTipoStrutDocAmmessos()) {
                     gestisciTipoStrutDoc(idStrutCorrente, tipoStrutDocAmmessoExp, tipoDoc,
-                            tipiStrutturaDocumetoDaLoggare, formatiDaLoggare, tipiRappresentazioneComponenteDaLoggare);
+                            tipiStrutturaDocumetoDaLoggare, tipiRappresentazioneComponenteDaLoggare);
                 }
             } // End For DecTipoDocAmmessoExp
 
@@ -2586,8 +3069,7 @@ public class StruttureEjb {
 
                 // Se il sistema versante NON è presente nella struttura: il record è importato.
                 if (sistemaVersante == null) {
-                    sistemaVersante = inserisciSistemaVersante(idStrutCorrente,
-                            tipoStrutUdSisVersExp.getAplSistemaVersante());
+                    sistemaVersante = inserisciSistemaVersante(tipoStrutUdSisVersExp.getAplSistemaVersante());
                 }
 
                 // Controllo se esiste già il record nella tabella DEC_TIPO_STRT_UD_SIS_VERS, ed in caso lo inserisco
@@ -2635,8 +3117,93 @@ public class StruttureEjb {
         return tipiDocImportati;
     }
 
-    public AplSistemaVersante inserisciSistemaVersante(BigDecimal idStrutCorrente,
-            AplSistemaVersante sistemaVersanteExp) {
+    /**
+     * Esegue l'importazione del periodo tipo fascicolo.
+     *
+     * @param idStrutCorrente
+     *            la struttura in cui mi trovo e nella quale sto facendo l'import
+     * @param aaTipoFascicoloExpList
+     *            la lista di periodi tipo fascicolo da importare dal file XML sui quali effettuare i controlli
+     * @param tipoFascicolo
+     *            l'oggetto tipo fascicolo in fase di decorazione
+     * @param tipoFascicoloGiaPresente
+     *            l'informazione se il tipoFascicolo sia gi\u00E0 presente su DB
+     * @param sovrascriviPeriodo
+     *            flag per richiedere la sovrascrittura dei periodi tipo fascicolo
+     */
+    public void importaAaTipoFascicolo(BigDecimal idStrutCorrente, List<DecAaTipoFascicolo> aaTipoFascicoloExpList,
+            DecTipoFascicolo tipoFascicolo, boolean tipoFascicoloGiaPresente, boolean sovrascriviPeriodo) {
+
+        // Se il tipoFascicolo era già presente (quindi non lo sto inserendo da zero) e ho spuntato sovrascriviPeriodo,
+        // cancello i suoi eventuali periodi di validità
+        if (tipoFascicoloGiaPresente && sovrascriviPeriodo) {
+            List<Long> idAaTipoFascicoloList = new ArrayList<>();
+            for (DecAaTipoFascicolo aaTipoFascicolo : tipoFascicolo.getDecAaTipoFascicolos()) {
+                idAaTipoFascicoloList.add(aaTipoFascicolo.getIdAaTipoFascicolo());
+            }
+            tipoFascicoloHelper.deleteAaTipoFascicolo(idAaTipoFascicoloList);
+            tipoFascicolo.setDecAaTipoFascicolos(new ArrayList<>());
+        }
+
+        // Per ogni PERIODO TIPO FASCICOLO
+        for (DecAaTipoFascicolo aaTipoFascicoloExp : aaTipoFascicoloExpList) {
+            // Entity DecAaTipoFascicolo da "decorare"
+            DecAaTipoFascicolo aaTipoFascicolo;
+
+            // Se il tipo fascicolo da importare NON era presente nella struttura, importo tutto RELATIVAMENTE AL
+            // PERIODO DI VALIDITA':
+            // periodo di validità stesso e poi partiNumero e Modelli Xsd periodo TipoFascicolo
+            if (!tipoFascicoloGiaPresente) {
+                // Importo il periodo tipo fascicolo
+                aaTipoFascicolo = inserisciAaTipoFascicolo(aaTipoFascicoloExp, tipoFascicolo);
+                // Importo le parti numero periodo tipo fascicolo
+                for (DecParteNumeroFascicolo parteNumeroFascicolo : aaTipoFascicoloExp.getDecParteNumeroFascicolos()) {
+                    inserisciParteNumeroFascicolo(parteNumeroFascicolo, aaTipoFascicolo);
+                }
+                // Importo i modelli XSD periodo tipo fascicolo
+                for (DecUsoModelloXsdFasc uso : aaTipoFascicoloExp.getDecUsoModelloXsdFascs()) {
+                    inserisciUsoModelloXsdFasc(uso, aaTipoFascicolo);
+                }
+            } // Se invece il tipo fascicolo NON \u00E8 stato importato (in quanto gi\u00E0 presente su DB) ricavo, se
+              // presente, il relativo aaTipoFascicolo dall'XML E LO INSERISCO SOLO SE IL FLAG SOVRASCRIVI E' STATO
+              // SETTATO A TRUE
+            else {
+                if (sovrascriviPeriodo) {
+                    aaTipoFascicolo = inserisciAaTipoFascicolo(aaTipoFascicoloExp, tipoFascicolo);
+
+                    // Importo le parti numero
+                    for (DecParteNumeroFascicolo parteNumeroFascicolo : aaTipoFascicoloExp
+                            .getDecParteNumeroFascicolos()) {
+                        inserisciParteNumeroFascicolo(parteNumeroFascicolo, aaTipoFascicolo);
+                    }
+                    // Importo i modelli XSD periodo tipo fascicolo
+                    for (DecUsoModelloXsdFasc uso : aaTipoFascicoloExp.getDecUsoModelloXsdFascs()) {
+                        inserisciUsoModelloXsdFasc(uso, aaTipoFascicolo);
+                    }
+                }
+            }
+        }
+    }
+
+    public DecUsoModelloXsdFasc inserisciUsoModelloXsdFasc(DecUsoModelloXsdFasc usoModelloXsdFascExp,
+            DecAaTipoFascicolo aaTipoFascicolo) {
+        DecUsoModelloXsdFasc usoModelloXsdFasc = new DecUsoModelloXsdFasc();
+        usoModelloXsdFasc.setDecAaTipoFascicolo(aaTipoFascicolo);
+        usoModelloXsdFasc.setDecModelloXsdFascicolo(usoModelloXsdFascExp.getDecModelloXsdFascicolo());
+        usoModelloXsdFasc.setDtIstituz(usoModelloXsdFascExp.getDtIstituz());
+        usoModelloXsdFasc.setDtSoppres(usoModelloXsdFascExp.getDtSoppres());
+        usoModelloXsdFasc.setFlStandard(usoModelloXsdFascExp.getFlStandard());
+
+        struttureHelper.insertEntity(usoModelloXsdFasc, true);
+        // e lo associo all'anno
+        if (aaTipoFascicolo.getDecUsoModelloXsdFascs() == null) {
+            aaTipoFascicolo.setDecUsoModelloXsdFascs(new ArrayList<>());
+        }
+        aaTipoFascicolo.getDecUsoModelloXsdFascs().add(usoModelloXsdFasc);
+        return usoModelloXsdFasc;
+    }
+
+    public AplSistemaVersante inserisciSistemaVersante(AplSistemaVersante sistemaVersanteExp) {
         AplSistemaVersante sistemaVersante = new AplSistemaVersante();
         sistemaVersante.setCdVersione(sistemaVersanteExp.getCdVersione());
         sistemaVersante.setDsSistemaVersante(sistemaVersanteExp.getDsSistemaVersante());
@@ -2679,12 +3246,7 @@ public class StruttureEjb {
         int minDB = decAaRegistroUnitaDocDB.getAaMinRegistroUnitaDoc().intValue();
         int maxDB = decAaRegistroUnitaDocDB.getAaMaxRegistroUnitaDoc() != null
                 ? decAaRegistroUnitaDocDB.getAaMaxRegistroUnitaDoc().intValue() : 2444;
-        if (maxExp >= minDB && minExp <= maxDB) {
-            // if ((minExp >= minDB && minExp <= maxDB) || (maxExp >= minDB && maxExp <= maxDB)) {
-            return true;
-        } else {
-            return false;
-        }
+        return maxExp >= minDB && minExp <= maxDB;
     }
 
     public DecTipoUnitaDoc getDecTipoUnitaDocExpSelected(OrgStrut strutExp, String nmTipoUnitaDocSelezionataDaCombo) {
@@ -2692,6 +3254,17 @@ public class StruttureEjb {
         for (DecTipoUnitaDoc tipoUnitaDocExp : tipoUnitaDocExpList) {
             if (tipoUnitaDocExp.getNmTipoUnitaDoc().equals(nmTipoUnitaDocSelezionataDaCombo)) {
                 return tipoUnitaDocExp;
+            }
+        }
+        return null;
+    }
+
+    public DecTipoFascicolo getDecTipoFascicoloExpSelected(OrgStrut strutExp,
+            String nmTipoFascicoloSelezionatoDaMulti) {
+        List<DecTipoFascicolo> tipoFascicoloExpList = strutExp.getDecTipoFascicolos();
+        for (DecTipoFascicolo tipoFascicoloExp : tipoFascicoloExpList) {
+            if (tipoFascicoloExp.getNmTipoFascicolo().equals(nmTipoFascicoloSelezionatoDaMulti)) {
+                return tipoFascicoloExp;
             }
         }
         return null;
@@ -2708,6 +3281,17 @@ public class StruttureEjb {
         return null;
     }
 
+    public DecAaTipoFascicolo getDecAaTipoFascicoloExpSelected(DecTipoFascicolo tipoFascicoloExp,
+            BigDecimal aaTipoFascicoloSelezionatoDaCombo) {
+        List<DecAaTipoFascicolo> aaTipoFascicoloExpList = tipoFascicoloExp.getDecAaTipoFascicolos();
+        for (DecAaTipoFascicolo aaTipoFascicoloExp : aaTipoFascicoloExpList) {
+            if (aaTipoFascicoloExp.getAaIniTipoFascicolo().compareTo(aaTipoFascicoloSelezionatoDaCombo) == 0) {
+                return aaTipoFascicoloExp;
+            }
+        }
+        return null;
+    }
+
     /**
      * Esegue il salvataggio su DB di DecAaRegistroUnitaDoc. Recupera l'anno dall'XML e crea il record su DB
      *
@@ -2716,7 +3300,7 @@ public class StruttureEjb {
      * @param registroUnitaDoc
      *            il record del registro, gi\u00E0 presente su DB, nel quale associare l'anno @return, il record
      *            relativo all'anno appena creato
-     * 
+     *
      * @return DecAaRegistroUnitaDoc
      */
     public DecAaRegistroUnitaDoc inserisciAaRegistroUnitaDoc(DecAaRegistroUnitaDoc aaRegistroUnitaDocExp,
@@ -2729,7 +3313,7 @@ public class StruttureEjb {
         struttureHelper.insertEntity(aaRegistroUnitaDoc, true);
         // e lo associo al registro
         if (registroUnitaDoc.getDecAaRegistroUnitaDocs() == null) {
-            registroUnitaDoc.setDecAaRegistroUnitaDocs(new ArrayList<DecAaRegistroUnitaDoc>());
+            registroUnitaDoc.setDecAaRegistroUnitaDocs(new ArrayList<>());
         }
         registroUnitaDoc.getDecAaRegistroUnitaDocs().add(aaRegistroUnitaDoc);
         return aaRegistroUnitaDoc;
@@ -2743,7 +3327,7 @@ public class StruttureEjb {
      * @param aaRegistroUnitaDoc
      *            il record dell'anno, gi\u00E0 presente su DB, nel quale associare la parte numero @return, il record
      *            relativo alla parte numero appena creata
-     * 
+     *
      * @return DecParteNumeroRegistro
      */
     public DecParteNumeroRegistro inserisciParteNumeroRegistro(DecParteNumeroRegistro parteNumeroRegistroExp,
@@ -2763,10 +3347,43 @@ public class StruttureEjb {
         struttureHelper.insertEntity(parteNumeroRegistro, true);
         // e lo associo all'anno
         if (aaRegistroUnitaDoc.getDecParteNumeroRegistros() == null) {
-            aaRegistroUnitaDoc.setDecParteNumeroRegistros(new ArrayList<DecParteNumeroRegistro>());
+            aaRegistroUnitaDoc.setDecParteNumeroRegistros(new ArrayList<>());
         }
         aaRegistroUnitaDoc.getDecParteNumeroRegistros().add(parteNumeroRegistro);
         return parteNumeroRegistro;
+    }
+
+    /**
+     * Esegue il salvataggio su DB di DecParteNumeroFascicolo. Recupera l'anno dall'XML e crea il record su DB
+     *
+     * @param parteNumeroFascicoloExp
+     *            la parte numero presente nell'XML
+     * @param aaTipoFascicolo
+     *            il record dell'anno, gi\u00E0 presente su DB, nel quale associare la parte numero
+     *
+     * @return DecParteNumeroFascicolo, il record relativo alla parte numero appena creata
+     */
+    public DecParteNumeroFascicolo inserisciParteNumeroFascicolo(DecParteNumeroFascicolo parteNumeroFascicoloExp,
+            DecAaTipoFascicolo aaTipoFascicolo) {
+        DecParteNumeroFascicolo parteNumeroFascicolo = new DecParteNumeroFascicolo();
+        parteNumeroFascicolo.setNmParteNumero(parteNumeroFascicoloExp.getNmParteNumero());
+        parteNumeroFascicolo.setDlValoriParte(parteNumeroFascicoloExp.getDlValoriParte());
+        parteNumeroFascicolo.setDsParteNumero(parteNumeroFascicoloExp.getDsParteNumero());
+        parteNumeroFascicolo.setNiMinCharParte(parteNumeroFascicoloExp.getNiMinCharParte());
+        parteNumeroFascicolo.setNiMaxCharParte(parteNumeroFascicoloExp.getNiMaxCharParte());
+        parteNumeroFascicolo.setNiParteNumero(parteNumeroFascicoloExp.getNiParteNumero());
+        parteNumeroFascicolo.setTiParte(parteNumeroFascicoloExp.getTiParte());
+        parteNumeroFascicolo.setTiCharSep(parteNumeroFascicoloExp.getTiCharSep());
+        parteNumeroFascicolo.setTiPadParte(parteNumeroFascicoloExp.getTiPadParte());
+        parteNumeroFascicolo.setTiCharParte(parteNumeroFascicoloExp.getTiCharParte());
+        parteNumeroFascicolo.setDecAaTipoFascicolo(aaTipoFascicolo);
+        struttureHelper.insertEntity(parteNumeroFascicolo, true);
+        // e lo associo all'anno
+        if (aaTipoFascicolo.getDecParteNumeroFascicolos() == null) {
+            aaTipoFascicolo.setDecParteNumeroFascicolos(new ArrayList<>());
+        }
+        aaTipoFascicolo.getDecParteNumeroFascicolos().add(parteNumeroFascicolo);
+        return parteNumeroFascicolo;
     }
 
     /**
@@ -2777,7 +3394,7 @@ public class StruttureEjb {
      *            il tipo struttura unit\u00E0 doc recuperato dall'XML
      * @param tipoUnitaDoc
      *            il tipo unità doc in fase di "decorazione" al quale associare il tipo struttura ud
-     * 
+     *
      * @return il tipo struttura unit\u00E0 documentaria inserito
      */
     public DecTipoStrutUnitaDoc inserisciTipoStrutUnitaDoc(DecTipoStrutUnitaDoc tipoStrutUnitaDocExp,
@@ -2801,10 +3418,38 @@ public class StruttureEjb {
         // Inserisco su DB il tipoStrutUnitaDoc
         struttureHelper.insertEntity(tipoStrutUnitaDoc, true);
         if (tipoUnitaDoc.getDecTipoStrutUnitaDocs() == null) {
-            tipoUnitaDoc.setDecTipoStrutUnitaDocs(new ArrayList<DecTipoStrutUnitaDoc>());
+            tipoUnitaDoc.setDecTipoStrutUnitaDocs(new ArrayList<>());
         }
         tipoUnitaDoc.getDecTipoStrutUnitaDocs().add(tipoStrutUnitaDoc);
         return tipoStrutUnitaDoc;
+    }
+
+    /**
+     * Inserisce su DB il record relativo al Periodo Tipo Fascicolo partendo da quello passato come parametro
+     * dell'oggetto aaTipoFascicolo recuperato dall'XML
+     *
+     * @param aaTipoFascicoloExp
+     *            il periodo tipo fascicolo recuperato dall'XML
+     * @param tipoFascicolo
+     *            il tipo fascicolo in fase di "decorazione" al quale associare il periodo tipo fascicolo
+     *
+     * @return il periodo tipo fascicolo inserito
+     */
+    public DecAaTipoFascicolo inserisciAaTipoFascicolo(DecAaTipoFascicolo aaTipoFascicoloExp,
+            DecTipoFascicolo tipoFascicolo) {
+        DecAaTipoFascicolo aaTipoFascicolo = new DecAaTipoFascicolo();
+        aaTipoFascicolo.setAaFinTipoFascicolo(aaTipoFascicoloExp.getAaFinTipoFascicolo());
+        aaTipoFascicolo.setAaIniTipoFascicolo(aaTipoFascicoloExp.getAaIniTipoFascicolo());
+        aaTipoFascicolo.setFlUpdFmtNumero(aaTipoFascicoloExp.getFlUpdFmtNumero());
+        aaTipoFascicolo.setNiCharPadParteClassif(aaTipoFascicoloExp.getNiCharPadParteClassif());
+        aaTipoFascicolo.setDecTipoFascicolo(tipoFascicolo);
+        // Inserisco su DB il aaTipoFascicolo
+        struttureHelper.insertEntity(aaTipoFascicolo, true);
+        if (tipoFascicolo.getDecAaTipoFascicolos() == null) {
+            tipoFascicolo.setDecAaTipoFascicolos(new ArrayList<>());
+        }
+        tipoFascicolo.getDecAaTipoFascicolos().add(aaTipoFascicolo);
+        return aaTipoFascicolo;
     }
 
     /**
@@ -2813,14 +3458,14 @@ public class StruttureEjb {
      *
      * @param categTipoUnitaDocExp
      *            l'oggetto recuperato dall'XML
-     * 
+     *
      * @return la nuova categoria inserita su DB
      */
     public DecCategTipoUnitaDoc inserisciCategTipoUnitaDoc(DecCategTipoUnitaDoc categTipoUnitaDocExp) {
         DecCategTipoUnitaDoc categTipoUnitaDoc = new DecCategTipoUnitaDoc();
         categTipoUnitaDoc.setCdCategTipoUnitaDoc(categTipoUnitaDocExp.getCdCategTipoUnitaDoc());
         categTipoUnitaDoc.setDsCategTipoUnitaDoc(categTipoUnitaDocExp.getDsCategTipoUnitaDoc());
-        categTipoUnitaDoc.setDecTipoUnitaDocs(new ArrayList<DecTipoUnitaDoc>());
+        categTipoUnitaDoc.setDecTipoUnitaDocs(new ArrayList<>());
         struttureHelper.insertEntity(categTipoUnitaDoc, true);
         return categTipoUnitaDoc;
     }
@@ -2832,7 +3477,7 @@ public class StruttureEjb {
      *            tipo unita doc
      * @param registroUnitaDoc
      *            registro unita doc
-     * 
+     *
      * @return il record relativo al tipoUnitaDocAmmesso inserito
      */
     public DecTipoUnitaDocAmmesso inserisciTipoUdAmmesso(DecTipoUnitaDoc tipoUnitaDoc,
@@ -2842,11 +3487,11 @@ public class StruttureEjb {
         tipoUnitaDocAmmesso.setDecRegistroUnitaDoc(registroUnitaDoc);
         struttureHelper.insertEntity(tipoUnitaDocAmmesso, true);
         if (tipoUnitaDoc.getDecTipoUnitaDocAmmessos() == null) {
-            tipoUnitaDoc.setDecTipoUnitaDocAmmessos(new ArrayList<DecTipoUnitaDocAmmesso>());
+            tipoUnitaDoc.setDecTipoUnitaDocAmmessos(new ArrayList<>());
         }
         tipoUnitaDoc.getDecTipoUnitaDocAmmessos().add(tipoUnitaDocAmmesso);
         if (registroUnitaDoc.getDecTipoUnitaDocAmmessos() == null) {
-            registroUnitaDoc.setDecTipoUnitaDocAmmessos(new ArrayList<DecTipoUnitaDocAmmesso>());
+            registroUnitaDoc.setDecTipoUnitaDocAmmessos(new ArrayList<>());
         }
         registroUnitaDoc.getDecTipoUnitaDocAmmessos().add(tipoUnitaDocAmmesso);
         return tipoUnitaDocAmmesso;
@@ -2865,7 +3510,7 @@ public class StruttureEjb {
         tipoDoc.setOrgStrut(strutCorrente);
         struttureHelper.insertEntity(tipoDoc, true);
         if (strutCorrente.getDecTipoDocs() == null) {
-            strutCorrente.setDecTipoDocs(new ArrayList<DecTipoDoc>());
+            strutCorrente.setDecTipoDocs(new ArrayList<>());
         }
         strutCorrente.getDecTipoDocs().add(tipoDoc);
         return tipoDoc;
@@ -2894,22 +3539,22 @@ public class StruttureEjb {
         struttureHelper.insertEntity(xsdDatiSpec, true);
         if (tipoUnitaDoc != null) {
             if (tipoUnitaDoc.getDecXsdDatiSpecs() == null) {
-                tipoUnitaDoc.setDecXsdDatiSpecs(new ArrayList<DecXsdDatiSpec>());
+                tipoUnitaDoc.setDecXsdDatiSpecs(new ArrayList<>());
             }
             tipoUnitaDoc.getDecXsdDatiSpecs().add(xsdDatiSpec);
         } else if (tipoDoc != null) {
             if (tipoDoc.getDecXsdDatiSpecs() == null) {
-                tipoDoc.setDecXsdDatiSpecs(new ArrayList<DecXsdDatiSpec>());
+                tipoDoc.setDecXsdDatiSpecs(new ArrayList<>());
             }
             tipoDoc.getDecXsdDatiSpecs().add(xsdDatiSpec);
         } else if (tipoCompDoc != null) {
             if (tipoCompDoc.getDecXsdDatiSpecs() == null) {
-                tipoCompDoc.setDecXsdDatiSpecs(new ArrayList<DecXsdDatiSpec>());
+                tipoCompDoc.setDecXsdDatiSpecs(new ArrayList<>());
             }
             tipoCompDoc.getDecXsdDatiSpecs().add(xsdDatiSpec);
         }
         if (strutCorrente.getDecXsdDatiSpecs() == null) {
-            strutCorrente.setDecXsdDatiSpecs(new ArrayList<DecXsdDatiSpec>());
+            strutCorrente.setDecXsdDatiSpecs(new ArrayList<>());
         }
         strutCorrente.getDecXsdDatiSpecs().add(xsdDatiSpec);
         return xsdDatiSpec;
@@ -2924,11 +3569,11 @@ public class StruttureEjb {
         tipoDocAmmesso.setDecTipoStrutUnitaDoc(tipoStrutUnitaDoc);
         struttureHelper.insertEntity(tipoDocAmmesso, true);
         if (tipoStrutUnitaDoc.getDecTipoDocAmmessos() == null) {
-            tipoStrutUnitaDoc.setDecTipoDocAmmessos(new ArrayList<DecTipoDocAmmesso>());
+            tipoStrutUnitaDoc.setDecTipoDocAmmessos(new ArrayList<>());
         }
         tipoStrutUnitaDoc.getDecTipoDocAmmessos().add(tipoDocAmmesso);
         if (tipoDoc.getDecTipoDocAmmessos() == null) {
-            tipoDoc.setDecTipoDocAmmessos(new ArrayList<DecTipoDocAmmesso>());
+            tipoDoc.setDecTipoDocAmmessos(new ArrayList<>());
         }
         tipoDoc.getDecTipoDocAmmessos().add(tipoDocAmmesso);
         return tipoDocAmmesso;
@@ -2944,7 +3589,7 @@ public class StruttureEjb {
         tipoStrutDoc.setOrgStrut(strutCorrente);
         struttureHelper.insertEntity(tipoStrutDoc, true);
         if (strutCorrente.getDecTipoStrutDocs() == null) {
-            strutCorrente.setDecTipoStrutDocs(new ArrayList<DecTipoStrutDoc>());
+            strutCorrente.setDecTipoStrutDocs(new ArrayList<>());
         }
         strutCorrente.getDecTipoStrutDocs().add(tipoStrutDoc);
         return tipoStrutDoc;
@@ -2968,11 +3613,26 @@ public class StruttureEjb {
         tipoCompDoc.setTiUsoCompDoc(tipoCompDocExp.getTiUsoCompDoc());
         tipoCompDoc.setDtSoppres(tipoCompDocExp.getDtSoppres());
         tipoCompDoc.setDtIstituz(new Date());
+        if (tipoCompDocExp.getFlGestiti() != null) {
+            tipoCompDoc.setFlGestiti(tipoCompDocExp.getFlGestiti());
+        } else {
+            tipoCompDoc.setFlGestiti("0");
+        }
+        if (tipoCompDocExp.getFlIdonei() != null) {
+            tipoCompDoc.setFlIdonei(tipoCompDocExp.getFlIdonei());
+        } else {
+            tipoCompDoc.setFlIdonei("0");
+        }
+        if (tipoCompDocExp.getFlDeprecati() != null) {
+            tipoCompDoc.setFlDeprecati(tipoCompDocExp.getFlDeprecati());
+        } else {
+            tipoCompDoc.setFlDeprecati("0");
+        }
         DecTipoStrutDoc tipoStrutDoc = tipoStrutDocHelper.getDecTipoStrutDocByName(nmTipoStrutDoc, idStrutCorrente);
         tipoCompDoc.setDecTipoStrutDoc(tipoStrutDoc);
         struttureHelper.insertEntity(tipoCompDoc, true);
         if (tipoStrutDoc.getDecTipoCompDocs() == null) {
-            tipoStrutDoc.setDecTipoCompDocs(new ArrayList<DecTipoCompDoc>());
+            tipoStrutDoc.setDecTipoCompDocs(new ArrayList<>());
         }
         tipoStrutDoc.getDecTipoCompDocs().add(tipoCompDoc);
         return tipoCompDoc;
@@ -2980,12 +3640,12 @@ public class StruttureEjb {
 
     public DecFormatoFileDoc inserisciFormatoFileDoc(BigDecimal idStrutCorrente, DecFormatoFileDoc formatoFileDocExp) {
         DecFormatoFileDoc formatoFileDoc = new DecFormatoFileDoc();
-        formatoFileDoc.setAroCompDocs(new ArrayList<AroCompDoc>());
+        formatoFileDoc.setAroCompDocs(new ArrayList<>());
         formatoFileDoc.setCdVersione(formatoFileDocExp.getCdVersione());
-        formatoFileDoc.setDecFormatoFileAmmessos(new ArrayList<DecFormatoFileAmmesso>());
-        formatoFileDoc.setDecTipoRapprCompConts(new ArrayList<DecTipoRapprComp>());
-        formatoFileDoc.setDecTipoRapprCompConvs(new ArrayList<DecTipoRapprComp>());
-        formatoFileDoc.setDecUsoFormatoFileStandards(new ArrayList<DecUsoFormatoFileStandard>());
+        formatoFileDoc.setDecFormatoFileAmmessos(new ArrayList<>());
+        formatoFileDoc.setDecTipoRapprCompConts(new ArrayList<>());
+        formatoFileDoc.setDecTipoRapprCompConvs(new ArrayList<>());
+        formatoFileDoc.setDecUsoFormatoFileStandards(new ArrayList<>());
         formatoFileDoc.setDsFormatoFileDoc(formatoFileDocExp.getDsFormatoFileDoc());
         formatoFileDoc.setDtIstituz(formatoFileDocExp.getDtIstituz());
         formatoFileDoc.setDtSoppres(formatoFileDocExp.getDtSoppres());
@@ -2994,7 +3654,7 @@ public class StruttureEjb {
         formatoFileDoc.setOrgStrut(strutCorrente);
         struttureHelper.insertEntity(formatoFileDoc, true);
         if (strutCorrente.getDecFormatoFileDocs() == null) {
-            strutCorrente.setDecFormatoFileDocs(new ArrayList<DecFormatoFileDoc>());
+            strutCorrente.setDecFormatoFileDocs(new ArrayList<>());
         }
         strutCorrente.getDecFormatoFileDocs().add(formatoFileDoc);
         return formatoFileDoc;
@@ -3007,11 +3667,11 @@ public class StruttureEjb {
         formatoFileAmmesso.setDecTipoCompDoc(tipoCompDoc);
         struttureHelper.insertEntity(formatoFileAmmesso, true);
         if (tipoCompDoc.getDecFormatoFileAmmessos() == null) {
-            tipoCompDoc.setDecFormatoFileAmmessos(new ArrayList<DecFormatoFileAmmesso>());
+            tipoCompDoc.setDecFormatoFileAmmessos(new ArrayList<>());
         }
         tipoCompDoc.getDecFormatoFileAmmessos().add(formatoFileAmmesso);
         if (formatoFileDoc.getDecFormatoFileAmmessos() == null) {
-            formatoFileDoc.setDecFormatoFileAmmessos(new ArrayList<DecFormatoFileAmmesso>());
+            formatoFileDoc.setDecFormatoFileAmmessos(new ArrayList<>());
         }
         formatoFileDoc.getDecFormatoFileAmmessos().add(formatoFileAmmesso);
         return formatoFileAmmesso;
@@ -3025,29 +3685,36 @@ public class StruttureEjb {
         tipoRapprComp.setTiOutputRappr(tipoRapprCompExp.getTiOutputRappr());
         tipoRapprComp.setDtSoppres(tipoRapprCompExp.getDtSoppres());
         tipoRapprComp.setDtIstituz(new Date());
-        tipoRapprComp.setDecTrasformTipoRapprs(new ArrayList<DecTrasformTipoRappr>());
+        tipoRapprComp.setDecTrasformTipoRapprs(new ArrayList<>());
 
-        // Formato output
+        // Formato output: lo inserisco solo se è censito a sistema
         DecFormatoFileStandard formatoFileStandard = new DecFormatoFileStandard();
         if (tipoRapprCompExp.getDecFormatoFileStandard() != null) {
-            formatoFileStandard = gestisciFormatoFileStandard(idStrutCorrente,
-                    tipoRapprCompExp.getDecFormatoFileStandard());
-            tipoRapprComp.setDecFormatoFileStandard(formatoFileStandard);
+            if (copiaStruttureEjb.existsAllFormatiStandard(
+                    tipoRapprCompExp.getDecFormatoFileStandard().getNmFormatoFileStandard())) {
+                formatoFileStandard = gestisciFormatoFileStandard(tipoRapprCompExp.getDecFormatoFileStandard());
+                tipoRapprComp.setDecFormatoFileStandard(formatoFileStandard);
+            }
         }
 
-        // Formato del file contenuto
-        DecFormatoFileDoc formatoFileContenuto = new DecFormatoFileDoc();
+        // Formato del file contenuto: lo inserisco solo se è censito a sistema
         if (tipoRapprCompExp.getDecFormatoFileDocCont() != null) {
-            formatoFileContenuto = gestisciFormatoFileDoc(idStrutCorrente, tipoRapprCompExp.getDecFormatoFileDocCont());
-            tipoRapprComp.setDecFormatoFileDocCont(formatoFileContenuto);
+            if (copiaStruttureEjb
+                    .existsAllFormatiStandard(tipoRapprCompExp.getDecFormatoFileDocCont().getNmFormatoFileDoc())) {
+                DecFormatoFileDoc formatoFileContenuto = gestisciFormatoFileDoc(idStrutCorrente,
+                        tipoRapprCompExp.getDecFormatoFileDocCont());
+                tipoRapprComp.setDecFormatoFileDocCont(formatoFileContenuto);
+            }
         }
 
         // Formato del file convertitore
-        DecFormatoFileDoc formatoFileConvertitore = new DecFormatoFileDoc();
         if (tipoRapprCompExp.getDecFormatoFileDocConv() != null) {
-            formatoFileConvertitore = gestisciFormatoFileDoc(idStrutCorrente,
-                    tipoRapprCompExp.getDecFormatoFileDocConv());
-            tipoRapprComp.setDecFormatoFileDocConv(formatoFileConvertitore);
+            if (copiaStruttureEjb
+                    .existsAllFormatiStandard(tipoRapprCompExp.getDecFormatoFileDocConv().getNmFormatoFileDoc())) {
+                DecFormatoFileDoc formatoFileConvertitore = gestisciFormatoFileDoc(idStrutCorrente,
+                        tipoRapprCompExp.getDecFormatoFileDocConv());
+                tipoRapprComp.setDecFormatoFileDocConv(formatoFileConvertitore);
+            }
         }
 
         OrgStrut strutCorrente = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
@@ -3058,7 +3725,7 @@ public class StruttureEjb {
             formatoFileStandard.getDecTipoRapprComps().add(tipoRapprComp);
         }
         if (strutCorrente.getDecTipoRapprComps() == null) {
-            strutCorrente.setDecTipoRapprComps(new ArrayList<DecTipoRapprComp>());
+            strutCorrente.setDecTipoRapprComps(new ArrayList<>());
         }
         strutCorrente.getDecTipoRapprComps().add(tipoRapprComp);
 
@@ -3068,7 +3735,7 @@ public class StruttureEjb {
                 DecTrasformTipoRappr trasformTipoRappr = new DecTrasformTipoRappr();
                 trasformTipoRappr.setBlFileTrasform(trasformTipoRapprExp.getBlFileTrasform());
                 trasformTipoRappr.setCdVersioneTrasform(trasformTipoRapprExp.getCdVersioneTrasform());
-                trasformTipoRappr.setDecImageTrasforms(new ArrayList<DecImageTrasform>());
+                trasformTipoRappr.setDecImageTrasforms(new ArrayList<>());
                 trasformTipoRappr.setDecTipoRapprComp(tipoRapprComp);
                 trasformTipoRappr.setDsHashFileTrasform(trasformTipoRapprExp.getDsHashFileTrasform());
                 trasformTipoRappr.setDtInsTrasform(trasformTipoRapprExp.getDtInsTrasform());
@@ -3114,8 +3781,7 @@ public class StruttureEjb {
         return formatoFileDoc;
     }
 
-    public DecFormatoFileStandard gestisciFormatoFileStandard(BigDecimal idStrutCorrente,
-            DecFormatoFileStandard formatoFileStandardExp) {
+    public DecFormatoFileStandard gestisciFormatoFileStandard(DecFormatoFileStandard formatoFileStandardExp) {
         DecFormatoFileStandard formatoFileStandard = formatoFileStandardHelper
                 .getDecFormatoFileStandardByName(formatoFileStandardExp.getNmFormatoFileStandard());
         // Se il formatoFileStandard non esiste, allora lo inserisco
@@ -3124,17 +3790,6 @@ public class StruttureEjb {
         }
         return formatoFileStandard;
     }
-
-    // public DecFormatoFileDoc gestisciFormatoFileDoc(BigDecimal idStrutCorrente,
-    // DecFormatoFileDoc formatoFileContenutoExp) {
-    // DecFormatoFileDoc formatoFileDoc = formatoFileStandardHelper
-    // .getDecFormatoFileDocByName(idStrutCorrente, formatoFileContenutoExp.getNmFormatoFileDoc());
-    // // Se il formatoFileDocnon esiste, allora lo inserisco
-    // if (formatoFileDoc == null) {
-    // formatoFileDoc = inserisciFormatoFileDoc(idStrutCorrente, formatoFileContenutoExp);
-    // }
-    // return formatoFileDoc;
-    // }
 
     public DecTipoRapprAmmesso inserisciTipoRapprAmmesso(DecTipoCompDoc tipoCompDoc, DecTipoRapprComp tipoRapprComp) {
         DecTipoRapprAmmesso tipoRapprAmmesso = new DecTipoRapprAmmesso();
@@ -3154,8 +3809,8 @@ public class StruttureEjb {
         formatoFileStandard.setDsCopyright(formatoFileStandardExp.getDsCopyright());
         formatoFileStandard.setNmMimetypeFile(formatoFileStandardExp.getNmMimetypeFile());
         formatoFileStandard.setTiEsitoContrFormato(formatoFileStandardExp.getTiEsitoContrFormato());
-        formatoFileStandard.setDecEstensioneFiles(new ArrayList<DecEstensioneFile>());
-        formatoFileStandard.setDecTipoRapprComps(new ArrayList<DecTipoRapprComp>());
+        formatoFileStandard.setDecEstensioneFiles(new ArrayList<>());
+        formatoFileStandard.setDecTipoRapprComps(new ArrayList<>());
         formatoFileStandard.setFlFormatoConcat(formatoFileStandardExp.getFlFormatoConcat());
         struttureHelper.insertEntity(formatoFileStandard, true);
 
@@ -3178,11 +3833,11 @@ public class StruttureEjb {
         usoFormatoFileStandard.setNiOrdUso(usoFormatoFileStandardExp.getNiOrdUso());
         struttureHelper.insertEntity(usoFormatoFileStandard, true);
         if (formatoFileDoc.getDecUsoFormatoFileStandards() == null) {
-            formatoFileDoc.setDecUsoFormatoFileStandards(new ArrayList<DecUsoFormatoFileStandard>());
+            formatoFileDoc.setDecUsoFormatoFileStandards(new ArrayList<>());
         }
         formatoFileDoc.getDecUsoFormatoFileStandards().add(usoFormatoFileStandard);
         if (formatoFileStandard.getDecUsoFormatoFileStandards() == null) {
-            formatoFileStandard.setDecUsoFormatoFileStandards(new ArrayList<DecUsoFormatoFileStandard>());
+            formatoFileStandard.setDecUsoFormatoFileStandards(new ArrayList<>());
         }
         formatoFileStandard.getDecUsoFormatoFileStandards().add(usoFormatoFileStandard);
     }
@@ -3192,7 +3847,6 @@ public class StruttureEjb {
         Long idRegolaValSubStrut = subStrutEjb.saveRegolaSubStrut(null,
                 new BigDecimal(tipoUnitaDoc.getIdTipoUnitaDoc()), new BigDecimal(tipoDoc.getIdTipoDoc()), new Date(),
                 regolaValSubStrutExp.getDtSoppres());
-        // param.setIdOggetto(new BigDecimal(tipoUnitaDoc.getIdTipoUnitaDoc()));
         OrgRegolaValSubStrut regolaValSubStrut = struttureHelper.findById(OrgRegolaValSubStrut.class,
                 idRegolaValSubStrut);
         // Inserisci i campi
@@ -3208,8 +3862,7 @@ public class StruttureEjb {
                         campoValSubStrutExp.getDecAttribDatiSpec().getTiUsoAttrib(),
                         campoValSubStrutExp.getDecAttribDatiSpec().getTiEntitaSacer(),
                         campoValSubStrutExp.getDecAttribDatiSpec().getDecTipoUnitaDoc().getNmTipoUnitaDoc(), null, null,
-                        null, campoValSubStrutExp.getDecAttribDatiSpec().getNmSistemaMigraz(),
-                        campoValSubStrutExp.getDecAttribDatiSpec().getNmAttribDatiSpec());
+                        null, campoValSubStrutExp.getDecAttribDatiSpec().getNmAttribDatiSpec());
                 idRecord = new BigDecimal(attribDatiSpec.getIdAttribDatiSpec());
                 break;
             case SUB_STRUT:
@@ -3278,10 +3931,53 @@ public class StruttureEjb {
         struttureHelper.insertEntity(criterioRaggr, true);
         criteriRaggruppamentoDaLoggare.add(new BigDecimal(criterioRaggr.getIdCriterioRaggr()));
         if (strutCorrente.getDecCriterioRaggrs() == null) {
-            strutCorrente.setDecCriterioRaggrs(new ArrayList<DecCriterioRaggr>());
+            strutCorrente.setDecCriterioRaggrs(new ArrayList<>());
         }
         strutCorrente.getDecCriterioRaggrs().add(criterioRaggr);
         return criterioRaggr;
+    }
+
+    public DecCriterioRaggrFasc inserisciCriterioFasc(BigDecimal idStrutCorrente,
+            DecCriterioRaggrFasc criterioRaggrFascExp, Set<BigDecimal> criteriRaggruppamentoFascDaLoggare) {
+        DecCriterioRaggrFasc criterioRaggrFasc = new DecCriterioRaggrFasc();
+        criterioRaggrFasc.setNmCriterioRaggr(criterioRaggrFascExp.getNmCriterioRaggr());
+        criterioRaggrFasc.setDsCriterioRaggr(criterioRaggrFascExp.getDsCriterioRaggr());
+        criterioRaggrFasc.setNiMaxFasc(criterioRaggrFascExp.getNiMaxFasc());
+        criterioRaggrFasc.setTiScadChius(criterioRaggrFascExp.getTiScadChius());
+        criterioRaggrFasc.setTiTempoScadChius(criterioRaggrFascExp.getTiTempoScadChius());
+        criterioRaggrFasc.setNiTempoScadChius(criterioRaggrFascExp.getNiTempoScadChius());
+        criterioRaggrFasc.setFlFiltroTipoFascicolo(criterioRaggrFascExp.getFlFiltroTipoFascicolo());
+        criterioRaggrFasc.setAaFascicolo(criterioRaggrFascExp.getAaFascicolo());
+        criterioRaggrFasc.setAaFascicoloDa(criterioRaggrFascExp.getAaFascicoloDa());
+        criterioRaggrFasc.setAaFascicoloA(criterioRaggrFascExp.getAaFascicoloA());
+        criterioRaggrFasc.setFlFiltroVoceTitol(criterioRaggrFascExp.getFlFiltroVoceTitol());
+        criterioRaggrFasc.setDtApeFascicoloDa(criterioRaggrFascExp.getDtApeFascicoloDa());
+        criterioRaggrFasc.setDtApeFascicoloA(criterioRaggrFascExp.getDtApeFascicoloA());
+        criterioRaggrFasc.setTiConservazione(criterioRaggrFascExp.getTiConservazione());
+        criterioRaggrFasc.setFlFiltroSistemaMigraz(criterioRaggrFascExp.getFlFiltroSistemaMigraz());
+        criterioRaggrFasc.setDsOggettoFascicolo(criterioRaggrFascExp.getDsOggettoFascicolo());
+        criterioRaggrFasc.setDtChiuFascicoloDa(criterioRaggrFascExp.getDtChiuFascicoloDa());
+        criterioRaggrFasc.setDtChiuFascicoloA(criterioRaggrFascExp.getDtChiuFascicoloA());
+        criterioRaggrFasc.setDtVersDa(criterioRaggrFascExp.getDtVersDa());
+        criterioRaggrFasc.setDtVersA(criterioRaggrFascExp.getDtVersA());
+        criterioRaggrFasc.setFlCriterioRaggrStandard(criterioRaggrFascExp.getFlCriterioRaggrStandard());
+        criterioRaggrFasc.setNtCriterioRaggr(criterioRaggrFascExp.getNtCriterioRaggr());
+        Calendar c1 = Calendar.getInstance();
+        c1.set(Calendar.HOUR, 0);
+        c1.set(Calendar.MINUTE, 0);
+        c1.set(Calendar.SECOND, 0);
+        c1.set(Calendar.MILLISECOND, 0);
+        criterioRaggrFasc.setDtIstituz(c1.getTime());
+        criterioRaggrFasc.setDtSoppres(criterioRaggrFascExp.getDtSoppres());
+        OrgStrut strutCorrente = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
+        criterioRaggrFasc.setOrgStrut(strutCorrente);
+        struttureHelper.insertEntity(criterioRaggrFasc, true);
+        criteriRaggruppamentoFascDaLoggare.add(new BigDecimal(criterioRaggrFasc.getIdCriterioRaggrFasc()));
+        if (strutCorrente.getDecCriterioRaggrFascs() == null) {
+            strutCorrente.setDecCriterioRaggrFascs(new ArrayList<>());
+        }
+        strutCorrente.getDecCriterioRaggrFascs().add(criterioRaggrFasc);
+        return criterioRaggrFasc;
     }
 
     private void inserisciFiltroMultiploTipoUd(BigDecimal idStrutCorrente,
@@ -3296,11 +3992,11 @@ public class StruttureEjb {
         criterioFiltroMultiplo.setNmSistemaMigraz(criterioFiltroMultiploExp.getNmSistemaMigraz());
         struttureHelper.insertEntity(criterioFiltroMultiplo, true);
         if (criterioRaggr.getDecCriterioFiltroMultiplos() == null) {
-            criterioRaggr.setDecCriterioFiltroMultiplos(new ArrayList<DecCriterioFiltroMultiplo>());
+            criterioRaggr.setDecCriterioFiltroMultiplos(new ArrayList<>());
         }
         criterioRaggr.getDecCriterioFiltroMultiplos().add(criterioFiltroMultiplo);
         if (tipoUnitaDoc.getDecCriterioFiltroMultiplos() == null) {
-            tipoUnitaDoc.setDecCriterioFiltroMultiplos(new ArrayList<DecCriterioFiltroMultiplo>());
+            tipoUnitaDoc.setDecCriterioFiltroMultiplos(new ArrayList<>());
         }
         tipoUnitaDoc.getDecCriterioFiltroMultiplos().add(criterioFiltroMultiplo);
     }
@@ -3317,11 +4013,11 @@ public class StruttureEjb {
         criterioFiltroMultiplo.setNmSistemaMigraz(criterioFiltroMultiploExp.getNmSistemaMigraz());
         struttureHelper.insertEntity(criterioFiltroMultiplo, true);
         if (criterioRaggr.getDecCriterioFiltroMultiplos() == null) {
-            criterioRaggr.setDecCriterioFiltroMultiplos(new ArrayList<DecCriterioFiltroMultiplo>());
+            criterioRaggr.setDecCriterioFiltroMultiplos(new ArrayList<>());
         }
         criterioRaggr.getDecCriterioFiltroMultiplos().add(criterioFiltroMultiplo);
         if (tipoDoc.getDecCriterioFiltroMultiplos() == null) {
-            tipoDoc.setDecCriterioFiltroMultiplos(new ArrayList<DecCriterioFiltroMultiplo>());
+            tipoDoc.setDecCriterioFiltroMultiplos(new ArrayList<>());
         }
         tipoDoc.getDecCriterioFiltroMultiplos().add(criterioFiltroMultiplo);
     }
@@ -3338,11 +4034,11 @@ public class StruttureEjb {
         criterioFiltroMultiplo.setNmSistemaMigraz(criterioFiltroMultiploExp.getNmSistemaMigraz());
         struttureHelper.insertEntity(criterioFiltroMultiplo, true);
         if (criterioRaggr.getDecCriterioFiltroMultiplos() == null) {
-            criterioRaggr.setDecCriterioFiltroMultiplos(new ArrayList<DecCriterioFiltroMultiplo>());
+            criterioRaggr.setDecCriterioFiltroMultiplos(new ArrayList<>());
         }
         criterioRaggr.getDecCriterioFiltroMultiplos().add(criterioFiltroMultiplo);
         if (registroUnitaDoc.getDecCriterioFiltroMultiplos() == null) {
-            registroUnitaDoc.setDecCriterioFiltroMultiplos(new ArrayList<DecCriterioFiltroMultiplo>());
+            registroUnitaDoc.setDecCriterioFiltroMultiplos(new ArrayList<>());
         }
         registroUnitaDoc.getDecCriterioFiltroMultiplos().add(criterioFiltroMultiplo);
     }
@@ -3369,24 +4065,24 @@ public class StruttureEjb {
         attribDatiSpec.setOrgStrut(strutCorrente);
         struttureHelper.insertEntity(attribDatiSpec, true);
         if (strutCorrente.getDecAttribDatiSpecs() == null) {
-            strutCorrente.setDecAttribDatiSpecs(new ArrayList<DecAttribDatiSpec>());
+            strutCorrente.setDecAttribDatiSpecs(new ArrayList<>());
         }
         strutCorrente.getDecAttribDatiSpecs().add(attribDatiSpec);
         if (tiEntitaSacer.equals(Constants.TipoEntitaSacer.UNI_DOC)) {
             if (tipoUnitaDoc.getDecAttribDatiSpecs() == null) {
-                tipoUnitaDoc.setDecAttribDatiSpecs(new ArrayList<DecAttribDatiSpec>());
+                tipoUnitaDoc.setDecAttribDatiSpecs(new ArrayList<>());
             }
             tipoUnitaDoc.getDecAttribDatiSpecs().add(attribDatiSpec);
         }
         if (tiEntitaSacer.equals(Constants.TipoEntitaSacer.DOC)) {
             if (tipoDoc.getDecAttribDatiSpecs() == null) {
-                tipoDoc.setDecAttribDatiSpecs(new ArrayList<DecAttribDatiSpec>());
+                tipoDoc.setDecAttribDatiSpecs(new ArrayList<>());
             }
             tipoDoc.getDecAttribDatiSpecs().add(attribDatiSpec);
         }
         if (tiEntitaSacer.equals(Constants.TipoEntitaSacer.COMP)) {
             if (tipoCompDoc.getDecAttribDatiSpecs() == null) {
-                tipoCompDoc.setDecAttribDatiSpecs(new ArrayList<DecAttribDatiSpec>());
+                tipoCompDoc.setDecAttribDatiSpecs(new ArrayList<>());
             }
             tipoCompDoc.getDecAttribDatiSpecs().add(attribDatiSpec);
         }
@@ -3417,7 +4113,7 @@ public class StruttureEjb {
      *            calcolo tipo servizio
      * @param calcTiServOnTipoUd2
      *            calcolo tipo servizio
-     * 
+     *
      * @return DecTipoUnitaDoc decodifica tipo unita doc
      */
     public DecTipoUnitaDoc inserisciTipoUd(BigDecimal idStrutCorrente, DecTipoUnitaDoc tipoUnitaDocExp,
@@ -3426,7 +4122,6 @@ public class StruttureEjb {
         DecTipoUnitaDoc tipoUnitaDoc = new DecTipoUnitaDoc();
         tipoUnitaDoc.setNmTipoUnitaDoc(tipoUnitaDocExp.getNmTipoUnitaDoc());
         tipoUnitaDoc.setDsTipoUnitaDoc(tipoUnitaDocExp.getDsTipoUnitaDoc());
-        // tipoUnitaDoc.setFlForzaCollegamento(tipoUnitaDocExp.getFlForzaCollegamento());
         tipoUnitaDoc.setDtSoppres(tipoUnitaDocExp.getDtSoppres());
         tipoUnitaDoc.setTiSaveFile(tipoUnitaDocExp.getTiSaveFile());
         tipoUnitaDoc.setDtIstituz(new Date());
@@ -3435,11 +4130,11 @@ public class StruttureEjb {
         tipoUnitaDoc.setOrgStrut(strutCorrente);
         struttureHelper.insertEntity(tipoUnitaDoc, true);
         if (categTipoUnitaDoc.getDecTipoUnitaDocs() == null) {
-            categTipoUnitaDoc.setDecTipoUnitaDocs(new ArrayList<DecTipoUnitaDoc>());
+            categTipoUnitaDoc.setDecTipoUnitaDocs(new ArrayList<>());
         }
         categTipoUnitaDoc.getDecTipoUnitaDocs().add(tipoUnitaDoc);
         if (strutCorrente.getDecTipoUnitaDocs() == null) {
-            strutCorrente.setDecTipoUnitaDocs(new ArrayList<DecTipoUnitaDoc>());
+            strutCorrente.setDecTipoUnitaDocs(new ArrayList<>());
         }
         strutCorrente.getDecTipoUnitaDocs().add(tipoUnitaDoc);
         // Aggiungo i nuovi campi sulla Consigurazione Serie
@@ -3471,6 +4166,34 @@ public class StruttureEjb {
         return tipoUnitaDoc;
     }
 
+    /**
+     * Creo un nuovo oggetto tipo fascicolo partendo dallo stesso ricavato dall'XML
+     *
+     * @param idStrutCorrente
+     *            id struttura corrente
+     * @param tipoFascicoloExp
+     *            tipo fascicolo
+     *
+     * @return DecTipoFascicolo decodifica tipo fascicolo
+     */
+    public DecTipoFascicolo inserisciTipoFascicolo(BigDecimal idStrutCorrente, DecTipoFascicolo tipoFascicoloExp) {
+        DecTipoFascicolo tipoFascicolo = new DecTipoFascicolo();
+        tipoFascicolo.setNmTipoFascicolo(tipoFascicoloExp.getNmTipoFascicolo());
+        tipoFascicolo.setDsTipoFascicolo(tipoFascicoloExp.getDsTipoFascicolo());
+        tipoFascicolo.setDtSoppres(tipoFascicoloExp.getDtSoppres());
+        tipoFascicolo.setDtIstituz(new Date());
+        OrgStrut strutCorrente = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
+        tipoFascicolo.setOrgStrut(strutCorrente);
+        struttureHelper.insertEntity(tipoFascicolo, true);
+
+        if (strutCorrente.getDecTipoUnitaDocs() == null) {
+            strutCorrente.setDecTipoUnitaDocs(new ArrayList<>());
+        }
+        strutCorrente.getDecTipoFascicolos().add(tipoFascicolo);
+
+        return tipoFascicolo;
+    }
+
     public AplValoreParamApplic inserisciValoreParamApplic(String nmParamApplic, String dsValoreParamApplicExp,
             DecTipoUnitaDoc tipoUnitaDoc) {
         AplValoreParamApplic valoreParamApplic = new AplValoreParamApplic();
@@ -3492,12 +4215,13 @@ public class StruttureEjb {
      *            id struttura corrente
      * @param registroUnitaDocExp
      *            registro unita doc
-     * 
+     *
      * @return DecRegistroUnitaDoc registro unita doc
      */
     public DecRegistroUnitaDoc inserisciRegistro(BigDecimal idStrutCorrente, DecRegistroUnitaDoc registroUnitaDocExp) {
         DecRegistroUnitaDoc registroUnitaDoc = new DecRegistroUnitaDoc();
         registroUnitaDoc.setCdRegistroUnitaDoc(registroUnitaDocExp.getCdRegistroUnitaDoc());
+        registroUnitaDoc.setCdRegistroNormaliz(registroUnitaDocExp.getCdRegistroNormaliz());
         registroUnitaDoc.setDsRegistroUnitaDoc(registroUnitaDocExp.getDsRegistroUnitaDoc());
         registroUnitaDoc.setFlRegistroFisc(registroUnitaDocExp.getFlRegistroFisc());
         registroUnitaDoc.setFlCreaSerie(registroUnitaDocExp.getFlCreaSerie());
@@ -3549,7 +4273,7 @@ public class StruttureEjb {
     }
 
     public void importaCriteriTipoUd(BigDecimal idStrutCorrente, DecTipoUnitaDoc tipoUnitaDocExp,
-            DecTipoUnitaDoc tipoUnitaDoc, List<CoppiaRegistri> registriImportati, List<CoppiaTipiDoc> tipiDocImportati,
+            List<CoppiaRegistri> registriImportati, List<CoppiaTipiDoc> tipiDocImportati,
             Set<BigDecimal> criteriRaggruppamentoDaLoggare) {
 
         List<DecCriterioRaggr> criteriCoinvoltiExp = new ArrayList<>();
@@ -3589,7 +4313,7 @@ public class StruttureEjb {
         for (DecCriterioRaggr criterioCoinvoltoExp : criteriCoinvoltiExp) {
             boolean elementoMancante = false;
             // Controllo che il criterio esista su DB
-            DecCriterioRaggr criterioRaggr = crHelper.getDecCriterioRaggr(idStrutCorrente,
+            DecCriterioRaggr criterioRaggr = crHelper.getDecCriterioRaggrByStrutturaCorrenteAndCriterio(idStrutCorrente,
                     criterioCoinvoltoExp.getNmCriterioRaggr());
 
             // Se il criterio non esiste su DB, pu\u00E8 darsi che vada inserito... dipender\u00E8 dai tipiUd, tipiDoc,
@@ -3662,6 +4386,45 @@ public class StruttureEjb {
 
     }
 
+    public void importaCriteriRaggrFasc(BigDecimal idStrutCorrente, DecTipoFascicolo tipoFascicoloExp,
+            DecTipoFascicolo tipoFascicolo, Set<BigDecimal> criteriRaggruppamentoFascDaLoggare) {
+
+        for (DecSelCriterioRaggrFasc selOld : tipoFascicoloExp.getDecSelCriterioRaggrFascicolos()) {
+
+            if (selOld.getTiSel()
+                    .equals(it.eng.parer.entity.constraint.DecSelCriterioRaggrFasc.TiSelFasc.TIPO_FASCICOLO.name())) {
+
+                // Recupero il criterio raggruppamento fascicolo, se esiste
+                DecCriterioRaggrFasc criterioFasc = crfHelper.getDecCriterioRaggrFascByStrutturaCorrenteAndCriterio(
+                        idStrutCorrente, selOld.getDecCriterioRaggrFasc().getNmCriterioRaggr());
+
+                // Se il criterio è nullo, lo inserisco
+                if (criterioFasc == null) {
+                    criterioFasc = inserisciCriterioFasc(idStrutCorrente, selOld.getDecCriterioRaggrFasc(),
+                            criteriRaggruppamentoFascDaLoggare);
+                    // Da fotografare in XML se inseriti ex-novo
+                    criteriRaggruppamentoFascDaLoggare.add(new BigDecimal(criterioFasc.getIdCriterioRaggrFasc()));
+                }
+
+                // Inserisco la relazione tra tipoFascicolo e criterioRaggrFascicolo
+                DecSelCriterioRaggrFasc selNew = tipoFascicoloHelper.getDecSelCriterioRaggrFasc(idStrutCorrente,
+                        criterioFasc.getNmCriterioRaggr(), tipoFascicoloExp.getNmTipoFascicolo());
+                if (selNew == null) {
+                    selNew = new DecSelCriterioRaggrFasc();
+                    selNew.setTiSel(selOld.getTiSel());
+                    selNew.setDecTipoFascicolo(tipoFascicolo);
+
+                    selNew.setDecCriterioRaggrFasc(criterioFasc);
+                    tipoUnitaDocHelper.getEntityManager().persist(selNew);
+                    if (tipoFascicolo.getDecSelCriterioRaggrFascicolos() == null) {
+                        tipoFascicolo.setDecSelCriterioRaggrFascicolos(new ArrayList<>());
+                    }
+                    tipoFascicolo.getDecSelCriterioRaggrFascicolos().add(selNew);
+                }
+            }
+        }
+    }
+
     public DecXsdDatiSpec inserisciXsdTipoUd(BigDecimal idStrutCorrente, DecXsdDatiSpec xsdDatiSpecExp,
             DecTipoUnitaDoc tipoUnitaDoc) throws ParerUserError {
 
@@ -3675,7 +4438,7 @@ public class StruttureEjb {
             DecAttribDatiSpec attribDatiSpec = datiSpecHelper.getDecAttribDatiSpecByName(idStrutCorrente,
                     attribDatiSpecExp.getTiUsoAttrib(), attribDatiSpecExp.getTiEntitaSacer(),
                     attribDatiSpecExp.getDecTipoUnitaDoc().getNmTipoUnitaDoc(), null, null, null,
-                    attribDatiSpecExp.getNmSistemaMigraz(), attribDatiSpecExp.getNmAttribDatiSpec());
+                    attribDatiSpecExp.getNmAttribDatiSpec());
             // Inserisco il record in DEC_ATTRIB_DATI_SPEC
             if (attribDatiSpec == null) {
                 attribDatiSpec = inserisciAttribDatiSpec(idStrutCorrente, attribDatiSpecExp, tipoUnitaDoc, null, null,
@@ -3698,7 +4461,7 @@ public class StruttureEjb {
             DecAttribDatiSpec attribDatiSpec = datiSpecHelper.getDecAttribDatiSpecByName(idStrutCorrente,
                     attribDatiSpecExp.getTiUsoAttrib(), attribDatiSpecExp.getTiEntitaSacer(), null,
                     attribDatiSpecExp.getDecTipoDoc().getNmTipoDoc(), null, null,
-                    attribDatiSpecExp.getNmSistemaMigraz(), attribDatiSpecExp.getNmAttribDatiSpec());
+                    attribDatiSpecExp.getNmAttribDatiSpec());
             // Inserisco il record in DEC_ATTRIB_DATI_SPEC
             if (attribDatiSpec == null) {
                 attribDatiSpec = inserisciAttribDatiSpec(idStrutCorrente, attribDatiSpecExp, null, tipoDoc, null,
@@ -3721,7 +4484,7 @@ public class StruttureEjb {
             DecAttribDatiSpec attribDatiSpec = datiSpecHelper.getDecAttribDatiSpecByName(idStrutCorrente,
                     attribDatiSpecExp.getTiUsoAttrib(), attribDatiSpecExp.getTiEntitaSacer(), null, null,
                     attribDatiSpecExp.getDecTipoCompDoc().getNmTipoCompDoc(), null,
-                    attribDatiSpecExp.getNmSistemaMigraz(), attribDatiSpecExp.getNmAttribDatiSpec());
+                    attribDatiSpecExp.getNmAttribDatiSpec());
             // Inserisco il record in DEC_ATTRIB_DATI_SPEC
             if (attribDatiSpec == null) {
                 attribDatiSpec = inserisciAttribDatiSpec(idStrutCorrente, attribDatiSpecExp, null, null, tipoCompDoc,
@@ -3752,14 +4515,7 @@ public class StruttureEjb {
                 // INSERISCI XSD //
                 ///////////////////
                 inserisciXsdTipoUd(idStrutCorrente, xsdDatiSpecExp, tipoUnitaDoc);
-            } // ... altrimenti
-              // TODO: da fare il caso di modifica XSD
-              // else {
-              // //////////////////
-              // // MODIFICA XSD //
-              // //////////////////
-              // modificaXsd(xsdDatiSpecExp, xsdDatiSpec);
-              // }
+            }
         }
     }
 
@@ -3779,13 +4535,6 @@ public class StruttureEjb {
                 ///////////////////
                 inserisciXsdTipoDoc(idStrutCorrente, xsdDatiSpecExp, tipoDoc);
             }
-            // TODO: da fare il caso di modifica XSD
-            // else {
-            // //////////////////
-            // // MODIFICA XSD //
-            // //////////////////
-            // modificaXsd(xsdDatiSpecExp, xsdDatiSpec);
-            // }
         }
     }
 
@@ -3808,13 +4557,6 @@ public class StruttureEjb {
                 ///////////////////
                 inserisciXsdTipoCompDoc(idStrutCorrente, xsdDatiSpecExp, tipoCompDoc);
             }
-            // TODO: da fare il caso di modifica XSD
-            // else {
-            // //////////////////
-            // // MODIFICA XSD //
-            // //////////////////
-            // modificaXsd(xsdDatiSpecExp, xsdDatiSpec);
-            // }
         }
     }
 
@@ -3918,8 +4660,7 @@ public class StruttureEjb {
 
     public DecTipoStrutDoc gestisciTipoStrutDoc(BigDecimal idStrutCorrente,
             DecTipoStrutDocAmmesso tipoStrutDocAmmessoExp, DecTipoDoc tipoDoc,
-            Set<BigDecimal> tipiStrutturaDocumentoDaLoggare, Set<BigDecimal> formatiDaLoggare,
-            Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare) {
+            Set<BigDecimal> tipiStrutturaDocumentoDaLoggare, Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare) {
         DecTipoStrutDoc tipoStrutDocExp = tipoStrutDocAmmessoExp.getDecTipoStrutDoc();
         String nmTipoStrutDocExp = tipoStrutDocExp.getNmTipoStrutDoc();
 
@@ -3940,7 +4681,7 @@ public class StruttureEjb {
 
         // Per ogni DEC_TIPO_COMP_DOC dell'XML
         for (DecTipoCompDoc tipoCompDocExp : tipoStrutDocExp.getDecTipoCompDocs()) {
-            gestisciTipoCompDoc(idStrutCorrente, tipoCompDocExp, nmTipoStrutDocExp, formatiDaLoggare,
+            gestisciTipoCompDoc(idStrutCorrente, tipoCompDocExp, nmTipoStrutDocExp,
                     tipiRappresentazioneComponenteDaLoggare);
         }
 
@@ -3948,8 +4689,7 @@ public class StruttureEjb {
     }
 
     public DecTipoCompDoc gestisciTipoCompDoc(BigDecimal idStrutCorrente, DecTipoCompDoc tipoCompDocExp,
-            String nmTipoStrutDoc, Set<BigDecimal> formatiDaLoggare,
-            Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare) {
+            String nmTipoStrutDoc, Set<BigDecimal> tipiRappresentazioneComponenteDaLoggare) {
         String nmTipoCompDocExp = tipoCompDocExp.getNmTipoCompDoc();
 
         // Verifico se esiste gi\u00E0 su DB il DecTipoCompDoc
@@ -4010,21 +4750,13 @@ public class StruttureEjb {
         return struttureHelper.partitionOK(idStrut);
     }
 
-    public String partitionUpdOK(BigDecimal idStrut) {
-        return struttureHelper.partitionUpdOK(idStrut);
-    }
-
-    public String partitionFascOK(BigDecimal idStrut) {
-        return struttureHelper.partitionFascOK(idStrut);
-    }
-
     /**
      * Restituisce il rowBean della prima struttura template disponibile per l'ambiente passato come parametro. Null in
      * caso non siano disponibili strutture template
      *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return OrgStrutRowBean bean struttura
      */
     public OrgStrutRowBean getFirstStrutturaTemplateDisponibilePerAmbienteSelezionato(BigDecimal idAmbiente) {
@@ -4048,7 +4780,7 @@ public class StruttureEjb {
      *
      * @param numStruttureTemplateDaCreare
      *            il numero di strutture template
-     * 
+     *
      * @return indiciPerCreazioneTemplate: l'array, lungo quante strutture template devo creare, che mi dice con quali
      *         indici crearle
      */
@@ -4101,70 +4833,55 @@ public class StruttureEjb {
         return indiciPerCreazioneTemplate;
     }
 
-    // FIXME LB: Perchè, se tanto tutti i metodi che lo chiamano controllano se è == "0" o no, non ritorna direttamente
-    // un booleano??? Misteri.
-    public String checkPartizioni(BigDecimal idStrut, Date data, String tiPartition) {
-        return struttureHelper.checkPartizioni(idStrut, data, tiPartition);
-    }
-
-    /**
-     * Controlla se esistono partizioni di tipo "FILE_ELENCO_VERS_FASC" per la data corrente per la struttura
-     * considerata
-     *
-     * @param idStrut
-     *            id struttura
-     * 
-     * @return true/false
-     */
-    public boolean checkPartizioniDataCorDefinito(BigDecimal idStrut) {
-        return "1".equals(struttureHelper.partitionFileEleVersFascOK(idStrut))
-                && "1".equals(struttureHelper.partitionFileEleVersFascDataOK(idStrut));
-    }
-
     private void loggaOggettiStruttura(LogParam param, OrgStrut strut) {
         /* Loggata di tutte le UD, Documenti e Registri */
-        // UD
-
-        for (DecTipoUnitaDoc ogg : strut.getDecTipoUnitaDocs()) {
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA,
-                    new BigDecimal(ogg.getIdTipoUnitaDoc()), param.getNomePagina());
+        // TIPO UD
+        if (strut.getDecTipoUnitaDocs() != null) {
+            for (DecTipoUnitaDoc ogg : strut.getDecTipoUnitaDocs()) {
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_UNITA_DOCUMENTARIA,
+                        new BigDecimal(ogg.getIdTipoUnitaDoc()), param.getNomePagina());
+            }
         }
         // TIPO DOC
-        for (DecTipoDoc ogg : strut.getDecTipoDocs()) {
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_DOCUMENTO,
-                    new BigDecimal(ogg.getIdTipoDoc()), param.getNomePagina());
+        if (strut.getDecTipoDocs() != null) {
+            for (DecTipoDoc ogg : strut.getDecTipoDocs()) {
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_DOCUMENTO,
+                        new BigDecimal(ogg.getIdTipoDoc()), param.getNomePagina());
+            }
         }
         // REGISTRI
-        for (DecRegistroUnitaDoc ogg : strut.getDecRegistroUnitaDocs()) {
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_REGISTRO,
-                    new BigDecimal(ogg.getIdRegistroUnitaDoc()), param.getNomePagina());
+        if (strut.getDecRegistroUnitaDocs() != null) {
+            for (DecRegistroUnitaDoc ogg : strut.getDecRegistroUnitaDocs()) {
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_REGISTRO,
+                        new BigDecimal(ogg.getIdRegistroUnitaDoc()), param.getNomePagina());
+            }
         }
         // STRUTTURA DOCUMENTO
-        for (DecTipoStrutDoc ogg : strut.getDecTipoStrutDocs()) {
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO,
-                    new BigDecimal(ogg.getIdTipoStrutDoc()), param.getNomePagina());
-        }
-        // Formati File Ammessi
-        for (DecFormatoFileDoc ogg : strut.getDecFormatoFileDocs()) {
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_FORMATO_AMMESSO,
-                    new BigDecimal(ogg.getIdFormatoFileDoc()), param.getNomePagina());
+        if (strut.getDecTipoStrutDocs() != null) {
+            for (DecTipoStrutDoc ogg : strut.getDecTipoStrutDocs()) {
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO,
+                        new BigDecimal(ogg.getIdTipoStrutDoc()), param.getNomePagina());
+            }
         }
         // Rappresentazione componenti
-        for (DecTipoRapprComp ogg : strut.getDecTipoRapprComps()) {
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_RAPPRESENTAZIONE_COMPONENTE,
-                    new BigDecimal(ogg.getIdTipoRapprComp()), param.getNomePagina());
+        if (strut.getDecTipoRapprComps() != null) {
+            for (DecTipoRapprComp ogg : strut.getDecTipoRapprComps()) {
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_RAPPRESENTAZIONE_COMPONENTE,
+                        new BigDecimal(ogg.getIdTipoRapprComp()), param.getNomePagina());
+            }
         }
         // Criteri di ragguppamento
-        for (DecCriterioRaggr ogg : strut.getDecCriterioRaggrs()) {
-            sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
-                    param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGRUPPAMENTO,
-                    new BigDecimal(ogg.getIdCriterioRaggr()), param.getNomePagina());
+        if (strut.getDecCriterioRaggrs() != null) {
+            for (DecCriterioRaggr ogg : strut.getDecCriterioRaggrs()) {
+                sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+                        param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_CRITERIO_RAGGRUPPAMENTO,
+                        new BigDecimal(ogg.getIdCriterioRaggr()), param.getNomePagina());
+            }
         }
         // tipi Serie
         if (strut.getDecTipoSeries() != null) {
@@ -4192,9 +4909,9 @@ public class StruttureEjb {
      *            id modello tipo serie
      * @param filterValid
      *            true/false
-     * 
+     *
      * @return il tablebean contenente le strutture
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -4223,7 +4940,7 @@ public class StruttureEjb {
 
     public boolean registriDaImportareConTipoSerieMult(UUID uuid, List<String> nmTipoUnitaDocList) {
         // Ricavo la struttura presente nell'XML
-        OrgStrut strutExp = (OrgStrut) strutCache.getOrgStrut(uuid);
+        OrgStrut strutExp = strutCache.getOrgStrut(uuid);
 
         for (String nmTipoUnitaDoc : nmTipoUnitaDocList) {
 
@@ -4243,21 +4960,12 @@ public class StruttureEjb {
         return false;
     }
 
-    public List<BigDecimal> getIdStrutAbilitatiFromAmbienteSet(long idUserIam,
-            Set<? extends BigDecimal> idAmbientiSet) {
-        return struttureHelper.getIdStrutAbilitatiFromAmbienteSet(idUserIam, idAmbientiSet);
-    }
-
-    public List<BigDecimal> getIdStrutAbilitatiFromEnteSet(long idUserIam, Set<? extends BigDecimal> idEntiSet) {
-        return struttureHelper.getIdStrutAbilitatiFromEnteSet(idUserIam, idEntiSet);
-    }
-
     /**
      * Recupera le strutture da mostrare nella combo della pagina di scelta strutture dopo aver effettuato il login
      *
      * @param idUtente
      *            id utente
-     * 
+     *
      * @return IamAbilOrganizRowBean l'object array contenente i dati sulle strutture
      */
     public IamAbilOrganizRowBean getAmbEnteStrutDefault(long idUtente) {
@@ -4319,7 +5027,7 @@ public class StruttureEjb {
 
     public List<BigDecimal> getIdAmbitoTerritorialePerRicerca(List<BigDecimal> regioniList,
             List<BigDecimal> provinceList, List<BigDecimal> formeAssociateList) {
-        List<BigDecimal> idAmbitoTerritList = new ArrayList();
+        List<BigDecimal> idAmbitoTerritList = new ArrayList<>();
         // Metto tutte le forme associate presenti in online tra gli idAmbitoTerrit da ricercare
         if (!formeAssociateList.isEmpty()) {
             idAmbitoTerritList.addAll(formeAssociateList);
@@ -4377,21 +5085,25 @@ public class StruttureEjb {
         OrgStrut strut = struttureHelper.findById(OrgStrut.class, idStrut);
 
         // Ricavo il parametro
-        AplParamApplic tiTempoScadChius = configurationHelper.getParamApplic("TI_TEMPO_SCAD_CHIUS");
-        AplParamApplic niTempoScadChius = configurationHelper.getParamApplic("NI_TEMPO_SCAD_CHIUS");
-        AplParamApplic flGestFascicoli = configurationHelper.getParamApplic("FL_GEST_FASCICOLI");
-        AplParamApplic numMaxCompCriterioRaggr = configurationHelper.getParamApplic("NUM_MAX_COMP_CRITERIO_RAGGR");
-        String numMaxCompCriterioRaggrWarn = configurationHelper.getValoreParamApplic(
-                "NUM_MAX_COMP_CRITERIO_RAGGR_WARN", null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        AplParamApplic tiTempoScadChius = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.TI_TEMPO_SCAD_CHIUS);
+        AplParamApplic niTempoScadChius = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.NI_TEMPO_SCAD_CHIUS);
+        AplParamApplic flGestFascicoli = configurationHelper.getParamApplic(CostantiDB.ParametroAppl.FL_GEST_FASCICOLI);
+        AplParamApplic numMaxCompCriterioRaggr = configurationHelper
+                .getParamApplic(CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR);
+        String numMaxCompCriterioRaggrWarn = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NUM_MAX_COMP_CRITERIO_RAGGR_WARN);
 
         amministrazioneEjb.insertAplValoreParamApplic(null, strut, null, null,
-                BigDecimal.valueOf(tiTempoScadChius.getIdParamApplic()), "STRUT", "GIORNI");
+                BigDecimal.valueOf(tiTempoScadChius.getIdParamApplic()), TiAppart.STRUT.name(), "GIORNI");
         amministrazioneEjb.insertAplValoreParamApplic(null, strut, null, null,
-                BigDecimal.valueOf(niTempoScadChius.getIdParamApplic()), "STRUT", "30");
+                BigDecimal.valueOf(niTempoScadChius.getIdParamApplic()), TiAppart.STRUT.name(), "30");
         amministrazioneEjb.insertAplValoreParamApplic(null, strut, null, null,
-                BigDecimal.valueOf(flGestFascicoli.getIdParamApplic()), "STRUT", "0");
+                BigDecimal.valueOf(flGestFascicoli.getIdParamApplic()), TiAppart.STRUT.name(), "0");
         amministrazioneEjb.insertAplValoreParamApplic(null, strut, null, null,
-                BigDecimal.valueOf(numMaxCompCriterioRaggr.getIdParamApplic()), "STRUT", numMaxCompCriterioRaggrWarn);
+                BigDecimal.valueOf(numMaxCompCriterioRaggr.getIdParamApplic()), TiAppart.STRUT.name(),
+                numMaxCompCriterioRaggrWarn);
     }
 
     public TiEnteConvenz getTiEnteConvenzUser(long idUser) {
@@ -4405,17 +5117,17 @@ public class StruttureEjb {
      * raggiungimento del centesimo carattere della stringa dopodiché si ferma.
      */
     public String getCodStrutturaNormalizzatoUnivoco(String codice) {
-        String codiceNormalizzato = codice;
+        StringBuilder codiceNormalizzato = new StringBuilder(codice);
         int numUnderscoreAggiuntivi = NUM_CARATTERI_CODICE_STRUTTURA_NORMALIZZATO - codice.length();
 
         for (int t = 0; t < numUnderscoreAggiuntivi; t++) {
-            if (struttureHelper.isCodStrutturaNormalizzatoUnivoco(codiceNormalizzato)) {
+            if (struttureHelper.isCodStrutturaNormalizzatoUnivoco(codiceNormalizzato.toString())) {
                 break;
             } else {
-                codiceNormalizzato += "_";
+                codiceNormalizzato.append("_");
             }
         }
-        return codiceNormalizzato;
+        return codiceNormalizzato.toString();
     }
 
     public BaseTable getFunzioneParametriTableBean() {
@@ -4429,6 +5141,59 @@ public class StruttureEjb {
             }
         }
         return funzioneTB;
+    }
+
+    public OrgStrutTableBean getStruttureAssociateEnteConvenz(BigDecimal idEnteConvenz) {
+        OrgStrutTableBean strutTableBean = new OrgStrutTableBean();
+        List<OrgStrut> strutList = struttureHelper.retrieveOrgStrutByEnteConvenz(idEnteConvenz);
+        try {
+            if (!strutList.isEmpty()) {
+                strutTableBean = (OrgStrutTableBean) Transform.entities2TableBean(strutList);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return strutTableBean;
+    }
+
+    public OrgVCorrPingTableBean retrieveOrgVCorrPingList(BigDecimal idStrut) {
+        OrgVCorrPingTableBean corrPingTableBean = new OrgVCorrPingTableBean();
+        OrgStrut strut = struttureHelper.findById(OrgStrut.class, idStrut);
+        final OrgEnte orgEnte = strut.getOrgEnte();
+        final OrgAmbiente orgAmbiente = orgEnte.getOrgAmbiente();
+        List<OrgVCorrPing> lista;
+        lista = corrispondenzeHelper.retrieveOrgVCorrPingList(idStrut, new BigDecimal(orgEnte.getIdEnte()),
+                new BigDecimal(orgAmbiente.getIdAmbiente()));
+
+        if (!lista.isEmpty()) {
+            try {
+                for (OrgVCorrPing orgVCorrPing : lista) {
+                    OrgVCorrPingRowBean row = (OrgVCorrPingRowBean) Transform.entity2RowBean(orgVCorrPing);
+                    switch (row.getTiDichVers()) {
+                    case "STRUTTURA":
+                        row.setObject("ti_corrispondenza", "Corrispondenza su struttura " + row.getNmEntita());
+                        break;
+                    case "ENTE":
+                        row.setObject("ti_corrispondenza", "Corrispondenza su ente " + row.getNmEntita());
+                        break;
+                    case "AMBIENTE":
+                        row.setObject("ti_corrispondenza", "Corrispondenza su ambiente " + row.getNmEntita());
+                        break;
+                    default:
+                        break;
+                    }
+                    row.setObject("vers", row.getNmAmbienteVers() + " - " + row.getNmVers());
+                    corrPingTableBean.add(row);
+                }
+            } catch (Exception e) {
+                logger.error("Errore nel recupero delle corrispondenze di Ping per la struttura : "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new IllegalStateException(
+                        "Errore inatteso nel recupero delle corrispondenze di Ping per la struttura");
+            }
+        }
+
+        return corrPingTableBean;
     }
 
 }

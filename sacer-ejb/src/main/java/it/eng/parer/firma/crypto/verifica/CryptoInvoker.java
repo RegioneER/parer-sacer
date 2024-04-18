@@ -1,19 +1,30 @@
-package it.eng.parer.firma.crypto.verifica;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.parer.crypto.model.ParerCRL;
-import it.eng.parer.crypto.model.ParerTSD;
-import it.eng.parer.crypto.model.ParerTST;
-import it.eng.parer.crypto.model.exceptions.CryptoParerException;
-import it.eng.parer.firma.crypto.helper.CryptoRestConfiguratorHelper;
-import it.eng.parer.retry.ParerRetryConfiguration;
-import it.eng.parer.retry.RestRetryInterceptor;
+package it.eng.parer.firma.crypto.verifica;
 
 import java.net.URI;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +40,14 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import it.eng.parer.crypto.model.ParerCRL;
+import it.eng.parer.crypto.model.ParerTSD;
+import it.eng.parer.crypto.model.ParerTST;
+import it.eng.parer.crypto.model.exceptions.CryptoParerException;
+import it.eng.parer.firma.crypto.helper.CryptoRestConfiguratorHelper;
+import it.eng.parer.retry.ParerRetryConfiguration;
+import it.eng.parer.retry.RestRetryInterceptor;
+
 /**
  * Invoca la Cryptolibrary.
  *
@@ -38,9 +57,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class CryptoInvoker {
 
     private static final Logger LOG = LoggerFactory.getLogger(CryptoInvoker.class.getName());
-    private static final String CRL_CTX_V1 = "/v1/crl";
-    private static final String TST_CTX_V1 = "/v1/tst";
-    private static final String TSD_CTX_V1 = "/v1/tsd";
+    private static final String CRL_CTX = "/api/crl";
+    private static final String TST_CTX = "/api/tst";
+    private static final String TSD_CTX = "/api/tsd";
 
     @EJB
     protected CryptoRestConfiguratorHelper restInvoker;
@@ -85,7 +104,7 @@ public class CryptoInvoker {
 
         String baseUrl = restInvoker.preferredEndpoint();
 
-        String endpoint = baseUrl + CRL_CTX_V1;
+        String endpoint = baseUrl + CRL_CTX;
 
         String certificatoFirmatarioBase64 = Base64.getUrlEncoder().encodeToString(blobFilePerFirma);
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint)
@@ -120,7 +139,7 @@ public class CryptoInvoker {
 
         String baseUrl = restInvoker.preferredEndpoint();
 
-        String endpoint = baseUrl + CRL_CTX_V1;
+        String endpoint = baseUrl + CRL_CTX;
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(endpoint).path("/")
                 .path(ParerCRL.calcolaUniqueId(dnCa, keyId));
@@ -149,7 +168,7 @@ public class CryptoInvoker {
 
         String preferredEndPoint = restInvoker.preferredEndpoint();
 
-        String endpoint = preferredEndPoint + CRL_CTX_V1;
+        String endpoint = preferredEndPoint + CRL_CTX;
 
         LOG.debug("POST crl by url " + endpoint);
         HttpEntity<List<String>> request = new HttpEntity<>(urls);
@@ -188,7 +207,7 @@ public class CryptoInvoker {
 
         String preferredEndPoint = restInvoker.preferredEndpoint();
 
-        String endpoint = preferredEndPoint + TST_CTX_V1;
+        String endpoint = preferredEndPoint + TST_CTX;
         LOG.debug("post per  " + endpoint);
 
         result = restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
@@ -208,7 +227,7 @@ public class CryptoInvoker {
         RestTemplate restTemplate = buildRestTemplateWithRetry();
 
         String baseUrl = restInvoker.preferredEndpoint();
-        String endpoint = baseUrl + TSD_CTX_V1;
+        String endpoint = baseUrl + TSD_CTX;
         LOG.debug("post per  " + endpoint);
 
         HttpHeaders headers = new HttpHeaders();

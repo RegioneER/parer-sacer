@@ -1,4 +1,33 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.calcoloContenutoSacer.ejb;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.exception.ParerErrorSeverity;
 import it.eng.parer.exception.ParerInternalError;
@@ -7,15 +36,6 @@ import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.util.LogParam;
 import it.eng.parer.web.util.Constants;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -66,10 +86,7 @@ public class CalcoloContenutoSacerEjb {
         LogParam param = new LogParam("SACER_IAM", "Job Calcolo contenuto Sacer", "CALCOLO_CONTENUTO_SACER",
                 "Set data erogazione servizi");
         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-        // ccsHelper.setDtErogByTiServ(param);
-        // ccsHelper.setDtErogBySistVers(param);
         ccsHelper.setDtErog(param);
-        // ccsHelper.setDtErogByTiServ(CostantiDB.TiClasseTipoServizio.ATTIVAZIONE_SISTEMA_VERSANTE);
 
         /* Scrivo in LogJob la fine corretta dell'esecuzione del job di Calcolo Contenuto Sacer */
         jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CALCOLO_CONTENUTO_SACER.name(),

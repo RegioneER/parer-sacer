@@ -202,8 +202,7 @@
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.ESITO_CRL%>" colSpan="2" />
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.MSG_ESITO_CRL%>" colSpan="2" />
                         <sl:newLine />
-                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.SERIAL_CRL%>" colSpan="2" />               
-                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DT_SCAD_CRL%>" colSpan="2" />     
+                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DT_SCAD_CRL%>" colSpan="4" />     
                         <sl:newLine />
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.ESITO_OCSP%>" colSpan="2" />
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.MSG_ESITO_OCSP%>" colSpan="2" />  
@@ -227,8 +226,7 @@
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.ESITO_CRL_DT_VERS%>" colSpan="2" />
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.MSG_ESITO_CRL_DT_VERS%>" colSpan="2" />
                         <sl:newLine />
-                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.SERIAL_CRL_DT_VERS%>" colSpan="2" />               
-                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DT_SCAD_CRL_DT_VERS%>" colSpan="2" />  
+                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DT_SCAD_CRL_DT_VERS%>" colSpan="4" />  
                         <sl:newLine />
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.ESITO_OCSP_DT_VERS%>" colSpan="2" />
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.MSG_ESITO_OCSP_DT_VERS%>" colSpan="2" />   
@@ -249,8 +247,7 @@
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.ESITO_CRL_VOL%>" colSpan="2" />
                         <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.MSG_ESITO_CRL_VOL%>" colSpan="2" />
                         <sl:newLine />
-                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.SERIAL_CRL_VOL%>" colSpan="2" />               
-                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DT_SCAD_CRL_VOL%>" colSpan="2" />               
+                        <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DT_SCAD_CRL_VOL%>" colSpan="4" />               
                     </slf:fieldSet>
                 </slf:section>
             </slf:tab>   

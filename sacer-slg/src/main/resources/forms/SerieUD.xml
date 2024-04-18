@@ -152,6 +152,7 @@
         <CheckBox Name="fl_upd_modif_unita_doc" Description="Presenza di unità documentarie aggiornate" Type="STRING" />
         <Input Name="dt_inizio_sel_serie" Description="Data inizio selezione" Type="DATE" />
         <Input Name="dt_fine_sel_serie" Description="Data fine selezione" Type="DATE" />
+        <Input Description="Urn" Name="urn_serie" Type="STRING"/>
         <Input Name="ni_anni_conserv" Description="Anni di conservazione" Type="INTEGER" GroupingDecimal="true" />
         <ComboBox Name="conserv_unlimited" Description="Conservazione illimitata" Type="STRING" Trigger="true"/>
         <Input Name="dt_reg_unita_doc_da" Description="Data unità documentarie da" Type="DATE" />

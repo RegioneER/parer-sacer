@@ -1,12 +1,28 @@
-package it.eng.parer.slite.gen.viewbean;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
-import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
+package it.eng.parer.slite.gen.viewbean;
 
 import java.sql.Types;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
+
+import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
+import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 
 /**
  * @author Sloth
@@ -31,7 +47,9 @@ public class FasVLisUdInFascTableDescriptor extends TableDescriptor {
     public static final String COL_NM_TIPO_UNITA_DOC = "nm_tipo_unita_doc";
     public static final String COL_NM_TIPO_DOC = "nm_tipo_doc";
     public static final String COL_DT_CREAZIONE = "dt_creazione";
+    public static final String COL_DT_REG_UNITA_DOC = "dt_reg_unita_doc";
     public static final String COL_TI_STATO_CONSERVAZIONE = "ti_stato_conservazione";
+    public static final String COL_NI_POSIZIONE = "ni_posizione";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -45,7 +63,9 @@ public class FasVLisUdInFascTableDescriptor extends TableDescriptor {
         map.put(COL_NM_TIPO_UNITA_DOC, new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
         map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
         map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_REG_UNITA_DOC, new ColumnDescriptor(COL_DT_REG_UNITA_DOC, Types.TIMESTAMP, 7, true));
         map.put(COL_TI_STATO_CONSERVAZIONE, new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, true));
+        map.put(COL_NI_POSIZIONE, new ColumnDescriptor(COL_NI_POSIZIONE, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

@@ -1,26 +1,29 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAipSerieUd.ejb;
 
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.SerFileVerSerie;
-import it.eng.parer.entity.SerStatoSerie;
-import it.eng.parer.entity.SerStatoVerSerie;
-import it.eng.parer.entity.SerVerSerieDaElab;
-import it.eng.parer.exception.ParerInternalError;
-import it.eng.parer.job.indiceAipSerieUd.helper.CreazioneIndiceAipSerieUdHelper;
-import it.eng.parer.job.indiceAipSerieUd.utils.CreazioneIndiceAipSerieUdUtil;
-import it.eng.parer.serie.ejb.SerieEjb;
-import it.eng.parer.serie.helper.SerieHelper;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.web.helper.UserHelper;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.ejb.XmlContextCache;
-import it.eng.parer.ws.utils.CostantiDB;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_HOLDER_RELEVANTDOCUMENT;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_FIRSTNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_LASTNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_TAXCODE;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_FORMALNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_TAXCODE;
-import it.eng.parer.ws.xml.usmainResp.IdCType;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_SUBMITTER_RELEVANTDOCUMENT;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -31,6 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -43,8 +47,29 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.ValidationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.SerFileVerSerie;
+import it.eng.parer.entity.SerStatoSerie;
+import it.eng.parer.entity.SerStatoVerSerie;
+import it.eng.parer.entity.SerVerSerieDaElab;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
+import it.eng.parer.job.indiceAipSerieUd.helper.CreazioneIndiceAipSerieUdHelper;
+import it.eng.parer.job.indiceAipSerieUd.utils.CreazioneIndiceAipSerieUdUtil;
+import it.eng.parer.job.indiceAipSerieUd.utils.CreazioneIndiceAipSerieUdUtilV2;
+import it.eng.parer.serie.ejb.SerieEjb;
+import it.eng.parer.serie.helper.SerieHelper;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.helper.ParamIamHelper;
+import it.eng.parer.web.helper.UserHelper;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.ejb.XmlContextCache;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.xml.usmainResp.IdCType;
+import it.eng.parer.ws.xml.usmainRespV2.PIndex;
 
 /**
  *
@@ -69,14 +94,26 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
     private UserHelper userHelper;
     @EJB
     private XmlContextCache xmlContextCache;
+    @EJB
+    private ParamIamHelper paramIamHelper;
+    @EJB
+    CreazioneIndiceAipSerieUdUtilV2 creazioneIndiceAipSerieUdUtilV2;
 
     /* Ricavo i valori degli Agent dalla tabella APL_PARAM_APPLIC */
     private static final List<String> agentParam = Arrays.asList(AGENT_PRESERVER_FORMALNAME, AGENT_PRESERVER_TAXCODE,
             AGENT_PRESERVATION_MNGR_TAXCODE, AGENT_PRESERVATION_MNGR_LASTNAME, AGENT_PRESERVATION_MNGR_FIRSTNAME);
 
+    /* Ricavo i valori degli Agent v2.0 dalla tabella APL_PARAM_APPLIC */
+    private static final List<String> agentParamV2 = Arrays.asList();
+
+    /* Ricavo i valori degli Agent v2.0 dalla tabella IAM_PARAM_APPLIC */
+    private static final List<String> agentParamIamV2 = Arrays.asList(AGENT_HOLDER_RELEVANTDOCUMENT,
+            AGENT_SUBMITTER_RELEVANTDOCUMENT);
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void creaIndiceAipSerieUd(long idVerSerieDaElab, String creatingApplicationProducer) throws NamingException,
             ValidationException, JAXBException, MarshalException, NoSuchAlgorithmException, IOException {
+
         SerVerSerieDaElab verSerieDaElab = serieHelper.findById(SerVerSerieDaElab.class, idVerSerieDaElab);
         String versioneSerie = verSerieDaElab.getSerVerSerie().getCdVerSerie();
         String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
@@ -86,9 +123,16 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
         csv.setStruttura(orgStrut.getNmStrut());
         csv.setEnte(orgStrut.getOrgEnte().getNmEnte());
         csv.setAmbiente(orgStrut.getOrgEnte().getOrgAmbiente().getNmAmbiente());
+
+        // MEV #27080
+        BigDecimal idAmbiente = BigDecimal.valueOf(orgStrut.getOrgEnte().getOrgAmbiente().getIdAmbiente());
+        String sincroVersion = confHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.UNISINCRO_VERSION,
+                idAmbiente);
+        // end MEV #27080
+
         // sistema (new URN)
-        String sistemaConservazione = confHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = confHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         csv.setSistemaConservazione(sistemaConservazione);
 
         log.info(ElaborazioneRigaIndiceAipVersioneSerieUd.class.getSimpleName()
@@ -104,19 +148,42 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
         /**
          * GENERAZIONE INDICE AIP VERSIONE SERIE UD
          */
+        StringWriter tmpWriter = null;
         OrgStrut strut = serieHelper.findById(OrgStrut.class, verSerieDaElab.getIdStrut());
-        Map<String, String> mappaAgenti = confHelper.getParamApplicMapValue(agentParam,
-                BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()), verSerieDaElab.getIdStrut(),
-                null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-        IdCType idc = indiceAipSerieUdUtil.generaIndiceAIPSerieUd(verSerieDaElab, dataRegistrazione, mappaAgenti,
-                creatingApplicationProducer);
 
-        StringWriter tmpWriter = marshallIdC(idc);
+        List<String> agentParamList = (!"2.0".equals(sincroVersion)) ? agentParam : agentParamV2;
+        Map<String, String> mappaAgenti = confHelper.getParamApplicMapValue(agentParamList,
+                BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()),
+                BigDecimal.valueOf(strut.getIdStrut()), null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
 
+        if (!"2.0".equals(sincroVersion)) {
+
+            mappaAgenti = confHelper.getParamApplicMapValue(agentParam,
+                    BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente()),
+                    verSerieDaElab.getIdStrut(), null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+
+            IdCType idc = indiceAipSerieUdUtil.generaIndiceAIPSerieUd(verSerieDaElab, dataRegistrazione, mappaAgenti,
+                    creatingApplicationProducer);
+
+            tmpWriter = marshallIdC(idc);
+        } else {
+            SIOrgEnteSiam orgEnteConvenz = null;
+            if (strut.getIdEnteConvenz() != null) {
+                orgEnteConvenz = ciasudHelper.findById(SIOrgEnteSiam.class, strut.getIdEnteConvenz());
+            }
+            mappaAgenti.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
+                    BigDecimal.valueOf(orgEnteConvenz.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
+                    BigDecimal.valueOf(orgEnteConvenz.getIdEnteSiam()), CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
+
+            PIndex pindex = creazioneIndiceAipSerieUdUtilV2.generaIndiceAIPSerieUd(verSerieDaElab, dataRegistrazione,
+                    mappaAgenti, creatingApplicationProducer);
+
+            tmpWriter = marshallPIndex(pindex);
+        }
         /* Persisto il file dell'indice AIP versione serie UD */
         SerFileVerSerie serFileVerSerie = serieHelper.storeFileIntoSerFileVerSerie(
                 verSerieDaElab.getSerVerSerie().getIdVerSerie(), CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name(),
-                tmpWriter.toString().getBytes(), "1.0", verSerieDaElab.getIdStrut(), dataRegistrazione);
+                tmpWriter.toString().getBytes("UTF-8"), sincroVersion, verSerieDaElab.getIdStrut(), dataRegistrazione);
 
         // EVO#16492
         /* Calcolo e persisto urn dell'indice AIP della serie */
@@ -136,10 +203,9 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
                 + "Registro il nuovo STATO della VERSIONE della SERIE: DA_FIRMARE");
         BigDecimal pgStatoVerSerie = ciasudHelper
                 .getUltimoProgressivoSerStatoVerSerie(verSerieDaElab.getSerVerSerie().getIdVerSerie());
-        BigDecimal idAmbiente = BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente());
-        Long idUserIam = userHelper
-                .findIamUser(confHelper.getValoreParamApplic("USERID_CREAZIONE_IX_AIP_SERIE", idAmbiente,
-                        BigDecimal.valueOf(strut.getIdStrut()), null, null, CostantiDB.TipoAplVGetValAppart.STRUT))
+        Long idUserIam = userHelper.findIamUser(
+                confHelper.getValoreParamApplicByStrut(CostantiDB.ParametroAppl.USERID_CREAZIONE_IX_AIP_SERIE,
+                        idAmbiente, BigDecimal.valueOf(strut.getIdStrut())))
                 .getIdUserIam();
 
         SerStatoVerSerie statoVerSerie = serieEjb.createSerStatoVerSerie(pgStatoVerSerie.add(BigDecimal.ONE),
@@ -180,4 +246,16 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
         tmpMarshaller.marshal(element_IdCType, tmpWriter);
         return tmpWriter;
     }
+
+    private StringWriter marshallPIndex(PIndex pindex) throws JAXBException {
+        it.eng.parer.ws.xml.usmainRespV2.ObjectFactory objFctPIndex = new it.eng.parer.ws.xml.usmainRespV2.ObjectFactory();
+        JAXBElement<PIndex> elementPIndex = objFctPIndex.createPIndex(pindex);
+
+        StringWriter tmpWriter = new StringWriter();
+        Marshaller tmpMarshaller = xmlContextCache.getVersRespUniSincroCtx_PIndex_Serie().createMarshaller();
+        tmpMarshaller.setSchema(xmlContextCache.getSchemaOfVersRespUniSincroV2());
+        tmpMarshaller.marshal(elementPIndex, tmpWriter);
+        return tmpWriter;
+    }
+
 }

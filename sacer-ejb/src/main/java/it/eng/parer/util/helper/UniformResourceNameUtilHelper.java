@@ -1,4 +1,36 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.util.helper;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.interceptor.Interceptors;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
+import org.apache.commons.lang3.StringUtils;
 
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroCompUrnCalc;
@@ -6,17 +38,17 @@ import it.eng.parer.entity.AroDoc;
 import it.eng.parer.entity.AroStrutDoc;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.AroUpdUnitaDoc;
+import it.eng.parer.entity.AroUrnVerIndiceAipUd;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.AroUrnVerIndiceAipUd;
 import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.ElvFileElencoVer;
 import it.eng.parer.entity.ElvUrnElencoVers;
 import it.eng.parer.entity.ElvUrnFileElencoVers;
 import it.eng.parer.entity.SerIxVolVerSerie;
 import it.eng.parer.entity.SerUrnIxVolVerSerie;
-import it.eng.parer.entity.VrsXmlDatiSessioneVers;
 import it.eng.parer.entity.VrsUrnXmlSessioneVers;
+import it.eng.parer.entity.VrsXmlDatiSessioneVers;
 import it.eng.parer.entity.constraint.AroCompUrnCalc.TiUrn;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
 import it.eng.parer.entity.constraint.ElvUrnElencoVers.TiUrnElenco;
@@ -24,7 +56,6 @@ import it.eng.parer.entity.constraint.ElvUrnFileElencoVers.TiUrnFileElenco;
 import it.eng.parer.entity.constraint.SerUrnIxVolVerSerie.TiUrnIxVolVerSerie;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
 import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.util.ejb.AppServerInstance;
 import it.eng.parer.viewEntity.AroVLisaipudUrndacalcByud;
 import it.eng.parer.viewEntity.VrsVLisXmlDocUrnDaCalc;
 import it.eng.parer.viewEntity.VrsVLisXmlUdUrnDaCalc;
@@ -35,31 +66,15 @@ import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.interceptor.Interceptors;
-import javax.persistence.Query;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  *
  * @author DiLorenzo_F
  */
+@SuppressWarnings({ "unchecked" })
 @Stateless(mappedName = "UniformResourceNameUtilHelper")
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
 public class UniformResourceNameUtilHelper extends GenericHelper {
-
-    private static final Logger log = LoggerFactory.getLogger(UniformResourceNameUtilHelper.class);
 
     public boolean existsCdKeyNormalized(long idRegistro, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc,
             String cdKeyUnitaDocNormaliz) {
@@ -102,10 +117,9 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
     private void getAndSetAroDocOrderedByTypeAndDateProg(AroUnitaDoc aroUnitaDoc) {
         BigDecimal prog = BigDecimal.ONE;
         // recupero documenti
-        List<AroDoc> listaDoc = aroUnitaDoc.getAroDocs();
+        List<AroDoc> listaDoc = loadAroDocs(aroUnitaDoc);
         ArrayList<AroDoc> alDef = null;
         if (listaDoc != null) {
-
             AroDoc aroDocPrinc = null;
             ArrayList<AroDoc> alNew = new ArrayList<>();
             for (AroDoc aroDoc : listaDoc) {
@@ -116,20 +130,17 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
                 }
             }
             // Ordina gli elementi tranne il PRINCIPALE...
-            Collections.sort(alNew, new Comparator<AroDoc>() {
-                @Override
-                public int compare(AroDoc doc1, AroDoc doc2) {
-                    int comparazionePerData = doc1.getDtCreazione().compareTo(doc2.getDtCreazione());
-                    if (comparazionePerData == 0) {
-                        int comparazionePerTipo = doc1.getTiDoc().compareTo(doc2.getTiDoc());
-                        if (comparazionePerTipo == 0) {
-                            return doc1.getPgDoc().compareTo(doc2.getPgDoc());
-                        } else {
-                            return comparazionePerTipo;
-                        }
+            Collections.sort(alNew, (doc1, doc2) -> {
+                int comparazionePerData = doc1.getDtCreazione().compareTo(doc2.getDtCreazione());
+                if (comparazionePerData == 0) {
+                    int comparazionePerTipo = doc1.getTiDoc().compareTo(doc2.getTiDoc());
+                    if (comparazionePerTipo == 0) {
+                        return doc1.getPgDoc().compareTo(doc2.getPgDoc());
                     } else {
-                        return comparazionePerData;
+                        return comparazionePerTipo;
                     }
+                } else {
+                    return comparazionePerData;
                 }
             });
             // PRINCIPALE FIRST
@@ -152,6 +163,14 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
                 prog = prog.add(BigDecimal.ONE);
             }
         }
+    }
+
+    private List<AroDoc> loadAroDocs(AroUnitaDoc aroUnitaDoc) {
+        final TypedQuery<AroDoc> query = getEntityManager()
+                .createQuery("SELECT a FROM AroDoc a WHERE a.aroUnitaDoc=:aroUnitaDoc", AroDoc.class);
+        query.setParameter("aroUnitaDoc", aroUnitaDoc);
+        aroUnitaDoc.setAroDocs(query.getResultList());
+        return aroUnitaDoc.getAroDocs();
     }
 
     private void salvaURNComponente(CSVersatore versatore, CSChiave chiave, AroDoc tmpAroDoc, AroCompDoc tmpAroCompDoc,
@@ -307,7 +326,7 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
     private List<VrsVLisXmlUdUrnDaCalc> retrieveVrsVLisXmlUdUrnDaCalcByUd(long idUnitaDoc) {
         Query query = getEntityManager()
                 .createQuery("SELECT vrs FROM VrsVLisXmlUdUrnDaCalc vrs WHERE vrs.idUnitaDoc = :idUnitaDoc ");
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+        query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
         return query.getResultList();
     }
 
@@ -387,7 +406,7 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
     private List<VrsVLisXmlDocUrnDaCalc> retrieveVrsVLisXmlDocUrnDaCalcByDoc(long idDoc) {
         Query query = getEntityManager()
                 .createQuery("SELECT vrs FROM VrsVLisXmlDocUrnDaCalc vrs WHERE vrs.idDoc = :idDoc ");
-        query.setParameter("idDoc", idDoc);
+        query.setParameter("idDoc", bigDecimalFromLong(idDoc));
         return query.getResultList();
     }
 
@@ -452,7 +471,7 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
     private List<VrsVLisXmlUpdUrnDaCalc> retrieveVrsVLisXmlUpdUrnDaCalcByUpd(long idUpdUnitaDoc) {
         Query query = getEntityManager()
                 .createQuery("SELECT vrs FROM VrsVLisXmlUpdUrnDaCalc vrs WHERE vrs.idUpdUnitaDoc = :idUpdUnitaDoc ");
-        query.setParameter("idUpdUnitaDoc", idUpdUnitaDoc);
+        query.setParameter("idUpdUnitaDoc", bigDecimalFromLong(idUpdUnitaDoc));
         return query.getResultList();
     }
 
@@ -482,7 +501,7 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
 
             //
             AroVerIndiceAipUd verIndiceAipUd = getEntityManager().find(AroVerIndiceAipUd.class,
-                    aro.getIdVerIndiceAip().longValue());
+                    aro.getId().getIdVerIndiceAip().longValue());
 
             // calcolo parte urn ORIGINALE
             String tmpUrn = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
@@ -510,8 +529,8 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
 
     private List<AroVLisaipudUrndacalcByud> retrieveAroVLisaipudUrndacalcByud(long idUnitaDoc) {
         Query query = getEntityManager()
-                .createQuery("SELECT aro FROM AroVLisaipudUrndacalcByud aro WHERE aro.idUnitaDoc = :idUnitaDoc ");
-        query.setParameter("idUnitaDoc", idUnitaDoc);
+                .createQuery("SELECT aro FROM AroVLisaipudUrndacalcByud aro WHERE aro.id.idUnitaDoc = :idUnitaDoc ");
+        query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
         return query.getResultList();
     }
 
@@ -555,6 +574,7 @@ public class UniformResourceNameUtilHelper extends GenericHelper {
         tmpElvUrnFileElencoVers.setElvFileElencoVers(elvFileElencoVers);
 
         // persist
+        getEntityManager().persist(elvFileElencoVers);
         getEntityManager().persist(tmpElvUrnFileElencoVers);
 
         if (elvFileElencoVers.getElvUrnFileElencoVerss() == null) {

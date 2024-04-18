@@ -1,24 +1,22 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.replicaUtente.ejb;
 
-import it.eng.integriam.server.ws.reputente.ListaIndIp;
-import it.eng.parer.entity.IamAbilOrganiz;
-import it.eng.parer.entity.IamAbilTipoDato;
-import it.eng.parer.entity.IamAutorServ;
-import it.eng.parer.entity.IamIndIpUser;
-import it.eng.parer.entity.IamUser;
-import it.eng.parer.ws.dto.IRispostaWS;
-import it.eng.integriam.server.ws.reputente.ListaOrganizAbil;
-import it.eng.integriam.server.ws.reputente.ListaServiziAutor;
-import it.eng.integriam.server.ws.reputente.ListaTipiDatoAbil;
-import it.eng.parer.ws.replicaUtente.dto.ModificaUtenteExt;
-import it.eng.integriam.server.ws.reputente.OrganizAbil;
-import it.eng.integriam.server.ws.reputente.TipoDatoAbil;
-import it.eng.parer.ws.replicaUtente.dto.RispostaWSModificaUtente;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
-import it.eng.integriam.server.ws.reputente.Utente;
-import it.eng.parer.exception.ParerErrorSeverity;
-import it.eng.parer.exception.ParerInternalError;
-import it.eng.parer.web.dto.PairAbil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -35,17 +34,38 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.integriam.server.ws.reputente.ListaIndIp;
+import it.eng.integriam.server.ws.reputente.ListaOrganizAbil;
+import it.eng.integriam.server.ws.reputente.ListaServiziAutor;
+import it.eng.integriam.server.ws.reputente.ListaTipiDatoAbil;
+import it.eng.integriam.server.ws.reputente.OrganizAbil;
+import it.eng.integriam.server.ws.reputente.TipoDatoAbil;
+import it.eng.integriam.server.ws.reputente.Utente;
+import it.eng.parer.entity.IamAbilOrganiz;
+import it.eng.parer.entity.IamAbilTipoDato;
+import it.eng.parer.entity.IamAutorServ;
+import it.eng.parer.entity.IamIndIpUser;
+import it.eng.parer.entity.IamUser;
+import it.eng.parer.exception.ParerErrorSeverity;
+import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.web.dto.PairAbil;
+import it.eng.parer.ws.dto.IRispostaWS;
+import it.eng.parer.ws.replicaUtente.dto.ModificaUtenteExt;
+import it.eng.parer.ws.replicaUtente.dto.RispostaWSModificaUtente;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ModificaUtenteHelper")
 @LocalBean
-
 public class ModificaUtenteHelper {
 
     private static final Logger log = LoggerFactory.getLogger(ModificaUtenteHelper.class);
@@ -65,9 +85,7 @@ public class ModificaUtenteHelper {
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("idUserIam", idUserIam);
 
-        List<IamAbilOrganiz> listaAbilOrganizDB = query.getResultList();
-
-        return listaAbilOrganizDB;
+        return query.getResultList();
     }
 
     /**
@@ -97,6 +115,7 @@ public class ModificaUtenteHelper {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void eseguiModificaUtente(Utente utente) {
 
@@ -149,7 +168,7 @@ public class ModificaUtenteHelper {
         ListaOrganizAbil listaOrganizAbil = utente.getListaOrganizAbil();
         // Memorizzo gli idOrganizApplic con relativo flag organiz default passati al servizio
         // in modo tale che sia agevole rintracciarli
-        Map<Long, String> idOrganizApplicFlagMap = new HashMap();
+        Map<Long, String> idOrganizApplicFlagMap = new HashMap<>();
         if (listaOrganizAbil != null && listaOrganizAbil.getOrganizAbilList() != null) {
             for (OrganizAbil organizAbil : listaOrganizAbil) {
                 idOrganizApplicFlagMap.put(organizAbil.getIdOrganizApplicAbil().longValue(),
@@ -157,11 +176,11 @@ public class ModificaUtenteHelper {
             }
         }
         // Tengo traccia degli eventuali iamAbilOrganiz da rimuovere
-        Set<Long> idAbilOrganizToRemove = new HashSet();
+        Set<Long> idAbilOrganizToRemove = new HashSet<>();
         // Tengo traccia degli eventuali iamAbilTipoDato da rimuovere
-        Set<Long> idAbilTipoDatoToRemove = new HashSet();
+        Set<Long> idAbilTipoDatoToRemove = new HashSet<>();
         // Tengo traccia degli eventuali iamAbilTipoDato da rimuovere
-        Set<Long> idAutorServToRemove = new HashSet();
+        Set<Long> idAutorServToRemove = new HashSet<>();
 
         log.debug("Inizio il confronto tra le abilitazioni memorizzate su DB con quelle passate al WS per l'utente "
                 + utente.getNmUserid());
@@ -197,12 +216,12 @@ public class ModificaUtenteHelper {
                  * Ricavo le coppie nmClasseTipoDato e idTipoDatoApplic dalla ListaTipiDatoAbil passatami in input
                  * relativa all'abilitazione sulle organizzazioni considerata
                  */
-                Set<PairAbil> abilTipoDatoSet = new HashSet();
+                Set<PairAbil> abilTipoDatoSet = new HashSet<>();
                 ListaTipiDatoAbil ltda = organizAbil.getListaTipiDatoAbil();
-                if (ltda.getTipoDatoAbilList() != null && ltda.getTipoDatoAbilList() != null) {
+                if (ltda.getTipoDatoAbilList() != null) {
                     for (TipoDatoAbil tda : ltda) {
-                        abilTipoDatoSet.add(
-                                new PairAbil(tda.getNmClasseTipoDato(), new BigDecimal(tda.getIdTipoDatoApplic())));
+                        abilTipoDatoSet.add(new PairAbil<String, BigDecimal>(tda.getNmClasseTipoDato(),
+                                new BigDecimal(tda.getIdTipoDatoApplic())));
                     }
                 }
 
@@ -226,7 +245,7 @@ public class ModificaUtenteHelper {
                  * Ricavo nmServizioWeb dalla ListaAutorServ passatami in input relativo all'abilitazione sulle
                  * organizzazioni considerata
                  */
-                Set<String> autorServSet = new HashSet();
+                Set<String> autorServSet = new HashSet<>();
                 ListaServiziAutor lsa = organizAbil.getListaServiziAutor();
                 if (lsa.getNmServizioAutor() != null) {
                     autorServSet.addAll(lsa.getNmServizioAutor());
@@ -451,8 +470,6 @@ public class ModificaUtenteHelper {
                     /* Per ogni elemento di ListaServiziAutor in input */
                     ListaServiziAutor lsa = organizAbil.getListaServiziAutor();
                     if (lsa.getNmServizioAutor() != null) {
-                        // log.debug("Necessario persistere " + lsa.getNmServizioAutor().size() + " record di servizi
-                        // autor");
                         boolean newServices = false;
                         for (String nmServizioAutor : lsa.getNmServizioAutor()) {
                             if (!autorServSetDB.contains(nmServizioAutor)) {
@@ -469,7 +486,6 @@ public class ModificaUtenteHelper {
                     }
                     abilOrganizDB.setIamUser(iamUser);
                     iamUser.getIamAbilOrganizs().add(abilOrganizDB);
-                    // log.debug("Eseguita persist di nuove IamAbilOrganiz");
                 }
             }
         }
@@ -477,7 +493,7 @@ public class ModificaUtenteHelper {
     }
 
     public void deleteIamAbilTipoDato(Collection<Long> idSet) {
-        String queryStr = "DELETE FROM IamAbilTipoDato u " + "WHERE u.idAbilTipoDato IN :idSet ";
+        String queryStr = "DELETE FROM IamAbilTipoDato u " + "WHERE u.idAbilTipoDato IN (:idSet) ";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("idSet", idSet);
         query.executeUpdate();
@@ -485,7 +501,7 @@ public class ModificaUtenteHelper {
     }
 
     public void deleteIamAutorServ(Collection<Long> idSet) {
-        String queryStr = "DELETE FROM IamAutorServ u " + "WHERE u.idAutorServ IN :idSet ";
+        String queryStr = "DELETE FROM IamAutorServ u " + "WHERE u.idAutorServ IN (:idSet) ";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("idSet", idSet);
         query.executeUpdate();
@@ -493,7 +509,7 @@ public class ModificaUtenteHelper {
     }
 
     public void deleteIamAbilOrganiz(Collection<Long> idSet) {
-        String queryStr = "DELETE FROM IamAbilOrganiz u " + "WHERE u.idAbilOrganiz IN :idSet ";
+        String queryStr = "DELETE FROM IamAbilOrganiz u " + "WHERE u.idAbilOrganiz IN (:idSet) ";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("idSet", idSet);
         query.executeUpdate();

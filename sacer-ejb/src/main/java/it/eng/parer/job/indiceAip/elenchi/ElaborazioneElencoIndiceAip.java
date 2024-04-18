@@ -1,4 +1,53 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAip.elenchi;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.MarshalException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.lang3.StringUtils;
 
 import it.eng.parer.elenco.xml.aip.ContenutoSinteticoType;
 import it.eng.parer.elenco.xml.aip.DescrizioneElencoIndiciAIPType;
@@ -21,8 +70,8 @@ import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
-import it.eng.parer.entity.constraint.ElvUrnFileElencoVers;
 import it.eng.parer.entity.constraint.ElvStatoElencoVer;
+import it.eng.parer.entity.constraint.ElvUrnFileElencoVers;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.job.indiceAip.helper.CreazioneIndiceAipHelper;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
@@ -37,42 +86,10 @@ import it.eng.parer.ws.ejb.XmlContextCache;
 import it.eng.parer.ws.recupero.utils.XmlDateUtility;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.HashCalculator;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
-import javax.xml.bind.Marshaller;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import it.eng.parer.ws.utils.HashCalculator;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 
 /**
  *
@@ -81,8 +98,6 @@ import org.slf4j.LoggerFactory;
 @Stateless
 @LocalBean
 public class ElaborazioneElencoIndiceAip {
-
-    private static final Logger logger = LoggerFactory.getLogger(ElaborazioneElencoIndiceAip.class);
 
     @Resource
     private SessionContext context;
@@ -117,20 +132,19 @@ public class ElaborazioneElencoIndiceAip {
             boolean elencoStandard = elenco.getFlElencoStandard().equals("1");
             boolean elencoFiscale = elenco.getFlElencoFisc().equals("1");
             if (!elencoStandard && !elencoFiscale) {
-                tiGestione = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_NOSTD",
-                        BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
-                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
+                tiGestione = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD, BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
+                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
             } else if (elencoFiscale) {
-                tiGestione = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_FISC",
+                tiGestione = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC,
                         BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
-                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
+                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
             } else {
-                tiGestione = configurationHelper.getValoreParamApplic("TI_GEST_ELENCO_STD_NOFISC",
+                tiGestione = configurationHelper.getValoreParamApplicByStrut(
+                        CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC,
                         BigDecimal.valueOf(orgAmbiente.getIdAmbiente()),
-                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()), null, null,
-                        CostantiDB.TipoAplVGetValAppart.STRUT);
+                        BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
             }
         }
         /*
@@ -155,6 +169,8 @@ public class ElaborazioneElencoIndiceAip {
         switch (tiGestioneEnum) {
         case FIRMA:
         case MARCA_FIRMA:
+        case SIGILLO:
+        case MARCA_SIGILLO:
             // EVO#16486
             verificaUrnAipElenco(elenco.getIdElencoVers());
             // end EVO#16486
@@ -164,7 +180,7 @@ public class ElaborazioneElencoIndiceAip {
 
             ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
             fileElencoVers.setTiFileElencoVers(ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name());
-            fileElencoVers.setBlFileElencoVers(elencoIndiciAipString.getBytes("UTF-8"));
+            fileElencoVers.setBlFileElencoVers(elencoIndiciAipString.getBytes(StandardCharsets.UTF_8));
             fileElencoVers.setIdStrut(BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
             XMLGregorianCalendar cal = elencoIndiciAip.getDescrizioneElencoIndiciAIP().getDataCreazione();
             fileElencoVers.setDtCreazioneFile(cal != null ? XmlDateUtility.xmlGregorianCalendarToDate(cal) : null);
@@ -185,9 +201,8 @@ public class ElaborazioneElencoIndiceAip {
             versatore.setEnte(elenco.getOrgStrut().getOrgEnte().getNmEnte());
             versatore.setStruttura(elenco.getOrgStrut().getNmStrut());
             // sistema (new URN)
-            final String sistema = configurationHelper.getValoreParamApplic(
-                    CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                    TipoAplVGetValAppart.APPLIC);
+            final String sistema = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
             versatore.setSistemaConservazione(sistema);
             // calcolo parte urn ORIGINALE
             String tmpUrn = MessaggiWSFormat.formattaUrnPartVersatore(versatore);
@@ -287,9 +302,8 @@ public class ElaborazioneElencoIndiceAip {
         versatore.setEnte(elenco.getOrgStrut().getOrgEnte().getNmEnte());
         versatore.setStruttura(elenco.getOrgStrut().getNmStrut());
         // sistema (new URN)
-        final String sistema = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        final String sistema = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         versatore.setSistemaConservazione(sistema);
         // calcolo parte urn ORIGINALE
         String tmpUrn = MessaggiWSFormat.formattaUrnPartVersatore(versatore);
@@ -421,6 +435,19 @@ public class ElaborazioneElencoIndiceAip {
         ciaHelper.updateAggiornamentiElencoIndiceAIP(idElencoVers, tiStatoUpdElencoVersOld, tiStatoUpdElencoVersNew);
     }
 
+    /**
+     * @deprecated
+     * 
+     * @param idElencoVers
+     *            identificativo dell'elenco di versamento
+     * @param tiStatoConservazione
+     *            tipo di stato conservazione
+     * @param tiStatoDocElencoVersCor
+     *            tipo stato documento elenco veramento corrente
+     * @param tiStatoDocElencoVersNew
+     *            tipo stato documento elenco versamento nuovo
+     */
+    @Deprecated
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void updateDocumentiElencoIndiceAIPStatoConservDiverso(long idElencoVers, String tiStatoConservazione,
             String tiStatoDocElencoVersCor, String tiStatoDocElencoVersNew) {
@@ -465,15 +492,13 @@ public class ElaborazioneElencoIndiceAip {
 
     // EVO#16486
     public void verificaUrnAipElenco(long idElencoVers) throws ParerInternalError, ParseException {
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         ElvElencoVer elenco = ciaHelper.findById(ElvElencoVer.class, idElencoVers);
 
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-        String dataInizioParam = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String dataInizioParam = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
         Date dataInizio = dateFormat.parse(dataInizioParam);
 
         List<ElvVLisaipudUrndacalcByele> elvVLisUrndacalcList = ciaHelper
@@ -483,7 +508,7 @@ public class ElaborazioneElencoIndiceAip {
             // controllo e calcolo URN normalizzato
             if (!elvVLisUrndacalc.getDtCreazione().after(dataInizio)) {
                 AroUnitaDoc aroUnitaDoc = ciaHelper.findById(AroUnitaDoc.class,
-                        elvVLisUrndacalc.getIdUnitaDoc().longValue());
+                        elvVLisUrndacalc.getId().getIdUnitaDoc().longValue());
                 CSVersatore versatore = this.getVersatoreUd(aroUnitaDoc, sistemaConservazione);
                 CSChiave chiave = this.getChiaveUd(aroUnitaDoc);
                 // Gestione KEY NORMALIZED / URN PREGRESSI

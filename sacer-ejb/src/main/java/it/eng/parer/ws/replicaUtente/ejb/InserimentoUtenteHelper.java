@@ -1,26 +1,26 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.replicaUtente.ejb;
 
-import it.eng.integriam.server.ws.reputente.ListaIndIp;
-import it.eng.parer.entity.IamAbilOrganiz;
-import it.eng.parer.entity.IamAbilTipoDato;
-import it.eng.parer.entity.IamAutorServ;
-import it.eng.parer.entity.IamIndIpUser;
-import it.eng.parer.entity.IamUser;
-import it.eng.parer.ws.dto.IRispostaWS;
-import it.eng.parer.ws.replicaUtente.dto.InserimentoUtenteExt;
-import it.eng.integriam.server.ws.reputente.ListaOrganizAbil;
-import it.eng.integriam.server.ws.reputente.ListaServiziAutor;
-import it.eng.integriam.server.ws.reputente.ListaTipiDatoAbil;
-import it.eng.integriam.server.ws.reputente.OrganizAbil;
-import it.eng.integriam.server.ws.reputente.TipoDatoAbil;
-import it.eng.parer.ws.replicaUtente.dto.RispostaWSInserimentoUtente;
-import it.eng.integriam.server.ws.reputente.Utente;
-import it.eng.parer.exception.ParerErrorSeverity;
-import it.eng.parer.exception.ParerInternalError;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -28,9 +28,29 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.integriam.server.ws.reputente.ListaIndIp;
+import it.eng.integriam.server.ws.reputente.ListaOrganizAbil;
+import it.eng.integriam.server.ws.reputente.ListaServiziAutor;
+import it.eng.integriam.server.ws.reputente.ListaTipiDatoAbil;
+import it.eng.integriam.server.ws.reputente.OrganizAbil;
+import it.eng.integriam.server.ws.reputente.TipoDatoAbil;
+import it.eng.integriam.server.ws.reputente.Utente;
+import it.eng.parer.entity.IamAbilOrganiz;
+import it.eng.parer.entity.IamAbilTipoDato;
+import it.eng.parer.entity.IamAutorServ;
+import it.eng.parer.entity.IamIndIpUser;
+import it.eng.parer.entity.IamUser;
+import it.eng.parer.exception.ParerErrorSeverity;
+import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.ws.dto.IRispostaWS;
+import it.eng.parer.ws.replicaUtente.dto.InserimentoUtenteExt;
+import it.eng.parer.ws.replicaUtente.dto.RispostaWSInserimentoUtente;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
 
 /**
  *
@@ -80,7 +100,7 @@ public class InserimentoUtenteHelper {
             iamUser.setTipoUser(utente.getTipoUser());
             iamUser.setTipoAuth(utente.getTipoAuth());
             /* Inserisco gli IP a cui l'utente è abilitato */
-            iamUser.setIamIndIpUsers(new ArrayList());
+            iamUser.setIamIndIpUsers(new ArrayList<>());
             ListaIndIp listaIndIp = utente.getListaIndIp();
             if (listaIndIp.getIndIp() != null) {
                 log.debug("Necessario persistere " + listaIndIp.getIndIp().size() + " record di IamIndIpUser");
@@ -95,7 +115,7 @@ public class InserimentoUtenteHelper {
 
             /* Inserisco le organizzazioni abilitate */
             ListaOrganizAbil listaOrganizAbil = utente.getListaOrganizAbil();
-            List<IamAbilOrganiz> iamAbilOrganizList = new ArrayList();
+            List<IamAbilOrganiz> iamAbilOrganizList = new ArrayList<>();
             if (listaOrganizAbil != null) {
                 if (listaOrganizAbil.getOrganizAbilList() != null) {
                     log.debug("Necessario persistere " + listaOrganizAbil.getOrganizAbilList().size()
@@ -106,7 +126,7 @@ public class InserimentoUtenteHelper {
                         iamAbilOrganiz.setIdOrganizApplic(new BigDecimal(organizAbil.getIdOrganizApplicAbil()));
                         iamAbilOrganiz.setFlOrganizDefault(organizAbil.isFlOrganizDefault() ? "1" : "0");
                         iamAbilOrganiz.setIamUser(iamUser);
-                        List<IamAutorServ> iamAutorServList = new ArrayList();
+                        List<IamAutorServ> iamAutorServList = new ArrayList<>();
                         ListaServiziAutor lsa = organizAbil.getListaServiziAutor();
                         if (lsa.getNmServizioAutor() != null) {
                             /* Inserisco i record in IAM_AUTOR_SERV */
@@ -121,7 +141,7 @@ public class InserimentoUtenteHelper {
                             log.debug("Eseguita persist di nuovi servizi autor");
                         }
                         iamAbilOrganiz.setIamAutorServs(iamAutorServList);
-                        List<IamAbilTipoDato> iamAbilTipoDatoList = new ArrayList();
+                        List<IamAbilTipoDato> iamAbilTipoDatoList = new ArrayList<>();
                         ListaTipiDatoAbil ltda = organizAbil.getListaTipiDatoAbil();
                         if (ltda.getTipoDatoAbilList() != null) {
                             if (ltda.getTipoDatoAbilList() != null) {

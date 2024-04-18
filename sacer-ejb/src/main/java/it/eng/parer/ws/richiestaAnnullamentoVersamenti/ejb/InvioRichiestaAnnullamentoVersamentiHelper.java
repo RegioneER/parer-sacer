@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.richiestaAnnullamentoVersamenti.ejb;
 
 import java.math.BigDecimal;
@@ -6,8 +23,6 @@ import java.util.List;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AroRichAnnulVers;
 import it.eng.parer.entity.IamUser;
@@ -26,10 +41,6 @@ import it.eng.parer.viewEntity.AroVLisItemRichAnnvrs;
 // NOTA LB 29/03/2017: Rimessa estensione a GenericHelper ed eliminata la classe GestioneRichiesteAnnullamentoVersamenti
 public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(InvioRichiestaAnnullamentoVersamentiHelper.class);
-
-    // @PersistenceContext(unitName = "ParerJPA")
-    // private EntityManager getEntityManager();
     /**
      * Se esiste un'altra richiesta appartenente alla struttura comunicata, con lo stesso codice identificativo e con
      * stato corrente pari a INVIO_FALLITO, la richiesta stessa viene cancellata
@@ -39,6 +50,7 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
      * @param codice
      *            codice
      */
+    @SuppressWarnings("unchecked")
     public void deleteRichiestaSePresente(Long idStrut, String codice) {
         String queryStr = "SELECT richAnnulVers FROM AroStatoRichAnnulVers statoRichAnnulVers "
                 + "JOIN statoRichAnnulVers.aroRichAnnulVers richAnnulVers "
@@ -48,7 +60,7 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idStrut", idStrut);
         query.setParameter("codice", codice);
-        List<AroRichAnnulVers> richAnnulVersList = (List<AroRichAnnulVers>) query.getResultList();
+        List<AroRichAnnulVers> richAnnulVersList = query.getResultList();
         if (!richAnnulVersList.isEmpty()) {
             getEntityManager().remove(richAnnulVersList.get(0));
             getEntityManager().flush();
@@ -78,9 +90,9 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
                 + "AND itemRichAnnulVers.aaKeyUnitaDoc = :aaKeyUnitaDoc "
                 + "AND itemRichAnnulVers.cdKeyUnitaDoc = :cdKeyUnitaDoc ";
         Query query = getEntityManager().createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
         query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
-        query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
+        query.setParameter("aaKeyUnitaDoc", bigDecimalFromInteger(aaKeyUnitaDoc));
         query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
         return (Long) query.getSingleResult() > 0;
     }
@@ -93,10 +105,11 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
      * 
      * @return l'entity relativa all'utente, null se non esiste
      */
+    @SuppressWarnings("unchecked")
     public IamUser getIamUserByNmUserid(String nmUserid) {
-        Query q = getEntityManager().createQuery("SELECT user FROM IamUser WHERE user.nmUserid = :nmUserid ");
+        Query q = getEntityManager().createQuery("SELECT user FROM IamUser user WHERE user.nmUserid = :nmUserid ");
         q.setParameter("nmUserid", nmUserid);
-        List<IamUser> userList = (List<IamUser>) q.getResultList();
+        List<IamUser> userList = q.getResultList();
         if (!userList.isEmpty()) {
             return userList.get(0);
         }
@@ -111,12 +124,12 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
      * 
      * @return lista oggetti di tipo {@link AroVLisItemRichAnnvrs}
      */
+    @SuppressWarnings("unchecked")
     public List<AroVLisItemRichAnnvrs> getAroVLisItemRichAnnvrs(BigDecimal idRichAnnVers) {
         String queryStr = "SELECT itemRichAnnvrs FROM AroVLisItemRichAnnvrs itemRichAnnvrs "
                 + "WHERE itemRichAnnvrs.idRichAnnulVers = :idRichAnnVers ";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idRichAnnVers", idRichAnnVers);
-        List<AroVLisItemRichAnnvrs> itemList = (List<AroVLisItemRichAnnvrs>) query.getResultList();
-        return itemList;
+        return query.getResultList();
     }
 }

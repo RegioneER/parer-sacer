@@ -5,24 +5,24 @@
     <sl:head title="RICERCA JOB">        
         <script type="text/javascript">
             $(document).ready(function () {
-                
-                $(document).bind('keypress', function(e) {
-                    if(e.keyCode==13){
+
+                $(document).bind('keypress', function (e) {
+                    if (e.keyCode == 13) {
                         e.preventDefault();
                         $("input[name='operation__ricercaGestioneJob']").trigger('click');
                     }
                 });
-                
+
 
                 $('#Ni_tot_job_nuovi2').css({"text-decoration": "underline"});
                 $('#Ni_tot_job_solo_foto').css({"text-decoration": "underline"});
-                
-                $('#Ni_tot_job_nuovi2').hover(function() {
-                    $(this).css('cursor','pointer');
+
+                $('#Ni_tot_job_nuovi2').hover(function () {
+                    $(this).css('cursor', 'pointer');
                 });
-                
-                $('#Ni_tot_job_solo_foto').hover(function() {
-                    $(this).css('cursor','pointer');
+
+                $('#Ni_tot_job_solo_foto').hover(function () {
+                    $(this).css('cursor', 'pointer');
                 });
 
                 $('#Ni_tot_job_nuovi2').click(function () {
@@ -72,6 +72,19 @@
                                 elemento.css({"color": "#003399", "text-align": "center", "height": "30"});
                             }
 
+                            var elemento1 = $(this).find('td:eq(12) input');                            
+
+                            // se provengo da Schedulazioni Job la descrizione non è linkabile, 
+                            // rimuovo l'elemento href dalla lista
+                            if (elemento1.val() === '0') {                                
+                                var elemento2 = $(this).find('td:eq(4) a ');
+                                elemento2.removeAttr('href');
+                                // rimuovo anche gli altri elementi linkabili
+                                $('.Ni_tot_job_presenti').removeAttr('href');
+                                $('.Ni_tot_job_attivi').removeAttr('href');
+                                $('.Ni_tot_job_disattivi').removeAttr('href');                                
+                            }
+
                             var colonnaStart = $(this).find('td:eq(9)').css({"text-align": "center"});
                             var colonnaStop = $(this).find('td:eq(10)').css({"text-align": "center"});
                             var colonnaSingle = $(this).find('td:eq(11)').css({"text-align": "center"});
@@ -104,7 +117,7 @@
                     $('#GestioneJobFotoListPerAmm tr').each(function (index) {
                         $(this).find('td').css({"background-color": ""});
                     })
-                    
+
                     var gestioneJobFotoListPerAmm = $('#GestioneJobFotoListPerAmm');
 
                     // Coloro di giallo la riga cliccata sulla prima tabella
@@ -158,9 +171,9 @@
                                 elemento.css({"color": "#003399", "text-align": "center"});
                             }
                         });
-                        
-                        
-                        $('#GestioneJobFotoListPerAmm tr').click(function () {
+
+
+                $('#GestioneJobFotoListPerAmm tr').click(function () {
                     // Ricavo le celle delle 2 colonne della lista GestioneJobListPerAmm
                     // della riga che ho cliccato
                     var cellaDellaPrimaColonna = $(this).find('td:eq(0)');
@@ -185,7 +198,7 @@
                     $('#GestioneJobFotoListPerAmm tr').each(function (index) {
                         $(this).find('td').css({"background-color": ""});
                     })
-                    
+
                     var gestioneJobListPerAmm = $('#GestioneJobListPerAmm');
 
                     // Coloro di giallo la riga cliccata sulla prima tabella
@@ -213,7 +226,7 @@
                         }).next().css({"background-color": ""});
                     }
                 });
-                        
+
             });
         </script>
 
@@ -256,6 +269,8 @@
             <sl:newLine skipLine="true"/>
             <sl:contentTitle title="RICERCA JOB"/>
 
+            <slf:fieldBarDetailTag name="<%=GestioneJobForm.GestioneJobRicercaInfo.NAME%>" hideBackButton="true"/> 
+
             <slf:tab  name="<%= GestioneJobForm.GestioneJobTabs.NAME%>" tabElement="RicercaJobTab">
                 <slf:fieldSet borderHidden="true">
                     <slf:section name="<%=GestioneJobForm.InfoRiassuntiveJobSection.NAME%>" styleClass="importantContainer">                        
@@ -291,7 +306,7 @@
                         <sl:newLine skipLine="true"/>
                         <sl:newLine skipLine="true"/>
                         <slf:container width="w50">                                                    
-                        <slf:lblField name="<%=GestioneJobForm.GestioneJobInfo.RICARICA_GESTIONE_JOB%>"  position="right" />
+                            <slf:lblField name="<%=GestioneJobForm.GestioneJobInfo.RICARICA_GESTIONE_JOB%>"  position="right" />
                         </slf:container>
                         <slf:container width="w50">                            
                             <slf:lblField name="<%=GestioneJobForm.GestioneJobInfo.SALVA_FOTO_GESTIONE_JOB%>"  position="left" />
@@ -327,7 +342,7 @@
                         </slf:container>
                         <sl:newLine skipLine="true"/>                
                         <c:if test="${sessionScope.visualizzaRipristinaFoto == null}" >
-                        <sl:newLine skipLine="true"/>                                                    
+                            <sl:newLine skipLine="true"/>                                                    
                         </c:if>
                         <slf:listNavBar name="<%= GestioneJobForm.GestioneJobFotoListPerAmm.NAME%>" pageSizeRelated="true"/>
                         <slf:list name="<%= GestioneJobForm.GestioneJobFotoListPerAmm.NAME%>" />

@@ -12,7 +12,7 @@
             <sl:newLine skipLine="true"/>
 
             <sl:contentTitle title="LISTA DOCUMENTI"/>
-            <slf:fieldBarDetailTag name="<%= MonitoraggioForm.RiepilogoVersamenti.NAME%>" hideOperationButton="true"/>
+            <slf:fieldBarDetailTag name="<%= MonitoraggioForm.RiepilogoVersamenti.NAME%>" hideOperationButton="true" hideBackButton="${sessionScope.hideBackButton == true}"/>
             <sl:newLine skipLine="true"/>
 
             <slf:fieldSet  borderHidden="false">

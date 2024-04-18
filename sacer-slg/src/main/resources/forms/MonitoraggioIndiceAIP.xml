@@ -12,6 +12,7 @@
     
     <List Name="MonitoraggioIndiceAIPList" Description="Riepilogo processo generazione indice AIP" >
         <Link Name="cd_ti_eve_stato_elenco_vers" Description="Fase processo" Type="STRING" Target="linkLoadListaStrutture" Tooltip="Visualizza lista strutture" isTargetList="false" />
+        <Input Name="ti_stato_elenco" Description="Stato elenco" Type="STRING" />
         <Link Name="ni_elenchi_fisc" Description="Numero elenchi fiscali" Type="INTEGER" Target="linkLoadListaElenchiFiscali" Tooltip="Visualizza lista elenchi" isTargetList="false" />
         <Link Name="ni_elenchi_no_fisc" Description="Numero elenchi non fiscali" Type="INTEGER" Target="linkLoadListaElenchiNoFiscali" Tooltip="Visualizza lista elenchi" isTargetList="false" />
         <Link Name="ni_elenchi_total" Description="Numero elenchi totali" Type="INTEGER" Target="linkLoadListaElenchiTotali" Tooltip="Visualizza lista elenchi" isTargetList="false" />       
@@ -60,13 +61,20 @@
         <Input Type="STRING" Description="Descrizione elenco" Name="ds_elenco" />  
         <CheckBox Type="STRING" Description="Fiscale" Name="fl_elenco_fisc" Readonly="true" />
         <Input Type="INTEGER" Description="Numero ud contenute" Name="ni_unita_doc_tot" />
+        <Input Type="INTEGER" Description="Numero ud aggiornate" Name="ni_unita_doc_agg" />
         <Input Type="INTEGER" Description="Numero ud versate" Name="ni_unita_doc_vers_elenco" />
         <Input Type="INTEGER" Description="Numero doc_aggiunti" Name="ni_doc_agg_elenco" />
         <Input Type="INTEGER" Description="Numero modifiche metadati" Name="ni_upd_unita_doc" />
         <Input Type="DATETIME" Description="Timestamp stato" Name="ts_stato_elenco_vers" />
         <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
-        <Link Name="unitaDoc"  Description="Unità documentarie versate" Type="STRING" Target="linkLoadListaUdDaElenco" Tooltip="Lista delle unità documentarie contenute negli elenchi" isTargetList="false" />        
+        <Link Name="unitaDoc"  Description="Unità documentarie" Type="STRING" Target="linkLoadListaUdDaElenco" Tooltip="Lista delle unità documentarie contenute negli elenchi" isTargetList="false" />        
     </List>
+    
+     <Tab Name="ElenchiMonitoraggioIndiceAIPTabs" Description="">
+        <TabElement Name="ListaUdVersate" Description="UD versate" />    
+        <TabElement Name="ListaUdAggiornate" Description="UD aggiornate" />    
+        <TabElement Name="ListaDocumentiAggiunti" Description="Documenti aggiunti" />    
+    </Tab>
     
     <!-- UNITA' DOCUMENTARIE --> 
      <Fields Name="FiltriUdMonitoraggioIndiceAIP" Description="Filtri di ricerca unità documentarie" >
@@ -101,6 +109,42 @@
         <CheckBox Type="STRING" Description="Verifica firme a data versamento" Name="fl_verifica_firma_eseguita" Readonly="true" />
         <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />
         <!--<Link Name="unitaDoc"  Description="" Type="STRING" Target="UnitaDocumentarieList" Tooltip="Dettaglio unità documentaria" />        -->
+    </List>
+    
+    <List Name="UdAggiornateMonitoraggioIndiceAIPList" Description="Lista unità documentarie aggiornate processo generazione indice AIP" >
+        <Input Type="INTEGER" Description="Id unita doc" Name="id_unita_doc" Hidden="true"/> 
+        <Input Type="STRING" Description="Struttura" Name="struttura" />  
+        <Input Type="INTEGER" Description="Id elenco" Name="id_elenco" /> 
+        <Input Type="STRING" Description="Nome elenco" Name="nm_elenco" />  
+        <Input Type="STRING" Description="Descrizione elenco" Name="ds_elenco" />  
+        <Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" />
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc" />
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_elenco_fisc" Readonly="true" />      
+        <Input Type="STRING" Description="Stato unità documentaria" Name="stato_ud" />
+        <Input Type="DATETIME" Description="Timestamp stato" Name="timestamp_stato" />
+        <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
+        <CheckBox Type="STRING" Description="Verifica firme a data versamento" Name="fl_verifica_firma_eseguita" Readonly="true" />
+        <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />
+    </List>
+    
+    <List Name="UdDocAggiuntiMonitoraggioIndiceAIPList" Description="Lista unità documentarie documenti aggiunti  processo generazione indice AIP" >
+        <Input Type="INTEGER" Description="Id unita doc" Name="id_unita_doc" Hidden="true"/> 
+        <Input Type="STRING" Description="Struttura" Name="struttura" />  
+        <Input Type="INTEGER" Description="Id elenco" Name="id_elenco" /> 
+        <Input Type="STRING" Description="Nome elenco" Name="nm_elenco" />  
+        <Input Type="STRING" Description="Descrizione elenco" Name="ds_elenco" />  
+        <Input Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc" />
+        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" />
+        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc" />
+        <Input Type="INTEGER" Description="Id doc" Name="id_doc" />
+        <Input Type="STRING" Description="Chiave doc" Name="cd_key_doc_vers" />        
+        <CheckBox Type="STRING" Description="Fiscale" Name="fl_elenco_fisc" Readonly="true" />      
+        <Input Type="STRING" Description="Stato unità documentaria" Name="stato_ud" />
+        <Input Type="DATETIME" Description="Timestamp stato" Name="timestamp_stato" />
+        <Input Type="STRING" Description="Numero giorni-ore-minuti permanenza nello stato" Name="permanenza" />
+        <CheckBox Type="STRING" Description="Verifica firme a data versamento" Name="fl_verifica_firma_eseguita" Readonly="true" />
+        <CheckBox Type="STRING" Description="Indice AIP creato" Name="fl_indice_aip_creato" Readonly="true" />        
     </List>
     
     <List Name="ConteggioMonitoraggioIndiceAIPList" Description="Risultato conteggio" >

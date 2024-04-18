@@ -1,4 +1,61 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAip.utils;
+
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_FIRSTNAME;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_LASTNAME;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_TAXCODE;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_FORMALNAME;
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_TAXCODE;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Map;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import it.eng.parer.entity.AroArchivSec;
 import it.eng.parer.entity.AroCompDoc;
@@ -21,16 +78,16 @@ import it.eng.parer.entity.AroVersIniComp;
 import it.eng.parer.entity.AroVersIniDatiSpec;
 import it.eng.parer.entity.AroVersIniDoc;
 import it.eng.parer.entity.AroVersIniLinkUnitaDoc;
-import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
-import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec;
 import it.eng.parer.entity.AroVersIniUnitaDoc;
 import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.constraint.AroXmlUpdUnitaDoc.TiXmlUpdUnitaDoc;
 import it.eng.parer.entity.DecRegistroUnitaDoc;
 import it.eng.parer.entity.constraint.AroCompUrnCalc.TiUrn;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiUsoXsdAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
+import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
+import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec;
+import it.eng.parer.entity.constraint.AroXmlUpdUnitaDoc.TiXmlUpdUnitaDoc;
 import it.eng.parer.job.dto.SessioneVersamentoExt;
 import it.eng.parer.job.dto.SessioneVersamentoExt.DatiXml;
 import it.eng.parer.job.indiceAip.helper.ControlliRecIndiceAip;
@@ -44,31 +101,25 @@ import it.eng.parer.ws.recupero.ejb.ControlliRecupero;
 import it.eng.parer.ws.recupero.utils.XmlDateUtility;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_FIRSTNAME;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_LASTNAME;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_TAXCODE;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_FORMALNAME;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_TAXCODE;
 import it.eng.parer.ws.utils.CostantiDB.TipiEntitaSacer;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.CostantiDB.TipiUsoDatiSpec;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.xml.usdocResp.MetadatiIntegratiDocType;
 import it.eng.parer.ws.xml.usdocResp.ProfiloDocumentoType;
 import it.eng.parer.ws.xml.usfileResp.MetadatiIntegratiFileType;
 import it.eng.parer.ws.xml.usfileResp.TipoSupportoType;
-import it.eng.parer.ws.xml.usmainResp.AgentType;
-import it.eng.parer.ws.xml.usmainResp.AgentNameType;
 import it.eng.parer.ws.xml.usmainResp.AgentIDType;
+import it.eng.parer.ws.xml.usmainResp.AgentNameType;
+import it.eng.parer.ws.xml.usmainResp.AgentType;
 import it.eng.parer.ws.xml.usmainResp.AttachedTimeStampType;
 import it.eng.parer.ws.xml.usmainResp.CreatingApplicationType;
 import it.eng.parer.ws.xml.usmainResp.DescriptionType;
 import it.eng.parer.ws.xml.usmainResp.EmbeddedMetadataType;
-import it.eng.parer.ws.xml.usmainResp.FileType;
 import it.eng.parer.ws.xml.usmainResp.FileGroupType;
+import it.eng.parer.ws.xml.usmainResp.FileType;
 import it.eng.parer.ws.xml.usmainResp.HashType;
-import it.eng.parer.ws.xml.usmainResp.IdentifierType;
 import it.eng.parer.ws.xml.usmainResp.IdCType;
+import it.eng.parer.ws.xml.usmainResp.IdentifierType;
 import it.eng.parer.ws.xml.usmainResp.LawAndRegulationsType;
 import it.eng.parer.ws.xml.usmainResp.MoreInfoType;
 import it.eng.parer.ws.xml.usmainResp.NameAndSurnameType;
@@ -76,10 +127,10 @@ import it.eng.parer.ws.xml.usmainResp.ProcessType;
 import it.eng.parer.ws.xml.usmainResp.SelfDescriptionType;
 import it.eng.parer.ws.xml.usmainResp.SourceIdCType;
 import it.eng.parer.ws.xml.usmainResp.TimeReferenceType;
-import it.eng.parer.ws.xml.usmainResp.VdCType;
 import it.eng.parer.ws.xml.usmainResp.VdCGroupType;
-import it.eng.parer.ws.xml.usselfdescResp.ContenutoType;
+import it.eng.parer.ws.xml.usmainResp.VdCType;
 import it.eng.parer.ws.xml.usselfdescResp.ContenutoPacchettoArchiviazioneType;
+import it.eng.parer.ws.xml.usselfdescResp.ContenutoType;
 import it.eng.parer.ws.xml.usselfdescResp.IndiceAIPType;
 import it.eng.parer.ws.xml.usselfdescResp.MetadatiIntegratiSelfDescriptionType;
 import it.eng.parer.ws.xml.usvdcResp.CamiciaFascicoloType;
@@ -93,43 +144,12 @@ import it.eng.parer.ws.xml.usvdcResp.NotaType;
 import it.eng.parer.ws.xml.usvdcResp.ProfiloArchivisticoType;
 import it.eng.parer.ws.xml.usvdcResp.ProfiloUnitaDocumentariaType;
 import it.eng.parer.ws.xml.usvdcResp.VersatoreType;
-import java.io.IOException;
-import java.io.StringReader;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Map;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings({ "unchecked" })
 public class CreazioneIndiceAipUtil {
 
     private static final Logger log = LoggerFactory.getLogger(CreazioneIndiceAipUtil.class);
@@ -152,10 +172,8 @@ public class CreazioneIndiceAipUtil {
     }
 
     private void setRispostaError() {
-        // log.fatal("Creazione Indice AIP - Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): "
-        // + rispostaControlli.getDsErr());
-        log.error("Creazione Indice AIP - Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): "
-                + rispostaControlli.getDsErr());
+        log.error("Creazione Indice AIP - Errore nella creazione dell'istanza di conservazione UniSyncro (IdC): {}",
+                rispostaControlli.getDsErr());
         throw new RuntimeException(rispostaControlli.getCodErr() + " - " + rispostaControlli.getDsErr());
     }
 
@@ -316,13 +334,9 @@ public class CreazioneIndiceAipUtil {
                 SourceIdCType sorgente = new SourceIdCType();
                 IdentifierType idSourceIdc = new IdentifierType();
                 it.eng.parer.ws.xml.usmainResp.HashType hashSourceIdc = new it.eng.parer.ws.xml.usmainResp.HashType();
-                AroUrnVerIndiceAipUd aroUrnAipIndiceAipUdOrigPrec = (AroUrnVerIndiceAipUd) CollectionUtils
-                        .find(versioniPrecedenti.get(i).getAroUrnVerIndiceAipUds(), new Predicate() {
-                            @Override
-                            public boolean evaluate(final Object object) {
-                                return ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE);
-                            }
-                        });
+                AroUrnVerIndiceAipUd aroUrnAipIndiceAipUdOrigPrec = (AroUrnVerIndiceAipUd) CollectionUtils.find(
+                        versioniPrecedenti.get(i).getAroUrnVerIndiceAipUds(),
+                        object -> ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                 idSourceIdc.setValue(aroUrnAipIndiceAipUdOrigPrec.getDsUrn());
                 sorgente.setID(idSourceIdc);
                 // MAC#18826
@@ -446,13 +460,9 @@ public class CreazioneIndiceAipUtil {
             if (lstVerIndice != null) {
                 for (AroVerIndiceAipUd precVersione : lstVerIndice) {
                     ContenutoType contenuto = new ContenutoType();
-                    AroUrnVerIndiceAipUd aroUrnAipIndiceAipUdOrigPrec = (AroUrnVerIndiceAipUd) CollectionUtils
-                            .find(precVersione.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                @Override
-                                public boolean evaluate(final Object object) {
-                                    return ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE);
-                                }
-                            });
+                    AroUrnVerIndiceAipUd aroUrnAipIndiceAipUdOrigPrec = (AroUrnVerIndiceAipUd) CollectionUtils.find(
+                            precVersione.getAroUrnVerIndiceAipUds(),
+                            object -> ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                     contenuto.setUrn(aroUrnAipIndiceAipUdOrigPrec.getDsUrn());
                     contenuto.setDescrizione("Precedente versione dell'indice AIP");
                     contenutoPacchettoArchiviazione.getContenuto().add(contenuto);
@@ -460,8 +470,8 @@ public class CreazioneIndiceAipUtil {
             }
         }
         miSelfD.setContenutoPacchettoArchiviazione(contenutoPacchettoArchiviazione);
-        it.eng.parer.ws.xml.usselfdescResp.ObjectFactory objFct_1 = new it.eng.parer.ws.xml.usselfdescResp.ObjectFactory();
-        extraInfoDescGenerale.setAny(objFct_1.createMetadatiIntegratiSelfDescription(miSelfD));
+        it.eng.parer.ws.xml.usselfdescResp.ObjectFactory objFct1 = new it.eng.parer.ws.xml.usselfdescResp.ObjectFactory();
+        extraInfoDescGenerale.setAny(objFct1.createMetadatiIntegratiSelfDescription(miSelfD));
         moreInfoApplic.setEmbeddedMetadata(extraInfoDescGenerale);
         selfie.setMoreInfo(moreInfoApplic);
         idc.setSelfDescription(selfie);
@@ -505,13 +515,13 @@ public class CreazioneIndiceAipUtil {
 
         // metadati PDA
         this.popolaMetadatiIntegratiPdA(mipda, tmpAroUnitaDoc, tmpAroVersIniUnitaDoc, tmpAroUpdUnitaDocPgMax,
-                codiceVersione, sistemaConservazione);
+                sistemaConservazione);
 
         // Composizione
         ComposizioneType composizione = new ComposizioneType();
         mipda.setComposizione(composizione);
-        it.eng.parer.ws.xml.usvdcResp.ObjectFactory objFct_2 = new it.eng.parer.ws.xml.usvdcResp.ObjectFactory();
-        emdvdc.setAny(objFct_2.createMetadatiIntegratiPdA(mipda));
+        it.eng.parer.ws.xml.usvdcResp.ObjectFactory objFct2 = new it.eng.parer.ws.xml.usvdcResp.ObjectFactory();
+        emdvdc.setAny(objFct2.createMetadatiIntegratiPdA(mipda));
         moreInfoVdc.setEmbeddedMetadata(emdvdc);
         vdc.setMoreInfo(moreInfoVdc);
         idc.setVdC(vdc);
@@ -538,13 +548,9 @@ public class CreazioneIndiceAipUtil {
             /* File */
             for (AroVerIndiceAipUd precVersIndiceAip : lstVerIndice) {
 
-                AroUrnVerIndiceAipUd aroUrnAipIndiceAipUdOrigPrec = (AroUrnVerIndiceAipUd) CollectionUtils
-                        .find(precVersIndiceAip.getAroUrnVerIndiceAipUds(), new Predicate() {
-                            @Override
-                            public boolean evaluate(final Object object) {
-                                return ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE);
-                            }
-                        });
+                AroUrnVerIndiceAipUd aroUrnAipIndiceAipUdOrigPrec = (AroUrnVerIndiceAipUd) CollectionUtils.find(
+                        precVersIndiceAip.getAroUrnVerIndiceAipUds(),
+                        object -> ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                 // end EVO#16486
                 if (aroUrnAipIndiceAipUdOrigPrec.getDsUrn() != null) {
                     FileType filePrecVersAip = new FileType();
@@ -634,8 +640,7 @@ public class CreazioneIndiceAipUtil {
     }
 
     private void popolaMetadatiIntegratiPdA(MetadatiIntegratiPdAType mipda, AroUnitaDoc tmpAroUnitaDoc,
-            AroVersIniUnitaDoc tmpAroVersIniUnitaDoc, AroUpdUnitaDoc tmpAroUpdUnitaDoc, String codiceVersione,
-            String sistemaConservazione) {
+            AroVersIniUnitaDoc tmpAroVersIniUnitaDoc, AroUpdUnitaDoc tmpAroUpdUnitaDoc, String sistemaConservazione) {
 
         // Versatore
         VersatoreType versatore = new VersatoreType();
@@ -718,9 +723,11 @@ public class CreazioneIndiceAipUtil {
             setRispostaError();
         } else {
             List<AroLinkUnitaDoc> tmpLstAroUDLink = (List<AroLinkUnitaDoc>) rispostaControlli.getrObject();
-            if (tmpLstAroUDLink.size() > 0) {
+            if (!tmpLstAroUDLink.isEmpty()) {
                 DocumentoCollegatoType documentiCollegati = new DocumentoCollegatoType();
                 for (AroLinkUnitaDoc tmpLinkUD : tmpLstAroUDLink) {
+                    AroUnitaDoc aroUnitaDoc = unitaDocumentarieHelper.findById(AroUnitaDoc.class,
+                            tmpLinkUD.getAroUnitaDoc().getIdUnitaDoc());
                     DocumentoCollegatoType.DocumentoCollegato tmpDocumentoCollegato = new DocumentoCollegatoType.DocumentoCollegato();
                     tmpDocumentoCollegato.setChiaveCollegamento(new ChiaveType());
                     tmpDocumentoCollegato.getChiaveCollegamento().setRegistro(tmpLinkUD.getCdRegistroKeyUnitaDocLink());
@@ -733,10 +740,10 @@ public class CreazioneIndiceAipUtil {
                     csChiaveUDColl.setTipoRegistro(tmpLinkUD.getCdRegistroKeyUnitaDocLink());
                     CSVersatore csVersatoreUDColl = new CSVersatore();
                     csVersatoreUDColl.setSistemaConservazione(sistemaConservazione);
-                    csVersatoreUDColl.setAmbiente(
-                            tmpLinkUD.getAroUnitaDoc().getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
-                    csVersatoreUDColl.setEnte(tmpLinkUD.getAroUnitaDoc().getOrgStrut().getOrgEnte().getNmEnte());
-                    csVersatoreUDColl.setStruttura(tmpLinkUD.getAroUnitaDoc().getOrgStrut().getNmStrut());
+                    csVersatoreUDColl
+                            .setAmbiente(aroUnitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
+                    csVersatoreUDColl.setEnte(aroUnitaDoc.getOrgStrut().getOrgEnte().getNmEnte());
+                    csVersatoreUDColl.setStruttura(aroUnitaDoc.getOrgStrut().getNmStrut());
                     String urnUDLink = MessaggiWSFormat.formattaBaseUrnUnitaDoc(
                             MessaggiWSFormat.formattaUrnPartVersatore(csVersatoreUDColl),
                             MessaggiWSFormat.formattaUrnPartUnitaDoc(csChiaveUDColl));
@@ -755,7 +762,7 @@ public class CreazioneIndiceAipUtil {
             } else {
                 List<AroVersIniLinkUnitaDoc> tmpLstAroUDLinkVersIniUpd = (List<AroVersIniLinkUnitaDoc>) rispostaControlli
                         .getrObject();
-                if (tmpLstAroUDLinkVersIniUpd.size() > 0) {
+                if (!tmpLstAroUDLinkVersIniUpd.isEmpty()) {
                     DocumentoCollegatoType documentiCollegati = new DocumentoCollegatoType();
                     for (AroVersIniLinkUnitaDoc tmpLinkUDVersIniUpd : tmpLstAroUDLinkVersIniUpd) {
                         DocumentoCollegatoType.DocumentoCollegato tmpDocumentoCollegato = new DocumentoCollegatoType.DocumentoCollegato();
@@ -796,7 +803,7 @@ public class CreazioneIndiceAipUtil {
                 setRispostaError();
             } else {
                 List<AroUpdLinkUnitaDoc> tmpLstAroUDLinkUpd = (List<AroUpdLinkUnitaDoc>) rispostaControlli.getrObject();
-                if (tmpLstAroUDLinkUpd.size() > 0) {
+                if (!tmpLstAroUDLinkUpd.isEmpty()) {
                     DocumentoCollegatoType documentiCollegati = new DocumentoCollegatoType();
                     for (AroUpdLinkUnitaDoc tmpLinkUDUpd : tmpLstAroUDLinkUpd) {
                         DocumentoCollegatoType.DocumentoCollegato tmpDocumentoCollegato = new DocumentoCollegatoType.DocumentoCollegato();
@@ -830,8 +837,8 @@ public class CreazioneIndiceAipUtil {
         }
 
         // Note
-        List<AroNotaUnitaDoc> tmpLstAroNotaUnitaDoc = (List<AroNotaUnitaDoc>) tmpAroUnitaDoc.getAroNotaUnitaDocs();
-        if (tmpLstAroNotaUnitaDoc.size() > 0) {
+        List<AroNotaUnitaDoc> tmpLstAroNotaUnitaDoc = tmpAroUnitaDoc.getAroNotaUnitaDocs();
+        if (!tmpLstAroNotaUnitaDoc.isEmpty()) {
             NotaType note = new NotaType();
             for (AroNotaUnitaDoc tmpNotaUnitaDoc : tmpLstAroNotaUnitaDoc) {
                 NotaType.NotaUnitaDocumentaria tmpNota = new NotaType.NotaUnitaDocumentaria();
@@ -881,7 +888,7 @@ public class CreazioneIndiceAipUtil {
             setRispostaError();
         } else {
             List<AroArchivSec> tmpLstAroArchivSecs = (List<AroArchivSec>) rispostaControlli.getrObject();
-            if (tmpLstAroArchivSecs.size() > 0) {
+            if (!tmpLstAroArchivSecs.isEmpty()) {
                 ProfiloArchivisticoType.FascicoliSecondari fascicoli = new ProfiloArchivisticoType.FascicoliSecondari();
                 profilo.setFascicoliSecondari(fascicoli);
                 for (AroArchivSec tmpArchivSec : tmpLstAroArchivSecs) {
@@ -951,7 +958,7 @@ public class CreazioneIndiceAipUtil {
         } else {
             List<AroVersIniArchivSec> tmpLstAroVersIniArchivSecs = (List<AroVersIniArchivSec>) rispostaControlli
                     .getrObject();
-            if (tmpLstAroVersIniArchivSecs.size() > 0) {
+            if (!tmpLstAroVersIniArchivSecs.isEmpty()) {
                 ProfiloArchivisticoType.FascicoliSecondari fascicoli = new ProfiloArchivisticoType.FascicoliSecondari();
                 profilo.setFascicoliSecondari(fascicoli);
                 for (AroVersIniArchivSec tmpVersIniArchivSec : tmpLstAroVersIniArchivSecs) {
@@ -1019,7 +1026,7 @@ public class CreazioneIndiceAipUtil {
             setRispostaError();
         } else {
             List<AroUpdArchivSec> tmpLstAroUpdArchivSecs = (List<AroUpdArchivSec>) rispostaControlli.getrObject();
-            if (tmpLstAroUpdArchivSecs.size() > 0) {
+            if (!tmpLstAroUpdArchivSecs.isEmpty()) {
                 ProfiloArchivisticoType.FascicoliSecondari fascicoli = new ProfiloArchivisticoType.FascicoliSecondari();
                 profilo.setFascicoliSecondari(fascicoli);
                 for (AroUpdArchivSec tmpUpdArchivSec : tmpLstAroUpdArchivSecs) {
@@ -1151,8 +1158,8 @@ public class CreazioneIndiceAipUtil {
                     }
                 }
                 EmbeddedMetadataType emgf = new EmbeddedMetadataType();
-                it.eng.parer.ws.xml.usdocResp.ObjectFactory objFct_3 = new it.eng.parer.ws.xml.usdocResp.ObjectFactory();
-                emgf.setAny(objFct_3.createMetadatiIntegratiDoc(mieid));
+                it.eng.parer.ws.xml.usdocResp.ObjectFactory objFct3 = new it.eng.parer.ws.xml.usdocResp.ObjectFactory();
+                emgf.setAny(objFct3.createMetadatiIntegratiDoc(mieid));
                 moreInfoFileGruppo.setEmbeddedMetadata(emgf);
                 gruppoFile.setMoreInfo(moreInfoFileGruppo);
                 idc.getFileGroup().add(gruppoFile);
@@ -1203,13 +1210,13 @@ public class CreazioneIndiceAipUtil {
         composizione.setNumeroAnnotazioni(BigInteger.valueOf(numAnnotazioni));
         //
 
-        if (fileGroupDocVers.getFile().size() > 0) {
+        if (!fileGroupDocVers.getFile().isEmpty()) {
             idc.getFileGroup().add(fileGroupDocVers);
         }
-        if (fileGroupRappVers.getFile().size() > 0) {
+        if (!fileGroupRappVers.getFile().isEmpty()) {
             idc.getFileGroup().add(fileGroupRappVers);
         }
-        if (fileGroupEsitoVers.getFile().size() > 0) {
+        if (!fileGroupEsitoVers.getFile().isEmpty()) {
             idc.getFileGroup().add(fileGroupEsitoVers);
         }
 
@@ -1248,10 +1255,10 @@ public class CreazioneIndiceAipUtil {
                 }
             }
 
-            if (fileGroupUpdVers.getFile().size() > 0) {
+            if (!fileGroupUpdVers.getFile().isEmpty()) {
                 idc.getFileGroup().add(fileGroupUpdVers);
             }
-            if (fileGroupUpdRappVers.getFile().size() > 0) {
+            if (!fileGroupUpdRappVers.getFile().isEmpty()) {
                 idc.getFileGroup().add(fileGroupUpdRappVers);
             }
         }
@@ -1275,14 +1282,13 @@ public class CreazioneIndiceAipUtil {
         ProfiloDocumentoType profiloDocumento = new ProfiloDocumentoType();
         profiloDocumento.setDescrizione(arodoc.getDlDoc());
         profiloDocumento.setAutore(arodoc.getDsAutoreDoc());
-        // profiloDocumento.setStrutturaDocumento("");
         mieid.setProfiloDocumento(profiloDocumento);
         // Note documento
         mieid.setNoteDocumento(arodoc.getNtDoc());
         // Dati Specifici del Documento
         DatiSpecificiTypeVdC dati = this.caricaDatiSpecUniSincro(TipiUsoDatiSpec.VERS, TipiEntitaSacer.DOC,
                 arodoc.getIdDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usdocResp.DatiSpecificiType o = new it.eng.parer.ws.xml.usdocResp.DatiSpecificiType();
             o.getAny().addAll(dati.getAny());
             o.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
@@ -1291,24 +1297,12 @@ public class CreazioneIndiceAipUtil {
         // Sistama di migrazione
         mieid.setSistemaDiMigrazione(tmpAroUnitaDoc.getNmSistemaMigraz());
         // Dati Specifici migrazione del Documento
-        dati = null;
         dati = this.caricaDatiSpecUniSincro(TipiUsoDatiSpec.MIGRAZ, TipiEntitaSacer.DOC, arodoc.getIdDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usdocResp.DatiSpecificiType m = new it.eng.parer.ws.xml.usdocResp.DatiSpecificiType();
             m.getAny().addAll(dati.getAny());
             m.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             mieid.setDatiSpecificiMigrazione(m);
-        }
-        // Stato Conservazione
-        String statoDoc = arodoc.getTiStatoDoc();
-        if (statoDoc != null && statoDoc.length() > 0) {
-            // *****************************
-            // righe commentate per cambio XSD
-            // TODO: pulire questo codice: questa è una patch
-            // it.eng.parer.ws.xml.usdocResp.types.StatoConservazioneType statoMeta =
-            // it.eng.parer.ws.xml.usdocResp.types.StatoConservazioneType.fromValue(statoDoc);
-            // mieid.setStatoConservazione(statoMeta);
-            // *****************************
         }
     }
 
@@ -1322,22 +1316,20 @@ public class CreazioneIndiceAipUtil {
         ProfiloDocumentoType profiloDocumento = new ProfiloDocumentoType();
         profiloDocumento.setDescrizione(aroVersIniDoc.getDlDoc());
         profiloDocumento.setAutore(aroVersIniDoc.getDsAutoreDoc());
-        // profiloDocumento.setStrutturaDocumento("");
         mieid.setProfiloDocumento(profiloDocumento);
         // Dati Specifici del Documento
         DatiSpecificiTypeVdC dati = this.caricaDatiSpecUniSincroVersIniUpd(TiUsoXsdAroVersIniDatiSpec.VERS,
                 TiEntitaSacerAroVersIniDatiSpec.DOC, aroVersIniDoc.getIdVersIniDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usdocResp.DatiSpecificiType o = new it.eng.parer.ws.xml.usdocResp.DatiSpecificiType();
             o.getAny().addAll(dati.getAny());
             o.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             mieid.setDatiSpecifici(o);
         }
         // Dati Specifici migrazione del Documento
-        dati = null;
         dati = this.caricaDatiSpecUniSincroVersIniUpd(TiUsoXsdAroVersIniDatiSpec.MIGRAZ,
                 TiEntitaSacerAroVersIniDatiSpec.DOC, aroVersIniDoc.getIdVersIniDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usdocResp.DatiSpecificiType m = new it.eng.parer.ws.xml.usdocResp.DatiSpecificiType();
             m.getAny().addAll(dati.getAny());
             m.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
@@ -1355,22 +1347,20 @@ public class CreazioneIndiceAipUtil {
         ProfiloDocumentoType profiloDocumento = new ProfiloDocumentoType();
         profiloDocumento.setDescrizione(aroUpdDocUnitaDoc.getDlDoc());
         profiloDocumento.setAutore(aroUpdDocUnitaDoc.getDsAutoreDoc());
-        // profiloDocumento.setStrutturaDocumento("");
         mieid.setProfiloDocumento(profiloDocumento);
         // Dati Specifici del Documento
         DatiSpecificiTypeVdC dati = this.caricaDatiSpecUniSincroUpd(TiUsoXsdAroUpdDatiSpecUnitaDoc.VERS,
                 TiEntitaAroUpdDatiSpecUnitaDoc.UPD_DOC, aroUpdDocUnitaDoc.getIdUpdDocUnitaDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usdocResp.DatiSpecificiType o = new it.eng.parer.ws.xml.usdocResp.DatiSpecificiType();
             o.getAny().addAll(dati.getAny());
             o.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             mieid.setDatiSpecifici(o);
         }
         // Dati Specifici migrazione del Documento
-        dati = null;
         dati = this.caricaDatiSpecUniSincroUpd(TiUsoXsdAroUpdDatiSpecUnitaDoc.MIGRAZ,
                 TiEntitaAroUpdDatiSpecUnitaDoc.UPD_DOC, aroUpdDocUnitaDoc.getIdUpdDocUnitaDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usdocResp.DatiSpecificiType m = new it.eng.parer.ws.xml.usdocResp.DatiSpecificiType();
             m.getAny().addAll(dati.getAny());
             m.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
@@ -1470,17 +1460,16 @@ public class CreazioneIndiceAipUtil {
         // Dati specifici del Componente
         it.eng.parer.ws.xml.usvdcResp.DatiSpecificiTypeVdC dati = this.caricaDatiSpecUniSincro(TipiUsoDatiSpec.VERS,
                 TipiEntitaSacer.COMP, aroCompDoc.getIdCompDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile o = new it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile();
             o.getAny().addAll(dati.getAny());
             o.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             meta.setDatiSpecifici(o);
         }
         // Dati specifici di migrazione del Componente
-        dati = null;
         it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile oMigraz = new it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile();
         dati = this.caricaDatiSpecUniSincro(TipiUsoDatiSpec.MIGRAZ, TipiEntitaSacer.COMP, aroCompDoc.getIdCompDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             oMigraz.getAny().addAll(dati.getAny());
             oMigraz.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             meta.setDatiSpecificiMigrazione(oMigraz);
@@ -1504,18 +1493,17 @@ public class CreazioneIndiceAipUtil {
         it.eng.parer.ws.xml.usvdcResp.DatiSpecificiTypeVdC dati = this.caricaDatiSpecUniSincroVersIniUpd(
                 TiUsoXsdAroVersIniDatiSpec.VERS, TiEntitaSacerAroVersIniDatiSpec.COMP,
                 aroVersIniComp.getIdVersIniComp());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile o = new it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile();
             o.getAny().addAll(dati.getAny());
             o.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             meta.setDatiSpecifici(o);
         }
         // Dati specifici di migrazione del Componente
-        dati = null;
         it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile oMigraz = new it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile();
         dati = this.caricaDatiSpecUniSincroVersIniUpd(TiUsoXsdAroVersIniDatiSpec.MIGRAZ,
                 TiEntitaSacerAroVersIniDatiSpec.COMP, aroVersIniComp.getIdVersIniComp());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             oMigraz.getAny().addAll(dati.getAny());
             oMigraz.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             meta.setDatiSpecificiMigrazione(oMigraz);
@@ -1538,18 +1526,17 @@ public class CreazioneIndiceAipUtil {
         it.eng.parer.ws.xml.usvdcResp.DatiSpecificiTypeVdC dati = this.caricaDatiSpecUniSincroUpd(
                 TiUsoXsdAroUpdDatiSpecUnitaDoc.VERS, TiEntitaAroUpdDatiSpecUnitaDoc.UPD_COMP,
                 aroUpdCompUnitaDoc.getIdUpdCompUnitaDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile o = new it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile();
             o.getAny().addAll(dati.getAny());
             o.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             meta.setDatiSpecifici(o);
         }
         // Dati specifici di migrazione del Componente
-        dati = null;
         it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile oMigraz = new it.eng.parer.ws.xml.usfileResp.DatiSpecificiTypeFile();
         dati = this.caricaDatiSpecUniSincroUpd(TiUsoXsdAroUpdDatiSpecUnitaDoc.MIGRAZ,
                 TiEntitaAroUpdDatiSpecUnitaDoc.UPD_COMP, aroUpdCompUnitaDoc.getIdUpdCompUnitaDoc());
-        if (dati != null && dati.getAny() != null && dati.getAny().size() > 0) {
+        if (dati != null && dati.getAny() != null && !dati.getAny().isEmpty()) {
             oMigraz.getAny().addAll(dati.getAny());
             oMigraz.setVersioneDatiSpecifici(dati.getVersioneDatiSpecifici());
             meta.setDatiSpecificiMigrazione(oMigraz);
@@ -1567,13 +1554,14 @@ public class CreazioneIndiceAipUtil {
             List<Object[]> tmpDati = (List<Object[]>) rispostaControlli.getrObject();
             if (!tmpDati.isEmpty()) {
                 tmpDatiSpecifici = new DatiSpecificiTypeVdC();
-                tmpDatiSpecifici.setVersioneDatiSpecifici(((Object[]) tmpDati.get(0))[0].toString());
+                tmpDatiSpecifici.setVersioneDatiSpecifici((tmpDati.get(0))[0].toString());
 
                 DocumentBuilder db = null;
                 try {
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     db = dbf.newDocumentBuilder();
                 } catch (Exception e) {
+                    log.error(e.getMessage());
                 }
 
                 Document doc = db.newDocument();
@@ -1605,8 +1593,8 @@ public class CreazioneIndiceAipUtil {
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     String blXmlDatiSpec = tmpDati.get(0).getBlXmlDatiSpec();
-                    byte[] xml = blXmlDatiSpec.getBytes("UTF-8");
-                    InputSource is = new InputSource(new StringReader(new String(xml, "UTF-8")));
+                    byte[] xml = blXmlDatiSpec.getBytes(StandardCharsets.UTF_8);
+                    InputSource is = new InputSource(new StringReader(new String(xml, StandardCharsets.UTF_8)));
                     Document docxml = db.parse(is);
                     XPath xPath = XPathFactory.newInstance().newXPath();
                     String queryXml = "//DatiSpecifici/VersioneDatiSpecifici";
@@ -1655,8 +1643,8 @@ public class CreazioneIndiceAipUtil {
                     DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     String blXmlDatiSpec = tmpDati.get(0).getBlXmlDatiSpec();
-                    byte[] xml = blXmlDatiSpec.getBytes("UTF-8");
-                    InputSource is = new InputSource(new StringReader(new String(xml, "UTF-8")));
+                    byte[] xml = blXmlDatiSpec.getBytes(StandardCharsets.UTF_8);
+                    InputSource is = new InputSource(new StringReader(new String(xml, StandardCharsets.UTF_8)));
                     Document docxml = db.parse(is);
                     XPath xPath = XPathFactory.newInstance().newXPath();
                     String queryXml = "//DatiSpecifici/VersioneDatiSpecifici";
@@ -1698,7 +1686,6 @@ public class CreazioneIndiceAipUtil {
         FileType fileComp = new FileType();
         // ID
         IdentifierType idFile = new IdentifierType();
-        // String idFileContent = aroCompDoc.getDsUrnCompCalc().replace(' ', '_');
         AroCompUrnCalc urn = unitaDocumentarieHelper.findAroCompUrnCalcByType(aroCompDoc, TiUrn.NORMALIZZATO);
         String idFileContent = urn.getDsUrn();
         idFile.setValue(idFileContent);
@@ -1721,15 +1708,6 @@ public class CreazioneIndiceAipUtil {
                     : "Non Definito";
             fileComp.setFormat(mymetype);
         }
-
-        // MAC#25856
-        /*
-         * // Previous Hash String dsHashFileVers = aroCompDoc.getDsHashFileVers(); if (dsHashFileVers != null &&
-         * !dsHashFileVers.isEmpty()) { PreviousHashType pHash = new PreviousHashType(); // MAC#25654 function =
-         * aroCompDoc.getDsAlgoHashFileVers() != null ? aroCompDoc.getDsAlgoHashFileVers() : "Non Definito";
-         * pHash.setFunction(function); // end MAC#25654 pHash.setRelatedIdC("Non_definito");
-         * pHash.setValue(aroCompDoc.getDsHashFileVers()); fileComp.setPreviousHash(pHash); } // end MAC#25856
-         */
 
         // More Info
         MoreInfoType moreInfoFile = new MoreInfoType();
@@ -1764,8 +1742,8 @@ public class CreazioneIndiceAipUtil {
                 }
             }
         }
-        it.eng.parer.ws.xml.usfileResp.ObjectFactory objFct_4 = new it.eng.parer.ws.xml.usfileResp.ObjectFactory();
-        emFile.setAny(objFct_4.createMetadatiIntegratiFile(mdif));
+        it.eng.parer.ws.xml.usfileResp.ObjectFactory objFct4 = new it.eng.parer.ws.xml.usfileResp.ObjectFactory();
+        emFile.setAny(objFct4.createMetadatiIntegratiFile(mdif));
         moreInfoFile.setEmbeddedMetadata(emFile);
         fileComp.setMoreInfo(moreInfoFile);
         return fileComp;

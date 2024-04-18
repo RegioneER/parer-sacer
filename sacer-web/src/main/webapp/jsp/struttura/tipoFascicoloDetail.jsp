@@ -49,8 +49,8 @@
                     <slf:lblField name="<%=StrutTipiFascicoloForm.TipoFascicoloDetail.DS_TIPO_FASCICOLO%>" colSpan="2" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiFascicoloForm.TipoFascicoloDetail.DT_ISTITUZ%>" colSpan="2" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiFascicoloForm.TipoFascicoloDetail.DT_SOPPRES%>" colSpan="2" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
-                    <slf:lblField name="<%=StrutTipiFascicoloForm.TipoFascicoloDetail.CONTROLLO_FORMATO_NUMERO%>" colSpan="2" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
-                    <slf:lblField name="<%=StrutTipiFascicoloForm.AaTipoFascicoloDetail.NI_CHAR_PAD_PARTE_CLASSIF%>" width="w100" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
+                    <%--<slf:lblField name="<%=StrutTipiFascicoloForm.TipoFascicoloDetail.CONTROLLO_FORMATO_NUMERO%>" colSpan="2" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiFascicoloForm.AaTipoFascicoloDetail.NI_CHAR_PAD_PARTE_CLASSIF%>" width="w100" labelWidth="w30" controlWidth="w70"/> <sl:newLine />--%>
                 </slf:section>
                 <%--<slf:section name="<%=StrutTipiFascicoloForm.ParametriControlloClassificazioneSection.NAME%>" styleClass="importantContainer">
                     <slf:lblField name="<%=StrutTipiFascicoloForm.AaTipoFascicoloDetail.FL_ABILITA_CONTR_CLASSIF%>" width="w100" labelWidth="w30" controlWidth="w20"/> <sl:newLine />

@@ -1,12 +1,28 @@
-package it.eng.parer.slite.gen.viewbean;
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
 
-import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
-import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
+package it.eng.parer.slite.gen.viewbean;
 
 import java.sql.Types;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import javax.annotation.Generated;
+
+import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
+import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 
 /**
  * @author Sloth
@@ -55,6 +71,8 @@ public class AroVRicUnitaDocTableDescriptor extends TableDescriptor {
     public static final String COL_DS_AUTORE_DOC = "ds_autore_doc";
     public static final String COL_CD_KEY_DOC_VERS = "cd_key_doc_vers";
     public static final String COL_FL_FORZA_COLLEGAMENTO = "fl_forza_collegamento";
+    public static final String COL_CD_VERSIONE_WS = "cd_versione_ws";
+    public static final String COL_FL_AGG_META = "fl_agg_meta";
     public static final String COL_NM_TIPO_DOC_PRINC = "nm_tipo_doc_princ";
     public static final String COL_FL_DOC_AGGIUNTI = "fl_doc_aggiunti";
     public static final String COL_FL_UNITA_DOC_ANNUL = "fl_unita_doc_annul";
@@ -106,6 +124,8 @@ public class AroVRicUnitaDocTableDescriptor extends TableDescriptor {
         map.put(COL_DS_AUTORE_DOC, new ColumnDescriptor(COL_DS_AUTORE_DOC, Types.VARCHAR, 4000, true));
         map.put(COL_CD_KEY_DOC_VERS, new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
         map.put(COL_FL_FORZA_COLLEGAMENTO, new ColumnDescriptor(COL_FL_FORZA_COLLEGAMENTO, Types.VARCHAR, 1, true));
+        map.put(COL_CD_VERSIONE_WS, new ColumnDescriptor(COL_CD_VERSIONE_WS, Types.VARCHAR, 100, true));
+        map.put(COL_FL_AGG_META, new ColumnDescriptor(COL_FL_AGG_META, Types.VARCHAR, 1, true));
         map.put(COL_NM_TIPO_DOC_PRINC, new ColumnDescriptor(COL_NM_TIPO_DOC_PRINC, Types.VARCHAR, 100, true));
         map.put(COL_FL_DOC_AGGIUNTI, new ColumnDescriptor(COL_FL_DOC_AGGIUNTI, Types.VARCHAR, 1, true));
         map.put(COL_FL_UNITA_DOC_ANNUL, new ColumnDescriptor(COL_FL_UNITA_DOC_ANNUL, Types.VARCHAR, 1, true));

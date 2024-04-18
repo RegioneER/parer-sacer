@@ -1,7 +1,56 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.validazioneFascicoli.ejb;
 
-import it.eng.parer.annulVers.ejb.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.naming.NamingException;
+import javax.xml.bind.JAXBException;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
+import it.eng.parer.annulVers.ejb.AnnulVersEjb;
 import it.eng.parer.annulVers.helper.AnnulVersHelper;
 import it.eng.parer.entity.AroItemRichAnnulVers;
 import it.eng.parer.entity.AroRichAnnulVers;
@@ -11,20 +60,20 @@ import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.ElvElencoVersFasc;
 import it.eng.parer.entity.ElvElencoVersFascDaElab;
 import it.eng.parer.entity.ElvStatoElencoVersFasc;
-import it.eng.parer.entity.FasStatoFascicoloElenco;
 import it.eng.parer.entity.FasAipFascicoloDaElab;
 import it.eng.parer.entity.FasFascicolo;
+import it.eng.parer.entity.FasStatoFascicoloElenco;
 import it.eng.parer.entity.FasUdAipFascicoloDaElab;
 import it.eng.parer.entity.FasUnitaDocFascicolo;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VolVolumeConserv;
-import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
-import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
 import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
+import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
+import it.eng.parer.entity.constraint.FasAipFascicoloDaElab.TiCreazione;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
-import it.eng.parer.entity.constraint.FasAipFascicoloDaElab.TiCreazione;
+import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.job.helper.JobHelper;
@@ -53,36 +102,6 @@ import it.eng.parer.ws.xml.versReqStato.Recupero;
 import it.eng.parer.ws.xml.versReqStato.TokenFileNameType;
 import it.eng.parer.ws.xml.versReqStato.VersatoreType;
 import it.eng.spagoLite.security.User;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.naming.NamingException;
-import javax.xml.bind.JAXBException;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -115,6 +134,8 @@ public class ValidazioneFascicoliEjb {
     private ElaborazioneRigaIndiceAipDaElab elabIndiceAip;
     @EJB
     private UniformResourceNameUtilHelper urnHelper;
+    @EJB
+    private RecuperoZipGen zipGen;
 
     // <editor-fold defaultstate="collapsed" desc="Validazione fascicoli">
     public void validazioneFascicoli() throws ParerInternalError, ParerUserError, IOException, NoSuchAlgorithmException,
@@ -167,9 +188,8 @@ public class ValidazioneFascicoliEjb {
         OrgStrut strut = vfHelper.findById(OrgStrut.class, elencoVersFascDaElab.getIdStrut());
         BigDecimal idAmbiente = BigDecimal.valueOf(strut.getOrgEnte().getOrgAmbiente().getIdAmbiente());
 
-        Long idUserIam = userHelper
-                .findIamUser(confHelper.getValoreParamApplic("USERID_CREAZIONE_IX_AIP_SERIE", idAmbiente,
-                        elencoVersFascDaElab.getIdStrut(), null, null, CostantiDB.TipoAplVGetValAppart.STRUT))
+        Long idUserIam = userHelper.findIamUser(confHelper.getValoreParamApplicByStrut(
+                CostantiDB.ParametroAppl.USERID_CREAZIONE_IX_AIP_SERIE, idAmbiente, elencoVersFascDaElab.getIdStrut()))
                 .getIdUserIam();
 
         // Per ogni fascicolo
@@ -498,7 +518,16 @@ public class ValidazioneFascicoliEjb {
                 + idUnitaDoc + " in formato UNISYNCRO");
         AroUnitaDoc ud = helper.findByIdWithLock(AroUnitaDoc.class, idUnitaDoc);
         logger.debug("Richiamo metodo di creazione prima versione dell'indice AIP dell'unita doc in formato UNISINCRO");
-        elabIndiceAip.gestisciIndiceAip(ud.getIdUnitaDoc());
+        // MEV#30395
+        BigDecimal idAmbiente = BigDecimal.valueOf(ud.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
+        String sincroVersion = confHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.UNISINCRO_VERSION,
+                idAmbiente);
+        if (!"2.0".equals(sincroVersion)) {
+            elabIndiceAip.gestisciIndiceAipOs(ud.getIdUnitaDoc());
+        } else {
+            elabIndiceAip.gestisciIndiceAipV2Os(ud.getIdUnitaDoc());
+        }
+        // end MEV#30395
     }
 
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -506,8 +535,8 @@ public class ValidazioneFascicoliEjb {
     public void verificaUrnUdFascicolo(long idUnitaDoc, long idFascicolo) throws ParerUserError, ParerInternalError,
             IOException, NoSuchAlgorithmException, NamingException, JAXBException, ParseException {
         AroUnitaDoc aroUnitaDoc = helper.findById(AroUnitaDoc.class, idUnitaDoc);
-        String sistemaConservazione = confHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = confHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         CSVersatore versatore = this.getVersatoreUd(aroUnitaDoc, sistemaConservazione);
         CSChiave chiave = this.getChiaveUd(aroUnitaDoc);
 
@@ -520,8 +549,8 @@ public class ValidazioneFascicoliEjb {
         // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
         // il sistema aggiorna ARO_UNITA_DOC
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-        String dataInizioParam = confHelper.getValoreParamApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN,
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String dataInizioParam = confHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
         Date dataInizio = dateFormat.parse(dataInizioParam);
         // controllo e calcolo URN normalizzato
         FasVLisUdByFasc fasVLisUdByFasc = vfHelper.getFasVLisUdByFasc(idFascicolo, idUnitaDoc);
@@ -658,9 +687,9 @@ public class ValidazioneFascicoliEjb {
      *            numero unita doc
      * @param cdVerIndiceAip
      *            versione indice aip
-     * 
+     *
      * @return hash calcolato
-     * 
+     *
      * @throws IOException
      *             errore generico di tipo IO
      * @throws NoSuchAlgorithmException
@@ -723,8 +752,7 @@ public class ValidazioneFascicoliEjb {
         recupero.setStrutturaRecupero(recXml);
         // end MAC#23726
 
-        RecuperoZipGen zipGen = new RecuperoZipGen(new RispostaWSRecupero());
-        File zippo = zipGen.getZip(System.getProperty("java.io.tmpdir"), recupero, true);
+        File zippo = zipGen.getZip(System.getProperty("java.io.tmpdir"), recupero, true, new RispostaWSRecupero());
         try (FileInputStream is = (new FileInputStream(zippo))) {
             return new HashCalculator().calculateSHAX(is, TipiHash.SHA_256).toHexBinary();
         }

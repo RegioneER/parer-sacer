@@ -1,4 +1,25 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
+
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -13,7 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -24,6 +44,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.SchemaFactory;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
@@ -40,7 +61,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
-import it.eng.parer.entity.DecModelloXsdFascicolo;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.fascicoli.ejb.ModelliFascicoliEjb;
 import it.eng.parer.sacer.util.SacerLogConstants;
@@ -52,6 +72,7 @@ import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.ModelliFascicoliAbstractAction;
 import it.eng.parer.slite.gen.form.ModelliFascicoliForm;
+import it.eng.parer.slite.gen.form.ModelliFascicoliForm.FiltriModelliXsdTipiFascicolo;
 import it.eng.parer.slite.gen.form.ModelliFascicoliForm.ModelliXsdTipiFascicoloDetail;
 import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloRowBean;
 import it.eng.parer.slite.gen.tablebean.DecModelloXsdFascicoloTableBean;
@@ -59,9 +80,10 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.WebConstants;
+import it.eng.parer.web.util.XmlPrettyPrintFormatter;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.TiModelloXsd;
 import it.eng.parer.ws.versamento.dto.FileBinario;
+import it.eng.spagoCore.configuration.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseTableInterface;
@@ -138,21 +160,16 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
             // maximum size that will be stored in memory
             factory.setSizeThreshold(sizeMb);
-            Properties props = new Properties();
-            try {
-                props.load(this.getClass().getClassLoader().getResourceAsStream("/Sacer.properties"));
-            } catch (IOException ex) {
-                throw new EMFError(EMFError.BLOCKING, "Errore nel caricamento delle impostazioni per l'upload", ex);
-            }
             // the location for saving data that is larger than
-            factory.setRepository(new File(props.getProperty("loadXsdApp.upload.directory")));
+            factory.setRepository(
+                    new File(ConfigSingleton.getInstance().getStringValue(LOAD_XSD_APP_UPLOAD_DIR.name())));
             // Create a new file upload handler
             ServletFileUpload upload = new ServletFileUpload(factory);
             // maximum size before a FileUploadException will be thrown
-            upload.setSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxRequestSize")));
-            upload.setFileSizeMax(Long.parseLong(props.getProperty("loadXsdApp.maxFileSize")));
-            List items = upload.parseRequest(getRequest());
-            Iterator iter = items.iterator();
+            upload.setSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_REQUEST_SIZE.name()));
+            upload.setFileSizeMax(ConfigSingleton.getInstance().getLongValue(LOAD_XSD_APP_MAX_FILE_SIZE.name()));
+            List<FileItem> items = upload.parseRequest(getRequest());
+            Iterator<FileItem> iter = items.iterator();
 
             DiskFileItem tmpFileItem = null;
             DiskFileItem tmpOperation = null;
@@ -334,8 +351,11 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             // Caricamento dettaglio modello xsd del tipo fascicolo
             DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = modelliFascicoliEjb
                     .getDecModelloXsdFascicoloRowBean(idModelloXsdFascicolo);
-            getForm().getModelliXsdTipiFascicoloDetail().copyFromBean(modelloXsdFascicoloRowBean);
 
+            XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+            String xmlFormatted = formatter.prettyPrintWithDOM3LS(modelloXsdFascicoloRowBean.getBlXsd());
+            modelloXsdFascicoloRowBean.setBlXsd(xmlFormatted);
+            getForm().getModelliXsdTipiFascicoloDetail().copyFromBean(modelloXsdFascicoloRowBean);
             getForm().getModelliXsdTipiFascicoloDetail().setViewMode();
             getForm().getModelliXsdTipiFascicoloDetail().setStatus(Status.view);
             getForm().getModelliXsdTipiFascicoloList().setStatus(Status.view);
@@ -347,8 +367,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
     private void initModelloXsdTipiFascicoloDetail() {
         BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
         getForm().getModelliXsdTipiFascicoloDetail().getId_ambiente()
@@ -495,8 +514,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getModelliXsdTipiFascicoloList().getStatus().equals(Status.insert)) {
@@ -584,11 +602,11 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                             isValidType = true;
                         }
                     }
-                    // if (CostantiDB.TiModelloXsd.FILE_GROUP_FILE_MORE_INFO.name().equals(tiModelloXsd)) {
-                    // if (item != null && item.getNodeValue().equals("MetadatiIntegratiFileGroup")) {
-                    // isValidType = true;
-                    // }
-                    // }
+                    if (CostantiDB.TiModelloXsd.PROFILO_NORMATIVO_FASCICOLO.name().equals(tiModelloXsd)) {
+                        if (item != null && item.getNodeValue().equals("AggregazioneDocumentaliInformatiche")) {
+                            isValidType = true;
+                        }
+                    }
                 } else {
                     item = map.getNamedItem("targetNamespace");
                     if (item != null && item.getNodeValue().equals("http://www.uni.com/U3011/sincro/")) {
@@ -633,18 +651,20 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             throw new ParerUserError("Il codice versione del modello xsd \u00E8 gi\u00E0 presente nell'ambiente");
         }
 
+        // MEV#26576
         // Controllo che non vi sia un’altra versione attiva alla data per lo stesso ambiente.
         // Se l’entità del modello è FASCICOLO, AIP_SELF_DESCRIPTION_MORE_INFO, AIP_UNISYNCRO
         // non è possibile avere più versioni attive alla stessa data
-        if (TiModelloXsd.FASCICOLO.name().equals(tiModelloXsd)
-                || TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO.name().equals(tiModelloXsd)
-                || TiModelloXsd.AIP_UNISYNCRO.name().equals(tiModelloXsd)) {
-            List<DecModelloXsdFascicolo> modelliXsdAttivi = modelliFascicoliEjb.checkModelliXsdAttiviInUse(idAmbiente,
-                    tiModelloXsd);
-            if (modelliXsdAttivi != null && !modelliXsdAttivi.isEmpty()) {
-                throw new ParerUserError("Esiste già un modello attivo alla data");
-            }
-        }
+        // if (TiModelloXsd.FASCICOLO.name().equals(tiModelloXsd)
+        // || TiModelloXsd.AIP_SELF_DESCRIPTION_MORE_INFO.name().equals(tiModelloXsd)
+        // || TiModelloXsd.AIP_UNISYNCRO.name().equals(tiModelloXsd)) {
+        // List<DecModelloXsdFascicolo> modelliXsdAttivi = modelliFascicoliEjb.checkModelliXsdAttiviInUse(idAmbiente,
+        // tiModelloXsd);
+        // if (modelliXsdAttivi != null && !modelliXsdAttivi.isEmpty()) {
+        // throw new ParerUserError("Esiste già un modello attivo alla data");
+        // }
+        // }
+        // end MEV#26576
     }
 
     @Override
@@ -686,8 +706,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                    null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (param.getNomePagina()
@@ -792,10 +811,10 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
         }
     }
 
-    @Secure(action = "Menu.Fascicoli.ModelliTipiFascicoli")
+    @Secure(action = "Menu.Amministrazione.ModelliTipiFascicoli")
     public void loadListaModelliXsdFascicoli() throws EMFError {
         getUser().getMenu().reset();
-        getUser().getMenu().select("Menu.Fascicoli.ModelliTipiFascicoli");
+        getUser().getMenu().select("Menu.Amministrazione.ModelliTipiFascicoli");
 
         // Azzero i filtri e la lista risultato della form di ricerca
         getForm().getFiltriModelliXsdTipiFascicolo().reset();
@@ -831,8 +850,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
         // Inizializzo le combo settando l'ambiente corrente
         BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
 
@@ -958,6 +976,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setHidden(false);
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setEditMode();
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setEditMode();
+            getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setDisableHourGlass(true);
         } else {
             getForm().getModelliXsdTipiFascicoloDetail().getScaricaXsdButton().setHidden(true);
             getForm().getModelliXsdTipiFascicoloDetail().getLogEventi().setHidden(true);

@@ -49,6 +49,10 @@
     <Section Name="parametriAmministrazioneSection" Description="" Legend="Parametri di amministrazione" ShowButton="true" LoadOpened="false"/>
     <Section Name="parametriConservazioneSection" Description="" Legend="Parametri di conservazione" ShowButton="true" LoadOpened="false"/>
     <Section Name="parametriGestioneSection" Description="" Legend="Parametri di gestione" ShowButton="true" LoadOpened="false"/>
+    <Section Name="corrispondenzePingSection" Description="" Legend="Corrispondenze in PING" ShowButton="true" LoadOpened="true"/>
+    
+    <Section Name="importaParametriTipiUdSection" Description="" Legend="Tipologie unità documentaria" ShowButton="false" LoadOpened="true"/>
+    <Section Name="importaParametriTipiFascicoloSection" Description="" Legend="Tipi fascicolo" ShowButton="false" LoadOpened="true"/>
    
     <!-- STRUTTURA --> 
     <!-- Qui tutti i campi della tabella tranne l'id che viene assegnato di default-->
@@ -63,54 +67,7 @@
         <ComboBox Name="id_ambiente_rif" Description="Ambiente" Type="INTEGER" Trigger="true" />
         <ComboBox Name="id_ente_rif" Description="Ente" Type="INTEGER" Trigger="true"/>
         <ComboBox Name="id_ente" Description="Ente" Type="INTEGER" />
-        <TextArea Type="STRING" Description="Note" Name="dl_note_strut" Rows="4" Cols="100" MaxLength="1024" />
-        <!--<Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING" Readonly="true" />-->
-        <!-- Parametri sull'unità documentaria -->
-        <!--        <ComboBox Type="STRING" Description="*Tipo scadenza chiusura volume / elenco" Name="ti_scad_chius_volume" Trigger="true"/>
-        <ComboBox Type="STRING" Description="*Tipo tempo scadenza chiusura" Name="ti_tempo_scad_chius" />
-        <Input Type="INTEGER" Description="*Tempo scadenza chiusura" Name="ni_tempo_scad_chius"  GroupingDecimal="true" />
-        <ComboBox Type="STRING" Description="*Tipo tempo scadenza chiusura firme" Name="ti_tempo_scad_chius_firme" />
-        <Input Type="INTEGER" Description="*Tempo scadenza chiusura firme" Name="ni_tempo_scad_chius_firme" GroupingDecimal="true" />
-        <Input Type="INTEGER" Description="*Numero massimo componenti" Name="num_max_comp_criterio_raggr" GroupingDecimal="true" />
-        <CheckBox  Type="STRING" Description="Controllo crittografico " Name="fl_abilita_contr_crittog_vers" />
-        <CheckBox Type="STRING" Description="Controllo catena trusted" Name="fl_abilita_contr_trust_vers" />
-        <CheckBox Type="STRING" Description="Controllo certificato" Name="fl_abilita_contr_certif_vers" />
-        <CheckBox Type="STRING" Description="Controllo crl" Name="fl_abilita_contr_crl_vers" />
-        <CheckBox Type="STRING" Description="Firma sconosciuta" Name="fl_accetta_firma_noconos" />
-        <CheckBox Type="STRING" Description="Firma non conforme" Name="fl_accetta_firma_noconf" />
-        <CheckBox Type="STRING" Description="Firma no delibera 45" Name="fl_accetta_firma_giugno_2011" />
-        <CheckBox Type="STRING" Description="Controllo crittografico negativo" Name="fl_accetta_contr_crittog_neg" />
-        <CheckBox Type="STRING" Description="Controllo catena trusted negativo" Name="fl_accetta_contr_trust_neg" />
-        <CheckBox Type="STRING" Description="Controllo certificato scaduto" Name="fl_accetta_contr_certif_scad" />
-        <CheckBox Type="STRING" Description="Controllo certificato non valido" Name="fl_accetta_contr_certif_noval" />
-        <CheckBox Type="STRING" Description="Controllo certificato no cert." Name="fl_accetta_contr_certif_nocert" />
-        <CheckBox Type="STRING" Description="Controllo crl negativo" Name="fl_accetta_contr_crl_neg" />
-        <CheckBox Type="STRING" Description="Controllo crl scaduta" Name="fl_accetta_contr_crl_scad" />
-        <CheckBox Type="STRING" Description="Controllo crl non valida" Name="fl_accetta_contr_crl_noval" />
-        <CheckBox Type="STRING" Description="Controllo crl non scaricabile" Name="fl_accetta_contr_crl_noscar" />
-        <CheckBox Type="STRING" Description="Abilita controllo formato numero" Name="fl_abilita_contr_fmt_num" Readonly="true" defaultValue="1" />
-        <CheckBox Type="STRING" Description="Accetta controllo formato numero negativo" Name="fl_accetta_fmt_num_neg" />
-        <CheckBox Type="STRING" Description="Forza formato numero" Name="fl_forza_fmt_num" />
-        <CheckBox Type="STRING" Description="Oggetto" Name="fl_obbl_oggetto" />
-        <CheckBox Type="STRING" Description="Data" Name="fl_obbl_data" />
-        <CheckBox Type="STRING" Description="Abilita controllo formato" Name="fl_abilita_contr_fmt" />
-        <CheckBox Type="STRING" Description="Marca sconosciuta" Name="fl_accetta_marca_noconos" />
-        <CheckBox Type="STRING" Description="Accetta controllo formato negativo" Name="fl_accetta_contr_fmt_neg" />
-        <CheckBox Type="STRING" Description="Forza formato" Name="fl_forza_fmt" />
-        <CheckBox Type="STRING" Description="Abilita controllo hash" Name="fl_abilita_contr_hash_vers" />
-        <CheckBox Type="STRING" Description="Accetta controllo hash negativo" Name="fl_accetta_contr_hash_neg" />
-        <CheckBox Type="STRING" Description="Forza hash" Name="fl_forza_hash_vers" />
-        <CheckBox Type="STRING" Description="Gestione fascicoli" Name="fl_gest_fascicoli" Trigger="true"/>        
-         Parametri sul fascicolo 
-        <CheckBox Type="STRING" Description="Abilita controllo classificazione" Name="fl_abilita_contr_classif" />
-        <CheckBox Type="STRING" Description="Accetta controllo classificazione negativo" Name="fl_accetta_contr_classif_neg" />
-        <CheckBox Type="STRING" Description="Forza classificazione" Name="fl_forza_contr_classif" />
-        <CheckBox Type="STRING" Description="Abilita controllo numero" Name="fl_abilita_contr_numero" />
-        <CheckBox Type="STRING" Description="Accetta controllo numero negativo" Name="fl_accetta_contr_numero_neg" />
-        <CheckBox Type="STRING" Description="Forza numero" Name="fl_forza_contr_numero" />
-        <CheckBox Type="STRING" Description="Abilita controllo collegamenti" Name="fl_abilita_contr_colleg" />
-        <CheckBox Type="STRING" Description="Accetta controllo collegamenti negativo" Name="fl_accetta_contr_colleg_neg" />
-        <CheckBox Type="STRING" Description="Forza collegamenti" Name="fl_forza_contr_colleg" />-->
+        <TextArea Type="STRING" Description="Note" Name="dl_note_strut" Rows="4" Cols="100" MaxLength="1024" />        
         <!-- Parametri criteri di raggruppamento -->
         <Input Type="INTEGER" Description="Tempo scadenza chiusura" Name="ni_gg_scad_criterio" />
         <Input Type="INTEGER" Description="Numero massimo fascicoli" Name="ni_max_fascicoli_criterio" />
@@ -123,9 +80,6 @@
         <ComboBox Type="STRING" Description="Archivio restituito" Name="fl_archivio_restituito" />
         <CheckBox Type="STRING" Description="Cessata" Name="fl_cessato" defaultValue="0" Readonly="true" />
         <CheckBox Type="STRING" Description="Partizionamenti completati" Name="partiz_complet" Readonly="true" />
-        <CheckBox Type="STRING" Description="Partizionamenti aggiornamenti metadati completati" Name="partiz_upd_complet" Readonly="true" />
-        <CheckBox Type="STRING" Description="Partizionamenti fascicoli completati" Name="partiz_fascic_complet" Readonly="true" />
-        
         <ComboBox Type="INTEGER" Description="Ambiente ente convenzionato" Name="id_ambiente_ente_convenz" Trigger="true" />
         <ComboBox Type="INTEGER" Description="Ente convenzionato" Name="id_ente_convenz" Trigger="true" />
         <Input Type="DATE" Description="Data inizio validità" Name="dt_ini_val" />
@@ -136,8 +90,9 @@
         <Button Name="importaStruttura" Description="Importa" Type="STRING"/>        
         <Button Name="cessaStruttura" Description="Cessazione struttura" Type="STRING" />
         <Button Name="confermaImportaStruttura" Description="Importa" Type="STRING"/>
-        <Button Name="creaStruttureTemplate" Description="Crea Strutture Template" Type="STRING"/>                
+        <Button Name="creaStruttureTemplate" Description="Crea Strutture Template" Type="STRING"/>                        
         <Button Name="logEventi" Description="Log eventi" Type="STRING"/>
+        <Button Name="eliminaFormatiSpecifici" Description="Gestisci formati specifici" Type="STRING"/>   
         <Input Name="bl_xml_strut" Description="File Xml" Type="FILE" />
         <ComboBox Type="INTEGER" Description="Categoria struttura" Name="id_categ_strut" />
         <CheckBox Type="STRING" Description="Crea nuova struttura non standard (avvisare Supporto tecnico)" Name="check_dup_strut" />
@@ -146,6 +101,7 @@
         <CheckBox Type="STRING" Description="Includi formati" Name="check_includi_formati" />
         <CheckBox Type="STRING" Description="Includi tipi fascicolo" Name="check_includi_tipi_fascicolo" />
         <CheckBox Type="STRING" Description="Includi elementi disattivi" Name="check_includi_elementi_disattivi" />
+        <CheckBox Type="STRING" Description="Includi sistemi migrazione" Name="check_includi_sistemi_migraz" /> 
         <CheckBox Type="STRING" Description="Mantieni le date di fine validità della struttura di partenza" Name="check_mantieni_date_fine_validita" />
     </Fields>
     
@@ -187,6 +143,11 @@
         <ComboBox Type="STRING" Description="Tipologia struttura unità documentaria" Name="nm_tipo_strut_unita_doc" />
         <CheckBox Type="STRING" Description="Includi registri collegati" Name="check_includi_registri" />
         <CheckBox Type="STRING" Description="Includi criteri di raggruppamento" Name="check_includi_criteri" />
+        <CheckBox Type="STRING" Description="Includi sistemi di migrazione" Name="check_includi_sistemi_migraz" />        
+        <CheckBox Type="STRING" Description="Includi formati" Name="check_includi_formati_componente" />
+        <MultiSelect Type="STRING" Description="Tipi fascicolo" Name="nm_tipo_fascicolo" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Periodo di validità" Name="aa_tipo_fascicolo" />
+        <CheckBox Type="STRING" Description="Sovrascrivi periodi di validità" Name="check_sovrascrivi_periodi" />
         <Input Name="xml_parametri" Description="File per importazione parametri" Type="FILE" />
     </Fields>
     
@@ -283,6 +244,8 @@
         <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
         <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" />
+        <Input Type="DATE" Description="Data primo versamento" Name="dt_first_vers" /> 
+        <Input Type="DATE" Description="Data ultimo versamento" Name="dt_last_vers" /> 
         <Link Name="duplicaRegistro" Description="" Type="STRING" Target="duplicaRegistroOperation" Tooltip="Duplica registro selezionato" isTargetList="false" /> <!--VisibilityProperty="!fl_template"-->
     </List>
     
@@ -299,6 +262,7 @@
         <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" /> 
         <Input Type="DATE" Description="Data primo versamento" Name="dt_first_vers" /> 
+        <Input Type="DATE" Description="Data ultimo versamento" Name="dt_last_vers" /> 
         <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" /> 
     </List>
     
@@ -564,4 +528,18 @@
         <Button Name="ricercaParametriStrutturaButton" Description="Ricerca" Type="STRING" />
     </Fields>
     
+    <Section Name="formatiSpecifici" Description="" Legend="Formati specifici"  ShowButton="false" LoadOpened="true"/>
+    
+    <List Name="FormatoFileDocSpecificoList" Description="Lista formati file ammessi specifici"  hideDetailButton="true" >
+        <Input Type="STRING" Description="Formato versato ammesso" Name="nm_formato_file_doc"  />
+        <Input Type="STRING" Description="Mimetype" Name="nm_mimetype_file" />
+        <Input Type="STRING" Description="Formato standard" Name="nm_formato_file_standard" />        
+        <Input Type="STRING" Description="Descrizione" Name="ds_formato_file_doc" />
+        <Input Type="STRING" Description="Idoneità alla conservazione" Name="ti_esito_contr_formato" />
+    </List>
+    
+    <List Name="CorrispondenzePingList" Description="Corrispondenze di Ping" hideDetailButton="true" hideUpdateButton="true">
+        <Input Name="vers" Description="Versatore" Type="STRING" />
+        <Input Name="ti_corrispondenza" Description="Nota" Type="STRING" />   
+    </List>
 </Form>

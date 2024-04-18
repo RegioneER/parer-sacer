@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
@@ -275,8 +292,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
 
     private void initModelloSerieDetail() {
         BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                configHelper.getValoreParamApplic("NM_APPLIC", null, null, null, null,
-                        CostantiDB.TipoAplVGetValAppart.APPLIC));
+                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
         ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
         ambienteTableBean.sort();
         getForm().getModelliTipiSerieDetail().getId_ambiente()
@@ -501,8 +517,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                          * Codice aggiuntivo per il logging...
                          */
                         LogParam param = SpagoliteLogUtil.getLogParam(
-                                configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                        null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                                configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                                 getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                         param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                         if (getForm().getModelliTipiSerieList().getStatus().equals(Status.insert)) {
@@ -726,8 +741,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                    null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.MODELLO_SERIE_DETAIL)) {
@@ -769,8 +783,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (getForm().getNoteModelloTipoSerieList().getStatus().equals(Status.insert)) {
@@ -855,8 +868,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 if (param.getNomePagina().equalsIgnoreCase(Application.Publisher.NOTA_MODELLO_SERIE_DETAIL)) {
@@ -985,8 +997,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 /* Se la lista è vuota mi metto in modalita' inserimento altrimenti in modifica */
@@ -1051,8 +1062,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                         SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getRegoleAcquisizioneList()));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1085,8 +1095,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
     private void initRegoleFiltraggioDetail(BigDecimal idModelloTipoSerie) throws EMFError, ParerUserError {
         if (idModelloTipoSerie != null) {
             BaseTableInterface ambienteTableBean = ambienteEjb.getAmbientiAbilitatiPerStrut(getUser().getIdUtente(),
-                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC));
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC));
             ambienteTableBean.addSortingRule("nm_ambiente", SortingRule.ASC);
             ambienteTableBean.sort();
             DecModelloFiltroTiDocTableBean decModelloFiltroTiDocTableBean = modelliSerieEjb
@@ -1123,8 +1132,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
             if (getForm().getRegoleFiltraggioDetail().getStatus().equals(Status.insert)) {
@@ -1154,8 +1162,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
              * Codice aggiuntivo per il logging...
              */
             LogParam param = SpagoliteLogUtil.getLogParam(
-                    configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                            CostantiDB.TipoAplVGetValAppart.APPLIC),
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                     getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                     SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getRegoleFiltraggioList()));
             param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1226,8 +1233,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                    null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getDatiSpecList().getTable().isEmpty()) {
@@ -1266,8 +1272,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                 param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getDatiSpecList()));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1508,8 +1513,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                    null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                     if (getForm().getRegoleRapprDetail().getStatus().equals(Status.update)
@@ -1604,8 +1608,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                         SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getRegoleRapprList()));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1636,8 +1639,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                      * Codice aggiuntivo per il logging...
                      */
                     LogParam param = SpagoliteLogUtil.getLogParam(
-                            configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null,
-                                    null, CostantiDB.TipoAplVGetValAppart.APPLIC),
+                            configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                             getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                             SpagoliteLogUtil.getToolbarInsert());
                     param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
@@ -1678,8 +1680,7 @@ public class ModelliSerieAction extends ModelliSerieAbstractAction {
                  * Codice aggiuntivo per il logging...
                  */
                 LogParam param = SpagoliteLogUtil.getLogParam(
-                        configHelper.getValoreParamApplic(CostantiDB.ParametroAppl.NM_APPLIC, null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC),
+                        configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                         SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getStrutModelloList()));
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());

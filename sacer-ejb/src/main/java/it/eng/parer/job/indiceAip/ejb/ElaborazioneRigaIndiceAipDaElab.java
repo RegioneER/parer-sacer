@@ -1,24 +1,42 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.indiceAip.ejb;
 
+import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_HOLDER_RELEVANTDOCUMENT;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_FIRSTNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_LASTNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_TAXCODE;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_FORMALNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_TAXCODE;
-import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_HOLDER_RELEVANTDOCUMENT;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_SUBMITTER_RELEVANTDOCUMENT;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -38,10 +56,9 @@ import javax.jms.TextMessage;
 import javax.naming.NamingException;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,13 +71,15 @@ import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.SerVerSerie;
 import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
-import it.eng.parer.entity.constraint.ElvStatoElencoVer;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.job.indiceAip.helper.CreazioneIndiceAipHelper;
 import it.eng.parer.job.indiceAip.utils.CreazioneIndiceAipUtil;
 import it.eng.parer.job.indiceAip.utils.CreazioneIndiceAipUtilV2;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
 import it.eng.parer.viewEntity.AroVLisLinkUnitaDoc;
@@ -78,7 +97,8 @@ import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.xml.usmainResp.IdCType;
 import it.eng.parer.ws.xml.usmainRespV2.PIndex;
-import org.apache.commons.lang3.StringUtils;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  *
@@ -89,6 +109,7 @@ import org.apache.commons.lang3.StringUtils;
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
 public class ElaborazioneRigaIndiceAipDaElab {
 
+    public static final String CREATING_APPLICATION_PRODUCER = "CREATING_APPLICATION_PRODUCER";
     Logger log = LoggerFactory.getLogger(ElaborazioneRigaIndiceAipDaElab.class);
     @EJB
     private CreazioneIndiceAipHelper ciaHelper;
@@ -102,10 +123,16 @@ public class ElaborazioneRigaIndiceAipDaElab {
     private UniformResourceNameUtilHelper urnHelper;
     @EJB
     private ParamIamHelper paramIamHelper;
+    @EJB
+    CreazioneIndiceAipUtilV2 creazioneIndiceAipUtilV2;
+    // MEV#30395
+    @EJB
+    private ObjectStorageService objectStorageService;
+    // end MEV#30395
 
     @Resource(mappedName = "jms/ProducerConnectionFactory")
     private ConnectionFactory connectionFactory;
-    @Resource(mappedName = "jms/IndiceAipUnitaDocQueue")
+    @Resource(mappedName = "jms/queue/IndiceAipUnitaDocQueue")
     private Queue queue;
 
     /* Ricavo i valori degli Agent dalla tabella APL_PARAM_APPLIC */
@@ -119,6 +146,8 @@ public class ElaborazioneRigaIndiceAipDaElab {
     private static final List<String> agentParamIamV2 = Arrays.asList(AGENT_HOLDER_RELEVANTDOCUMENT,
             AGENT_SUBMITTER_RELEVANTDOCUMENT);
 
+    private static final String LOG_SALVATAGGIO_OS = "Salvato l'indice aip su Object storage nel bucket {} con chiave {}! ";
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void gestisciIndiceAipDaElaborareNelJob(long idUdDaElab) throws ParerInternalError, ParseException {
         AroIndiceAipUdDaElab entity = ciaHelper.findByIdWithLock(AroIndiceAipUdDaElab.class, idUdDaElab);
@@ -126,8 +155,8 @@ public class ElaborazioneRigaIndiceAipDaElab {
             AroUnitaDoc ud = ciaHelper.findByIdWithLock(AroUnitaDoc.class, entity.getAroUnitaDoc().getIdUnitaDoc());
             if (entity.getPgCreazioneDaElab().longValueExact() > 1) {
                 // Se non esiste...
-                if (ciaHelper.existsIndexAplIndiceAipInCodaPrgMinore(ud,
-                        entity.getPgCreazioneDaElab().longValueExact()) == false) {
+                if (!ciaHelper.existsIndexAplIndiceAipInCodaPrgMinore(ud,
+                        entity.getPgCreazioneDaElab().longValueExact())) {
                     // EVO#16486
                     verificaUrnUd(ud.getIdUnitaDoc());
                     // end EVO#16486
@@ -153,12 +182,11 @@ public class ElaborazioneRigaIndiceAipDaElab {
         entity.setTsInCoda(new Date());
         // METTO IN CODA l'elenco appena estratto
         MessageProducer messageProducer = null;
-        Connection connection = null;
         Session session = null;
         TextMessage textMessage = null;
         long idIndiceAipDaElab = entity.getIdIndiceAipDaElab();
-        try {
-            connection = connectionFactory.createConnection();
+        try (Connection connection = connectionFactory.createConnection();) {
+
             log.debug("Creo la connessione alla coda per l'indiceAIP da elaborare {}", idIndiceAipDaElab);
             session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
             messageProducer = session.createProducer(queue);
@@ -181,10 +209,8 @@ public class ElaborazioneRigaIndiceAipDaElab {
                 if (session != null) {
                     session.close();
                 }
-                if (connection != null) {
-                    connection.close();
-                }
             } catch (Exception ex) {
+                log.error("Errore inviaMessaggio", ex);
             }
         }
     }
@@ -192,25 +218,21 @@ public class ElaborazioneRigaIndiceAipDaElab {
     // EVO#16486
     public void verificaUrnUd(long idUnitaDoc) throws ParerInternalError, ParseException {
         AroUnitaDoc aroUnitaDoc = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         CSVersatore versatore = this.getVersatoreUd(aroUnitaDoc, sistemaConservazione);
         CSChiave chiave = this.getChiaveUd(aroUnitaDoc);
 
         DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
-        String dataInizioParam = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String dataInizioParam = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
         Date dataInizio = dateFormat.parse(dataInizioParam);
 
         // MEV#26219
         // controllo : dtChiusura <= dataInizioCalcNuoviUrn
         // controllo e calcolo URN normalizzato
-        // if (!aroUnitaDoc.getElvElencoVer().getDtChius().after(dataInizio)) {
         // Gestione KEY NORMALIZED / URN PREGRESSI
         this.sistemaUrnUnitaDoc(aroUnitaDoc, dataInizio, versatore, chiave);
-        // }
         // end MEV#26219
 
         // Sistema URN INDICI AIP PREGRESSI
@@ -300,23 +322,22 @@ public class ElaborazioneRigaIndiceAipDaElab {
     // end EVO#16486
 
     // EVO#20972
-    public void gestisciIndiceAipDaElab(long idUdDaElab) throws ParerInternalError, NamingException,
-            NoSuchAlgorithmException, IOException, ValidationException, JAXBException {
+    public void gestisciIndiceAipDaElab(long idUdDaElab)
+            throws ParerInternalError, NamingException, NoSuchAlgorithmException, IOException, JAXBException {
         AroIndiceAipUdDaElab udDaElab = ciaHelper.findByIdWithLock(AroIndiceAipUdDaElab.class, idUdDaElab);
         // Se non trova il record esce e non fa nulla!
         if (udDaElab != null) {
             BigDecimal idAmbiente = BigDecimal
                     .valueOf(udDaElab.getAroUnitaDoc().getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
-            String sincroVersion = configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.UNISINCRO_VERSION,
-                    idAmbiente, null, null, null, CostantiDB.TipoAplVGetValAppart.AMBIENTE);
+            String sincroVersion = configurationHelper
+                    .getValoreParamApplicByAmb(CostantiDB.ParametroAppl.UNISINCRO_VERSION, idAmbiente);
             gestisciIndiceAipDaElab(udDaElab, sincroVersion);
         }
     }
     // end EVO#20972
 
     public void gestisciIndiceAipDaElab(AroIndiceAipUdDaElab udDaElab, String sincroVersion)
-            throws ParerInternalError, NamingException, NoSuchAlgorithmException, IOException, MarshalException,
-            ValidationException, JAXBException {
+            throws ParerInternalError, NamingException, NoSuchAlgorithmException, IOException, JAXBException {
         // EVO#20972
         String desJobMessage = "Creazione Indice AIP v" + sincroVersion;
         // end EVO#20972
@@ -344,86 +365,100 @@ public class ElaborazioneRigaIndiceAipDaElab {
         // end MEV#25903
 
         /* Recupero l'unità documentaria da elaborare */
-        log.debug("Creazione Indice AIP - Elaboro l'unità documentaria {}", udDaElab.getAroUnitaDoc().getIdUnitaDoc());
+        log.debug("{} - Elaboro l'unità documentaria {}", desJobMessage, udDaElab.getAroUnitaDoc().getIdUnitaDoc());
 
-        // Ricavo il parametro da AplParamApplic relativo alla verifica delle partizioni
-        boolean verificaPartizioni = Boolean
-                .parseBoolean(configurationHelper.getValoreParamApplic(CostantiDB.ParametroAppl.VERIFICA_PARTIZIONI,
-                        null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC));
-        String annoMese = "";
-        if (verificaPartizioni) {
-            log.debug(desJobMessage + " - Check partition");
-            annoMese = checkPartition(unitaDoc);
-        } else {
-            Calendar c = Calendar.getInstance();
-            String anno = "" + c.get(Calendar.YEAR);
-            int meseNum = c.get(Calendar.MONTH) + 1;
-            String mese = meseNum < 10 ? "0" + meseNum : "" + meseNum;
-            annoMese = anno + mese;
-        }
+        Calendar c = Calendar.getInstance();
+        String anno = "" + c.get(Calendar.YEAR);
+        int meseNum = c.get(Calendar.MONTH) + 1;
+        String mese = meseNum < 10 ? "0" + meseNum : "" + meseNum;
+        String annoMese = anno + mese;
 
         /* Determino il progressivo di versione dell'indice AIP e lo aumento di 1 */
-        log.debug(desJobMessage + " - Ottengo il progressivo versione");
+        log.debug("{} - Ottengo il progressivo versione", desJobMessage);
         int progressivoVersione = ciaHelper.getProgressivoVersione(unitaDoc.getIdUnitaDoc());
         progressivoVersione++;
 
         /* Determino il codice di versione dell'AIP */
         // EVO#20972
         String tiCreazione = udDaElab.getTiCreazione();
-        log.debug(desJobMessage + " - Ottengo il progressivo versione AIP");
+        log.debug("{} - Ottengo il progressivo versione AIP", desJobMessage);
         String codiceVersione = (!"2.0".equals(sincroVersion))
                 ? ciaHelper.getVersioneAIP(unitaDoc.getIdUnitaDoc(), tiCreazione)
                 : ciaHelper.getVersioneIndiceAIPV2(unitaDoc.getIdUnitaDoc(), tiCreazione);
         // end EVO#20972
 
         /* Determino il sistema di conservazione */
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         /* Determino il versatore */
         CSVersatore versatore = getVersatoreUd(unitaDoc, sistemaConservazione);
         /* Recupero parametro CREATING_APPLICATION_PRODUCER */
-        String creatingApplicationProducer = configurationHelper.getValoreParamApplic("CREATING_APPLICATION_PRODUCER",
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String creatingApplicationProducer = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.CREATING_APPLICATION_PRODUCER);
         /* Determino la chiave */
         CSChiave chiave = getChiaveUd(unitaDoc);
 
         /* Crea Indice AIP */
         // EVO#20972
         StringWriter tmpWriter = null;
-        log.debug(desJobMessage + " - Genero l'indice AIP");
+        log.debug("{} - Genero l'indice AIP", desJobMessage);
         if (!"2.0".equals(sincroVersion)) {
             CreazioneIndiceAipUtil creazione = new CreazioneIndiceAipUtil();
             IdCType idc = creazione.generaIndiceAIP(udDaElab, codiceVersione, Costanti.VERSIONE_XSD_INDICE_AIP,
                     sistemaConservazione, mappaAgent, creatingApplicationProducer);
 
-            log.debug(desJobMessage + " - Eseguo il marshalling dell'idc");
+            log.debug("{} - Eseguo il marshalling dell'idc", desJobMessage);
             tmpWriter = marshallIdC(idc);
         } else {
-            CreazioneIndiceAipUtilV2 creazioneV2 = new CreazioneIndiceAipUtilV2();
-            PIndex pindex = creazioneV2.generaIndiceAIPV2(udDaElab, codiceVersione, Costanti.VERSIONE_XSD_INDICE_AIP_V2,
-                    sistemaConservazione, mappaAgent, creatingApplicationProducer);
+            PIndex pindex = creazioneIndiceAipUtilV2.generaIndiceAIPV2(udDaElab, codiceVersione,
+                    Costanti.VERSIONE_XSD_INDICE_AIP_V2, sistemaConservazione, mappaAgent, creatingApplicationProducer);
 
-            log.debug(desJobMessage + " - Eseguo il marshalling del pindex");
+            log.debug("{} - Eseguo il marshalling del pindex", desJobMessage);
             tmpWriter = marshallPIndex(pindex);
         }
         // end EVO#20972
 
         /* Calcolo l'hash */
-        log.debug(desJobMessage + " - Calcolo l'hash");
+        log.debug("{} - Calcolo l'hash", desJobMessage);
         String hash = new HashCalculator().calculateHashSHAX(tmpWriter.toString(), TipiHash.SHA_256).toHexBinary();
 
         /* Persisto nelle varie tabelle di creazione dell'indice AIP */
-        log.debug(desJobMessage + " - Creo l'indice AIP");
+        log.debug("{} - Creo l'indice AIP", desJobMessage);
         AroVerIndiceAipUd lastVer = ciaHelper.creaAIP(udDaElab, annoMese, progressivoVersione, codiceVersione, hash,
                 tmpWriter.toString(), versatore, chiave);
+
+        // MEV#30395
+        BackendStorage backendIndiciAip = objectStorageService.lookupBackend(
+                unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc(), CostantiDB.ParametroAppl.BACKEND_INDICI_AIP);
+        if (backendIndiciAip.isDataBase()) {
+            // procedo alla memorizzazione dell'indice aip, via JDBC
+            ciaHelper.insertFileVerIndiceAipUd(lastVer, annoMese, tmpWriter.toString());
+        } else { // Backend Object storage
+            boolean putOnOs = true;
+            if (objectStorageService.isIndiceAipOnOs(lastVer.getIdVerIndiceAip())) {
+                String md5LocalContent = calculateMd5AsBase64(tmpWriter.toString());
+                String eTagFromObjectMetadata = objectStorageService
+                        .getObjectMetadataIndiceAipUd(lastVer.getIdVerIndiceAip()).eTag();
+
+                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
+                    putOnOs = false;
+                }
+            }
+            if (putOnOs) {
+                ObjectStorageResource indiceAipSuOS = objectStorageService.createResourcesInIndiciAipUnitaDoc(
+                        backendIndiciAip.getBackendName(), tmpWriter.toString(), lastVer.getIdVerIndiceAip(),
+                        new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()), unitaDoc.getAaKeyUnitaDoc());
+                log.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+            }
+        }
+        // end MEV#30395
 
         /* Recupero l'entity della tabella ARO_INDICE_AIP_UD e setto l'idVerIndiceAipLast */
         AroIndiceAipUd aroIndice = lastVer.getAroIndiceAipUd();
         aroIndice.setIdVerIndiceAipLast(new BigDecimal(lastVer.getIdVerIndiceAip()));
         long idUnitaDoc = aroIndice.getAroUnitaDoc().getIdUnitaDoc();
 
-        log.debug(desJobMessage + " - Ottengo, byId, AroUnitaDoc");
+        log.debug("{} - Ottengo, byId, AroUnitaDoc", desJobMessage);
         AroUnitaDoc aroUnitaDoc = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
 
         /**
@@ -435,16 +470,20 @@ public class ElaborazioneRigaIndiceAipDaElab {
                         .equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name())
                 || aroUnitaDoc.getTiStatoConservazione()
                         .equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name())) {
-            log.debug(desJobMessage + " - Controllo i componenti presenti");
-            if (ciaHelper.checkComponentiPresentiCount(idUnitaDoc, lastVer.getIdVerIndiceAip())) {
+            log.debug("{} - Controllo i componenti e gli aggiornamenti metadati presenti", desJobMessage);
+            if (ciaHelper.checkComponentiPresentiCount(idUnitaDoc, lastVer.getIdVerIndiceAip())
+                    // MAC#27786
+                    || ciaHelper.checkAggMdPresentiCount(idUnitaDoc, lastVer.getIdVerIndiceAip())
+            // end MAC#27786
+            ) {
                 aroUnitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name());
             } else {
                 aroUnitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
             }
         }
 
-        if (aroUnitaDoc.getElvElencoVer().getIdElencoVers() == udDaElab.getElvElencoVer().getIdElencoVers()) {
-            log.debug(desJobMessage + " - Aggiorno lo stato ud a IN_ELENCO_CON_INDICI_AIP_GENERATI");
+        if (aroUnitaDoc.getElvElencoVer().getIdElencoVers().equals(udDaElab.getElvElencoVer().getIdElencoVers())) {
+            log.debug("{} - Aggiorno lo stato ud a IN_ELENCO_CON_INDICI_AIP_GENERATI", desJobMessage);
             aroUnitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_INDICI_AIP_GENERATI.name());
         }
 
@@ -481,14 +520,14 @@ public class ElaborazioneRigaIndiceAipDaElab {
         }
         // end MEV#24597
 
-        log.debug(desJobMessage + " - Elimino l'indice AIP dalla coda di elaborazione");
+        log.debug("{} - Elimino l'indice AIP dalla coda di elaborazione", desJobMessage);
         /* Elimino il record da quelli da elaborare */
         ciaHelper.eliminaIndiceAipDaElab(udDaElab);
-        log.debug(desJobMessage + " - Operazione di inserimento completata con successo");
+        log.debug("{} - Operazione di inserimento completata con successo", desJobMessage);
     }
 
     // EVO#20972
-    private StringWriter marshallPIndex(PIndex pindex) throws ValidationException, JAXBException, MarshalException {
+    private StringWriter marshallPIndex(PIndex pindex) throws JAXBException {
         it.eng.parer.ws.xml.usmainRespV2.ObjectFactory objFctPIndex = new it.eng.parer.ws.xml.usmainRespV2.ObjectFactory();
         JAXBElement<PIndex> elementPIndex = objFctPIndex.createPIndex(pindex);
 
@@ -500,14 +539,14 @@ public class ElaborazioneRigaIndiceAipDaElab {
     }
     // end EVO#20972
 
-    private StringWriter marshallIdC(IdCType idc) throws ValidationException, JAXBException, MarshalException {
-        it.eng.parer.ws.xml.usmainResp.ObjectFactory objFct_IdCType = new it.eng.parer.ws.xml.usmainResp.ObjectFactory();
-        JAXBElement<IdCType> element_IdCType = objFct_IdCType.createIdC(idc);
+    private StringWriter marshallIdC(IdCType idc) throws JAXBException {
+        it.eng.parer.ws.xml.usmainResp.ObjectFactory objFctIdCType = new it.eng.parer.ws.xml.usmainResp.ObjectFactory();
+        JAXBElement<IdCType> elementIdCType = objFctIdCType.createIdC(idc);
 
         StringWriter tmpWriter = new StringWriter();
         Marshaller tmpMarshaller = xmlContextCache.getVersRespUniSincroCtx_IdC_Ud().createMarshaller();
         tmpMarshaller.setSchema(xmlContextCache.getSchemaOfVersRespUniSincro());
-        tmpMarshaller.marshal(element_IdCType, tmpWriter);
+        tmpMarshaller.marshal(elementIdCType, tmpWriter);
         return tmpWriter;
     }
 
@@ -542,11 +581,14 @@ public class ElaborazioneRigaIndiceAipDaElab {
         return annoMese;
     }
 
+    /*
+     * Crea la prima versione dell'indice AIP dell'unita doc appartenente alla serie o al fascicolo con stato di
+     * conservazione = IN_VOLUME_DI_CONSERVAZIONE. Metodo richiamato dalla Validazione Serie o Validazione Fascicoli
+     */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void gestisciIndiceAip(long idUnitaDoc) throws ParerInternalError, NamingException, ValidationException,
-            NoSuchAlgorithmException, IOException, MarshalException, JAXBException {
+    public void gestisciIndiceAipOs(long idUnitaDoc)
+            throws ParerInternalError, NamingException, NoSuchAlgorithmException, IOException, JAXBException {
         log.debug("Creazione Indice AIP - Elaboro l'unit\u00E0 documentaria {}", idUnitaDoc);
-        // Map<String, String> mappaAgent = configurationHelper.getParamApplicMapValue(agentParam);
         AroUnitaDoc unitaDoc = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
         Map<String, String> mappaAgent = configurationHelper.getParamApplicMapValue(agentParam,
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
@@ -561,14 +603,13 @@ public class ElaborazioneRigaIndiceAipDaElab {
         String codiceVersione = ciaHelper.getVersioneAIP(unitaDoc.getIdUnitaDoc(),
                 CostantiDB.TipoCreazioneIndiceAip.ANTICIPATO.name());
         /* Determino il sistema di conservazione */
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         /* Determino il versatore */
         CSVersatore versatore = getVersatoreUd(unitaDoc, sistemaConservazione);
         /* Recupero parametro CREATING_APPLICATION_PRODUCER */
-        String creatingApplicationProducer = configurationHelper.getValoreParamApplic("CREATING_APPLICATION_PRODUCER",
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String creatingApplicationProducer = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.CREATING_APPLICATION_PRODUCER);
         /* Determino la chiave */
         CSChiave chiave = getChiaveUd(unitaDoc);
 
@@ -580,12 +621,37 @@ public class ElaborazioneRigaIndiceAipDaElab {
         StringWriter tmpWriter = marshallIdC(idc);
 
         /* Calcolo l'hash */
-        // String hash = new HashCalculator().calculateHash(tmpWriter.toString()).toHexBinary();
         String hash = new HashCalculator().calculateHashSHAX(tmpWriter.toString(), TipiHash.SHA_256).toHexBinary();
 
         /* Persisto nelle varie tabelle di creazione dell'indice AIP */
         AroVerIndiceAipUd lastVer = ciaHelper.creaAIP(unitaDoc, annoMese, progressivoVersione, codiceVersione, hash,
                 tmpWriter.toString(), versatore, chiave);
+
+        // MEV#30395
+        BackendStorage backendIndiciAip = objectStorageService.lookupBackend(
+                unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc(), CostantiDB.ParametroAppl.BACKEND_INDICI_AIP);
+        if (backendIndiciAip.isDataBase()) {
+            // procedo alla memorizzazione dell'indice aip, via JDBC
+            ciaHelper.insertFileVerIndiceAipUd(lastVer, annoMese, tmpWriter.toString());
+        } else { // Backend Object storage
+            boolean putOnOs = true;
+            if (objectStorageService.isIndiceAipOnOs(lastVer.getIdVerIndiceAip())) {
+                String md5LocalContent = calculateMd5AsBase64(tmpWriter.toString());
+                String eTagFromObjectMetadata = objectStorageService
+                        .getObjectMetadataIndiceAipUd(lastVer.getIdVerIndiceAip()).eTag();
+
+                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
+                    putOnOs = false;
+                }
+            }
+            if (putOnOs) {
+                ObjectStorageResource indiceAipSuOS = objectStorageService.createResourcesInIndiciAipUnitaDoc(
+                        backendIndiciAip.getBackendName(), tmpWriter.toString(), lastVer.getIdVerIndiceAip(),
+                        new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()), unitaDoc.getAaKeyUnitaDoc());
+                log.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+            }
+        }
+        // end MEV#30395
 
         /* Recupero l'entity della tabella ARO_INDICE_AIP_UD e setto l'idVerIndiceAipLast */
         AroIndiceAipUd aroIndice = lastVer.getAroIndiceAipUd();
@@ -595,10 +661,15 @@ public class ElaborazioneRigaIndiceAipDaElab {
     }
 
     // EVO#20972
+    /*
+     * Crea la prima versione dell'indice AIP UNISINCRO V2 dell'unita doc appartenente alla serie o al fascicolo con
+     * stato di conservazione = IN_VOLUME_DI_CONSERVAZIONE. Metodo richiamato dalla Validazione Serie o Validazione
+     * Fascicoli
+     */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void gestisciIndiceAipV2(long idUnitaDoc) throws ParerInternalError, NamingException, ValidationException,
-            NoSuchAlgorithmException, IOException, MarshalException, JAXBException {
-        log.debug("Creazione Indice AIP v2.0 - Elaboro l'unit\u00E0 documentaria " + String.valueOf(idUnitaDoc));
+    public void gestisciIndiceAipV2Os(long idUnitaDoc)
+            throws ParerInternalError, NamingException, NoSuchAlgorithmException, IOException, JAXBException {
+        log.debug("Creazione Indice AIP v2.0 - Elaboro l'unit\u00E0 documentaria {}", idUnitaDoc);
         AroUnitaDoc unitaDoc = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
         Map<String, String> mappaAgent = configurationHelper.getParamApplicMapValue(agentParamV2,
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
@@ -613,21 +684,19 @@ public class ElaborazioneRigaIndiceAipDaElab {
         String codiceVersione = ciaHelper.getVersioneIndiceAIPV2(unitaDoc.getIdUnitaDoc(),
                 CostantiDB.TipoCreazioneIndiceAip.ANTICIPATO.name());
         /* Determino il sistema di conservazione */
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         /* Determino il versatore */
         CSVersatore versatore = getVersatoreUd(unitaDoc, sistemaConservazione);
         /* Recupero parametro CREATING_APPLICATION_PRODUCER */
-        String creatingApplicationProducer = configurationHelper.getValoreParamApplic("CREATING_APPLICATION_PRODUCER",
-                null, null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String creatingApplicationProducer = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.CREATING_APPLICATION_PRODUCER);
         /* Determino la chiave */
         CSChiave chiave = getChiaveUd(unitaDoc);
 
         /* Crea AIP */
-        CreazioneIndiceAipUtilV2 creazioneV2 = new CreazioneIndiceAipUtilV2();
-        PIndex pindex = creazioneV2.generaIndiceAIPV2(unitaDoc, codiceVersione, Costanti.VERSIONE_XSD_INDICE_AIP_V2,
-                sistemaConservazione, mappaAgent, creatingApplicationProducer);
+        PIndex pindex = creazioneIndiceAipUtilV2.generaIndiceAIPV2(unitaDoc, codiceVersione,
+                Costanti.VERSIONE_XSD_INDICE_AIP_V2, sistemaConservazione, mappaAgent, creatingApplicationProducer);
 
         StringWriter tmpWriter = marshallPIndex(pindex);
 
@@ -637,6 +706,32 @@ public class ElaborazioneRigaIndiceAipDaElab {
         /* Persisto nelle varie tabelle di creazione dell'indice AIP */
         AroVerIndiceAipUd lastVer = ciaHelper.creaAIP(unitaDoc, annoMese, progressivoVersione, codiceVersione, hash,
                 tmpWriter.toString(), versatore, chiave);
+
+        // MEV#30395
+        BackendStorage backendIndiciAip = objectStorageService.lookupBackend(
+                unitaDoc.getDecTipoUnitaDoc().getIdTipoUnitaDoc(), CostantiDB.ParametroAppl.BACKEND_INDICI_AIP);
+        if (backendIndiciAip.isDataBase()) {
+            // procedo alla memorizzazione dell'indice aip, via JDBC
+            ciaHelper.insertFileVerIndiceAipUd(lastVer, annoMese, tmpWriter.toString());
+        } else { // Backend Object storage
+            boolean putOnOs = true;
+            if (objectStorageService.isIndiceAipOnOs(lastVer.getIdVerIndiceAip())) {
+                String md5LocalContent = calculateMd5AsBase64(tmpWriter.toString());
+                String eTagFromObjectMetadata = objectStorageService
+                        .getObjectMetadataIndiceAipUd(lastVer.getIdVerIndiceAip()).eTag();
+
+                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
+                    putOnOs = false;
+                }
+            }
+            if (putOnOs) {
+                ObjectStorageResource indiceAipSuOS = objectStorageService.createResourcesInIndiciAipUnitaDoc(
+                        backendIndiciAip.getBackendName(), tmpWriter.toString(), lastVer.getIdVerIndiceAip(),
+                        new BigDecimal(unitaDoc.getOrgSubStrut().getIdSubStrut()), unitaDoc.getAaKeyUnitaDoc());
+                log.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+            }
+        }
+        // end MEV#30395
 
         /* Recupero l'entity della tabella ARO_INDICE_AIP_UD e setto l'idVerIndiceAipLast */
         AroIndiceAipUd aroIndice = lastVer.getAroIndiceAipUd();
@@ -670,4 +765,10 @@ public class ElaborazioneRigaIndiceAipDaElab {
             fasFascicolo.setFlUpdModifUnitaDoc("1");
         }
     }
+
+    // MEV#30395
+    private String calculateMd5AsBase64(String str) {
+        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+    }
+    // end MEV#30395
 }

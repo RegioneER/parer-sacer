@@ -1,9 +1,52 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.recuperoDip.ejb;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.EJBContext;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroCompUrnCalc;
@@ -15,6 +58,7 @@ import it.eng.parer.entity.DecTrasformTipoRappr;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AroCompUrnCalc.TiUrn;
 import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.firma.crypto.helper.CryptoRestConfiguratorHelper;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.Constants.TiEntitaSacerObjectStorage;
@@ -22,7 +66,6 @@ import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.dto.IRispostaWS;
 import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.ejb.RecuperoDocumento;
-import it.eng.parer.ws.recupero.dto.ComponenteRec;
 import it.eng.parer.ws.recupero.dto.ParametriRecupero;
 import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.recuperoDip.dto.CompRecDip;
@@ -33,38 +76,29 @@ import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.StatoFileTrasform;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBContext;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
-import org.apache.commons.io.input.BOMInputStream;
-import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
  * @author Fioravanti_F
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ControlliRecDip")
 @LocalBean
 public class ControlliRecDip {
@@ -74,6 +108,8 @@ public class ControlliRecDip {
     //
     public static final String REG_EXP_VERSIONE = "^DefaultVER([0-9]{6}+)\\s*$";
     public static final int PAD_NUM_VERSIONE = 6;
+
+    private static final String P7MEXTRACTOR_CONTEXT = "/api/file-xml";
     //
     private static final Logger log = LoggerFactory.getLogger(ControlliRecDip.class);
     @Resource
@@ -84,6 +120,8 @@ public class ControlliRecDip {
     private UnitaDocumentarieHelper unitaDocumentarieHelper;
     @EJB
     private RecuperoDocumento recuperoDocumento;
+    @EJB
+    private CryptoRestConfiguratorHelper cryptoRestConfiguratorHelper;
 
     @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     public RispostaControlli contaComponenti(ParametriRecupero parametri) {
@@ -203,7 +241,7 @@ public class ControlliRecDip {
                 throw new IllegalArgumentException("Tipo entità non supportato");
             }
             //
-            aroCompDocs = (List<AroCompDoc>) query.getResultList();
+            aroCompDocs = query.getResultList();
 
             for (AroCompDoc aroCompDoc : aroCompDocs) {
                 // urn
@@ -372,8 +410,8 @@ public class ControlliRecDip {
         String queryStr = null;
         javax.persistence.Query query = null;
 
-        Map<String, Object> properties = new HashMap();
-        properties.put("javax.persistence.lock.timeout", 25);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("javax.persistence.lock.timeout", 25000);
         try {
             DecTipoRapprComp tmpTipoRapprComp = entityManager.find(AroCompDoc.class, compRecDip.getIdCompDoc())
                     .getDecTipoRapprComp();
@@ -384,7 +422,7 @@ public class ControlliRecDip {
             query = entityManager.createQuery(queryStr);
             query.setParameter("decTipoRapprCompIn", tmpTipoRapprComp);
             query.setParameter("dsHashFileTrasformIn", hash);
-            decTrasformTipoRapprs = (List<DecTrasformTipoRappr>) query.getResultList();
+            decTrasformTipoRapprs = query.getResultList();
             if (decTrasformTipoRapprs.isEmpty()) {
                 // non c'è... inseriscilo in tabella e recuperane l'indice
                 Date tmpDate = new Date();
@@ -408,7 +446,7 @@ public class ControlliRecDip {
                 queryInt.setParameter("decTipoRapprCompIn", tmpTipoRapprComp);
                 queryInt.setParameter("nmTrasformIn", NOME_DEFAULT);
                 queryInt.setParameter("cdVersioneTrasformIn", VERSIONE_DEFAULT + "%");
-                decTrasformTipoRapprs = (List<DecTrasformTipoRappr>) queryInt.getResultList();
+                decTrasformTipoRapprs = queryInt.getResultList();
                 //
                 if (decTrasformTipoRapprs.isEmpty()) {
                     // non ho trovato righe che iniziano per VERSIONE
@@ -444,8 +482,8 @@ public class ControlliRecDip {
                 compRecDip.setNomeConvertitore(tmpTrasformTipoRappr.getNmTrasform());
                 compRecDip.setVersioneConvertitore(tmpTrasformTipoRappr.getCdVersioneTrasform());
                 compRecDip.setDataUltimoAggiornamento(tmpTrasformTipoRappr.getDtLastModTrasform());
-                compRecDip
-                        .setStatoFileTrasform(StatoFileTrasform.valueOf(tmpTrasformTipoRappr.getTiStatoFileTrasform()));
+                String tiStatoFileTrasform = tmpTrasformTipoRappr.getTiStatoFileTrasform().trim();
+                compRecDip.setStatoFileTrasform(StatoFileTrasform.valueOf(tiStatoFileTrasform));
             }
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
@@ -526,13 +564,13 @@ public class ControlliRecDip {
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
         //
-        Map<String, Object> properties = new HashMap();
-        properties.put("javax.persistence.lock.timeout", 25);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("javax.persistence.lock.timeout", 25000);
 
         try {
             DecTrasformTipoRappr dttr = entityManager.find(DecTrasformTipoRappr.class, idConvertitore,
                     LockModeType.PESSIMISTIC_WRITE, properties);
-            if (dttr.getDecImageTrasforms().size() > 0) {
+            if (!dttr.getDecImageTrasforms().isEmpty()) {
                 OrgStrut tmpStrut = dttr.getDecTipoRapprComp().getOrgStrut();
                 CSVersatore vers = new CSVersatore();
                 vers.setStruttura(tmpStrut.getNmStrut());
@@ -588,17 +626,53 @@ public class ControlliRecDip {
             RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(TiEntitaSacerObjectStorage.COMP_DOC,
                     comp.getIdCompDoc(), bos, RecBlbOracle.TabellaBlob.BLOB);
             // recupero
-            RispostaControlli rc = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
-            if (!rc.isrBoolean()) {
-                throw new ParerInternalError(rc.getDsErr());
+            boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+            risposta.setrBoolean(esitoRecupero);
+            if (!esitoRecupero) {
+                throw new ParerInternalError("Errore non gestito nel recupero del file");
             }
-            parametriTrasf.setFileXml(new BOMInputStream(new ByteArrayInputStream(bos.toByteArray())));
+            parametriTrasf.setFileXml(
+                    new BOMInputStream.Builder().setInputStream(new ByteArrayInputStream(bos.toByteArray())).get());
+
             //
             DecTrasformTipoRappr tmpTrasformTipoRappr = entityManager.find(DecTrasformTipoRappr.class,
                     comp.getIdFileTrasform());
-            parametriTrasf.setFileXslt(
-                    new BOMInputStream(new ByteArrayInputStream(tmpTrasformTipoRappr.getBlFileTrasform())));
+            parametriTrasf.setFileXslt(new BOMInputStream.Builder()
+                    .setInputStream(new ByteArrayInputStream(tmpTrasformTipoRappr.getBlFileTrasform())).get());
             //
+
+            ResponseEntity<String> response = null;
+
+            if (comp.getDsFormatoContAtteso().equals("XML.P7M")) {
+
+                // headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+                headers.setAccept(Arrays.asList(MediaType.APPLICATION_XML));
+                // body
+                File xmlp7m = File.createTempFile("xmlp7m_", ".xml.p7m",
+                        new File(System.getProperty("java.io.tmpdir")));
+                MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+                FileUtils.copyInputStreamToFile(parametriTrasf.getFileXml(), xmlp7m);
+                body.add("xml-p7m", new FileSystemResource(xmlp7m));
+
+                HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+                String serverUrl = cryptoRestConfiguratorHelper.endPoints().get(0) + P7MEXTRACTOR_CONTEXT;
+
+                RestTemplate restTemplate = new RestTemplate();
+                HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+                int timeout = 300000;
+                clientHttpRequestFactory.setReadTimeout(timeout);
+                clientHttpRequestFactory.setConnectTimeout(timeout);
+                clientHttpRequestFactory.setConnectionRequestTimeout(timeout);
+
+                restTemplate.setRequestFactory(clientHttpRequestFactory);
+                response = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
+                parametriTrasf.setFileXml(new ByteArrayInputStream(response.getBody().getBytes()));
+                // parametriTrasf.getFileXml().reset();
+            }
+
             parametriTrasf.setFileXmlOut(out);
             //
             RispostaControlli rispostaControlli = iTransformer.convertiSuStream(parametriTrasf);

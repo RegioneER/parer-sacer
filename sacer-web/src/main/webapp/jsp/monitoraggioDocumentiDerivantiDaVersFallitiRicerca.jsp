@@ -13,7 +13,7 @@
             <!--    Bottoni per custom MessageBox in caso javascript sia disabilitato -->
             <sl:newLine skipLine="true"/>
 
-            <sl:contentTitle title="Lista versamenti annullati unità documentarie"/>
+            <sl:contentTitle title="Lista unità documentarie derivanti da versamenti falliti"/>
             <slf:fieldBarDetailTag name="<%= MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.NAME%>" hideOperationButton="true"/>
 
             <slf:tab  name="<%= MonitoraggioForm.FiltriListaDocumentiDerivantiVersFallitiTabs.NAME%>" tabElement="FiltriGeneraliDerivanti">
@@ -27,6 +27,16 @@
                     <sl:newLine />
                     <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.TIPO_LISTA%>" colSpan="2" />
                     <sl:newLine />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.GIORNO_FIRST_VERS_DA%>" colSpan="1" />
+                    <slf:doubleLblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.ORE_FIRST_VERS_DA%>" name2="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.MINUTI_FIRST_VERS_DA%>" controlWidth="w15" controlWidth2="w15" colSpan="1" />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.GIORNO_FIRST_VERS_A%>" colSpan="1" />
+                    <slf:doubleLblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.ORE_FIRST_VERS_A%>" name2="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.MINUTI_FIRST_VERS_A%>" controlWidth="w15" controlWidth2="w15" colSpan="1" />
+                    <sl:newLine />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.GIORNO_LAST_VERS_DA%>" colSpan="1" />
+                    <slf:doubleLblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.ORE_LAST_VERS_DA%>" name2="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.MINUTI_LAST_VERS_DA%>" controlWidth="w15" controlWidth2="w15" colSpan="1" />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.GIORNO_LAST_VERS_A%>" colSpan="1" />
+                    <slf:doubleLblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.ORE_LAST_VERS_A%>" name2="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.MINUTI_LAST_VERS_A%>" controlWidth="w15" controlWidth2="w15" colSpan="1" />
+                    <sl:newLine />
                     <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.FL_VERIF%>" colSpan="2" />
                     <sl:newLine />
                     <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.FL_NON_RISOLUB%>" colSpan="2" />
@@ -35,13 +45,14 @@
                     <sl:newLine />
                     <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.SOTTOCLASSE_ERRORE%>" colSpan="4" />
                     <sl:newLine />
-                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.CODICE_ERRORE%>" colSpan="4" />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.CODICE_ERRORE%>" colSpan="4" />                    
                     <sl:newLine />
                 </slf:fieldSet>
 
                 <sl:pulsantiera>
-                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.RICERCA_DOCUMENTI_DERIVANTI_DA_VERS_FALLITI%>" colSpan="2" />
-                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.VERIFICA_VERSAMENTI_FALLITI%>" colSpan="2" />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.RICERCA_DOCUMENTI_DERIVANTI_DA_VERS_FALLITI%>" colSpan="3" />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.VERIFICA_VERSAMENTI_FALLITI%>" colSpan="3" />
+                    <slf:lblField name="<%=MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti.DOWNLOAD_CONTENUTO%>" colSpan="3" />
 
                 </sl:pulsantiera>
                 <sl:newLine skipLine="true" />

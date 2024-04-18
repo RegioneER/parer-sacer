@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
@@ -23,7 +40,9 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,21 +250,30 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
             BigDecimal idEnte = monitSintEjb.getEnte(idStruttura);
             BigDecimal idAmbiente = monitSintEjb.getAmbiente(idEnte);
 
+            System.out.println("Inizio calcolo ambienti abilitati");
+
             // Inizializzo le combo settando la struttura corrente
             // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             OrgAmbienteTableBean tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
 
+            System.out.println("Fine calcolo ambienti abilitati");
+            System.out.println("Inizio calcolo enti abilitati");
             // Ricavo i valori della combo ENTE
             OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(),
                     idAmbiente.longValue(), Boolean.TRUE);
 
+            System.out.println("Fine calcolo enti abilitati");
+            System.out.println("Inizio calcolo strutture abilitate");
             // Ricavo i valori della combo STRUTTURA
             OrgStrutTableBean tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
                     Boolean.TRUE);
-
+            System.out.println("Fine calcolo strutture abilitate");
+            System.out.println("Inizio calcolo tipi ud abilitate");
             // Ricavo i valori della combo TIPO UNITA' DOC.
             DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(getUser().getIdUtente(),
                     idStruttura);
+
+            System.out.println("Fine calcolo tipi ud abilitate");
 
             getForm().getRiepilogoVersamentiSintetico().getId_ambiente()
                     .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente"));
@@ -346,6 +374,59 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
         getForm().getUnitaDocDaVersFalliti().copyFromBean(formMap.get(getForm().getUnitaDocDaVersFalliti().getName()));
         getForm().getDocDaVersFalliti().copyFromBean(formMap.get(getForm().getDocDaVersFalliti().getName()));
         getForm().getUnitaDocAnnul().copyFromBean(formMap.get(getForm().getUnitaDocAnnul().getName()));
+    }
+
+    public void listaDocumentiDaMenu() throws EMFError {
+        try {
+            getUser().getMenu().reset();
+            getUser().getMenu().select("Menu.Monitoraggio.ListaDocumenti");
+
+            // Resetto tutti i campi di riepilogo versamenti (filtri e totali)
+            getForm().getRiepilogoVersamentiSintetico().reset();
+            getSession().removeAttribute(WebConstants.PARAMETER_SESSION_GET_CNT);
+            getSession().setAttribute("hideBackButton", true);
+
+            // Ricavo id struttura, ente ed ambiente attuali
+            BigDecimal idStruttura = getUser().getIdOrganizzazioneFoglia();
+            BigDecimal idEnte = monitSintEjb.getEnte(idStruttura);
+            BigDecimal idAmbiente = monitSintEjb.getAmbiente(idEnte);
+
+            // Inizializzo le combo settando la struttura corrente
+            // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
+            OrgAmbienteTableBean tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
+
+            // Ricavo i valori della combo ENTE
+            OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(),
+                    idAmbiente.longValue(), Boolean.TRUE);
+
+            // Ricavo i valori della combo STRUTTURA
+            OrgStrutTableBean tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
+                    Boolean.TRUE);
+
+            // Ricavo i valori della combo TIPO UNITA' DOC.
+            DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(getUser().getIdUtente(),
+                    idStruttura);
+
+            getForm().getRiepilogoVersamentiSintetico().getId_ambiente()
+                    .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente"));
+            getForm().getRiepilogoVersamentiSintetico().getId_ente()
+                    .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
+            getForm().getRiepilogoVersamentiSintetico().getId_strut()
+                    .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStruttura, "id_strut", "nm_strut"));
+            getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().setDecodeMap(
+                    DecodeMap.Factory.newInstance(tmpTableBeanTUD, "id_tipo_unita_doc", "nm_tipo_unita_doc"));
+
+            getForm().getRiepilogoVersamentiSintetico().getId_ambiente().setValue(idAmbiente.toString());
+            getForm().getRiepilogoVersamentiSintetico().getId_ente().setValue(idEnte.toString());
+            getForm().getRiepilogoVersamentiSintetico().getId_strut().setValue(idStruttura.toString());
+            // Imposto le combo in editMode
+            getForm().getRiepilogoVersamentiSintetico().setEditMode();
+            getForm().getCalcolaTotaliButtonList().setEditMode();
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore inatteso nel caricamento della pagina");
+        }
+
+        listaDocumenti();
     }
 
     /**
@@ -514,7 +595,7 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
     }
 
     /**
-     * Metodo che esegue una redirectToAction a Monitoraggio - lista unitÃ  doc / documenti derivanti da versamenti
+     * Metodo che esegue una redirectToAction a Monitoraggio - lista unitÃ doc / documenti derivanti da versamenti
      * falliti in base ai parametri selezionati
      * 
      * @throws EMFError

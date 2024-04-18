@@ -1,8 +1,44 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.job.helper;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.LogJob;
 import it.eng.parer.entity.OrgStrut;
@@ -13,22 +49,6 @@ import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.ejb.ControlliSemantici;
 import it.eng.parer.ws.ejb.ControlliTpi;
 import it.eng.parer.ws.utils.CostantiDB;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -38,6 +58,7 @@ import org.slf4j.LoggerFactory;
 @LocalBean
 public class JobHelper implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     Logger log = LoggerFactory.getLogger(JobHelper.class);
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
@@ -49,7 +70,7 @@ public class JobHelper implements Serializable {
     private AppServerInstance appServerInstance;
 
     public LogJob writeLogJob(String job, String opType, String descr, Long idStrut, Long idRecord,
-            String nmTabellaRecord) {
+            String nmTabellaRecord, String appServerInstanceName) {
         Date date = new Date();
         LogJob newLogJob = new LogJob();
         newLogJob.setDtRegLogJob(date);
@@ -67,11 +88,16 @@ public class JobHelper implements Serializable {
             newLogJob.setIdRecord(new BigDecimal(idRecord));
             newLogJob.setNmEntityRecord(nmTabellaRecord);
         }
-        newLogJob.setCdIndServer(appServerInstance.getName());
+        newLogJob.setCdIndServer(appServerInstanceName);
 
         LogJob logJob = entityManager.merge(newLogJob);
         entityManager.flush();
         return logJob;
+    }
+
+    public LogJob writeLogJob(String job, String opType, String descr, Long idStrut, Long idRecord,
+            String nmTabellaRecord) {
+        return writeLogJob(job, opType, descr, idStrut, idRecord, nmTabellaRecord, appServerInstance.getName());
     }
 
     public LogJob writeLogJob(String job, String opType, String descr, Long idRecord, String nmTabellaRecord) {
@@ -114,10 +140,6 @@ public class JobHelper implements Serializable {
         /*
          * NOTA DI FF: il parametro appl è completamente inutile
          */
-        // javax.persistence.Query query = entityManager.createQuery("SELECT applic.idApplic FROM AplApplic applic WHERE
-        // applic.nmApplic = :applic");
-        // query.setParameter("applic", appl);
-        // Long idApplic = (Long) query.getSingleResult();
         RispostaControlli risp = controlli.caricaDefaultDaDBParametriApplic(CostantiDB.TipoParametroAppl.TPI);
         if (risp.isrBoolean()) {
             Map<String, String> map = (Map<String, String>) risp.getrObject();
@@ -150,5 +172,4 @@ public class JobHelper implements Serializable {
 
         return data;
     }
-
 }

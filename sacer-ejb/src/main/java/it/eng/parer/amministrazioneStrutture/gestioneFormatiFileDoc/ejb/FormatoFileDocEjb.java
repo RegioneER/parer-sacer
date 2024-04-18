@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb;
 
 import java.lang.reflect.InvocationTargetException;
@@ -23,11 +40,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.helper.FormatoFileDocHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard.ejb.FormatoFileStandardEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard.helper.FormatoFileStandardHelper;
 import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.DecEstensioneFile;
+import it.eng.parer.entity.DecFormatoFileAmmesso;
 import it.eng.parer.entity.DecFormatoFileDoc;
 import it.eng.parer.entity.DecFormatoFileStandard;
+import it.eng.parer.entity.DecTipoCompDoc;
+import it.eng.parer.entity.DecTipoStrutDoc;
 import it.eng.parer.entity.DecUsoFormatoFileStandard;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.exception.ParerUserError;
@@ -42,6 +63,9 @@ import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecFormatoFileStandardTableBean;
 import it.eng.parer.slite.gen.tablebean.DecUsoFormatoFileStandardRowBean;
 import it.eng.parer.web.util.Transform;
+import java.sql.Timestamp;
+import java.util.HashSet;
+import org.apache.commons.collections4.ListUtils;
 
 /**
  * EJB di gestione dei formati file doc
@@ -61,6 +85,7 @@ public class FormatoFileDocEjb {
     private SessionContext context;
     @EJB
     private FormatoFileDocHelper helper;
+    //
     @EJB
     private FormatoFileStandardHelper formatoFileStandardHelper;
     @EJB
@@ -274,6 +299,95 @@ public class FormatoFileDocEjb {
         }
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void addFormatoFileDocTipoComp(LogParam param, DecFormatoFileDocRowBean formato,
+            DecFormatoFileStandardTableBean decFormatoFileStandardTableBean, Boolean duplica, BigDecimal idTipoCompDoc)
+            throws ParerUserError {
+        DecFormatoFileDoc formatoFileDocDB = null;
+        // Controllo di poter inserire il record: sia che sia un nuovo inserimento (insert o duplica), sia che sia una
+        // modifica
+        if ((formatoFileDocDB = helper.getDecFormatoFileDocByName(formato.getNmFormatoFileDoc(),
+                formato.getIdStrut())) != null) {
+            if (formato.getIdFormatoFileDoc() == null) {
+                throw new ParerUserError("Attenzione: il formato " + formato.getNmFormatoFileDoc()
+                        + " non può essere salvato in quanto già presente");
+            } // modifica (in quanto id presente)
+            else {
+                DecFormatoFileDoc ffd = helper.findById(DecFormatoFileDoc.class, formato.getIdFormatoFileDoc());
+                if (!ffd.getNmFormatoFileDoc().equals(formato.getNmFormatoFileDoc())) {
+                    throw new ParerUserError("Attenzione: il formato " + formato.getNmFormatoFileDoc()
+                            + " non può essere salvato in quanto già presente");
+                }
+            }
+            // }
+        }
+
+        executeModificaFormatoTipoComp(param, formato, decFormatoFileStandardTableBean, duplica, idTipoCompDoc);
+
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void executeModificaFormatoTipoComp(LogParam param, DecFormatoFileDocRowBean formato,
+            DecFormatoFileStandardTableBean decFormatoFileStandardTableBean, Boolean duplica, BigDecimal idTipoCompDoc)
+            throws ParerUserError {
+        try {
+            String[] sNew = formato.getNmFormatoFileDoc().split("[.]");
+
+            // sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+            // param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_FORMATO_AMMESSO,
+            // formato.getIdFormatoFileDoc(), param.getNomePagina());
+            BigDecimal idDecFormatoFileDoc = insertDecFormatoFileDoc(formato);
+            // sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+            // param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_FORMATO_AMMESSO, idDecFormatoFileDoc,
+            // param.getNomePagina());
+            formato.setIdFormatoFileDoc(idDecFormatoFileDoc);
+            if (formato.getIdFormatoFileDoc() != null && duplica != null) {
+                int counter = 0;
+                // Inserisco il formato in DEC_USO
+                String tiEsitoContrFormato = "";
+                for (String row : sNew) {
+                    DecFormatoFileStandard ffs = formatoFileStandardHelper.getDecFormatoFileStandardByName(row);
+                    tiEsitoContrFormato = ffs.getTiEsitoContrFormato();
+                    DecUsoFormatoFileStandardRowBean usoFormato = new DecUsoFormatoFileStandardRowBean();
+                    usoFormato.setIdFormatoFileDoc(formato.getIdFormatoFileDoc());
+                    BigDecimal id = ffs != null ? BigDecimal.valueOf(ffs.getIdFormatoFileStandard()) : null;
+                    usoFormato.setIdFormatoFileStandard(id);
+                    usoFormato.setNiOrdUso(new BigDecimal(++counter));
+                    insertDecUsoFormatoFileStandard(usoFormato);
+                } //
+                  //
+                  // Inserisco il record in DEC_FORMATO_FILE_AMMESSO se ho il flag settato in automatico
+                  // per ogni tipo componente della struttura
+                OrgStrut strut = helper.findById(OrgStrut.class, formato.getIdStrut().longValue());
+                for (DecTipoStrutDoc tipoStrutDoc : strut.getDecTipoStrutDocs()) {
+                    for (DecTipoCompDoc tipoCompDoc : tipoStrutDoc.getDecTipoCompDocs()) {
+
+                        // DecTipoCompDoc tipoCompDoc = helper.findById(DecTipoCompDoc.class, idTipoCompDoc);
+                        if (tiEsitoContrFormato.equals("GESTITO") && tipoCompDoc.getFlGestiti().equals("1")
+                                || tiEsitoContrFormato.equals("IDONEO") && tipoCompDoc.getFlIdonei().equals("1")
+                                || tiEsitoContrFormato.equals("DEPRECATO")
+                                        && tipoCompDoc.getFlDeprecati().equals("1")) {
+                            if (formatoFileStandardHelper.getDecFormatoFileAmmesso(
+                                    formato.getIdFormatoFileDoc().longValue(), idTipoCompDoc.longValue()) == null) {
+                                DecFormatoFileAmmesso formatoFileAmmesso = new DecFormatoFileAmmesso();
+                                DecFormatoFileDoc formatoFileDoc = helper.findById(DecFormatoFileDoc.class,
+                                        formato.getIdFormatoFileDoc());
+                                formatoFileAmmesso.setDecFormatoFileDoc(formatoFileDoc);
+                                formatoFileAmmesso.setDecTipoCompDoc(tipoCompDoc);
+                                helper.getEntityManager().persist(formatoFileAmmesso);
+                                helper.getEntityManager().flush();
+                            }
+                        }
+                    }
+
+                }
+            }
+        } catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+            throw new ParerUserError("Errore nel salvataggio del formato file doc: " + ex.getMessage());
+        }
+    }
+
     private BigDecimal insertDecFormatoFileDoc(DecFormatoFileDocRowBean formatoFileDocRowBean) {
 
         DecFormatoFileDoc formatoFileDoc = new DecFormatoFileDoc();
@@ -370,53 +484,31 @@ public class FormatoFileDocEjb {
                 BigDecimal.valueOf(idFormatoFileDoc), param.getNomePagina());
     }
 
-    public DecFormatoFileDocTableBean getDecFormatoFileAmmessoTableBean(BigDecimal idTipoCompDoc) {
-        DecFormatoFileDocTableBean formatoTableBean = new DecFormatoFileDocTableBean();
-        List<Object[]> formati = helper.getDecFormatoFileAmmessoList(idTipoCompDoc);
-        try {
-            if (!formati.isEmpty()) {
-                DecFormatoFileDocRowBean formatoRB;
+    public DecFormatoFileDocTableBean getDecFormatoFileAmmessoTableBean(BigDecimal idTipoCompDoc) {//
+        DecFormatoFileDocTableBean formatoTableBean = new DecFormatoFileDocTableBean();//
+        /* Recupera i FORMATI del tipo componente */
+        List<Object[]> formati = helper.selectFormatiAmmessi(idTipoCompDoc);//
+        try {//
+            if (!formati.isEmpty()) {// formati
+                DecFormatoFileDocRowBean formatoRB = new DecFormatoFileDocRowBean();
                 for (Object[] formato : formati) {
-                    formatoRB = (DecFormatoFileDocRowBean) Transform.entity2RowBean(formato[1]);
-                    formatoRB.setBigDecimal("id_formato_file_ammesso", new BigDecimal((Long) formato[0]));
-
-                    if (formatoRB.getDtIstituz().before(new Date()) && formatoRB.getDtSoppres().after(new Date())) {
-                        formatoRB.setObject("fl_attivo", "1");
-                    } else {
-                        formatoRB.setObject("fl_attivo", "0");
-                    }
-
-                    // Aggiunto il mimetype
-                    List<DecUsoFormatoFileStandard> usi = ((DecFormatoFileDoc) formato[1])
-                            .getDecUsoFormatoFileStandards();
-
-                    String nmFormatoFileStandard = "";
-                    boolean putComma = false;
-                    for (DecUsoFormatoFileStandard uso : usi) {
-                        if (putComma) {
-                            nmFormatoFileStandard = nmFormatoFileStandard + ", ";
-                        }
-                        nmFormatoFileStandard = nmFormatoFileStandard
-                                + uso.getDecFormatoFileStandard().getNmFormatoFileStandard();
-                        putComma = true;
-                        formatoRB.setString("ti_esito_contr_formato",
-                                uso.getDecFormatoFileStandard().getTiEsitoContrFormato());
-                        if (uso.getDecFormatoFileStandard().getFlFormatoConcat().equals("0")) {
-                            formatoRB.setString("nm_mimetype_file",
-                                    uso.getDecFormatoFileStandard().getNmMimetypeFile());
-                        }
-                    }
-                    formatoRB.setString("nm_formato_file_standard", nmFormatoFileStandard);
-
+                    formatoRB.setBigDecimal("id_formato_file_ammesso", (BigDecimal) formato[0]);
+                    formatoRB.setString("nm_formato_file_doc", (String) formato[1]);
+                    formatoRB.setString("nm_mimetype_file", (String) formato[2]);
+                    formatoRB.setString("nm_formato_file_standard", (String) formato[6]);
+                    formatoRB.setString("ds_formato_file_doc", (String) formato[3]);
+                    formatoRB.setString("ti_esito_contr_formato", (String) formato[4]);
+                    formatoRB.setString("fl_attivo", ((Character) formato[5]).toString());
+                    formatoRB.setString("cd_versione", (String) formato[7]);
+                    formatoRB.setTimestamp("dt_istituz", new Timestamp(((Date) formato[8]).getTime()));
+                    formatoRB.setTimestamp("dt_soppres", new Timestamp(((Date) formato[9]).getTime()));
                     formatoTableBean.add(formatoRB);
                 }
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
         }
-        formatoTableBean.addSortingRule("nm_mimetype_file");
-        formatoTableBean.sort();
-        return formatoTableBean;
+        return formatoTableBean;// formatoTableBean
     }
 
     public DecFormatoFileDocTableBean getDecFormatoFileAmmessoNotInList(Set<String> list, BigDecimal idStrut) {
@@ -454,7 +546,70 @@ public class FormatoFileDocEjb {
             logger.error(e.getMessage(), e);
         }
         return formatoTableBean;
-    }
+    }//
+
+    // public DecFormatoFileDocTableBean getDecFormatoFileAmmessoNotInList(BigDecimal idTipoCompDoc, BigDecimal idStrut,
+    // String flGestiti, String flIdonei, String flDeprecati) {
+    // DecFormatoFileDocTableBean formatoTableBean = new DecFormatoFileDocTableBean();//
+    // /* Recupera i FORMATI del tipo componente */
+    // List<Object[]> formati = helper.getFormatiAmmissibiliDaAggiungere(idTipoCompDoc, idStrut);//
+    // try {//
+    // if (!formati.isEmpty()) {// formati
+    // DecFormatoFileDocRowBean formatoRB = new DecFormatoFileDocRowBean();
+    // for (Object[] formato : formati) {
+    // formatoRB.setBigDecimal("id_strut", (BigDecimal) formato[0]);
+    // formatoRB.setBigDecimal("id_formato_file_doc", (BigDecimal) formato[1]);
+    // formatoRB.setString("nm_formato_file_doc", (String) formato[2]);
+    // formatoRB.setString("nm_mimetype_file", (String) formato[3]);
+    // formatoRB.setString("nm_formato_file_standard", (String) formato[7]);
+    // formatoRB.setString("ds_formato_file_doc", (String) formato[4]);
+    // formatoRB.setString("ti_esito_contr_formato", (String) formato[5]);
+    // formatoRB.setString("fl_attivo", ((Character) formato[6]).toString());
+    // formatoRB.setString("cd_versione", (String) formato[8]);
+    // formatoRB.setTimestamp("dt_istituz", new Timestamp(((Date) formato[9]).getTime()));
+    // formatoRB.setTimestamp("dt_soppres", new Timestamp(((Date) formato[10]).getTime()));
+    // formatoTableBean.add(formatoRB);
+    // }
+    // }
+    // } catch (Exception e) {
+    // logger.error(e.getMessage(), e);
+    // }
+    // return formatoTableBean;// formatoTableBean
+    //
+    // }//
+
+    public DecFormatoFileDocTableBean getDecFormatoFileAmmessoNotInList(BigDecimal idTipoCompDoc, BigDecimal idStrut,
+            String flGestiti, String flIdonei, String flDeprecati, String nome, String mimetype,
+            Set<String> recordPresentiListaAmmessi) {
+        DecFormatoFileDocTableBean formatoTableBean = new DecFormatoFileDocTableBean();//
+        /* Recupera i FORMATI del tipo componente */
+        List<Object[]> formati = helper.getFormatiAmmissibiliDaAggiungere(idTipoCompDoc, idStrut, nome, mimetype);//
+        try {//
+            if (!formati.isEmpty()) {// formati
+                DecFormatoFileDocRowBean formatoRB = new DecFormatoFileDocRowBean();
+                for (Object[] formato : formati) {
+                    if (!recordPresentiListaAmmessi.contains((String) formato[2])) {
+                        formatoRB.setBigDecimal("id_strut", (BigDecimal) formato[0]);
+                        formatoRB.setBigDecimal("id_formato_file_doc", (BigDecimal) formato[1]);
+                        formatoRB.setString("nm_formato_file_doc", (String) formato[2]);
+                        formatoRB.setString("nm_mimetype_file", (String) formato[3]);
+                        formatoRB.setString("nm_formato_file_standard", (String) formato[7]);
+                        formatoRB.setString("ds_formato_file_doc", (String) formato[4]);
+                        formatoRB.setString("ti_esito_contr_formato", (String) formato[5]);
+                        formatoRB.setString("fl_attivo", ((Character) formato[6]).toString());
+                        formatoRB.setString("cd_versione", (String) formato[8]);
+                        formatoRB.setTimestamp("dt_istituz", new Timestamp(((Date) formato[9]).getTime()));
+                        formatoRB.setTimestamp("dt_soppres", new Timestamp(((Date) formato[10]).getTime()));
+                        formatoTableBean.add(formatoRB);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return formatoTableBean;// formatoTableBean
+
+    }//
 
     /**
      * Elimina i formati passati come parametro di input e restituisce la lista di quelli non eliminati in quanto
@@ -466,7 +621,7 @@ public class FormatoFileDocEjb {
      *            struttura
      * @param formatoFileDocList
      *            formato file (lista elementi)
-     * 
+     *
      * @return resituisce lista di elementi di tipo String
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -556,6 +711,25 @@ public class FormatoFileDocEjb {
                 + " avvenuta con successo!");
     }
 
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public void deleteDecFormatoFileDocSpecifico(LogParam param, long idFormatoFileDoc) throws ParerUserError {
+        DecFormatoFileDoc formatoFileDoc = helper.findById(DecFormatoFileDoc.class, idFormatoFileDoc);
+        String nmFormatoFileDoc = formatoFileDoc.getNmFormatoFileDoc();
+        long idStrut = formatoFileDoc.getOrgStrut().getIdStrut();
+        // Recupero il tipo strut doc
+        // BigDecimal idStru
+
+        helper.removeEntity(formatoFileDoc, true);
+
+        // sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
+        // param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO, new
+        // BigDecimal(idTipoStrutDoc),
+        // param.getNomePagina());
+
+        logger.info("Cancellazione formato specifico " + nmFormatoFileDoc + " della struttura " + idStrut
+                + " avvenuta con successo!");
+    }
+
     public boolean isDecFormatoFileDocInUse(DecFormatoFileDocRowBean formatoFileDocRowBean) {
         return helper
                 .checkRelationsAreEmptyForDecFormatoFileDoc(formatoFileDocRowBean.getIdFormatoFileDoc().longValue());
@@ -576,4 +750,233 @@ public class FormatoFileDocEjb {
         }
         return table;
     }
+    //
+
+    /**
+     * Inserisce (tutti o in parte a seconda di quelli mancanti) i formati per un determinato tipo componente
+     *
+     * @param idTipoCompDoc
+     *            il tipo componente per il quale inserire i formati ammessi gestiti
+     */
+    public void gestisciFormatiAmmessiGestiti(BigDecimal idTipoCompDoc) {
+        DecTipoCompDoc compDoc = helper.findById(DecTipoCompDoc.class, idTipoCompDoc);
+        OrgStrut strut = compDoc.getDecTipoStrutDoc().getOrgStrut();// strut
+        helper.insertFormatiAmmessi(strut.getIdStrut(), idTipoCompDoc, "GESTITO");
+    }
+
+    /**
+     * Inserisce (tutti o in parte a seconda di quelli mancanti) i formati per un determinato tipo componente
+     *
+     * @param idTipoCompDoc
+     *            il tipo componente per il quale inserire i formati ammessi idonei
+     */
+    public void gestisciFormatiAmmessiIdonei(BigDecimal idTipoCompDoc) {
+        DecTipoCompDoc compDoc = helper.findById(DecTipoCompDoc.class, idTipoCompDoc);
+        OrgStrut strut = compDoc.getDecTipoStrutDoc().getOrgStrut();// strut
+        helper.insertFormatiAmmessi(strut.getIdStrut(), idTipoCompDoc, "IDONEO");
+
+    }
+
+    /**
+     * Inserisce (tutti o in parte a seconda di quelli mancanti) i formati per un determinato tipo componente
+     *
+     * @param idTipoCompDoc
+     *            il tipo componente per il quale inserire i formati ammessi deprecati
+     */
+    public void gestisciFormatiAmmessiDeprecati(BigDecimal idTipoCompDoc) {
+        DecTipoCompDoc compDoc = helper.findById(DecTipoCompDoc.class, idTipoCompDoc);
+        OrgStrut strut = compDoc.getDecTipoStrutDoc().getOrgStrut();// strut
+        helper.insertFormatiAmmessi(strut.getIdStrut(), idTipoCompDoc, "DEPRECATO");
+
+    }
+
+    public void gestisciFormatiAmmessi(BigDecimal idTipoCompDoc, String flGestiti, String flIdonei,
+            String flDeprecati) {
+        DecTipoCompDoc compDoc = helper.findById(DecTipoCompDoc.class, idTipoCompDoc);
+        OrgStrut strut = compDoc.getDecTipoStrutDoc().getOrgStrut();// strut
+
+        if (flGestiti.equals("1")) {
+            helper.insertFormatiAmmessi(strut.getIdStrut(), idTipoCompDoc, "GESTITO");
+        }
+        if (flIdonei.equals("1")) {
+            helper.insertFormatiAmmessi(strut.getIdStrut(), idTipoCompDoc, "IDONEO");
+        }
+        if (flDeprecati.equals("1")) {
+            helper.insertFormatiAmmessi(strut.getIdStrut(), idTipoCompDoc, "DEPRECATO");
+        }
+
+    }
+
+    public void inserisciFormatiAmmessiSulTipoComponente(DecFormatoFileDoc formatoFileDoc, BigDecimal idTipoCompDoc,
+            String nmStrut, DecTipoCompDoc compDoc, String tipoFormato) {
+        /* Se il formato NON è già presente, lo inserisco */
+        if (formatoFileStandardHelper.getDecFormatoFileAmmesso(formatoFileDoc.getIdFormatoFileDoc(),
+                idTipoCompDoc.longValue()) == null) {
+            // logger.info("Inserisco il formato file ammesso " + formatoFileDoc.getNmFormatoFileDoc()
+            // + " per la struttura " + nmStrut + " nel gruppo dei formati " + tipoFormato
+            // + " del tipo componente " + compDoc.getNmTipoCompDoc());
+            DecFormatoFileAmmesso formatoFileAmmessoNew = new DecFormatoFileAmmesso();
+            formatoFileAmmessoNew.setDecFormatoFileDoc(formatoFileDoc);
+            formatoFileAmmessoNew.setDecTipoCompDoc(compDoc);
+            helper.getEntityManager().persist(formatoFileAmmessoNew);
+            helper.getEntityManager().flush();
+        }
+    }
+
+    public void eliminaFormatiAmmessiGestiti(BigDecimal idTipoCompDoc) {
+        helper.deleteFormatiAmmessi(idTipoCompDoc, "GESTITO");
+    }
+
+    public void eliminaFormatiAmmessiIdonei(BigDecimal idTipoCompDoc) {
+        helper.deleteFormatiAmmessi(idTipoCompDoc, "IDONEO");
+    }
+
+    public void eliminaFormatiAmmessiDeprecati(BigDecimal idTipoCompDoc) {
+        helper.deleteFormatiAmmessi(idTipoCompDoc, "DEPRECATO");
+    }
+
+    public boolean isFormatoAmmesso(String nmFormatoFileStandard) {
+        return helper.isFormatoAmmesso(nmFormatoFileStandard);
+    }
+
+    public void deleteFormatoFileDoc(String nmFormatoFileStandard) {
+        helper.deleteFormatoFileDoc(nmFormatoFileStandard);
+    }
+
+    public DecFormatoFileDocTableBean getDecFormatoFileDocPersonalizzati(BigDecimal idStrut) {
+        List<DecFormatoFileDoc> list = helper.getDecFormatoFileDocPersonalizzati(idStrut);
+        DecFormatoFileDocTableBean table = new DecFormatoFileDocTableBean();
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (DecFormatoFileDocTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException ex) {
+                logger.error("Errore inatteso nel recupero dei formati per la struttura "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalArgumentException("Errore inatteso nel recupero dei formati per la struttura");
+            }
+        }
+        return table;
+    }
+
+    public DecFormatoFileDocTableBean getDecFormatoFileDocPersonalizzati2(BigDecimal idStrut) {
+        List<Object[]> list = helper.getDecFormatoFileDocPersonalizzati2(idStrut);
+        DecFormatoFileDocTableBean table = new DecFormatoFileDocTableBean();
+
+        try {
+            for (Object[] formato : list) {
+                DecFormatoFileDocRowBean row = new DecFormatoFileDocRowBean();
+                row.setIdFormatoFileDoc(BigDecimal.valueOf((Long) formato[0]));
+                row.setNmFormatoFileDoc((String) formato[1]);
+                row.setString("nm_mimetype_file", (String) formato[2]);
+                row.setString("nm_formato_file_standard", (String) formato[3]);
+                row.setDsFormatoFileDoc((String) formato[4]);
+                row.setString("ti_esito_contr_formato", (String) formato[5]);
+                table.add(row);
+            }
+        } catch (Exception e) {
+            logger.error("Errore inatteso nel recupero dei formati per la struttura "
+                    + ExceptionUtils.getRootCauseMessage(e), e);
+            throw new IllegalArgumentException("Errore inatteso nel recupero dei formati per la struttura");
+        }
+        return table;
+    }
+
+    public DecFormatoFileDocTableBean getDecFormatoFileDocSpecifici(BigDecimal idStrut) {
+        List<DecFormatoFileDoc> list = helper.getDecFormatoFileDocPersonalizzati3(idStrut);
+        DecFormatoFileDocTableBean table = new DecFormatoFileDocTableBean();
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (DecFormatoFileDocTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException ex) {
+                logger.error("Errore inatteso nel recupero dei formati per la struttura "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalArgumentException("Errore inatteso nel recupero dei formati per la struttura");
+            }
+        }
+
+        for (DecFormatoFileDocRowBean row : table) {
+            String[] nmFormati = row.getNmFormatoFileDoc().split("[.]");
+            String nmFormatoFileStandard = "";
+            for (String nmFormato : nmFormati) {
+                nmFormatoFileStandard = nmFormatoFileStandard + ", " + nmFormato;
+            }
+            nmFormatoFileStandard = nmFormatoFileStandard.substring(1, nmFormatoFileStandard.length());
+            DecFormatoFileStandard std = formatoFileStandardHelper
+                    .getDecFormatoFileStandardByName(nmFormati[nmFormati.length - 1]);
+            row.setString("nm_mimetype_file", std.getNmMimetypeFile());
+            row.setString("nm_formato_file_standard", nmFormatoFileStandard);
+            row.setString("ti_esito_contr_formato", std.getTiEsitoContrFormato());
+        }
+
+        return table;
+    }
+
+    public DecFormatoFileDocTableBean getDecFormatoFileDocPersonalizzati3TipoComp(BigDecimal idStrut,
+            BigDecimal idTipoCompDoc) {
+        List<DecFormatoFileDoc> list = helper.getDecFormatoFileDocPersonalizzatiTipoComp(idStrut, idTipoCompDoc);
+        DecFormatoFileDocTableBean table = new DecFormatoFileDocTableBean();
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (DecFormatoFileDocTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException ex) {
+                logger.error("Errore inatteso nel recupero dei formati per la struttura "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalArgumentException("Errore inatteso nel recupero dei formati per la struttura");
+            }
+        }
+
+        for (DecFormatoFileDocRowBean row : table) {
+            String[] nmFormati = row.getNmFormatoFileDoc().split("[.]");
+            DecFormatoFileStandard std = formatoFileStandardHelper.getDecFormatoFileStandardByName(nmFormati[0]);
+            row.setString("nm_mimetype_file", std.getNmMimetypeFile());
+            row.setString("nm_formato_file_standard", std.getNmFormatoFileStandard());
+            row.setString("ti_esito_contr_formato", std.getTiEsitoContrFormato());
+        }
+
+        return table;
+    }
+
+    public DecFormatoFileDocTableBean getDecFormatoFileDocPersonalizzatiTipoComp(BigDecimal idStrut,
+            BigDecimal idTipoCompDoc) {
+        List<DecFormatoFileDoc> list = helper.getDecFormatoFileDocPersonalizzatiTipoComp(idStrut, idTipoCompDoc);
+        DecFormatoFileDocTableBean table = new DecFormatoFileDocTableBean();
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (DecFormatoFileDocTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException ex) {
+                logger.error("Errore inatteso nel recupero dei formati per il tipo componente "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalArgumentException("Errore inatteso nel recupero dei formati per il tipo componente");
+            }
+        }
+        return table;
+    }
+
+    public List<String> getFormatiFileDocSingoliConcatenabili(BigDecimal idStrut) {
+        List<DecFormatoFileDoc> list = helper.getDecFormatoFileDocListSingoliContenabili(idStrut);
+        DecFormatoFileDocTableBean table = new DecFormatoFileDocTableBean();
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (DecFormatoFileDocTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException ex) {
+                logger.error("Errore inatteso nel recupero dei formati per il tipo componente "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalArgumentException("Errore inatteso nel recupero dei formati per il tipo componente");
+            }
+        }
+
+        List<String> formatiSingoliConcatenabiliAmmessiSullaStruttura = new ArrayList<>();
+
+        for (DecFormatoFileDocRowBean rb : table) {
+            formatiSingoliConcatenabiliAmmessiSullaStruttura.add(rb.getNmFormatoFileDoc());
+        }
+
+        return formatiSingoliConcatenabiliAmmessiSullaStruttura;
+    }
+
 }

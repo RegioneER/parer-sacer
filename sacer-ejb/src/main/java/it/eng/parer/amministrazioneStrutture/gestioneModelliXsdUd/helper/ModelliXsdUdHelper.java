@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneModelliXsdUd.helper;
 
 import java.math.BigDecimal;
@@ -43,28 +60,6 @@ public class ModelliXsdUdHelper extends GenericHelper {
     }
 
     /**
-     * Restituisce una lista di modelli xsd
-     * 
-     * @param idTiEntita
-     *            id entità
-     * @param tiEntitaSacer
-     *            tipi entità
-     * @param tiUsoModello
-     *            VERS / MIGRAZ
-     * @param cdXsd
-     *            versione modello
-     * @param filterValid
-     *            se valido o meno
-     * 
-     * @return modello xsd
-     */
-    public List retrieveDecModelliXsdUdDetailByTiEntitaInUso(BigDecimal idTiEntita, TipiEntitaSacer tiEntitaSacer,
-            String tiUsoModello, String cdXsd, boolean filterValid) {
-        return retrieveDecUsoModelloXsdUdListByTiEntitaInUso(null, idTiEntita, tiEntitaSacer, tiUsoModello, cdXsd,
-                StringUtils.EMPTY, filterValid);
-    }
-
-    /**
      * Restiusice l'uso del modello
      * 
      * @param idModelloXsdUd
@@ -80,7 +75,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
      * @param flStandard
      *            true = standard / false = altrimenti
      * @param filterValid
-     *            se valido (opzionale)
+     *            se valido (opzionale)\
      * 
      * @return lista uso del modello
      */
@@ -90,15 +85,22 @@ public class ModelliXsdUdHelper extends GenericHelper {
         //
         queryStr.append("select uso ");
 
-        if (tiEntitaSacer.equals(TipiEntitaSacer.UNI_DOC)) {
-            queryStr.append("from DecUsoModelloXsdUniDoc uso ");
-            queryStr.append("where uso.decTipoUnitaDoc.idTipoUnitaDoc = :idTiEntita ");
-        } else if (tiEntitaSacer.equals(TipiEntitaSacer.DOC)) {
-            queryStr.append("from DecUsoModelloXsdDoc uso ");
-            queryStr.append("where uso.decTipoDoc.idTipoDoc = :idTiEntita ");
-        } else if (tiEntitaSacer.equals(TipiEntitaSacer.COMP) || tiEntitaSacer.equals(TipiEntitaSacer.SUB_COMP)) {
-            queryStr.append("from DecUsoModelloXsdCompDoc uso ");
-            queryStr.append("where uso.decTipoCompDoc.idTipoCompDoc = :idTiEntita ");
+        switch (tiEntitaSacer) {
+        case UNI_DOC:
+            queryStr.append(" from DecUsoModelloXsdUniDoc uso ");
+            queryStr.append(" where uso.decTipoUnitaDoc.idTipoUnitaDoc = :idTiEntita ");
+            break;
+        case DOC:
+            queryStr.append(" from DecUsoModelloXsdDoc uso ");
+            queryStr.append(" where uso.decTipoDoc.idTipoDoc = :idTiEntita ");
+            break;
+        case COMP:
+        case SUB_COMP:
+            queryStr.append(" from DecUsoModelloXsdCompDoc uso ");
+            queryStr.append(" where uso.decTipoCompDoc.idTipoCompDoc = :idTiEntita ");
+            break;
+        default:
+            throw new IllegalArgumentException("Il tipo " + tiEntitaSacer.name() + " non è gestito");
         }
         //
         if (idModelloXsdUd != null) {
@@ -119,7 +121,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idModelloXsdUd != null) {
-            query.setParameter("idModelloXsdUd", idModelloXsdUd);
+            query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
         }
         if (StringUtils.isNotBlank(cdXsd)) {
             query.setParameter("cdXsd", cdXsd);
@@ -132,7 +134,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
         }
 
         // mandatory
-        query.setParameter("idTiEntita", idTiEntita);
+        query.setParameter("idTiEntita", longFromBigDecimal(idTiEntita));
         query.setParameter("tiUsoModelloXsd", tiUsoModello);
 
         return query.getResultList();
@@ -241,7 +243,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
         }
 
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idAmbiente", idAmbiente);
+        query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         if (StringUtils.isNotBlank(tiModelloXsd)) {
             query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
         }
@@ -277,26 +279,33 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
         queryStr.append("select uso.decModelloXsdUd ");
 
-        if (tiEntitaSacer.equals(TipiEntitaSacer.UNI_DOC)) {
+        switch (tiEntitaSacer) {
+        case UNI_DOC:
             queryStr.append("from DecUsoModelloXsdUniDoc uso ");
             queryStr.append("where uso.idUsoModelloXsdUniDoc = :idUsoModelloXsdUd ");
             queryStr.append(
                     " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdUniDoc.idUsoModelloXsdUniDoc = uso.idUsoModelloXsdUniDoc and vrs.idStrut = :idStrut) ");
-        } else if (tiEntitaSacer.equals(TipiEntitaSacer.DOC)) {
+            break;
+        case DOC:
             queryStr.append("from DecUsoModelloXsdDoc uso ");
             queryStr.append("where uso.idUsoModelloXsdDoc = :idUsoModelloXsdUd ");
             queryStr.append(
                     " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdDoc.idUsoModelloXsdDoc = uso.idUsoModelloXsdDoc and vrs.idStrut = :idStrut) ");
-        } else if (tiEntitaSacer.equals(TipiEntitaSacer.COMP) || tiEntitaSacer.equals(TipiEntitaSacer.SUB_COMP)) {
+            break;
+        case COMP:
+        case SUB_COMP:
             queryStr.append("from DecUsoModelloXsdCompDoc uso ");
             queryStr.append("where uso.idUsoModelloXsdCompDoc = :idUsoModelloXsdUd ");
             queryStr.append(
                     " AND NOT EXISTS (select vrs from VrsXmlModelloSessioneVers vrs where vrs.decUsoModelloXsdCompDoc.idUsoModelloXsdCompDoc = uso.idUsoModelloXsdCompDoc and vrs.idStrut = :idStrut) ");
+            break;
+        default:
+            throw new IllegalArgumentException("il tipo " + tiEntitaSacer.name() + " non è gestito");
         }
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idStrut", idStrut);
-        query.setParameter("idUsoModelloXsdUd", idUsoModelloXsdUd);
+        query.setParameter("idUsoModelloXsdUd", longFromBigDecimal(idUsoModelloXsdUd));
         List<Object[]> list = query.getResultList();
         result = list.isEmpty();
         return result;
@@ -326,7 +335,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
                 " OR EXISTS (select vrsusocomp from VrsXmlModelloSessioneVers vrsusocomp where vrsusocomp.decUsoModelloXsdCompDoc.decModelloXsdUd.idModelloXsdUd = m.idModelloXsdUd) ");
         queryStr.append(")");
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idModelloXsdUd", idModelloXsdUd);
+        query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
         List<Object[]> list = query.getResultList();
         return list.isEmpty();
     }
@@ -363,7 +372,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
         }
 
         Query query = getEntityManager().createQuery(queryStr.toString());
-        query.setParameter("idModelloXsdUd", idModelloXsdUd);
+        query.setParameter("idModelloXsdUd", longFromBigDecimal(idModelloXsdUd));
         if (filterValid) {
             query.setParameter("filterDate", new Date());
         }
@@ -373,7 +382,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Retituisce la lista dei modelli con filtro applicato
-     * 
+     *
      * @param filtriModelliXsdUd
      *            filtro
      * @param idAmbientiToFind
@@ -382,31 +391,57 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *            tipo uso modello
      * @param filterValid
      *            true = valido / false altrimenti
-     * 
+     *
      * @return lista modelli xsd ud
-     * 
+     *
      * @throws EMFError
      *             eccezione generica
      */
     public List<DecModelloXsdUd> findDecModelliXsdUdList(FiltriModelliXsdUd filtriModelliXsdUd,
             List<BigDecimal> idAmbientiToFind, String tiUsoModelloXsd, boolean filterValid) throws EMFError {
+        return findDecModelliXsdUdList(idAmbientiToFind, tiUsoModelloXsd, filterValid,
+                filtriModelliXsdUd.getCd_xsd().parse(), filtriModelliXsdUd.getDs_xsd().parse(),
+                filtriModelliXsdUd.getFl_default().parse(), filtriModelliXsdUd.getTi_modello_xsd().parse());
+    }
+
+    /**
+     * Retituisce la lista dei modelli con filtro applicato
+     * 
+     * @param idAmbientiToFind
+     *            lista id ambienti
+     * @param tiUsoModelloXsd
+     *            tipo uso modello
+     * @param filterValid
+     *            true = valido / false altrimenti
+     * 
+     * @param cdXsd
+     *            Codice xsd
+     * @param dsXsd
+     *            Descrizione xsd
+     * @param flDefault
+     *            flag default
+     * @param tiModelloXsd
+     *            tipo di modello Xsd
+     * 
+     * @return lista modelli xsd ud
+     *
+     */
+    public List<DecModelloXsdUd> findDecModelliXsdUdList(List<BigDecimal> idAmbientiToFind, String tiUsoModelloXsd,
+            boolean filterValid, String cdXsd, String dsXsd, String flDefault, String tiModelloXsd) {
         StringBuilder queryStr = new StringBuilder("select m FROM DecModelloXsdUd m ");
         String whereClause = " WHERE ";
         if (!idAmbientiToFind.isEmpty()) {
             queryStr.append(whereClause).append("m.orgAmbiente.idAmbiente IN :idAmbientiToFind ");
             whereClause = " AND ";
         }
-        String cdXsd = filtriModelliXsdUd.getCd_xsd().parse();
         if (!StringUtils.isEmpty(cdXsd)) {
             queryStr.append(whereClause).append("UPPER(m.cdXsd) LIKE :cdXsd ");
             whereClause = " AND ";
         }
-        String dsXsd = filtriModelliXsdUd.getDs_xsd().parse();
         if (!StringUtils.isEmpty(dsXsd)) {
             queryStr.append(whereClause).append("UPPER(m.dsXsd) LIKE :dsXsd ");
             whereClause = " AND ";
         }
-        String flDefault = filtriModelliXsdUd.getFl_default().parse();
         if (!StringUtils.isEmpty(flDefault)) {
             queryStr.append(whereClause).append("m.flDefault = :flDefault ");
             whereClause = " AND ";
@@ -415,7 +450,6 @@ public class ModelliXsdUdHelper extends GenericHelper {
             queryStr.append(whereClause).append("m.tiUsoModelloXsd = :tiUsoModelloXsd ");
             whereClause = " AND ";
         }
-        String tiModelloXsd = filtriModelliXsdUd.getTi_modello_xsd().parse();
         if (!StringUtils.isEmpty(tiModelloXsd)) {
             queryStr.append(whereClause).append("m.tiModelloXsd = :tiModelloXsd ");
             whereClause = " AND ";
@@ -427,7 +461,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (!idAmbientiToFind.isEmpty()) {
-            query.setParameter("idAmbientiToFind", idAmbientiToFind);
+            query.setParameter("idAmbientiToFind", longListFrom(idAmbientiToFind));
         }
 
         if (!StringUtils.isEmpty(cdXsd)) {

@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -18,6 +35,7 @@ import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recuperoTpi.dto.DatiSessioneRecupero;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -40,6 +58,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Fioravanti_F
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ControlliRecTpi")
 @LocalBean
 public class ControlliRecTpi {
@@ -146,7 +165,7 @@ public class ControlliRecTpi {
             query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDocIn", parametri.getIdUnitaDoc());
             recUnitaDocRecups = query.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                    .setHint("javax.persistence.lock.timeout", 25).getResultList();
+                    .setHint("javax.persistence.lock.timeout", 25000).getResultList();
             if (recUnitaDocRecups.size() > 0) {
                 tmpRecUnitaDocRecup = recUnitaDocRecups.get(0);
                 queryStr = "select t from RecSessioneRecup t where  " + "t.recUnitaDocRecup = :recUnitaDocRecupIn "
@@ -278,7 +297,7 @@ public class ControlliRecTpi {
             query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDocIn", parametri.getIdUnitaDoc());
             recUnitaDocRecups = query.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                    .setHint("javax.persistence.lock.timeout", 25).getResultList();
+                    .setHint("javax.persistence.lock.timeout", 25000).getResultList();
             if (recUnitaDocRecups.size() > 0) {
                 tmpRecUnitaDocRecup = recUnitaDocRecups.get(0);
             } else {
@@ -427,7 +446,9 @@ public class ControlliRecTpi {
             for (Date data : datiSessioneRecupero.getDateDocumenti()) {
                 RecDtVersRecup tmpDtVersRecup = new RecDtVersRecup();
                 tmpDtVersRecup.setRecSessioneRecup(tmpRecSessioneRecup);
-                tmpDtVersRecup.setDtVers(data);
+                // MAC#27666
+                tmpDtVersRecup.setDtVers(data.toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+                // end MAC#27666
                 tmpDtVersRecup.setTiStatoDtVersRecup(datiSessioneRecupero.getStatoDtVers().name());
                 /*
                  * per ogni record è definito l'indicatore che segnala se la data di versamento è definita per

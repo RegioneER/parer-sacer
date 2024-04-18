@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ejb-jar  
     xmlns = "http://java.sun.com/xml/ns/javaee" 
-    xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
     version = "3.1">
     
@@ -12,14 +12,13 @@
             <ejb-class>it.eng.parer.jboss.timers.helper.SacerTimerHelper</ejb-class>
             <session-type>Stateless</session-type>
         </session>
+        <session>
+            <ejb-name>replicaUtenteEjb</ejb-name>
+            <ejb-class>it.eng.parer.ws.replicaUtente.ejb.ReplicaUtenteEjb</ejb-class>
+            <session-type>Stateless</session-type>
+        </session>
     </enterprise-beans>
     <interceptors>
-        <interceptor>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <around-invoke>
-                <method-name>storeInvocation</method-name>
-            </around-invoke>
-        </interceptor>
         <!-- Timer interceptors -->
         <interceptor>
             <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerNodeInterceptor</interceptor-class>
@@ -50,226 +49,6 @@
         </interceptor>
     </interceptors>
     <assembly-descriptor>
-        <interceptor-binding>
-            <description>Ricerca avanzata unità documentaria</description>
-            <ejb-name>UnitaDocumentarieHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getAroVRicUnitaDocRicAvanzataViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Ricerca semplice unità documentaria</description>
-            <ejb-name>UnitaDocumentarieHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getAroVRicUnitaDocRicSempliceViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista documenti unità documentaria</description>
-            <ejb-name>UnitaDocumentarieHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getAroVLisDocTableBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista collegamenti unità documentaria</description>
-            <ejb-name>UnitaDocumentarieHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getAroVLisLinkUnitaDocTableBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista archiviazioni secondarie unità documentaria</description>
-            <ejb-name>UnitaDocumentarieHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getAroVLisArchivUnitaDocTableBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista dati specifici unità documentaria</description>
-            <ejb-name>UnitaDocumentarieHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getAroVLisDatiSpecTableBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista ricerca componenti</description>
-            <ejb-name>ComponentiHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getAroVRicCompViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista ricerca volumi</description>
-            <ejb-name>VolumiHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getVolVRicVolumeViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista componenti appartenenti ad un volume</description>
-            <ejb-name>ComponentiHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getVolVListaCompVolViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Riepilogo per struttura</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getMonVRiepStrutIamViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista doc. dei versamenti svolti con successo</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getMonVLisDocViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        
-        <!-- Monitoraggio fascicoli -->
-        <interceptor-binding>
-            <description>Ricerca sessioni fascicoli errate</description>
-            <ejb-name>FascicoliEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>ricercaSessFascErrate</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista fascicoli versati</description>
-            <ejb-name>FascicoliEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>ricercaFascicoliPerMonitoraggio</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista fascicoli derivanti da versamenti falliti</description>
-            <ejb-name>FascicoliEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>ricercaFascicoliKoPerMonitoraggio</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista fascicoli derivanti da versamenti falliti</description>
-            <ejb-name>FascicoliEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>ricercaFascicoliKoPerMonitoraggioErr</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Dettaglio fascicolo derivante da versamenti falliti</description>
-            <ejb-name>FascicoliEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>ricercaVersamentiFascicoliKo</method-name>
-            </method>
-        </interceptor-binding>
-        <!-- Fine monitoraggio fascicoli -->
-        
-        <interceptor-binding>
-            <description>Lista unità doc. derivanti da versamenti falliti</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getMonVLisUdNonVersIamViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista documenti derivanti da versamenti falliti</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getMonVLisDocNonVersIamViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista sessioni errate</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getSessioniErrateListTB</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista operazioni volumi</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getMonVLisOperVolIamViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista schedulazioni job</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getLogVLisSchedViewBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista file versamento fallito</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getFileListTableBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista repliche organizzazioni</description>
-            <ejb-name>MonitoraggioHelper</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getIamVLisOrganizDaReplicTableBean</method-name>
-            </method>
-        </interceptor-binding>  
-        <interceptor-binding>
-            <description>Lista versamenti documenti annullati</description>
-            <ejb-name>MonitoraggioEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getMonVLisUniDocDaAnnul</method-name>
-            </method>
-        </interceptor-binding> 
-        <interceptor-binding>
-            <description>Lista unità documentarie appartenenti alla serie</description>
-            <ejb-name>SerieEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getSerVLisUdAppartSerieTableBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista errori file in input serie</description>
-            <ejb-name>SerieEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getSerVLisErrFileSerieUdTableBean</method-name>
-            </method>
-        </interceptor-binding>
-        <interceptor-binding>
-            <description>Lista unità documentarie appartenenti al volume della serie</description>
-            <ejb-name>SerieEjb</ejb-name>
-            <interceptor-class>it.eng.paginator.ejb.PaginatorInterceptor</interceptor-class>
-            <method>
-                <method-name>getSerVLisUdAppartVolSerieTableBean</method-name>
-            </method>
-        </interceptor-binding>
         <!-- TIMERS -->
         
         <!-- Timer AggiornaStatoArchiviazioneTimer -->
@@ -1288,6 +1067,47 @@
         </interceptor-binding>
         <interceptor-binding>
             <ejb-name>AllineamentoEntiConvenzionatiTimer</ejb-name>
+            <interceptor-order>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerNodeInterceptor</interceptor-class>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerResetStatusInterceptor</interceptor-class>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerStartInterceptor</interceptor-class>
+            </interceptor-order>
+            <method>
+                <method-name>startCronScheduled</method-name>
+            </method>
+        </interceptor-binding>		
+        <!-- Timer SigilloTimer -->
+        <interceptor-binding>
+            <ejb-name>SigilloTimer</ejb-name>
+            <interceptor-order>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerNodeInterceptor</interceptor-class>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerResetStatusInterceptor</interceptor-class>
+            </interceptor-order>
+            <method>
+                <method-name>startSingleAction</method-name>
+            </method>
+        </interceptor-binding>
+        <interceptor-binding>
+            <ejb-name>SigilloTimer</ejb-name>
+            <interceptor-order>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerNodeInterceptor</interceptor-class>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerResetStatusInterceptor</interceptor-class>
+            </interceptor-order>
+            <method>
+                <method-name>stop</method-name>
+            </method>
+        </interceptor-binding>
+        <interceptor-binding>
+            <ejb-name>SigilloTimer</ejb-name>
+            <interceptor-order>
+                <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerTimeoutInterceptor</interceptor-class>
+            </interceptor-order>
+            <method>
+                <method-name>doJob</method-name>
+            </method>
+        </interceptor-binding>
+        <interceptor-binding>
+            <ejb-name>SigilloTimer</ejb-name>
             <interceptor-order>
                 <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerNodeInterceptor</interceptor-class>
                 <interceptor-class>it.eng.parer.jboss.timer.interceptor.JbossTimerResetStatusInterceptor</interceptor-class>

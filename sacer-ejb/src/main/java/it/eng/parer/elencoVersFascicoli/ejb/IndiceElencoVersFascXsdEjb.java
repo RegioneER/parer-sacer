@@ -1,33 +1,53 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.elencoVersFascicoli.ejb;
+
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.springframework.util.StringUtils;
 
 import it.eng.parer.elencoFascicoli.xml.indice.ContenutoSinteticoElencoType;
 import it.eng.parer.elencoFascicoli.xml.indice.ElencoversamentoFascicoli;
 import it.eng.parer.elencoFascicoli.xml.indice.FascicoliType;
 import it.eng.parer.elencoFascicoli.xml.indice.FascicoloType;
 import it.eng.parer.elencoVersFascicoli.helper.IndiceElencoVersFascHelper;
-import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums.*;
+import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums.ElencoInfo;
 import it.eng.parer.entity.ElvElencoVersFasc;
 import it.eng.parer.entity.FasFascicolo;
-import it.eng.parer.viewEntity.ElvVCreaLisFascElenco;
 import it.eng.parer.viewEntity.ElvVCreaIxElencoFasc;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
+import it.eng.parer.viewEntity.ElvVCreaLisFascElenco;
 import it.eng.parer.ws.ejb.XmlContextCache;
-import java.util.Collections;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
-import org.springframework.util.StringUtils;
 
 /**
  *

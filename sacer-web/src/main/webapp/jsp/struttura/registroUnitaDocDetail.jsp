@@ -151,6 +151,8 @@
                     <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.CONTROLLO_FORMATO%>" width="w100" labelWidth="w30" controlWidth="w20"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.MAX_LEN_NUMERO%>" width="w100" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.DT_ISTITUZ%>" width="w100" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.DT_FIRST_VERS%>" width="w100" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.DT_LAST_VERS%>" width="w100" labelWidth="w30" controlWidth="w70"/> <sl:newLine />
                     <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.DT_SOPPRES%>" width="w100" labelWidth="w30" controlWidth="w70"/> 
                 </slf:section>
                 <slf:section name="<%=StrutTipiForm.ConfigSerieSection.NAME%>" styleClass="importantContainer">

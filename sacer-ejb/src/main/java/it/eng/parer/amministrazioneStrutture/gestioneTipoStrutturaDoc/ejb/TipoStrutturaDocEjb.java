@@ -1,6 +1,24 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.ejb;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.helper.TipoStrutturaDocHelper;
 import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.DecFormatoFileAmmesso;
@@ -10,13 +28,17 @@ import it.eng.parer.entity.DecTipoRapprAmmesso;
 import it.eng.parer.entity.DecTipoRapprComp;
 import it.eng.parer.entity.DecTipoStrutDoc;
 import it.eng.parer.entity.DecTipoStrutUnitaDoc;
+import it.eng.parer.entity.DecUsoFormatoFileStandard;
 import it.eng.parer.entity.DecXsdDatiSpec;
 import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.DecFormatoFileStandard;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.ejb.util.ObjectsToLogBefore;
 import it.eng.parer.sacerlog.util.LogParam;
+import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocRowBean;
+import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoCompDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoCompDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoRapprAmmessoRowBean;
@@ -40,6 +62,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +88,8 @@ public class TipoStrutturaDocEjb {
     private DatiSpecificiHelper datiSpecHelper;
     @EJB
     private SacerLogEjb sacerLogEjb;
+    @EJB
+    private FormatoFileDocEjb formatoFileDocEjb;
 
     public DecTipoStrutDocRowBean getDecTipoStrutDocRowBean(BigDecimal idTipoStrutDoc, BigDecimal idStrut) {
         DecTipoStrutDocRowBean tipoStrutDocRowBean = getDecTipoStrutDoc(idTipoStrutDoc, null, idStrut);
@@ -226,20 +251,6 @@ public class TipoStrutturaDocEjb {
                         tipoStrutUnitaDocRow.setObject("fl_attivo", "0");
                     }
 
-                    // // Creo il campo relativo ai periodi di validit\u00E0
-                    // StringBuilder periodi = new StringBuilder();
-                    // int numeroPeriodi = registro.getDecAaRegistroUnitaDocs().size();
-                    // for (int index = 0; index < numeroPeriodi; index++) {
-                    // DecAaRegistroUnitaDoc anno = registro.getDecAaRegistroUnitaDocs().get(index);
-                    // periodi.append(anno.getAaMinRegistroUnitaDoc());
-                    // if (anno.getAaMaxRegistroUnitaDoc() != null) {
-                    // periodi.append(" - ").append(anno.getAaMaxRegistroUnitaDoc());
-                    // }
-                    // if (index < (numeroPeriodi - 1)) {
-                    // periodi.append("; ");
-                    // }
-                    //
-                    // }
                     String aaMin = tipoStrutUnitaDocRow.getAaMinTipoStrutUnitaDoc() != null
                             ? tipoStrutUnitaDocRow.getAaMinTipoStrutUnitaDoc().toString() : "";
                     String aaMax = tipoStrutUnitaDocRow.getAaMaxTipoStrutUnitaDoc() != null
@@ -307,9 +318,14 @@ public class TipoStrutturaDocEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void deleteAndInsertDecFormatoFileAmmesso(LogParam param, List<BigDecimal> idFormatoFileAmmessoToDeleteList,
             BigDecimal idTipoStrutDoc, BigDecimal idTipoCompDoc, List<BigDecimal> listaFormatiDaInserire) {
-        if (!idFormatoFileAmmessoToDeleteList.isEmpty()) {
-            helper.deleteDecFormatoFileAmmessoList(idFormatoFileAmmessoToDeleteList);
+        // if (!idFormatoFileAmmessoToDeleteList.isEmpty()) {
+        // helper.deleteDecFormatoFileAmmessoList(idFormatoFileAmmessoToDeleteList);
+        // }
+
+        for (BigDecimal id : idFormatoFileAmmessoToDeleteList) {
+            deleteDecFormatoFileAmmesso(id);
         }
+
         for (BigDecimal id : listaFormatiDaInserire) {
             insertDecFormatoFileAmmesso(idTipoCompDoc, id);
         }
@@ -349,8 +365,17 @@ public class TipoStrutturaDocEjb {
         tipoCompDoc.setDtIstituz(tipoCompDocRowBean.getDtIstituz());
         tipoCompDoc.setDtSoppres(tipoCompDocRowBean.getDtSoppres());
         tipoCompDoc.setTiUsoCompDoc(tipoCompDocRowBean.getTiUsoCompDoc());
+        tipoCompDoc.setFlGestiti(tipoCompDocRowBean.getFlGestiti());
+        tipoCompDoc.setFlIdonei(tipoCompDocRowBean.getFlIdonei());
+        tipoCompDoc.setFlDeprecati(tipoCompDocRowBean.getFlDeprecati());
 
         helper.insertEntity(tipoCompDoc, true);
+
+        /* In base ai flag spuntati, inserisco i formati ammessi */
+        formatoFileDocEjb.gestisciFormatiAmmessi(BigDecimal.valueOf(tipoCompDoc.getIdTipoCompDoc()),
+                tipoCompDocRowBean.getFlGestiti(), tipoCompDocRowBean.getFlIdonei(),
+                tipoCompDocRowBean.getFlDeprecati());
+
         // TEST: VERIFICARE LOGGING
         sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO,
@@ -363,7 +388,10 @@ public class TipoStrutturaDocEjb {
     public void updateDecTipoCompDoc(LogParam param, BigDecimal idTipoCompDoc, DecTipoCompDocRowBean tipoCompDocRowBean)
             throws ParerUserError {
         DecTipoCompDoc dbTipoCompDoc = helper.getDecTipoCompDocByName(tipoCompDocRowBean.getNmTipoCompDoc(),
-                tipoCompDocRowBean.getIdTipoStrutDoc());
+                tipoCompDocRowBean.getIdTipoStrutDoc()); // tipoCompDocRowBean
+        String flGestitiDB = dbTipoCompDoc.getFlGestiti();
+        String flIdoneiDB = dbTipoCompDoc.getFlIdonei();
+        String flDeprecatiDB = dbTipoCompDoc.getFlDeprecati();
         if (dbTipoCompDoc != null && dbTipoCompDoc.getIdTipoCompDoc() != idTipoCompDoc.longValue()) {
             throw new ParerUserError(
                     "Nome Tipo Componente gi\u00E0 associato a questa struttura all'interno del database</br>");
@@ -378,6 +406,48 @@ public class TipoStrutturaDocEjb {
         tipoCompDoc.setTiUsoCompDoc(tipoCompDocRowBean.getTiUsoCompDoc());
         tipoCompDoc.setDtIstituz(tipoCompDocRowBean.getDtIstituz());
         tipoCompDoc.setDtSoppres(tipoCompDocRowBean.getDtSoppres());
+        tipoCompDoc.setFlGestiti(tipoCompDocRowBean.getFlGestiti());
+        tipoCompDoc.setFlIdonei(tipoCompDocRowBean.getFlIdonei());
+        tipoCompDoc.setFlDeprecati(tipoCompDocRowBean.getFlDeprecati());
+        //
+        /*
+         * "Allineo" i formati GESTITI per il tipo componente SOLO se il flag è stato modificato, altrimenti allineerei
+         * errorenamente
+         */
+        if (!StringUtils.equals(flGestitiDB, tipoCompDocRowBean.getFlGestiti())) {
+            if (tipoCompDocRowBean.getFlGestiti().equals("1")) {
+                /* Cerca nei DEC_FORMATO_FILE_DOC se ci sono dei formati GESTITI e in caso aggiungili */
+                formatoFileDocEjb.gestisciFormatiAmmessiGestiti(idTipoCompDoc);
+            } else {
+                formatoFileDocEjb.eliminaFormatiAmmessiGestiti(idTipoCompDoc);
+            }
+        }
+
+        /*
+         * "Allineo" i formati IDONEI per il tipo componente SOLO se il flag è stato modificato, altrimenti allineerei
+         * errorenamente
+         */
+        if (!StringUtils.equals(flIdoneiDB, tipoCompDocRowBean.getFlIdonei())) {
+            if (tipoCompDocRowBean.getFlIdonei().equals("1")) {
+                /* Cerca nei DEC_FORMATO_FILE_DOC se ci sono dei formati IDONEI e in caso aggiungili */
+                formatoFileDocEjb.gestisciFormatiAmmessiIdonei(idTipoCompDoc);
+            } else {
+                formatoFileDocEjb.eliminaFormatiAmmessiIdonei(idTipoCompDoc);
+            }
+        }
+
+        /*
+         * "Allineo" i formati DEPRECATI per il tipo componente SOLO se il flag è stato modificato, altrimenti
+         * allineerei errorenamente
+         */
+        if (!StringUtils.equals(flDeprecatiDB, tipoCompDocRowBean.getFlDeprecati())) {
+            if (tipoCompDocRowBean.getFlDeprecati().equals("1")) {
+                /* Cerca nei DEC_FORMATO_FILE_DOC se ci sono dei formati DEPRECATI e in caso aggiungili */
+                formatoFileDocEjb.gestisciFormatiAmmessiDeprecati(idTipoCompDoc);
+            } else {
+                formatoFileDocEjb.eliminaFormatiAmmessiDeprecati(idTipoCompDoc);
+            }
+        }
 
         helper.getEntityManager().flush();
         sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
@@ -435,13 +505,48 @@ public class TipoStrutturaDocEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void deleteDecFormatoFileAmmesso(LogParam param, BigDecimal idFormatoFileAmmesso,
-            BigDecimal idTipoStrutDoc) {
+    public String deleteDecFormatoFileAmmesso(LogParam param, BigDecimal idFormatoFileAmmesso,
+            BigDecimal idTipoStrutDoc, String tiEsitoContrFormato) {
         DecFormatoFileAmmesso formatoFileAmmesso = helper.findById(DecFormatoFileAmmesso.class, idFormatoFileAmmesso);
+        DecTipoCompDoc tipoCompDoc = helper.findById(DecTipoCompDoc.class,
+                formatoFileAmmesso.getDecTipoCompDoc().getIdTipoCompDoc());
+        String flGestitiPreDelete = tipoCompDoc.getFlGestiti();
+        String flIdoneiPreDelete = tipoCompDoc.getFlIdonei();
+        String flDeprecatiPreDelete = tipoCompDoc.getFlDeprecati();
         helper.removeEntity(formatoFileAmmesso, true);
+        String messaggio = null;
+        /*
+         * La cancellazione di un formato, comporta sicuramente, nel caso fosse settato a 1, l'azzeramento del relativo
+         * flag GESTITO, IDONEO o DEPRECATO
+         */
+        if (tiEsitoContrFormato.equals(DecFormatoFileStandard.TiEsitoControFormato.GESTITO.name())) {
+            if (flGestitiPreDelete.equals("1")) {
+                messaggio = "La cancellazione del formato ammesso ha comportato il settaggio a 'false' del flag GESTITI";
+            }
+            tipoCompDoc.setFlGestiti("0");
+        } else if (tiEsitoContrFormato.equals(DecFormatoFileStandard.TiEsitoControFormato.IDONEO.name())) {
+            if (flIdoneiPreDelete.equals("1")) {
+                messaggio = "La cancellazione del formato ammesso ha comportato il settaggio a 'false' del flag IDONEI";
+            }
+            tipoCompDoc.setFlIdonei("0");
+        } else if (tiEsitoContrFormato.equals(DecFormatoFileStandard.TiEsitoControFormato.DEPRECATO.name())) {
+            if (flDeprecatiPreDelete.equals("1")) {
+                messaggio = "La cancellazione del formato ammesso ha comportato il settaggio a 'false' del seguente DEPRECATI";
+            }
+            tipoCompDoc.setFlDeprecati("0");
+        }
+
         sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO, idTipoStrutDoc,
                 param.getNomePagina());
+
+        return messaggio;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void deleteDecFormatoFileAmmesso(BigDecimal idFormatoFileAmmesso) {
+        DecFormatoFileAmmesso formatoFileAmmesso = helper.findById(DecFormatoFileAmmesso.class, idFormatoFileAmmesso);
+        helper.removeEntity(formatoFileAmmesso, true);
     }
 
     public DecTipoRapprAmmessoTableBean getDecTipoRapprAmmessoTableBeanByIdTipoCompDoc(BigDecimal idTipoCompDoc) {
@@ -457,8 +562,6 @@ public class TipoStrutturaDocEjb {
                             tipoRapprAmmesso.getDecTipoRapprComp().getNmTipoRapprComp());
                     tipoRapprCompRowBean.setString("ds_tipo_rappr_comp",
                             tipoRapprAmmesso.getDecTipoRapprComp().getDsTipoRapprComp());
-                    // tipoRapprCompRowBean.setString("ds_tipo_doc",
-                    // tipoRapprAmmesso.getDecTipoRapprComp().getDsTipoRapprComp());
                     if (tipoRapprAmmesso.getDecTipoRapprComp().getDtSoppres().after(new Date())) {
                         tipoRapprCompRowBean.setString("dt_soppres", "1");
                     } else {
@@ -603,6 +706,83 @@ public class TipoStrutturaDocEjb {
         sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(), param.getNomeUtente(),
                 param.getNomeAzione(), SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO, idTipoStrutDoc,
                 param.getNomePagina());
+    }
+
+    public void updateFlagTipoComponente(BigDecimal idTipoCompDoc) {
+        int gestitiTotali = 0;
+        int idoneiTotali = 0;
+        int deprecatiTotali = 0;
+
+        // Recupero i formati ammessi per il tipo componente IN QUESTO MOMENTO
+        // a seguito delle modifiche sto apportando
+        DecFormatoFileDocTableBean formatoFileAmmessoTableBean = formatoFileDocEjb
+                .getDecFormatoFileAmmessoTableBean(idTipoCompDoc);
+        // Discerno tra totali GESTITI, IDONEI e DEPRECATI
+        int totGestitiPreSalvataggio = 0;
+        int totIdoneiPreSalvataggio = 0;
+        int totDeprecatiPreSalvataggio = 0;
+
+        for (DecFormatoFileDocRowBean formatoFileAmmessoRowBean : formatoFileAmmessoTableBean) {
+            if (formatoFileAmmessoRowBean.getString("ti_esito_contr_formato") != null) {
+                if (formatoFileAmmessoRowBean.getString("ti_esito_contr_formato")
+                        .equals(DecFormatoFileStandard.TiEsitoControFormato.GESTITO.name())) {
+                    totGestitiPreSalvataggio++;
+                }
+                if (formatoFileAmmessoRowBean.getString("ti_esito_contr_formato")
+                        .equals(DecFormatoFileStandard.TiEsitoControFormato.IDONEO.name())) {
+                    totIdoneiPreSalvataggio++;
+                }
+                if (formatoFileAmmessoRowBean.getString("ti_esito_contr_formato")
+                        .equals(DecFormatoFileStandard.TiEsitoControFormato.DEPRECATO.name())) {
+                    totDeprecatiPreSalvataggio++;
+                }
+            }
+        }
+
+        /* Ricavo il numero massimo di formati possibili GESTITI, IDONEI e DEPRECATI */
+        DecTipoCompDoc compDoc = helper.findById(DecTipoCompDoc.class, idTipoCompDoc);
+        OrgStrut strut = compDoc.getDecTipoStrutDoc().getOrgStrut();// strut
+        List<DecFormatoFileDoc> formatoFileDocList = strut.getDecFormatoFileDocs();
+        /* Scorro tutti i DEC_FORMATO_FILE_DOC della struttura */
+        for (DecFormatoFileDoc formatoFileDoc : formatoFileDocList) {
+            /* Per ognuno verifica se è GESTITO e in caso lo inserisco come tale in DEC_FORMATO_FILE_AMMESSO */
+            int lunghezza = formatoFileDoc.getDecUsoFormatoFileStandards().size();
+            if (lunghezza > 0) {
+                DecUsoFormatoFileStandard usoFormatoFileStandard = formatoFileDoc.getDecUsoFormatoFileStandards()
+                        .get(formatoFileDoc.getDecUsoFormatoFileStandards().size() - 1);
+                /* Se il formato è di tipo GESTITO */
+                if (usoFormatoFileStandard.getDecFormatoFileStandard().getTiEsitoContrFormato()
+                        .equals(DecFormatoFileStandard.TiEsitoControFormato.GESTITO.name())) {
+                    gestitiTotali++;
+                }
+                if (usoFormatoFileStandard.getDecFormatoFileStandard().getTiEsitoContrFormato()
+                        .equals(DecFormatoFileStandard.TiEsitoControFormato.IDONEO.name())) {
+                    idoneiTotali++;
+                }
+                if (usoFormatoFileStandard.getDecFormatoFileStandard().getTiEsitoContrFormato()
+                        .equals(DecFormatoFileStandard.TiEsitoControFormato.DEPRECATO.name())) {
+                    deprecatiTotali++;
+                }
+            }
+        }
+        // compDoc poi cancella
+        DecTipoCompDoc tipoCompDoc = helper.findById(DecTipoCompDoc.class, idTipoCompDoc);
+        if (gestitiTotali == totGestitiPreSalvataggio) {
+            tipoCompDoc.setFlGestiti("1");
+        } else {
+            tipoCompDoc.setFlGestiti("0");
+        }
+        if (idoneiTotali == totIdoneiPreSalvataggio) {
+            tipoCompDoc.setFlIdonei("1");
+        } else {
+            tipoCompDoc.setFlIdonei("0");
+        }
+        if (deprecatiTotali == totDeprecatiPreSalvataggio) {
+            tipoCompDoc.setFlDeprecati("1");
+        } else {
+            tipoCompDoc.setFlDeprecati("0");
+        }
+
     }
 
 }

@@ -227,11 +227,6 @@
                     <slf:lblField name="<%=UnitaDocumentarieForm.VersioneIndiceAIPLast.SCARICA_INDICE_AIP_LAST%>"  width="w50" labelWidth="w40" controlWidth="w60" />
                 </sl:pulsantiera>
             </slf:tab>
-            <slf:tab  name="<%= UnitaDocumentarieForm.UnitaDocumentarieDettaglioTabs.NAME%>" tabElement="NoteUD">
-                <slf:fieldSet  borderHidden="false">
-                    <slf:field name="<%=UnitaDocumentarieForm.UnitaDocumentarieDetail.NT_UNITA_DOC%>" colSpan="4" controlWidth="w100"/>
-                </slf:fieldSet>
-            </slf:tab>
 
             <sl:newLine skipLine="true"/>
             <slf:fieldSet borderHidden="true">

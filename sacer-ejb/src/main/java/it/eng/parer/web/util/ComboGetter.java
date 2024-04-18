@@ -1,8 +1,28 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.util;
 
+import java.util.List;
+import java.util.TreeSet;
+
+import it.eng.parer.entity.constraint.AroUnitaDoc;
 import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
 import it.eng.parer.entity.constraint.ElvElencoVer;
-import it.eng.parer.entity.constraint.AroUnitaDoc;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.ws.utils.CostantiDB;
@@ -14,17 +34,20 @@ import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.db.decodemap.DecodeMapIF;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
-import java.util.List;
-import java.util.TreeSet;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 public class ComboGetter {
 
     public static final String CAMPO_VALORE = "valore";
     public static final String CAMPO_NOME = "nome";
+
+    private ComboGetter() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /*
      * GESTIONE DECODEMAP GENERICHE
@@ -447,6 +470,17 @@ public class ComboGetter {
         return mappaTiModelloXsd;
     }
 
+    public static DecodeMap getMappaTiModelloXsdProfilo() {
+        BaseTable bt = new BaseTable();
+        String key = "ti_modello_xsd";
+        DecodeMap mappaTiModelloXsd = new DecodeMap();
+        for (CostantiDB.TiModelloXsdProfilo tiModelloXsd : Utils.sortEnum(CostantiDB.TiModelloXsdProfilo.values())) {
+            bt.add(createKeyValueBaseRow(key, tiModelloXsd.toString()));
+        }
+        mappaTiModelloXsd.populatedMap(bt, key, key);
+        return mappaTiModelloXsd;
+    }
+
     public static DecodeMap getMappaTiValidElenco() {
         BaseTable bt = new BaseTable();
         String key = "ti_valid_elenco";
@@ -471,12 +505,21 @@ public class ComboGetter {
         return mappaTiModValidElenco;
     }
 
-    public static DecodeMap getMappaTiGestElencoCriterio() {
+    public static DecodeMap getMappaTiGestElencoCriterio(boolean funzioneSigilloAttivata) {
         BaseTable bt = new BaseTable();
         String key = "ti_gest_elenco_criterio";
         DecodeMap mappaTiGestElencoCriterio = new DecodeMap();
         for (CostantiDB.TiGestElencoCriterio tiGestElencoCriterio : Utils
                 .sortEnum(CostantiDB.TiGestElencoCriterio.values())) {
+            /*
+             * Se non è attivata la funzionalità di sigillo i relativi valori costanti vengono esclusi dalla lista.
+             */
+            if (funzioneSigilloAttivata == false) {
+                if (tiGestElencoCriterio.equals(CostantiDB.TiGestElencoCriterio.SIGILLO)
+                        || tiGestElencoCriterio.equals(CostantiDB.TiGestElencoCriterio.MARCA_SIGILLO)) {
+                    continue;
+                }
+            }
             bt.add(createKeyValueBaseRow(key, tiGestElencoCriterio.toString()));
         }
         mappaTiGestElencoCriterio.populatedMap(bt, key, key);

@@ -1,60 +1,22 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.serie.ejb;
 
-import it.eng.parer.entity.DecModelloTipoSerie;
-import it.eng.parer.entity.DecTipoSerie;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.amministrazioneStrutture.gestioneRegistro.helper.RegistroHelper;
-import it.eng.parer.serie.helper.ModelliSerieHelper;
-import it.eng.parer.slite.gen.tablebean.DecModelloTipoSerieTableBean;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.helper.TipoUnitaDocHelper;
-import it.eng.parer.entity.DecAttribDatiSpec;
-import it.eng.parer.entity.DecModelloCampoInpUd;
-import it.eng.parer.entity.DecModelloCampoOutSelUd;
-import it.eng.parer.entity.DecModelloFiltroSelUdattb;
-import it.eng.parer.entity.DecModelloFiltroTiDoc;
-import it.eng.parer.entity.DecModelloOutSelUd;
-import it.eng.parer.entity.DecNotaModelloTipoSerie;
-import it.eng.parer.entity.DecTipoDoc;
-import it.eng.parer.entity.DecTipoNotaSerie;
-import it.eng.parer.entity.DecTipoUnitaDoc;
-import it.eng.parer.entity.DecUsoModelloTipoSerie;
-import it.eng.parer.entity.IamUser;
-import it.eng.parer.entity.OrgAmbiente;
-import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.sacer.util.SacerLogConstants;
-import it.eng.parer.sacerlog.ejb.SacerLogEjb;
-import it.eng.parer.sacerlog.util.LogParam;
-import it.eng.parer.serie.dto.CreazioneModelloSerieBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroTiDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroTiDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloOutSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloOutSelUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.DecNotaModelloTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.DecNotaModelloTipoSerieTableBean;
-import it.eng.parer.slite.gen.tablebean.DecUsoModelloTipoSerieRowBean;
-import it.eng.parer.slite.gen.tablebean.DecUsoModelloTipoSerieTableBean;
-import it.eng.parer.serie.helper.TipoSerieHelper;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdTableBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbRowBean;
-import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
-import it.eng.parer.web.util.Constants;
-import it.eng.parer.web.util.Transform;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.spagoIFace.Values;
-import it.eng.spagoLite.db.base.BaseTableInterface;
-import it.eng.spagoLite.db.base.row.BaseRow;
-import it.eng.spagoLite.db.base.sorting.SortingRule;
-import it.eng.spagoLite.db.base.table.BaseTable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -65,21 +27,80 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.amministrazioneStrutture.gestioneRegistro.helper.RegistroHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.helper.TipoUnitaDocHelper;
+import it.eng.parer.entity.DecAttribDatiSpec;
+import it.eng.parer.entity.DecModelloCampoInpUd;
+import it.eng.parer.entity.DecModelloCampoOutSelUd;
+import it.eng.parer.entity.DecModelloFiltroSelUdattb;
+import it.eng.parer.entity.DecModelloFiltroTiDoc;
+import it.eng.parer.entity.DecModelloOutSelUd;
+import it.eng.parer.entity.DecModelloTipoSerie;
+import it.eng.parer.entity.DecNotaModelloTipoSerie;
+import it.eng.parer.entity.DecTipoDoc;
+import it.eng.parer.entity.DecTipoNotaSerie;
+import it.eng.parer.entity.DecTipoSerie;
+import it.eng.parer.entity.DecTipoUnitaDoc;
+import it.eng.parer.entity.DecUsoModelloTipoSerie;
+import it.eng.parer.entity.IamUser;
+import it.eng.parer.entity.OrgAmbiente;
+import it.eng.parer.entity.OrgEnte;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.sacer.util.SacerLogConstants;
+import it.eng.parer.sacerlog.ejb.SacerLogEjb;
+import it.eng.parer.sacerlog.util.LogParam;
+import it.eng.parer.serie.dto.CreazioneModelloSerieBean;
+import it.eng.parer.serie.helper.ModelliSerieHelper;
+import it.eng.parer.serie.helper.TipoSerieHelper;
+import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdTableBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloCampoInpUdTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdTableBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloCampoOutSelUdTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbTableBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloFiltroSelUdattbTableDescriptor;
+import it.eng.parer.slite.gen.tablebean.DecModelloFiltroTiDocRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloFiltroTiDocTableBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloOutSelUdRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloOutSelUdTableBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloTipoSerieRowBean;
+import it.eng.parer.slite.gen.tablebean.DecModelloTipoSerieTableBean;
+import it.eng.parer.slite.gen.tablebean.DecNotaModelloTipoSerieRowBean;
+import it.eng.parer.slite.gen.tablebean.DecNotaModelloTipoSerieTableBean;
+import it.eng.parer.slite.gen.tablebean.DecUsoModelloTipoSerieRowBean;
+import it.eng.parer.slite.gen.tablebean.DecUsoModelloTipoSerieTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
+import it.eng.parer.web.util.Constants;
+import it.eng.parer.web.util.Transform;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.spagoIFace.Values;
+import it.eng.spagoLite.db.base.BaseTableInterface;
+import it.eng.spagoLite.db.base.row.BaseRow;
+import it.eng.spagoLite.db.base.sorting.SortingRule;
+import it.eng.spagoLite.db.base.table.BaseTable;
+
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings("rawtypes")
 @Stateless
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -279,10 +300,10 @@ public class ModelliSerieEjb {
      */
     public boolean checkTipoUdRegNmTipoSerieDaCreare(String nmTipoSerieDaCreare, BigDecimal idStrut,
             BigDecimal idRegistroUnitaDoc, BigDecimal idTipoUnitaDoc) {
-        boolean regs = registroHelper.checkRegistroUnitaDoc("nmTipoSerieDaCreare", nmTipoSerieDaCreare, idStrut,
-                idRegistroUnitaDoc);
-        boolean tipiUd = tipoUdHelper.checkTipoUnitaDoc("nmTipoSerieDaCreare", nmTipoSerieDaCreare, idStrut,
-                idTipoUnitaDoc);
+        boolean regs = registroHelper.checkRegistroUnitaDocByCampoStringa("nmTipoSerieDaCreare", nmTipoSerieDaCreare,
+                idStrut, idRegistroUnitaDoc);
+        boolean tipiUd = tipoUdHelper.checkTipoUnitaDocByCampoStringa("nmTipoSerieDaCreare", nmTipoSerieDaCreare,
+                idStrut, idTipoUnitaDoc);
         return (regs || tipiUd);
     }
 
@@ -304,9 +325,10 @@ public class ModelliSerieEjb {
      */
     public boolean checkTipoUdRegCdSerieDaCreare(String cdSerieDaCreare, BigDecimal idStrut,
             BigDecimal idRegistroUnitaDoc, BigDecimal idTipoUnitaDoc) {
-        boolean regs = registroHelper.checkRegistroUnitaDoc("cdSerieDaCreare", cdSerieDaCreare, idStrut,
+        boolean regs = registroHelper.checkRegistroUnitaDocByCampoStringa("cdSerieDaCreare", cdSerieDaCreare, idStrut,
                 idRegistroUnitaDoc);
-        boolean tipiUd = tipoUdHelper.checkTipoUnitaDoc("cdSerieDaCreare", cdSerieDaCreare, idStrut, idTipoUnitaDoc);
+        boolean tipiUd = tipoUdHelper.checkTipoUnitaDocByCampoStringa("cdSerieDaCreare", cdSerieDaCreare, idStrut,
+                idTipoUnitaDoc);
         return (regs || tipiUd);
     }
 
@@ -635,7 +657,7 @@ public class ModelliSerieEjb {
              * 2° - Sistemo i campi "modificati", ovvero quelli in cui ho scambiato pgOrdCampo tra due campi esistenti
              * oppure glielo ho cambiato con uno nuovo
              */
-            ArrayList<DecModelloCampoInpUd> al = new ArrayList();
+            ArrayList<DecModelloCampoInpUd> al = new ArrayList<>();
             for (DecModelloCampoInpUd campoPreModifica : campiPreModifiche) {
                 for (DecModelloCampoInpUdRowBean datoCompilato : datiCompilati) {
                     if (datoCompilato.getIdModelloCampoInpUd() != null && campoPreModifica
@@ -1237,7 +1259,7 @@ public class ModelliSerieEjb {
         if (decAttribDatiSpecsDoc != null) {
             // Potrei avere attributi già popolati da db o aggiunti dai tipi ud, devo discernere la casistica mentre
             // scorro la lista
-            List<String> udAttributeNames = new ArrayList(attributeNames);
+            List<String> udAttributeNames = new ArrayList<>(attributeNames);
             String vers = "Tipo doc.: " + tipoDoc;
             for (DecAttribDatiSpec attrib : decAttribDatiSpecsDoc) {
                 BaseRow versioneXsd = new BaseRow();

@@ -1,3 +1,20 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
@@ -8,78 +25,15 @@ import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEj
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.async.ejb.CalcoloMonitoraggioAsync;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.IamUser;
-import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.jboss.timer.service.JbossTimerEjb;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.MonitoraggioAbstractAction;
-import it.eng.parer.slite.gen.form.ElenchiVersamentoForm;
-import it.eng.parer.slite.gen.form.MonitoraggioForm;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriConsistenzaSacer;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriContenutoSacer;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriJobSchedulati;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriOperazioniElenchiVersamento;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriOperazioniVolumi;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriReplicaOrg;
-import it.eng.parer.slite.gen.form.MonitoraggioSinteticoForm;
-import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
-import it.eng.parer.slite.gen.form.VolumiForm;
-import it.eng.parer.slite.gen.tablebean.DecCategTipoUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoDocTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbitoTerritRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgAmbitoTerritTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgCategEnteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgCategStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.OrgSubStrutRowBean;
-import it.eng.parer.slite.gen.tablebean.OrgSubStrutTableBean;
-import it.eng.parer.slite.gen.tablebean.VrsFileSessioneTableBean;
-import it.eng.parer.slite.gen.tablebean.VrsSessioneVersRowBean;
-import it.eng.parer.slite.gen.tablebean.VrsSessioneVersTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocTiUdRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocTiUdRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolTiUdRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolTiUdRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.ElvVLisLogOperTableBean;
-import it.eng.parer.slite.gen.viewbean.ElvVRicElencoVersRowBean;
-import it.eng.parer.slite.gen.viewbean.ElvVRicElencoVersTableBean;
-import it.eng.parer.slite.gen.viewbean.IamVLisOrganizDaReplicTableBean;
-import it.eng.parer.slite.gen.viewbean.LogVVisLastSchedRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisDocNonVersIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisSesRecupRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisUdNonVersIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisUniDocDaAnnulTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersDocNonVersRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersDocNonVersTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersErrIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersErrIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersUdNonVersRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersUdNonVersTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVRiepStrutIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisDocNonVersRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisSesErrIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisUdNonVersRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisVersErrIamRowBean;
-import it.eng.parer.slite.gen.viewbean.VolVRicVolumeRowBean;
-import it.eng.parer.slite.gen.viewbean.VolVRicVolumeTableBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneAggRisoltaRowBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneAggRisoltaTableBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneVersRisoltaRowBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneVersRisoltaTableBean;
+import it.eng.parer.slite.gen.form.*;
+import it.eng.parer.slite.gen.form.MonitoraggioForm.*;
+import it.eng.parer.slite.gen.tablebean.*;
+import it.eng.parer.slite.gen.viewbean.*;
 import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.dto.MonitoraggioAttributiVersFallitiDaDocNonVersati;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaDocBean;
@@ -87,26 +41,19 @@ import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiDistintiDocBean;
 import it.eng.parer.web.ejb.CaricaErrori;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
+import it.eng.parer.web.ejb.GestioneJobEjb;
 import it.eng.parer.web.ejb.MonitoraggioEjb;
 import it.eng.parer.web.ejb.MonitoraggioSinteticoEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.helper.VolumiHelper;
-import it.eng.parer.web.util.ActionEnums;
+import it.eng.parer.web.util.*;
 import it.eng.parer.web.util.ActionEnums.SezioneMonitoraggio;
-import it.eng.parer.web.util.ActionUtils;
-import it.eng.parer.web.util.BlobObject;
-import it.eng.parer.web.util.ComboGetter;
-import it.eng.parer.web.util.RecuperoWeb;
-import it.eng.parer.web.util.WebConstants;
-import it.eng.parer.web.util.XmlPrettyPrintFormatter;
 import it.eng.parer.web.validator.MonitoraggioValidator;
 import it.eng.parer.web.validator.TypeValidator;
 import it.eng.parer.web.validator.UnitaDocumentarieValidator;
-import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
-import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.xml.versReqStato.ChiaveType;
 import it.eng.parer.ws.xml.versReqStato.Recupero;
@@ -122,21 +69,20 @@ import it.eng.spagoLite.db.decodemap.DecodeMapIF;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.form.fields.Fields;
+import it.eng.spagoLite.form.fields.impl.Button;
+import it.eng.spagoLite.form.fields.impl.CheckBox;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
+import it.eng.spagoLite.form.fields.impl.Input;
 import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
 import it.eng.spagoLite.security.User;
-import it.eng.spagoLite.security.menu.MenuEntry;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -149,14 +95,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.ejb.EJB;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -185,7 +129,9 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
  */
 public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
-    private static Logger logger = LoggerFactory.getLogger(MonitoraggioAction.class.getName());
+    public static final String FROM_GESTIONE_JOB = "fromGestioneJob";
+    private static final String ERRORE_RECUPERO_AMBIENTE = "Errore nel recupero ambiente";
+    private static Logger log = LoggerFactory.getLogger(MonitoraggioAction.class.getName());
 
     @EJB(mappedName = "java:app/Parer-ejb/UnitaDocumentarieHelper")
     private UnitaDocumentarieHelper udHelper;
@@ -201,8 +147,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     private CaricaErrori caricaErrori;
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioEjb")
     private MonitoraggioEjb monitoraggioEjb;
-    @EJB(mappedName = "java:app/Parer-ejb/RecBlbOracle")
-    private RecBlbOracle recBlbOracle;
     @EJB(mappedName = "java:app/Parer-ejb/CalcoloMonitoraggioAsync")
     private CalcoloMonitoraggioAsync calcoloAsync;
     @EJB(mappedName = "java:app/Parer-ejb/TipoUnitaDocEjb")
@@ -223,14 +167,17 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     @EJB(mappedName = "java:app/JbossTimerWrapper-ejb/JbossTimerEjb")
     private JbossTimerEjb jbossTimerEjb;
 
+    @EJB(mappedName = "java:app/Parer-ejb/GestioneJobEjb")
+    private GestioneJobEjb gestioneJobEjb;
+
     @Override
     public void initOnClick() throws EMFError {
-        String a = "";
+        // not implemented yet
     }
 
     @Override
     public void process() throws EMFError {
-        String a = "";
+        // not implemented yet
     }
 
     /**
@@ -256,13 +203,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     /**
      * Metodo di inizializzazione form di Riepilogo Struttura
      *
-     * @throws EMFError
-     *             errore generico
-     * @throws Exception
-     *             errore generico
      */
     @Secure(action = "Menu.Monitoraggio.RiepilogoStruttura")
-    public void riepilogoStruttura() throws EMFError, Exception {
+    public void riepilogoStruttura() {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Monitoraggio.RiepilogoStruttura");
         // Resetto tutti i campi di riepilogo versamenti (filtri)
@@ -274,7 +217,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
-            logger.error("Errore nel recupero ambiente", ex);
+            log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
@@ -309,8 +252,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // la ricerca con quest'ultimo
             getSession().setAttribute("filtriRiepilogoStruttura", filtri.getId_ambiente().parse().intValue());
             // Carico i dati nella pagina Riepilogo Struttura
-            String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String maxResultStandard = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
             MonVRiepStrutIamTableBean listaMon = monitoraggioHelper.getMonVRiepStrutIamViewBean(getUser().getIdUtente(),
                     Integer.parseInt(maxResultStandard), filtri.getId_ambiente().parse().intValue());
             getForm().getRiepilogoStrutturaList().setTable(listaMon);
@@ -324,13 +267,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     /**
      * Metodo di inizializzazione form di Sessioni Errate
      *
-     * @throws EMFError
-     *             errore generico
-     * @throws Exception
-     *             errore generico
      */
     @Secure(action = "Menu.Logging.SessioniErrate")
-    public void sessioniErrate() throws EMFError, Exception {
+    public void sessioniErrate() {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Logging.SessioniErrate");
 
@@ -343,9 +282,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         getForm().getFiltriSessione().getCercaSessioniErrate().setEditMode();
 
         // Ricavo la lista delle sessioni errate senza filtraggio per flag verificato
-        String maxResultSessioniErrate = configurationHelper.getValoreParamApplic("MAX_RESULT_SESSIONI_ERRATE", null,
-                null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
-        VrsSessioneVersTableBean listaSessErr = monitoraggioHelper.getSessioniErrateListTB(null,
+        String maxResultSessioniErrate = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_SESSIONI_ERRATE);
+        VrsSessioneVersKoTableBean listaSessErr = monitoraggioHelper.getSessioniErrateListTB(null,
                 Integer.parseInt(maxResultSessioniErrate));
         getForm().getSessioniErrateList().setTable(listaSessErr);
         getForm().getSessioniErrateList().getTable().setPageSize(10);
@@ -395,7 +334,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
-            logger.error("Errore nel recupero ambiente", ex);
+            log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
@@ -478,18 +417,15 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     /**
      * Metodo di inizializzazione pagina di Esame Contenuto Sacer
      *
-     * @throws EMFError
-     *             errore generico
-     * @throws Exception
-     *             errore generico
      */
     @Secure(action = "Menu.Monitoraggio.EsameContenutoSacer")
-    public void contenutoSacer() throws EMFError, Exception {
+    public void contenutoSacer() {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Monitoraggio.EsameContenutoSacer");
 
         /* Resetto i campi e il risultato della ricerca */
         getForm().getFiltriContenutoSacer().reset();
+        getForm().getContenutoSacerTotaliUdDocComp().clear();
         getForm().getContenutoSacerList().clear();
 
         /* Inizializzo i campi di ricerca */
@@ -497,7 +433,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         try {
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
-            logger.error("Errore nel recupero ambiente", ex);
+            log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
@@ -530,7 +466,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         getForm().getFiltriContenutoSacer().getDt_rif_da().setValue("01/12/2011");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
-        SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+        SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getFiltriContenutoSacer().getDt_rif_a().setValue(df.format(cal.getTime()));
 
         getForm().getFiltriContenutoSacer().setEditMode();
@@ -539,14 +475,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
     /**
      * Metodo di inizializzazione pagina di Esame Consistenza Sacer
-     *
-     * @throws EMFError
-     *             errore generico
-     * @throws Exception
-     *             errore generico
      */
     @Secure(action = "Menu.Amministrazione.ConsistenzaSacer")
-    public void consistenzaSacer() throws EMFError, Exception {
+    public void consistenzaSacer() {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Amministrazione.ConsistenzaSacer");
 
@@ -568,7 +499,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         try {
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
-            logger.error("Errore nel recupero ambiente", ex);
+            log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
@@ -582,7 +513,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         getForm().getFiltriConsistenzaSacer().getDt_rif_da().setValue("01/12/2011");
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
-        SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+        SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getFiltriConsistenzaSacer().getDt_rif_a().setValue(df.format(cal.getTime()));
 
         getForm().getFiltriConsistenzaSacer().setEditMode();
@@ -594,7 +525,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         getForm().getConsistenzaSacerProblemsList().getId_registro_unita_doc().setHidden(rendiInvisibili);
         getForm().getConsistenzaSacerProblemsList().getId_strut().setHidden(rendiInvisibili);
         getForm().getConsistenzaSacerProblemsList().getId_sub_strut().setHidden(rendiInvisibili);
-        // getForm().getConsistenzaSacerProblemsList().getId_tipo_doc().setHidden(rendiInvisibili);
         getForm().getConsistenzaSacerProblemsList().getId_tipo_unita_doc().setHidden(rendiInvisibili);
     }
 
@@ -603,18 +533,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      *
      * @throws EMFError
      *             errore generico
-     * @throws Exception
-     *             errore generico
      */
     @Secure(action = "Menu.Monitoraggio.EsameJobSchedulati")
-    public void jobSchedulati() throws EMFError, Exception {
+    public void jobSchedulati() throws EMFError {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Monitoraggio.EsameJobSchedulati");
-
-        // Resetto tutti i filtri
-        getForm().getFiltriJobSchedulati().reset();
-        getSession().removeAttribute("fromRicercaJob");
-        getSession().removeAttribute("backToRicercaJob");
 
         // Setto vuota la lista risultato
         getForm().getJobSchedulatiList().setTable(null);
@@ -622,11 +545,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Setto preimpostata la data di ricerca da
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
-        SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+        SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getFiltriJobSchedulati().getDt_reg_log_job_da().setValue(df.format(cal.getTime()));
 
         // Resetto i valori delle label
-        getForm().getStatoJob().reset();
+        getForm().getInformazioniJob().reset();
 
         // Reimposto le combo
         DecodeMap dec = ComboGetter.getMappaSortedGenericEnum("nm_job", JobConstants.JobEnum.values());
@@ -634,9 +557,17 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         dec.keySet().remove(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE.name());
         getForm().getFiltriJobSchedulati().getNm_job().setDecodeMap(dec);
         getForm().getFiltriJobSchedulati().setEditMode();
+        getForm().getInformazioniJob().setViewMode();
         getForm().getFiltriJobSchedulati().getId_ambiente().setDecodeMap(new DecodeMap());
         getForm().getFiltriJobSchedulati().getId_ente().setDecodeMap(new DecodeMap());
         getForm().getFiltriJobSchedulati().getId_strut().setDecodeMap(new DecodeMap());
+
+        getForm().getFiltriJobSchedulati().post(getRequest());
+        getForm().getInformazioniJob().post(getRequest());
+        String nmJob = getForm().getFiltriJobSchedulati().getNm_job().parse();
+        if (nmJob != null) {
+            setStatoJob(nmJob);
+        }
 
         // Eseguo il forward alla stessa pagina
         forwardToPublisher(Application.Publisher.MONITORAGGIO_JOB_SCHEDULATI_RICERCA);
@@ -673,7 +604,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     currentRowBean = getForm().getDocumentiAnnullatiList().getTable().getRow(riga);
                     idStrut = currentRowBean.getBigDecimal("id_strut");
                 } else {
-                    getMessageBox().addError("Errore nell'apertura dell'unit\u00e0  documentaria selezionata");
+                    getMessageBox().addError("Errore nell'apertura dell'unit\u00e0 documentaria selezionata");
                 }
 
                 if (!getMessageBox().hasError() && idStrut != null) {
@@ -748,7 +679,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                                 form);
                     } else {
                         getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                                "Utente non abilitato ad accedere al dettaglio dell'unit\u00e0  documentaria selezionata"));
+                                "Utente non abilitato ad accedere al dettaglio dell'unit\u00e0 documentaria selezionata"));
                     }
                 }
             } // Se ho cliccato sull'icona del "Visualizza volume" di Lista Documenti
@@ -804,11 +735,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         && !getForm().getOutputAnaliticoCronologicoList().getTable().getRow(riga).getString("ti_oper")
                                 .equals("RIMUOVI_DOC_VOLUME")) {
                     getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                            "Impossibile visualizzare l'unit\u00e0  documentaria se tipo operazione diverso da AGGIUNGI_DOC_VOLUME e RIMUOVI_DOC_VOLUME"));
+                            "Impossibile visualizzare l'unit\u00e0 documentaria se tipo operazione diverso da AGGIUNGI_DOC_VOLUME e RIMUOVI_DOC_VOLUME"));
                 } // controllo che l'id dell'unit\u00e0  documentaria non sia nullo
                 else if (idUnitaDoc == null) {
                     getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                            "Errore nella visualizzazione dell'unit\u00e0  documentaria: identificativo nullo"));
+                            "Errore nella visualizzazione dell'unit\u00e0 documentaria: identificativo nullo"));
                 } // Altrimenti procedo a controllare i permessi
                 else if (idStrut != null) {
                     // Ricavo il TableBean relativo ai tipi di unit\u00e0  doc in base alle abilitazioni
@@ -835,7 +766,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                                 form);
                     } else {
                         getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                                "Utente non abilitato ad accedere al dettaglio dell'unit\u00e0  documentaria selezionata"));
+                                "Utente non abilitato ad accedere al dettaglio dell'unit\u00e0 documentaria selezionata"));
                     }
                 }
             } // Se ho cliccato sull'icona del "Visualizza volume" di Operazioni Volumi
@@ -1006,10 +937,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 getForm().getVersamentiFallitiDetail().copyFromBean(versErrRB);
                 // Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line in versione
                 // "pretty-print"
+
                 String xmlrich = versErrRB.getBlXmlRich();
                 String xmlindex = versErrRB.getBlXmlIndex();
                 String xmlrisp = versErrRB.getBlXmlRisp();
-                // Nascondo di default il tab sull'XML di indice
+
+                // Nascondo di default i tab XML
+                getForm().getVersamentiFallitiTabs().getVersamentoXMLRich().setHidden(true);
+                getForm().getVersamentiFallitiTabs().getVersamentoXMLRisp().setHidden(true);
                 getForm().getVersamentiFallitiTabs().getVersamentoXMLIndex().setHidden(true);
                 if (xmlrich != null && xmlrisp != null) {
                     XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
@@ -1017,6 +952,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     xmlrisp = formatter.prettyPrintWithDOM3LS(xmlrisp);
                     getForm().getVersamentiFallitiDetail().getBl_xml_rich().setValue(xmlrich);
                     getForm().getVersamentiFallitiDetail().getBl_xml_risp().setValue(xmlrisp);
+                    // show
+                    getForm().getVersamentiFallitiTabs().getVersamentoXMLRich().setHidden(false);
+                    getForm().getVersamentiFallitiTabs().getVersamentoXMLRisp().setHidden(false);
                     if (xmlindex != null) {
                         xmlindex = formatter.prettyPrintWithDOM3LS(xmlindex);
                         getForm().getVersamentiFallitiDetail().getBl_xml_index().setValue(xmlindex);
@@ -1024,7 +962,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     }
                 }
                 // Carico la lista file
-                VrsFileSessioneTableBean fileListTB = monitoraggioHelper.getFileListTableBean(idSessioneVers);
+                VrsFileSessioneKoTableBean fileListTB = monitoraggioHelper.getFileListTableBean(idSessioneVers);
                 getForm().getFileList().setTable(fileListTB);
                 getForm().getFileList().getTable().setPageSize(10);
                 getForm().getFileList().getTable().first();
@@ -1039,9 +977,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 getForm().getSessioniErrateDetail().copyFromBean(sesErrRB);
                 // Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line in versione
                 // "pretty-print"
+
                 String xmlrich = sesErrRB.getBlXmlRich();
                 String xmlindex = sesErrRB.getBlXmlIndex();
                 String xmlrisp = sesErrRB.getBlXmlRisp();
+
                 // Nascondo di default il tab sull'XML di indice
                 getForm().getSessioniErrateTabs().getSessioneXMLIndex().setHidden(true);
                 if (xmlrich != null && xmlrisp != null) {
@@ -1057,7 +997,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     }
                 }
                 // Carico la lista file
-                VrsFileSessioneTableBean fileListTB = monitoraggioHelper.getFileListTableBean(idSessioneVers);
+                VrsFileSessioneKoTableBean fileListTB = monitoraggioHelper.getFileListTableBean(idSessioneVers);
                 getForm().getFileList().setTable(fileListTB);
                 getForm().getFileList().getTable().setPageSize(10);
                 getForm().getFileList().getTable().first();
@@ -1074,7 +1014,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         .getString("cd_key_unita_doc");
                 String docVers = null;
                 // Se ho cliccato su un'Unit\u00e0  Documentaria
-                AbstractBaseTable sessioniListTB;
+                AbstractBaseTable<?> sessioniListTB;
                 String tipoVers;
                 if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getTipo_lista().parse().equals("UNITA_DOC")) {
                     MonVVisUdNonVersRowBean nonVersRB = monitoraggioHelper.getMonVVisUdNonVersRowBean(idStrut, registro,
@@ -1085,8 +1025,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
                     tipoVers = getForm().getDocumentiDerivantiDaVersFallitiDetail().getTipo_versamento().getValue();
 
-                    sessioniListTB = monitoraggioHelper.getMonVLisVersUdNonVersViewBean(idStrut, registro, anno, numero,
-                            tipoVers);
+                    sessioniListTB = monitoraggioHelper.getMonVLisVersUdNonVersViewBean(idStrut, registro, anno,
+                            numero);
                 } // Se ho cliccato su un Documento Aggiunto
                 else {
                     docVers = getForm().getDocumentiDerivantiDaVersFallitiList().getTable().getCurrentRow()
@@ -1101,7 +1041,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     tipoVers = getForm().getDocumentiDerivantiDaVersFallitiDetail().getTipo_versamento().getValue();
 
                     sessioniListTB = monitoraggioHelper.getMonVLisVersDocNonVersViewBean(idStrut, registro, anno,
-                            numero, docVers, tipoVers);
+                            numero, docVers);
                 }
 
                 // Carico la lista sessioni (che sono dei versamenti falliti)
@@ -1124,28 +1064,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         }
     }
 
-    public void ricaricaListaSessioniDaDettaglioUdDoc() throws EMFError {
-        MonitoraggioAttributiVersFallitiDaDocNonVersati mon = (MonitoraggioAttributiVersFallitiDaDocNonVersati) getSession()
-                .getAttribute("attributiVersFallitiDaDocNonVersati");
-        BigDecimal idStrut = mon.getIdStrut();
-        String registro = mon.getCdRegistroKeyUnitaDoc();
-        BigDecimal anno = mon.getAaKeyUnitaDoc();
-        String numero = mon.getCdKeyUnitaDoc();
-        String docVers = mon.getCdKeyDocVers();
-        String tipoVers = mon.getTipoVers();
-        // Rieseguo la ricerca della pagina precedente che avr\u00e0  anch'essa subito modifiche
-        int paginaCorrente = getForm().getSessioniList().getTable().getCurrentPageIndex();
-        int inizio = getForm().getSessioniList().getTable().getFirstRowPageIndex();
-        int pageSize = getForm().getSessioniList().getTable().getPageSize();
-        MonVLisVersDocNonVersTableBean sessioniListTB = monitoraggioHelper.getMonVLisVersDocNonVersViewBean(idStrut,
-                registro, anno, numero, docVers, tipoVers);
-        getForm().getSessioniList().setTable(sessioniListTB);
-        getForm().getSessioniList().getTable().setPageSize(pageSize);
-        getForm().getSessioniList().getTable().first();
-        this.lazyLoadGoPage(getForm().getSessioniList(), paginaCorrente);
-        getForm().getSessioniList().getTable().setCurrentRowIndex(inizio);
-    }
-
     /**
      * Metodo invocato in dettaglio Versamenti Falliti o Sessioni Errate quando si conferma la modifica del valore del
      * flag riferito allo stato del versamento/sessione (verificato o meno)
@@ -1158,7 +1076,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Se mi trovo nel dettaglio di una SESSIONE ERRATA
         if (getSession().getAttribute("provenienza").equals("SE")) {
             // Ricavo l'id della sessione errata
-            BigDecimal idSes = ((VrsSessioneVersRowBean) getForm().getSessioniErrateList().getTable().getCurrentRow())
+            BigDecimal idSes = ((VrsSessioneVersKoRowBean) getForm().getSessioniErrateList().getTable().getCurrentRow())
                     .getIdSessioneVers();
 
             /*
@@ -1173,8 +1091,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             }
 
             // Imposto il flaggozzo nel front-end (in pratica ne faccio il post)
-            getForm().getSessioniErrateDetail().getFl_sessione_err_verif()
-                    .setChecked(flaggozzo.equals("1") ? true : false);
+            getForm().getSessioniErrateDetail().getFl_sessione_err_verif().setChecked(flaggozzo.equals("1"));
 
             try {
                 // Valida i campi sulla correttezza formale
@@ -1183,14 +1100,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                      * Controllo che, se ho inserito un ambiente ed un ente per modificare l'id strut in
                      * VrsSessioneVers, sia valorizzato anche il campo struttura
                      */
-                    String nm_ambiente_per_calcolo = getForm().getSessioniErrateDetail().getId_ambiente().getValue()
+                    String nmAmbientePerCalcolo = getForm().getSessioniErrateDetail().getId_ambiente().getValue()
                             .equals("") ? null : getForm().getSessioniErrateDetail().getId_ambiente().getDecodedValue();
-                    String nm_ente_per_calcolo = getForm().getSessioniErrateDetail().getId_ente().getValue().equals("")
+                    String nmEntePerCalcolo = getForm().getSessioniErrateDetail().getId_ente().getValue().equals("")
                             ? null : getForm().getSessioniErrateDetail().getId_ente().getDecodedValue();
-                    String nm_strut_per_calcolo = getForm().getSessioniErrateDetail().getId_strut().getValue()
-                            .equals("") ? null : getForm().getSessioniErrateDetail().getId_strut().getDecodedValue();
-                    BigDecimal id_strut_per_calcolo = getForm().getSessioniErrateDetail().getId_strut().parse();
-                    if (nm_strut_per_calcolo == null && nm_ambiente_per_calcolo != null) {
+                    String nmStrutPerCalcolo = getForm().getSessioniErrateDetail().getId_strut().getValue().equals("")
+                            ? null : getForm().getSessioniErrateDetail().getId_strut().getDecodedValue();
+                    BigDecimal idStrutPerCalcolo = getForm().getSessioniErrateDetail().getId_strut().parse();
+                    if (nmStrutPerCalcolo == null && nmAmbientePerCalcolo != null) {
                         getMessageBox().addMessage(
                                 new Message(MessageLevel.ERR, "ATTENZIONE: campi ente e/o struttura non valorizzati"));
                     }
@@ -1215,9 +1132,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                          * La validazione non ha riportato errori. Salvo il flaggozzo su DB e setto la checkbox spuntata
                          * o meno nel front-end
                          */
-                        monitoraggioHelper.salvaDettaglio(idSes, flaggozzo, null, nm_ambiente_per_calcolo,
-                                nm_ente_per_calcolo, nm_strut_per_calcolo, id_strut_per_calcolo, registroUD, annoUD,
-                                numUD, chiaveDoc);
+                        monitoraggioHelper.salvaDettaglio(idSes, flaggozzo, null, nmAmbientePerCalcolo,
+                                nmEntePerCalcolo, nmStrutPerCalcolo, idStrutPerCalcolo, registroUD, annoUD, numUD,
+                                chiaveDoc);
                         if (flaggozzo.equals("1")) {
                             getForm().getSessioniErrateDetail().getFl_sessione_err_verif().setChecked(true);
                         } else {
@@ -1243,9 +1160,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         int pageSize = getForm().getSessioniErrateList().getTable().getPageSize();
                         int paginaCorrente = getForm().getSessioniErrateList().getTable().getCurrentPageIndex();
                         getForm().getSessioniErrateList().getFl_sessione_err_verif().setEditMode();
-                        String maxResultSessioniErrate = configurationHelper.getValoreParamApplic(
-                                "MAX_RESULT_SESSIONI_ERRATE", null, null, null, null,
-                                CostantiDB.TipoAplVGetValAppart.APPLIC);
+                        String maxResultSessioniErrate = configurationHelper
+                                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_SESSIONI_ERRATE);
                         getForm().getSessioniErrateList().setTable(monitoraggioHelper.getSessioniErrateListTB(null,
                                 Integer.parseInt(maxResultSessioniErrate)));
                         getForm().getSessioniErrateList().getTable().setPageSize(pageSize);
@@ -1301,9 +1217,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
             // Imposto i flaggozzi nel front-end (in pratica ne faccio il post)
             getForm().getVersamentiFallitiDetail().getFl_sessione_err_verif()
-                    .setChecked(flaggozzoVerificato.equals("1") ? true : false);
+                    .setChecked(flaggozzoVerificato.equals("1"));
             getForm().getVersamentiFallitiDetail().getFl_sessione_err_non_risolub()
-                    .setChecked(flaggozzoNonRisolubile.equals("1") ? true : false);
+                    .setChecked(flaggozzoNonRisolubile.equals("1"));
 
             try {
                 // Valida i campi sulla correttezza formale
@@ -1414,9 +1330,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 && !getForm().getRiepilogoVersamenti().getId_tipo_unita_doc().getValue().equals("")) {
             getRequest().setAttribute("tipoud", true);
         }
-        if (getSession().getAttribute("fromRicercaJob") != null) {
-            getSession().removeAttribute("fromRicercaJob");
-        }
         goBack();
     }
 
@@ -1439,7 +1352,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     }
 
     public void calcolaTotaliRiepilogoVersamenti(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStruttura,
-            BigDecimal idTipoUnitaDoc) throws EMFError {
+            BigDecimal idTipoUnitaDoc) {
         // Rendo visibili i totali
         visualizzaTotaliRiepilogoVersamenti();
 
@@ -2434,16 +2347,16 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         }
 
         // Inizializzo le combo settando la struttura corrente
-        ComboBox ambienteCombo = getForm().getRiepilogoVersamenti().getId_ambiente();
+        ComboBox<BigDecimal> ambienteCombo = getForm().getRiepilogoVersamenti().getId_ambiente();
         DecodeMapIF mappaAmbiente = ambienteCombo.getDecodeMap();
 
-        ComboBox enteCombo = getForm().getRiepilogoVersamenti().getId_ente();
+        ComboBox<BigDecimal> enteCombo = getForm().getRiepilogoVersamenti().getId_ente();
         DecodeMapIF mappaEnte = enteCombo.getDecodeMap();
 
-        ComboBox strutCombo = getForm().getRiepilogoVersamenti().getId_strut();
+        ComboBox<BigDecimal> strutCombo = getForm().getRiepilogoVersamenti().getId_strut();
         DecodeMapIF mappaStrut = strutCombo.getDecodeMap();
 
-        ComboBox tipoUnitaDocCombo = getForm().getRiepilogoVersamenti().getId_tipo_unita_doc();
+        ComboBox<BigDecimal> tipoUnitaDocCombo = getForm().getRiepilogoVersamenti().getId_tipo_unita_doc();
         DecodeMapIF mappaUD = tipoUnitaDocCombo.getDecodeMap();
 
         // MOSTRA LISTA DOCUMENTI
@@ -2473,7 +2386,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 calA.set(Calendar.SECOND, 59);
                 calA.set(Calendar.MILLISECOND, 999);
 
-                SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+                SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
                 switch (getRequest().getParameter("tiCreazione")) {
                 case WebConstants.PARAMETER_CREAZIONE_OGGI:
 
@@ -2527,9 +2440,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Salvo in sessione i filtri
             getSession().setAttribute("filtriListaDoc", filtriListaDoc);
             // Setto la lista dei documenti
-            String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
-            BaseTableInterface monVLisDocViewBean = monitoraggioHelper.getMonVLisDocViewBean(
+            String maxResultStandard = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
+            BaseTableInterface<?> monVLisDocViewBean = monitoraggioHelper.getMonVLisDocViewBean(
                     (MonitoraggioFiltriListaDocBean) getSession().getAttribute("filtriListaDoc"),
                     Integer.parseInt(maxResultStandard));
             getForm().getDocumentiList().setTable(monVLisDocViewBean);
@@ -2579,15 +2492,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     .setValue(getRequest().getParameter("statoDoc"));
             getForm().getFiltriDocumenti().getTi_stato_doc_elenco_vers().setEditMode();
 
-            /*
-             * Se il contenuto della combo Stato documento \u00e0¨ uguale a IN_VOLUME_CHIUSO il contenuto di Stato
-             * Volume \u00e0¨ impostato su CHIUSO if (getRequest().getParameter("statoDoc") != null) { if
-             * (getRequest().getParameter("statoDoc").equals("IN_VOLUME_CHIUSO")) {
-             * getForm().getFiltriDocumenti().getTi_stato_volume().setDecodeMap(ComboGetter.getMappaStatoVol());
-             * getForm().getFiltriDocumenti().getTi_stato_volume().setValue(getRequest().getParameter("statoVol")); }
-             * else { getForm().getFiltriDocumenti().getTi_stato_volume().setDecodeMap(new DecodeMap()); } }
-             * getForm().getFiltriDocumenti().getTi_stato_volume().setEditMode();
-             */
             // Preparo la combo "periodo versamento"
             getForm().getFiltriDocumenti().getPeriodo_vers().setDecodeMap(ComboGetter.getMappaPeriodoVers());
             getForm().getFiltriDocumenti().getPeriodo_vers().setValue(getRequest().getParameter("periodo"));
@@ -2629,7 +2533,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 calA.set(Calendar.SECOND, 59);
                 calA.set(Calendar.MILLISECOND, 999);
 
-                SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+                SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
                 switch (getRequest().getParameter("tiCreazione")) {
                 case WebConstants.PARAMETER_CREAZIONE_OGGI:
 
@@ -2678,8 +2582,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
             // Salvo i filtri in sessione
             getSession().setAttribute("filtriSes", filtriSes);
-            String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String maxResultStandard = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
             // Setto la lista dei versamenti falliti
             MonVLisVersErrIamTableBean versErrTableBean = monitoraggioHelper.getMonVLisVersErrIamViewBean(filtriSes,
                     Integer.parseInt(maxResultStandard));
@@ -2705,7 +2609,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
             // Preparo la combo "Tipo Sessione"
             getForm().getFiltriVersamenti().getTi_sessione_vers().setDecodeMap(
-                    ComboGetter.getMappaSortedGenericEnum("ti_sessione_vers", WebConstants.TipoSessione.values()));
+                    ComboGetter.getMappaSortedGenericEnum("ti_sessione_vers", Constants.TipoSessione.values()));
             getForm().getFiltriVersamenti().getTi_sessione_vers().setValue(getRequest().getParameter("tipoSes"));
             getForm().getFiltriVersamenti().getTi_sessione_vers().setEditMode();
 
@@ -2757,7 +2661,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 getForm().getFiltriVersamenti().getVersamento_ses_err_non_risolub().setDecodeMap(new DecodeMap());
             }
 
-            // caricaErrori.inizia();
             // Preparo la combo "Classe errore"
             getForm().getFiltriVersamenti().getClasse_errore().setDecodeMap(caricaErrori.getMappaClasseErrore());
             getForm().getFiltriVersamenti().getClasse_errore().setEditMode();
@@ -2785,24 +2688,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             getForm().getVersamentiFallitiList().getFl_sessione_err_verif().setReadonly(false);
             getForm().getVersamentiFallitiList().getFl_sessione_err_non_risolub().setReadonly(false);
 
-            if (filtriSes.getRisolto() != null) {
-                if (filtriSes.getRisolto().equals("1")) {
-                    /*
-                     * Se \u00e0¨ "risolto", mette in view mode le checkbox Verificati e Non Risolubile
-                     */
-                    getForm().getVersamentiFallitiList().getFl_sessione_err_verif().setReadonly(true);
-                    getForm().getVersamentiFallitiList().getFl_sessione_err_non_risolub().setReadonly(true);
-                }
+            if (filtriSes.getRisolto() != null && filtriSes.getRisolto().equals("1")) {
+                /*
+                 * Se \u00e0¨ "risolto", mette in view mode le checkbox Verificati e Non Risolubile
+                 */
+                getForm().getVersamentiFallitiList().getFl_sessione_err_verif().setReadonly(true);
+                getForm().getVersamentiFallitiList().getFl_sessione_err_non_risolub().setReadonly(true);
             }
-
-            // Ricavo gli id sessione per calcolo chiave unit\u00e0  doc.
-            /*
-             * Chiamata eliminata per la mac #14982. Nelle versioni successive verrà eliminato. List<BigDecimal>
-             * listaIdSessioneVersFalliti =
-             * monitoraggioHelper.getIdSessioneVersFalliti((MonitoraggioFiltriListaVersFallitiBean)
-             * getSession().getAttribute("filtriSes")); getSession().setAttribute("id_sessione_vers",
-             * listaIdSessioneVersFalliti);
-             */
 
             /* Gestione visibilità bottoni */
             mostraNascondiBottoniOperazioniVersamentiFalliti(versErrTableBean.size());
@@ -2821,7 +2713,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             getForm().getFiltriRicercaVersamentiFallitiTabs()
                     .setCurrentTab(getForm().getFiltriRicercaVersamentiFallitiTabs().getFiltriGenerali());
             forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_RICERCA);
-        } // MOSTRA LISTA RIEPILOGO VERSAMENTI FALLITI DISTINTI PER DOCUMENTI
+        } // MOSTRA LISTA RIEPILOGO VERSAMENTI FALLITI DISTINTI PER DOCUMENTI --> (UNITÀ DOCUMENTARIE DERIVANTI DA
+          // VERSAMENTI FALLITI)
         else if (getRequest().getParameter("pagina").equals("3")) {
             // Setto diversi valori dei filtri presi come parametri passati dalla request
             filtriListaVersFallitiDistintiDoc.setTipoLista(getRequest().getParameter("tipoLista"));
@@ -2834,25 +2727,62 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Setto i permessi dell'utente
             filtriListaVersFallitiDistintiDoc.setIdUserIam(new BigDecimal(getUser().getIdUtente()));
 
+            Calendar calDa = Calendar.getInstance();
+            Calendar calA = Calendar.getInstance();
+            calDa.set(Calendar.YEAR, 2011);
+            calDa.set(Calendar.MONTH, 11);
+            calDa.set(Calendar.DAY_OF_MONTH, 1);
+            calDa.set(Calendar.HOUR_OF_DAY, 0);
+            calDa.set(Calendar.MINUTE, 0);
+            calDa.set(Calendar.SECOND, 0);
+            calDa.set(Calendar.MILLISECOND, 0);
+
+            calA.set(Calendar.HOUR_OF_DAY, 23);
+            calA.set(Calendar.MINUTE, 59);
+            calA.set(Calendar.SECOND, 59);
+            calA.set(Calendar.MILLISECOND, 999);
+            SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getGiorno_first_vers_da()
+                    .setValue(df.format(calDa.getTime()));
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getOre_first_vers_da().setValue("0");
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getMinuti_first_vers_da().setValue("0");
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getGiorno_first_vers_a()
+                    .setValue(df.format(calA.getTime()));
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getOre_first_vers_a().setValue("23");
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getMinuti_first_vers_a().setValue("59");
+
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getGiorno_last_vers_da()
+                    .setValue(df.format(calDa.getTime()));
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getOre_last_vers_da().setValue("0");
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getMinuti_last_vers_da().setValue("0");
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getGiorno_last_vers_a()
+                    .setValue(df.format(calA.getTime()));
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getOre_last_vers_a().setValue("23");
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getMinuti_last_vers_a().setValue("59");
+
+            filtriListaVersFallitiDistintiDoc.setGiornoFirstVersDaValidato(calDa.getTime());
+            filtriListaVersFallitiDistintiDoc.setGiornoFirstVersAValidato(calA.getTime());
+
+            filtriListaVersFallitiDistintiDoc.setGiornoLastVersDaValidato(calDa.getTime());
+            filtriListaVersFallitiDistintiDoc.setGiornoLastVersAValidato(calA.getTime());
+
             // Salvo in sessione i filtri
             getSession().setAttribute("filtriListaVersFallitiDistintiDoc", filtriListaVersFallitiDistintiDoc);
 
             // Setto la lista dei documenti non versati
-            String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
             if (filtriListaVersFallitiDistintiDoc.getTipoLista().equals("UNITA_DOC")) {
                 MonVLisUdNonVersIamTableBean monVLisUdNonVersTableBean = monitoraggioHelper
-                        .getMonVLisUdNonVersIamViewBean(
+                        .getMonVLisUdNonVersIamViewBeanScaricaContenuto(
                                 (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
                                         .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                Integer.parseInt(maxResultStandard));
+                                null);
                 getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLisUdNonVersTableBean);
             } else {
                 MonVLisDocNonVersIamTableBean monVLisDocNonVersTableBean = monitoraggioHelper
-                        .getMonVLisDocNonVersIamViewBean(
+                        .getMonVLisDocNonVersIamViewBeanScaricaContenuto(
                                 (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
                                         .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                Integer.parseInt(maxResultStandard));
+                                null);
                 getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLisDocNonVersTableBean);
             }
 
@@ -2934,6 +2864,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     .setDecodeMap(mappaReg);
             getForm().getFiltriUdDocDerivantiDaVersFallitiUlteriori().setEditMode();
 
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getDownloadContenuto().setEditMode();
+            getForm().getFiltriUdDocDerivantiDaVersFalliti().getDownloadContenuto().setDisableHourGlass(true);
+
             // Setto il tab nel quale presentare la videata
             getForm().getFiltriListaDocumentiDerivantiVersFallitiTabs().setCurrentTab(
                     getForm().getFiltriListaDocumentiDerivantiVersFallitiTabs().getFiltriGeneraliDerivanti());
@@ -2980,8 +2913,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             getForm().getFiltriDocumentiAnnullati().getTi_stato_annul().setValue(stato);
 
             // Setto la lista dei documenti
-            String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                    null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String maxResultStandard = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
             MonVLisUniDocDaAnnulTableBean monVLisDocTableBean = monitoraggioEjb.getMonVLisUniDocDaAnnul(
                     getUser().getIdUtente(), getForm().getFiltriDocumentiAnnullati(),
                     Integer.parseInt(maxResultStandard));
@@ -3093,10 +3026,10 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     getSession().setAttribute("filtriListaDoc", filtriListaDoc);
                 }
 
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 // La validazione non ha riportato errori. Carico la tabella con i filtri impostati
-                BaseTableInterface monVLisDocTableBean = monitoraggioHelper.getMonVLisDocViewBean(
+                BaseTableInterface<?> monVLisDocTableBean = monitoraggioHelper.getMonVLisDocViewBean(
                         (MonitoraggioFiltriListaDocBean) getSession().getAttribute("filtriListaDoc"),
                         Integer.parseInt(maxResultStandard));
                 getForm().getDocumentiList().setTable(monVLisDocTableBean);
@@ -3114,7 +3047,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         MonitoraggioForm.FiltriVersamentiUlteriori filtriUlteriori = getForm().getFiltriVersamentiUlteriori();
         // Esegue la post dei filtri compilati
         filtri.post(getRequest());
-        // filtriUlteriori.post(getRequest());
         if (filtri.validate(getMessageBox())) {
             // recupero i filtri dalla sessione e setto i filtri con il nuovo valore
             MonitoraggioFiltriListaVersFallitiBean filtriSes = (MonitoraggioFiltriListaVersFallitiBean) getSession()
@@ -3144,8 +3076,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             filtriSes.setNumero_range_da(filtriUlteriori.getCd_key_unita_doc_da().parse());
             filtriSes.setAnno_range_a(filtriUlteriori.getAa_key_unita_doc_a().parse());
             filtriSes.setNumero_range_a(filtriUlteriori.getCd_key_unita_doc_a().parse());
-
-            // filtriSes.setTipiUD(filtriUlteriori.getTipi_ud().parse());
             getSession().setAttribute("filtriSes", filtriSes);
 
             /*
@@ -3177,8 +3107,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 }
 
                 // Setto la lista dei versamenti falliti
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 MonVLisVersErrIamTableBean monVLisVersErrTableBean = monitoraggioHelper.getMonVLisVersErrIamViewBean(
                         (MonitoraggioFiltriListaVersFallitiBean) getSession().getAttribute("filtriSes"),
                         Integer.parseInt(maxResultStandard));
@@ -3197,14 +3127,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 getForm().getVersamentiFallitiList().getFl_sessione_err_verif().setReadonly(false);
                 getForm().getVersamentiFallitiList().getFl_sessione_err_non_risolub().setReadonly(false);
 
-                if (filtriSes.getRisolto() != null) {
-                    if (filtriSes.getRisolto().equals("1")) {
-                        /*
-                         * Se \u00e0¨ "risolto", mette in view mode le checkbox Verificati e Non Risolubile
-                         */
-                        getForm().getVersamentiFallitiList().getFl_sessione_err_verif().setReadonly(true);
-                        getForm().getVersamentiFallitiList().getFl_sessione_err_non_risolub().setReadonly(true);
-                    }
+                if (filtriSes.getRisolto() != null && filtriSes.getRisolto().equals("1")) {
+                    /*
+                     * Se \u00e0¨ "risolto", mette in view mode le checkbox Verificati e Non Risolubile
+                     */
+                    getForm().getVersamentiFallitiList().getFl_sessione_err_verif().setReadonly(true);
+                    getForm().getVersamentiFallitiList().getFl_sessione_err_non_risolub().setReadonly(true);
                 }
             }
 
@@ -3233,10 +3161,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     private void mostraNascondiBottoniOperazioniVersamentiFalliti(int numRecord) {
         if (numRecord != 0) {
             getForm().getSalvaVerificaButtonList().getSalvaVerificaVersamento().setEditMode();
-            getForm().getCalcolaChiaveUD().getCalcolaChiaveUnitaDoc().setEditMode();
         } else {
             getForm().getSalvaVerificaButtonList().getSalvaVerificaVersamento().setViewMode();
-            getForm().getCalcolaChiaveUD().getCalcolaChiaveUnitaDoc().setViewMode();
         }
     }
 
@@ -3269,6 +3195,34 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         filtriListaVersFallitiDistintiDoc.setAnno_range_a(filtriUlteriori.getAa_key_unita_doc_a_ult().parse());
         filtriListaVersFallitiDistintiDoc.setNumero_range_a(filtriUlteriori.getCd_key_unita_doc_a_ult().parse());
 
+        MonitoraggioValidator validator = new MonitoraggioValidator(getMessageBox());
+
+        // Controllo che i range di giorno versamento sia corretto e setto gli eventuali
+        // valori di default
+        Date[] dateValidateFirst = validator.validaDate(filtri.getGiorno_first_vers_da().parse(),
+                filtri.getOre_first_vers_da().parse(), filtri.getMinuti_first_vers_da().parse(),
+                filtri.getGiorno_first_vers_a().parse(), filtri.getOre_first_vers_a().parse(),
+                filtri.getMinuti_first_vers_a().parse(), filtri.getGiorno_first_vers_da().getHtmlDescription(),
+                filtri.getGiorno_first_vers_a().getHtmlDescription());
+
+        Date[] dateValidateLast = validator.validaDate(filtri.getGiorno_last_vers_da().parse(),
+                filtri.getOre_last_vers_da().parse(), filtri.getMinuti_last_vers_da().parse(),
+                filtri.getGiorno_last_vers_a().parse(), filtri.getOre_last_vers_a().parse(),
+                filtri.getMinuti_last_vers_a().parse(), filtri.getGiorno_last_vers_da().getHtmlDescription(),
+                filtri.getGiorno_last_vers_a().getHtmlDescription());
+
+        // Le eventuali date riferite al giorno di versamento vengono salvate in sessione
+        if (dateValidateFirst != null) {
+            filtriListaVersFallitiDistintiDoc.setGiornoFirstVersDaValidato(dateValidateFirst[0]);
+            filtriListaVersFallitiDistintiDoc.setGiornoFirstVersAValidato(dateValidateFirst[1]);
+        }
+        if (dateValidateLast != null) {
+            filtriListaVersFallitiDistintiDoc.setGiornoLastVersDaValidato(dateValidateLast[0]);
+            filtriListaVersFallitiDistintiDoc.setGiornoLastVersAValidato(dateValidateLast[1]);
+        }
+
+        getSession().setAttribute("filtriListaVersFallitiDistintiDoc", filtri);
+
         // Li risetto perch\u00e0¨ se torno indietro in "Riepilogo Versamenti" devo avere impostata la ricerca con
         // questi ultimi
         getSession().setAttribute("filtriListaVersFallitiDistintiDoc", filtriListaVersFallitiDistintiDoc);
@@ -3276,23 +3230,21 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Valida i filtri per verificare quelli obbligatori
         if (filtri.validate(getMessageBox())) {
             if (!getMessageBox().hasError()) {
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
                 if (filtriListaVersFallitiDistintiDoc.getTipoLista().equals("UNITA_DOC")) {
                     // Setto la lista delle unit\u00e0  documentarie non versate
                     MonVLisUdNonVersIamTableBean monVLiUdNonVersTableBean = monitoraggioHelper
-                            .getMonVLisUdNonVersIamViewBean(
+                            .getMonVLisUdNonVersIamViewBeanScaricaContenuto(
                                     (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
                                             .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                    Integer.parseInt(maxResultStandard));
+                                    null);
                     getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLiUdNonVersTableBean);
                 } else {
                     // Setto la lista delle unit\u00e0  documentarie non versate
                     MonVLisDocNonVersIamTableBean monVLisDocNonVersTableBean = monitoraggioHelper
-                            .getMonVLisDocNonVersIamViewBean(
+                            .getMonVLisDocNonVersIamViewBeanScaricaContenuto(
                                     (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
                                             .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                    Integer.parseInt(maxResultStandard));
+                                    null);
                     getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLisDocNonVersTableBean);
                 }
                 getForm().getDocumentiDerivantiDaVersFallitiList().getTable().setPageSize(10);
@@ -3351,7 +3303,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error("Errore in ricerca ambiente", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -3450,7 +3402,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error("Errore in ricerca ambiente", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -3548,43 +3500,30 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
              * Setto le varie checkbox dei filtri spuntate o meno a seconda dei valori presi dalla request questo
              * perch\u00e0¨ non riesco direttamente a ricavare il valore del filtro checkbox
              */
-            Map cecchini = getRequest().getParameterMap();
-            filtri.getFl_oper_crea_volume().setChecked(cecchini.get("Fl_oper_crea_volume") != null ? true : false);
+            Map<String, String[]> cecchini = getRequest().getParameterMap();
+            filtri.getFl_oper_crea_volume().setChecked(cecchini.get("Fl_oper_crea_volume") != null);
             filtri.getFl_oper_recupera_volume_aperto()
-                    .setChecked(cecchini.get("Fl_oper_recupera_volume_aperto") != null ? true : false);
-            filtri.getFl_oper_aggiungi_doc_volume()
-                    .setChecked(cecchini.get("Fl_oper_aggiungi_doc_volume") != null ? true : false);
+                    .setChecked(cecchini.get("Fl_oper_recupera_volume_aperto") != null);
+            filtri.getFl_oper_aggiungi_doc_volume().setChecked(cecchini.get("Fl_oper_aggiungi_doc_volume") != null);
             filtri.getFl_oper_recupera_volume_scaduto()
-                    .setChecked(cecchini.get("Fl_oper_recupera_volume_scaduto") != null ? true : false);
+                    .setChecked(cecchini.get("Fl_oper_recupera_volume_scaduto") != null);
             filtri.getFl_oper_set_volume_da_chiudere()
-                    .setChecked(cecchini.get("Fl_oper_set_volume_da_chiudere") != null ? true : false);
-            filtri.getFl_oper_set_volume_aperto()
-                    .setChecked(cecchini.get("Fl_oper_set_volume_aperto") != null ? true : false);
-            filtri.getFl_oper_inizio_crea_indice()
-                    .setChecked(cecchini.get("Fl_oper_inizio_crea_indice") != null ? true : false);
+                    .setChecked(cecchini.get("Fl_oper_set_volume_da_chiudere") != null);
+            filtri.getFl_oper_set_volume_aperto().setChecked(cecchini.get("Fl_oper_set_volume_aperto") != null);
+            filtri.getFl_oper_inizio_crea_indice().setChecked(cecchini.get("Fl_oper_inizio_crea_indice") != null);
             filtri.getFl_oper_recupera_volume_in_errore()
-                    .setChecked(cecchini.get("Fl_oper_recupera_volume_in_errore") != null ? true : false);
-            filtri.getFl_oper_crea_indice_volume()
-                    .setChecked(cecchini.get("Fl_oper_crea_indice_volume") != null ? true : false);
-            filtri.getFl_oper_marca_indice_volume()
-                    .setChecked(cecchini.get("Fl_oper_marca_indice_volume") != null ? true : false);
-            filtri.getFl_oper_set_volume_in_errore()
-                    .setChecked(cecchini.get("Fl_oper_set_volume_in_errore") != null ? true : false);
-            filtri.getFl_oper_inizio_verif_firme()
-                    .setChecked(cecchini.get("Fl_oper_inizio_verif_firme") != null ? true : false);
-            filtri.getFl_oper_chiusura_volume()
-                    .setChecked(cecchini.get("Fl_oper_chiusura_volume") != null ? true : false);
-            filtri.getFl_oper_err_verif_firme()
-                    .setChecked(cecchini.get("Fl_oper_err_verif_firme") != null ? true : false);
-            filtri.getFl_oper_rimuovi_doc_volume()
-                    .setChecked(cecchini.get("Fl_oper_rimuovi_doc_volume") != null ? true : false);
-            filtri.getFl_oper_elimina_volume()
-                    .setChecked(cecchini.get("Fl_oper_elimina_volume") != null ? true : false);
-            filtri.getFl_oper_modifica_volume()
-                    .setChecked(cecchini.get("Fl_oper_modifica_volume") != null ? true : false);
-            filtri.getFl_oper_firma_no_marca_volume()
-                    .setChecked(cecchini.get("Fl_oper_firma_no_marca_volume") != null ? true : false);
-            filtri.getFl_oper_firma_volume().setChecked(cecchini.get("Fl_oper_firma_volume") != null ? true : false);
+                    .setChecked(cecchini.get("Fl_oper_recupera_volume_in_errore") != null);
+            filtri.getFl_oper_crea_indice_volume().setChecked(cecchini.get("Fl_oper_crea_indice_volume") != null);
+            filtri.getFl_oper_marca_indice_volume().setChecked(cecchini.get("Fl_oper_marca_indice_volume") != null);
+            filtri.getFl_oper_set_volume_in_errore().setChecked(cecchini.get("Fl_oper_set_volume_in_errore") != null);
+            filtri.getFl_oper_inizio_verif_firme().setChecked(cecchini.get("Fl_oper_inizio_verif_firme") != null);
+            filtri.getFl_oper_chiusura_volume().setChecked(cecchini.get("Fl_oper_chiusura_volume") != null);
+            filtri.getFl_oper_err_verif_firme().setChecked(cecchini.get("Fl_oper_err_verif_firme") != null);
+            filtri.getFl_oper_rimuovi_doc_volume().setChecked(cecchini.get("Fl_oper_rimuovi_doc_volume") != null);
+            filtri.getFl_oper_elimina_volume().setChecked(cecchini.get("Fl_oper_elimina_volume") != null);
+            filtri.getFl_oper_modifica_volume().setChecked(cecchini.get("Fl_oper_modifica_volume") != null);
+            filtri.getFl_oper_firma_no_marca_volume().setChecked(cecchini.get("Fl_oper_firma_no_marca_volume") != null);
+            filtri.getFl_oper_firma_volume().setChecked(cecchini.get("Fl_oper_firma_volume") != null);
         }
 
         // Controllo che ci sia almeno un cecchino checkato
@@ -3641,8 +3580,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         inizioOutput = getForm().getOutputAnaliticoCronologicoList().getTable().getFirstRowPageIndex();
                         outputPageSize = getForm().getOutputAnaliticoCronologicoList().getTable().getPageSize();
                     }
-                    String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null,
-                            null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                    String maxResultStandard = configurationHelper
+                            .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                     getForm().getOutputAnaliticoCronologicoList().setTable(monitoraggioHelper
                             .getMonVLisOperVolIamViewBean(filtri, dateValidate, Integer.parseInt(maxResultStandard)));
                     getForm().getOutputAnaliticoCronologicoList().getTable().setPageSize(outputPageSize);
@@ -3678,7 +3617,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Ricarica la form di ricerca
             this.operazioniVolumi();
         } catch (Exception ex) {
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
         }
     }
 
@@ -3810,7 +3749,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         getUser().getIdUtente());
                 getForm().getContenutoSacerTotaliUdDocComp().copyFromBean(totali);
                 /* Ricavo la lista risultato */
-                BaseTableInterface totSacer = monitoraggioHelper.getMonTotSacerTable(filtri, idAmbitoTerritList,
+                BaseTableInterface<?> totSacer = monitoraggioHelper.getMonTotSacerTable(filtri, idAmbitoTerritList,
                         getUser().getIdUtente());
                 getForm().getContenutoSacerList().setTable(totSacer);
                 getForm().getContenutoSacerList().getTable().first();
@@ -3831,7 +3770,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         try {
             this.contenutoSacer();
         } catch (Exception ex) {
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
         }
     }
 
@@ -3847,9 +3786,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         FiltriJobSchedulati filtri = getForm().getFiltriJobSchedulati();
 
         // Esegue la post dei filtri compilati
-        if (getSession().getAttribute("fromRicercaJob") != null) {
-            getSession().removeAttribute("fromRicercaJob");
-            getSession().setAttribute("backToRicercaJob", true);
+        if (getSession().getAttribute(FROM_GESTIONE_JOB) != null) {
+            getSession().removeAttribute(FROM_GESTIONE_JOB);
         } else {
             filtri.post(getRequest());
         }
@@ -3891,36 +3829,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 getForm().getJobSchedulatiList().getTable().first();
 
                 // Setto i campi di "Stato Job"
-                String nomeJob = filtri.getNm_job().parse();
-                Date proxAttivazione = jbossTimerEjb.getDataProssimaAttivazione(nomeJob);
-
-                LogVVisLastSchedRowBean rb = monitoraggioHelper.getLogVVisLastSchedRowBean(nomeJob);
-                String formattata = "";
-                DateFormat formato = new SimpleDateFormat(WebConstants.DATE_FORMAT_TIMESTAMP_TYPE);
-                if (proxAttivazione != null) {
-                    formattata = formato.format(proxAttivazione);
-                }
-                getForm().getStatoJob().getDt_prossima_attivazione().setValue(formattata);
-                if (rb.getFlJobAttivo() != null) {
-                    if (rb.getFlJobAttivo().equals("1")) {
-                        getForm().getStatoJob().getAttivo().setChecked(true);
-                        formattata = formato.format(rb.getDtRegLogJobIni());
-                        getForm().getStatoJob().getDt_reg_log_job_ini().setValue(formattata);
-                    } else {
-                        getForm().getStatoJob().getAttivo().setChecked(false);
-                        getForm().getStatoJob().getDt_reg_log_job_ini().setValue(null);
-                    }
-                } else {
-                    getForm().getStatoJob().getAttivo().setChecked(false);
-                    getForm().getStatoJob().getDt_reg_log_job_ini().setValue(null);
-                }
+                setStatoJob(nmJob);
             }
         }
         forwardToPublisher(Application.Publisher.MONITORAGGIO_JOB_SCHEDULATI_RICERCA);
     }
 
     public void ricercaJobSchedulatiDaGestioneJob() throws EMFError {
-        // String nmJob = getForm().getFiltriJobSchedulati().getNm_job().parse();
         triggerFiltriJobSchedulatiNm_jobOnTrigger();
         ricercaJobSchedulati();
     }
@@ -3936,7 +3851,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         try {
             this.jobSchedulati();
         } catch (Exception ex) {
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
         }
     }
 
@@ -3982,19 +3897,17 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         ///// Quindi li confronto per vedere se ci sono state modifiche ////////////
         ////////////////////////////////////////////////////////////////////////////
         int numRecordPerPagina = fine - inizio;
-        // getForm().getVersamentiFallitiList().post(getRequest());
         MonVLisVersErrIamTableBean monVersErr = (MonVLisVersErrIamTableBean) getForm().getVersamentiFallitiList()
                 .getTable();
         String[] verificatiPre = new String[numRecordPerPagina];
         String[] verificatiPost = new String[numRecordPerPagina];
         String[] nonRisolubiliPre = new String[numRecordPerPagina];
         String[] nonRisolubiliPost = new String[numRecordPerPagina];
-        // String[] statoRisoluzione = new String[numRecordPerPagina];
         /*
          * Contiene gli indici assoluti dei record in cui sono stati modificati il flag "Verificato" o il flag
          * "Non Risolubile" o entrambi
          */
-        Set<Integer> verificatiNonRisolubiliModificati = new HashSet();
+        Set<Integer> verificatiNonRisolubiliModificati = new HashSet<>();
         Set<BigDecimal> idSesModificate;
 
         /* 1) Inserisco tutti i valori dei PRE e tutti "0" nei POST */
@@ -4089,8 +4002,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                             .getAttribute("filtriSes");
                     filtriSes.setVerificato(flaggozzo);
                     getSession().setAttribute("filtriSes", filtriSes);
-                    String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null,
-                            null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                    String maxResultStandard = configurationHelper
+                            .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                     MonVLisVersErrIamTableBean listaVersErr = monitoraggioHelper.getMonVLisVersErrIamViewBean(
                             (MonitoraggioFiltriListaVersFallitiBean) getSession().getAttribute("filtriSes"),
                             Integer.parseInt(maxResultStandard));
@@ -4099,7 +4012,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     getForm().getVersamentiFallitiList().getTable().first();
                     this.lazyLoadGoPage(getForm().getVersamentiFallitiList(), paginaCorrente);
                     getForm().getVersamentiFallitiList().getTable().setCurrentRowIndex(inizio);
-                    // getForm().getVersamentiFallitiList().post(getRequest());
 
                     // Rieseguo anche la quesy di Riepilogo Versamenti
                     calcolaTotaliRiepilogoVersamenti(filtriSes.getIdAmbiente(), filtriSes.getIdEnte(),
@@ -4159,7 +4071,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         ///// Quindi li confronto per vedere se ci sono state modifiche ////////////
         ////////////////////////////////////////////////////////////////////////////
         int numRecordPerPagina = fine - inizio;
-        // getForm().getSessioniList().post(getRequest());
 
         String[] verificatiPre = new String[numRecordPerPagina];
         String[] verificatiPost = new String[numRecordPerPagina];
@@ -4169,7 +4080,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
          * Contiene gli indici assoluti dei record in cui sono stati modificati il flag "Verificato" o il flag
          * "Non Risolubile" o entrambi
          */
-        Set<Integer> verificatiNonRisolubiliModificati = new HashSet();
+        Set<Integer> verificatiNonRisolubiliModificati = new HashSet<>();
         Set<BigDecimal> idSesModificate;
 
         if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getTipo_lista().parse().equals("UNITA_DOC")) {
@@ -4296,20 +4207,17 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                                 .parse();
                         String docVers = getForm().getDocumentiDerivantiDaVersFallitiDetail().getCd_key_doc_vers()
                                 .parse();
-                        String tipoVers = getForm().getDocumentiDerivantiDaVersFallitiDetail().getTipo_versamento()
-                                .parse();
                         int pageSize = getForm().getSessioniList().getTable().getPageSize();
                         if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getTipo_lista().parse()
                                 .equals("UNITA_DOC")) {
                             MonVLisVersUdNonVersTableBean listaVersErr = monitoraggioHelper
-                                    .getMonVLisVersUdNonVersViewBean(idStrut, registro, anno, numero, tipoVers);
+                                    .getMonVLisVersUdNonVersViewBean(idStrut, registro, anno, numero);
                             getForm().getSessioniList().setTable(listaVersErr);
                             getForm().getSessioniList().getTable().setPageSize(pageSize);
                             getForm().getSessioniList().getTable().first();
                         } else {
                             MonVLisVersDocNonVersTableBean listaVersErr = monitoraggioHelper
-                                    .getMonVLisVersDocNonVersViewBean(idStrut, registro, anno, numero, docVers,
-                                            tipoVers);
+                                    .getMonVLisVersDocNonVersViewBean(idStrut, registro, anno, numero, docVers);
                             getForm().getSessioniList().setTable(listaVersErr);
                             getForm().getSessioniList().getTable().setPageSize(pageSize);
                             getForm().getSessioniList().getTable().first();
@@ -4376,7 +4284,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Ottengo i riferimenti ai componenti selezionati (spuntati) dalla lista
         String[] verificati = getRequest().getParameterValues("Fl_sessione_err_verif");
         int totVerificati = verificati != null ? verificati.length : 0;
-        HashSet<BigDecimal> idSessioneHS = new HashSet<BigDecimal>();
+        HashSet<BigDecimal> idSessioneHS = new HashSet<>();
         // Ricavo dei valori utili al fine della memorizzazione su DB dei flag
         int riga = 0;
         int inizio = getForm().getSessioniErrateList().getTable().getFirstRowPageIndex();
@@ -4395,8 +4303,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
          * Ricavo i valori delle checkbox prima di eventuali modifiche su di essi e li confronto per vedere se ci sono
          * state modifiche
          */
-        // getForm().getSessioniErrateList().post(getRequest());
-        VrsSessioneVersTableBean monSesErr = (VrsSessioneVersTableBean) getForm().getSessioniErrateList().getTable();
+        VrsSessioneVersKoTableBean monSesErr = (VrsSessioneVersKoTableBean) getForm().getSessioniErrateList()
+                .getTable();
         String[] verificatiPre = new String[fine - inizio];
         String[] verificatiPost = new String[fine - inizio];
 
@@ -4442,11 +4350,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 if (idSessioneHS.contains(idSesErr)) {
                     // metti il flag a 1 nella tabella VrsSessioneVers
                     monitoraggioHelper.saveFlVerificati(idSesErr, "1");
-                    logger.debug("Ho impostato il flaggozzo 'verificata' di sessione a 1");
+                    log.debug("Ho impostato il flaggozzo 'verificata' di sessione a 1");
                 } else {
                     // metti il flag a 0
                     monitoraggioHelper.saveFlVerificati(idSesErr, "0");
-                    logger.debug("Ho impostato il flaggozzo 'verificata' di sessione a 0");
+                    log.debug("Ho impostato il flaggozzo 'verificata' di sessione a 0");
                 }
             }
 
@@ -4454,9 +4362,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 /*
                  * Se non avevo il filtro impostato (su s\u00e0¬ o no, e dunque posso restare dov'ero) rieseguo la query
                  */
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
-                VrsSessioneVersTableBean listaSessErr = monitoraggioHelper.getSessioniErrateListTB(flaggozzo,
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
+                VrsSessioneVersKoTableBean listaSessErr = monitoraggioHelper.getSessioniErrateListTB(flaggozzo,
                         Integer.parseInt(maxResultStandard));
                 getForm().getSessioniErrateList().setTable(listaSessErr);
                 getForm().getSessioniErrateList().getTable().setPageSize(pageSize);
@@ -4465,12 +4373,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 this.lazyLoadGoPage(getForm().getSessioniErrateList(), paginaCorrente);
                 // ritorno alla pagina
                 getForm().getSessioniErrateList().getTable().setCurrentRowIndex(inizio);
-                // getForm().getSessioniErrateList().post(getRequest());
                 // Segnalo l'avvenuta impostazione dei flaggozzi andata a buon fine
                 getMessageBox().addMessage(new Message(MessageLevel.INF, "Aggiornamento effettuato con successo"));
                 getMessageBox().setViewMode(ViewMode.plain);
             } catch (Exception e) {
-                logger.error("Errore nell'impostazione del flag verificato");
+                log.error("Errore nell'impostazione del flag verificato");
                 getMessageBox()
                         .addMessage(new Message(MessageLevel.ERR, "Errore nell'impostazione del flag verificato"));
             } finally {
@@ -4525,7 +4432,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error("Errore in ricerca ambiente", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -4539,7 +4446,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             getForm().getSessioniErrateDetail().getId_ambiente()
                     .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
             BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
-            // checkUniqueAmbienteInComboRiepilogoVersamenti(idAmbiente);
             checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.SESSIONI_ERRATE);
         } /*
            * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in particolare e
@@ -4593,23 +4499,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     @Override
     public void calcolaStrutturaVersante() throws EMFError {
         getMessageBox().addMessage(new Message(MessageLevel.WAR,
-                "Eseguire il calcolo della struttura versante e della chiave unit\u00e0  doc.?"));
+                "Eseguire il calcolo della struttura versante e della chiave unit\u00e0  doc.?"));
         forwardToPublisher(Application.Publisher.MONITORAGGIO_SESSIONI_ERRATE_RICERCA);
-    }
-
-    /**
-     * Metodo invocato alla pressione del tasto Calcola chiave unit\u00e0  doc. della pagina Lista Versamenti Falliti,
-     * per eseguire l'update della tabella VRS_SESSIONE_VERS
-     *
-     *
-     * @throws EMFError
-     *             errore generico
-     */
-    @Override
-    public void calcolaChiaveUnitaDoc() throws EMFError {
-        getMessageBox().addMessage(
-                new Message(MessageLevel.WAR, "Eseguire il calcolo della chiave unit\u00e0  doc. e/o chiave doc.?"));
-        forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_RICERCA);
     }
 
     @Override
@@ -4618,7 +4509,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         if (success) {
             getMessageBox().addInfo("Calcolo della struttura versante lanciato con successo");
         } else {
-            getMessageBox().addError("Calcolo della struttura versante gi\u00E0 in corso");
+            getMessageBox().addError("Calcolo della struttura versante gi\u00E0 in corso");
         }
         forwardToPublisher(Application.Publisher.MONITORAGGIO_SESSIONI_ERRATE_RICERCA);
     }
@@ -4626,29 +4517,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     @Override
     public void annullaCalcolo() throws Throwable {
         forwardToPublisher(Application.Publisher.MONITORAGGIO_SESSIONI_ERRATE_RICERCA);
-    }
-
-    @Override
-    public void confermaCalcolaChiaveUD() throws Throwable {
-        MonitoraggioFiltriListaVersFallitiBean filtri = (MonitoraggioFiltriListaVersFallitiBean) getSession()
-                .getAttribute("filtriSes");
-        if (filtri.getIdStrut() != null) {
-            boolean success = calcoloAsync.calcolaChiaveUdDoc(filtri);
-            if (success) {
-                getMessageBox().addInfo("Calcolo della chiave unita doc / documento lanciato con successo");
-            } else {
-                getMessageBox().addError("Calcolo della chiave unita doc / documento gi\u00e0  in corso");
-            }
-        } else {
-            getMessageBox().addError(
-                    "Per eseguire il calcolo \u00e0¨ necessario ricercare i versamenti per singola struttura");
-        }
-        forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_RICERCA);
-    }
-
-    @Override
-    public void annullaCalcolaChiaveUD() throws Throwable {
-        forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_RICERCA);
     }
 
     /**
@@ -4686,7 +4554,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
     /**
      * Trigger sul filtro nome struttura di Riepilogo Versamenti: selezionando un valore della combo box viene popolata
-     * la combo relativa al nome tipo unit\u00e0  doc, se esiste almeno un valore per essa
+     * la combo relativa al nome tipo unit\u00e0 doc, se esiste almeno un valore per essa
      *
      * @return JSONObject
      *
@@ -4747,9 +4615,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public void filtraSessioniVerificate() throws EMFError {
         getForm().getFiltriSessione().post(getRequest());
         // Setto la lista delle sessioni fallite
-        String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null, null,
-                null, CostantiDB.TipoAplVGetValAppart.APPLIC);
-        VrsSessioneVersTableBean listaSessErr = monitoraggioHelper.getSessioniErrateListTB(
+        String maxResultStandard = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
+        VrsSessioneVersKoTableBean listaSessErr = monitoraggioHelper.getSessioniErrateListTB(
                 getForm().getFiltriSessione().getSessione_ses_err_verif().parse(), Integer.parseInt(maxResultStandard));
         getForm().getSessioniErrateList().setTable(listaSessErr);
         getForm().getSessioniErrateList().getTable().setPageSize(10);
@@ -4812,11 +4680,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         List<BigDecimal> idAmbitoTerrit = struttureEjb.getIdAmbitoTerritorialePerRicerca(idAmbitoTerrit1Livello,
                 idAmbitoTerrit2Livello, idAmbitoTerrit3Livello);
 
-        BigDecimal idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
+        List<BigDecimal> idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
         List<BigDecimal> idCategEnte = getForm().getFiltriContenutoSacer().getId_categ_ente().parse();
         // SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI PREOCCUPA TI TRATTARE
         // IL FILTRO ENTE
-        if (idAmbiente != null || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
+        if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
             // Ricavo il TableBean relativo agli enti dipendenti dall'ambiente scelto
             OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(getUser().getIdUtente(),
                     idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
@@ -4859,7 +4727,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Ricavo i filtri
         List<BigDecimal> idAmbitoTerrit1Livello = getForm().getFiltriContenutoSacer().getId_ambito_territ_livello_1()
                 .parse();
-        BigDecimal idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
+        List<BigDecimal> idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
         List<BigDecimal> idCategEnte = getForm().getFiltriContenutoSacer().getId_categ_ente().parse();
 
         // Ricavo il TableBean relativo agli ambiti territoriali di secondo livello
@@ -4909,7 +4777,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
         // SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI PREOCCUPA TI TRATTARE
         // IL FILTRO ENTE
-        if (idAmbiente != null || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
+        if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
             // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
             OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(getUser().getIdUtente(),
                     idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
@@ -4948,14 +4816,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      *
      * @param idAmbitoTerrit2Livello
      *            quelli SELEZIONATI ONLINE "NUOVI" di secondo livello
-     * @param idAmbitoTerrit3LivelloLis
+     * @param idAmbitoTerrit3LivelloList
      *            quelli SELEZIONATI ONLINE "VECCHI" di terzo livello
      *
      * @throws EMFError
      *             errore generico
      */
     private void check3LivelloAmbitoTerritoriale(List<BigDecimal> idAmbitoTerrit2Livello,
-            List<BigDecimal> idAmbitoTerrit3LivelloList) throws EMFError {
+            List<BigDecimal> idAmbitoTerrit3LivelloList) {
 
         // Ricavo il TableBean relativo agli ambiti territoriali di terzo livello in base ai selezionati di secondo
         // livello
@@ -4989,7 +4857,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Ricavo i filtri
         List<BigDecimal> idAmbitoTerrit2Livello = getForm().getFiltriContenutoSacer().getId_ambito_territ_livello_2()
                 .parse();
-        BigDecimal idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
+        List<BigDecimal> idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
         List<BigDecimal> idCategEnte = getForm().getFiltriContenutoSacer().getId_categ_ente().parse();
 
         check3LivelloAmbitoTerritoriale(idAmbitoTerrit2Livello,
@@ -5006,7 +4874,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
         // SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI PREOCCUPA TI TRATTARE
         // IL FILTRO ENTE
-        if (idAmbiente != null || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
+        if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
             // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
             OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(getUser().getIdUtente(),
                     idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
@@ -5046,7 +4914,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Ricavo i filtri
         List<BigDecimal> idAmbitoTerrit3Livello = getForm().getFiltriContenutoSacer().getId_ambito_territ_livello_3()
                 .parse();
-        BigDecimal idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
+        List<BigDecimal> idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
         List<BigDecimal> idCategEnte = getForm().getFiltriContenutoSacer().getId_categ_ente().parse();
 
         List<BigDecimal> idAmbitoTerrit1Livello = getForm().getFiltriContenutoSacer().getId_ambito_territ_livello_1()
@@ -5059,7 +4927,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
         // SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI PREOCCUPA TI TRATTARE
         // IL FILTRO ENTE
-        if (idAmbiente != null || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
+        if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
             // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
             OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(getUser().getIdUtente(),
                     idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
@@ -5107,12 +4975,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         List<BigDecimal> idAmbitoTerrit = struttureEjb.getIdAmbitoTerritorialePerRicerca(idAmbitoTerrit1Livello,
                 idAmbitoTerrit2Livello, idAmbitoTerrit3Livello);
 
-        BigDecimal idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
+        List<BigDecimal> idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
         List<BigDecimal> idCategEnte = getForm().getFiltriContenutoSacer().getId_categ_ente().parse();
 
         // SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI PREOCCUPA TI TRATTARE
         // IL FILTRO ENTE
-        if (idAmbiente != null || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
+        if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
             // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
             OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(getUser().getIdUtente(),
                     idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
@@ -5156,7 +5024,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public JSONObject triggerFiltriContenutoSacerId_enteOnTrigger() throws EMFError {
         getForm().getFiltriContenutoSacer().post(getRequest());
 
-        Set<BigDecimal> idEnte = (getForm().getFiltriContenutoSacer().getId_ente().getValues().size() > 0
+        Set<BigDecimal> idEnte = (!getForm().getFiltriContenutoSacer().getId_ente().getValues().isEmpty()
                 ? new HashSet<BigDecimal>(getForm().getFiltriContenutoSacer().getId_ente().parse()) : null);
         if (idEnte != null) {
             // Ricavo il TableBean relativo alle strutture dipendenti dall'ente scelto
@@ -5201,14 +5069,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         return getForm().getFiltriContenutoSacer().asJSON();
     }
 
-    public Fields triggerAmbienteGenerico(Fields campi, SezioneMonitoraggio sezione) throws EMFError {
+    public Fields<?> triggerAmbienteGenerico(Fields<?> campi, SezioneMonitoraggio sezione) throws EMFError {
         campi.post(getRequest());
 
         // Passaggio per riferimento del "campo"; le modifiche avranno effetto sui "Fields"
-        ComboBox ambienteCombo = (ComboBox) campi.getComponent("id_ambiente");
-        ComboBox enteCombo = (ComboBox) campi.getComponent("id_ente");
-        ComboBox strutCombo = (ComboBox) campi.getComponent("id_strut");
-        ComboBox tipoUnitaDocCombo = (ComboBox) campi.getComponent("id_tipo_unita_doc");
+        ComboBox<?> ambienteCombo = (ComboBox<?>) campi.getComponent("id_ambiente");
+        ComboBox<?> enteCombo = (ComboBox<?>) campi.getComponent("id_ente");
+        ComboBox<?> strutCombo = (ComboBox<?>) campi.getComponent("id_strut");
+        ComboBox<?> tipoUnitaDocCombo = (ComboBox<?>) campi.getComponent("id_tipo_unita_doc");
 
         // Azzero i valori preimpostati delle varie combo
         enteCombo.setValue("");
@@ -5226,7 +5094,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             DecodeMap mappaEnte = new DecodeMap();
             mappaEnte.populatedMap(tmpTableBeanEnte, "id_ente", "nm_ente");
             enteCombo.setDecodeMap(mappaEnte);
-            // Se ho un solo ente lo setto gi\u00e0  impostato nella combo
+            // Se ho un solo ente lo setto gi\u00e0 impostato nella combo
             if (tmpTableBeanEnte.size() == 1) {
                 enteCombo.setValue(tmpTableBeanEnte.getRow(0).getIdEnte().toString());
                 checkUniqueEnteInCombo(tmpTableBeanEnte.getRow(0).getIdEnte(), sezione);
@@ -5250,13 +5118,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         return campi;
     }
 
-    public Fields triggerEnteGenerico(Fields campi, SezioneMonitoraggio sezione) throws EMFError {
+    public Fields<?> triggerEnteGenerico(Fields<?> campi, SezioneMonitoraggio sezione) throws EMFError {
         campi.post(getRequest());
 
         // Passaggio per riferimento del "campo"; le modifiche avranno effetto sui "Fields"
-        ComboBox enteCombo = (ComboBox) campi.getComponent("id_ente");
-        ComboBox strutCombo = (ComboBox) campi.getComponent("id_strut");
-        ComboBox tipoUnitaDocCombo = (ComboBox) campi.getComponent("id_tipo_unita_doc");
+        ComboBox<?> enteCombo = (ComboBox<?>) campi.getComponent("id_ente");
+        ComboBox<?> strutCombo = (ComboBox<?>) campi.getComponent("id_strut");
+        ComboBox<?> tipoUnitaDocCombo = (ComboBox<?>) campi.getComponent("id_tipo_unita_doc");
 
         // Azzero i valori preimpostati delle varie combo
         strutCombo.setValue("");
@@ -5272,7 +5140,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             DecodeMap mappaStrut = new DecodeMap();
             mappaStrut.populatedMap(tmpTableBeanStrut, "id_strut", "nm_strut");
             strutCombo.setDecodeMap(mappaStrut);
-            // Se ho una sola struttura la setto gi\u00e0  impostata nella combo
+            // Se ho una sola struttura la setto gi\u00e0 impostata nella combo
             if (tmpTableBeanStrut.size() == 1) {
                 strutCombo.setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
                 checkUniqueStrutInCombo(tmpTableBeanStrut.getRow(0).getIdStrut(), sezione);
@@ -5288,14 +5156,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         return campi;
     }
 
-    public Fields triggerStrutGenerico(Fields campi) throws EMFError {
+    public Fields<?> triggerStrutGenerico(Fields<?> campi) throws EMFError {
         campi.post(getRequest());
 
         // Passaggio per riferimento del "campo"; le modifiche avranno effetto sui "Fields"
-        ComboBox strutCombo = (ComboBox) campi.getComponent("id_strut");
-        ComboBox tipoUnitaDocCombo = (ComboBox) campi.getComponent("id_tipo_unita_doc");
-        ComboBox tipoDocCombo = (ComboBox) campi.getComponent("id_tipo_doc");
-        ComboBox regUnitaDocCombo = (ComboBox) campi.getComponent("cd_registro_key_unita_doc");
+        ComboBox<?> strutCombo = (ComboBox<?>) campi.getComponent("id_strut");
+        ComboBox<?> tipoUnitaDocCombo = (ComboBox<?>) campi.getComponent("id_tipo_unita_doc");
+        ComboBox<?> tipoDocCombo = (ComboBox<?>) campi.getComponent("id_tipo_doc");
+        ComboBox<?> regUnitaDocCombo = (ComboBox<?>) campi.getComponent("cd_registro_key_unita_doc");
 
         /*
          * Azzero i valori preimpostati delle varie combo In questo caso non devo fare controlli su tipoUnitaDoc
@@ -5305,7 +5173,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
         BigDecimal idStrut = (!strutCombo.getValue().equals("") ? new BigDecimal(strutCombo.getValue()) : null);
         if (idStrut != null) {
-            // Ricavo il TableBean relativo ai tipi di unit\u00e0  doc dall'ente scelto
+            // Ricavo il TableBean relativo ai tipi di unit\u00e0 doc dall'ente scelto
             DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(getUser().getIdUtente(),
                     idStrut);
             DecodeMap mappaUD = new DecodeMap();
@@ -5434,102 +5302,116 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      */
     @Override
     public void scaricaFileXMLSessione() throws Throwable {
-        BigDecimal idSessioneVers = (BigDecimal) getSession().getAttribute("idSessioneVers");
+        BigDecimal idSessioneVersKo = (BigDecimal) getSession().getAttribute("idSessioneVers");
+        // create tmp file
+        File tmpDwnFileXMLSessione = File.createTempFile("dwnxmlsess_idSessioneVers", ".tmp");
         // Ricavo la lista dei blobbi dei file da scaricare
-        List<BlobObject> blobbiFileList = monitoraggioHelper.getBlobboByteList(idSessioneVers);
-
-        // Comincio a costruire lo zippone che conterr\u00e0  i file
-        String nomeZippone = "sessioneErrata-" + idSessioneVers;
-        getResponse().setContentType("application/zip");
-        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeZippone + ".zip");
-        // Ricavo lo stream di output
-        ZipOutputStream out = new ZipOutputStream(getServletOutputStream());
-        String filename = "";
-
+        List<BlobObject> blobbiFileList = monitoraggioHelper.getBlobboByteList(idSessioneVersKo);
         try {
-            // Caccio dentro nello zippone i blobbi
-            if (blobbiFileList != null) {
-                for (int i = 0; i < blobbiFileList.size(); i++) {
-                    BlobObject tempBlobbo = blobbiFileList.get(i);
-                    if (tempBlobbo != null) {
-                        RispostaControlli rc = recBlbOracle.contaBlobComp(tempBlobbo.id,
-                                RecBlbOracle.TabellaBlob.ERRORI_VERS);
-                        if (!rc.isrBoolean()) {
-                            throw new ParerInternalError(rc.getDsErr());
-                        }
-                        if (rc.getrLong() > 0) {
-                            out.putNextEntry(new ZipEntry(tempBlobbo.name));
-                            rc = recBlbOracle.recuperaBlobCompSuStream(tempBlobbo.id, out,
-                                    RecBlbOracle.TabellaBlob.ERRORI_VERS);
-                            if (!rc.isrBoolean()) {
-                                throw new ParerInternalError(rc.getDsErr());
-                            }
-                            out.closeEntry();
-                        }
+            // Ricavo lo stream di output
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tmpDwnFileXMLSessione))) {
+                String filename = "";
+
+                // Caccio dentro nello zippone i blobbi
+                addBlobObjectsOnZip(blobbiFileList, out);
+
+                byte[] xmlRichiesta = null;
+                byte[] xmlRisposta = null;
+                if (getForm().getSessioniErrateDetail().getBl_xml_rich().getValue().length() < 1000000000
+                        && getForm().getSessioniErrateDetail().getBl_xml_index().getValue().length() < 1000000000) {
+                    xmlRichiesta = getForm().getSessioniErrateDetail().getBl_xml_rich().getValue().getBytes();
+                    xmlRisposta = getForm().getSessioniErrateDetail().getBl_xml_risp().getValue().getBytes();
+                } else {
+                    // Carico il rowbean corrispondente all'id ottenuto
+                    Object[] xmls = monitoraggioHelper.getXmlsSesErr(idSessioneVersKo);
+                    xmlRichiesta = (byte[]) xmls[0];
+                    xmlRisposta = (byte[]) xmls[1];
+                }
+                // Caccio dentro lo zippone il file xml di richiesta
+                if (xmlRichiesta != null && xmlRichiesta.length > 0) {
+                    filename = "vers_" + idSessioneVersKo + "_richiesta.xml";
+                    zippaBlobbo(out, filename, xmlRichiesta);
+                }
+                // Caccio dentro lo zippone il file xml di indice
+                byte[] xmlIndice = getForm().getSessioniErrateDetail().getBl_xml_index().getValue().getBytes();
+                if (xmlIndice != null && xmlIndice.length > 0) {
+                    filename = "vers_" + idSessioneVersKo + "_indice.xml";
+                    zippaBlobbo(out, filename, xmlIndice);
+                }
+                // Caccio dentro lo zippone il file xml di risposta
+                if (xmlRisposta != null && xmlRisposta.length > 0) {
+                    filename = "vers_" + idSessioneVersKo + "_risposta.xml";
+                    zippaBlobbo(out, filename, xmlRisposta);
+                }
+                out.flush();
+                freeze();
+            } catch (Exception e) {
+                getMessageBox().addMessage(new Message(MessageLevel.ERR, "Errore durante elaborazione file"));
+                log.error("Eccezione", e);
+                forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_DETAIL);
+            }
+            // no error
+            if (!getMessageBox().hasError()) {
+                // prepare anche check final zip file
+                try (FileInputStream in = new FileInputStream(tmpDwnFileXMLSessione);
+                        ZipFile zipFile = new ZipFile(tmpDwnFileXMLSessione)) {
+                    if (zipFile.size() == 0) { // zip file no entries
+                        getMessageBox().addMessage(new Message(MessageLevel.WAR, "File non disponibile al download"));
+                        forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_DETAIL);
+                    } else {
+                        String nomeZippone = "sessioneErrata-" + idSessioneVersKo;
+                        getResponse().setContentType("application/zip");
+                        getResponse().setHeader("Content-Disposition",
+                                "attachment; filename=\"" + nomeZippone + ".zip");
+                        getResponse().setContentLengthLong(Files.size(tmpDwnFileXMLSessione.toPath()));
+                        IOUtils.copy(in, getServletOutputStream());
                     }
                 }
             }
-
-            byte[] xmlRichiesta = null;
-            byte[] xmlRisposta = null;
-            if (getForm().getSessioniErrateDetail().getBl_xml_rich().getValue().length() < 1000000000
-                    && getForm().getSessioniErrateDetail().getBl_xml_index().getValue().length() < 1000000000) {
-                xmlRichiesta = getForm().getSessioniErrateDetail().getBl_xml_rich().getValue().getBytes();
-                xmlRisposta = getForm().getSessioniErrateDetail().getBl_xml_risp().getValue().getBytes();
-            } else {
-                // Carico il rowbean corrispondente all'id ottenuto
-                Object[] xmls = monitoraggioHelper.getXmlsSesErr(idSessioneVers);
-                xmlRichiesta = (byte[]) xmls[0];
-                xmlRisposta = (byte[]) xmls[1];
-            }
-            // Caccio dentro lo zippone il file xml di richiesta
-            if (xmlRichiesta != null && xmlRichiesta.length > 0) {
-                filename = "vers_" + idSessioneVers + "_richiesta.xml";
-                zippaBlobbo(out, filename, xmlRichiesta);
-            }
-            // Caccio dentro lo zippone il file xml di indice
-            byte[] xmlIndice = getForm().getSessioniErrateDetail().getBl_xml_index().getValue().getBytes();
-            if (xmlIndice != null && xmlIndice.length > 0) {
-                filename = "vers_" + idSessioneVers + "_indice.xml";
-                zippaBlobbo(out, filename, xmlIndice);
-            }
-            // Caccio dentro lo zippone il file xml di risposta
-            if (xmlRisposta != null && xmlRisposta.length > 0) {
-                filename = "vers_" + idSessioneVers + "_risposta.xml";
-                zippaBlobbo(out, filename, xmlRisposta);
-            }
-            out.flush();
-            out.close();
-            freeze();
-        } catch (Exception e) {
-            getMessageBox().addMessage(
-                    new Message(MessageLevel.ERR, "Errore nel recupero dei file da zippare: " + e.getMessage()));
-            logger.error("Eccezione", e);
+        } finally {
+            Files.delete(tmpDwnFileXMLSessione.toPath());
         }
     }
 
-    /**
-     * Metodo addetto alla compressione nel file zip del byte array contenente il file originale
-     *
-     * @param out
-     *            stream di tipo {@link ZipOutputStream}
-     * @param filename
-     *            nome file
-     * @param blobbo
-     *            array di byte file in ingresso
-     *
-     * @throws EMFError
-     *             errore generico
-     * @throws IOException
-     *             errore generico
-     *
-     * @throws EMFError
-     *             errore generico
-     * @throws IOException
-     *             errore generico
-     *
+    /*
+     * Elabora una lista di BlobObject per aggiungerli come single entry su file zip
      */
-    public void zippaBlobbo(ZipOutputStream out, String filename, byte[] blobbo) throws EMFError, IOException {
+    private void addBlobObjectsOnZip(List<BlobObject> blobbiFileList, ZipOutputStream out) throws IOException {
+        if (blobbiFileList != null) {
+            for (int i = 0; i < blobbiFileList.size(); i++) {
+                BlobObject tempBlobbo = blobbiFileList.get(i);
+                if (tempBlobbo != null) {
+
+                    long count = monitoraggioEjb.contaComponentiErroreVersamento(tempBlobbo.id);
+                    // create tmp file
+                    File tmpFileBlobObject = File.createTempFile("dwn_blobobj", ".tmp");
+                    try {
+                        if (count > 0) {
+                            boolean result = false;
+                            try (FileOutputStream outEntry = new FileOutputStream(tmpFileBlobObject)) {
+                                result = monitoraggioEjb.salvaStreamComponenteDaErroreVersamento(tempBlobbo.id,
+                                        outEntry);
+                            }
+                            if (result) {
+                                out.putNextEntry(new ZipEntry(tempBlobbo.name));
+                                try (FileInputStream inEntry = new FileInputStream(tmpFileBlobObject)) {
+                                    IOUtils.copyLarge(inEntry, out);
+                                }
+                                out.closeEntry();
+                            }
+                        }
+                    } finally {
+                        Files.delete(tmpFileBlobObject.toPath());
+                    }
+                }
+            }
+        }
+    }
+
+    /*
+     * Metodo addetto alla compressione nel file zip del byte array contenente il file originale
+     */
+    private void zippaBlobbo(ZipOutputStream out, String filename, byte[] blobbo) throws IOException {
         // Ricavo lo stream di input
         InputStream is = new ByteArrayInputStream(blobbo);
         byte[] data = new byte[1024];
@@ -5552,76 +5434,74 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     @Override
     public void scaricaFileXMLVersamento() throws Throwable {
         BigDecimal idSessioneVers = (BigDecimal) getSession().getAttribute("idSessioneVers");
+        // create tmp file
+        File tmpDwnFileXMLVersamento = File.createTempFile("dwnxmlversamento_idSessioneVers", ".tmp");
         // Ricavo la lista dei blobbi dei file da scaricare
         List<BlobObject> blobbiFileList = monitoraggioHelper.getBlobboByteList(idSessioneVers);
 
-        // Comincio a costruire lo zippone
-        String nomeZippone = "versamentoFallito-" + idSessioneVers;
-        getResponse().setContentType("application/zip");
-        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeZippone + ".zip");
-        // Ricavo lo stream di output
-        ZipOutputStream out = new ZipOutputStream(getServletOutputStream());
-        String filename = "";
-
         try {
-            // Caccio dentro nello zippone i blobbi
-            if (blobbiFileList != null) {
-                for (int i = 0; i < blobbiFileList.size(); i++) {
-                    BlobObject tempBlobbo = blobbiFileList.get(i);
-                    if (tempBlobbo != null) {
-                        RispostaControlli rc = recBlbOracle.contaBlobComp(tempBlobbo.id,
-                                RecBlbOracle.TabellaBlob.ERRORI_VERS);
-                        if (!rc.isrBoolean()) {
-                            throw new ParerInternalError(rc.getDsErr());
-                        }
-                        if (rc.getrLong() > 0) {
-                            out.putNextEntry(new ZipEntry(tempBlobbo.name));
-                            rc = recBlbOracle.recuperaBlobCompSuStream(tempBlobbo.id, out,
-                                    RecBlbOracle.TabellaBlob.ERRORI_VERS);
-                            if (!rc.isrBoolean()) {
-                                throw new ParerInternalError(rc.getDsErr());
-                            }
-                            out.closeEntry();
-                        }
+            // Ricavo lo stream di output
+            try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(tmpDwnFileXMLVersamento))) {
+                String filename = "";
+
+                // Caccio dentro nello zippone i blobbi
+                addBlobObjectsOnZip(blobbiFileList, out);
+
+                byte[] xmlRichiesta = null;
+                byte[] xmlRisposta = null;
+                if (getForm().getVersamentiFallitiDetail().getBl_xml_rich().getValue().length() < 1000000000
+                        && getForm().getVersamentiFallitiDetail().getBl_xml_risp().getValue().length() < 1000000000) {
+                    xmlRichiesta = getForm().getVersamentiFallitiDetail().getBl_xml_rich().getValue().getBytes();
+                    xmlRisposta = getForm().getVersamentiFallitiDetail().getBl_xml_risp().getValue().getBytes();
+                } else {
+                    // Carico il rowbean corrispondente all'id ottenuto
+                    Object[] xmls = monitoraggioHelper.getXmlsVersErr(idSessioneVers);
+                    xmlRichiesta = (byte[]) xmls[0];
+                    xmlRisposta = (byte[]) xmls[1];
+                }
+                // Caccio dentro lo zippone il file xml di richiesta
+                if (xmlRichiesta != null && xmlRichiesta.length > 0) {
+                    filename = "vers_" + idSessioneVers + "_richiesta.xml";
+                    zippaBlobbo(out, filename, xmlRichiesta);
+                }
+                // Caccio dentro lo zippone il file xml di indice
+                byte[] xmlIndice = getForm().getVersamentiFallitiDetail().getBl_xml_index().getValue().getBytes();
+                if (xmlIndice != null && xmlIndice.length > 0) {
+                    filename = "vers_" + idSessioneVers + "_indice.xml";
+                    zippaBlobbo(out, filename, xmlIndice);
+                }
+                // Caccio dentro lo zippone il file xml di risposta
+                if (xmlRisposta != null && xmlRisposta.length > 0) {
+                    filename = "vers_" + idSessioneVers + "_risposta.xml";
+                    zippaBlobbo(out, filename, xmlRisposta);
+                }
+                out.flush();
+                freeze();
+            } catch (Exception e) {
+                getMessageBox().addMessage(new Message(MessageLevel.ERR, "Errore durante elaborazione file"));
+                log.error("Eccezione", e);
+                forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_DETAIL);
+            }
+            // no error
+            if (!getMessageBox().hasError()) {
+                // prepare anche check final zip file
+                try (FileInputStream in = new FileInputStream(tmpDwnFileXMLVersamento);
+                        ZipFile zipFile = new ZipFile(tmpDwnFileXMLVersamento)) {
+                    if (zipFile.size() == 0) { // zip file no entries
+                        getMessageBox().addMessage(new Message(MessageLevel.WAR, "File non disponibile al download"));
+                        forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_DETAIL);
+                    } else {
+                        String nomeZippone = "versamentoFallito-" + idSessioneVers;
+                        getResponse().setContentType("application/zip");
+                        getResponse().setHeader("Content-Disposition",
+                                "attachment; filename=\"" + nomeZippone + ".zip");
+                        getResponse().setContentLengthLong(Files.size(tmpDwnFileXMLVersamento.toPath()));
+                        IOUtils.copyLarge(in, getServletOutputStream());
                     }
                 }
             }
-
-            byte[] xmlRichiesta = null;
-            byte[] xmlRisposta = null;
-            if (getForm().getVersamentiFallitiDetail().getBl_xml_rich().getValue().length() < 1000000000
-                    && getForm().getVersamentiFallitiDetail().getBl_xml_risp().getValue().length() < 1000000000) {
-                xmlRichiesta = getForm().getVersamentiFallitiDetail().getBl_xml_rich().getValue().getBytes();
-                xmlRisposta = getForm().getVersamentiFallitiDetail().getBl_xml_risp().getValue().getBytes();
-            } else {
-                // Carico il rowbean corrispondente all'id ottenuto
-                Object[] xmls = monitoraggioHelper.getXmlsVersErr(idSessioneVers);
-                xmlRichiesta = (byte[]) xmls[0];
-                xmlRisposta = (byte[]) xmls[1];
-            }
-            // Caccio dentro lo zippone il file xml di richiesta
-            if (xmlRichiesta != null && xmlRichiesta.length > 0) {
-                filename = "vers_" + idSessioneVers + "_richiesta.xml";
-                zippaBlobbo(out, filename, xmlRichiesta);
-            }
-            // Caccio dentro lo zippone il file xml di indice
-            byte[] xmlIndice = getForm().getVersamentiFallitiDetail().getBl_xml_index().getValue().getBytes();
-            if (xmlIndice != null && xmlIndice.length > 0) {
-                filename = "vers_" + idSessioneVers + "_indice.xml";
-                zippaBlobbo(out, filename, xmlIndice);
-            }
-            // Caccio dentro lo zippone il file xml di risposta
-            if (xmlRisposta != null && xmlRisposta.length > 0) {
-                filename = "vers_" + idSessioneVers + "_risposta.xml";
-                zippaBlobbo(out, filename, xmlRisposta);
-            }
-            out.flush();
-            out.close();
-            freeze();
-        } catch (Exception e) {
-            getMessageBox().addMessage(
-                    new Message(MessageLevel.ERR, "Errore nel recupero dei file da zippare: " + e.getMessage()));
-            logger.error("Eccezione", e);
+        } finally {
+            Files.delete(tmpDwnFileXMLVersamento.toPath());
         }
     }
 
@@ -5745,12 +5625,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public void tabFiltriGeneraliOnClick() throws EMFError {
         getForm().getFiltriVersamentiUlteriori().post(getRequest());
         UnitaDocumentarieValidator validatoreUD = new UnitaDocumentarieValidator(getMessageBox());
-        // Controllo l'obbligatoriet\u00e0  di anno o range anni di chiave unit\u00e0  documentaria
-        // validatoreUD.controllaPresenzaAnno(getForm().getFiltriVersamentiUlteriori().getAa_key_unita_doc().parse(),
-        // getForm().getFiltriVersamentiUlteriori().getAa_key_unita_doc_da().parse(),
-        // getForm().getFiltriVersamentiUlteriori().getAa_key_unita_doc_a().parse());
 
-        // Valida i campi di Range di chiavi unit\u00e0  documentaria
+        // Valida i campi di Range di chiavi unit\u00e0 documentaria
         String[] registro = Arrays.copyOf(
                 getForm().getFiltriVersamentiUlteriori().getCd_registro_key_unita_doc().getDecodedValues().toArray(),
                 getForm().getFiltriVersamentiUlteriori().getCd_registro_key_unita_doc().getDecodedValues()
@@ -5767,7 +5643,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Valida i filtri per verificare quelli obbligatori
         if (!getMessageBox().hasError()) {
             // La validazione non ha riportato errori.
-            // Setto i filtri di chiavi unit\u00e0  documentaria impostando gli eventuali valori di default
+            // Setto i filtri di chiavi unit\u00e0 documentaria impostando gli eventuali valori di default
             if (chiavi != null && chiavi.length == 5) {
                 getForm().getFiltriVersamentiUlteriori().getAa_key_unita_doc_da()
                         .setValue(chiavi[1] != null ? ((BigDecimal) chiavi[1]).toString() : null);
@@ -5777,7 +5653,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         .setValue(chiavi[3] != null ? (String) chiavi[3] : null);
                 getForm().getFiltriVersamentiUlteriori().getCd_key_unita_doc_a()
                         .setValue(chiavi[4] != null ? (String) chiavi[4] : null);
-                // Se \u00e0¨ valorizzato qualche campo lascio aperta la section del Range di chiavi unit\u00e0 
+                // Se \u00e0¨ valorizzato qualche campo lascio aperta la section del Range di chiavi unit\u00e0
                 // documentaria
                 getForm().getFiltriVersamentiChiaveSection().setLoadOpened(true);
             }
@@ -5803,7 +5679,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         UnitaDocumentarieValidator validatoreUD = new UnitaDocumentarieValidator(getMessageBox());
 
         if (getForm().getFiltriUdDocDerivantiDaVersFallitiUlteriori().validate(getMessageBox())) {
-            // Valida i campi di Range di chiavi unit\u00e0  documentaria
+            // Valida i campi di Range di chiavi unit\u00e0 documentaria
             String[] registro = Arrays.copyOf(
                     getForm().getFiltriUdDocDerivantiDaVersFallitiUlteriori().getCd_registro_key_unita_doc_ult()
                             .getDecodedValues().toArray(),
@@ -5821,7 +5697,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Valida i filtri per verificare quelli obbligatori
             if (!getMessageBox().hasError()) {
                 // La validazione non ha riportato errori.
-                // Setto i filtri di chiavi unit\u00e0  documentaria impostando gli eventuali valori di default
+                // Setto i filtri di chiavi unit\u00e0 documentaria impostando gli eventuali valori di default
                 if (chiavi != null && chiavi.length == 5) {
                     getForm().getFiltriUdDocDerivantiDaVersFallitiUlteriori().getAa_key_unita_doc_da_ult()
                             .setValue(chiavi[1] != null ? ((BigDecimal) chiavi[1]).toString() : null);
@@ -5831,7 +5707,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                             .setValue(chiavi[3] != null ? (String) chiavi[3] : null);
                     getForm().getFiltriUdDocDerivantiDaVersFallitiUlteriori().getCd_key_unita_doc_a_ult()
                             .setValue(chiavi[4] != null ? (String) chiavi[4] : null);
-                    // Se \u00e0¨ valorizzato qualche campo lascio aperta la section del Range di chiavi unit\u00e0 
+                    // Se \u00e0¨ valorizzato qualche campo lascio aperta la section del Range di chiavi unit\u00e0
                     // documentaria
                     getForm().getFiltriVersamentiChiaveSection().setLoadOpened(true);
                 }
@@ -5865,7 +5741,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
          */
         User u = (User) getRequest().getSession().getAttribute("###_USER_CONTAINER");
         int lastIndex = u.getMenu().getSelectedPath("").size() - 1;
-        String lastMenuEntry = ((MenuEntry) u.getMenu().getSelectedPath("").get(lastIndex)).getCodice();
+        String lastMenuEntry = (u.getMenu().getSelectedPath("").get(lastIndex)).getCodice();
         try {
             if (lastMenuEntry.contains("OperazioniVolumi") || lastMenuEntry.contains("RiepilogoVersamenti")) {
 
@@ -5873,7 +5749,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     eseguiRicercaOperazioniVolumi(false);
                 }
 
-                if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getId_ambiente().getValue() != null) {
+                if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getId_ambiente().getValue() != null
+                        && getLastPublisher() != null
+                        && !getLastPublisher().equals("/monitoraggioDocumentiDerivantiDaVersFallitiDetail")) {
                     BigDecimal idAmbiente = getForm().getRiepilogoVersamenti().getId_ambiente().parse();
                     BigDecimal idEnte = getForm().getRiepilogoVersamenti().getId_ente().parse();
                     BigDecimal idStruttura = getForm().getRiepilogoVersamenti().getId_strut().parse();
@@ -5890,13 +5768,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
                     if (getForm().getVersamentiFallitiList().getTable() != null
                             && getLastPublisher().equals("/monitoraggioVersFallitiDetail")) {
-                        // Rieseguo la ricerca della pagina precedente che avr\u00e0  anch'essa subito modifiche
+                        // Rieseguo la ricerca della pagina precedente che avr\u00e0 anch'essa subito modifiche
                         int paginaCorrenteDocNonVers = getForm().getVersamentiFallitiList().getTable()
                                 .getCurrentPageIndex();
                         int inizioDocNonVers = getForm().getVersamentiFallitiList().getTable().getFirstRowPageIndex();
                         int pageSize = getForm().getVersamentiFallitiList().getTable().getPageSize();
-                        String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null,
-                                null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                        String maxResultStandard = configurationHelper
+                                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                         MonVLisVersErrIamTableBean versErrTableBean = monitoraggioHelper.getMonVLisVersErrIamViewBean(
                                 (MonitoraggioFiltriListaVersFallitiBean) getSession().getAttribute("filtriSes"),
                                 Integer.parseInt(maxResultStandard));
@@ -5925,14 +5803,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                             .parse();
                     String numero = getForm().getDocumentiDerivantiDaVersFallitiDetail().getCd_key_unita_doc().parse();
                     String docVers = getForm().getDocumentiDerivantiDaVersFallitiDetail().getCd_key_doc_vers().parse();
-                    String tipoVers = getForm().getDocumentiDerivantiDaVersFallitiDetail().getTipo_versamento().parse();
 
                     /*
                      * Ricarico anche la parte di dettaglio in quanto anche su di questa le modifiche possono essere
                      * andate ad impattare
                      */
                     if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getTipo_lista().parse() != null) {
-                        AbstractBaseTable sessioniListTB;
+                        AbstractBaseTable<?> sessioniListTB;
                         if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getTipo_lista().parse()
                                 .equals("UNITA_DOC")) {
                             MonVVisUdNonVersRowBean nonVersRB = monitoraggioHelper.getMonVVisUdNonVersRowBean(idStrut,
@@ -5940,22 +5817,19 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                             // Copio nella form di dettaglio i dati del rowbean
                             getForm().getDocumentiDerivantiDaVersFallitiDetail().copyFromBean(nonVersRB);
                             sessioniListTB = monitoraggioHelper.getMonVLisVersUdNonVersViewBean(idStrut, registro, anno,
-                                    numero, tipoVers);
+                                    numero);
                         } else {
                             MonVVisDocNonVersRowBean nonVersRB = monitoraggioHelper.getMonVVisDocNonVersRowBean(idStrut,
                                     registro, anno, numero, docVers);
                             // Copio nella form di dettaglio i dati del rowbean
                             getForm().getDocumentiDerivantiDaVersFallitiDetail().copyFromBean(nonVersRB);
                             sessioniListTB = monitoraggioHelper.getMonVLisVersDocNonVersViewBean(idStrut, registro,
-                                    anno, numero, docVers, tipoVers);
+                                    anno, numero, docVers);
                         }
 
                         int pageSize = getForm().getSessioniList().getTable().getPageSize();
                         int paginaCorrente = getForm().getSessioniList().getTable().getCurrentPageIndex();
                         int inizio = getForm().getSessioniList().getTable().getFirstRowPageIndex();
-                        // MonVLisVersDocNonVersTableBean listaVersErr =
-                        // monitoraggioHelper.getMonVLisVersDocNonVersViewBean(idStrut, registro, anno, numero, docVers,
-                        // tipoVers);
                         getForm().getSessioniList().setTable(sessioniListTB);
                         getForm().getSessioniList().getTable().setPageSize(pageSize);
                         getSession().removeAttribute("sessioniListPageSize");
@@ -5969,7 +5843,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
                 if (getForm().getDocumentiDerivantiDaVersFallitiList().getTable() != null
                         && getLastPublisher().equals("/monitoraggioDocumentiDerivantiDaVersFallitiDetail")) {
-                    // Rieseguo la ricerca della pagina precedente che avr\u00e0  anch'essa subito modifiche
+                    // Rieseguo la ricerca della pagina precedente che avr\u00e0 anch'essa subito modifiche
                     int paginaCorrenteDocNonVers = getForm().getDocumentiDerivantiDaVersFallitiList().getTable()
                             .getCurrentPageIndex();
                     int inizioDocNonVers = getForm().getDocumentiDerivantiDaVersFallitiList().getTable()
@@ -5977,23 +5851,21 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     int pageSize = getForm().getDocumentiDerivantiDaVersFallitiList().getTable().getPageSize();
                     MonitoraggioFiltriListaVersFallitiDistintiDocBean filtriListaDocNonVers = (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
                             .getAttribute("filtriListaVersFallitiDistintiDoc");
-                    String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null,
-                            null, null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
                     if (filtriListaDocNonVers.getTipoLista().equals("UNITA_DOC")) {
-                        // Setto la lista delle unit\u00e0  documentarie non versate
+                        // Setto la lista delle unit\u00e0 documentarie non versate
                         MonVLisUdNonVersIamTableBean monVLisVersErrTableBean = monitoraggioHelper
-                                .getMonVLisUdNonVersIamViewBean(
+                                .getMonVLisUdNonVersIamViewBeanScaricaContenuto(
                                         (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
                                                 .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                        Integer.parseInt(maxResultStandard));
+                                        null);
                         getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLisVersErrTableBean);
                     } else {
-                        // Setto la lista delle unit\u00e0  documentarie non versate
+                        // Setto la lista delle unit\u00e0 documentarie non versate
                         MonVLisDocNonVersIamTableBean monVLisDocNonVersTableBean = monitoraggioHelper
-                                .getMonVLisDocNonVersIamViewBean(
+                                .getMonVLisDocNonVersIamViewBeanScaricaContenuto(
                                         (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
                                                 .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                        Integer.parseInt(maxResultStandard));
+                                        null);
                         getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLisDocNonVersTableBean);
                     }
                     getForm().getDocumentiDerivantiDaVersFallitiList().getTable().setPageSize(pageSize);
@@ -6014,8 +5886,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 getSession().removeAttribute("idStrutRif");
                 // Ricarico i dati nella pagina Riepilogo Struttura
                 int pageSize = getForm().getRiepilogoStrutturaList().getTable().getPageSize();
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 MonVRiepStrutIamTableBean listaMon = monitoraggioHelper.getMonVRiepStrutIamViewBean(
                         getUser().getIdUtente(), Integer.parseInt(maxResultStandard),
                         (Integer) getSession().getAttribute("filtriRiepilogoStruttura"));
@@ -6082,9 +5954,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 if (getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente().getValue() != null) {
                     eseguiRicercaOperazioniElenchiVersamento(false);
                 }
+            } else if (lastMenuEntry.contains("EsameJobSchedulati")) {
+                if (getForm().getFiltriJobSchedulati().getNm_job().parse() != null) {
+                    ricercaJobSchedulati();
+                }
             }
         } catch (EMFError ex) {
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
         }
     }
 
@@ -6100,7 +5976,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      * @throws EMFError
      *             errore generico
      */
-    public void checkUniqueAmbienteInCombo(BigDecimal idAmbiente, Enum sezione) throws EMFError {
+    public void checkUniqueAmbienteInCombo(BigDecimal idAmbiente, Enum<?> sezione) throws EMFError {
         if (idAmbiente != null) {
             // Ricavo il TableBean relativo agli enti dipendenti dall'ambiente scelto
             OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(),
@@ -6138,7 +6014,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     checkUniqueEnteInCombo(tmpTableBeanEnte.getRow(0).getIdEnte(),
                             ActionEnums.SezioneMonitoraggio.RIEPILOGO_VERSAMENTI);
                 } else if (sezione.equals(ActionEnums.SezioneMonitoraggio.CONTENUTO_SACER)) {
-                    // getForm().getFiltriContenutoSacer().getId_ente().setValue(tmpTableBeanEnte.getRow(0).getIdEnte().toString());
                     checkUniqueEnteInCombo(tmpTableBeanEnte.getRow(0).getIdEnte(),
                             ActionEnums.SezioneMonitoraggio.CONTENUTO_SACER);
                 } else if (sezione.equals(ActionEnums.SezioneMonitoraggio.OPERAZIONI_VOLUMI)) {
@@ -6218,7 +6093,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      * @throws EMFError
      *             errore generico
      */
-    public void checkUniqueEnteInCombo(BigDecimal idEnte, Enum sezione) throws EMFError {
+    public void checkUniqueEnteInCombo(BigDecimal idEnte, Enum<?> sezione) throws EMFError {
         if (idEnte != null) {
             // Ricavo il TableBean relativo alle strutture dipendenti dall'ente scelto
             OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
@@ -6259,7 +6134,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     getForm().getSessioniErrateDetail().getId_strut()
                             .setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
                 } else if (sezione.equals(ActionEnums.SezioneMonitoraggio.CONTENUTO_SACER)) {
-                    // getForm().getFiltriContenutoSacer().getId_strut().setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
                 } else if (sezione.equals(ActionEnums.SezioneMonitoraggio.OPERAZIONI_VOLUMI)) {
                     getForm().getFiltriOperazioniVolumi().getId_strut()
                             .setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
@@ -6288,7 +6162,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
     /**
      * Metodo utilizzato per controllare il valore nella combo struttura quando questo \u00e0¨ l'unico presente e
-     * settare di conseguenza la combo tipo unit\u00e0  doc
+     * settare di conseguenza la combo tipo unit\u00e0 doc
      *
      * @param idStrut
      *            id struttura
@@ -6298,9 +6172,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      * @throws EMFError
      *             errore generico
      */
-    public void checkUniqueStrutInCombo(BigDecimal idStrut, Enum sezione) throws EMFError {
+    public void checkUniqueStrutInCombo(BigDecimal idStrut, Enum<?> sezione) throws EMFError {
         if (idStrut != null) {
-            // Ricavo il TableBean relativo ai tipi di unit\u00e0  doc dalla struttura scelta
+            // Ricavo il TableBean relativo ai tipi di unit\u00e0 doc dalla struttura scelta
             DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(getUser().getIdUtente(),
                     idStrut);
             DecodeMap mappaUD = new DecodeMap();
@@ -6338,6 +6212,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         if (ogg instanceof MonitoraggioForm) {
             MonitoraggioForm form = getForm();
             form.getFiltriConsistenzaSacer().getScaricaReport().setEditMode();
+            form.getFiltriConsistenzaSacer().getScaricaReport().setDisableHourGlass(true);
 
             if (form.getConsistenzaSacerList().getTable() != null
                     && form.getConsistenzaSacerList().getTable().size() > 0) {
@@ -6347,10 +6222,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             }
 
             try {
-                if (form.getFiltriConsistenzaSacer().getId_ambiente().parse() == null
+                if (form.getFiltriConsistenzaSacer().getId_ambiente().parse() != null
+                        && form.getFiltriConsistenzaSacer().getId_ambiente().parse().isEmpty()
                         && form.getConsistenzaSacerList().getTable() != null
                         && form.getConsistenzaSacerList().getTable().size() > 0) {
                     form.getFiltriConsistenzaSacer().getScaricaReportSintetico().setHidden(false);
+                    form.getFiltriConsistenzaSacer().getScaricaReportSintetico().setDisableHourGlass(true);
                 } else {
                     form.getFiltriConsistenzaSacer().getScaricaReportSintetico().setHidden(true);
                 }
@@ -6390,25 +6267,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     }
 
     /**
-     * Restituisce un record Versamento Fallito sotto forma di row bean preso dalla lista sessioni
-     *
-     * @return entity bean MonVLisVersDocNonVersRowBean
-     */
-    private MonVLisVersDocNonVersRowBean getMonVLisVersDocNonVersRowBean() {
-        MonVLisVersDocNonVersRowBean av = (MonVLisVersDocNonVersRowBean) getForm().getSessioniList().getTable()
-                .getCurrentRow();
-        return av;
-    }
-
-    /**
      * Restituisce un record Sessione Errata sotto forma di row bean
      *
      * @return entity bean VrsSessioneVersRowBean
      */
-    private VrsSessioneVersRowBean getVrsSessioneVersRowBean() {
-        VrsSessioneVersRowBean sv = (VrsSessioneVersRowBean) getForm().getSessioniErrateList().getTable()
-                .getCurrentRow();
-        return sv;
+    private VrsSessioneVersKoRowBean getVrsSessioneVersRowBean() {
+        return (VrsSessioneVersKoRowBean) getForm().getSessioniErrateList().getTable().getCurrentRow();
     }
 
     private void visualizzaTotaliRiepilogoVersamenti() {
@@ -6577,7 +6441,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     }
 
     /**
-     * Metodo utilizzato per popolare le combo "Registro" nei filtri di ricerca che utilizzano la Chiave Unit\u00e0 
+     * Metodo utilizzato per popolare le combo "Registro" nei filtri di ricerca che utilizzano la Chiave Unit\u00e0
      * Documentaria
      *
      * @param idStrut
@@ -6603,7 +6467,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     }
 
     private DecodeMap getMappaRegistroFromTotaleMonVLisVersErr(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, Long idUserIam) throws EMFError {
+            BigDecimal idStrut, Long idUserIam) {
         BaseTable registri = monitoraggioHelper.getRegistriFromTotaleMonVLisVersErr(idAmbiente, idEnte, idStrut,
                 idUserIam);
         DecodeMap mappaRegistro = new DecodeMap();
@@ -6612,7 +6476,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     }
 
     private DecodeMap getMappaRegistroFromTotaleMonVLisUdNonVers(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, Long idUserIam) throws EMFError {
+            BigDecimal idStrut, Long idUserIam) {
         BaseTable registri = monitoraggioHelper.getRegistriFromTotaleMonVLisUdNonVers(idAmbiente, idEnte, idStrut,
                 idUserIam);
         DecodeMap mappaRegistro = new DecodeMap();
@@ -6657,7 +6521,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     }
 
     @Secure(action = "Menu.Monitoraggio.SessioniRecupero")
-    public void loadSessioniRecupero() throws EMFError {
+    public void loadSessioniRecupero() {
         getUser().getMenu().reset();
         getUser().getMenu().select("Menu.Monitoraggio.SessioniRecupero");
 
@@ -6684,18 +6548,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             OrgStrutTableBean tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
                     Boolean.TRUE);
 
-            // Ricavo i valori della combo TIPO UNITA' DOC.
-            DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(getUser().getIdUtente(),
-                    idStruttura);
-
             getForm().getFiltriRicercaSessioniRecupero().getId_ambiente()
                     .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente"));
             getForm().getFiltriRicercaSessioniRecupero().getId_ente()
                     .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
             getForm().getFiltriRicercaSessioniRecupero().getId_strut()
                     .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStruttura, "id_strut", "nm_strut"));
-            // getForm().getRiepilogoVersamentiSintetico().getId_tipo_unita_doc().setDecodeMap(
-            // DecodeMap.Factory.newInstance(tmpTableBeanTUD, "id_tipo_unita_doc", "nm_tipo_unita_doc"));
 
             getForm().getFiltriRicercaSessioniRecupero().getId_ambiente().setValue(idAmbiente.toString());
             getForm().getFiltriRicercaSessioniRecupero().getId_ente().setValue(idEnte.toString());
@@ -6833,17 +6691,15 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             File fileToDownload = new File(path);
             if (fileToDownload.exists()) {
                 /*
-                 * Definiamo l'output previsto che sar\u00e0  un file in formato zip di cui si occuper\u00e0  la servlet
+                 * Definiamo l'output previsto che sar\u00e0 un file in formato zip di cui si occuper\u00e0 la servlet
                  * per fare il download
                  */
                 OutputStream outUD = getServletOutputStream();
                 getResponse().setContentType("application/zip");
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename);
 
-                FileInputStream inputStream = null;
-                try {
+                try (FileInputStream inputStream = new FileInputStream(fileToDownload);) {
                     getResponse().setHeader("Content-Length", String.valueOf(fileToDownload.length()));
-                    inputStream = new FileInputStream(fileToDownload);
                     byte[] bytes = new byte[8000];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(bytes)) != -1) {
@@ -6851,17 +6707,15 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     }
                     outUD.flush();
                 } catch (IOException e) {
-                    logger.error("Eccezione nel recupero del documento ", e);
+                    log.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
-                    IOUtils.closeQuietly(inputStream);
                     IOUtils.closeQuietly(outUD);
-                    inputStream = null;
                     outUD = null;
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
+                if (Boolean.TRUE.equals(deleteFile)) {
                     fileToDownload.delete();
                 }
             } else {
@@ -6948,14 +6802,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
-            logger.error("Errore nel recupero ambiente", ex);
+            log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
         getForm().getFiltriReplicaOrg().getId_ambiente().setDecodeMap(mappaAmbiente);
 
         /*
-         * Se ho un solo ambiente lo setto gi\u00e0  impostato nella combo e procedo con i controlli successivi
+         * Se ho un solo ambiente lo setto gi\u00e0 impostato nella combo e procedo con i controlli successivi
          */
         if (tmpTableBeanAmbiente.size() == 1) {
             getForm().getFiltriReplicaOrg().getId_ambiente()
@@ -6972,9 +6826,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
         // Popolo le combo "Tipo operatore" e "Stato replica"
         getForm().getFiltriReplicaOrg().getTi_oper_replic()
-                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_oper", WebConstants.TiOperReplic.values()));
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_oper", Constants.TiOperReplic.values()));
         getForm().getFiltriReplicaOrg().getTi_stato_replic()
-                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato", WebConstants.TiStatoReplic.values()));
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato", Constants.TiStatoReplic.values()));
 
         getForm().getReplicaOrgList().clear();
     }
@@ -7034,7 +6888,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
             Object[] chiavi = null;
             if (!getMessageBox().hasError()) {
-                // Valida i campi di Range di chiavi unit\u00e0  documentaria
+                // Valida i campi di Range di chiavi unit\u00e0 documentaria
                 chiavi = validator.validaChiaviUnitaDoc(filtri.getCd_registro_key_unita_doc().getValue(),
                         filtri.getAa_key_unita_doc().parse(), filtri.getCd_key_unita_doc().parse(),
                         filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse(),
@@ -7053,14 +6907,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 }
                 // Le eventuali date riferite al giorno di versamento vengono salvate in sessione
                 if (dateValidate != null) {
-                    SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_TIMESTAMP_TYPE);
+                    SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
                     filtri.getGiorno_vers_da_validato().setValue(df.format(dateValidate[0]));
                     filtri.getGiorno_vers_a_validato().setValue(df.format(dateValidate[1]));
                 }
 
                 // La validazione non ha riportato errori. Carico la tabella con i filtri impostati
-                String maxResultStandard = configurationHelper.getValoreParamApplic("MAX_RESULT_STANDARD", null, null,
-                        null, null, CostantiDB.TipoAplVGetValAppart.APPLIC);
+                String maxResultStandard = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
                 MonVLisUniDocDaAnnulTableBean monVLisDocTableBean = monitoraggioEjb
                         .getMonVLisUniDocDaAnnul(getUser().getIdUtente(), filtri, Integer.parseInt(maxResultStandard));
                 getForm().getDocumentiAnnullatiList().setTable(monVLisDocTableBean);
@@ -7089,7 +6943,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             Date ultimaRegistrazione = calcoloAsync.getUltimaRegistrazione(
                     JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
                     getForm().getFiltriVersamenti().getId_strut().parse().longValue());
-            SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+            SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
             getForm().getFiltriVerificaVersamenti().getData_registrazione().setValue(df.format(ultimaRegistrazione));
             df.applyPattern("HH");
             getForm().getFiltriVerificaVersamenti().getOre_registrazione().setValue(df.format(ultimaRegistrazione));
@@ -7117,9 +6971,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
     @Override
     public JSONObject triggerFiltriJobSchedulatiNm_jobOnTrigger() throws EMFError {
-        JSONObject result;
-
-        if (getSession().getAttribute("fromRicercaJob") == null) {
+        if (getSession().getAttribute(FROM_GESTIONE_JOB) == null) {
             getForm().getFiltriJobSchedulati().post(getRequest());
         }
         String nomeJob = getForm().getFiltriJobSchedulati().getNm_job().parse();
@@ -7132,11 +6984,10 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 || nomeJob.equals(JobConstants.JobEnum.CALCOLA_CHIAVE_UD_DOC.name()))) {
             populateFiltriJobSchedulati();
         }
-
         return getForm().getFiltriJobSchedulati().asJSON();
     }
 
-    public void populateFiltriJobSchedulati() throws EMFError {
+    public void populateFiltriJobSchedulati() {
         // Ricavo id struttura, ente ed ambiente attuali
         BigDecimal idStruttura = getUser().getIdOrganizzazioneFoglia();
         BigDecimal idEnte = monitoraggioHelper.getIdEnte(idStruttura);
@@ -7158,7 +7009,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
         } catch (Exception ex) {
-            logger.error("Errore in ricerca ambiente", ex);
+            log.error("Errore in ricerca ambiente", ex);
         }
 
         DecodeMap mappaAmbiente = new DecodeMap();
@@ -7218,11 +7069,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         FiltriContenutoSacer filtri = getForm().getFiltriContenutoSacer();
         // Eseguo la post del filtri
         filtri.post(getRequest());
-        BigDecimal idCategTipoUnitaDoc = (!getForm().getFiltriContenutoSacer().getId_categ_tipo_unita_doc().getValue()
-                .equals("")
-                        ? new BigDecimal(getForm().getFiltriContenutoSacer().getId_categ_tipo_unita_doc().getValue())
-                        : null);
-        if (idCategTipoUnitaDoc != null) {
+        List<BigDecimal> idCategTipoUnitaDoc = getForm().getFiltriContenutoSacer().getId_categ_tipo_unita_doc().parse();
+        if (!idCategTipoUnitaDoc.isEmpty()) {
             // Ricavo il TableBean relativo alle sottocategorie dipendenti dalla categoria scelta
             DecCategTipoUnitaDocTableBean sottoCategTipoUnitaDocTableBean = tipoUnitaDocEjb
                     .getDecCategTipoUnitaDocChildTableBean(idCategTipoUnitaDoc);
@@ -7268,7 +7116,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             filtri.getId_registro_unita_doc().setDecodeMap(mappaRegistro);
             filtri.getId_tipo_unita_doc().setDecodeMap(mappaTipoUD);
             filtri.getId_tipo_doc().setDecodeMap(mappaTipoDoc);
-            /* Se ho una sola sottostruttura la setto gi\u00e0  impostata nella multiselect */
+            /* Se ho una sola sottostruttura la setto gi\u00e0 impostata nella multiselect */
             if (subStrutTableBean.size() == 1) {
                 filtri.getId_sub_strut()
                         .setValues(new String[] { subStrutTableBean.getRow(0).getIdSubStrut().toString() });
@@ -7302,7 +7150,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Ricarica la form di ricerca
             this.operazioniElenchiVersamento();
         } catch (Exception ex) {
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
         }
     }
 
@@ -7315,14 +7163,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
-            logger.error("Errore nel recupero ambiente", ex);
+            log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
         getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente().setDecodeMap(mappaAmbiente);
 
         /*
-         * Se ho un solo ambiente lo setto gi\u00e0  impostato nella combo e procedo con i controlli successivi
+         * Se ho un solo ambiente lo setto gi\u00e0 impostato nella combo e procedo con i controlli successivi
          */
         if (tmpTableBeanAmbiente.size() == 1) {
             getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente()
@@ -7337,7 +7185,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             getForm().getFiltriOperazioniElenchiVersamento().getId_strut().setDecodeMap(new DecodeMap());
         }
 
-        /* Inizializzo le combo Modalit\u00e0  operazione e Tipo output */
+        /* Inizializzo le combo Modalit\u00e0 operazione e Tipo output */
         getForm().getFiltriOperazioniElenchiVersamento().getTi_mod_oper().setDecodeMap(
                 ComboGetter.getMappaSortedGenericEnum("modalita", VolumeEnums.ModalitaOperazioni.values()));
         getForm().getFiltriOperazioniElenchiVersamento().getTi_output().setDecodeMap(
@@ -7381,7 +7229,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             Date ultimaRegistrazione = calcoloAsync.getUltimaRegistrazione(
                     JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
                     getForm().getFiltriUdDocDerivantiDaVersFalliti().getId_strut().parse().longValue());
-            SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+            SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
             getForm().getFiltriVerificaVersamenti().getData_registrazione().setValue(df.format(ultimaRegistrazione));
             df.applyPattern("HH");
             getForm().getFiltriVerificaVersamenti().getOre_registrazione().setValue(df.format(ultimaRegistrazione));
@@ -7498,7 +7346,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             validatore.validaDataCalcoloConsistenzaSacer(filtri.getDt_rif_da().parse());
             if (!getMessageBox().hasError()) {
                 Object[] risultato = monitoraggioHelper.getListaTotaliConsistenzaComp(filtri);
-                BaseTableInterface totSacer = (BaseTableInterface) risultato[0];
+                BaseTableInterface<?> totSacer = (BaseTableInterface<?>) risultato[0];
                 BaseRowInterface rigaTotali = (BaseRowInterface) risultato[1];
                 // Setto la lista con i conteggi
                 getForm().getConsistenzaSacerList().setTable(totSacer);
@@ -7522,9 +7370,10 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
                 // Setto i filtri utilizzati
                 String filtriUtilizzati = "";
-                if (getForm().getFiltriConsistenzaSacer().getId_ambiente().parse() != null) {
+                if (getForm().getFiltriConsistenzaSacer().getId_ambiente().parse() != null
+                        && !getForm().getFiltriConsistenzaSacer().getId_ambiente().parse().isEmpty()) {
                     filtriUtilizzati = filtriUtilizzati + "Ambiente: "
-                            + getForm().getFiltriConsistenzaSacer().getId_ambiente().getDecodedValue() + "; ";
+                            + getForm().getFiltriConsistenzaSacer().getId_ambiente().getDecodedValues() + "; ";
                 }
                 if (getForm().getFiltriConsistenzaSacer().getId_ente().parse() != null) {
                     filtriUtilizzati = filtriUtilizzati + "Ente: "
@@ -7558,7 +7407,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         try {
             this.consistenzaSacer();
         } catch (Exception ex) {
-            logger.error("Eccezione", ex);
+            log.error("Eccezione", ex);
         }
     }
 
@@ -7574,11 +7423,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     @Override
     public JSONObject triggerFiltriConsistenzaSacerId_ambienteOnTrigger() throws EMFError {
         getForm().getFiltriConsistenzaSacer().post(getRequest());
-        BigDecimal idAmbiente = getForm().getFiltriConsistenzaSacer().getId_ambiente().parse();
-        if (idAmbiente != null) {
+        List<BigDecimal> idAmbiente = getForm().getFiltriConsistenzaSacer().getId_ambiente().parse();
+        if (idAmbiente != null && !idAmbiente.isEmpty()) {
             // Ricavo il TableBean relativo agli enti dipendenti dall'ambiente scelto
-            OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitati(getUser().getIdUtente(),
-                    idAmbiente.longValue(), Boolean.TRUE);
+            OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitati(getUser().getIdUtente(), idAmbiente,
+                    Boolean.TRUE);
             DecodeMap mappaEnte = new DecodeMap();
             mappaEnte.populatedMap(enteTableBean, "id_ente", "nm_ente");
             getForm().getFiltriConsistenzaSacer().getId_ente().setDecodeMap(mappaEnte);
@@ -7616,10 +7465,10 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         return getForm().getFiltriConsistenzaSacer().asJSON();
     }
 
-    private final static String APRI_DELTA = "apriDelta";
-    private final static String PROBLEMI_DELTA = "problemiDelta";
-    private final static String PROBLEMI_DELTA_FRASE1 = "Nell'intervallo considerato per la struttura ";
-    private final static String PROBLEMI_DELTA_FRASE2 = " sono state trovate le seguenti differenze: ";
+    private static final String APRI_DELTA = "apriDelta";
+    private static final String PROBLEMI_DELTA = "problemiDelta";
+    private static final String PROBLEMI_DELTA_FRASE1 = "Nell'intervallo considerato per la struttura ";
+    private static final String PROBLEMI_DELTA_FRASE2 = " sono state trovate le seguenti differenze: ";
 
     // @Secure(action = "detail/MonitoraggioForm#ConsistenzaSacerList/apriPopUpDelta")
     public void apriListaDelta() throws EMFError {
@@ -7631,14 +7480,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         Date dtRifA = getForm().getFiltriConsistenzaSacer().getDt_rif_a().parse();
         getSession().setAttribute(PROBLEMI_DELTA, PROBLEMI_DELTA_FRASE1 + nmStrut + PROBLEMI_DELTA_FRASE2);
 
-        // BaseTableInterface t = monitoraggioHelper.getListaDifferenzaConsistenzaComp(idStrut, dtRifDa, dtRifA);
-        BaseTableInterface t = monitoraggioHelper.getListaDifferenzaConsistenzaVsCalcoloSacer2(idStrut, dtRifDa,
+        BaseTableInterface<?> t = monitoraggioHelper.getListaDifferenzaConsistenzaVsCalcoloSacer2(idStrut, dtRifDa,
                 dtRifA);
-        // BaseTableInterface t = monitoraggioHelper.getListaTotaliConsistenzaCompDiffDayByDayAnnull(idStrut, dtRifDa,
-        // dtRifA);
-        // BaseTableInterface t = monitoraggioHelper.getListaTotaliConsistenzaCompDiffDayByDayLink2(idStrut, dtRifDa,
-        // dtRifA);
-        String a = monitoraggioHelper.getListaTotaliConsistenzaCompDiffDayByDayLink(idStrut, dtRifDa, dtRifA);
         getForm().getConsistenzaSacerProblemsList().setTable(t);
         getForm().getConsistenzaSacerProblemsList().getTable().first();
         getForm().getConsistenzaSacerProblemsList().getTable().setPageSize(10);
@@ -7659,7 +7502,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         }
         getSession().setAttribute(APRI_DELTA, true);
         getSession().setAttribute(PROBLEMI_DELTA, PROBLEMI_DELTA_FRASE1 + nmStrut + PROBLEMI_DELTA_FRASE2);
-        // setConsistenzaColonneIdInvisibili(false);
         forwardToPublisher(getLastPublisher());
     }
 
@@ -7878,9 +7720,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             r10Descrizione.setText(
                     "i componenti ricevuti sono calcolati sottraendo i componenti nei versamenti annullati al totale dei componenti versati; i componenti conservati sono calcolati sommando i componenti non ancora elaborati a quelli presenti negli AIP o nei Volumi di conservazione. Un valore è diverso da zero indica una possibile perdita di dati.");
 
-            // // Interruzione di pagina
-            XWPFParagraph p20 = doc.createParagraph();
-
             // Recupero il file del "template" della tabella già formattata in maniera tale
             // da averla già personalizzata
             InputStream is = this.getClass().getClassLoader().getResourceAsStream("report/Tabella.docx");
@@ -7908,7 +7747,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 // Ricavo la riga in posizione k, la inserisco in posizione k+1
                 // (saranno le righe dei record ricavati dalla ricerca)
                 // e me la faccio restituire come nuova riga su cui poi lavorarci su
-                BaseTableInterface tabellaConsistenza = getForm().getConsistenzaSacerList().getTable();
+                BaseTableInterface<?> tabellaConsistenza = getForm().getConsistenzaSacerList().getTable();
                 for (int k = 2; k < tabellaConsistenza.size() + 2; k++) {
 
                     XWPFTableRow oldRow = table.getRow(k);
@@ -7931,7 +7770,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         CTTblWidth cellWidth = ctTcPr.addNewTcW();
                         cellWidth.setType(oldRow.getCell(i).getCTTc().getTcPr().getTcW().getType()); // sets type of
                         // width
-                        BigInteger width = (BigInteger) oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
+                        BigInteger width = oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
                         cellWidth.setW(width); // sets width
 
                         // Se comincio ad elaborare le colonne "numeriche", i numeri devono essere allineati a destra
@@ -8085,8 +7924,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     out.flush();
                     out.close();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (EMFError | IOException e) {
+                    throw new EMFError("Errore durante la schedulazione del job", e);
                 } finally {
                     freeze();
                 }
@@ -8120,13 +7959,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             r0TitoloFiltri.setFontSize(12);
             r0TitoloFiltri.setFontFamily("Verdana");
             r0TitoloFiltri.setText("Filtri utilizzati: ");
-            //
-            // XSSFFont fontBold= r0TitoloFiltri.createFont();
-            // fontBold.setBold(true); //set bold
-            // fontBold.setFontHeight(12); //add font size
-            // fontBold.setFontName("Verdana");
 
-            XSSFRichTextString rts = new XSSFRichTextString();
             String[] filtriArray = getForm().getConsistenzaSacerTotaliUdDocComp().getFiltri_utilizzati().getValue()
                     .trim().split(";");
 
@@ -8148,8 +7981,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             r0Valore.setText("tutti;");
             r0Valore.addBreak();
 
-            for (String filtri : filtriArray) {
-                String[] filtro = filtri.split(":");
+            for (int i = 1; i < filtriArray.length; i++) {
+                String[] filtro = filtriArray[i].split(":");
+
                 // set font
                 r0Descrizione = p0Descrizione.createRun();
                 r0Descrizione.setFontSize(10);
@@ -8163,6 +7997,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 r0Descrizione.setText(filtro[0].trim() + ": ");
                 r0Valore.setText(filtro[1].trim() + ";");
                 r0Valore.addBreak();
+
             }
 
             XWPFParagraph p1Descrizione = doc.createParagraph();
@@ -8329,9 +8164,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             r10Descrizione.setText(
                     "i componenti ricevuti sono calcolati sottraendo i componenti nei versamenti annullati al totale dei componenti versati; i componenti conservati sono calcolati sommando i componenti non ancora elaborati a quelli presenti negli AIP o nei Volumi di conservazione. Un valore è diverso da zero indica una possibile perdita di dati.");
 
-            // // Interruzione di pagina
-            XWPFParagraph p20 = doc.createParagraph();
-
             // Recupero il file del "template" della tabella già formattata in maniera tale
             // da averla già personalizzata
             InputStream is = this.getClass().getClassLoader().getResourceAsStream("report/Tabella_sintetica.docx");
@@ -8355,12 +8187,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 CTTblLayoutType type = table.getCTTbl().getTblPr().addNewTblLayout();
                 type.setType(STTblLayoutType.FIXED);
 
-                // Ricavo la riga in posizione k, la inserisco in posizione k+1
-                // (saranno le righe dei record ricavati dalla ricerca)
-                // e me la faccio restituire come nuova riga su cui poi lavorarci su
-                // BaseTableInterface tabellaConsistenza =
-                // (BaseTableInterface)getForm().getConsistenzaSacerList().getTable();
-                AbstractBaseTable tabellaConsistenzaTmp = new BaseTable();
+                AbstractBaseTable<?> tabellaConsistenzaTmp = new BaseTable();
 
                 /* PRIMA DEVO RIELABORARE LA LISTA RISULTATO "RAGGRUPPANDO" PER AMBIENTI */
                 Map<String, BigDecimal[]> totaliAmbienti = new HashMap<>();
@@ -8387,7 +8214,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     }
                 }
 
-                // tabellaConsistenza.clear();
                 for (Map.Entry<String, BigDecimal[]> entry : totaliAmbienti.entrySet()) {
                     String chiave = entry.getKey();
                     BigDecimal[] valore = entry.getValue();
@@ -8430,7 +8256,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         CTTblWidth cellWidth = ctTcPr.addNewTcW();
                         cellWidth.setType(oldRow.getCell(i).getCTTc().getTcPr().getTcW().getType()); // sets type of
                         // width
-                        BigInteger width = (BigInteger) oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
+                        BigInteger width = oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
                         cellWidth.setW(width); // sets width
 
                         // Se comincio ad elaborare le colonne "numeriche", i numeri devono essere allineati a destra
@@ -8460,8 +8286,6 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                             break;
                         case 2:// aggB
                             run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_annul")));
-                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_annul"));
-                            // Integer aggB = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
                             totB = totB + rigaConsistenza.getBigDecimal("ni_comp_annul").intValue();
                             break;
                         case 3:
@@ -8470,26 +8294,18 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                             break;
                         case 4:
                             run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn")));
-                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn"));
-                            // Integer aggD = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
                             totD = totD + rigaConsistenza.getBigDecimal("ni_comp_aip_in_aggiorn").intValue();
                             break;
                         case 5:
                             run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_aip_generato")));
-                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_aip_generato"));
-                            // Integer aggE = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
                             totE = totE + rigaConsistenza.getBigDecimal("ni_comp_aip_generato").intValue();
                             break;
                         case 6:
                             run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_in_volume")));
-                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_in_volume"));
-                            // Integer aggF = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
                             totF = totF + rigaConsistenza.getBigDecimal("ni_comp_in_volume").intValue();
                             break;
                         case 7:
                             run.setText(df.format(rigaConsistenza.getBigDecimal("ni_comp_delta")));
-                            // run.setText("" + rigaConsistenza.getBigDecimal("ni_comp_delta"));
-                            // Integer aggG = run.getText(0) != null ? Integer.parseInt(run.getText(0)) : 0;
                             totG = totG + rigaConsistenza.getBigDecimal("ni_comp_delta").intValue();
                             break;
                         default:
@@ -8574,8 +8390,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     out.flush();
                     out.close();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (EMFError | IOException e) {
+                    throw new EMFError("Errore durante la schedulazione del job", e);
                 } finally {
                     freeze();
                 }
@@ -8605,24 +8421,443 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             pageSize.setH(BigInteger.valueOf(16840));
             pageSize.setW(BigInteger.valueOf(12240));
         }
-    }
+    }//
 
     @Override
     public void scaricaReport() throws EMFError {
         try {
             eseguiScaricaReport();
         } catch (Throwable ex) {
-            logger.error(ex.getMessage());
+            log.error(ex.getMessage());
         }
-    }
+    }//
 
     @Override
     public void scaricaReportSintetico() throws EMFError {
         try {
             eseguiScaricaReportSintetico();
         } catch (Throwable ex) {
-            logger.error(ex.getMessage());
+            log.error(ex.getMessage());
         }
+    }
+    //
+    //
+
+    private Timestamp getActivationDateJob(String jobName) {
+        Timestamp res = null;
+        LogVVisLastSchedRowBean rb = monitoraggioHelper.getLogVVisLastSchedRowBean(jobName);
+
+        if (rb.getFlJobAttivo() != null) {
+            if (rb.getFlJobAttivo().equals("1")) {
+                res = rb.getDtRegLogJobIni();
+            }
+        }
+
+        return res;
+    }
+
+    @Override
+    public void startJobSchedulati() throws EMFError {
+        // Eseguo lo start del job interessato
+        getForm().getFiltriJobSchedulati().post(getRequest());
+        String nmJob = getForm().getFiltriJobSchedulati().getNm_job().parse();
+        if (nmJob != null) {
+            String dsJob = gestioneJobEjb.getDsJob(nmJob);
+            startGestioneJobOperation(nmJob, dsJob);
+        } else {
+            getMessageBox().addWarning("Attenzione: nessun JOB selezionato");
+            forwardToPublisher(getLastPublisher());
+        }
+    }
+
+    @Override
+    public void stopJobSchedulati() throws EMFError {
+        // Eseguo lo start del job interessato
+        getForm().getFiltriJobSchedulati().post(getRequest());
+        String nmJob = getForm().getFiltriJobSchedulati().getNm_job().parse();
+        if (nmJob != null) {
+            String dsJob = gestioneJobEjb.getDsJob(nmJob);
+            stopGestioneJobOperation(nmJob, dsJob);
+        } else {
+            getMessageBox().addWarning("Attenzione: nessun JOB selezionato");
+            forwardToPublisher(getLastPublisher());
+        }
+    }
+
+    @Override
+    public void esecuzioneSingolaJobSchedulati() throws EMFError {
+        // Eseguo lo start del job interessato
+        getForm().getFiltriJobSchedulati().post(getRequest());
+        String nmJob = getForm().getFiltriJobSchedulati().getNm_job().parse();
+        if (nmJob != null) {
+            String dsJob = gestioneJobEjb.getDsJob(nmJob);
+            esecuzioneSingolaGestioneJobOperation(nmJob, dsJob);
+        } else {
+            getMessageBox().addWarning("Attenzione: nessun JOB selezionato");
+            forwardToPublisher(getLastPublisher());
+        }
+    }
+
+    public void startGestioneJobOperation(String nmJob, String dsJob) {
+        // Se il JOB è di tipo NO_TIMER in ogni caso il tasto di START va inibito
+        if (gestioneJobEjb.isNoTimerJob(nmJob)) {
+            getMessageBox().addWarning(
+                    "Attenzione: si sta tentando di schedulare un JOB di tipo NO_TIMER. Operazione non consentita");
+            forwardToPublisher(getLastPublisher());
+        } else {
+            eseguiNuovo(nmJob, dsJob, null, OPERAZIONE.START);
+            setStatoJob(nmJob);
+        }
+    }
+
+    public void stopGestioneJobOperation(String nmJob, String dsJob) {
+        // Se il JOB è di tipo NO_TIMER in ogni caso il tasto di STOP va inibito
+        if (gestioneJobEjb.isNoTimerJob(nmJob)) {
+            getMessageBox().addWarning(
+                    "Attenzione: si sta tentando di stoppare un JOB di tipo NO_TIMER. Operazione non consentita");
+            forwardToPublisher(getLastPublisher());
+        } else {
+            eseguiNuovo(nmJob, dsJob, null, OPERAZIONE.STOP);
+            setStatoJob(nmJob);
+        }
+    }
+
+    public void esecuzioneSingolaGestioneJobOperation(String nmJob, String dsJob) {
+        eseguiNuovo(nmJob, dsJob, null, OPERAZIONE.ESECUZIONE_SINGOLA);
+        setStatoJob(nmJob);
+    }
+
+    @Override
+    public void gestioneJobPage() throws EMFError {
+        GestioneJobForm form = new GestioneJobForm();
+        form.getGestioneJobRicercaFiltri().setEditMode();
+        form.getGestioneJobRicercaFiltri().reset();
+        form.getGestioneJobRicercaList().setTable(null);
+        BaseTable ambitoTableBean = gestioneJobEjb.getAmbitoJob();
+        form.getGestioneJobRicercaFiltri().getNm_ambito()
+                .setDecodeMap(DecodeMap.Factory.newInstance(ambitoTableBean, "nm_ambito", "nm_ambito"));
+        form.getGestioneJobRicercaFiltri().getTi_stato_job().setDecodeMap(ComboGetter.getMappaTiStatoJob());
+        getForm().getFiltriJobSchedulati().post(getRequest());
+        String nmJob = getForm().getFiltriJobSchedulati().getNm_job().parse();
+        if (nmJob != null) {
+            String dsJob = gestioneJobEjb.getDsJob(nmJob);
+            form.getGestioneJobRicercaFiltri().getDs_job().setValue(dsJob);
+        }
+        getSession().setAttribute("fromSchedulazioniJob", true);
+        form.getGestioneJobRicercaFiltri().setEditMode();
+        redirectToAction(Application.Actions.GESTIONE_JOB, "?operation=ricercaGestioneJob", form);
+
+    }
+
+    public void setJobVBeforeOperation(String nmJob) {
+        // Setto i campi di "Stato Job"
+        Date proxAttivazione = jbossTimerEjb.getDataProssimaAttivazione(nmJob);
+
+        boolean dataAccurata = jbossTimerEjb.isDataProssimaAttivazioneAccurata(nmJob);
+        getForm().getInformazioniJob().getFl_data_accurata().setValue(dataAccurata ? "1" : "0");
+
+        LogVVisLastSchedRowBean rb = monitoraggioHelper.getLogVVisLastSchedRowBean(nmJob);
+        String formattata = "";
+        DateFormat formato = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
+        if (proxAttivazione != null) {
+            formattata = formato.format(proxAttivazione);
+        }
+        getForm().getInformazioniJob().getDt_prossima_attivazione().setValue(formattata);
+        if (rb.getFlJobAttivo() != null) {
+            if (rb.getFlJobAttivo().equals("1")) {
+                getForm().getInformazioniJob().getAttivo().setChecked(true);
+                formattata = formato.format(rb.getDtRegLogJobIni());
+                getForm().getInformazioniJob().getDt_reg_log_job_ini().setValue(formattata);
+            } else {
+                getForm().getInformazioniJob().getAttivo().setChecked(false);
+                getForm().getInformazioniJob().getDt_reg_log_job_ini().setValue(null);
+            }
+        } else {
+            getForm().getInformazioniJob().getAttivo().setChecked(false);
+            getForm().getInformazioniJob().getDt_reg_log_job_ini().setValue(null);
+        }
+    }
+
+    private void setStatoJob(String nmJob) {
+        Timestamp dataAttivazioneJob = getActivationDateJob(nmJob);
+        StatoJob job = new StatoJob(nmJob, getForm().getInformazioniJob().getFl_data_accurata(),
+                getForm().getInformazioniJob().getStartJobSchedulati(),
+                getForm().getInformazioniJob().getEsecuzioneSingolaJobSchedulati(),
+                getForm().getInformazioniJob().getStopJobSchedulati(),
+                getForm().getInformazioniJob().getDt_prossima_attivazione(), getForm().getInformazioniJob().getAttivo(),
+                getForm().getInformazioniJob().getDt_reg_log_job_ini(), dataAttivazioneJob);
+
+        gestisciStatoJobNuovo(job);
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_JOB_SCHEDULATI_RICERCA);
+    }
+
+    private void gestisciStatoJobNuovo(StatoJob statoJob) {
+        // se non è ancora passato un minuto da quando è stato premuto un pulsante non posso fare nulla
+        boolean operazioneInCorso = jbossTimerEjb.isEsecuzioneInCorso(statoJob.getNomeJob());
+
+        statoJob.getFlagDataAccurata().setViewMode();
+        statoJob.getFlagDataAccurata().setValue("L'operazione richiesta verrà effettuata entro il prossimo minuto.");
+        statoJob.getFlagDataAccurata().setHidden(!operazioneInCorso);
+
+        // Posso operare sulla pagina
+        Date nextActivation = jbossTimerEjb.getDataProssimaAttivazione(statoJob.getNomeJob());
+        boolean dataAccurata = jbossTimerEjb.isDataProssimaAttivazioneAccurata(statoJob.getNomeJob());
+        DateFormat formato = new SimpleDateFormat(WebConstants.DATE_FORMAT_TIMESTAMP_TYPE);
+
+        /*
+         * Se il job è già schedulato o in esecuzione singola nascondo il pulsante Start/esecuzione singola, mostro Stop
+         * e visualizzo la prossima attivazione. Viceversa se è fermo mostro Start e nascondo Stop
+         */
+        if (nextActivation != null) {
+            statoJob.getStart().setViewMode();
+            statoJob.getEsecuzioneSingola().setViewMode();
+            statoJob.getStop().setEditMode();
+            statoJob.getStart().setHidden(true);
+            statoJob.getEsecuzioneSingola().setHidden(true);
+            statoJob.getStop().setHidden(false);
+            statoJob.getDataProssimaAttivazione().setValue(formato.format(nextActivation));
+        } else {
+            statoJob.getStart().setEditMode();
+            statoJob.getEsecuzioneSingola().setEditMode();
+            statoJob.getStop().setViewMode();
+            statoJob.getStart().setHidden(false);
+            statoJob.getEsecuzioneSingola().setHidden(false);
+            statoJob.getStop().setHidden(true);
+            statoJob.getDataProssimaAttivazione().setValue(null);
+        }
+
+        boolean flagHidden = nextActivation == null || dataAccurata;
+        // se la data c'è ma non è accurata non visualizzare la "data prossima attivazione"
+        statoJob.getDataProssimaAttivazione().setHidden(!flagHidden);
+
+        if (statoJob.getDataAttivazione() != null) {
+            statoJob.getCheckAttivo().setChecked(true);
+            statoJob.getDataRegistrazioneJob()
+                    .setValue(formato.format(new Date(statoJob.getDataAttivazione().getTime())));
+        } else {
+            statoJob.getCheckAttivo().setChecked(false);
+            statoJob.getDataRegistrazioneJob().setValue(null);
+        }
+
+        // Se il JOB è di tipo NO_TIMER in ogni caso il tasto di START va inibito
+        if (gestioneJobEjb.isNoTimerJob(statoJob.getNomeJob())) {
+            statoJob.getStart().setViewMode();
+            statoJob.getStart().setHidden(true);
+        }
+
+    }
+
+    private enum OPERAZIONE {
+        START("lancio il timer"), ESECUZIONE_SINGOLA("esecuzione singola"), STOP("stop");
+
+        protected String desc;
+
+        OPERAZIONE(String desc) {
+            this.desc = desc;
+        }
+
+        public String description() {
+            return desc;
+        }
+    }
+
+    private void eseguiNuovo(String nomeJob, String descrizioneJob, String nomeApplicazione, OPERAZIONE operazione) {
+        // Messaggio sul logger di sistema
+        StringBuilder info = new StringBuilder(descrizioneJob);
+        info.append(": ").append(operazione.description()).append(" [").append(nomeJob);
+        if (nomeApplicazione != null) {
+            info.append("_").append(nomeApplicazione);
+        }
+        info.append("]");
+        log.info(info.toString());
+
+        String message = "Errore durante la schedulazione del job";
+
+        switch (operazione) {
+        case START:
+            jbossTimerEjb.start(nomeJob, null);
+            message = descrizioneJob
+                    + ": job correttamente schedulato. L'operazione richiesta verrà schedulata correttamente entro il prossimo minuto.";
+            break;
+        case ESECUZIONE_SINGOLA:
+            jbossTimerEjb.esecuzioneSingola(nomeJob, null);
+            message = descrizioneJob
+                    + ": job correttamente schedulato per esecuzione singola. L'operazione richiesta verrà effettuata entro il prossimo minuto.";
+            break;
+        case STOP:
+            jbossTimerEjb.stop(nomeJob);
+            message = descrizioneJob
+                    + ": schedulazione job annullata. L'operazione richiesta diventerà effettiva entro il prossimo minuto.";
+            break;
+        }
+
+        // Segnalo l'avvenuta operazione sul job
+        getMessageBox().addMessage(new Message(MessageLevel.INF, message));
+        getMessageBox().setViewMode(ViewMode.plain);
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Classe che mappa lo stato dei job">
+    /**
+     * Astrazione dei componenti della pagina Schedulazioni Job
+     *
+     */
+    public static final class StatoJob {
+
+        private final String nomeJob;
+        private final Input<String> flagDataAccurata;
+        private final Button<String> start;
+        private final Button<String> esecuzioneSingola;
+        private final Button<String> stop;
+        private final Input<Timestamp> dataProssimaAttivazione;
+        private final CheckBox<String> checkAttivo;
+        private final Input<Timestamp> dataRegistrazioneJob;
+        private final Timestamp dataAttivazione;
+
+        // Mi serve per evitare una null pointer Exception
+        private static final Button<String> NULL_BUTTON = new Button<>(null, "EMPTY_BUTTON", "Pulsante vuoto", null,
+                null, null, false, true, true, false);
+
+        public StatoJob(String nomeJob, Input<String> flagDataAccurata, Button<String> start,
+                Button<String> esecuzioneSingola, Button<String> stop, Input<Timestamp> dataProssimaAttivazione,
+                CheckBox<String> checkAttivo, Input<Timestamp> dataRegistrazioneJob, Timestamp dataAttivazione) {
+            this.nomeJob = nomeJob;
+            this.flagDataAccurata = flagDataAccurata;
+            this.start = start;
+            this.esecuzioneSingola = esecuzioneSingola;
+            this.stop = stop;
+            this.dataProssimaAttivazione = dataProssimaAttivazione;
+            this.checkAttivo = checkAttivo;
+            this.dataRegistrazioneJob = dataRegistrazioneJob;
+            this.dataAttivazione = dataAttivazione;
+        }
+
+        public String getNomeJob() {
+            return nomeJob;
+        }
+
+        public Input<String> getFlagDataAccurata() {
+            return flagDataAccurata;
+        }
+
+        public Button<String> getStart() {
+            if (start == null) {
+                return NULL_BUTTON;
+            }
+            return start;
+        }
+
+        public Button<String> getEsecuzioneSingola() {
+            return esecuzioneSingola;
+        }
+
+        public Button<String> getStop() {
+            if (stop == null) {
+                return NULL_BUTTON;
+            }
+            return stop;
+        }
+
+        public Input<Timestamp> getDataProssimaAttivazione() {
+            return dataProssimaAttivazione;
+        }
+
+        public CheckBox<String> getCheckAttivo() {
+            return checkAttivo;
+        }
+
+        public Input<Timestamp> getDataRegistrazioneJob() {
+            return dataRegistrazioneJob;
+        }
+
+        public Timestamp getDataAttivazione() {
+            return dataAttivazione;
+        }
+    }
+    // </editor-fold>
+
+    @Override
+    public void downloadContenuto() {
+        MonitoraggioForm.FiltriUdDocDerivantiDaVersFalliti filtri = getForm().getFiltriUdDocDerivantiDaVersFalliti();
+        MonitoraggioForm.FiltriUdDocDerivantiDaVersFallitiUlteriori filtriUlteriori = getForm()
+                .getFiltriUdDocDerivantiDaVersFallitiUlteriori();
+        // Esegue la post dei filtri compilati
+        filtri.post(getRequest());
+        // Recupero i filtri dalla sessione e setto i filtri con il nuovo valore
+        MonitoraggioFiltriListaVersFallitiDistintiDocBean filtriListaVersFallitiDistintiDoc = (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
+                .getAttribute("filtriListaVersFallitiDistintiDoc");
+        try {
+            filtriListaVersFallitiDistintiDoc.setIdAmbiente(filtri.getId_ambiente().parse());
+
+            filtriListaVersFallitiDistintiDoc.setIdEnte(filtri.getId_ente().parse());
+            filtriListaVersFallitiDistintiDoc.setIdStrut(filtri.getId_strut().parse());
+            filtriListaVersFallitiDistintiDoc.setTipoLista(filtri.getTipo_lista().parse());
+            filtriListaVersFallitiDistintiDoc.setFlVerificato(filtri.getFl_verif().parse());
+            filtriListaVersFallitiDistintiDoc.setFlNonRisolub(filtri.getFl_non_risolub().parse());
+            filtriListaVersFallitiDistintiDoc.setClasseErrore(filtri.getClasse_errore().parse());
+            filtriListaVersFallitiDistintiDoc.setSottoClasseErrore(filtri.getSottoclasse_errore().parse());
+            filtriListaVersFallitiDistintiDoc.setCodiceErrore(filtri.getCodice_errore().parse());
+
+            filtriListaVersFallitiDistintiDoc
+                    .setRegistro(filtriUlteriori.getCd_registro_key_unita_doc_ult().getDecodedValues());
+            filtriListaVersFallitiDistintiDoc.setAnno(filtriUlteriori.getAa_key_unita_doc_ult().parse());
+            filtriListaVersFallitiDistintiDoc.setNumero(filtriUlteriori.getCd_key_unita_doc_ult().parse());
+            filtriListaVersFallitiDistintiDoc.setAnno_range_da(filtriUlteriori.getAa_key_unita_doc_da_ult().parse());
+            filtriListaVersFallitiDistintiDoc.setNumero_range_da(filtriUlteriori.getCd_key_unita_doc_da_ult().parse());
+            filtriListaVersFallitiDistintiDoc.setAnno_range_a(filtriUlteriori.getAa_key_unita_doc_a_ult().parse());
+            filtriListaVersFallitiDistintiDoc.setNumero_range_a(filtriUlteriori.getCd_key_unita_doc_a_ult().parse());
+        } catch (EMFError ex) {
+            getMessageBox().addError("Errore inatteso nella preparazione del download riguardante i filtri di ricerca");
+        }
+        // Li risetto perch\u00e0¨ se torno indietro in "Riepilogo Versamenti" devo avere impostata la ricerca con
+        // questi ultimi
+        getSession().setAttribute("filtriListaVersFallitiDistintiDoc", filtriListaVersFallitiDistintiDoc);
+
+        if (filtri.validate(getMessageBox())) {
+
+            // Effettuo la ricerca per la visualizzazione oppure per il download dei contenuti
+            // Setto la lista dei documenti non versati
+            if (filtriListaVersFallitiDistintiDoc.getTipoLista().equals("UNITA_DOC")) {
+                MonVLisUdNonVersIamTableBean tb = monitoraggioHelper.getMonVLisUdNonVersIamViewBeanScaricaContenuto(
+                        (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
+                                .getAttribute("filtriListaVersFallitiDistintiDoc"),
+                        null);
+                getForm().getDocumentiDerivantiDaVersFallitiList().setTable(tb);
+            } else {
+                MonVLisDocNonVersIamTableBean tb = monitoraggioHelper.getMonVLisDocNonVersIamViewBeanScaricaContenuto(
+                        (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
+                                .getAttribute("filtriListaVersFallitiDistintiDoc"),
+                        null);
+                getForm().getDocumentiDerivantiDaVersFallitiList().setTable(tb);
+            }
+
+            SimpleDateFormat df = new SimpleDateFormat("ddMMyyyy");
+            if (!getMessageBox().hasError()) {
+                File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                        "lista_versamenti_" + df.format(new Date()) + ".csv");
+                try {
+                    ActionUtils.buildCsvString(getForm().getDocumentiDerivantiDaVersFallitiList(),
+                            /* (BaseTableInterface<? extends BaseRowInterface>) */ getForm()
+                                    .getDocumentiDerivantiDaVersFallitiList().getTable(),
+                            MonVLisUdNonVersIamTableBean.TABLE_DESCRIPTOR, tmpFile);
+                    getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
+                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
+                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(), tmpFile.getPath());
+                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name(),
+                            Boolean.toString(true));
+                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(), "text/csv");
+                } catch (IOException ex) {
+                    getMessageBox().addError("Errore inatteso nella preparazione del download");
+                }
+            }
+
+        }
+
+        if (getMessageBox().hasError()) {
+            forwardToPublisher(getLastPublisher());
+        } else {
+            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+        }
+
     }
 
 }

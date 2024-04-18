@@ -9,7 +9,7 @@
         <sl:content>
             <slf:messageBox />
             <sl:newLine skipLine="true"/>
-            <sl:contentTitle title="Dettaglio parmetro di valutazione del formato"/>
+            <sl:contentTitle title="Dettaglio parametro di valutazione del formato"/>
             <c:if test="${sessionScope['###_FORM_CONTAINER']['formatoFileParametriValutazioneList'].table['empty']}">
                 <slf:fieldBarDetailTag name="<%= FormatiForm.ParametroValutazione.NAME%>" hideBackButton="true"/> 
             </c:if>   
@@ -26,6 +26,7 @@
                 <sl:newLine />
                 <slf:lblField name="<%=FormatiForm.ParametroValutazione.NI_PUNTEGGIO%>" colSpan="4" controlWidth="w40" />
                 <sl:newLine />  
+                <slf:lblField name="<%=FormatiForm.ParametroValutazione.NT_PUNTEGGIO_VALUTAZIONE%>" colSpan="4" controlWidth="w40" />
             </slf:fieldSet>
         </sl:content>
         <sl:footer />

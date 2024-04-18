@@ -1,12 +1,28 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.monitoraggio.ejb;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,9 +36,9 @@ import javax.ejb.Stateless;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.joda.time.DateTime;
 
 import it.eng.parer.entity.VrsDtVers;
 import it.eng.parer.entity.VrsPathDtVers;
@@ -44,6 +60,7 @@ import it.eng.parer.ws.utils.CostantiDB;
  *
  * @author fioravanti_f
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "AltriStatusMonitor")
 @LocalBean
 public class AltriStatusMonitor {
@@ -179,9 +196,8 @@ public class AltriStatusMonitor {
         // nome
         tmpAltro.setNome(MonitorAltri.PRESENZA_RECORD_INDICE_AIPUD_TOELAB.name());
         // delta
-        int delta = Integer.parseInt(configurationHelper.getValoreParamApplic(
-                CostantiDB.TipoParametroAppl.PARERMT_INDICE_UD_DAELAB_NI_GG_MAX, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC));
+        int delta = Integer.parseInt(configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.TipoParametroAppl.PARERMT_INDICE_UD_DAELAB_NI_GG_MAX));
 
         // calcolo date max
         DateTime dateTime = new DateTime(new Date());
@@ -208,7 +224,10 @@ public class AltriStatusMonitor {
 
     public void calcolaTpiNiPathFileArk(RispostaWSStatusMonitor rispostaWs, List<MonitorAltro> tmpLstAltro) {
         MonitorAltro tmpAltro = new MonitorAltro();
-        DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        // MAC#27666
+        // DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_DATE_TYPE);
+        // end MAC#27666
         // nome
         tmpAltro.setNome(MonitorAltri.TPI_NI_FILE_PATH_ARK.name());
         // query
@@ -246,7 +265,10 @@ public class AltriStatusMonitor {
 
     public void calcolaTpiArkErr(RispostaWSStatusMonitor rispostaWs, List<MonitorAltro> tmpLstAltro) {
         MonitorAltro tmpAltro = new MonitorAltro();
-        DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        // MAC#27666
+        // DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_DATE_TYPE);
+        // end MAC#27666
         // nome
         tmpAltro.setNome(MonitorAltri.TPI_ARCHIVIATA_ERR.name());
         // query
@@ -275,7 +297,10 @@ public class AltriStatusMonitor {
 
     public void calcolaTpiDataNotArk(RispostaWSStatusMonitor rispostaWs, List<MonitorAltro> tmpLstAltro) {
         MonitorAltro tmpAltro = new MonitorAltro();
-        DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        // MAC#27666
+        // DateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_DATE_TYPE);
+        // end MAC#27666
         // nome
         tmpAltro.setNome(MonitorAltri.TPI_DATA_NON_ARCHIVIATA.name());
         // query

@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -8,9 +25,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import it.eng.parer.ws.utils.CostantiDB.ReportvfZipVersion;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-
 /**
  *
  * @author Fioravanti_F
@@ -19,13 +33,16 @@ public class CostantiDB {
 
     //
     public class DatiCablati {
+        private DatiCablati() {
+        }
 
         public static final String TPI_PATH_LISTA_FILE = "ListaFile";
-        public static final String VERS_TIPO_CONSERVAZIONE_DEFAULT = "VERSAMENTO_ANTICIPATO";
     }
 
     //
     public class TipoDocumento {
+        private TipoDocumento() {
+        }
 
         public static final String PRINCIPALE = "PRINCIPALE";
         public static final String ALLEGATO = "ALLEGATO";
@@ -36,9 +53,9 @@ public class CostantiDB {
     //
     public class TipoParametroAppl {
 
-        public static final String VERSAMENTO_DEFAULT = "Default di versamento";
-        public static final String MAX_RESULT = "Paginazione risultati";
-        public static final String PATH = "Gestione servizi asincroni";
+        private TipoParametroAppl() {
+        }
+
         public static final String TPI = "Salvataggio su nastro";
         public static final String IMAGE = "Trasformazione componenti";
         public static final String LOG_APPLIC = "Log accessi";
@@ -52,28 +69,21 @@ public class CostantiDB {
     //
     public class ParametroAppl {
 
+        private ParametroAppl() {
+        }
+
         public static final String NM_APPLIC = "NM_APPLIC";
 
-        public static final String TIPO_STRUT_DOC = "TIPO_STRUT_DOC";
-        public static final String TIPO_COMP_DOC = "TIPO_COMP_DOC";
-        public static final String TIPO_SUPPORTO_COMP = "TIPO_SUPPORTO";
-        public static final String USO_DATA_FIRMA = "USO_DATA_FIRMA";
-        public static final String VERIFICA_PARTIZIONI = "VERIFICA_PARTIZIONI";
-        public static final String FMT_UNKNOWN = "FMT_UNKNOWN";
         public static final String SERVER_NAME_SYSTEM_PROPERTY = "SERVER_NAME_SYSTEM_PROPERTY";
         //
-        public static final String PATH_MM_IN_ = "PATH_MM_IN_";
-        public static final String PATH_MM_OUT_ = "PATH_MM_OUT_";
+        public static final String PATH_MM_IN = "PATH_MM_IN_";
+        public static final String PATH_MM_OUT = "PATH_MM_OUT_";
         //
         public static final String TPI_ROOT_SACER = "root_SACER";
         public static final String TPI_ROOT_TPI = "root_TPI";
-        public static final String TPI_ROOT_VERS = "root_vers";
         public static final String TPI_ROOT_ARK_VERS = "root_ark_vers";
-        public static final String TPI_ROOT_DA_MIGRARE = "root_da_migrare";
-        public static final String TPI_ROOT_MIGRAZ = "root_migraz";
         public static final String TPI_ROOT_ARK_MIGRAZ = "root_ark_migraz";
         public static final String TPI_ROOT_RECUP = "root_recup";
-        public static final String TPI_DATA_INIZIO_USO_BLOB = "dataInizioUsoBlob";
         public static final String TPI_DATA_FINE_USO_BLOB = "dataFineUsoBlob";
         public static final String TPI_NM_USER_TPI = "nmUserTPI";
         public static final String TPI_CD_PSW_TPI = "cdPswTPI";
@@ -83,14 +93,10 @@ public class CostantiDB {
         public static final String TPI_URL_RETRIEVEFILEUNITADOC = "URL_RetrieveFileUnitaDoc";
         public static final String TPI_URL_REGISTRACARTELLARIARK = "URL_RegistraCartellaRiArk";
         public static final String TPI_URL_SCHEDULAZIONIJOB = "URL_SchedulazioniJobTPI";
-        public static final String TPI_NI_GG_MAX_MIGRAZ = "niGgMaxMigraz";
         public static final String TPI_TIMEOUT = "timeoutTPI";
         public static final String TPI_TIMEOUT_RETRIEVE = "timeoutTPIRetrieve";
-        //
-        // questi verranno rimossi quando la migrazione sarà completata
-        public static final String TPI_NM_USER_MIG_BLB = "nmUserMigBlb";
-        public static final String TPI_CD_PSW_MIG_BLB = "cdPswMigBlb";
-        public static final String TPI_MIG_BLB_WS_URL = "MigBlb_WsURL";
+        public static final String TPI_ENABLE = "TPI_Enable";
+
         //
         public static final String TPI_DATA_INIZIO_CONTROLLO_NUM_FILE_ARK = "dataInizioControlloNumFileArk";
         //
@@ -102,14 +108,14 @@ public class CostantiDB {
         public static final String AGENT_PRESERVATION_MNGR_TAXCODE = "AGENT_PRESERVATION_MNGR_TAXCODE";
         public static final String AGENT_PRESERVATION_MNGR_LASTNAME = "AGENT_PRESERVATION_MNGR_LASTNAME";
         public static final String AGENT_PRESERVATION_MNGR_FIRSTNAME = "AGENT_PRESERVATION_MNGR_FIRSTNAME";
-        public static final String AGENT_PRESERVATION_MNGR_USERNAME = "AGENT_PRESERVATION_MNGR_USERNAME";
 
         // EVO#20972
         // Costanti per indice AIP v2.0
-        public static final String AGENT_SUBMITTER_FORMALNAME = "AGENT_SUBMITTER_FORMALNAME";
-        public static final String AGENT_SUBMITTER_TAXCODE = "AGENT_SUBMITTER_TAXCODE";
         public static final String AGENT_AUTHORIZED_SIGNER_ROLE = "AGENT_AUTHORIZED_SIGNER_ROLE";
         // end EVO#20972
+        // MEV#27831 - Modifica creazione indice AIP in presenza di SIGILLO
+        public static final String AGENT_AUTHORIZED_SIGNER_ROLE_LEGAL_PERSON = "AGENT_AUTHORIZED_SIGNER_ROLE_LEGAL_PERSON";
+        // fine MEV#27831
         // MEV#25903
         public static final String AGENT_HOLDER_RELEVANTDOCUMENT = "AGENT_HOLDER_RELEVANTDOCUMENT";
         public static final String AGENT_SUBMITTER_RELEVANTDOCUMENT = "AGENT_SUBMITTER_RELEVANTDOCUMENT";
@@ -130,24 +136,154 @@ public class CostantiDB {
         // Costati per URN (SISTEMA)
         public static final String NM_SISTEMACONSERVAZIONE = "SISTEMA_CONSERVAZIONE";
 
-        public static final String OBJECT_STORAGE_ADDR = "OBJECT_STORAGE_ADDR";
-
         public static final String VERSIONI_WS_PREFIX = "VERSIONI_";
 
         public static final String DATA_INIZIO_CALC_NUOVI_URN = "DATA_INIZIO_CALC_NUOVI_URN";
 
-        // Report verifica firma su Object storage
-        public static final String REPORTVF_S3_ACCESS_KEY_ID = "REPORTVF_S3_ACCESS_KEY_ID";
-        public static final String REPORTVF_S3_SECRET_KEY = "REPORTVF_S3_SECRET_KEY";
-        public static final String BUCKET_REPORT_VERIFICAFIRMA = "BUCKET_REPORT_VERIFICAFIRMA";
-
         // Costati per AIP
         public static final String UNISINCRO_VERSION = "UNISINCRO_VERSION";
 
+        //
+        public static final String FL_ABILITA_CONTR_CLASSIF = "FL_ABILITA_CONTR_CLASSIF";
+        public static final String FL_ABILITA_CONTR_COLLEG = "FL_ABILITA_CONTR_COLLEG";
+        public static final String FL_ABILITA_CONTR_NUMERO = "FL_ABILITA_CONTR_NUMERO";
+        public static final String FL_ACCETTA_CONTR_CLASSIF_NEG = "FL_ACCETTA_CONTR_CLASSIF_NEG";
+        public static final String FL_ACCETTA_CONTR_COLLEG_NEG_FAS = "FL_ACCETTA_CONTR_COLLEG_NEG_FAS";
+        public static final String FL_ACCETTA_CONTR_NUMERO_NEG = "FL_ACCETTA_CONTR_NUMERO_NEG";
+        public static final String FL_FORZA_CONTR_CLASSIF = "FL_FORZA_CONTR_CLASSIF";
+        public static final String FL_FORZA_CONTR_COLLEG = "FL_FORZA_CONTR_COLLEG";
+        public static final String FL_FORZA_CONTR_NUMERO = "FL_FORZA_CONTR_NUMERO";
+        public static final String PERIODO_TIPO_FASC = "PERIODO_TIPO_FASC";
+
+        //
+        public static final String TI_TEMPO_SCAD_CHIUS = "TI_TEMPO_SCAD_CHIUS";
+        public static final String NI_TEMPO_SCAD_CHIUS = "NI_TEMPO_SCAD_CHIUS";
+        public static final String FL_GEST_FASCICOLI = "FL_GEST_FASCICOLI";
+        public static final String NUM_MAX_COMP_CRITERIO_RAGGR = "NUM_MAX_COMP_CRITERIO_RAGGR";
+
+        //
+        public static final String HSM_USERNAME = "HSM_USERNAME";
+        //
+        public static final String URL_CALCOLO_SERVIZI_EROGATI = "URL_CALCOLO_SERVIZI_EROGATI";
+        public static final String USERID_REPLICA_ORG = "USERID_REPLICA_ORG";
+        public static final String PSW_REPLICA_ORG = "PSW_REPLICA_ORG";
+        public static final String TIMEOUT_CALCOLO_SERVIZI_EROGATI = "PSW_REPLICA_ORG";
+        //
+        public static final String NUM_MAX_COMP_CRITERIO_RAGGR_WARN = "NUM_MAX_COMP_CRITERIO_RAGGR_WARN";
+        //
+        public static final String ROOT_FOLDER_EC_RA = "ROOT_FOLDER_EC_RA";
+        //
+        public static final String DATA_SCAD_CHIUSURA_ELV_FISC = "DATA_SCAD_CHIUSURA_ELV_FISC";
+        public static final String NI_GG_CHIUSURA_ELV_FISC = "NI_GG_CHIUSURA_ELV_FISC";
+        public static final String ORARIO_CHIUSURA_ELV_FISC = "ORARIO_CHIUSURA_ELV_FISC";
+        public static final String ANNO_CHIUSURA_ELV_FISC = "ANNO_CHIUSURA_ELV_FISC";
+        //
+        public static final String NUM_FASC_CRITERIO_STD = "NUM_FASC_CRITERIO_STD";
+        public static final String NUM_GG_SCAD_CRITERIO_FASC_STD = "NUM_GG_SCAD_CRITERIO_FASC_STD";
+        //
+        public static final String NUM_MAX_UD_IN_CODA_VERIFICA_FIRME_DT_VERS = "NUM_MAX_UD_IN_CODA_VERIFICA_FIRME_DT_VERS";
+        public static final String NUM_GG_RESET_STATO_IN_ELENCO = "NUM_GG_RESET_STATO_IN_ELENCO";
+        //
+        public static final String FL_ABILITA_JOB_ELENCHI_BATCH = "FL_ABILITA_JOB_ELENCHI_BATCH";
+        public static final String NUM_MAX_IN_CODA_ELENCHI_BATCH = "NUM_MAX_IN_CODA_ELENCHI_BATCH";
+        public static final String JMS_SESSION_ELENCHI_BATCH = "JMS_SESSION_ELENCHI_BATCH";
+        public static final String JMS_MSG_CHUNK_ELENCHI_BATCH = "JMS_MSG_CHUNK_ELENCHI_BATCH";
+        public static final String JMS_MSG_DELIVERY_ELENCHI_BATCH = "JMS_MSG_DELIVERY_ELENCHI_BATCH";
+        //
+        public static final String URL_ALLINEA_ENTE_CONVENZ = "URL_ALLINEA_ENTE_CONVENZ";
+        public static final String TIMEOUT_ALLINEA_ENTE_CONVENZ = "TIMEOUT_ALLINEA_ENTE_CONVENZ";
+        //
+        public static final String URL_REPLICA_ORG = "URL_REPLICA_ORG";
+        public static final String TIMEOUT_REPLICA_ORG = "TIMEOUT_REPLICA_ORG";
+        //
+        public static final String MAX_UD2PROC_RA = "MAX_UD2PROC_RA";
+        public static final String NUM_MAX_FILE_FOLDER_RA = "NUM_MAX_FILE_FOLDER_RA";
+        //
+        public static final String NUM_MAX_UD_IN_CODA_GENERA_AIP = "NUM_MAX_UD_IN_CODA_GENERA_AIP";
+        //
+        public static final String CREATING_APPLICATION_PRODUCER = "CREATING_APPLICATION_PRODUCER";
+        //
+        public static final String TI_GEST_ELENCO_NOSTD = "TI_GEST_ELENCO_NOSTD";
+        public static final String TI_GEST_ELENCO_STD_FISC = "TI_GEST_ELENCO_STD_FISC";
+        public static final String TI_GEST_ELENCO_STD_NOFISC = "TI_GEST_ELENCO_STD_NOFISC";
+        public static final String TI_VALID_ELENCO = "TI_VALID_ELENCO";
+        public static final String TI_MOD_VALID_ELENCO = "TI_MOD_VALID_ELENCO";
+        public static final String TI_SCAD_CHIUS_VOLUME = "TI_SCAD_CHIUS_VOLUME";
+        //
+        public static final String NUM_MAX_UNITA_DOC_IN_CODA_INDICE_AIP = "NUM_MAX_UNITA_DOC_IN_CODA_INDICE_AIP";
+        /**
+         * Numero massimo di record da estrarre. Definito su <strong>APL_PARAM_APPLIC</strong>.
+         */
+        public static final String MAX_FETCH_INDICE_AIP_FASC = "MAX_FETCH_INDICE_AIP_FASC";
+        public static final String USERID_CREAZIONE_IX_AIP_SERIE = "USERID_CREAZIONE_IX_AIP_SERIE";
+        //
+        public static final String USERID_CREAZIONE_SERIE = "USERID_CREAZIONE_SERIE";
+        public static final String NUM_MAX_MESSAGGI_CODA_DA_MIGRARE = "NUM_MAX_MESSAGGI_CODA_DA_MIGRARE";
+        public static final String NUM_FILE_DA_MIGRARE = "NUM_FILE_DA_MIGRARE";
+        public static final String NUM_MAX_FILE_DA_ELAB = "NUM_MAX_FILE_DA_ELAB";
+        //
+        public static final String TENANT_OBJECT_STORAGE = "TENANT_OBJECT_STORAGE";
+        public static final String BUCKET_OBJECT_STORAGE_COMP = "BUCKET_OBJECT_STORAGE_COMP";
+
+        // Configurazioni Storage
+        public static final String BACKEND_VERSAMENTO_SYNC = "BACKEND_VERSAMENTO_SYNC";
+        public static final String BACKEND_AGGIUNTALLEGATI_SYNC = "BACKEND_AGGIUNTALLEGATI_SYNC";
+        public static final String BACKEND_VERSAMENTO_MULTIMEDIA = "BACKEND_VERSAMENTO_MULTIMEDIA";
+        public static final String BACKEND_INDICI_AIP = "BACKEND_INDICI_AIP";
+
+        // Configurazioni S3
+        public static final String S3_PRESIGNED_URL_DURATION = "S3_PRESIGNED_URL_DURATION";
+        public static final String S3_CLIENT_MAX_CONNECTIONS = "S3_CLIENT_MAX_CONNECTIONS";
+        public static final String S3_CLIENT_CONNECTION_TIMEOUT = "S3_CLIENT_CONNECTION_TIMEOUT";
+        public static final String S3_CLIENT_SOCKET_TIMEOUT = "S3_CLIENT_SOCKET_TIMEOUT";
+        //
+        public static final String NUM_GG_MIGRAZ_IN_CORSO = "NUM_GG_MIGRAZ_IN_CORSO";
+        public static final String NUM_MAX_ERR = "NUM_MAX_ERR";
+        //
+        public static final String URL_ASSOCIAZIONE_UTENTE_CF = "URL_ASSOCIAZIONE_UTENTE_CF";
+        //
+        public static final String NUM_MAX_ELENCHI_DA_VALIDARE = "NUM_MAX_ELENCHI_DA_VALIDARE";
+        //
+        public static final String MAX_RESULT_RICERCA_COMP = "MAX_RESULT_RICERCA_COMP";
+        public static final String MAX_RESULT_STANDARD = "MAX_RESULT_STANDARD";
+        //
+        public static final String NUM_MAX_COMP_CRITERIO_RAGGR_ERR = "NUM_MAX_COMP_CRITERIO_RAGGR_ERR";
+        //
+        public static final String URL_MODIFICA_PASSWORD = "URL_MODIFICA_PASSWORD";
+        public static final String URL_RECUP_NEWS = "URL_RECUP_NEWS";
+        public static final String PSW_RECUP_INFO = "PSW_RECUP_INFO";
+        public static final String USERID_RECUP_INFO = "USERID_RECUP_INFO";
+        public static final String TIMEOUT_RECUP_NEWS = "TIMEOUT_RECUP_NEWS";
+        public static final String MAX_RESULT_SESSIONI_ERRATE = "MAX_RESULT_SESSIONI_ERRATE";
+        //
+        public static final String NUM_MAX_STRUT_TEMPLATE = "NUM_MAX_STRUT_TEMPLATE";
+        public static final String ABILITA_FL_ARK_RESTITUITO_NO_RICH = "ABILITA_FL_ARK_RESTITUITO_NO_RICH";
+        //
+        public static final String MAX_RESULT_RICERCA_UD = "MAX_RESULT_RICERCA_UD";
+        public static final String MAX_RESULT_COMP_VOL = "MAX_RESULT_COMP_VOL";
+        //
+        public static final String URL_RECUP_AUTOR_USER = "URL_RECUP_AUTOR_USER";
+        public static final String TIMEOUT_RECUP_AUTOR_USER = "TIMEOUT_RECUP_AUTOR_USER";
+        //
+        public static final String URL_RECUP_HELP = "URL_RECUP_HELP";
+
+        // Costanti per il SIGILLO
+        public static final String FL_ABILITA_SIGILLO = "FL_ABILITA_SIGILLO";
+        public static final String HSM_USERNAME_SIGILLO = "HSM_USERNAME_SIGILLO";
+        public static final String HSM_PSW_SIGILLO = "HSM_PSW_SIGILLO";
+        public static final String HSM_OTP_SIGILLO = "HSM_OTP_SIGILLO";
+        public static final String USERNAME_JOB_SIGILLO = "USERNAME_JOB_SIGILLO";
+        public static final String NUM_MAX_ELENCHI_SIGILLO = "NUM_MAX_ELENCHI_SIGILLO";
+        //
+        public static final String URL_RECUP_OGGETTO_PING = "URL_RECUP_OGGETTO_PING";
+        public static final String USERID_RECUP_OGGETTO_PING = "USERID_RECUP_OGGETTO_PING";
+        public static final String PSW_RECUP_OGGETTO_PING = "PSW_RECUP_OGGETTO_PING";
     }
 
     //
     public class TipiXmlDati {
+        private TipiXmlDati() {
+        }
 
         public static final String INDICE_FILE = "INDICE_FILE";
         public static final String RICHIESTA = "RICHIESTA";
@@ -157,17 +293,18 @@ public class CostantiDB {
 
     //
     public class TipoUsoComponente {
+        private TipoUsoComponente() {
+        }
 
         public static final String CONTENUTO = "CONTENUTO";
         public static final String CONVERTITORE = "CONVERTITORE";
         public static final String FIRMA = "FIRMA";
-        public static final String MARCA = "MARCA";
         public static final String RAPPRESENTAZIONE = "RAPPRESENTAZIONE";
-        public static final String SEGNATURA = "SEGNATURA";
-        public static final String FIRMA_ELETTRONICA = "FIRMA_ELETTRONICA";
     }
 
     public class SubStruttura {
+        private SubStruttura() {
+        }
 
         public static final String DEFAULT_NAME = "DEFAULT";
         public static final String DEFAULT_DESC = "Sub struttura di default per la struttura ";
@@ -189,6 +326,11 @@ public class CostantiDB {
         AIP_SELF_DESCRIPTION_MORE_INFO,
         // FILE_GROUP_FILE_MORE_INFO,
         AIP_UNISYNCRO, PROFILO_NORMATIVO_FASCICOLO
+    }
+
+    public enum TiModelloXsdProfilo {
+        PROFILO_GENERALE_FASCICOLO, PROFILO_ARCHIVISTICO_FASCICOLO, PROFILO_SPECIFICO_FASCICOLO,
+        PROFILO_NORMATIVO_FASCICOLO
     }
 
     public enum TipiStatoElementoVersato {
@@ -230,8 +372,14 @@ public class CostantiDB {
         // EVO#20972
         PROVE_CONSERV_AIPV2("Prove di conservazione"),
         //
-        UNI_DOC_UNISYNCRO_V2("Unit\u00E0 Documentaria UniSyncro v2.0");
+        UNI_DOC_UNISYNCRO_V2("Unit\u00E0 Documentaria UniSyncro v2.0"),
         // end EVO#20972
+        //
+        // EVO#13993
+        FASCICOLO("Fascicolo"),
+        //
+        FASC_UNISYNCRO("Fascicolo UniSyncro");
+        // end EVO#13993
 
         private String valore;
 
@@ -794,8 +942,8 @@ public class CostantiDB {
         DESCRIZIONE, RANGE_PROGRESSIVI
     }
 
-    public static final BigDecimal NUM_SERIE_36 = new BigDecimal(0.3);
-    public static final BigDecimal NUM_SERIE_24 = new BigDecimal(0.5);
+    public static final BigDecimal NUM_SERIE_36 = BigDecimal.valueOf(0.3);
+    public static final BigDecimal NUM_SERIE_24 = BigDecimal.valueOf(0.5);
     public static final BigDecimal NUM_SERIE_12 = new BigDecimal(1);
     public static final BigDecimal NUM_SERIE_6 = new BigDecimal(2);
     public static final BigDecimal NUM_SERIE_4 = new BigDecimal(3);
@@ -924,7 +1072,7 @@ public class CostantiDB {
 
     public enum StatoRichAnnulVers {
 
-        APERTA, CHIUSA, COMUNICATA_A_SACER, EVASA, INVIO_FALLITO, RECUPERATA_DA_PING, RIFIUTATA
+        APERTA, CHIUSA, COMUNICATA_A_SACER, EVASA, INVIO_FALLITO, RECUPERATA_DA_PING, RIFIUTATA, ANNULLATA
     }
 
     public enum TipoFileRichAnnulVers {
@@ -947,16 +1095,14 @@ public class CostantiDB {
             // <<<<<<< Ritorna tutti gli stati tranne ITEM_NON_ESISTE e ITEM_GIA_PRESENTE - DA MODIFICARE IN CASO DI
             // AGGIUNTE
 
-            String[] stati = new String[] { CostantiDB.TipoErrRichAnnulVers.ITEM_IN_CORSO_DI_ANNUL.name(),
-                    CostantiDB.TipoErrRichAnnulVers.ITEM_RIFERITO.name(),
-                    CostantiDB.TipoErrRichAnnulVers.ITEM_VERSATA_IN_DATA_RICH.name(),
-                    CostantiDB.TipoErrRichAnnulVers.STATO_CONSERV_NON_AMMESSO.name(),
-                    CostantiDB.TipoErrRichAnnulVers.REGISTRO_NON_ABILITATO.name(),
-                    CostantiDB.TipoErrRichAnnulVers.TIPO_DOC_PRINC_NON_ABILITATO.name(),
-                    CostantiDB.TipoErrRichAnnulVers.TIPO_UNITA_DOC_NON_ABILITATO.name(),
-                    CostantiDB.TipoErrRichAnnulVers.TIPO_FASCICOLO_NON_ABILITATO.name(),
-                    CostantiDB.TipoErrRichAnnulVers.DA_ANNULLARE_IN_PING.name(), };
-            return stati;
+            return new String[] { TipoErrRichAnnulVers.ITEM_IN_CORSO_DI_ANNUL.name(),
+                    TipoErrRichAnnulVers.ITEM_RIFERITO.name(), TipoErrRichAnnulVers.ITEM_VERSATA_IN_DATA_RICH.name(),
+                    TipoErrRichAnnulVers.STATO_CONSERV_NON_AMMESSO.name(),
+                    TipoErrRichAnnulVers.REGISTRO_NON_ABILITATO.name(),
+                    TipoErrRichAnnulVers.TIPO_DOC_PRINC_NON_ABILITATO.name(),
+                    TipoErrRichAnnulVers.TIPO_UNITA_DOC_NON_ABILITATO.name(),
+                    TipoErrRichAnnulVers.TIPO_FASCICOLO_NON_ABILITATO.name(),
+                    TipoErrRichAnnulVers.DA_ANNULLARE_IN_PING.name(), };
         }
     }
 
@@ -1021,7 +1167,7 @@ public class CostantiDB {
     }
 
     public enum TiGestElencoCriterio {
-        FIRMA, NO_FIRMA, MARCA_FIRMA
+        FIRMA, NO_FIRMA, MARCA_FIRMA, SIGILLO, MARCA_SIGILLO
     }
 
     // vista da cui recuperare i valori
@@ -1064,6 +1210,8 @@ public class CostantiDB {
 
     //
     public class Flag {
+        private Flag() {
+        }
 
         public static final String TRUE = "1";
         public static final String FALSE = "0";

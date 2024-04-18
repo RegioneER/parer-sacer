@@ -1,4 +1,33 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.verificaVersamenti.ejb;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.async.ejb.CalcoloMonitoraggioAsync;
 import it.eng.parer.async.helper.AsyncHelper;
@@ -7,15 +36,6 @@ import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -36,9 +56,9 @@ public class VerificaMassivaVersamentiFallitiEjb {
     private AsyncHelper asyncHelper;
 
     public void verificaMassivaVersamentiFalliti() {
-        log.info(VerificaMassivaVersamentiFallitiEjb.class.getSimpleName()
-                + " --- Chiamata per verifica massiva versamenti falliti");
-        List<OrgStrut> struttureWithProblems = new ArrayList();
+        log.info("{} --- Chiamata per verifica massiva versamenti falliti",
+                VerificaMassivaVersamentiFallitiEjb.class.getSimpleName());
+        List<OrgStrut> struttureWithProblems = new ArrayList<>();
         jobHelper.writeAtomicLogJob(JobConstants.JobEnum.VERIFICA_MASSIVA_VERS_FALLITI.name(),
                 JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null);
         log.info("Recupero le strutture sulle quali eseguire la verifica massiva versamenti falliti");
@@ -103,7 +123,7 @@ public class VerificaMassivaVersamentiFallitiEjb {
     }
 
     List<String> esplodiStrutture(List<OrgStrut> strutture) {
-        List<String> lista = new ArrayList();
+        List<String> lista = new ArrayList<>();
         for (OrgStrut strut : strutture) {
             lista.add(strut.getOrgEnte().getOrgAmbiente().getNmAmbiente() + " - " + strut.getOrgEnte().getNmEnte()
                     + " - " + strut.getNmStrut());

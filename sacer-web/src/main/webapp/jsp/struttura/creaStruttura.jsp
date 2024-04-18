@@ -15,6 +15,11 @@
                 }
             }
             $(document).ready(function () {
+                
+                 $("[name='operation__scaricaStruttura']").click(function() {
+                        $('.overlay').hide();
+                    }); 
+                
 
                 $("#RegistroUnitaDocList tr ").each(function () {
                     var elemento = $(this).find('div[id^="Controllo_formato_"] img');
@@ -149,9 +154,7 @@
             }
 
         </script>
-        <!--        <script type="text/javascript" src="<c:url value='/js/sips/customTitolarioMessageBox.js'/>" ></script>
-                <script type="text/javascript" src="<c:url value='/js/sips/customStruttureTemplateCreatorMessageBox.js'/>" ></script>
-                <script type="text/javascript" src="<c:url value='/js/sips/customNumMaxCompStruttureMessageBox.js'/>" ></script>-->
+
 
         <script type="text/javascript" src="<c:url value='/js/sips/customStruttureMessageBox.js'/>" ></script>
 
@@ -165,6 +168,8 @@
             });
 
         </script>
+        
+        
     </sl:head>
 
     <sl:body>
@@ -254,16 +259,14 @@
                             <sl:newLine />
                             <slf:lblField name="<%=StruttureForm.InsStruttura.PARTIZ_COMPLET%>" colSpan="4" />
                             <sl:newLine />
-                            <slf:lblField name="<%=StruttureForm.InsStruttura.PARTIZ_UPD_COMPLET%>" colSpan="4" />
-                            <sl:newLine />
-                            <slf:lblField name="<%=StruttureForm.InsStruttura.PARTIZ_FASCIC_COMPLET%>" colSpan="4" />  
-                            <sl:newLine />
                             <slf:lblField name="<%=StruttureForm.InsStruttura.CESSA_STRUTTURA%>" width="w20" />    
                             <slf:lblField name="<%=StruttureForm.InsStruttura.SCARICA_STRUTTURA%>" width="w20" />                              
                             <sl:newLine />
                             <slf:lblField name="<%=StruttureForm.ImportaParametri.IMPORTA_PARAMETRI_BUTTON%>" width="w20" />                                                        
                             <sl:newLine />
                             <slf:lblField name="<%=StruttureForm.InsStruttura.LOG_EVENTI%>" width="w20" />                              
+                            <sl:newLine />
+                            <slf:lblField name="<%=StruttureForm.InsStruttura.ELIMINA_FORMATI_SPECIFICI%>" width="w20" />
                             <sl:newLine />
                         </c:when>
                         <c:otherwise>
@@ -315,6 +318,10 @@
                           <slf:list name="<%= StruttureForm.EnteConvenzOrgList.NAME%>"  />
                           <slf:listNavBar  name="<%= StruttureForm.EnteConvenzOrgList.NAME%>" />
                       </slf:section>
+                      <slf:section name="<%=StruttureForm.CorrispondenzePingSection.NAME%>" styleClass="importantContainer">
+                          <slf:list name="<%= StruttureForm.CorrispondenzePingList.NAME%>" />
+                          <slf:listNavBar  name="<%= StruttureForm.CorrispondenzePingList.NAME%>" />
+                      </slf:section> 
                       <slf:section name="<%=StruttureForm.RegistriTab.NAME%>" styleClass="importantContainer"> 
                           <slf:listNavBar name="<%= StruttureForm.RegistroUnitaDocList.NAME%>" pageSizeRelated="true"/>
                           <slf:list name="<%= StruttureForm.RegistroUnitaDocList.NAME%>"  />
@@ -340,14 +347,14 @@
                           <slf:list name="<%= StruttureForm.TipologieSerieList.NAME%>"  />
                           <slf:listNavBar  name="<%= StruttureForm.TipologieSerieList.NAME%>" />
                       </slf:section>
-                      <slf:section name="<%=StruttureForm.FormatoFileTab.NAME%>" styleClass="importantContainer"> 
+                      <%--<slf:section name="<%=StruttureForm.FormatoFileTab.NAME%>" styleClass="importantContainer"> 
                           <slf:listNavBar name="<%= StruttureForm.FormatoFileDocList.NAME%>" pageSizeRelated="true"/>
                           <slf:list name="<%= StruttureForm.FormatoFileDocList.NAME%>"  />
                           <slf:listNavBar  name="<%= StruttureForm.FormatoFileDocList.NAME%>" />
                           <sl:pulsantiera>               
                               <slf:lblField  name="<%=StruttureForm.FormatoFileDocButtonList.ELIMINA_TUTTI_FORMATI_FILE_DOC%>" colSpan="4" />
                           </sl:pulsantiera>
-                      </slf:section>
+                      </slf:section>--%>
                       <slf:section name="<%=StruttureForm.TipoStrutTab.NAME%>" styleClass="importantContainer"> 
                           <slf:listNavBar name="<%= StruttureForm.TipoStrutDocList.NAME%>" pageSizeRelated="true"/>
                           <slf:list name="<%= StruttureForm.TipoStrutDocList.NAME%>"    />
@@ -401,7 +408,7 @@
                           </sl:pulsantiera>
                           <slf:editableList name="<%= StruttureForm.ParametriGestioneStrutturaList.NAME%>" multiRowEdit="true"/>
                           <slf:listNavBar  name="<%= StruttureForm.ParametriGestioneStrutturaList.NAME%>" />
-                      </slf:section>
+                      </slf:section>                      
                       <sl:newLine />
                 </c:if>
                 <sl:newLine skipLine="true"/>

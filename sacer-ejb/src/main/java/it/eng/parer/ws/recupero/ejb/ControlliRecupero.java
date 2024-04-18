@@ -1,8 +1,29 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.ws.recupero.ejb;
+
+import static it.eng.paginator.util.HibernateUtils.bigDecimalFrom;
+import static it.eng.parer.ws.utils.Costanti.UKNOWN_EXT;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,15 +36,21 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
+import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.paginator.util.HibernateUtils;
 import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.AplValParamApplicMulti;
@@ -34,16 +61,19 @@ import it.eng.parer.entity.AroFileVerIndiceAipUd;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.AroUpdUnitaDoc;
+import it.eng.parer.entity.AroUrnVerIndiceAipUd;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.DecReportServizioVerificaCompDoc;
 import it.eng.parer.entity.DecTipoDoc;
+import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.ElvFileElencoVer;
 import it.eng.parer.entity.FasUnitaDocFascicolo;
+import it.eng.parer.entity.VolFileVolumeConserv;
 import it.eng.parer.entity.VolVolumeConserv;
+import it.eng.parer.entity.VrsSessioneVers;
+import it.eng.parer.entity.VrsUrnXmlSessioneVers;
 import it.eng.parer.entity.VrsXmlDatiSessioneVers;
 import it.eng.parer.entity.constraint.AroCompUrnCalc.TiUrn;
-import it.eng.parer.entity.constraint.FiUrnReport.TiUrnReport;
 import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
@@ -52,28 +82,35 @@ import it.eng.parer.web.helper.AmministrazioneHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.helper.UserHelper;
+import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.recupero.dto.AgentLegalPersonDto;
 import it.eng.parer.ws.recupero.dto.ComponenteRec;
 import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
-import java.util.Collection;
-import org.apache.commons.collections4.MultiValuedMap;
-import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
 /**
  *
  * @author Fioravanti_F
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "ControlliRecupero")
 @LocalBean
 @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
 public class ControlliRecupero {
 
     private static final Logger log = LoggerFactory.getLogger(ControlliRecupero.class);
+    public static final String ERROR_LETTURA_UD = "Eccezione nella lettura  della tabella delle unità doc ";
+    public static final String ERROR_LETTURA_COMPONENTI = "Eccezione nella lettura della tabella dei componenti in UD ";
+    public static final String ERROR_CONTROLLI_LEGGI_XML = "Eccezione ControlliRecupero.leggiXMLSessioneversUd ";
+    public static final String ERROR_XML_VERSAMENTO = "Eccezione nella lettura  della tabella degli XML di versamento UD ";
+    public static final String ERROR_FILE_V_INDICE_AIP = "Eccezione nella lettura della tabella dei file di versione indice AIP ";
+    public static final String ERROR_VER_INDICE_AIP = "Eccezione nella lettura della tabella delle versioni dell'indice AIP ";
+    public static final String JAVAX_PERSISTENCE_FETCHGRAPH = "javax.persistence.fetchgraph";
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
     @EJB
@@ -88,6 +125,8 @@ public class ControlliRecupero {
     private UserHelper userHelper;
     @EJB
     private AmministrazioneHelper amministrazioneHelper;
+    @EJB
+    private ControlliRecupero me;
 
     @Resource
     EJBContext context;
@@ -96,17 +135,24 @@ public class ControlliRecupero {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
-        AroUnitaDoc tmpUnitaDoc = null;
-
+        AroUnitaDoc tmpUnitaDoc;
+        EntityGraph<AroUnitaDoc> entityGraph = entityManager.createEntityGraph(AroUnitaDoc.class);
+        entityGraph.addAttributeNodes("decRegistroUnitaDoc");
+        entityGraph.addAttributeNodes("iamUser");
+        entityGraph.addAttributeNodes("decTipoUnitaDoc");
+        entityGraph.addAttributeNodes("aroNotaUnitaDocs");
+        entityGraph.addSubgraph("orgStrut").addSubgraph("orgEnte").addAttributeNodes("orgAmbiente");
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
         try {
-            tmpUnitaDoc = entityManager.find(AroUnitaDoc.class, idUnitaDoc);
+            tmpUnitaDoc = entityManager.find(AroUnitaDoc.class, idUnitaDoc, properties);
             rispostaControlli.setrObject(tmpUnitaDoc);
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiUnitaDoc " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella delle unità doc ", e);
+            log.error(ERROR_LETTURA_UD, e);
         }
         return rispostaControlli;
     }
@@ -165,7 +211,7 @@ public class ControlliRecupero {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return istanza di RispostaControlli con i campi valorizzati come segue: se va in errore: rBoolean è false se ok:
      *         rBoolean è true rObject contiene una lista di ComponenteRec corrispondenti ai componenti ed rString
      *         contiene il nome da attribuire alla directory dello zip che conterrà l'unità doc
@@ -180,7 +226,7 @@ public class ControlliRecupero {
         List<ComponenteRec> lstComp;
 
         try {
-            lstComp = new ArrayList();
+            lstComp = new ArrayList<>();
 
             String queryStr = "select acd from AroCompDoc acd "
                     + "where acd.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
@@ -213,12 +259,12 @@ public class ControlliRecupero {
                     if (tmpCmp.getDecFormatoFileDoc() != null) {
                         tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
                     } else {
-                        tmpCRec.setEstensioneFile("unknown");
+                        tmpCRec.setEstensioneFile(UKNOWN_EXT);
                     }
                 }
                 lstComp.add(tmpCRec);
             }
-            if (lstComp.size() > 0) {
+            if (!lstComp.isEmpty()) {
                 rispostaControlli.setrString(
                         this.generaNomeFileUD(lstComponenti.get(0).getAroStrutDoc().getAroDoc().getAroUnitaDoc()));
             } else {
@@ -231,7 +277,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiCompFileInUD " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei componenti in UD ", e);
+            log.error(ERROR_LETTURA_COMPONENTI, e);
         }
         return rispostaControlli;
     }
@@ -246,11 +292,13 @@ public class ControlliRecupero {
         List<ComponenteRec> lstComp;
 
         try {
-            lstComp = new ArrayList();
+            lstComp = new ArrayList<>();
 
-            String queryStr = "select acd from AroCompDoc acd "
-                    + "where acd.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+            // MAC#30890
+            String queryStr = "SELECT DISTINCT acd from AroCompDoc acd " + "join acd.aroCompVerIndiceAipUds acviau "
+                    + "where acviau.aroVerIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                     + "and acd.tiSupportoComp = 'FILE'";
+            // end MAC#30890
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -279,12 +327,12 @@ public class ControlliRecupero {
                     if (tmpCmp.getDecFormatoFileDoc() != null) {
                         tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
                     } else {
-                        tmpCRec.setEstensioneFile("unknown");
+                        tmpCRec.setEstensioneFile(UKNOWN_EXT);
                     }
                 }
                 lstComp.add(tmpCRec);
             }
-            if (lstComp.size() > 0) {
+            if (!lstComp.isEmpty()) {
                 rispostaControlli.setrString(
                         this.generaNomeFileAIPV2(lstComponenti.get(0).getAroStrutDoc().getAroDoc().getAroUnitaDoc()));
             } else {
@@ -297,7 +345,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiCompFileInUDAIPV2 " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei componenti in UD ", e);
+            log.error(ERROR_LETTURA_COMPONENTI, e);
         }
         return rispostaControlli;
     }
@@ -311,7 +359,7 @@ public class ControlliRecupero {
         List<ComponenteRec> lstComp;
 
         try {
-            lstComp = new ArrayList();
+            lstComp = new ArrayList<>();
 
             String queryStr = "SELECT compDoc FROM AroCompDoc compDoc " + "JOIN compDoc.aroStrutDoc strutDoc "
                     + "JOIN strutDoc.aroDoc doc " + "JOIN doc.aroUnitaDoc unitaDoc "
@@ -343,12 +391,12 @@ public class ControlliRecupero {
                     if (tmpCmp.getDecFormatoFileDoc() != null) {
                         tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
                     } else {
-                        tmpCRec.setEstensioneFile("unknown");
+                        tmpCRec.setEstensioneFile(UKNOWN_EXT);
                     }
                 }
                 lstComp.add(tmpCRec);
             }
-            if (lstComp.size() > 0) {
+            if (!lstComp.isEmpty()) {
                 rispostaControlli.setrString(
                         this.generaNomeFileUD(lstComponenti.get(0).getAroStrutDoc().getAroDoc().getAroUnitaDoc()));
             } else {
@@ -361,7 +409,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiCompFileInUDVersamentoUd " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei componenti in UD ", e);
+            log.error(ERROR_LETTURA_COMPONENTI, e);
         }
         return rispostaControlli;
     }
@@ -374,7 +422,7 @@ public class ControlliRecupero {
         List<ComponenteRec> lstComp;
 
         try {
-            lstComp = new ArrayList();
+            lstComp = new ArrayList<>();
 
             String queryStr = "select acd from AroCompDoc acd "
                     + "where acd.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
@@ -410,12 +458,12 @@ public class ControlliRecupero {
                     if (tmpCmp.getDecFormatoFileDoc() != null) {
                         tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
                     } else {
-                        tmpCRec.setEstensioneFile("unknown");
+                        tmpCRec.setEstensioneFile(UKNOWN_EXT);
                     }
                 }
                 lstComp.add(tmpCRec);
             }
-            if (lstComp.size() > 0) {
+            if (!lstComp.isEmpty()) {
                 rispostaControlli.setrString(
                         this.generaNomeFileUD(lstComponenti.get(0).getAroStrutDoc().getAroDoc().getAroUnitaDoc())
                                 + this.generaSuffissoTipoDocUD(
@@ -431,7 +479,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiCompFileInUDByTipoDoc " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei componenti in UD ", e);
+            log.error(ERROR_LETTURA_COMPONENTI, e);
         }
         return rispostaControlli;
     }
@@ -470,9 +518,8 @@ public class ControlliRecupero {
     }
 
     private String generaNomeFileAIPV2(AroUnitaDoc aud) {
-        String sistemaConservazione = configurationHelper.getValoreParamApplic(
-                CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String sistemaConservazione = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
         CSVersatore versatore = this.getVersatoreUd(aud, sistemaConservazione);
         CSChiave chiave = this.getChiaveUd(aud);
         String tmpUrn = MessaggiWSFormat.formattaUrnAipUdAip(
@@ -540,7 +587,7 @@ public class ControlliRecupero {
                     if (tmpCmp.getDecFormatoFileDoc() != null) {
                         tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
                     } else {
-                        tmpCRec.setEstensioneFile("unknown");
+                        tmpCRec.setEstensioneFile(UKNOWN_EXT);
                     }
                 }
                 lstComp.add(tmpCRec);
@@ -636,12 +683,12 @@ public class ControlliRecupero {
                     if (tmpCmp.getDecFormatoFileDoc() != null) {
                         tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
                     } else {
-                        tmpCRec.setEstensioneFile("unknown");
+                        tmpCRec.setEstensioneFile(UKNOWN_EXT);
                     }
                 }
                 lstComp.add(tmpCRec);
             }
-            if (lstComp.size() > 0) {
+            if (!lstComp.isEmpty()) {
                 rispostaControlli.setrString(this.generaNomeFileComp(lstComponenti.get(0), lstComp.get(0)));
             } else {
                 rispostaControlli.setrString(this.generaNomeFileComp(idComp));
@@ -680,7 +727,7 @@ public class ControlliRecupero {
             if (tmpCmp.getDecFormatoFileDoc() != null) {
                 tmpCRec.setEstensioneFile(tmpCmp.getDecFormatoFileDoc().getNmFormatoFileDoc());
             } else {
-                tmpCRec.setEstensioneFile("unknown");
+                tmpCRec.setEstensioneFile(UKNOWN_EXT);
             }
         }
         return this.generaNomeFileComp(tmpCmp, tmpCRec);
@@ -720,7 +767,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiChiaveUnitaDoc " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella delle unità doc ", e);
+            log.error(ERROR_LETTURA_UD, e);
         }
         return rispostaControlli;
     }
@@ -745,10 +792,96 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiVersatoreUnitaDoc " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella delle unità doc ", e);
+            log.error(ERROR_LETTURA_UD, e);
         }
         return rispostaControlli;
     }
+
+    // MAC#30890
+    public RispostaControlli leggiXmlSessioniVersamentiAip(long idUnitaDoc) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        List<VrsXmlDatiSessioneVers> lstDatiSessioneVerses = new ArrayList<>();
+        List<VrsSessioneVers> tmpVsvList = new ArrayList<>();
+
+        log.debug("Lettura xml di versamento per AIP - INIZIO");
+
+        /*
+         * recupero la sessione relativa al versamento originale dell'UD. per ora non ho bisogno di conoscerne l'elenco
+         * dei documenti
+         */
+        log.debug("Ricavo la sessione di versamento per l'UD id={}", idUnitaDoc);
+        String queryStr = "select t from VrsSessioneVers t " + "where t.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                + "and t.aroDoc is null " + "and t.tiStatoSessioneVers = 'CHIUSA_OK' "
+                + "and t.tiSessioneVers = 'VERSAMENTO' ";
+
+        javax.persistence.Query query = entityManager.createQuery(queryStr);
+        query.setParameter("idUnitaDoc", idUnitaDoc);
+
+        List<VrsSessioneVers> vsv = query.getResultList();
+        if (!vsv.isEmpty()) {
+            tmpVsvList.add(vsv.get(0));
+            //
+            /*
+             * ricavo la lista dei documenti versati ed aggiunti riferiti da questa unità documentaria. La lista
+             * dovrebbe essere sempre non-vuota poichè deve contenere almeno i documenti versati nel versamento
+             * iniziale, che vengono sempre riportati.
+             */
+            queryStr = "SELECT DISTINCT ad from AroDoc ad " + "join ad.aroStrutDocs asd " + "join asd.aroCompDocs acd "
+                    + "join acd.aroCompVerIndiceAipUds acviau "
+                    + "where acviau.aroVerIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDocIn "
+                    + "order by ad.dtCreazione, ad.niOrdDoc, ad.pgDoc ";
+            EntityGraph<AroDoc> entityGraph = entityManager.createEntityGraph(AroDoc.class);
+            entityGraph.addAttributeNodes("decTipoDoc");
+            query = entityManager.createQuery(queryStr);
+            query.setHint(JAVAX_PERSISTENCE_FETCHGRAPH, entityGraph);
+            query.setParameter("idUnitaDocIn", idUnitaDoc);
+            List<AroDoc> ads = query.getResultList();
+            for (AroDoc tmpAd : ads) {
+                if (tmpAd.getTiCreazione().equals(CostantiDB.TipoCreazioneDoc.AGGIUNTA_DOCUMENTO.name())) {
+                    log.debug("Ricavo la sessione di versamento del documento aggiunto id={}", tmpAd.getIdDoc());
+                    /*
+                     * per ogni doc trovato, ricavo la sessione di versamento e la accodo alla collection
+                     */
+                    queryStr = "select t from VrsSessioneVers t " + "where t.aroDoc.idDoc = :idDoc "
+                            + "and t.tiStatoSessioneVers = 'CHIUSA_OK' ";
+                    query = entityManager.createQuery(queryStr);
+                    query.setParameter("idDoc", tmpAd.getIdDoc());
+                    vsv = query.getResultList();
+                    if (!vsv.isEmpty()) {
+                        tmpVsvList.add(vsv.get(0));
+                    }
+                }
+            }
+
+            /*
+             * ricavo i documenti XML relativi ad ogni sessione di versamento individuata
+             */
+            for (VrsSessioneVers tmpsvExt : tmpVsvList) {
+                queryStr = "select xml from VrsXmlDatiSessioneVers xml "
+                        + "where xml.vrsDatiSessioneVers.vrsSessioneVers.idSessioneVers = :idSessioneVers "
+                        + "and xml.vrsDatiSessioneVers.tiDatiSessioneVers = 'XML_DOC' ";
+
+                query = entityManager.createQuery(queryStr);
+                query.setParameter("idSessioneVers", tmpsvExt.getIdSessioneVers());
+
+                List<VrsXmlDatiSessioneVers> vxdsv = query.getResultList();
+
+                lstDatiSessioneVerses.addAll(vxdsv);
+            }
+
+            rispostaControlli.setrObject(lstDatiSessioneVerses);
+            rispostaControlli.setrBoolean(true);
+        } else {
+            rispostaControlli.setCodErr("666");
+            rispostaControlli.setDsErr("Errore interno: non sono stati eseguiti versamenti per l'UD " + idUnitaDoc);
+        }
+
+        log.debug("Lettura xml di versamento per AIP - FINE");
+        return rispostaControlli;
+    }
+    // end MAC#30980
 
     public RispostaControlli leggiXMLSessioneversUd(long idUnitaDoc) {
         RispostaControlli rispostaControlli;
@@ -772,9 +905,9 @@ public class ControlliRecupero {
         } catch (Exception e) {
             rispostaControlli.setrBoolean(false);
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione ControlliRecupero.leggiXMLSessioneversUd " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella degli XML di versamento UD ", e);
+            rispostaControlli.setDsErr(
+                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ERROR_CONTROLLI_LEGGI_XML + e.getMessage()));
+            log.error(ERROR_XML_VERSAMENTO, e);
         }
         return rispostaControlli;
     }
@@ -819,9 +952,9 @@ public class ControlliRecupero {
         } catch (Exception e) {
             rispostaControlli.setrBoolean(false);
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione ControlliRecupero.leggiXMLSessioneversUd " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella degli XML di versamento UD ", e);
+            rispostaControlli.setDsErr(
+                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ERROR_CONTROLLI_LEGGI_XML + e.getMessage()));
+            log.error(ERROR_XML_VERSAMENTO, e);
         }
         return rispostaControlli;
     }
@@ -856,9 +989,9 @@ public class ControlliRecupero {
         } catch (Exception e) {
             rispostaControlli.setrBoolean(false);
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione ControlliRecupero.leggiXMLSessioneversUd " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella degli XML di versamento UD ", e);
+            rispostaControlli.setDsErr(
+                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ERROR_CONTROLLI_LEGGI_XML + e.getMessage()));
+            log.error(ERROR_XML_VERSAMENTO, e);
         }
         return rispostaControlli;
     }
@@ -870,7 +1003,6 @@ public class ControlliRecupero {
         List<VrsXmlDatiSessioneVers> lstDatiSessioneVerses = null;
 
         try {
-            lstDatiSessioneVerses = new ArrayList<VrsXmlDatiSessioneVers>();
             String queryStr = "SELECT xmlDatiSessioneVers FROM VrsXmlDatiSessioneVers xmlDatiSessioneVers "
                     + "JOIN xmlDatiSessioneVers.vrsDatiSessioneVers datiSessioneVers "
                     + "JOIN datiSessioneVers.vrsSessioneVers sessioneVers " + "JOIN sessioneVers.aroUnitaDoc unitaDoc "
@@ -890,12 +1022,51 @@ public class ControlliRecupero {
         } catch (Exception e) {
             rispostaControlli.setrBoolean(false);
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione ControlliRecupero.leggiXMLSessioneversUd " + e.getMessage()));
-            log.error("Eccezione nella lettura  della tabella degli XML di versamento UD ", e);
+            rispostaControlli.setDsErr(
+                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ERROR_CONTROLLI_LEGGI_XML + e.getMessage()));
+            log.error(ERROR_XML_VERSAMENTO, e);
         }
         return rispostaControlli;
     }
+
+    // MAC#30890
+    public RispostaControlli leggiXmlVersamentiAipUpdDaUnitaDoc(long idUnitaDoc) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        List<AroXmlUpdUnitaDoc> xmlupds = new ArrayList<>();
+
+        try {
+            /*
+             * ricavo la lista degli aggiornamenti versati riferiti all'unita doc per l'aip corrente
+             */
+            String queryStr = "SELECT DISTINCT upd from AroUpdUdVerIndiceAipUd updvi "
+                    + "join updvi.aroUpdUnitaDoc upd " + "join upd.aroUnitaDoc ud "
+                    + "where ud.idUnitaDoc = :idUnitaDoc " + "order by upd.tsIniSes ";
+
+            javax.persistence.Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idUnitaDoc", idUnitaDoc);
+            List<AroUpdUnitaDoc> upds = query.getResultList();
+            for (AroUpdUnitaDoc tmpUpd : upds) {
+                queryStr = "select xml from AroXmlUpdUnitaDoc xml "
+                        + "where xml.aroUpdUnitaDoc.idUpdUnitaDoc = :idUpdUnitaDoc ";
+
+                query = entityManager.createQuery(queryStr);
+                query.setParameter("idUpdUnitaDoc", tmpUpd.getIdUpdUnitaDoc());
+
+                xmlupds.addAll(query.getResultList());
+            }
+            rispostaControlli.setrObject(xmlupds);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecIndiceAip.leggiXmlVersamentiAipUpdDaUnitaDoc " + e.getMessage()));
+            log.error("Eccezione nella lettura xml di versamento aggiornamento metadati ", e);
+        }
+        return rispostaControlli;
+    }
+    // end MAC#30890
 
     // EVO#20972
     public RispostaControlli leggiXMLSessioneversUpd(long idUnitaDoc) {
@@ -941,9 +1112,9 @@ public class ControlliRecupero {
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
         try {
-            String queryStr = "select count(aro) from AroFileVerIndiceAipUd aro "
-                    + "WHERE aro.aroVerIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-                    + "and aro.aroVerIndiceAipUd.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' ";
+            String queryStr = "select count(aro) from AroVerIndiceAipUd aro "
+                    + "WHERE aro.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                    + "and aro.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' ";
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -955,7 +1126,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.contaXMLIndiceAIP " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei file di versione indice AIP ", e);
+            log.error(ERROR_FILE_V_INDICE_AIP, e);
         }
         return rispostaControlli;
     }
@@ -964,17 +1135,16 @@ public class ControlliRecupero {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
-        List<AroFileVerIndiceAipUd> listaAroFile = null;
-
         try {
-            String queryStr = "SELECT aro FROM AroFileVerIndiceAipUd aro "
-                    + "WHERE aro.aroVerIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+            String queryStr = "SELECT aro FROM AroFileVerIndiceAipUd aro JOIN FETCH aro.aroVerIndiceAipUd"
+                    + " WHERE aro.aroVerIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                     + "and aro.aroVerIndiceAipUd.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' ";
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
 
-            listaAroFile = query.getResultList();
+            List<AroFileVerIndiceAipUd> listaAroFile = query.getResultList();
+            listaAroFile.stream().forEach(this::loadAroUrnVerIndiceAipUds);
             rispostaControlli.setrObject(listaAroFile);
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
@@ -982,10 +1152,39 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiXMLIndiceAIP " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei file di versione indice AIP ", e);
+            log.error(ERROR_FILE_V_INDICE_AIP, e);
         }
         return rispostaControlli;
     }
+
+    // MEV#30395
+    public RispostaControlli leggiXMLIndiceAIPV2Os(long idUnitaDoc) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        List<AroVerIndiceAipUd> listaAroVerIxAip = null;
+
+        try {
+            String queryStr = "SELECT DISTINCT u FROM AroVerIndiceAipUd u JOIN FETCH u.aroUrnVerIndiceAipUds "
+                    + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                    + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' " + "ORDER BY u.pgVerIndiceAip DESC ";
+
+            javax.persistence.Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idUnitaDoc", idUnitaDoc);
+
+            listaAroVerIxAip = query.getResultList();
+            rispostaControlli.setrObject(listaAroVerIxAip);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setrBoolean(false);
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecupero.leggiVerIndiceAIPV2 " + e.getMessage()));
+            log.error(ERROR_VER_INDICE_AIP, e);
+        }
+        return rispostaControlli;
+    }
+    // end MEV#30395
 
     // EVO#20972:MEV#20971
     public RispostaControlli leggiXMLIndiceAIPV2(long idUnitaDoc) {
@@ -995,7 +1194,7 @@ public class ControlliRecupero {
         List<AroFileVerIndiceAipUd> listaAroFile = null;
 
         try {
-            String queryStr = "SELECT aro FROM AroFileVerIndiceAipUd aro JOIN aro.aroVerIndiceAipUd u "
+            String queryStr = "SELECT DISTINCT aro FROM AroFileVerIndiceAipUd aro JOIN FETCH aro.aroVerIndiceAipUd u JOIN FETCH u.aroUrnVerIndiceAipUds "
                     + "WHERE u.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
                     + "AND u.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' " + "ORDER BY u.pgVerIndiceAip DESC ";
 
@@ -1010,7 +1209,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiXMLIndiceAIPV2 " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei file di versione indice AIP ", e);
+            log.error(ERROR_FILE_V_INDICE_AIP, e);
         }
         return rispostaControlli;
     }
@@ -1022,7 +1221,7 @@ public class ControlliRecupero {
             // Ricavo tutte le versioni precedenti dell'AIP provenienti da altri conservatori
             String queryStr = "SELECT u FROM AroVLisaipudSistemaMigraz u " + "WHERE u.idUnitaDoc = :idUnitaDoc ";
             Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idUnitaDoc", idUnitaDoc);
+            query.setParameter("idUnitaDoc", HibernateUtils.bigDecimalFrom(idUnitaDoc));
             List<AroVLisaipudSistemaMigraz> versioniPrecedentiExternal = query.getResultList();
             rispostaControlli.setrObject(versioniPrecedentiExternal);
             rispostaControlli.setrBoolean(true);
@@ -1031,8 +1230,8 @@ public class ControlliRecupero {
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiXMLIndiceAIPExternal " + e.getMessage()));
             log.error(
-                    "Eccezione durante il recupero delle versioni precedenti dell'AIP provenienti da altri conservatori "
-                            + e);
+                    "Eccezione durante il recupero delle versioni precedenti dell'AIP provenienti da altri conservatori ",
+                    e);
         }
         return rispostaControlli;
     }
@@ -1048,13 +1247,14 @@ public class ControlliRecupero {
         try {
             // MAC#25864
             String queryStr = "SELECT fileElencoVers FROM AroVLisElvVer elv, AroVerIndiceAipUd verIndiceAipUd, ElvFileElencoVer fileElencoVers "
-                    + "WHERE verIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = elv.idUnitaDoc "
+                    + "WHERE verIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = elv.aroVLisElvVerId.idUnitaDoc "
                     + "AND verIndiceAipUd.pgVerIndiceAip = (SELECT MAX(d.pgVerIndiceAip) FROM AroVerIndiceAipUd d WHERE d.aroIndiceAipUd = verIndiceAipUd.aroIndiceAipUd) "
                     + "AND fileElencoVers.elvElencoVer = verIndiceAipUd.elvElencoVer "
-                    + "AND elv.idUnitaDoc = :idUnitaDoc " + "AND fileElencoVers.tiFileElencoVers = :tiFileElencoVers ";
+                    + "AND elv.aroVLisElvVerId.idUnitaDoc = :idUnitaDoc "
+                    + "AND fileElencoVers.tiFileElencoVers = :tiFileElencoVers ";
             // end MAC#25864
             javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idUnitaDoc", idUnitaDoc);
+            query.setParameter("idUnitaDoc", bigDecimalFrom(idUnitaDoc));
             query.setParameter("tiFileElencoVers", tiFileElencoVers);
 
             List<ElvFileElencoVer> listaFileElencoVers = query.getResultList();
@@ -1114,7 +1314,7 @@ public class ControlliRecupero {
 
             Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
-            List<AroUdAppartVerSerie> uds = (List<AroUdAppartVerSerie>) query.getResultList();
+            List<AroUdAppartVerSerie> uds = query.getResultList();
             rispostaControlli.setrObject(uds);
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
@@ -1133,13 +1333,13 @@ public class ControlliRecupero {
         rispostaControlli.setrBoolean(false);
 
         try {
-            String queryStr = "SELECT unitaDocFascicolo FROM FasUnitaDocFascicolo unitaDocFascicolo "
+            String queryStr = "SELECT unitaDocFascicolo FROM FasUnitaDocFascicolo unitaDocFascicolo JOIN FETCH unitaDocFascicolo.fasFascicolo "
                     + "WHERE unitaDocFascicolo.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ";
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
 
-            List<FasUnitaDocFascicolo> uds = (List<FasUnitaDocFascicolo>) query.getResultList();
+            List<FasUnitaDocFascicolo> uds = query.getResultList();
             rispostaControlli.setrObject(uds);
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
@@ -1305,7 +1505,7 @@ public class ControlliRecupero {
      *            id unita doc
      * @param cdKeyNormalized
      *            chiave normalizzata unita doc
-     * 
+     *
      * @return RispostaControlli con risultato della verifica effettuata
      */
     @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
@@ -1317,9 +1517,8 @@ public class ControlliRecupero {
 
         try {
             // recupero parametro DATA_INIZIO_CALC_NUOVI_URN
-            String dataInizioParam = configurationHelper.getValoreParamApplic(
-                    CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN, null, null, null, null,
-                    CostantiDB.TipoAplVGetValAppart.APPLIC);
+            String dataInizioParam = configurationHelper
+                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.DATA_INIZIO_CALC_NUOVI_URN);
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             Date dtInizioCalcNuoviUrn = dateFormat.parse(dataInizioParam);
 
@@ -1331,7 +1530,7 @@ public class ControlliRecupero {
                 if ((dtVersMax.before(dtInizioCalcNuoviUrn) || dtVersMax.equals(dtInizioCalcNuoviUrn))) {
                     // lock ud
                     Map<String, Object> properties = new HashMap<>();
-                    properties.put("javax.persistence.lock.timeout", 25);
+                    properties.put("javax.persistence.lock.timeout", 25000);
                     AroUnitaDoc aroUnitaDoc = entityManager.find(AroUnitaDoc.class, idUnitaDoc,
                             LockModeType.PESSIMISTIC_WRITE, properties);
                     //
@@ -1402,7 +1601,7 @@ public class ControlliRecupero {
         try {
             Query query = entityManager
                     .createQuery("SELECT aro FROM AroVDtVersMaxByUnitaDoc aro WHERE aro.idUnitaDoc = :idUnitaDoc ");
-            query.setParameter("idUnitaDoc", idUnitaDoc);
+            query.setParameter("idUnitaDoc", bigDecimalFrom(idUnitaDoc));
             aroVDtVersMaxByUnitaDoc = (AroVDtVersMaxByUnitaDoc) query.getSingleResult();
             if (aroVDtVersMaxByUnitaDoc == null) {
                 rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666P);
@@ -1424,7 +1623,6 @@ public class ControlliRecupero {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrLong(-1);
-
         Long num;
         try {
             String queryStr = "select count(ud) from AroUnitaDoc ud "
@@ -1434,7 +1632,7 @@ public class ControlliRecupero {
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idRegistro", idRegistro);
-            query.setParameter("aaKeyUnitaDoc", key.getAnno());
+            query.setParameter("aaKeyUnitaDoc", bigDecimalFrom(key.getAnno()));
             query.setParameter("cdKeyUnitaDoc", key.getNumero());
             query.setParameter("cdKeyUnitaDocNormaliz", cdKeyUnitaDocNormaliz);
 
@@ -1484,7 +1682,7 @@ public class ControlliRecupero {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione ControlliRecupero.leggiFirReportIdsAndGenZipName " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei componenti in UD ", e);
+            log.error(ERROR_LETTURA_COMPONENTI, e);
         }
         return rispostaControlli;
     }
@@ -1492,10 +1690,10 @@ public class ControlliRecupero {
     // EVO#20972
     /**
      * Restituisce la lista degli utenti applicativi configurati per la firma HSM dato l'ambiente
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return RispostaControlli con risultato del recupero effettuato
      */
     public RispostaControlli leggiListaUserByHsmUsername(BigDecimal idAmbiente) {
@@ -1505,7 +1703,7 @@ public class ControlliRecupero {
 
         List<UsrUser> listaUser = new ArrayList<>();
         try {
-            AplParamApplic paramApplic = configurationHelper.getParamApplic("HSM_USERNAME");
+            AplParamApplic paramApplic = configurationHelper.getParamApplic(CostantiDB.ParametroAppl.HSM_USERNAME);
             // Ricavo le coppie di valori multipli del parametro HSM_USERNAME sull'ambiente
             List<AplValParamApplicMulti> listaCoppieValoriHsmUsername = amministrazioneHelper
                     .getAplValParamApplicMultiList(BigDecimal.valueOf(paramApplic.getIdParamApplic()), idAmbiente);
@@ -1540,7 +1738,7 @@ public class ControlliRecupero {
      *            id user Iam corrente
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return RispostaControlli con risultato del recupero effettuato
      */
     public RispostaControlli leggiRuoloAuthorizedSigner(long idUserIamCor, BigDecimal idAmbiente) {
@@ -1549,7 +1747,8 @@ public class ControlliRecupero {
         rispostaControlli.setrBoolean(false);
 
         try {
-            AplParamApplic paramApplic = configurationHelper.getParamApplic("AGENT_AUTHORIZED_SIGNER_ROLE");
+            AplParamApplic paramApplic = configurationHelper
+                    .getParamApplic(CostantiDB.ParametroAppl.AGENT_AUTHORIZED_SIGNER_ROLE);
             UsrUser user = amministrazioneHelper.findById(UsrUser.class, idUserIamCor);
             String[] authSignerRole = null;
             // Ricavo le coppie di valori multipli del parametro AGENT_AUTHORIZED_SIGNER_ROLE sull'ambiente
@@ -1596,39 +1795,201 @@ public class ControlliRecupero {
     }
     // end EVO#20972
 
-    public RispostaControlli leggiDecReportServizioCompAndGenEntryName(long idFirReport) {
+    // MEV#27831 - Modifica creazione indice AIP in presenza di SIGILLO
+    /**
+     * Restituisce la lista di agenti legal person per l'ambiente specificato
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * 
+     * @return RispostaControlli con risultato del recupero effettuato
+     */
+    public RispostaControlli leggiAuthorizedSignerLegalPersons(BigDecimal idAmbiente) {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
-        rispostaControlli.setrBoolean(true);
-        rispostaControlli.setrLong(-1);
+        rispostaControlli.setrBoolean(false);
 
         try {
-            String queryStr = "select t.decReportServizioVerificaCompDoc, u.dsUrn from FirReport t inner join t.firUrnReports u "
-                    + "where t.idFirReport = :idFirReport and u.tiUrn = :tiUrn";
-            javax.persistence.Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idFirReport", idFirReport);
-            query.setParameter("tiUrn", TiUrnReport.NORMALIZZATO);
-
-            Object[] result = (Object[]) query.getSingleResult();
-            if (result != null) {
-                DecReportServizioVerificaCompDoc reportServizio = (DecReportServizioVerificaCompDoc) result[0];
-                String dsUrn = (String) result[1];
-                // esiste report
-                rispostaControlli.setrLong(0);
-                rispostaControlli.setrString(MessaggiWSFormat.bonificaUrnPerNomeFile(dsUrn));
-                rispostaControlli.setrObject(reportServizio);
+            AplParamApplic paramApplic = configurationHelper
+                    .getParamApplic(CostantiDB.ParametroAppl.AGENT_AUTHORIZED_SIGNER_ROLE_LEGAL_PERSON);
+            // Ricavo i valori multipli del parametro AGENT_AUTHORIZED_SIGNER_ROLE sull'ambiente
+            List<AplValParamApplicMulti> listaCoppieValoriHsmUsername = amministrazioneHelper
+                    .getAplValParamApplicMultiList(BigDecimal.valueOf(paramApplic.getIdParamApplic()), idAmbiente);
+            // Per ogni agent gestito dal parametro AGENT_AUTHORIZED_SIGNER_ROLE
+            ArrayList<AgentLegalPersonDto> agenti = new ArrayList<>();
+            if (listaCoppieValoriHsmUsername.isEmpty()) {
+                // mette a vero altrimenti esce e poi esplode senza mostrare il motivo
+                rispostaControlli.setrBoolean(true);
             } else {
-                rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-                rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                        "Eccezione ControlliRecupero.leggiDecReportServizioCompAndGenEntryName "));
+                // MAC#29103 - Risoluzione problema con parametro "AGENT_AUTHORIZED_SIGNER_ROLE_LEGAL_PERSON"
+                // Oltre a testare lista.size() == 0 si testa che il singolo record non contenva valore vuoto
+                String parDescrizione = listaCoppieValoriHsmUsername.get(0).getDsValoreParamApplic();
+                if (listaCoppieValoriHsmUsername.size() == 1
+                        && (parDescrizione == null || parDescrizione.trim().equals(""))) {
+                    // mette a vero altrimenti esce e poi esplode senza mostrare il motivo
+                    rispostaControlli.setrBoolean(true);
+                } else {
+                    for (AplValParamApplicMulti valParamApplicMulti : listaCoppieValoriHsmUsername) {
+                        // Splitto il parametro: il primo valore sarà lul nome dell'ente, il secondo il ruolo,
+                        // il terzo il relevant document, il quarto l'agentID
+                        String[] valori = valParamApplicMulti.getDsValoreParamApplic().split(",");
+                        if (valori.length != 4) {
+                            rispostaControlli.setrBoolean(false);
+                            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+                            final String ERRORE_SUI_PARAMETRI = "ControlliRecupero.leggiAuthorizedSignerLegalPersons: Uno dei parametri multipli contiene meno di 4 valori sull'ambiente "
+                                    + idAmbiente;
+                            rispostaControlli.setDsErr(
+                                    MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, ERRORE_SUI_PARAMETRI));
+                            log.error(ERRORE_SUI_PARAMETRI);
+                            break;
+                        } else {
+                            AgentLegalPersonDto dto = new AgentLegalPersonDto();
+                            agenti.add(dto);
+                            dto.setNome(valori[0]);
+                            dto.setRuolo(valori[1]);
+                            dto.setDocumentoRilevante(valori[2]);
+                            dto.setId(valori[3]);
+                            rispostaControlli.setrBoolean(true);
+                        }
+                    }
+                }
             }
+            rispostaControlli.setrObject(agenti);
         } catch (Exception e) {
             rispostaControlli.setrBoolean(false);
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-                    "Eccezione ControlliRecupero.leggiDecReportServizioCompAndGenEntryName " + e.getMessage()));
-            log.error("Eccezione nella lettura della tabella dei componenti in UD ", e);
+                    "ControlliRecupero.leggiAuthorizedSignerLegalPersons: " + e.getMessage()));
+            log.error("Eccezione nel recupero del ruolo per l'authorized signer legal person: ", e);
         }
+        return rispostaControlli;
+    }
+    // End - MEV#27831
+
+    private void loadAroUrnVerIndiceAipUds(AroFileVerIndiceAipUd aroFileVerIndiceAipUd) {
+        if (aroFileVerIndiceAipUd.getAroVerIndiceAipUd() != null) {
+            final String PARAM_NAME = "aroVerIndiceAipUd";
+            TypedQuery<AroUrnVerIndiceAipUd> query = entityManager.createQuery(
+                    "SELECT t FROM AroUrnVerIndiceAipUd t WHERE t.aroVerIndiceAipUd=:" + PARAM_NAME,
+                    AroUrnVerIndiceAipUd.class);
+            query.setParameter(PARAM_NAME, aroFileVerIndiceAipUd.getAroVerIndiceAipUd());
+            aroFileVerIndiceAipUd.getAroVerIndiceAipUd().setAroUrnVerIndiceAipUds(query.getResultList());
+        }
+    }
+
+    public VrsUrnXmlSessioneVers findVrsUrnXmlSessioneVersByTiUrn(VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers,
+            it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers tiUrn) {
+        final String vrsXmlDatiSessioneVersParam = "vrsXmlDatiSessioneVers";
+        final String tiUrnParam = "tiUrn";
+        TypedQuery<VrsUrnXmlSessioneVers> query = entityManager
+                .createQuery(
+                        "SELECT v from VrsUrnXmlSessioneVers v " + " WHERE v.vrsXmlDatiSessioneVers=:"
+                                + vrsXmlDatiSessioneVersParam + " AND v.tiUrn=:" + tiUrnParam,
+                        VrsUrnXmlSessioneVers.class);
+        query.setParameter(vrsXmlDatiSessioneVersParam, vrsXmlDatiSessioneVers);
+        query.setParameter(tiUrnParam, tiUrn);
+        query.setMaxResults(1);
+        query.setFirstResult(0);
+        return query.getSingleResult();
+    }
+
+    public Constants.TipoSessione getTipoSessioneFrom(VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers) {
+        final String param1 = "vrsXmlDatiSessioneVers";
+        TypedQuery<String> query = entityManager.createQuery("SELECT v.vrsSessioneVers.tiSessioneVers FROM "
+                + "VrsDatiSessioneVers v WHERE v.idDatiSessioneVers = :" + param1, String.class);
+        query.setParameter(param1, vrsXmlDatiSessioneVers.getVrsDatiSessioneVers().getIdDatiSessioneVers());
+        return Constants.TipoSessione.valueOf(query.getSingleResult());
+    }
+
+    public void loadElvElencoVer(ElvFileElencoVer fileElencoVers) {
+        final String idParam = "idElencoVers";
+        TypedQuery<ElvElencoVer> query = entityManager.createQuery(
+                "SELECT f FROM ElvElencoVer f JOIN FETCH f.orgStrut s "
+                        + "JOIN FETCH s.orgEnte e JOIN FETCH e.orgAmbiente a WHERE f.idElencoVers=:" + idParam,
+                ElvElencoVer.class);
+        query.setParameter(idParam, fileElencoVers.getElvElencoVer().getIdElencoVers());
+        fileElencoVers.setElvElencoVer(query.getSingleResult());
+    }
+
+    public List<VolFileVolumeConserv> findVolFileVolumeConserv(VolVolumeConserv volume) {
+        final String paramVolume = "volVolumeConserv";
+        TypedQuery<VolFileVolumeConserv> query = entityManager.createQuery(
+                "SELECT v FROM VolFileVolumeConserv v " + "WHERE v.volVolumeConserv=:" + paramVolume,
+                VolFileVolumeConserv.class);
+        query.setParameter(paramVolume, volume);
+        return query.getResultList();
+    }
+
+    /**
+     * Ottieni la lista degli id_sessione_vers distinti partendo dalla tabella VRS_XML_DATI_SESSIONE_VERS.
+     *
+     * Questo filtro non viene effettuato direttamente all'interno dello stream perchè non è possibile, con hibernate,
+     * accedere ai valori non chiave per le entity con lazy loading (vedi
+     * https://parermine.regione.emilia-romagna.it/projects/parer/wiki/Eclipselink2Hibernate#Lazy-loading )
+     *
+     * @param vrsXmlDatiSessioneVers
+     *            lista di entità VrsXmlDatiSessioneVers
+     *
+     * @return lista di id sessione vers (distinti)
+     */
+    public RispostaControlli findAllSessVersByXmlDatiSessVers(List<VrsXmlDatiSessioneVers> vrsXmlDatiSessioneVers) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        //
+        try {
+            TypedQuery<VrsSessioneVers> query = entityManager
+                    .createQuery("Select distinct vrs from VrsXmlDatiSessioneVers xml_dati "
+                            + "join xml_dati.vrsDatiSessioneVers dati join dati.vrsSessioneVers vrs "
+                            + "WHERE xml_dati in (:vrsXmlDatiSessioneVers)", VrsSessioneVers.class);
+            query.setParameter("vrsXmlDatiSessioneVers", vrsXmlDatiSessioneVers);
+            List<VrsSessioneVers> result = query.getResultList();
+            rispostaControlli.setrObject(result);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception ex) {
+            rispostaControlli.setrBoolean(false);
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecupero.findSessVersByXmlDatiSessVers "
+                            + ExceptionUtils.getRootCauseMessage(ex)));
+            log.error("Eccezione nella verifica esistenza sessione versamento da recuperare ", ex);
+        }
+
+        return rispostaControlli;
+    }
+
+    /**
+     * Ottieni l'identificativo della sessione di versamento a partire dall'identificativo delle
+     * VRS_XML_DATI_SESSIONE_VERS.
+     *
+     * @param vrsXmlDatiSessioneVers
+     *            id VrsXmlDatiSessioneVers
+     *
+     * @return id sessione vers
+     */
+    public RispostaControlli findIdSessVersByXmlDatiSessVers(VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        //
+        try {
+            TypedQuery<Long> query = entityManager
+                    .createQuery("Select vrs.idSessioneVers from VrsXmlDatiSessioneVers xml_dati "
+                            + "join xml_dati.vrsDatiSessioneVers dati join dati.vrsSessioneVers vrs "
+                            + "WHERE xml_dati = :vrsXmlDatiSessioneVers", Long.class);
+            query.setParameter("vrsXmlDatiSessioneVers", vrsXmlDatiSessioneVers);
+            Long result = query.getSingleResult();
+            rispostaControlli.setrBoolean(true);
+            rispostaControlli.setrLong(result);
+        } catch (Exception ex) {
+            rispostaControlli.setrBoolean(false);
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecupero.findSessVersByXmlDatiSessVers "
+                            + ExceptionUtils.getRootCauseMessage(ex)));
+            log.error("Eccezione nella verifica esistenza sessione versamento da recuperare ", ex);
+        }
+
         return rispostaControlli;
     }
 

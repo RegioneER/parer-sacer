@@ -1,23 +1,45 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.restWS.util;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.keycloak.representations.AccessToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.ws.dto.IRispostaWS;
 import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.FileBinario;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
-import java.util.Iterator;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Parser di request di tipo POST/MULTIPART FORM DATA
@@ -26,7 +48,6 @@ import org.slf4j.LoggerFactory;
  */
 public class RequestPrsr extends AbsRequestPrsr {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(RequestPrsr.class);
 
     public class ReqPrsrConfig {
@@ -88,7 +109,7 @@ public class RequestPrsr extends AbsRequestPrsr {
     }
 
     /**
-     * Nota bene: è fondamentale che questo metodo renda la collection di FileItem, e che il chiamante ne tenga una
+     * Nota bene: è fondamentale che questo metodo ritorni la collection di FileItem, e che il chiamante ne tenga una
      * copia: la deallocazione del DiskFileItem a causa della GC e la conseguente chiamata del metodo finalize()
      * comporta la cancellazione del file fisico e mantenere una copia dell'istanza della classe File sortisce l'unico
      * effetto di avere un File handler che non punta a nulla; il fenomeno è difficile da replicare ma estremamente
@@ -107,9 +128,14 @@ public class RequestPrsr extends AbsRequestPrsr {
      * 
      */
     public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione) throws FileUploadException {
-        Iterator tmpIterator = null;
+        return parse(rispostaWs, configurazione, null);
+    }
+
+    public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione, AccessToken accessToken)
+            throws FileUploadException {
+        Iterator<FileItem> tmpIterator = null;
         DiskFileItem tmpFileItem = null;
-        List fileItems = null;
+        List<FileItem> fileItems = null;
         FileBinario tmpFileBinario;
 
         // lettura configurazione;
@@ -136,7 +162,6 @@ public class RequestPrsr extends AbsRequestPrsr {
         tmpFileItem = (DiskFileItem) tmpIterator.next();
         if (tmpFileItem.isFormField()) {
             if (tmpFileItem.getFieldName().equals("VERSIONE")) {
-                // log.info("VERSIONE " + tmpFileItem.getString());
                 sessioneFinta.setVersioneWS(tmpFileItem.getString());
             } else {
                 rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
@@ -153,41 +178,45 @@ public class RequestPrsr extends AbsRequestPrsr {
             rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
         }
 
-        String commonName = this.leggiCertCommonName(request);
         // verifica strutturale del campo LOGINNAME e memorizzazione dello stesso nella sessione finta
         // Il controllo sullo username viene fatto se non è presente il CommonName nell'Header HTTP
-        if (rispostaWs
-                .getSeverity() == IRispostaWS.SeverityEnum.OK /* && (commonName == null || commonName.isEmpty()) */ ) {
-            tmpFileItem = (DiskFileItem) tmpIterator.next();
-            if (tmpFileItem.isFormField()) {
-                if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
-                    log.info("LOGINNAME " + tmpFileItem.getString());
-                    sessioneFinta.setLoginName(tmpFileItem.getString());
-                    tmpAvanzamento.setVrsUser(tmpFileItem.getString()).logAvanzamento();
+        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            if (Objects.isNull(accessToken)) {
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+                if (tmpFileItem.isFormField()) {
+                    if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
+                        log.info("LOGINNAME {}", tmpFileItem.getString());
+                        sessioneFinta.setLoginName(tmpFileItem.getString());
+                        tmpAvanzamento.setVrsUser(tmpFileItem.getString()).logAvanzamento();
+                    } else {
+                        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                        rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                        rispostaWs.setErrorMessage(
+                                MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo LOGINNAME"));
+                        rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                    }
                 } else {
                     rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
                     rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-                    rispostaWs.setErrorMessage(
-                            MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo LOGINNAME"));
+                    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                            "Il campo LOGINNAME deve essere di tipo FORM"));
                     rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
                 }
             } else {
-                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-                rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-                rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-                        "Il campo LOGINNAME deve essere di tipo FORM"));
-                rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                String oauth2PreferredUsername = accessToken.getPreferredUsername();
+
+                log.info("LOGINNAME OUATH2 {}", oauth2PreferredUsername);
+                sessioneFinta.setLoginName(oauth2PreferredUsername);
+                tmpAvanzamento.setVrsUser(oauth2PreferredUsername).logAvanzamento();
             }
         }
 
         // verifica strutturale del campo PASSWORD e memorizzazione dello stesso nella sessione finta
         // Il controllo sulla password viene fatto se non è presente il CommonName nell'Header HTTP
-        if (rispostaWs
-                .getSeverity() == IRispostaWS.SeverityEnum.OK /* && (commonName == null || commonName.isEmpty()) */ ) {
+        if (Objects.isNull(accessToken) && rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
             tmpFileItem = (DiskFileItem) tmpIterator.next();
             if (tmpFileItem.isFormField()) {
                 if (tmpFileItem.getFieldName().equals("PASSWORD")) {
-                    // log.info("PASSWORD " + tmpFileItem.getString());
                     sessioneFinta.setPassword(tmpFileItem.getString());
                 } else {
                     rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
@@ -211,8 +240,6 @@ public class RequestPrsr extends AbsRequestPrsr {
                 tmpFileItem = (DiskFileItem) tmpIterator.next();
                 if (tmpFileItem.isFormField()) {
                     if (tmpFileItem.getFieldName().equals("XMLINDICE")) {
-                        // log.info("XMLINDICE trovato");
-                        //
                         sessioneFinta.setDatiPackInfoSipXml(tmpFileItem.getString());
                         //
                     } else {
@@ -237,7 +264,6 @@ public class RequestPrsr extends AbsRequestPrsr {
             tmpFileItem = (DiskFileItem) tmpIterator.next();
             if (tmpFileItem.isFormField()) {
                 if (tmpFileItem.getFieldName().equals("XMLSIP")) {
-                    // log.info("XMLSIP trovato");
                     sessioneFinta.setDatiIndiceSipXml(tmpFileItem.getString());
                     sessioneFinta.setDatiDaSalvareIndiceSip(tmpFileItem.getString());
                 } else {

@@ -1,4 +1,35 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.firma.crypto.sign;
+
+import java.util.Date;
+import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.hsm.AuthenticationException;
 import it.eng.hsm.ClientHSM;
@@ -9,8 +40,8 @@ import it.eng.hsm.OTPException;
 import it.eng.hsm.UserBlockedException;
 import it.eng.hsm.beans.HSMSignatureSession;
 import it.eng.hsm.beans.HSMUser;
-import it.eng.parer.common.signature.SignatureSession.CdErr;
 import it.eng.parer.common.signature.Signature;
+import it.eng.parer.common.signature.SignatureSession.CdErr;
 import it.eng.parer.entity.HsmSessioneFirma;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiSessioneFirma;
 import it.eng.parer.firma.crypto.ejb.ElencoFascSignatureSessionEjb;
@@ -20,18 +51,6 @@ import it.eng.parer.firma.crypto.ejb.ElencoSignatureSessionEjb;
 import it.eng.parer.firma.crypto.ejb.SerieSignatureSessionEjb;
 import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.ws.utils.CostantiDB;
-import java.util.Date;
-import java.util.concurrent.Future;
-import javax.annotation.Resource;
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -64,8 +83,7 @@ public class SignerHsmEjb {
         ClientHSM clientHsm;
         AMBIENTE_HSM ambiente = null;
 
-        String value = configurationHelper.getValoreParamApplic(Signature.SISTEMA_FIRMA, null, null, null, null,
-                CostantiDB.TipoAplVGetValAppart.APPLIC);
+        String value = configurationHelper.getValoreParamApplicByApplic(Signature.SISTEMA_FIRMA);
         if (value.equals(Signature.SistemaFirma.HSM_TEST.name())) {
             ambiente = AMBIENTE_HSM.TEST;
         } else if (value.equals(Signature.SistemaFirma.HSM_PROD.name())) {

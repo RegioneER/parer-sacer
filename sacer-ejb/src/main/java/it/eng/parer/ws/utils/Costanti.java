@@ -1,4 +1,21 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -36,6 +53,11 @@ public class Costanti {
     public static final String WS_REC_PROVE_CON_IDX_UD_NOME = "RecProveConservIdxUdSync"; // non esiste più
     public static final String WS_REC_RAPPORTI_VERS_NOME = "RecDIPRapportiVersSync";
     //
+    // EVO#13993
+    public static final String WS_REC_FASC_NOME = "RecFascicoloSync";
+    public static final String WS_REC_AIP_FASC_NOME = "RecAIPFascicoloSync";
+    // end EVO#13993
+    //
     public static final String WS_INSERIMENTO_UTENTE_NOME = "InserimentoUtente"; // inutile, da togliere
     public static final String WS_MODIFICA_UTENTE_NOME = "ModificaUtente"; // inutile, da togliere
     public static final String WS_CANCELLA_UTENTE_NOME = "CancellaUtente"; // inutile, da togliere
@@ -64,6 +86,8 @@ public class Costanti {
     public static final String TPI_DATA_PATH_FMT_STRING = "yyyy_MM_dd";
     //
     public static final String VERSIONE_XML_RECUP_UD = "1.2";
+    //
+    public static final String UKNOWN_EXT = "unknown";
 
     public class UrnFormatter {
 
@@ -187,6 +211,7 @@ public class Costanti {
         public static final String URN_UPD_UD_FMT_STRING_V2 = "urn:{0}:{1}:{2}:{3}-{4}-{5}:UPD{6}";
         // urn:<sistemaconservazione>:<ente>:<struttura>:<registro>-<anno>-<numero>:AGG_MD<progressivo aggiornamento>
         public static final String URN_UPD_UD_FMT_STRING_V3 = "urn:{0}:{1}:{2}:{3}-{4}-{5}:AGG_MD{6}";
+        public static final String SERIE_FMT_STRING = "{0}-{1}";
 
         //
         // FASCICOLI
@@ -306,6 +331,23 @@ public class Costanti {
     }
 
     //
+    public class AwsConstants {
+
+        private AwsConstants() {
+            throw new IllegalStateException("AwsS3Constants Utility class");
+        }
+
+        // custom tags
+        // public static final String TAG_KEY_AROOBJ_TYPE = "aro-object-type";
+        // public static final String TAG_VALUE_AROOBJ_INDICI_AIP = "xml_indici_aip_ud";
+
+        // custom metadata
+        public static final String MEATADATA_INGEST_NODE = "ingest-node";
+        public static final String MEATADATA_INGEST_TIME = "ingest-time";
+
+    }
+
+    //
     public class JMSMsgProperties {
 
         private JMSMsgProperties() {
@@ -401,7 +443,10 @@ public class Costanti {
     }
 
     public enum TipiWSPerControlli {
-        VERSAMENTO_RECUPERO, ANNULLAMENTO, VERSAMENTO_FASCICOLO
+        VERSAMENTO_RECUPERO, ANNULLAMENTO, VERSAMENTO_FASCICOLO,
+        /* EVO#13993 */ VERSAMENTO_RECUPERO_FASC /*
+                                                  * end EVO#13993
+                                                  */
     }
 
     // EVO#20972

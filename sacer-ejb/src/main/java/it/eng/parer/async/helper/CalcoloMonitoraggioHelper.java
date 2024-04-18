@@ -1,38 +1,43 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.async.helper;
 
-import it.eng.parer.entity.AroUnitaDoc;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.VrsContenutoFile;
-import it.eng.parer.entity.VrsDatiSessioneVers;
-import it.eng.parer.entity.VrsDocNonVer;
-import it.eng.parer.entity.VrsFileSessione;
-import it.eng.parer.entity.VrsSessioneVers;
-import it.eng.parer.entity.VrsUnitaDocNonVer;
-import it.eng.parer.viewEntity.LogVLisIniSchedJob;
-import it.eng.parer.viewEntity.LogVLisIniSchedJobStrut;
-import it.eng.parer.viewEntity.VrsVAggFallitiRisolto;
-import it.eng.parer.viewEntity.VrsVVersFallitiDaNorisol;
-import it.eng.parer.viewEntity.VrsVVersFallitiDaVerif;
-import it.eng.parer.viewEntity.VrsVVersFallitiRisolto;
+import it.eng.parer.entity.*;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
+import it.eng.parer.viewEntity.*;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
+import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.Constants;
-import it.eng.spagoCore.error.EMFError;
+import it.eng.parer.ws.utils.CostantiDB;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.ejb.*;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.LockTimeoutException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "CalcoloMonitoraggioHelper")
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -48,51 +54,47 @@ public class CalcoloMonitoraggioHelper {
     Logger log = LoggerFactory.getLogger(CalcoloMonitoraggioHelper.class);
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
+    private static final String DIVERSI = "Diversi";
 
     @EJB
     private CalcoloMonitoraggioHelper me;
+    @EJB
+    private UnitaDocumentarieHelper udHelper;
 
-    public List<Long> getListaSessioniVersByUsr(boolean checkUsr, String flVerificato) {
+    @EJB
+    private ObjectStorageService objectStorageService;
+
+    public List<Long> getListaSessioniVersByUsr() {
         /*
          * Ricavo le entità di tipo VrsSessioneVers di tipo chiusa in errore dove la struttura è nulla
          */
-        StringBuilder queryStr = new StringBuilder("SELECT ses.idSessioneVers FROM VrsSessioneVers ses "
-                + "WHERE ses.tiStatoSessioneVers = 'CHIUSA_ERR' " + "AND ses.orgStrut is null ");
-        if (checkUsr) {
-            /* cerco di recuperare la struttura attraverso User */
-            queryStr.append("AND (SELECT COUNT(iao) FROM IamAbilOrganiz iao "
-                    + "WHERE iao.iamUser.nmUserid = ses.nmUseridWs) = 1 ");
-        }
-
-        if (flVerificato != null) {
-            queryStr.append(" AND ses.flSessioneErrVerif = :flVerificato ");
-        }
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT ses.idSessioneVersKo FROM VrsSessioneVersKo ses " + "WHERE ses.orgStrut is null ");
+        queryStr.append(" AND ses.flSessioneErrVerif = :flVerificato ");
         queryStr.append(" ORDER BY ses.dtApertura ");
 
         Query query = entityManager.createQuery(queryStr.toString());
-        if (flVerificato != null) {
-            query.setParameter("flVerificato", flVerificato);
-        }
+        query.setParameter("flVerificato", "0");
 
-        return (List<Long>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<VrsVVersFallitiDaVerif> getListaVersFallitiDaVerif(Long idStrut, Date ultimaRegistrazione) {
         String queryStr = "SELECT u FROM VrsVVersFallitiDaVerif u " + "WHERE u.idStrut = :idStrut "
                 + "AND u.dtApertura > :ultimaRegistrazione ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", GenericHelper.bigDecimalFromLong(idStrut));
         query.setParameter("ultimaRegistrazione", ultimaRegistrazione);
-        return (List<VrsVVersFallitiDaVerif>) query.getResultList();
+        return query.getResultList();
     }
 
     public List<VrsVVersFallitiDaNorisol> getListaVersFallitiDaNorisol(Long idStrut, Date ultimaRegistrazione) {
         String queryStr = "SELECT u FROM VrsVVersFallitiDaNorisol u " + "WHERE u.idStrut = :idStrut "
                 + "AND u.dtApertura > :ultimaRegistrazione ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", GenericHelper.bigDecimalFromLong(idStrut));
         query.setParameter("ultimaRegistrazione", ultimaRegistrazione);
-        return (List<VrsVVersFallitiDaNorisol>) query.getResultList();
+        return query.getResultList();
     }
 
     public Date getUltimaRegistrazione(String nmJob, Long idStrut) {
@@ -100,9 +102,9 @@ public class CalcoloMonitoraggioHelper {
                 + "AND u.idStrut = :idStrut " + "ORDER BY u.dtRegLogJobIni DESC ";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("nmJob", nmJob);
-        query.setParameter("idStrut", idStrut);
+        query.setParameter("idStrut", GenericHelper.bigDecimalFromLong(idStrut));
 
-        List<LogVLisIniSchedJobStrut> lastSched = (List<LogVLisIniSchedJobStrut>) query.getResultList();
+        List<LogVLisIniSchedJobStrut> lastSched = query.getResultList();
 
         /*
          * Imposto la sezione relativa alla data all'1 gennaio 2011 relativa all'ora alle 0:00:00.000
@@ -131,7 +133,7 @@ public class CalcoloMonitoraggioHelper {
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("nmJob", nmJob);
 
-        List<LogVLisIniSchedJob> lastSched = (List<LogVLisIniSchedJob>) query.getResultList();
+        List<LogVLisIniSchedJob> lastSched = query.getResultList();
 
         /*
          * Imposto la sezione relativa alla data all'1 gennaio 2011 relativa all'ora alle 0:00:00.000
@@ -158,33 +160,53 @@ public class CalcoloMonitoraggioHelper {
     public List<OrgStrut> getStruttureVersanti() {
         String queryStr = "SELECT u FROM OrgStrut u ";
         Query query = entityManager.createQuery(queryStr);
-        return (List<OrgStrut>) query.getResultList();
+        return query.getResultList();
     }
 
-    public String getXmlRichiestaSessione(Long idSessione) {
-        Query query = entityManager.createQuery("SELECT xmlRich.blXml " + "FROM VrsSessioneVers ses "
-                + "JOIN ses.vrsDatiSessioneVers datiSes " + "JOIN datiSes.vrsXmlDatiSessioneVers xmlRich "
-                + "WHERE xmlRich.tiXmlDati = 'RICHIESTA' AND ses.idSessioneVers = :idSessione");
-        query.setParameter("idSessione", idSessione);
-        return (String) query.getSingleResult();
+    private String getXmlRichiestaSessioneKo(Long idSessioneKo) {
+        TypedQuery<VrsXmlDatiSessioneVersKo> query = entityManager.createQuery(
+                "SELECT xmlRich " + "FROM VrsSessioneVersKo ses " + "JOIN ses.vrsDatiSessioneVersKos datiSes "
+                        + "JOIN datiSes.vrsXmlDatiSessioneVersKos xmlRich "
+                        + "WHERE xmlRich.tiXmlDati = 'RICHIESTA' AND ses.idSessioneVersKo = :idSessioneKo",
+                VrsXmlDatiSessioneVersKo.class);
+        query.setParameter("idSessioneKo", idSessioneKo);
+
+        final VrsXmlDatiSessioneVersKo vrsXmlDatiSessioneVersKo = query.getSingleResult();
+        /* MEV 30369 - TODO da rimuovere quando viene completata la migrazione dei BLOB */
+        return scegliXmlDatiSessioneVers(vrsXmlDatiSessioneVersKo.getBlXml(),
+                vrsXmlDatiSessioneVersKo.getIdXmlDatiSessioneVersKo());
+    }
+
+    /*
+     * MEV 30369 - TODO da rimuovere quando viene completata la migrazione dei BLOB
+     * (https://parermine.regione.emilia-romagna.it/issues/29978) se non lo trovo su VRS_XML_DATI_SESSIONE_VERS_KO lo
+     * cerco su VRS_XML_DATI_SESSIONE_VERS perché evidentemente non è ancora stato spostato il CLOB
+     */
+    private String scegliXmlDatiSessioneVers(String blXml, Long idXmlDatiSessioneVersKo) {
+        if (StringUtils.isBlank(blXml)) {
+            VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers = entityManager.find(VrsXmlDatiSessioneVers.class,
+                    idXmlDatiSessioneVersKo);
+            return !Objects.isNull(vrsXmlDatiSessioneVers) ? vrsXmlDatiSessioneVers.getBlXml() : StringUtils.EMPTY;
+        }
+        return blXml;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void impostaVersamentoFallitoVerif(Long idVersFallito) {
-        VrsSessioneVers ses = entityManager.find(VrsSessioneVers.class, idVersFallito);
+        VrsSessioneVersKo ses = entityManager.find(VrsSessioneVersKo.class, idVersFallito);
         ses.setFlSessioneErrVerif("1");
         ses.setFlSessioneErrNonRisolub("0");
-        log.info("Il versamento fallito " + idVersFallito + " &#232; stato impostato verificato");
+        log.info("Il versamento fallito {} &#232; stato impostato verificato", idVersFallito);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void impostaVersamentoFallitoNorisol(Long idVersFallito) {
-        VrsSessioneVers ses = entityManager.find(VrsSessioneVers.class, idVersFallito);
+        VrsSessioneVersKo ses = entityManager.find(VrsSessioneVersKo.class, idVersFallito);
         ses.setFlSessioneErrNonRisolub("1");
-        log.info("Il versamento fallito " + idVersFallito + " &#232; stato impostato non risolubile");
+        log.info("Il versamento fallito {} &#232; stato impostato non risolubile", idVersFallito);
     }
 
-    public void calcolaChiave(String xmlRich, VrsSessioneVers ses) {
+    private void calcolaChiave(String xmlRich, VrsSessioneVersKo ses) {
         /* Se il file XML non è vuoto... */
         if (xmlRich != null) {
             /*
@@ -295,19 +317,28 @@ public class CalcoloMonitoraggioHelper {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void calcolaStrutturaByXml(Long idSessione) {
-        VrsSessioneVers ses = entityManager.find(VrsSessioneVers.class, idSessione);
-
-        String xml = me.getXmlRichiestaSessione(ses.getIdSessioneVers());
-        me.calcolaStrutturaXml(xml, ses);
+    public void calcolaStrutturaByXml(Long idSessioneKo) {
+        VrsSessioneVersKo ses = entityManager.find(VrsSessioneVersKo.class, idSessioneKo);
+        // from d.b.
+        String xml = getXmlRichiestaSessioneKo(ses.getIdSessioneVersKo());
+        // from o.s.
+        if (StringUtils.isBlank(xml)) {
+            Map<String, String> xmls = objectStorageService.getObjectSipInStaging(ses.getIdSessioneVersKo());
+            // recupero oggetti se presenti su O.S.
+            if (!xmls.isEmpty()) {
+                xml = xmls.get(CostantiDB.TipiXmlDati.RICHIESTA);
+            }
+        }
+        //
+        calcolaStrutturaXml(xml, ses);
     }
 
-    public void calcolaStrutturaXml(String xmlRich, VrsSessioneVers ses) {
+    private void calcolaStrutturaXml(String xmlRich, VrsSessioneVersKo ses) {
         String nmAmbiente = null;
         String nmEnte = null;
         String nmStrut = null;
         boolean setSessioneVerif = false;
-        if (xmlRich != null) {
+        if (StringUtils.isNotBlank(xmlRich)) {
             int ambStart = xmlRich.indexOf("<Ambiente>");
             int ambStop = xmlRich.indexOf("</Ambiente>");
             int enteStart = xmlRich.indexOf("<Ente>");
@@ -326,7 +357,7 @@ public class CalcoloMonitoraggioHelper {
             }
 
             if (nmAmbiente != null && nmEnte != null && nmStrut != null) {
-                OrgStrut strut = me.getStrutturaIfExist(nmAmbiente, nmEnte, nmStrut);
+                OrgStrut strut = getStrutturaIfExist(nmAmbiente, nmEnte, nmStrut);
                 if (strut != null) {
                     // Setto i valori ricavati nell'entity
                     ses.setNmAmbiente(nmAmbiente);
@@ -335,15 +366,15 @@ public class CalcoloMonitoraggioHelper {
                     ses.setOrgStrut(strut);
 
                     /*
-                     * Eseguo l'update della struttura anche nei record di VrsContenutoFile
+                     * Eseguo l'update della struttura anche nei record di VrsContenutoFileKo
                      */
-                    log.debug("Eseguo l'update della struttura anche nei record di VrsContenutoFile");
-                    me.updateVrsContenutoFile(ses.getIdSessioneVers(), strut.getIdStrut());
+                    log.debug("Eseguo l'update della struttura anche nei record di VrsContenutoFileKo");
+                    updateVrsContenutoFileKo(ses.getIdSessioneVersKo(), strut.getIdStrut());
 
                     // a questo punto calcolo anche la chiave unità documentaria
-                    me.calcolaChiave(xmlRich, ses);
-
-                    me.checkSessioneRisolta(ses);
+                    calcolaChiave(xmlRich, ses);
+                    //
+                    checkSessioneRisolta(ses);
                 } else {
                     setSessioneVerif = true;
                 }
@@ -359,14 +390,14 @@ public class CalcoloMonitoraggioHelper {
         }
     }
 
-    public OrgStrut getStrutturaIfExist(String nmAmbiente, String nmEnte, String nmStruttura) {
+    private OrgStrut getStrutturaIfExist(String nmAmbiente, String nmEnte, String nmStruttura) {
         Query query = entityManager
                 .createQuery("SELECT strut FROM OrgStrut strut JOIN strut.orgEnte ente JOIN ente.orgAmbiente ambiente "
                         + "WHERE ambiente.nmAmbiente = :ambiente AND ente.nmEnte = :ente AND strut.nmStrut = :strut");
         query.setParameter("ambiente", nmAmbiente);
         query.setParameter("ente", nmEnte);
         query.setParameter("strut", nmStruttura);
-        List<OrgStrut> resultList = (List<OrgStrut>) query.getResultList();
+        List<OrgStrut> resultList = query.getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
@@ -383,7 +414,7 @@ public class CalcoloMonitoraggioHelper {
         query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
         query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
         query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
-        List<AroUnitaDoc> resultList = (List<AroUnitaDoc>) query.getResultList();
+        List<AroUnitaDoc> resultList = query.getResultList();
         if (!resultList.isEmpty()) {
             return resultList.get(0);
         } else {
@@ -396,18 +427,15 @@ public class CalcoloMonitoraggioHelper {
      *
      * @param filtriSes
      *            filtro monitoraggio
-     * 
+     *
      * @return listaVersErr in errore
-     * 
-     * @throws EMFError
-     *             errore generico
      */
-    public List<Object[]> getSessioniSenzaChiave(MonitoraggioFiltriListaVersFallitiBean filtriSes) throws EMFError {
+    public List<Object[]> getSessioniKoSenzaChiave(MonitoraggioFiltriListaVersFallitiBean filtriSes) {
 
         String whereWord = "AND ";
         StringBuilder queryStr = new StringBuilder(
-                "SELECT u.idSessioneVers, v.blXml FROM MonVLisVersErrIam u, VrsXmlDatiSessioneVers v JOIN v.vrsDatiSessioneVers dv "
-                        + "WHERE u.idSessioneVers = dv.vrsSessioneVers.idSessioneVers ");
+                "SELECT u.idSessioneVers, v.blXml,v.idXmlDatiSessioneVersKo FROM MonVLisVersErrIam u, VrsXmlDatiSessioneVersKo v JOIN v.vrsDatiSessioneVersKo dv "
+                        + "WHERE u.idSessioneVers = dv.vrsSessioneVersKo.idSessioneVersKo ");
 
         // Inserimento nella query del filtro id ambiente
         BigDecimal idAmbiente = filtriSes.getIdAmbiente();
@@ -466,15 +494,14 @@ public class CalcoloMonitoraggioHelper {
             whereWord = "AND ";
         }
 
-        Date data_orario_da = (filtriSes.getGiornoVersDaValidato() != null ? filtriSes.getGiornoVersDaValidato()
-                : null);
-        Date data_orario_a = (filtriSes.getGiornoVersAValidato() != null ? filtriSes.getGiornoVersAValidato() : null);
+        Date dataOrarioDa = (filtriSes.getGiornoVersDaValidato() != null ? filtriSes.getGiornoVersDaValidato() : null);
+        Date dataOrarioA = (filtriSes.getGiornoVersAValidato() != null ? filtriSes.getGiornoVersAValidato() : null);
 
-        if (data_orario_da != null && data_orario_a != null) {
+        if (dataOrarioDa != null && dataOrarioA != null) {
             queryStr.append(whereWord).append("u.dtChiusura between :datada AND :dataa ");
-        } else if (data_orario_da != null) {
+        } else if (dataOrarioDa != null) {
             queryStr.append(whereWord).append("u.dtChiusura >= :datada ");
-        } else if (data_orario_a != null) {
+        } else if (dataOrarioA != null) {
             queryStr.append(whereWord).append("u.dtChiusura <= :dataa ");
         }
 
@@ -558,13 +585,13 @@ public class CalcoloMonitoraggioHelper {
             query.setParameter("dataa", dataDBa.getTime(), TemporalType.TIMESTAMP);
         }
 
-        if (data_orario_da != null && data_orario_a != null) {
-            query.setParameter("datada", data_orario_da, TemporalType.TIMESTAMP);
-            query.setParameter("dataa", data_orario_a, TemporalType.TIMESTAMP);
-        } else if (data_orario_da != null) {
-            query.setParameter("datada", data_orario_da, TemporalType.TIMESTAMP);
-        } else if (data_orario_a != null) {
-            query.setParameter("dataa", data_orario_a, TemporalType.TIMESTAMP);
+        if (dataOrarioDa != null && dataOrarioA != null) {
+            query.setParameter("datada", dataOrarioDa, TemporalType.TIMESTAMP);
+            query.setParameter("dataa", dataOrarioA, TemporalType.TIMESTAMP);
+        } else if (dataOrarioDa != null) {
+            query.setParameter("datada", dataOrarioDa, TemporalType.TIMESTAMP);
+        } else if (dataOrarioA != null) {
+            query.setParameter("dataa", dataOrarioA, TemporalType.TIMESTAMP);
         }
 
         if (flSessioneErrVerif != null) {
@@ -583,86 +610,75 @@ public class CalcoloMonitoraggioHelper {
             query.setParameter("idUsrIam", idUsrIam);
         }
 
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<Object[]> listaVersErr = query.getResultList();
-
-        return listaVersErr;
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void calcolaChiaveUdDoc(Object[] objTotSacer) {
-        VrsSessioneVers ses = entityManager.find(VrsSessioneVers.class, ((BigDecimal) objTotSacer[0]).longValue());
-        String xmlrich = (String) objTotSacer[1];
-
-        // aggiorno l'entity con i valori della chiave
-        // contaAggiornati = contaAggiornati +
-        me.calcolaChiave(xmlrich, ses);
-
-        me.checkSessioneRisolta(ses);
+        final List<Object[]> resultList = query.getResultList();
+        /*
+         * MEV 30369 - TODO da rimuovere quando viene completata la migrazione dei BLOB obj[0] = idSessioneVers obj[1] =
+         * blob xml obj[2] = idXmlDatiSessioneVersKo
+         */
+        return resultList.stream()
+                .map(obj -> new Object[] { obj[0], scegliXmlDatiSessioneVers((String) obj[1], (Long) obj[2]) })
+                .collect(Collectors.toList());
     }
 
     /*
-     * Eseguo l'update dell'idStruttura trovato nei record della sessione relativi a VrsContenutoFile
+     * Eseguo l'update dell'idStruttura trovato nei record della sessione relativi a VrsContenutoFileKo
      */
-    public void updateVrsContenutoFile(Long idSessione, Long idStrut) {
-        VrsSessioneVers ses = entityManager.find(VrsSessioneVers.class, idSessione);
-        for (VrsDatiSessioneVers datiSessioneVers : ses.getVrsDatiSessioneVers()) {
-            for (VrsFileSessione fileSessione : datiSessioneVers.getVrsFileSessiones()) {
-                for (VrsContenutoFile contenutoFile : fileSessione.getVrsContenutoFiles()) {
+    private void updateVrsContenutoFileKo(Long idSessioneKo, Long idStrut) {
+        VrsSessioneVersKo ses = entityManager.find(VrsSessioneVersKo.class, idSessioneKo);
+        for (VrsDatiSessioneVersKo datiSessioneVers : ses.getVrsDatiSessioneVersKos()) {
+            for (VrsFileSessioneKo fileSessione : datiSessioneVers.getVrsFileSessioneKos()) {
+                for (VrsContenutoFileKo contenutoFile : fileSessione.getVrsContenutoFileKos()) {
                     contenutoFile.setIdStrut(new BigDecimal(idStrut));
                 }
             }
         }
     }
 
-    public void checkSessioneRisolta(VrsSessioneVers ses) {
+    private void checkSessioneRisolta(VrsSessioneVersKo ses) {
         log.debug("Verifico se la sessione è risolta o no");
         if (ses.getTiSessioneVers().equals(Constants.TipoSessione.VERSAMENTO.name())) {
             if (ses.getOrgStrut() != null && ses.getCdRegistroKeyUnitaDoc() != null && ses.getAaKeyUnitaDoc() != null
                     && ses.getCdKeyUnitaDoc() != null) {
-                if (!me.isSessioneRisolta(ses.getIdSessioneVers(), ses.getTiSessioneVers())) {
-                    log.debug("Sessione non risolta - creo un record in VrsUnitaDocNonVers, se non esiste già");
+                if (!isSessioneRisolta(ses.getIdSessioneVersKo(), ses.getTiSessioneVers())) {
+                    // MEV 29971
+                    log.debug("Sessione non risolta - verifico se l'UD non è ancora stata versata in ARO_UNITA_DOC");
                     VrsUnitaDocNonVer udNonVer;
-                    if ((udNonVer = me.getVrsUnitaDocNonVers(ses.getOrgStrut().getIdStrut(),
-                            ses.getCdRegistroKeyUnitaDoc(), ses.getAaKeyUnitaDoc(), ses.getCdKeyUnitaDoc())) == null) {
-                        VrsUnitaDocNonVer v = new VrsUnitaDocNonVer();
-                        v.setOrgStrut(ses.getOrgStrut());
-                        v.setCdRegistroKeyUnitaDoc(ses.getCdRegistroKeyUnitaDoc());
-                        v.setAaKeyUnitaDoc(ses.getAaKeyUnitaDoc());
-                        v.setCdKeyUnitaDoc(ses.getCdKeyUnitaDoc());
-                        v.setDtFirstSesErr(ses.getDtApertura());
-                        v.setDtLastSesErr(ses.getDtApertura());
-                        v.setDsErrPrinc(ses.getDsErrPrinc());
-                        v.setCdErrPrinc(ses.getCdErrPrinc());
-                        entityManager.persist(v);
-                        entityManager.flush();
-                    } else {
+                    if (!udHelper.existAroUnitaDoc(BigDecimal.valueOf(ses.getOrgStrut().getIdStrut()),
+                            ses.getCdRegistroKeyUnitaDoc(), ses.getAaKeyUnitaDoc(), ses.getCdKeyUnitaDoc())) {
                         log.debug(
-                                "Sessione non risolta - esiste già un record, aggiorno la descrizione errore e la dtLastSessErr");
-                        if (ses.getDtApertura().before(udNonVer.getDtFirstSesErr())) {
-                            udNonVer.setDtFirstSesErr(ses.getDtApertura());
+                                "Sessione non risolta - UD non presente: creo un record in VrsUnitaDocNonVers, se non esiste già");
+                        if ((udNonVer = getVrsUnitaDocNonVers(ses.getOrgStrut().getIdStrut(),
+                                ses.getCdRegistroKeyUnitaDoc(), ses.getAaKeyUnitaDoc(),
+                                ses.getCdKeyUnitaDoc())) == null) {
+                            VrsUnitaDocNonVer v = new VrsUnitaDocNonVer();
+                            v.setOrgStrut(ses.getOrgStrut());
+                            v.setCdRegistroKeyUnitaDoc(ses.getCdRegistroKeyUnitaDoc());
+                            v.setAaKeyUnitaDoc(ses.getAaKeyUnitaDoc());
+                            v.setCdKeyUnitaDoc(ses.getCdKeyUnitaDoc());
+                            v.setDtFirstSesErr(ses.getDtApertura());
+                            v.setDtLastSesErr(ses.getDtApertura());
+                            v.setDsErrPrinc(ses.getDsErrPrinc());
+                            v.setCdErrPrinc(ses.getCdErrPrinc());
+                            entityManager.persist(v);
+                            entityManager.flush();
+                        } else {
+                            updateSessioneNonRisolta(ses, udNonVer);
                         }
-                        if (ses.getDtApertura().after(udNonVer.getDtLastSesErr())) {
-                            udNonVer.setDtLastSesErr(ses.getDtApertura());
-                        }
-                        if (ses.getDsErrPrinc() != null && !ses.getDsErrPrinc().equals(udNonVer.getDsErrPrinc())) {
-                            udNonVer.setDsErrPrinc("Diversi");
-                        }
-                        if (ses.getCdErrPrinc() != null && !ses.getCdErrPrinc().equals(udNonVer.getCdErrPrinc())) {
-                            udNonVer.setCdErrPrinc("Diversi");
-                        }
+                    } else if ((udNonVer = getVrsUnitaDocNonVers(ses.getOrgStrut().getIdStrut(),
+                            ses.getCdRegistroKeyUnitaDoc(), ses.getAaKeyUnitaDoc(), ses.getCdKeyUnitaDoc())) != null) {
+                        updateSessioneNonRisolta(ses, udNonVer);
                     }
+                    // end MEV 29971
                 }
             }
         } else if (ses.getTiSessioneVers().equals(Constants.TipoSessione.AGGIUNGI_DOCUMENTO.name())) {
             if (ses.getOrgStrut() != null && ses.getCdRegistroKeyUnitaDoc() != null && ses.getAaKeyUnitaDoc() != null
                     && ses.getCdKeyUnitaDoc() != null && ses.getCdKeyDocVers() != null) {
-                if (!me.isSessioneRisolta(ses.getIdSessioneVers(), ses.getTiSessioneVers())) {
+                if (!isSessioneRisolta(ses.getIdSessioneVersKo(), ses.getTiSessioneVers())) {
                     log.debug("Sessione non risolta - creo un record in VrsDocNonVers, se non esiste già");
                     VrsDocNonVer docNonVer;
-                    if ((docNonVer = me.existVrsDocNonVers(ses.getOrgStrut().getIdStrut(),
-                            ses.getCdRegistroKeyUnitaDoc(), ses.getAaKeyUnitaDoc(), ses.getCdKeyUnitaDoc(),
-                            ses.getCdKeyDocVers())) == null) {
+                    if ((docNonVer = existVrsDocNonVers(ses.getOrgStrut().getIdStrut(), ses.getCdRegistroKeyUnitaDoc(),
+                            ses.getAaKeyUnitaDoc(), ses.getCdKeyUnitaDoc(), ses.getCdKeyDocVers())) == null) {
                         VrsDocNonVer v = new VrsDocNonVer();
                         v.setOrgStrut(ses.getOrgStrut());
                         v.setCdRegistroKeyUnitaDoc(ses.getCdRegistroKeyUnitaDoc());
@@ -683,10 +699,10 @@ public class CalcoloMonitoraggioHelper {
                             docNonVer.setDtLastSesErr(ses.getDtApertura());
                         }
                         if (ses.getDsErrPrinc() != null && !ses.getDsErrPrinc().equals(docNonVer.getDsErrPrinc())) {
-                            docNonVer.setDsErrPrinc("Diversi");
+                            docNonVer.setDsErrPrinc(DIVERSI);
                         }
                         if (ses.getCdErrPrinc() != null && !ses.getCdErrPrinc().equals(docNonVer.getCdErrPrinc())) {
-                            docNonVer.setCdErrPrinc("Diversi");
+                            docNonVer.setCdErrPrinc(DIVERSI);
                         }
                     }
                 }
@@ -694,7 +710,23 @@ public class CalcoloMonitoraggioHelper {
         }
     }
 
-    public boolean isSessioneRisolta(long idSessioneVers, String tiSessioneVers) {
+    private void updateSessioneNonRisolta(VrsSessioneVersKo ses, VrsUnitaDocNonVer udNonVer) {
+        log.debug("Sessione non risolta - esiste già un record, aggiorno la descrizione errore e la dtLastSessErr");
+        if (ses.getDtApertura().before(udNonVer.getDtFirstSesErr())) {
+            udNonVer.setDtFirstSesErr(ses.getDtApertura());
+        }
+        if (ses.getDtApertura().after(udNonVer.getDtLastSesErr())) {
+            udNonVer.setDtLastSesErr(ses.getDtApertura());
+        }
+        if (ses.getDsErrPrinc() != null && !ses.getDsErrPrinc().equals(udNonVer.getDsErrPrinc())) {
+            udNonVer.setDsErrPrinc("Diversi");
+        }
+        if (ses.getCdErrPrinc() != null && !ses.getCdErrPrinc().equals(udNonVer.getCdErrPrinc())) {
+            udNonVer.setCdErrPrinc("Diversi");
+        }
+    }
+
+    private boolean isSessioneRisolta(long idSessioneVersKo, String tiSessioneVers) {
         boolean risolto = false;
         String table = null;
         if (tiSessioneVers.equals(Constants.TipoSessione.VERSAMENTO.name())) {
@@ -702,12 +734,12 @@ public class CalcoloMonitoraggioHelper {
         } else if (tiSessioneVers.equals(Constants.TipoSessione.AGGIUNGI_DOCUMENTO.name())) {
             table = "VrsVAggFallitiRisolto";
         }
-        String queryStr = "SELECT v FROM " + table + " v WHERE v.idSessioneVers = :idSessioneVers";
+        String queryStr = "SELECT v FROM " + table + " v WHERE v.idSessioneVers = :idSessioneVersKo";
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idSessioneVers", idSessioneVers);
+        query.setParameter("idSessioneVersKo", GenericHelper.bigDecimalFromLong(idSessioneVersKo));
 
-        List vrsList = query.getResultList();
+        List<?> vrsList = query.getResultList();
         if (vrsList != null && !vrsList.isEmpty()) {
             Object o = vrsList.get(0);
             if (o instanceof VrsVVersFallitiRisolto) {
@@ -721,8 +753,8 @@ public class CalcoloMonitoraggioHelper {
         return risolto;
     }
 
-    public VrsUnitaDocNonVer getVrsUnitaDocNonVers(long idStrut, String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc,
-            String cdKeyUnitaDoc) {
+    private VrsUnitaDocNonVer getVrsUnitaDocNonVers(long idStrut, String cdRegistroKeyUnitaDoc,
+            BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc) {
         Query query = entityManager.createQuery("SELECT v FROM VrsUnitaDocNonVer v "
                 + "WHERE v.orgStrut.idStrut = :idStrut " + "AND v.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc "
                 + "AND v.aaKeyUnitaDoc = :aaKeyUnitaDoc " + "AND v.cdKeyUnitaDoc = :cdKeyUnitaDoc");
@@ -730,10 +762,10 @@ public class CalcoloMonitoraggioHelper {
         query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
         query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
         query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
-        return (VrsUnitaDocNonVer) (query.getResultList().size() > 0 ? query.getResultList().get(0) : null);
+        return (VrsUnitaDocNonVer) (!query.getResultList().isEmpty() ? query.getResultList().get(0) : null);
     }
 
-    public VrsDocNonVer existVrsDocNonVers(long idStrut, String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc,
+    private VrsDocNonVer existVrsDocNonVers(long idStrut, String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc,
             String cdKeyUnitaDoc, String cdKeyDocVers) {
 
         Query query = entityManager.createQuery("SELECT v FROM VrsDocNonVer v " + "WHERE v.orgStrut.idStrut = :idStrut "
@@ -744,7 +776,7 @@ public class CalcoloMonitoraggioHelper {
         query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
         query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
         query.setParameter("cdKeyDocVers", cdKeyDocVers);
-        return (VrsDocNonVer) (query.getResultList().size() > 0 ? query.getResultList().get(0) : null);
+        return (VrsDocNonVer) (!query.getResultList().isEmpty() ? query.getResultList().get(0) : null);
 
     }
 }

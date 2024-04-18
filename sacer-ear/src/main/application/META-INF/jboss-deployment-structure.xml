@@ -2,35 +2,41 @@
     <deployment>
         <dependencies>
             <module name="deployment.XADisk.rar" export="true" />
-            <module name="org.eclipse.persistence" export="true" />
             <module name="javax.mail.api" export="true"/>
             <module name="org.slf4j" export="true"/>
-            <module name="org.slf4j.jcl-over-slf4j" export="true"/>
             <module name="org.apache.cxf" export="true" />
             <module name="org.apache.cxf.impl" export="true" />
             <module name="org.apache.ws.security" export="true" />
+            <module name="org.hibernate" export="true" />
+            <module name="org.dom4j" export="true" />            
         </dependencies>
         <exclusions>
             <module name="org.apache.xalan"/>
+            <module name="org.apache.xerces"/>            
             <module name="org.apache.commons.logging"/>
             <module name="org.apache.juddi.uddi-ws"/>
             <module name="org.joda.time"/>
+            <module name="org.opensaml"/>
         </exclusions> 
     </deployment>
     <sub-deployment name="sacer-jboss-ejb-${project.version}.jar">
         <exclusions>
             <module name="org.apache.xalan"/>
+            <module name="org.apache.xerces"/>  
             <module name="org.apache.commons.logging"/>
             <module name="org.apache.juddi.uddi-ws"/>
             <module name="org.joda.time"/>
+            <module name="org.opensaml"/>
         </exclusions> 
     </sub-deployment>
     <sub-deployment name="sacer-jboss-web-${project.version}.war">
         <!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
         <exclusions>
             <module name="org.apache.xalan"/>
+            <module name="org.apache.xerces"/>  
             <module name="org.apache.commons.logging"/>
             <module name="org.apache.juddi.uddi-ws"/>
+            <module name="org.opensaml"/>
         </exclusions>
     </sub-deployment>
 </jboss-deployment-structure>

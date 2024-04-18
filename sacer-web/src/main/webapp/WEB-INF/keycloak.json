@@ -1,0 +1,9 @@
+{
+  "realm" : "${sacer-keycloak_realm}",
+  "resource" : "${sacer-keycloak_resource}",
+  "auth-server-url" : "${sacer-keycloak_auth_server_url}",
+  "credentials" : {
+    "secret" : "${sacer-keycloak_secret}"
+  },
+  "bearer-only": true
+}

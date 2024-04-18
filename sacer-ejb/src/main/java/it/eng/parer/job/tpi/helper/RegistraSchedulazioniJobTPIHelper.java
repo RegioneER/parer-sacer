@@ -1,4 +1,39 @@
+/*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package it.eng.parer.job.tpi.helper;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.TpiDtSched;
 import it.eng.parer.entity.TpiErrArk;
@@ -9,26 +44,12 @@ import it.eng.tpi.bean.Job;
 import it.eng.tpi.bean.JobErrArk;
 import it.eng.tpi.bean.PathElab;
 import it.eng.tpi.bean.SchedulazioniJobTPIRisposta;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "RegistraSchedulazioniJobTPIHelper")
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -43,7 +64,7 @@ public class RegistraSchedulazioniJobTPIHelper {
     public Date findLastDaySched() {
         javax.persistence.Query query = entityManager.createQuery("SELECT t FROM TpiDtSched t order by t.dtSched desc");
         query.setMaxResults(1);
-        List<TpiDtSched> lstObjects = (List<TpiDtSched>) query.getResultList();
+        List<TpiDtSched> lstObjects = query.getResultList();
         return lstObjects.get(0).getDtSched();
     }
 
@@ -51,8 +72,7 @@ public class RegistraSchedulazioniJobTPIHelper {
         javax.persistence.Query query = entityManager
                 .createQuery("SELECT t FROM TpiDtSched t WHERE t.tiStatoDtSched = :status order by t.dtSched");
         query.setParameter("status", status);
-        List<TpiDtSched> lstObjects = (List<TpiDtSched>) query.getResultList();
-        return lstObjects;
+        return query.getResultList();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -68,9 +88,10 @@ public class RegistraSchedulazioniJobTPIHelper {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void handleResp(SchedulazioniJobTPIRisposta resp, Long idDtSched, Date currentDate) {
         TpiDtSched dtSched = entityManager.find(TpiDtSched.class, idDtSched);
-        dtSched.setFlMigrazInCorso(resp.getFlMigrazInCorso() ? JobConstants.DB_TRUE : JobConstants.DB_FALSE);
+        dtSched.setFlMigrazInCorso(
+                Boolean.TRUE.equals(resp.getFlMigrazInCorso()) ? JobConstants.DB_TRUE : JobConstants.DB_FALSE);
         dtSched.setFlPresenzaSecondario(
-                resp.getFlPresenzaSitoSecondario() ? JobConstants.DB_TRUE : JobConstants.DB_FALSE);
+                Boolean.TRUE.equals(resp.getFlPresenzaSitoSecondario()) ? JobConstants.DB_TRUE : JobConstants.DB_FALSE);
         // elimina i record di TPI_SCHED_JOB relativi alla data di schedulazione corrente
         me.deleteSchedJob(idDtSched);
         // ricrea i record
@@ -87,7 +108,7 @@ public class RegistraSchedulazioniJobTPIHelper {
         }
         entityManager.flush();
         if (dtSched.getDtSched().equals(currentDate)
-                && (resp.getListaJob().size() > 0 || resp.getListaJobSecondario().size() > 0)) {
+                && (!resp.getListaJob().isEmpty() || !resp.getListaJobSecondario().isEmpty())) {
             log.info("{} --- Imposto le date precedenti il {} a CONSOLIDATA",
                     JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI, dtSched.getDtSched());
             updateConsolidate(currentDate);
@@ -107,12 +128,12 @@ public class RegistraSchedulazioniJobTPIHelper {
         sched.setTiTpiSchedJob(tiTpiSchedJob);
         sched.setNmJob(job.getNmJob());
         sched.setDtSchedJob(job.getDtSchedJob());
-        sched.setFlJobOk(
-                job.getFlJobOk() != null ? (job.getFlJobOk() ? JobConstants.DB_TRUE : JobConstants.DB_FALSE) : null);
-        sched.setFlMigraz(job.getFlMigraz() ? JobConstants.DB_TRUE : JobConstants.DB_FALSE);
+        sched.setFlJobOk(job.getFlJobOk() != null
+                ? (Boolean.TRUE.equals(job.getFlJobOk()) ? JobConstants.DB_TRUE : JobConstants.DB_FALSE) : null);
+        sched.setFlMigraz(Boolean.TRUE.equals(job.getFlMigraz()) ? JobConstants.DB_TRUE : JobConstants.DB_FALSE);
         sched.setDlErrJob(job.getDlErrJob());
         sched.setDsDurataJob(job.getDsDurataJob());
-        sched.setNiOrdSchedJob(new BigDecimal(job.getNiOrdSchedJob().intValue()));
+        sched.setNiOrdSchedJob(new BigDecimal(job.getNiOrdSchedJob()));
 
         if (job.getListaErrArk() != null && !job.getListaErrArk().isEmpty()) {
             if (sched.getTpiErrArks() == null) {
@@ -122,7 +143,7 @@ public class RegistraSchedulazioniJobTPIHelper {
                 TpiErrArk error = new TpiErrArk();
                 error.setCdErrArk(jobErr.getCdErrArk());
                 error.setDlErrArk(jobErr.getDsErrArk());
-                error.setNiErrArk(new BigDecimal(jobErr.getNiErrArk().intValue()));
+                error.setNiErrArk(new BigDecimal(jobErr.getNiErrArk()));
                 error.setTiErrArk(jobErr.getTiErrArk());
                 error.setTpiSchedJob(sched);
                 sched.getTpiErrArks().add(error);

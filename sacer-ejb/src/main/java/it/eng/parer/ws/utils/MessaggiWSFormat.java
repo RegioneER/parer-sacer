@@ -1,13 +1,26 @@
 /*
+ * Engineering Ingegneria Informatica S.p.A.
+ *
+ * Copyright (C) 2023 Regione Emilia-Romagna
+ * <p/>
+ * This program is free software: you can redistribute it and/or modify it under the terms of
+ * the GNU Affero General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ * <p/>
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Affero General Public License along with this program.
+ * If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.eng.parer.ws.utils;
 
-import it.eng.parer.ws.dto.CSChiave;
-import it.eng.parer.ws.dto.CSChiaveFasc;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.Costanti.CategoriaDocumento;
 import java.text.MessageFormat;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
@@ -17,6 +30,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+
+import it.eng.parer.ws.dto.CSChiave;
+import it.eng.parer.ws.dto.CSChiaveFasc;
+import it.eng.parer.ws.dto.CSChiaveSerie;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.Costanti.CategoriaDocumento;
 
 /**
  *
@@ -370,6 +389,19 @@ public class MessaggiWSFormat {
 
     public static String formattaBaseUrnSerie(String versatore, String codiceSerie) {
         return MessageFormat.format(Costanti.UrnFormatter.URN_VERS_SERIE_FMT_STRING, versatore, codiceSerie);
+    }
+
+    public static String formattaUrnPartSerie(CSChiaveSerie chiave) {
+        return formattaUrnPartSerie(chiave, false, Costanti.UrnFormatter.SERIE_FMT_STRING);
+    }
+
+    public static String formattaUrnPartSerie(CSChiaveSerie chiave, boolean toNormalize, String fmtUsed) {
+        if (!toNormalize) {
+            return MessageFormat.format(fmtUsed, chiave.getAnno().toString(), chiave.getNumero());
+        } else {
+            return MessageFormat.format(fmtUsed, chiave.getAnno().toString(),
+                    MessaggiWSFormat.normalizingKey(chiave.getNumero()));
+        }
     }
 
     //
