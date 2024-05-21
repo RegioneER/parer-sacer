@@ -240,6 +240,14 @@ public class AroVRicRichAnnvrsRowBean extends BaseRow implements JEEBaseRowInter
         setObject("ni_item_non_annul", niItemNonAnnul);
     }
 
+    public String getTiAnnullamento() {
+        return getString("ti_annullamento");
+    }
+
+    public void setTiAnnullamento(String tiAnnullamento) {
+        setObject("ti_annullamento", tiAnnullamento);
+    }
+
     @Override
     public void entityToRowBean(Object obj) {
         AroVRicRichAnnvrs entity = (AroVRicRichAnnvrs) obj;
@@ -271,6 +279,7 @@ public class AroVRicRichAnnvrsRowBean extends BaseRow implements JEEBaseRowInter
         this.setNiItem(entity.getNiItem());
         this.setNiItemPing(entity.getNiItemPing());
         this.setNiItemNonAnnul(entity.getNiItemNonAnnul());
+        this.setTiAnnullamento(entity.getTiAnnullamento());
     }
 
     @Override
@@ -301,6 +310,7 @@ public class AroVRicRichAnnvrsRowBean extends BaseRow implements JEEBaseRowInter
         entity.setNiItem(this.getNiItem());
         entity.setNiItemPing(this.getNiItemPing());
         entity.setNiItemNonAnnul(this.getNiItemNonAnnul());
+        entity.setTiAnnullamento(this.getTiAnnullamento());
         return entity;
     }
 

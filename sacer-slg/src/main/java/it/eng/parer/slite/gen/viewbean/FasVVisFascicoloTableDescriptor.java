@@ -17,6 +17,7 @@
 
 package it.eng.parer.slite.gen.viewbean;
 
+import static it.eng.parer.slite.gen.tablebean.FasFascicoloTableDescriptor.COL_DS_INFO_CONSERVAZIONE;
 import it.eng.spagoLite.db.oracle.bean.column.ColumnDescriptor;
 import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 
@@ -130,6 +131,7 @@ public class FasVVisFascicoloTableDescriptor extends TableDescriptor {
     public static final String COL_DS_XSD_SPECIFICO = "ds_xsd_specifico";
     public static final String COL_CD_INDICE_CLASSIF = "cd_indice_classif";
     public static final String COL_DS_INDICE_CLASSIF = "ds_indice_classif";
+    public static final String COL_DS_INFO_CONSERVAZIONE = "ds_info_conservazione";
     public static final String COL_FL_DEFAULT_SPECIFICO = "fl_default_specifico";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
@@ -240,6 +242,7 @@ public class FasVVisFascicoloTableDescriptor extends TableDescriptor {
         map.put(COL_FL_DEFAULT_SPECIFICO, new ColumnDescriptor(COL_FL_DEFAULT_SPECIFICO, Types.VARCHAR, 1, true));
         map.put(COL_CD_INDICE_CLASSIF, new ColumnDescriptor(COL_CD_INDICE_CLASSIF, Types.VARCHAR, 100, true));
         map.put(COL_DS_INDICE_CLASSIF, new ColumnDescriptor(COL_DS_INDICE_CLASSIF, Types.VARCHAR, 254, true));
+        map.put(COL_DS_INFO_CONSERVAZIONE, new ColumnDescriptor(COL_DS_INFO_CONSERVAZIONE, Types.VARCHAR, 1024, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

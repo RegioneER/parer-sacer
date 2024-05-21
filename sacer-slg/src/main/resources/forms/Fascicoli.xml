@@ -188,6 +188,7 @@
         <Input Description="Procedimento amministrativo" Name="proc_ammin" Type="STRING"/>
         <Input Description="Tempo di conservazione" MaxLength="4" Name="ni_aa_conservazione" Type="INTEGER"/>
         <Input Description="Livello di riservatezza" Name="cd_livello_riserv" Type="STRING"/>
+        <TextArea Description="Note sul Piano di Conservazione" Name="ds_info_conservazione"  Rows="100" Cols="100" MaxLength="4000" Type="STRING" />
         <Input Description="Data versamento" Name="ts_ini_ses" Type="DATE"/>
         <Input Description="Urn" Name="urn_fas" Type="STRING"/>
         <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>

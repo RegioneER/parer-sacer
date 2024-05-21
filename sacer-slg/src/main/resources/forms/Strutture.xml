@@ -159,6 +159,8 @@
         <Input Type="STRING" Description="Ente" Name="nm_ente" />
         <Input Type="STRING" Description="Ambito territoriale" Name="ds_tree_cd_ambito_territ" />
         <Input Type="STRING" Description="Categoria ente" Name="cd_categ_ente" />
+        <CheckBox Type="STRING" Description="Parametri specifici struttura" Name="fl_parametri_strut" Readonly="true" />
+        <CheckBox Type="STRING" Description="Parametri specifici Tipo UD" Name="fl_parametri_tipo_ud" Readonly="true" />
         <CheckBox Type="STRING" Description="Partizionata" Name="fl_part_ok" Readonly="true" />
         <Link Name="dupStruttura" Description="" Type="STRING" Target="duplicaStrutturaOperation" Tooltip="Duplica struttura selezionata" isTargetList="false" VisibilityProperty="!fl_template"/>
         <Link Name="sostStruttura" Description="" Type="STRING" Target="sostituisciStrutturaOperation" Tooltip="Sostituisci struttura selezionata" isTargetList="false"/>
@@ -181,6 +183,7 @@
         <ComboBox Name="id_ente" Description="Ente" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
         <ComboBox Type="STRING" Description="Struttura Template" Name="fl_template" />
         <ComboBox Type="STRING" Description="Struttura partizionata" Name="fl_partiz" />
+        <ComboBox Type="STRING" Description="Parametri specifici" Name="fl_parametri_specifici" />
         <Input Type="STRING" Description="Sistema versante" Name="nm_sistema_versante" />
         <ComboBox Type="INTEGER" Description="Regione" Name="id_regione_stato"  Trigger="true" />
         <ComboBox Type="INTEGER" Description="Provincia" Name="id_provincia"  Trigger="true" />
@@ -264,6 +267,7 @@
         <Input Type="DATE" Description="Data primo versamento" Name="dt_first_vers" /> 
         <Input Type="DATE" Description="Data ultimo versamento" Name="dt_last_vers" /> 
         <Input Type="DATE" Description="Data disattivazione" Name="dt_soppres" /> 
+        <CheckBox Type="STRING" Description="Parametri specifici" Name="fl_parametri_tipo_ud" Readonly="true" />
     </List>
     
     <List Name="TipoDocList" Description="Tipi documento" filterValidRecords="true">     

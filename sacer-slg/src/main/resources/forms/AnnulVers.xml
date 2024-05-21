@@ -10,7 +10,8 @@
         <TextArea Name="nt_rich_annul_vers" Description="Motivazione" Type="STRING" Required="true" Rows="20" Cols="100" MaxLength="2000"/>
         <CheckBox Name="fl_immediata" Description="Annullamento immediato" Type="STRING" Required="true" Readonly="true"/>
         <ComboBox Name="fl_forza_annul" Description="Forza annullamento" Type="STRING" Required="true"/>
-        <Input Name="bl_file" Description="File con cui creare la richiesta" Type="FILE"/>
+        <Input Name="bl_file" Description="File con cui creare la richiesta" Type="FILE" Required="true"/>
+        <ComboBox Name="ti_annullamento" Description="Tipo annullamento" Type="STRING"/>
         
         <Button Name="creaRichAnnulVers" Description="Crea richiesta annullamento versamenti" Type="STRING"/>
     </Fields>
@@ -44,9 +45,10 @@
         <Input Name="cd_key_fascicolo" Description="Numero" Type="STRING"/>
                 
         <Input Name="ti_rich_annul_vers" Description="Tipo richiesta" Type="STRING" Hidden="true"/>
+        <ComboBox Name="ti_annullamento" Description="Tipo annullamento" Type="STRING"/>
         
         <Button Name="ricercaRichAnnulVers" Description="Ricerca richieste" Type="STRING"/>
-        <Button Name="creaRichAnnulImmediata" Description="Crea richiesta immediata" Type="STRING"/>
+        <Button Name="creaRichAnnulImmediata" Description="Crea richiesta di annullamento" Type="STRING"/>
     </Fields>
     
     <List Name="RichAnnulVersList" Description="Richieste annullamento versamenti">
@@ -55,6 +57,7 @@
         <Input Name="ds_rich_annul_vers" Description="Descrizione" Type="STRING"/>
         <Input Name="ti_stato_rich_annul_vers_cor" Description="Stato corrente" Type="STRING"/>
         <Input Name="dt_creazione_rich_annul_vers" Description="Data creazione" Type="DATE"/>
+        <Input Name="ti_annullamento" Description="Tipo annullamento" Type="STRING"/>
         <CheckBox Name="fl_immediata" Description="Annullamento immediato" Type="STRING" Readonly="true"/>
         <Input Name="ni_item" Description="Numero annullamenti" Type="INTEGER" GroupingDecimal="true"/>
         <Input Name="ni_item_ping" Description="Numero annullamenti da fare in PreIngest" Type="INTEGER" GroupingDecimal="true"/>

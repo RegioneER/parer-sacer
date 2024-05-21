@@ -16,6 +16,7 @@
     <Section Name="sRegola" Description="" Legend="Regola"  ShowButton="false" LoadOpened="true"/>
     <Section Name="sCampo" Description="" Legend="Campo"  ShowButton="false" LoadOpened="true"/>
     <Section Name="creaCriterioTipoUnitaDocSection" Description="" Legend="Criterio di raggruppamento sul tipo unità documentaria"  ShowButton="false" LoadOpened="true"/>
+    <Section Name="tempoConservazioneUnitaDocSection" Description="" Legend="Tempo di conservazione"  ShowButton="false" LoadOpened="true"/>
     <Section Name="creaCriterioRegistroSection" Description="" Legend="Criterio di raggruppamento sul registro"  ShowButton="false" LoadOpened="true"/>
     <Section Name="creaCriterioTipoDocSection" Description="" Legend="Criterio di raggruppamento sul tipo documento"  ShowButton="false" LoadOpened="true"/>
     <Section Name="ConfigSerieSection" Description="" Legend="Configurazione serie"  ShowButton="false" LoadOpened="true"/>
@@ -72,6 +73,9 @@
         <Input Name="cd_serie_da_creare" Description="Codice serie" Type="STRING" />
         <Input Name="ds_serie_da_creare" Description="Descrizione serie" Type="STRING" />
         <CheckBox Name="fl_tipo_serie_mult" Description="Tipo serie mult" Type="STRING" Hidden="true" Readonly="true"/>
+        <ComboBox  Type="STRING" Description="Tempo conservazione uniforme" Name="fl_conserv_uniforme" />
+        <ComboBox  Type="STRING" Description="Conservazione illimitata" Name="fl_conserv_illimitata" />
+        <Input Type="INTEGER" Description="Anni conservazione" Name="ni_aa_conserv" MaxLength="4" />
         <Button Name="duplicaRegistroButton" Description="Duplica registro" Type="STRING" />
         <Button Name="confermaSalvataggioRegistroUnitaDoc" Description="Conferma salvataggio registro (NB. METODO FAKE PER LA PROFILAZIONE)" Type="STRING" />        
         <Button Name="logEventi" Description="Log eventi" Type="STRING"/>
@@ -123,6 +127,10 @@
         <Input Name="ds_tipo_serie_da_creare" Description="Descrizione tipo serie" Type="STRING" />
         <Input Name="cd_serie_da_creare" Description="Codice serie" Type="STRING" />
         <Input Name="ds_serie_da_creare" Description="Descrizione serie" Type="STRING" />
+        
+        <ComboBox  Type="STRING" Description="Tempo conservazione uniforme" Name="fl_conserv_uniforme" />
+        <ComboBox  Type="STRING" Description="Conservazione illimitata" Name="fl_conserv_illimitata" />
+        <Input Type="INTEGER" Description="Anni conservazione" Name="ni_aa_conserv" MaxLength="4" />
 
         <Button Name="logEventiTipoUD" Description="Log eventi" Type="STRING"/>
     </Fields>
@@ -130,7 +138,7 @@
     <Fields Name="TipoUnitaDocCreazioneCriterio" Description="Flag creazione automatica criterio in Tipo Unita Doc" >
         <CheckBox  Type="STRING" Description="Creazione in automatico del criterio" Name="criterio_autom_tipo_ud" Readonly="false" />
         <Button Type="STRING" Description="Crea criterio raggruppamento standard" Name="creaCriterioRaggrStandardTipoUdButton" />
-    </Fields>
+    </Fields>        
 
     <!-- DETTAGLIO TIPOLOGIA DOCUMENTO -->
     <Fields Name="TipoDoc" Description="Tipo documento" >

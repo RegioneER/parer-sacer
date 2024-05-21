@@ -531,6 +531,9 @@ public class RegistroEjb {
             registroUnitaDoc.setCdSerieDaCreare(registroUnitaDocRowBean.getCdSerieDaCreare());
             registroUnitaDoc.setDsSerieDaCreare(registroUnitaDocRowBean.getDsSerieDaCreare());
             registroUnitaDoc.setNiAnniConserv(registroUnitaDocRowBean.getNiAnniConserv());
+            registroUnitaDoc.setNiAaConserv(registroUnitaDocRowBean.getNiAaConserv());
+            registroUnitaDoc.setFlConservIllimitata(registroUnitaDocRowBean.getFlConservIllimitata());
+            registroUnitaDoc.setFlConservUniforme(registroUnitaDocRowBean.getFlConservUniforme());
 
             tiOper = ApplEnum.TiOperReplic.MOD;
 

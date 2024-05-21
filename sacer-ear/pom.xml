@@ -4,7 +4,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>9.2.1-SNAPSHOT</version>
+        <version>9.3.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>sacer-jboss-ear</artifactId>    
@@ -115,10 +115,13 @@
             <artifactId>pdfbox</artifactId>
             <version>${pdf-box.version}</version>
         </dependency>
+        <!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
+<!--        
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>ooxml-schemas</artifactId>
         </dependency>
+-->
     </dependencies>   
     <build>
         <finalName>sacer-${project.version}</finalName>

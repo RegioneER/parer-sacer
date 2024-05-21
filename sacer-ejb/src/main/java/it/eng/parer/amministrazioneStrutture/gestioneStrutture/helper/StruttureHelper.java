@@ -121,13 +121,14 @@ public class StruttureHelper extends GenericHelper {
 
     public List<OrgVRicStrut> retrieveOrgVRicStrutList(String nmStrut, BigDecimal idEnte, BigDecimal idAmbiente,
             Boolean isTemplate, String partizionata, String nmSistemaVersante, BigDecimal idAmbitoTerrit,
-            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz, long idUserIamCor) {
+            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz,
+            String flParametriSpecifici, long idUserIamCor) {
 
         StringBuilder queryStr = new StringBuilder(
                 "SELECT DISTINCT new it.eng.parer.viewEntity.OrgVRicStrut(ricStrut.idAmbiente, "
                         + "ricStrut.nmAmbiente, ricStrut.idEnte, ricStrut.nmEnte, ricStrut.id.idStrut, ricStrut.nmStrut, ricStrut.dsStrut, "
                         + "ricStrut.flTemplate, ricStrut.flPartOk, ricStrut.idAmbitoTerrit, ricStrut.tiAmbitoTerrit, ricStrut.dsTreeCdAmbitoTerrit, "
-                        + "ricStrut.dsTreeIdAmbitoTerrit, ricStrut.idCategEnte, ricStrut.cdCategEnte) "
+                        + "ricStrut.dsTreeIdAmbitoTerrit, ricStrut.idCategEnte, ricStrut.cdCategEnte, ricStrut.flParametriStrut, ricStrut.flParametriTipoUd) "
                         + "FROM OrgVRicStrut ricStrut " + "WHERE ricStrut.id.idUserIamCor = :idUserIamCor ");
 
         if (StringUtils.isNotBlank(nmStrut)) {
@@ -159,6 +160,15 @@ public class StruttureHelper extends GenericHelper {
         }
         if (idEnteConvenz != null) {
             queryStr.append(" AND ricStrut.idEnteConvenz = :idEnteConvenz ");
+        }
+        if (StringUtils.isNotBlank(flParametriSpecifici)) {
+            if (flParametriSpecifici.equals("1")) {
+                queryStr.append(
+                        " AND (ricStrut.flParametriStrut = :flParametriSpecifici OR ricStrut.flParametriTipoUd = :flParametriSpecifici) ");
+            } else {
+                queryStr.append(
+                        " AND (ricStrut.flParametriStrut = :flParametriSpecifici AND ricStrut.flParametriTipoUd = :flParametriSpecifici) ");
+            }
         }
 
         queryStr.append(" ORDER BY ricStrut.nmStrut ASC, ricStrut.nmEnte ASC ");
@@ -194,6 +204,9 @@ public class StruttureHelper extends GenericHelper {
         }
         if (idEnteConvenz != null) {
             query.setParameter("idEnteConvenz", idEnteConvenz);
+        }
+        if (StringUtils.isNotBlank(flParametriSpecifici)) {
+            query.setParameter("flParametriSpecifici", flParametriSpecifici);
         }
 
         return query.getResultList();

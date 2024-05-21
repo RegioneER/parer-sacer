@@ -25,6 +25,8 @@
                 <sl:newLine />
                 <slf:lblField  name="<%=AnnulVersForm.CreazioneRichAnnulVers.FL_FORZA_ANNUL%>" width="w100" controlWidth="w30" labelWidth="w20" />
                 <sl:newLine />
+                <slf:lblField  name="<%=AnnulVersForm.CreazioneRichAnnulVers.TI_ANNULLAMENTO%>" width="w100" controlWidth="w30" labelWidth="w20" />
+                <sl:newLine />
                 <slf:lblField  name="<%=AnnulVersForm.CreazioneRichAnnulVers.BL_FILE%>" width="w100" controlWidth="w30" labelWidth="w20" />
                 <sl:newLine />
             </slf:fieldSet>

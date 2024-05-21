@@ -48,6 +48,7 @@ import it.eng.parer.ws.xml.esitoRichAnnullVers.EsitoRichiestaAnnullamentoVersame
 import it.eng.parer.ws.xml.esitoRichAnnullVers.RichiestaType;
 import it.eng.parer.ws.xml.esitoRichAnnullVers.VersatoreType;
 import it.eng.parer.ws.xml.richAnnullVers.RichiestaAnnullamentoVersamenti;
+import it.eng.parer.ws.xml.richAnnullVers.TipoAnnullamentoType;
 import it.eng.parer.ws.xml.richAnnullVers.TipoVersamentoType;
 import it.eng.parer.ws.xml.richAnnullVers.VersamentoDaAnnullareType;
 
@@ -214,6 +215,24 @@ public class InvioRichiestaAnnullamentoVersamentiParser {
             }
         }
 
+        // // posso usare il tag Utente?
+        // if (rispostaWs.getSeverity() == SeverityEnum.OK
+        // && !richiesta.getVersatore().getUserID().contains(Costanti.ModificatoriWS.TAG_REC_USR_DOC_COMP)
+        // && parsedUnitaDoc.getVersatore().getUtente() != null
+        // && !parsedUnitaDoc.getVersatore().getUtente().isEmpty()) {
+        // rispostaWs.setSeverity(SeverityEnum.ERROR);
+        // rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.XSD_011_003, "<Utente>");
+        // myEsito.getEsitoChiamataWS().setVersioneWSCorretta(ECEsitoPosNegType.NEGATIVO);
+        // }
+        //
+        // // posso usare il tag Utente?
+        // if (rispostaWsFasc.getSeverity() == SeverityEnum.OK && parsedFasc.getVersatore().getUtente() != null
+        // && !parsedFasc.getVersatore().getUtente().isEmpty()) {
+        // rispostaWsFasc.setSeverity(SeverityEnum.ERROR);
+        // rispostaWsFasc.setEsitoWsErrBundle(MessaggiWSBundle.XSD_011_003, "<Utente>");
+        // myEsito.getEsitoChiamataWS().setVersioneWSCorretta(ECEsitoPosNegType.NEGATIVO);
+        // }
+
         // MEV#26446
         /* CONTROLLO TAG TIPOVERSAMENTO (RICH_ANN_VERS_017) */
         if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
@@ -302,6 +321,30 @@ public class InvioRichiestaAnnullamentoVersamentiParser {
         }
         // end MEV#26446
 
+        // MEV 30721
+
+        if (rispostaWs.getSeverity() != SeverityEnum.ERROR
+                && !ravExt.getModificatoriWS().contains(Costanti.ModificatoriWS.TAG_ANNUL_TIPO_ANNUL)
+                && (ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getTipoAnnullamento() != null)) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_024,
+                    MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_024));
+        }
+
+        if (rispostaWs.getSeverity() != SeverityEnum.ERROR
+                && ravExt.getModificatoriWS().contains(Costanti.ModificatoriWS.TAG_ANNUL_TIPO_ANNUL)) {
+            VersamentoDaAnnullareType versamentoDaAnnullare = richiesta.getVersamentiDaAnnullare()
+                    .getVersamentoDaAnnullare().stream().findFirst().get();
+            if (versamentoDaAnnullare.getTipoVersamento().value().equals(TipoVersamentoType.FASCICOLO.value())
+                    && ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getTipoAnnullamento()
+                            .equals(TipoAnnullamentoType.CANCELLAZIONE)) {
+                rispostaWs.setSeverity(SeverityEnum.ERROR);
+                rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_025,
+                        MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_025));
+            }
+
+        }
+
         // RICH_ANNUL_VERS_004
         // RICH_ANNUL_VERS_005
         // RICH_ANNUL_VERS_006
@@ -383,6 +426,11 @@ public class InvioRichiestaAnnullamentoVersamentiParser {
                 .setStruttura(ravExt.getRichiestaAnnullamentoVersamenti().getVersatore().getStruttura());
         rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getVersatore()
                 .setUserID(ravExt.getRichiestaAnnullamentoVersamenti().getVersatore().getUserID());
+        if (ravExt.getRichiestaAnnullamentoVersamenti().getVersatore().getUtente() != null
+                && !ravExt.getRichiestaAnnullamentoVersamenti().getVersatore().getUtente().isEmpty()) {
+            rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getVersatore()
+                    .setUtente(ravExt.getRichiestaAnnullamentoVersamenti().getVersatore().getUtente());
+        }
         rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().setRichiesta(new RichiestaType());
         rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getRichiesta()
                 .setCodice(ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getCodice());

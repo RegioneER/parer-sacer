@@ -38,6 +38,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.xml.bind.Marshaller;
 
+import it.eng.parer.entity.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
@@ -53,21 +54,6 @@ import org.slf4j.LoggerFactory;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.AroFileVerIndiceAipUd;
-import it.eng.parer.entity.AroUdAppartVerSerie;
-import it.eng.parer.entity.AroUrnVerIndiceAipUd;
-import it.eng.parer.entity.AroVerIndiceAipUd;
-import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.ElvFileElencoVer;
-import it.eng.parer.entity.ElvFileElencoVersFasc;
-import it.eng.parer.entity.FasFileMetaVerAipFasc;
-import it.eng.parer.entity.FasUnitaDocFascicolo;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.VolFileVolumeConserv;
-import it.eng.parer.entity.VolVolumeConserv;
-import it.eng.parer.entity.VrsSessioneVers;
-import it.eng.parer.entity.VrsUrnXmlSessioneVers;
-import it.eng.parer.entity.VrsXmlDatiSessioneVers;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
 import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
@@ -2016,10 +2002,34 @@ public class RecuperoZipGen {
         return rispostaControlli;
     }
 
+    // MEV#29089
+    private RispostaControlli aggiungiXmlUpdUdDaObjectStorageOnMap(List<AroXmlUpdUnitaDoc> aroXmlUpdUnitaDocs) {
+        // filter
+        RispostaControlli rispostaControlli = controlliRecupero.findAllUpdUnitaDocByXmlUpdUnitaDoc(aroXmlUpdUnitaDocs);
+        if (rispostaControlli.isrBoolean()) {
+            Map<Long, Map<String, String>> xmlMapByAroUpdUnitaDoc = new HashMap<>();
+
+            List<AroUpdUnitaDoc> aroUpdUnitaDocs = (List<AroUpdUnitaDoc>) rispostaControlli.getrObject();
+
+            // filter on Constants.TipoSessione.VERSAMENTO
+            aroUpdUnitaDocs.stream().forEach(upd ->
+            // put on map
+            xmlMapByAroUpdUnitaDoc.put(upd.getIdUpdUnitaDoc(),
+                    objectStorageService.getObjectXmlVersAggMd(upd.getIdUpdUnitaDoc())));
+
+            // OK
+            rispostaControlli.setrBoolean(true);
+            rispostaControlli.setrObject(xmlMapByAroUpdUnitaDoc);
+        }
+        return rispostaControlli;
+    }
+    // end MEV#29089
+
     // EVO#20972
     private void aggiungiXMLVersamentoUpd(ZipArchiveOutputStream zipOutputStream, RecuperoExt recupero,
             RispostaWSRecupero rispostaWs) throws IOException {
         List<AroXmlUpdUnitaDoc> lstVrsXmlUpd = null;
+        Map<Long, Map<String, String>> xmlVersamentoUpdOs = new HashMap<>();
         String fileName;
         RispostaControlli rispostaControlli = new RispostaControlli();
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
@@ -2034,6 +2044,21 @@ public class RecuperoZipGen {
                 lstVrsXmlUpd = (List<AroXmlUpdUnitaDoc>) rispostaControlli.getrObject();
             }
         }
+
+        // load from O.S.
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            if (lstVrsXmlUpd != null && !lstVrsXmlUpd.isEmpty()) {
+                rispostaControlli = aggiungiXmlUpdUdDaObjectStorageOnMap(lstVrsXmlUpd);
+
+                if (!rispostaControlli.isrBoolean()) {
+                    setRispostaWsError(rispostaWs, rispostaControlli);
+                    rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                } else {
+                    xmlVersamentoUpdOs = (Map<Long, Map<String, String>>) rispostaControlli.getrObject();
+                }
+            }
+        }
+        //
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             if (lstVrsXmlUpd != null && !lstVrsXmlUpd.isEmpty()) {
@@ -2073,7 +2098,26 @@ public class RecuperoZipGen {
                             ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(pathSip);
                             this.filterZipEntry(zipArchiveEntry);
                             zipOutputStream.putArchiveEntry(zipArchiveEntry);
-                            zipOutputStream.write(tmpXmlUpd.getBlXml().getBytes(StandardCharsets.UTF_8));
+
+                            // MEV#29089
+                            // load XML from O.S. vs DB
+                            rispostaControlli = controlliRecupero.findIdUpdUnitaDocByXmlUpdUnitaDoc(tmpXmlUpd);
+                            if (!rispostaControlli.isrBoolean()) {
+                                setRispostaWsError(rispostaWs, rispostaControlli);
+                                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+                            } else {
+                                long idUpdUnitaDoc = rispostaControlli.getrLong();
+                                // verify if xml on O.S.
+                                if (xmlVersamentoUpdOs.containsKey(idUpdUnitaDoc) && tmpXmlUpd.getBlXml() == null) {
+                                    Map<String, String> allXml = xmlVersamentoUpdOs.get(idUpdUnitaDoc);
+                                    String blXml = allXml.get(tmpXmlUpd.getTiXmlUpdUnitaDoc().name());
+                                    zipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                } else {
+                                    zipOutputStream.write(tmpXmlUpd.getBlXml().getBytes(StandardCharsets.UTF_8));
+                                }
+                            }
+                            // end MEV#29089
+
                             closeEntry = true;
                         }
                     }

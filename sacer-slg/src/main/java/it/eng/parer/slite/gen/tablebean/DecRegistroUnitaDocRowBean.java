@@ -122,6 +122,7 @@ public class DecRegistroUnitaDocRowBean extends BaseRow implements JEEBaseRowInt
         setObject("fl_crea_serie", flCreaSerie);
     }
 
+    //////
     public BigDecimal getNiAnniConserv() {
         return getBigDecimal("ni_anni_conserv");
     }
@@ -186,6 +187,32 @@ public class DecRegistroUnitaDocRowBean extends BaseRow implements JEEBaseRowInt
         setObject("fl_tipo_serie_mult", flTipoSerieMult);
     }
 
+    //
+    public BigDecimal getNiAaConserv() {
+        return getBigDecimal("ni_aa_conserv");
+    }
+
+    public void setNiAaConserv(BigDecimal niAaConserv) {
+        setObject("ni_aa_conserv", niAaConserv);
+    }
+    //
+
+    public String getFlConservIllimitata() {
+        return getString("fl_conserv_illimitata");
+    }
+
+    public void setFlConservIllimitata(String flConservIllimitata) {
+        setObject("fl_conserv_illimitata", flConservIllimitata);
+    }
+
+    public String getFlConservUniforme() {
+        return getString("fl_conserv_uniforme");
+    }
+
+    public void setFlConservUniforme(String flConservUniforme) {
+        setObject("fl_conserv_uniforme", flConservUniforme);
+    }
+
     @Override
     public void entityToRowBean(Object obj) {
         DecRegistroUnitaDoc entity = (DecRegistroUnitaDoc) obj;
@@ -214,6 +241,9 @@ public class DecRegistroUnitaDocRowBean extends BaseRow implements JEEBaseRowInt
         this.setDsTipoSerieDaCreare(entity.getDsTipoSerieDaCreare());
         this.setCdSerieDaCreare(entity.getCdSerieDaCreare());
         this.setDsSerieDaCreare(entity.getDsSerieDaCreare());
+        this.setNiAaConserv(entity.getNiAaConserv());
+        this.setFlConservIllimitata(entity.getFlConservIllimitata());
+        this.setFlConservUniforme(entity.getFlConservUniforme());
 
         if (entity.getDecModelloTipoSerie() != null) {
             this.setIdModelloTipoSerie(new BigDecimal(entity.getDecModelloTipoSerie().getIdModelloTipoSerie()));
@@ -247,6 +277,9 @@ public class DecRegistroUnitaDocRowBean extends BaseRow implements JEEBaseRowInt
         entity.setDsTipoSerieDaCreare(this.getDsTipoSerieDaCreare());
         entity.setCdSerieDaCreare(this.getCdSerieDaCreare());
         entity.setDsSerieDaCreare(this.getDsSerieDaCreare());
+        entity.setNiAaConserv(this.getNiAaConserv());
+        entity.setFlConservIllimitata(this.getFlConservIllimitata());
+        entity.setFlConservUniforme(this.getFlConservUniforme());
         if (this.getIdModelloTipoSerie() != null) {
             if (entity.getDecModelloTipoSerie() == null) {
                 entity.setDecModelloTipoSerie(new DecModelloTipoSerie());

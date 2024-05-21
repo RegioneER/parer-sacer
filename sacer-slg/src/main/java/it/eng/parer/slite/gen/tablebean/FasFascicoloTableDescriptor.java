@@ -56,6 +56,7 @@ public class FasFascicoloTableDescriptor extends TableDescriptor {
     public static final String COL_FL_FORZA_CONTR_COLLEG = "fl_forza_contr_colleg";
     public static final String COL_CD_INDICE_CLASSIF = "cd_indice_classif";
     public static final String COL_DS_INDICE_CLASSIF = "ds_indice_classif";
+    public static final String COL_DS_INFO_CONSERVAZIONE = "ds_info_conservazione";
     public static final String COL_ID_VOCE_TITOL = "id_voce_titol";
     public static final String COL_DS_OGGETTO_FASCICOLO = "ds_oggetto_fascicolo";
     public static final String COL_DT_APE_FASCICOLO = "dt_ape_fascicolo";
@@ -103,6 +104,7 @@ public class FasFascicoloTableDescriptor extends TableDescriptor {
         map.put(COL_FL_FORZA_CONTR_COLLEG, new ColumnDescriptor(COL_FL_FORZA_CONTR_COLLEG, Types.VARCHAR, 1, false));
         map.put(COL_CD_INDICE_CLASSIF, new ColumnDescriptor(COL_CD_INDICE_CLASSIF, Types.VARCHAR, 100, false));
         map.put(COL_DS_INDICE_CLASSIF, new ColumnDescriptor(COL_DS_INDICE_CLASSIF, Types.VARCHAR, 254, false));
+        map.put(COL_DS_INFO_CONSERVAZIONE, new ColumnDescriptor(COL_DS_INFO_CONSERVAZIONE, Types.VARCHAR, 1024, false));
         map.put(COL_ID_VOCE_TITOL, new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, false));
         map.put(COL_DS_OGGETTO_FASCICOLO, new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO, Types.VARCHAR, 4000, false));
         map.put(COL_DT_APE_FASCICOLO, new ColumnDescriptor(COL_DT_APE_FASCICOLO, Types.TIMESTAMP, 7, false));

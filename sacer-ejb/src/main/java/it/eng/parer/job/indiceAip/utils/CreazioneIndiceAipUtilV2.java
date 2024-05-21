@@ -106,6 +106,7 @@ import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.job.dto.SessioneVersamentoExt;
 import it.eng.parer.job.dto.SessioneVersamentoExt.DatiXml;
 import it.eng.parer.job.indiceAip.helper.ControlliRecIndiceAip;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.viewEntity.AroVLisaipudSistemaMigraz;
 import it.eng.parer.viewEntity.AroVVisCompAip;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
@@ -199,6 +200,8 @@ public class CreazioneIndiceAipUtilV2 {
     FormatoFileDocHelper formatoFileDocHelper = null;
     @EJB
     private RecuperoZipGen zipGen;
+    @EJB
+    private ObjectStorageService objectStorageService;
 
     public CreazioneIndiceAipUtilV2() {
         rispostaControlli = new RispostaControlli();
@@ -1921,6 +1924,16 @@ public class CreazioneIndiceAipUtilV2 {
                     // dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     String blXmlDatiSpec = tmpAroVersIniDatiSpec.get(0).getBlXmlDatiSpec();
+                    // MEV#29089
+                    if (StringUtils.isBlank(blXmlDatiSpec)) {
+                        Map<String, String> xmls = objectStorageService.getObjectXmlVersIniDatiSpecAggMd(idEntitySacer,
+                                tipoEntitySacer);
+                        // recupero oggetti se presenti su O.S
+                        if (!xmls.isEmpty()) {
+                            blXmlDatiSpec = xmls.get(tipoUsoAttr.name());
+                        }
+                    }
+                    // end MEV#29089
                     byte[] xml = blXmlDatiSpec.getBytes(StandardCharsets.UTF_8);
                     InputSource is = new InputSource(new StringReader(new String(xml, StandardCharsets.UTF_8)));
                     Document docxml = db.parse(is);
@@ -1976,6 +1989,16 @@ public class CreazioneIndiceAipUtilV2 {
                     // dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
                     DocumentBuilder db = dbf.newDocumentBuilder();
                     String blXmlDatiSpec = tmpAroUpdDatiSpecUnitaDoc.get(0).getBlXmlDatiSpec();
+                    // MEV#29089
+                    if (StringUtils.isBlank(blXmlDatiSpec)) {
+                        Map<String, String> xmls = objectStorageService.getObjectXmlUpdDatiSpecAggMd(idEntitySacerUpd,
+                                tipoEntitySacer);
+                        // recupero oggetti se presenti su O.S
+                        if (!xmls.isEmpty()) {
+                            blXmlDatiSpec = xmls.get(tipoUsoAttr.name());
+                        }
+                    }
+                    // end MEV#29089
                     byte[] xml = blXmlDatiSpec.getBytes(StandardCharsets.UTF_8);
                     InputSource is = new InputSource(new StringReader(new String(xml, StandardCharsets.UTF_8)));
                     Document docxml = db.parse(is);

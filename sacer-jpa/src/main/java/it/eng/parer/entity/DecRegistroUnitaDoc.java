@@ -108,6 +108,12 @@ public class DecRegistroUnitaDoc implements Serializable {
 
     private List<DecTipoStrutUdReg> decTipoStrutUdRegs = new ArrayList<>();
 
+    private BigDecimal niAaConserv;
+
+    private String flConservUniforme;
+
+    private String flConservIllimitata;
+
     public DecRegistroUnitaDoc() {/* Hibernate */
     }
 
@@ -362,5 +368,33 @@ public class DecRegistroUnitaDoc implements Serializable {
 
     public void setDecTipoStrutUdRegs(List<DecTipoStrutUdReg> decTipoStrutUdRegs) {
         this.decTipoStrutUdRegs = decTipoStrutUdRegs;
+    }
+
+    @Column(name = "NI_AA_CONSERV")
+    public BigDecimal getNiAaConserv() {
+        return this.niAaConserv;
+    }
+
+    public void setNiAaConserv(BigDecimal niAaConserv) {
+        this.niAaConserv = niAaConserv;
+    }
+
+    @Column(name = "FL_CONSERV_UNIFORME", columnDefinition = "char(1)")
+    public String getFlConservUniforme() {
+        return this.flConservUniforme;
+    }
+
+    public void setFlConservUniforme(String flConservUniforme) {
+        this.flConservUniforme = flConservUniforme;
+    }
+
+    @Column(name = "FL_CONSERV_ILLIMITATA", columnDefinition = "char(1)")
+    public String getFlConservIllimitata() {
+        return this.flConservIllimitata;
+    }
+
+    public void setFlConservIllimitata(String flConservIllimitata) {
+        this.flConservIllimitata = flConservIllimitata;
+
     }
 }

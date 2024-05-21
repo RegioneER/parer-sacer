@@ -47,6 +47,7 @@ import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.serie.dto.RegistroTipoUnitaDoc;
 import it.eng.parer.serie.ejb.SerieEjb;
 import it.eng.parer.slite.gen.Application;
@@ -250,12 +251,15 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     private UniformResourceNameUtilHelper urnHelper;
     @EJB(mappedName = "java:app/Parer-ejb/RecuperoDocumento")
     private RecuperoDocumento recuperoDocumento;
+    @EJB(mappedName = "java:app/Parer-ejb/ObjectStorageService")
+    private ObjectStorageService objectStorageService;
 
     private DecodeMap mappaTipoUD;
     private DecodeMap mappaRegistro;
     private DecodeMap mappaTipoDoc;
     private DecodeMap mappaSisMig;
     private DecodeMap mappaTipoFasc;
+    private DecodeMap mappaTipoAnnullamento;
 
     private BigDecimal getIdStrut() {
         return getUser().getIdOrganizzazioneFoglia();
@@ -607,6 +611,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getFiltriUnitaDocumentarieAnnullate().getId_tipo_unita_doc().setDecodeMap(mappaTipoUD);
         getForm().getFiltriUnitaDocumentarieAnnullate().getId_tipo_doc().setDecodeMap(mappaTipoDoc);
         getForm().getFiltriUnitaDocumentarieAnnullate().getCd_registro_key_unita_doc().setDecodeMap(mappaRegistro);
+        getForm().getFiltriUnitaDocumentarieAnnullate().getTi_annullamento().setDecodeMap(mappaTipoAnnullamento);
 
         // Imposto i filtri in edit mode
         getForm().getFiltriUnitaDocumentarieAnnullate().setEditMode();
@@ -1734,6 +1739,10 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                             getForm().getAggiornamentiDettaglioTabs().getXMLRichiestaUpd().setHidden(false);
                             getForm().getAggiornamentiDettaglioTabs().getXMLRispostaUpd().setHidden(false);
                         }
+
+                        // MEV#29089
+                        addXmlVersUpdFromOStoAroVVisUpdUnitaDocBean(aggiornamentoAaaRB);
+                        // end MEV#29089
                     }
                 }
 
@@ -1810,6 +1819,42 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             }
         }
     }
+
+    // MEV#29089
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento dell'aggiornamento metadati sia l'object
+     * storage (gestito dal parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            AroVVisUpdUnitaDocRowBean
+     */
+    private void addXmlVersUpdFromOStoAroVVisUpdUnitaDocBean(AroVVisUpdUnitaDocRowBean riga) {
+        boolean xmlVersVuoti = riga.getBlXmlRich() == null && riga.getBlXmlRisp() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (xmlVersVuoti) {
+            Map<String, String> xmls = objectStorageService.getObjectXmlVersAggMd(riga.getIdUpdUnitaDoc().longValue());
+            // recupero oggetti da O.S. (se presenti)
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                getForm().getAggiornamentiMetadatiUDDetail().getBl_xml_rich()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA)));
+                getForm().getAggiornamentiMetadatiUDDetail().getBl_xml_risp()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA)));
+                getForm().getAggiornamentiMetadatiUDDetail().getScarica_xml_upd().setDisableHourGlass(true);
+                getForm().getAggiornamentiMetadatiUDDetail().getScarica_xml_upd().setEditMode();
+                getForm().getAggiornamentiDettaglioTabs().getXMLRichiestaUpd().setHidden(false);
+                getForm().getAggiornamentiDettaglioTabs().getXMLRispostaUpd().setHidden(false);
+            }
+        }
+    }
+    // end MEV#29089
 
     /**
      * Metodo di caricamento dell'unitÃ documentaria in base al suo id
@@ -2644,6 +2689,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         tmpTableBeanTipoFasc.sort();
         mappaTipoFasc = new DecodeMap();
         mappaTipoFasc.populatedMap(tmpTableBeanTipoFasc, "id_tipo_fascicolo", "nm_tipo_fascicolo");
+        // Setto i valori della combo TIPO ANNULLAMENTO
+        mappaTipoAnnullamento = ComboGetter.getMappaSortedGenericEnum("ti_annullamento",
+                CostantiDB.TipoAnnullamento.values());
     }
 
     // Gestione DOCUMENTI DETTAGLIO TABS
@@ -4733,6 +4781,21 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // Ricavo i tre CLOB, che sono delle stringone
             String xmlRichClob = updRB.getBlXmlRich();
             String xmlRispClob = updRB.getBlXmlRisp();
+
+            // MEV#29089
+            boolean xmlVuoti = xmlRichClob == null && xmlRispClob == null;
+            // verify if xml on O.S.
+            if (xmlVuoti) {
+                // recupero oggetti da O.S. (se presenti)
+                Map<String, String> xmlFiles = objectStorageService
+                        .getObjectXmlVersAggMd(updRB.getIdUpdUnitaDoc().longValue());
+
+                if (!xmlFiles.isEmpty()) {
+                    xmlRichClob = xmlFiles.get(CostantiDB.TipiXmlDati.RICHIESTA);
+                    xmlRispClob = xmlFiles.get(CostantiDB.TipiXmlDati.RISPOSTA);
+                }
+            }
+            // end MEV#29089
 
             // Inserisco nello zippone il CLOB dell'xml di richiesta dell'aggiornamento
             if (xmlRichClob != null && !xmlRichClob.isEmpty()) {

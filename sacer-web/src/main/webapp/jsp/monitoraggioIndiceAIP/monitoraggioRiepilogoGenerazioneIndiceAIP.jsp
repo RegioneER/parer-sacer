@@ -8,7 +8,7 @@
             $(document).ready(function () {
                 $('#MonitoraggioIndiceAIPList tr').each(
                         function (index) {
-                            var elemento = $(this).find('td:eq(2), td:eq(3), td:eq(4)');
+                            var elemento = $(this).find('td:eq(2), td:eq(3), td:eq(4), td:eq(5)');
                             elemento.css({"text-align": "right"});
                             
                             // Mostra/nascondi icona link ud
@@ -63,7 +63,15 @@
                 <sl:newLine />
                 <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.ID_STRUT%>" colSpan="2" />
                 <sl:newLine />               
-                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.NI_GG_STATO%>" colSpan="1" />              
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.AA_KEY_UNITA_DOC%>" colSpan="1"/>              
+                <sl:newLine />               
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.TI_STATO_ELENCO%>" colSpan="2" />              
+                <sl:newLine />               
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.DT_CREAZIONE_ELENCO_DA%>" colSpan="2" />                              
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.DT_CREAZIONE_ELENCO_A%>" colSpan="2" />              
+                <sl:newLine />               
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.NI_GG_STATO_DA%>" colSpan="2" />                              
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriMonitoraggioIndiceAIP.NI_GG_STATO_A%>" colSpan="2" />              
             </slf:fieldSet>
             <sl:newLine skipLine="true" />
 

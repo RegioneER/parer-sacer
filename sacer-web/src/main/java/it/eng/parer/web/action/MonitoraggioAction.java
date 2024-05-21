@@ -512,7 +512,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Range di date
         getForm().getFiltriConsistenzaSacer().getDt_rif_da().setValue("01/12/2011");
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -1);
+        cal.add(Calendar.DATE, -2);
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getFiltriConsistenzaSacer().getDt_rif_a().setValue(df.format(cal.getTime()));
 
@@ -7342,8 +7342,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Verifico i campi e le date
         if (filtri.validate(getMessageBox())) {
             MonitoraggioValidator validatore = new MonitoraggioValidator(getMessageBox());
-            validatore.validaDateCalcoloContenutoSacer(filtri.getDt_rif_da().parse(), filtri.getDt_rif_a().parse());
-            validatore.validaDataCalcoloConsistenzaSacer(filtri.getDt_rif_da().parse());
+            validatore.validaDataCalcoloConsistenzaSacer(filtri.getDt_rif_da().parse(), filtri.getDt_rif_a().parse());
             if (!getMessageBox().hasError()) {
                 Object[] risultato = monitoraggioHelper.getListaTotaliConsistenzaComp(filtri);
                 BaseTableInterface<?> totSacer = (BaseTableInterface<?>) risultato[0];
@@ -7770,7 +7769,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         CTTblWidth cellWidth = ctTcPr.addNewTcW();
                         cellWidth.setType(oldRow.getCell(i).getCTTc().getTcPr().getTcW().getType()); // sets type of
                         // width
-                        BigInteger width = oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
+                        // MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP
+                        BigInteger width = (BigInteger) oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
                         cellWidth.setW(width); // sets width
 
                         // Se comincio ad elaborare le colonne "numeriche", i numeri devono essere allineati a destra
@@ -7933,7 +7933,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             }
 
         }
-        forwardToPublisher(Application.Publisher.MONITORAGGIO_CONSISTENZA_SACER_RICERCA);
+        // forwardToPublisher(Application.Publisher.MONITORAGGIO_CONSISTENZA_SACER_RICERCA);
     }
 
     public void eseguiScaricaReportSintetico() throws Throwable {
@@ -8256,7 +8256,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                         CTTblWidth cellWidth = ctTcPr.addNewTcW();
                         cellWidth.setType(oldRow.getCell(i).getCTTc().getTcPr().getTcW().getType()); // sets type of
                         // width
-                        BigInteger width = oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
+                        // MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP
+                        BigInteger width = (BigInteger) oldRow.getCell(i).getCTTc().getTcPr().getTcW().getW();
                         cellWidth.setW(width); // sets width
 
                         // Se comincio ad elaborare le colonne "numeriche", i numeri devono essere allineati a destra
@@ -8399,7 +8400,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             }
 
         }
-        forwardToPublisher(Application.Publisher.MONITORAGGIO_CONSISTENZA_SACER_RICERCA);
+        // forwardToPublisher(Application.Publisher.MONITORAGGIO_CONSISTENZA_SACER_RICERCA);
     }
 
     private void changeOrientation(XWPFDocument document, String orientation) {
@@ -8421,27 +8422,25 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             pageSize.setH(BigInteger.valueOf(16840));
             pageSize.setW(BigInteger.valueOf(12240));
         }
-    }//
+    }
 
     @Override
     public void scaricaReport() throws EMFError {
         try {
             eseguiScaricaReport();
         } catch (Throwable ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
-    }//
+    }
 
     @Override
     public void scaricaReportSintetico() throws EMFError {
         try {
             eseguiScaricaReportSintetico();
         } catch (Throwable ex) {
-            log.error(ex.getMessage());
+            log.error(ex.getMessage(), ex);
         }
     }
-    //
-    //
 
     private Timestamp getActivationDateJob(String jobName) {
         Timestamp res = null;

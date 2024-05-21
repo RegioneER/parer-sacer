@@ -135,7 +135,11 @@ public class InvioRichiestaAnnullamentoVersamentiExt {
         modificatoriWS = EnumSet.noneOf(Costanti.ModificatoriWS.class);
 
         this.versioneCalc = versione;
-        if (versione.equals("1.3")) {
+        if (versione.equals("1.4")) {
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_TIPO_ANNUL);
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
+            this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
+        } else if (versione.equals("1.3")) {
             this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FORZA_PING);
             this.modificatoriWS.add(Costanti.ModificatoriWS.TAG_ANNUL_FASC);
         } else if (!versione.equals("1.0")) {

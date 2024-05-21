@@ -74,6 +74,7 @@ public class FasVVisFascicolo implements Serializable {
     private String dsHashXmlRapp;
     private String dsHashXmlSip;
     private String dsIndiceClassif;
+    private String dsInfoConservazione;
     private String dsNota;
     private String dsOggettoFascicolo;
     private String dsOggettoFascicoloPadre;
@@ -306,6 +307,15 @@ public class FasVVisFascicolo implements Serializable {
 
     public void setCdIndiceClassif(String cdIndiceClassif) {
         this.cdIndiceClassif = cdIndiceClassif;
+    }
+
+    @Column(name = "DS_INFO_CONSERVAZIONE")
+    public String getDsInfoConservazione() {
+        return this.dsInfoConservazione;
+    }
+
+    public void setDsInfoConservazione(String dsInfoConservazione) {
+        this.dsInfoConservazione = dsInfoConservazione;
     }
 
     @Column(name = "CD_IND_IP_CLIENT")

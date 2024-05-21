@@ -555,6 +555,10 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
             final String tiRichAnnulVers = getForm().getCreazioneRichAnnulVers().getTi_rich_annul_vers().parse();
 
             final String flForzaAnnul = getForm().getCreazioneRichAnnulVers().getFl_forza_annul().parse();
+            final String tiAnnullamento = getForm().getCreazioneRichAnnulVers().getTi_annullamento().getValue() == null
+                    || !getForm().getCreazioneRichAnnulVers().getTi_annullamento().getValue().equals("CANCELLAZIONE")
+                            ? "ANNULLAMENTO_VERSAMENTO" : "CANCELLAZIONE";
+
             flImmediata = (String) getSession()
                     .getAttribute(getForm().getCreazioneRichAnnulVers().getFl_immediata().getName());
             if (!getMessageBox().hasError() && StringUtils.isBlank(flImmediata)) {
@@ -562,10 +566,11 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
                         + "' obbligatorio");
             }
             final String blFile = getForm().getCreazioneRichAnnulVers().getBl_file().parse();
-            if (!getMessageBox().hasError() && flImmediata.equals("1") && blFile == null) {
-                getMessageBox().addError(
-                        "Siccome la richiesta prevede l'annullamento immediato, deve essere definito il file di cui fare upload che elenca i versamenti da annullare");
-            }
+            // if (!getMessageBox().hasError() && flImmediata.equals("1") && blFile == null) {
+            // getMessageBox().addError(
+            // "Siccome la richiesta prevede l'annullamento immediato, deve essere definito il file di cui fare upload
+            // che elenca i versamenti da annullare");
+            // }
             if (!getMessageBox().hasError() && blFile != null) {
                 fileByteArray = getForm().getCreazioneRichAnnulVers().getBl_file().getFileBytes();
                 String mime = tikaSingleton.detectMimeType(fileByteArray);
@@ -592,7 +597,7 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
                 // Salvo la richiesta di annullamento versamento
                 Long idRichAnnulVers = annulVersEjb.saveRichAnnulVers(getUser().getIdUtente(), cdRichAnnulVers,
                         dsRichAnnulVers, ntRichAnnulVers, flImmediata, fileByteArray,
-                        getUser().getIdOrganizzazioneFoglia(), flForzaAnnul, tiRichAnnulVers);
+                        getUser().getIdOrganizzazioneFoglia(), flForzaAnnul, tiAnnullamento, tiRichAnnulVers);
                 //
                 if (idRichAnnulVers != null && flImmediata.equals("1")) {
                     // Determino l'utente che ha creato la richiesta (ovvero il primo stato). In questo caso è l'utente
@@ -668,6 +673,9 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
 
         getSession().setAttribute("tiRichAnnulVers", tiRichAnnulVers);
         getForm().getFiltriRicercaRichAnnullVers().getTi_rich_annul_vers().setValue(tiRichAnnulVers);
+
+        getForm().getFiltriRicercaRichAnnullVers().getTi_annullamento().setDecodeMap(
+                ComboGetter.getMappaSortedGenericEnum("ti_annullamento", CostantiDB.TipoAnnullamento.values()));
 
         if (tiRichAnnulVers.equals("UNITA_DOC")) {
             getForm().getFiltriRicercaRichAnnullVers().getFl_annul_ping().setHidden(false);
@@ -917,6 +925,9 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
         getForm().getCreazioneRichAnnulVers().getFl_immediata().setValue("1");
         getForm().getCreazioneRichAnnulVers().getFl_forza_annul().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getSession().setAttribute(getForm().getCreazioneRichAnnulVers().getFl_immediata().getName(), "1");
+        getForm().getCreazioneRichAnnulVers().getTi_annullamento().setDecodeMap(
+                ComboGetter.getMappaSortedGenericEnum("ti_annullamento", CostantiDB.TipoAnnullamento.values()));
+        getForm().getCreazioneRichAnnulVers().getTi_annullamento().setValue("ANNULLAMENTO_VERSAMENTO");
 
         if (getSession().getAttribute("tiRichAnnulVers") != null) {
             if (((String) getSession().getAttribute("tiRichAnnulVers")).equals("UNITA_DOC")) {

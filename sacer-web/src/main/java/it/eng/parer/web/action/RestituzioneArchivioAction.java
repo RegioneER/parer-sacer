@@ -381,14 +381,7 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                             messaggio2 = messaggio2 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
                                     + strutRB.getNmStrut() + "<br>";
                             trovatoMsg2 = true;
-                        } else if (chk.getFlElencoNonFirmato().equals("1")) {
-                            restArchEjb.setDaAnnullareAtomic(
-                                    "Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato",
-                                    idRichRestArch, "RICHIESTA ANNULLATA");
-                            messaggio2 = messaggio2 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
-                                    + strutRB.getNmStrut() + "<br>";
-                            trovatoMsg2 = true;
-                        } else if (chk.getFlAipNonFirmato().equals("1")) {
+                        } else if (chk.getFlUdAipNonFirmato().equals("1")) {
                             restArchEjb.setDaAnnullareAtomic(
                                     "Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato",
                                     idRichRestArch, "RICHIESTA ANNULLATA");

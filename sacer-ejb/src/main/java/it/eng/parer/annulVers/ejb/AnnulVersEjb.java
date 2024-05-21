@@ -214,9 +214,14 @@ public class AnnulVersEjb {
      *            la struttura per cui viene creata la serie
      * @param flForzaAnnul
      *            flag forzatura annullamento
+     *
+     * @param tiAnnullamento
+     *            tipo di annullamento
+     *
      * @param tiRichAnnulVers
      *            tipo richiesta annullamento
-     * 
+     *
+     *
      * @return id richiesta
      * 
      * @throws ParerUserError
@@ -225,7 +230,7 @@ public class AnnulVersEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long saveRichAnnulVers(long idUserIam, String cdRichAnnulVers, String dsRichAnnulVers,
             String ntRichAnnulVers, String flImmediata, byte[] fileByteArray, BigDecimal idStrut, String flForzaAnnul,
-            String tiRichAnnulVers) throws ParerUserError {
+            String tiAnnullamento, String tiRichAnnulVers) throws ParerUserError {
         logger.info("Eseguo il salvataggio della richiesta di annullamento");
         Date now = Calendar.getInstance().getTime();
         Long idRich = null;
@@ -248,6 +253,7 @@ public class AnnulVersEjb {
                             : CostantiDB.TipoCreazioneRichAnnulVers.ON_LINE.name());
             rich.setFlImmediata(flImmediata);
             rich.setFlForzaAnnul(flForzaAnnul);
+            rich.setTiAnnullamento(tiAnnullamento);
             rich.setFlRichPing("0");
             rich.setOrgStrut(strut);
             if (rich.getAroFileRichAnnulVers() == null) {
@@ -337,6 +343,9 @@ public class AnnulVersEjb {
      *            indicatore di forzatura annullamento
      * @param flRichiestaPing
      *            indicatore di richiesta annullamento da PreIngest
+     *
+     * @param tiAnnulRichAnnulVers
+     *            tipo annullamento
      * @param ravExt
      *            invio richiesta annullamento
      * 
@@ -348,7 +357,7 @@ public class AnnulVersEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public AroRichAnnulVers insertRichAnnulVers(long idUserIam, Long idStrut, String cdRichAnnulVers,
             String dsRichAnnulVers, String ntRichAnnulVers, String tiRichAnnulVers, Date dtCreazione,
-            boolean flImmediata, boolean flForzaAnnul, boolean flRichiestaPing,
+            boolean flImmediata, boolean flForzaAnnul, boolean flRichiestaPing, String tiAnnulRichAnnulVers,
             InvioRichiestaAnnullamentoVersamentiExt ravExt) throws ParerUserError {
         logger.info("Eseguo il salvataggio della richiesta annullamento");
         AroRichAnnulVers rich = new AroRichAnnulVers();
@@ -358,7 +367,7 @@ public class AnnulVersEjb {
             // Inizializzo la richiesta creata dal WS
             rich = initAroRichAnnulVers(cdRichAnnulVers, dsRichAnnulVers, ntRichAnnulVers, tiRichAnnulVers, dtCreazione,
                     CostantiDB.TipoCreazioneRichAnnulVers.WEB_SERVICE.name(), flImmediata, flForzaAnnul,
-                    flRichiestaPing, strut);
+                    flRichiestaPing, tiAnnulRichAnnulVers, strut);
 
             // Persisto la richiesta
             helper.insertEntity(rich, true);
@@ -380,7 +389,7 @@ public class AnnulVersEjb {
 
     private AroRichAnnulVers initAroRichAnnulVers(String cdRichAnnulVers, String dsRichAnnulVers,
             String ntRichAnnulVers, String tiRichAnnulVers, Date now, String tiCreazione, boolean flImmediata,
-            boolean flForzaAnnul, boolean flRichiestaPing, OrgStrut strut) {
+            boolean flForzaAnnul, boolean flRichiestaPing, String tiAnnulRichAnnulVers, OrgStrut strut) {
         AroRichAnnulVers rich = new AroRichAnnulVers();
         rich.setCdRichAnnulVers(cdRichAnnulVers);
         rich.setDsRichAnnulVers(dsRichAnnulVers);
@@ -392,6 +401,7 @@ public class AnnulVersEjb {
         rich.setFlForzaAnnul(flForzaAnnul ? "1" : "0");
         rich.setFlRichPing(flRichiestaPing ? "1" : "0");
         rich.setOrgStrut(strut);
+        rich.setTiAnnullamento(tiAnnulRichAnnulVers);
         if (rich.getAroFileRichAnnulVers() == null) {
             rich.setAroFileRichAnnulVers(new ArrayList<>());
         }
@@ -1691,6 +1701,7 @@ public class AnnulVersEjb {
     public AroXmlRichAnnulVers createAroXmlRichAnnulVers(AroRichAnnulVers richAnnulVers, String tiXmlRichAnnulVers,
             String blXmlRichAnnulVers, String cdVersioneXml) {
         AroXmlRichAnnulVers xmlRichAnnulVers = new AroXmlRichAnnulVers();
+        logger.info("Eseguo il salvataggio dell'xml " + tiXmlRichAnnulVers + " annullamento");
         xmlRichAnnulVers.setTiXmlRichAnnulVers(tiXmlRichAnnulVers);
         xmlRichAnnulVers.setBlXmlRichAnnulVers(blXmlRichAnnulVers);
         xmlRichAnnulVers.setCdVersioneXml(cdVersioneXml);

@@ -89,6 +89,8 @@ public class AroVRicRichAnnvrs implements Serializable {
 
     private String tiStatoRichAnnulVersCor;
 
+    private String tiAnnullamento;
+
     public AroVRicRichAnnvrs() {/* Hibernate */
     }
 
@@ -96,7 +98,8 @@ public class AroVRicRichAnnvrs implements Serializable {
             String flAnnulPing, String flImmediata, String flNonAnnul, BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idRichAnnulVers, BigDecimal idStrut, BigDecimal idUserIam, BigDecimal niItem,
             BigDecimal niItemNonAnnul, BigDecimal niItemPing, String nmAmbiente, String nmEnte, String nmStrut,
-            String ntRichAnnulVers, String tiCreazioneRichAnnulVers, String tiStatoRichAnnulVersCor) {
+            String ntRichAnnulVers, String tiCreazioneRichAnnulVers, String tiStatoRichAnnulVersCor,
+            String tiAnnullamento) {
         this.cdRichAnnulVers = cdRichAnnulVers;
         this.dsRichAnnulVers = dsRichAnnulVers;
         this.dtCreazioneRichAnnulVers = dtCreazioneRichAnnulVers;
@@ -118,6 +121,7 @@ public class AroVRicRichAnnvrs implements Serializable {
         this.ntRichAnnulVers = ntRichAnnulVers;
         this.tiCreazioneRichAnnulVers = tiCreazioneRichAnnulVers;
         this.tiStatoRichAnnulVersCor = tiStatoRichAnnulVersCor;
+        this.tiAnnullamento = tiAnnullamento;
     }
 
     @Column(name = "AA_FASCICOLO")
@@ -344,6 +348,15 @@ public class AroVRicRichAnnvrs implements Serializable {
 
     public void setTiStatoRichAnnulVersCor(String tiStatoRichAnnulVersCor) {
         this.tiStatoRichAnnulVersCor = tiStatoRichAnnulVersCor;
+    }
+
+    @Column(name = "TI_ANNULLAMENTO")
+    public String getTiAnnullamento() {
+        return this.tiAnnullamento;
+    }
+
+    public void setTiAnnullamento(String tiAnnullamento) {
+        this.tiAnnullamento = tiAnnullamento;
     }
 
     private AroVRicRichAnnvrsId aroVRicRichAnnvrsId;

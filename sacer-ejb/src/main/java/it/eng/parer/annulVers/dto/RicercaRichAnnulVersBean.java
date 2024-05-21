@@ -48,6 +48,7 @@ public class RicercaRichAnnulVersBean {
     private BigDecimal aa_fascicolo;
     private String cd_key_fascicolo;
     private String ti_rich_annul_vers;
+    private String ti_annullamento;
 
     public RicercaRichAnnulVersBean() {
 
@@ -72,6 +73,7 @@ public class RicercaRichAnnulVersBean {
         this.aa_fascicolo = filtri.getAa_fascicolo().parse();
         this.cd_key_fascicolo = filtri.getCd_key_fascicolo().parse();
         this.ti_rich_annul_vers = filtri.getTi_rich_annul_vers().parse();
+        this.ti_annullamento = filtri.getTi_annullamento().parse();
     }
 
     public String getTi_rich_annul_vers() {
@@ -216,6 +218,14 @@ public class RicercaRichAnnulVersBean {
 
     public void setCd_key_unita_doc(String cd_key_unita_doc) {
         this.cd_key_unita_doc = cd_key_unita_doc;
+    }
+
+    public String getTi_annullamento() {
+        return ti_annullamento;
+    }
+
+    public void setTi_annullamento(String ti_annullamento) {
+        this.ti_annullamento = ti_annullamento;
     }
 
 }

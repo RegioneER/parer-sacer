@@ -37,25 +37,19 @@ import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
+import it.eng.parer.entity.*;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.entity.AroCompObjectStorage;
-import it.eng.parer.entity.AroVerIndiceAipUdObjectStorage;
-import it.eng.parer.entity.FasXmlFascObjectStorage;
-import it.eng.parer.entity.FasXmlVersFascObjectStorage;
-import it.eng.parer.entity.FirReport;
-import it.eng.parer.entity.VrsFileSesObjectStorageKo;
-import it.eng.parer.entity.VrsXmlDatiSesObjectStorageKo;
-import it.eng.parer.entity.VrsXmlSesFascErrObjectStorage;
-import it.eng.parer.entity.VrsXmlSesFascKoObjectStorage;
 import it.eng.parer.entity.inheritance.oop.AroXmlObjectStorage;
 import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.objectstorage.dto.ObjectStorageBackend;
 import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.objectstorage.helper.SalvataggioBackendHelper;
+import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
+import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
 import it.eng.parer.ws.utils.CostantiDB;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectAttributesResponse;
@@ -73,6 +67,10 @@ public class ObjectStorageService {
     private static final String STAGING_R = "READ_STAGING";
     private static final String COMPONENTI_R = "READ_COMPONENTI";
     private static final String SIP_R = "READ_SIP";
+    // MEV#29089
+    private static final String METADATI_AGG_MD_R = "READ_AGG_MD";
+    private static final String SES_AGG_MD_ERR_KO_R = "READ_SESSIONI_AGG_MD_ERR_KO";
+    // end MEV#29089
     // MEV#29090
     private static final String METADATI_FASC_R = "READ_FASCICOLI";
     private static final String SES_FASC_ERR_KO_R = "READ_SESSIONI_FASC_ERR_KO";
@@ -186,6 +184,193 @@ public class ObjectStorageService {
             return Collections.emptyMap();
         }
     }
+
+    // MEV#29089
+    /**
+     * Ottieni, in una mappa, la lista degli xml di versamento classificati nelle tipologie definite qui
+     * {@link it.eng.parer.ws.utils.CostantiDB.TipiXmlDati} per l'aggiornamento metadati
+     *
+     * @param idUpdUnitaDoc
+     *            id aggiornamento metadati
+     *
+     * @return mappa degli XML di versamento aggiornamento metadati
+     */
+    public Map<String, String> getObjectXmlVersAggMd(long idUpdUnitaDoc) {
+        try {
+
+            return getObjectSipAggMd(salvataggioBackendHelper.getLinkSipAggMdOs(idUpdUnitaDoc));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    private Map<String, String> getObjectSipAggMd(AroXmlUpdUdObjectStorage xmlUpdUdObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(xmlUpdUdObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    xmlUpdUdObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    xmlUpdUdObjectStorage.getNmBucket(), xmlUpdUdObjectStorage.getCdKeyFile());
+            return unzip(object);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
+     * Ottieni, in una mappa, la lista degli xml dei dati specifici aggiornati classificati nelle tipologie definite qui
+     * {@link it.eng.parer.ws.utils.CostantiDB.TipiUsoDatiSpec} per l'aggiornamento metadati
+     *
+     * @param idEntitaSacerUpd
+     *            id aggiornamento metadati
+     * @param tiEntitaSacerUpd
+     *            tipo entità aggiornamento metadati
+     *
+     * @return mappa degli XML dei dati specifici aggiornati
+     */
+    public Map<String, String> getObjectXmlUpdDatiSpecAggMd(long idEntitaSacerUpd,
+            TiEntitaAroUpdDatiSpecUnitaDoc tiEntitaSacerUpd) {
+        try {
+
+            return getObjectUpdDatiSpecAggMd(
+                    salvataggioBackendHelper.getLinkUpdDatiSpecAggMdOs(idEntitaSacerUpd, tiEntitaSacerUpd));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    private Map<String, String> getObjectUpdDatiSpecAggMd(AroUpdDatiSpecUdObjectStorage updDatiSpecObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(updDatiSpecObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    updDatiSpecObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    updDatiSpecObjectStorage.getNmBucket(), updDatiSpecObjectStorage.getCdKeyFile());
+            return unzipDatiSpecAggMd(object);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
+     * Ottieni, in una mappa, la lista degli xml dei dati specifici relativi ai metadati iniziali classificati nelle
+     * tipologie definite qui {@link it.eng.parer.ws.utils.CostantiDB.TipiUsoDatiSpec} per l'aggiornamento metadati
+     *
+     * @param idEntitaSacerVersIni
+     *            id versamento iniziale
+     * @param tiEntitaSacerVersIni
+     *            tipo entità versamento iniziale
+     *
+     * @return mappa degli XML dei dati specifici relativi ai metadati iniziali
+     */
+    public Map<String, String> getObjectXmlVersIniDatiSpecAggMd(long idEntitaSacerVersIni,
+            TiEntitaSacerAroVersIniDatiSpec tiEntitaSacerVersIni) {
+        try {
+
+            return getObjectVersIniDatiSpecAggMd(
+                    salvataggioBackendHelper.getLinkVersIniDatiSpecAggMdOs(idEntitaSacerVersIni, tiEntitaSacerVersIni));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    private Map<String, String> getObjectVersIniDatiSpecAggMd(
+            AroVersIniDatiSpecObjectStorage versIniDatiSpecObjectStorage) throws ObjectStorageException, IOException {
+        if (!Objects.isNull(versIniDatiSpecObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    versIniDatiSpecObjectStorage.getDecBackend().getNmBackend(), METADATI_AGG_MD_R);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    versIniDatiSpecObjectStorage.getNmBucket(), versIniDatiSpecObjectStorage.getCdKeyFile());
+            return unzipDatiSpecAggMd(object);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
+     * Ottieni, in una mappa, la lista degli xml di versamento aggiornamento metadati fallito classificati nelle
+     * tipologie definite qui {@link it.eng.parer.ws.utils.CostantiDB.TipiXmlDati}
+     *
+     * @param idSesUpdUnitaDocKo
+     *            id sessione di versamento aggiornamento metadati fallita
+     *
+     * @return mappa degli XML
+     */
+    public Map<String, String> getObjectSipAggMdFallito(long idSesUpdUnitaDocKo) {
+        try {
+            VrsXmlSesUpdUdKoObjectStorage xmlVersUpdUdKo = salvataggioBackendHelper
+                    .getLinkXmlSesAggMdKoOs(idSesUpdUnitaDocKo);
+            if (!Objects.isNull(xmlVersUpdUdKo)) {
+                ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                        xmlVersUpdUdKo.getDecBackend().getNmBackend(), SES_AGG_MD_ERR_KO_R);
+                ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                        xmlVersUpdUdKo.getNmBucket(), xmlVersUpdUdKo.getCdKeyFile());
+                return unzip(object);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Ottieni, in una mappa, la lista degli xml di versamento aggiornamento metadati errato classificati nelle
+     * tipologie definite qui {@link it.eng.parer.ws.utils.CostantiDB.TipiXmlDati}
+     *
+     * @param idSesUpdUnitaDocErr
+     *            id sessione di versamento aggiornamento metadati errata
+     *
+     * @return mappa degli XML
+     */
+    public Map<String, String> getObjectSipAggMdErrato(long idSesUpdUnitaDocErr) {
+        try {
+            VrsXmlSesUpdUdErrObjectStorage xmlVersUpdUdErr = salvataggioBackendHelper
+                    .getLinkXmlSesAggMdErrOs(idSesUpdUnitaDocErr);
+            if (!Objects.isNull(xmlVersUpdUdErr)) {
+                ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                        xmlVersUpdUdErr.getDecBackend().getNmBackend(), SES_AGG_MD_ERR_KO_R);
+                ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                        xmlVersUpdUdErr.getNmBucket(), xmlVersUpdUdErr.getCdKeyFile());
+                return unzip(object);
+            } else {
+                return Collections.emptyMap();
+            }
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    private Map<String, String> unzipDatiSpecAggMd(ResponseInputStream<GetObjectResponse> inputStream)
+            throws IOException {
+        // TipiXmlDati
+        final String xml = ".xml";
+        final Map<String, String> xmlDatiSpec = new HashMap<>();
+        try (ZipInputStream zis = new ZipInputStream(inputStream);) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
+                if (ze.getName().equals(CostantiDB.TipiUsoDatiSpec.VERS.name() + xml)) {
+                    xmlDatiSpec.put(CostantiDB.TipiUsoDatiSpec.VERS.name(), value);
+                } else if (ze.getName().equals(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name() + xml)) {
+                    xmlDatiSpec.put(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(), value);
+                } else {
+                    log.warn(
+                            "Attenzione, l'entry con nome {} non è stata riconosciuta nel file zip dei Dati Specifici dell'aggiornamento metadati",
+                            ze.getName());
+                }
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+        }
+        return xmlDatiSpec;
+    }
+    // end MEV#29089
 
     // MEV#29090
     /**

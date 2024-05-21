@@ -60,6 +60,9 @@ public class DecTipoUnitaDocTableDescriptor extends TableDescriptor {
     public static final String COL_DL_NOTE_TIPO_UD = "dl_note_tipo_ud";
     public static final String COL_ID_TIPO_SERV_ATTIV_TIPO_UD = "id_tipo_serv_attiv_tipo_ud";
     public static final String COL_ID_TIPO_SERV_CONSERV_TIPO_UD = "id_tipo_serv_conserv_tipo_ud";
+    public static final String COL_NI_AA_CONSERV = "ni_aa_conserv";
+    public static final String COL_FL_CONSERV_UNIFORME = "fl_conserv_uniforme";
+    public static final String COL_FL_CONSERV_ILLIMITATA = "fl_conserv_illimitata";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -91,6 +94,9 @@ public class DecTipoUnitaDocTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_ID_TIPO_SERV_ATTIV_TIPO_UD, Types.DECIMAL, 22, false));
         map.put(COL_ID_TIPO_SERV_CONSERV_TIPO_UD,
                 new ColumnDescriptor(COL_ID_TIPO_SERV_CONSERV_TIPO_UD, Types.DECIMAL, 22, false));
+        map.put(COL_NI_AA_CONSERV, new ColumnDescriptor(COL_NI_AA_CONSERV, Types.DECIMAL, 22, false));
+        map.put(COL_FL_CONSERV_ILLIMITATA, new ColumnDescriptor(COL_FL_CONSERV_ILLIMITATA, Types.VARCHAR, 1, false));
+        map.put(COL_FL_CONSERV_UNIFORME, new ColumnDescriptor(COL_FL_CONSERV_UNIFORME, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

@@ -96,16 +96,8 @@ public class NoteRilascioAction extends NoteRilascioAbstractAction {
                     today.set(Calendar.SECOND, 0);
                     today.set(Calendar.MILLISECOND, 0);
 
-                    // if (getForm().getDettaglioNoteRilascio().getDt_fine_val().parse() == null ||
-                    // (getForm().getDettaglioNoteRilascio().getDt_fine_val().parse() != null &&
-                    // today.getTime().compareTo(getForm().getDettaglioNoteRilascio().getDt_fine_val().parse()) <= 0)
-                    // && today.getTime().compareTo(getForm().getDettaglioNoteRilascio().getDt_ini_val().parse()) >= 0)
-                    // {
                     getRequest().setAttribute("showNotaRilascio", true);
-                    // } else {
-                    // getRequest().setAttribute("infoDaMostrare", "Informazioni non disponibili");
-                    // }
-                    // Carico da DB la lista delle note di rilascio precedenti associate all'applicazione
+
                     SIAplNotaRilascioTableBean noteRilascioPrecTableBean = noteRilascioEjb
                             .getAplNoteRilascioPrecTableBean(detailRow.getBigDecimal("id_applic"), idNotaRilascio,
                                     new Date(detailRow.getTimestamp("dt_versione").getTime()));
@@ -165,14 +157,7 @@ public class NoteRilascioAction extends NoteRilascioAbstractAction {
                 today.set(Calendar.MINUTE, 0);
                 today.set(Calendar.SECOND, 0);
                 today.set(Calendar.MILLISECOND, 0);
-                // if (getForm().getDettaglioNoteRilascio().getDt_fine_val().parse() == null ||
-                // (getForm().getDettaglioNoteRilascio().getDt_fine_val().parse() != null &&
-                // today.getTime().compareTo(getForm().getDettaglioNoteRilascio().getDt_fine_val().parse()) <= 0)
-                // && today.getTime().compareTo(getForm().getDettaglioNoteRilascio().getDt_ini_val().parse()) >= 0) {
                 getRequest().setAttribute("showNotaRilascio", true);
-                // } else {
-                // getRequest().setAttribute("infoDaMostrare", "Informazioni non disponibili");
-                // }
                 getSession().removeAttribute("isFromNotaRilascioPrec");
             }
         } catch (Exception e) {
@@ -197,6 +182,14 @@ public class NoteRilascioAction extends NoteRilascioAbstractAction {
         getSession().removeAttribute("isFromNotaRilascioPrec");
 
         ricercaNoteRilascio(Constants.SACER);
+    }
+
+    @Secure(action = "Menu.Informazioni.InfoPrivacy")
+    public void infoPrivacyPage() throws EMFError {
+        getUser().getMenu().reset();
+        getUser().getMenu().select("Menu.Informazioni.InfoPrivacy");
+
+        forwardToPublisher(Application.Publisher.INFO_PRIVACY);
     }
 
     /**

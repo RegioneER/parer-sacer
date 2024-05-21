@@ -387,6 +387,17 @@ public class RestituzioneArchivioEjb {
                 if (richiesta.getIamUser() != null) {
                     row.setString("nm_userid", richiesta.getIamUser().getNmUserid());
                 }
+                String rootFolderEcRaPath = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.ROOT_FOLDER_EC_RA);
+
+                String nmEnteSiamNormalizzato = StringUtils.stripAccents(enteConvenz.getNmEnteSiam().toUpperCase())
+                        .replaceAll(" ", "_").replaceAll("[^a-zA-Z0-9]", "_");
+                String childFolderEcRaPath = IOUtils.getPath(rootFolderEcRaPath, nmEnteSiamNormalizzato);
+                if (IOUtils.isFileReady(childFolderEcRaPath)) {
+                    row.setString("ftp_path", childFolderEcRaPath);
+                } else {
+                    row.setString("ftp_path", "");
+                }
             } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
                     | IllegalArgumentException | InvocationTargetException ex) {
                 logger.error("Errore durante il recupero della richiesta di restituzione archivio {}",

@@ -5,6 +5,7 @@
     <sl:head title="Dettaglio tipologia unità documentaria" >
         <script type="text/javascript">
             $(document).ready(function () {
+                
                 $('.confermaDisattivazioneXsd').dialog({
                     autoOpen: true,
                     width: 600,
@@ -63,6 +64,30 @@
                         $('#loading').remove();
                     });
                 });
+                
+                $("#Fl_conserv_uniforme").change(function () {
+                    var select = $("#Fl_conserv_uniforme").val();                     
+                    
+                    if (select === "1") {
+                        $("#Fl_conserv_illimitata").attr("disabled", false);
+                        $("#Ni_aa_conserv").attr("readonly", "readonly");                        
+                    } else {
+                        $("#Fl_conserv_illimitata").val("").attr("disabled", true);
+                        $("#Ni_aa_conserv").val("").attr("readonly", "readonly");                        
+                    }
+                }).trigger('change');
+                
+                $("#Fl_conserv_illimitata").change(function () {
+                    var select = $("#Fl_conserv_illimitata").val();
+                    
+                    if (select === "1") {
+                        $("#Ni_aa_conserv").val("9999").attr("readonly", "readonly");
+                    } else if (select === "0") {
+                        $("#Ni_aa_conserv").removeAttr("readonly");
+                    }else{
+                        $("#Ni_aa_conserv").val("").attr("readonly", "readonly");                        
+                    } 
+                }).trigger('change');
 
             });
         </script>
@@ -138,6 +163,14 @@
                         <slf:lblField name="<%=StrutTipiForm.TipoUnitaDocCreazioneCriterio.CREA_CRITERIO_RAGGR_STANDARD_TIPO_UD_BUTTON%>" />
                     </sl:pulsantiera>
                 </c:if>
+                <slf:section name="<%=StrutTipiForm.TempoConservazioneUnitaDocSection.NAME%>" styleClass="importantContainer"> 
+                    <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.FL_CONSERV_UNIFORME%>" colSpan="1" labelWidth="w30" controlWidth="w100" /> 
+                    <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.FL_CONSERV_ILLIMITATA%>" colSpan="1" labelWidth="w30" controlWidth="w100" /> 
+                    <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.NI_AA_CONSERV%>" colSpan="1" labelWidth="w30" controlWidth="w100" /> 
+                    <sl:newLine />
+                </slf:section>
                 <slf:lblField name="<%=StrutTipiForm.TipoUnitaDoc.ID_TIPO_UNITA_DOC%>" />
             </slf:fieldSet>
 

@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/queue/IndiceAipUnitaDocQueue"),
         // MEV#30195
-        @ActivationConfigProperty(propertyName = "transactionTimeout", propertyValue = "3600")
+        @ActivationConfigProperty(propertyName = "transactionTimeout", propertyValue = "7200")
         // end MEV#30195
 })
 @TransactionManagement(TransactionManagementType.CONTAINER)

@@ -2097,6 +2097,8 @@ public class StruttureAction extends StruttureAbstractAction {
             OrgStrutRowBean strutRowBean = new OrgStrutRowBean();
             strutRowBean.setNmStrut(getForm().getVisStrutture().getNm_strut().getValue());
             strutRowBean.setFlTemplate(getForm().getVisStrutture().getFl_template().getValue());
+            strutRowBean.setString("fl_parametri_strut",
+                    getForm().getVisStrutture().getFl_parametri_specifici().getValue());
             if (getForm().getVisStrutture().getId_ente().getValue() != null) {
                 strutRowBean.setIdEnte(new BigDecimal(getForm().getVisStrutture().getId_ente().getValue()));
             }
@@ -2179,6 +2181,7 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getVisStrutture().getFl_template().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getVisStrutture().getFl_template().setValue("0");
         getForm().getVisStrutture().getFl_partiz().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getVisStrutture().getFl_parametri_specifici().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
 
         // Combo ambito territoriale
         OrgAmbitoTerritTableBean regioniTable = ambienteEjb.getOrgAmbitoTerritTableBean("REGIONE/STATO");
@@ -2352,7 +2355,8 @@ public class StruttureAction extends StruttureAbstractAction {
                 strutRowBean.getFlTemplate() != null ? strutRowBean.getFlTemplate().equals("1") : null,
                 strutRowBean.getString("fl_partiz"), strutRowBean.getString("nm_sistema_versante"), idAmbitoTerrit,
                 strutRowBean.getBigDecimal("id_categ_ente"), strutRowBean.getBigDecimal("id_ambiente_ente_convenz"),
-                strutRowBean.getBigDecimal("id_ente_convenz"), getUser().getIdUtente());
+                strutRowBean.getBigDecimal("id_ente_convenz"), strutRowBean.getString("fl_parametri_specifici"),
+                getUser().getIdUtente());
 
         int inizio = 0;
         int pageSize = WebConstants.STRUTLIST_PAGE_SIZE;

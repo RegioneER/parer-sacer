@@ -76,6 +76,8 @@ public class FasFascicolo implements Serializable {
 
     private String dsIndiceClassif;
 
+    private String dsInfoConservazione;
+
     private String dsNota;
 
     private String dsOggettoFascicolo;
@@ -315,6 +317,15 @@ public class FasFascicolo implements Serializable {
 
     public void setDsIndiceClassif(String dsIndiceClassif) {
         this.dsIndiceClassif = dsIndiceClassif;
+    }
+
+    @Column(name = "DS_INFO_CONSERVAZIONE")
+    public String getDsInfoConservazione() {
+        return this.dsInfoConservazione;
+    }
+
+    public void setDsInfoConservazione(String dsInfoConservazione) {
+        this.dsInfoConservazione = dsInfoConservazione;
     }
 
     @Column(name = "DS_NOTA")

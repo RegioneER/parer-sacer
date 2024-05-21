@@ -49,7 +49,15 @@
                 <sl:newLine />  
                 <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.ID_STRUT%>" colSpan="2" />
                 <sl:newLine /> 
-                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.NI_GG_STATO%>" colSpan="1" />  
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.AA_KEY_UNITA_DOC%>" colSpan="1"/>              
+                <sl:newLine />               
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.TI_STATO_ELENCO%>" colSpan="2" />              
+                <sl:newLine />               
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.DT_CREAZIONE_ELENCO_DA%>" colSpan="2" />                              
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.DT_CREAZIONE_ELENCO_A%>" colSpan="2" />              
+                <sl:newLine />               
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.NI_GG_STATO_DA%>" colSpan="2" />                              
+                <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.NI_GG_STATO_A%>" colSpan="2" />   
                   <sl:newLine />                             
                 <slf:lblField name="<%=MonitoraggioIndiceAIPForm.FiltriElenchiMonitoraggioIndiceAIP.CD_TI_EVE_STATO_ELENCO_VERS%>" colSpan="2" />         
                   <sl:newLine />                             

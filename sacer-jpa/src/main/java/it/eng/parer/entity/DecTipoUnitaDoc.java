@@ -18,6 +18,7 @@
 package it.eng.parer.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -122,6 +123,12 @@ public class DecTipoUnitaDoc implements Serializable {
 
     private List<AplValoreParamApplic> aplValoreParamApplics = new ArrayList<>();
     private List<DecUsoModelloXsdUniDoc> decUsoModelloXsdUniDocs = new ArrayList<>();
+
+    private BigDecimal niAaConserv;
+
+    private String flConservUniforme;
+
+    private String flConservIllimitata;
 
     public DecTipoUnitaDoc() {
         // hibernate
@@ -512,6 +519,33 @@ public class DecTipoUnitaDoc implements Serializable {
 
     public void setDecUsoModelloXsdUniDocs(List<DecUsoModelloXsdUniDoc> decUsoModelloXsdUniDocs) {
         this.decUsoModelloXsdUniDocs = decUsoModelloXsdUniDocs;
+    }
+
+    @Column(name = "NI_AA_CONSERV")
+    public BigDecimal getNiAaConserv() {
+        return this.niAaConserv;
+    }
+
+    public void setNiAaConserv(BigDecimal niAaConserv) {
+        this.niAaConserv = niAaConserv;
+    }
+
+    @Column(name = "FL_CONSERV_UNIFORME", columnDefinition = "char(1)")
+    public String getFlConservUniforme() {
+        return this.flConservUniforme;
+    }
+
+    public void setFlConservUniforme(String flConservUniforme) {
+        this.flConservUniforme = flConservUniforme;
+    }
+
+    @Column(name = "FL_CONSERV_ILLIMITATA", columnDefinition = "char(1)")
+    public String getFlConservIllimitata() {
+        return this.flConservIllimitata;
+    }
+
+    public void setFlConservIllimitata(String flConservIllimitata) {
+        this.flConservIllimitata = flConservIllimitata;
     }
 
     /**

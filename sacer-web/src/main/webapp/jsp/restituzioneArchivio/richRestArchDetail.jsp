@@ -40,6 +40,7 @@
                             <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.PRIORITA_COMBO%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                         </c:otherwise>
                     </c:choose>
+                    <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.FTP_PATH%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                 </slf:section>
                 <slf:section name="<%=RestituzioneArchivioForm.StatoCorrenteSection.NAME%>" styleClass="importantContainer w100">
                     <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.TI_STATO%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />

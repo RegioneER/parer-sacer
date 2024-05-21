@@ -358,6 +358,11 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                             .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
                     BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
 
+                    getForm().getRegistroUnitaDoc().getFl_conserv_illimitata()
+                            .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+                    getForm().getRegistroUnitaDoc().getFl_conserv_uniforme()
+                            .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+
                     DecModelloTipoSerieTableBean listaModelli = modelliSerieEjb
                             .getDecModelloTipoSerieAllAbilitatiTableBean(idStrut, true);
                     getForm().getRegistroUnitaDoc().getId_modello_tipo_serie().setDecodeMap(DecodeMap.Factory
@@ -830,16 +835,32 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             getForm().getRegistroUnitaDoc().getDt_istituz().setValue(stringToday);
             getForm().getRegistroCreazioneCriterio().setEditMode();
             getForm().getRegistroCreazioneCriterio().clear();
+
+            // getForm().getTempoConservazioneUnitaDoc().setEditMode();
+            // getForm().getTempoConservazioneUnitaDoc().clear();
             // Visualizzo il tab (che contiene il flag) e nascondo il bottone per la
             // creazione del criterio
             getForm().getCreaCriterioRegistroSection().setHidden(false);
             getForm().getRegistroCreazioneCriterio().getCreaCriterioRaggrStandardRegistroButton().setHidden(true);
+            getForm().getTempoConservazioneUnitaDocSection().setHidden(false);
 
             getForm().getRegistroUnitaDoc().getConserv_unlimited().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
             getForm().getRegistroUnitaDoc().getFl_registro_fisc().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
             getForm().getRegistroUnitaDoc().getFl_registro_fisc().setValue(JobConstants.ComboFlag.NO.getValue());
             getForm().getRegistroUnitaDoc().getFl_crea_tipo_serie_standard()
                     .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+
+            // tempo di conservazione
+            getForm().getRegistroUnitaDoc().getFl_conserv_uniforme()
+                    .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+
+            getForm().getRegistroUnitaDoc().getFl_conserv_uniforme().setValue(JobConstants.ComboFlag.NO.getValue());
+
+            getForm().getRegistroUnitaDoc().getFl_conserv_illimitata()
+                    .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+
+            getForm().getRegistroUnitaDoc().getNi_aa_conserv().clear();
+
             BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
 
             DecModelloTipoSerieTableBean listaModelli = modelliSerieEjb
@@ -859,10 +880,13 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             getForm().getTipoUnitaDocCreazioneCriterio().setEditMode();
             getForm().getTipoUnitaDocCreazioneCriterio().clear();
 
+            // getForm().getTempoConservazioneUnitaDoc().setEditMode();
+            // getForm().getTempoConservazioneUnitaDoc().clear();
             // Visualizzo il tab (che contiene il flag) e nascondo il bottone per la
             // creazione del criterio
             getForm().getCreaCriterioTipoUnitaDocSection().setHidden(false);
             getForm().getTipoUnitaDocCreazioneCriterio().getCreaCriterioRaggrStandardTipoUdButton().setHidden(true);
+            getForm().getTempoConservazioneUnitaDocSection().setHidden(false);
 
             setTipoUnitaComboBox();
             disabileTipoUdParametersSections(true);
@@ -899,6 +923,15 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
             // Data primo versamento non editabile
             getForm().getTipoUnitaDoc().getDt_first_vers().setViewMode();
+
+            // tempo di conservazione
+            getForm().getTipoUnitaDoc().getFl_conserv_uniforme().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+
+            getForm().getTipoUnitaDoc().getFl_conserv_uniforme().setValue(JobConstants.ComboFlag.NO.getValue());
+
+            getForm().getTipoUnitaDoc().getFl_conserv_illimitata().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+
+            getForm().getTipoUnitaDoc().getNi_aa_conserv().clear();
 
             getForm().getTipoUnitaDoc().setStatus(Status.insert);
             getForm().getTipoUnitaDocList().setStatus(Status.insert);
@@ -2356,6 +2389,10 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         DecRegistroUnitaDocRowBean registroUnitaDocRowBean = new DecRegistroUnitaDocRowBean();
         RegistroUnitaDoc registroUnitaDoc = getForm().getRegistroUnitaDoc();
         RegistroCreazioneCriterio creazioneCriterio = getForm().getRegistroCreazioneCriterio();
+
+        boolean popup = false;
+        String msgTempiConservazione = "";
+
         registroUnitaDoc.post(getRequest());
         creazioneCriterio.post(getRequest());
 
@@ -2410,9 +2447,16 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             if (registroUnitaDoc.getFl_crea_serie().getValue().equals("1")) {
                 checkAnniConservazioneIllimitata(registroUnitaDoc.getConserv_unlimited().parse(),
                         registroUnitaDoc.getNi_anni_conserv().parse());
+                msgTempiConservazione = "Attenzione: avendo impostato i valori relativi al Tempo di Conservazione in Configurazione serie, sono stati eliminati i dati configurati sul tipo registro e mantenuti quelli della serie<br>";
+                popup = true;
             } else {
                 registroUnitaDoc.getNi_anni_conserv().setValue(null);
             }
+
+            // if (registroUnitaDoc.getFl_conserv_uniforme().parse() == null) {
+            // getMessageBox()
+            // .addError("Errore di compilazione form: inserire tempo conservazione tipo unit\u00E0<br/>");
+            // }
 
             try {
                 BigDecimal idStrut = (BigDecimal) getSession().getAttribute("id_struttura_lavorato");
@@ -2493,6 +2537,39 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                 }
 
                 if (!getMessageBox().hasError()) {
+                    // conser uniforme uguale a 0 e ho messo qualcosa in illimitata o numero anni
+                    if ((registroUnitaDoc.getFl_conserv_uniforme().parse() != null
+                            && registroUnitaDoc.getFl_conserv_uniforme().parse().equals("0")
+                            && (StringUtils.isNotEmpty(registroUnitaDoc.getFl_conserv_illimitata().parse())
+                                    || registroUnitaDoc.getNi_aa_conserv().parse() != null))
+                            // conserv uniforme uguale a 1 e ho messo illimitata a 1 ma numero anni diverso da 9999
+                            || (registroUnitaDoc.getFl_conserv_uniforme().parse() != null
+                                    && registroUnitaDoc.getFl_conserv_uniforme().parse().equals("1")
+                                    && registroUnitaDoc.getFl_conserv_illimitata().parse() != null
+                                    && registroUnitaDoc.getFl_conserv_illimitata().parse().equals("1")
+                                    && registroUnitaDoc.getNi_aa_conserv().parse() != null && registroUnitaDoc
+                                            .getNi_aa_conserv().parse().compareTo(new BigDecimal("9999")) != 0)
+                            // conserv uniforme uguale a 1, illimitata a 0 ma non ho messo qualcosa in numero anni
+                            || (registroUnitaDoc.getFl_conserv_uniforme().parse() != null
+                                    && registroUnitaDoc.getFl_conserv_uniforme().parse().equals("1")
+                                    && registroUnitaDoc.getFl_conserv_illimitata().parse() != null
+                                    && registroUnitaDoc.getFl_conserv_illimitata().parse().equals("0")
+                                    && registroUnitaDoc.getNi_aa_conserv().parse() == null)) {
+                        getMessageBox().addError(
+                                "Errore di compilazione form: errore nei valori del Tempo di Conservazione<br/>");
+                    }
+                }
+
+                if (!getMessageBox().hasError()) {
+
+                    // MEV 25985 - Se il valore di FlCreaSerie è spuntato, allora non devo considerare i valori su
+                    // registro
+                    if (getForm().getRegistroUnitaDoc().getFl_crea_serie() != null
+                            && getForm().getRegistroUnitaDoc().getFl_crea_serie().parse().equals("1")) {
+                        registroUnitaDoc.getFl_conserv_uniforme().setValue(null);
+                        registroUnitaDoc.getFl_conserv_illimitata().setValue(null);
+                        registroUnitaDoc.getNi_aa_conserv().setValue(null);
+                    }
 
                     registroUnitaDoc.copyToBean(registroUnitaDocRowBean);
                     registroUnitaDocRowBean.setIdStrut(idStrut);
@@ -2518,9 +2595,16 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                         getForm().getRegistroUnitaDocList().setTable(rudTable);
                         getForm().getRegistroUnitaDocList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
                         getForm().getRegistroUnitaDocList().getTable().setCurrentRowIndex(0);
+
                         getMessageBox()
                                 .addMessage(new Message(MessageLevel.INF, "Nuovo registro salvato con successo"));
-                        getMessageBox().setViewMode(ViewMode.plain);
+
+                        if (popup) {
+                            getMessageBox().setViewMode(ViewMode.alert);
+                            getMessageBox().addMessage(new Message(MessageLevel.INF, "<br>" + msgTempiConservazione));
+                        } else {
+                            getMessageBox().setViewMode(ViewMode.plain);
+                        }
                         // Ricarico tutto il registro e i suoi figli
                         registroUnitaDocRowBean = registroEjb.getDecRegistroUnitaDocRowBean(
                                 registroUnitaDocRowBean.getCdRegistroUnitaDoc(), registroUnitaDocRowBean.getIdStrut());
@@ -2530,7 +2614,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                     } else if (getForm().getRegistroUnitaDoc().getStatus().equals(Status.update)) {
                         param.setNomeAzione(SpagoliteLogUtil.getToolbarSave(true));
                         eseguiStepControlloTipiSerieSalvataggioModificaRegistro(param, null, idStrut,
-                                idRegistroUnitaDoc, cdRegistroUnitaDoc, registroUnitaDocRowBean, creazioneCriterio);
+                                idRegistroUnitaDoc, cdRegistroUnitaDoc, registroUnitaDocRowBean, creazioneCriterio,
+                                popup, msgTempiConservazione);
                     }
                 }
             } catch (ParerUserError e) {
@@ -2540,13 +2625,14 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                 getMessageBox().addError(e.getDescription());
             }
         }
+
         forwardToPublisher(Application.Publisher.REGISTRO_UNITA_DOC_DETAIL);
     }
 
     private void eseguiStepControlloTipiSerieSalvataggioModificaRegistro(LogParam param, String nmAzionePerCriteri,
             BigDecimal idStrut, BigDecimal idRegistroUnitaDoc, String cdRegistroUnitaDoc,
-            DecRegistroUnitaDocRowBean registroUnitaDocRowBean, RegistroCreazioneCriterio creazioneCriterio)
-            throws EMFError {
+            DecRegistroUnitaDocRowBean registroUnitaDocRowBean, RegistroCreazioneCriterio creazioneCriterio,
+            boolean popup, String msgTempiConservazione) throws EMFError {
         try {
             // Devo mostrare un popup. Purtroppo il punto più "decente" è questo. Fa schifo
             // e lo sappiamo entrambi.
@@ -2566,7 +2652,12 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             registroEjb.updateDecRegistroUnitaDoc(param, azioneInsCriterio, azioneModCriterio, idRegistroUnitaDoc,
                     registroUnitaDocRowBean, creazioneCriterio.getCriterio_autom_registro().parse());
             getMessageBox().addMessage(new Message(MessageLevel.INF, "Registro modificato con successo"));
-            getMessageBox().setViewMode(ViewMode.plain);
+            if (popup) {
+                getMessageBox().setViewMode(ViewMode.alert);
+                getMessageBox().addMessage(new Message(MessageLevel.INF, "<br>" + msgTempiConservazione));
+            } else {
+                getMessageBox().setViewMode(ViewMode.plain);
+            }
             // Ricarico tutto il registro e i suoi figli
             registroUnitaDocRowBean = registroEjb.getDecRegistroUnitaDocRowBean(
                     registroUnitaDocRowBean.getCdRegistroUnitaDoc(), registroUnitaDocRowBean.getIdStrut());
@@ -2616,7 +2707,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             error = true;
         }
         if (error) {
-            getMessageBox().addError("'Anni di conservazione' \u00E8 alternativo a 'Conservazione illimitata'");
+            getMessageBox().addError(
+                    "In Configurazione serie 'Anni di conservazione' \u00E8 alternativo a 'Conservazione illimitata'");
         }
     }
 
@@ -2634,6 +2726,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
         TipoUnitaDoc tipoUnitaDoc = getForm().getTipoUnitaDoc();
         TipoUnitaDocCreazioneCriterio creazioneCriterio = getForm().getTipoUnitaDocCreazioneCriterio();
+        // TempoConservazioneUnitaDoc registroUnitaDoc = getForm().getTempoConservazioneUnitaDoc();
         tipoUnitaDoc.post(getRequest());
         creazioneCriterio.post(getRequest());
 
@@ -2666,6 +2759,11 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             if (tipoUnitaDoc.getNm_categ_strut().parse() == null) {
                 getMessageBox().addError("Errore di compilazione form: inserire categoria tipo unit\u00E0<br/>");
             }
+
+            // if (tipoUnitaDoc.getFl_conserv_uniforme().parse() == null) {
+            // getMessageBox()
+            // .addError("Errore di compilazione form: inserire tempo conservazione tipo unit\u00E0<br/>");
+            // }
 
             try {
 
@@ -2723,6 +2821,30 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                     if (tipoUnitaDoc.getId_tipo_serv_attiv_tipo_ud().parse() == null) {
                         getMessageBox().addError(
                                 "Errore di compilazione form: accordo di tipo 'Da fatturare' o 'Accordo enti extra ER', valorizzare il campo 'Tipo servizio di attivazione su tipo ud'<br/>");
+                    }
+                }
+
+                if (!getMessageBox().hasError()) {
+                    // conser uniforme uguale a 0 e ho messo qualcosa in illimitata o numero anni
+                    if ((tipoUnitaDoc.getFl_conserv_uniforme().parse() != null
+                            && tipoUnitaDoc.getFl_conserv_uniforme().parse().equals("0")
+                            && (StringUtils.isNotEmpty(tipoUnitaDoc.getFl_conserv_illimitata().parse())
+                                    || tipoUnitaDoc.getNi_aa_conserv().parse() != null))
+                            // conserv uniforme uguale a 1 e ho messo illimitata a 1 ma numero anni diverso da 9999
+                            || (tipoUnitaDoc.getFl_conserv_uniforme().parse() != null
+                                    && tipoUnitaDoc.getFl_conserv_uniforme().parse().equals("1")
+                                    && tipoUnitaDoc.getFl_conserv_illimitata().parse() != null
+                                    && tipoUnitaDoc.getFl_conserv_illimitata().parse().equals("1")
+                                    && tipoUnitaDoc.getNi_aa_conserv().parse() != null
+                                    && tipoUnitaDoc.getNi_aa_conserv().parse().compareTo(new BigDecimal("9999")) != 0)
+                            // conserv uniforme uguale a 1, illimitata a 0 ma non ho messo qualcosa in numero anni
+                            || (tipoUnitaDoc.getFl_conserv_uniforme().parse() != null
+                                    && tipoUnitaDoc.getFl_conserv_uniforme().parse().equals("1")
+                                    && tipoUnitaDoc.getFl_conserv_illimitata().parse() != null
+                                    && tipoUnitaDoc.getFl_conserv_illimitata().parse().equals("0")
+                                    && tipoUnitaDoc.getNi_aa_conserv().parse() == null)) {
+                        getMessageBox().addError(
+                                "Errore di compilazione form: errore nei valori del Tempo di Conservazione<br/>");
                     }
                 }
 
@@ -3405,6 +3527,9 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 
         getForm().getTipoUnitaDocCreazioneCriterio().setEditMode();
         getForm().getTipoUnitaDocCreazioneCriterio().clear();
+
+        // getForm().getTempoConservazioneUnitaDoc().setEditMode();
+        // getForm().getTempoConservazioneUnitaDoc().clear();
         // Nascondo il tab (all'interno del quale ci sarà il flag) per la creazione del
         // criterio
         getForm().getCreaCriterioTipoUnitaDocSection().setHidden(true);
@@ -3416,6 +3541,9 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                 DecodeMap.Factory.newInstance(listaModelli, "id_modello_tipo_serie", "nm_modello_tipo_serie"));
         getForm().getTipoUnitaDoc().getFl_crea_tipo_serie_standard()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+
+        getForm().getTipoUnitaDoc().getFl_conserv_illimitata().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getTipoUnitaDoc().getFl_conserv_uniforme().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
 
         // Tipo servizio
         OrgTipoServizioTableBean listaTipiServizioConserv = tipoUnitaDocEjb
@@ -3441,6 +3569,9 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         getForm().getTipoUnitaDoc().copyFromBean(tipoUnitaRowBean);
         getForm().getIdList().getId_tipo_unita_doc().setValue("" + idTipoUnitaDoc);
         loadTipoUnitaDoclists(true);
+
+        // tempo di conservazione
+        getForm().getTipoUnitaDoc().getFl_conserv_uniforme().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
 
         if (tipoUnitaRowBean.getIdCategTipoUnitaDoc() != null) {
             BigDecimal idCategStrutPadre = tipoUnitaDocEjb
@@ -5513,6 +5644,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         getForm().getRegistroUnitaDocList().setStatus(Status.insert);
 
         getForm().getRegistroUnitaDoc().getFl_registro_fisc().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getRegistroUnitaDoc().getFl_conserv_illimitata().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
+        getForm().getRegistroUnitaDoc().getFl_conserv_uniforme().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         getForm().getRegistroUnitaDoc().getConserv_unlimited().setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
         // Precompilo i campi del registro
         BigDecimal idRegistroUnitaDoc = ((DecRegistroUnitaDocRowBean) getForm().getRegistroUnitaDocList().getTable()

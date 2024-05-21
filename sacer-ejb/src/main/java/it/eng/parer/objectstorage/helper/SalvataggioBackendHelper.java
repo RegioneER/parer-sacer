@@ -45,10 +45,13 @@ import org.slf4j.LoggerFactory;
 
 import it.eng.parer.entity.AroCompObjectStorage;
 import it.eng.parer.entity.AroUnitaDoc;
+import it.eng.parer.entity.AroUpdDatiSpecUdObjectStorage;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.AroVerIndiceAipUdObjectStorage;
+import it.eng.parer.entity.AroVersIniDatiSpecObjectStorage;
 import it.eng.parer.entity.AroXmlDocObjectStorage;
 import it.eng.parer.entity.AroXmlUnitaDocObjectStorage;
+import it.eng.parer.entity.AroXmlUpdUdObjectStorage;
 import it.eng.parer.entity.DecBackend;
 import it.eng.parer.entity.DecConfigObjectStorage;
 import it.eng.parer.entity.DecTipoUnitaDoc;
@@ -57,6 +60,10 @@ import it.eng.parer.entity.FasXmlVersFascObjectStorage;
 import it.eng.parer.entity.FirReport;
 import it.eng.parer.entity.VrsFileSesObjectStorageKo;
 import it.eng.parer.entity.VrsXmlDatiSesObjectStorageKo;
+import it.eng.parer.entity.VrsXmlSesUpdUdErrObjectStorage;
+import it.eng.parer.entity.VrsXmlSesUpdUdKoObjectStorage;
+import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
+import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
 import it.eng.parer.entity.VrsXmlSesFascErrObjectStorage;
 import it.eng.parer.entity.VrsXmlSesFascKoObjectStorage;
 import it.eng.parer.entity.inheritance.oop.AroXmlObjectStorage;
@@ -269,6 +276,189 @@ public class SalvataggioBackendHelper {
         }
 
     }
+
+    // MEV#29089
+    /**
+     * Ottieni il collegamento tra sip dell'aggiornamento metadati e il suo bucket/chiave su OS.
+     *
+     * @param idUpdUnitaDoc
+     *            id aggiornamento metadati
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public AroXmlUpdUdObjectStorage getLinkSipAggMdOs(long idUpdUnitaDoc) throws ObjectStorageException {
+        try {
+            return entityManager.find(AroXmlUpdUdObjectStorage.class, idUpdUnitaDoc);
+
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder()
+                    .message(
+                            "Errore durante il recupero da AroXmlUpdUdObjectStorage per id aggiornamento metadati {0} ",
+                            idUpdUnitaDoc)
+                    .cause(e).build();
+        }
+
+    }
+
+    /**
+     * Ottieni il collegamento tra i dati specifici aggiornati dell'aggiornamento metadati e il suo bucket/chiave su OS.
+     *
+     * @param idEntitaSacerUpd
+     *            id aggiornamento metadati
+     * @param tiEntitaSacerUpd
+     *            tipo entità aggiornamento metadati
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public AroUpdDatiSpecUdObjectStorage getLinkUpdDatiSpecAggMdOs(long idEntitaSacerUpd,
+            TiEntitaAroUpdDatiSpecUnitaDoc tiEntitaSacerUpd) throws ObjectStorageException {
+        try {
+            String tmpTipoEntita = null;
+            switch (tiEntitaSacerUpd) {
+            case UPD_UNI_DOC:
+                tmpTipoEntita = "xml.aroUpdUnitaDoc.idUpdUnitaDoc";
+                break;
+            case UPD_DOC:
+                tmpTipoEntita = "xml.aroUpdDocUnitaDoc.idUpdDocUnitaDoc";
+                break;
+            case UPD_COMP:
+                tmpTipoEntita = "xml.aroUpdCompUnitaDoc.idUpdCompUnitaDoc";
+                break;
+            }
+            String queryStr = String.format(
+                    "select xml " + "from AroUpdDatiSpecUdObjectStorage xml "
+                            + "where xml.tiEntitaSacer = :tipoEntitySacer " + "and %s = :idEntitySacerUpd ",
+                    tmpTipoEntita);
+
+            TypedQuery<AroUpdDatiSpecUdObjectStorage> query = entityManager.createQuery(queryStr,
+                    AroUpdDatiSpecUdObjectStorage.class);
+            query.setParameter("tipoEntitySacer", tiEntitaSacerUpd);
+            query.setParameter("idEntitySacerUpd", idEntitaSacerUpd);
+            return query.getSingleResult();
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da AroUpdDatiSpecUdObjectStorage per tipo entità aggiornamento metadati {0} con id aggiornamento metadati {1} ",
+                    tiEntitaSacerUpd.name(), idEntitaSacerUpd).cause(e).build();
+        }
+
+    }
+
+    /**
+     * Ottieni il collegamento tra i dati specifici relativi ai metadati iniziali dell'aggiornamento metadati e il suo
+     * bucket/chiave su OS.
+     *
+     * @param idEntitaSacerVersIni
+     *            id versamento iniziale
+     * @param tiEntitaSacerVersIni
+     *            tipo entità versamento iniziale
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public AroVersIniDatiSpecObjectStorage getLinkVersIniDatiSpecAggMdOs(long idEntitaSacerVersIni,
+            TiEntitaSacerAroVersIniDatiSpec tiEntitaSacerVersIni) throws ObjectStorageException {
+        try {
+            String tmpTipoEntita = null;
+            switch (tiEntitaSacerVersIni) {
+            case UNI_DOC:
+                tmpTipoEntita = "xml.aroVersIniUnitaDoc.idVersIniUnitaDoc";
+                break;
+            case DOC:
+                tmpTipoEntita = "xml.aroVersIniDoc.idVersIniDoc";
+                break;
+            case COMP:
+                tmpTipoEntita = "xml.aroVersIniComp.idVersIniComp";
+                break;
+            }
+            String queryStr = String.format(
+                    "select xml " + "from AroVersIniDatiSpecObjectStorage xml "
+                            + "where xml.tiEntitaSacer = :tipoEntitySacer " + "and %s = :idEntitySacerVersIni ",
+                    tmpTipoEntita);
+
+            TypedQuery<AroVersIniDatiSpecObjectStorage> query = entityManager.createQuery(queryStr,
+                    AroVersIniDatiSpecObjectStorage.class);
+            query.setParameter("tipoEntitySacer", tiEntitaSacerVersIni);
+            query.setParameter("idEntitySacerVersIni", idEntitaSacerVersIni);
+            return query.getSingleResult();
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da AroVersIniDatiSpecObjectStorage per tipo entità versamento iniziale {0} con id versamento iniziale {1} ",
+                    tiEntitaSacerVersIni.name(), idEntitaSacerVersIni).cause(e).build();
+        }
+
+    }
+
+    /**
+     * Ottieni le informazioni relative all'object storage su cui è memorizzato il SIP di versamento aggiornamento
+     * metadati fallito. L'oggetto che corrisponde alla chiave inserita nella tabella è un file zip contenente tutti gli
+     * xml di versamento aggiornamento metadati fallito.
+     *
+     * @param idSesUpdUnitaDocKo
+     *            id sessione di versamento aggiornamento metadati fallita
+     *
+     * @return entity contenente le informazioni di bucket/chiave dello zip contenente gli xml di versamento
+     *         aggiornamento metadati fallito.
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public VrsXmlSesUpdUdKoObjectStorage getLinkXmlSesAggMdKoOs(long idSesUpdUnitaDocKo) throws ObjectStorageException {
+        try {
+
+            TypedQuery<VrsXmlSesUpdUdKoObjectStorage> query = entityManager.createQuery(
+                    "Select xml from VrsXmlSesUpdUdKoObjectStorage xml where xml.vrsSesUpdUnitaDocKo.idSesUpdUnitaDocKo = :idSesUpdUnitaDocKo",
+                    VrsXmlSesUpdUdKoObjectStorage.class);
+            query.setParameter("idSesUpdUnitaDocKo", idSesUpdUnitaDocKo);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null; // no result (past data / needed guarantess working from the past)
+        } catch (NonUniqueResultException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da VrsXmlSesUpdUdKoObjectStorage per id xml sessione aggiornamento metadati fallita {0} ",
+                    idSesUpdUnitaDocKo).cause(e).build();
+        }
+    }
+
+    /**
+     * Ottieni le informazioni relative all'object storage su cui è memorizzato il SIP di versamento aggiornamento
+     * metadati errato. L'oggetto che corrisponde alla chiave inserita nella tabella è un file zip contenente tutti gli
+     * xml di versamento aggiornamento metadati errato.
+     *
+     * @param idSesUpdUnitaDocErr
+     *            id sessione di versamento aggiornamento metadati errata
+     *
+     * @return entity contenente le informazioni di bucket/chiave dello zip contenente gli xml di versamento
+     *         aggiornamento metadati errato.
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public VrsXmlSesUpdUdErrObjectStorage getLinkXmlSesAggMdErrOs(long idSesUpdUnitaDocErr)
+            throws ObjectStorageException {
+        try {
+
+            TypedQuery<VrsXmlSesUpdUdErrObjectStorage> query = entityManager.createQuery(
+                    "Select xml from VrsXmlSesUpdUdErrObjectStorage xml where xml.vrsSesUpdUnitaDocErr.idSesUpdUnitaDocErr = :idSesUpdUnitaDocErr",
+                    VrsXmlSesUpdUdErrObjectStorage.class);
+            query.setParameter("idSesUpdUnitaDocErr", idSesUpdUnitaDocErr);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null; // no result (past data / needed guarantess working from the past)
+        } catch (NonUniqueResultException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da VrsXmlSesUpdUdErrObjectStorage per id xml sessione aggiornamento metadati errata {0} ",
+                    idSesUpdUnitaDocErr).cause(e).build();
+        }
+    }
+    // end MEV#29089
 
     // MEV#29090
     /**

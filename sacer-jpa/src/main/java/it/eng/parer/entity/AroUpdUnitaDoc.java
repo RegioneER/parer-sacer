@@ -23,22 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -152,6 +138,8 @@ public class AroUpdUnitaDoc implements Serializable {
     private String tipoUpdUnitaDoc;
 
     private BigDecimal niResetStato;
+
+    private AroXmlUpdUdObjectStorage aroXmlUpdUdObjectStorage;
 
     public AroUpdUnitaDoc() {/* Hibernate */
     }
@@ -607,5 +595,15 @@ public class AroUpdUnitaDoc implements Serializable {
 
     public void setFlUpdProfiloNormativo(String flUpdProfiloNormativo) {
         this.flUpdProfiloNormativo = flUpdProfiloNormativo;
+    }
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    public AroXmlUpdUdObjectStorage getAroXmlUpdUdObjectStorage() {
+        return aroXmlUpdUdObjectStorage;
+    }
+
+    public void setAroXmlUpdUdObjectStorage(AroXmlUpdUdObjectStorage aroXmlUpdUdObjectStorage) {
+        this.aroXmlUpdUdObjectStorage = aroXmlUpdUdObjectStorage;
     }
 }

@@ -220,6 +220,31 @@ public class DecTipoUnitaDocRowBean extends BaseRow implements JEEBaseRowInterfa
         setObject("id_tipo_serv_attiv_tipo_ud", id_tipo_serv_attiv_tipo_ud);
     }
 
+    public BigDecimal getNiAaConserv() {
+        return getBigDecimal("ni_aa_conserv");
+    }
+
+    public void setNiAaConserv(BigDecimal niAaConserv) {
+        setObject("ni_aa_conserv", niAaConserv);
+    }
+    //
+
+    public String getFlConservIllimitata() {
+        return getString("fl_conserv_illimitata");
+    }
+
+    public void setFlConservIllimitata(String flConservIllimitata) {
+        setObject("fl_conserv_illimitata", flConservIllimitata);
+    }
+
+    public String getFlConservUniforme() {
+        return getString("fl_conserv_uniforme");
+    }
+
+    public void setFlConservUniforme(String flConservUniforme) {
+        setObject("fl_conserv_uniforme", flConservUniforme);
+    }
+
     @Override
     public void entityToRowBean(Object obj) {
         DecTipoUnitaDoc entity = (DecTipoUnitaDoc) obj;
@@ -252,6 +277,9 @@ public class DecTipoUnitaDocRowBean extends BaseRow implements JEEBaseRowInterfa
         this.setDsTipoSerieDaCreare(entity.getDsTipoSerieDaCreare());
         this.setCdSerieDaCreare(entity.getCdSerieDaCreare());
         this.setDsSerieDaCreare(entity.getDsSerieDaCreare());
+        this.setNiAaConserv(entity.getNiAaConserv());
+        this.setFlConservIllimitata(entity.getFlConservIllimitata());
+        this.setFlConservUniforme(entity.getFlConservUniforme());
 
         if (entity.getDecModelloTipoSerie() != null) {
             this.setIdModelloTipoSerie(new BigDecimal(entity.getDecModelloTipoSerie().getIdModelloTipoSerie()));
@@ -303,6 +331,9 @@ public class DecTipoUnitaDocRowBean extends BaseRow implements JEEBaseRowInterfa
         entity.setDsTipoSerieDaCreare(this.getDsTipoSerieDaCreare());
         entity.setCdSerieDaCreare(this.getCdSerieDaCreare());
         entity.setDsSerieDaCreare(this.getDsSerieDaCreare());
+        entity.setNiAaConserv(this.getNiAaConserv());
+        entity.setFlConservIllimitata(this.getFlConservIllimitata());
+        entity.setFlConservUniforme(this.getFlConservUniforme());
         if (this.getIdModelloTipoSerie() != null) {
             if (entity.getDecModelloTipoSerie() == null) {
                 entity.setDecModelloTipoSerie(new DecModelloTipoSerie());

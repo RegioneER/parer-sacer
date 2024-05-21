@@ -266,6 +266,7 @@
         <Input Description="Data versamento" Name="dt_creazione" Type="DATETIME"/>
         <Input Description="Data annullamento" Name="dt_annul" Type="DATETIME"/>
         <Input Description="Motivazione" Name="nt_annul" Type="STRING"/>
+        <Input Description="Tipo annullamento" Name="ti_annullamento" Type="STRING"/>
         <Input Description="Richiesta annullamento" Name="scarica_xml_rich" Type="STRING" />
         <Input Description="Esito annullamento" Name="scarica_xml_risp" Type="STRING" />
         <Input Description="Stati generazione Indice AIP" Name="ds_lista_stati_elenco_vers" Type="STRING"/>
@@ -894,6 +895,7 @@
         <Input Description="Data unità documentaria a" Name="dt_reg_unita_doc_a" Type="DATE"/>
         <Input Description="Data annullamento da" Name="dt_annul_da" Type="DATE"/>
         <Input Description="Data annullamento a" Name="dt_annul_a" Type="DATE"/>
+        <ComboBox Name="ti_annullamento" Description="Tipo annullamento" Type="STRING"/>
         <!--<Input Description="Unità documentarie annullate" Name="fl_unita_doc_annul" Type="STRING" Hidden="true" />
         <Input Description="Con documenti annullati" Name="fl_doc_annul" Type="STRING" />-->
     </Fields>

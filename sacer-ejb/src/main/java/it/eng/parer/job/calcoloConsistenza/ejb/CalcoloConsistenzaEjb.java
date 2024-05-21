@@ -36,6 +36,8 @@ import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.web.util.Constants;
+import java.text.DateFormat;
+import java.text.ParseException;
 
 /**
  *
@@ -53,21 +55,28 @@ public class CalcoloConsistenzaEjb {
     private JobHelper jobHelper;
 
     public void calcolaConsistenza() throws ParerInternalError {
+        // Pulizia di MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180
+        ccHelper.truncateMonContaByStatoConservNewLast180();
+        log.debug("{} - Pulizia di MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180 prima dell'inizio del JOB",
+                JobConstants.JobEnum.CALCOLO_CONSISTENZA.name());
+
         // Calcolo il periodo di esecuzione del JOB
         Calendar dtRifContaDa = ccHelper.getUltimaDtRifContaA();
+        DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
         Calendar dtRifContaA = Calendar.getInstance();
         dtRifContaA.set(Calendar.HOUR_OF_DAY, 0);
         dtRifContaA.set(Calendar.MINUTE, 0);
         dtRifContaA.set(Calendar.SECOND, 0);
         dtRifContaA.set(Calendar.MILLISECOND, 0);
-        dtRifContaA.add(Calendar.DATE, -1);
+        dtRifContaA.add(Calendar.DATE, -2);
 
         Date dtRifContaDateDa = dtRifContaDa.getTime();
         Date dtRifContaDateA = dtRifContaA.getTime();
 
         SimpleDateFormat formattaData = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         boolean firstTime = dtRifContaDa.compareTo(ccHelper.get1Dicembre2011()) == 0;
+
         /**
          * ******************************************
          *
@@ -75,13 +84,14 @@ public class CalcoloConsistenzaEjb {
          *
          ********************************************
          */
-        if (log.isDebugEnabled()) {
-            log.debug("Calcolo Consistenza - Inserimento totali per l'intervallo temporale {} " + " - {} ",
-                    formattaData.format(dtRifContaDateDa), formattaData.format(dtRifContaDateA));
-        }
 
         // 1° giro scompattando mese per mese l'intero periodo
         if (firstTime) {
+            if (log.isDebugEnabled()) {
+                log.debug("Calcolo Consistenza - Inserimento totali per l'intervallo temporale {} " + " - {} ",
+                        formattaData.format(dtRifContaDateDa), formattaData.format(dtRifContaDateA));
+            }
+
             int yearDa = dtRifContaDa.get(Calendar.YEAR);
             int yearA = dtRifContaA.get(Calendar.YEAR);
             for (int i = yearDa; i <= yearA; i++) {
@@ -128,13 +138,27 @@ public class CalcoloConsistenzaEjb {
                     }
                 }
             }
-
         } else {
-            // 2° giro, prendo l'intero intervallo
             try {
-                // Inserisco i totali
+                // 2° giro, prendo l'intero intervallo
+                log.debug(
+                        "{} - Ricalcolo degli ultimi 6 mesi rispetto all'ultima dtRifContaA e salvataggio dei record in MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180",
+                        JobConstants.JobEnum.CALCOLO_CONSISTENZA.name());
+                dtRifContaDa.add(Calendar.DAY_OF_MONTH, -180);
+                dtRifContaDateDa = dtRifContaDa.getTime();
+                String dataRicalcoloDaString = sdf.format(dtRifContaDa.getTime());
+                String dataRicalcoloAString = sdf.format(dtRifContaA.getTime());
+
+                log.info(
+                        "{} - Calcolo dell'intervallo temporale {} - {} e salvataggio in MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180",
+                        JobConstants.JobEnum.CALCOLO_CONSISTENZA.name(), dataRicalcoloDaString, dataRicalcoloAString);
+
+                // Inserisco i totali in MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180
+                ccHelper.insertTotaliPerGiornoLast180(dtRifContaDateDa, dtRifContaDateA);
+
+                // Inserisco i totali da LAST_180 a MON_CONTA
                 ccHelper.insertTotaliPerGiornoOptimized(firstTime, dtRifContaDateDa, dtRifContaDateA);
-            } catch (Exception ex) {
+            } catch (ParseException ex) {
                 String errore = "Calcolo Consistenza - Errore durante il calcolo " + "per l'intervallo temporale "
                         + formattaData.format(dtRifContaDa.getTime()) + " - "
                         + formattaData.format(dtRifContaA.getTime());

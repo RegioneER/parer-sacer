@@ -20,6 +20,7 @@ package it.eng.parer.web.action;
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.MonitoraggioIndiceAIPAbstractAction;
 import it.eng.parer.slite.gen.form.ElenchiVersamentoForm;
@@ -44,7 +45,12 @@ import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.security.Secure;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import javax.ejb.EJB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,24 +102,25 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().setDecodeMap(new DecodeMap());
         getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().setDecodeMap(new DecodeMap());
-        getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().setValue("");
+        resetFiltriMonitoraggioIndiceAIP();
 
         // Imposto i filtri in editMode
         getForm().getFiltriMonitoraggioIndiceAIP().setEditMode();
 
         // Calcolo subito la lista senza filtri
-        calcolaRiepilogoProcessoGenerazioneIndiceAIP(null, null, null, null);
+        calcolaRiepilogoProcessoGenerazioneIndiceAIP(null, null, null, null, null, null, null, null, null);
 
         // Eseguo forward alla stessa pagina
         forwardToPublisher(Application.Publisher.MONITORAGGIO_RIEPILOGO_GENERAZIONE_INDICE_AIP);
     }
 
     private void calcolaRiepilogoProcessoGenerazioneIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, BigDecimal niGgStato) {
+            BigDecimal idStrut, BigDecimal aaKeyUnitaDoc, String tiStatoelenco, String dtCreazioneElencoDa,
+            String dtCreazioneElencoA, BigDecimal niGgStatoDa, BigDecimal niGgStatoA) {
         BaseTable tabella = monitIndiceAIPEjb.calcolaRiepilogoProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut,
-                niGgStato);
+                aaKeyUnitaDoc, tiStatoelenco, dtCreazioneElencoDa, dtCreazioneElencoA, niGgStatoDa, niGgStatoA);
         getForm().getMonitoraggioIndiceAIPList().setTable(tabella);
-        getForm().getMonitoraggioIndiceAIPList().getTable().setPageSize(10);
+        getForm().getMonitoraggioIndiceAIPList().getTable().setPageSize(100);
         getForm().getMonitoraggioIndiceAIPList().getTable().first();
         getForm().getMonitoraggioIndiceAIPList().getTable().addSortingRule(
                 getForm().getMonitoraggioIndiceAIPList().getCd_ti_eve_stato_elenco_vers().getName(), SortingRule.ASC);
@@ -133,11 +140,11 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             mappaEnte.populatedMap(enteTableBean, "id_ente", "nm_ente");
             getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().setDecodeMap(mappaEnte);
             getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().setDecodeMap(new DecodeMap());
-            getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().setValue("");
+            resetFiltriMonitoraggioIndiceAIP();
         } else {
             getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().setDecodeMap(new DecodeMap());
             getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().setDecodeMap(new DecodeMap());
-            getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().setValue("");
+            resetFiltriMonitoraggioIndiceAIP();
         }
         return getForm().getFiltriMonitoraggioIndiceAIP().asJSON();
     }
@@ -154,12 +161,24 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             DecodeMap mappaStrut = new DecodeMap();
             mappaStrut.populatedMap(strutTableBean, "id_strut", "nm_strut");
             getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().setDecodeMap(mappaStrut);
-            getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().setValue("");
+            resetFiltriMonitoraggioIndiceAIP();
         } else {
             getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().setDecodeMap(new DecodeMap());
-            getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().setValue("");
+            resetFiltriMonitoraggioIndiceAIP();
         }
         return getForm().getFiltriMonitoraggioIndiceAIP().asJSON();
+    }
+
+    private void resetFiltriMonitoraggioIndiceAIP() {
+        getForm().getFiltriMonitoraggioIndiceAIP().getAa_key_unita_doc().setValue("");
+        getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_elenco",
+                        ElencoEnums.ElencoStatusEnum.getComboMappaStatoElencoRicerca()));
+        getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco().setValue("");
+        getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_da().setValue("");
+        getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_a().setValue("");
+        getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_da().setValue("");
+        getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_a().setValue("");
     }
 
     @Override
@@ -169,11 +188,28 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             BigDecimal idAmbiente = getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente().parse();
             BigDecimal idEnte = getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().parse();
             BigDecimal idStrut = getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().parse();
-            BigDecimal niGgStato = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().parse();
-            // Calcolo subito la lista senza filtri
-            calcolaRiepilogoProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut, niGgStato);
-            if (idStrut != null) {
-                getRequest().setAttribute("struttura", true);
+            BigDecimal aaKeyUnitaDoc = getForm().getFiltriMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();
+            String tiStatoElenco = getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+            Date dtCreazioneElencoDa = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_da().parse();
+            Date dtCreazioneElencoA = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+            BigDecimal niGgStatoDa = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+            BigDecimal niGgStatoA = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
+
+            String[] dtCreazioneElencoFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
+
+            if (niGgStatoA != null) {
+                niGgStatoDa = niGgStatoDa != null ? niGgStatoDa : BigDecimal.ZERO;
+            } else if (niGgStatoDa != null && niGgStatoA == null) {
+                getMessageBox().addError("Attenzione: numero di giorni di permanenza nello stato a non valorizzato");
+            }
+
+            if (!getMessageBox().hasError()) {
+                // Calcolo subito la lista senza filtri
+                calcolaRiepilogoProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco,
+                        dtCreazioneElencoFormattate[0], dtCreazioneElencoFormattate[1], niGgStatoDa, niGgStatoA);
+                if (idStrut != null) {
+                    getRequest().setAttribute("struttura", true);
+                }
             }
         }
         forwardToPublisher(Application.Publisher.MONITORAGGIO_RIEPILOGO_GENERAZIONE_INDICE_AIP);
@@ -183,7 +219,12 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         BigDecimal idAmbiente = getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente().parse();
         BigDecimal idEnte = getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().parse();
         BigDecimal idStrut = getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().parse();
-        BigDecimal niGgStato = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneDa = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_da().parse();
+        Date dtCreazioneA = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
 
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -194,7 +235,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (numElenchiTotali.longValue() != 0 && idStrut == null) {
-            loadListaStrutture(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers);
+            loadListaStrutture(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco, dtCreazioneDa, dtCreazioneA,
+                    niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers);
             // Setto i parametri in quanto si tratta di un Link
             setNavigationEvent(NE_DETTAGLIO_VIEW);
             setTableName(getForm().getStrutMonitoraggioIndiceAIPList().getName());
@@ -208,8 +250,9 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         }
     }
 
-    public void loadListaStrutture(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut, BigDecimal niGgStato,
-            String cdTiEveStatoElencoVers) throws EMFError {
+    public void loadListaStrutture(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
+            BigDecimal aaKeyUnitaDoc, String tiStatoElenco, Date dtCreazioneElencoDa, Date dtCreazioneElencoA,
+            BigDecimal niGgStatoDa, BigDecimal niGgStatoA, String cdTiEveStatoElencoVers) throws EMFError {
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().reset();
         // Creo la combo degli stati elenco e setto il valore
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().getCd_ti_eve_stato_elenco_vers()
@@ -227,19 +270,44 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ambiente().setDecodeMap(mappaAmbiente);
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ente().setDecodeMap(mappaEnte);
 
+        getForm().getFiltriStruttureMonitoraggioIndiceAIP().getTi_stato_elenco()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_elenco",
+                        ElencoEnums.ElencoStatusEnum.getComboMappaStatoElencoRicerca()));
+
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().getCd_ti_eve_stato_elenco_vers()
                 .setValue(cdTiEveStatoElencoVers);
-        if (niGgStato != null) {
-            getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato().setValue("" + niGgStato);
-        }
+
         if (idAmbiente != null) {
             getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ambiente().setValue("" + idAmbiente);
         }
         if (idEnte != null) {
             getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ente().setValue("" + idEnte);
         }
+        if (aaKeyUnitaDoc != null) {
+            getForm().getFiltriStruttureMonitoraggioIndiceAIP().getAa_key_unita_doc().setValue("" + aaKeyUnitaDoc);
+        }
+        if (tiStatoElenco != null) {
+            getForm().getFiltriStruttureMonitoraggioIndiceAIP().getTi_stato_elenco().setValue("" + tiStatoElenco);
+        }
 
-        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaStruttureIndiceAIP(idAmbiente, idEnte, niGgStato,
+        String[] dtCreazioneElencoFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
+        // if (dtCreazioneElencoDa != null) {
+        getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                .setValue("" + dtCreazioneElencoFormattate[0]);
+        // }
+        if (dtCreazioneElencoA != null) {
+            getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                    .setValue("" + dtCreazioneElencoFormattate[1]);
+        }
+        if (niGgStatoDa != null) {
+            getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_da().setValue("" + niGgStatoDa);
+        }
+        if (niGgStatoA != null) {
+            getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_a().setValue("" + niGgStatoA);
+        } //
+
+        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaStruttureIndiceAIP(idAmbiente, idEnte, aaKeyUnitaDoc,
+                tiStatoElenco, dtCreazioneElencoFormattate[0], dtCreazioneElencoFormattate[1], niGgStatoDa, niGgStatoA,
                 cdTiEveStatoElencoVers);
         getForm().getStrutMonitoraggioIndiceAIPList().setTable(tabella);
         getForm().getStrutMonitoraggioIndiceAIPList().getTable().setPageSize(10);
@@ -252,7 +320,12 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         BigDecimal idAmbiente = getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente().parse();
         BigDecimal idEnte = getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().parse();
         BigDecimal idStrut = getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().parse();
-        BigDecimal niGgStato = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_da().parse();
+        Date dtCreazioneElencoA = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
 
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -263,7 +336,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (numElenchiFiscali.longValue() != 0) {
-            loadListaElenchi(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers, "1");
+            loadListaElenchi(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                    dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, "1");
             forwardToPublisher(Application.Publisher.MONITORAGGIO_ELENCHI_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -276,7 +350,12 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         BigDecimal idAmbiente = getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente().parse();
         BigDecimal idEnte = getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().parse();
         BigDecimal idStrut = getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().parse();
-        BigDecimal niGgStato = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_da().parse();
+        Date dtCreazioneElencoA = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
 
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -287,7 +366,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (numElenchiNoFiscali.longValue() != 0) {
-            loadListaElenchi(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers, "0");
+            loadListaElenchi(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                    dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, "0");
             forwardToPublisher(Application.Publisher.MONITORAGGIO_ELENCHI_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -300,7 +380,12 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         BigDecimal idAmbiente = getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente().parse();
         BigDecimal idEnte = getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().parse();
         BigDecimal idStrut = getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().parse();
-        BigDecimal niGgStato = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_da().parse();
+        Date dtCreazioneElencoA = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
 
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -310,7 +395,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
                 .getString("cd_ti_eve_stato_elenco_vers");
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (numElenchiTotali.longValue() != 0) {
-            loadListaElenchi(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers, null);
+            loadListaElenchi(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                    dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, null);
             forwardToPublisher(Application.Publisher.MONITORAGGIO_ELENCHI_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -319,10 +405,17 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         }
     }
 
-    public void linkLoadListaElenchiFiscaliDaStrut() throws EMFError {
+    public void linkLoadListaElenchiFiscaliDaStrut() throws EMFError {//
         BigDecimal idAmbiente = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ambiente().parse();
         BigDecimal idEnte = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ente().parse();
-        BigDecimal niGgStato = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                .parse();
+        Date dtCreazioneElencoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                .parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
         String cdTiEveStatoElencoVers = getForm().getFiltriStruttureMonitoraggioIndiceAIP()
                 .getCd_ti_eve_stato_elenco_vers().parse();
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
@@ -346,7 +439,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (numElenchiFiscali.longValue() != 0) {
-            loadListaElenchi(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers, "1");
+            loadListaElenchi(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                    dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, "1");
             forwardToPublisher(Application.Publisher.MONITORAGGIO_ELENCHI_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -358,9 +452,16 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
     public void linkLoadListaElenchiNoFiscaliDaStrut() throws EMFError {
         BigDecimal idAmbiente = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ambiente().parse();
         BigDecimal idEnte = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ente().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                .parse();
+        Date dtCreazioneElencoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                .parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
         String cdTiEveStatoElencoVers = getForm().getFiltriStruttureMonitoraggioIndiceAIP()
                 .getCd_ti_eve_stato_elenco_vers().parse();
-        BigDecimal niGgStato = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato().parse();
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
 
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -382,7 +483,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (numElenchiNoFiscali.longValue() != 0) {
-            loadListaElenchi(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers, "0");
+            loadListaElenchi(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                    dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, "0");
             forwardToPublisher(Application.Publisher.MONITORAGGIO_ELENCHI_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -396,7 +498,14 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         BigDecimal idEnte = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ente().parse();
         String cdTiEveStatoElencoVers = getForm().getFiltriStruttureMonitoraggioIndiceAIP()
                 .getCd_ti_eve_stato_elenco_vers().parse();
-        BigDecimal niGgStato = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                .parse();
+        Date dtCreazioneElencoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                .parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
 
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -418,7 +527,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (numElenchiTotali.longValue() != 0) {
-            loadListaElenchi(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers, null);
+            loadListaElenchi(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                    dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, null);
             forwardToPublisher(Application.Publisher.MONITORAGGIO_ELENCHI_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -427,8 +537,9 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         }
     }
 
-    public void loadListaElenchi(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut, BigDecimal niGgStato,
-            String cdTiEveStatoElencoVers, String fiscali) throws EMFError {
+    public void loadListaElenchi(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut, BigDecimal aaKeyUnitaDoc,
+            String tiStatoElenco, Date dtCreazioneElencoDa, Date dtCreazioneElencoA, BigDecimal niGgStatoDa,
+            BigDecimal niGgStatoA, String cdTiEveStatoElencoVers, String fiscali) throws EMFError {
         getForm().getFiltriElenchiMonitoraggioIndiceAIP().reset();
         getForm().getFiltriElenchiMonitoraggioIndiceAIP().setEditMode();
         // Creo la combo degli stati elenco e setto il valore
@@ -453,11 +564,13 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         getForm().getFiltriElenchiMonitoraggioIndiceAIP().getFl_elenco_fisc()
                 .setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
 
+        getForm().getFiltriElenchiMonitoraggioIndiceAIP().getTi_stato_elenco()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_elenco",
+                        ElencoEnums.ElencoStatusEnum.getComboMappaStatoElencoRicerca()));
+
         getForm().getFiltriElenchiMonitoraggioIndiceAIP().getCd_ti_eve_stato_elenco_vers()
                 .setValue(cdTiEveStatoElencoVers);
-        if (niGgStato != null) {
-            getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato().setValue("" + niGgStato);
-        }
+
         if (idAmbiente != null) {
             getForm().getFiltriElenchiMonitoraggioIndiceAIP().getId_ambiente().setValue("" + idAmbiente);
         }
@@ -483,18 +596,79 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         }
         getForm().getFiltriElenchiMonitoraggioIndiceAIP().getFl_elenco_fisc().setValue(fiscali);
 
-        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaElenchiIndiceAIP(idAmbiente, idEnte, idStrut, niGgStato,
-                cdTiEveStatoElencoVers, fiscali);
+        if (aaKeyUnitaDoc != null) {
+            getForm().getFiltriElenchiMonitoraggioIndiceAIP().getAa_key_unita_doc().setValue("" + aaKeyUnitaDoc);
+        }
+        if (tiStatoElenco != null) {
+            getForm().getFiltriElenchiMonitoraggioIndiceAIP().getTi_stato_elenco().setValue("" + tiStatoElenco);
+        }
+        //
+        String[] dtCreazioneElencoFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
+
+        if (dtCreazioneElencoDa != null) {
+            getForm().getFiltriElenchiMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                    .setValue(dtCreazioneElencoFormattate[0]);
+        }
+        if (dtCreazioneElencoA != null) {
+            getForm().getFiltriElenchiMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                    .setValue(dtCreazioneElencoFormattate[1]);
+        }
+        if (niGgStatoDa != null) {
+            getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato_da().setValue("" + niGgStatoDa);
+        }
+        if (niGgStatoA != null) {
+            getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato_a().setValue("" + niGgStatoA);
+        } //
+
+        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaElenchiIndiceAIP(idAmbiente, idEnte, idStrut,
+                aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoFormattate[0], dtCreazioneElencoFormattate[1],
+                niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, fiscali);
         getForm().getElenchiMonitoraggioIndiceAIPList().setTable(tabella);
         getForm().getElenchiMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getElenchiMonitoraggioIndiceAIPList().getTable().first();
+    }
+
+    public String[] formattaDataString(Date dtCreazioneElencoDa, Date dtCreazioneElencoA) {
+        String dtCreazioneElencoDaFormattata;
+        String dtCreazioneElencoAFormattata;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        if (dtCreazioneElencoDa != null) {
+            dtCreazioneElencoDaFormattata = formatter.format(dtCreazioneElencoDa);
+        } else {
+            dtCreazioneElencoDaFormattata = "01/01/2000";
+        }
+        Calendar c = Calendar.getInstance();
+        if (dtCreazioneElencoA != null) {
+            c.setTime(dtCreazioneElencoA);
+            c.add(Calendar.DATE, 1);
+            dtCreazioneElencoAFormattata = formatter.format(c.getTime());
+        } else {
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            c.add(Calendar.DATE, 1);
+            dtCreazioneElencoAFormattata = formatter.format(c.getTime());
+        }
+        String[] dateFormattateString = new String[2];
+        dateFormattateString[0] = dtCreazioneElencoDaFormattata;
+        dateFormattateString[1] = dtCreazioneElencoAFormattata;
+        return dateFormattateString;
     }
 
     public void linkLoadListaUd() throws EMFError {
         BigDecimal idAmbiente = getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente().parse();
         BigDecimal idEnte = getForm().getFiltriMonitoraggioIndiceAIP().getId_ente().parse();
         BigDecimal idStrut = getForm().getFiltriMonitoraggioIndiceAIP().getId_strut().parse();
-        BigDecimal niGgStato = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_da().parse();
+        Date dtCreazioneElencoA = getForm().getFiltriMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
+
+        String[] dateFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
+
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
 
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
@@ -511,8 +685,9 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         if (cdTiEveStatoElencoVers != null && (cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
                 || cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
                 || cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS"))) {
-            loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, niGgStato, cdTiEveStatoElencoVers, null, null,
-                    null, Provenienza.GENERALE);
+            loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, tiStatoElenco, dateFormattate[0],
+                    dateFormattate[1], niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, null, null, null,
+                    Provenienza.GENERALE);
             forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -522,9 +697,17 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
     }
 
     public void linkLoadListaUdDaStrut() throws EMFError {
-        BigDecimal niGgStato = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato().parse();
         String cdTiEveStatoElencoVers = getForm().getFiltriStruttureMonitoraggioIndiceAIP()
                 .getCd_ti_eve_stato_elenco_vers().parse();
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                .parse();
+        Date dtCreazioneElencoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                .parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
+        String[] dateFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
         getForm().getFiltriStruttureMonitoraggioIndiceAIP().setEditMode();
         Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
         BigDecimal idAmbiente = ((BaseTable) getForm().getStrutMonitoraggioIndiceAIPList().getTable()).getRow(riga)
@@ -539,8 +722,9 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         if (cdTiEveStatoElencoVers != null && (cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
                 || cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
                 || cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS"))) {
-            loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, niGgStato, cdTiEveStatoElencoVers, null, null,
-                    null, Provenienza.STRUTTURA);
+            loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, tiStatoElenco, dateFormattate[0],
+                    dateFormattate[1], niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, null, null, null,
+                    Provenienza.STRUTTURA);
             forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -550,9 +734,17 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
     }
 
     public void linkLoadListaUdDaElenco() throws EMFError {
-        BigDecimal niGgStato = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+        //
         getForm().getElenchiMonitoraggioIndiceAIPTabs()
                 .setCurrentTab(getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaUdVersate());
+        BigDecimal aaKeyUnitaDoc = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+        String tiStatoElenco = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+        Date dtCreazioneElencoDa = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                .parse();
+        Date dtCreazioneElencoA = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+        BigDecimal niGgStatoDa = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+        BigDecimal niGgStatoA = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
+        String[] dateFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
 
         String cdTiEveStatoElencoVers = getForm().getFiltriElenchiMonitoraggioIndiceAIP()
                 .getCd_ti_eve_stato_elenco_vers().parse();
@@ -573,9 +765,10 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         // Controllo se il numero di elenchi è diverso da 0 e il filtro struttura non è stato inserito
         if (cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
                 || cdTiEveStatoElencoVers.equals("IN_CODA_INDICE_AIP_DA_ELAB")
-                || cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS")) {
-            loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, niGgStato, cdTiEveStatoElencoVers, fiscale,
-                    idElencoVers, null, Provenienza.ELENCO);
+                || cdTiEveStatoElencoVers.equals("ESEGUITA_VERIFICA_FIRMA_DT_VERS")) {//
+            loadListaUd(idAmbiente, idEnte, idStrut, null, null, null, tiStatoElenco, dateFormattate[0],
+                    dateFormattate[1], niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, fiscale, idElencoVers, null,
+                    Provenienza.ELENCO);
             forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
         } else {
             getMessageBox().addError(
@@ -589,7 +782,8 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
     }
 
     public void loadListaUd(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut, String cdRegistroKeyUnitaDoc,
-            BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal niGgStato, String cdTiEveStatoElencoVers,
+            BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, String tiStatoElenco, String dtCreazioneElencoDa,
+            String dtCreazioneElencoA, BigDecimal niGgStatoDa, BigDecimal niGgStatoA, String cdTiEveStatoElencoVers,
             String fiscali, BigDecimal idElencoVers, String tiStatoUdElencoVers, Provenienza provenienza)
             throws EMFError {
         getForm().getFiltriUdMonitoraggioIndiceAIP().reset();
@@ -676,8 +870,30 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
                 .setDecodeMap(ComboGetter.getMappaTiStatoUdElencoVers());
 
         getForm().getFiltriUdMonitoraggioIndiceAIP().getCd_ti_eve_stato_elenco_vers().setValue(cdTiEveStatoElencoVers);
-        if (niGgStato != null) {
-            getForm().getFiltriUdMonitoraggioIndiceAIP().getNi_gg_stato().setValue("" + niGgStato);
+
+        getForm().getFiltriUdMonitoraggioIndiceAIP().getTi_stato_elenco()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_elenco",
+                        ElencoEnums.ElencoStatusEnum.getComboMappaStatoElencoRicerca()));
+
+        //
+        if (aaKeyUnitaDoc != null) {
+            getForm().getFiltriUdMonitoraggioIndiceAIP().getAa_key_unita_doc().setValue("" + aaKeyUnitaDoc);
+        }
+        if (dtCreazioneElencoDa != null) {
+            getForm().getFiltriUdMonitoraggioIndiceAIP().getDt_creazione_elenco_da().setValue("" + dtCreazioneElencoDa);
+        }
+        if (dtCreazioneElencoA != null) {
+            getForm().getFiltriUdMonitoraggioIndiceAIP().getDt_creazione_elenco_a().setValue("" + dtCreazioneElencoA);
+        }
+
+        if (tiStatoElenco != null) {
+            getForm().getFiltriUdMonitoraggioIndiceAIP().getTi_stato_elenco().setValue("" + tiStatoElenco);
+        }
+        if (niGgStatoDa != null) {
+            getForm().getFiltriUdMonitoraggioIndiceAIP().getNi_gg_stato_da().setValue("" + niGgStatoDa);
+        }
+        if (niGgStatoA != null) {
+            getForm().getFiltriUdMonitoraggioIndiceAIP().getNi_gg_stato_a().setValue("" + niGgStatoA);
         }
         if (idAmbiente != null) {
             getForm().getFiltriUdMonitoraggioIndiceAIP().getId_ambiente().setValue("" + idAmbiente);
@@ -701,20 +917,27 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         getForm().getFiltriUdMonitoraggioIndiceAIP().getFl_elenco_fisc().setValue(fiscali);
 
         List<BaseTable> tabelle = monitIndiceAIPEjb.calcolaTotaliListaUdIndiceAIP(idAmbiente, idEnte, idStrut,
-                cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, niGgStato, cdTiEveStatoElencoVers, fiscali,
-                idElencoVers, tiStatoUdElencoVers);
+                cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, fiscali, idElencoVers,
+                tiStatoUdElencoVers);
 
         getForm().getUdMonitoraggioIndiceAIPList().setTable(tabelle.get(0));
         getForm().getUdMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getUdMonitoraggioIndiceAIPList().getTable().first();
+        getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaUdVersate()
+                .setDescription("UD versate (" + tabelle.get(0).size() + ")");
 
         getForm().getUdAggiornateMonitoraggioIndiceAIPList().setTable(tabelle.get(1));
         getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getUdAggiornateMonitoraggioIndiceAIPList().getTable().first();
+        getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaUdAggiornate()
+                .setDescription("UD aggiornate (" + tabelle.get(1).size() + ")");
 
         getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().setTable(tabelle.get(2));
         getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getUdDocAggiuntiMonitoraggioIndiceAIPList().getTable().first();
+        getForm().getElenchiMonitoraggioIndiceAIPTabs().getListaDocumentiAggiunti()
+                .setDescription("Documenti aggiunti (" + tabelle.get(2).size() + ")");
     }
 
     @Override
@@ -956,19 +1179,39 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
         if (!getMessageBox().hasError()) {
             BigDecimal idAmbiente = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ambiente().parse();
             BigDecimal idEnte = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getId_ente().parse();
-            BigDecimal niGgStato = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+            BigDecimal aaKeyUnitaDoc = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getAa_key_unita_doc()
+                    .parse();//
+            String tiStatoElenco = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+            Date dtCreazioneElencoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                    .parse();
+            Date dtCreazioneElencoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                    .parse();
+            BigDecimal niGgStatoDa = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+            BigDecimal niGgStatoA = getForm().getFiltriStruttureMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
+
             String cdTiEveStatoElencoVers = getForm().getFiltriStruttureMonitoraggioIndiceAIP()
                     .getCd_ti_eve_stato_elenco_vers().parse();
-            // Calcolo subito la lista senza filtri
-            calcolaStruttureProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, niGgStato, cdTiEveStatoElencoVers);
+            String[] dtCreazioneElencoFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
+            if (niGgStatoA != null) {
+                niGgStatoDa = niGgStatoDa != null ? niGgStatoDa : BigDecimal.ZERO;
+            } else if (niGgStatoDa != null && niGgStatoA == null) {
+                getMessageBox().addError("Attenzione: numero di giorni di permanenza nello stato a non valorizzato");
+            }
+            if (!getMessageBox().hasError()) {
+                // Calcolo subito la lista senza filtri
+                calcolaStruttureProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, aaKeyUnitaDoc, tiStatoElenco,
+                        dtCreazioneElencoFormattate[0], dtCreazioneElencoFormattate[1], niGgStatoDa, niGgStatoA,
+                        cdTiEveStatoElencoVers);
+            }
         }
         forwardToPublisher(Application.Publisher.MONITORAGGIO_STRUTTURE_INDICE_AIP);
-    }
+    }//
 
     private void calcolaStruttureProcessoGenerazioneIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal niGgStato, String cdTiEveStatoElencoVers) {
-        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaStruttureIndiceAIP(idAmbiente, idEnte, niGgStato,
-                cdTiEveStatoElencoVers);
+            BigDecimal aaKeyUnitaDoc, String tiStatoElenco, String dtCreazioneDa, String dtCreazioneA,
+            BigDecimal niGgStatoDa, BigDecimal niGgStatoA, String cdTiEveStatoElencoVers) {
+        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaStruttureIndiceAIP(idAmbiente, idEnte, aaKeyUnitaDoc,
+                tiStatoElenco, dtCreazioneDa, dtCreazioneA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers);
         getForm().getStrutMonitoraggioIndiceAIPList().setTable(tabella);
         getForm().getStrutMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getStrutMonitoraggioIndiceAIPList().getTable().first();
@@ -983,20 +1226,40 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
             BigDecimal idAmbiente = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getId_ambiente().parse();
             BigDecimal idEnte = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getId_ente().parse();
             BigDecimal idStrut = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getId_strut().parse();
-            BigDecimal niGgStato = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato().parse();
+            BigDecimal aaKeyUnitaDoc = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();//
+            String tiStatoElenco = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+            Date dtCreazioneElencoDa = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getDt_creazione_elenco_da()
+                    .parse();
+            Date dtCreazioneElencoA = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getDt_creazione_elenco_a()
+                    .parse();
+            String[] dtCreazioneElencoFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
+            BigDecimal niGgStatoDa = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+            BigDecimal niGgStatoA = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
+            if (niGgStatoA != null) {
+                niGgStatoDa = niGgStatoDa != null ? niGgStatoDa : BigDecimal.ZERO;
+            } else if (niGgStatoDa != null && niGgStatoA == null) {
+                getMessageBox().addError("Attenzione: numero di giorni di permanenza nello stato a non valorizzato");
+            }
             String cdTiEveStatoElencoVers = getForm().getFiltriElenchiMonitoraggioIndiceAIP()
                     .getCd_ti_eve_stato_elenco_vers().parse();
             String flElencoFisc = getForm().getFiltriElenchiMonitoraggioIndiceAIP().getFl_elenco_fisc().parse();
-            // Calcolo subito la lista senza filtri
-            calcolaElenchiProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut, niGgStato, cdTiEveStatoElencoVers,
-                    flElencoFisc);
+            if (!getMessageBox().hasError()) {
+                // Calcolo subito la lista senza filtri
+                calcolaElenchiProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc, tiStatoElenco,
+                        dtCreazioneElencoFormattate[0], dtCreazioneElencoFormattate[1], niGgStatoDa, niGgStatoA,
+                        cdTiEveStatoElencoVers, flElencoFisc);
+            }
         }
         forwardToPublisher(Application.Publisher.MONITORAGGIO_ELENCHI_INDICE_AIP);
     }
 
+    //
     private void calcolaElenchiProcessoGenerazioneIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, BigDecimal niGgStato, String cdTiEveStatoElencoVers, String flElencoFisc) {
-        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaElenchiIndiceAIP(idAmbiente, idEnte, idStrut, niGgStato,
+            BigDecimal idStrut, BigDecimal aaKeyUnitaDoc, String tiStatoElenco, String dtCreazioneElencoDa,
+            String dtCreazioneElencoA, BigDecimal niGgStatoDa, BigDecimal niGgStatoA, String cdTiEveStatoElencoVers,
+            String flElencoFisc) {
+        BaseTable tabella = monitIndiceAIPEjb.calcolaTotaliListaElenchiIndiceAIP(idAmbiente, idEnte, idStrut,
+                aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa, dtCreazioneElencoA, niGgStatoDa, niGgStatoA,
                 cdTiEveStatoElencoVers, flElencoFisc);
         getForm().getElenchiMonitoraggioIndiceAIPList().setTable(tabella);
         getForm().getElenchiMonitoraggioIndiceAIPList().getTable().setPageSize(10);
@@ -1016,13 +1279,18 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
                     .parse();
             BigDecimal aaKeyUnitaDoc = getForm().getFiltriUdMonitoraggioIndiceAIP().getAa_key_unita_doc().parse();
             String cdKeyUnitaDoc = getForm().getFiltriUdMonitoraggioIndiceAIP().getCd_key_unita_doc().parse();
-            BigDecimal niGgStato = getForm().getFiltriUdMonitoraggioIndiceAIP().getNi_gg_stato().parse();
             String cdTiEveStatoElencoVers = getForm().getFiltriUdMonitoraggioIndiceAIP()
                     .getCd_ti_eve_stato_elenco_vers().parse();
             String flElencoFisc = getForm().getFiltriUdMonitoraggioIndiceAIP().getFl_elenco_fisc().parse();
             BigDecimal idElencoVers = getForm().getFiltriUdMonitoraggioIndiceAIP().getId_elenco_vers().parse();
             String tiStatoUdElencoVers = getForm().getFiltriUdMonitoraggioIndiceAIP().getTi_stato_ud_elenco_vers()
                     .parse();
+            String tiStatoElenco = getForm().getFiltriUdMonitoraggioIndiceAIP().getTi_stato_elenco().parse();
+            Date dtCreazioneElencoDa = getForm().getFiltriUdMonitoraggioIndiceAIP().getDt_creazione_elenco_da().parse();
+            Date dtCreazioneElencoA = getForm().getFiltriUdMonitoraggioIndiceAIP().getDt_creazione_elenco_a().parse();
+            BigDecimal niGgStatoDa = getForm().getFiltriUdMonitoraggioIndiceAIP().getNi_gg_stato_da().parse();
+            BigDecimal niGgStatoA = getForm().getFiltriUdMonitoraggioIndiceAIP().getNi_gg_stato_a().parse();
+            String[] dateFormattate = formattaDataString(dtCreazioneElencoDa, dtCreazioneElencoA);
 
             // Calcolo subito la lista senza filtri
             if (cdTiEveStatoElencoVers != null && (!cdTiEveStatoElencoVers.equals("IN_CODA_VERIFICA_FIRMA_DT_VERS")
@@ -1033,24 +1301,27 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
                             "I campi Ambiente, Ente, Struttura ed ID elenco sono obbligatori in quanto lo stato elenco è diverso da IN_CODA_VERIFICA_FIRMA_DT_VERS, IN_CODA_INDICE_AIP_DA_ELAB e ESEGUITA_VERIFICA_FIRMA_DT_VERS");
                 } else {
                     calcolaUdProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut, cdRegistroKeyUnitaDoc,
-                            aaKeyUnitaDoc, cdKeyUnitaDoc, niGgStato, cdTiEveStatoElencoVers, flElencoFisc, idElencoVers,
+                            aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco, dateFormattate[0], dateFormattate[1],
+                            niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, flElencoFisc, idElencoVers,
                             tiStatoUdElencoVers);
                 }
             } else {
                 calcolaUdProcessoGenerazioneIndiceAIP(idAmbiente, idEnte, idStrut, cdRegistroKeyUnitaDoc, aaKeyUnitaDoc,
-                        cdKeyUnitaDoc, niGgStato, cdTiEveStatoElencoVers, flElencoFisc, idElencoVers,
-                        tiStatoUdElencoVers);
+                        cdKeyUnitaDoc, tiStatoElenco, dateFormattate[0], dateFormattate[1], niGgStatoDa, niGgStatoA,
+                        cdTiEveStatoElencoVers, flElencoFisc, idElencoVers, tiStatoUdElencoVers);
             }
         }
         forwardToPublisher(Application.Publisher.MONITORAGGIO_UD_INDICE_AIP);
     }
 
     private void calcolaUdProcessoGenerazioneIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
-            String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal niGgStato,
+            String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, String tiStatoElenco,
+            String dtCreazioneElencoDa, String dtCreazioneElencoA, BigDecimal niGgStatoDa, BigDecimal niGgStatoA,
             String cdTiEveStatoElencoVers, String flElencoFisc, BigDecimal idElencoVers, String tiStatoUdElencoVers) {
         List<BaseTable> tabelle = monitIndiceAIPEjb.calcolaTotaliListaUdIndiceAIP(idAmbiente, idEnte, idStrut,
-                cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, niGgStato, cdTiEveStatoElencoVers, flElencoFisc,
-                idElencoVers, tiStatoUdElencoVers);
+                cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, flElencoFisc, idElencoVers,
+                tiStatoUdElencoVers);
         getForm().getUdMonitoraggioIndiceAIPList().setTable(tabelle.get(0));
         getForm().getUdMonitoraggioIndiceAIPList().getTable().setPageSize(10);
         getForm().getUdMonitoraggioIndiceAIPList().getTable().first();

@@ -86,8 +86,9 @@ public class StruttureHelperTest {
         BigDecimal idAmbienteEnteConvenz = aBigDecimal();
         BigDecimal idEnteConvenz = aBigDecimal();
         long idUserIamCor = aLong();
+        String flParametriStrut = aString();
         helper.retrieveOrgVRicStrutList(nmStrut, idEnte, idAmbiente, isTemplate, partizionata, nmSistemaVersante,
-                idAmbitoTerrit, idCategEnte, idAmbienteEnteConvenz, idEnteConvenz, idUserIamCor);
+                idAmbitoTerrit, idCategEnte, idAmbienteEnteConvenz, idEnteConvenz, flParametriStrut, idUserIamCor);
         assertTrue(true);
     }
 

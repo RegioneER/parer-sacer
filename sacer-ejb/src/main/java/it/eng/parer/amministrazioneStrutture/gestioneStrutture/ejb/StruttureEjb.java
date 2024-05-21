@@ -469,15 +469,17 @@ public class StruttureEjb {
         return strutTableBean;
     }
 
+    //
     public OrgVRicStrutTableBean getOrgVRicStrutTableBean(String nmStrut, BigDecimal idEnte, BigDecimal idAmbiente,
             Boolean isTemplate, String partizionata, String nmSistemaVersante, BigDecimal idAmbitoTerrit,
-            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz, long idUtente) {
+            BigDecimal idCategEnte, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteConvenz,
+            String flParametriSpecifici, long idUtente) {
 
         OrgVRicStrutTableBean strutTableBean = new OrgVRicStrutTableBean();
 
         List<OrgVRicStrut> strutList = struttureHelper.retrieveOrgVRicStrutList(nmStrut, idEnte, idAmbiente, isTemplate,
                 partizionata, nmSistemaVersante, idAmbitoTerrit, idCategEnte, idAmbienteEnteConvenz, idEnteConvenz,
-                idUtente);
+                flParametriSpecifici, idUtente);
 
         try {
             if (!strutList.isEmpty()) {
@@ -4143,6 +4145,9 @@ public class StruttureEjb {
         tipoUnitaDoc.setDsTipoSerieDaCreare(tipoUnitaDocExp.getDsTipoSerieDaCreare());
         tipoUnitaDoc.setCdSerieDaCreare(tipoUnitaDocExp.getCdSerieDaCreare());
         tipoUnitaDoc.setDsSerieDaCreare(tipoUnitaDocExp.getDsSerieDaCreare());
+        tipoUnitaDoc.setNiAaConserv(tipoUnitaDocExp.getNiAaConserv());
+        tipoUnitaDoc.setFlConservIllimitata(tipoUnitaDocExp.getFlConservIllimitata());
+        tipoUnitaDoc.setFlConservUniforme(tipoUnitaDocExp.getFlConservUniforme());
         if (calcTiServOnTipoUd != null) {
             OrgTipoServizio tipoServizioConserv = calcTiServOnTipoUd.getIdTipoServizioConserv() != null
                     ? struttureHelper.findById(OrgTipoServizio.class, calcTiServOnTipoUd.getIdTipoServizioConserv())
@@ -4237,6 +4242,9 @@ public class StruttureEjb {
         registroUnitaDoc.setDsTipoSerieDaCreare(registroUnitaDocExp.getDsTipoSerieDaCreare());
         registroUnitaDoc.setCdSerieDaCreare(registroUnitaDocExp.getCdSerieDaCreare());
         registroUnitaDoc.setDsSerieDaCreare(registroUnitaDocExp.getDsSerieDaCreare());
+        registroUnitaDoc.setNiAaConserv(registroUnitaDocExp.getNiAaConserv());
+        registroUnitaDoc.setFlConservIllimitata(registroUnitaDocExp.getFlConservIllimitata());
+        registroUnitaDoc.setFlConservUniforme(registroUnitaDocExp.getFlConservUniforme());
         struttureHelper.insertEntity(registroUnitaDoc, true);
         return registroUnitaDoc;
     }

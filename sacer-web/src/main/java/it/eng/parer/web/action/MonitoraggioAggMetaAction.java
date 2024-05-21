@@ -23,6 +23,7 @@ import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.MonitoraggioAggMetaAbstractAction;
 import it.eng.parer.slite.gen.action.MonitoraggioSinteticoAbstractAction;
@@ -80,6 +81,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ejb.EJB;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -114,6 +116,8 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
     private StruttureEjb struttureEjb;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/ObjectStorageService")
+    private ObjectStorageService objectStorageService;
 
     public static final String PAR_TI_CREAZIONE = "ti_creazione";
     public static final String TI_CREAZIONE_OGGI = "OGGI";
@@ -373,6 +377,10 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
                     getForm().getDettaglioAggMeta().getBl_xml_risp().setValue(xmlrisp);
                 }
 
+                // MEV#29089
+                addXmlVersUpdFromOStoAroVVisUpdUnitaDocBean(rb);
+                // end MEV#29089
+
                 String sistemaConservazione = configHelper
                         .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
 
@@ -457,6 +465,10 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
             getForm().getDettaglioAggMetaFallito().getBl_xml_risp().setValue(xmlrisp);
         }
 
+        // MEV#29089
+        aggiungiXmlSesAggMdFallitaDaObjectStorage(rb);
+        // end MEV#29089
+
         // Ulteriori errori
         VrsErrSesUpdUnitaDocKoTableBean tl = monitAggMetaEjb
                 .ricercaVersamentiErrSesUpdUnitaDocKo(rb.getIdSesUpdUnitaDocKo());
@@ -493,7 +505,9 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
             getForm().getDettaglioUnitaDocAggMetaFallito().getBl_xml_risp_last().setValue(xmlrisplast);
         }
 
-        // VrsSesUpdUnitaDocKoTableBean t1
+        // MEV#29089
+        aggiungiXmlSesAggMdFallitaDaObjectStorageByUpdUd(rb);
+        // end MEV#29089
 
         // Ulteriori errori
         List<Long> idSesUpdUnitaDocKoList = monitAggMetaEjb.ricercaVrsSesUpdUnitaDocKo(rb.getIdUpdUnitaDocKo());
@@ -532,6 +546,10 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
             getForm().getDettaglioAggMetaErrato().getBl_xml_risp().setValue(xmlrisp);
         }
 
+        // MEV#29089
+        aggiungiXmlSesAggMdErrataDaObjectStorage(rb);
+        // end MEV#29089
+
         // Ulteriori errori
         VrsErrSesUpdUnitaDocErrTableBean tl = monitAggMetaEjb
                 .ricercaVersamentiErrSesUpdUnitaDocErr(rb.getIdSesUpdUnitaDocErr());
@@ -539,6 +557,131 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
         getForm().getUlterioriErroriErratiList().getTable().first();
         getForm().getUlterioriErroriErratiList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
     }
+
+    // MEV#29089
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento dell'aggiornamento metadati sia l'object
+     * storage (gestito dal parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            AroVVisUpdUnitaDocRowBean
+     */
+    private void addXmlVersUpdFromOStoAroVVisUpdUnitaDocBean(AroVVisUpdUnitaDocRowBean riga) {
+        boolean xmlVersVuoti = riga.getBlXmlRich() == null && riga.getBlXmlRisp() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (xmlVersVuoti) {
+            Map<String, String> xmls = objectStorageService.getObjectXmlVersAggMd(riga.getIdUpdUnitaDoc().longValue());
+            // recupero oggetti da O.S. (se presenti)
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                getForm().getDettaglioAggMeta().getBl_xml_rich()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA)));
+                getForm().getDettaglioAggMeta().getBl_xml_risp()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA)));
+            }
+        }
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento aggiornamento metadati fallito sia l'object
+     * storage (gestito dal parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            MonVVisUdUpdKoRowBean
+     */
+    private void aggiungiXmlSesAggMdFallitaDaObjectStorageByUpdUd(MonVVisUdUpdKoRowBean riga) {
+        boolean xmlSesAggMdKoVuoti = riga.getBlXmlRichLast() == null && riga.getBlXmlRispLast() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (riga.getIdSesUpdUdKoLast() != null && xmlSesAggMdKoVuoti) {
+            Map<String, String> xmls = objectStorageService
+                    .getObjectSipAggMdFallito(riga.getIdSesUpdUdKoLast().longValue());
+            // recupero oggetti se presenti su O.S
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                getForm().getDettaglioUnitaDocAggMetaFallito().getBl_xml_rich_last()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA)));
+                getForm().getDettaglioUnitaDocAggMetaFallito().getBl_xml_risp_last()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA)));
+            }
+        }
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento aggiornamento metadati fallito sia l'object
+     * storage (gestito dal parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            MonVVisUpdUdKoRowBean
+     */
+    private void aggiungiXmlSesAggMdFallitaDaObjectStorage(MonVVisUpdUdKoRowBean riga) {
+        boolean xmlSesAggMdKoVuoti = riga.getBlXmlRich() == null && riga.getBlXmlRisp() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (riga.getIdSesUpdUnitaDocKo() != null && xmlSesAggMdKoVuoti) {
+            Map<String, String> xmls = objectStorageService
+                    .getObjectSipAggMdFallito(riga.getIdSesUpdUnitaDocKo().longValue());
+            // recupero oggetti se presenti su O.S
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                getForm().getDettaglioAggMetaFallito().getBl_xml_rich()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA)));
+                getForm().getDettaglioAggMetaFallito().getBl_xml_risp()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA)));
+            }
+        }
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML di versamento aggiornamento metadati errato sia l'object
+     * storage (gestito dal parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param riga
+     *            MonVVisUpdUdErrRowBean
+     */
+    private void aggiungiXmlSesAggMdErrataDaObjectStorage(MonVVisUpdUdErrRowBean riga) {
+        boolean xmlSesAggMdErrVuoti = riga.getBlXmlRich() == null && riga.getBlXmlRisp() == null;
+        /*
+         * Se gli xml non sono ancora stati migrati, però, sono ancora presenti sulle tabelle
+         */
+        if (riga.getIdSesUpdUnitaDocErr() != null && xmlSesAggMdErrVuoti) {
+            Map<String, String> xmls = objectStorageService
+                    .getObjectSipAggMdErrato(riga.getIdSesUpdUnitaDocErr().longValue());
+            // recupero oggetti se presenti su O.S
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                getForm().getDettaglioAggMetaErrato().getBl_xml_rich()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RICHIESTA)));
+                getForm().getDettaglioAggMetaErrato().getBl_xml_risp()
+                        .setValue(formatter.prettyPrintWithDOM3LS(xmls.get(CostantiDB.TipiXmlDati.RISPOSTA)));
+            }
+        }
+    }
+    // end MEV#29089
 
     @Override
     public void undoDettaglio() throws EMFError {

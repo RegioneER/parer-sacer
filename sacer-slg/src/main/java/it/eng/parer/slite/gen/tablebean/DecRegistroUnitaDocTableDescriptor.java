@@ -55,6 +55,9 @@ public class DecRegistroUnitaDocTableDescriptor extends TableDescriptor {
     public static final String COL_DS_SERIE_DA_CREARE = "ds_serie_da_creare";
     public static final String COL_ID_MODELLO_TIPO_SERIE = "id_modello_tipo_serie";
     public static final String COL_FL_TIPO_SERIE_MULT = "fl_tipo_serie_mult";
+    public static final String COL_NI_AA_CONSERV = "ni_aa_conserv";
+    public static final String COL_FL_CONSERV_UNIFORME = "fl_conserv_uniforme";
+    public static final String COL_FL_CONSERV_ILLIMITATA = "fl_conserv_illimitata";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -78,6 +81,9 @@ public class DecRegistroUnitaDocTableDescriptor extends TableDescriptor {
         map.put(COL_DS_SERIE_DA_CREARE, new ColumnDescriptor(COL_DS_SERIE_DA_CREARE, Types.VARCHAR, 254, false));
         map.put(COL_ID_MODELLO_TIPO_SERIE, new ColumnDescriptor(COL_ID_MODELLO_TIPO_SERIE, Types.DECIMAL, 22, false));
         map.put(COL_FL_TIPO_SERIE_MULT, new ColumnDescriptor(COL_FL_TIPO_SERIE_MULT, Types.VARCHAR, 1, false));
+        map.put(COL_NI_AA_CONSERV, new ColumnDescriptor(COL_NI_AA_CONSERV, Types.DECIMAL, 22, false));
+        map.put(COL_FL_CONSERV_ILLIMITATA, new ColumnDescriptor(COL_FL_CONSERV_ILLIMITATA, Types.VARCHAR, 1, false));
+        map.put(COL_FL_CONSERV_UNIFORME, new ColumnDescriptor(COL_FL_CONSERV_UNIFORME, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

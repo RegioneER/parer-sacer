@@ -58,7 +58,7 @@ public class CalcoloContenutoSacerEjb {
         /* Ricavo l'intervallo di giorni da elaborare */
         Calendar start = ccsHelper.getDataInizioCalcolo();
         Calendar end = Calendar.getInstance();
-        end.add(Calendar.DATE, -1);
+        end.add(Calendar.DATE, -2);
         SimpleDateFormat formattaData = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         log.info("Calcolo Contenuto Sacer - Intervallo di date da elaborare: " + formattaData.format(start.getTime())
                 + " e " + formattaData.format(end.getTime()));

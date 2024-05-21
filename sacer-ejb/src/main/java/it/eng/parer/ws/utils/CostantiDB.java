@@ -1106,6 +1106,10 @@ public class CostantiDB {
         }
     }
 
+    public enum TipoAnnullamento {
+        ANNULLAMENTO_VERSAMENTO, CANCELLAZIONE
+    }
+
     public enum TipoRegolaModelloTipoSerie {
 
         DEFINITO_NEL_MODELLO, TUTTI, EREDITA_DA_REG, EREDITA_DA_TIPO_UD_REG;

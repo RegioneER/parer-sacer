@@ -234,6 +234,9 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             getForm().getDettaglioElenchiVersamentoButtonList().getScaricaIndiceElencoButton().setEditMode();
             getForm().getDettaglioElenchiVersamentoButtonList().getGeneraIndiceElencoButton().setEditMode();
 
+            getForm().getDettaglioElenchiVersamentoButtonList().getScaricaIndiceElencoButton()
+                    .setDisableHourGlass(true);
+
             boolean esisteIndice = esisteIndiceVersamento(idElencoVers);
             getForm().getDettaglioElenchiVersamentoButtonList().getScaricaIndiceElencoButton().setHidden(!esisteIndice);
             getForm().getDettaglioElenchiVersamentoButtonList().getGeneraIndiceElencoButton().setHidden(esisteIndice);
@@ -610,13 +613,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 || getTableName().equals(getForm().getElenchiVersamentoDaFirmareList().getName())
                 || getTableName().equals(getForm().getElenchiIndiciAipDaFirmareList().getName())))
                 || getTableName() == null) {
-            /* Gestione dei tipi dato soggetti alle abilitazioni */
-            DecTipoUnitaDocTableBean tmpTableBeanTipoUD = tipoUnitaDocEjb
-                    .getTipiUnitaDocAbilitati(getUser().getIdUtente(), elencoVersRowBean.getIdStrut());
-            DecTipoDocTableBean tmpTableBeanTipoDoc = tipoDocumentoEjb.getTipiDocAbilitati(getUser().getIdUtente(),
-                    elencoVersRowBean.getIdStrut());
-            OrgSubStrutTableBean tmpSubStrutsTableBean = subStrutEjb
-                    .getOrgSubStrutTableBeanAbilitate(getUser().getIdUtente(), elencoVersRowBean.getIdStrut());
             // Carico la lista degli Stati
             ElvStatoElencoVerTableBean listaStati = evEjb.getElvStatoElencoVersTableBean(idElencoVers);
             getForm().getStatiElencoList().setTable(listaStati);
@@ -625,8 +621,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             getForm().getStatiElencoList().getTable().first();
             // Carico la lista dei Componenti
             ElvVListaCompElvTableBean listaComp = componentiHelper.getElvVListaCompElvViewBean(idElencoVers,
-                    new ElenchiVersamentoForm.ComponentiFiltri(), null, tmpTableBeanTipoUD, tmpTableBeanTipoDoc,
-                    tmpSubStrutsTableBean);
+                    new ElenchiVersamentoForm.ComponentiFiltri(), null, getUser().getIdUtente(),
+                    elencoVersRowBean.getIdStrut());
             getForm().getComponentiList().setTable(listaComp);
             getForm().getComponentiList().getTable().setPageSize(10);
             // Workaround in modo che la lista punti al primo record, non all'ultimo
@@ -1230,14 +1226,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                         compfiltri.getCd_key_unita_doc_da().parse(), compfiltri.getCd_key_unita_doc_a().parse());
             }
 
-            /* Gestione dei tipi dato soggetti alle abilitazioni */
-            DecTipoUnitaDocTableBean tmpTableBeanTipoUD = tipoUnitaDocEjb
-                    .getTipiUnitaDocAbilitati(getUser().getIdUtente(), getIdStrutCorrente());
-            DecTipoDocTableBean tmpTableBeanTipoDoc = tipoDocumentoEjb.getTipiDocAbilitati(getUser().getIdUtente(),
-                    getIdStrutCorrente());
-            OrgSubStrutTableBean tmpSubStrutsTableBean = subStrutEjb
-                    .getOrgSubStrutTableBeanAbilitate(getUser().getIdUtente(), getIdStrutCorrente());
-
             if (!getMessageBox().hasError()) {
                 // La validazione non ha riportato errori.
                 if (chiavi != null && chiavi.length == 5) {
@@ -1249,9 +1237,11 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     compfiltri.getCd_key_unita_doc_a().setValue(chiavi[4] != null ? (String) chiavi[4] : null);
                 }
                 // Carico la lista dei Componenti
-                getForm().getComponentiList().setTable(componentiHelper.getElvVListaCompElvViewBean(
-                        getForm().getElenchiVersamentoDetail().getId_elenco_vers().parse(), compfiltri,
-                        dateAcquisizioneValidate, tmpTableBeanTipoUD, tmpTableBeanTipoDoc, tmpSubStrutsTableBean));
+                getForm().getComponentiList()
+                        .setTable(componentiHelper.getElvVListaCompElvViewBean(
+                                getForm().getElenchiVersamentoDetail().getId_elenco_vers().parse(), compfiltri,
+                                dateAcquisizioneValidate, getUser().getIdUtente(),
+                                getForm().getElenchiVersamentoDetail().getId_strut().parse()));
                 getForm().getComponentiList().getTable().setPageSize(10);
                 getForm().getComponentiList().setUserOperations(true, false, false, false);
                 // Workaround in modo che la lista punti al primo record, non all'ultimo
@@ -1640,6 +1630,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         try (ZipOutputStream out = new ZipOutputStream(getServletOutputStream());) {
             evEjb.streamOutFileIndiceElenco(out, "IndiceElencoVersamento_", filesSuffix, idElencoVers.longValue(),
                     FileTypeEnum.getIndiceFileTypes());
+            out.close();
             freeze();
         } catch (Exception e) {
             logger.error("Eccezione", e);

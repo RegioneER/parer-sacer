@@ -778,6 +778,14 @@ public class FasVVisFascicoloRowBean extends BaseRow implements BaseRowInterface
         setObject("ds_indice_classif", ds_indice_classif);
     }
 
+    public String getDsInfoConservazione() {
+        return getString("ds_info_conservazione");
+    }
+
+    public void setDsInfoConservazione(String dsInfoConservazione) {
+        setObject("ds_info_conservazione", dsInfoConservazione);
+    }
+
     @Override
     public void entityToRowBean(Object obj) {
         FasVVisFascicolo entity = (FasVVisFascicolo) obj;
@@ -878,6 +886,7 @@ public class FasVVisFascicoloRowBean extends BaseRow implements BaseRowInterface
         this.setFlDefaultSpecifico(entity.getFlDefaultSpecifico());
         this.setCdIndiceClassif(entity.getCdIndiceClassif());
         this.setDsIndiceClassif(entity.getDsIndiceClassif());
+        this.setDsInfoConservazione(entity.getDsInfoConservazione());
     }
 
     @Override
@@ -974,6 +983,7 @@ public class FasVVisFascicoloRowBean extends BaseRow implements BaseRowInterface
         entity.setFlDefaultSpecifico(this.getFlDefaultSpecifico());
         entity.setCdIndiceClassif(this.getCdIndiceClassif());
         entity.setDsIndiceClassif(this.getDsIndiceClassif());
+        entity.setDsInfoConservazione(this.getDsInfoConservazione());
         return entity;
     }
 

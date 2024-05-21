@@ -156,12 +156,9 @@ public class CalcoloEstrazioneAsync {
         } else if (chkRaUdView.getFlElencoNonCompletato().equals("1")) {
             log.debug("Versamento ud non completato - annullo la richiesta");
             cdErrore = "Versamento ud non completato";
-        } else if (chkRaUdView.getFlElencoNonFirmato().equals("1")) {
-            log.debug("Ud in elenco non firmato - annullo la richiesta");
-            cdErrore = "Ud in elenco non firmato";
-        } else if (chkRaUdView.getFlAipNonFirmato().equals("1")) {
-            log.debug("Aip in elenco non firmato o non in archivio - annullo la richiesta");
-            cdErrore = "Aip in elenco non firmato o non in archivio";
+        } else if (chkRaUdView.getFlUdAipNonFirmato().equals("1")) {
+            log.debug("Ud con stato di conservazione diverso da AIP_FIRMATO o IN_ARCHIVIO - annullo la richiesta");
+            cdErrore = "Ud con stato di conservazione diverso da AIP_FIRMATO e IN_ARCHIVIO";
         }
 
         if (!cdErrore.isEmpty()) {

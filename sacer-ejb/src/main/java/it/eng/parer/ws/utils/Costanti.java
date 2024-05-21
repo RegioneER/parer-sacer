@@ -382,7 +382,9 @@ public class Costanti {
         //
         TAG_ANNUL_FORZA_PING, // tag di annullamento, abilita i tag opzionali di ForzaAnnullamento e RichiestaAPing
         //
-        TAG_ANNUL_FASC // tag di annullamento, abilita l'opzione di Annullamento Fascicolo
+        TAG_ANNUL_FASC, // tag di annullamento, abilita l'opzione di Annullamento Fascicolo,
+
+        TAG_ANNUL_TIPO_ANNUL // tag di annullamento che abilita il tag opzionale TipoAnnullamento
     }
 
     public enum CategoriaDocumento {

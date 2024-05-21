@@ -49,6 +49,8 @@ public class OrgVRicStrutTableDescriptor extends TableDescriptor {
     public static final String COL_DS_STRUT = "ds_strut";
     public static final String COL_FL_TEMPLATE = "fl_template";
     public static final String COL_FL_PART_OK = "fl_part_ok";
+    public static final String COL_FL_PARAMETRI_STRUT = "fl_parametri_strut";
+    public static final String COL_FL_PARAMETRI_TIPO_UD = "fl_parametri_tipo_ud";
     public static final String COL_ID_AMBITO_TERRIT = "id_ambito_territ";
     public static final String COL_TI_AMBITO_TERRIT = "ti_ambito_territ";
     public static final String COL_DS_TREE_CD_AMBITO_TERRIT = "ds_tree_cd_ambito_territ";
@@ -75,6 +77,8 @@ public class OrgVRicStrutTableDescriptor extends TableDescriptor {
         map.put(COL_DS_STRUT, new ColumnDescriptor(COL_DS_STRUT, Types.VARCHAR, 254, true));
         map.put(COL_FL_TEMPLATE, new ColumnDescriptor(COL_FL_TEMPLATE, Types.VARCHAR, 1, true));
         map.put(COL_FL_PART_OK, new ColumnDescriptor(COL_FL_PART_OK, Types.VARCHAR, 1, true));
+        map.put(COL_FL_PARAMETRI_STRUT, new ColumnDescriptor(COL_FL_PARAMETRI_STRUT, Types.VARCHAR, 1, true));
+        map.put(COL_FL_PARAMETRI_TIPO_UD, new ColumnDescriptor(COL_FL_PARAMETRI_TIPO_UD, Types.VARCHAR, 1, true));
         map.put(COL_ID_AMBITO_TERRIT, new ColumnDescriptor(COL_ID_AMBITO_TERRIT, Types.DECIMAL, 22, true));
         map.put(COL_TI_AMBITO_TERRIT, new ColumnDescriptor(COL_TI_AMBITO_TERRIT, Types.VARCHAR, 20, true));
         map.put(COL_DS_TREE_CD_AMBITO_TERRIT,

@@ -201,6 +201,14 @@ public class FasFascicoloRowBean extends BaseRow implements JEEBaseRowInterface 
         setObject("ds_indice_classif", dsIndiceClassif);
     }
 
+    public String getDsInfoConservazione() {
+        return getString("ds_info_conservazione");
+    }
+
+    public void setDsInfoConservazione(String dsInfoConservazione) {
+        setObject("ds_info_conservazione", dsInfoConservazione);
+    }
+
     public BigDecimal getIdVoceTitol() {
         return getBigDecimal("id_voce_titol");
     }
@@ -444,6 +452,7 @@ public class FasFascicoloRowBean extends BaseRow implements JEEBaseRowInterface 
         this.setFlForzaContrColleg(entity.getFlForzaContrColleg());
         this.setCdIndiceClassif(entity.getCdIndiceClassif());
         this.setDsIndiceClassif(entity.getDsIndiceClassif());
+        this.setDsInfoConservazione(entity.getDsInfoConservazione());
 
         if (entity.getDecVoceTitol() != null) {
             this.setIdVoceTitol(new BigDecimal(entity.getDecVoceTitol().getIdVoceTitol()));
@@ -535,6 +544,7 @@ public class FasFascicoloRowBean extends BaseRow implements JEEBaseRowInterface 
         entity.setFlForzaContrColleg(this.getFlForzaContrColleg());
         entity.setCdIndiceClassif(this.getCdIndiceClassif());
         entity.setDsIndiceClassif(this.getDsIndiceClassif());
+        entity.setDsInfoConservazione(this.getDsInfoConservazione());
         if (this.getIdVoceTitol() != null) {
             if (entity.getDecVoceTitol() == null) {
                 entity.setDecVoceTitol(new DecVoceTitol());

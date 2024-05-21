@@ -148,6 +148,8 @@
                 <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_LIVELLO_RISERV%>" colSpan="2"/>
                 <sl:newLine />
                 <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NI_AA_CONSERVAZIONE%>" colSpan="2"/>
+                <sl:newLine />
+                <slf:lblField name="<%=FascicoliForm.FascicoloDetail.DS_INFO_CONSERVAZIONE%>" colSpan="2"/>
                 <sl:newLine skipLine="true"/>
                 <slf:section name="<%=FascicoliForm.FascicoliCollegatiSection.NAME%>" styleClass="importantContainer">
                     <slf:listNavBar name="<%= FascicoliForm.CollegamentiList.NAME%>" pageSizeRelated="true"/>

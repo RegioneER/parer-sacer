@@ -94,7 +94,6 @@ import it.eng.parer.web.util.Constants.TipoDato;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.ParametroAppl;
-import it.eng.spagoLite.db.base.table.BaseTable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -427,6 +426,9 @@ public class TipoUnitaDocEjb {
             tipoUnitaDoc.setDsTipoSerieDaCreare(tipoUnitaDocRowBean.getDsTipoSerieDaCreare());
             tipoUnitaDoc.setCdSerieDaCreare(tipoUnitaDocRowBean.getCdSerieDaCreare());
             tipoUnitaDoc.setDsSerieDaCreare(tipoUnitaDocRowBean.getDsSerieDaCreare());
+            tipoUnitaDoc.setNiAaConserv(tipoUnitaDocRowBean.getNiAaConserv());
+            tipoUnitaDoc.setFlConservIllimitata(tipoUnitaDocRowBean.getFlConservIllimitata());
+            tipoUnitaDoc.setFlConservUniforme(tipoUnitaDocRowBean.getFlConservUniforme());
 
             if (tipoUnitaDocRowBean.getIdTipoServizio() != null) {
                 OrgTipoServizio tipoServizio = helper.findById(OrgTipoServizio.class,
@@ -1007,6 +1009,10 @@ public class TipoUnitaDocEjb {
                         Date dLast = (Date) rigaSistemaVersante.getObject("dt_last_vers");
                         tipoUnitaRow.setObject("dt_last_vers", dLast);
                     }
+
+                    boolean existsValoreParamApplicTipoUd = helper
+                            .existsValoreParamApplicTipoUd(tipoUnitaDoc.getIdTipoUnitaDoc());
+                    tipoUnitaRow.setString("fl_parametri_tipo_ud", existsValoreParamApplicTipoUd ? "1" : "0");
 
                     tipoUnitaTableBean.add(tipoUnitaRow);
                 }

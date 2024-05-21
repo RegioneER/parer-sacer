@@ -3699,7 +3699,12 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             List<BigDecimal> idTipoUnitaDocList, Set<String> cdRegistroUnitaDocSet, List<BigDecimal> idTipoDocList,
             FiltriUnitaDocumentarieAnnullatePlain filtriUnitaDocumentarieAnnullatePlain, boolean lazy) {
         String whereWord = "WHERE ";
-        StringBuilder queryStr = new StringBuilder("SELECT u FROM AroUnitaDoc u LEFT JOIN u.aroDocs doc ");
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT u FROM AroUnitaDoc u LEFT JOIN u.aroDocs doc ");
+
+        if (!StringUtils.isBlank(filtriUnitaDocumentarieAnnullatePlain.getTiAnnullamento())) {
+            queryStr.append(
+                    "INNER JOIN AroItemRichAnnulVers i ON i.aroUnitaDoc = u.idUnitaDoc JOIN AroRichAnnulVers r ON i.aroRichAnnulVers = r.idRichAnnulVers ");
+        }
 
         // Inserimento nella query del filtro Tipo Unità Doc versione multiselect
         if (!idTipoUnitaDocList.isEmpty()) {
@@ -3767,6 +3772,11 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             whereWord = " AND ";
         }
 
+        if (!StringUtils.isBlank(filtriUnitaDocumentarieAnnullatePlain.getTiAnnullamento())) {
+            queryStr.append(whereWord).append("r.tiAnnullamento = :tiAnnullamento ");
+            whereWord = " AND ";
+        }
+
         queryStr.append(whereWord).append("u.tiAnnul = 'ANNULLAMENTO' ORDER BY u.dsKeyOrd ");
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
@@ -3824,6 +3834,10 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("dataannulda", filtriUnitaDocumentarieAnnullatePlain.getDataAnnulDa());
             query.setParameter("dataannula", filtriUnitaDocumentarieAnnullatePlain.getDataAnnulA());
         }
+
+        if (!StringUtils.isBlank(filtriUnitaDocumentarieAnnullatePlain.getTiAnnullamento())) {
+            query.setParameter("tiAnnullamento", filtriUnitaDocumentarieAnnullatePlain.getTiAnnullamento());
+        }
         if (lazy) {
             return lazyListHelper.getTableBean(query, this::aroUnitaDocsToTableBean);
         } else {
@@ -3844,6 +3858,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                     rowBean.setString("nm_tipo_unita_doc",
                             getNmTipoUnitaDoc(ud.getDecTipoUnitaDoc().getIdTipoUnitaDoc()));
                     // Ricavo il campo tipo doc principale
+                    rowBean.setString("ti_annullamento", getTiAnnullamento(ud));
                     for (AroDoc doc : getAroDocs(ud)) {
                         if (doc.getTiDoc().equals("PRINCIPALE")) {
                             rowBean.setString("nm_tipo_doc_princ", getNmTipoDoc(doc.getIdDecTipoDoc()));
@@ -3896,6 +3911,20 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                     .createQuery("SELECT d.nmTipoDoc FROM DecTipoDoc d WHERE d.idTipoDoc=:idTipoDoc", String.class);
             query.setParameter("idTipoDoc", idTipoDoc);
             return query.getSingleResult();
+        }
+        return "";
+    }
+
+    public String getTiAnnullamento(AroUnitaDoc ud) {
+        if (ud != null) {
+            TypedQuery<String> query = getEntityManager().createQuery(
+                    "SELECT a.tiAnnullamento FROM AroRichAnnulVers a JOIN AroItemRichAnnulVers i ON i.aroRichAnnulVers = a.idRichAnnulVers WHERE i.aroUnitaDoc = :aroUnitaDoc",
+                    String.class);
+            query.setParameter("aroUnitaDoc", ud);
+            List<String> result = query.getResultList();
+            if (result != null && !result.isEmpty()) {
+                return result.get(0);
+            }
         }
         return "";
     }
@@ -4294,6 +4323,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         private Date dataRegUnitaDocA;
         private Date dataAnnulDa;
         private Date dataAnnulA;
+        private String tiAnnullamento;
 
         FiltriUnitaDocumentarieAnnullatePlain() {
 
@@ -4314,6 +4344,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             this.dataRegUnitaDocA = dataRegUnitaDocA;
             this.dataAnnulDa = dataAnnulDa;
             this.dataAnnulA = dataAnnulA;
+            this.tiAnnullamento = filtri.getTi_annullamento().parse();
         }
 
         public BigDecimal getAaKeyUnitaDoc() {
@@ -4364,6 +4395,10 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             return dataAnnulA;
         }
 
+        public String getTiAnnullamento() {
+            return tiAnnullamento;
+        }
+
         void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
             this.aaKeyUnitaDoc = aaKeyUnitaDoc;
         }
@@ -4410,6 +4445,10 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
         void setDataAnnulA(Date dataAnnulA) {
             this.dataAnnulA = dataAnnulA;
+        }
+
+        void setTiAnnullamento(String tiAnnullamento) {
+            this.tiAnnullamento = tiAnnullamento;
         }
     }
 

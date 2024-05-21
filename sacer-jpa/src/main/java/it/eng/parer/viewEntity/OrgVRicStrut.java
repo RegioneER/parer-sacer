@@ -40,6 +40,8 @@ public class OrgVRicStrut implements Serializable {
     private String dsStrut;
     private String dsTreeCdAmbitoTerrit;
     private String dsTreeIdAmbitoTerrit;
+    private String flParametriStrut;
+    private String flParametriTipoUd;
     private String flPartOk;
     private String flTemplate;
     private BigDecimal idAmbiente;
@@ -63,7 +65,7 @@ public class OrgVRicStrut implements Serializable {
     public OrgVRicStrut(BigDecimal idAmbiente, String nmAmbiente, BigDecimal idEnte, String nmEnte, BigDecimal idStrut,
             String nmStrut, String dsStrut, String flTemplate, String flPartOk, BigDecimal idAmbitoTerrit,
             String tiAmbitoTerrit, String dsTreeCdAmbitoTerrit, String dsTreeIdAmbitoTerrit, BigDecimal idCategEnte,
-            String cdCategEnte) {
+            String cdCategEnte, String flParametriStrut, String flParametriTipoUd) {
         this.idAmbiente = idAmbiente;
         this.nmAmbiente = nmAmbiente;
         this.idEnte = idEnte;
@@ -80,6 +82,8 @@ public class OrgVRicStrut implements Serializable {
         this.dsTreeIdAmbitoTerrit = dsTreeIdAmbitoTerrit;
         this.idCategEnte = idCategEnte;
         this.cdCategEnte = cdCategEnte;
+        this.flParametriStrut = flParametriStrut;
+        this.flParametriTipoUd = flParametriTipoUd;
     }
 
     @Column(name = "CD_CATEG_ENTE")
@@ -116,6 +120,24 @@ public class OrgVRicStrut implements Serializable {
 
     public void setDsTreeIdAmbitoTerrit(String dsTreeIdAmbitoTerrit) {
         this.dsTreeIdAmbitoTerrit = dsTreeIdAmbitoTerrit;
+    }
+
+    @Column(name = "FL_PARAMETRI_STRUT", columnDefinition = "char(1)")
+    public String getFlParametriStrut() {
+        return this.flParametriStrut;
+    }
+
+    public void setFlParametriStrut(String flParametriStrut) {
+        this.flParametriStrut = flParametriStrut;
+    }
+
+    @Column(name = "FL_PARAMETRI_TIPO_UD", columnDefinition = "char(1)")
+    public String getFlParametriTipoUd() {
+        return this.flParametriTipoUd;
+    }
+
+    public void setFlParametriTipoUd(String flParametriTipoUd) {
+        this.flParametriTipoUd = flParametriTipoUd;
     }
 
     @Column(name = "FL_PART_OK", columnDefinition = "char(1)")

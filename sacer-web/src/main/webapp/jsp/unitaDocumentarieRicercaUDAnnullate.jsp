@@ -93,6 +93,8 @@
                     <sl:newLine />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAnnullate.DT_ANNUL_DA%>" />
                     <slf:lblField colSpan="2" controlWidth="w30" name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAnnullate.DT_ANNUL_A%>"  />
+                    <sl:newLine />
+                    <slf:lblField name="<%=UnitaDocumentarieForm.FiltriUnitaDocumentarieAnnullate.TI_ANNULLAMENTO%>"  colSpan="2" />
                 </slf:section>
             </slf:fieldSet>
             <sl:newLine skipLine="true" />

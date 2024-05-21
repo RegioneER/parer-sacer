@@ -98,8 +98,8 @@ public class MonitoraggioValidator extends TypeValidator {
         dataInizio.set(Calendar.MINUTE, 0);
         dataInizio.set(Calendar.SECOND, 0);
         dataInizio.set(Calendar.MILLISECOND, 0);
-        Calendar ieri = Calendar.getInstance();
-        ieri.add(Calendar.DATE, -1);
+        Calendar altroIeri = Calendar.getInstance();
+        altroIeri.add(Calendar.DATE, -2);
 
         if (dataRifDa.after(dataRifA)) {
             getMessageBox()
@@ -109,18 +109,20 @@ public class MonitoraggioValidator extends TypeValidator {
             getMessageBox()
                     .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da inferiore al 1 gennaio 2000"));
         }
-        if (dataRifDa.after(ieri.getTime())) {
-            getMessageBox().addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di ieri"));
+        if (dataRifDa.after(altroIeri.getTime())) {
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di data odierna - 2 gg"));
         }
         if (dataRifA.before(dataInizio.getTime())) {
             getMessageBox().addMessage(new Message(MessageLevel.ERR, "Data riferimento A inferiore al 1 gennaio 2000"));
         }
-        if (dataRifA.after(ieri.getTime())) {
-            getMessageBox().addMessage(new Message(MessageLevel.ERR, "Data riferimento A maggiore di ieri"));
+        if (dataRifA.after(altroIeri.getTime())) {
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento A maggiore di data odierna - 2 gg"));
         }
     }
 
-    public void validaDataCalcoloConsistenzaSacer(Date dataRifDa) {
+    public void validaDataCalcoloConsistenzaSacer(Date dataRifDa, Date dataRifA) {
         Calendar dataInizio = Calendar.getInstance();
         dataInizio.set(Calendar.YEAR, 2011);
         dataInizio.set(Calendar.MONTH, Calendar.DECEMBER);
@@ -129,9 +131,28 @@ public class MonitoraggioValidator extends TypeValidator {
         dataInizio.set(Calendar.MINUTE, 0);
         dataInizio.set(Calendar.SECOND, 0);
         dataInizio.set(Calendar.MILLISECOND, 0);
+        Calendar altroIeri = Calendar.getInstance();
+        altroIeri.add(Calendar.DATE, -2);
+
+        if (dataRifDa.after(dataRifA)) {
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di Data riferimento A"));
+        }
         if (dataRifDa.before(dataInizio.getTime())) {
             getMessageBox()
-                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da minima impostabile: 01/12/2011"));
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da inferiore al 1 dicembre 2011"));
+        }
+        if (dataRifDa.after(altroIeri.getTime())) {
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di data odierna - 2 gg"));
+        }
+        if (dataRifA.before(dataInizio.getTime())) {
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento A inferiore al 1 dicembre 2011"));
+        }
+        if (dataRifA.after(altroIeri.getTime())) {
+            getMessageBox()
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento A maggiore di data odierna - 2 gg"));
         }
     }
 }

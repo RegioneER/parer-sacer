@@ -790,6 +790,9 @@ public class CopiaStruttureEjb {
                     ud.setFlVersManuale(udOld.getFlVersManuale());
                     ud.setNmTipoUnitaDoc(udOld.getNmTipoUnitaDoc());
                     ud.setTiSaveFile(udOld.getTiSaveFile());
+                    ud.setNiAaConserv(udOld.getNiAaConserv());
+                    ud.setFlConservIllimitata(udOld.getFlConservIllimitata());
+                    ud.setFlConservUniforme(udOld.getFlConservUniforme());
                     ud.setOrgStrut(newStrut);
                     ud.setDecModelloTipoSerie(determinaModelloTipoSerie(result, udOld.getDecModelloTipoSerie()));
                     // b)
@@ -1909,6 +1912,9 @@ public class CopiaStruttureEjb {
                     reg.setFlRegistroFisc(regOld.getFlRegistroFisc());
                     reg.setFlTipoSerieMult(regOld.getFlTipoSerieMult());
                     reg.setNiAnniConserv(regOld.getNiAnniConserv());
+                    reg.setNiAaConserv(regOld.getNiAaConserv());
+                    reg.setFlConservIllimitata(regOld.getFlConservIllimitata());
+                    reg.setFlConservUniforme(regOld.getFlConservUniforme());
                     reg.setNmTipoSerieDaCreare(regOld.getNmTipoSerieDaCreare());
                     reg.setOrgStrut(newStrut);
                     reg.setDecModelloTipoSerie(determinaModelloTipoSerie(result, regOld.getDecModelloTipoSerie()));

@@ -1537,6 +1537,16 @@ public class MessaggiWSBundle {
     public static final String RICH_ANN_VERS_023 = "RICH-ANN-VERS-023";
 
     /**
+     * Tipo annullamento definito ma la versione del WS specificata nel xml non lo supporta
+     */
+    public static final String RICH_ANN_VERS_024 = "RICH-ANN-VERS-024";
+
+    /**
+     * Il valore del TipoAnnullamento CANCELLAZIONE è incompatibile col TipoVersamento FASCICOLO
+     */
+    public static final String RICH_ANN_VERS_025 = "RICH-ANN-VERS-025";
+
+    /**
      * Errore inaspettato al salvataggio: {0}
      */
     public static final String SERVIZI_USR_001 = "SERVIZI-USR-001";

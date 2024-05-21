@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>9.2.1-SNAPSHOT</version>
+    <version>9.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -10,16 +10,16 @@
     <parent>
         <groupId>it.eng.parer</groupId>
         <artifactId>parer-pom</artifactId>
-        <version>5.2.0</version>
+        <version>5.2.1</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Skiptests by default : esecuzione su CI 2.6.0-->
         <skipTests>true</skipTests>
         <!-- Questa è la versione del modulo sacer-xml che dovrà essere inclusa nel progetto -->
-        <sacer.xmlmodule.version>2.8.0</sacer.xmlmodule.version>
+        <sacer.xmlmodule.version>2.9.0</sacer.xmlmodule.version>
         <!-- spagofat bom -->
-        <spagofat.version>5.12.0</spagofat.version>
+        <spagofat.version>5.14.0</spagofat.version>
         <verificafirma-eidas-beans.version>1.9.0</verificafirma-eidas-beans.version>
         <verificafirma-crypto-beans.version>1.3.0</verificafirma-crypto-beans.version>
         <parer-retry.version>2.1.0</parer-retry.version>
@@ -38,7 +38,8 @@
         <saxon-he.version>9.6.0-5</saxon-he.version>
         <asm-debug-all.version>4.1</asm-debug-all.version>
         <javax.mail.version>1.4.7</javax.mail.version>
-        <ooxml-schemas.version>1.4</ooxml-schemas.version>
+        <!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
+<!--        <ooxml-schemas.version>1.4</ooxml-schemas.version> -->
         <pdf-box.version>2.0.28</pdf-box.version>
         <fop.version>1.1</fop.version>              
     </properties>
@@ -65,11 +66,6 @@
                 <artifactId>sacer-jboss-ejb</artifactId>
                 <version>${project.version}</version>
                 <type>ejb</type>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>sacer-jboss-jpa</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -203,24 +199,24 @@
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-parsers-standard-package</artifactId>
                 <version>${tika.version}</version>
-				<exclusions>
-	                <exclusion>
-	                    <groupId>org.ow2.asm</groupId>
-	                    <artifactId>asm</artifactId>
-	                </exclusion>
-	                <exclusion>
-	                    <groupId>org.apache.cxf</groupId>
-	                    <artifactId>cxf-rt-rs-client</artifactId>
-	                </exclusion>
-	                 <exclusion>
-	                	  <groupId>org.bouncycastle</groupId>
-	                	  <artifactId>bcprov-jdk18on</artifactId>
-	                  </exclusion>
-	                 <exclusion>
-	                 	<groupId>org.bouncycastle</groupId>
-	                 	<artifactId>bcmail-jdk18on</artifactId>
-	                 </exclusion>
-           		 </exclusions>                
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.ow2.asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-rs-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk18on</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcmail-jdk18on</artifactId>
+                    </exclusion>
+                </exclusions>                
             </dependency>
             
             <!-- Altro -->
@@ -312,20 +308,20 @@
                 <groupId>org.apache.wss4j</groupId>
                 <artifactId>wss4j-ws-security-common</artifactId>
                 <version>${org.apache.wss4j.version}</version>
-	            <exclusions>
-	                <exclusion>
-	                    <groupId>org.opensaml</groupId>
-	                    <artifactId>opensaml-saml-impl</artifactId>
-	                </exclusion>
-	                <exclusion>
-	                    <groupId>org.opensaml</groupId>
-	                    <artifactId>opensaml-xacml-impl</artifactId>
-	                </exclusion>
-	                <exclusion>
-	                    <groupId>org.opensaml</groupId>
-	                    <artifactId>opensaml-xacml-saml-impl</artifactId>
-	                </exclusion>
-	            </exclusions>                
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.opensaml</groupId>
+                        <artifactId>opensaml-saml-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.opensaml</groupId>
+                        <artifactId>opensaml-xacml-impl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.opensaml</groupId>
+                        <artifactId>opensaml-xacml-saml-impl</artifactId>
+                    </exclusion>
+                </exclusions>                
             </dependency>
             <!-- AWS -->
             <dependency>
@@ -402,35 +398,52 @@
                 <version>${javax.xml.soap-api.version}</version>
                 <scope>provided</scope>
             </dependency> 
+<!--            
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>ooxml-schemas</artifactId>
                 <version>${ooxml-schemas.version}</version>    
             </dependency>
-			<!-- OWASP -->
+            -->
+            <!-- https://mvnrepository.com/artifact/org.apache.xmlbeans/xmlbeans -->
+            <dependency>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>5.2.0</version>
+            </dependency>
+            
+            <!-- OWASP -->
             <dependency>
                 <groupId>org.owasp.esapi</groupId>
                 <artifactId>esapi</artifactId>
                 <version>${owasp.version}</version>
                 <exclusions>
-	            	<exclusion>
-	            		<groupId>org.apache.xmlgraphics</groupId>
-	            		<artifactId>batik-css</artifactId>
-	            	</exclusion>
-	            	<exclusion>
-	            		<groupId>xerces</groupId>
-	            		<artifactId>xercesImpl</artifactId>
-	            	</exclusion>
-	            	<exclusion>
-	            		<groupId>log4j</groupId>
-	            		<artifactId>log4j</artifactId>
-	            	</exclusion>
-	            </exclusions>
-            </dependency>            
+                    <exclusion>
+                        <groupId>org.apache.xmlgraphics</groupId>
+                        <artifactId>batik-css</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>   
+            <!--                     
+                        <dependency>
+                            <groupId>org.apache.poi</groupId>
+                            <artifactId>poi-ooxml</artifactId>
+                            <version>4.1.2</version>    
+                        </dependency>
+            -->    
+            <!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>4.1.2</version>    
+                <artifactId>poi-ooxml-lite</artifactId>
+                <version>${poi.version}</version>    
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>

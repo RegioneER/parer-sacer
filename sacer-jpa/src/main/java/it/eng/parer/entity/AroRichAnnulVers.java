@@ -84,6 +84,8 @@ public class AroRichAnnulVers implements Serializable {
 
     private List<AroXmlRichAnnulVers> aroXmlRichAnnulVers = new ArrayList<>();
 
+    private String tiAnnullamento;
+
     public AroRichAnnulVers() {/* Hibernate */
     }
 
@@ -285,4 +287,14 @@ public class AroRichAnnulVers implements Serializable {
         aroXmlRichAnnulVers.setAroRichAnnulVers(null);
         return aroXmlRichAnnulVers;
     }
+
+    @Column(name = "TI_ANNULLAMENTO")
+    public String getTiAnnullamento() {
+        return this.tiAnnullamento;
+    }
+
+    public void setTiAnnullamento(String tiAnnullamento) {
+        this.tiAnnullamento = tiAnnullamento;
+    }
+
 }

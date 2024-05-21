@@ -30,6 +30,7 @@
                 <slf:lblField name="<%=AnnulVersForm.FiltriRicercaRichAnnullVers.FL_IMMEDIATA%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                 <slf:lblField name="<%=AnnulVersForm.FiltriRicercaRichAnnullVers.FL_ANNUL_PING%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                 <slf:lblField name="<%=AnnulVersForm.FiltriRicercaRichAnnullVers.FL_NON_ANNUL%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
+                <slf:lblField name="<%=AnnulVersForm.FiltriRicercaRichAnnullVers.TI_ANNULLAMENTO%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                 <slf:section name="<%=AnnulVersForm.UdSection.NAME%>" styleClass="noborder w100">
                     <slf:lblField name="<%=AnnulVersForm.FiltriRicercaRichAnnullVers.CD_REGISTRO_KEY_UNITA_DOC%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                     <slf:lblField name="<%=AnnulVersForm.FiltriRicercaRichAnnullVers.AA_KEY_UNITA_DOC%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />

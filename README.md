@@ -21,16 +21,148 @@ Requisiti minimi per installazione:
 
 Consigliata adozione della OpenJDK alla versione 8, guida all'installazione https://openjdk.org/install/.
 
-## Setup application server (Jboss 7)
+## Setup application server (JBoss 7)
 
 Richiesta l'esecuzione delle seguenti guide secondo l'ordine riportato di seguito: 
 
 1. guida per la configurazione **base** di [guida 1](src/docs/JBoss7_configurazione_generale.md);
 2. guida con le configurazioni **specifiche** per il contesto applicativo **SIAM**  di [guida 2](src/docs/JBoss7_configurazione_siam.md).
 
+### Deploy su JBoss 7
+
+Di seguito le indicazioni per il rilascio su application server JBoss7: 
+
+1. generazione dell'artifact attraverso tool maven, eseguire il seguente comando: 
+
+   ```bash
+   mvn package
+   ```
+   
+2. viene generato l'artifact .ear all'interno del modulo sacer-ear/target (e.g. sacer-9.3.1.ear)
+3. deploy dell'ear generato allo step 1 su JBoss 7 (vedi configurazione [setup JBoss7](#setup-application-server-jboss-7))
+
 ## Predisposizione database
 
-TODO
+L'applicazione utilizza come DBMS di riferimento Oracle DB (https://www.oracle.com/it/database/) alla versione, consigliata, **19c**. Per l'installazione e la configurazione fare riferimento alle guide ufficiali.
+
+Per la creazione del modello E-R consultare il seguente [README.md](https://github.com/RegioneER/parer-db-init/blob/master/README.md) (progetto di riferimento https://github.com/RegioneER/parer-db-init).
+
+## Configurazione bucket S3 Object Storage
+
+L'applicazione può essere integrata sulla base delle configurazioni impostate, vedi paragrafo [Setup application server (Jboss 7)](#setup-application-server-jboss-7), ad uno storage grid o object storage attraverso lo standard [AWS S3](https://aws.amazon.com/it/s3/).
+
+In questa sezione si vuole proporre un possibile scenario di configurazione dei bucket e, in particolar modo, di eventuali [lifecycle](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lifecycle-mgmt.html) legati ad alcuni bucket, essenziali per gestire in modo corretto ed opportuno il ciclo di vita degli oggetti all'interno di determinati bucket; su quest'ultimo aspetto, si sottolinea, che alcuni flussi applicativi/servizi prevedono la creazione di oggetto "temporanei" ossia la cui esistenza è prevista per un determinato periodo temporale dopo il quale possono essere eliminati dal bucket stesso.
+
+### Configurazione dei bucket
+
+Una possibile configurazione dei bucket, proposta, è la seguente: 
+
+- aggiornamenti-metadati : oggetti prodotti dal servizio di Aggiornamento Metadati (vedi README.md progetto "sacerws");
+- aip : oggetti prodotti dai processi di creazione dell'AIP;
+- componenti : oggetti prodotti dai servizi di Versamento Unità Documentarie/Aggiunta documenti (vedi README.md progetto "sacerws");
+- indici-aip : oggetti prodotti dai processi di creazione degli indici AIP;
+- reportvf : oggetti prodotti dalla creazione di report verifica firma su documenti processati dai servizi di Versamento Unità Documentarie/Aggiunta documenti (vedi README.md progetto "sacerws");
+- sessioni-agg-md-err-ko  : oggetti prodotti dal servizio di Aggiornamento Metadati (vedi README.md progetto "sacerws");
+- vrs-staging : oggetti prodotti dai servizi di Versamento Unità Documentarie/Aggiunta documenti (vedi README.md progetto "sacerws").
+
+I bucket possono essere creati con / senza versioning, alcuni dei bucket prevedono l'applicazione di lifecycle policy (consigliato), nello specifico: 
+- vrs-staging;
+- sessioni-agg-md-err-ko.
+
+#### Lifecyle policy : casi d'uso
+
+Bucket : vrs-staging
+
+Esempio di lifecycle applicata (con filtri per tag)
+
+```json
+{
+    "Rules": [
+        {
+            "Expiration": {
+                "Days": 183
+            },
+            "ID": "default_no_tag",
+            "Filter": {
+                "Prefix": ""
+            },
+            "Status": "Enabled"
+        },
+        {
+            "Expiration": {
+                "Days": 92
+            },
+            "ID": "file_componente_uddoc",
+            "Filter": {
+                "And": {
+                    "Prefix": "",
+                    "Tags": [
+                        {
+                            "Key": "vrs-object-type",
+                            "Value": "file_componente_uddoc"
+                        }
+                    ]
+                }
+            },
+            "Status": "Enabled"
+        },
+        {
+            "Expiration": {
+                "Days": 183
+            },
+            "ID": "xml_metadati_uddoc",
+            "Filter": {
+                "And": {
+                    "Prefix": "",
+                    "Tags": [
+                        {
+                            "Key": "vrs-object-type",
+                            "Value": "xml_metadati_uddoc"
+                        }
+                    ]
+                }
+            },
+            "Status": "Enabled"
+        },
+        {
+            "Expiration": {
+                "Days": 30
+            },
+            "ID": "orphan_objects",
+            "Filter": {
+                "And": {
+                    "Prefix": "",
+                    "Tags": [
+                        {
+                            "Key": "orphan",
+                            "Value": "true"
+                        }
+                    ]
+                }
+            },
+            "Status": "Enabled"
+        },
+        {
+            "Expiration": {
+                "Days": 2
+            },
+            "ID": "temporany_object",
+            "Filter": {
+                "And": {
+                    "Prefix": "",
+                    "Tags": [
+                        {
+                            "Key": "vrs-object-type",
+                            "Value": "temporany"
+                        }
+                    ]
+                }
+            },
+            "Status": "Enabled"
+        }
+    ]
+}
+```
 
 
 # Utilizzo

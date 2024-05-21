@@ -39,7 +39,11 @@
                     }
                 });
 
-                poll();
+                interval = poll();
+                
+                $('#InfoSerieSection .Nm_tipo_serie').on('click', () => {
+                    clearInterval(interval)
+                });
             });
         </script>
     </sl:head>

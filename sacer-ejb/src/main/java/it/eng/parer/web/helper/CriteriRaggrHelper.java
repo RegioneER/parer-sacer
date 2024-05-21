@@ -1051,35 +1051,45 @@ public class CriteriRaggrHelper extends GenericHelper {
         }
         if (nmCriterioRaggr != null) {
             queryStr.append(whereWord).append("UPPER(u.nmCriterioRaggr) LIKE :nmCriterioRaggr ");
+            whereWord = "AND ";
         }
         if (flCriterioRaggrStandard != null) {
             queryStr.append(whereWord).append("u.flCriterioRaggrStandard = :flCriterioRaggrStandard ");
+            whereWord = "AND ";
         }
         if (flCriterioRaggrFisc != null) {
             queryStr.append(whereWord).append("u.flCriterioRaggrFisc = :flCriterioRaggrFisc ");
+            whereWord = "AND ";
         }
         if (tiValidElenco != null) {
             queryStr.append(whereWord).append("u.tiValidElenco = :tiValidElenco ");
+            whereWord = "AND ";
         }
         if (tiModValidElenco != null) {
             queryStr.append(whereWord).append("u.tiModValidElenco = :tiModValidElenco ");
+            whereWord = "AND ";
         }
         if (tiGestElencoCriterio != null) {
             queryStr.append(whereWord).append("u.tiGestElencoCriterio = :tiGestElencoCriterio ");
+            whereWord = "AND ";
         }
         if (idRegistroUnitaDoc != null) {
             queryStr.append(whereWord).append(
                     "(u.id.idRegistroUnitaDoc = :idRegistroUnitaDoc OR u.id.idRegistroRangeUnitaDoc = :idRegistroUnitaDoc) ");
+            whereWord = "AND ";
         }
         if (idTipoUnitaDoc != null) {
             queryStr.append(whereWord).append("u.id.idTipoUnitaDoc = :idTipoUnitaDoc ");
+            whereWord = "AND ";
         }
         if (idTipoDoc != null) {
             queryStr.append(whereWord).append("u.id.idTipoDoc = :idTipoDoc ");
+            whereWord = "AND ";
         }
         if (aaKeyUnitaDoc != null) {
             queryStr.append(whereWord).append(
                     "(u.aaKeyUnitaDoc = :aaKeyUnitaDoc OR (u.aaKeyUnitaDocDa <= :aaKeyUnitaDoc AND u.aaKeyUnitaDocA >= :aaKeyUnitaDoc)) ");
+            whereWord = "AND ";
         }
         if (criterioAttivo != null) {
             if (criterioAttivo.equals("1")) {

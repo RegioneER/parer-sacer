@@ -877,4 +877,12 @@ public class TipoUnitaDocHelper extends GenericHelper {
         getEntityManager().flush();
     }
 
+    public boolean existsValoreParamApplicTipoUd(long idTipoUnitaDoc) {
+        String queryStr = "SELECT valoreParamApplic FROM AplValoreParamApplic valoreParamApplic "
+                + "WHERE valoreParamApplic.decTipoUnitaDoc.idTipoUnitaDoc = :idTipoUnitaDoc ";
+        Query q = getEntityManager().createQuery(queryStr);
+        q.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+        return !q.getResultList().isEmpty();
+    }
+
 }

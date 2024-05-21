@@ -29,6 +29,7 @@ import javax.ejb.Stateless;
 import it.eng.parer.web.helper.MonitoraggioIndiceAIPHelper;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
+import java.util.Date;
 
 /**
  *
@@ -42,10 +43,12 @@ public class MonitoraggioIndiceAIPEjb {
     private MonitoraggioIndiceAIPHelper monitoraggioIndiceAIPHelper;
 
     public BaseTable calcolaRiepilogoProcessoGenerazioneIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, BigDecimal niGgStato) {
+            BigDecimal idStrut, BigDecimal aaKeyUnitaDoc, String tiStatoelenco, String dtCreazioneElencoDa,
+            String dtCreazioneElencoA, BigDecimal niGgStatoDa, BigDecimal niGgStatoA) {
         BaseTable tabella = new BaseTable();
 
-        List<Object[]> risultati = monitoraggioIndiceAIPHelper.getRiepilogo(idAmbiente, idEnte, idStrut, niGgStato);
+        List<Object[]> risultati = monitoraggioIndiceAIPHelper.getRiepilogo(idAmbiente, idEnte, idStrut, aaKeyUnitaDoc,
+                tiStatoelenco, dtCreazioneElencoDa, dtCreazioneElencoA, niGgStatoDa, niGgStatoA);
         risultati.forEach((objArr) -> {
             BaseRow riga = new BaseRow();
             riga.setString("cd_ti_eve_stato_elenco_vers", (String) objArr[0]);
@@ -53,6 +56,7 @@ public class MonitoraggioIndiceAIPEjb {
             riga.setBigDecimal("ni_elenchi_fisc", (BigDecimal) objArr[3]);
             riga.setBigDecimal("ni_elenchi_no_fisc", (BigDecimal) objArr[4]);
             riga.setBigDecimal("ni_elenchi_total", (BigDecimal) objArr[2]);
+            riga.setBigDecimal("ni_unita_doc_tot", (BigDecimal) objArr[5]);
             tabella.add(riga);
         });
 
@@ -60,11 +64,12 @@ public class MonitoraggioIndiceAIPEjb {
     }
 
     public BaseTable calcolaTotaliListaStruttureIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal niGgStato, String cdTiEveStatoElencoVers) {
+            BigDecimal aaKeyUnitaDoc, String tiStatoElenco, String dtCreazioneDa, String dtCreazioneA,
+            BigDecimal niGgStatoDa, BigDecimal niGgStatoA, String cdTiEveStatoElencoVers) {
         BaseTable tabella = new BaseTable();
 
-        List<Object[]> risultati = monitoraggioIndiceAIPHelper.getRiepilogoStrutture(idAmbiente, idEnte, niGgStato,
-                cdTiEveStatoElencoVers);
+        List<Object[]> risultati = monitoraggioIndiceAIPHelper.getRiepilogoStrutture(idAmbiente, idEnte, aaKeyUnitaDoc,
+                tiStatoElenco, dtCreazioneDa, dtCreazioneA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers);
         risultati.forEach((objArr) -> {
             BaseRow riga = new BaseRow();
             riga.setString("nm_strut", (String) objArr[0]);
@@ -94,11 +99,13 @@ public class MonitoraggioIndiceAIPEjb {
     }
 
     public BaseTable calcolaTotaliListaElenchiIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
-            BigDecimal niGgStato, String cdTiEveStatoElencoVers, String fiscali) {
+            BigDecimal aaKeyUnitaDoc, String tiStatoElenco, String dtCreazioneElencoDa, String dtCreazioneElencoA,
+            BigDecimal niGgStatoDa, BigDecimal niGgStatoA, String cdTiEveStatoElencoVers, String fiscali) {
         BaseTable tabella = new BaseTable();
 
         List<Object[]> risultati = monitoraggioIndiceAIPHelper.getRiepilogoElenchi(idAmbiente, idEnte, idStrut,
-                niGgStato, cdTiEveStatoElencoVers, fiscali);
+                aaKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa, dtCreazioneElencoA, niGgStatoDa, niGgStatoA,
+                cdTiEveStatoElencoVers, fiscali);
         risultati.forEach((objArr) -> {
             BaseRow riga = new BaseRow();
             riga.setString("struttura", (String) objArr[0]);
@@ -126,7 +133,8 @@ public class MonitoraggioIndiceAIPEjb {
     }
 
     public List<BaseTable> calcolaTotaliListaUdIndiceAIP(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
-            String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, BigDecimal nnGgStato,
+            String cdRegistroKeyUnitaDoc, BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc, String tiStatoElenco,
+            String dtCreazioneElencoDa, String dtCreazioneElencoA, BigDecimal niGgStatoDa, BigDecimal niGgStatoA,
             String cdTiEveStatoElencoVers, String fiscali, BigDecimal idElencoVers, String tiStatoUdElencoVers) {
         BaseTable tabella = new BaseTable();
         BaseTable tabella1 = new BaseTable();
@@ -134,8 +142,9 @@ public class MonitoraggioIndiceAIPEjb {
         List<BaseTable> listaTabelle = new ArrayList<>();
 
         List<List<Object[]>> risultatiTot = monitoraggioIndiceAIPHelper.getRiepilogoUd(idAmbiente, idEnte, idStrut,
-                cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, nnGgStato, cdTiEveStatoElencoVers, fiscali,
-                idElencoVers, tiStatoUdElencoVers);
+                cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, tiStatoElenco, dtCreazioneElencoDa,
+                dtCreazioneElencoA, niGgStatoDa, niGgStatoA, cdTiEveStatoElencoVers, fiscali, idElencoVers,
+                tiStatoUdElencoVers);
 
         List<Object[]> risultati = ((List<Object[]>) risultatiTot.get(0));
         List<Object[]> risultati1 = ((List<Object[]>) risultatiTot.get(1));

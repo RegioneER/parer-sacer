@@ -1142,22 +1142,9 @@ public class ComponentiHelper extends GenericHelper {
     }
 
     public it.eng.parer.slite.gen.viewbean.ElvVListaCompElvTableBean getElvVListaCompElvViewBean(
-            BigDecimal idElencoVers, ElenchiVersamentoForm.ComponentiFiltri filtri, Date[] dateValidate,
-            DecTipoUnitaDocTableBean tmpTableBeanTipoUD, DecTipoDocTableBean tmpTableBeanTipoDoc,
-            OrgSubStrutTableBean tmpSubStrutsTableBean) throws it.eng.spagoCore.error.EMFError {
-        Set<BigDecimal> idTipoUnitaDocSet = new HashSet<>();
-        for (DecTipoUnitaDocRowBean row : tmpTableBeanTipoUD) {
-            idTipoUnitaDocSet.add(row.getIdTipoUnitaDoc());
-        }
-        Set<BigDecimal> idTipoDocSet = new HashSet<>();
-        for (DecTipoDocRowBean row : tmpTableBeanTipoDoc) {
-            idTipoDocSet.add(row.getIdTipoDoc());
-        }
-        // Inserimento nella query delle sottostrutture abilitate
-        Set<BigDecimal> idSubStrutSet = new HashSet<>();
-        for (OrgSubStrutRowBean row : tmpSubStrutsTableBean) {
-            idSubStrutSet.add(row.getIdSubStrut());
-        }
+            BigDecimal idElencoVers, ElenchiVersamentoForm.ComponentiFiltri filtri, Date[] dateValidate, long idUtente,
+            BigDecimal idStrut) throws it.eng.spagoCore.error.EMFError {
+
         return getElvVListaCompElvViewBean(idElencoVers, dateValidate, filtri.getCd_registro_key_unita_doc().parse(),
                 filtri.getAa_key_unita_doc().parse(), filtri.getCd_key_unita_doc().parse(),
                 filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse(),
@@ -1173,7 +1160,7 @@ public class ComponentiHelper extends GenericHelper {
                 filtri.getFl_forza_accettazione().parse(), filtri.getFl_forza_conservazione().parse(),
                 filtri.getTi_esito_contr_formato_file().parse(), filtri.getDs_hash_file_calc().parse(),
                 filtri.getDs_algo_hash_file_calc().parse(), filtri.getCd_encoding_hash_file_calc().parse(),
-                filtri.getDs_urn_comp_calc().parse(), idTipoUnitaDocSet, idTipoDocSet, idSubStrutSet);
+                filtri.getDs_urn_comp_calc().parse(), idUtente, idStrut);
     }
 
     public ElvVListaCompElvTableBean getElvVListaCompElvViewBean(BigDecimal idElencoVers, Date[] dateValidate,
@@ -1185,8 +1172,7 @@ public class ComponentiHelper extends GenericHelper {
             final String nmMimetypeFile, final String dlUrnCompVers, final String dsFormatoRapprCalc,
             final String dsFormatoRapprEstesoCalc, final String forzaAcc, final String forzaConserva,
             final String tiEsitoContrFormatoFile, final String dsHashFileCalc, final String dsAlgoHashFileCalc,
-            final String cdEncodingHashFileCalc, final String dsUrnCompCalc, Set<BigDecimal> idTipoUnitaDocSet,
-            Set<BigDecimal> idTipoDocSet, Set<BigDecimal> idSubStrutSet) {
+            final String cdEncodingHashFileCalc, final String dsUrnCompCalc, long idUtente, BigDecimal idStrut) {
         String whereWord = "AND ";
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.ElvVListaCompElv"
                 + "(u.idElencoVers, u.id.idCompDoc, "
@@ -1194,24 +1180,13 @@ public class ComponentiHelper extends GenericHelper {
                 + "u.nmTipoStrutDoc, u.nmTipoCompDoc, u.nmFormatoFileDocVers, u.dtCreazioneDoc, u.niSizeFileCalc, "
                 + "u.flCompFirmato, u.tiEsitoVerifFirmeVers, u.idUnitaDoc, u.idDoc, "
                 + "u.cdRegistroKeyUnitaDoc, u.idTipoUnitaDoc, u.idTipoDoc, u.idSubStrut, u.tiStatoElencoVers, u.tiStatoConservazione) "
-                + "FROM ElvVListaCompElv u WHERE u.idElencoVers = :idElencoVers ");
-        // Inserimento nella query dei tipi unità documentaria abilitati
+                + "FROM ElvVListaCompElv u, " + "DecTipoUnitaDoc tud, " + "IamAbilTipoDato iatdtud, "
+                + "DecTipoDoc td, " + "IamAbilTipoDato iatdtd, " + "OrgSubStrut ss, " + "IamAbilTipoDato iatdss "
+                + "where u.idTipoUnitaDoc = tud.idTipoUnitaDoc and iatdtud.idTipoDatoApplic = tud.idTipoUnitaDoc and iatdtud.nmClasseTipoDato = 'TIPO_UNITA_DOC' and iatdtud.iamAbilOrganiz.iamUser.idUserIam = :idUtente and iatdtud.iamAbilOrganiz.idOrganizApplic = :idStrut "
+                + "and u.idTipoDoc = td.idTipoDoc and iatdtd.idTipoDatoApplic = td.idTipoDoc and iatdtd.nmClasseTipoDato = 'TIPO_DOC' AND iatdtd.iamAbilOrganiz.iamUser.idUserIam = :idUtente and iatdtd.iamAbilOrganiz.idOrganizApplic = :idStrut "
+                + "and u.idSubStrut = ss.idSubStrut and iatdss.idTipoDatoApplic = ss.idSubStrut and iatdss.nmClasseTipoDato = 'SUB_STRUTTURA' AND iatdss.iamAbilOrganiz.iamUser.idUserIam = :idUtente and iatdss.iamAbilOrganiz.idOrganizApplic = :idStrut "
+                + "and u.idElencoVers = :idElencoVers ");
 
-        if (idTipoUnitaDocSet.isEmpty()) {
-            idTipoUnitaDocSet.add(new BigDecimal("0"));
-        }
-        queryStr.append(whereWord).append("u.idTipoUnitaDoc IN (:idtipounitadocin) ");
-        // Inserimento nella query dei tipi documento abilitati
-
-        if (idTipoDocSet.isEmpty()) {
-            idTipoDocSet.add(new BigDecimal("0"));
-        }
-        queryStr.append(whereWord).append("u.idTipoDoc IN (:idtipodocin) ");
-
-        if (idTipoDocSet.isEmpty()) {
-            idSubStrutSet.add(new BigDecimal("0"));
-        }
-        queryStr.append(whereWord).append("u.idSubStrut IN (:idsubstrutin) ");
         // Inserimento nella query del filtro CHIAVE DOCUMENTO
         if (registro != null) {
             queryStr.append(whereWord).append("u.cdRegistroKeyUnitaDoc = :registroin ");
@@ -1358,9 +1333,7 @@ public class ComponentiHelper extends GenericHelper {
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createQuery(queryStr.toString());
         query.setParameter("idElencoVers", idElencoVers);
-        query.setParameter("idtipounitadocin", idTipoUnitaDocSet);
-        query.setParameter("idtipodocin", idTipoDocSet);
-        query.setParameter("idsubstrutin", idSubStrutSet);
+
         if (registro != null) {
             query.setParameter("registroin", registro);
         }
@@ -1447,6 +1420,9 @@ public class ComponentiHelper extends GenericHelper {
         if (StringUtils.isNotBlank(dsUrnCompCalc)) {
             query.setParameter("urnCompCalcIn", "%" + dsUrnCompCalc.toUpperCase() + "%");
         }
+
+        query.setParameter("idUtente", idUtente);
+        query.setParameter("idStrut", idStrut);
         // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
         List<ElvVListaCompElv> listaComponenti = query.getResultList();
         ElvVListaCompElvTableBean componentiTableBean = new ElvVListaCompElvTableBean();

@@ -558,7 +558,7 @@ public class AnnulVersHelper extends GenericHelper {
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicRichAnnvrs ("
                 + "r.cdRichAnnulVers,r.dsRichAnnulVers,r.dtCreazioneRichAnnulVers,r.flAnnulPing,r.flImmediata,r.flNonAnnul,"
                 + "r.idAmbiente,r.idEnte,r.id.idRichAnnulVers,r.idStrut,r.id.idUserIam,r.niItem,r.niItemNonAnnul,"
-                + "r.niItemPing,r.nmAmbiente,r.nmEnte,r.nmStrut,r.ntRichAnnulVers,r.tiCreazioneRichAnnulVers,r.tiStatoRichAnnulVersCor)"
+                + "r.niItemPing,r.nmAmbiente,r.nmEnte,r.nmStrut,r.ntRichAnnulVers,r.tiCreazioneRichAnnulVers,r.tiStatoRichAnnulVersCor,r.tiAnnullamento)"
                 + " FROM AroVRicRichAnnvrs r WHERE r.id.idUserIam = :idUserIam AND r.idAmbiente = :idAmbiente ");
         if (filtri.getId_ente() != null) {
             queryStr.append(clause).append("r.idEnte = :idEnte ");
@@ -614,6 +614,9 @@ public class AnnulVersHelper extends GenericHelper {
         }
         if (StringUtils.isNotBlank(filtri.getTi_rich_annul_vers())) {
             queryStr.append(clause).append("r.tiRichAnnulVers = :tiRichAnnulVers ");
+        }
+        if (StringUtils.isNotBlank(filtri.getTi_annullamento())) {
+            queryStr.append(clause).append("r.tiAnnullamento = :tiAnnullamento ");
         }
         queryStr.append("ORDER BY r.dtCreazioneRichAnnulVers");
 
@@ -675,6 +678,9 @@ public class AnnulVersHelper extends GenericHelper {
         }
         if (StringUtils.isNotBlank(filtri.getTi_rich_annul_vers())) {
             query.setParameter("tiRichAnnulVers", filtri.getTi_rich_annul_vers());
+        }
+        if (StringUtils.isNotBlank(filtri.getTi_annullamento())) {
+            query.setParameter("tiAnnullamento", filtri.getTi_annullamento());
         }
         return query.getResultList();
     }

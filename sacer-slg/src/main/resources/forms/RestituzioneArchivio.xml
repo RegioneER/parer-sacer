@@ -60,7 +60,8 @@
         <ComboBox Name="priorita_combo" Description="Priorita" Type="STRING" Required="true"/>
         <!-- Stato corrente -->
         <Input Name="ti_stato" Description="Stato corrente" Type="STRING" />
-        <Input Name="nm_userid" Description="Utente" Type="STRING" />       
+        <Input Name="nm_userid" Description="Utente" Type="STRING" />  
+        <Input Name="ftp_path" Description="Path FTP" Type="STRING" />       
     </Fields>
     
     <List Name="ItemList" Description="" hideUpdateButton="true">

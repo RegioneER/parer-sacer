@@ -253,16 +253,14 @@ public class ComponentiHelperTest {
         String dsAlgoHashFileCalc = aString();
         String cdEncodingHashFileCalc = aString();
         String dsUrnCompCalc = aString();
-        Set<BigDecimal> idTipoUnitaDocSet = aSetOfBigDecimal(2);
-        Set<BigDecimal> idTipoDocSet = emptySet();
-        Set<BigDecimal> idSubStrutSet = aSetOfBigDecimal(1);
+        long idUtente = aLong();
+        BigDecimal idStrut = aBigDecimal();
         ElvVListaCompElvTableBean tableBean = helper.getElvVListaCompElvViewBean(idElencoVers, dateValidate, registro,
                 anno, codice, annoRangeDa, annoRangeA, codiceRangeDa, codiceRangeA, tipoStrutDoc, tipoCompDoc, formato,
                 fileSizeDa, fileSizeA, presenza, conformita, esitoFirme, dtScadFirmaCompDa, dtScadFirmaCompA,
                 dsNomeCompVers, dsHashFileVers, nmMimetypeFile, dlUrnCompVers, dsFormatoRapprCalc,
                 dsFormatoRapprEstesoCalc, forzaAcc, forzaConserva, tiEsitoContrFormatoFile, dsHashFileCalc,
-                dsAlgoHashFileCalc, cdEncodingHashFileCalc, dsUrnCompCalc, idTipoUnitaDocSet, idTipoDocSet,
-                idSubStrutSet);
+                dsAlgoHashFileCalc, cdEncodingHashFileCalc, dsUrnCompCalc, idUtente, idStrut);
         assertNotNull(tableBean);
     }
 

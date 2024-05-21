@@ -1993,4 +1993,79 @@ public class ControlliRecupero {
         return rispostaControlli;
     }
 
+    /**
+     * Ottieni la lista degli id_upd_unita_doc distinti partendo dalla tabella ARO_XML_UPD_UNITA_DOC.
+     *
+     * Questo filtro non viene effettuato direttamente all'interno dello stream perchè non è possibile, con hibernate,
+     * accedere ai valori non chiave per le entity con lazy loading (vedi
+     * https://parermine.regione.emilia-romagna.it/projects/parer/wiki/Eclipselink2Hibernate#Lazy-loading )
+     *
+     * @param aroXmlUpdUnitaDocs
+     *            lista di entità AroXmlUpdUnitaDoc
+     *
+     * @return lista di id upd unita doc (distinti)
+     */
+    public RispostaControlli findAllUpdUnitaDocByXmlUpdUnitaDoc(List<AroXmlUpdUnitaDoc> aroXmlUpdUnitaDocs) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        //
+        try {
+            TypedQuery<AroUpdUnitaDoc> query = entityManager.createQuery(
+                    "Select distinct upd_ud from AroXmlUpdUnitaDoc xml_upd_ud "
+                            + "join xml_upd_ud.aroUpdUnitaDoc upd_ud " + "WHERE xml_upd_ud in (:aroXmlUpdUnitaDocs)",
+                    AroUpdUnitaDoc.class);
+            query.setParameter("aroXmlUpdUnitaDocs", aroXmlUpdUnitaDocs);
+            List<AroUpdUnitaDoc> result = query.getResultList();
+            rispostaControlli.setrObject(result);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception ex) {
+            rispostaControlli.setrBoolean(false);
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecupero.findAllUpdUnitaDocByXmlUpdUnitaDoc "
+                            + ExceptionUtils.getRootCauseMessage(ex)));
+            log.error("Eccezione nella verifica esistenza sessione versamento aggiornamento metadati da recuperare ",
+                    ex);
+        }
+
+        return rispostaControlli;
+    }
+
+    /**
+     * Ottieni l'identificativo della sessione di versamento aggiornamento metadati a partire dall'identificativo delle
+     * ARO_XML_UPD_UNITA_DOC
+     *
+     * @param aroXmlUpdUnitaDoc
+     *            id AroXmlUpdUnitaDoc
+     *
+     * @return id upd unita doc
+     */
+    public RispostaControlli findIdUpdUnitaDocByXmlUpdUnitaDoc(AroXmlUpdUnitaDoc aroXmlUpdUnitaDoc) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        //
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                    "Select upd_ud.idUpdUnitaDoc from AroXmlUpdUnitaDoc xml_upd_ud "
+                            + "join xml_upd_ud.aroUpdUnitaDoc upd_ud " + "WHERE xml_upd_ud = :aroXmlUpdUnitaDoc",
+                    Long.class);
+            query.setParameter("aroXmlUpdUnitaDoc", aroXmlUpdUnitaDoc);
+            Long result = query.getSingleResult();
+            rispostaControlli.setrBoolean(true);
+            rispostaControlli.setrLong(result);
+        } catch (Exception ex) {
+            rispostaControlli.setrBoolean(false);
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecupero.findIdUpdUnitaDocByXmlUpdUnitaDoc "
+                            + ExceptionUtils.getRootCauseMessage(ex)));
+            log.error("Eccezione nella verifica esistenza sessione versamento aggiornamento metadati da recuperare ",
+                    ex);
+        }
+
+        return rispostaControlli;
+    }
+
 }

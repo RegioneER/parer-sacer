@@ -127,6 +127,22 @@ public class OrgVRicStrutRowBean extends BaseRow implements JEEBaseRowInterface 
         setObject("fl_part_ok", flPartOk);
     }
 
+    public String getFlParametriStrut() {
+        return getString("fl_parametri_strut");
+    }
+
+    public void setFlParametriStrut(String flParametriStrut) {
+        setObject("fl_parametri_strut", flParametriStrut);
+    }
+
+    public String getFlParametriTipoUd() {
+        return getString("fl_parametri_tipo_ud");
+    }
+
+    public void setFlParametriTipoUd(String flParametriTipoUd) {
+        setObject("fl_parametri_tipo_ud", flParametriTipoUd);
+    }
+
     public BigDecimal getIdAmbitoTerrit() {
         return getBigDecimal("id_ambito_territ");
     }
@@ -238,6 +254,8 @@ public class OrgVRicStrutRowBean extends BaseRow implements JEEBaseRowInterface 
         this.setNmStrut(entity.getNmStrut());
         this.setDsStrut(entity.getDsStrut());
         this.setFlTemplate(entity.getFlTemplate());
+        this.setFlParametriStrut(entity.getFlParametriStrut());
+        this.setFlParametriTipoUd(entity.getFlParametriTipoUd());
         this.setFlPartOk(entity.getFlPartOk());
         this.setIdAmbitoTerrit(entity.getIdAmbitoTerrit());
         this.setTiAmbitoTerrit(entity.getTiAmbitoTerrit());
@@ -265,6 +283,8 @@ public class OrgVRicStrutRowBean extends BaseRow implements JEEBaseRowInterface 
         entity.setNmStrut(this.getNmStrut());
         entity.setDsStrut(this.getDsStrut());
         entity.setFlTemplate(this.getFlTemplate());
+        entity.setFlParametriStrut(this.getFlParametriStrut());
+        entity.setFlParametriTipoUd(this.getFlParametriTipoUd());
         entity.setFlPartOk(this.getFlPartOk());
         entity.setIdAmbitoTerrit(this.getIdAmbitoTerrit());
         entity.setTiAmbitoTerrit(this.getTiAmbitoTerrit());

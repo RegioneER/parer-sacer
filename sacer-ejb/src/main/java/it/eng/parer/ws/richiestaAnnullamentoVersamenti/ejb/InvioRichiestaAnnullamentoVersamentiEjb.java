@@ -66,6 +66,7 @@ import it.eng.parer.ws.xml.esitoRichAnnullVers.CodiceEsitoType;
 import it.eng.parer.ws.xml.esitoRichAnnullVers.EsitoRichiestaAnnullamentoVersamenti;
 import it.eng.parer.ws.xml.esitoRichAnnullVers.EsitoRichiestaType;
 import it.eng.parer.ws.xml.esitoRichAnnullVers.VersamentoDaAnnullareType;
+import it.eng.parer.ws.xml.richAnnullVers.TipoAnnullamentoType;
 import it.eng.parer.ws.xml.richAnnullVers.TipoVersamentoType;
 import it.eng.spagoLite.security.User;
 
@@ -114,7 +115,7 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
             // Apro transazione e registro le richieste
             Long idRichiesta = context.getBusinessObject(InvioRichiestaAnnullamentoVersamentiEjb.class)
                     .registraRichieste(rispostaWs, ravExt);
-            log.info("richiesta registrata");
+            log.info("Richiesta registrata");
             // Chiusa transazione
             if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR && idRichiesta != null) {
                 AroRichAnnulVers richAnnulVers = ravHelper.findById(AroRichAnnulVers.class, idRichiesta);
@@ -198,6 +199,9 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
             TipoVersamentoType tipoVersamento = TipoVersamentoType.UNITA_DOCUMENTARIA;
             // end MEV#26446
 
+            // MEV 30721
+            TipoAnnullamentoType tipoAnnullamento = TipoAnnullamentoType.ANNULLAMENTO_VERSAMENTO;
+
             // flImmediata è un parametro facoltativo che dunque, in caso non venga inviato, di default risulta essere
             // false
             if (ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isImmediata() != null) {
@@ -249,11 +253,21 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
                     ? CostantiDB.TiRichAnnulVers.FASCICOLI.name() : CostantiDB.TiRichAnnulVers.UNITA_DOC.name();
             // end MEV#26446
 
+            // MEV 30721
+            String tiAnnulRichAnnulVers = "ANNULLAMENTO_VERSAMENTO";
+            if (ravExt.getModificatoriWS().contains(Costanti.ModificatoriWS.TAG_ANNUL_TIPO_ANNUL)
+                    && ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getTipoAnnullamento() != null) {
+                if (!ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().getTipoAnnullamento().value()
+                        .equals(tipoAnnullamento.value())) {
+                    tiAnnulRichAnnulVers = "CANCELLAZIONE";
+                }
+            }
+
             // Registro la richiesta di annullamento con i relativi item, eseguendo infine i controlli sulle unità
             // documentarie o sui fascicoli
             AroRichAnnulVers richAnnulVers = avEjb.insertRichAnnulVers(user.getIdUtente(), idStrut, codice, descrizione,
                     note, tiRichAnnulVers, ravExt.getDataElaborazione(), flImmediata, flForzaAnnul, flRichiestaPing,
-                    ravExt);
+                    tiAnnulRichAnnulVers, ravExt);
 
             boolean presentiDaAnnulInPing = false;
             for (AroItemRichAnnulVers aroItemRichAnnulVers : richAnnulVers.getAroItemRichAnnulVers()) {
@@ -297,8 +311,11 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
             log.info(InvioRichiestaAnnullamentoVersamentiEjb.class.getSimpleName()
                     + " --- Registro su DB gli XML di richiesta ed esito annullamento versamenti " + partMsg);
             // Registro l'XML ricevuto
-            avEjb.createAroXmlRichAnnulVers(richAnnulVers, CostantiDB.TiXmlRichAnnulVers.RICHIESTA.name(),
-                    ravExt.getXmlRichiesta(), ravExt.getRichiestaAnnullamentoVersamenti().getVersioneXmlRichiesta());
+            // MAC 31064
+            AroXmlRichAnnulVers xmlRichAnnulVers = avEjb.createAroXmlRichAnnulVers(richAnnulVers,
+                    CostantiDB.TiXmlRichAnnulVers.RICHIESTA.name(), ravExt.getXmlRichiesta(),
+                    ravExt.getRichiestaAnnullamentoVersamenti().getVersioneXmlRichiesta());
+            ravHelper.insertEntity(xmlRichAnnulVers, true);
             idRichiesta = richAnnulVers.getIdRichAnnulVers();
         }
         return idRichiesta;
@@ -376,6 +393,14 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
         if (!itemList.isEmpty()) {
             rispostaWs.getEsitoRichiestaAnnullamentoVersamenti()
                     .setVersamentiDaAnnullare(new EsitoRichiestaAnnullamentoVersamenti.VersamentiDaAnnullare());
+            if (rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getVersioneXmlEsito().equals("1.4")) {
+                it.eng.parer.ws.xml.esitoRichAnnullVers.TipoAnnullamentoType tiAnnullamento = richAnnulVers
+                        .getTiAnnullamento()
+                        .equals(it.eng.parer.ws.xml.esitoRichAnnullVers.TipoAnnullamentoType.CANCELLAZIONE.value())
+                                ? it.eng.parer.ws.xml.esitoRichAnnullVers.TipoAnnullamentoType.CANCELLAZIONE
+                                : it.eng.parer.ws.xml.esitoRichAnnullVers.TipoAnnullamentoType.ANNULLAMENTO_VERSAMENTO;
+                rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getRichiesta().setTipoAnnullamento(tiAnnullamento);
+            }
             for (AroVLisItemRichAnnvrs item : itemList) {
                 // Creo il record del versamento da annullare da dare in risposta
                 VersamentoDaAnnullareType versamentoDaAnnullare = new VersamentoDaAnnullareType();
@@ -397,7 +422,8 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
                 // end MEV#26446
                 //
                 if (rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getVersioneXmlEsito().equals("1.2")
-                        || rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getVersioneXmlEsito().equals("1.3")) {
+                        || rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getVersioneXmlEsito().equals("1.3")
+                        || rispostaWs.getEsitoRichiestaAnnullamentoVersamenti().getVersioneXmlEsito().equals("1.4")) {
                     versamentoDaAnnullare.setStato(item.getTiStatoItem());
                 }
                 versamentoDaAnnullare.setErroriRilevati(item.getDsListaErr());

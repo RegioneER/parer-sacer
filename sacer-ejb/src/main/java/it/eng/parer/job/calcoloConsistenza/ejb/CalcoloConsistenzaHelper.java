@@ -50,7 +50,10 @@ import it.eng.parer.entity.MonContaByStatoConservNew.TipoConteggio;
 import it.eng.parer.entity.MonTipoUnitaDocUserVers;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.OrgSubStrut;
+import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -66,6 +69,7 @@ public class CalcoloConsistenzaHelper {
     private SacerLogEjb sacerLogEjb;
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
+    Logger log = LoggerFactory.getLogger(CalcoloConsistenzaHelper.class);
 
     private static final String UD_AIP_GENERATO = "SELECT new it.eng.parer.entity.MonContaByStatoConservNew("
             + " trunc(doc.dtCreazione), ud.idOrgStrut, ud.idOrgSubStrut, ud.aaKeyUnitaDoc, ud.idDecRegistroUnitaDoc, "
@@ -149,6 +153,20 @@ public class CalcoloConsistenzaHelper {
             + " id_tipo_doc, ni_comp_aip_generato, ni_comp_aip_in_agg, ni_comp_presa_in_carico,	ni_comp_volume, ni_comp_annul	"
             + "FROM MON_V_CONTA_BY_STATO_CONSERV_NEW " + "WHERE dt_creazione BETWEEN ?1 AND ?2 ";
 
+    private static final String UD_AIP_GENERATO_E_NON_GENERATO_NATIVA_LAST_180 = "Insert /*+ append */ into "
+            + "MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180 (dt_creazione, id_strut, id_sub_strut, aa_key_unita_doc, id_registro_unita_doc, id_tipo_unita_doc, "
+            + "id_tipo_doc, ni_comp_aip_generato, ni_comp_aip_in_agg, ni_comp_presa_in_carico, ni_comp_volume, ni_comp_annul) "
+            + "SELECT dt_creazione, id_strut, id_sub_strut, aa_key_unita_doc, id_registro_unita_doc, id_tipo_unita_doc, "
+            + " id_tipo_doc, ni_comp_aip_generato, ni_comp_aip_in_agg, ni_comp_presa_in_carico,	ni_comp_volume, ni_comp_annul	"
+            + "FROM MON_V_CONTA_BY_STATO_CONSERV_NEW " + "WHERE dt_creazione BETWEEN ?1 AND ?2 ";
+
+    private static final String MOVE_LAST_180_TO_MON_CONTA = "Insert /*+ append */ into "
+            + "MON_CONTA_BY_STATO_CONSERV_NEW (id_conta_by_stato_conserv, dt_rif_conta, id_strut, id_sub_strut, aa_key_unita_doc, id_registro_unita_doc, id_tipo_unita_doc, "
+            + "id_tipo_doc_princ, ni_comp_aip_generato, ni_comp_aip_in_aggiorn, ni_comp_presa_in_carico, ni_comp_in_volume, ni_comp_annul) "
+            + "SELECT SMON_CONTA_BY_STATO_CONSERV_NEW.nextval, dt_creazione, id_strut, id_sub_strut, aa_key_unita_doc, id_registro_unita_doc, id_tipo_unita_doc, "
+            + " id_tipo_doc, ni_comp_aip_generato, ni_comp_aip_in_agg, ni_comp_presa_in_carico,	ni_comp_volume, ni_comp_annul	"
+            + "FROM MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180 ";
+
     // Inserimento record nella tabella di appoggio
     private static final String UD_AIP_GENERATO_E_NON_GENERATO_NATIVA_APPOGGIO = "Insert /*+ append */ into "
             + "MON_CONTA_BY_STATO_CONSERV_NEW_ANNUL (id_conta_by_stato_conserv, dt_rif_conta, id_strut, id_sub_strut, aa_key_unita_doc, id_registro_unita_doc, id_tipo_unita_doc, "
@@ -198,10 +216,37 @@ public class CalcoloConsistenzaHelper {
         return cal;
     }
 
+    public Calendar getData6Mesi() {
+        Calendar cal = Calendar.getInstance();
+        // Imposto la data 6 mesi antecedente alla data odierna
+        cal.add(Calendar.DAY_OF_MONTH, -180);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void deleteMonConta(MonContaByStatoConservNew conta) {
         entityManager.remove(conta);
         entityManager.flush();
+    }
+
+    public int deleteMonConta(Date dtRifContaDa) {
+        Query query = entityManager
+                .createQuery("DELETE FROM MonContaByStatoConservNew conta WHERE conta.dtRifConta >= :dtRifConta ");
+        query.setParameter("dtRifConta", dtRifContaDa);
+        int numRecordCancellati = query.executeUpdate();
+        return numRecordCancellati;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public int truncateMonContaByStatoConservNewLast180() {
+        Query query = entityManager.createNativeQuery("DELETE FROM MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180");
+        int numRecordCancellati = query.executeUpdate();
+        entityManager.flush();
+        return numRecordCancellati;
     }
 
     public List<MonContaByStatoConservNew> getMonContaByStatoConservNew(long idStrut, long idSubStrut,
@@ -794,6 +839,26 @@ public class CalcoloConsistenzaHelper {
         return cal;
     }
 
+    public Calendar getUltimaDtElabConsist() {
+        String queryString = "SELECT MAX(u.dtElabConsist) FROM LogElabConsist u ";
+        Query query = entityManager.createQuery(queryString);
+        List<Date> d = query.getResultList();
+        Calendar cal = Calendar.getInstance();
+        if (d.get(0) == null) {
+            // Imposto la data all'1 dicembre 2011
+            cal.set(Calendar.YEAR, 2011);
+            cal.set(Calendar.MONTH, Calendar.DECEMBER);
+            cal.set(Calendar.DATE, 1);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+        } else {
+            cal.setTime(d.get(0));
+        }
+        return cal;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void eseguiPrimoGiroByRange(Date da, Date a) {
         executeNativeQueryCalcolo4(da, a, UD_AIP_GENERATO_E_NON_GENERATO_NATIVA4);
@@ -803,6 +868,11 @@ public class CalcoloConsistenzaHelper {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void insertTotaliPerGiornoOptimized(boolean firstTime, Date dtRifContaDa, Date dtRifContaA)
             throws ParseException {
+
+        // Elimino i record da ricalcolare da MON_CONTA_BY_STATO_CONSERV_NEW
+        int numRecordCancellati = deleteMonConta(dtRifContaDa);
+        log.info("{} - Cancellazione da MON_CONTA_BY_STATO_CONSERV_NEW: sono stati cancellati {} record",
+                JobConstants.JobEnum.CALCOLO_CONSISTENZA.name(), numRecordCancellati);
 
         // Controllo di non aver già eseguito i calcoli per questo giorno
         Calendar a = Calendar.getInstance();
@@ -841,7 +911,12 @@ public class CalcoloConsistenzaHelper {
              * ************************ Calcolo tutto il periodo
              *************************
              */
-            executeNativeQueryCalcolo4(dtRifContaDa, dtRifContaA, UD_AIP_GENERATO_E_NON_GENERATO_NATIVA4);
+            // executeNativeQueryCalcolo4(dtRifContaDa, dtRifContaA, UD_AIP_GENERATO_E_NON_GENERATO_NATIVA4);
+            // Riverso in MON_CONTA_BY_STATO_CONSERV_NEW i dati calcolati in MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180
+            moveDataInMonConta(dtRifContaDa, dtRifContaA);
+            log.info(
+                    "{} - Copio i dati da LAST_180 a MON_CONTA e ricalcolo eventuali annullamenti nel periodo considerato",
+                    JobConstants.JobEnum.CALCOLO_CONSISTENZA.name());
 
             // Se sono presenti annullamenti con dt_creazione antecedente il periodo di calcolo, "allineo"
             if (!idStrutDaRicalcolare.isEmpty()) {
@@ -861,6 +936,7 @@ public class CalcoloConsistenzaHelper {
                 // Svuoto la tabella di appoggio
                 executeNativeQueryWithoutParameters(DELETE_MON_CONTA_BY_STATO_CONSERV_NEW_ANNULL);
             }
+
         }
 
         if (dtRifContaDa.after(dtRifContaA)) {
@@ -869,7 +945,33 @@ public class CalcoloConsistenzaHelper {
         // Salvo il record del JOB in Log_Elab_Consist
         insertLogElabConsist(dtRifContaDa, dtRifContaA);
 
+        truncateMonContaByStatoConservNewLast180();
+        log.info("{} - Svuoto MON_CONTA_BY_STATO_CONSERV_NEW_LAST_180",
+                JobConstants.JobEnum.CALCOLO_CONSISTENZA.name());
+
         entityManager.flush();
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void insertTotaliPerGiornoLast180(Date dtRifContaDa, Date dtRifContaA) throws ParseException {
+
+        // Controllo di non aver già eseguito i calcoli per questo giorno
+        Calendar a = Calendar.getInstance();
+        a.set(Calendar.HOUR_OF_DAY, 0);
+        a.set(Calendar.MINUTE, 0);
+        a.set(Calendar.SECOND, 0);
+        a.set(Calendar.MILLISECOND, 0);
+
+        if (!dtRifContaA.equals(a.getTime())) {
+            executeNativeQueryCalcolo4(dtRifContaDa, dtRifContaA, UD_AIP_GENERATO_E_NON_GENERATO_NATIVA_LAST_180);
+            entityManager.flush();
+        }
+    }
+
+    public int moveDataInMonConta(Date dtRifContaDa, Date dtRifContaA) {
+        Query query = entityManager.createNativeQuery(MOVE_LAST_180_TO_MON_CONTA);
+        int numRecordCopiati = query.executeUpdate();
+        return numRecordCopiati;
     }
 
 }

@@ -8,7 +8,8 @@
         <script type='text/javascript' >
 
             $(document).ready(function () {
-
+                //$("#Fl_conserv_illimitata").attr("disabled", true);       
+                //$("#Ni_aa_conserv").attr("disabled", true);       
                 $("#AaRegistroUnitaDocList tr ").each(function () {
                     var elemento = $(this).find('div[id^="Controllo_formato_"] img');
                     if (elemento.attr('src') === '/sacer/img/checkbox-on.png') {
@@ -94,6 +95,30 @@
                         $("#Id_modello_tipo_serie").val("");
                     }
                 }).trigger('change');
+                
+                $("#Fl_conserv_uniforme").change(function () {
+                    var select = $("#Fl_conserv_uniforme").val();                     
+                    
+                    if (select === "1") {
+                        $("#Fl_conserv_illimitata").attr("disabled", false);
+                        $("#Ni_aa_conserv").attr("readonly", "readonly");                        
+                    } else {
+                        $("#Fl_conserv_illimitata").val("").attr("disabled", true);
+                        $("#Ni_aa_conserv").val("").attr("readonly", "readonly");                        
+                    }
+                }).trigger('change');
+                
+                $("#Fl_conserv_illimitata").change(function () {
+                    var select = $("#Fl_conserv_illimitata").val();
+                    
+                    if (select === "1") {
+                        $("#Ni_aa_conserv").val("9999").attr("readonly", "readonly");
+                    } else if (select === "0") {
+                        $("#Ni_aa_conserv").removeAttr("readonly");
+                    }else{
+                        $("#Ni_aa_conserv").val("").attr("readonly", "readonly");                        
+                    } 
+                }).trigger('change');
 
             }
 
@@ -178,6 +203,14 @@
                         <slf:lblField name="<%=StrutTipiForm.RegistroCreazioneCriterio.CREA_CRITERIO_RAGGR_STANDARD_REGISTRO_BUTTON%>" />
                     </sl:pulsantiera>
                 </c:if>
+                <slf:section name="<%=StrutTipiForm.TempoConservazioneUnitaDocSection.NAME%>" styleClass="importantContainer"> 
+                    <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.FL_CONSERV_UNIFORME%>" colSpan="1" labelWidth="w30" controlWidth="w100" /> 
+                    <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.FL_CONSERV_ILLIMITATA%>" colSpan="1" labelWidth="w30" controlWidth="w100" /> 
+                    <sl:newLine />
+                    <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.NI_AA_CONSERV%>" colSpan="1" labelWidth="w30" controlWidth="w100" /> 
+                    <sl:newLine />
+                </slf:section>
                 <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.ID_REGISTRO_UNITA_DOC%>" />
             </slf:fieldSet>
 
