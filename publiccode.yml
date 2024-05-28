@@ -22,7 +22,8 @@ description:
       SACER (Sistema per l'archivio di conservazione dell'Emilia-Romagna) è il modulo centrale del Sistema di conservazione di Parer e gestisce l'intero processo di conservazione 
       di Unità documentarie, Fascicoli e Serie, a partire dall'acquisizione dei Pacchetti di versamento (SIP)  
       fino alla generazione dei Pacchetti di Archiviazione (AIP) e alla messa a disposizione dei Pacchetti di distribuzione (DIP). 
-      Inoltre, SACER mette a disposizione, tra le altre, funzionalità avanzate di ricerca degli oggetti versati, di monitoraggio dei processi gestiti e di configurazione delle strutture che ospitano gli archivi degli enti produttori.     
+      Inoltre, SACER mette a disposizione, tra le altre, funzionalità avanzate di ricerca degli oggetti versati, di monitoraggio dei processi gestiti e di configurazione delle strutture che ospitano gli archivi degli enti produttori.
+     
     shortDescription: |-
       Modulo centrale del Sistema di conservazione che gestisce l'intero processo di conservazione.
 developmentStatus: stable
@@ -53,7 +54,7 @@ localisation:
     - it
   localisationReady: true
 logo: |-
-  https://raw.githubusercontent.com/RegioneER/parer-verifica-firma-crypto/master/src/docs/rer-logo.png
+  https://raw.githubusercontent.com/RegioneER/parer-sacer/master/src/docs/rer-logo.png
 maintenance:
   contacts:
     - email: areasviluppoparer@regione.emilia-romagna.it
