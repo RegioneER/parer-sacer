@@ -75,13 +75,17 @@ public class RecBlbOracle {
             + "where t.ID_FILE_SESSIONE_KO = ?";
     private static final String QRY_VRS_CONTENUTO_FILE = "SELECT BL_CONTENUTO_FILE_SESSIONE FROM VRS_CONTENUTO_FILE t "
             + "where t.ID_FILE_SESSIONE = ?";
+    private static final String QRY_ELV_FILE_ELENCO_VERS = "SELECT BL_FILE_ELENCO_VERS FROM ELV_FILE_ELENCO_VERS t "
+            + "where t.id_file_elenco_vers = ?";
+    private static final String QRY_ELV_FILE_ELENCO_VERS_FASC = "SELECT BL_FILE_ELENCO_VERS FROM ELV_FILE_ELENCO_VERS_FASC t "
+            + "where t.id_file_elenco_vers_fasc = ?";
     //
     private static final String QRY_FIR_REPORT_COMP = "SELECT BL_CONTENUTO_REPORT FROM FIR_REPORT t "
             + "where t.id_comp_doc = ?";
     private static final int BUFFERSIZE = 10 * 1024 * 1024; // 10 megabyte
 
     public enum TabellaBlob {
-        BLOB, ERRORI_VERS, FIR_REPORT, ERRORI_VERS_TMP
+        BLOB, ERRORI_VERS, FIR_REPORT, ERRORI_VERS_TMP, ELV_FILE_ELENCO, ELV_FILE_ELENCO_FASC
     }
 
     /**
@@ -146,6 +150,12 @@ public class RecBlbOracle {
             break;
         case FIR_REPORT:
             queryStr = QRY_FIR_REPORT_COMP;
+            break;
+        case ELV_FILE_ELENCO:
+            queryStr = QRY_ELV_FILE_ELENCO_VERS;
+            break;
+        case ELV_FILE_ELENCO_FASC:
+            queryStr = QRY_ELV_FILE_ELENCO_VERS_FASC;
             break;
         }
         try {

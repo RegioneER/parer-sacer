@@ -33,6 +33,8 @@ import it.eng.parer.elencoVersamento.utils.ElencoEnums.FileTypeEnum;
 import it.eng.parer.entity.constraint.ElvElencoVer;
 import it.eng.parer.entity.constraint.ElvStatoElencoVer;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiSessioneFirma;
+import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.exception.ParerNoResultException;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipSignatureSessionEjb;
 import it.eng.parer.firma.crypto.ejb.ElencoSignatureSessionEjb;
@@ -55,6 +57,7 @@ import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.helper.*;
 import it.eng.parer.web.util.ActionEnums;
 import it.eng.parer.web.util.ComboGetter;
+import it.eng.parer.web.util.ComboUtil;
 import it.eng.parer.web.validator.ElenchiVersamentoValidator;
 import it.eng.parer.web.validator.UnitaDocumentarieValidator;
 import it.eng.parer.web.validator.VolumiValidator;
@@ -73,6 +76,7 @@ import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
 import it.eng.spagoLite.security.SuppressLogging;
+import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.codehaus.jettison.json.JSONException;
@@ -82,6 +86,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -233,14 +239,13 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             // MEV #24534 se non esiste l'indice di versamento visualizza il pulsante "Genera" altrimenti "Scarica"
             getForm().getDettaglioElenchiVersamentoButtonList().getScaricaIndiceElencoButton().setEditMode();
             getForm().getDettaglioElenchiVersamentoButtonList().getGeneraIndiceElencoButton().setEditMode();
-
+            getForm().getDettaglioElenchiVersamentoButtonList().getGeneraIndiceElencoButton().setDisableHourGlass(true);
             getForm().getDettaglioElenchiVersamentoButtonList().getScaricaIndiceElencoButton()
                     .setDisableHourGlass(true);
 
             boolean esisteIndice = esisteIndiceVersamento(idElencoVers);
             getForm().getDettaglioElenchiVersamentoButtonList().getScaricaIndiceElencoButton().setHidden(!esisteIndice);
             getForm().getDettaglioElenchiVersamentoButtonList().getGeneraIndiceElencoButton().setHidden(esisteIndice);
-
         }
 
         if (tiStatoElenco.equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO.name())
@@ -370,34 +375,39 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         Future<Boolean> futureFirma = (Future<Boolean>) getSession().getAttribute(Signature.FUTURE_ATTR_ELENCHI);
         /* Rendo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaElenchiVersamentoDaFirmareButtonList().setEditMode();
+
+        // MEV#31945 - Eliminare validazione elenco UD con firma
+        //
         // Verifico su db la presenza della sessione di firma o di un oggetto future (di una possibile sessione di firma
         // preesistente) in sessione
-        if (elencoSignSessionEjb.hasUserActiveSessions(getUser().getIdUtente()) || futureFirma != null) {
-            // Se esistono delle sessioni bloccate per quell'utente le sblocco
-            if (elencoSignSessionEjb.hasUserBlockedSessions(getUser().getIdUtente())) {
-                // Sessione di firma bloccata
-                elencoSignSessionEjb.unlockBlockedSessions(getUser().getIdUtente());
-
-                getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(false);
-                getMessageBox().addInfo("\u00C8 stata sbloccata una sessione di firma bloccata");
-                getMessageBox().setViewMode(ViewMode.plain);
-            } else {
-                getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(true);
-                // Sessione di firma attiva
-                getMessageBox().addInfo("Sessione di firma attiva");
-                getMessageBox().setViewMode(ViewMode.plain);
-            }
-        } else {
-            getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(false);
-        }
+        // if (elencoSignSessionEjb.hasUserActiveSessions(getUser().getIdUtente()) || futureFirma != null) {
+        // // Se esistono delle sessioni bloccate per quell'utente le sblocco
+        // if (elencoSignSessionEjb.hasUserBlockedSessions(getUser().getIdUtente())) {
+        // // Sessione di firma bloccata
+        // elencoSignSessionEjb.unlockBlockedSessions(getUser().getIdUtente());
+        //
+        // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(false);
+        // getMessageBox().addInfo("\u00C8 stata sbloccata una sessione di firma bloccata");
+        // getMessageBox().setViewMode(ViewMode.plain);
+        // } else {
+        // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(true);
+        // // Sessione di firma attiva
+        // getMessageBox().addInfo("Sessione di firma attiva");
+        // getMessageBox().setViewMode(ViewMode.plain);
+        // }
+        // } else {
+        // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(false);
+        // }
 
         if (getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().parse()
                 .equals(ElvElencoVer.TiValidElenco.FIRMA.name())) {
-            getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setHidden(false);
+            // MEV#31945 - Eliminare validazione elenco UD con firma
+            // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setHidden(false);
             getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton().setHidden(true);
         } else {
             /* NO_FIRMA */
-            getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setHidden(true);
+            // MEV#31945 - Eliminare validazione elenco UD con firma
+            // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton().setHidden(true);
             getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton().setHidden(false);
         }
         getForm().getElenchiVersamentoList().setUserOperations(true, false, false, false);
@@ -466,7 +476,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             // Ricavo i valori della combo STRUTTURA
             tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
 
-        } catch (Exception ex) {
+        } catch (ParerUserError ex) {
             logger.error("Errore in ricerca ambiente", ex);
         }
 
@@ -876,6 +886,18 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             editable = true;
         }
         if (statoElenco.equals(ElencoStatusEnum.APERTO.name()) || statoElenco.equals(ElencoStatusEnum.CHIUSO.name())) {
+
+            // MEV#31945 - Eliminare validazione elenco UD con firma
+            // Quando la combo del tipoValidazione diventa editabile, viene tolto il valore FIRMA e se era stato scelto
+            // firma in
+            // precedenza il campo viene pulito per una nuova selezione
+            String valorePrecedente = getForm().getElenchiVersamentoDetail().getTi_valid_elenco().getValue();
+            getForm().getElenchiVersamentoDetail().getTi_valid_elenco()
+                    .setDecodeMap(ComboUtil.getTipiValidazioneElencoSenzaFirma());
+            getForm().getElenchiVersamentoDetail().getTi_valid_elenco().setValue(valorePrecedente);
+            if (valorePrecedente.equals(ElvElencoVer.TiValidElenco.FIRMA.name())) {
+                getForm().getElenchiVersamentoDetail().getTi_valid_elenco().setValue("");
+            }
             getForm().getElenchiVersamentoDetail().getTi_valid_elenco().setEditMode();
             getForm().getElenchiVersamentoDetail().getTi_mod_valid_elenco().setEditMode();
             editable = true;
@@ -1004,7 +1026,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     // end MAC#21555
                     reloadElenchiVersamentoList(getForm().getFiltriElenchiVersamento());
                     forwardToPublisher(Application.Publisher.ELENCHI_VERSAMENTO_DETAIL);
-                } catch (Exception e) {
+                } catch (EMFError e) {
                     getMessageBox().addMessage(new Message(MessageLevel.ERR, e.getMessage()));
                 }
             }
@@ -1321,7 +1343,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
             getMessageBox().addInfo(messageOk);
 
-        } catch (Exception e) {
+        } catch (ParerInternalError | ParerNoResultException | ParerUserError | IOException | NoSuchAlgorithmException
+                | ParseException e) {
             logger.error("Eccezione", e);
             getMessageBox().addMessage(
                     new Message(Message.MessageLevel.ERR, "Errore durante la chiusura/validazione dell'elenco"));
@@ -1352,8 +1375,10 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         ElvElencoVerTableBean elenchiDaValidare = checkElenchiVersamentoToSign();
         int elenchiValidati = 0;
         int elenchiEliminati = 0;
+        int daValidare = 0;
         List<BigDecimal> idElencoVersRigheTotali = new ArrayList<>();
         List<BigDecimal> idElencoVersRigheCancellate = new ArrayList<>();
+        HashMap<BigDecimal, String> mapElenchiEliminati = new HashMap<BigDecimal, String>();
 
         // Se non ci sono problemi, procedo alla validazione
         if (!getMessageBox().hasError() && elenchiDaValidare != null) {
@@ -1368,41 +1393,47 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     // Se lo sono, annullo lo stato di generazione indice AIP di ud e doc ed elimino l'elenco
                     evEjb.manageElencoUdAnnulDaFirmaElenco(idElencoVers, getUser().getIdUtente());
                     idElencoVersRigheCancellate.add(idElencoVers);
+                    mapElenchiEliminati.put(idElencoVers, elenco.getTiStatoElenco());
                     elenchiEliminati++;
+
                 } else {
                     evEjb.validElenco(getIdUtenteCorrente(), idElencoVers);
                     elenchiValidati++;
                 }
             }
         }
-
+        daValidare = getForm().getElenchiVersamentoSelezionatiList().getTable().size();
         if (!getMessageBox().hasError()) {
-            // Elimino a video gli elenchi cancellati su DB in quanto contenenti solo ud annullate
-            idElencoVersRigheTotali.removeAll(idElencoVersRigheCancellate);
-            ElvVLisElencoVersStatoTableBean elenchiRimanenti = evEjb
-                    .getElenchiDaFirmareTableBean(idElencoVersRigheTotali, getUser().getIdUtente());
-            getForm().getElenchiVersamentoSelezionatiList().setTable(elenchiRimanenti);
-
             if (elenchiEliminati > 0) {
+                // Elimino a video gli elenchi cancellati su DB in quanto contenenti solo ud annullate
+                idElencoVersRigheTotali.removeAll(idElencoVersRigheCancellate);
+                ElvVLisElencoVersStatoTableBean elenchiRimanenti = evEjb
+                        .getElenchiDaFirmareTableBean(idElencoVersRigheTotali, getUser().getIdUtente());
+                getForm().getElenchiVersamentoSelezionatiList().setTable(elenchiRimanenti);
+
                 getMessageBox().setViewMode(ViewMode.plain);
                 getMessageBox().addInfo("Sono stati eliminati " + elenchiEliminati
                         + " elenchi di versamento in quanto contenenti almeno una unità documentaria annullata");
+
+                mapElenchiEliminati.entrySet().forEach(entry -> {
+                    getMessageBox().addMessage(new Message(MessageLevel.WAR,
+                            "Eliminato elenco Id: " + entry.getKey() + " stato: " + entry.getValue()));
+                });
             }
         }
-
-        endValidaElenco(elenchiValidati);
+        endValidaElenco(daValidare, elenchiValidati, mapElenchiEliminati);
     }
 
-    public void endValidaElenco(int validati) throws EMFError {
+    public void endValidaElenco(int daValidare, int validati, HashMap<BigDecimal, String> mapElenchiEliminati)
+            throws EMFError {
 
         if (validati > 0) {
             getMessageBox().setViewMode(ViewMode.plain);
 
-            int daValidare = getForm().getElenchiVersamentoSelezionatiList().getTable().size();
             /* Se ho validato tutti gli elenchi mostro una INFO */
             if (validati == daValidare) {
-                getMessageBox().addMessage(new Message(MessageLevel.INF, "Validazione eseguita correttamente: validati "
-                        + validati + " su " + getForm().getElenchiVersamentoSelezionatiList().getTable().size()));
+                getMessageBox().addMessage(new Message(MessageLevel.INF,
+                        "Validazione eseguita correttamente: validati " + validati + " su " + daValidare));
                 /* Inizializzo la lista degli elenchi di versamento selezionati */
                 getForm().getElenchiVersamentoSelezionatiList().setTable(new ElvVLisElencoVersStatoTableBean());
                 getForm().getElenchiVersamentoSelezionatiList().getTable().setPageSize(10);
@@ -1412,7 +1443,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             } /* altrimenti mostro un WARNING */ else {
                 getMessageBox().addMessage(new Message(MessageLevel.WAR,
                         "Non tutti gli elenchi sono stati validati correttamente: validati " + validati + " su "
-                                + getForm().getElenchiVersamentoSelezionatiList().getTable().size()));
+                                + daValidare));
             }
         }
 
@@ -1642,7 +1673,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
     @Override
     public void generaIndiceElencoButton() throws Throwable {
         // MEV #24534 pulsante di creazione manuale dell'indice.
-        forwardToPublisher(getLastPublisher());
+        // forwardToPublisher(getLastPublisher());
         BigDecimal idElencoVers = getForm().getElenchiVersamentoDetail().getId_elenco_vers().parse();
         String nmAmbiente = getForm().getElenchiVersamentoDetail().getNm_ambiente().parse();
         String nmEnte = getForm().getElenchiVersamentoDetail().getNm_ente().parse();
@@ -1653,17 +1684,22 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 String.valueOf(idElencoVers), nmStrut, nmEnte, nmAmbiente);
         logger.info(infoMessage);
 
-        try {
-            evEjb.creaIndice(idElencoVers.longValue());
-            getMessageBox().addInfo("Indice elenco di versamento creato correttamente per l'elenco con identificativo "
-                    + idElencoVers.toPlainString());
+        // MEV #31947 - Eliminare il salvataggio degli elenchi di versamento UD
+        String filesSuffix = nmAmbiente + "_" + nmEnte + "_" + nmStrut + "_" + idElencoVers;
+        String nomeZippone = "indice_elenco_" + StringUtils.defaultString(filesSuffix).replace(" ", "_");
+        getResponse().setContentType("application/zip");
+        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeZippone + ".zip");
+        try (ZipOutputStream out = new ZipOutputStream(getServletOutputStream());) {
+            byte[] xml = evEjb.generaIndice(idElencoVers.longValue());
+            evEjb.addEntryToZip(out, xml, "IndiceElencoVersamento_" + filesSuffix + ".xml");
+            out.flush();
+            out.close();
+            freeze();
         } catch (Exception e) {
-            logger.error("Errore durante l'esecuzione manuale della creazione indice", e);
-            getMessageBox().addError("Errore durante la creazione dell'indice per l'elenco con identificativo "
-                    + idElencoVers.toPlainString());
+            logger.error("Eccezione", e);
+            getMessageBox().addError("Errore nel recupero dei file delle prove di conservazione");
+            forwardToPublisher(getLastPublisher());
         }
-
-        getMessageBox().setViewMode(ViewMode.plain);
     }
 
     /* UTILITIES */
@@ -1981,7 +2017,10 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco()
                 .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
         // Imposto la combo tipo validazione e, se vuota, il valore di default
-        getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
+        // MEV#31945 - Eliminare validazione elenco UD con firma
+        getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco()
+                .setDecodeMap(ComboUtil.getTipiValidazioneElencoSenzaFirma());
+        // getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
         if (getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().getValues() == null
                 || getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().getValues().isEmpty()) {
             String[] values = { ElvElencoVer.TiValidElenco.NO_FIRMA.name(),
@@ -2080,14 +2119,16 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
                     if (getForm().getFiltriElenchiDaFirmare().getTi_valid_elenco().parse()
                             .equals(ElvElencoVer.TiValidElenco.FIRMA.name())) {
-                        getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton()
-                                .setHidden(false);
+                        // MEV#31945 - Eliminare validazione elenco UD con firma
+                        // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton()
+                        // .setHidden(false);
                         getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton()
                                 .setHidden(true);
                     } else {
                         /* NO_FIRMA */
-                        getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton()
-                                .setHidden(true);
+                        // MEV#31945 - Eliminare validazione elenco UD con firma
+                        // getForm().getListaElenchiVersamentoDaFirmareButtonList().getFirmaElenchiHsmButton()
+                        // .setHidden(true);
                         getForm().getListaElenchiVersamentoDaFirmareButtonList().getValidaElenchiButton()
                                 .setHidden(false);
                     }
@@ -2162,6 +2203,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         }
     }
 
+    // MEV#31945 - Eliminare validazione elenco UD con firma
     /**
      * Invoca il meccanismo di firma del HSM.
      *
@@ -2169,72 +2211,72 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
      *             errore generico
      *
      */
-    @Override
-    public void firmaElenchiHsmButton() throws Throwable {
-        ElvElencoVerTableBean elenchiDaFirmare = checkElenchiVersamentoToSign();
-        int elenchiHsmEliminati = 0;
-
-        /* Richiedo le credenziali del HSM utilizzando apposito popup */
-        if (!getMessageBox().hasError()) {
-            // Ricavo l'id ambiente da un qualsiasi record degli elenchi da firmare
-            // PS: non lo prendo dal filtro di ricerca perchè l'utente potrebbe cambiarlo dalla combo senza fare la
-            // ricerca
-            // e così verrebbe preso un ambiente errato
-            BigDecimal idStrut = elenchiDaFirmare.getRow(0).getIdStrut();
-            OrgAmbienteRowBean ambienteRowBean = struttureEjb.getOrgAmbienteRowBeanByIdStrut(idStrut);
-            BigDecimal idAmbiente = ambienteRowBean.getIdAmbiente();
-            if (idAmbiente != null) {
-                // Ricavo il parametro HSM_USERNAME (parametro multiplo dell'ambiente) associato all'utente corrente
-                String hsmUserName = amministrazioneEjb.getHsmUsername(getUser().getIdUtente(), idAmbiente);
-                if (hsmUserName != null) {
-
-                    List<BigDecimal> idElencoVersRigheTotali = new ArrayList<>();
-                    List<BigDecimal> idElencoVersRigheCancellate = new ArrayList<>();
-
-                    for (int i = 0; i < elenchiDaFirmare.size(); i++) {
-                        ElvElencoVerRowBean elenco = elenchiDaFirmare.getRow(i);
-                        BigDecimal idElencoVers = elenco.getIdElencoVers();
-                        idElencoVersRigheTotali.add(idElencoVers);
-                        // EVO 19304: prima dei controlli sulla vista ELV_V_CHK_UNA_UD_ANNUL (evEjb.almenoUnaUdAnnul)
-                        // e relativa gestione delle ud
-                        // Il sistema registra lo stato dell’elenco creato
-                        evEjb.registraStatoElencoVersamento(idElencoVers, "RICHIESTA_FIRMA_INDICE_ELENCO_VERS",
-                                "Richiesta firma indice elenco di versamento",
-                                ElvStatoElencoVer.TiStatoElenco.FIRMA_IN_CORSO, getUser().getUsername());
-
-                        if (evEjb.almenoUnaUdAnnul(idElencoVers)) {
-                            // Se lo sono, annullo lo stato di generazione indice AIP di ud e doc ed elimino l'elenco
-                            evEjb.manageElencoUdAnnulDaFirmaElenco(idElencoVers, getUser().getIdUtente());
-                            idElencoVersRigheCancellate.add(idElencoVers);
-                            elenchiHsmEliminati++;
-                        }
-                    }
-
-                    // Elimino a video gli elenchi cancellati su DB in quanto contenenti solo ud annullate
-                    idElencoVersRigheTotali.removeAll(idElencoVersRigheCancellate);
-                    ElvVLisElencoVersStatoTableBean elenchiRimanenti = evEjb
-                            .getElenchiDaFirmareTableBean(idElencoVersRigheTotali, getUser().getIdUtente());
-                    getForm().getElenchiVersamentoSelezionatiList().setTable(elenchiRimanenti);
-
-                    if (elenchiHsmEliminati > 0) {
-                        getMessageBox().setViewMode(ViewMode.plain);
-                        getMessageBox().addInfo("Sono stati eliminati " + elenchiHsmEliminati
-                                + " elenchi di versamento in quanto contenenti almeno una unità documentaria annullata");
-                    }
-
-                    if (getForm().getElenchiVersamentoSelezionatiList().getTable().size() > 0) {
-                        getRequest().setAttribute("customElenchiVersamentoSelect", true);
-                        getForm().getFiltriElenchiDaFirmare().getUser().setValue(hsmUserName);
-                        getForm().getFiltriElenchiDaFirmare().getUser().setViewMode();
-                    }
-                }
-            } else {
-                getMessageBox().addError("Utente non rientra tra i firmatari definiti sull’ambiente");
-            }
-        }
-
-        forwardToPublisher(Application.Publisher.LISTA_ELENCHI_VERSAMENTO_SELECT);
-    }
+    // @Override
+    // public void firmaElenchiHsmButton() throws Throwable {
+    // ElvElencoVerTableBean elenchiDaFirmare = checkElenchiVersamentoToSign();
+    // int elenchiHsmEliminati = 0;
+    //
+    // /* Richiedo le credenziali del HSM utilizzando apposito popup */
+    // if (!getMessageBox().hasError()) {
+    // // Ricavo l'id ambiente da un qualsiasi record degli elenchi da firmare
+    // // PS: non lo prendo dal filtro di ricerca perchè l'utente potrebbe cambiarlo dalla combo senza fare la
+    // // ricerca
+    // // e così verrebbe preso un ambiente errato
+    // BigDecimal idStrut = elenchiDaFirmare.getRow(0).getIdStrut();
+    // OrgAmbienteRowBean ambienteRowBean = struttureEjb.getOrgAmbienteRowBeanByIdStrut(idStrut);
+    // BigDecimal idAmbiente = ambienteRowBean.getIdAmbiente();
+    // if (idAmbiente != null) {
+    // // Ricavo il parametro HSM_USERNAME (parametro multiplo dell'ambiente) associato all'utente corrente
+    // String hsmUserName = amministrazioneEjb.getHsmUsername(getUser().getIdUtente(), idAmbiente);
+    // if (hsmUserName != null) {
+    //
+    // List<BigDecimal> idElencoVersRigheTotali = new ArrayList<>();
+    // List<BigDecimal> idElencoVersRigheCancellate = new ArrayList<>();
+    //
+    // for (int i = 0; i < elenchiDaFirmare.size(); i++) {
+    // ElvElencoVerRowBean elenco = elenchiDaFirmare.getRow(i);
+    // BigDecimal idElencoVers = elenco.getIdElencoVers();
+    // idElencoVersRigheTotali.add(idElencoVers);
+    // // EVO 19304: prima dei controlli sulla vista ELV_V_CHK_UNA_UD_ANNUL (evEjb.almenoUnaUdAnnul)
+    // // e relativa gestione delle ud
+    // // Il sistema registra lo stato dell’elenco creato
+    // evEjb.registraStatoElencoVersamento(idElencoVers, "RICHIESTA_FIRMA_INDICE_ELENCO_VERS",
+    // "Richiesta firma indice elenco di versamento",
+    // ElvStatoElencoVer.TiStatoElenco.FIRMA_IN_CORSO, getUser().getUsername());
+    //
+    // if (evEjb.almenoUnaUdAnnul(idElencoVers)) {
+    // // Se lo sono, annullo lo stato di generazione indice AIP di ud e doc ed elimino l'elenco
+    // evEjb.manageElencoUdAnnulDaFirmaElenco(idElencoVers, getUser().getIdUtente());
+    // idElencoVersRigheCancellate.add(idElencoVers);
+    // elenchiHsmEliminati++;
+    // }
+    // }
+    //
+    // // Elimino a video gli elenchi cancellati su DB in quanto contenenti solo ud annullate
+    // idElencoVersRigheTotali.removeAll(idElencoVersRigheCancellate);
+    // ElvVLisElencoVersStatoTableBean elenchiRimanenti = evEjb
+    // .getElenchiDaFirmareTableBean(idElencoVersRigheTotali, getUser().getIdUtente());
+    // getForm().getElenchiVersamentoSelezionatiList().setTable(elenchiRimanenti);
+    //
+    // if (elenchiHsmEliminati > 0) {
+    // getMessageBox().setViewMode(ViewMode.plain);
+    // getMessageBox().addInfo("Sono stati eliminati " + elenchiHsmEliminati
+    // + " elenchi di versamento in quanto contenenti almeno una unità documentaria annullata");
+    // }
+    //
+    // if (getForm().getElenchiVersamentoSelezionatiList().getTable().size() > 0) {
+    // getRequest().setAttribute("customElenchiVersamentoSelect", true);
+    // getForm().getFiltriElenchiDaFirmare().getUser().setValue(hsmUserName);
+    // getForm().getFiltriElenchiDaFirmare().getUser().setViewMode();
+    // }
+    // }
+    // } else {
+    // getMessageBox().addError("Utente non rientra tra i firmatari definiti sull’ambiente");
+    // }
+    // }
+    //
+    // forwardToPublisher(Application.Publisher.LISTA_ELENCHI_VERSAMENTO_SELECT);
+    // }
 
     /**
      * Signs the list of file selected
@@ -2499,7 +2541,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         } catch (Exception e) {
             logger.error("Eccezione", e);
             getMessageBox().addError("Errore nel recupero dei file delle prove di conservazione");
-            forwardToPublisher(getLastPublisher());
+            // forwardToPublisher(getLastPublisher());
         }
     }
 

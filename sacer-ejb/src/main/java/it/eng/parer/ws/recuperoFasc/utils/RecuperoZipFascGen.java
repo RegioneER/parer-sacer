@@ -16,9 +16,9 @@
  */
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+* To change this template, choose Tools | Templates
+* and open the template in the editor.
+*/
 package it.eng.parer.ws.recuperoFasc.utils;
 
 import java.io.File;
@@ -54,12 +54,17 @@ import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasXmlFascicolo;
 import it.eng.parer.entity.FasXmlVersFascicolo;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
+import it.eng.parer.objectstorage.dto.RecuperoDocBean;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.RecuperoWeb;
 import it.eng.parer.ws.dto.IRispostaWS.SeverityEnum;
 import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.ejb.RecuperoDocumento;
 import it.eng.parer.ws.recupero.dto.ComponenteRec;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
+import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.recuperoFasc.dto.ContenutoRec;
 import it.eng.parer.ws.recuperoFasc.dto.RecuperoFascExt;
 import it.eng.parer.ws.recuperoFasc.dto.RispostaWSRecuperoFasc;
@@ -74,6 +79,10 @@ import it.eng.parer.ws.xml.versReqStatoFasc.VersatoreFascType;
 import it.eng.parerxml.xsd.FileXSD;
 import it.eng.parerxml.xsd.FileXSDUtil;
 import it.eng.spagoLite.security.User;
+import javax.xml.datatype.DatatypeConfigurationException;
+import java.util.Map;
+import java.util.Map;
+import javax.ejb.EJB;
 
 /**
  *
@@ -90,6 +99,10 @@ public class RecuperoZipFascGen {
     ControlliRecuperoFasc controlliRecuperoFasc = null;
     //
     FascicoliHelper fasHelper = null;
+    //
+    ObjectStorageService objectStorageService = null;
+    @EJB
+    private RecuperoDocumento recuperoDocumento;
 
     private static final String DIRECTORY_REC_FASC_METADATI = "metadati";
     private static final String DIRECTORY_REC_FASC_CONTEN = "contenuto";
@@ -140,6 +153,10 @@ public class RecuperoZipFascGen {
                 .lookup("java:module/ControlliRecuperoFasc");
 
         fasHelper = (FascicoliHelper) new InitialContext().lookup("java:module/FascicoliHelper");
+        objectStorageService = (ObjectStorageService) new InitialContext()
+                .lookup("java:app/Parer-ejb/ObjectStorageService");
+
+        recuperoDocumento = (RecuperoDocumento) new InitialContext().lookup("java:app/Parer-ejb/RecuperoDocumento");
     }
 
     public void generaZipOggettoFasc(String outputPath, RecuperoFascExt recuperoFasc) throws Exception {
@@ -309,14 +326,14 @@ public class RecuperoZipFascGen {
 
     /**
      * Metodo per fare il download del pacchetto aip di una determinata unita documentaria in un file zip
-     * 
+     *
      * @param verIndiceAipUd
      *            entity AroVerIndiceAipUd
      * @param recuperoFasc
      *            bean RecuperoFascExt
-     * 
+     *
      * @return RispostaWSRecupero oggetto con risposta recupero
-     * 
+     *
      * @throws Exception
      *             errore generico
      */
@@ -353,7 +370,6 @@ public class RecuperoZipFascGen {
         // è stato prodotto l'ultimo Indice AIP (se presente), perchè il pacchetto AIP viene generato in
         // modo differente impostando il valore
         // UNI_DOC_UNISYNCRO (versioni 0.X) o UNI_DOC_UNISYNCRO_V2 (versioni 1.X).
-
         // Scompatto il campo cdVerIndiceAip
         String[] numbers = verIndiceAipUd.getCdVerIndiceAip().split("[.]");
         int majorNumber = Integer.parseInt(numbers[0]);
@@ -367,7 +383,8 @@ public class RecuperoZipFascGen {
     }
 
     private void aggiungiElencoIndiciAipFasc(ZipArchiveOutputStream zipOutputStream, long idFascicolo,
-            String tiFileElencoVersFasc1, String tiFileElencoVersFasc2) throws IOException {
+            String tiFileElencoVersFasc1, String tiFileElencoVersFasc2)
+            throws IOException, DatatypeConfigurationException {
         ElvFileElencoVersFasc fileElencoVersFasc = null;
         String prefisso = null;
         String estensione = null;
@@ -401,7 +418,21 @@ public class RecuperoZipFascGen {
                 ZipArchiveEntry zae = new ZipArchiveEntry(fileName + estensione);
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(fileElencoVersFasc.getBlFileElencoVers());
+                // MEV#30399
+                // recupero documento blob vs obj storage
+                // build dto per recupero
+                RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(
+                        Constants.TiEntitaSacerObjectStorage.ELENCO_INDICI_AIP_FASC,
+                        fileElencoVersFasc.getIdFileElencoVersFasc(), zipOutputStream,
+                        RecBlbOracle.TabellaBlob.ELV_FILE_ELENCO_FASC);
+                // recupero
+                boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                rispostaControlli.setrBoolean(esitoRecupero);
+                if (!esitoRecupero) {
+                    throw new IOException("Errore non gestito nel recupero del file");
+                }
+                // end MEV#30399
+                // zipOutputStream.write(fileElencoVersFasc.getBlFileElencoVers());
                 zipOutputStream.closeArchiveEntry();
             }
         }
@@ -470,7 +501,20 @@ public class RecuperoZipFascGen {
                             ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(pathSip);
                             this.filterZipEntry(zipArchiveEntry);
                             zipOutputStream.putArchiveEntry(zipArchiveEntry);
-                            zipOutputStream.write(tmpXml.getBlXmlVers().getBytes(StandardCharsets.UTF_8));
+                            // Recupero XML Richiesta Fascicolo salvato su OS
+                            String blFile = tmpXml.getBlXmlVers();
+                            if (blFile == null) {
+                                Map<String, String> xmls = objectStorageService
+                                        .getObjectXmlVersFascicolo(tmpXml.getFasFascicolo().getIdFascicolo());
+                                // recupero oggetti da O.S. (se presenti)
+                                if (!xmls.isEmpty()) {
+                                    blFile = xmls.get(tmpXml.getTiXmlVers());
+                                }
+                            }
+                            zipOutputStream.write(blFile.getBytes(StandardCharsets.UTF_8));
+                            // End recupero XML richiesta
+
+                            // zipOutputStream.write(tmpXml.getBlXmlVers().getBytes(StandardCharsets.UTF_8));
                             closeEntry = true;
                         }
                     }
@@ -700,8 +744,20 @@ public class RecuperoZipFascGen {
                     ZipArchiveEntry zae = new ZipArchiveEntry(fileName);
                     this.filterZipEntry(zae);
                     zipOutputStream.putArchiveEntry(zae);
-                    zipOutputStream
-                            .write(fileMetaIndiceLastVers.getBlFileVerIndiceAip().getBytes(StandardCharsets.UTF_8));
+
+                    // MEV #30398
+                    String blFile = fileMetaIndiceLastVers.getBlFileVerIndiceAip();
+                    if (fileMetaIndiceLastVers.getBlFileVerIndiceAip() == null) {
+                        Map<String, String> xmls = objectStorageService.getObjectXmlIndiceAipFasc(fileMetaIndiceLastVers
+                                .getFasMetaVerAipFascicolo().getFasVerAipFascicolo().getIdVerAipFascicolo());
+                        // recupero oggetti da O.S. (se presenti)
+                        if (!xmls.isEmpty()) {
+                            blFile = xmls.get("INDICE");
+                        }
+                    }
+                    // end MEV #30398
+
+                    zipOutputStream.write(blFile.getBytes(StandardCharsets.UTF_8));
                     closeEntry = true;
                 }
 
@@ -776,12 +832,24 @@ public class RecuperoZipFascGen {
 
                     /* Definisco il nome e l'estensione del file */
                     // fileName = "Fascicolo.xml";
-
                     ZipArchiveEntry zae = new ZipArchiveEntry(path);
                     this.filterZipEntry(zae);
                     zipOutputStream.putArchiveEntry(zae);
-                    zipOutputStream
-                            .write(fileMetaIndiceLastVers.getBlFileVerIndiceAip().getBytes(StandardCharsets.UTF_8));
+
+                    // MEV #30398
+                    String blFile = fileMetaIndiceLastVers.getBlFileVerIndiceAip();
+                    if (fileMetaIndiceLastVers.getBlFileVerIndiceAip() == null) {
+                        Map<String, String> xmls = objectStorageService.getObjectXmlIndiceAipFasc(fileMetaIndiceLastVers
+                                .getFasMetaVerAipFascicolo().getFasVerAipFascicolo().getIdVerAipFascicolo());
+                        // recupero oggetti da O.S. (se presenti)
+                        if (!xmls.isEmpty()) {
+                            blFile = xmls.get("FASCICOLO");
+                        }
+                    }
+                    // end MEV #30398
+
+                    zipOutputStream.write(blFile.getBytes(StandardCharsets.UTF_8));
+
                     closeEntry = true;
                 }
 

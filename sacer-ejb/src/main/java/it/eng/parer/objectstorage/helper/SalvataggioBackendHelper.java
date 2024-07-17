@@ -17,6 +17,7 @@
 
 package it.eng.parer.objectstorage.helper;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
@@ -39,6 +40,7 @@ import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import it.eng.parer.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,20 +54,28 @@ import it.eng.parer.entity.AroVersIniDatiSpecObjectStorage;
 import it.eng.parer.entity.AroXmlDocObjectStorage;
 import it.eng.parer.entity.AroXmlUnitaDocObjectStorage;
 import it.eng.parer.entity.AroXmlUpdUdObjectStorage;
+import it.eng.parer.entity.DecAaTipoFascicolo;
 import it.eng.parer.entity.DecBackend;
 import it.eng.parer.entity.DecConfigObjectStorage;
 import it.eng.parer.entity.DecTipoUnitaDoc;
+import it.eng.parer.entity.FasFileMetaVerAipFascObjectStorage;
+import it.eng.parer.entity.FasVerAipFascicolo;
+import it.eng.parer.entity.ElvFileElencoVersFasc;
+import it.eng.parer.entity.ElvFileElencoVersFascObjectStorage;
+import it.eng.parer.entity.FasFileMetaVerAipFascObjectStorage;
+import it.eng.parer.entity.FasVerAipFascicolo;
 import it.eng.parer.entity.FasXmlFascObjectStorage;
 import it.eng.parer.entity.FasXmlVersFascObjectStorage;
 import it.eng.parer.entity.FirReport;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VrsFileSesObjectStorageKo;
 import it.eng.parer.entity.VrsXmlDatiSesObjectStorageKo;
+import it.eng.parer.entity.VrsXmlSesFascErrObjectStorage;
+import it.eng.parer.entity.VrsXmlSesFascKoObjectStorage;
 import it.eng.parer.entity.VrsXmlSesUpdUdErrObjectStorage;
 import it.eng.parer.entity.VrsXmlSesUpdUdKoObjectStorage;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
-import it.eng.parer.entity.VrsXmlSesFascErrObjectStorage;
-import it.eng.parer.entity.VrsXmlSesFascKoObjectStorage;
 import it.eng.parer.entity.inheritance.oop.AroXmlObjectStorage;
 import it.eng.parer.exception.ParamApplicNotFoundException;
 import it.eng.parer.objectstorage.dto.BackendStorage;
@@ -77,6 +87,7 @@ import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.ws.utils.Costanti.AwsConstants;
 import it.eng.parer.ws.utils.CostantiDB.ParametroAppl;
+import java.io.InputStream;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -99,6 +110,7 @@ public class SalvataggioBackendHelper {
 
     private final Logger log = LoggerFactory.getLogger(SalvataggioBackendHelper.class);
 
+    private static final String NO_PARAMETER = "Impossibile ottenere il parametro {0}";
     private static final String LOG_MESSAGE_NO_SAVED = "Impossibile salvare il link dell'oggetto su DB";
     private static final String ID_COMP_DOC = "idCompDoc";
 
@@ -158,6 +170,34 @@ public class SalvataggioBackendHelper {
         return configurationHelper.getValoreParamApplicByTipoUd(parameterName, BigDecimal.valueOf(idAmbiente),
                 BigDecimal.valueOf(idStrut), BigDecimal.valueOf(idTipoUnitaDoc));
     }
+
+    // MEV#30397
+    /**
+     * Ottieni la configurazione applicativa relativa alla tipologia di Backend per il salvataggio degli elenchi indici
+     * aip
+     *
+     * @param idStrut
+     *            id struttura
+     * 
+     * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure DATABASE_PRIMARIO
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore di recupero del parametro
+     */
+    public String getBackendElenchiIndiciAip(long idStrut) throws ObjectStorageException {
+        try {
+            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut);
+
+            long idAmbiente = strut.getOrgEnte().getOrgAmbiente().getIdAmbiente();
+            return configurationHelper.getValoreParamApplicByStrut(ParametroAppl.BACKEND_ELENCHI_INDICI_AIP,
+                    BigDecimal.valueOf(idAmbiente), BigDecimal.valueOf(idStrut));
+
+        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(NO_PARAMETER, ParametroAppl.BACKEND_ELENCHI_INDICI_AIP)
+                    .cause(e).build();
+        }
+    }
+    // end MEV#30397
 
     public DecBackend getBackendEntity(String nomeBackend) {
         TypedQuery<DecBackend> query = entityManager
@@ -876,7 +916,7 @@ public class SalvataggioBackendHelper {
      */
     public ObjectStorageResource putObject(String contenuto, final String key, ObjectStorageBackend configuration)
             throws ObjectStorageException {
-        checkConfiguration(configuration);
+        checkFullConfiguration(configuration);
         try {
             return putObject(contenuto, key, configuration, Optional.empty(), Optional.empty(), Optional.empty());
         } catch (Exception e) {
@@ -911,7 +951,7 @@ public class SalvataggioBackendHelper {
             Optional<Map<String, String>> metadata, Optional<Set<Tag>> tags, Optional<String> base64md5)
             throws ObjectStorageException {
 
-        checkConfiguration(configuration);
+        checkFullConfiguration(configuration);
 
         final URI storageAddress = configuration.getAddress();
         final String accessKeyId = configuration.getAccessKeyId();
@@ -989,6 +1029,207 @@ public class SalvataggioBackendHelper {
                     configuration.getBackendName(), key, configuration.getBucket()).cause(e).build();
         }
     }
+
+    // MEV#30397
+    /**
+     * Salva lo stream di dati sull'object storage della configurazione identificandolo con la chiave passata come
+     * parametro.
+     *
+     * @param blob
+     *            stream di dati
+     * @param blobLength
+     *            dimensione dello stream di dati
+     * @param key
+     *            chiave dell'oggetto
+     * @param configuration
+     *            configurazione dell'object storage in cui aggiungere l'oggetto
+     * @param metadata
+     *            eventuali metadati (nel caso non vengano passati vengono utilizzati quelli predefiniti)
+     * @param tags
+     *            eventuali tag (nel caso non vengano passati non vengnono apposti)
+     * @param base64md5
+     *            eventuale base64-encoded MD5 del file per data integrity check
+     *
+     * @return riferimento alla risorsa appena inserita
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public ObjectStorageResource putObject(InputStream blob, long blobLength, final String key,
+            ObjectStorageBackend configuration, Optional<Map<String, String>> metadata, Optional<Set<Tag>> tags,
+            Optional<String> base64md5) throws ObjectStorageException {
+
+        checkFullConfiguration(configuration);
+
+        final URI storageAddress = configuration.getAddress();
+        final String accessKeyId = configuration.getAccessKeyId();
+        final String secretKey = configuration.getSecretKey();
+        final String bucket = configuration.getBucket();
+
+        log.debug("Sto per inserire nell'os {} la chiave {} sul bucket {}", storageAddress, key, bucket);
+
+        try {
+            S3Client s3Client = s3Clients.getClient(storageAddress, accessKeyId, secretKey);
+
+            PutObjectRequest.Builder putObjectBuilder = PutObjectRequest.builder().bucket(bucket).key(key);
+
+            if (metadata.isPresent()) {
+                putObjectBuilder.metadata(metadata.get());
+            } else {
+                putObjectBuilder.metadata(defaultMetadata());
+            }
+            if (tags.isPresent()) {
+                putObjectBuilder.tagging(Tagging.builder().tagSet(tags.get()).build());
+            }
+            if (base64md5.isPresent()) {
+                putObjectBuilder.contentMD5(base64md5.get());
+            }
+
+            PutObjectRequest objectRequest = putObjectBuilder.build();
+            final long start = System.currentTimeMillis();
+            PutObjectResponse response = s3Client.putObject(objectRequest,
+                    RequestBody.fromInputStream(blob, blobLength));
+
+            final long end = System.currentTimeMillis() - start;
+            if (log.isDebugEnabled()) {
+                log.debug("Salvato oggetto {} di {} byte sul bucket {} con ETag {} in {} ms", key, blobLength, bucket,
+                        response.eTag(), end);
+            }
+            final URL presignedUrl = presigner.getPresignedUrl(configuration, key);
+            //
+            final URI presignedURLasURI = presignedUrl.toURI();
+
+            final String tenant = getDefaultTenant();
+
+            return new ObjectStorageResource() {
+                @Override
+                public String getBucket() {
+                    return bucket;
+                }
+
+                @Override
+                public String getKey() {
+                    return key;
+                }
+
+                @Override
+                public String getETag() {
+                    return response.eTag();
+                }
+
+                @Override
+                public String getExpiration() {
+                    return response.expiration();
+                }
+
+                @Override
+                public URI getPresignedURL() {
+                    return presignedURLasURI;
+                }
+
+                @Override
+                public String getTenant() {
+                    return tenant;
+                }
+            };
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message("{0}: impossibile salvare oggetto {1} sul bucket {2}",
+                    configuration.getBackendName(), key, configuration.getBucket()).cause(e).build();
+        }
+    }
+
+    /**
+     * Effettua il salvataggio del collegamento tra la l'elenco indice aip e la chiave sull'object storage
+     *
+     * @param object
+     *            informazioni dell'oggetto salvato
+     * @param nmBackend
+     *            nome del backend (di tipo OS) su cui è stato salvato
+     * @param idFileElencoVers
+     *            id file elenco indice aip
+     * @param idStrut
+     *            id struttura
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public void saveObjectStorageLinkElencoIndiceAip(ObjectStorageResource object, String nmBackend,
+            long idFileElencoVers, BigDecimal idStrut) throws ObjectStorageException {
+        try {
+            DecBackend decBackend = me.getBackendEntity(nmBackend);
+            ElvFileElencoVer elvFileElencoVer = entityManager.find(ElvFileElencoVer.class, idFileElencoVers);
+
+            ElvFileElencoVersObjectStorage osLink = new ElvFileElencoVersObjectStorage();
+            osLink.setElvFileElencoVer(elvFileElencoVer);
+
+            osLink.setIdStrut(idStrut);
+            osLink.setCdKeyFile(object.getKey());
+            osLink.setNmBucket(object.getBucket());
+            osLink.setNmTenant(object.getTenant());
+
+            osLink.setDecBackend(decBackend);
+            entityManager.persist(osLink);
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message(LOG_MESSAGE_NO_SAVED).cause(e).build();
+        }
+    }
+
+    /**
+     * Restitusce un boolean per la verifica del "link" verso object storage
+     *
+     * @param idFileElencoVers
+     *            id elenco indici aip
+     *
+     * @return boolean true se effettivamente presente su object storage / false altrimenti
+     *
+     * @throws ObjectStorageException
+     *             eccezione generica
+     */
+    public boolean existElencoIndiciAipObjectStorage(long idFileElencoVers) throws ObjectStorageException {
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                    "Select count(elv_file_os) from ElvFileElencoVersObjectStorage elv_file_os where elv_file_os.elvFileElencoVer.idFileElencoVers = :idFileElencoVers",
+                    Long.class);
+            query.setParameter("idFileElencoVers", idFileElencoVers);
+            Long result = query.getSingleResult();
+            return result > 0;
+        } catch (NonUniqueResultException e) {
+            throw ObjectStorageException.builder()
+                    .message("Errore verifica presenza ElvFileElencoVersObjectStorage per id file elenco vers {0} ",
+                            idFileElencoVers)
+                    .cause(e).build();
+        }
+    }
+
+    /**
+     * Ottieni il collegamento tra l'elenco indici aip e il suo bucket/chiave su OS.
+     *
+     * @param idFileElencoVers
+     *            id file elenco indici aip
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public ElvFileElencoVersObjectStorage getLinkElvFileElencoVersOs(long idFileElencoVers)
+            throws ObjectStorageException {
+        try {
+            TypedQuery<ElvFileElencoVersObjectStorage> query = entityManager.createQuery(
+                    "Select elv_file_os from ElvFileElencoVersObjectStorage elv_file_os where elv_file_os.elvFileElencoVer.idFileElencoVers = :idFileElencoVers",
+                    ElvFileElencoVersObjectStorage.class);
+            query.setParameter("idFileElencoVers", idFileElencoVers);
+            return query.getSingleResult();
+
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da ElvFileElencoVersObjectStorage per id file elenco vers  {0} ",
+                    idFileElencoVers).cause(e).build();
+        }
+    }
+    // end MEV#30397
 
     private Map<String, String> defaultMetadata() {
 
@@ -1089,7 +1330,22 @@ public class SalvataggioBackendHelper {
                 + "/" + pgVerIndiceAip;
     }
 
-    private static void checkConfiguration(ObjectStorageBackend configuration) throws ObjectStorageException {
+    /*
+     * Full configuration = S3 URI + access_key + secret_key + bucket name
+     */
+    private static void checkFullConfiguration(ObjectStorageBackend configuration) throws ObjectStorageException {
+        checkConfiguration(configuration, true);
+    }
+
+    /*
+     * Minimal configuration = S3 URI + access_key + secret_key
+     */
+    private static void checkMinimalConfiguration(ObjectStorageBackend configuration) throws ObjectStorageException {
+        checkConfiguration(configuration, false);
+    }
+
+    private static void checkConfiguration(ObjectStorageBackend configuration, boolean checkIfBucketExists)
+            throws ObjectStorageException {
         List<String> errors = new ArrayList<>();
         if (configuration.getAddress() == null) {
             errors.add("indirizzo object storage");
@@ -1100,7 +1356,7 @@ public class SalvataggioBackendHelper {
         if (StringUtils.isBlank(configuration.getSecretKey())) {
             errors.add("secret Key");
         }
-        if (StringUtils.isBlank(configuration.getBucket())) {
+        if (checkIfBucketExists && StringUtils.isBlank(configuration.getBucket())) {
             errors.add("nome bucket");
         }
         if (!errors.isEmpty()) {
@@ -1229,4 +1485,289 @@ public class SalvataggioBackendHelper {
 
     }
     // end MEV#30395
+
+    // MEV #30398
+    /**
+     * Effettua il salvataggio del collegamento tra i file indici AIP fascicoli e la chiave sull'object storage
+     *
+     * @param object
+     *            informazioni dell'oggetto salvato
+     * @param nmBackend
+     *            nome del backend (di tipo OS) su cui è stato salvato
+     * @param idVerAipFascicolo
+     *            id versione aip fascicolo
+     * @param idStrut
+     *            id della struttura versante
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public void saveObjectStorageLinkIndiceAipFasc(ObjectStorageResource object, String nmBackend,
+            long idVerAipFascicolo, BigDecimal idStrut) throws ObjectStorageException {
+        try {
+            FasVerAipFascicolo fasVerAipFascicolo = entityManager.find(FasVerAipFascicolo.class, idVerAipFascicolo);
+
+            FasFileMetaVerAipFascObjectStorage osLink = new FasFileMetaVerAipFascObjectStorage();
+            osLink.setFasVerAipFascicolo(fasVerAipFascicolo);//
+
+            osLink.setCdKeyFile(object.getKey());
+            osLink.setNmBucket(object.getBucket());
+            osLink.setNmTenant(object.getTenant());
+            osLink.setDecBackend(getBakendEntity(nmBackend));
+            osLink.setIdStrut(idStrut);
+
+            entityManager.persist(osLink);
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message(LOG_MESSAGE_NO_SAVED).cause(e).build();
+        }
+    }
+
+    private DecBackend getBakendEntity(String nomeBackend) {
+        TypedQuery<DecBackend> query = entityManager
+                .createQuery("Select d from DecBackend d where d.nmBackend = :nomeBackend", DecBackend.class);
+        query.setParameter("nomeBackend", nomeBackend);
+        return query.getSingleResult();
+    }
+
+    /**
+     * Ottieni il collegamento tra il record dell'indice AIP fascicolo e il suo bucket/chiave su OS.
+     *
+     * @param idVerAipFascicolo
+     *            id versione aip fascicolo
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public FasFileMetaVerAipFascObjectStorage getLinkIndiceAipFascOs(long idVerAipFascicolo)
+            throws ObjectStorageException {
+        try {
+            TypedQuery<FasFileMetaVerAipFascObjectStorage> query = entityManager.createQuery(
+                    "Select f from FasFileMetaVerAipFascObjectStorage f where f.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo",
+                    FasFileMetaVerAipFascObjectStorage.class);
+            query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
+            return query.getSingleResult();
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da FasFileMetaVerAipFascObjectStorage per id ver aip fascicolo {0} ",
+                    idVerAipFascicolo).cause(e).build();
+        }
+
+    }
+
+    /**
+     * Restitusce un boolean per la verifica del "link" verso object storage
+     * 
+     * @param idVerAipFascicolo
+     *            id versione indice aip fascicolo
+     * 
+     * @return boolean true se effettivamente presente su object storage / false altrimenti
+     * 
+     * @throws ObjectStorageException
+     *             eccezione generica
+     */
+    public boolean existIndiceAipFascicoloObjectStorage(long idVerAipFascicolo) throws ObjectStorageException {
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                    "Select count(ix_aip_os) from FasFileMetaVerAipFascObjectStorage ix_aip_os where ix_aip_os.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo",
+                    Long.class);
+            query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
+            Long result = query.getSingleResult();
+            return result > 0;
+        } catch (NonUniqueResultException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore verifica presenza FasFileMetaVerAipFascObjectStorage per id versione aip fascicolo {0} ",
+                    idVerAipFascicolo).cause(e).build();
+        }
+    }
+
+    /**
+     * Ottieni il collegamento tra l'indice aip del fascicolo e il suo bucket/chiave su OS.
+     *
+     * @param idVerAipFascicolo
+     *            id versione indice aip fascicolo
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public FasFileMetaVerAipFascObjectStorage getLinkFasFileMetaVerAipFascOs(long idVerAipFascicolo)
+            throws ObjectStorageException {
+        try {
+            TypedQuery<FasFileMetaVerAipFascObjectStorage> query = entityManager.createQuery(
+                    "Select ix_aip_os from FasFileMetaVerAipFascObjectStorage ix_aip_os where ix_aip_os.fasVerAipFascicolo.idVerAipFascicolo = :idVerAipFascicolo",
+                    FasFileMetaVerAipFascObjectStorage.class);
+            query.setParameter("idVerAipFascicolo", idVerAipFascicolo);
+            return query.getSingleResult();
+
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da FasFileMetaVerAipFascObjectStorage per id versione aip fascicolo {0} ",
+                    idVerAipFascicolo).cause(e).build();
+        }
+
+    }
+
+    /**
+     * Ottieni la tipologia di backend per salvare i BLOB relativi al versamento sincrono
+     *
+     * @param idAaTipoFascicolo
+     *            id periodo della tipologia del fascicolo
+     * @param paramName
+     *            nome del parametro
+     *
+     * @return Configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure DATABASE_PRIMARIO
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public String getBackendByParamNameFasc(long idAaTipoFascicolo, String paramName) throws ObjectStorageException {
+        String backendDatiVersamento = null;
+        try {
+            return getParameterFasc(idAaTipoFascicolo, paramName);
+
+        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
+            throw ObjectStorageException.builder()
+                    .message("Impossibile ottenere il parametro {0} con id aa tipo fascicolo {1} e tipo creazione {2}",
+                            backendDatiVersamento, idAaTipoFascicolo, paramName)
+                    .cause(e).build();
+        }
+    }
+
+    private String getParameterFasc(long idAaTipoFascicolo, String parameterName) {
+        DecAaTipoFascicolo aaTipoFasc = entityManager.find(DecAaTipoFascicolo.class, idAaTipoFascicolo);
+        long idStrut = aaTipoFasc.getDecTipoFascicolo().getOrgStrut().getIdStrut();
+
+        long idAmbiente = aaTipoFasc.getDecTipoFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
+
+        return configurationHelper.getValoreParamApplicByAaTipoFasc(parameterName, BigDecimal.valueOf(idAmbiente),
+                BigDecimal.valueOf(idStrut), BigDecimal.valueOf(idAaTipoFascicolo));
+    }
+
+    // end MEV #30398
+
+    // MEV #30399
+    /**
+     * Effettua il salvataggio del collegamento tra la l'elenco indice aip fascicoli e la chiave sull'object storage
+     *
+     * @param object
+     *            informazioni dell'oggetto salvato
+     * @param nmBackend
+     *            nome del backend (di tipo OS) su cui è stato salvato
+     * @param idFileElencoVersFasc
+     *            id file elenco indice aip fascicoli
+     * @param idStrut
+     *            id struttura
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public void saveObjectStorageLinkElencoIndiceAipFasc(ObjectStorageResource object, String nmBackend,
+            long idFileElencoVersFasc, BigDecimal idStrut) throws ObjectStorageException {
+        try {
+            DecBackend decBackend = me.getBackendEntity(nmBackend);
+            ElvFileElencoVersFasc elvFileElencoVersFasc = entityManager.find(ElvFileElencoVersFasc.class,
+                    idFileElencoVersFasc);
+
+            ElvFileElencoVersFascObjectStorage osLink = new ElvFileElencoVersFascObjectStorage();
+            osLink.setElvFileElencoVersFasc(elvFileElencoVersFasc);
+
+            osLink.setIdStrut(idStrut);
+            osLink.setCdKeyFile(object.getKey());
+            osLink.setNmBucket(object.getBucket());
+            osLink.setNmTenant(object.getTenant());
+
+            osLink.setDecBackend(decBackend);
+            entityManager.persist(osLink);
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message(LOG_MESSAGE_NO_SAVED).cause(e).build();
+        }
+    }
+
+    //
+    /**
+     * Restitusce un boolean per la verifica del "link" verso object storage
+     *
+     * @param idFileElencoVersFasc
+     *            id elenco indici aip fascicoli
+     *
+     * @return boolean true se effettivamente presente su object storage / false altrimenti
+     *
+     * @throws ObjectStorageException
+     *             eccezione generica
+     */
+    public boolean existElencoIndiciAipFascObjectStorage(long idFileElencoVersFasc) throws ObjectStorageException {
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                    "Select count(elv_file_os) from ElvFileElencoVersFascObjectStorage elv_file_os where elv_file_os.elvFileElencoVersFasc.idFileElencoVersFasc = :idFileElencoVersFasc",
+                    Long.class);
+            query.setParameter("idFileElencoVersFasc", idFileElencoVersFasc);
+            Long result = query.getSingleResult();
+            return result > 0;
+        } catch (NonUniqueResultException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore verifica presenza ElvFileElencoVersFascObjectStorage per id file elenco vers fasc {0} ",
+                    idFileElencoVersFasc).cause(e).build();
+        }
+    }
+
+    /**
+     * Ottieni la configurazione applicativa relativa alla tipologia di Backend per il salvataggio degli elenchi indici
+     * aip fascicoli
+     *
+     * @param idStrut
+     *            id struttura
+     * 
+     * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure DATABASE_PRIMARIO
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore di recupero del parametro
+     */
+    public String getBackendElenchiIndiciAipFasc(long idStrut) throws ObjectStorageException {
+        try {
+            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut);
+
+            long idAmbiente = strut.getOrgEnte().getOrgAmbiente().getIdAmbiente();
+            return configurationHelper.getValoreParamApplicByStrut(ParametroAppl.BACKEND_ELENCHI_INDICI_AIP_FASCICOLI,
+                    BigDecimal.valueOf(idAmbiente), BigDecimal.valueOf(idStrut));
+
+        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
+            throw ObjectStorageException.builder()
+                    .message(NO_PARAMETER, ParametroAppl.BACKEND_ELENCHI_INDICI_AIP_FASCICOLI).cause(e).build();
+        }
+    }
+
+    /**
+     * Ottieni il collegamento tra l'elenco indici aip fascicoli e il suo bucket/chiave su OS.
+     *
+     * @param idFileElencoVersFasc
+     *            id file elenco indici aip fascicoli
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public ElvFileElencoVersFascObjectStorage getLinkElvFileElencoVersFascOs(long idFileElencoVersFasc)
+            throws ObjectStorageException {
+        try {
+            TypedQuery<ElvFileElencoVersFascObjectStorage> query = entityManager.createQuery(
+                    "Select elv_file_os from ElvFileElencoVersFascObjectStorage elv_file_os where elv_file_os.elvFileElencoVersFasc.idFileElencoVersFasc = :idFileElencoVersFasc",
+                    ElvFileElencoVersFascObjectStorage.class);
+            query.setParameter("idFileElencoVersFasc", idFileElencoVersFasc);
+            return query.getSingleResult();
+
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da ElvFileElencoVersFascObjectStorage per id file elenco vers fasc {0} ",
+                    idFileElencoVersFasc).cause(e).build();
+        }
+    }
+
+    // end MEV #30399
+
 }

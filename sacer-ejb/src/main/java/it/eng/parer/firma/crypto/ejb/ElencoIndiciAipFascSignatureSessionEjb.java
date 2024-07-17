@@ -52,6 +52,9 @@ import it.eng.parer.entity.constraint.HsmSessioneFirma.TiEsitoSessioneFirma;
 import it.eng.parer.fascicoli.ejb.ElenchiVersFascicoliEjb;
 import it.eng.parer.firma.crypto.helper.ElenchiIndiciAipFascSignatureHelper;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 
@@ -72,6 +75,10 @@ public class ElencoIndiciAipFascSignatureSessionEjb implements SignatureSessionE
     private ElenchiVersFascicoliEjb elencoEjb;
     @EJB
     private ElenchiIndiciAipFascSignatureHelper signHlp;
+    // MEV#30399
+    @EJB
+    private ObjectStorageService objectStorageService;
+    // end MEV#30399
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -184,7 +191,29 @@ public class ElencoIndiciAipFascSignatureSessionEjb implements SignatureSessionE
         HsmElencoFascSesFirma elencoSession = signHlp.findElencoFascSes(session, idFile);
         elencoSession.setTiEsito(TiEsitoFirmaElencoFasc.OK);
         elencoSession.setTsEsito(new Date());
-        elencoEjb.storeFirmaElencoIndiceAipFasc(idFile, signedFile, signingDate, session.getIamUser().getIdUserIam());
+        // MEV#30399
+        BackendStorage backendIndiciAip = objectStorageService
+                .lookupBackendElenchiIndiciAipFasc(elencoSession.getElvElencoVersFasc().getOrgStrut().getIdStrut());
+        ElvFileElencoVersFasc fileElencoVers = elencoEjb.storeFirmaElencoIndiceAipFasc(idFile, signedFile, signingDate,
+                session.getIamUser().getIdUserIam(), backendIndiciAip);
+        /*
+         * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
+         */
+        if (backendIndiciAip.isObjectStorage()) {
+            // retrieve normalized URN
+            // final String urn = "provaURNElencoVersFasc";
+            final String urn = fileElencoVers.getDsUrnNormalizFile().substring(4);
+
+            ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAipFasc(urn,
+                    backendIndiciAip.getBackendName(), signedFile, fileElencoVers.getIdFileElencoVersFasc(),
+                    fileElencoVers.getIdStrut());
+            logger.debug("Salvato il file dell'elenco indici aip fascicoli firmato nel bucket {} con chiave {} ",
+                    res.getBucket(), res.getKey());
+        }
+        // end MEV#30399
+
+        // elencoEjb.storeFirmaElencoIndiceAipFasc(idFile, signedFile, signingDate,
+        // session.getIamUser().getIdUserIam());
 
         logger.info("Firmato elenco (id: " + idFile + ") nella sessione con id " + session.getIdSessioneFirma());
     }

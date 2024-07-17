@@ -65,7 +65,8 @@ import it.eng.parer.entity.VrsSesFascicoloErr;
 import it.eng.parer.entity.VrsSesFascicoloKo;
 import it.eng.parer.entity.VrsXmlSesFascicoloErr;
 import it.eng.parer.entity.VrsXmlSesFascicoloKo;
-import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
+import it.eng.parer.entity.FasMetaVerAipFascicolo;
+import it.eng.parer.entity.FasVerAipFascicolo;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.fascicoli.dto.RicercaFascicoliBean;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
@@ -454,11 +455,13 @@ public class FascicoliEjb {
         FasFileMetaVerAipFasc result = fascicoliHelper.getFasFileMetaVerAipFasc(idFascicolo.longValue(), tiMeta);
         if (result != null) {
             row = new BaseRow();
-            if (FasMetaVerAipFascicolo.TiMeta.valueOf(tiMeta).equals(FasMetaVerAipFascicolo.TiMeta.INDICE)) {
+            if (it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.valueOf(tiMeta)
+                    .equals(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE)) {
                 row.setString("ds_urn_aip_fascicolo", result.getFasMetaVerAipFascicolo().getDsUrnMetaFascicolo());
                 row.setString("ds_urn_normaliz_aip_fascicolo",
                         result.getFasMetaVerAipFascicolo().getDsUrnNormalizMetaFascicolo());
-            } else if (FasMetaVerAipFascicolo.TiMeta.valueOf(tiMeta).equals(FasMetaVerAipFascicolo.TiMeta.FASCICOLO)) {
+            } else if (it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.valueOf(tiMeta)
+                    .equals(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO)) {
                 row.setString("ds_urn_file_fascicolo", result.getFasMetaVerAipFascicolo().getDsUrnMetaFascicolo());
                 row.setString("ds_urn_normaliz_file_fascicolo",
                         result.getFasMetaVerAipFascicolo().getDsUrnNormalizMetaFascicolo());
@@ -466,7 +469,11 @@ public class FascicoliEjb {
             row.setString("ds_hash_file", result.getFasMetaVerAipFascicolo().getDsHashFile());
             row.setString("ds_algo_hash_file", result.getFasMetaVerAipFascicolo().getDsAlgoHashFile());
             row.setString("cd_encoding_hash_file", result.getFasMetaVerAipFascicolo().getCdEncodingHashFile());
-            row.setString("bl_file_ver_indice_aip", formatter.prettyPrintWithDOM3LS(result.getBlFileVerIndiceAip()));
+
+            if (result.getBlFileVerIndiceAip() != null) {
+                row.setString("bl_file_ver_indice_aip",
+                        formatter.prettyPrintWithDOM3LS(result.getBlFileVerIndiceAip()));
+            }
             if (result.getFasMetaVerAipFascicolo().getFasVerAipFascicolo().getIdEnteConserv() != null) {
                 row.setString("nm_ente_conserv",
                         fascicoliHelper
@@ -478,6 +485,58 @@ public class FascicoliEjb {
 
         return row;
     }
+
+    // MEV#30398
+    public void setIndiceAipFascByOS(BigDecimal idFascicolo, BaseRow fileMetaIndiceAipDetail) {
+        long idVerAipFascicolo = getIdVerAipFascicolo(idFascicolo);
+        fileMetaIndiceAipDetail.setBigDecimal("id_ver_aip_fascicolo", BigDecimal.valueOf(idVerAipFascicolo));
+        addXmlIndiceAipFascFromOStoFasFileMetaVerAipFascBean(fileMetaIndiceAipDetail);
+    }
+
+    /**
+     * Nel caso in cui il backend di salvataggio degli XML indice AIP fascicolo sia l'object storage (gestito dal
+     * parametro <strong>applicativo</strong>) si possono verificare 2 casi:
+     * <ul>
+     * <li>gli xml sono <em>ancora</em> sul DB perché non ancora migrati</li>
+     * <li>gli xml sono effettivamente sull'object storage</li>
+     * </ul>
+     * Se si avvera il secondo caso li devo recuperare
+     *
+     * @param fileMetaVerAipFascDetail
+     *            BaseRow rappresentante FileMetaVerAipFasc
+     */
+    public void addXmlIndiceAipFascFromOStoFasFileMetaVerAipFascBean(BaseRow fileMetaVerAipFascDetail) {
+
+        // Recupero il blobbo, vediamo se c'è o se invece devo andare a cuccarlo dall'OS
+        String blFileVerIndiceAip = fileMetaVerAipFascDetail.getString("bl_file_ver_indice_aip");
+
+        /*
+         * Se l'xml è vuoto
+         */
+        if (blFileVerIndiceAip == null) {
+            Map<String, String> xmls = objectStorageService.getObjectXmlIndiceAipFasc(
+                    fileMetaVerAipFascDetail.getBigDecimal("id_ver_aip_fascicolo").longValue());
+            // recupero oggetti da O.S. (se presenti)
+            if (!xmls.isEmpty()) {
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+                fileMetaVerAipFascDetail.setString("bl_file_ver_indice_aip",
+                        formatter.prettyPrintWithDOM3LS(xmls.get("INDICE")));
+            }
+        }
+    }
+
+    public long getIdMetaVerAipFascicolo(BigDecimal idFascicolo) {
+        FasMetaVerAipFascicolo meta = fascicoliHelper.getFasMetaVerAipFascicolo(idFascicolo.longValue(),
+                it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name());
+        return meta.getIdMetaVerAipFascicolo();
+    }
+
+    public long getIdVerAipFascicolo(BigDecimal idFascicolo) {
+        FasVerAipFascicolo meta = fascicoliHelper.getFasVerAipFascicolo(idFascicolo.longValue());
+        return meta.getIdVerAipFascicolo();
+    }
+
+    // end MEV#30398
 
     public FasVLisUdInFascTableBean retrieveFasVLisUdInFasc(BigDecimal idFascicolo, long userId) {
         FasVLisUdInFascTableBean result = new FasVLisUdInFascTableBean();

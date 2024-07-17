@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.ejb;
 
 import java.math.BigDecimal;
@@ -97,8 +96,10 @@ import it.eng.parer.viewEntity.MonVCntVersEnteB30;
 import it.eng.parer.viewEntity.MonVCntVersStrut;
 import it.eng.parer.viewEntity.MonVCntVersStrutB30;
 import it.eng.parer.volume.utils.VolumeEnums;
+import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.helper.MonitoraggioSinteticoHelper;
+import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 
 /**
@@ -119,6 +120,9 @@ public class MonitoraggioSinteticoEjb {
 
     @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioSinteticoHelper")
     private MonitoraggioSinteticoHelper monitSintHelper;
+
+    @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
+    private ConfigurationHelper configurationHelper;
 
     public enum fieldSetToPopulate {
 
@@ -249,17 +253,39 @@ public class MonitoraggioSinteticoEjb {
         String paramString = null;
         BigDecimal param1 = null;
         Long param2 = null;
+
+        // Recupero il parametro per sapere se utilizzare vista o vista parametrica
+        boolean flUsoVp;
+
         if (idTipoUnitaDoc != null) {
 
             switch (fieldSetToBuild) {
             case UNITA_DOC_VERSATE:
-                view = MonVChkUdTipoUd.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_TIPO_UD));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Tipo_Ud";
+                } else {
+                    view = MonVChkUdTipoUd.class.getSimpleName();
+                }
                 break;
             case DOC_AGGIUNTI:
-                view = MonVChkDocTipoUd.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_DOC_TIPO_UD));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Doc_Tipo_Ud";
+                } else {
+                    view = MonVChkDocTipoUd.class.getSimpleName();
+                }
                 break;
             case UNITA_DOC_ANNUL:
-                view = MonVChkUdAnnulTipoUd.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_ANNUL_TIPO_UD));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Annul_Tipo_Ud";
+                } else {
+                    view = MonVChkUdAnnulTipoUd.class.getSimpleName();
+                }
                 break;
             case VERS_FALLITI:
             case AGGIUNTE_DOC_FALLITE:
@@ -270,98 +296,247 @@ public class MonitoraggioSinteticoEjb {
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
 
-            paramString = VIEW_ID_TIPO_UNITA_DOC + " = :param1";
+            if (flUsoVp) {
+                paramString = "(:param1)";
+            } else {
+                paramString = VIEW_ID_TIPO_UNITA_DOC + " = :param1";
+            }
+
             param1 = idTipoUnitaDoc;
         } else if (idStrut != null) {
             switch (fieldSetToBuild) {
             case UNITA_DOC_VERSATE:
-                view = MonVChkUdStrut.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_STRUT));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Strut";
+                } else {
+                    view = MonVChkUdStrut.class.getSimpleName();
+                }
                 break;
             case DOC_AGGIUNTI:
-                view = MonVChkDocStrut.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_DOC_STRUT));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Doc_Strut";
+                } else {
+                    view = MonVChkDocStrut.class.getSimpleName();
+                }
                 break;
             case VERS_FALLITI:
-                view = MonVChkVersStrut.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_VERS_STRUT));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Vers_Strut";
+                } else {
+                    view = MonVChkVersStrut.class.getSimpleName();
+                }
                 break;
             case AGGIUNTE_DOC_FALLITE:
-                view = MonVChkAggStrut.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_AGG_STRUT));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Agg_Strut";
+                } else {
+                    view = MonVChkAggStrut.class.getSimpleName();
+                }
                 break;
             case UNITA_DOC_VERS_FALLITI:
-                view = MonVChkUdNonversStrut.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_NONVERS_STRUT));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Nonvers_Strut";
+                } else {
+                    view = MonVChkUdNonversStrut.class.getSimpleName();
+                }
                 break;
             case DOC_AGGIUNTI_VERS_FALLITI:
-                view = MonVChkDocNonversStrut.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_DOC_NONVERS_STRUT));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Doc_Nonvers_Strut";
+                } else {
+                    view = MonVChkDocNonversStrut.class.getSimpleName();
+                }
                 break;
             case UNITA_DOC_ANNUL:
-                view = MonVChkUdAnnulStrut.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_ANNUL_STRUT));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Annul_Strut";
+                } else {
+                    view = MonVChkUdAnnulStrut.class.getSimpleName();
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
-            paramString = VIEW_ID_STRUT + " = :param1";
+            if (flUsoVp) {
+                paramString = "(:param1)";
+            } else {
+                paramString = VIEW_ID_STRUT + " = :param1";
+            }
             param1 = idStrut;
         } else if (idEnte != null) {
             switch (fieldSetToBuild) {
             case UNITA_DOC_VERSATE:
-                view = MonVChkUdEnte.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_ENTE));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Ente";
+                } else {
+                    view = MonVChkUdEnte.class.getSimpleName();
+                }
                 break;
             case DOC_AGGIUNTI:
-                view = MonVChkDocEnte.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_DOC_ENTE));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Doc_Ente";
+                } else {
+                    view = MonVChkDocEnte.class.getSimpleName();
+                }
                 break;
             case VERS_FALLITI:
-                view = MonVChkVersEnte.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_VERS_ENTE));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Vers_Ente";
+                } else {
+                    view = MonVChkVersEnte.class.getSimpleName();
+                }
                 break;
             case AGGIUNTE_DOC_FALLITE:
-                view = MonVChkAggEnte.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_AGG_ENTE));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Agg_Ente";
+                } else {
+                    view = MonVChkAggEnte.class.getSimpleName();
+                }
                 break;
             case UNITA_DOC_VERS_FALLITI:
-                view = MonVChkUdNonversEnte.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_NONVERS_ENTE));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Nonvers_Ente";
+                } else {
+                    view = MonVChkUdNonversEnte.class.getSimpleName();
+                }
                 break;
             case DOC_AGGIUNTI_VERS_FALLITI:
-                view = MonVChkDocNonversEnte.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_DOC_NONVERS_ENTE));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Doc_Nonvers_Ente";
+                } else {
+                    view = MonVChkDocNonversEnte.class.getSimpleName();
+                }
                 break;
             case UNITA_DOC_ANNUL:
-                view = MonVChkUdAnnulEnte.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_ANNUL_ENTE));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Annul_Ente";
+                } else {
+                    view = MonVChkUdAnnulEnte.class.getSimpleName();
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
-            paramString = VIEW_ID_ENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
+            if (flUsoVp) {
+                paramString = "(:param1, :param2)";
+            } else {
+                paramString = VIEW_ID_ENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
+            }
             param1 = idEnte;
             param2 = idUtente;
         } else if (idAmbiente != null) {
             switch (fieldSetToBuild) {
             case UNITA_DOC_VERSATE:
-                view = MonVChkUdAmb.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_AMB));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Amb";
+                } else {
+                    view = MonVChkUdAmb.class.getSimpleName();
+                }
                 break;
             case DOC_AGGIUNTI:
-                view = MonVChkDocAmb.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_DOC_AMB));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Doc_Amb";
+                } else {
+                    view = MonVChkDocAmb.class.getSimpleName();
+                }
                 break;
             case VERS_FALLITI:
-                view = MonVChkVersAmb.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_VERS_AMB));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Vers_Amb";
+                } else {
+                    view = MonVChkVersAmb.class.getSimpleName();
+                }
                 break;
             case AGGIUNTE_DOC_FALLITE:
-                view = MonVChkAggAmb.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_AGG_AMB));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Agg_Amb";
+                } else {
+                    view = MonVChkAggAmb.class.getSimpleName();
+                }
                 break;
             case UNITA_DOC_VERS_FALLITI:
-                view = MonVChkUdNonversAmb.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_NONVERS_AMB));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Nonvers_Amb";
+                } else {
+                    view = MonVChkUdNonversAmb.class.getSimpleName();
+                }
                 break;
             case DOC_AGGIUNTI_VERS_FALLITI:
-                view = MonVChkDocNonversAmb.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_DOC_NONVERS_AMB));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Doc_Nonvers_Amb";
+                } else {
+                    view = MonVChkDocNonversAmb.class.getSimpleName();
+                }
                 break;
             case UNITA_DOC_ANNUL:
-                view = MonVChkUdAnnulAmb.class.getSimpleName();
+                flUsoVp = Boolean.parseBoolean(
+                        configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USO_VP_UD_ANNUL_AMB));
+                if (flUsoVp) {
+                    view = "Mon_Vp_Chk_Ud_Annul_Amb";
+                } else {
+                    view = MonVChkUdAnnulAmb.class.getSimpleName();
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
             }
-            paramString = VIEW_ID_AMBIENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
+            if (flUsoVp) {
+                paramString = "(:param1, :param2)";
+            } else {
+                paramString = VIEW_ID_AMBIENTE + " = :param1 AND " + VIEW_ID_USER_IAM + " = :param2";
+            }
             param1 = idAmbiente;
             param2 = idUtente;
         } else {
             throw new IllegalArgumentException("Errore inaspettato nei parametri di calcolo riepilogo sintetico");
         }
-        Object obj = monitSintHelper.getMonVChk(view, paramString, param1, param2);
+
+        Object obj = null;
+        if (flUsoVp) {
+            obj = monitSintHelper.getMonVpChk(view, paramString, param1, param2);
+        } else {
+            obj = monitSintHelper.getMonVChk(view, paramString, param1, param2);
+        }
         return obj;
     }
 

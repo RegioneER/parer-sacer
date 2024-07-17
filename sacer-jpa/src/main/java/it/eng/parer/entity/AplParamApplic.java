@@ -49,6 +49,10 @@ public class AplParamApplic implements Serializable {
 
     private Long idParamApplic;
 
+    private String cdVersioneAppIni;
+
+    private String cdVersioneAppFine;
+
     private String dmParamApplic;
 
     private String dsParamApplic;
@@ -92,6 +96,24 @@ public class AplParamApplic implements Serializable {
 
     public void setIdParamApplic(Long idParamApplic) {
         this.idParamApplic = idParamApplic;
+    }
+
+    @Column(name = "CD_VERSIONE_APP_INI")
+    public String getCdVersioneAppIni() {
+        return this.cdVersioneAppIni;
+    }
+
+    public void setCdVersioneAppIni(String cdVersioneAppIni) {
+        this.cdVersioneAppIni = cdVersioneAppIni;
+    }
+
+    @Column(name = "CD_VERSIONE_APP_FINE")
+    public String getCdVersioneAppFine() {
+        return this.cdVersioneAppFine;
+    }
+
+    public void setCdVersioneAppFine(String cdVersioneAppFine) {
+        this.cdVersioneAppFine = cdVersioneAppFine;
     }
 
     @Column(name = "DM_PARAM_APPLIC")

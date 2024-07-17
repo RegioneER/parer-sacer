@@ -91,6 +91,22 @@ public class RecObjectStorage {
     }
     // end MEV#30395
 
+    // MEV#30397
+    private boolean recuperaObjectStorageElencoIndiciAipSuStream(long idFileElencoVers, OutputStream outputStream) {
+        boolean rc = false;
+
+        try {
+            objectStorageService.getObjectElencoIndiciAip(idFileElencoVers, outputStream);
+            rc = true;
+        } catch (Exception e) {
+
+            log.error(LOG_EXCEPTION_OS, e);
+        }
+
+        return rc;
+    }
+    // end MEV#30397
+
     /**
      * Recupera il tipo oggetto identificato nel dto.
      *
@@ -114,6 +130,21 @@ public class RecObjectStorage {
             rc = this.recuperaObjectStorageIndiceAipUdSuStream(dto.getId(), dto.getOs());
             break;
         // end MEV#30395
+        // MEV#30397
+        case ELENCO_INDICI_AIP:
+            rc = this.recuperaObjectStorageElencoIndiciAipSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV#30397
+        // MEV #30398
+        case INDICE_AIP_FASC:
+            rc = this.recuperaObjectStorageIndiceAipFascSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV #30398
+        // MEV #30399
+        case ELENCO_INDICI_AIP_FASC:
+            rc = this.recuperaObjectStorageElencoIndiciAipFascSuStream(dto.getId(), dto.getOs());
+            break;
+        // end MEV #30399
         default:
             log.warn("Tipo oggetto {} non supportato", dto.getTipo());
             break;
@@ -121,4 +152,37 @@ public class RecObjectStorage {
 
         return rc;
     }
+
+    // MEV#30398
+    private boolean recuperaObjectStorageIndiceAipFascSuStream(long idVerAipFascicolo, OutputStream outputStream) {
+        boolean rc = false;
+
+        try {
+            objectStorageService.getObjectIndiceAipFasc(idVerAipFascicolo, outputStream);
+            rc = true;
+        } catch (Exception e) {
+
+            log.error(LOG_EXCEPTION_OS, e);
+        }
+
+        return rc;
+    }
+    // end MEV#30398
+
+    // MEV #30399
+    private boolean recuperaObjectStorageElencoIndiciAipFascSuStream(long idFileElencoVersFasc,
+            OutputStream outputStream) {
+        boolean rc = false;
+
+        try {
+            objectStorageService.getObjectElencoIndiciAipFasc(idFileElencoVersFasc, outputStream);
+            rc = true;
+        } catch (Exception e) {
+
+            log.error(LOG_EXCEPTION_OS, e);
+        }
+
+        return rc;
+    }
+    // end MEV #30399
 }

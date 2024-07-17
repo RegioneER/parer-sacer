@@ -25,6 +25,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import it.eng.spagoCore.util.JpaUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,13 @@ import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.ws.recupero.ejb.objectStorage.RecObjectStorage;
 import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.recupero.ejb.oracleClb.RecClbOracle;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.sql.Clob;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
@@ -74,15 +83,14 @@ public class RecuperoDocumento {
             log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from ObjectStorage, doc = {}", dto);
             return recObjectStorage.recuperaObjectStorageSuStream(dto);
         }
-        log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from BlbOracle, doc = {}", dto);
         // default (ASIS : pre object storage)
-        // MEV#30395
         if (dto.getTabellaBlobDaLeggere() != null) {
+            log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from BlbOracle, doc = {}", dto);
             return recBlbOracle.recuperaBlobCompSuStream(dto.getId(), dto.getOs(), dto.getTabellaBlobDaLeggere());
         } else {
+            log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from ClbOracle, doc = {}", dto);
             return recClbOracle.recuperaClobDataSuStream(dto.getId(), dto.getOs(), dto.getTabellaClobDaLeggere());
         }
-        // end MEV#30395
     }
 
     private boolean existInObjectStorage(RecuperoDocBean doc) {
@@ -100,6 +108,21 @@ public class RecuperoDocumento {
             result = objectStorageService.isIndiceAipOnOs(doc.getId());
             break;
         // end MEV#30395
+        // MEV#30397
+        case ELENCO_INDICI_AIP:
+            result = objectStorageService.isElencoIndiciAipOnOs(doc.getId());
+            break;
+        // end MEV#30397
+        // MEV #30398
+        case INDICE_AIP_FASC:
+            result = objectStorageService.isIndiceAipFascicoloOnOs(doc.getId());
+            break;
+        // end MEV #30398
+        // MEV #30399
+        case ELENCO_INDICI_AIP_FASC:
+            result = objectStorageService.isElencoIndiciAipFascOnOs(doc.getId());
+            break;
+        // end MEV #30399
         default:
             break;
         }

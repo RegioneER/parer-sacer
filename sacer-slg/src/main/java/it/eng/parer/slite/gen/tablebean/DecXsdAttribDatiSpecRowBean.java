@@ -81,6 +81,14 @@ public class DecXsdAttribDatiSpecRowBean extends BaseRow implements JEEBaseRowIn
         setObject("ni_ord_attrib", niOrdAttrib);
     }
 
+    public String getDsAttribDatiSpec() {
+        return getString("ds_attrib_dati_spec");
+    }
+
+    public void setDsAttribDatiSpec(String dsAttribDatiSpec) {
+        setObject("ds_attrib_dati_spec", dsAttribDatiSpec);
+    }
+
     @Override
     public void entityToRowBean(Object obj) {
         DecXsdAttribDatiSpec entity = (DecXsdAttribDatiSpec) obj;
@@ -97,6 +105,7 @@ public class DecXsdAttribDatiSpecRowBean extends BaseRow implements JEEBaseRowIn
         }
 
         this.setNiOrdAttrib(entity.getNiOrdAttrib());
+        this.setDsAttribDatiSpec(entity.getDsAttribDatiSpec());
     }
 
     @Override
@@ -118,6 +127,7 @@ public class DecXsdAttribDatiSpecRowBean extends BaseRow implements JEEBaseRowIn
             entity.getDecAttribDatiSpec().setIdAttribDatiSpec(this.getIdAttribDatiSpec().longValue());
         }
         entity.setNiOrdAttrib(this.getNiOrdAttrib());
+        entity.setDsAttribDatiSpec(this.getDsAttribDatiSpec());
         return entity;
     }
 

@@ -58,10 +58,12 @@ import it.eng.parer.entity.FasEventoSog;
 import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasLinkFascicolo;
+import it.eng.parer.entity.FasMetaVerAipFascicolo;
 import it.eng.parer.entity.FasRespFascicolo;
 import it.eng.parer.entity.FasSogFascicolo;
 import it.eng.parer.entity.FasUniOrgRespFascicolo;
 import it.eng.parer.entity.FasValoreAttribFascicolo;
+import it.eng.parer.entity.FasVerAipFascicolo;
 import it.eng.parer.entity.MonContaFascicoli;
 import it.eng.parer.entity.MonContaFascicoliKo;
 import it.eng.parer.entity.OrgStrut;
@@ -1430,6 +1432,36 @@ public class FascicoliHelper extends GenericHelper {
         List<FasFileMetaVerAipFasc> meta = query.getResultList();
         if (!meta.isEmpty()) {
             return meta.get(0);
+        }
+        return null;
+    }
+
+    public FasMetaVerAipFascicolo getFasMetaVerAipFascicolo(long idFascicolo, String tiMeta) {
+        Query query = getEntityManager()
+                .createQuery("SELECT metaVerAipFascicolo FROM FasMetaVerAipFascicolo metaVerAipFascicolo "
+                        + "JOIN metaVerAipFascicolo.fasVerAipFascicolo verAipFascicolo "
+                        + "WHERE verAipFascicolo.fasFascicolo.idFascicolo = :idFascicolo "
+                        + "AND verAipFascicolo.pgVerAipFascicolo = (SELECT MAX(verAipFascicolo2.pgVerAipFascicolo) FROM FasVerAipFascicolo verAipFascicolo2 WHERE verAipFascicolo2.fasFascicolo.idFascicolo = :idFascicolo) "
+                        + "AND metaVerAipFascicolo.tiMeta = :tiMeta ");
+        query.setParameter("idFascicolo", idFascicolo);
+        query.setParameter("tiMeta", tiMeta);
+        List<FasMetaVerAipFascicolo> meta = query.getResultList();
+        if (!meta.isEmpty()) {
+            return meta.get(0);
+        }
+        return null;
+    }
+
+    public FasVerAipFascicolo getFasVerAipFascicolo(long idFascicolo) {
+        Query query = getEntityManager().createQuery("SELECT verAipFascicolo FROM FasVerAipFascicolo verAipFascicolo "
+                + "WHERE verAipFascicolo.fasFascicolo.idFascicolo = :idFascicolo "
+                + "AND verAipFascicolo.pgVerAipFascicolo = " + "(SELECT MAX(verAipFascicolo2.pgVerAipFascicolo) "
+                + "FROM FasVerAipFascicolo verAipFascicolo2 "
+                + "WHERE verAipFascicolo2.fasFascicolo.idFascicolo = :idFascicolo) ");
+        query.setParameter("idFascicolo", idFascicolo);
+        List<FasVerAipFascicolo> ver = query.getResultList();
+        if (!ver.isEmpty()) {
+            return ver.get(0);
         }
         return null;
     }

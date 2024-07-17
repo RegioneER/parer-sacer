@@ -230,6 +230,9 @@ public class CostantiDB {
         public static final String BACKEND_AGGIUNTALLEGATI_SYNC = "BACKEND_AGGIUNTALLEGATI_SYNC";
         public static final String BACKEND_VERSAMENTO_MULTIMEDIA = "BACKEND_VERSAMENTO_MULTIMEDIA";
         public static final String BACKEND_INDICI_AIP = "BACKEND_INDICI_AIP";
+        public static final String BACKEND_ELENCHI_INDICI_AIP = "BACKEND_ELENCHI_INDICI_AIP";
+        public static final String BACKEND_INDICI_AIP_FASCICOLI = "BACKEND_INDICI_AIP_FASCICOLI";
+        public static final String BACKEND_ELENCHI_INDICI_AIP_FASCICOLI = "BACKEND_ELENCHI_INDICI_AIP_FASCICOLI";
 
         // Configurazioni S3
         public static final String S3_PRESIGNED_URL_DURATION = "S3_PRESIGNED_URL_DURATION";
@@ -278,6 +281,39 @@ public class CostantiDB {
         public static final String URL_RECUP_OGGETTO_PING = "URL_RECUP_OGGETTO_PING";
         public static final String USERID_RECUP_OGGETTO_PING = "USERID_RECUP_OGGETTO_PING";
         public static final String PSW_RECUP_OGGETTO_PING = "PSW_RECUP_OGGETTO_PING";
+        // Costanti per Keycloak
+        public static final String URL_KEYCLOAK = "URL_KEYCLOAK";
+        public static final String KEYCLOAK_CLIENT_SECRET = "KEYCLOAK_CLIENT_SECRET";
+        public static final String KEYCLOAK_CLIENT_ID = "KEYCLOAK_CLIENT_ID";
+
+        // Costanti per monitoraggio sintetico
+        public static final String USO_VP_UD_TIPO_UD = "USO_VP_UD_TIPO_UD";
+        public static final String USO_VP_DOC_TIPO_UD = "USO_VP_DOC_TIPO_UD";
+        public static final String USO_VP_UD_ANNUL_TIPO_UD = "USO_VP_UD_ANNUL_TIPO_UD";
+
+        public static final String USO_VP_UD_STRUT = "USO_VP_UD_STRUT";
+        public static final String USO_VP_DOC_STRUT = "USO_VP_DOC_STRUT";
+        public static final String USO_VP_VERS_STRUT = "USO_VP_VERS_STRUT";
+        public static final String USO_VP_AGG_STRUT = "USO_VP_AGG_STRUT";
+        public static final String USO_VP_UD_NONVERS_STRUT = "USO_VP_UD_NONVERS_STRUT";
+        public static final String USO_VP_DOC_NONVERS_STRUT = "USO_VP_DOC_NONVERS_STRUT";
+        public static final String USO_VP_UD_ANNUL_STRUT = "USO_VP_UD_ANNUL_STRUT";
+
+        public static final String USO_VP_UD_ENTE = "USO_VP_UD_ENTE";
+        public static final String USO_VP_DOC_ENTE = "USO_VP_DOC_ENTE";
+        public static final String USO_VP_VERS_ENTE = "USO_VP_VERS_ENTE";
+        public static final String USO_VP_AGG_ENTE = "USO_VP_AGG_ENTE";
+        public static final String USO_VP_UD_NONVERS_ENTE = "USO_VP_UD_NONVERS_ENTE";
+        public static final String USO_VP_DOC_NONVERS_ENTE = "USO_VP_DOC_NONVERS_ENTE";
+        public static final String USO_VP_UD_ANNUL_ENTE = "USO_VP_UD_ANNUL_ENTE";
+
+        public static final String USO_VP_UD_AMB = "USO_VP_UD_AMB";
+        public static final String USO_VP_DOC_AMB = "USO_VP_DOC_AMB";
+        public static final String USO_VP_VERS_AMB = "USO_VP_VERS_AMB";
+        public static final String USO_VP_AGG_AMB = "USO_VP_AGG_AMB";
+        public static final String USO_VP_UD_NONVERS_AMB = "USO_VP_UD_NONVERS_AMB";
+        public static final String USO_VP_DOC_NONVERS_AMB = "USO_VP_DOC_NONVERS_AMB";
+        public static final String USO_VP_UD_ANNUL_AMB = "USO_VP_UD_ANNUL_AMB";
     }
 
     //
@@ -1254,4 +1290,14 @@ public class CostantiDB {
         }
 
     }
+
+    // MEV #30398
+    //
+    public enum TiMeta {
+
+        FASCICOLO, INDICE
+    }
+
+    // end MEV #30398
+
 }

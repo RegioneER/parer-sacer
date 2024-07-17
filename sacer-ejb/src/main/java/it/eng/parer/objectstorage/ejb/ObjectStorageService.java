@@ -17,17 +17,17 @@
 
 package it.eng.parer.objectstorage.ejb;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.math.BigDecimal;
+import java.io.*;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -39,6 +39,7 @@ import javax.ejb.Stateless;
 
 import it.eng.parer.entity.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,18 +52,38 @@ import it.eng.parer.objectstorage.helper.SalvataggioBackendHelper;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
 import it.eng.parer.ws.utils.CostantiDB;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.zip.ZipOutputStream;
+import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectAttributesResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.utils.Md5Utils;
+import it.eng.spagoCore.util.UUIDMdcLogUtil;
+import java.io.ByteArrayInputStream;
 
 @Stateless(mappedName = "ObjectStorageService")
 @LocalBean
 public class ObjectStorageService {
 
     private final Logger log = LoggerFactory.getLogger(ObjectStorageService.class);
+
+    private static final String PATTERN_FORMAT = "yyyyMMdd/HH/mm";
 
     private static final String STAGING_R = "READ_STAGING";
     private static final String COMPONENTI_R = "READ_COMPONENTI";
@@ -80,6 +101,19 @@ public class ObjectStorageService {
     private static final String READ_INDICI_AIP = "READ_INDICI_AIP";
     private static final String WRITE_INDICI_AIP = "WRITE_INDICI_AIP";
     // end MEV#30395
+    // MEV#30397
+    private static final String READ_ELV_IX_AIP = "READ_ELV_IX_AIP";
+    private static final String WRITE_ELV_IX_AIP = "WRITE_ELV_IX_AIP";
+    // end MEV#30397
+    // MEV#30398
+    private static final String READ_INDICI_AIP_FASCICOLI = "READ_INDICI_AIP_FASCICOLI";
+    private static final String WRITE_INDICI_AIP_FASCICOLI = "WRITE_INDICI_AIP_FASCICOLI";
+    // end MEV#30398
+    // MEV#30399
+    private static final String READ_ELV_IX_AIP_FASCICOLI = "READ_ELV_IX_AIP_FASCICOLI";
+    private static final String WRITE_ELV_IX_AIP_FASCICOLI = "WRITE_ELV_IX_AIP_FASCICOLI";
+    // end MEV#30399
+    private static final int BUFFER_SIZE = 10 * 1024 * 1024;
 
     @EJB
     private SalvataggioBackendHelper salvataggioBackendHelper;
@@ -107,6 +141,29 @@ public class ObjectStorageService {
             throw new EJBException(e);
         }
     }
+
+    // MEV#30397
+    /**
+     * Effettua la lookup per stabilire come sia configurato il backend per gli elenchi indici aip
+     *
+     * @param idStrut
+     *            id struttura
+     *
+     * @return tipologia di backend.
+     */
+    public BackendStorage lookupBackendElenchiIndiciAip(long idStrut) {
+        try {
+            String tipoBackend = salvataggioBackendHelper.getBackendElenchiIndiciAip(idStrut);
+
+            // tipo backend
+            return salvataggioBackendHelper.getBackend(tipoBackend);
+
+        } catch (Exception e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+    // end MEV#30397
 
     /**
      * Ottieni, in una mappa, la lista degli xml di versamento classificati nelle tipologie definite qui
@@ -416,8 +473,8 @@ public class ObjectStorageService {
      */
     public Map<String, String> getObjectXmlFascicolo(long idFascicolo) {
         try {
-
-            return getObjectMetaProfFasc(salvataggioBackendHelper.getLinkMetaProfFascicoloOs(idFascicolo));
+            return getObjectMetaProfFasc(
+                    (FasXmlFascObjectStorage) salvataggioBackendHelper.getLinkMetaProfFascicoloOs(idFascicolo));
         } catch (IOException | ObjectStorageException e) {
             // EJB spec (14.2.2 in the EJB 3)
             throw new EJBException(e);
@@ -594,6 +651,62 @@ public class ObjectStorageService {
     }
     // end MEV#30395
 
+    // MEV#30397
+    /**
+     * Ottieni lo stream dell'elenco indici aip contenuto nell'object storage
+     *
+     * @param idFileElencoVers
+     *            id del file dell'elenco indici aip
+     * @param outputStream
+     *            Stream su cui scrivere l'oggetto
+     *
+     */
+    public void getObjectElencoIndiciAip(long idFileElencoVers, OutputStream outputStream) {
+        try {
+            ElvFileElencoVersObjectStorage link = salvataggioBackendHelper.getLinkElvFileElencoVersOs(idFileElencoVers);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), READ_ELV_IX_AIP);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Ottieni, sotto forma di byte array, il file dell'elenco indici aip contenuto nell'object storage
+     *
+     * @param idFileElencoVers
+     *            id file elenco versamento
+     *
+     * @return file XML dell'elenco indici aip
+     */
+    public byte[] getObjectElencoIndiciAip(long idFileElencoVers) {
+        try {
+
+            return getObjectFileElencoIxAip(salvataggioBackendHelper.getLinkElvFileElencoVersOs(idFileElencoVers));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    private byte[] getObjectFileElencoIxAip(ElvFileElencoVersObjectStorage fileElencoVersObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileElencoVersObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileElencoVersObjectStorage.getDecBackend().getNmBackend(), READ_ELV_IX_AIP);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    fileElencoVersObjectStorage.getNmBucket(), fileElencoVersObjectStorage.getCdKeyFile());
+            return IOUtils.toByteArray(object);
+        } else {
+            return IOUtils.byteArray();
+        }
+    }
+    // end MEV#30397
+
     /**
      * Controlla se il versamento fallito sia o meno stato registrato sull'object storage indipendemente dal valore del
      * parametro (il pregresso potrebbe ancora essere su DB).
@@ -707,6 +820,96 @@ public class ObjectStorageService {
         }
         return xmlProf;
     }
+
+    // MEV#30397
+    /**
+     * Salva il contenuto nel bucket degli Elenchi Indici AIP
+     * 
+     * @param urn
+     *            urn
+     * @param nomeBackend
+     *            backend configurato (per esempio OBJECT_STORAGE_PRIMARIO)
+     * @param contenuto
+     *            byte array da salvare
+     * @param idFileElencoVers
+     *            id file elenco indice aip
+     * @param idStrut
+     *            id struttura
+     *
+     * @return risorsa su OS che identifica il contenuto caricato
+     */
+    public ObjectStorageResource createResourcesInElenchiIndiciAip(final String urn, String nomeBackend,
+            byte[] contenuto, long idFileElencoVers, BigDecimal idStrut) {
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
+                    WRITE_ELV_IX_AIP);
+
+            // generate std tag
+            Set<Tag> tags = new HashSet<>();
+
+            // create key
+            final String estensione = urn.toUpperCase().contains("MARCA") ? ".tsr" : ".xml.p7m";
+            final String destKey = createRandomKey(urn) + estensione;
+
+            // put on O.S. + save link
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
+
+                ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais, contenuto.length, destKey,
+                        configuration, Optional.empty(), Optional.of(tags),
+                        Optional.of(Md5Utils.md5AsBase64(contenuto)));
+                log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+                // link
+                salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAip(savedFile, nomeBackend, idFileElencoVers,
+                        idStrut);
+                return savedFile;
+            }
+
+        } catch (ObjectStorageException | IOException ex) {
+            throw new EJBException(ex);
+        }
+    }
+
+    /**
+     * Crea una chiave utilizzando i seguenti elementi separati dal carattere <code>/</code>:
+     * <ul>
+     * <li>data in formato anno mese giorno (per esempio <strong>20221124</strong>)</li>
+     * <li>ora a due cifre (per esempio <strong>14</strong>)</li>
+     * <li>minuto a due cifre (per esempio <strong>05</strong>)</li>
+     * <li>URN</li>
+     * <li>UUID generato runtime <strong>28fd282d-fbe6-4528-bd28-2dfbe685286f</strong>) per ogni oggetto caricato</li>
+     * </ul>
+     *
+     * Esempio di chiave completa:
+     * <code>20221124/14/05/550e8400-e29b-41d4-a716-446655440000/28fd282d-fbe6-4528-bd28-2dfbe685286f</code>
+     *
+     * @return chiave dell'oggetto
+     */
+    private static String createRandomKey(final String urn) {
+
+        String when = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault())
+                .format(Instant.now());
+
+        return when + "/" + urn + "/" + UUID.randomUUID().toString();
+    }
+
+    /**
+     * Controlla se l'elenco indici aip sia o meno stato registrato sull'object storage indipendentemente dal valore del
+     * parametro (il pregresso potrebbe ancora essere su DB).
+     *
+     * @param idFileElencoVers
+     *            id file elenco indice aip
+     *
+     * @return true se su O.s false altrimenti
+     */
+    public boolean isElencoIndiciAipOnOs(long idFileElencoVers) {
+        try {
+            return salvataggioBackendHelper.existElencoIndiciAipObjectStorage(idFileElencoVers);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+    // end MEV#30397
 
     // MEV#30395
     /**
@@ -830,4 +1033,419 @@ public class ObjectStorageService {
         }
     }
     // end MEV#30395
+
+    // MEV #30398
+    /**
+     * Salva il file unico indice AIP fascicolo nel bucket degli indici AIP fascicoli
+     *
+     * @param urn
+     *            urn normalizzato
+     * @param nomeBackend
+     *            backend configurato (per esempio OBJECT_STORAGE_PRIMARIO)
+     * @param xmlFiles
+     *            files Xml da salvare (previa creazione file zip)
+     * @param idVerAipFascicolo
+     *            id versione aip fascicolo
+     * @param idStrut
+     *            id della struttura versante
+     *
+     * @return risorsa su OS che identifica il file caricato
+     */
+    public ObjectStorageResource createResourcesInIndiciAipFasc(final String urn, String nomeBackend,
+            Map<String, String> xmlFiles, long idVerAipFascicolo, BigDecimal idStrut) {
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
+                    WRITE_INDICI_AIP_FASCICOLI);
+            // put on O.S.
+            ObjectStorageResource savedFile = createSipXmlMapAndPutOnBucket(urn, xmlFiles, configuration,
+                    SetUtils.emptySet());
+            // link
+            salvataggioBackendHelper.saveObjectStorageLinkIndiceAipFasc(savedFile, nomeBackend, idVerAipFascicolo,
+                    idStrut);
+            return savedFile;
+        } catch (ObjectStorageException | IOException | NoSuchAlgorithmException ex) {
+            throw new EJBException(ex);
+        }
+    }
+
+    private ObjectStorageResource createSipXmlMapAndPutOnBucket(final String urn, Map<String, String> xmlFiles,
+            ObjectStorageBackend configuration, Set<Tag> tags)
+            throws IOException, ObjectStorageException, NoSuchAlgorithmException {
+        ObjectStorageResource savedFile = null;
+        Path tempZip = Files.createTempFile("aip_fasc-", ".zip");
+        //
+        try (InputStream is = Files.newInputStream(tempZip)) {
+            // create key
+            final String key;
+            if (StringUtils.isBlank(urn)) {
+                key = createRandomKey() + ".zip";
+            } else {
+                key = createRandomKey(urn) + ".zip";
+            }
+            // create zip file
+            createZipFile(xmlFiles, tempZip);
+            // put on O.S.
+            savedFile = salvataggioBackendHelper.putObject(is, Files.size(tempZip), key, configuration,
+                    Optional.empty(), Optional.of(tags), Optional.of(calculateFileBase64(tempZip)));
+            log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+        } finally {
+            if (tempZip != null) {
+                Files.delete(tempZip);
+            }
+        }
+
+        return savedFile;
+    }
+
+    /**
+     * Crea una chiave utilizzando i seguenti elementi separati dal carattere <code>/</code>:
+     * <ul>
+     * <li>data in formato anno mese giorno (per esempio <strong>20221124</strong>)</li>
+     * <li>ora a due cifre (per esempio <strong>14</strong>)</li>
+     * <li>minuto a due cifre (per esempio <strong>05</strong>)</li>
+     * <li>UUID sessione di versamento <strong>550e8400-e29b-41d4-a716-446655440000</strong>) recuperato dall'MDC ossia
+     * dal Mapped Diagnostic Context (se non esiste viene generato comunque un UUID)</li>
+     * <li>UUID generato runtime <strong>28fd282d-fbe6-4528-bd28-2dfbe685286f</strong>) per ogni oggetto caricato</li>
+     * </ul>
+     *
+     * Esempio di chiave completa:
+     * <code>20221124/14/05/550e8400-e29b-41d4-a716-446655440000/28fd282d-fbe6-4528-bd28-2dfbe685286f</code>
+     *
+     * @return chiave dell'oggetto
+     */
+    private static String createRandomKey() {
+
+        String when = DateTimeFormatter.ofPattern(PATTERN_FORMAT).withZone(ZoneId.systemDefault())
+                .format(Instant.now());
+
+        return when + "/" + UUIDMdcLogUtil.getUuid() + "/" + UUID.randomUUID().toString();
+    }
+
+    /**
+     * Crea i file zip contenente gli xml dell'indice AIP fascicolo.Possono essere di tipo:
+     * <ul>
+     * <li>{@link CostantiDB.TiMeta#FASCICOLO}, obbligatorio è l'XML dei metadati fascicolo</li>
+     * <li>{@link CostantiDB.TiMeta#INDICE}, obbligatorio è l'XML dell'indice AIP fascicolo</li>
+     * </ul>
+     *
+     *
+     * @param xmlFiles
+     *            mappa dei file delle tipologie indicate in descrizione.
+     * @param zipFile
+     *            file zip su cui salvare tutto
+     *
+     * @throws IOException
+     *             in caso di errore
+     */
+    private void createZipFile(Map<String, String> xmlFiles, Path zipFile) throws IOException {
+        try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            for (Map.Entry<String, String> sipBlob : xmlFiles.entrySet()) {
+                ZipEntry entry = new ZipEntry(sipBlob.getKey() + ".xml");
+                out.putNextEntry(entry);
+                out.write(sipBlob.getValue().getBytes(StandardCharsets.UTF_8));
+                out.closeEntry();
+            }
+        }
+    }
+
+    /**
+     * Calcola il message digest MD5 (base64 encoded) del file da inviare via S3
+     * 
+     * Nota: questa scelta deriva dal modello supportato dal vendor
+     * (https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) *
+     * 
+     * @param path
+     *            file
+     * 
+     * @return rappresentazione base64 del contenuto calcolato
+     * 
+     * @throws NoSuchAlgorithmException
+     *             errore generico
+     * @throws IOException
+     *             errore generico
+     */
+    private String calculateFileBase64(Path resource) throws NoSuchAlgorithmException, IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int readed;
+        MessageDigest digester = MessageDigest.getInstance(CostantiDB.TipiHash.MD5.descrivi());
+        try (InputStream is = Files.newInputStream(resource)) {
+            while ((readed = is.read(buffer)) != -1) {
+                digester.update(buffer, 0, readed);
+            }
+        }
+        return Base64.getEncoder().encodeToString(digester.digest());
+    }
+
+    /**
+     * Ottieni, in una mappa, la lista degli xml classificati nelle tipologie definite qui
+     * {@link it.eng.parer.ws.utils.CostantiDB.TiMeta} per l'indice AIP fascicolo
+     *
+     * @param idVerAipFascicolo
+     *            id versione aip fascicolo
+     *
+     * @return mappa degli XML dell'indice AIP fascicolo
+     */
+    public Map<String, String> getObjectXmlIndiceAipFasc(long idVerAipFascicolo) {
+        try {
+            return getObjectIndiceAipFasc(salvataggioBackendHelper.getLinkIndiceAipFascOs(idVerAipFascicolo));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    public Map<String, String> getObjectIndiceAipFasc(
+            FasFileMetaVerAipFascObjectStorage fileMetaVerAipFascObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileMetaVerAipFascObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileMetaVerAipFascObjectStorage.getDecBackend().getNmBackend(), READ_INDICI_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    fileMetaVerAipFascObjectStorage.getNmBucket(), fileMetaVerAipFascObjectStorage.getCdKeyFile());
+            return unzipAipFascicolo(object);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    /**
+     * Ottieni lo stream dell'indice aip fascicolo contenuto nell'object storage
+     *
+     * @param idVerAipFascicolo
+     *            id della versione dell'indice aip fascicolo
+     * @param outputStream
+     *            Stream su cui scrivere l'oggetto
+     *
+     */
+    public void getObjectIndiceAipFasc(long idVerAipFascicolo, OutputStream outputStream) {
+        try {
+            FasFileMetaVerAipFascObjectStorage link = salvataggioBackendHelper
+                    .getLinkFasFileMetaVerAipFascOs(idVerAipFascicolo);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), READ_INDICI_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Effettua il lookup per stabilire come sia configurato il backend
+     *
+     * @param idAaTipoFascicolo
+     *            id periodo tipologia fascicolo
+     * @param paramName
+     *            nome del parametro
+     *
+     * @return Tipologia di backend. Al momento sono supportate
+     *         {@link it.eng.parer.objectstorage.dto.BackendStorage.STORAGE_TYPE#BLOB} e
+     *         {@link it.eng.parer.objectstorage.dto.BackendStorage.STORAGE_TYPE#OS}
+     */
+    public BackendStorage lookupBackendFasc(long idAaTipoFascicolo, String paramName) {
+        try {
+
+            String tipoBackend = salvataggioBackendHelper.getBackendByParamNameFasc(idAaTipoFascicolo, paramName);
+            return salvataggioBackendHelper.getBackend(tipoBackend);
+
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Controlla se l'indice aip fascicolo sia o meno stato registrato sull'object storage indipendemente dal valore del
+     * parametro (il pregresso potrebbe ancora essere su DB).
+     * 
+     * @param idVerAipFascicolo
+     *            id versione indice aip fascicolo
+     * 
+     * @return true se su O.s false altrimenti
+     */
+    public boolean isIndiceAipFascicoloOnOs(long idVerAipFascicolo) {
+        try {
+            return salvataggioBackendHelper.existIndiceAipFascicoloObjectStorage(idVerAipFascicolo);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    private Map<String, String> unzipAipFascicolo(ResponseInputStream<GetObjectResponse> inputStream)
+            throws IOException {
+        // TipiXmlDati
+        final String xml = ".xml";
+        final Map<String, String> xmlVers = new HashMap<>();
+        try (ZipInputStream zis = new ZipInputStream(inputStream);) {
+            ZipEntry ze = zis.getNextEntry();
+            while (ze != null) {
+                String value = IOUtils.toString(zis, StandardCharsets.UTF_8);
+                if (ze.getName()
+                        .equals(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name() + xml)) {
+                    xmlVers.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name(), value);
+                } else if (ze.getName()
+                        .equals(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE.name() + xml)) {
+                    xmlVers.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE.name(), value);
+                } else {
+                    log.warn(
+                            "Attenzione, l'entry con nome {} non è stata riconosciuta nel file zip degli AIP fascicolo",
+                            ze.getName());
+                }
+                zis.closeEntry();
+                ze = zis.getNextEntry();
+            }
+        }
+        return xmlVers;
+    }
+
+    // end MEV #30398
+
+    // MEV#30399
+    /**
+     * Salva il contenuto nel bucket degli Elenchi Indici AIP
+     * 
+     * @param urn
+     *            urn
+     * @param nomeBackend
+     *            backend configurato (per esempio OBJECT_STORAGE_PRIMARIO)
+     * @param contenuto
+     *            byte array da salvare
+     * @param idFileElencoVersFasc
+     *            id file elenco indice aip fascicoli
+     * @param idStrut
+     *            id struttura
+     *
+     * @return risorsa su OS che identifica il contenuto caricato
+     */
+    public ObjectStorageResource createResourcesInElenchiIndiciAipFasc(final String urn, String nomeBackend,
+            byte[] contenuto, long idFileElencoVersFasc, BigDecimal idStrut) {
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
+                    WRITE_ELV_IX_AIP_FASCICOLI);
+
+            // generate std tag
+            Set<Tag> tags = new HashSet<>();
+
+            // create key
+            final String estensione = urn.toUpperCase().contains("MARCA") ? ".tsr" : ".xml.p7m";
+            final String destKey = createRandomKey(urn) + estensione;
+
+            // put on O.S. + save link
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
+
+                ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais, contenuto.length, destKey,
+                        configuration, Optional.empty(), Optional.of(tags),
+                        Optional.of(Md5Utils.md5AsBase64(contenuto)));
+                log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+                // link
+                salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAipFasc(savedFile, nomeBackend,
+                        idFileElencoVersFasc, idStrut);
+                return savedFile;
+            }
+
+        } catch (ObjectStorageException | IOException ex) {
+            throw new EJBException(ex);
+        }
+    }
+
+    /**
+     * Controlla se l'elenco indici aip fascicoli sia o meno stato registrato sull'object storage indipendentemente dal
+     * valore del parametro (il pregresso potrebbe ancora essere su DB).
+     *
+     * @param idFileElencoVersFasc
+     *            id file elenco indice aip fascicoli
+     *
+     * @return true se su O.s false altrimenti
+     */
+    public boolean isElencoIndiciAipFascOnOs(long idFileElencoVersFasc) {
+        try {
+            return salvataggioBackendHelper.existElencoIndiciAipFascObjectStorage(idFileElencoVersFasc);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Effettua la lookup per stabilire come sia configurato il backend per gli elenchi indici aip fascicoli
+     *
+     * @param idStrut
+     *            id struttura
+     *
+     * @return tipologia di backend.
+     */
+    public BackendStorage lookupBackendElenchiIndiciAipFasc(long idStrut) {
+        try {
+            String tipoBackend = salvataggioBackendHelper.getBackendElenchiIndiciAipFasc(idStrut);
+
+            // tipo backend
+            return salvataggioBackendHelper.getBackend(tipoBackend);
+
+        } catch (Exception e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Ottieni lo stream dell'elenco indici aip fascicoli contenuto nell'object storage
+     *
+     * @param idFileElencoVersFasc
+     *            id del file dell'elenco indici aip fascicoli
+     * @param outputStream
+     *            Stream su cui scrivere l'oggetto
+     *
+     */
+    public void getObjectElencoIndiciAipFasc(long idFileElencoVersFasc, OutputStream outputStream) {
+        try {
+            ElvFileElencoVersFascObjectStorage link = salvataggioBackendHelper
+                    .getLinkElvFileElencoVersFascOs(idFileElencoVersFasc);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), READ_ELV_IX_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Ottieni, sotto forma di byte array, il file dell'elenco indici aip fascicoli contenuto nell'object storage
+     *
+     * @param idFileElencoVersFasc
+     *            id file elenco versamento fascicoli
+     *
+     * @return file XML dell'elenco indici aip fascicoli
+     */
+    public byte[] getObjectElencoIndiciAipFasc(long idFileElencoVersFasc) {
+        try {
+
+            return getObjectFileElencoIxAipFasc(
+                    salvataggioBackendHelper.getLinkElvFileElencoVersFascOs(idFileElencoVersFasc));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    private byte[] getObjectFileElencoIxAipFasc(ElvFileElencoVersFascObjectStorage fileElencoVersFascObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileElencoVersFascObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileElencoVersFascObjectStorage.getDecBackend().getNmBackend(), READ_ELV_IX_AIP_FASCICOLI);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    fileElencoVersFascObjectStorage.getNmBucket(), fileElencoVersFascObjectStorage.getCdKeyFile());
+            return IOUtils.toByteArray(object);
+        } else {
+            return IOUtils.byteArray();
+        }
+    }
+
+    // end MEV#30399
+
 }

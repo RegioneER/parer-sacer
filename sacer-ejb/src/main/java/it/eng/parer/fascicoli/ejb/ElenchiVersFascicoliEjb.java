@@ -76,6 +76,8 @@ import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
 import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
 import it.eng.parer.entity.constraint.HsmElencoFascSesFirma.TiEsitoFirmaElencoFasc;
 import it.eng.parer.fascicoli.helper.ElenchiVersFascicoliHelper;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.form.ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli;
 import it.eng.parer.slite.gen.tablebean.DecCriterioRaggrFascRowBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVersFascRowBean;
@@ -102,6 +104,7 @@ import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
+import java.util.logging.Level;
 
 /**
  *
@@ -124,6 +127,10 @@ public class ElenchiVersFascicoliEjb {
     private IndiceElencoVersFascXsdEjb iefxEjb;
     @EJB
     private IndiceElencoVersFascJobEjb iefjEjb;
+    // MEV#30399
+    @EJB
+    private ObjectStorageService objectStorageService;
+    // end MEV#30399
 
     public ElvElencoVersFascRowBean getElvElencoVersFascRowBean(BigDecimal idElencoVersFasc) {
         ElvElencoVersFasc elenco = evfWebHelper.findById(ElvElencoVersFasc.class, idElencoVersFasc.longValue());
@@ -339,7 +346,7 @@ public class ElenchiVersFascicoliEjb {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new EMFError("Errore nel recupero della lista degli elenchi di versamento fascicoli da firmare", e);
+            throw new EMFError("Errore nel recupero della lista degli elenchi di versamento fascicoli", e);
         }
         return elenchiVersFascicoliTableBean;
     }
@@ -665,9 +672,20 @@ public class ElenchiVersFascicoliEjb {
         return evfHelper.retrieveFileIndiceElenco(idElencoVersFasc, tiFileElencoVers);
     }
 
+    // MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento dei fascicoli
+    public void streamOutFileIndiceElencoNoFirma(ZipOutputStream out, String fileNamePrefix, String fileNameSuffix,
+            long idElencoVersFasc) throws IOException, DatatypeConfigurationException {
+        ElvElencoVersFasc elenco = evfHelper.retrieveElencoById(idElencoVersFasc);
+        byte[] dati = iefxEjb.createIndex(elenco, false);
+        fileNamePrefix = StringUtils.defaultString(fileNamePrefix);
+        fileNameSuffix = StringUtils.defaultString(fileNameSuffix);
+        addEntryToZip(out, dati, fileNamePrefix + fileNameSuffix + FileTypeEnum.INDICE_ELENCO.getFileExtension());
+        out.flush();
+    }
+
     public void streamOutFileIndiceElenco(ZipOutputStream out, String fileNamePrefix, String fileNameSuffix,
             long idElencoVersFasc, FileTypeEnum... fileTypes) throws IOException {
-        List<ElvFileElencoVersFasc> retrieveFileIndiceElenco = evfHelper.retrieveFileIndiceElenco(idElencoVersFasc,
+        List<ElvFileElencoVersFasc> retrieveFileIndiceElenco = evfHelper.retrieveFileIndiceElenco2(idElencoVersFasc,
                 FileTypeEnum.getStringEnumsList(fileTypes));
         for (ElvFileElencoVersFasc elvFileElencoVersFasc : retrieveFileIndiceElenco) {
             FileTypeEnum fileType = ElencoEnums.FileTypeEnum.valueOf(elvFileElencoVersFasc.getTiFileElencoVers());
@@ -688,8 +706,16 @@ public class ElenchiVersFascicoliEjb {
             default:
                 throw new AssertionError(fileType.name());
             }
-            addEntryToZip(out, elvFileElencoVersFasc.getBlFileElencoVers(),
-                    fileNamePrefix + fileNameSuffix + fileExtension);
+
+            // MEV#30399
+            byte[] blFileElencoVers = elvFileElencoVersFasc.getBlFileElencoVers();
+            if (blFileElencoVers == null) {
+                blFileElencoVers = objectStorageService
+                        .getObjectElencoIndiciAipFasc(elvFileElencoVersFasc.getIdFileElencoVersFasc());
+            }
+            // end MEV#30399
+
+            addEntryToZip(out, blFileElencoVers, fileNamePrefix + fileNameSuffix + fileExtension);
         }
         out.flush();
     }
@@ -782,6 +808,54 @@ public class ElenchiVersFascicoliEjb {
          */
     }
 
+    // MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento dei fascicoli
+    /*
+     * Nuovo metodo per validare gli elenchi fascicolo
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void validElenco(long idUserIam, BigDecimal idElencoVersFasc) {
+        ElvElencoVersFasc elenco = evfHelper.retrieveElencoById(idElencoVersFasc.longValueExact());
+        log.info("Inizio processo di validazione elenco di versamento fascicoli avente id {}",
+                elenco.getIdElencoVersFasc());
+        /* Assumo lock esclusivo sull'elenco */
+        evfHelper.lockElenco(elenco);
+        /* Controllo se almeno una unità doc appartenente all'elenco e' annullata */
+        IamUser user = evfHelper.findById(IamUser.class, idUserIam);
+        /* Registro un nuovo stato = VALIDATO */
+        ElvStatoElencoVersFasc statoElencoVersFasc = new ElvStatoElencoVersFasc();
+        statoElencoVersFasc.setElvElencoVersFasc(elenco);
+        /* Imposto la data di firma */
+        statoElencoVersFasc.setTsStato(new Date());
+        /* Setto l'elenco a stato VALIDATO */
+        statoElencoVersFasc.setTiStato(TiStatoElencoFasc.VALIDATO);
+        /* Imposto l'utente che valida */
+        statoElencoVersFasc.setIamUser(user);
+        elenco.getElvStatoElencoVersFascicoli().add(statoElencoVersFasc);
+        /* Aggiorno l’elenco specificando l’identificatore dello stato corrente */
+        Long idStatoElencoVersFasc = evfHelper
+                .getStatoElencoByIdElencoVersFascStato(elenco.getIdElencoVersFasc(), TiStatoElencoFasc.VALIDATO)
+                .getIdStatoElencoVersFasc();
+        elenco.setIdStatoElencoVersFascCor(new BigDecimal(idStatoElencoVersFasc));
+
+        /* Per ogni fascicolo appartenente all'elenco */
+        for (FasFascicolo fasFascicolo : elenco.getFasFascicoli()) {
+            // Registra un nuovo stato pari a IN_ELENCO_VALIDATO per il fascicolo
+            FasStatoFascicoloElenco statoFascicoloElenco = new FasStatoFascicoloElenco();
+            statoFascicoloElenco.setFasFascicolo(fasFascicolo);
+            statoFascicoloElenco.setTsStato(new Date());
+            statoFascicoloElenco.setTiStatoFascElencoVers(TiStatoFascElenco.IN_ELENCO_VALIDATO);
+            fasFascicolo.getFasStatoFascicoloElencos().add(statoFascicoloElenco);
+            // Assegna stato IN_ELENCO_VALIDATO al fascicolo
+            fasFascicolo.setTiStatoFascElencoVers(TiStatoFascElencoVers.IN_ELENCO_VALIDATO);
+        }
+        /* Cambio lo stato dell'elenco nella coda di elaborazione */
+        ElvElencoVersFascDaElab elencoDaElab = evfHelper
+                .getElvElencoVersFascDaElabByIdElencoVersFasc(idElencoVersFasc.longValueExact());
+        elencoDaElab.setTiStato(TiStatoElencoFascDaElab.VALIDATO);
+        log.info("Fine processo di validazione elenco di versamento fascicoli avente id {}",
+                elenco.getIdElencoVersFasc());
+    }
+
     /**
      * Metodo di salvataggio file firmato dell'elenco indici AIP fascicoli sul database
      *
@@ -793,9 +867,13 @@ public class ElenchiVersFascicoliEjb {
      *            data firma
      * @param idUtente
      *            id utente
+     * @param backendMetadata
+     *            tipo backend
+     * 
+     * @return ElvFileElencoVersFasc
      */
-    public void storeFirmaElencoIndiceAipFasc(Long idElencoVersFasc, byte[] fileFirmato, Date signatureDate,
-            long idUtente) {
+    public ElvFileElencoVersFasc storeFirmaElencoIndiceAipFasc(Long idElencoVersFasc, byte[] fileFirmato,
+            Date signatureDate, long idUtente, BackendStorage backendMetadata) {
         ElvElencoVersFasc elenco = evfHelper.retrieveElencoById(idElencoVersFasc);
         evfHelper.lockElenco(elenco);
 
@@ -828,7 +906,11 @@ public class ElenchiVersFascicoliEjb {
         ElvFileElencoVersFasc fileElencoVersFasc = new ElvFileElencoVersFasc();
         fileElencoVersFasc.setCdVerXsdFile(Costanti.VERSIONE_ELENCO_INDICE_AIP_FASC);
         fileElencoVersFasc.setTiFileElencoVers(ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
-        fileElencoVersFasc.setBlFileElencoVers(fileFirmato);
+        // MEV#30399
+        if (backendMetadata.isDataBase()) {
+            fileElencoVersFasc.setBlFileElencoVers(fileFirmato);
+        }
+        // end MEV#30399
         fileElencoVersFasc.setIdStrut(BigDecimal.valueOf(orgStrut.getIdStrut()));
         fileElencoVersFasc.setDtCreazioneFile(new Date());
         fileElencoVersFasc.setDsHashFile(hash);
@@ -917,6 +999,7 @@ public class ElenchiVersFascicoliEjb {
         /* Registro sul log delle operazioni */
         // evHelper.writeLogElencoVers(elenco, orgStrut, idUtente,
         // ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
+        return fileElencoVersFasc;
     }
 
     public void manageElencoFascAnnulDaFirmaElencoFasc(BigDecimal idElencoVersFasc, long idUserIam) {

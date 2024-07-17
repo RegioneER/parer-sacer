@@ -475,4 +475,25 @@ public class ConfigurationHelper {
         return getValoreParamApplicByApplic(URL_BACK_ASSOCIAZIONE_UTENTE_CF);
     }
 
+    /**
+     * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
+     * <em>AATIPOFASCICOLO</em> {@link TipoAplVGetValAppart#AATIPOFASCICOLO}
+     *
+     * @param nmParamApplic
+     *            codice del parametro
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idAaTipoFascicolo
+     *            id periodo tipologia fascicolo
+     * 
+     * @return valore del parametro filtrato per tipologia <em>AATIPOFASCICOLO</em> .
+     */
+    public String getValoreParamApplicByTipoFasc(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo) {
+        return getValoreParamApplic(nmParamApplic, idAmbiente, idStrut, BigDecimal.valueOf(Integer.MIN_VALUE),
+                idAaTipoFascicolo, TipoAplVGetValAppart.AATIPOFASCICOLO);
+    }
+
 }
