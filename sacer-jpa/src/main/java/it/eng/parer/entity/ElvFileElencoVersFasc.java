@@ -71,6 +71,14 @@ public class ElvFileElencoVersFasc implements Serializable {
         this.tiFileElencoVers = tiFileElencoVers;
     }
 
+    public ElvFileElencoVersFasc(long idFileElencoVersFasc, byte[] blFileElencoVers, String cdVerXsdFile,
+            String tiFileElencoVers) {
+        this.idFileElencoVersFasc = idFileElencoVersFasc;
+        this.blFileElencoVers = blFileElencoVers;
+        this.cdVerXsdFile = cdVerXsdFile;
+        this.tiFileElencoVers = tiFileElencoVers;
+    }
+
     @Id
 
     @Column(name = "ID_FILE_ELENCO_VERS_FASC")

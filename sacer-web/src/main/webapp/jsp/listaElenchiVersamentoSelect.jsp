@@ -266,7 +266,6 @@
                     <slf:lblField name="<%=ElenchiVersamentoForm.ListaElenchiVersamentoDaFirmareButtonList.SELECT_ALL_ELENCHI_BUTTON%>" colSpan="2"/>
                     <slf:lblField name="<%=ElenchiVersamentoForm.ListaElenchiVersamentoDaFirmareButtonList.DESELECT_ALL_ELENCHI_BUTTON%>" colSpan="2"/>
                     <slf:lblField name="<%=ElenchiVersamentoForm.ListaElenchiVersamentoDaFirmareButtonList.SELECT_HUNDRED_ELENCHI_BUTTON%>" colSpan="2"/>
-                    <slf:lblField name="<%=ElenchiVersamentoForm.ListaElenchiVersamentoDaFirmareButtonList.FIRMA_ELENCHI_HSM_BUTTON%>" colSpan="2"/>
                     <slf:lblField name="<%=ElenchiVersamentoForm.ListaElenchiVersamentoDaFirmareButtonList.VALIDA_ELENCHI_BUTTON%>" colSpan="2"/>
                 </slf:buttonList>
             </sl:pulsantiera>

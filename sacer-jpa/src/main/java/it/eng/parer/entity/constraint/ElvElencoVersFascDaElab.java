@@ -34,6 +34,8 @@ public final class ElvElencoVersFascDaElab {
      */
     public enum TiStatoElencoFascDaElab {
         AIP_CREATI, APERTO, CHIUSO, DA_CHIUDERE, ELENCO_INDICI_AIP_CREATO, ELENCO_INDICI_AIP_FIRMA_IN_CORSO, FIRMATO,
-        FIRMA_IN_CORSO, IN_CODA_CREAZIONE_AIP
+        FIRMA_IN_CORSO, IN_CODA_CREAZIONE_AIP,
+        // MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento dei fascicoli
+        VALIDATO
     }
 }

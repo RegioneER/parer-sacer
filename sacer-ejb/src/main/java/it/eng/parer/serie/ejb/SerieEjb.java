@@ -193,6 +193,7 @@ import it.eng.parer.ws.utils.CostantiDB.TipoFileVerSerie;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.message.MessageBox;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -5669,7 +5670,7 @@ public class SerieEjb {
         List<SerIxVolVerSerie> ixVolumi = helper.getSerIxVolVerSerieList(idVerSerie.longValue());
         for (SerIxVolVerSerie ix : ixVolumi) {
             String ixVolFileName = ixVolPrefix + ix.getSerVolVerSerie().getPgVolVerSerie().toPlainString() + ixVolExt;
-            byte[] ixVol = ix.getBlIxVol().getBytes();
+            byte[] ixVol = ix.getBlIxVol().getBytes(StandardCharsets.UTF_8);
             addEntryToZip(out, ixVol, ixVolFileName);
         }
     }

@@ -78,7 +78,7 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiStatoConservazione", TiStatoConservazione.ANNULLATO);
-        query.setParameter("tiStatoFascElencoVers", TiStatoFascElencoVers.IN_ELENCO_FIRMATO);
+        query.setParameter("tiStatoFascElencoVers", TiStatoFascElencoVers.IN_ELENCO_VALIDATO);
 
         return query.getResultList();
     }

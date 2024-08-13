@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.action;
 
 import java.math.BigDecimal;
@@ -78,6 +77,7 @@ import it.eng.parer.web.helper.CriteriRaggrHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.util.ActionEnums;
 import it.eng.parer.web.util.ComboGetter;
+import it.eng.parer.web.util.ComboUtil;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.web.validator.CriteriRaggruppamentoValidator;
 import it.eng.parer.web.validator.UnitaDocumentarieValidator;
@@ -142,36 +142,47 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
 
     @Override
     public void loadDettaglio() throws EMFError {
+
         // Se ho cliccato sul dettaglio di un Criterio di Raggruppamento
-        if (getTableName().equals(getForm().getCriterioRaggrList().getName())
-                && !getNavigationEvent().equals(NE_DETTAGLIO_INSERT)) {
-            // Carica il rowBean del criterio
-            BigDecimal id = getForm().getCriterioRaggrList().getTable().getCurrentRow()
-                    .getBigDecimal("id_criterio_raggr");
-            DecCriterioRaggrRowBean critRB = crHelper.getDecCriterioRaggrById(id);
-            getForm().getCreaCriterioRaggr().copyFromBean(critRB);
+        if (getTableName().equals(getForm().getCriterioRaggrList().getName())) {
+            if (!getNavigationEvent().equals(NE_DETTAGLIO_INSERT)) {
+                // Carica il rowBean del criterio
+                BigDecimal id = getForm().getCriterioRaggrList().getTable().getCurrentRow()
+                        .getBigDecimal("id_criterio_raggr");
+                DecCriterioRaggrRowBean critRB = crHelper.getDecCriterioRaggrById(id);
+                // MEV#31945 - Eliminare validazione elenco UD con firma
+                // Se si è in modifica e nel tipo validazione c'era FIRMA lo svuota!
+                if (getTableName().equals(getForm().getCriterioRaggrList().getName())
+                        && getNavigationEvent().equals(NE_DETTAGLIO_UPDATE) && critRB.getTiValidElenco() != null
+                        && critRB.getTiValidElenco().equals(
+                                it.eng.parer.entity.constraint.DecCriterioRaggr.TiValidElencoCriterio.FIRMA.name())) {
+                    critRB.setTiValidElenco("");
+                }
 
-            // Inizializza le combo della form
-            initCriterioRaggrCombo(critRB.getIdStrut());
+                getForm().getCreaCriterioRaggr().copyFromBean(critRB);
 
-            // Popola i valori delle combo in base ai dati
-            populateComboFields(critRB);
+                // Inizializza le combo della form
+                initCriterioRaggrCombo(critRB.getIdStrut());
 
-            // Popola i valori delle combo ambiente/ente/struttura
-            initComboAmbienteEnteStrutCreaCriteriRaggr(critRB.getIdStrut());
-            caricaGestioneElencoCriterioByAmbiente(getForm().getCreaCriterioRaggr().getId_ambiente().parse());
+                // Popola i valori delle combo in base ai dati
+                populateComboFields(critRB);
 
-            // Metto in viewMode anche lista e campi
-            getForm().getCreaCriterioRaggr().setViewMode();
-            getForm().getCreaCriterioRaggr().setStatus(Status.view);
-            getForm().getCriterioRaggrList().setStatus(Status.view);
+                // Popola i valori delle combo ambiente/ente/struttura
+                initComboAmbienteEnteStrutCreaCriteriRaggr(critRB.getIdStrut());
+                caricaGestioneElencoCriterioByAmbiente(getForm().getCreaCriterioRaggr().getId_ambiente().parse());
 
-            // Aggiungo la versione "casella di testo" di ambiente/ente/struttura
-            setAmbienteEnteStrutturaDesc(critRB.getIdStrut());
+                // Metto in viewMode anche lista e campi
+                getForm().getCreaCriterioRaggr().setViewMode();
+                getForm().getCreaCriterioRaggr().setStatus(Status.view);
+                getForm().getCriterioRaggrList().setStatus(Status.view);
 
-            String cessato = (String) getRequest().getParameter("cessato");
-            if (StringUtils.isNotBlank(cessato) && "1".equals(cessato)) {
-                getForm().getCriterioRaggrList().setUserOperations(true, false, false, false);
+                // Aggiungo la versione "casella di testo" di ambiente/ente/struttura
+                setAmbienteEnteStrutturaDesc(critRB.getIdStrut());
+
+                String cessato = (String) getRequest().getParameter("cessato");
+                if (StringUtils.isNotBlank(cessato) && "1".equals(cessato)) {
+                    getForm().getCriterioRaggrList().setUserOperations(true, false, false, false);
+                }
             }
         }
     }
@@ -234,7 +245,6 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
 
         // getForm().getCreaCriterioRaggr().getTi_gest_elenco_criterio().setDecodeMap(ComboGetter
         // .getMappaSortedGenericEnum("ti_gest_elenco_criterio", ElencoEnums.GestioneElencoEnum.values()));
-
         // boolean flSigilloAttivo = Boolean.parseBoolean(configurationHelper.getValoreParamApplic(
         // CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO, getForm().getCreaCriterioRaggr().getId_ambiente().parse(),
         // null, null, null, CostantiDB.TipoAplVGetValAppart.AMBIENTE));
@@ -396,7 +406,21 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                 .getValoreParamApplicByStrut(CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC, idAmbiente, idStrut);
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setValue(tiGestElencoStdNoFisc);
         getForm().getCreaCriterioRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
+
+        // MEV#31945 - Eliminare validazione elenco UD con firma
+        if (getTableName().equals(getForm().getCriterioRaggrList().getName())
+                && (getNavigationEvent().equals(NE_DETTAGLIO_INSERT)
+                        || getNavigationEvent().equals(NE_DETTAGLIO_UPDATE))) {
+            getForm().getCreaCriterioRaggr().getTi_valid_elenco()
+                    .setDecodeMap(ComboUtil.getTipiValidazioneCriteriRaggruppamentoSenzaFirma());
+        } else {
+            getForm().getCreaCriterioRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
+        }
         getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().setDecodeMap(ComboGetter.getMappaTiModValidElenco());
+
+        // getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco()
+        // .setDecodeMap(ComboUtil.getTipiValidazioneCriteriRaggruppamentoSenzaFirma());
+        // getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().setDecodeMap(ComboGetter.getMappaTiModValidElenco());
         if (getForm().getCreaCriterioRaggr().getTi_valid_elenco().getValue() == null
                 || getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().getValue() == null) {
             getForm().getCreaCriterioRaggr().getTi_valid_elenco().setValue(configurationHelper
@@ -413,9 +437,9 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
      *
      * @param critRB
      *            Rowbean del criterio di raggruppamento
-     * 
+     *
      * @return il tableBean dei dati specifici
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -499,9 +523,16 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
 
     @Override
     public void insertDettaglio() throws EMFError {
-        // Richiamo il metodo per la creazione ex-novo di un criterio di raggruppamento
-        creaCriterioRaggr();
-        caricaGestioneElencoCriterioByAmbiente(getForm().getCreaCriterioRaggr().getId_ambiente().parse());
+        // MEV#31945 - Eliminare validazione elenco UD con firma
+        // Corretto il bug che se si andava in inserimento senza aver selezionato una struttura da ricercare esplodeva.
+        if (getForm().getFiltriCriteriRaggr().getId_strut().getValue().equals("")) {
+            getMessageBox().addInfo("Per inserire un nuovo criterio di raggruppamento selezionale una struttura.");
+            forwardToPublisher(getLastPublisher());
+        } else {
+            // Richiamo il metodo per la creazione ex-novo di un criterio di raggruppamento
+            creaCriterioRaggr();
+            caricaGestioneElencoCriterioByAmbiente(getForm().getCreaCriterioRaggr().getId_ambiente().parse());
+        }
     }
 
     @Override
@@ -689,17 +720,24 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
                 CostantiDB.ParametroAppl.TI_GEST_ELENCO_NOSTD, ambienteRowBean.getIdAmbiente(),
                 new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()));
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_nostd().setValue(tiGestElencoNoStd);
-        getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setViewMode();
         String tiGestElencoStdFisc = configurationHelper.getValoreParamApplicByStrut(
                 CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_FISC, ambienteRowBean.getIdAmbiente(),
                 new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()));
+
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setValue(tiGestElencoStdFisc);
+        getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_fisc().setViewMode();
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setViewMode();
         String tiGestElencoStdNofisc = configurationHelper.getValoreParamApplicByStrut(
                 CostantiDB.ParametroAppl.TI_GEST_ELENCO_STD_NOFISC, ambienteRowBean.getIdAmbiente(),
                 new BigDecimal(getForm().getFiltriCriteriRaggr().getId_strut().getValue()));
         getForm().getCreaCriterioRaggr().getTi_gest_elenco_std_nofisc().setValue(tiGestElencoStdNofisc);
-        getForm().getCreaCriterioRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
+        // MEV#31945 - Eliminare validazione elenco UD con firma
+        if (getNavigationEvent().equals(NE_DETTAGLIO_INSERT)) {
+            getForm().getCreaCriterioRaggr().getTi_valid_elenco()
+                    .setDecodeMap(ComboUtil.getTipiValidazioneCriteriRaggruppamentoSenzaFirma());
+        } else {
+            getForm().getCreaCriterioRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
+        }
         getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().setDecodeMap(ComboGetter.getMappaTiModValidElenco());
         if (getForm().getCreaCriterioRaggr().getTi_valid_elenco().getValue() == null
                 || getForm().getCreaCriterioRaggr().getTi_mod_valid_elenco().getValue() == null) {
@@ -947,7 +985,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
      *
      * @param status
      *            Lo stato della form, in modifica o creazione
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1232,7 +1270,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
      *
      * @param type
      *            lista filtri di tipo {@link Field}
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1748,7 +1786,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
      *            id ente
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1787,7 +1825,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
      *            id struttura
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

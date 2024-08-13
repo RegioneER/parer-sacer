@@ -18,6 +18,7 @@
 package it.eng.parer.firma.crypto.ejb;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,16 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import it.eng.parer.entity.*;
+import it.eng.parer.entity.constraint.ElvUrnFileElencoVers;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.Costanti;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.HashCalculator;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -39,12 +50,6 @@ import it.eng.parer.common.signature.SignatureSession;
 import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.ElencoStatusEnum;
-import it.eng.parer.entity.ElvElencoVer;
-import it.eng.parer.entity.ElvElencoVersDaElab;
-import it.eng.parer.entity.ElvFileElencoVer;
-import it.eng.parer.entity.HsmElencoSessioneFirma;
-import it.eng.parer.entity.HsmSessioneFirma;
-import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.constraint.HsmElencoSessioneFirma.TiEsitoFirmaElenco;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiEsitoSessioneFirma;
 import it.eng.parer.firma.crypto.helper.ElenchiIndiciAipSignatureHelper;
@@ -73,6 +78,10 @@ public class ElencoIndiciAipSignatureSessionEjb implements SignatureSessionEjb {
     private ElenchiIndiciAipSignatureHelper signHlp;
     @EJB
     private GenericHelper genericHelper;
+    // MEV#30397
+    @EJB
+    private ObjectStorageService objectStorageService;
+    // end MEV#30397
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -176,7 +185,27 @@ public class ElencoIndiciAipSignatureSessionEjb implements SignatureSessionEjb {
         HsmElencoSessioneFirma elencoSession = signHlp.findElencoSessione(session, idFile);
         elencoSession.setTiEsito(TiEsitoFirmaElenco.OK);
         elencoSession.setTsEsito(new Date());
-        elencoEjb.storeFirmaElencoIndiceAip(idFile, signedFile, signingDate, session.getIamUser().getIdUserIam());
+        // MEV#30397
+        BackendStorage backendIndiciAip = objectStorageService
+                .lookupBackendElenchiIndiciAip(elencoSession.getElvElencoVer().getOrgStrut().getIdStrut());
+        ElvFileElencoVer fileElencoVers = elencoEjb.storeFirmaElencoIndiceAip(idFile, signedFile, signingDate,
+                session.getIamUser().getIdUserIam(), backendIndiciAip);
+        /*
+         * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
+         */
+        if (backendIndiciAip.isObjectStorage()) {
+            // retrieve normalized URN
+            final String urn = fileElencoVers.getElvUrnFileElencoVerss().stream().filter(
+                    tmpUrnNorm -> ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO.equals(tmpUrnNorm.getTiUrn()))
+                    .findAny().get().getDsUrn().substring(4);
+
+            ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(urn,
+                    backendIndiciAip.getBackendName(), signedFile, fileElencoVers.getIdFileElencoVers(),
+                    fileElencoVers.getIdStrut());
+            logger.debug("Salvato il file dell'elenco indici aip firmato nel bucket {} con chiave {} ", res.getBucket(),
+                    res.getKey());
+        }
+        // end MEV#30397
 
         logger.info("Firmato elenco (id: " + idFile + ") nella sessione con id " + session.getIdSessioneFirma());
     }

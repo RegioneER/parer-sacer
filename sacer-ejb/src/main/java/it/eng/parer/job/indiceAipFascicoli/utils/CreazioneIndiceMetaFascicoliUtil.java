@@ -171,10 +171,6 @@ public class CreazioneIndiceMetaFascicoliUtil {
             profiloGeneraleFascicolo.setUltimoDocumentoNelFascicolo(chiaveUdUltimoDocNelFascicolo);
         }
 
-        // TEMPO CONSERVAZIONE
-        long niAaConserzione = creaMeta.getNiAaConservazione().longValue();
-        profiloGeneraleFascicolo.setTempoConservazione(niAaConserzione);
-
         // LIVELLO RISERVATEZZA
         String cdLivelloRiserv = Objects.toString(creaMeta.getCdLivelloRiserv(), "");
         profiloGeneraleFascicolo.setLivelloRiservatezza(cdLivelloRiserv);

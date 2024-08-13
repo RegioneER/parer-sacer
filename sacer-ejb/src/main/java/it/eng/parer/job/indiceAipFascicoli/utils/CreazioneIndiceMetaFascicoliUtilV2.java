@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.job.indiceAipFascicoli.utils;
 
 import it.eng.parer.aipFascicoli.xml.usprofascRespV2.ChiaveType;
@@ -34,6 +33,7 @@ import it.eng.parer.aipFascicoli.xml.usprofascRespV2.UnitaDocumentarieType;
 import it.eng.parer.entity.FasXmlFascicolo;
 import it.eng.parer.entity.constraint.DecModelloXsdFascicolo;
 import it.eng.parer.job.indiceAipFascicoli.helper.CreazioneIndiceMetaFascicoliHelper;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.viewEntity.FasVLisUdInFasc;
 import it.eng.parer.viewEntity.FasVVisFascicolo;
 import java.io.ByteArrayInputStream;
@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.naming.InitialContext;
@@ -74,10 +75,13 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
 
     private CreazioneIndiceMetaFascicoliHelper cimfHelper;
 
+    private ObjectStorageService objectStorageService;
+
     public CreazioneIndiceMetaFascicoliUtilV2() throws NamingException {
         // Recupera l'ejb per la lettura di informazioni, se possibile
         cimfHelper = (CreazioneIndiceMetaFascicoliHelper) new InitialContext()
                 .lookup("java:module/CreazioneIndiceMetaFascicoliHelper");
+        objectStorageService = (ObjectStorageService) new InitialContext().lookup("java:module/ObjectStorageService");
     }
 
     public Fascicolo generaIndiceMetaFascicoloV2(FasVVisFascicolo creaMeta, String cdVersioneXml)
@@ -93,16 +97,15 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
 
         ObjectFactory objFct = new ObjectFactory();
 
-        /***************************************
-         * VERSIONE PROFILO COMPLETO FASCICOLO *
-         ***************************************/
-
+        /**
+         * ************************************* VERSIONE PROFILO COMPLETO FASCICOLO *
+         * *************************************
+         */
         indiceMetaFascicoloV2.setVersioneProfiloCompletoFascicolo(cdVersioneXml);
 
-        /****************
-         * INTESTAZIONE *
-         ****************/
-
+        /**
+         * ************** INTESTAZIONE * **************
+         */
         // Versatore
         VersatoreType versatore = new VersatoreType();
         versatore.setAmbiente(creaMeta.getNmAmbiente());
@@ -133,37 +136,40 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
 
         indiceMetaFascicoloV2.setIntestazione(intestazione);
 
-        /********************
-         * PROFILO GENERALE *
-         ********************/
-        indiceMetaFascicoloV2
-                .setProfiloGenerale(this.caricaProfiloGeneraleFascicolo(creaMeta.getIdFascicolo().longValue()));
+        // MAC #32985
+        // Ricavo la mappa dei profili fascicolo
+        Map<String, String> xmls = objectStorageService.getObjectXmlFascicolo(creaMeta.getIdFascicolo().longValue());
 
-        /************************
-         * PROFILO ARCHIVISTICO *
-         ************************/
+        /**
+         * ****************** PROFILO GENERALE * ******************
+         */
+        indiceMetaFascicoloV2
+                .setProfiloGenerale(this.caricaProfiloGeneraleFascicolo(creaMeta.getIdFascicolo().longValue(), xmls));
+
+        /**
+         * ********************** PROFILO ARCHIVISTICO * **********************
+         */
         ProfiloArchivisticoType profiloArchivistico = this
-                .caricaProfiloArchivisticoFascicolo(creaMeta.getIdFascicolo().longValue());
+                .caricaProfiloArchivisticoFascicolo(creaMeta.getIdFascicolo().longValue(), xmls);
         if (profiloArchivistico != null) {
             indiceMetaFascicoloV2
                     .setProfiloArchivistico(objFct.createFascicoloProfiloArchivistico(profiloArchivistico));
         }
 
-        /*********************
-         * PROFILO NORMATIVO *
-         *********************/
+        /**
+         * ******************* PROFILO NORMATIVO * *******************
+         */
         ProfiloNormativoType profiloNormativo = this
-                .caricaProfiloNormativoFascicolo(creaMeta.getIdFascicolo().longValue());
+                .caricaProfiloNormativoFascicolo(creaMeta.getIdFascicolo().longValue(), xmls);
         if (profiloNormativo != null) {
             indiceMetaFascicoloV2.setProfiloNormativo(objFct.createFascicoloProfiloNormativo(profiloNormativo));
         }
 
-        /*********************
-         * PROFILO SPECIFICO *
-         *********************/
-
+        /**
+         * ******************* PROFILO SPECIFICO * *******************
+         */
         ProfiloSpecificoType tmpProfiloSpecifico = this
-                .caricaProfiloSpecificoFascicolo(creaMeta.getIdFascicolo().longValue());
+                .caricaProfiloSpecificoFascicolo(creaMeta.getIdFascicolo().longValue(), xmls);
         if (tmpProfiloSpecifico != null && tmpProfiloSpecifico.getAny() != null
                 && !tmpProfiloSpecifico.getAny().isEmpty()) {
             ProfiloSpecificoType o = new ProfiloSpecificoType();
@@ -172,10 +178,9 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
             indiceMetaFascicoloV2.setProfiloSpecifico(objFct.createFascicoloProfiloSpecifico(o));
         }
 
-        /***********************
-         * UNITA' DOCUMENTARIE *
-         ***********************/
-
+        /**
+         * ********************* UNITA' DOCUMENTARIE * *********************
+         */
         UnitaDocumentarieType unitaDocumentarie = new UnitaDocumentarieType();
 
         /*
@@ -200,22 +205,20 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
             unitaDocumentarie.setNumeroUnitaDocumentarie(creaMeta.getNiUnitaDoc().intValue());
         }
 
-        /*************
-         * FASCICOLI *
-         *************/
+        /**
+         * *********** FASCICOLI * ***********
+         */
         // NON GESTITO AL MOMENTO
-
-        /*************
-         * CONTENUTO *
-         *************/
-
+        /**
+         * *********** CONTENUTO * ***********
+         */
         ContenutoType contenuto = new ContenutoType();
         contenuto.setUnitaDocumentarie(unitaDocumentarie);
 
         indiceMetaFascicoloV2.setContenuto(contenuto);
     }
 
-    private ProfiloGeneraleType caricaProfiloGeneraleFascicolo(long idFascicolo) {
+    private ProfiloGeneraleType caricaProfiloGeneraleFascicolo(long idFascicolo, Map<String, String> xmls) {
         ProfiloGeneraleType tmpProfiloGenerale = null;
         List<FasXmlFascicolo> lstXmlFascicolo = cimfHelper.leggiXmlVersamentiModelloXsdFascicolo(
                 DecModelloXsdFascicolo.TiUsoModelloXsd.VERS,
@@ -225,8 +228,20 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
             tmpProfiloGenerale = new ProfiloGeneraleType();
 
             try {
-                tmpProfiloGenerale = JAXB.unmarshal(new StringReader(lstXmlFascicolo.get(0).getBlXml()),
-                        ProfiloGeneraleType.class);
+                // MAC #32985
+                String blXml = lstXmlFascicolo.get(0).getBlXml();
+                /*
+                 * Se l'xml è vuoto
+                 */
+                if (blXml == null) {
+                    // recupero oggetti da O.S. (se presenti)
+                    if (!xmls.isEmpty()) {
+                        blXml = xmls.get(DecModelloXsdFascicolo.TiModelloXsd.PROFILO_GENERALE_FASCICOLO.name());
+                    }
+                }
+                // end MAC #32985
+
+                tmpProfiloGenerale = JAXB.unmarshal(new StringReader(blXml), ProfiloGeneraleType.class);
                 tmpProfiloGenerale.setVersione(lstXmlFascicolo.get(0).getDecModelloXsdFascicolo().getCdXsd());
 
             } catch (IllegalArgumentException ex) {
@@ -238,7 +253,7 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
         return tmpProfiloGenerale;
     }
 
-    private ProfiloArchivisticoType caricaProfiloArchivisticoFascicolo(long idFascicolo) {
+    private ProfiloArchivisticoType caricaProfiloArchivisticoFascicolo(long idFascicolo, Map<String, String> xmls) {
         ProfiloArchivisticoType tmpProfiloArchivistico = null;
         List<FasXmlFascicolo> lstXmlFascicolo = cimfHelper.leggiXmlVersamentiModelloXsdFascicolo(
                 DecModelloXsdFascicolo.TiUsoModelloXsd.VERS,
@@ -246,13 +261,25 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
 
         if (!lstXmlFascicolo.isEmpty()) {
             tmpProfiloArchivistico = new ProfiloArchivisticoType();
+
+            // MAC #32985
+            String blXml = lstXmlFascicolo.get(0).getBlXml();
+            /*
+             * Se l'xml è vuoto
+             */
+            if (blXml == null) {
+                // recupero oggetti da O.S. (se presenti)
+                if (!xmls.isEmpty()) {
+                    blXml = xmls.get(DecModelloXsdFascicolo.TiModelloXsd.PROFILO_ARCHIVISTICO_FASCICOLO.name());
+                }
+            }
+            // end MAC #32985
+
             tmpProfiloArchivistico.setVersione(lstXmlFascicolo.get(0).getDecModelloXsdFascicolo().getCdXsd());
 
             try {
                 Element el = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .parse(new ByteArrayInputStream(
-                                lstXmlFascicolo.get(0).getBlXml().getBytes(StandardCharsets.UTF_8)))
-                        .getDocumentElement();
+                        .parse(new ByteArrayInputStream(blXml.getBytes(StandardCharsets.UTF_8))).getDocumentElement();
                 tmpProfiloArchivistico.setAny(el);
 
             } catch (IllegalArgumentException | ParserConfigurationException | SAXException | IOException ex) {
@@ -264,7 +291,7 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
         return tmpProfiloArchivistico;
     }
 
-    private ProfiloNormativoType caricaProfiloNormativoFascicolo(long idFascicolo) {
+    private ProfiloNormativoType caricaProfiloNormativoFascicolo(long idFascicolo, Map<String, String> xmls) {
         ProfiloNormativoType tmpProfiloNormativo = null;
         List<FasXmlFascicolo> lstXmlFascicolo = cimfHelper.leggiXmlVersamentiModelloXsdFascicolo(
                 DecModelloXsdFascicolo.TiUsoModelloXsd.VERS,
@@ -272,13 +299,25 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
 
         if (!lstXmlFascicolo.isEmpty()) {
             tmpProfiloNormativo = new ProfiloNormativoType();
+
+            // MAC #32985
+            String blXml = lstXmlFascicolo.get(0).getBlXml();
+            /*
+             * Se l'xml è vuoto
+             */
+            if (blXml == null) {
+                // recupero oggetti da O.S. (se presenti)
+                if (!xmls.isEmpty()) {
+                    blXml = xmls.get(DecModelloXsdFascicolo.TiModelloXsd.PROFILO_NORMATIVO_FASCICOLO.name());
+                }
+            }
+            // end MAC #32985
+
             tmpProfiloNormativo.setVersione(lstXmlFascicolo.get(0).getDecModelloXsdFascicolo().getCdXsd());
 
             try {
                 Element el = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .parse(new ByteArrayInputStream(
-                                lstXmlFascicolo.get(0).getBlXml().getBytes(StandardCharsets.UTF_8)))
-                        .getDocumentElement();
+                        .parse(new ByteArrayInputStream(blXml.getBytes(StandardCharsets.UTF_8))).getDocumentElement();
                 tmpProfiloNormativo.setAny(el);
 
             } catch (IllegalArgumentException | ParserConfigurationException | SAXException | IOException ex) {
@@ -290,20 +329,33 @@ public class CreazioneIndiceMetaFascicoliUtilV2 {
         return tmpProfiloNormativo;
     }
 
-    private ProfiloSpecificoType caricaProfiloSpecificoFascicolo(long idFascicolo) {
+    private ProfiloSpecificoType caricaProfiloSpecificoFascicolo(long idFascicolo, Map<String, String> xmls) {
         ProfiloSpecificoType tmpProfiloSpecifico = null;
         List<FasXmlFascicolo> lstXmlFascicolo = cimfHelper.leggiXmlVersamentiModelloXsdFascicolo(
                 DecModelloXsdFascicolo.TiUsoModelloXsd.VERS,
                 DecModelloXsdFascicolo.TiModelloXsd.PROFILO_SPECIFICO_FASCICOLO, idFascicolo);
 
         if (!lstXmlFascicolo.isEmpty()) {
+            // MAC #32985
+            String blXml = lstXmlFascicolo.get(0).getBlXml();
+            /*
+             * Se l'xml è vuoto
+             */
+            if (blXml == null) {
+                // recupero oggetti da O.S. (se presenti)
+                if (!xmls.isEmpty()) {
+                    blXml = xmls.get(DecModelloXsdFascicolo.TiModelloXsd.PROFILO_SPECIFICO_FASCICOLO.name());
+                }
+            }
+            // end MAC #32985
+
             DocumentBuilder db = null;
             try {
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 // dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); // Compliant
                 // dbf.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, ""); // compliant
                 db = dbf.newDocumentBuilder();
-                String blXmlProfiloSpec = lstXmlFascicolo.get(0).getBlXml();
+                String blXmlProfiloSpec = blXml;
                 byte[] xml = blXmlProfiloSpec.getBytes(StandardCharsets.UTF_8);
                 InputSource is = new InputSource(new StringReader(new String(xml, StandardCharsets.UTF_8)));
                 Document docxml = db.parse(is);

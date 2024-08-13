@@ -45,7 +45,7 @@ import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.fascicoli.dto.RicercaFascicoliBean;
 import it.eng.parer.fascicoli.ejb.FascicoliEjb;
-import it.eng.parer.fascicoli.helper.FascicoliHelper;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.FascicoliAbstractAction;
 import it.eng.parer.slite.gen.form.ElenchiVersFascicoliForm;
@@ -68,7 +68,6 @@ import it.eng.parer.slite.gen.viewbean.FasVRicFascicoliRowBean;
 import it.eng.parer.slite.gen.viewbean.FasVRicFascicoliTableBean;
 import it.eng.parer.slite.gen.viewbean.FasVVisFascicoloRowBean;
 import it.eng.parer.viewEntity.constants.FasVRicFascicoli.TiEsito;
-import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
@@ -108,6 +107,7 @@ import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -134,16 +134,14 @@ public class FascicoliAction extends FascicoliAbstractAction {
     private FascicoliEjb fascicoliEjb;
     @EJB(mappedName = "java:app/Parer-ejb/StrutTitolariEjb")
     private StrutTitolariEjb titolariEjb;
-    @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
-    private ConfigurationHelper configHelper;
     @EJB(mappedName = "java:app/Parer-ejb/AnnulVersEjb")
     private AnnulVersEjb annulVersEjb;
     @EJB(mappedName = "java:app/Parer-ejb/UnitaDocumentarieHelper")
     private UnitaDocumentarieHelper udHelper;
-    @EJB(mappedName = "java:app/Parer-ejb/FascicoliHelper")
-    private FascicoliHelper fascicoliHelper;
     @EJB(mappedName = "java:app/Parer-ejb/ControlliRecuperoFasc")
     private ControlliRecuperoFasc controlliRecuperoFasc;
+    @EJB(mappedName = "java:app/Parer-ejb/ObjectStorageService")
+    private ObjectStorageService objectStorageService;
 
     private static final String MEX_UD_UNAUTHORIZED = "Attenzione: la visualizzazione del contenuto del fascicolo è parziale: sono state escluse le unità documentarie sulle quali l’utente non dispone di tutte le autorizzazioni";
 
@@ -452,12 +450,12 @@ public class FascicoliAction extends FascicoliAbstractAction {
 
         // Creo dto versatore
 
-        // Recupero le informazioni sul dettaglio del File fascicolo
-        BaseRow fileMetaFascicoloDetail = fascicoliEjb.retrieveFasFileMetaVerAipFasc(idFascicolo,
-                FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name());
-        if (fileMetaFascicoloDetail != null) {
-            getForm().getMetaFileFascicoloDetail().copyFromBean(fileMetaFascicoloDetail);
-        }
+        // // Recupero le informazioni sul dettaglio del File fascicolo
+        // BaseRow fileMetaFascicoloDetail = fascicoliEjb.retrieveFasFileMetaVerAipFasc(idFascicolo,
+        // FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name());
+        // if (fileMetaFascicoloDetail != null) {
+        // getForm().getMetaFileFascicoloDetail().copyFromBean(fileMetaFascicoloDetail);
+        // }
 
         // Pulisco il dettaglio Indice AIP del fascicolo
         getForm().getMetaIndiceAipFascicoloDetail().reset();
@@ -484,6 +482,12 @@ public class FascicoliAction extends FascicoliAbstractAction {
                 getForm().getMetaIndiceAipFascicoloDetail().getHash_personalizzato().setHidden(true);
                 getForm().getMetaIndiceAipFascicoloDetail().getCd_encoding_hash_aip_fascicolo().setHidden(true);
             }
+
+            // MEV#30398
+            fascicoliEjb.setIndiceAipFascByOS(idFascicolo, fileMetaIndiceAipDetail);
+            getForm().getMetaIndiceAipFascicoloDetail().getBl_file_ver_indice_aip()
+                    .setValue(fileMetaIndiceAipDetail.getString("bl_file_ver_indice_aip"));
+            // end MEV#30398
 
             // EVO#13993
             getForm().getFascicoloDetail().getScarica_xml_unisincro_fasc().setHidden(false);
@@ -1637,7 +1641,21 @@ public class FascicoliAction extends FascicoliAbstractAction {
                 ZipArchiveEntry zae = new ZipArchiveEntry(path);
                 filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(fileMetaIndiceLastVers.getBlFileVerIndiceAip().getBytes(StandardCharsets.UTF_8));
+
+                // MEV #30398
+                String blFile = fileMetaIndiceLastVers.getBlFileVerIndiceAip();
+                if (fileMetaIndiceLastVers.getBlFileVerIndiceAip() == null) {
+                    Map<String, String> xmls = objectStorageService.getObjectXmlIndiceAipFasc(fileMetaIndiceLastVers
+                            .getFasMetaVerAipFascicolo().getFasVerAipFascicolo().getIdVerAipFascicolo());
+                    // recupero oggetti da O.S. (se presenti)
+                    if (!xmls.isEmpty()) {
+                        blFile = xmls.get("FASCICOLO");
+                    }
+                }
+                // end MEV #30398
+
+                zipOutputStream.write(blFile.getBytes(StandardCharsets.UTF_8));
+
                 closeEntry = true;
             }
 
@@ -1664,8 +1682,19 @@ public class FascicoliAction extends FascicoliAbstractAction {
                     ZipArchiveEntry zae = new ZipArchiveEntry(pathPIndexSource);
                     filterZipEntry(zae);
                     zipOutputStream.putArchiveEntry(zae);
-                    zipOutputStream
-                            .write(fileMetaIndicePrecVers.getBlFileVerIndiceAip().getBytes(StandardCharsets.UTF_8));
+                    // MEV #30398
+                    String blFile = fileMetaIndicePrecVers.getBlFileVerIndiceAip();
+                    if (fileMetaIndicePrecVers.getBlFileVerIndiceAip() == null) {
+                        Map<String, String> xmls = objectStorageService.getObjectXmlIndiceAipFasc(fileMetaIndicePrecVers
+                                .getFasMetaVerAipFascicolo().getFasVerAipFascicolo().getIdVerAipFascicolo());
+                        // recupero oggetti da O.S. (se presenti)
+                        if (!xmls.isEmpty()) {
+                            blFile = xmls.get("FASCICOLO");
+                        }
+                    }
+                    // end MEV #30398
+
+                    zipOutputStream.write(blFile.getBytes(StandardCharsets.UTF_8));
                     closeEntry = true;
                 }
             }

@@ -36,6 +36,7 @@ import it.eng.parer.web.helper.AmministrazioneHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
+import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
@@ -115,6 +116,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getConfiguration().getSave_config().setViewMode();
         getForm().getConfiguration().getLogEventiRegistroParametri().setEditMode();
 
+        getForm().getConfigurationList().setFilterValidRecords(Boolean.TRUE);
+
         // Carico la lista dei configurazioni
         forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
     }
@@ -151,6 +154,8 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         // Rendo editabili i campi della lista
         getForm().getConfigurationList().getTi_param_applic().setEditMode();
         getForm().getConfigurationList().getTi_gestione_param().setEditMode();
+        getForm().getConfigurationList().getCd_versione_app_ini().setEditMode();
+        getForm().getConfigurationList().getCd_versione_app_fine().setEditMode();
         getForm().getConfigurationList().getNm_param_applic().setEditMode();
         getForm().getConfigurationList().getDm_param_applic().setEditMode();
         getForm().getConfigurationList().getDs_param_applic().setEditMode();
@@ -163,6 +168,7 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getConfigurationList().getFl_appart_strut().setEditMode();
         getForm().getConfigurationList().getFl_appart_tipo_unita_doc().setEditMode();
         getForm().getConfigurationList().getFl_appart_aa_tipo_fascicolo().setEditMode();
+        getForm().getConfigurationList().getFl_multi().setReadonly(false);
         getForm().getConfigurationList().getFl_appart_applic().setReadonly(false);
         getForm().getConfigurationList().getFl_appart_ambiente().setReadonly(false);
         getForm().getConfigurationList().getFl_appart_strut().setReadonly(false);
@@ -197,7 +203,7 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         // Carico i valori della lista configurazioni
         AplParamApplicTableBean paramApplicTableBean = amministrazioneEjb.getAplParamApplicTableBean(tiParamApplic,
                 tiGestioneParam, flAppartApplic, flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
-                flAppartAaTipoFascicolo);
+                flAppartAaTipoFascicolo, getForm().getConfigurationList().isFilterValidRecords());
 
         paramApplicTableBean = obfuscatePasswordParamApplic(paramApplicTableBean);
 
@@ -230,11 +236,15 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         getForm().getConfigurationList().getTi_valore_param_applic().setViewMode();
         getForm().getConfigurationList().getDs_lista_valori_ammessi().setViewMode();
         getForm().getConfigurationList().getDs_valore_param_applic().setViewMode();
+        getForm().getConfigurationList().getCd_versione_app_ini().setViewMode();
+        getForm().getConfigurationList().getCd_versione_app_fine().setViewMode();
+        getForm().getConfigurationList().getFl_multi().setEditMode();
         getForm().getConfigurationList().getFl_appart_applic().setEditMode();
         getForm().getConfigurationList().getFl_appart_ambiente().setEditMode();
         getForm().getConfigurationList().getFl_appart_strut().setEditMode();
         getForm().getConfigurationList().getFl_appart_tipo_unita_doc().setEditMode();
         getForm().getConfigurationList().getFl_appart_aa_tipo_fascicolo().setEditMode();
+        getForm().getConfigurationList().getFl_multi().setReadonly(true);
         getForm().getConfigurationList().getFl_appart_applic().setReadonly(true);
         getForm().getConfigurationList().getFl_appart_ambiente().setReadonly(true);
         getForm().getConfigurationList().getFl_appart_strut().setReadonly(true);
@@ -313,6 +323,7 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         String dsValoreParamApplicName = getForm().getConfigurationList().getDs_valore_param_applic().getName();
         String flAppartApplicName = getForm().getConfigurationList().getFl_appart_applic().getName();
         String tiValoreParamApplic = getForm().getConfigurationList().getTi_valore_param_applic().getName();
+        String cdVersioneAppIni = getForm().getConfigurationList().getCd_versione_app_ini().getName();
         Set<Integer> completeRows = new HashSet<Integer>();
         Set<String> nmParamApplicSet = new HashSet<String>();
         // Tiro su i dati i request di tutti i record della lista
@@ -329,9 +340,11 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
             String dsValoreParamApplicValue = r.getString(dsValoreParamApplicName);
             String tiValoreParamApplicValue = r.getString(tiValoreParamApplic);
             String flAppartApplicValue = r.getString(flAppartApplicName);
+            String cdVersioneAppIniValue = r.getString(cdVersioneAppIni);
             if (StringUtils.isNotBlank(tiParamApplicValue) && StringUtils.isNotBlank(tiGestioneParamValue)
                     && StringUtils.isNotBlank(nmParamApplicValue) && StringUtils.isNotBlank(dsParamApplicValue)
-                    && StringUtils.isNotBlank(tiValoreParamApplicValue)) {
+                    && StringUtils.isNotBlank(tiValoreParamApplicValue)
+                    && StringUtils.isNotBlank(cdVersioneAppIniValue)) {
                 if (StringUtils.isNotBlank(dsValoreParamApplicValue)) {
                     if (flAppartApplicValue.equals("1")) {
                         completeRows.add(i);
@@ -767,6 +780,45 @@ public class AmministrazioneAction extends AmministrazioneAbstractAction {
         form.getOggettoDetail().getIdOggetto().setValue(BigDecimal.ZERO.toString());
         redirectToAction(it.eng.parer.sacerlog.slite.gen.Application.Actions.GESTIONE_LOG_EVENTI,
                 "?operation=inizializzaLogEventi", form);
+    }
+
+    @Override
+    public void filterInactiveRecordsConfigurationList() throws EMFError {
+        int rowIndex = 0;
+        int pageSize = WebConstants.DEFAULT_PAGE_SIZE;
+        if (getForm().getConfigurationList().getTable() != null) {
+            rowIndex = getForm().getConfigurationList().getTable().getCurrentRowIndex();
+            pageSize = getForm().getConfigurationList().getTable().getPageSize();
+        }
+
+        getForm().getConfiguration().post(getRequest());
+        String tiParamApplic = getForm().getConfiguration().getTi_param_applic_combo().parse();
+        String tiGestioneParam = getForm().getConfiguration().getTi_gestione_param_combo().parse();
+        String flAppartApplic = getForm().getConfiguration().getFl_appart_applic_combo().parse();
+        String flAppartAmbiente = getForm().getConfiguration().getFl_appart_ambiente_combo().parse();
+        String flAppartStrut = getForm().getConfiguration().getFl_appart_strut_combo().parse();
+        String flAppartTipoUnitaDoc = getForm().getConfiguration().getFl_appart_tipo_unita_doc_combo().parse();
+        String flAppartAaTipoFascicolo = getForm().getConfiguration().getFl_appart_aa_tipo_fascicolo_combo().parse();
+
+        // Carico i valori della lista configurazioni
+        AplParamApplicTableBean paramApplicTableBean = amministrazioneEjb.getAplParamApplicTableBean(tiParamApplic,
+                tiGestioneParam, flAppartApplic, flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
+                flAppartAaTipoFascicolo, getForm().getConfigurationList().isFilterValidRecords());
+
+        paramApplicTableBean = obfuscatePasswordParamApplic(paramApplicTableBean);
+
+        getForm().getConfigurationList().setTable(paramApplicTableBean);
+
+        setConfigListReadOnly();
+
+        // se non ho trovato risultati nascondo il pulsate "Edita"
+        if (paramApplicTableBean.isEmpty())
+            getForm().getConfiguration().getEdit_config().setViewMode();
+
+        getForm().getConfigurationList().getTable().setCurrentRowIndex(rowIndex);
+        getForm().getConfigurationList().getTable().setPageSize(pageSize);
+
+        forwardToPublisher(Application.Publisher.AMMINISTRAZIONE_CONFIG_LIST);
     }
 
 }
