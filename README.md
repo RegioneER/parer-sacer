@@ -13,7 +13,7 @@ SACER è il modulo centrale del Sistema di Conservazione e gestisce l'intero pro
 Requisiti minimi per installazione: 
 
 - Sistema operativo : consigliato Linux server (in alternativa compatibilità con Windows server);
-- Java versione 8 (OpenJDK / Oracle);
+- Java versione 11 (OpenJDK / Oracle);
 - JBoss 7 EAP;
 - Oracle DB (versione consigliata 19c).
 
