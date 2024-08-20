@@ -173,7 +173,7 @@ public class ElenchiFascSignatureHelper extends SigningHelper {
      *            sessione HSM
      * @param idElenco
      *            id elenco
-     * 
+     *
      * @return HsmElencoFascSesFirma entity HsmElencoFascSesFirma
      */
     public HsmElencoFascSesFirma findElencoSessione(HsmSessioneFirma session, long idElenco) {
@@ -191,7 +191,7 @@ public class ElenchiFascSignatureHelper extends SigningHelper {
      *            id sessione
      * @param idElenco
      *            id elenco
-     * 
+     *
      * @return HsmElencoFascSesFirma entity HsmElencoFascSesFirma
      */
     public HsmElencoFascSesFirma findElencoFascSes(long sessionId, long idElenco) {

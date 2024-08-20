@@ -108,7 +108,7 @@ public class RecDIPEsibizioneOauth2Srvlt extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -341,9 +341,9 @@ public class RecDIPEsibizioneOauth2Srvlt extends HttpServlet {
 
     /**
      * Get keycloak session from request
-     * 
+     *
      * @param req
-     * 
+     *
      * @return
      */
     private KeycloakSecurityContext getKeycloakSession(HttpServletRequest req) {

@@ -17,6 +17,9 @@
 
 package it.eng.parer.elencoVersFascicoli.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -154,7 +157,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      *
      * @param criterio
      *            raggruppamento fascicoli
-     * 
+     *
      * @return lista oggetti di tipo {@link FasFascicoloObj}
      */
     public List<FasFascicoloObj> retrieveFascicoliToProcess(DecCriterioRaggrFasc criterio) {
@@ -675,7 +678,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      *
      * @param unitaDoc
      *            Unità documentaria della quale si vuole il numero di documenti
-     * 
+     *
      * @return Il numero di documenti
      */
     public long countDocsInUnitaDocCustom(BigDecimal unitaDoc) {
@@ -704,7 +707,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      *
      * @param unitaDocId
      *            id unita doc
-     * 
+     *
      * @return Object entity AroUnitaDoc
      */
     public Object numCompsAndSizeInUnitaDocCustom(BigDecimal unitaDocId) {
@@ -723,7 +726,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      *
      * @param docId
      *            id documento
-     * 
+     *
      * @return Object entity AroDoc
      */
     public Object numCompsAndSizeInDoc(BigDecimal docId) {
@@ -789,7 +792,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
     /**
      * @deprecated (i parametri elenco, ff, logJob non vengono usati, meglio usare direttamente il metodo senza questi
      *             parametri)
-     * 
+     *
      * @param elenco
      *            elenco dei vers Fasc
      * @param struttura
@@ -1112,12 +1115,21 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         return query.getResultList();
     }
 
+    public List<ElvFileElencoVersFasc> retrieveFileIndiceElenco2(long idElencoVersFasc, String... tiFileElencoVers) {
+        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.idFileElencoVersFasc, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVersFasc u "
+                + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN (:tiFileElencoVers)";
+        Query query = em.createQuery(queryStr);
+        query.setParameter("idElencoVersFasc", idElencoVersFasc);
+        query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
+        return query.getResultList();
+    }
+
     /**
      * Restituisce il numero dei fascicoli versati in elenco
      *
      * @param idElencoVersFasc
      *            id elenco versamento fascicolo
-     * 
+     *
      * @return long risultato
      */
     public long contaFascVersati(Long idElencoVersFasc) {
@@ -1136,7 +1148,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "WHERE elencoDaElab.tiStato = :tiStato " + "AND statoElencoVersoFasc.tiStato = :tiStatoFirmato "
                 + "ORDER BY statoElencoVersoFasc.tsStato ASC");
         q.setParameter("tiStato", TiStatoElencoFascDaElab.AIP_CREATI);
-        q.setParameter("tiStatoFirmato", TiStatoElencoFasc.FIRMATO);
+        q.setParameter("tiStatoFirmato", TiStatoElencoFasc.VALIDATO);
         return q.getResultList();
     }
 
@@ -1145,7 +1157,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      *
      * @param idElencoVersFasc
      *            id elenco versamento fascicolo
-     * 
+     *
      * @return true/false
      */
     public boolean existFascVersAnnullati(BigDecimal idElencoVersFasc) {
@@ -1174,7 +1186,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      *
      * @param idElenco
      *            id dell'elenco validato.
-     * 
+     *
      * @return Set - insieme di id <strong>distinti</strong>
      */
     public Set<Long> retrieveFascVersInElenco(long idElenco) {
@@ -1194,7 +1206,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
      *
      * @param idElenco
      *            id dell'elenco validato.
-     * 
+     *
      * @return Set - insieme di id <strong>distinti</strong>
      */
     public Set<Long> retrieveFascVersInElencoAipCreato(long idElenco) {

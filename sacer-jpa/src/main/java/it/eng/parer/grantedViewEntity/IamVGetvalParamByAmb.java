@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the IAM_V_GETVAL_PARAM_BY_AMB database table.
- * 
+ *
  */
 @Entity
 @Table(name = "IAM_V_GETVAL_PARAM_BY_AMB", schema = "SACER_IAM")

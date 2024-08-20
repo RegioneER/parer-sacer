@@ -40,7 +40,7 @@ import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 /**
  * The persistent class for the ARO_NOTA_UNITA_DOC database table.
- * 
+ *
  */
 @Entity
 @Table(name = "ARO_NOTA_UNITA_DOC")

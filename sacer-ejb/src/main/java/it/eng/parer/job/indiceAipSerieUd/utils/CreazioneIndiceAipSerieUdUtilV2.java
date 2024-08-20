@@ -177,9 +177,9 @@ public class CreazioneIndiceAipSerieUdUtilV2 {
      *            mappa chiave/valore
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity PIndex
-     * 
+     *
      * @throws IOException
      *             errore generico di tipo IO
      * @throws NamingException

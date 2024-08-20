@@ -120,12 +120,12 @@ public class RequestPrsr extends AbsRequestPrsr {
      *            interfaccia IRispostaWS
      * @param configurazione
      *            bean ReqPrsrConfig
-     * 
+     *
      * @return lista oggetti di tipo {@link FileItem}
-     * 
+     *
      * @throws FileUploadException
      *             errore generico
-     * 
+     *
      */
     public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione) throws FileUploadException {
         return parse(rispostaWs, configurazione, null);

@@ -17,54 +17,19 @@
 
 package it.eng.parer.job.indiceAipFascicoli.utils;
 
-import it.eng.parer.aipFascicoli.xml.usmainResp.CreatingApplicationType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.DescriptionType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.EmbeddedMetadataType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.FileGroupType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.FileType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.HashType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.IdCType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.IdentifierType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.MoreInfoType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.SelfDescriptionType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.SourceIdCType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.VdCGroupType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.VdCType;
-import it.eng.parer.aipFascicoli.xml.usselfdescResp.MetadatiIntegratiSelfDescriptionType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.AgentIDType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.AgentNameType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.AgentType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.AttachedTimeStampType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.LawAndRegulationsType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.NameAndSurnameType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.ProcessType;
-import it.eng.parer.aipFascicoli.xml.usmainResp.TimeReferenceType;
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.helper.TipoFascicoloHelper;
-import it.eng.parer.entity.*;
-import it.eng.parer.exception.ParerInternalError;
-import it.eng.parer.grantedEntity.SIOrgEnteSiam;
-import it.eng.parer.job.indiceAipFascicoli.helper.ControlliRecIndiceAipFascicoli;
-import it.eng.parer.ws.dto.CSChiave;
-import it.eng.parer.ws.dto.CSChiaveFasc;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.ejb.XmlContextCache;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_FIRSTNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_LASTNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVATION_MNGR_TAXCODE;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_FORMALNAME;
 import static it.eng.parer.ws.utils.CostantiDB.ParametroAppl.AGENT_PRESERVER_TAXCODE;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-import it.eng.parer.ws.versFascicoli.ejb.ControlliFascicoli;
-import it.eng.parer.xml.utils.XmlUtils;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.xml.bind.JAXBElement;
@@ -73,11 +38,57 @@ import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+
+import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import it.eng.parer.aipFascicoli.xml.usmainResp.AgentIDType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.AgentNameType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.AgentType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.AttachedTimeStampType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.CreatingApplicationType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.DescriptionType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.EmbeddedMetadataType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.FileGroupType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.FileType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.HashType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.IdCType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.IdentifierType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.LawAndRegulationsType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.MoreInfoType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.NameAndSurnameType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.ProcessType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.SelfDescriptionType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.SourceIdCType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.TimeReferenceType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.VdCGroupType;
+import it.eng.parer.aipFascicoli.xml.usmainResp.VdCType;
+import it.eng.parer.aipFascicoli.xml.usselfdescResp.MetadatiIntegratiSelfDescriptionType;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.helper.TipoFascicoloHelper;
+import it.eng.parer.entity.DecModelloXsdFascicolo;
+import it.eng.parer.entity.DecTipoFascicolo;
+import it.eng.parer.entity.FasContenVerAipFascicolo;
+import it.eng.parer.entity.FasFascicolo;
+import it.eng.parer.entity.FasMetaVerAipFascicolo;
+import it.eng.parer.entity.FasSipVerAipFascicolo;
+import it.eng.parer.entity.FasVerAipFascicolo;
+import it.eng.parer.entity.FasXmlVersFascicolo;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
+import it.eng.parer.job.indiceAipFascicoli.helper.ControlliRecIndiceAipFascicoli;
+import it.eng.parer.ws.dto.CSChiave;
+import it.eng.parer.ws.dto.CSChiaveFasc;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.ejb.XmlContextCache;
+import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
+import it.eng.parer.ws.versFascicoli.ejb.ControlliFascicoli;
+import it.eng.parer.xml.utils.XmlUtils;
 
 /**
  *
@@ -130,9 +141,9 @@ public class CreazioneIndiceAipFascicoliUtil {
      *            entity SIOrgEnteSiam
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity IdCType
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      * @throws DatatypeConfigurationException
@@ -167,9 +178,9 @@ public class CreazioneIndiceAipFascicoliUtil {
      *            entity SIOrgEnteSiam
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity IdCType
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      * @throws DatatypeConfigurationException
@@ -258,13 +269,9 @@ public class CreazioneIndiceAipFascicoliUtil {
                 // end EVO#16486
                 sorgente.setID(idSourceIdc);
                 // recupero l'hash della precedente versione di AIP
-                FasMetaVerAipFascicolo fasMetaVerAipFasc = (FasMetaVerAipFascicolo) CollectionUtils
-                        .find(versioniPrecedenti.get(i).getFasMetaVerAipFascicolos(), new Predicate() {
-                            @Override
-                            public boolean evaluate(final Object object) {
-                                return ((FasMetaVerAipFascicolo) object).getTiMeta().equals("INDICE");
-                            }
-                        });
+                FasMetaVerAipFascicolo fasMetaVerAipFasc = IterableUtils.find(
+                        versioniPrecedenti.get(i).getFasMetaVerAipFascicolos(),
+                        object -> (object).getTiMeta().equals("INDICE"));
                 hashSourceIdc.setValue(fasMetaVerAipFasc.getDsHashFile());
                 hashSourceIdc.setFunction(hashFunction);
                 sorgente.setHash(hashSourceIdc);
@@ -338,13 +345,8 @@ public class CreazioneIndiceAipFascicoliUtil {
         } else {
             List<FasMetaVerAipFascicolo> versioneCorrente = (List<FasMetaVerAipFascicolo>) rispostaControlli
                     .getrObject();
-            FasMetaVerAipFascicolo fasMetaVerAipFasc = (FasMetaVerAipFascicolo) CollectionUtils.find(versioneCorrente,
-                    new Predicate() {
-                        @Override
-                        public boolean evaluate(final Object object) {
-                            return ((FasMetaVerAipFascicolo) object).getNmMeta().equals("Fascicolo");
-                        }
-                    });
+            FasMetaVerAipFascicolo fasMetaVerAipFasc = IterableUtils.find(versioneCorrente,
+                    object -> (object).getNmMeta().equals("Fascicolo"));
             HashType hashExt = new HashType();
             hashExt.setValue(fasMetaVerAipFasc.getDsHashFile());
             hashExt.setFunction(hashFunction);

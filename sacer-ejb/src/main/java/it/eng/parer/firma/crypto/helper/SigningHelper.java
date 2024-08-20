@@ -43,17 +43,17 @@ public abstract class SigningHelper extends GenericHelper {
 
     /**
      * Creates a new {@link HsmSessioneFirma}
-     * 
+     *
      * @param userId
      *            the user's id
-     * 
+     *
      * @return the id of HsmSessioneFirma
      */
     public abstract long createSessioneFirma(long userId);
 
     /**
      * Adds a document to the session. The kind of the document must be equal as the session's one
-     * 
+     *
      * @param sessionId
      *            id sessione
      * @param documentId
@@ -63,7 +63,7 @@ public abstract class SigningHelper extends GenericHelper {
 
     /**
      * Adds a document to the session. The kind of the document must be equal as the session's one
-     * 
+     *
      * @param session
      *            sessione HSM
      * @param documentId
@@ -73,67 +73,67 @@ public abstract class SigningHelper extends GenericHelper {
 
     /**
      * Returns the list of the active {@link HsmSessioneFirma}
-     * 
+     *
      * @param userId
      *            id utente
-     * 
+     *
      * @return lista oggetti di tipo {@link HsmSessioneFirma}
      */
     public abstract List<HsmSessioneFirma> getActiveSessionsByUser(long userId);
 
     /**
      * Returns the list of the active {@link HsmSessioneFirma}
-     * 
+     *
      * @param user
      *            entity IamUser
-     * 
+     *
      * @return lista oggetti di tipo {@link HsmSessioneFirma}
      */
     public abstract List<HsmSessioneFirma> getActiveSessionsByUser(IamUser user);
 
     /**
      * Returns the list of blocked {@link HsmSessioneFirma}
-     * 
+     *
      * @param userId
      *            id utente
-     * 
+     *
      * @return lista oggetti di tipo {@link HsmSessioneFirma}
      */
     public abstract List<HsmSessioneFirma> getBlockedSessionsByUser(long userId);
 
     /**
      * Returns the lost of blocked {@link HsmSessioneFirma}
-     * 
+     *
      * @param user
      *            entity IamUser
-     * 
+     *
      * @return lista oggetti di tipo {@link HsmSessioneFirma}
      */
     public abstract List<HsmSessioneFirma> getBlockedSessionsByUser(IamUser user);
 
     /**
      * Returns {@literal true} if all files of the session are signed, otherwise {@literal false}
-     * 
+     *
      * @param sessionId
      *            id sessione
-     * 
+     *
      * @return true/false
      */
     public abstract boolean isAllFileSigned(long sessionId);
 
     /**
      * Returns {@literal true} if all files of the session are signed, otherwise {@literal false}
-     * 
+     *
      * @param session
      *            oggetto di tipo HsmSessioneFirma
-     * 
+     *
      * @return true/false
      */
     public abstract boolean isAllFileSigned(HsmSessioneFirma session);
 
     /**
      * Returns the time after which a signature session will be blocked
-     * 
+     *
      * @return long time
      */
     protected long getTimeSessionBlock() {

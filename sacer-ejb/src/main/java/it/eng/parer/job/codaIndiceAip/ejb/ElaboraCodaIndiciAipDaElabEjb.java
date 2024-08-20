@@ -71,7 +71,7 @@ public class ElaboraCodaIndiciAipDaElabEjb {
      *            - Unità documentaria in elenco
      * @param elencoDaElab
      *            - elenco versamento da elaborare
-     * 
+     *
      * @throws ParerUserError
      *             - eccezione per passare all'ud successiva.
      */
@@ -95,7 +95,7 @@ public class ElaboraCodaIndiciAipDaElabEjb {
      *            - Ud di cui è stato eseguito il lock
      * @param elenco
      *            - Elenco di versamento
-     * 
+     *
      * @throws ParerUserError
      *             - eccezione che fa passare alla ud successiva
      */

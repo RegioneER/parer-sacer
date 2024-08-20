@@ -144,7 +144,7 @@ public class RegistroEjb {
      *
      * @param idRegistroUnitaDoc
      *            registro unita doc
-     * 
+     *
      * @return true se esiste una tipologia di unità documentaria con flCreaTipoSerieStandard a TRUE
      */
     public boolean checkTipoSerieStandardForTipiUdAmmessi(BigDecimal idRegistroUnitaDoc) {
@@ -167,7 +167,7 @@ public class RegistroEjb {
      *
      * @param bean
      *            raw bean con dati registro
-     * 
+     *
      * @return la dimensione massima calcolata
      */
     public String calcolaMaxLenNumeroChiave(DecRegistroUnitaDocRowBean bean) {
@@ -193,7 +193,7 @@ public class RegistroEjb {
      *            bean contenente i dati del registro
      * @param criterioAutomRegistro
      *            flag relativo alla creazione automatica del criterio di raggruppamento
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -220,7 +220,7 @@ public class RegistroEjb {
      *            bean contenente i dati del registro
      * @param criterioAutomRegistro
      *            flag relativo alla creazione automatica del criterio di raggruppamento
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -251,7 +251,7 @@ public class RegistroEjb {
      *            bean contenente i dati del registro
      * @param criterioAutomRegistro
      *            flag relativo alla creazione automatica del criterio di raggruppamento
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      * @throws ParerWarningException
@@ -297,9 +297,9 @@ public class RegistroEjb {
      *            si/no
      * @param tipoUnitaDocAmmessoList
      *            lista unita doc ammessa
-     * 
+     *
      * @return l'entity IamOrganizDaReplic con cui eseguire la replica su IAM
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      * @throws ParerWarningException
@@ -883,7 +883,7 @@ public class RegistroEjb {
      *
      * @param idRegistro
      *            id del registro
-     * 
+     *
      * @return il tablebean
      */
     public DecAaRegistroUnitaDocTableBean getDecAARegistroUnitaDocTableBean(BigDecimal idRegistro) {
@@ -915,7 +915,7 @@ public class RegistroEjb {
      *
      * @param idAaRegistroUnitaDoc
      *            id anno registro unita doc
-     * 
+     *
      * @return il tablebean
      */
     public DecParteNumeroRegistroTableBean getDecParteNumeroRegistroTableBean(BigDecimal idAaRegistroUnitaDoc) {
@@ -1148,7 +1148,7 @@ public class RegistroEjb {
      *
      * @param idTipoSerie
      *            tipo serie
-     * 
+     *
      * @return BigDecimal
      */
     public BigDecimal getMaxAnniConserv(BigDecimal idTipoSerie) {
@@ -1293,7 +1293,7 @@ public class RegistroEjb {
      *            parametro
      * @param idRegistroUnitaDoc
      *            id registro unita doc
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1343,9 +1343,9 @@ public class RegistroEjb {
      *            parametro
      * @param idRegistroUnitaDoc
      *            id registro unita doc
-     * 
+     *
      * @return il record dell'organizzazione da replicare
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

@@ -24,6 +24,6 @@
  * <p>
  * - <b>DecUsoFormatoFileStandard</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc;

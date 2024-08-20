@@ -26,9 +26,9 @@ import java.io.FileFilter;
  * L'implementazione serve ad individuare gli estremi di tutti i file contenuti in una directory: in pratica, non
  * applica nessun filtro sul parametro previsto dal metodo {@link #accept(File)}.
  * <p>
- * 
+ *
  * @author DiLorenzo_F
- * 
+ *
  */
 public final class AllFileFilter implements FileFilter {
 
@@ -37,14 +37,14 @@ public final class AllFileFilter implements FileFilter {
 
     /**
      * Costruttore.
-     * 
+     *
      */
     private AllFileFilter() {
     }
 
     /**
      * Ritorna l'implementazione con cui filtrare il contenuto di una directory.
-     * 
+     *
      * @return Implementazione con cui filtrare il contenuto di una directory.
      */
     public static AllFileFilter getInstance() {

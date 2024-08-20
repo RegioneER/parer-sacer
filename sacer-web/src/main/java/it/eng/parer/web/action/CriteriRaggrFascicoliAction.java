@@ -305,7 +305,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param critRB
      *            BaseRow del criterio di raggruppamento fascicoli
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -354,7 +354,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param critRB
      *            BaseRow del criterio di raggruppamento fascicoli
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -379,7 +379,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -403,7 +403,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param idCriterioRaggrFasc
      *            id criterio raggruppamento fascicoli
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -422,7 +422,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @throws EMFError
      */
     private void initCriterioRaggrFascCombo(BigDecimal idStrut) {
@@ -444,7 +444,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param idCriterioRaggrFasc
      *            id criterio raggruppamento fascicoli
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -647,7 +647,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *            lista filtri di tipo {@link Field}
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -896,7 +896,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param status
      *            Lo stato della form, in modifica o creazione
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1099,7 +1099,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *            id ente
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1138,7 +1138,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *            id struttura
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1533,7 +1533,7 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
      *
      * @param status
      *            Lo stato della form, in modifica o creazione
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

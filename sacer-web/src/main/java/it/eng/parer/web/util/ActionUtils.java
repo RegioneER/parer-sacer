@@ -211,7 +211,7 @@ public class ActionUtils {
      *            id struttura
      * @param idUtente
      *            id utente
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -244,7 +244,7 @@ public class ActionUtils {
      *            id struttura
      * @param filterValid
      *            true/false
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -302,7 +302,7 @@ public class ActionUtils {
      *
      * @param inputDate
      *            data da valutare
-     * 
+     *
      * @return la data in formato dd/MM/yyyy
      */
     public static String getStringDate(Date inputDate) {
@@ -327,7 +327,7 @@ public class ActionUtils {
      *
      * @param inputDate
      *            data da valutare
-     * 
+     *
      * @return la data in formato dd/MM/yyyy HH:mm
      */
     public static String getStringDateTime(Date inputDate) {
@@ -393,9 +393,9 @@ public class ActionUtils {
              * if (table.getLazyListBean() != null) { int max = (table.getLazyListBean() != null) ?
              * table.getLazyListBean().getMaxResult() : table.fullSize(); int count = table.fullSize(); double
              * quantiPassi = Math.ceil(count / max);
-             * 
+             *
              * for (int i = 0; i <= quantiPassi; i++) {
-             * 
+             *
              * int pageToOpen = (i * table.getLazyListBean().getMaxResult()) / table.getPageSize(); table =
              * action.getPaginator().goPage(table, i > 0 ? pageToOpen + 1 : pageToOpen); writeTable(table, columnMap,
              * columns, out); } } else {

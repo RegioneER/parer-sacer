@@ -30,7 +30,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the VOL_V_RIC_VOLUME database table.
- * 
+ *
  */
 @Entity
 @Table(name = "VOL_V_RIC_VOLUME")

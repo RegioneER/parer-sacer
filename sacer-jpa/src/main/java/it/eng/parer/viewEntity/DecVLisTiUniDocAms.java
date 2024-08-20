@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the DEC_V_LIS_TI_UNI_DOC_AMS database table.
- * 
+ *
  */
 @Entity
 @Table(name = "DEC_V_LIS_TI_UNI_DOC_AMS")

@@ -60,6 +60,7 @@
                         <%@ include file="xsdDatiSpec.jspf"%>
                         <h2><font color="#d3101c">Dettaglio XSD</font></h2>
                             <sl:newLine skipLine="true"/>
+                            <slf:lblField name="<%=StrutDatiSpecForm.XsdDatiSpec.ID_XSD_DATI_SPEC%>" colSpan="4" controlWidth="w40"/><sl:newLine />
                             <slf:lblField name="<%=StrutDatiSpecForm.XsdDatiSpec.CD_VERSIONE_XSD%>" colSpan="4" controlWidth="w40"/><sl:newLine />
                             <slf:lblField name="<%=StrutDatiSpecForm.XsdDatiSpec.DS_VERSIONE_XSD%>" colSpan="4" controlWidth="w40"/><sl:newLine />
                             <slf:lblField name="<%=StrutDatiSpecForm.XsdDatiSpec.DT_ISTITUZ%>" colSpan="4" controlWidth="w10"/><sl:newLine />

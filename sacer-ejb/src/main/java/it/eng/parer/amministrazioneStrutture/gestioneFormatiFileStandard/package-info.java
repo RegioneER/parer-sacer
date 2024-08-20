@@ -27,6 +27,6 @@
  * <p>
  * - <b>DecFormatoFileBusta</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard;

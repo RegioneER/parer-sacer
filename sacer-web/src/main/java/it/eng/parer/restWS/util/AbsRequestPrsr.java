@@ -38,10 +38,10 @@ public abstract class AbsRequestPrsr {
      * variabile RERFwFor tra gli header HTTP della request. Questo è l'unico sistema per recepire l'IP nel caso in cui
      * l'application server non sia esposto direttamente. NOTA: è ovvio che l'application server è esposto direttamente
      * solo sui PC di sviluppo.
-     * 
+     *
      * @param request
      *            HttpServletRequest standard
-     * 
+     *
      * @return paramentro letto da request
      */
     public String leggiIpVersante(HttpServletRequest request) {

@@ -17,6 +17,8 @@
 
 package it.eng.parer.informazioni.noteRilascio.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -27,11 +29,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import it.eng.parer.grantedEntity.SIAplApplic;
 import it.eng.parer.grantedEntity.SIAplNotaRilascio;
-import it.eng.parer.helper.GenericHelper;
 
 /**
  *
@@ -51,10 +52,10 @@ public class NoteRilascioHelper {
 
     /**
      * @deprecated non più utilizzato
-     * 
+     *
      * @param nmApplic
      *            nome dell'applicazione
-     * 
+     *
      * @return {@link SIAplApplic} o null se non trova record
      */
     @Deprecated
@@ -84,7 +85,7 @@ public class NoteRilascioHelper {
         Query query = entityManager.createQuery(queryStr);
 
         if (idApplic != null) {
-            query.setParameter("idApplic", GenericHelper.longFromBigDecimal(idApplic));
+            query.setParameter("idApplic", longFromBigDecimal(idApplic));
         }
 
         return query.getResultList();
@@ -92,10 +93,10 @@ public class NoteRilascioHelper {
 
     /**
      * @deprecated non più utilizzato
-     * 
+     *
      * @param cdVersione
      *            codice della versione
-     * 
+     *
      * @return SIAplNotaRilascio
      */
     @Deprecated
@@ -151,8 +152,8 @@ public class NoteRilascioHelper {
                 + "JOIN notaRilascio.siAplApplic applic " + "WHERE notaRilascio.idNotaRilascio != :idNotaRilascio "
                 + "AND applic.idApplic = :idApplic ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idNotaRilascio", GenericHelper.longFromBigDecimal(idNotaRilascio));
-        query.setParameter("idApplic", GenericHelper.longFromBigDecimal(idApplic));
+        query.setParameter("idNotaRilascio", longFromBigDecimal(idNotaRilascio));
+        query.setParameter("idApplic", longFromBigDecimal(idApplic));
         List<SIAplNotaRilascio> list = query.getResultList();
         CollectionUtils.filter(list, object -> ((SIAplNotaRilascio) object).getDtVersione().compareTo(dtVersione) < 0);
         return list;

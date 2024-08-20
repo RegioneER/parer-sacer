@@ -122,7 +122,7 @@ public class AltriStatusMonitor {
     /**
      * Se esiste un attributo payloadType elaboro il messaggio secondo un template prestabilito Elabora quindi il numero
      * di KO
-     * 
+     *
      * @param tmpAltro
      * @param infoCodas
      */

@@ -431,7 +431,7 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
 
     /**
      * Metodo che esegue una redirectToAction a Monitoraggio - lista documenti in base ai parametri selezionati
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -501,7 +501,7 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
 
     /**
      * Metodo che esegue una redirectToAction a Monitoraggio - lista versamenti falliti in base ai parametri selezionati
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -597,7 +597,7 @@ public class MonitoraggioSinteticoAction extends MonitoraggioSinteticoAbstractAc
     /**
      * Metodo che esegue una redirectToAction a Monitoraggio - lista unitÃ doc / documenti derivanti da versamenti
      * falliti in base ai parametri selezionati
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

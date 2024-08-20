@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.job.indiceAipFascicoli.ejb;
 
 import it.eng.parer.aipFascicoli.xml.usmainResp.IdCType;
@@ -27,6 +26,7 @@ import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.job.indiceAipFascicoli.helper.CreazioneIndiceAipFascicoliHelper;
 import it.eng.parer.job.indiceAipFascicoli.utils.CreazioneIndiceAipFascicoliUtil;
 import it.eng.parer.job.indiceAipFascicoli.utils.CreazioneIndiceAipFascicoliUtilV2;
+import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.ParamIamHelper;
 import it.eng.parer.ws.dto.CSChiaveFasc;
@@ -115,7 +115,8 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
     // end MEV#29589
 
     public void creaIndiceAipVerFascicolo(Long idVerAipFascicolo, String codiceVersione, String codiceVersioneMetadati,
-            String sistemaConservazione, String creatingApplicationProducer, String cdVersioneXml)
+            String sistemaConservazione, String creatingApplicationProducer, String cdVersioneXml,
+            BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob)
             throws ParerInternalError, Exception {
 
         // MEV#29589
@@ -128,11 +129,17 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
             desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
         } else {
             // MEV#26576
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + cdVersioneXml;
+            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
+                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
+                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
             // end MEV#26576
         }
         // end MEV#29589
 
+        // // workaround per gestione versione xml versamento fascicolo 3.0
+        // if ("3.0".equals(cdVersioneXml)) {
+        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
+        // }
         FasVerAipFascicolo verAipFascicolo = ciafHelper.findById(FasVerAipFascicolo.class, idVerAipFascicolo);
         long idAmbiente = verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
 
@@ -144,6 +151,11 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
                 && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
                 && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) ? UNISINCRO_V2_REF : cdVersioneXml;
         // end MEV#29589
+
+        // workaround per gestione versione xml versamento fascicolo 3.0
+        if ("3.0".equals(cdVersioneXml)) {
+            usoVersioneXml = UNISINCRO_V2_REF;
+        }
 
         /*
          * Determino il modello xsd attivo per l'ambiente di appartenenza della struttura a cui il fascicolo appartiene
@@ -180,13 +192,15 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
         // TIP: qui mi aspetto sempre un modello e uno soltanto!!!
         for (DecModelloXsdFascicolo modello : modelloAttivoList) {
             manageIndex(idAmbiente, verAipFascicolo, modello, codiceVersione, codiceVersioneMetadati,
-                    sistemaConservazione, creatingApplicationProducer, cdVersioneXml);
+                    sistemaConservazione, creatingApplicationProducer, cdVersioneXml, backendIndiciAipFascicoli,
+                    indiciAipFascicoliBlob);
         }
     }
 
     public void manageIndex(long idAmbiente, FasVerAipFascicolo verAipFascicolo,
             DecModelloXsdFascicolo modelloUnisyncro, String codiceVersione, String codiceVersioneMetadati,
-            String sistemaConservazione, String creatingApplicationProducer, String cdVersioneXml) throws Exception {
+            String sistemaConservazione, String creatingApplicationProducer, String cdVersioneXml,
+            BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob) throws Exception {
 
         // MEV#29589
         // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
@@ -198,10 +212,17 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
             desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
         } else {
             // MEV#26576
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + cdVersioneXml;
+            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
+                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
+                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
             // end MEV#26576
         }
         // end MEV#29589
+
+        // // workaround per gestione versione xml versamento fascicolo 3.0
+        // if ("3.0".equals(cdVersioneXml)) {
+        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
+        // }
 
         log.info("{} - Inizio creazione XML indice AIP per la versione fascicolo {}", desJobMessage,
                 verAipFascicolo.getIdVerAipFascicolo());
@@ -247,9 +268,8 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
 
             log.debug("{} - Eseguo il marshalling del pindex", desJobMessage);
             indexFile = marshallPIndex(pindex);
-        }
-        // end MEV#29589
-        else if (!"2.0".equals(cdVersioneXml)) {
+        } // end MEV#29589
+        else if (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)) {
 
             Map<String, String> mappaAgent = confHelper.getParamApplicMapValue(agentParam, idAmbienteFas, idStrutFas,
                     null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
@@ -302,9 +322,12 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
                 hashXmlIndice, TipiHash.SHA_256.descrivi(), TipiEncBinari.HEX_BINARY.descrivi(), codiceVersione,
                 versatore, chiaveFasc);
 
+        // MEV #30398
         // Eseguo il salvataggio del clob del file nella tabella FAS_FILE_META_VER_AIP_FASC
         ciafHelper.registraFasFileMetaVerAipFasc(metaVerAipFascicolo.getIdMetaVerAipFascicolo(), indexFile.toString(),
-                verAipFascicolo.getFasFascicolo().getOrgStrut(), new Date());
+                verAipFascicolo.getFasFascicolo().getOrgStrut(), new Date(), backendIndiciAipFascicoli,
+                indiciAipFascicoliBlob);
+        // end MEV #30398
 
         /*
          * Inserisco i record nella tabella FAS_XSD_META_VER_AIP_FASC indicando il riferimento al modello di xsd

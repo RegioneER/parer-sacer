@@ -29,7 +29,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the ELV_V_CREA_IX_ELENCO_FASC database table.
- * 
+ *
  */
 @Entity
 @Table(name = "ELV_V_CREA_IX_ELENCO_FASC")

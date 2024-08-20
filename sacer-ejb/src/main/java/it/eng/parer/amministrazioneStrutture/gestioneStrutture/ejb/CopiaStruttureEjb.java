@@ -1647,6 +1647,7 @@ public class CopiaStruttureEjb {
                             DecXsdAttribDatiSpec decXsdAttribDatiSpecNew = new DecXsdAttribDatiSpec();
                             decXsdAttribDatiSpecNew.setDecXsdDatiSpec(decXsdDatiSpecNew);
                             decXsdAttribDatiSpecNew.setNiOrdAttrib(decXsdAttribDatiSpecOld.getNiOrdAttrib());
+                            decXsdAttribDatiSpecNew.setDsAttribDatiSpec(decXsdAttribDatiSpecOld.getDsAttribDatiSpec());
                             List<DecAttribDatiSpec> listaAtt = null;
                             if (newUd != null) {
                                 listaAtt = newUd.getDecAttribDatiSpecs();

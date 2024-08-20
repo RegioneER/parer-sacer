@@ -61,14 +61,14 @@ public class MonitorCoda {
 
     /**
      * Recupera i messaggi dalla coda
-     * 
+     *
      * @param queue
      *            nome coda
      * @param messageSelector
      *            selettore
-     * 
+     *
      * @return lista di messaggi
-     * 
+     *
      * @throws JMSException
      *             errore generico
      */

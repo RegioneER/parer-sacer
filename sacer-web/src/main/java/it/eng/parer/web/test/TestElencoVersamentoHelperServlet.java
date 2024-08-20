@@ -48,9 +48,9 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Servlet di test per i metodi dell'helper {@link ElencoVersamentoHelper}.
- * 
+ *
  * Probabilmente in futuro questa classe verrà eliminata.
- * 
+ *
  * @author Snidero_L
  */
 @WebServlet(name = "TestEvhelper", urlPatterns = { "/TestEvhelper" })
@@ -68,7 +68,7 @@ public class TestElencoVersamentoHelperServlet extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -351,7 +351,7 @@ public class TestElencoVersamentoHelperServlet extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -370,7 +370,7 @@ public class TestElencoVersamentoHelperServlet extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException

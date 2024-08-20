@@ -59,9 +59,9 @@ public class TypeValidator {
      *            descrizione campo data da
      * @param nm_data_a
      *            descrizione campo data a
-     * 
+     *
      * @return dateValidate, un array di Date contenente le date da - a validate
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -185,7 +185,7 @@ public class TypeValidator {
      *            descrizione campo data da
      * @param nm_data_a
      *            descrizione campo data a
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -215,7 +215,7 @@ public class TypeValidator {
      *            dimensione di riferimento da
      * @param size_a
      *            dimensione di riferimento a
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -242,7 +242,7 @@ public class TypeValidator {
      *            id struttura
      * @param idEnte
      *            id ente
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

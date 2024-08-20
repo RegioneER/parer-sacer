@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the VRS_V_VERS_FALLITI_RISOLTO database table.
- * 
+ *
  */
 @Entity
 @Table(name = "VRS_V_VERS_FALLITI_RISOLTO")

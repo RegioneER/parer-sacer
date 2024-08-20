@@ -140,7 +140,7 @@ public class StrutTitolariEjb {
      *            Data istituzione del titolario
      * @param dtSoppres
      *            Data soppressione del titolario
-     * 
+     *
      * @return pk DecTitolario inserito
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

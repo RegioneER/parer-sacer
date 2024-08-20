@@ -44,9 +44,9 @@ import javax.xml.bind.MarshalException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.commons.collections4.Transformer;
 import org.apache.commons.lang3.StringUtils;
 
 import it.eng.parer.elenco.xml.aip.ContenutoSinteticoType;
@@ -437,7 +437,7 @@ public class ElaborazioneElencoIndiceAip {
 
     /**
      * @deprecated
-     * 
+     *
      * @param idElencoVers
      *            identificativo dell'elenco di versamento
      * @param tiStatoConservazione

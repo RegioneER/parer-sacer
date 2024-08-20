@@ -28,7 +28,7 @@ import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.VerificaVersione;
 
 /**
- * 
+ *
  * @author Fioravanti_F
  */
 public class WSDescRecProveConsMM implements IWSDesc {

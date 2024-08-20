@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the MON_V_CHK_AGG_AMB database table.
- * 
+ *
  */
 @Entity
 @Table(name = "MON_V_CHK_AGG_AMB")

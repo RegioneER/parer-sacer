@@ -25,8 +25,39 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import javax.ejb.EJB;
+import javax.naming.NamingException;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoFileDocEjb;
@@ -176,35 +207,6 @@ import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.form.fields.impl.MultiSelect;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.security.Secure;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.ejb.EJB;
-import javax.naming.NamingException;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.codehaus.jettison.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -1861,7 +1863,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      *
      * @param idUnitDoc
      *            id dell'unitÃ documentaria
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -2864,7 +2866,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         }
     }
 
-    public void download() throws EMFError {
+    public void download() throws EMFError, IOException {
         String filename = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name());
         String path = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name());
         String contentType = (String) getSession()
@@ -2878,14 +2880,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                  * Definiamo l'output previsto che sarÃ un file in formato zip di cui si occuperÃ la servlet per fare il
                  * download
                  */
-                OutputStream outUD = getServletOutputStream();
                 getResponse().setContentType(StringUtils.isBlank(contentType) ? "application/zip" : contentType);
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename);
 
-                FileInputStream inputStream = null;
-                try {
+                try (OutputStream outUD = getServletOutputStream();
+                        FileInputStream inputStream = new FileInputStream(fileToDownload);) {
+
                     getResponse().setHeader("Content-Length", String.valueOf(fileToDownload.length()));
-                    inputStream = new FileInputStream(fileToDownload);
                     byte[] bytes = new byte[8000];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(bytes)) != -1) {
@@ -2896,15 +2897,11 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                     log.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
-                    IOUtils.closeQuietly(inputStream);
-                    IOUtils.closeQuietly(outUD);
-                    inputStream = null;
-                    outUD = null;
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
                 if (Boolean.TRUE.equals(deleteFile)) {
-                    fileToDownload.delete();
+                    Files.delete(fileToDownload.toPath());
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");
@@ -3763,7 +3760,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      * stesso
      *
      * @return l'oggetto JSON dei filtri unitÃ documentaria ricerca avanzata
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -3859,7 +3856,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      * Trigger sul filtro "Tipo Documento" per l'aggiunta/rimozione dei dati specifici definiti dal filtro stesso
      *
      * @return l'oggetto JSON dei filtri unitÃ documentaria ricerca avanzata
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -4434,7 +4431,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
      *            il tableBean contenente i dati AroVVisUnitaDocIamRowBean
      * @param docTB
      *            il tableBean contenente i dati AroVVisDocIamTableBean
-     * 
+     *
      * @throws IOException
      *             eccezione in fase di scrittura del file
      */

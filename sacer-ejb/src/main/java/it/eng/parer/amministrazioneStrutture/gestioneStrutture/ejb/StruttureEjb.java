@@ -1695,13 +1695,13 @@ public class StruttureEjb {
     }
 
     /**
-     * 
+     *
      * @param struttureDaElaborare
      *            le strutture da elaborare nell'importa parametri massivo
-     * 
+     *
      * @return la stringa con eventuale errore per presenza di strutture appartenenti ad ambienti diversi nell'import
      *         parametri massivo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2067,7 +2067,7 @@ public class StruttureEjb {
 
     /**
      * Esegue il metodo dell'ejb per la chiamata al WS di allineamento enti convenzionati
-     * 
+     *
      * @param enteConvenzDaAllineaList
      *            lista IamEnteConvenzDaAllinea
      *
@@ -4092,11 +4092,12 @@ public class StruttureEjb {
     }
 
     public DecXsdAttribDatiSpec inserisciXsdAttribDatiSpec(DecXsdDatiSpec xsdDatiSpec, DecAttribDatiSpec attribDatiSpec,
-            BigDecimal niOrdAttrib) {
+            BigDecimal niOrdAttrib, String dsAttribDatiSpec) {
         DecXsdAttribDatiSpec xsdAttribDatiSpec = new DecXsdAttribDatiSpec();
         xsdAttribDatiSpec.setDecXsdDatiSpec(xsdDatiSpec);
         xsdAttribDatiSpec.setDecAttribDatiSpec(attribDatiSpec);
         xsdAttribDatiSpec.setNiOrdAttrib(niOrdAttrib);
+        xsdAttribDatiSpec.setDsAttribDatiSpec(dsAttribDatiSpec);
         struttureHelper.insertEntity(xsdAttribDatiSpec, true);
         return xsdAttribDatiSpec;
     }
@@ -4454,7 +4455,8 @@ public class StruttureEjb {
             }
 
             // Inserisco la relazione xsdDatiSpec-attribDatiSpec
-            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib());
+            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib(),
+                    xsdAttribDatiSpecExp.getDsAttribDatiSpec());
         }
         return xsdDatiSpec;
     }
@@ -4477,7 +4479,8 @@ public class StruttureEjb {
             }
 
             // Inserisco la relazione xsdDatiSpec-attribDatiSpec
-            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib());
+            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib(),
+                    xsdAttribDatiSpecExp.getDsAttribDatiSpec());
         }
         return xsdDatiSpec;
     }
@@ -4500,7 +4503,8 @@ public class StruttureEjb {
             }
 
             // Inserisco la relazione xsdDatiSpec-attribDatiSpec
-            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib());
+            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib(),
+                    xsdAttribDatiSpecExp.getDsAttribDatiSpec());
         }
         return xsdDatiSpec;
     }

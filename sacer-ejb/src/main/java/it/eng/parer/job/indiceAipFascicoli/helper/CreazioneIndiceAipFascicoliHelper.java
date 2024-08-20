@@ -17,27 +17,15 @@
 
 package it.eng.parer.job.indiceAipFascicoli.helper;
 
-import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.*;
-import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
-import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
-import it.eng.parer.exception.ParerInternalError;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.viewEntity.ElvVLisIxAipFascByEle;
-import it.eng.parer.volume.helper.VolumeHelper;
-import it.eng.parer.web.helper.ComponentiHelper;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.ws.dto.CSChiave;
-import it.eng.parer.ws.dto.CSChiaveFasc;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.Costanti;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -51,9 +39,41 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import org.apache.commons.collections.CollectionUtils;
+
+import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.entity.DecAaTipoFascicolo;
+import it.eng.parer.entity.DecModelloXsdFascicolo;
+import it.eng.parer.entity.ElvElencoVersFasc;
+import it.eng.parer.entity.FasAipFascicoloDaElab;
+import it.eng.parer.entity.FasContenVerAipFascicolo;
+import it.eng.parer.entity.FasFascicolo;
+import it.eng.parer.entity.FasFileMetaVerAipFasc;
+import it.eng.parer.entity.FasMetaVerAipFascicolo;
+import it.eng.parer.entity.FasSipVerAipFascicolo;
+import it.eng.parer.entity.FasUdAipFascicoloDaElab;
+import it.eng.parer.entity.FasVerAipFascicolo;
+import it.eng.parer.entity.FasXmlVersFascicolo;
+import it.eng.parer.entity.FasXsdMetaVerAipFasc;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
+import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
+import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.viewEntity.ElvVLisIxAipFascByEle;
+import it.eng.parer.volume.helper.VolumeHelper;
+import it.eng.parer.web.helper.ComponentiHelper;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.dto.CSChiave;
+import it.eng.parer.ws.dto.CSChiaveFasc;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.Costanti;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 
 /**
  *
@@ -98,7 +118,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      * Ottieni il numero massimo di righe da recuperare.
      *
      * @param maxResultString
-     * 
+     *
      * @return numero massimo di righe da recuperare
      */
     private static int getMaxFetchIndiceAipFascicolo(String maxResultString) {
@@ -124,7 +144,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *
      * @param idFascicolo
      *            id fascicolo
-     * 
+     *
      * @return il progressivo versione oppure 0 se questo ancora non esiste
      */
     public int getProgressivoVersione(Long idFascicolo) {
@@ -148,9 +168,9 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *            id fascicolo
      * @param tiCreazione
      *            tipo creazione
-     * 
+     *
      * @return la nuova versione
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -209,9 +229,9 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *            id unita doc
      * @param tiCreazione
      *            tipo creazione
-     * 
+     *
      * @return la nuova versione
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -253,7 +273,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *            id fascicolo
      * @param tiXmlVers
      *            tipo xml versamento
-     * 
+     *
      * @return xml di versamento per AIP fascicolo
      */
     public FasXmlVersFascicolo getFasXmlVersFascicolo(Long idFascicolo, String tiXmlVers) {
@@ -276,9 +296,9 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *            id unita doc
      * @param tiCreazione
      *            tipo creazione
-     * 
+     *
      * @return la nuova versione
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -325,7 +345,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *            codice versione
      * @param sistemaConservazione
      *            sistema conservazione
-     * 
+     *
      * @return entity FasVerAipFascicolo
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -395,14 +415,12 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         }
 
         // Determino lo xml di richiesta del versamento del fascicolo
-        FasXmlVersFascicolo fasXmlVersFascicoloRich = (FasXmlVersFascicolo) CollectionUtils.find(
-                fasFascicolo.getFasXmlVersFascicolos(),
-                object -> ((FasXmlVersFascicolo) object).getTiXmlVers().equals("RICHIESTA"));
+        FasXmlVersFascicolo fasXmlVersFascicoloRich = IterableUtils.find(fasFascicolo.getFasXmlVersFascicolos(),
+                object -> (object).getTiXmlVers().equals("RICHIESTA"));
 
         // Determino lo xml di risposta del versamento del fascicolo
-        FasXmlVersFascicolo fasXmlVersFascicoloRisp = (FasXmlVersFascicolo) CollectionUtils.find(
-                fasFascicolo.getFasXmlVersFascicolos(),
-                object -> ((FasXmlVersFascicolo) object).getTiXmlVers().equals("RISPOSTA"));
+        FasXmlVersFascicolo fasXmlVersFascicoloRisp = IterableUtils.find(fasFascicolo.getFasXmlVersFascicolos(),
+                object -> (object).getTiXmlVers().equals("RISPOSTA"));
 
         /* Inserisco FAS_SIP_VER_AIP_FASCICOLO */
         FasSipVerAipFascicolo sipVerFascicolo = new FasSipVerAipFascicolo();
@@ -447,7 +465,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *            id ambiente
      * @param tiModelloXsd
      *            tipo modello xsd
-     * 
+     *
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public List<DecModelloXsdFascicolo> retrieveIdModelliDaElaborare(long idAmbiente, String tiModelloXsd) {
@@ -474,7 +492,7 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
      *            tipo modello
      * @param cdVersioneXml
      *            versione del servizio di versamento fascicolo
-     * 
+     *
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public List<DecModelloXsdFascicolo> retrieveIdModelliDaElaborareV2(long idAmbiente, String tiModelloXsd,
@@ -528,12 +546,20 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
     }
 
     public FasFileMetaVerAipFasc registraFasFileMetaVerAipFasc(long idMetaVerAipFascicolo, String file, OrgStrut strut,
-            Date dtCreazione) {
+            Date dtCreazione, BackendStorage backendMetadata, Map<String, String> indiceAipFascicoloBlob) {
         FasFileMetaVerAipFasc fileMetaVerAipFasc = new FasFileMetaVerAipFasc();
         FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager().find(FasMetaVerAipFascicolo.class,
                 idMetaVerAipFascicolo);
         fileMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
-        fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+        // MEV#30398
+        if (backendMetadata.isDataBase()) {
+            // clob contenente lo XML in input (canonicalizzato)
+            fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+        } else {
+            indiceAipFascicoloBlob.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE.name(),
+                    file);
+        }
+        // end MEV#30398
         fileMetaVerAipFasc.setOrgStrut(strut);
         fileMetaVerAipFasc.setDtCreazione(dtCreazione);
         getEntityManager().persist(fileMetaVerAipFasc);
@@ -579,5 +605,15 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiStatoConservazione", TiStatoConservazione.ANNULLATO);
         return query.getResultList();
+    }
+
+    public DecAaTipoFascicolo retrieveDecAaTipoFascicoloCorrente(long idTipoFascicolo) {
+        Query query = entityManager.createQuery("SELECT aaTipoFascicolo FROM DecAaTipoFascicolo aaTipoFascicolo "
+                + "WHERE aaTipoFascicolo.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo "
+                + "AND aaTipoFascicolo.aaIniTipoFascicolo <= :aaCorrente AND aaTipoFascicolo.aaFinTipoFascicolo >= :aaCorrente ");
+        query.setParameter("idTipoFascicolo", idTipoFascicolo);
+        query.setParameter("aaCorrente", BigDecimal.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+        List<DecAaTipoFascicolo> lista = query.getResultList();
+        return lista.get(0);
     }
 }

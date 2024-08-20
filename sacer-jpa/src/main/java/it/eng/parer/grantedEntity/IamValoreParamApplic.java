@@ -30,7 +30,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the IAM_VALORE_PARAM_APPLIC database table.
- * 
+ *
  */
 @Entity
 @Table(name = "IAM_VALORE_PARAM_APPLIC", schema = "SACER_IAM")

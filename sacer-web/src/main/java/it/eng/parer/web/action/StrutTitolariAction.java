@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -1720,7 +1721,7 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
         }
     }
 
-    public void download() throws EMFError {
+    public void download() throws EMFError, IOException {
         String filename = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name());
         String path = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name());
         Boolean deleteFile = Boolean.parseBoolean(
@@ -1734,14 +1735,13 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
                  * Definiamo l'output previsto che sarà un file in formato zip di cui si occuperà la servlet per fare il
                  * download
                  */
-                OutputStream outUD = getServletOutputStream();
                 getResponse().setContentType(StringUtils.isBlank(contentType) ? "application/zip" : contentType);
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename);
 
-                FileInputStream inputStream = null;
-                try {
+                try (OutputStream outUD = getServletOutputStream();
+                        FileInputStream inputStream = new FileInputStream(fileToDownload);) {
+
                     getResponse().setHeader("Content-Length", String.valueOf(fileToDownload.length()));
-                    inputStream = new FileInputStream(fileToDownload);
                     byte[] bytes = new byte[8000];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(bytes)) != -1) {
@@ -1752,15 +1752,11 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
                     log.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
-                    IOUtils.closeQuietly(inputStream);
-                    IOUtils.closeQuietly(outUD);
-                    inputStream = null;
-                    outUD = null;
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
-                    fileToDownload.delete();
+                if (deleteFile.booleanValue()) {
+                    Files.delete(fileToDownload.toPath());
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");

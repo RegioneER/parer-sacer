@@ -17,6 +17,38 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper.DatiSpecificiHelper;
 import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.DecAttribDatiSpec;
@@ -39,35 +71,6 @@ import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * EJB di gestione dei dati specifici
@@ -274,7 +277,8 @@ public class DatiSpecificiEjb {
                 xsdDatiSpecRowBean.getNmSistemaMigraz());
         /*
          * Salvo la lista degli attributi uno a uno Controllo che l'attributo non ci sia gi\u00E0, se c'\u00E8 non
-         * importa inserirlo, devo solo inserire il nuovo riferimento in DecXsdAttribDatiSpec
+         * importa inserirlo, devo solo inserire il nuovo riferimento in DecXsdAttribDatiSpec (MEV 31034 con la
+         * descrizione di questo attributo)
          */
         List<String> controlList = new ArrayList<>();
 
@@ -297,7 +301,7 @@ public class DatiSpecificiEjb {
             // inserisco nella lista dei riferimenti
             if (idAttribDatiSpec != null) {
                 // DecXsdAttribDatiSpecRowBean xsdAttribDatiSpecRowBean = new DecXsdAttribDatiSpecRowBean();
-                insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order);
+                insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order, attr);
             }
             controlList.add(attr);
             order = order + 5;
@@ -305,7 +309,8 @@ public class DatiSpecificiEjb {
 
     }
 
-    private void insertDecXsdAttribDatiSpec(BigDecimal idXsdDatiSpec, BigDecimal idAttribDatiSpec, int order) {
+    private void insertDecXsdAttribDatiSpec(BigDecimal idXsdDatiSpec, BigDecimal idAttribDatiSpec, int order,
+            String dsAttribDatiSpec) {
 
         DecXsdAttribDatiSpec xsdAttribDatiSpec = new DecXsdAttribDatiSpec();
 
@@ -315,6 +320,7 @@ public class DatiSpecificiEjb {
         xsdAttribDatiSpec.setDecXsdDatiSpec(xsdDatiSpec);
         xsdAttribDatiSpec.setDecAttribDatiSpec(attribDatiSpec);
         xsdAttribDatiSpec.setNiOrdAttrib(new BigDecimal(order));
+        xsdAttribDatiSpec.setDsAttribDatiSpec(dsAttribDatiSpec);
 
         helper.insertEntity(xsdAttribDatiSpec, true);
     }
@@ -669,7 +675,7 @@ public class DatiSpecificiEjb {
                 }
                 // inserisco riferimento a Xsd
                 if (idAttribDatiSpec != null) {
-                    insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order);
+                    insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order, attr);
                 }
                 // se Xsd in uso, allora devo semplicemente aggiornare il numero ordine (unica modifica consentita)
                 // MEV #16859: ora devo poter consentire non solo l'aggiornamento del numero d'ordine, ma anche
@@ -682,7 +688,7 @@ public class DatiSpecificiEjb {
                     // inserisco e ricavo id per inserire anche il riferimento
                     idAttribDatiSpec = salvaAttribDatiSpec(attr, attribDatiSpecRowBean);
 
-                    insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order);
+                    insertDecXsdAttribDatiSpec(idXsdDatiSpec, idAttribDatiSpec, order, attr);
                 }
                 // fine MEV #16859
                 else {
@@ -843,15 +849,6 @@ public class DatiSpecificiEjb {
         return xsdAttribDatiSpecRowBean;
     }
 
-    public BigDecimal getDecAttribNrOrd(DecAttribDatiSpecRowBean row, DecXsdDatiSpecRowBean xsdDatiSpecRowBean) {
-
-        DecXsdAttribDatiSpec attrib = new DecXsdAttribDatiSpec();
-        attrib = helper.getDecXsdAttribDatiSpecByAttrib(row.getIdAttribDatiSpec(),
-                xsdDatiSpecRowBean.getIdXsdDatiSpec());
-
-        return attrib.getNiOrdAttrib();
-    }
-
     public DecXsdDatiSpecTableBean getDecXsdDatiSpecTableBean(DecXsdDatiSpecRowBean xsdDatiSpecRowBean) {
         DecXsdDatiSpecTableBean xsdDatiSpecTableBean = new DecXsdDatiSpecTableBean();
         List<DecXsdDatiSpec> list = helper.retrieveDecXsdDatiSpecList(xsdDatiSpecRowBean.getIdStrut(),
@@ -893,10 +890,16 @@ public class DatiSpecificiEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateDsDecAttribDatiSpec(LogParam param, BigDecimal idAttribDatiSpec, String dsAttribDatiSpec)
-            throws EMFError {
+    public void updateDsDecAttribDatiSpec(LogParam param, BigDecimal idAttribDatiSpec, String dsAttribDatiSpec,
+            BigDecimal idXsdDatiSpec) throws EMFError {
         DecAttribDatiSpec attribDatiSpec = helper.findById(DecAttribDatiSpec.class, idAttribDatiSpec);
-        attribDatiSpec.setDsAttribDatiSpec(dsAttribDatiSpec);
+        // attribDatiSpec.setDsAttribDatiSpec(dsAttribDatiSpec);
+
+        // MEV #31034: salvo la descrizione attributo dato specifico in DEC_XSD_ATTRIB_DATI_SPEC
+        DecXsdAttribDatiSpec xsdAttribDatiSpec = helper.getDecXsdAttribDatiSpecByAttrib(idAttribDatiSpec,
+                idXsdDatiSpec);
+        xsdAttribDatiSpec.setDsAttribDatiSpec(dsAttribDatiSpec);
+
         helper.getEntityManager().flush();
 
         if (attribDatiSpec.getDecTipoUnitaDoc() != null) {

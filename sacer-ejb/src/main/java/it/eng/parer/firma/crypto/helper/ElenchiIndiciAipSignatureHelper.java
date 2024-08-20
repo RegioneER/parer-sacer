@@ -172,7 +172,7 @@ public class ElenchiIndiciAipSignatureHelper extends SigningHelper {
      *            sessione HSM
      * @param idElenco
      *            id elenco
-     * 
+     *
      * @return entity HsmElencoSessioneFirma
      */
     public HsmElencoSessioneFirma findElencoSessione(HsmSessioneFirma session, long idElenco) {
@@ -190,7 +190,7 @@ public class ElenchiIndiciAipSignatureHelper extends SigningHelper {
      *            id sessione
      * @param idElenco
      *            id elenco
-     * 
+     *
      * @return entity HsmElencoSessioneFirma
      */
     public HsmElencoSessioneFirma findElencoSessione(long sessionId, long idElenco) {

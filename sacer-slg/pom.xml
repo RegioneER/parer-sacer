@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>9.3.1-SNAPSHOT</version>
+        <version>10.1.0</version>
     </parent>
     
     <artifactId>sacer-jboss-slg</artifactId>
@@ -23,9 +23,6 @@
                         <id>parer-tool-compilation</id>
                         <phase>generate-sources</phase>
                         <configuration>
-                            <source>1.8</source>
-                            <target>1.8</target>
-                            <compilerVersion>1.8</compilerVersion>
                             <includes>
                                 <include>it/eng/parer/slite/gen/util/*.java</include>
                             </includes>
@@ -34,7 +31,7 @@
                             <goal>compile</goal>
                         </goals>
                     </execution>
-                </executions>                
+                </executions>
             </plugin>
             
             <plugin>

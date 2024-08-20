@@ -4,11 +4,19 @@
 <sl:html>
     <sl:head title="<%= EntiConvenzionatiForm.EnteConvenzOrg.DESCRIPTION%>" >
     </sl:head>
+    <script type="text/javascript" src="<c:url value='/js/sips/customDateContigueMessageBox.js'/>" ></script>
     <sl:body>
         <sl:header changeOrganizationBtnDescription="Cambia struttura" />
         <sl:menu />
         <sl:content >
             <slf:messageBox />
+            <c:if test="${!empty requestScope.customBox}">
+                <div class="messages customBox ">
+                    <ul>
+                        <li class="message warning ">Attenzione: è stato rilevato un intervallo di validità non contiguo nella lista associazioni ente convenzionato - struttura. Vuoi proseguire con il salvataggio?</li>
+                    </ul>
+                </div>
+            </c:if>
             <sl:contentTitle title="<%= EntiConvenzionatiForm.EnteConvenzOrg.DESCRIPTION%>"/>
             <c:if test="${sessionScope['###_FORM_CONTAINER']['enteConvenzOrgList'].table['empty']}">
                 <slf:fieldBarDetailTag name="<%= EntiConvenzionatiForm.EnteConvenzOrg.NAME%>" hideBackButton="${sessionScope['###_FORM_CONTAINER']['enteConvenzOrgList'].status eq 'insert'}"/> 

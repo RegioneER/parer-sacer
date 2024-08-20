@@ -17,6 +17,9 @@
 
 package it.eng.parer.elencoVersamento.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromInteger;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -53,7 +56,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
@@ -1448,7 +1451,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            idStrut
      * @param rowNum
      *            rowNum
-     * 
+     *
      * @return List - Insieme di elementi ordinati
      */
     public List<PayLoad> retrieveUdDocUpdToVerify(long idStrut, int rowNum) {
@@ -2336,9 +2339,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on (comp.id_strut_doc = strut_doc. id_strut_doc) where
          * ud.id_unita_doc = <unità doc corrente> and ud.id_elenco_vers = <elenco corrente> and doc.dt_annul =
          * '31/12/2444'
-         * 
+         *
          * UNION
-         * 
+         *
          * select comp.id_comp_doc, comp.ds_urn_comp_calc from ARO_DOC doc join ARO_STRUT_DOC strut_doc on
          * (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on (comp.id_strut_doc = strut_doc. id_strut_doc) where
          * doc.id_unita_doc = <unità doc corrente> and doc.id_elenco_vers = <elenco corrente> and doc.ti_creazione =
@@ -2460,15 +2463,15 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * select doc.id_doc from ARO_UNITA_DOC ud join ARO_DOC doc on (doc.id_unita_doc = ud.id_unita_doc and
          * doc.ti_creazione = 'VERSAMENTO_UNITA_DOC') where ud.id_unita_doc = <unità doc corrente> and doc.dt_annul =
          * '31/12/2444' and ud.dt_creazione < <data creazione minima>
-         * 
+         *
          * and (ud.id_elenco_vers is null or (ud.id_elenco_vers is not nulland ud.id_elenco_vers != <elenco corrente>)
          * and ud.ti_stato_ud_elenco_vers != IN_ELENCO_IN_CODA_INDICE_AIP))
-         * 
+         *
          * UNION
-         * 
+         *
          * select doc.id_doc from ARO_DOC doc where doc.id_unita_doc = <unità doc corrente> and doc.ti_creazione =
          * 'AGGIUNTA_DOCUMENTO' and doc.dt_annul = '31/12/2444' and doc.dt_creazione < <data creazione minima>
-         * 
+         *
          * and (doc.id_elenco_vers is null or (doc.id_elenco_vers is not null and doc.id_elenco_vers != <elenco
          * corrente>) and doc.ti_stato_doc_elenco_vers != IN_ELENCO_IN_CODA_INDICE_AIP))
          */
@@ -2570,7 +2573,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * select id_upd_unita_doc from ARO_UPD_UNITA_DOC upd join ARO_UNITA_DOC ud on (ud.id_unita_doc =
          * upd.id_unita_doc) where upd.id_unita_doc = <unità doc corrente> and ud.dt_annul = ‘31/12/2444’ and
          * upd.pg_upd_unita_doc < <progressivo aggiornamento minimo>
-         * 
+         *
          * and (upd.id_elenco_vers is null or (upd.id_elenco_vers is not null and upd.id_elenco_vers != <elenco
          * corrente> and upd.ti_stato_upd_elenco_vers not in (IN_ELENCO_IN_CODA_INDICE_AIP,
          * IN_ELENCO_CON_INDICI_AIP_GENERATI, N_ELENCO_CON_ELENCO_INDICI_AIP_CREATO,
@@ -2616,17 +2619,17 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on (comp.id_strut_doc = strut_doc. id_strut_doc) where
          * doc.id_unita_doc = <unità doc corrente> and doc.id_elenco_vers = <elenco corrente> and doc.ti_creazione =
          * 'AGGIUNTA_DOCUMENTO' and doc.dt_annul = '31/12/2444'
-         * 
+         *
          * UNION
-         * 
+         *
          * select comp.id_comp_doc, comp.ds_urn_comp_calc from ARO_UNITA_DOC ud join ARO_DOC doc on (doc.id_unita_doc =
          * ud.id_unita_doc) join ARO_STRUT_DOC strut_doc on (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on
          * (comp.id_strut_doc = strut_doc. id_strut_doc) where ud.id_unita_doc = <unità doc corrente> and
          * doc.ti_creazione = 'VERSAMENTO_UNITA_DOC' and doc.dt_annul = '31/12/2444' and ud.ti_stato_ud_elenco_vers =
          * 'IN_ELENCO_IN_CODA_INDICE_AIP'
-         * 
+         *
          * UNION
-         * 
+         *
          * select comp.id_comp_doc, comp.ds_urn_comp_calc from ARO_UNITA_DOC ud join ARO_DOC doc on (doc.id_unita_doc =
          * ud.id_unita_doc) join ARO_STRUT_DOC strut_doc on (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on
          * (comp.id_strut_doc = strut_doc. id_strut_doc) where ud.id_unita_doc = <unità doc corrente> and
@@ -2690,9 +2693,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * select id_upd_unita_doc, pg_upd_unita_doc from ARO_UPD_UNITA_DOC upd join ARO_UNITA_DOC ud on
          * (ud.id_unita_doc = upd.id_unita_doc) where upd.id_unita_doc = <unità doc corrente> and ud.dt_annul =
          * ‘31/12/2444’ and upd.id_elenco_vers = <elenco corrente>
-         * 
+         *
          * UNION
-         * 
+         *
          * select id_upd_unita_doc, pg_upd_unita_doc from ARO_UPD_UNITA_DOC upd join ARO_UNITA_DOC ud on
          * (ud.id_unita_doc = upd.id_unita_doc) where upd.id_unita_doc = <unità doc corrente> and ud.dt_annul =
          * ‘31/12/2444’ and upd.ti_stato_upd_elenco_vers in (IN_ELENCO_IN_CODA_INDICE_AIP,
@@ -3218,6 +3221,15 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return query.getResultList();
     }
 
+    public List<ElvFileElencoVer> retrieveFileIndiceElenco2(long idElencoVers, String... tiFileElencoVers) {
+        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVer(u.idFileElencoVers, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVer u "
+                + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers AND u.tiFileElencoVers IN (:tiFileElencoVers)";
+        Query query = em.createQuery(queryStr);
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
+        return query.getResultList();
+    }
+
     public ElvFileElencoVer getFileIndiceElenco(long idElencoVers, String tiFileElencoVers) {
         String queryStr = "SELECT u FROM ElvFileElencoVer u " + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers "
                 + "AND u.tiFileElencoVers IN (:tiFileElencoVers)";
@@ -3677,9 +3689,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 }
                 // EVO#16486
                 // Recupero lo urn ORIGINALE dalla tabella VRS_URN_XML_SESSIONE_VERS (EVO#16486)
-                VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils.find(
-                        xml.getVrsUrnXmlSessioneVers(),
-                        object -> ((VrsUrnXmlSessioneVers) object).getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE));
+                VrsUrnXmlSessioneVers urnXmlSessioneVers = IterableUtils.find(xml.getVrsUrnXmlSessioneVers(),
+                        object -> (object).getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE));
                 if (urnXmlSessioneVers != null) {
                     tmpDatiXml.setUrn(urnXmlSessioneVers.getDsUrn());
                 } else {

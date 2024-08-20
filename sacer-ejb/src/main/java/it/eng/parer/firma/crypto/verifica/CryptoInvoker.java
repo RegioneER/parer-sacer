@@ -69,7 +69,7 @@ public class CryptoInvoker {
      *
      * @param url
      *            lista URI
-     * 
+     *
      * @return true/false se servizio UP and running
      */
     public boolean isUp(String url) {
@@ -90,9 +90,9 @@ public class CryptoInvoker {
      *
      * @param blobFilePerFirma
      *            blob del firmatario
-     * 
+     *
      * @return Oggetto contente la CRL
-     * 
+     *
      * @throws CryptoParerException
      *             Errore (gestito)
      * @throws RestClientException
@@ -123,9 +123,9 @@ public class CryptoInvoker {
      *            DN della CA
      * @param keyId
      *            keyID della CA
-     * 
+     *
      * @return Oggetto contente la CRL
-     * 
+     *
      * @throws CryptoParerException
      *             Errore (gestito)
      * @throws RestClientException
@@ -155,9 +155,9 @@ public class CryptoInvoker {
      *
      * @param urls
      *            lista URI
-     * 
+     *
      * @return la CRL (se c'è)
-     * 
+     *
      * @throws CryptoParerException
      *             se non c'è la crl
      * @throws RestClientException
@@ -181,7 +181,7 @@ public class CryptoInvoker {
      *
      * @param fileVerSerie
      *            contenuto da marcare.
-     * 
+     *
      * @return Marca temporale per l'oggetto in input.
      */
     // @ParerRetry(contextDataValue = RestInvoker.CURRENT_URL, retryException = RestClientException.class)
@@ -220,7 +220,7 @@ public class CryptoInvoker {
      *
      * @param fileVerSerie
      *            contenuto da marcare.
-     * 
+     *
      * @return Oggetto in input + marca temporale.
      */
     public ParerTSD generateTSD(byte[] fileVerSerie) {
@@ -251,7 +251,7 @@ public class CryptoInvoker {
      *
      * @param timeout
      *            timeout in ms
-     * 
+     *
      * @return restTemplate di spring configurato per "crypto"
      */
     private RestTemplate buildRestTemplateWithRetry() {

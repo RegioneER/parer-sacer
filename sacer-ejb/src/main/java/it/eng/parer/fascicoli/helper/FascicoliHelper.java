@@ -17,6 +17,10 @@
 
 package it.eng.parer.fascicoli.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -58,10 +62,12 @@ import it.eng.parer.entity.FasEventoSog;
 import it.eng.parer.entity.FasFascicolo;
 import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasLinkFascicolo;
+import it.eng.parer.entity.FasMetaVerAipFascicolo;
 import it.eng.parer.entity.FasRespFascicolo;
 import it.eng.parer.entity.FasSogFascicolo;
 import it.eng.parer.entity.FasUniOrgRespFascicolo;
 import it.eng.parer.entity.FasValoreAttribFascicolo;
+import it.eng.parer.entity.FasVerAipFascicolo;
 import it.eng.parer.entity.MonContaFascicoli;
 import it.eng.parer.entity.MonContaFascicoliKo;
 import it.eng.parer.entity.OrgStrut;
@@ -691,7 +697,7 @@ public class FascicoliHelper extends GenericHelper {
      *            id utente
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @return lista entity di tipo DecTipoFascicolo
      */
     public List<DecTipoFascicolo> getTipiFascicoloAbilitati(long idUtente, BigDecimal idStruttura) {
@@ -1430,6 +1436,36 @@ public class FascicoliHelper extends GenericHelper {
         List<FasFileMetaVerAipFasc> meta = query.getResultList();
         if (!meta.isEmpty()) {
             return meta.get(0);
+        }
+        return null;
+    }
+
+    public FasMetaVerAipFascicolo getFasMetaVerAipFascicolo(long idFascicolo, String tiMeta) {
+        Query query = getEntityManager()
+                .createQuery("SELECT metaVerAipFascicolo FROM FasMetaVerAipFascicolo metaVerAipFascicolo "
+                        + "JOIN metaVerAipFascicolo.fasVerAipFascicolo verAipFascicolo "
+                        + "WHERE verAipFascicolo.fasFascicolo.idFascicolo = :idFascicolo "
+                        + "AND verAipFascicolo.pgVerAipFascicolo = (SELECT MAX(verAipFascicolo2.pgVerAipFascicolo) FROM FasVerAipFascicolo verAipFascicolo2 WHERE verAipFascicolo2.fasFascicolo.idFascicolo = :idFascicolo) "
+                        + "AND metaVerAipFascicolo.tiMeta = :tiMeta ");
+        query.setParameter("idFascicolo", idFascicolo);
+        query.setParameter("tiMeta", tiMeta);
+        List<FasMetaVerAipFascicolo> meta = query.getResultList();
+        if (!meta.isEmpty()) {
+            return meta.get(0);
+        }
+        return null;
+    }
+
+    public FasVerAipFascicolo getFasVerAipFascicolo(long idFascicolo) {
+        Query query = getEntityManager().createQuery("SELECT verAipFascicolo FROM FasVerAipFascicolo verAipFascicolo "
+                + "WHERE verAipFascicolo.fasFascicolo.idFascicolo = :idFascicolo "
+                + "AND verAipFascicolo.pgVerAipFascicolo = " + "(SELECT MAX(verAipFascicolo2.pgVerAipFascicolo) "
+                + "FROM FasVerAipFascicolo verAipFascicolo2 "
+                + "WHERE verAipFascicolo2.fasFascicolo.idFascicolo = :idFascicolo) ");
+        query.setParameter("idFascicolo", idFascicolo);
+        List<FasVerAipFascicolo> ver = query.getResultList();
+        if (!ver.isEmpty()) {
+            return ver.get(0);
         }
         return null;
     }
@@ -3531,7 +3567,7 @@ public class FascicoliHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @return lista di elementi di tipo DecModelloXsdFascicolo
      */
     public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloDisp() {
@@ -3552,10 +3588,10 @@ public class FascicoliHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @param idTipoFascicolo
      *            id tipo fascicolo
-     * 
+     *
      * @return lista di Object timodelloxsd
      */
     public List<Object[]> getDecModelloXsdFascicoloByTipoFascicolo(long idTipoFascicolo) {
@@ -3577,12 +3613,12 @@ public class FascicoliHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @param idTipoFascicolo
      *            id tipo fascicolo
      * @param tiModelloXsd
      *            modello xsd
-     * 
+     *
      * @return lista di elementi di tipo DecModelloXsdFascicolo
      */
     public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloByTipoFascicoloAndIdModelloXsd(long idTipoFascicolo,

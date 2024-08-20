@@ -338,7 +338,14 @@ public class AmbienteAction extends AmbienteAbstractAction {
         getForm().getAmbientiList().setStatus(Status.view);
 
         // Parametri
-        loadListeParametriAmbiente(idAmbiente, null, false, false, false, false, false);
+        // loadListeParametriAmbiente(idAmbiente, null, false, false, false, false, false);
+        loadListaParametriAmministrazioneAmbiente(idAmbiente, null, true, false,
+                getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriConservazioneAmbiente(idAmbiente, null, true, false,
+                getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriGestioneAmbiente(idAmbiente, null, true, false,
+                getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+        loadListaParametriMultiAmbiente(idAmbiente, true, false);
         getForm().getParametriAmbienteButtonList().getParametriAmministrazioneAmbienteButton().setEditMode();
         getForm().getParametriAmbienteButtonList().getParametriConservazioneAmbienteButton().setEditMode();
         getForm().getParametriAmbienteButtonList().getParametriGestioneAmbienteButton().setEditMode();
@@ -883,9 +890,9 @@ public class AmbienteAction extends AmbienteAbstractAction {
     }
 
     /*
-     * 
+     *
      * METODI DI RICERCA AMBIENTE/ENTE/STRUTTURA
-     * 
+     *
      */
     @Override
     public void visAmbienteButton() throws EMFError {
@@ -1011,7 +1018,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
 
     /*
      * Metodi per update Ambienti / Enti / Strutture
-     * 
+     *
      */
     @Override
     public void updateAmbientiList() throws EMFError {
@@ -1120,7 +1127,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
 
     /*
      * Metodi per cancellazione Ambienti / Enti / Strutture
-     * 
+     *
      */
     @Override
     public void deleteAmbientiList() throws EMFError {
@@ -1394,7 +1401,14 @@ public class AmbienteAction extends AmbienteAbstractAction {
     public void parametriAmministrazioneAmbienteButton() throws Throwable {
         BigDecimal idAmbiente = ((BaseRowInterface) getForm().getAmbientiList().getTable().getCurrentRow())
                 .getBigDecimal("id_ambiente");
-        loadListeParametriAmbiente(idAmbiente, null, true, true, true, true, true);
+        // loadListeParametriAmbiente(idAmbiente, null, true, true, true, true, true);
+        loadListaParametriAmministrazioneAmbiente(idAmbiente, null, false, true,
+                getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriConservazioneAmbiente(idAmbiente, null, false, true,
+                getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriGestioneAmbiente(idAmbiente, null, false, true,
+                getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+        loadListaParametriMultiAmbiente(idAmbiente, false, true);
         prepareRicercaParametriAmbiente(AMMINISTRAZIONE);
     }
 
@@ -1402,7 +1416,14 @@ public class AmbienteAction extends AmbienteAbstractAction {
     public void parametriConservazioneAmbienteButton() throws Throwable {
         BigDecimal idAmbiente = ((BaseRowInterface) getForm().getAmbientiList().getTable().getCurrentRow())
                 .getBigDecimal("id_ambiente");
-        loadListeParametriAmbiente(idAmbiente, null, true, false, true, true, false);
+        // loadListeParametriAmbiente(idAmbiente, null, true, false, true, true, false);
+        loadListaParametriAmministrazioneAmbiente(idAmbiente, null, false, false,
+                getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriConservazioneAmbiente(idAmbiente, null, false, true,
+                getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriGestioneAmbiente(idAmbiente, null, false, true,
+                getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+        loadListaParametriMultiAmbiente(idAmbiente, false, false);
         prepareRicercaParametriAmbiente(CONSERVAZIONE);
     }
 
@@ -1410,7 +1431,14 @@ public class AmbienteAction extends AmbienteAbstractAction {
     public void parametriGestioneAmbienteButton() throws Throwable {
         BigDecimal idAmbiente = ((BaseRowInterface) getForm().getAmbientiList().getTable().getCurrentRow())
                 .getBigDecimal("id_ambiente");
-        loadListeParametriAmbiente(idAmbiente, null, true, false, false, true, false);
+        // loadListeParametriAmbiente(idAmbiente, null, true, false, false, true, false);
+        loadListaParametriAmministrazioneAmbiente(idAmbiente, null, false, false,
+                getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriConservazioneAmbiente(idAmbiente, null, false, false,
+                getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+        loadListaParametriGestioneAmbiente(idAmbiente, null, false, true,
+                getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+        loadListaParametriMultiAmbiente(idAmbiente, false, false);
         prepareRicercaParametriAmbiente(GESTIONE);
     }
 
@@ -1437,13 +1465,34 @@ public class AmbienteAction extends AmbienteAbstractAction {
                 String provenzienzaParametri = (String) getSession().getAttribute("provenienzaParametri");
                 switch (provenzienzaParametri) {
                 case AMMINISTRAZIONE:
-                    loadListeParametriAmbiente(idAmbiente, funzione, false, true, true, true, true);
+                    // loadListeParametriAmbiente(idAmbiente, funzione, false, true, true, true, true);
+                    loadListaParametriAmministrazioneAmbiente(idAmbiente, funzione, false, true,
+                            getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriConservazioneAmbiente(idAmbiente, funzione, false, true,
+                            getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriGestioneAmbiente(idAmbiente, funzione, false, true,
+                            getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriMultiAmbiente(idAmbiente, true, true);
                     break;
                 case CONSERVAZIONE:
-                    loadListeParametriAmbiente(idAmbiente, funzione, false, false, true, true, true);
+                    // loadListeParametriAmbiente(idAmbiente, funzione, false, false, true, true, true);
+                    loadListaParametriAmministrazioneAmbiente(idAmbiente, funzione, false, false,
+                            getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriConservazioneAmbiente(idAmbiente, funzione, false, true,
+                            getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriGestioneAmbiente(idAmbiente, funzione, false, true,
+                            getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriMultiAmbiente(idAmbiente, false, false);
                     break;
                 case GESTIONE:
-                    loadListeParametriAmbiente(idAmbiente, funzione, false, false, false, true, true);
+                    // loadListeParametriAmbiente(idAmbiente, funzione, false, false, false, true, true);
+                    loadListaParametriAmministrazioneAmbiente(idAmbiente, funzione, false, false,
+                            getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriConservazioneAmbiente(idAmbiente, funzione, false, false,
+                            getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriGestioneAmbiente(idAmbiente, funzione, false, true,
+                            getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+                    loadListaParametriMultiAmbiente(idAmbiente, false, false);
                     break;
                 default:
                     break;
@@ -1490,7 +1539,14 @@ public class AmbienteAction extends AmbienteAbstractAction {
             getForm().getParametriConservazioneAmbienteList().setViewMode();
             getForm().getParametriGestioneAmbienteList().setViewMode();
             try {
-                loadDettaglioAmbiente(idAmbiente);
+                // loadDettaglioAmbiente(idAmbiente);
+                loadListaParametriAmministrazioneAmbiente(idAmbiente, null, false, false,
+                        getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords());
+                loadListaParametriConservazioneAmbiente(idAmbiente, null, false, false,
+                        getForm().getParametriConservazioneAmbienteList().isFilterValidRecords());
+                loadListaParametriGestioneAmbiente(idAmbiente, null, false, false,
+                        getForm().getParametriGestioneAmbienteList().isFilterValidRecords());
+                loadListaParametriMultiAmbiente(idAmbiente, false, false);
                 forwardToPublisher(Application.Publisher.CREA_AMBIENTE);
             } catch (ParerUserError e) {
                 getMessageBox().addError(e.getDescription());
@@ -1523,6 +1579,161 @@ public class AmbienteAction extends AmbienteAbstractAction {
         }
 
         return paramApplicTableBean;
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriAmministrazioneAmbienteList() throws EMFError {
+        BigDecimal idAmbiente = ((BaseRowInterface) getForm().getAmbientiList().getTable().getCurrentRow())
+                .getBigDecimal("id_ambiente");
+        boolean filterValid = getForm().getParametriAmministrazioneAmbienteList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AMBIENTE)) {
+                loadListaParametriAmministrazioneAmbiente(idAmbiente, null, false, true, filterValid);
+            } else {
+                loadListaParametriAmministrazioneAmbiente(idAmbiente, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di amministrazione dell'ambiente");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriConservazioneAmbienteList() throws EMFError {
+        BigDecimal idAmbiente = ((BaseRowInterface) getForm().getAmbientiList().getTable().getCurrentRow())
+                .getBigDecimal("id_ambiente");
+        boolean filterValid = getForm().getParametriConservazioneAmbienteList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AMBIENTE)) {
+                loadListaParametriConservazioneAmbiente(idAmbiente, null, false, true, filterValid);
+            } else {
+                loadListaParametriConservazioneAmbiente(idAmbiente, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di conservazione dell'ambiente");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriGestioneAmbienteList() throws EMFError {
+        BigDecimal idAmbiente = ((BaseRowInterface) getForm().getAmbientiList().getTable().getCurrentRow())
+                .getBigDecimal("id_ambiente");
+        boolean filterValid = getForm().getParametriGestioneAmbienteList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AMBIENTE)) {
+                loadListaParametriGestioneAmbiente(idAmbiente, null, false, true, filterValid);
+            } else {
+                loadListaParametriGestioneAmbiente(idAmbiente, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di gestione dell'ambiente");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriMultipliAmbienteList() throws EMFError {
+        BigDecimal idAmbiente = ((BaseRowInterface) getForm().getAmbientiList().getTable().getCurrentRow())
+                .getBigDecimal("id_ambiente");
+        boolean filterValid = getForm().getParametriGestioneAmbienteList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AMBIENTE)) {
+                loadListaParametriMultiAmbiente(idAmbiente, false, true);
+            } else {
+                loadListaParametriMultiAmbiente(idAmbiente, false, false);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri multipli dell'ambiente");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    private void loadListaParametriAmministrazioneAmbiente(BigDecimal idAmbiente, List<String> funzione,
+            boolean hideDeleteButtons, boolean editModeAmministrazione, boolean filterValid) throws ParerUserError {
+
+        // MEV26587
+        AplParamApplicTableBean parametriAmministrazione = amministrazioneEjb
+                .getAplParamApplicAmministrazioneAmbiente(idAmbiente, funzione, filterValid);
+
+        if (!editModeAmministrazione) {
+            parametriAmministrazione = obfuscatePasswordParamApplic(parametriAmministrazione);
+        }
+
+        getForm().getParametriAmministrazioneAmbienteList().setTable(parametriAmministrazione);
+        getForm().getParametriAmministrazioneAmbienteList().getTable().setPageSize(300);
+        getForm().getParametriAmministrazioneAmbienteList().getTable().first();
+        getForm().getParametriAmministrazioneAmbienteList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeAmministrazione) {
+            getForm().getParametriAmministrazioneAmbienteList().getDs_valore_param_applic_ambiente_amm().setEditMode();
+            getForm().getParametriAmministrazioneAmbienteList().setStatus(Status.update);
+        } else {
+            getForm().getParametriAmministrazioneAmbienteList().getDs_valore_param_applic_ambiente_amm().setViewMode();
+            getForm().getParametriAmministrazioneAmbienteList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriConservazioneAmbiente(BigDecimal idAmbiente, List<String> funzione,
+            boolean hideDeleteButtons, boolean editModeConservazione, boolean filterValid) throws ParerUserError {
+        // MEV26587
+        AplParamApplicTableBean parametriConservazione = amministrazioneEjb
+                .getAplParamApplicConservazioneAmbiente(idAmbiente, funzione, filterValid);
+
+        if (!editModeConservazione) {
+            parametriConservazione = obfuscatePasswordParamApplic(parametriConservazione);
+        }
+
+        getForm().getParametriConservazioneAmbienteList().setTable(parametriConservazione);
+        getForm().getParametriConservazioneAmbienteList().getTable().setPageSize(300);
+        getForm().getParametriConservazioneAmbienteList().getTable().first();
+        getForm().getParametriConservazioneAmbienteList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeConservazione) {
+            getForm().getParametriConservazioneAmbienteList().getDs_valore_param_applic_ambiente_cons().setEditMode();
+            getForm().getParametriConservazioneAmbienteList().setStatus(Status.update);
+        } else {
+            getForm().getParametriConservazioneAmbienteList().getDs_valore_param_applic_ambiente_cons().setViewMode();
+            getForm().getParametriConservazioneAmbienteList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriGestioneAmbiente(BigDecimal idAmbiente, List<String> funzione,
+            boolean hideDeleteButtons, boolean editModeGestione, boolean filterValid) throws ParerUserError {
+
+        // MEV26587
+        AplParamApplicTableBean parametriGestione = amministrazioneEjb.getAplParamApplicGestioneAmbiente(idAmbiente,
+                funzione, filterValid);
+
+        if (!editModeGestione) {
+            parametriGestione = obfuscatePasswordParamApplic(parametriGestione);
+        }
+
+        getForm().getParametriGestioneAmbienteList().setTable(parametriGestione);
+        getForm().getParametriGestioneAmbienteList().getTable().setPageSize(300);
+        getForm().getParametriGestioneAmbienteList().getTable().first();
+        getForm().getParametriGestioneAmbienteList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeGestione) {
+            getForm().getParametriGestioneAmbienteList().getDs_valore_param_applic_ambiente_gest().setEditMode();
+            getForm().getParametriGestioneAmbienteList().setStatus(Status.update);
+        } else {
+            getForm().getParametriGestioneAmbienteList().getDs_valore_param_applic_ambiente_gest().setViewMode();
+            getForm().getParametriGestioneAmbienteList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriMultiAmbiente(BigDecimal idAmbiente, boolean hideDeleteButtons,
+            boolean editModeMultipli) throws ParerUserError {
+
+        // Parametri multipli
+        AplParamApplicTableBean parametriMultipli = amministrazioneEjb.getAplParamApplicMultiAmbiente(idAmbiente);
+        getForm().getParametriMultipliAmbienteList().setTable(parametriMultipli);
+        getForm().getParametriMultipliAmbienteList().getTable().setPageSize(300);
+        getForm().getParametriMultipliAmbienteList().getTable().first();
+        getForm().getParametriMultipliAmbienteList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeMultipli) {
+            getForm().getParametriMultipliAmbienteList().getDs_valore_param_applic_multi().setEditMode();
+        } else {
+            getForm().getParametriMultipliAmbienteList().getDs_valore_param_applic_multi().setViewMode();
+        }
     }
 
 }

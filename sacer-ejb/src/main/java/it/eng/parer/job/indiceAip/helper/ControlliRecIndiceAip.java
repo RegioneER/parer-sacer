@@ -17,6 +17,8 @@
 
 package it.eng.parer.job.indiceAip.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +36,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +74,6 @@ import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIni
 import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec;
 import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.dto.SessioneVersamentoExt;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.viewEntity.AroVLisaipudSistemaMigraz;
@@ -211,9 +212,8 @@ public class ControlliRecIndiceAip {
                     } else {
                         tmpDatiXml.setXml(xml.getBlXml());
                     }
-                    VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils
-                            .find(xml.getVrsUrnXmlSessioneVers(), object -> ((VrsUrnXmlSessioneVers) object).getTiUrn()
-                                    .equals(TiUrnXmlSessioneVers.ORIGINALE));
+                    VrsUrnXmlSessioneVers urnXmlSessioneVers = IterableUtils.find(xml.getVrsUrnXmlSessioneVers(),
+                            object -> (object).getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE));
                     if (urnXmlSessioneVers != null) {
                         tmpDatiXml.setUrn(urnXmlSessioneVers.getDsUrn());
                     } else {
@@ -343,9 +343,8 @@ public class ControlliRecIndiceAip {
                         tmpDatiXml.setXml(xml.getBlXml());
                     }
 
-                    VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils
-                            .find(xml.getVrsUrnXmlSessioneVers(), object -> ((VrsUrnXmlSessioneVers) object).getTiUrn()
-                                    .equals(TiUrnXmlSessioneVers.ORIGINALE));
+                    VrsUrnXmlSessioneVers urnXmlSessioneVers = IterableUtils.find(xml.getVrsUrnXmlSessioneVers(),
+                            object -> (object).getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE));
                     if (urnXmlSessioneVers != null) {
                         tmpDatiXml.setUrn(urnXmlSessioneVers.getDsUrn());
                     } else {
@@ -863,7 +862,7 @@ public class ControlliRecIndiceAip {
             // conservatori
             String queryStr = "SELECT u FROM AroVLisaipudSistemaMigraz u " + "WHERE u.idUnitaDoc = :idUnitaDoc ";
             Query query = entityManager.createQuery(queryStr);
-            query.setParameter("idUnitaDoc", GenericHelper.bigDecimalFromLong(idUnitaDoc));
+            query.setParameter("idUnitaDoc", bigDecimalFromLong(idUnitaDoc));
             List<AroVLisaipudSistemaMigraz> versioniPrecedentiExternal = query.getResultList();
             rispostaControlli.setrObject(versioniPrecedentiExternal);
             rispostaControlli.setrBoolean(true);

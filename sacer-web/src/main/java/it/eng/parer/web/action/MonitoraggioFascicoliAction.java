@@ -74,6 +74,7 @@ import org.joda.time.DateTime;
 import javax.ejb.EJB;
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -150,6 +151,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             getForm().getRiepilogoVersamentiFascicoli().getId_ente().setValue(idEnte.toString());
             getForm().getRiepilogoVersamentiFascicoli().getId_strut().setValue(idStruttura.toString());
             calcolaRiepilogo(idAmbiente, idEnte, idStruttura, null);
+
             postLoad();
         } catch (ParerUserError ex) {
             getMessageBox().addError("Errore inatteso nel caricamento della pagina");
@@ -758,7 +760,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
         }
     }
 
-    public void download() throws EMFError {
+    public void download() throws EMFError, IOException {
         logger.debug(">>>DOWNLOAD");
         String filename = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name());
         String path = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name());
@@ -773,14 +775,14 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
                  * Definiamo l'output previsto che sarà un file in formato zip di cui si occuperà la servlet per fare il
                  * download
                  */
-                OutputStream outUD = getServletOutputStream();
                 getResponse()
                         .setContentType(StringUtils.isBlank(contentType) ? WebConstants.MIME_TYPE_ZIP : contentType);
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename);
-                FileInputStream inputStream = null;
-                try {
+
+                try (OutputStream outUD = getServletOutputStream();
+                        FileInputStream inputStream = new FileInputStream(fileToDownload);) {
+
                     getResponse().setHeader("Content-Length", String.valueOf(fileToDownload.length()));
-                    inputStream = new FileInputStream(fileToDownload);
                     byte[] bytes = new byte[8000];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(bytes)) != -1) {
@@ -791,15 +793,11 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
                     logger.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
-                    IOUtils.closeQuietly(inputStream);
-                    IOUtils.closeQuietly(outUD);
-                    inputStream = null;
-                    outUD = null;
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
-                    fileToDownload.delete();
+                if (deleteFile.booleanValue()) {
+                    Files.delete(fileToDownload.toPath());
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");

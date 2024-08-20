@@ -26,7 +26,7 @@ import java.io.File;
 public class FileBinario implements java.io.Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3038080614562309178L;
     private String id;

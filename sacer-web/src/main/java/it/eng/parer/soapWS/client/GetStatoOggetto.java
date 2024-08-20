@@ -24,10 +24,10 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Classe Java per getStatoOggetto complex type.
- * 
+ *
  * <p>
  * Il seguente frammento di schema specifica il contenuto previsto contenuto in questa classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="getStatoOggetto"&gt;
  *   &lt;complexContent&gt;
@@ -41,8 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getStatoOggettoTipo", propOrder = { "nmAmbiente", "nmVersatore", "cdKeyObject" })
@@ -54,9 +54,9 @@ public class GetStatoOggetto {
 
     /**
      * Recupera il valore della proprietà nmAmbiente.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getNmAmbiente() {
         return nmAmbiente;
@@ -64,10 +64,10 @@ public class GetStatoOggetto {
 
     /**
      * Imposta il valore della proprietà nmAmbiente.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setNmAmbiente(String value) {
         this.nmAmbiente = value;
@@ -75,9 +75,9 @@ public class GetStatoOggetto {
 
     /**
      * Recupera il valore della proprietà nmVersatore.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getNmVersatore() {
         return nmVersatore;
@@ -85,10 +85,10 @@ public class GetStatoOggetto {
 
     /**
      * Imposta il valore della proprietà nmVersatore.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setNmVersatore(String value) {
         this.nmVersatore = value;
@@ -96,9 +96,9 @@ public class GetStatoOggetto {
 
     /**
      * Recupera il valore della proprietà cdKeyObject.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getCdKeyObject() {
         return cdKeyObject;
@@ -106,10 +106,10 @@ public class GetStatoOggetto {
 
     /**
      * Imposta il valore della proprietà cdKeyObject.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setCdKeyObject(String value) {
         this.cdKeyObject = value;

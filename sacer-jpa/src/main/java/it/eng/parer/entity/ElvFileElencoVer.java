@@ -84,6 +84,14 @@ public class ElvFileElencoVer implements Serializable {
         this.tiFileElencoVers = tiFileElencoVers;
     }
 
+    public ElvFileElencoVer(long idFileElencoVers, byte[] blFileElencoVers, String cdVerXsdFile,
+            String tiFileElencoVers) {
+        this.idFileElencoVers = idFileElencoVers;
+        this.blFileElencoVers = blFileElencoVers;
+        this.cdVerXsdFile = cdVerXsdFile;
+        this.tiFileElencoVers = tiFileElencoVers;
+    }
+
     @Id
 
     @Column(name = "ID_FILE_ELENCO_VERS")

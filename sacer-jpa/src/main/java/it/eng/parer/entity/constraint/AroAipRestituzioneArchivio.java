@@ -29,7 +29,7 @@ public final class AroAipRestituzioneArchivio {
 
     /**
      * Stato elaborazione
-     * 
+     *
      * TI_STATO IN ('DA_ELABORARE', 'ESTRATTO','ERRORE')
      *
      */
@@ -39,7 +39,7 @@ public final class AroAipRestituzioneArchivio {
 
     /**
      * Stato elaborazione
-     * 
+     *
      * TI_TIPOLOGIA_OGGETTO IN ('FASCICOLO', 'OGGETTO', 'SERIE', 'UD')
      *
      */

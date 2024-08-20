@@ -160,7 +160,7 @@ public class CreazioneIndiceAipSerieUdUtil {
      *            mappa chiave/valore
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity IdCType
      */
     public IdCType generaIndiceAIPSerieUd(SerVerSerieDaElab verSerieDaElab, Date timeRef,

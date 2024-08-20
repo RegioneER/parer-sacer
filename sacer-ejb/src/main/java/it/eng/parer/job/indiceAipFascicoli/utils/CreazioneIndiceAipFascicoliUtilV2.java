@@ -38,8 +38,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,9 +157,9 @@ public class CreazioneIndiceAipFascicoliUtilV2 {
      *            sistema conservazione
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity PIndex
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      * @throws DatatypeConfigurationException
@@ -193,9 +193,9 @@ public class CreazioneIndiceAipFascicoliUtilV2 {
      *            sistema conservazione
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity PIndex
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      * @throws DatatypeConfigurationException
@@ -231,9 +231,9 @@ public class CreazioneIndiceAipFascicoliUtilV2 {
      *            sistema conservazione
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity PIndex
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      * @throws DatatypeConfigurationException

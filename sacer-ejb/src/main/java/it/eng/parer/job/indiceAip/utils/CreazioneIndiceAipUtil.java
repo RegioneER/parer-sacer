@@ -45,7 +45,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,7 +192,7 @@ public class CreazioneIndiceAipUtil {
      *            mappa chiave/valore
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity IdCType
      */
     public IdCType generaIndiceAIP(AroIndiceAipUdDaElab aro, String codiceVersione, String cdVersioneXSDIndiceAIP,
@@ -227,7 +227,7 @@ public class CreazioneIndiceAipUtil {
      *            mappa chiave/valore
      * @param creatingApplicationProducer
      *            producer
-     * 
+     *
      * @return entity IdCType
      */
     public IdCType generaIndiceAIP(AroUnitaDoc aro, String codiceVersione, String cdVersioneXSDIndiceAIP,

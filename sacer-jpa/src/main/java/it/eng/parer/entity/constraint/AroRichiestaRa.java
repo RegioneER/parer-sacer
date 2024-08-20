@@ -29,7 +29,7 @@ public final class AroRichiestaRa {
 
     /**
      * Stato richiesta
-     * 
+     *
      * TI_STATO IN
      * ('CALCOLO_AIP_IN_CORSO','IN_ATTESA_ESTRAZIONE','ESTRAZIONE_IN_CORSO','ESTRATTO','VERIFICATO','ERRORE','ANNULLATO')
      *

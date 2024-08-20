@@ -224,8 +224,8 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
     ////////////
     /* PAGINE */
     ////////////
-    @Secure(action = "Menu.Fascicoli.ListaElenchiVersFascicoliDaFirmare")
-    public void loadListaElenchiVersFascicoliDaFirmare() throws EMFError {
+    @Secure(action = "Menu.Fascicoli.ListaElenchiVersFascicoliDaValidare")
+    public void loadListaElenchiVersFascicoliDaValidare() throws EMFError {
         /*
          * Controllo lo stato della history di navigazione se non ci sono pagine precedenti, vuol dire che arrivo qui da
          * un link del menu, se ci sono pagine allora devo passare alla jsp l'id della struttura
@@ -318,19 +318,19 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                 // Sessione di firma bloccata
                 elencoFascSignSessionEjb.unlockBlockedSessions(getUser().getIdUtente());
 
-                getForm().getListaElenchiVersFascDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(false);
+                getForm().getListaElenchiVersFascDaFirmareButtonList().getValidaElenchiButton().setReadonly(false);
                 getMessageBox().addInfo("\u00C8 stata sbloccata una sessione di firma bloccata");
                 getMessageBox().setViewMode(ViewMode.plain);
             } else {
-                getForm().getListaElenchiVersFascDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(true);
+                getForm().getListaElenchiVersFascDaFirmareButtonList().getValidaElenchiButton().setReadonly(true);
                 // Sessione di firma attiva
                 getMessageBox().addInfo("Sessione di firma attiva");
                 getMessageBox().setViewMode(ViewMode.plain);
             }
         } else {
-            getForm().getListaElenchiVersFascDaFirmareButtonList().getFirmaElenchiHsmButton().setReadonly(false);
+            getForm().getListaElenchiVersFascDaFirmareButtonList().getValidaElenchiButton().setReadonly(false);
         }
-        getForm().getListaElenchiVersFascDaFirmareButtonList().getFirmaElenchiHsmButton().setHidden(false);
+        getForm().getListaElenchiVersFascDaFirmareButtonList().getValidaElenchiButton().setHidden(false);
         getForm().getElenchiVersFascicoliList().setUserOperations(true, false, false, false);
 
         getSession().setAttribute("idStrutRif", idStrut);
@@ -362,7 +362,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 
     /**
      * Creo le mappe coi valori e setto le combo presenti nella pagina di ricerca elenchi
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -424,7 +424,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      *            id struttura
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -462,7 +462,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      *            id ente
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1330,8 +1330,10 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeZip + ".zip");
         ZipOutputStream out = new ZipOutputStream(getServletOutputStream());
         try {
-            evfEjb.streamOutFileIndiceElenco(out, filesPrefix, filesSuffix, idElencoVersFasc.longValue(),
-                    FileTypeEnum.getIndiceFileTypes());
+            // MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento dei fascicoli
+            evfEjb.streamOutFileIndiceElencoNoFirma(out, filesPrefix, filesSuffix, idElencoVersFasc.longValue());
+            // evfEjb.streamOutFileIndiceElenco(out, filesPrefix, filesSuffix, idElencoVersFasc.longValue(),
+            // FileTypeEnum.getIndiceFileTypes());
             out.close();
             freeze();
         } catch (Exception e) {
@@ -1432,7 +1434,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      *
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1604,8 +1606,9 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      *             errore generico
      */
     @Override
-    public void firmaElenchiHsmButton() throws Throwable {
-        ElvElencoVersFascTableBean elenchiDaFirmare = checkElenchiVersFascicoliToSign();
+    // public void firmaElenchiHsmButton() throws Throwable {
+    public void validaElenchiButton() throws Throwable {
+        ElvElencoVersFascTableBean elenchiDaFirmare = checkElenchiVersFascicoliToValidate();
         int elenchiHsmEliminati = 0;
 
         if (!getMessageBox().hasError()) {
@@ -1613,55 +1616,89 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             // PS: non lo prendo dal filtro di ricerca perchè l'utente potrebbe cambiarlo dalla combo senza fare la
             // ricerca
             // e così verrebbe preso un ambiente errato
-            BigDecimal idStrut = elenchiDaFirmare.getRow(0).getIdStrut();
-            OrgAmbienteRowBean ambienteRowBean = struttureEjb.getOrgAmbienteRowBeanByIdStrut(idStrut);
-            BigDecimal idAmbiente = ambienteRowBean.getIdAmbiente();
-            if (idAmbiente != null) {
-                // Ricavo il parametro HSM_USERNAME (parametro multiplo dell'ambiente) associato all'utente corrente
-                String hsmUserName = amministrazioneEjb.getHsmUsername(getUser().getIdUtente(), idAmbiente);
-                if (hsmUserName != null) {
+            // BigDecimal idStrut = elenchiDaFirmare.getRow(0).getIdStrut();
+            // OrgAmbienteRowBean ambienteRowBean = struttureEjb.getOrgAmbienteRowBeanByIdStrut(idStrut);
+            // BigDecimal idAmbiente = ambienteRowBean.getIdAmbiente();
+            // if (idAmbiente != null) {
+            // Ricavo il parametro HSM_USERNAME (parametro multiplo dell'ambiente) associato all'utente corrente
+            // String hsmUserName = amministrazioneEjb.getHsmUsername(getUser().getIdUtente(), idAmbiente);
+            // if (hsmUserName != null) {
+            int elenchiValidati = 0;
+            List<BigDecimal> idElencoVersFascRigheTotali = new ArrayList<>();
+            List<BigDecimal> idElencoVersFascRigheCancellate = new ArrayList<>();
 
-                    List<BigDecimal> idElencoVersFascRigheTotali = new ArrayList<>();
-                    List<BigDecimal> idElencoVersFascRigheCancellate = new ArrayList<>();
-
-                    for (int i = 0; i < elenchiDaFirmare.size(); i++) {
-                        ElvElencoVersFascRowBean elenco = elenchiDaFirmare.getRow(i);
-                        BigDecimal idElencoVersFasc = elenco.getIdElencoVersFasc();
-                        idElencoVersFascRigheTotali.add(idElencoVersFasc);
-                        if (evfEjb.almenoUnFascAnnul(idElencoVersFasc)) {
-                            evfEjb.manageElencoFascAnnulDaFirmaElencoFasc(idElencoVersFasc, getUser().getIdUtente());
-                            idElencoVersFascRigheCancellate.add(idElencoVersFasc);
-                            elenchiHsmEliminati++;
-                        }
-                    }
-
-                    // Elimino a video gli elenchi di versamento fascicoli cancellati su DB in quanto contenenti almeno
-                    // un fascicolo annullato
-                    idElencoVersFascRigheTotali.removeAll(idElencoVersFascRigheCancellate);
-                    ElvVRicElencoFascByStatoTableBean elenchiRimanenti = evfEjb
-                            .getElenchiVersFascicoliDaFirmareTableBean(idElencoVersFascRigheTotali,
-                                    getUser().getIdUtente());
-                    getForm().getElenchiVersFascicoliSelezionatiList().setTable(elenchiRimanenti);
-
-                    if (elenchiHsmEliminati > 0) {
-                        getMessageBox().setViewMode(ViewMode.plain);
-                        getMessageBox().addInfo("Sono stati eliminati " + elenchiHsmEliminati
-                                + " elenchi di versamento fascicoli in quanto contenenti almeno un fascicolo annullato");
-                    }
-
-                    if (getForm().getElenchiVersFascicoliSelezionatiList().getTable().size() > 0) {
-                        /* Richiedo le credenziali del HSM utilizzando apposito popup */
-                        getRequest().setAttribute("customElenchiVersFascicoliSelect", true);
-                        getForm().getFiltriElenchiVersFascDaFirmare().getUser().setValue(hsmUserName);
-                        getForm().getFiltriElenchiVersFascDaFirmare().getUser().setViewMode();
-                    }
-                } else {
-                    getMessageBox().addError("Utente non rientra tra i firmatari definiti sull’ambiente");
+            for (int i = 0; i < elenchiDaFirmare.size(); i++) {
+                ElvElencoVersFascRowBean elenco = elenchiDaFirmare.getRow(i);
+                BigDecimal idElencoVersFasc = elenco.getIdElencoVersFasc();
+                idElencoVersFascRigheTotali.add(idElencoVersFasc);
+                if (evfEjb.almenoUnFascAnnul(idElencoVersFasc)) {
+                    evfEjb.manageElencoFascAnnulDaFirmaElencoFasc(idElencoVersFasc, getUser().getIdUtente());
+                    idElencoVersFascRigheCancellate.add(idElencoVersFasc);
+                    elenchiHsmEliminati++;
                 }
             }
+
+            // Elimino a video gli elenchi di versamento fascicoli cancellati su DB in quanto contenenti almeno
+            // un fascicolo annullato
+            idElencoVersFascRigheTotali.removeAll(idElencoVersFascRigheCancellate);
+            ElvVRicElencoFascByStatoTableBean elenchiRimanenti = evfEjb
+                    .getElenchiVersFascicoliDaFirmareTableBean(idElencoVersFascRigheTotali, getUser().getIdUtente());
+            getForm().getElenchiVersFascicoliSelezionatiList().setTable(elenchiRimanenti);
+
+            if (elenchiHsmEliminati > 0) {
+                getMessageBox().setViewMode(ViewMode.plain);
+                getMessageBox().addInfo("Sono stati eliminati " + elenchiHsmEliminati
+                        + " elenchi di versamento fascicoli in quanto contenenti almeno un fascicolo annullato");
+            }
+
+            if (getForm().getElenchiVersFascicoliSelezionatiList().getTable().size() > 0) {
+                /* Richiedo le credenziali del HSM utilizzando apposito popup */
+                // getRequest().setAttribute("customElenchiVersFascicoliSelect", true);
+                // getForm().getFiltriElenchiVersFascDaFirmare().getUser().setValue(hsmUserName);
+                // getForm().getFiltriElenchiVersFascDaFirmare().getUser().setViewMode();
+
+                for (int i = 0; i < elenchiRimanenti.size(); i++) {
+                    ElvVRicElencoFascByStatoRowBean riga = elenchiRimanenti.getRow(i);
+                    evfEjb.validElenco(getUser().getIdUtente(), riga.getIdElencoVersFasc());
+                    elenchiValidati++;
+                }
+            }
+            // } else {
+            // getMessageBox().addError("Utente non rientra tra i firmatari definiti sull’ambiente");
+            // }
+            // }
+            endValidaElenco(elenchiValidati);
         }
 
         forwardToPublisher(Application.Publisher.LISTA_ELENCHI_VERS_FASCICOLI_SELECT);
+    }
+
+    public void endValidaElenco(int validati) throws EMFError {
+
+        if (validati > 0) {
+            getMessageBox().setViewMode(ViewMode.plain);
+
+            int daValidare = getForm().getElenchiVersFascicoliSelezionatiList().getTable().size();
+            /* Se ho validato tutti gli elenchi mostro una INFO */
+            if (validati == daValidare) {
+                getMessageBox().addMessage(new Message(MessageLevel.INF, "Validazione eseguita correttamente: validati "
+                        + validati + " su " + getForm().getElenchiVersFascicoliSelezionatiList().getTable().size()));
+                /* Inizializzo la lista degli elenchi di versamento selezionati */
+                // getForm().getElenchiVersamentoSelezionatiList().setTable(new ElvVLisElencoVersStatoTableBean());
+                // getForm().getElenchiVersamentoSelezionatiList().getTable().setPageSize(10);
+                // getForm().getElenchiVersamentoSelezionatiList().getTable().addSortingRule(
+                // getForm().getElenchiVersamentoSelezionatiList().getDt_creazione_elenco().getName(),
+                // SortingRule.ASC);
+            } /* altrimenti mostro un WARNING */ else {
+                getMessageBox().addMessage(new Message(MessageLevel.WAR,
+                        "Non tutti gli elenchi sono stati validati correttamente: validati " + validati + " su "
+                                + getForm().getElenchiVersFascicoliSelezionatiList().getTable().size()));
+            }
+        }
+
+        // Eseguo la ricerca sui filtri pre-impostati
+        // ricercaElenchiDaFirmare(getForm().getFiltriElenchiDaFirmare());
+        ricercaElenchiVersFascDaFirmareButton();
     }
 
     /**
@@ -1699,7 +1736,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
             getMessageBox().addError("Sessione di firma attiva");
         }
 
-        ElvElencoVersFascTableBean elenchiDaFirmare = checkElenchiVersFascicoliToSign();
+        ElvElencoVersFascTableBean elenchiDaFirmare = checkElenchiVersFascicoliToValidate();
         try {
             if (errorList.isEmpty() && !getMessageBox().hasError() && elenchiDaFirmare != null) {
                 SigningRequest request = new SigningRequest(idUtente);
@@ -1731,12 +1768,12 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
         }
     }
 
-    private ElvElencoVersFascTableBean checkElenchiVersFascicoliToSign() {
+    private ElvElencoVersFascTableBean checkElenchiVersFascicoliToValidate() {
         ElvElencoVersFascTableBean result = null;
 
         if (getForm().getElenchiVersFascicoliSelezionatiList().getTable().isEmpty()) {
             getMessageBox().addMessage(
-                    new Message(MessageLevel.ERR, "Selezionare almeno un elenco di versamento fascicoli da firmare"));
+                    new Message(MessageLevel.ERR, "Selezionare almeno un elenco di versamento fascicoli da validare"));
         } else {
             List<String> organizNoPartitionList = new ArrayList<>();
             ElvElencoVersFascTableBean elenchiDaFirmare = new ElvElencoVersFascTableBean();

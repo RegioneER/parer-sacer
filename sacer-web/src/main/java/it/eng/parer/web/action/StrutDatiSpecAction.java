@@ -246,8 +246,13 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
                 getForm().getAttribDatiSpecList().getTable().first();
 
                 for (DecAttribDatiSpecRowBean row : attribDatiSpecTableBean) {
-                    BigDecimal nrOrd = datiSpecificiEjb.getDecAttribNrOrd(row, xsdDatiSpecRowBean);
-                    getForm().getAttribDatiSpecList().getTable().getCurrentRow().setBigDecimal("ni_ord_attrib", nrOrd);
+                    DecXsdAttribDatiSpecRowBean xsdAttribDatiSpecRowBean = datiSpecificiEjb
+                            .getDecXsdAttribDatiSpecRowBeanByAttrib(row.getIdAttribDatiSpec(),
+                                    xsdDatiSpecRowBean.getIdXsdDatiSpec());
+                    getForm().getAttribDatiSpecList().getTable().getCurrentRow().setBigDecimal("ni_ord_attrib",
+                            xsdAttribDatiSpecRowBean.getNiOrdAttrib());
+                    getForm().getAttribDatiSpecList().getTable().getCurrentRow().setString("ds_attrib_dati_spec",
+                            xsdAttribDatiSpecRowBean.getDsAttribDatiSpec());
                     getForm().getAttribDatiSpecList().getTable().next();
                 }
 
@@ -291,6 +296,8 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
             getForm().getAttribDatiSpec().copyFromBean(attribDatiSpecRowBean);
             getForm().getAttribDatiSpec().getNi_ord_attrib()
                     .setValue(xsdAttribDatiSpecRowBean.getNiOrdAttrib().toString());
+            getForm().getAttribDatiSpec().getDs_attrib_dati_spec()
+                    .setValue(xsdAttribDatiSpecRowBean.getDsAttribDatiSpec());
 
         }
 
@@ -424,8 +431,13 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
                 getForm().getAttribDatiSpecList().getTable().first();
 
                 for (DecAttribDatiSpecRowBean row : attribDatiSpecTableBean) {
-                    BigDecimal nrOrd = datiSpecificiEjb.getDecAttribNrOrd(row, xsdDatiSpecRowBean);
-                    getForm().getAttribDatiSpecList().getTable().getCurrentRow().setBigDecimal("ni_ord_attrib", nrOrd);
+                    DecXsdAttribDatiSpecRowBean xsdAttribDatiSpecRowBean = datiSpecificiEjb
+                            .getDecXsdAttribDatiSpecRowBeanByAttrib(row.getIdAttribDatiSpec(),
+                                    xsdDatiSpecRowBean.getIdXsdDatiSpec());
+                    getForm().getAttribDatiSpecList().getTable().getCurrentRow().setBigDecimal("ni_ord_attrib",
+                            xsdAttribDatiSpecRowBean.getNiOrdAttrib());
+                    getForm().getAttribDatiSpecList().getTable().getCurrentRow().setString("ds_attrib_dati_spec",
+                            xsdAttribDatiSpecRowBean.getDsAttribDatiSpec());
                     getForm().getAttribDatiSpecList().getTable().next();
                 }
 
@@ -849,6 +861,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
         getMessageBox().clear();
         AttribDatiSpec attribDatiSpec = getForm().getAttribDatiSpec();
         attribDatiSpec.post(getRequest());
+        BigDecimal idXsdDatiSpec = getForm().getXsdDatiSpec().getId_xsd_dati_spec().parse();
 
         if (attribDatiSpec.getDs_attrib_dati_spec().parse() == null) {
             getMessageBox().addError("Errore di compilazione form: descrizione non inserito</br>");
@@ -868,7 +881,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
                         getUser().getUsername(), SpagoliteLogUtil.getPageName(this),
                         SpagoliteLogUtil.getToolbarUpdate());
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-                datiSpecificiEjb.updateDsDecAttribDatiSpec(param, idAttribDatiSpec, dsAttribDatiSpec);
+                datiSpecificiEjb.updateDsDecAttribDatiSpec(param, idAttribDatiSpec, dsAttribDatiSpec, idXsdDatiSpec);
                 getForm().getAttribDatiSpecList().getTable()
                         .setCurrentRowIndex(getForm().getAttribDatiSpecList().getTable().getCurrentRowIndex());
             }

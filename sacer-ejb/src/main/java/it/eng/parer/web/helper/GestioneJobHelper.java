@@ -109,10 +109,10 @@ public class GestioneJobHelper extends GenericHelper {
 
     /**
      * @deprecated funzionalità in disuso, andrà eliminato col passaggio definitivo alla nuova gestione dei job
-     * 
+     *
      * @param nmJob
      *            nome del job
-     * 
+     *
      * @return true se l'ultima esecuzione è andata buon fine, false altrimenti
      */
     @Deprecated

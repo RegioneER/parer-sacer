@@ -74,6 +74,7 @@
     <bean name="/NoteRilascio.html" class="it.eng.parer.web.action.NoteRilascioAction" scope="prototype"/>
     <bean name="/RestituzioneArchivio.html" class="it.eng.parer.web.action.RestituzioneArchivioAction" scope="prototype"/>
     <bean name="/ModelliUD.html" class="it.eng.parer.web.action.ModelliUDAction" scope="prototype"/>
+    <bean name="/UtilizzoMicroservizi.html" class="it.eng.parer.web.action.UtilizzoMicroserviziAction" scope="prototype"/>
         
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix">

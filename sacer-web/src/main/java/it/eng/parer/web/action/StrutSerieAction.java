@@ -1427,9 +1427,9 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      *
      * @param idTipoSerie
      *            id tipo serie
-     * 
+     *
      * @return true o false, a seconda che uno o più campi siano stati modificati
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1503,9 +1503,9 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      *
      * @param idTipoSerie
      *            id tipo serie
-     * 
+     *
      * @return true o false, a seconda che uno o più campi siano stati modificati
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1860,7 +1860,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      *            id tipo serie
      * @param status
      *            insert od update
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1900,11 +1900,11 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      * N.B: VECCHIO METODO NON PIU' UTILIZZATO A PARTIRE DAL 22 GENNAIO 2016. Consigliata rimozione a distanza di tempo
      *
      * @param decFiltroSelUd
-     * 
+     *
      * @param decOutSelUdTableBean
-     * 
+     *
      * @param idTipoSerie
-     * 
+     *
      * @param isFromDetailOrIsEmpty
      */
     // public void eseguiCancellazioneRegoleFiltraggioTipoSerie(DecFiltroSelUdRowBean decFiltroSelUd,
@@ -1942,7 +1942,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      *            id tipo serie
      * @param isFromDetailOrIsEmpty
      *            true/false
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2333,7 +2333,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      * "Nuova" versione del trigger sulla multiselect relativa ai tipi doc principale delle regole di filtraggio.
      *
      * @return oggetto json {@link JSONObject}
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -4676,7 +4676,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      *
      * @param table
      *            campo di tipo {@link BaseTableInterface}
-     * 
+     *
      * @return mappa chiave/valore
      */
     private Map<String, String> recuperaListaDatiProfiloPerIndividuazione(BaseTableInterface<?> table) throws EMFError {
@@ -5066,7 +5066,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
              * getForm().getTipologieSerieList().setStatus(BaseElements.Status.view);
              * msgBox.setViewMode(MessageBox.ViewMode.plain);
              * forwardToPublisher(Application.Publisher.TIPO_SERIE_DETAIL);
-             * 
+             *
              */
 
         } else {
@@ -5427,7 +5427,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      *
      * @param field
      *            campo di tipo {@link Fields}
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

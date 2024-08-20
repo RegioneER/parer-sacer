@@ -24,10 +24,10 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Classe Java per recuperoStatoOggettoRisposta complex type.
- * 
+ *
  * <p>
  * Il seguente frammento di schema specifica il contenuto previsto contenuto in questa classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="recuperoStatoOggettoRisposta"&gt;
  *   &lt;complexContent&gt;
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "recuperoStatoOggettoRisposta", propOrder = { "cdEsito", "cdErr", "dlErr", "nmAmbiente", "nmVersatore",
@@ -65,9 +65,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà cdEsito.
-     * 
+     *
      * @return possible object is {@link EsitoServizio }
-     * 
+     *
      */
     public EsitoServizio getCdEsito() {
         return cdEsito;
@@ -75,10 +75,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà cdEsito.
-     * 
+     *
      * @param value
      *            allowed object is {@link EsitoServizio }
-     * 
+     *
      */
     public void setCdEsito(EsitoServizio value) {
         this.cdEsito = value;
@@ -86,9 +86,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà cdErr.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getCdErr() {
         return cdErr;
@@ -96,10 +96,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà cdErr.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setCdErr(String value) {
         this.cdErr = value;
@@ -107,9 +107,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà dlErr.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getDlErr() {
         return dlErr;
@@ -117,10 +117,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà dlErr.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setDlErr(String value) {
         this.dlErr = value;
@@ -128,9 +128,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà nmAmbiente.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getNmAmbiente() {
         return nmAmbiente;
@@ -138,10 +138,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà nmAmbiente.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setNmAmbiente(String value) {
         this.nmAmbiente = value;
@@ -149,9 +149,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà nmVersatore.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getNmVersatore() {
         return nmVersatore;
@@ -159,10 +159,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà nmVersatore.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setNmVersatore(String value) {
         this.nmVersatore = value;
@@ -170,9 +170,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà cdKeyObject.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getCdKeyObject() {
         return cdKeyObject;
@@ -180,10 +180,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà cdKeyObject.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setCdKeyObject(String value) {
         this.cdKeyObject = value;
@@ -191,9 +191,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà statoOggetto.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getStatoOggetto() {
         return statoOggetto;
@@ -201,10 +201,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà statoOggetto.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setStatoOggetto(String value) {
         this.statoOggetto = value;
@@ -212,9 +212,9 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Recupera il valore della proprietà descrizioneStatoOggetto.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getDescrizioneStatoOggetto() {
         return descrizioneStatoOggetto;
@@ -222,10 +222,10 @@ public class RecuperoStatoOggettoRisposta {
 
     /**
      * Imposta il valore della proprietà descrizioneStatoOggetto.
-     * 
+     *
      * @param value
      *            allowed object is {@link String }
-     * 
+     *
      */
     public void setDescrizioneStatoOggetto(String value) {
         this.descrizioneStatoOggetto = value;

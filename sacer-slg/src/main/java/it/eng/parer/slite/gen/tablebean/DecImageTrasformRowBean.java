@@ -176,7 +176,7 @@ public class DecImageTrasformRowBean extends BaseRow implements JEEBaseRowInterf
     /*
      * <Input Type="STRING" Description="Nome completo" Name="nm_completo_image_trasform" MaxLength="100"/> <Input
      * Type="STRING" Description="Path trasformatore" Name="ti_path_trasform" MaxLength="100"/>
-     * 
+     *
      */
     public String getNmCompletoImageTrasform() {
         return getString("nm_completo_image_trasform");

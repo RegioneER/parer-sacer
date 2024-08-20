@@ -183,7 +183,7 @@ public class MonitoraggioEjb {
      *
      * @param idFileSessioneKo
      *            id file sesssione
-     * 
+     *
      * @return numero di componenti con errore di versamento
      */
     public long contaComponentiErroreVersamento(long idFileSessioneKo) {
@@ -209,7 +209,7 @@ public class MonitoraggioEjb {
      *            id file sessione
      * @param out
      *            stream su cui viene scritto il componente.
-     * 
+     *
      * @return true OutputStream aggiornato con la copia dell'oggetto / false OutputStream non aggiornato, file non
      *         restituito per errore
      */

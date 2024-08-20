@@ -17,17 +17,14 @@
 
 package it.eng.parer.job.calcoloContenutoSacer.ejb;
 
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.COMP_AGG;
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.COMP_ANNULL;
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.COMP_VERS;
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.DOC_AGG;
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.DOC_ANNULL;
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.DOC_VERS;
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.UD_ANNULL;
-import static it.eng.parer.entity.MonContaUdDocComp.TipoConteggio.UD_VERS;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
@@ -50,8 +47,6 @@ import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.MonContaUdDocComp;
 import it.eng.parer.entity.MonTipoUnitaDocUserVers;
 import it.eng.parer.grantedEntity.OrgServizioErog;
-import it.eng.parer.grantedViewEntity.OrgVCalcDtErog;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.util.LogParam;
@@ -389,7 +384,7 @@ public class CalcoloContenutoSacerHelper {
         List<Long> ids = idStrutList.stream().map(BigDecimal::longValue).collect(Collectors.toList());
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("idStrut", ids);
-        query.setParameter("idTipoServizio", GenericHelper.longFromBigDecimal(idTipoServizio));
+        query.setParameter("idTipoServizio", longFromBigDecimal(idTipoServizio));
         return query.getResultList();
     }
 
@@ -417,7 +412,7 @@ public class CalcoloContenutoSacerHelper {
                     + "ORDER BY mon.dtRifConta ASC";
             Query query = entityManager.createQuery(queryStr);
             query.setParameter("idTipoUnitaDocList", idTipoUnitaDocList);
-            query.setParameter("idSistemaVersante", GenericHelper.longFromBigDecimal(idSistemaVersante));
+            query.setParameter("idSistemaVersante", longFromBigDecimal(idSistemaVersante));
             List<Date> lista = query.getResultList();
             if (!lista.isEmpty()) {
                 return lista.get(0);

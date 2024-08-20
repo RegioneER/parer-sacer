@@ -17,7 +17,10 @@
 
 package it.eng.parer.web.util;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import it.eng.parer.entity.constraint.AroUnitaDoc;
@@ -77,13 +80,13 @@ public class ComboGetter {
      *            chiave
      * @param enumerator
      *            tipo enumerator
-     * 
+     *
      * @return DecodeMap mappa codifica
      */
     public static <T extends Enum<?>> DecodeMap getMappaSortedGenericEnum(String key, T... enumerator) {
         BaseTable bt = new BaseTable();
         DecodeMap mappa = new DecodeMap();
-        for (T mod : Utils.sortEnum(enumerator)) {
+        for (T mod : sortEnum(enumerator)) {
             bt.add(createKeyValueBaseRow(key, mod.name()));
         }
         mappa.populatedMap(bt, key, key);
@@ -100,7 +103,7 @@ public class ComboGetter {
      *            chiave
      * @param enumerator
      *            tipo enumerator
-     * 
+     *
      * @return DecodeMap mappa codifica
      */
     public static <T extends Enum<?>> DecodeMap getMappaOrdinalGenericEnum(String key, T... enumerator) {
@@ -120,7 +123,7 @@ public class ComboGetter {
      *            chiave
      * @param list
      *            lista valori
-     * 
+     *
      * @return DecodeMap mappa codifica
      */
     public static DecodeMap getSortedMapByStringList(String key, List<String> list) {
@@ -136,7 +139,7 @@ public class ComboGetter {
     public static <T extends Enum<?>> DecodeMap getMappaTiParte(ConfigRegAnno.TiParte... enumerator) {
         BaseTable bt = new BaseTable();
         DecodeMap mappa = new DecodeMap();
-        for (TiParte mod : Utils.sortEnum(enumerator)) {
+        for (TiParte mod : sortEnum(enumerator)) {
             BaseRow br = createKeyValueBaseRow("key", mod.name());
             br.setString("value", mod.descrizione());
             bt.add(br);
@@ -179,7 +182,7 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         BaseRow br = new BaseRow();
         DecodeMap mappa = new DecodeMap();
-        for (TipoDefTemplateEnte mod : Utils.sortEnum(enumerator)) {
+        for (TipoDefTemplateEnte mod : sortEnum(enumerator)) {
             br.setString("key", mod.name());
             br.setString("value", mod.descrizione());
             bt.add(br);
@@ -217,7 +220,7 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         DecodeMap mappaAlgo = new DecodeMap();
         String key = "ds_algo_hash_file_calc";
-        for (VolumeEnums.AlgoHash algo : Utils.sortEnum(VolumeEnums.AlgoHash.values())) {
+        for (VolumeEnums.AlgoHash algo : sortEnum(VolumeEnums.AlgoHash.values())) {
             bt.add(createKeyValueBaseRow(key, algo.algorithm()));
         }
         mappaAlgo.populatedMap(bt, key, key);
@@ -228,7 +231,7 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         DecodeMap mappaEncoding = new DecodeMap();
         String key = "cd_encoding_hash_file_calc";
-        for (VolumeEnums.EncodingHash enc : Utils.sortEnum(VolumeEnums.EncodingHash.values())) {
+        for (VolumeEnums.EncodingHash enc : sortEnum(VolumeEnums.EncodingHash.values())) {
             bt.add(createKeyValueBaseRow(key, enc.encoding()));
         }
         mappaEncoding.populatedMap(bt, key, key);
@@ -240,7 +243,7 @@ public class ComboGetter {
         String key = "ti_output_rappr";
         //
         DecodeMap mappaTiOutputRappr = new DecodeMap();
-        for (CostantiDB.TipiOutputRappr tiAlgo : Utils.sortEnum(CostantiDB.TipiOutputRappr.getComboTipoOutputRappr())) {
+        for (CostantiDB.TipiOutputRappr tiAlgo : sortEnum(CostantiDB.TipiOutputRappr.getComboTipoOutputRappr())) {
             bt.add(createKeyValueBaseRow(key, tiAlgo.toString()));
         }
         mappaTiOutputRappr.populatedMap(bt, key, key);
@@ -251,8 +254,8 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         String key = "ti_algo_rappr";
         DecodeMap mappaTiAlgoRappr = new DecodeMap();
-        for (CostantiDB.TipoAlgoritmoRappr tiAlgo : Utils
-                .sortEnum(CostantiDB.TipoAlgoritmoRappr.getComboTipoAlgoritmoRappr())) {
+        for (CostantiDB.TipoAlgoritmoRappr tiAlgo : sortEnum(
+                CostantiDB.TipoAlgoritmoRappr.getComboTipoAlgoritmoRappr())) {
             bt.add(createKeyValueBaseRow(key, tiAlgo.toString()));
         }
         mappaTiAlgoRappr.populatedMap(bt, key, key);
@@ -264,7 +267,7 @@ public class ComboGetter {
         String key1 = "ti_stato_annul";
         String key2 = "transcode_annul";
         DecodeMap mappaTiStatoAnnul = new DecodeMap();
-        for (VolumeEnums.MonitAnnulStatusEnum tiStato : Utils.sortEnum(VolumeEnums.MonitAnnulStatusEnum.values())) {
+        for (VolumeEnums.MonitAnnulStatusEnum tiStato : sortEnum(VolumeEnums.MonitAnnulStatusEnum.values())) {
             BaseRow row = createKeyValueBaseRow(key1, tiStato.name());
             row.setString(key2, tiStato.getTranscodedValue().name());
             bt.add(row);
@@ -278,7 +281,7 @@ public class ComboGetter {
         String key1 = "ti_campo";
         String key2 = "transcode_campo";
         DecodeMap tiCampo = new DecodeMap();
-        for (CostantiDB.TipoCampo campo : Utils.sortEnum(CostantiDB.TipoCampo.values())) {
+        for (CostantiDB.TipoCampo campo : sortEnum(CostantiDB.TipoCampo.values())) {
             BaseRow row = createKeyValueBaseRow(key1, campo.name());
             row.setString(key2, campo.getDescrizione());
             bt.add(row);
@@ -292,7 +295,7 @@ public class ComboGetter {
         String key1 = "nm_campo";
         String key2 = "transcode_campo";
         DecodeMap nmCampo = new DecodeMap();
-        for (CostantiDB.NomeCampo campo : Utils.sortEnum(CostantiDB.NomeCampo.getComboDatoProfilo())) {
+        for (CostantiDB.NomeCampo campo : sortEnum(CostantiDB.NomeCampo.getComboDatoProfilo())) {
             BaseRow row = createKeyValueBaseRow(key1, campo.name());
             row.setString(key2, campo.getDescrizione());
             bt.add(row);
@@ -306,7 +309,7 @@ public class ComboGetter {
         String key1 = "nm_campo";
         String key2 = "transcode_campo";
         DecodeMap nmCampo = new DecodeMap();
-        for (CostantiDB.NomeCampo campo : Utils.sortEnum(CostantiDB.NomeCampo.getComboSubStruttura())) {
+        for (CostantiDB.NomeCampo campo : sortEnum(CostantiDB.NomeCampo.getComboSubStruttura())) {
             BaseRow row = createKeyValueBaseRow(key1, campo.name());
             row.setString(key2, campo.getDescrizione());
             bt.add(row);
@@ -320,8 +323,8 @@ public class ComboGetter {
         String key = "ti_ord_serie";
         String key2 = "transcode_ord_serie";
         DecodeMap mappaTiTipoOrdin = new DecodeMap();
-        for (CostantiDB.TipoOrdinamentoTipiSerie tiTipoOrdin : Utils
-                .sortEnum(CostantiDB.TipoOrdinamentoTipiSerie.getComboTipoOrdinamentoTipiSerie())) {
+        for (CostantiDB.TipoOrdinamentoTipiSerie tiTipoOrdin : sortEnum(
+                CostantiDB.TipoOrdinamentoTipiSerie.getComboTipoOrdinamentoTipiSerie())) {
             BaseRow row = createKeyValueBaseRow(key, tiTipoOrdin.name());
             row.setString(key2, tiTipoOrdin.toString());
             bt.add(row);
@@ -350,8 +353,8 @@ public class ComboGetter {
         String key = "ti_sel_ud";
         String key2 = "transcode_sel_ud";
         DecodeMap mappaTiSelUd = new DecodeMap();
-        for (CostantiDB.TipoSelUdTipiSerie tiSelUd : Utils
-                .sortEnum(CostantiDB.TipoSelUdTipiSerie.getComboTipoSelUdTipiSerie())) {
+        for (CostantiDB.TipoSelUdTipiSerie tiSelUd : sortEnum(
+                CostantiDB.TipoSelUdTipiSerie.getComboTipoSelUdTipiSerie())) {
             BaseRow row = createKeyValueBaseRow(key, tiSelUd.name());
             row.setString(key2, tiSelUd.toString());
             bt.add(row);
@@ -377,8 +380,7 @@ public class ComboGetter {
         String key = "ti_filtro";
         String key2 = "transcode_filtro";
         DecodeMap mappaTiFiltro = new DecodeMap();
-        for (CostantiDB.TipoFiltroSerieUd tiFiltro : Utils
-                .sortEnum(CostantiDB.TipoFiltroSerieUd.getComboTipoDiFiltro())) {
+        for (CostantiDB.TipoFiltroSerieUd tiFiltro : sortEnum(CostantiDB.TipoFiltroSerieUd.getComboTipoDiFiltro())) {
             BaseRow row = createKeyValueBaseRow(key, tiFiltro.name());
             row.setString(key2, tiFiltro.toString());
             bt.add(row);
@@ -393,8 +395,8 @@ public class ComboGetter {
         String key = "ti_out";
         String key2 = "transcode_out";
         DecodeMap mappaTiOut = new DecodeMap();
-        for (CostantiDB.TipoDiRappresentazione tiOut : Utils
-                .sortEnum(CostantiDB.TipoDiRappresentazione.getComboTipoDiRappresentazione())) {
+        for (CostantiDB.TipoDiRappresentazione tiOut : sortEnum(
+                CostantiDB.TipoDiRappresentazione.getComboTipoDiRappresentazione())) {
             BaseRow row = createKeyValueBaseRow(key, tiOut.name());
             row.setString(key2, tiOut.toString());
             bt.add(row);
@@ -408,7 +410,7 @@ public class ComboGetter {
         // Imposto i valori della combo TipoDiTrasformatore
         String key = "ti_trasform";
         DecodeMap mappaTipoDiTrasformatore = new DecodeMap();
-        for (CostantiDB.TipoTrasformatore tiCreaz : Utils.sortEnum(CostantiDB.TipoTrasformatore.getComboTipiOut())) {
+        for (CostantiDB.TipoTrasformatore tiCreaz : sortEnum(CostantiDB.TipoTrasformatore.getComboTipiOut())) {
             bt.add(createKeyValueBaseRow(key, tiCreaz.getTransformString()));
         }
         mappaTipoDiTrasformatore.populatedMap(bt, key, key);
@@ -421,7 +423,7 @@ public class ComboGetter {
         // Imposto i valori della combo TipoDiTrasformatore
         String key = "ti_trasform";
         DecodeMap mappaTipoDiTrasformatore = new DecodeMap();
-        for (CostantiDB.TipoTrasformatore tiCreaz : Utils.sortEnum(CostantiDB.TipoTrasformatore.getComboTipiIn())) {
+        for (CostantiDB.TipoTrasformatore tiCreaz : sortEnum(CostantiDB.TipoTrasformatore.getComboTipiIn())) {
             bt.add(createKeyValueBaseRow(key, tiCreaz.getTransformString()));
         }
         mappaTipoDiTrasformatore.populatedMap(bt, key, key);
@@ -463,7 +465,7 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         String key = "ti_modello_xsd";
         DecodeMap mappaTiModelloXsd = new DecodeMap();
-        for (CostantiDB.TiModelloXsd tiModelloXsd : Utils.sortEnum(CostantiDB.TiModelloXsd.values())) {
+        for (CostantiDB.TiModelloXsd tiModelloXsd : sortEnum(CostantiDB.TiModelloXsd.values())) {
             bt.add(createKeyValueBaseRow(key, tiModelloXsd.toString()));
         }
         mappaTiModelloXsd.populatedMap(bt, key, key);
@@ -474,7 +476,7 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         String key = "ti_modello_xsd";
         DecodeMap mappaTiModelloXsd = new DecodeMap();
-        for (CostantiDB.TiModelloXsdProfilo tiModelloXsd : Utils.sortEnum(CostantiDB.TiModelloXsdProfilo.values())) {
+        for (CostantiDB.TiModelloXsdProfilo tiModelloXsd : sortEnum(CostantiDB.TiModelloXsdProfilo.values())) {
             bt.add(createKeyValueBaseRow(key, tiModelloXsd.toString()));
         }
         mappaTiModelloXsd.populatedMap(bt, key, key);
@@ -486,7 +488,7 @@ public class ComboGetter {
         String key = "ti_valid_elenco";
         DecodeMap mappaTiValidElenco = new DecodeMap();
         /* Sostituito CostantiDB con le enum it.eng.parer.entity.constraint */
-        for (ElvElencoVer.TiValidElenco tiValidElenco : Utils.sortEnum(ElvElencoVer.TiValidElenco.values())) {
+        for (ElvElencoVer.TiValidElenco tiValidElenco : sortEnum(ElvElencoVer.TiValidElenco.values())) {
             bt.add(createKeyValueBaseRow(key, tiValidElenco.toString()));
         }
         mappaTiValidElenco.populatedMap(bt, key, key);
@@ -498,7 +500,7 @@ public class ComboGetter {
         String key = "ti_mod_valid_elenco";
         DecodeMap mappaTiModValidElenco = new DecodeMap();
         /* Sostituito CostantiDB con le enum it.eng.parer.entity.constraint */
-        for (ElvElencoVer.TiModValidElenco tiModValidElenco : Utils.sortEnum(ElvElencoVer.TiModValidElenco.values())) {
+        for (ElvElencoVer.TiModValidElenco tiModValidElenco : sortEnum(ElvElencoVer.TiModValidElenco.values())) {
             bt.add(createKeyValueBaseRow(key, tiModValidElenco.toString()));
         }
         mappaTiModValidElenco.populatedMap(bt, key, key);
@@ -509,8 +511,8 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         String key = "ti_gest_elenco_criterio";
         DecodeMap mappaTiGestElencoCriterio = new DecodeMap();
-        for (CostantiDB.TiGestElencoCriterio tiGestElencoCriterio : Utils
-                .sortEnum(CostantiDB.TiGestElencoCriterio.values())) {
+        for (CostantiDB.TiGestElencoCriterio tiGestElencoCriterio : sortEnum(
+                CostantiDB.TiGestElencoCriterio.values())) {
             /*
              * Se non è attivata la funzionalità di sigillo i relativi valori costanti vengono esclusi dalla lista.
              */
@@ -597,7 +599,7 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         DecodeMap mappaAlgo = new DecodeMap();
         String key = "ti_stato_ud_elenco_vers";
-        for (AroUnitaDoc.TiStatoUdElencoVers a : Utils.sortEnum(AroUnitaDoc.TiStatoUdElencoVers.values())) {
+        for (AroUnitaDoc.TiStatoUdElencoVers a : sortEnum(AroUnitaDoc.TiStatoUdElencoVers.values())) {
             bt.add(createKeyValueBaseRow(key, a.name()));
         }
         mappaAlgo.populatedMap(bt, key, key);
@@ -608,7 +610,7 @@ public class ComboGetter {
         BaseTable bt = new BaseTable();
         String key = "ti_modello_xsd";
         DecodeMap mappaTiModelloXsd = new DecodeMap();
-        for (TiModelloXsdUd tiModelloXsd : Utils.sortEnum(TiModelloXsdUd.values())) {
+        for (TiModelloXsdUd tiModelloXsd : sortEnum(TiModelloXsdUd.values())) {
             bt.add(createKeyValueBaseRow(key, tiModelloXsd.toString()));
         }
         mappaTiModelloXsd.populatedMap(bt, key, key);
@@ -646,5 +648,24 @@ public class ComboGetter {
         bt.add(br2);
         mappaStatoAgg.populatedMap(bt, "ti_stato_job", "ti_stato_job");
         return mappaStatoAgg;
+    }
+
+    /**
+     * Metodo statico per ordinare un enum tramite il valore
+     *
+     * @param <T>
+     *            oggetti generics di tipo Enum
+     *
+     * @param enumValues
+     *            l'array di valori dell'enum
+     *
+     * @return la collezione ordinata
+     */
+    private static <T extends Enum<?>> Collection<T> sortEnum(T[] enumValues) {
+        SortedMap<String, T> map = new TreeMap<>();
+        for (T l : enumValues) {
+            map.put(l.name(), l);
+        }
+        return map.values();
     }
 }

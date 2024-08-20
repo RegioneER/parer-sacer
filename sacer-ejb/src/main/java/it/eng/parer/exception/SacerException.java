@@ -26,7 +26,7 @@ import it.eng.parer.exception.ParerErrorCategory.SacerErrorCategory;
 public class SacerException extends Exception {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9173356878746119329L;
     private final SacerErrorCategory category;

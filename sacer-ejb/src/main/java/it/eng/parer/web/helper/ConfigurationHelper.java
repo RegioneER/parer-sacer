@@ -17,7 +17,8 @@
 
 package it.eng.parer.web.helper;
 
-import static it.eng.parer.helper.GenericHelper.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ import org.slf4j.LoggerFactory;
 import it.eng.parer.entity.AplParamApplic;
 import it.eng.parer.entity.constraint.AplValoreParamApplic.TiAppart;
 import it.eng.parer.exception.ParamApplicNotFoundException;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.web.helper.dto.AplVGetValParamDto;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.TipoAplVGetValAppart;
@@ -88,7 +88,7 @@ public class ConfigurationHelper {
      *            id anno tipo fascicolo
      * @param getVal
      *            entity tipo TipoAplVGetValAppart
-     * 
+     *
      * @return mappa chiave/valore di tipo String
      */
     public Map<String, String> getParamApplicMapValue(List<String> nmParamApplicList, BigDecimal idAmbiente,
@@ -150,16 +150,16 @@ public class ConfigurationHelper {
         query.setParameter("tiAppart", tiAppart);
 
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idStrut != null) {
-            query.setParameter("idStrut", GenericHelper.longFromBigDecimal(idStrut));
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
         if (idTipoUnitaDoc != null) {
-            query.setParameter("idTipoUnitaDoc", GenericHelper.longFromBigDecimal(idTipoUnitaDoc));
+            query.setParameter("idTipoUnitaDoc", longFromBigDecimal(idTipoUnitaDoc));
         }
         if (idAaTipoFascicolo != null) {
-            query.setParameter("idAaTipoFascicolo", GenericHelper.longFromBigDecimal(idAaTipoFascicolo));
+            query.setParameter("idAaTipoFascicolo", longFromBigDecimal(idAaTipoFascicolo));
         }
 
         List<String> paramList = query.getResultList();
@@ -194,7 +194,7 @@ public class ConfigurationHelper {
      *
      * @param nmParamApplic
      *            codice del parametro
-     * 
+     *
      * @return valore del parametro filtrato per tipologia <em>APPLIC</em> .
      */
     public String getValoreParamApplicByApplic(String nmParamApplic) {
@@ -211,8 +211,8 @@ public class ConfigurationHelper {
      *            codice del parametro
      * @param idAmbiente
      *            id ambiente
-     * 
-     * 
+     *
+     *
      * @return valore del parametro filtrato per tipologia <em>AMBIENTE</em> .
      */
     public String getValoreParamApplicByAmb(String nmParamApplic, BigDecimal idAmbiente) {
@@ -231,8 +231,8 @@ public class ConfigurationHelper {
      *            id ambiente
      * @param idStrut
      *            id struttura
-     * 
-     * 
+     *
+     *
      * @return valore del parametro filtrato per tipologia <em>STRUT</em> .
      */
     public String getValoreParamApplicByStrut(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut) {
@@ -252,7 +252,7 @@ public class ConfigurationHelper {
      *            id struttura
      * @param idTipoUnitaDoc
      *            id tipologia unità documentaria
-     * 
+     *
      * @return valore del parametro filtrato per tipologia <em>TIPOUNITADOC</em> .
      */
     public String getValoreParamApplicByTipoUd(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
@@ -273,7 +273,7 @@ public class ConfigurationHelper {
      *            id struttura
      * @param idAaTipoFascicolo
      *            id tipologia anno fascicolo
-     * 
+     *
      * @return valore del parametro filtrato per tipologia <em>AATIPOFASCICOLO</em> .
      */
     public String getValoreParamApplicByAaTipoFasc(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
@@ -284,7 +284,7 @@ public class ConfigurationHelper {
 
     /**
      * Restituisce il valore del parametro configurato
-     * 
+     *
      * @param nmParamApplic
      *            nome parametro applicativo
      * @param idAmbiente
@@ -297,7 +297,7 @@ public class ConfigurationHelper {
      *            id anno tipo fascicolo
      * @param tipoAplVGetValAppart
      *            entity TipoAplVGetValAppart
-     * 
+     *
      * @return valore parametro
      */
     private String getValoreParamApplic(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
@@ -473,6 +473,27 @@ public class ConfigurationHelper {
 
     public String getUrlBackAssociazioneUtenteCf() {
         return getValoreParamApplicByApplic(URL_BACK_ASSOCIAZIONE_UTENTE_CF);
+    }
+
+    /**
+     * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
+     * <em>AATIPOFASCICOLO</em> {@link TipoAplVGetValAppart#AATIPOFASCICOLO}
+     *
+     * @param nmParamApplic
+     *            codice del parametro
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idAaTipoFascicolo
+     *            id periodo tipologia fascicolo
+     *
+     * @return valore del parametro filtrato per tipologia <em>AATIPOFASCICOLO</em> .
+     */
+    public String getValoreParamApplicByTipoFasc(String nmParamApplic, BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo) {
+        return getValoreParamApplic(nmParamApplic, idAmbiente, idStrut, BigDecimal.valueOf(Integer.MIN_VALUE),
+                idAaTipoFascicolo, TipoAplVGetValAppart.AATIPOFASCICOLO);
     }
 
 }

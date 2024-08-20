@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,7 +53,10 @@ import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
  *
  * @author Quaranta_M
  */
+@WebServlet(urlPatterns = { "/TestMarcatura" }, asyncSupported = true)
 public class TestMarcatura extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     Logger log = LoggerFactory.getLogger(TestMarcatura.class);
     @EJB
@@ -67,7 +71,7 @@ public class TestMarcatura extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -177,10 +181,10 @@ public class TestMarcatura extends HttpServlet {
 
         } finally {
             if (contDaMarcare != null && contDaMarcare.exists()) {
-                contDaMarcare.delete();
+                Files.delete(contDaMarcare.toPath());
             }
             if (contTika != null && contTika.exists()) {
-                contTika.delete();
+                Files.delete(contTika.toPath());
             }
         }
     }
@@ -193,7 +197,7 @@ public class TestMarcatura extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -212,7 +216,7 @@ public class TestMarcatura extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException

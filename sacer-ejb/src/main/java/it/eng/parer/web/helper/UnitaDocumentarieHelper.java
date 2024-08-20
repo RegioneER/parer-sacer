@@ -17,6 +17,10 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -43,8 +47,8 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -1821,7 +1825,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         return list -> getAroVRicUnitaDocTableBeanFromResultList(list, addButton);
     }
 
-    public static AroVRicUnitaDocTableBean getAroVRicUnitaDocTableBeanFromResultList(List<AroVRicUnitaDoc> listaUD,
+    public AroVRicUnitaDocTableBean getAroVRicUnitaDocTableBeanFromResultList(List<AroVRicUnitaDoc> listaUD,
             boolean addButton) {
         AroVRicUnitaDocTableBean udTableBean = new AroVRicUnitaDocTableBean();
 
@@ -2637,38 +2641,21 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                                 indiceRowBean.getBigDecimal("id_ver_indice_aip"));
                         if (indice.getAroUrnVerIndiceAipUds() != null && !indice.getAroUrnVerIndiceAipUds().isEmpty()) {
                             // Recupero lo urn ORIGINALE
-                            AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                    .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                        @Override
-                                        public boolean evaluate(final Object object) {
-                                            return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                    .equals(TiUrnVerIxAipUd.ORIGINALE);
-                                        }
-                                    });
+                            AroUrnVerIndiceAipUd urnVerIndiceAipUd = IterableUtils.find(
+                                    indice.getAroUrnVerIndiceAipUds(),
+                                    object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                             if (urnVerIndiceAipUd != null) {
                                 indiceRowBean.setString("urn", urnVerIndiceAipUd.getDsUrn());
                             }
                             // Recupero lo urn NORMALIZZATO
-                            urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                    .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                        @Override
-                                        public boolean evaluate(final Object object) {
-                                            return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                    .equals(TiUrnVerIxAipUd.NORMALIZZATO);
-                                        }
-                                    });
+                            urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                    object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.NORMALIZZATO));
                             if (urnVerIndiceAipUd != null) {
                                 indiceRowBean.setString("urn_normalizzato", urnVerIndiceAipUd.getDsUrn());
                             }
-                            // Recupero lo urn INZIALE
-                            urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                    .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                        @Override
-                                        public boolean evaluate(final Object object) {
-                                            return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                    .equals(TiUrnVerIxAipUd.INIZIALE);
-                                        }
-                                    });
+                            // Recupero lo urn INIZIALE
+                            urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                    object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.INIZIALE));
                             if (urnVerIndiceAipUd != null) {
                                 indiceRowBean.setString("urn_iniziale", urnVerIndiceAipUd.getDsUrn());
                             }
@@ -2698,36 +2685,20 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                 verIndiceRowBean = (AroVerIndiceAipUdRowBean) Transform.entity2RowBean(indice);
                 if (indice.getAroUrnVerIndiceAipUds() != null && !indice.getAroUrnVerIndiceAipUds().isEmpty()) {
                     // Recupero lo urn ORIGINALE
-                    AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                            .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                @Override
-                                public boolean evaluate(final Object object) {
-                                    return ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE);
-                                }
-                            });
+                    AroUrnVerIndiceAipUd urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                            object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                     if (urnVerIndiceAipUd != null) {
                         verIndiceRowBean.setString("urn", urnVerIndiceAipUd.getDsUrn());
                     }
                     // Recupero lo urn NORMALIZZATO
-                    urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils.find(indice.getAroUrnVerIndiceAipUds(),
-                            new Predicate() {
-                                @Override
-                                public boolean evaluate(final Object object) {
-                                    return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                            .equals(TiUrnVerIxAipUd.NORMALIZZATO);
-                                }
-                            });
+                    urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                            object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.NORMALIZZATO));
                     if (urnVerIndiceAipUd != null) {
                         verIndiceRowBean.setString("urn_normalizzato", urnVerIndiceAipUd.getDsUrn());
                     }
-                    // Recupero lo urn INZIALE
-                    urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils.find(indice.getAroUrnVerIndiceAipUds(),
-                            new Predicate() {
-                                @Override
-                                public boolean evaluate(final Object object) {
-                                    return ((AroUrnVerIndiceAipUd) object).getTiUrn().equals(TiUrnVerIxAipUd.INIZIALE);
-                                }
-                            });
+                    // Recupero lo urn INIZIALE
+                    urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                            object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.INIZIALE));
                     if (urnVerIndiceAipUd != null) {
                         verIndiceRowBean.setString("urn_iniziale", urnVerIndiceAipUd.getDsUrn());
                     }
@@ -2758,38 +2729,20 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                             fileIndiceRowBean.getBigDecimal("id_ver_indice_aip"));
                     if (indice.getAroUrnVerIndiceAipUds() != null && !indice.getAroUrnVerIndiceAipUds().isEmpty()) {
                         // Recupero lo urn ORIGINALE
-                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.ORIGINALE);
-                                    }
-                                });
+                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                         if (urnVerIndiceAipUd != null) {
                             fileIndiceRowBean.setString("urn", urnVerIndiceAipUd.getDsUrn());
                         }
                         // Recupero lo urn NORMALIZZATO
-                        urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.NORMALIZZATO);
-                                    }
-                                });
+                        urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.NORMALIZZATO));
                         if (urnVerIndiceAipUd != null) {
                             fileIndiceRowBean.setString("urn_normalizzato", urnVerIndiceAipUd.getDsUrn());
                         }
-                        // Recupero lo urn INZIALE
-                        urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.INIZIALE);
-                                    }
-                                });
+                        // Recupero lo urn INIZIALE
+                        urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.INIZIALE));
                         if (urnVerIndiceAipUd != null) {
                             fileIndiceRowBean.setString("urn_iniziale", urnVerIndiceAipUd.getDsUrn());
                         }
@@ -3042,7 +2995,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             if (TiEnteConvenz.PRODUTTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())
                     || TiEnteConvenz.GESTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())) {
                 CollectionUtils.filter(decTipoNotaUnitaDocList,
-                        object -> ((DecTipoNotaUnitaDoc) object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE"));
+                        object -> (object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE"));
             }
         }
 
@@ -3104,7 +3057,7 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             if (TiEnteConvenz.PRODUTTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())
                     || TiEnteConvenz.GESTORE.equals(user.getSiOrgEnteSiam().getTiEnteConvenz())) {
                 CollectionUtils.filter(listNotInUnitaDoc,
-                        object -> ((DecTipoNotaUnitaDoc) object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE"));
+                        object -> (object).getCdTipoNotaUnitaDoc().equals("NOTE_PRODUTTORE"));
             }
         }
 
@@ -3286,38 +3239,20 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                             verIndiceAipUdRowBean.getBigDecimal("id_ver_indice_aip"));
                     if (indice.getAroUrnVerIndiceAipUds() != null && !indice.getAroUrnVerIndiceAipUds().isEmpty()) {
                         // Recupero lo urn ORIGINALE
-                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.ORIGINALE);
-                                    }
-                                });
+                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                         if (urnVerIndiceAipUd != null) {
                             verIndiceAipUdRowBean.setString("urn", urnVerIndiceAipUd.getDsUrn());
                         }
                         // Recupero lo urn NORMALIZZATO
-                        urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.NORMALIZZATO);
-                                    }
-                                });
+                        urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.NORMALIZZATO));
                         if (urnVerIndiceAipUd != null) {
                             verIndiceAipUdRowBean.setString("urn_normalizzato", urnVerIndiceAipUd.getDsUrn());
                         }
                         // Recupero lo urn INZIALE
-                        urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(indice.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.INIZIALE);
-                                    }
-                                });
+                        urnVerIndiceAipUd = IterableUtils.find(indice.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.INIZIALE));
                         if (urnVerIndiceAipUd != null) {
                             verIndiceAipUdRowBean.setString("urn_iniziale", urnVerIndiceAipUd.getDsUrn());
                         }

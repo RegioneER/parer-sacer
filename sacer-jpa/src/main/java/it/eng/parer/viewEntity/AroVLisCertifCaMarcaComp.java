@@ -30,7 +30,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the ARO_V_LIS_CERTIF_CA_MARCA_COMP database table.
- * 
+ *
  */
 @Entity
 @Table(name = "ARO_V_LIS_CERTIF_CA_MARCA_COMP")

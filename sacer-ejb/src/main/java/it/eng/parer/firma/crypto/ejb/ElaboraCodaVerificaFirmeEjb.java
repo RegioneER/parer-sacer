@@ -68,7 +68,7 @@ public class ElaboraCodaVerificaFirmeEjb {
      *            - Id unità documentaria in elenco
      * @param idElenco
      *            - Id elenco
-     * 
+     *
      * @throws ParerUserError
      *             - Eccezione che fa passare all'unità documentaria successiva
      */

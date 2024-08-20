@@ -43,9 +43,12 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -166,6 +169,10 @@ public class ElenchiVersamentoEjb {
     private UniformResourceNameUtilHelper urnHelper;
     @EJB
     private GenericHelper genericHelper;
+    // MEV#30397
+    @EJB
+    private ObjectStorageService objectStorageService;
+    // end MEV#30397
 
     public ElvElencoVerRowBean getElvElencoVersRowBean(BigDecimal idElencoVers) {
         ElvElencoVer elenco = evWebHelper.findById(ElvElencoVer.class, idElencoVers.longValue());
@@ -534,10 +541,10 @@ public class ElenchiVersamentoEjb {
         CSChiave chiave = getChiaveUd(aroUnitaDoc);
 
         /*
-         * 
+         *
          * Gestione KEY NORMALIZED / URN PREGRESSI
-         * 
-         * 
+         *
+         *
          */
         // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
         // il sistema aggiorna ARO_UNITA_DOC
@@ -748,8 +755,14 @@ public class ElenchiVersamentoEjb {
         creaIndice(elenco);
     }
 
+    // MEV #31947 - Eliminare il salvataggio degli elenchi di versamento UD
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public byte[] generaIndice(long idElencoVers) throws ParerNoResultException, NoSuchAlgorithmException, IOException {
+        ElvElencoVer elenco = evWebHelper.findById(ElvElencoVer.class, idElencoVers);
+        return iejEjb.createIndex(elenco, true);
+    }
+
     private void creaIndice(ElvElencoVer elenco) throws ParerNoResultException, NoSuchAlgorithmException, IOException {
-        /* Registro nella tabella ElvFileElencoVers */
         byte[] indexFile = iejEjb.createIndex(elenco, true);
         /* Registro nella tabella ElvFileElencoVers */
         ElvFileElencoVer elvFileElencoVers = evHelper.storeFileIntoElenco(elenco, indexFile,
@@ -1131,7 +1144,7 @@ public class ElenchiVersamentoEjb {
 
     public void streamOutFileIndiceElenco(ZipOutputStream out, String fileNamePrefix, String fileNameSuffix,
             long idElencoVers, FileTypeEnum... fileTypes) throws IOException {
-        List<ElvFileElencoVer> retrieveFileIndiceElenco = evHelper.retrieveFileIndiceElenco(idElencoVers,
+        List<ElvFileElencoVer> retrieveFileIndiceElenco = evHelper.retrieveFileIndiceElenco2(idElencoVers,
                 FileTypeEnum.getStringEnumsList(fileTypes));
         for (ElvFileElencoVer elvFileElencoVer : retrieveFileIndiceElenco) {
             FileTypeEnum fileType = ElencoEnums.FileTypeEnum.valueOf(elvFileElencoVer.getTiFileElencoVers());
@@ -1161,12 +1174,21 @@ public class ElenchiVersamentoEjb {
             default:
                 throw new AssertionError(fileType.name());
             }
-            addEntryToZip(out, elvFileElencoVer.getBlFileElencoVers(), fileNamePrefix + fileNameSuffix + fileExtension);
+
+            // MEV#30397
+            byte[] blFileElencoVers = elvFileElencoVer.getBlFileElencoVers();
+            if (blFileElencoVers == null) {
+                blFileElencoVers = objectStorageService
+                        .getObjectElencoIndiciAip(elvFileElencoVer.getIdFileElencoVers());
+            }
+            // end MEV#30397
+
+            addEntryToZip(out, blFileElencoVers, fileNamePrefix + fileNameSuffix + fileExtension);
         }
         out.flush();
     }
 
-    private void addEntryToZip(ZipOutputStream out, byte[] file, String filename) throws IOException {
+    public void addEntryToZip(ZipOutputStream out, byte[] file, String filename) throws IOException {
         byte[] data = new byte[1024];
         try (InputStream bis = new ByteArrayInputStream(file)) {
             int count;
@@ -1252,14 +1274,18 @@ public class ElenchiVersamentoEjb {
      *            data firma
      * @param idUtente
      *            id utente
+     * @param backendMetadata
+     *            tipo backend
+     *
+     * @return ElvFileElencoVer
      *
      * @throws IOException
      *             errore generico
      * @throws NoSuchAlgorithmException
      *             errore generico
      */
-    public void storeFirmaElencoIndiceAip(Long idElencoVers, byte[] fileFirmato, Date signatureDate, long idUtente)
-            throws NoSuchAlgorithmException, IOException {
+    public ElvFileElencoVer storeFirmaElencoIndiceAip(Long idElencoVers, byte[] fileFirmato, Date signatureDate,
+            long idUtente, BackendStorage backendMetadata) throws NoSuchAlgorithmException, IOException {
         ElvElencoVer elenco = evHelper.retrieveElencoById(idElencoVers);
         evHelper.lockElenco(elenco);
 
@@ -1275,7 +1301,11 @@ public class ElenchiVersamentoEjb {
         ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
         fileElencoVers.setCdVerXsdFile(Costanti.VERSIONE_ELENCO_INDICE_AIP);
         fileElencoVers.setTiFileElencoVers(ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
-        fileElencoVers.setBlFileElencoVers(fileFirmato);
+        // MEV#30397
+        if (backendMetadata.isDataBase()) {
+            fileElencoVers.setBlFileElencoVers(fileFirmato);
+        }
+        // end MEV#30397
         fileElencoVers.setIdStrut(BigDecimal.valueOf(orgStrut.getIdStrut()));
         fileElencoVers.setDtCreazioneFile(new Date());
         fileElencoVers.setDsHashFile(hash);
@@ -1364,6 +1394,8 @@ public class ElenchiVersamentoEjb {
 
         /* Registro sul log delle operazioni */
         evHelper.writeLogElencoVers(elenco, orgStrut, idUtente, ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
+
+        return fileElencoVers;
     }
 
     /**
@@ -1379,7 +1411,7 @@ public class ElenchiVersamentoEjb {
      *            id utente
      * @param isSoloSigillo
      *            Gestione solo sigillo o firma e sigillo insieme
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1388,7 +1420,7 @@ public class ElenchiVersamentoEjb {
         try {
             /*
              * MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
-             * 
+             *
              * La logica prevede che se viene chiamato dal job sigillo vuol dire che si vogliono processare solanto gli
              * elenchi con getsione SIGILLO o SIGILLO_MARC, altrimenti se richiamati da interfaccia utente per la firma
              * manuale li processa tutti i tipi di gestione, sia di SIGILLO che di FIRMA §/
@@ -1498,8 +1530,20 @@ public class ElenchiVersamentoEjb {
              * desiderati In caso negativo scrive un log di warning
              */
             if (isElencoToMark(elenco)) {
-                byte[] firmaElencoIndiciAip = evHelper.retrieveFileIndiceElenco(idElencoVers,
+                // MEV#30397
+                BackendStorage backendIndiciAip = objectStorageService
+                        .lookupBackendElenchiIndiciAip(elenco.getOrgStrut().getIdStrut());
+
+                ElvFileElencoVer firmaElencoIxAip = evHelper.getFileIndiceElenco(idElencoVers,
                         ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
+
+                byte[] firmaElencoIndiciAip = firmaElencoIxAip.getBlFileElencoVers();
+                if (firmaElencoIndiciAip == null) {
+                    firmaElencoIndiciAip = objectStorageService
+                            .getObjectElencoIndiciAip(firmaElencoIxAip.getIdFileElencoVers());
+                }
+                // end MEV#30397
+
                 try {
                     /* Richiedo la marca per il file firmato */
                     ParerTST tsToken = cryptoInvoker.requestTST(firmaElencoIndiciAip);
@@ -1507,7 +1551,27 @@ public class ElenchiVersamentoEjb {
                     /* Verifico l'avvenuta acquisizione della marcatura temporale */
                     if (marcaTemporale != null) {
                         log.info("Marca temporale valida");
-                        saveMarcaElencoIndiceAip(elenco, marcaTemporale, idUtente);
+                        ElvFileElencoVer marcaElencoIxAip = saveMarcaElencoIndiceAip(elenco, marcaTemporale, idUtente,
+                                backendIndiciAip);
+                        // MEV#30397
+                        /*
+                         * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
+                         */
+                        if (backendIndiciAip.isObjectStorage()) {
+                            // retrieve normalized URN
+                            final String urn = marcaElencoIxAip.getElvUrnFileElencoVerss().stream()
+                                    .filter(tmpUrnNorm -> ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO
+                                            .equals(tmpUrnNorm.getTiUrn()))
+                                    .findAny().get().getDsUrn().substring(4);
+
+                            ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(urn,
+                                    backendIndiciAip.getBackendName(), marcaTemporale,
+                                    marcaElencoIxAip.getIdFileElencoVers(), marcaElencoIxAip.getIdStrut());
+                            log.debug(
+                                    "Salvato il file dell'elenco indici aip firmato su cui è stata apposta la marca temporale nel bucket {} con chiave {} ",
+                                    res.getBucket(), res.getKey());
+                        }
+                        // end MEV#30397
                     } else {
                         throw new ParerInternalError("Acquisizione marca temporale fallita");
                     }
@@ -1563,7 +1627,8 @@ public class ElenchiVersamentoEjb {
                 || elenco.getTiStatoElenco().equals(elencoCompletato)) && firma;
     }
 
-    private void saveMarcaElencoIndiceAip(ElvElencoVer elenco, byte[] marcaTemporale, long idUtente) {
+    private ElvFileElencoVer saveMarcaElencoIndiceAip(ElvElencoVer elenco, byte[] marcaTemporale, long idUtente,
+            BackendStorage backendMetadata) {
         final OrgStrut orgStrut = elenco.getOrgStrut();
         final OrgEnte orgEnte = orgStrut.getOrgEnte();
         final String nmStrut = orgStrut.getNmStrut();
@@ -1575,7 +1640,11 @@ public class ElenchiVersamentoEjb {
 
         ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
         fileElencoVers.setTiFileElencoVers(ElencoEnums.FileTypeEnum.MARCA_FIRMA_ELENCO_INDICI_AIP.name());
-        fileElencoVers.setBlFileElencoVers(marcaTemporale);
+        // MEV#30397
+        if (backendMetadata.isDataBase()) {
+            fileElencoVers.setBlFileElencoVers(marcaTemporale);
+        }
+        // end MEV#30397
         fileElencoVers.setIdStrut(BigDecimal.valueOf(orgStrut.getIdStrut()));
         fileElencoVers.setDtCreazioneFile(new Date());
         fileElencoVers.setDsHashFile(hash);
@@ -1623,6 +1692,8 @@ public class ElenchiVersamentoEjb {
         registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()), "MARCA_ELENCO_INDICI_AIP",
                 "Marca assunta con successo; gestione elenco = MARCA_FIRMA",
                 it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco.COMPLETATO, user.getNmUserid());
+
+        return fileElencoVers;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

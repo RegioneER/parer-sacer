@@ -17,21 +17,14 @@
 
 package it.eng.parer.job.indiceAipFascicoli.helper;
 
-import it.eng.parer.entity.*;
-import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
-import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiUsoModelloXsd;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.viewEntity.FasVLisUdInFasc;
-import it.eng.parer.viewEntity.FasVVisFascicolo;
-import it.eng.parer.ws.dto.CSChiaveFasc;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.Costanti;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
@@ -40,8 +33,33 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 import javax.persistence.Query;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.DecModelloXsdFascicolo;
+import it.eng.parer.entity.DecValVoceTitol;
+import it.eng.parer.entity.FasAmminPartec;
+import it.eng.parer.entity.FasFileMetaVerAipFasc;
+import it.eng.parer.entity.FasLinkFascicolo;
+import it.eng.parer.entity.FasMetaVerAipFascicolo;
+import it.eng.parer.entity.FasRespFascicolo;
+import it.eng.parer.entity.FasSogFascicolo;
+import it.eng.parer.entity.FasUniOrgRespFascicolo;
+import it.eng.parer.entity.FasVerAipFascicolo;
+import it.eng.parer.entity.FasXmlFascicolo;
+import it.eng.parer.entity.FasXsdMetaVerAipFasc;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiUsoModelloXsd;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.viewEntity.FasVLisUdInFasc;
+import it.eng.parer.viewEntity.FasVVisFascicolo;
+import it.eng.parer.ws.dto.CSChiaveFasc;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.Costanti;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 
 /**
  *
@@ -143,12 +161,22 @@ public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
     }
 
     public FasFileMetaVerAipFasc registraFasFileMetaVerAipFasc(long idMetaVerAipFascicolo, String file, OrgStrut strut,
-            Date dtCreazione) {
+            Date dtCreazione, BackendStorage backendMetadata, Map<String, String> indiceAipFascicoloBlob) {
         FasFileMetaVerAipFasc fileMetaVerAipFasc = new FasFileMetaVerAipFasc();
         FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager().find(FasMetaVerAipFascicolo.class,
                 idMetaVerAipFascicolo);
         fileMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
-        fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+
+        // MEV#30398
+        if (backendMetadata.isDataBase()) {
+            // clob contenente lo XML in input (canonicalizzato)
+            fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+        } else {
+            indiceAipFascicoloBlob.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name(),
+                    file);
+        }
+        // end MEV#30398
+
         fileMetaVerAipFasc.setOrgStrut(strut);
         fileMetaVerAipFasc.setDtCreazione(dtCreazione);
         getEntityManager().persist(fileMetaVerAipFasc);
@@ -199,7 +227,7 @@ public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
      *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public List<DecModelloXsdFascicolo> retrieveIdModelliFascicoloDaElaborare(long idAmbiente) {
@@ -222,7 +250,7 @@ public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
      *            id ambiente
      * @param cdVersioneXml
      *            versione del servizio di versamento fascicolo
-     * 
+     *
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public List<DecModelloXsdFascicolo> retrieveIdModelliFascicoloDaElaborareV2(long idAmbiente, String cdVersioneXml) {

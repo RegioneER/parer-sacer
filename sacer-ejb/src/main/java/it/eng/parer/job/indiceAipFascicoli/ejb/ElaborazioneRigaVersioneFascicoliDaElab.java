@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
+import it.eng.parer.entity.DecAaTipoFascicolo;
 import it.eng.parer.entity.ElvElencoVersFascDaElab;
 import it.eng.parer.entity.ElvStatoElencoVersFasc;
 import it.eng.parer.entity.FasAipFascicoloDaElab;
@@ -46,9 +47,18 @@ import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
 import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
 import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
 import it.eng.parer.job.indiceAipFascicoli.helper.CreazioneIndiceAipFascicoliHelper;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.viewEntity.ElvVChkAllAipFascCreati;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.dto.CSChiaveFasc;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -70,6 +80,10 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
     private ElencoVersFascicoliHelper elencoHelper;
     @EJB
     private ConfigurationHelper configurationHelper;
+    // MEV#30398
+    @EJB
+    private ObjectStorageService objectStorageService;
+    // end MEV#30398
 
     // MEV#29589
     /*
@@ -105,6 +119,14 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
     public void gestisciIndiceAipFascicoliDaElab(FasAipFascicoloDaElab fascDaElab, String cdVersioneXml)
             throws Exception {
 
+        // MEV #30398
+        DecAaTipoFascicolo aaTipoFascicoloCorrente = ciafHelper.retrieveDecAaTipoFascicoloCorrente(
+                fascDaElab.getFasFascicolo().getDecTipoFascicolo().getIdTipoFascicolo());
+        BackendStorage backendIndiciAipFascicoli = objectStorageService.lookupBackendFasc(
+                aaTipoFascicoloCorrente.getIdAaTipoFascicolo(), CostantiDB.ParametroAppl.BACKEND_INDICI_AIP_FASCICOLI);
+        Map<String, String> indiciAipFascicoliBlob = new HashMap<>();
+        // end MEV #30398
+
         // MEV#29589
         // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
         // Unisincro specificata dalla costante UNISINCRO_V2_REF
@@ -115,10 +137,17 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
             desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
         } else {
             // MEV#26576
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + cdVersioneXml;
+            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
+                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
+                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
             // end MEV#26576
         }
         // end MEV#29589
+
+        // // workaround per gestione versione xml versamento fascicolo 3.0
+        // if ("3.0".equals(cdVersioneXml)) {
+        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
+        // }
 
         /* Recupero il fascicolo da elaborare */
         log.debug("{} - Elaboro il fascicolo {}", desJobMessage, fascDaElab.getFasFascicolo().getIdFascicolo());
@@ -148,10 +177,15 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
                 && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
             codiceVersioneMetadati = codiceVersione;
         } else {
-            codiceVersioneMetadati = (!"2.0".equals(cdVersioneXml)) ? codiceVersione
+            codiceVersioneMetadati = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)) ? codiceVersione
                     : ciafHelper.getVersioneMetadatiAIPV2(fascicolo.getIdFascicolo(), tiCreazione);
         }
         // end MEV#29589
+
+        // // workaround per gestione versione xml versamento fascicolo 3.0
+        // if ("3.0".equals(cdVersioneXml)) {
+        // codiceVersioneMetadati = UNISINCRO_V2_REF;
+        // }
 
         /* Determino il sistema di conservazione */
         String sistemaConservazione = configurationHelper
@@ -166,15 +200,47 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
         FasVerAipFascicolo lastVer = ciafHelper.registraAIP(fascDaElab, progressivoVersione, codiceVersione,
                 sistemaConservazione);
 
-        /* Crea File fascicolo */
+        /* Crea File fascicolo --> file FASCICOLO */
         log.debug("{} - Creo il file XML", desJobMessage);
         elaborazioneMeta.creaMetaVerFascicolo(lastVer.getIdVerAipFascicolo(), codiceVersioneMetadati,
-                sistemaConservazione, cdVersioneXml);
+                sistemaConservazione, cdVersioneXml, backendIndiciAipFascicoli, indiciAipFascicoliBlob);
 
-        /* Crea indice AIP fascicolo */
+        /* Crea indice AIP fascicolo --> file INDICE */
         log.debug("{} - Genero l'indice AIP", desJobMessage);
         elaborazioneAip.creaIndiceAipVerFascicolo(lastVer.getIdVerAipFascicolo(), codiceVersione,
-                codiceVersioneMetadati, sistemaConservazione, creatingApplicationProducer, cdVersioneXml);
+                codiceVersioneMetadati, sistemaConservazione, creatingApplicationProducer, cdVersioneXml,
+                backendIndiciAipFascicoli, indiciAipFascicoliBlob);
+
+        // MEV #30398
+        /*
+         * Se backendIndiciAipFascicoli di tipo O.S. si effettua il salvataggio (con link su apposita entity)
+         */
+        if (backendIndiciAipFascicoli.isObjectStorage()) {
+            // Creo gli oggetti per calcolare l'URN
+            CSVersatore versatore = new CSVersatore();
+            versatore.setSistemaConservazione(sistemaConservazione);
+            versatore.setAmbiente(
+                    fascDaElab.getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
+            versatore.setEnte(fascDaElab.getFasFascicolo().getOrgStrut().getOrgEnte().getNmEnte());
+            versatore.setStruttura(fascDaElab.getFasFascicolo().getOrgStrut().getNmStrut());
+
+            CSChiaveFasc chiaveFasc = new CSChiaveFasc();
+            chiaveFasc.setAnno(fascDaElab.getFasFascicolo().getAaFascicolo().intValue());
+            chiaveFasc.setNumero(fascDaElab.getFasFascicolo().getCdKeyFascicolo());
+
+            // calculate normalized URN
+            String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnFascicolo(
+                    MessaggiWSFormat.formattaUrnPartVersatore(versatore, true, Costanti.UrnFormatter.VERS_FMT_STRING),
+                    MessaggiWSFormat.formattaUrnPartFasc(chiaveFasc, true, Costanti.UrnFormatter.FASC_FMT_STRING));
+            final String urn = MessaggiWSFormat.formattaUrnAipFascicolo(tmpUrnNorm).substring(4);
+
+            ObjectStorageResource indiceAipFascSuOS = objectStorageService.createResourcesInIndiciAipFasc(urn,
+                    backendIndiciAipFascicoli.getBackendName(), indiciAipFascicoliBlob, lastVer.getIdVerAipFascicolo(),
+                    BigDecimal.valueOf(fascDaElab.getFasFascicolo().getOrgStrut().getIdStrut()));
+            log.debug("Salvati i file indice AIP fascicolo nel bucket {} con chiave {} ", indiceAipFascSuOS.getBucket(),
+                    indiceAipFascSuOS.getKey());
+        }
+        // end MEV #30398
 
         // Aggiorno il fascicolo assegnando stato nell’elenco pari a IN_ELENCO_CON_AIP_CREATO
         if (fascicolo.getElvElencoVersFasc().getIdElencoVersFasc()
