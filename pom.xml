@@ -493,7 +493,7 @@
         <module>sacer-ear</module>
     </modules>
     <scm>
-        <developerConnection>scm:git:https://github.com/RegioneER/parer.sacer.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/RegioneER/parer-sacer.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
