@@ -73,7 +73,7 @@ public class CreazioneModelloSerieBean {
      *
      * @param detail
      *            form di dettaglio
-     * 
+     *
      * @throws it.eng.spagoCore.error.EMFError
      *             Errore di parsing
      */

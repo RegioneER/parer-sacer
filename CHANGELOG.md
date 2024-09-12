@@ -1,4 +1,58 @@
 
+## 10.2.0 (12-09-2024)
+
+### Bugfix: 9
+- [#33854](https://parermine.regione.emilia-romagna.it/issues/33854) Modifica condizione di controllo su modifica/cancellazione periodo di validità registro
+- [#33801](https://parermine.regione.emilia-romagna.it/issues/33801) Correzione casting sul parametro aa_unita_doc_registro.
+- [#33782](https://parermine.regione.emilia-romagna.it/issues/33782) Correzione descrizione struttura mostrata nell'intestazione a sinistra all'apertura di organizzazione da Siam
+- [#33298](https://parermine.regione.emilia-romagna.it/issues/33298) Precompilazione di ambiente, ente e struttura nella pagina RIEPILOGO AGGIORNAMENTO METADATI
+- [#33252](https://parermine.regione.emilia-romagna.it/issues/33252) Correzione dei valori su RIEPILOGO AGGIORNAMENTO METADATI
+- [#33157](https://parermine.regione.emilia-romagna.it/issues/33157) Correzione dell'errore nella creazione di un criterio di raggruppamento
+- [#33057](https://parermine.regione.emilia-romagna.it/issues/33057) Importazione parametri struttura: correzione bug che impedisce di importare il profilo normativo
+- [#32638](https://parermine.regione.emilia-romagna.it/issues/32638) Correzione alla ricerca fascicoli per la selezione del modello xsd di fascicolo
+- [#32589](https://parermine.regione.emilia-romagna.it/issues/32589) Restituzione archivio: Correzione contatore dimensione file estratti
+
+### Novità: 3
+- [#33156](https://parermine.regione.emilia-romagna.it/issues/33156) Aumento della capacità di upload di lab
+- [#32249](https://parermine.regione.emilia-romagna.it/issues/32249) Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+- [#31352](https://parermine.regione.emilia-romagna.it/issues/31352) Modifiche alla pagina Gestione richieste di restituzione archivio
+
+## 10.1.0 (20-08-2024)
+
+### Bugfix: 1
+- [#33297](https://parermine.regione.emilia-romagna.it/issues/33297) Recupero da object storage degli Indici Aip Unisincro 1.0 nell'AIP
+
+### Novità: 1
+- [#33069](https://parermine.regione.emilia-romagna.it/issues/33069) Aggiornamento librerie obsolete 2024
+
+## 10.0.0 (13-08-2024)
+
+### Novità: 1
+- [#30802](https://parermine.regione.emilia-romagna.it/issues/30802) Aggiornamento a Java 11
+
+## 9.4.0 (17-07-2024)
+
+### Bugfix: 3
+- [#32985](https://parermine.regione.emilia-romagna.it/issues/32985) Recupero dei profili del fascicolo da object storage nella creazione dell'indici AIP dei fascicoli
+- [#32546](https://parermine.regione.emilia-romagna.it/issues/32546) Introduzione constraint inter schema SACER (aro_unita_doc) e SACER_IAM(usr_user
+- [#32341](https://parermine.regione.emilia-romagna.it/issues/32341) Risoluzione problema relativo agli indici aip delle aggregazioni nell'AIP dell'UD
+
+### Novità: 14
+- [#32930](https://parermine.regione.emilia-romagna.it/issues/32930) Ottimizzazione performance monitoraggio riepilogo versamenti sintetico
+- [#32818](https://parermine.regione.emilia-romagna.it/issues/32818) Modifica modello CRYPTO response
+- [#32648](https://parermine.regione.emilia-romagna.it/issues/32648) Associazione tra parametri e versione dell'applicazione
+- [#32529](https://parermine.regione.emilia-romagna.it/issues/32529) Aggiunta controllo per date non contigue durante la fase di salvataggio associazione  ente convenzionato-struttura.
+- [#32322](https://parermine.regione.emilia-romagna.it/issues/32322) Realizzazione della funzionalità per comunicare key&secret per client api pubblicate
+- [#31947](https://parermine.regione.emilia-romagna.it/issues/31947) Eliminare il salvataggio degli elenchi di versamento UD
+- [#31945](https://parermine.regione.emilia-romagna.it/issues/31945) Eliminare validazione elenco UD con firma
+- [#31922](https://parermine.regione.emilia-romagna.it/issues/31922) Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento dei fascicoli
+- [#31034](https://parermine.regione.emilia-romagna.it/issues/31034) Gestione descrizione dei dati specifici per singola versione 
+- [#30752](https://parermine.regione.emilia-romagna.it/issues/30752) Indicazione degli elenchi non validati nel messaggio di avvenuta validazione
+- [#30399](https://parermine.regione.emilia-romagna.it/issues/30399) Salvataggio diretto su object storage dell'elenco indici AIP dei fascicoli
+- [#30398](https://parermine.regione.emilia-romagna.it/issues/30398) Salvataggio diretto su object storage dell'indice AIP dei fascicoli
+- [#30397](https://parermine.regione.emilia-romagna.it/issues/30397) Salvataggio diretto su object storage dell'elenco indici AIP delle UD
+- [#9833](https://parermine.regione.emilia-romagna.it/issues/9833) Cancellazione periodica dei versamenti non andati a buon fine
+
 ## 9.3.0 (06-05-2024)
 
 ### Bugfix: 8

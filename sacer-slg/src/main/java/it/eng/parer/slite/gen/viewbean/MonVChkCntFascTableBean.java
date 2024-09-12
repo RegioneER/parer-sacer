@@ -20,7 +20,7 @@ package it.eng.parer.slite.gen.viewbean;
 import java.util.Iterator;
 
 /**
- * ViewBean per la vista 
+ * ViewBean per la vista
  *
  */
 import it.eng.spagoLite.db.base.table.AbstractBaseTable;

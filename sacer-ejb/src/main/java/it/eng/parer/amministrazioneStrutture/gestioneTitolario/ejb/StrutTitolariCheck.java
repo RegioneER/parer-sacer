@@ -17,19 +17,6 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneTitolario.ejb;
 
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.titolario.xml.ChiudiVoceType;
-import it.eng.parer.titolario.xml.CreaTitolario;
-import it.eng.parer.titolario.xml.CreaVoceType;
-import it.eng.parer.titolario.xml.LivelloType;
-import it.eng.parer.titolario.xml.ModificaVoceType;
-import it.eng.parer.titolario.xml.OperazioneCreaType;
-import it.eng.parer.titolario.xml.OperazioneModificaType;
-import it.eng.parer.titolario.xml.OperazioneType;
-import it.eng.parer.amministrazioneStrutture.gestioneTitolario.dto.Voce;
-import it.eng.parer.amministrazioneStrutture.gestioneTitolario.utils.OperazioneComparator;
-import it.eng.parer.amministrazioneStrutture.gestioneTitolario.utils.VoceComparator;
-import it.eng.spagoLite.message.MessageBox;
 import java.math.BigInteger;
 import java.util.Calendar;
 import java.util.Collections;
@@ -45,12 +32,28 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import org.apache.commons.collections.CollectionUtils;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.amministrazioneStrutture.gestioneTitolario.dto.Voce;
+import it.eng.parer.amministrazioneStrutture.gestioneTitolario.utils.OperazioneComparator;
+import it.eng.parer.amministrazioneStrutture.gestioneTitolario.utils.VoceComparator;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.titolario.xml.ChiudiVoceType;
+import it.eng.parer.titolario.xml.CreaTitolario;
+import it.eng.parer.titolario.xml.CreaVoceType;
+import it.eng.parer.titolario.xml.LivelloType;
+import it.eng.parer.titolario.xml.ModificaVoceType;
+import it.eng.parer.titolario.xml.OperazioneCreaType;
+import it.eng.parer.titolario.xml.OperazioneModificaType;
+import it.eng.parer.titolario.xml.OperazioneType;
+import it.eng.spagoLite.message.MessageBox;
 
 /**
  *

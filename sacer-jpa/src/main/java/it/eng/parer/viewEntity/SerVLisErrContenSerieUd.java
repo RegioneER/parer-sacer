@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the SER_V_LIS_ERR_CONTEN_SERIE_UD database table.
- * 
+ *
  */
 @Entity
 @Table(name = "SER_V_LIS_ERR_CONTEN_SERIE_UD")

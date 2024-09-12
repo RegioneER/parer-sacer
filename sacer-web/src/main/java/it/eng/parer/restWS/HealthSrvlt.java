@@ -24,9 +24,11 @@ package it.eng.parer.restWS;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.parer.web.dto.HealthActuatorBean;
 
+@WebServlet(urlPatterns = { "/actuator/health" }, asyncSupported = true)
 public class HealthSrvlt extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -52,25 +55,13 @@ public class HealthSrvlt extends HttpServlet {
         response.reset();
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json; charset=\"utf-8\"");
-        ServletOutputStream out = response.getOutputStream();
-        OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out, "UTF-8");
-        try {
+        try (ServletOutputStream out = response.getOutputStream();
+                OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);) {
+
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(tmpStreamWriter, HealthActuatorBean.statusUp());
         } catch (Exception e) {
             log.error("Eccezione nella servlet actuator", e);
-        } finally {
-            try {
-                tmpStreamWriter.close();
-            } catch (Exception ei) {
-                log.error("Eccezione nella servlet actuator", ei);
-            }
-            try {
-                out.flush();
-                out.close();
-            } catch (Exception ei) {
-                log.error("Eccezione nella servlet actuator", ei);
-            }
         }
     }
 

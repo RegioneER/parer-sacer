@@ -1846,7 +1846,7 @@ public class TipoUnitaDocEjb {
      *
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @return configurazione del backend utilizzato
      */
     public String getStorageUtilizzatoVersamento(BigDecimal idTipoUnitaDoc) {
@@ -1864,7 +1864,7 @@ public class TipoUnitaDocEjb {
      *
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @return configurazione del backend utilizzato
      */
     public String getStorageUtilizzatoVersamentoMultimedia(BigDecimal idTipoUnitaDoc) {
@@ -1882,7 +1882,7 @@ public class TipoUnitaDocEjb {
      *
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @return configurazione del backend utilizzato
      */
     public String getStorageUtilizzatoAggiuntaDocumenti(BigDecimal idTipoUnitaDoc) {

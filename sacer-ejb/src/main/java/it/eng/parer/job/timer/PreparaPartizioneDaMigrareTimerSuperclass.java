@@ -34,7 +34,7 @@ import it.eng.parer.migrazioneObjectStorage.job.ProducerCodaDaMigrareEjb;
 /**
  *
  * @author Iacolucci_M
- * 
+ *
  *         Superclasse da cui ereditare altre classi che rappresentano il job ennesimo di PREPARA_PARTIZIONE_DA_MIGRARE.
  */
 public class PreparaPartizioneDaMigrareTimerSuperclass extends JobTimer {

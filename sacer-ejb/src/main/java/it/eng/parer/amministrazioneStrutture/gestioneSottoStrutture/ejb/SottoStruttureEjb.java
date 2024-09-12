@@ -88,9 +88,9 @@ public class SottoStruttureEjb {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true/false
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

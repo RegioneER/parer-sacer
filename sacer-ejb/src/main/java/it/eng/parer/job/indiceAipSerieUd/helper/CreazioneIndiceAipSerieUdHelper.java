@@ -45,7 +45,7 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      *            id struttura
      * @param tiStatoVerSerie
      *            stato versamento serie
-     * 
+     *
      * @return la lista da elaborare
      */
     @SuppressWarnings("unchecked")
@@ -76,7 +76,7 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      *
      * @param idVerSerie
      *            id versamento serie
-     * 
+     *
      * @return pk entity AroUdAppartVerSerie
      */
     public Long getNumUdEffettiveSenzaVolume(Long idVerSerie) {
@@ -94,7 +94,7 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      *
      * @param idVerSerie
      *            id versamento serie
-     * 
+     *
      * @return progressivo
      */
     public BigDecimal getUltimoProgressivoSerStatoVerSerie(Long idVerSerie) {
@@ -110,7 +110,7 @@ public class CreazioneIndiceAipSerieUdHelper extends GenericHelper {
      *
      * @param idSerie
      *            id serie
-     * 
+     *
      * @return progressivo
      */
     public BigDecimal getUltimoProgressivoSerStatoSerie(Long idSerie) {

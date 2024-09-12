@@ -17,22 +17,32 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.helper;
 
-import it.eng.parer.entity.*;
-import it.eng.parer.helper.GenericHelper;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+
+import it.eng.parer.entity.DecFormatoFileAmmesso;
+import it.eng.parer.entity.DecTipoCompDoc;
+import it.eng.parer.entity.DecTipoRapprAmmesso;
+import it.eng.parer.entity.DecTipoRapprComp;
+import it.eng.parer.entity.DecTipoStrutDoc;
+import it.eng.parer.entity.DecTipoStrutUnitaDoc;
+import it.eng.parer.helper.GenericHelper;
 
 /**
  * Helper delle tipologie di struttura documento
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class TipoStrutturaDocHelper extends GenericHelper {

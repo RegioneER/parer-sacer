@@ -28,7 +28,7 @@ import javax.persistence.Table;
 /**
  *
  * @author gpiccioli
- * 
+ *
  *         The persistent class for the ORG_V_CORR_PING database table.
  */
 @Entity

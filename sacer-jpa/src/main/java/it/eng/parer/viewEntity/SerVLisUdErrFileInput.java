@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the SER_V_LIS_UD_ERR_FILE_INPUT database table.
- * 
+ *
  */
 @Entity
 @Table(name = "SER_V_LIS_UD_ERR_FILE_INPUT")

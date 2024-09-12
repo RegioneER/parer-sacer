@@ -97,7 +97,7 @@ public class FutureUtils {
      *            sessione Http
      * @param sessionId
      *            l'id della sessione in gestione
-     * 
+     *
      * @return la mappa di future per la sessione richiesta
      */
     public static Map<String, Future<?>> getFutureMap(HttpSession httpSession, String sessionId) {
@@ -125,7 +125,7 @@ public class FutureUtils {
      *            id della struttura della serie
      * @param idVerSerie
      *            id della versione della serie su cui è stato chiamato il metodo asincrono
-     * 
+     *
      * @return la stringa univoca per la gestione dell'oggetto Future che verra' chiamato
      */
     public static String buildKeyFuture(CreazioneSerieBean serieBean, BigDecimal idStrut, Long idVerSerie) {
@@ -155,7 +155,7 @@ public class FutureUtils {
      *            id della struttura della serie
      * @param idVerSerie
      *            id della versione della serie su cui è stato chiamato il metodo asincrono
-     * 
+     *
      * @return la stringa univoca per la gestione dell'oggetto Future che verra' chiamato
      */
     public static String buildKeyFuture(String tiCreazione, String cdSerie, BigDecimal aaSerie, BigDecimal idStrut,
@@ -172,7 +172,7 @@ public class FutureUtils {
      *
      * @param key
      *            la stringa univoca per la gestione dell'oggetto Future che verra' chiamato
-     * 
+     *
      * @return l'array che costituisce i dati della serie gestita in base alla chiave
      */
     public static String[] unbuildKeyFuture(String key) {

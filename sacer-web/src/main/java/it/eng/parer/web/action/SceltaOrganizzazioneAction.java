@@ -243,7 +243,7 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
      *            id utente
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -274,7 +274,7 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
      *            id utente
      * @param idEnte
      *            id ente
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -314,13 +314,8 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
                     getForm().getStrutture().getId_ambiente().getDecodedValue());
             organizzazione.put(WebConstants.Organizzazione.ENTE.name(),
                     getForm().getStrutture().getId_ente().getDecodedValue());
-            // Parametro messo in sessione per gestire la struttura linkabile lato framework in MenuTag.java
-            getRequest().getSession().setAttribute(WebConstants.Organizzazione.STRUTTURA_LINK.name(),
-                    "<a href=\"Strutture.html?operation=loadStrutDaMenu\">"
-                            + getForm().getStrutture().getId_strut().getDecodedValue() + "</a>");
             organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(),
                     getForm().getStrutture().getId_strut().getDecodedValue());
-            // getSession().setAttribute("idStrutDaMenu", getForm().getStrutture().getId_strut().parse());
             user.setOrganizzazioneMap(organizzazione);
             user.setConfigurazione(configHelper.getConfiguration());
             authenticator.recuperoAutorizzazioni(getSession());

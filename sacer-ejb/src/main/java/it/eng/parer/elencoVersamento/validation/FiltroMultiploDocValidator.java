@@ -27,8 +27,8 @@ import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 
 import it.eng.parer.entity.AroDoc;
 import it.eng.parer.entity.DecCriterioFiltroMultiplo;

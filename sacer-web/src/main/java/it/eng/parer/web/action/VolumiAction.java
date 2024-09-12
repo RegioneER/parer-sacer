@@ -660,7 +660,7 @@ public class VolumiAction extends VolumiAbstractAction {
      * relativa al tipo componente documento
      *
      * @return oggetto di tipo {@link JSONObject}
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -816,7 +816,7 @@ public class VolumiAction extends VolumiAbstractAction {
      *            id volume
      * @param statoVol
      *            stato volume
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -903,14 +903,14 @@ public class VolumiAction extends VolumiAbstractAction {
 
     /**
      * Metodo utilizzato per inserire in un file zip (stream di output) un file passato sotto forma di bytearray
-     * 
+     *
      * @param out
      *            output stream {@link ZipOutputStream}
      * @param filename
      *            nome file
      * @param blobbo
      *            file in byte array
-     * 
+     *
      * @throws EMFError
      *             errore generico
      * @throws IOException

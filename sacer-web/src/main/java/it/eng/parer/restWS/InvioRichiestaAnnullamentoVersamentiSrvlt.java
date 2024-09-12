@@ -23,23 +23,24 @@ import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.W
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.ejb.EJB;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.MarshalException;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationException;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -66,6 +67,7 @@ import it.eng.spagoCore.util.Oauth2Srvlt;
  *
  * @author gilioli_p
  */
+@WebServlet(urlPatterns = { "/InvioRichiestaAnnullamentoVersamenti" }, asyncSupported = true)
 public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
 
     private static final long serialVersionUID = 1L;
@@ -73,6 +75,12 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
     private String uploadDir;
     private String instanceName;
     // Percorso del file XSD di risposta
+
+    @EJB(mappedName = "java:app/Parer-ejb/InvioRichiestaAnnullamentoVersamentiEjb")
+    private InvioRichiestaAnnullamentoVersamentiEjb invioRichiestaAnnullamentoVersamentiEjb;
+
+    @EJB(mappedName = "java:app/Parer-ejb/XmlContextCache")
+    private XmlContextCache xmlContextCache;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -103,15 +111,13 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        InvioRichiestaAnnullamentoVersamentiEjb invioRichiestaAnnullamentoVersamentiEjb;
-        XmlContextCache xmlContextCache;
         RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs;
         InvioRichiestaAnnullamentoVersamentiExt ravExt;
         EsitoRichiestaAnnullamentoVersamenti myEsito;
         SyncFakeSessn sessioneFinta = new SyncFakeSessn();
-        Iterator tmpIterator = null;
+        Iterator<FileItem> tmpIterator = null;
         DiskFileItem tmpFileItem = null;
-        List fileItems = null;
+        List<FileItem> fileItems = null;
         AvanzamentoWs tmpAvanzamento;
         RequestPrsr myRequestPrsr = new RequestPrsr();
         RequestPrsr.ReqPrsrConfig tmpPrsrConfig = new RequestPrsr().new ReqPrsrConfig();
@@ -123,23 +129,6 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
         tmpAvanzamento = AvanzamentoWs.nuovoAvanzamentoWS(instanceName, AvanzamentoWs.Funzioni.Annullamento);
         tmpAvanzamento.logAvanzamento();
 
-        // Recupera l'ejb, se possibile - altrimenti segnala errore
-        try {
-            invioRichiestaAnnullamentoVersamentiEjb = (InvioRichiestaAnnullamentoVersamentiEjb) new InitialContext()
-                    .lookup("java:app/Parer-ejb/InvioRichiestaAnnullamentoVersamentiEjb");
-        } catch (NamingException ex) {
-            log.error("Errore nel recupero dell'EJB di Richiesta Annullamento Versamenti", ex);
-            throw new ServletException("Impossibile recuperare l'ejb di Richiesta Annullamento Versamenti", ex);
-        }
-
-        try {
-            xmlContextCache = (XmlContextCache) new InitialContext().lookup("java:app/Parer-ejb/XmlContextCache");
-        } catch (NamingException ex) {
-            log.error("Errore nel recupero dell'EJB XmlContextCache ", ex);
-            throw new ServletException("Impossibile recuperare l'ejb XmlContextCache ", ex);
-        }
-
-        tmpAvanzamento.setFase("EJB recuperato").logAvanzamento();
         Date now = Calendar.getInstance().getTime();
         //////////////////////
         // INIT RISPOSTA WS //
@@ -266,33 +255,16 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
         response.reset();
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/xml; charset=\"utf-8\"");
-        ServletOutputStream out = response.getOutputStream();
-        OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out, "UTF-8");
 
-        try {
+        try (ServletOutputStream out = response.getOutputStream();
+                OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);) {
+
             Marshaller marshaller = xmlContextCache.getEsitoAnnVersCtx_EsitoRichiestaAnnullamentoVersamenti()
                     .createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             marshaller.marshal(myEsito, tmpStreamWriter);
-        } catch (MarshalException e) {
+        } catch (JAXBException | IOException e) {
             log.error("Eccezione nella servlet richieste annullamento ud ", e);
-        } catch (ValidationException e) {
-            log.error("Eccezione nella servlet richieste annullamento ud", e);
-        } catch (Exception e) {
-            log.error("Eccezione nella servlet richieste annullamento ud", e);
-        } finally {
-            try {
-                tmpStreamWriter.flush();
-                tmpStreamWriter.close();
-            } catch (Exception ei) {
-                log.error("Eccezione nella servlet richieste annullamento ud", ei);
-            }
-            try {
-                out.flush();
-                out.close();
-            } catch (Exception ei) {
-                log.error("Eccezione nella servlet richieste annullamento ud", ei);
-            }
         }
     }
 

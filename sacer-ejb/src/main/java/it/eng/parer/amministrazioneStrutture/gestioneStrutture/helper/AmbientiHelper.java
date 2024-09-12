@@ -17,26 +17,54 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper;
 
-import it.eng.parer.entity.*;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.grantedEntity.*;
-import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
-import it.eng.parer.grantedViewEntity.UsrVAbilAmbEnteConvenz;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.job.allineamentoOrganizzazioni.utils.CostantiReplicaOrg;
-import it.eng.parer.viewEntity.*;
-import it.eng.parer.web.util.ApplEnum;
-import it.eng.parer.web.util.Constants;
-import org.apache.commons.lang3.StringUtils;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+
+import it.eng.parer.entity.IamOrganizDaReplic;
+import it.eng.parer.entity.OrgAmbiente;
+import it.eng.parer.entity.OrgCategEnte;
+import it.eng.parer.entity.OrgCategStrut;
+import it.eng.parer.entity.OrgEnte;
+import it.eng.parer.entity.OrgStoricoEnteAmbiente;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.grantedEntity.OrgAmbitoTerrit;
+import it.eng.parer.grantedEntity.SIOrgAccordoEnte;
+import it.eng.parer.grantedEntity.SIOrgAmbienteEnteConvenz;
+import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
+import it.eng.parer.grantedEntity.SIUsrOrganizIam;
+import it.eng.parer.grantedEntity.UsrUser;
+import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
+import it.eng.parer.grantedViewEntity.UsrVAbilAmbEnteConvenz;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.job.allineamentoOrganizzazioni.utils.CostantiReplicaOrg;
+import it.eng.parer.viewEntity.OrgVRicAmbiente;
+import it.eng.parer.viewEntity.OrgVRicEnte;
+import it.eng.parer.viewEntity.UsrVAbilAmbSacerXstrut;
+import it.eng.parer.viewEntity.UsrVAbilAmbXente;
+import it.eng.parer.viewEntity.UsrVAbilEnteSacerXstrut;
+import it.eng.parer.viewEntity.UsrVChkCreaAmbSacer;
+import it.eng.parer.web.util.ApplEnum;
+import it.eng.parer.web.util.Constants;
+
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class AmbientiHelper extends GenericHelper {
@@ -48,7 +76,7 @@ public class AmbientiHelper extends GenericHelper {
      *            nome dell'ente
      * @param idAmb
      *            idAmbiente associato
-     * 
+     *
      * @return OrgEnte istanza
      */
     public OrgEnte getOrgEnteByName(String nmEnte, BigDecimal idAmb) {
@@ -79,7 +107,7 @@ public class AmbientiHelper extends GenericHelper {
      *
      * @param nmAmbiente
      *            nome ambiente
-     * 
+     *
      * @return OrgAmbiente istanza
      */
     public OrgAmbiente getOrgAmbienteByName(String nmAmbiente) {
@@ -371,7 +399,7 @@ public class AmbientiHelper extends GenericHelper {
      *            nome ente
      * @param tipoDefTemplateEnte
      *            tipo definizione template ente
-     * 
+     *
      * @return lista di entità OrgEnte
      */
     public List<OrgVRicEnte> getEntiAbilitatiRicerca(long idUtente, BigDecimal idAmbiente, String nmEnte,
@@ -415,7 +443,7 @@ public class AmbientiHelper extends GenericHelper {
      *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return lista di entità OrgEnte
      */
     public List<OrgEnte> getEntiValidiAmbiente(BigDecimal idAmbiente) {
@@ -477,7 +505,7 @@ public class AmbientiHelper extends GenericHelper {
      *            nome tipo organizzazione
      * @param idOrganizApplic
      *            id organizzazione applicazione
-     * 
+     *
      * @return String nome
      */
     public String getNmEnteConvenz(String nmApplic, String nmTipoOrganiz, BigDecimal idOrganizApplic) {
@@ -502,7 +530,7 @@ public class AmbientiHelper extends GenericHelper {
      *
      * @param idUtente
      *            id utente
-     * 
+     *
      * @return lista oggetti di tipo {@link OrgAmbiente}
      */
     public List<OrgAmbiente> retrieveOrgAmbienteFromAbil(long idUtente) {
@@ -703,7 +731,7 @@ public class AmbientiHelper extends GenericHelper {
      *
      * @param idEnteConvenz
      *            id ente convenzionato
-     * 
+     *
      * @return l'accordo valido, o null
      */
     public SIOrgAccordoEnte retrieveOrgAccordoValidoEnteConvenz(BigDecimal idEnteConvenz) {

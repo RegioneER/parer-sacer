@@ -95,7 +95,7 @@ public class ModificaUtenteHelper {
      *            bean ModificaUtenteExt
      * @param rispostaWs
      *            bean RispostaWSModificaUtente
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */

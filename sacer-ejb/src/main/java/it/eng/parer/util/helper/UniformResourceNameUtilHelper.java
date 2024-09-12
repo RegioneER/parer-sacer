@@ -17,6 +17,8 @@
 
 package it.eng.parer.util.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;

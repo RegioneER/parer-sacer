@@ -4,7 +4,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>9.3.1-SNAPSHOT</version>
+        <version>10.2.0</version>
     </parent>
     
     <artifactId>sacer-jboss-web</artifactId>
@@ -114,12 +114,7 @@
             <artifactId>poi-ooxml-lite</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.xmlbeans</groupId>
-            <artifactId>xmlbeans</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        
+
     </dependencies>
     <build>
         <resources>

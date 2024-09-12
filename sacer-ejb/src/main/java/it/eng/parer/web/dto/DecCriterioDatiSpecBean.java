@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Copia modificata della entity JPA DecCriterioDatiSpec per la gestione dei dati specifici in fase di costruzione query
- * 
+ *
  * @author Gilioli_P
  */
 public class DecCriterioDatiSpecBean {

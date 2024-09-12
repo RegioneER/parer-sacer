@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Form Description="UtilizzoMicroservizi" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="Form.xsd" >
+    
+    <Fields Name="DatiUtilizzoMicroserviziFields" >
+        <Input Type="STRING" Description="Url richiesta Token" Name="nm_url_token" />
+    </Fields>
+
+    <Section Name="DatiUtilizzoMicroserviziSection" Description="" Legend="" ShowButton="false" LoadOpened="true"/>
+    
+    <List Name="DatiUtilizzoMicroserviziList" Description="Lista dati utilizzo microservizi" >
+        <Input Type="STRING" Description="client-id" Name="cd_key" />
+        <Input Type="STRING" Description="secret" Name="cd_secret" />
+        <Input Type="STRING" Description="descrizione" Name="ds_client" />
+    </List>     
+    
+</Form>

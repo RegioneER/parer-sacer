@@ -63,9 +63,9 @@ public class SpringTikaSingleton {
      *
      * @param fileBytes
      *            byteArray del file (piccolo)
-     * 
+     *
      * @return null oppure mimeType del file
-     * 
+     *
      * @throws IOException
      *             in caso di errore
      */

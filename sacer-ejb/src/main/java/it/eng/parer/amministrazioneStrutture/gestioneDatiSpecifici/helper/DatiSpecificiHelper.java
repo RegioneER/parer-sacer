@@ -17,6 +17,8 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -43,6 +45,7 @@ import it.eng.parer.ws.utils.CostantiDB;
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class DatiSpecificiHelper extends GenericHelper {
@@ -66,7 +69,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            se esistente, id del tipo componente
      * @param nmSistemaMigraz
      *            sistema migrazione
-     * 
+     *
      * @return DecAttribDatiSpec o null se inesistente
      */
     public DecAttribDatiSpec getDecAttribDatiSpecById(Long idStrut, String nmAttribDatiSpec, String tiEntitaSacer,
@@ -177,7 +180,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            se esistente, nome del tipo componente
      * @param nmSistemaMigraz
      *            sistema migrazione
-     * 
+     *
      * @return DecAttribDatiSpec o null se inesistente
      */
     public DecAttribDatiSpec getDecAttribDatiSpecByName(Long idStrut, String nmAttribDatiSpec, String tiEntitaSacer,
@@ -400,7 +403,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            se esistente, nome del tipo documento
      * @param nmTipoCompDoc
      *            se esistente, nome del tipo componente
-     * 
+     *
      * @return l'attributo
      */
     public DecAttribDatiSpec getDecAttribDatiSpecUniDocAndDoc(Long idStrut, String nmAttribDatiSpec,
@@ -475,7 +478,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            tipo di entita di Sacer
      * @param nmSistemaMigraz
      *            sistema migrazione
-     * 
+     *
      * @return la lista di xsd per i dati specifici
      */
     public List<DecXsdDatiSpec> retrieveDecXsdDatiSpecList(BigDecimal idStrut, String tiUsoXsd, String tiEntitaSacer,
@@ -723,7 +726,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            struttura
      * @param idTipoUnitaDoc
      *            tipo unita doc
-     * 
+     *
      * @return l'ultimo xsd per quel tipo di unita documentaria
      */
     public DecXsdDatiSpec getLastDecXsdDatiSpecForTipoUnitaDoc(Long idStrut, Long idTipoUnitaDoc) {
@@ -741,7 +744,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            struttura
      * @param idTipoCompDoc
      *            tipo componente
-     * 
+     *
      * @return l'ultimo xsd per quel tipo di componente
      */
     public DecXsdDatiSpec getLastDecXsdDatiSpecForTipoCompDoc(Long idStrut, Long idTipoCompDoc) {
@@ -759,7 +762,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            struttura
      * @param idTipoDoc
      *            tipo documento
-     * 
+     *
      * @return l'ultimo xsd per quel tipo di documento
      */
     public DecXsdDatiSpec getLastDecXsdDatiSpecForTipoDoc(Long idStrut, Long idTipoDoc) {
@@ -774,7 +777,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *
      * @param xsdDatiSpecRowBean
      *            Bean contenente i parametri
-     * 
+     *
      * @return la lista di xsd per i dati specifici
      */
     public DecXsdDatiSpec getLastDecXsdDatiSpec(DecXsdDatiSpecRowBean xsdDatiSpecRowBean) {
@@ -884,7 +887,7 @@ public class DatiSpecificiHelper extends GenericHelper {
      *            xsd dati specifici
      * @param tipiCampo
      *            tipo compo (array opzinale)
-     * 
+     *
      * @return true/false
      */
     public boolean existsCampoSuXsdDatiSpec(BigDecimal idXsdDatiSpec, String... tipiCampo) {

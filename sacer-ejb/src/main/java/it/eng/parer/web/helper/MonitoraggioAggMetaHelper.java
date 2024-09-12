@@ -17,6 +17,8 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,8 +51,8 @@ import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VrsErrSesUpdUnitaDocErr;
 import it.eng.parer.entity.VrsErrSesUpdUnitaDocKo;
 import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
-import it.eng.parer.exception.SacerRuntimeException;
 import it.eng.parer.exception.ParerErrorCategory.SacerErrorCategory;
+import it.eng.parer.exception.SacerRuntimeException;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.viewEntity.AroVLisUpdCompUnitaDoc;
 import it.eng.parer.viewEntity.AroVLisUpdDocUnitaDoc;
@@ -71,7 +73,7 @@ import it.eng.parer.viewEntity.MonVLisUpdUdKoInterface;
  *
  * @author Gilioli_P
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 @Stateless
 @LocalBean
 public class MonitoraggioAggMetaHelper extends GenericHelper {
@@ -1540,7 +1542,7 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
      * valori.add(AroUpdUDTiStatoUpdElencoVers.IN_ATTESA_SCHED); //
      * valori.add(AroUpdUDTiStatoUpdElencoVers.NON_SELEZ_SCHED); // q.setParameter("valori", valori); List<Object[]>
      * lista = new ArrayList<>(); lista.addAll(q.getResultList());
-     * 
+     *
      * String queryStr2 = "select " + "      key_tot.id_key_total_ud " + "	 upd.id_strut, " + "	 ud.id_sub_strut, "
      * + "	 upd.id_tipo_unita_doc, " + "	 upd.id_registro_unita_doc, " + "	 upd.id_tipo_doc_princ, " +
      * "	 upd.aa_key_unita_doc, " + "	 'TOTALE' ti_stato_upd_ud, " + "	 trunc(upd.ts_ini_ses) dt_upd_ud, " +
@@ -1587,8 +1589,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "		and key_tot.id_tipo_doc_princ = tmp.id_tipo_doc_princ  "
                 + "		and key_tot.aa_key_unita_doc = tmp.aa_key_unita_doc)";
         Query q = getEntityManager().createNativeQuery(queryStr);
-        q.setParameter(2, idStrut);
-        q.setParameter(1, data);
+        q.setParameter("due", idStrut);
+        q.setParameter("uno", data);
         return q.getResultList();
     }
 
@@ -1632,8 +1634,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "		and key_tot_ko.id_tipo_doc_princ = tmp.id_tipo_doc_princ  "
                 + "		and key_tot_ko.aa_key_unita_doc = tmp.aa_key_unita_doc)";
         Query q = getEntityManager().createNativeQuery(queryStr);
-        q.setParameter(1, idStrut);
-        q.setParameter(2, data);
+        q.setParameter("uno", idStrut);
+        q.setParameter("due", data);
         return q.getResultList();
     }
 }

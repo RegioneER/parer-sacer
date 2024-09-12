@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.integriam.client.ws.IAMSoapClients;
-import it.eng.integriam.client.ws.reporg.CancellaOrganizzazioneRisposta;
 import it.eng.integriam.client.ws.reporg.ListaTipiDato;
 import it.eng.integriam.client.ws.reporg.ReplicaOrganizzazione;
 import it.eng.integriam.client.ws.reporg.ReplicaOrganizzazioneRispostaAbstract;
@@ -93,7 +92,7 @@ public class AllineamentoOrganizzazioniEjb {
      *
      * @param organizList
      *            Lista deelle organizzazioni da replicare su IAM
-     * 
+     *
      * @return ritorna l'esito della lavorazione dell'ultimo elemento della lista passata comeparametro
      */
     public String allineamentoOrganizzazioni(List<IamOrganizDaReplic> organizList) {
@@ -112,7 +111,7 @@ public class AllineamentoOrganizzazioniEjb {
         /* Mi tengo una variabile che mi dice se la replica è andata o meno a buon fine */
         boolean replicaOK = true;
 
-        log.info("Replica Organizzazioni SACER - ottenute " + organizList.size() + " organizzazioni da replicare");
+        log.info("Replica Organizzazioni SACER - ottenute {} organizzazioni da replicare", organizList.size());
 
         /* Per ogni registrazione determinata */
         for (IamOrganizDaReplic organizDaReplic : organizList) {
@@ -129,8 +128,8 @@ public class AllineamentoOrganizzazioniEjb {
 
                 if (client != null) {
                     /* PREPARAZIONE ATTIVAZIONE SERVIZIO */
-                    log.info("Replica Organizzazioni SACER - Preparazione attivazione servizio per l'organizzazione "
-                            + organizDaReplic.getNmOrganiz());
+                    log.info("Replica Organizzazioni SACER - Preparazione attivazione servizio per l'organizzazione {}",
+                            organizDaReplic.getNmOrganiz());
                     if (organizDaReplic.getTiOperReplic().equals(ApplEnum.TiOperReplic.INS.name())
                             || organizDaReplic.getTiOperReplic().equals(ApplEnum.TiOperReplic.MOD.name())) {
                         if (pa.isOrgPresente()) {
@@ -167,8 +166,8 @@ public class AllineamentoOrganizzazioniEjb {
                         }
                     } /* Se tipo operazione è CANCELLAZIONE */ else {
                         log.info("Replica Organizzazioni SACER - Chiamo il ws di Cancellazione Organizzazione");
-                        resp = (CancellaOrganizzazioneRisposta) client.cancellaOrganizzazione(pa.getNmApplic(),
-                                pa.getIdOrganizApplic(), pa.getNmTipoOrganiz());
+                        resp = client.cancellaOrganizzazione(pa.getNmApplic(), pa.getIdOrganizApplic(),
+                                pa.getNmTipoOrganiz());
                     }
 
                     /* Il sistema verifica la risposta del servizio di replica organizzazione */
@@ -181,8 +180,8 @@ public class AllineamentoOrganizzazioniEjb {
 
                     String posNeg = esitoServizio.name().equals(CostantiReplicaOrg.EsitoServizio.OK.name()) ? "positiva"
                             : "negativa";
-                    log.info("Replica Organizzazioni SACER - Risposta WS " + posNeg + " per l'organizzazione "
-                            + organizDaReplic.getNmOrganiz());
+                    log.info("Replica Organizzazioni SACER - Risposta WS {} per l'organizzazione {}", posNeg,
+                            organizDaReplic.getNmOrganiz());
 
                     if (!esitoServizio.name().equals(CostantiReplicaOrg.EsitoServizio.OK.name())
                             && !resp.getCdErr().equals(CostantiReplicaOrg.SERVIZI_ORG_002)) {
@@ -195,8 +194,8 @@ public class AllineamentoOrganizzazioniEjb {
                     aoHelper.writeEsitoIamOrganizDaReplic(organizDaReplic.getIdOrganizDaReplic(),
                             CostantiReplicaOrg.EsitoServizio.KO, CostantiReplicaOrg.SERVIZI_ORG_001,
                             "Errore nella creazione del client per la chiamata al WS di ReplicaOrganizzazioni");
-                    log.error("Replica Organizzazioni - Risposta WS negativa per l'organizzazione "
-                            + organizDaReplic.getNmOrganiz());
+                    log.error("Replica Organizzazioni - Risposta WS negativa per l'organizzazione {}",
+                            organizDaReplic.getNmOrganiz());
                     break;
                 }
 
@@ -214,9 +213,9 @@ public class AllineamentoOrganizzazioniEjb {
                 aoHelper.writeEsitoIamOrganizDaReplic(organizDaReplic.getIdOrganizDaReplic(),
                         CostantiReplicaOrg.EsitoServizio.NO_RISPOSTA, CostantiReplicaOrg.REPLICA_ORG_001,
                         "Il servizio di replica organizzazione non risponde");
-                log.error("Replica Organizzazioni - Risposta WS negativa per l'organizzazione "
-                        + organizDaReplic.getNmOrganiz() + " " + CostantiReplicaOrg.REPLICA_ORG_001
-                        + " - Il servizio di replica organizzazione non risponde");
+                log.error(
+                        "Replica Organizzazioni - Risposta WS negativa per l'organizzazione {} {} - Il servizio di replica organizzazione non risponde",
+                        organizDaReplic.getNmOrganiz(), CostantiReplicaOrg.REPLICA_ORG_001);
                 replicaOK = false;
                 break;
             } catch (Exception e) {
@@ -248,7 +247,7 @@ public class AllineamentoOrganizzazioniEjb {
      * Costruisce il bean di parametri in input da mandare al WS
      *
      * @param organizDaReplic
-     * 
+     *
      * @return
      */
     private ParametriInputOrganizzazioni getParametriInputOrganizzazione(IamOrganizDaReplic organizDaReplic) {
@@ -274,8 +273,9 @@ public class AllineamentoOrganizzazioniEjb {
             int timeoutReplicaOrganizzazione = Integer.parseInt(timeoutString);
             parametriInputOrganizzazioni.setTimeout(timeoutReplicaOrganizzazione);
         } else {
-            log.warn("Il valore personalizzato \"" + timeoutString
-                    + "\" per il parametro TIMEOUT_REPLICA_ORG non è corretto. Utilizzo il valore predefinito");
+            log.warn(
+                    "Il valore personalizzato {} per il parametro TIMEOUT_REPLICA_ORG non è corretto. Utilizzo il valore predefinito",
+                    timeoutString);
         }
 
         parametriInputOrganizzazioni.setIdOrganizApplic((organizDaReplic.getIdOrganizApplic().intValue()));
@@ -338,7 +338,7 @@ public class AllineamentoOrganizzazioniEjb {
                 }
                 break;
             default:
-                log.warn("Nome tipo organizzazione " + organizDaReplic.getNmTipoOrganiz() + " non gestito.");
+                log.warn("Nome tipo organizzazione {} non gestito.", organizDaReplic.getNmTipoOrganiz());
                 break;
             }
 

@@ -17,7 +17,7 @@
 
 package it.eng.parer.restArch.ejb;
 
-import static it.eng.parer.job.calcoloEstrazione.RestituzioneArchivioJob.createEmptyDir;
+import static it.eng.parer.util.Utils.createEmptyDir;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -279,8 +279,6 @@ public class RestituzioneArchivioEjb {
      *            utente che crea la richiesta di restituzione archivio
      * @param idStrut
      *            la struttura per cui viene creata la richiesta
-     * @param priorita
-     *            la priorità con cui eseguire l'operazione
      * @param tiRichRestArch
      *            tipo richiesta archiviazione
      *
@@ -290,8 +288,7 @@ public class RestituzioneArchivioEjb {
      *             errore generico
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Long saveRichRestArch(long idUserIam, BigDecimal idStrut, String priorita, String tiRichRestArch)
-            throws ParerUserError {
+    public Long saveRichRestArch(long idUserIam, BigDecimal idStrut, String tiRichRestArch) throws ParerUserError {
         logger.info("Eseguo il salvataggio della richiesta di restituzione archivio");
         Date now = Calendar.getInstance().getTime();
         Long idRich = null;
@@ -304,7 +301,6 @@ public class RestituzioneArchivioEjb {
             rich.setTsInizio(now);
             rich.setOrgStrut(strut);
             rich.setTiStato(AroRichiestaTiStato.CALCOLO_AIP_IN_CORSO);
-            rich.setPriorita(BigDecimal.valueOf(Long.parseLong(priorita)));
             rich.setIamUser(user);
 
             entityManager.persist(rich);
@@ -362,6 +358,33 @@ public class RestituzioneArchivioEjb {
         return table;
     }
 
+    // <editor-fold defaultstate="expand" desc="Funzioni Online">
+    /**
+     * Ricerca online - Ritorna il tablebean di risultati dati i filtri richiesti
+     *
+     * @param idRichiesta
+     *            id richiesta
+     *
+     * @return tablebean AroVRicRichRaTableBean
+     */
+    public AroVRicRichRaTableBean getAroVRicRichRaTableBeanInElaborazione(BigDecimal idRichiesta) {
+        AroVRicRichRaTableBean table = new AroVRicRichRaTableBean();
+        try {
+            List<AroVRicRichRa> list = helper.retrieveAroVRicRichRa(idRichiesta);
+            if (list != null && !list.isEmpty()) {
+                for (AroVRicRichRa richiesta : list) {
+                    AroVRicRichRaRowBean row = (AroVRicRichRaRowBean) Transform.entity2RowBean(richiesta);
+                    table.add(row);
+                }
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                | IllegalArgumentException | InvocationTargetException ex) {
+            logger.error("Errore durante il recupero delle richieste di restituzione archivio {}",
+                    ExceptionUtils.getRootCauseMessage(ex), ex);
+        }
+        return table;
+    }
+
     /**
      * Carica il dettaglio richiesta di restituzione archivio dato l'id richiesta
      *
@@ -384,6 +407,47 @@ public class RestituzioneArchivioEjb {
                 row.setString("nm_ente_convenz", enteConvenz.getNmEnteSiam());
                 row.setString("nm_ente_strut",
                         richiesta.getOrgStrut().getOrgEnte().getNmEnte() + " - " + strut.getNmStrut());
+                if (richiesta.getIamUser() != null) {
+                    row.setString("nm_userid", richiesta.getIamUser().getNmUserid());
+                }
+                String rootFolderEcRaPath = configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.ROOT_FOLDER_EC_RA);
+
+                String nmEnteSiamNormalizzato = StringUtils.stripAccents(enteConvenz.getNmEnteSiam().toUpperCase())
+                        .replaceAll(" ", "_").replaceAll("[^a-zA-Z0-9]", "_");
+                String childFolderEcRaPath = IOUtils.getPath(rootFolderEcRaPath, nmEnteSiamNormalizzato);
+                if (IOUtils.isFileReady(childFolderEcRaPath)) {
+                    row.setString("ftp_path", childFolderEcRaPath);
+                } else {
+                    row.setString("ftp_path", "");
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero della richiesta di restituzione archivio {}",
+                        ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalStateException("Errore durante il recupero della richiesta di restituzione archivio");
+            }
+        }
+        return row;
+    }
+
+    /**
+     * Carica il dettaglio richiesta di restituzione archivio dato l'id richiesta
+     *
+     * @param idRichRestArch
+     *            id della richiesta di restituzione archivio
+     *
+     * @return rowBean della vista
+     */
+    public AroRichiestaRaRowBean getAroRichiestaRaRowBean(BigDecimal idRichRestArch) {
+        AroRichiestaRa richiesta = entityManager.find(AroRichiestaRa.class, idRichRestArch.longValue());
+        AroRichiestaRaRowBean row = null;
+        if (richiesta != null) {
+            SIOrgEnteSiam enteConvenz = entityManager.find(SIOrgEnteSiam.class,
+                    richiesta.getOrgStrut().getIdEnteConvenz().longValue());
+            try {
+                row = (AroRichiestaRaRowBean) Transform.entity2RowBean(richiesta);
+                row.setString("nm_ente_convenz", enteConvenz.getNmEnteSiam());
                 if (richiesta.getIamUser() != null) {
                     row.setString("nm_userid", richiesta.getIamUser().getNmUserid());
                 }
@@ -461,14 +525,12 @@ public class RestituzioneArchivioEjb {
      *
      * @param idRichRestArch
      *            id della richiesta di restituzione archivio
-     * @param priorita
-     *            valore priorita
      *
      * @throws ParerUserError
      *             errore imprevisto
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void saveRichRestArch(BigDecimal idRichRestArch, String priorita) throws ParerUserError {
+    public void saveRichRestArch(BigDecimal idRichRestArch) throws ParerUserError {
         try {
             AroRichiestaRa richRestArch = entityManager.find(AroRichiestaRa.class, idRichRestArch.longValue(),
                     LockModeType.PESSIMISTIC_WRITE);
@@ -478,7 +540,6 @@ public class RestituzioneArchivioEjb {
                         "La richiesta non \u00E8 modificabile perch\u00E9 ha stato corrente diverso da "
                                 + AroRichiestaTiStato.IN_ATTESA_ESTRAZIONE.name());
             }
-            richRestArch.setPriorita(BigDecimal.valueOf(Long.parseLong(priorita)));
         } catch (ParerUserError ex) {
             throw ex;
         } catch (Exception ex) {

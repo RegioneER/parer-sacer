@@ -17,6 +17,10 @@
 
 package it.eng.parer.fascicoli.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -615,7 +619,7 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 
     /**
      * @deprecated (i parametri idUserIam e operList non vengono mai usati, utilizzare il metodo senza questi parametri
-     * 
+     *
      * @param idUserIam
      *            NON USATO
      * @param idElencoVersFasc

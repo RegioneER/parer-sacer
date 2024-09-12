@@ -17,6 +17,9 @@
 
 package it.eng.parer.serie.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
@@ -334,7 +337,7 @@ public class SerieHelper extends GenericHelper {
     /**
      * @param queryString
      *            la query
-     * 
+     *
      * @return Lista di {@link ResultVCalcoloSerieUd}
      */
     public List<ResultVCalcoloSerieUd> executeQueryList(String queryString) {
@@ -1470,9 +1473,9 @@ public class SerieHelper extends GenericHelper {
      *            id struttura
      * @param dtCreazione
      *            data creazione
-     * 
+     *
      * @return entity SerFileVerSerie
-     * 
+     *
      * @throws IOException
      *             errore generico di tipo IO
      * @throws NoSuchAlgorithmException
@@ -1740,7 +1743,7 @@ public class SerieHelper extends GenericHelper {
      *
      * @param idRichAnnulVers
      *            id della richiesta di annullamento
-     * 
+     *
      * @return la lista delle versioni
      */
     public List<BigDecimal> retrieveSerVLisVerserByRichann(long idRichAnnulVers) {

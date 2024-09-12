@@ -17,6 +17,22 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromInteger;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.StringUtils;
+
 import it.eng.parer.entity.DecAaTipoFascicolo;
 import it.eng.parer.entity.DecAttribFascicolo;
 import it.eng.parer.entity.DecCriterioRaggrFasc;
@@ -27,32 +43,16 @@ import it.eng.parer.entity.DecParteNumeroFascicolo;
 import it.eng.parer.entity.DecSelCriterioRaggrFasc;
 import it.eng.parer.entity.DecTipoFascicolo;
 import it.eng.parer.entity.DecUsoModelloXsdFasc;
+import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiUsoModelloXsd;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.utils.CostantiDB;
-import org.springframework.util.StringUtils;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiUsoModelloXsd;
-import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
-import java.util.stream.Collectors;
 
 /**
  *
  * @author gilioli_p
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class TipoFascicoloHelper extends GenericHelper {
@@ -415,10 +415,10 @@ public class TipoFascicoloHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @param idAttribFascicolo
      *            id Attributo fascicolo
-     * 
+     *
      * @return DecModelloXsdAttribFascicolo
      */
     public DecModelloXsdAttribFascicolo getDecModelloXsdAttribFascicoloByAttrib(BigDecimal idAttribFascicolo) {
@@ -436,12 +436,12 @@ public class TipoFascicoloHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @param idAaTipoFascicolo
      *            id periodo di validita fascicolo
      * @param idModelloXsdFascicolo
      *            id modello xsd fascicolo
-     * 
+     *
      * @return DecUsoModelloXsdFasc
      */
     public DecUsoModelloXsdFasc getDecUsoModelloXsdFascicoloByAttrib(BigDecimal idAaTipoFascicolo,
@@ -465,10 +465,10 @@ public class TipoFascicoloHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @param tiModelloXsd
      *            tipo modello xsd
-     * 
+     *
      * @return lista di elementi di tipo DecModelloXsdFascicolo
      */
     public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloByTiModelloXsd(String tiModelloXsd) {

@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 
 /**
  * The persistent class for the DEC_VERSIONE_WS database table.
- * 
+ *
  */
 @Entity
 @Table(name = "DEC_VERSIONE_WS")

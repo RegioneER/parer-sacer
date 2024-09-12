@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the SER_V_CHK_NOTA_OBBLIG database table.
- * 
+ *
  */
 @Entity
 @Table(name = "SER_V_CHK_NOTA_OBBLIG")

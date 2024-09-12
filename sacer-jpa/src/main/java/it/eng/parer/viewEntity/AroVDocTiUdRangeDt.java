@@ -25,7 +25,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the ARO_V_DOC_TI_UD_RANGE_DT database table.
- * 
+ *
  */
 @Entity
 @Table(name = "ARO_V_DOC_TI_UD_RANGE_DT")

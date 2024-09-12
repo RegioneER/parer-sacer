@@ -17,6 +17,8 @@
 
 package it.eng.parer.job.indiceAip.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -84,6 +86,7 @@ import it.eng.parer.ws.utils.MessaggiWSFormat;
  *
  * @author Gilioli_P
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "CreazioneIndiceAipHelper")
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -139,7 +142,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return il progressivo versione oppure 0 se questo ancora non esiste
      */
     public int getProgressivoVersione(Long idUnitaDoc) {
@@ -164,9 +167,9 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id unita doc
      * @param tiCreazione
      *            tipo creazione
-     * 
+     *
      * @return la nuova versione
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -227,9 +230,9 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id unita doc
      * @param tiCreazione
      *            tipo creazione
-     * 
+     *
      * @return la nuova versione
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -270,9 +273,9 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return la nuova versione
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -313,7 +316,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return il record dell'indice AIP, null se non esiste
      */
     public AroIndiceAipUd getAroIndiceAipUd(Long idUnitaDoc) {
@@ -350,7 +353,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            valore
      * @param chiave
      *            ud (anno/registro/numero)
-     * 
+     *
      * @return entity AroVerIndiceAipUd
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -464,7 +467,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            valore
      * @param chiave
      *            chiave ud (anno/registro/numero)
-     * 
+     *
      * @return entity AroVerIndiceAipUd
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -563,7 +566,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            anno e mese
      * @param xml
      *            indice aip
-     * 
+     *
      * @return entity AroFileVerIndiceAipUd
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -589,7 +592,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return l'id della partizione se esiste
      */
     public Long checkPartizioneStruttura(Long idStrut) {
@@ -613,7 +616,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id partizione
      * @param annoMese
      *            anno e mese
-     * 
+     *
      * @return l'id della sotto-partizione se esiste
      */
     public Long checkSottopartizioneAnnoMese(Long idPartition, String annoMese) {
@@ -647,7 +650,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id unita doc
      * @param idVerIndiceAip
      *            id versamento indice aip
-     * 
+     *
      * @return true se esiste almeno un componente che soddisfa i requisti. false altrimenti.
      */
     public boolean checkComponentiPresentiCount(long idUnitaDoc, long idVerIndiceAip) {
@@ -670,7 +673,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id unita doc
      * @param idVerIndiceAip
      *            id versamento indice aip
-     * 
+     *
      * @return true se esiste almeno un aggiornamento metadati che soddisfa i requisti. false altrimenti.
      */
     public boolean checkAggMdPresentiCount(long idUnitaDoc, long idVerIndiceAip) {
@@ -693,7 +696,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id unita doc
      * @param idElencoVers
      *            id elenco versamento
-     * 
+     *
      * @return int pk documento aggiunto su elenco indice aip
      */
     public int updateDocumentiAggiuntiElencoIndiceAIP(long idUnitaDoc, long idElencoVers) {
@@ -713,7 +716,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id elenco versamento
      * @param tiStatoElenco
      *            tipo stato elenco
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateDocumentiElencoIndiceAIP(long idElencoVers, String tiStatoElenco) {
@@ -734,7 +737,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            se null, porta tutte i doc nel nuovo stato di gestione elenco
      * @param tiStatoDocElencoVersNew
      *            tipo stato nuovo documento versato
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateDocumentiElencoIndiceAIP(long idElencoVers, List<String> tiStatoDocElencoVersOld,
@@ -768,7 +771,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id elenco versamento
      * @param stato
      *            entity AroUpdUDTiStatoUpdElencoVers
-     * 
+     *
      * @return int numero aggiornati
      */
     public int updateAggiornamentiMetadatiElencoIndiceAIP(long idUnitaDoc, long idElencoVers,
@@ -798,7 +801,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            tipo stato elenco aggiornato corrente
      * @param tiStatoUpdElencoVersNew
      *            tipo stato elenco aggiornato nuovo
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateAggiornamentiElencoIndiceAIP(long idElencoVers,
@@ -835,7 +838,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            tipo stato docoumento in elenco
      * @param tiStatoElenco
      *            tipo stato elenco
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateDocumentiElencoIndiceAIPStatoConservDiverso(long idElencoVers, String tiStatoConservazione,
@@ -882,7 +885,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            tipo stato elenco aggiornato su versamento corrente
      * @param tiStatoElenco
      *            tipo stato elenco
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateAggiornamentiElencoIndiceAIPStatoConservDiverso(long idElencoVers, String tiStatoConservazione,
@@ -924,7 +927,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            id elenco versamento
      * @param tiStatoElenco
      *            tipo stato elenco
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateUnitaDocElencoIndiceAIP(long idElencoVers, String tiStatoElenco) {
@@ -945,7 +948,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            se null, porta tutte le ud nel nuovo stato di gestione elenco
      * @param tiStatoUdElencoVersNew
      *            tipo stato elenco ud nuovo versamento
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateUnitaDocElencoIndiceAIP(long idElencoVers, List<String> tiStatoUdElencoVersOld,
@@ -981,7 +984,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *            tipo stato ud in elenco versamento corrente
      * @param tiStatoElenco
      *            tipo stato elenco
-     * 
+     *
      * @return il numero di record aggiornati
      */
     public int updateUnitaDocElencoIndiceAIPStatoConvervDiverso(long idElencoVers, String tiStatoConservazione,
@@ -1076,7 +1079,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return lista oggetti di tipo {@link AroVLisLinkUnitaDoc}
      */
     public List<AroVLisLinkUnitaDoc> getAroVLisLinkUnitaDoc(long idUnitaDoc) {
@@ -1096,7 +1099,7 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return entity di tipo AroVerIndiceAipUd
      */
     public AroVerIndiceAipUd getUltimaVersioneIndiceAip(long idUnitaDoc) {

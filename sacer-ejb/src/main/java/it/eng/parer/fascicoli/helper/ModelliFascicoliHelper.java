@@ -17,6 +17,9 @@
 
 package it.eng.parer.fascicoli.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
@@ -54,9 +57,9 @@ public class ModelliFascicoliHelper extends GenericHelper {
      *            tipo modello in uso xsd
      * @param filterValid
      *            true per prendere i record attivi attualmente
-     * 
+     *
      * @return lista di modelli xsd
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -78,7 +81,7 @@ public class ModelliFascicoliHelper extends GenericHelper {
      *            true per prendere i record attivi attualmente
      * @param filtri
      *            filtri di ricerca
-     * 
+     *
      * @return lista di modelli xsd
      */
     public List<DecModelloXsdFascicolo> retrieveDecModelloXsdTipoFascicolo(List<BigDecimal> idAmbienteList,
@@ -167,7 +170,7 @@ public class ModelliFascicoliHelper extends GenericHelper {
      *            tipo modello xsd
      * @param filterValid
      *            true per prendere i record attivi attualmente
-     * 
+     *
      * @return lista di modelli xsd
      */
     public List<DecModelloXsdFascicolo> retrieveDecModelloXsdFascicolo(BigDecimal idAmbiente, String tiModelloXsd,
@@ -197,7 +200,7 @@ public class ModelliFascicoliHelper extends GenericHelper {
      *            tipo modello xsd in uso
      * @param cdXsd
      *            codice xsd
-     * 
+     *
      * @return modello entity DecModelloXsdFascicolo
      */
     public DecModelloXsdFascicolo getDecModelloXsdFascicolo(BigDecimal idAmbiente, String tiModelloXsd,
@@ -222,7 +225,7 @@ public class ModelliFascicoliHelper extends GenericHelper {
      *
      * @param idModelloXsdFascicolo
      *            id modello xsd fascicolo
-     * 
+     *
      * @return lista oggetti di tipo {@link DecUsoModelloXsdFasc}
      */
     public List<DecUsoModelloXsdFasc> retrieveDecUsoModelloXsdFasc(BigDecimal idModelloXsdFascicolo) {

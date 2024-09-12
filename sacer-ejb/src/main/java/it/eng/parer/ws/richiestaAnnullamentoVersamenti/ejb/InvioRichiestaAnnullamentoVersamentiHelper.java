@@ -17,6 +17,9 @@
 
 package it.eng.parer.ws.richiestaAnnullamentoVersamenti.ejb;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.bigDecimalFromInteger;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -79,7 +82,7 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
      *            anno unita doc
      * @param cdKeyUnitaDoc
      *            codice unita doc
-     * 
+     *
      * @return true o false a seconda che ci sia l'item
      */
     public boolean isItemPresente(Long idStrut, String cdRegistroKeyUnitaDoc, int aaKeyUnitaDoc, String cdKeyUnitaDoc) {
@@ -102,7 +105,7 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
      *
      * @param nmUserid
      *            nome userid
-     * 
+     *
      * @return l'entity relativa all'utente, null se non esiste
      */
     @SuppressWarnings("unchecked")
@@ -121,7 +124,7 @@ public class InvioRichiestaAnnullamentoVersamentiHelper extends GenericHelper {
      *
      * @param idRichAnnVers
      *            id richiesta di annullamento versamento
-     * 
+     *
      * @return lista oggetti di tipo {@link AroVLisItemRichAnnvrs}
      */
     @SuppressWarnings("unchecked")

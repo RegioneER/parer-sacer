@@ -17,6 +17,9 @@
 
 package it.eng.parer.elencoVersamento.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromInteger;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -53,7 +56,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.jpa.QueryHints;
 import org.slf4j.Logger;
@@ -1448,7 +1451,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
      *            idStrut
      * @param rowNum
      *            rowNum
-     * 
+     *
      * @return List - Insieme di elementi ordinati
      */
     public List<PayLoad> retrieveUdDocUpdToVerify(long idStrut, int rowNum) {
@@ -2336,9 +2339,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on (comp.id_strut_doc = strut_doc. id_strut_doc) where
          * ud.id_unita_doc = <unità doc corrente> and ud.id_elenco_vers = <elenco corrente> and doc.dt_annul =
          * '31/12/2444'
-         * 
+         *
          * UNION
-         * 
+         *
          * select comp.id_comp_doc, comp.ds_urn_comp_calc from ARO_DOC doc join ARO_STRUT_DOC strut_doc on
          * (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on (comp.id_strut_doc = strut_doc. id_strut_doc) where
          * doc.id_unita_doc = <unità doc corrente> and doc.id_elenco_vers = <elenco corrente> and doc.ti_creazione =
@@ -2460,15 +2463,15 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * select doc.id_doc from ARO_UNITA_DOC ud join ARO_DOC doc on (doc.id_unita_doc = ud.id_unita_doc and
          * doc.ti_creazione = 'VERSAMENTO_UNITA_DOC') where ud.id_unita_doc = <unità doc corrente> and doc.dt_annul =
          * '31/12/2444' and ud.dt_creazione < <data creazione minima>
-         * 
+         *
          * and (ud.id_elenco_vers is null or (ud.id_elenco_vers is not nulland ud.id_elenco_vers != <elenco corrente>)
          * and ud.ti_stato_ud_elenco_vers != IN_ELENCO_IN_CODA_INDICE_AIP))
-         * 
+         *
          * UNION
-         * 
+         *
          * select doc.id_doc from ARO_DOC doc where doc.id_unita_doc = <unità doc corrente> and doc.ti_creazione =
          * 'AGGIUNTA_DOCUMENTO' and doc.dt_annul = '31/12/2444' and doc.dt_creazione < <data creazione minima>
-         * 
+         *
          * and (doc.id_elenco_vers is null or (doc.id_elenco_vers is not null and doc.id_elenco_vers != <elenco
          * corrente>) and doc.ti_stato_doc_elenco_vers != IN_ELENCO_IN_CODA_INDICE_AIP))
          */
@@ -2570,7 +2573,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * select id_upd_unita_doc from ARO_UPD_UNITA_DOC upd join ARO_UNITA_DOC ud on (ud.id_unita_doc =
          * upd.id_unita_doc) where upd.id_unita_doc = <unità doc corrente> and ud.dt_annul = ‘31/12/2444’ and
          * upd.pg_upd_unita_doc < <progressivo aggiornamento minimo>
-         * 
+         *
          * and (upd.id_elenco_vers is null or (upd.id_elenco_vers is not null and upd.id_elenco_vers != <elenco
          * corrente> and upd.ti_stato_upd_elenco_vers not in (IN_ELENCO_IN_CODA_INDICE_AIP,
          * IN_ELENCO_CON_INDICI_AIP_GENERATI, N_ELENCO_CON_ELENCO_INDICI_AIP_CREATO,
@@ -2616,17 +2619,17 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on (comp.id_strut_doc = strut_doc. id_strut_doc) where
          * doc.id_unita_doc = <unità doc corrente> and doc.id_elenco_vers = <elenco corrente> and doc.ti_creazione =
          * 'AGGIUNTA_DOCUMENTO' and doc.dt_annul = '31/12/2444'
-         * 
+         *
          * UNION
-         * 
+         *
          * select comp.id_comp_doc, comp.ds_urn_comp_calc from ARO_UNITA_DOC ud join ARO_DOC doc on (doc.id_unita_doc =
          * ud.id_unita_doc) join ARO_STRUT_DOC strut_doc on (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on
          * (comp.id_strut_doc = strut_doc. id_strut_doc) where ud.id_unita_doc = <unità doc corrente> and
          * doc.ti_creazione = 'VERSAMENTO_UNITA_DOC' and doc.dt_annul = '31/12/2444' and ud.ti_stato_ud_elenco_vers =
          * 'IN_ELENCO_IN_CODA_INDICE_AIP'
-         * 
+         *
          * UNION
-         * 
+         *
          * select comp.id_comp_doc, comp.ds_urn_comp_calc from ARO_UNITA_DOC ud join ARO_DOC doc on (doc.id_unita_doc =
          * ud.id_unita_doc) join ARO_STRUT_DOC strut_doc on (strut_doc.id_doc = doc.id_doc) join ARO_COMP_DOC comp on
          * (comp.id_strut_doc = strut_doc. id_strut_doc) where ud.id_unita_doc = <unità doc corrente> and
@@ -2690,9 +2693,9 @@ public class ElencoVersamentoHelper extends GenericHelper {
          * select id_upd_unita_doc, pg_upd_unita_doc from ARO_UPD_UNITA_DOC upd join ARO_UNITA_DOC ud on
          * (ud.id_unita_doc = upd.id_unita_doc) where upd.id_unita_doc = <unità doc corrente> and ud.dt_annul =
          * ‘31/12/2444’ and upd.id_elenco_vers = <elenco corrente>
-         * 
+         *
          * UNION
-         * 
+         *
          * select id_upd_unita_doc, pg_upd_unita_doc from ARO_UPD_UNITA_DOC upd join ARO_UNITA_DOC ud on
          * (ud.id_unita_doc = upd.id_unita_doc) where upd.id_unita_doc = <unità doc corrente> and ud.dt_annul =
          * ‘31/12/2444’ and upd.ti_stato_upd_elenco_vers in (IN_ELENCO_IN_CODA_INDICE_AIP,
@@ -3218,6 +3221,15 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return query.getResultList();
     }
 
+    public List<ElvFileElencoVer> retrieveFileIndiceElenco2(long idElencoVers, String... tiFileElencoVers) {
+        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVer(u.idFileElencoVers, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVer u "
+                + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers AND u.tiFileElencoVers IN (:tiFileElencoVers)";
+        Query query = em.createQuery(queryStr);
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
+        return query.getResultList();
+    }
+
     public ElvFileElencoVer getFileIndiceElenco(long idElencoVers, String tiFileElencoVers) {
         String queryStr = "SELECT u FROM ElvFileElencoVer u " + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers "
                 + "AND u.tiFileElencoVers IN (:tiFileElencoVers)";
@@ -3677,9 +3689,8 @@ public class ElencoVersamentoHelper extends GenericHelper {
                 }
                 // EVO#16486
                 // Recupero lo urn ORIGINALE dalla tabella VRS_URN_XML_SESSIONE_VERS (EVO#16486)
-                VrsUrnXmlSessioneVers urnXmlSessioneVers = (VrsUrnXmlSessioneVers) CollectionUtils.find(
-                        xml.getVrsUrnXmlSessioneVers(),
-                        object -> ((VrsUrnXmlSessioneVers) object).getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE));
+                VrsUrnXmlSessioneVers urnXmlSessioneVers = IterableUtils.find(xml.getVrsUrnXmlSessioneVers(),
+                        object -> (object).getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE));
                 if (urnXmlSessioneVers != null) {
                     tmpDatiXml.setUrn(urnXmlSessioneVers.getDsUrn());
                 } else {
@@ -3789,6 +3800,117 @@ public class ElencoVersamentoHelper extends GenericHelper {
         query.setParameter("tiStatoElenco", tiStatoElenco);
         List<ElvStatoElencoVer> stati = query.getResultList();
         return stati != null && !stati.isEmpty();
+    }
+
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    //
+    // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO
+    //
+    public boolean isPossibileMettereAipAllaFirma(BigDecimal idElencoVers) {
+        Query query = em.createNativeQuery("SELECT id_elenco_vers FROM ELV_ELENCO_VERS ele "
+                + "JOIN DEC_CRITERIO_RAGGR crit ON (crit.id_criterio_raggr = ele.id_criterio_raggr) "
+                + "WHERE ele.id_elenco_vers = :idElencoVers AND ele.ti_stato_elenco = 'COMPLETATO' "
+                + "AND NOT EXISTS (SELECT * FROM ELV_FILE_ELENCO_VERS file_ele "
+                + "WHERE file_ele.id_elenco_vers = ele.id_elenco_vers "
+                + "AND file_ele.ti_file_elenco_vers = 'ELENCO_INDICI_AIP') "
+                + "AND (ele.ti_gest_elenco in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO') "
+                + "or (ele.ti_gest_elenco is null "
+                + "and crit.ti_gest_elenco_criterio in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO')) "
+                + "or (ele.ti_gest_elenco is null and crit.ti_gest_elenco_criterio is null "
+                + "and case when ele.fl_elenco_standard = '0' "
+                + "then (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_NOSTD') "
+                + "when ele.fl_elenco_standard = '1' and ele.fl_elenco_fisc = '0' "
+                + "then (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_STD_NOFISC') "
+                + "else (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_STD_FISC') "
+                + "end in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO')) )");
+        query.setParameter("idElencoVers", idElencoVers);
+        List<Object> l = query.getResultList();
+        return (l != null && l.size() > 0) ? true : false;
+    }
+
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    //
+    // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO
+    //
+    public boolean isElencoConAlmenoUnaUdSenzaIndiceAip(BigDecimal idElencoVers) {
+        Query query = em.createNativeQuery("SELECT tmp.id_unita_doc "
+                + "FROM (	SELECT ud.id_elenco_vers, ud.id_unita_doc " + "		FROM ARO_UNITA_DOC ud "
+                + "		WHERE ud.id_elenco_vers = :idElencoVers1 "
+                + "		AND ud.ti_stato_conservazione != 'ANNULLATA' " + "		UNION "
+                + "		SELECT doc.id_elenco_vers, ud.id_unita_doc " + "		FROM ARO_DOC doc "
+                + "		JOIN ARO_UNITA_DOC ud " + "			ON (ud.id_unita_doc = doc.id_unita_doc "
+                + "			AND ud.ti_stato_conservazione != 'ANNULLATA') "
+                + "		WHERE doc.id_elenco_vers = :idElencoVers2 "
+                + "UNION        SELECT upd_ud.id_elenco_vers, ud.id_unita_doc " + "FROM ARO_UPD_UNITA_DOC upd_ud "
+                + "join ARO_UNITA_DOC ud ON (ud.id_unita_doc = upd_ud.id_unita_doc "
+                + "	AND ud.ti_stato_conservazione != 'ANNULLATA') " + "WHERE upd_ud.id_elenco_vers = :idElencoVers3 "
+                + ") tmp " + "WHERE NOT EXISTS (SELECT * " + "				  FROM ARO_INDICE_AIP_UD ix "
+                + "				  JOIN ARO_VER_INDICE_AIP_UD ver_ix "
+                + "					ON (ver_ix.id_indice_aip = ix.id_indice_aip "
+                + "					AND ver_ix.id_elenco_vers = tmp.id_elenco_vers) "
+                + "				  WHERE ix.id_unita_doc = tmp.id_unita_doc " + " 				  )");
+        query.setParameter("idElencoVers1", idElencoVers);
+        query.setParameter("idElencoVers2", idElencoVers);
+        query.setParameter("idElencoVers3", idElencoVers);
+        List<Object> l = query.getResultList();
+        return (l != null && l.size() > 0) ? true : false;
+    }
+
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    //
+    // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO
+    //
+    public boolean isElencoConUdConTroppeVersioniIndiceAip(BigDecimal idElencoVers) {
+        Query query = em.createNativeQuery("SELECT tmp.id_unita_doc, (SELECT count(*) "
+                + "	   FROM ARO_INDICE_AIP_UD ix JOIN ARO_VER_INDICE_AIP_UD ver_ix "
+                + "		ON (ver_ix.id_indice_aip = ix.id_indice_aip "
+                + "		AND ver_ix.id_elenco_vers = tmp.id_elenco_vers) "
+                + "	   WHERE ix.id_unita_doc = tmp.id_unita_doc ) ni_ver_ix_aip "
+                + "FROM (	SELECT ud.id_elenco_vers, ud.id_unita_doc FROM ARO_UNITA_DOC ud "
+                + "		WHERE ud.id_elenco_vers = :idElencoVers1 "
+                + "		AND ud.ti_stato_conservazione != 'ANNULLATA' UNION "
+                + "		SELECT doc.id_elenco_vers, ud.id_unita_doc FROM ARO_DOC doc "
+                + "		JOIN ARO_UNITA_DOC ud ON (ud.id_unita_doc = doc.id_unita_doc "
+                + "			AND ud.ti_stato_conservazione != 'ANNULLATA') "
+                + "		WHERE doc.id_elenco_vers = :idElencoVers2 "
+                + "UNION        SELECT upd_ud.id_elenco_vers, ud.id_unita_doc FROM ARO_UPD_UNITA_DOC upd_ud "
+                + "join ARO_UNITA_DOC ud ON (ud.id_unita_doc = upd_ud.id_unita_doc "
+                + "	AND ud.ti_stato_conservazione != 'ANNULLATA') WHERE upd_ud.id_elenco_vers = :idElencoVers3 "
+                + ") tmp " + "WHERE (SELECT count(*) FROM ARO_INDICE_AIP_UD ix "
+                + "	   JOIN ARO_VER_INDICE_AIP_UD ver_ix ON (ver_ix.id_indice_aip = ix.id_indice_aip "
+                + "		AND ver_ix.id_elenco_vers = tmp.id_elenco_vers) "
+                + "	   WHERE ix.id_unita_doc = tmp.id_unita_doc ) > 1");
+        query.setParameter("idElencoVers1", idElencoVers);
+        query.setParameter("idElencoVers2", idElencoVers);
+        query.setParameter("idElencoVers3", idElencoVers);
+        List<Object> l = query.getResultList();
+        return (l != null && l.size() == 1) ? true : false;
+    }
+
+    public List<AroUnitaDoc> findUdPerStatoElencoEConservazioneStatoDiverso(BigDecimal idElencoVers,
+            it.eng.parer.entity.constraint.AroUnitaDoc.TiStatoUdElencoVers tiStatoUdElencoVers,
+            String tiStatoConservazione) {
+        Query query = em.createQuery("SELECT ud FROM AroUnitaDoc ud WHERE ud.elvElencoVer.idElencoVers = :idElencoVers "
+                + "AND ud.tiStatoUdElencoVers = :tiStatoUdElencoVers "
+                + "AND ud.tiStatoConservazione <> :tiStatoConservazione ");
+        query.setParameter("idElencoVers", idElencoVers.longValueExact());
+        query.setParameter("tiStatoUdElencoVers", tiStatoUdElencoVers.name());
+        query.setParameter("tiStatoConservazione", tiStatoConservazione);
+        return query.getResultList();
+    }
+
+    public List<AroDoc> findAroDocPerStatoElencoSenzaUdAnnullate(BigDecimal idElencoVers, String tiStatoDocElencoVers) {
+        Query query = em
+                .createQuery("SELECT doc FROM AroDoc doc " + "WHERE    doc.elvElencoVer.idElencoVers = :idElencoVers "
+                        + "AND      doc.tiStatoDocElencoVers = :tiStatoDocElencoVers "
+                        + "AND EXISTS ( SELECT ud FROM AroUnitaDoc ud WHERE ud.idUnitaDoc=doc.aroUnitaDoc.idUnitaDoc "
+                        + "             AND   ud.tiStatoConservazione <> 'ANNULLATA' )");
+        query.setParameter("idElencoVers", idElencoVers.longValueExact());
+        query.setParameter("tiStatoDocElencoVers", tiStatoDocElencoVers);
+        return query.getResultList();
     }
 
     // MAC#28509

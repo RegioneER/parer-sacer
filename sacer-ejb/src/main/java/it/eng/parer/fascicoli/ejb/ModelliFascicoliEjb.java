@@ -78,9 +78,9 @@ public class ModelliFascicoliEjb {
      *            tipo modello xsd in uso
      * @param filterValid
      *            true per prendere i record attivi attualmente
-     * 
+     *
      * @return entity DecModelloXsdFascicoloTableBean
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -120,9 +120,9 @@ public class ModelliFascicoliEjb {
      *
      * @param idModelloXsdFascicolo
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -152,9 +152,9 @@ public class ModelliFascicoliEjb {
      *
      * @param idModelloXsdFascicolo
      *            id modello xsd fascicolo
-     * 
+     *
      * @return il rowBean contenente i dati del modello xsd
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -177,7 +177,7 @@ public class ModelliFascicoliEjb {
 
     /**
      * Ritorna il rowBean del modello xsd richiesto in input tramite chiave unique
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModelloXsd
@@ -186,9 +186,9 @@ public class ModelliFascicoliEjb {
      *            tipo modello in uso xsd
      * @param cdXsd
      *            codice xsd
-     * 
+     *
      * @return il rowBean contenente i dati del modello
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -218,7 +218,7 @@ public class ModelliFascicoliEjb {
      *            id ambiente
      * @param tiModelloXsd
      *            tipo modello xsd
-     * 
+     *
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public List<DecModelloXsdFascicolo> checkModelliXsdAttiviInUse(BigDecimal idAmbiente, String tiModelloXsd) {
@@ -236,9 +236,9 @@ public class ModelliFascicoliEjb {
      *            paramentri per il logging
      * @param modelloXsdFascicoloRowBean
      *            decodifica xsd fascicolo
-     * 
+     *
      * @return id del nuovo modello xsd
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -305,7 +305,7 @@ public class ModelliFascicoliEjb {
      *            parametri per il logging
      * @param idModelloXsdFascicolo
      *            id modello xsd fascicolo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

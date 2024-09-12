@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author DiLorenzo_F
- * 
+ *
  */
 @SuppressWarnings({ "unchecked" })
 @Stateless(mappedName = "ControlliRecIndiceAipFascicoli")
@@ -271,7 +271,7 @@ public class ControlliRecIndiceAipFascicoli {
      *            id ambiente
      * @param cdVersioneXml
      *            versione del servizio di versamento fascicolo
-     * 
+     *
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public RispostaControlli getDecModelloSelfDescMoreInfoV2(long idAmbiente, String cdVersioneXml) {

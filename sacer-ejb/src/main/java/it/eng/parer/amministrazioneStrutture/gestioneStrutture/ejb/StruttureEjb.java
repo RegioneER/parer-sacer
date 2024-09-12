@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb;
 
 import it.eng.integriam.client.ws.IAMSoapClients;
@@ -94,12 +93,13 @@ import javax.xml.transform.Result;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.sax.TransformerHandler; 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPFaultException;
 import it.eng.integriam.client.ws.calcoloservizierogati.CalcoloServiziErogati;
+import it.eng.parer.amministrazioneStrutture.gestioneModelliXsdUd.helper.ModelliXsdUdHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.helper.SistemaMigrazioneHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.helper.TipoFascicoloHelper;
 import it.eng.parer.entity.AplSistemaMigraz;
@@ -196,6 +196,8 @@ public class StruttureEjb {
     private TipoFascicoloHelper tipoFascicoloHelper;
     @EJB
     private CriteriRaggrFascicoliHelper crfHelper;
+    @EJB
+    private ModelliXsdUdHelper modelliXsdUdHelper;
 
     public enum TiApparType {
 
@@ -1620,6 +1622,7 @@ public class StruttureEjb {
             throws ParerUserError {
         // Ricavo la struttura presente nell'XML
         OrgStrut strutExp = strutCache.getOrgStrut(uuid);
+        // Ricavo la struttura corrente
         OrgStrut strutturaCorrente = struttureHelper.findById(OrgStrut.class, idStrutCorrente);
 
         checkAndSetModelliXsdTipiFascicoloStruttura(strutExp,
@@ -1695,13 +1698,13 @@ public class StruttureEjb {
     }
 
     /**
-     * 
+     *
      * @param struttureDaElaborare
      *            le strutture da elaborare nell'importa parametri massivo
-     * 
+     *
      * @return la stringa con eventuale errore per presenza di strutture appartenenti ad ambienti diversi nell'import
      *         parametri massivo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1773,6 +1776,136 @@ public class StruttureEjb {
             }
         }
     }
+
+    // MAC #33057
+    /**
+     * Controlla i modelli xsd ud del tipo UD da importare verificando che siano presenti nell'ambiente della struttura
+     *
+     * @param idStrutturaCorrente
+     *            la struttura corrente nella quale si sta importando il tipo ud
+     * @param tipoUnitaDocExp
+     *            il tipo ud dell'XML da importare
+     * @param tipoUnitaDoc
+     *            il tipo ud che si sta importando
+     *
+     * @throws ParerUserError
+     *             errore restituito in caso di mancanza modello
+     */
+    public void checkAndSetModelliXsdTipiUdStrutturaPerImportaParametri(BigDecimal idStrutturaCorrente,
+            DecTipoUnitaDoc tipoUnitaDocExp, DecTipoUnitaDoc tipoUnitaDoc) throws ParerUserError {
+        // List<DecTipoUnitaDoc> tipiUdOld = strutturaOld.getDecTipoUnitaDocs();
+        boolean eccezione = false;
+        // Ricavo la struttura corrente, quella dove mi trovo e sto eseguendo l'importazione dei parametri
+        OrgStrut strutturaCorrente = struttureHelper.findById(OrgStrut.class, idStrutturaCorrente.longValue());
+        // Da essa ricavo l'ambiente della struttura in cui mi trovo
+        long idAmbienteNuovo = strutturaCorrente.getOrgEnte().getOrgAmbiente().getIdAmbiente();
+
+        List<String[]> listaDatiErroreModelli = new ArrayList<>();
+        Set<String> setModelliErrore = new HashSet<>();
+        if (tipoUnitaDocExp.getDecUsoModelloXsdUniDocs() != null) {
+            for (DecUsoModelloXsdUniDoc usoModelloXsdUniDocNuovo : tipoUnitaDocExp.getDecUsoModelloXsdUniDocs()) {
+                DecModelloXsdUd modelloXsdUdNuovo = usoModelloXsdUniDocNuovo.getDecModelloXsdUd();
+                if (modelloXsdUdNuovo != null) {
+                    DecModelloXsdUd modelloXsdUdNuovoAmbiente = modelliXsdUdHelper.getDecModelloXsdUd(idAmbienteNuovo,
+                            modelloXsdUdNuovo.getTiModelloXsd().name(), modelloXsdUdNuovo.getTiUsoModelloXsd(),
+                            modelloXsdUdNuovo.getCdXsd());
+                    if (modelloXsdUdNuovoAmbiente == null) {
+                        eccezione = true;
+                        String[] datiErroreModelli = new String[3];
+                        datiErroreModelli[0] = tipoUnitaDocExp.getNmTipoUnitaDoc();
+                        datiErroreModelli[1] = modelloXsdUdNuovo.getTiModelloXsd().name();
+                        datiErroreModelli[2] = modelloXsdUdNuovo.getCdXsd();
+                        String modelloDaValutare = modelloXsdUdNuovo.getTiModelloXsd().name() + "_v"
+                                + modelloXsdUdNuovo.getCdXsd();
+                        if (setModelliErrore.add(modelloDaValutare)) {
+                            listaDatiErroreModelli.add(datiErroreModelli);
+                        }
+                    } else {
+                        // Importa XSD profilo normativo
+                        importaUsoModelloXsdUd(idStrutturaCorrente, tipoUnitaDocExp, tipoUnitaDoc);
+                    }
+                }
+            }
+        }
+        if (eccezione) {
+            StringBuilder errorMessage = new StringBuilder();
+            for (String[] datiErroreModelli : listaDatiErroreModelli) {
+                OrgStrut strut = struttureHelper.findById(OrgStrut.class, idStrutturaCorrente);
+                errorMessage.append("Il Tipo unità documentaria ").append(datiErroreModelli[0])
+                        .append(" per la struttura ").append(strut.getNmStrut()).append(" referenzia il modello ")
+                        .append(datiErroreModelli[1]).append("_v").append(datiErroreModelli[2])
+                        .append(" che non è presente in questo ambiente;<br>");
+            }
+            throw new ParerUserError(errorMessage.append("Impossibile proseguire.").toString());
+        }
+    }
+
+    public void importaUsoModelloXsdUd(BigDecimal idStrutCorrente, DecTipoUnitaDoc tipoUnitaDocExp,
+            DecTipoUnitaDoc tipoUnitaDoc) throws ParerUserError {
+        // Importa Modello
+        List<DecUsoModelloXsdUniDoc> usoModelloXsdUniDocExpList = tipoUnitaDocExp.getDecUsoModelloXsdUniDocs();
+        // Per ogni versione modello associato al tipo ud presente in DEC_USO_MODELLO_XSD_UNI_DOC
+        for (DecUsoModelloXsdUniDoc usoModelloXsdUniDocExp : usoModelloXsdUniDocExpList) {
+            DecModelloXsdUd modelloXsdUdExp = usoModelloXsdUniDocExp.getDecModelloXsdUd();
+
+            OrgStrut strutCor = ambienteHelper.findById(OrgStrut.class, idStrutCorrente);
+            long idAmbienteCorrente = strutCor.getOrgEnte().getOrgAmbiente().getIdAmbiente();
+
+            // Controllo se esiste il modello xsd tipo ud per l'ambiente del tipo ud
+            DecModelloXsdUd modelloXsdUd = modelliXsdUdHelper.getDecModelloXsdUd(idAmbienteCorrente,
+                    modelloXsdUdExp.getTiModelloXsd().name(), modelloXsdUdExp.getTiUsoModelloXsd(),
+                    modelloXsdUdExp.getCdXsd());
+
+            if (modelloXsdUd != null) {
+                // Controlla se esiste uso modello del tipo unit\u00E0 doc su DB per l'ambiente della struttura del tipo
+                // ud
+                // che sto importando
+                DecUsoModelloXsdUniDoc usoModelloXsdUniDoc = modelliXsdUdHelper.getDecUsoModelloXsdUniDoc(
+                        idStrutCorrente, tipoUnitaDocExp.getNmTipoUnitaDoc(), modelloXsdUd.getIdModelloXsdUd());
+
+                // Se usoModelloXsdUniDoc non \u00E8 presente, lo creo e lo salvo su DB
+                if (usoModelloXsdUniDoc == null) {
+
+                    inserisciUsoModelloXsdUniDoc(tipoUnitaDoc, usoModelloXsdUniDocExp, modelloXsdUd);
+                }
+            }
+
+        }
+    }
+
+    /**
+     * Inserisce su DB uso modello xsd uni doc (relazione tipoUd-modello xsd uni doc)
+     *
+     * @param tipoUnitaDoc
+     *            tipo unita doc
+     * @param usoModelloXsdUniDoc
+     *            uso modello xsd uni doc
+     * @param modelloXsdUd
+     *            modello xsd uni doc
+     *
+     * @return il record relativo al tipoUnitaDocAmmesso inserito
+     */
+    public DecUsoModelloXsdUniDoc inserisciUsoModelloXsdUniDoc(DecTipoUnitaDoc tipoUnitaDoc,
+            DecUsoModelloXsdUniDoc usoModelloXsdUniDoc, DecModelloXsdUd modelloXsdUd) {
+        DecUsoModelloXsdUniDoc u = new DecUsoModelloXsdUniDoc();
+        u.setDecTipoUnitaDoc(tipoUnitaDoc);
+        u.setDecModelloXsdUd(modelloXsdUd);
+        u.setDtIstituz(usoModelloXsdUniDoc.getDtIstituz());
+        u.setDtSoppres(usoModelloXsdUniDoc.getDtSoppres());
+        u.setFlStandard(usoModelloXsdUniDoc.getFlStandard());
+        struttureHelper.insertEntity(u, true);
+        if (tipoUnitaDoc.getDecUsoModelloXsdUniDocs() == null) {
+            tipoUnitaDoc.setDecUsoModelloXsdUniDocs(new ArrayList<>());
+        }
+        tipoUnitaDoc.getDecUsoModelloXsdUniDocs().add(u);
+        if (modelloXsdUd.getDecUsoModelloXsdUniDocs() == null) {
+            modelloXsdUd.setDecUsoModelloXsdUniDocs(new ArrayList<>());
+        }
+        modelloXsdUd.getDecUsoModelloXsdUniDocs().add(u);
+        return u;
+    }
+
+    // end MAC #33057
 
     public void deleteStruttura(LogParam param, long idStrut) throws ParerUserError {
         // Richiedo al EJB container una nuova istanza di StruttureEjb
@@ -2067,7 +2200,7 @@ public class StruttureEjb {
 
     /**
      * Esegue il metodo dell'ejb per la chiamata al WS di allineamento enti convenzionati
-     * 
+     *
      * @param enteConvenzDaAllineaList
      *            lista IamEnteConvenzDaAllinea
      *
@@ -2333,6 +2466,7 @@ public class StruttureEjb {
         // Preparo le strutture dati per il report
         Set<String> strutErrorGenerico = new HashSet<>();
         Set<String> strutErrorSuModello = new HashSet<>();
+        Set<String> strutErrorSuModelloXsdUd = new HashSet<>();
         Map<String, String> strutErrorTipiSerie = new HashMap<>();
         Set<String> strutErrorSisMigr = new HashSet<>();
 
@@ -2349,8 +2483,13 @@ public class StruttureEjb {
                         nmTipoStrutUnitaDocSelezionataDaCombo, importareRegistri, importareCriteri,
                         importareSistemiMigraz, importareFormatiComponente);
             } catch (ParerUserError e) {
+                // TODO: miglior gestione delle eccezioni da smistare
                 if (e.getDescription().contains(" iniziare o terminare con caratteri di spaziatura")) {
                     throw new ParerUserError(e.getDescription());
+                } else if (e.getDescription().contains(" referenzia il modello")) {
+                    strutErrorSuModelloXsdUd.add(nmStrutCorrente);
+                    // passa alla struttura successiva
+                    continue;
                 } else {
                     strutErrorSuModello.add(nmStrutCorrente);
                     // passa alla struttura successiva
@@ -2412,15 +2551,15 @@ public class StruttureEjb {
         }
 
         // Preparo il report
-        Object[] report = new Object[4];
+        Object[] report = new Object[5];
         report[0] = strutErrorGenerico;
         report[1] = strutErrorSuModello;
         report[2] = strutErrorTipiSerie;
         report[3] = strutErrorSisMigr;
+        report[4] = strutErrorSuModelloXsdUd;
         return report;
     }
 
-    // TransactionAttribute
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Object[] confermaImportazione(LogParam param, BigDecimal idStrutCorrente, UUID uuid,
             String nmTipoUnitaDocSelezionataDaCombo, String nmTipoStrutUnitaDocSelezionataDaCombo,
@@ -2459,6 +2598,10 @@ public class StruttureEjb {
         // Controllo sui ModelliTipiSerie
         checkAndSetModelliTipiSerieStrutturaPerImportaParametri(idStrutCorrente, tipoUnitaDocExp, tipoUnitaDoc,
                 registriImportati);
+
+        // MAC #33057
+        // Controllo sui ModelliXsdTipoUd
+        checkAndSetModelliXsdTipiUdStrutturaPerImportaParametri(idStrutCorrente, tipoUnitaDocExp, tipoUnitaDoc);
 
         /////////////////////////////////
         // IMPORTA FORMATI COMPONENTE ///
@@ -2635,7 +2778,6 @@ public class StruttureEjb {
         // IN ATTESA DI SVILUPPO CONTROLLI SOVRASCRIVI PERIODI DI VALIDITA':
         // CONTROLLO TEMPORANEO PER VERIFICARE CHE IL TIPO FASCICOLO NON ESISTA:
         // SE ESISTE NON IMPORTO NULLA, AL MOMENTO, VISTO CHE HO TOLTO IL CHECK SOVRASCITI PERIODO
-
         // Cerco su DB il nmTipoFascicolo selezionato dalla combo
         DecTipoFascicolo tipoFascicoloDB = tipoFascicoloHelper
                 .getDecTipoFascicoloByName(tipoFascicoloExp.getNmTipoFascicolo(), idStrutCorrente);
@@ -4092,11 +4234,12 @@ public class StruttureEjb {
     }
 
     public DecXsdAttribDatiSpec inserisciXsdAttribDatiSpec(DecXsdDatiSpec xsdDatiSpec, DecAttribDatiSpec attribDatiSpec,
-            BigDecimal niOrdAttrib) {
+            BigDecimal niOrdAttrib, String dsAttribDatiSpec) {
         DecXsdAttribDatiSpec xsdAttribDatiSpec = new DecXsdAttribDatiSpec();
         xsdAttribDatiSpec.setDecXsdDatiSpec(xsdDatiSpec);
         xsdAttribDatiSpec.setDecAttribDatiSpec(attribDatiSpec);
         xsdAttribDatiSpec.setNiOrdAttrib(niOrdAttrib);
+        xsdAttribDatiSpec.setDsAttribDatiSpec(dsAttribDatiSpec);
         struttureHelper.insertEntity(xsdAttribDatiSpec, true);
         return xsdAttribDatiSpec;
     }
@@ -4454,7 +4597,8 @@ public class StruttureEjb {
             }
 
             // Inserisco la relazione xsdDatiSpec-attribDatiSpec
-            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib());
+            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib(),
+                    xsdAttribDatiSpecExp.getDsAttribDatiSpec());
         }
         return xsdDatiSpec;
     }
@@ -4477,7 +4621,8 @@ public class StruttureEjb {
             }
 
             // Inserisco la relazione xsdDatiSpec-attribDatiSpec
-            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib());
+            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib(),
+                    xsdAttribDatiSpecExp.getDsAttribDatiSpec());
         }
         return xsdDatiSpec;
     }
@@ -4500,7 +4645,8 @@ public class StruttureEjb {
             }
 
             // Inserisco la relazione xsdDatiSpec-attribDatiSpec
-            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib());
+            inserisciXsdAttribDatiSpec(xsdDatiSpec, attribDatiSpec, xsdAttribDatiSpecExp.getNiOrdAttrib(),
+                    xsdAttribDatiSpecExp.getDsAttribDatiSpec());
         }
         return xsdDatiSpec;
     }

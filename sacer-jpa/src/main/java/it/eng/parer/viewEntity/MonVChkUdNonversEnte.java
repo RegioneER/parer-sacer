@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the MON_V_CHK_UD_NONVERS_ENTE database table.
- * 
+ *
  */
 @Entity
 @Table(name = "MON_V_CHK_UD_NONVERS_ENTE")

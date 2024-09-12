@@ -69,7 +69,7 @@ public class ParamIamHelper {
      *            id ente IAM
      * @param getVal
      *            entity tipo TipoIamVGetValAppart
-     * 
+     *
      * @return mappa chiave/valore di tipo String
      */
     public Map<String, String> getParamApplicMapValue(List<String> nmParamApplicList, BigDecimal idAmbienteEnteConvenz,
@@ -120,7 +120,7 @@ public class ParamIamHelper {
      *            id ente IAM
      * @param tipoIamVGetValAppart
      *            tipo valore {@link TipoIamVGetValAppart}
-     * 
+     *
      * @return valore
      */
     public String getValoreParamApplic(String nmParamApplic, BigDecimal idAmbienteEnteConvenz, BigDecimal idEnteSiam,

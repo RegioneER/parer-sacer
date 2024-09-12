@@ -22,6 +22,8 @@
  */
 package it.eng.parer.job.validazioneFascicoli.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -78,7 +80,7 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiStatoConservazione", TiStatoConservazione.ANNULLATO);
-        query.setParameter("tiStatoFascElencoVers", TiStatoFascElencoVers.IN_ELENCO_FIRMATO);
+        query.setParameter("tiStatoFascElencoVers", TiStatoFascElencoVers.IN_ELENCO_VALIDATO);
 
         return query.getResultList();
     }
@@ -154,7 +156,7 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return entity AroVerIndiceAipUd
      */
     public AroVerIndiceAipUd getUltimaVersioneIndiceAip(long idUnitaDoc) {

@@ -22,14 +22,14 @@ import java.util.Date;
 
 /**
  * @author Iacolucci_M
- * 
+ *
  *         Classe che determina se un'entità deve essere considerata (flag valida==true) e quale deve essere la
  *         risultante data istituzione (dataInizio) e data soppressione (dataFine). per ogni entità che si intende
  *         processare si passano al costruttore i due flag che dicono come si deve comportare l'oggetto, la data
  *         istituzione e soppressione originali del vecchio oggetto e la data attuale di riferimento. Questa classe
  *         determina poi se l'oggetto è valido e quali devono essere le date giuste da mettere nel nuovo oggetto che si
  *         andrà a creare come importazione/duplicazione del vecchio.
- * 
+ *
  */
 public class EntitaValida {
 
@@ -63,7 +63,7 @@ public class EntitaValida {
         } else {
             /*
              * Se invece l'oggetto non è attivo:
-             * 
+             *
              * Se la data inizio è successiva a adesso e la data fine è successiva ad adesso:
              */
             if (dataIstituzione.after(dataAttuale) && dataSoppressione.after(dataAttuale)) {

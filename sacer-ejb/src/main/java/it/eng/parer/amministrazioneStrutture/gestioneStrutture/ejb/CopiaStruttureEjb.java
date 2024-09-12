@@ -829,6 +829,22 @@ public class CopiaStruttureEjb {
                             determinaAttribDatiSpecs(udOld.getDecAttribDatiSpecs(), newStrut, ud, null, null));
                     ud.setDecXsdDatiSpecs(determinaXsdDatiSpecs(udOld.getDecXsdDatiSpecs(), newStrut, ud, null, null,
                             dataAttuale, includiElementiDisattivi, mantieniDateFineValidita));
+
+                    // if (udOld.getDecUsoModelloXsdUniDocs() != null &&
+                    // (!udOld.getDecUsoModelloXsdUniDocs().isEmpty())) {
+                    // ArrayList<DecUsoModelloXsdUniDoc> alUsoModelli = new ArrayList();
+                    // ud.setDecUsoModelloXsdUniDocs(alUsoModelli);
+                    // for (DecUsoModelloXsdUniDoc uOld : udOld.getDecUsoModelloXsdUniDocs()) {
+                    // DecUsoModelloXsdUniDoc u = new DecUsoModelloXsdUniDoc();
+                    // alUsoModelli.add(u);
+                    // u.setDecTipoUnitaDoc(ud);
+                    // u.setDecModelloXsdUd(uOld.getDecModelloXsdUd());
+                    // u.setDtIstituz(uOld.getDtIstituz());
+                    // u.setDtSoppres(uOld.getDtSoppres());
+                    // u.setFlStandard(uOld.getFlStandard());
+                    // }
+                    // }
+
                     tipoUnitaDocHelper.getEntityManager().flush();
                     ud.setAplValoreParamApplics(determinaAplValoreParamApplics(udOld.getAplValoreParamApplics(), ud));
                 }
@@ -1647,6 +1663,7 @@ public class CopiaStruttureEjb {
                             DecXsdAttribDatiSpec decXsdAttribDatiSpecNew = new DecXsdAttribDatiSpec();
                             decXsdAttribDatiSpecNew.setDecXsdDatiSpec(decXsdDatiSpecNew);
                             decXsdAttribDatiSpecNew.setNiOrdAttrib(decXsdAttribDatiSpecOld.getNiOrdAttrib());
+                            decXsdAttribDatiSpecNew.setDsAttribDatiSpec(decXsdAttribDatiSpecOld.getDsAttribDatiSpec());
                             List<DecAttribDatiSpec> listaAtt = null;
                             if (newUd != null) {
                                 listaAtt = newUd.getDecAttribDatiSpecs();

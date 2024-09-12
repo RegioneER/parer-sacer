@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the ARO_V_LIS_ITEM_RICH_ANNVRS database table.
- * 
+ *
  */
 @Entity
 @Table(name = "ARO_V_LIS_ITEM_RICH_ANNVRS")

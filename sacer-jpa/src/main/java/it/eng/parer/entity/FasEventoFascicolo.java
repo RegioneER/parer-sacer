@@ -24,7 +24,7 @@ import javax.persistence.*;
 
 /**
  * The persistent class for the FAS_EVENTO_FASCICOLO database table.
- * 
+ *
  */
 @Entity
 @Table(name = "FAS_EVENTO_FASCICOLO")

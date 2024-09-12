@@ -17,6 +17,40 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.CorrispondenzePingHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
@@ -42,8 +76,6 @@ import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
 import it.eng.parer.grantedViewEntity.OrgVTreeAmbitoTerrit;
 import it.eng.parer.grantedViewEntity.UsrVAbilAmbEnteConvenz;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.job.allineamentoEntiConvenzionati.ejb.AllineamentoEntiConvenzionatiEjb;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.ejb.common.helper.ParamApplicHelper;
@@ -81,30 +113,8 @@ import it.eng.parer.web.util.Transform;
 import it.eng.spagoLite.db.base.BaseTableInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("rawtypes")
 @Stateless
 @LocalBean
 @Interceptors({ TransactionInterceptor.class })
@@ -121,8 +131,6 @@ public class AmbienteEjb {
     private ParamApplicHelper paramApplicHelper;
     @EJB
     private SacerLogEjb sacerLogEjb;
-    @EJB
-    private AllineamentoEntiConvenzionatiEjb aecEjb;
     @EJB
     private AmministrazioneEjb amministrazioneEjb;
     @EJB
@@ -564,7 +572,7 @@ public class AmbienteEjb {
                     "Eliminazione ambiente non riuscita: esistono elementi ancora associati all'ambiente</br>");
         }
 
-        if (corrispondenzeHelper.checkPingRelations(GenericHelper.longFromBigDecimal(idAmbiente), 2)) {
+        if (corrispondenzeHelper.checkPingRelations(longFromBigDecimal(idAmbiente), 2)) {
             throw new ParerUserError(
                     "Eliminazione dell'ambiente non consentita. Sono presenti corrispondenze con versatori di Ping</br>");
         }
@@ -588,7 +596,7 @@ public class AmbienteEjb {
                     "Eliminazione ente non riuscita: esistono strutture ancora associati all'ente</br>");
         }
 
-        if (corrispondenzeHelper.checkPingRelations(GenericHelper.longFromBigDecimal(idEnte), 1)) {
+        if (corrispondenzeHelper.checkPingRelations(longFromBigDecimal(idEnte), 1)) {
             throw new ParerUserError(
                     "Eliminazione dell'ente non consentita. Sono presenti corrispondenze con versatori di Ping</br>");
         }
@@ -1139,6 +1147,20 @@ public class AmbienteEjb {
             throw new IllegalStateException("Errore inatteso nel recupero degli enti siam");
         }
         return entiTableBean;
+    }
+
+    public BaseRow getSIOrgEnteSiamRowBean(BigDecimal idEnteSiam) {
+        SIOrgEnteSiam enteSiam = ambienteHelper.findById(SIOrgEnteSiam.class, idEnteSiam);
+        BaseRow riga = new BaseRow();
+        try {
+
+            riga.setBigDecimal("id_ente_siam", new BigDecimal(enteSiam.getIdEnteSiam()));
+            riga.setString("nm_ente_siam", enteSiam.getNmEnteSiam());
+        } catch (Exception e) {
+            log.error("Errore nel recupero dell'ente siam" + ExceptionUtils.getRootCauseMessage(e), e);
+            throw new IllegalStateException("Errore inatteso nel recupero dell'ente siam");
+        }
+        return riga;
     }
 
     /**
@@ -1802,10 +1824,10 @@ public class AmbienteEjb {
 
     /**
      * Data una struttura in input, viene recuperato l'ente convenzionato associato con data più recente
-     * 
+     *
      * @param idStrut
      *            struttura per la quale ricercare l'associazione con ente convenzionato più recente
-     * 
+     *
      * @return entity {@link SIOrgEnteConvenzOrg}
      */
     public SIOrgEnteConvenzOrg getOrgEnteConvenzOrgMostRecent(BigDecimal idStrut) {
@@ -1842,6 +1864,84 @@ public class AmbienteEjb {
         // errore
         return null;
 
+    }
+
+    /**
+     * Dato in input un range di date, verifica se questo rispetta la contiguità con i range delle associazioni ente
+     * convenzionato - struttura già presenti
+     *
+     * @param idStrut
+     *            la struttura di cui estrarre tutte le associazioni
+     * @param dtIniVal
+     *            data inizio validità associazione trattata (nuova o esistente in fase di modifica)
+     * @param dtFineVal
+     *            data Fine validità associazione trattata (nuova o esistente in fase di modifica)
+     *
+     * @return true se se rispetta regola di contiguità / false altrimenti
+     */
+    public boolean checkDateContigue(BigDecimal idStrut, Date dtIniVal, Date dtFineVal) {
+
+        // Recupero tutte le associazioni ente convenzionato - struttura SACER
+        List<SIOrgEnteConvenzOrg> associazioniStrutturaEnteConvenzionatoList = ambienteHelper
+                .retrieveSIOrgEnteConvenzOrg(idStrut);
+
+        // Converto la lista in mappa: chiave --> dataIniCal, valore --> range di date
+        Map<Date, Date[]> map = new TreeMap<>();
+        for (SIOrgEnteConvenzOrg associazione : associazioniStrutturaEnteConvenzionatoList) {
+            Date[] dateDaA = new Date[2];
+            dateDaA[0] = associazione.getDtIniVal();
+            dateDaA[1] = associazione.getDtFineVal();
+            map.put(associazione.getDtIniVal(), dateDaA);
+        }
+
+        // Inserisco (sostituisco se già esiste) l'elemento trattato
+        Date[] dateDaA = new Date[2];
+        dateDaA[0] = dtIniVal;
+        dateDaA[1] = dtFineVal;
+        map.put(dtIniVal, dateDaA);
+
+        // Creo una mappa che avrà elementi in ordine decrescente per chiave
+        SortedMap<Date, Date[]> treeMap = new TreeMap<>(Comparator.reverseOrder());
+
+        for (Map.Entry<Date, Date[]> entry : map.entrySet()) {
+            treeMap.put(entry.getKey(), entry.getValue());
+        }
+
+        // Riconverto in lista
+        List<SIOrgEnteConvenzOrg> associazioniStrutturaEnteConvenzionatoListOrdered = new ArrayList<>();
+        // int conta = 0;
+        for (Map.Entry<Date, Date[]> entry : treeMap.entrySet()) {
+            SIOrgEnteConvenzOrg associazione = new SIOrgEnteConvenzOrg();
+            Date[] date = entry.getValue();
+            associazione.setDtIniVal(date[0]);
+            associazione.setDtFineVal(date[1]);
+            associazioniStrutturaEnteConvenzionatoListOrdered.add(associazione);
+        }
+
+        // Verifico che i vari intervalli di validità siano contigui
+        for (int i = 0; i < associazioniStrutturaEnteConvenzionatoListOrdered.size(); i++) {
+            // Recupero la data di inizio del primo record
+            Date dataInizioCorrente = associazioniStrutturaEnteConvenzionatoListOrdered.get(i).getDtIniVal();
+            // La confronto con la data di fine del record precedente, se esiste
+            if (i < associazioniStrutturaEnteConvenzionatoListOrdered.size() - 1) {
+
+                Date dataFinePrecedente = associazioniStrutturaEnteConvenzionatoListOrdered.get(i + 1).getDtFineVal();
+
+                // Verifica se le 2 date sono contigue
+                Instant instant = dataInizioCorrente.toInstant();
+                ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
+                LocalDate date1 = zdt.toLocalDate();
+
+                Instant instant2 = dataFinePrecedente.toInstant();
+                ZonedDateTime zdt2 = instant2.atZone(ZoneId.systemDefault());
+                LocalDate date2 = zdt2.toLocalDate();
+
+                if (!date1.equals(date2.plusDays(1))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }

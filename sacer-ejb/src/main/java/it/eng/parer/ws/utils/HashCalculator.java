@@ -51,12 +51,12 @@ public class HashCalculator {
 
     /**
      * @deprecated Vedi MEV#https://redmine.ente.regione.emr.it/issues/17493
-     * 
+     *
      * @param str
      *            valore hash
-     * 
+     *
      * @return bean HashCalculator con risultato calcolo hash
-     * 
+     *
      * @throws NoSuchAlgorithmException
      *             errore generico
      * @throws IOException
@@ -78,12 +78,12 @@ public class HashCalculator {
 
     /**
      * @deprecated Vedi MEV#https://redmine.ente.regione.emr.it/issues/17493
-     * 
+     *
      * @param buf
      *            array di byte file in ingresso
-     * 
+     *
      * @return bean HashCalculator con risultato calcolo hash
-     * 
+     *
      * @throws NoSuchAlgorithmException
      *             errore generico
      * @throws IOException
@@ -105,12 +105,12 @@ public class HashCalculator {
 
     /**
      * @deprecated Vedi MEV#https://redmine.ente.regione.emr.it/issues/17493
-     * 
+     *
      * @param is
      *            inputstream
-     * 
+     *
      * @return bean HashCalculator con risultato calcolo hash
-     * 
+     *
      * @throws NoSuchAlgorithmException
      *             errore generico
      * @throws IOException
@@ -124,14 +124,14 @@ public class HashCalculator {
     /**
      * Note: aggiunto metodo "generico" e per non creare impatti negativi è stato lasciato anche il precedente con SHA-1
      * di base
-     * 
+     *
      * @param is
      *            inputstream
      * @param tipiHash
      *            tipo hash da calcolare TipiHash
-     * 
+     *
      * @return bean HashCalculator con risultato calcolo hash
-     * 
+     *
      * @throws NoSuchAlgorithmException
      *             errore generico
      * @throws IOException

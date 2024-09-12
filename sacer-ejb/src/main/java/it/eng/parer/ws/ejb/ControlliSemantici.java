@@ -502,10 +502,10 @@ public class ControlliSemantici {
 
     /**
      * Verifica se data id struttura risulta cessata
-     * 
+     *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return RispostaControlli con risultato della verifica effettuata
      */
     public RispostaControlli checkStrutCessata(long idStrut) {

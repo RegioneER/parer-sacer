@@ -172,12 +172,12 @@ public class SerieSignatureHelper extends SigningHelper {
 
     /**
      * Returns the {@link HsmVerSerieSessioneFirma} of {@code session} whose <code>Elenco</code> id is {@code idElenco}
-     * 
+     *
      * @param session
      *            sessione HSM
      * @param idElenco
      *            id elenco
-     * 
+     *
      * @return entity HsmVerSerieSessioneFirma
      */
     public HsmVerSerieSessioneFirma findSerieSessione(HsmSessioneFirma session, long idElenco) {
@@ -190,12 +190,12 @@ public class SerieSignatureHelper extends SigningHelper {
 
     /**
      * Returns the {@link HsmVerSerieSessioneFirma} of {@code session} whose <code>Elenco</code> id is {@code idElenco}
-     * 
+     *
      * @param sessionId
      *            id sessione
      * @param idElenco
      *            id elenco
-     * 
+     *
      * @return entity HsmVerSerieSessioneFirma
      */
     public HsmVerSerieSessioneFirma findSerieSessione(long sessionId, long idElenco) {

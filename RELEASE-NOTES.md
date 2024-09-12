@@ -1,28 +1,17 @@
-## 9.3.0 (06-05-2024)
+## 10.2.0 (12-09-2024)
 
-### Bugfix: 8
-- [#31701](https://parermine.regione.emilia-romagna.it/issues/31701) Risoluzione errore riscontrato nella verifica formato di file MPP
-- [#31359](https://parermine.regione.emilia-romagna.it/issues/31359) Correzione errore pagina grigia dopo il download dell'elenco di versamento
-- [#31064](https://parermine.regione.emilia-romagna.it/issues/31064) Correzione bug in fase di salvataggio RICHIESTA di annullamento UD
-- [#31062](https://parermine.regione.emilia-romagna.it/issues/31062) Integrazione ai dati presentati per il fascicolo nella sezione Profilo archivistico
-- [#31060](https://parermine.regione.emilia-romagna.it/issues/31060) Rimozione record duplicati nella ricerca annullamenti UD
-- [#30429](https://parermine.regione.emilia-romagna.it/issues/30429) Correzione dell'errore critico nella ricerca dei criteri di raggruppametno
-- [#27520](https://parermine.regione.emilia-romagna.it/issues/27520) Gestione dell'errore critico aprendo tipo serie da Dettaglio serie di unità documentarie
-- [#25168](https://parermine.regione.emilia-romagna.it/issues/25168) Correzione della gestione dei nomi file e degli urn nel servizio di recupero 
+### Bugfix: 9
+- [#33854](https://parermine.regione.emilia-romagna.it/issues/33854) Modifica condizione di controllo su modifica/cancellazione periodo di validità registro
+- [#33801](https://parermine.regione.emilia-romagna.it/issues/33801) Correzione casting sul parametro aa_unita_doc_registro.
+- [#33782](https://parermine.regione.emilia-romagna.it/issues/33782) Correzione descrizione struttura mostrata nell'intestazione a sinistra all'apertura di organizzazione da Siam
+- [#33298](https://parermine.regione.emilia-romagna.it/issues/33298) Precompilazione di ambiente, ente e struttura nella pagina RIEPILOGO AGGIORNAMENTO METADATI
+- [#33252](https://parermine.regione.emilia-romagna.it/issues/33252) Correzione dei valori su RIEPILOGO AGGIORNAMENTO METADATI
+- [#33157](https://parermine.regione.emilia-romagna.it/issues/33157) Correzione dell'errore nella creazione di un criterio di raggruppamento
+- [#33057](https://parermine.regione.emilia-romagna.it/issues/33057) Importazione parametri struttura: correzione bug che impedisce di importare il profilo normativo
+- [#32638](https://parermine.regione.emilia-romagna.it/issues/32638) Correzione alla ricerca fascicoli per la selezione del modello xsd di fascicolo
+- [#32589](https://parermine.regione.emilia-romagna.it/issues/32589) Restituzione archivio: Correzione contatore dimensione file estratti
 
-### Novità: 15
-- [#31671](https://parermine.regione.emilia-romagna.it/issues/31671) Inserimento pagina "informativa privacy"
-- [#31449](https://parermine.regione.emilia-romagna.it/issues/31449) Adeguamento del transaction timeout sul Consumer Indice Aip
-- [#31298](https://parermine.regione.emilia-romagna.it/issues/31298) ottimizzaione recupero lista componenti di un elenco di versamenti
-- [#31079](https://parermine.regione.emilia-romagna.it/issues/31079) Restituzione archivio: modifica controlli alla creazione della richiesta
-- [#31047](https://parermine.regione.emilia-romagna.it/issues/31047) Servizi di annullamento versamento UD: aggiunta campo Utente
-- [#30846](https://parermine.regione.emilia-romagna.it/issues/30846) Modifiche alla pagina di dettaglio della richiesta restituzione archivio
-- [#30823](https://parermine.regione.emilia-romagna.it/issues/30823) Aggiunta logica di ricalcolo consistenza SACER a seguito di cambio stato delle US/componenti
-- [#30723](https://parermine.regione.emilia-romagna.it/issues/30723) Gestione del Tipo annullamento nell'interfaccia di Sacer
-- [#30721](https://parermine.regione.emilia-romagna.it/issues/30721) Introduzione parametro Tipo annullamento nella chiamata del servizio di annullamento UD
-- [#30536](https://parermine.regione.emilia-romagna.it/issues/30536) Gestione strutture: introdurre la ricerca per parametro con valore non standard
-- [#30394](https://parermine.regione.emilia-romagna.it/issues/30394) Eliminazione dall'annullamento versamento UD della modalità di richiesta che prevede l'iter di approvazione
-- [#29089](https://parermine.regione.emilia-romagna.it/issues/29089) Accesso ai dati dell'aggiornamento metadati UD salvati su Object Storage
-- [#28935](https://parermine.regione.emilia-romagna.it/issues/28935) Aggiunta della procedura automatica eliminazione sessioni di versamento errate e fallite
-- [#28081](https://parermine.regione.emilia-romagna.it/issues/28081) Riepilogo processo generazione indice aip: modifiche alla pagina
-- [#25865](https://parermine.regione.emilia-romagna.it/issues/25865) Inserimento tempo di conservazione su tipo registro e tipo ud
+### Novità: 3
+- [#33156](https://parermine.regione.emilia-romagna.it/issues/33156) Aumento della capacità di upload di lab
+- [#32249](https://parermine.regione.emilia-romagna.it/issues/32249) Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+- [#31352](https://parermine.regione.emilia-romagna.it/issues/31352) Modifiche alla pagina Gestione richieste di restituzione archivio

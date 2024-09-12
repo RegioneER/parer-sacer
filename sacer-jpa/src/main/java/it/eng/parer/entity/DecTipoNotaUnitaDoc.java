@@ -37,7 +37,7 @@ import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 /**
  * The persistent class for the DEC_TIPO_NOTA_UNITA_DOC database table.
- * 
+ *
  */
 @Entity
 @Table(name = "DEC_TIPO_NOTA_UNITA_DOC")

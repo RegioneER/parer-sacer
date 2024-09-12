@@ -47,6 +47,6 @@
  * <p>
  * - Gestione dei <b>TIPI STRUTTURA DOCUMENTO</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture;

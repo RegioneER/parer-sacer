@@ -25,7 +25,7 @@ import javax.persistence.*;
 
 /**
  * The persistent class for the DEC_JOB_FOTO database table.
- * 
+ *
  */
 @Entity
 @Table(name = "DEC_JOB_FOTO")

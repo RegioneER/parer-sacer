@@ -43,10 +43,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Fornisce servizi di utilità per gestire l'IO.
- * 
- * 
+ *
+ *
  * @author DiLorenzo_F
- * 
+ *
  */
 public final class IOUtils {
 
@@ -93,7 +93,7 @@ public final class IOUtils {
 
         /**
          * Costruttore.
-         * 
+         *
          * @param pContentType
          *            <code>content-type</code> associato al formato di output del documento
          * @param pDescription
@@ -107,7 +107,7 @@ public final class IOUtils {
 
         /**
          * Ritorna il <code>content-type</code> associato al formato di output del documento.
-         * 
+         *
          * @return <code>content-type</code> associato al formato di output del documento.
          */
         public String getContentType() {
@@ -116,7 +116,7 @@ public final class IOUtils {
 
         /**
          * Ritorna la descrizione del formato di output del documento.
-         * 
+         *
          * @return Descrizione del formato di output del documento.
          */
         public String getDescription() {
@@ -125,7 +125,7 @@ public final class IOUtils {
 
         /**
          * Ritorna l'estensione (<code>multi-value</code>) del formato di output del documento.
-         * 
+         *
          * @return Estensione (<code>multi-value</code>) del formato di output del documento
          */
         public String getFileExt() {
@@ -134,10 +134,10 @@ public final class IOUtils {
 
         /**
          * Ritorna la definizione delle tipologia di output identificata dal parametro fornito.
-         * 
+         *
          * @param pFileExt
          *            path file esterno
-         * 
+         *
          * @return efinizione delle tipologia di output identificata dal parametro fornito
          */
         public static CONTENT_TYPE getFromFileExt(final String pFileExt) {
@@ -166,17 +166,17 @@ public final class IOUtils {
 
     /**
      * Costruttore.
-     * 
+     *
      */
     private IOUtils() {
     }
 
     /**
      * Indica se un file esiste.
-     * 
+     *
      * @param pFile
      *            File per cui eseguire l'operazione
-     * 
+     *
      * @return True se il file esiste, false in caso contrario.
      */
     public static boolean exists(final String pFile) {
@@ -188,10 +188,10 @@ public final class IOUtils {
 
     /**
      * Ritorna il nome del file fornito, senza estensione.
-     * 
+     *
      * @param pFileName
      *            Nome del file per cui eseguire l'operazione
-     * 
+     *
      * @return Nome del file fornito, senza estensione.
      */
     public static String extractBaseFileName(final String pFileName) {
@@ -219,10 +219,10 @@ public final class IOUtils {
     // EVO#20792
     /**
      * Ritorna il nome relativo dall'urn fornito.
-     * 
+     *
      * @param pUrn
      *            Urn per cui eseguire l'operazione
-     * 
+     *
      * @return Nome relativo dall'urn fornito.
      */
     public static String extractPartUrnName(final String pUrn) {
@@ -231,12 +231,12 @@ public final class IOUtils {
 
     /**
      * Ritorna il nome relativo dall'urn fornito.
-     * 
+     *
      * @param pUrn
      *            Urn per cui eseguire l'operazione
      * @param pNormalize
      *            True se è richiesta la normalizzazione, false in caso contrario
-     * 
+     *
      * @return Nome relativo dall'urn fornito.
      */
     public static String extractPartUrnName(final String pUrn, final boolean pNormalize) {
@@ -260,10 +260,10 @@ public final class IOUtils {
 
     /**
      * Ritorna l'estensione del file fornito.
-     * 
+     *
      * @param pFileName
      *            Nome del file per cui eseguire l'operazione
-     * 
+     *
      * @return Estensione del file fornito.
      */
     public static String extractFileExtension(final String pFileName) {
@@ -272,12 +272,12 @@ public final class IOUtils {
 
     /**
      * Ritorna l'estensione del file fornito.
-     * 
+     *
      * @param pFileName
      *            Nome del file per cui eseguire l'operazione
      * @param pWithDot
      *            True se è richiesta l'estensione con il separatore, false in caso contrario
-     * 
+     *
      * @return Estensione del file fornito.
      */
     public static String extractFileExtension(final String pFileName, final Boolean pWithDot) {
@@ -300,10 +300,10 @@ public final class IOUtils {
 
     /**
      * Ritorna il percorso contenuto nel nome dei file fornito.
-     * 
+     *
      * @param pFilename
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return Percorso contenuto nel nome dei file fornito.
      */
     public static String extractPath(final String pFilename) {
@@ -314,10 +314,10 @@ public final class IOUtils {
 
     /**
      * Ritorna il percorso che contiene il file fornito.
-     * 
+     *
      * @param pFile
      *            Istanza <code>File</code> per cui eseguire l'operazione
-     * 
+     *
      * @return Percorso che contiene il file fornito
      */
     public static String extractPath(final File pFile) {
@@ -328,12 +328,12 @@ public final class IOUtils {
 
     /**
      * Ritorna il percorso assoluto per i parametri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso del file con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return Percorso assoluto per i parametri forniti.
      */
     public static String getAbsolutePath(final String pFilePath, final String pFileName) {
@@ -342,14 +342,14 @@ public final class IOUtils {
 
     /**
      * Ritorna il percorso assoluto per i parametri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso del file con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
      * @param pFileSeparator
      *            Separatore del file con cui eseguire l'operazione
-     * 
+     *
      * @return Percorso assoluto per i parametri forniti.
      */
     public static String getAbsolutePath(final String pFilePath, final String pFileName, final String pFileSeparator) {
@@ -366,10 +366,10 @@ public final class IOUtils {
 
     /**
      * Indica se il percorso fornito è relativo.
-     * 
+     *
      * @param pFilePath
      *            Percorso per cui eseguire l'operazione
-     * 
+     *
      * @return True se il percorso fornito è relativo, false in caso contrario.
      */
     public static boolean isRelativePath(final String pFilePath) {
@@ -380,12 +380,12 @@ public final class IOUtils {
 
     /**
      * Ritorna il nome del file ottenuto dalla concatenazione dei parametri forniti.
-     * 
+     *
      * @param pFileName
      *            Nome del file
      * @param pFileExt
      *            Estensione del file
-     * 
+     *
      * @return Nome del file ottenuto dalla concatenazione dei parametri forniti.
      */
     public static String getFilename(final String pFileName, final String pFileExt) {
@@ -396,10 +396,10 @@ public final class IOUtils {
 
     /**
      * Ritorna il nome del file (<code>last-name</code>) contenuto nel parametro fornito.
-     * 
+     *
      * @param pAbsoluteFileName
      *            Nome del file (<code>abstlute-file-path</code>) per cui eseguire l'operazione
-     * 
+     *
      * @return Nome del file (<code>last-name</code>) contenuto nel parametro fornito.
      */
     public static String getFilename(final String pAbsoluteFileName) {
@@ -414,12 +414,12 @@ public final class IOUtils {
      * <p>
      * Se il nome del file non è fornito nel formato <code>absolute-path</code>, il file viene cercato nella directory
      * corrente.
-     * 
+     *
      * @see <code>CURRENT_DIR</code>
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return <code>File</code> per la risorsa identificata dal parametro fornito.
      */
     public static File getFile(final String pFile) {
@@ -447,12 +447,12 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>File</code> per la risorsa identificata dai parametri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return <code>File</code> per la risorsa identificata dai parametri forniti.
      */
     public static File getFile(final String pFilePath, final String pFileName) {
@@ -463,12 +463,12 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>FileInputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @param pFile
      *            Istanza <code>File</code> con cui eseguire l'operazione
-     * 
+     *
      * @return <code>FileInputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @throws FileNotFoundException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -480,12 +480,12 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>FileInputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return <code>FileInputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @throws FileNotFoundException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -497,14 +497,14 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>FileInputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @param pFilePath
      *            Percorso con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return Istanza <code>FileInputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @throws FileNotFoundException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -517,12 +517,12 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>FileOutputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @param pFile
      *            Istanza <code>File</code> con cui eseguire l'operazione
-     * 
+     *
      * @return <code>FileOutputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @throws FileNotFoundException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -534,12 +534,12 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>FileOutputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return <code>FileOutputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @throws FileNotFoundException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -551,14 +551,14 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>FileOutputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @param pFilePath
      *            Percorso con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return Istanza <code>FileOutputStream</code> per la risorsa identificata dal parametro fornito.
-     * 
+     *
      * @throws FileNotFoundException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -571,12 +571,12 @@ public final class IOUtils {
 
     /**
      * Calcola e ritorna il percorso ottenuto come concatenazione dei parametri forniti.
-     * 
+     *
      * @param pRoot
      *            Percorso <code>root</code> con cui eseguire l'operazione
      * @param pPath
      *            Percorso con cui eseguire l'operazione
-     * 
+     *
      * @return Percorso ottenuto come concatenazione dei parametri forniti.
      */
     public static String getPath(final String pRoot, final String pPath) {
@@ -585,14 +585,14 @@ public final class IOUtils {
 
     /**
      * Calcola e ritorna il percorso ottenuto come concatenazione dei parametri forniti.
-     * 
+     *
      * @param pRoot
      *            Percorso <code>root</code> con cui eseguire l'operazione
      * @param pPath
      *            Percorso con cui eseguire l'operazione
      * @param pFileSeparator
      *            Separatore con cui eseguire l'operazione
-     * 
+     *
      * @return Percorso ottenuto come concatenazione dei parametri forniti.
      */
     public static String getPath(final String pRoot, final String pPath, final String pFileSeparator) {
@@ -605,7 +605,7 @@ public final class IOUtils {
 
     /**
      * Ritorna il nome della cartella temporanea.
-     * 
+     *
      * @return Nome della cartella temporanea.
      */
     public static String getTempDirName() {
@@ -616,14 +616,14 @@ public final class IOUtils {
 
     /**
      * Crea e ritorna l'istanza <code>File</code> per i parametri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return <code>File</code> per la risorsa identificata dai parametri forniti.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -633,16 +633,16 @@ public final class IOUtils {
 
     /**
      * Crea e ritorna l'istanza <code>File</code> per i parametri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
      * @param pMkDir
      *            True se richiesto di creare eventualmente la directory, false in caso contrario
-     * 
+     *
      * @return <code>File</code> per la risorsa identificata dai parametri forniti.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -664,10 +664,10 @@ public final class IOUtils {
     /**
      * Ritorna l'istanza <code>File</code> contenente gli estremi della directory temporanea identificata dal parametro
      * fornito.
-     * 
+     *
      * @param pDirName
      *            Nome della directory con cui eseguire l'operazione
-     * 
+     *
      * @return <code>File</code> contenente gli estremi della directory temporanea identificata dal parametro fornito.
      */
     public static File newTempDirectory(final String pDirName) {
@@ -689,10 +689,10 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>File</code> contenente gli estremi della directory identificata dal parametro fornito.
-     * 
+     *
      * @param pDirName
      *            Nome della directory con cui eseguire l'operazione
-     * 
+     *
      * @return <code>File</code> contenente gli estremi della directory identificata dal parametro fornito.
      */
     public static File newDirectory(final String pDirName) {
@@ -707,10 +707,10 @@ public final class IOUtils {
 
     /**
      * Ritorna il nome del file temporaneo.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return Nome del file temporaneo.
      */
     public static String getTempFilename(final String pFile) {
@@ -727,10 +727,10 @@ public final class IOUtils {
 
     /**
      * Ritorna l'istanza <code>File</code> per la risorsa temporanea identificata dal parametro fornito.
-     * 
+     *
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return <code>File</code> per la risorsa temporanea identificata dal parametro fornito.
      */
     public static File getTempFile(final String pFileName) {
@@ -741,10 +741,10 @@ public final class IOUtils {
 
     /**
      * Indica se un file presente e disponibile ad essere letto/scritto.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return True se un file è presente e disponibile ad essere letto/scritto, false in caso contrario.
      */
     public static boolean isFileReady(final String pFile) {
@@ -761,7 +761,7 @@ public final class IOUtils {
 
     /**
      * Ritorna la lista dei file (<code>absolute-path</code>) cancellati, filtrati dai criteri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso in cui eseguire l'operazione
      * @param pFileFilter
@@ -769,7 +769,7 @@ public final class IOUtils {
      * @param pDeeply
      *            True se eseguire l'operazione in modo ricorsivo sulle cartelle eventualmente presenti, false in caso
      *            contrario
-     * 
+     *
      * @return Lista dei file (<code>absolute-path</code>) cancellati, filtrati dai criteri forniti.
      */
     public static List<String> delete(final File pFilePath, final FileFilter pFileFilter, final boolean pDeeply) {
@@ -779,7 +779,7 @@ public final class IOUtils {
     /**
      * Ritorna la lista contenente i nomi dei file (<code>absolute-path</code>) cancellati, filtrati dai criteri
      * forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso in cui eseguire l'operazione
      * @param pFileFilter
@@ -790,7 +790,7 @@ public final class IOUtils {
      * @param pSmooth
      *            True se NON richiesto di sollevare una eccezione se la classe non viene trovata, false in caso
      *            contrario
-     * 
+     *
      * @return Lista contenente i nomi dei file (<code>absolute-path</code>) cancellati, filtrati dai criteri forniti.
      */
     public static List<String> delete(final File pFilePath, final FileFilter pFileFilter, final boolean pDeeply,
@@ -810,12 +810,12 @@ public final class IOUtils {
 
     /**
      * Cancella il file.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
-     * 
+     *
      */
     public static boolean delete(final String pFile) {
         return delete(pFile, false);
@@ -823,13 +823,13 @@ public final class IOUtils {
 
     /**
      * Cancella il file.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
      * @param pSmooth
      *            True se NON è richiesto di sollevare una eccezione se la classe non viene trovata, false in caso
      *            contrario
-     * 
+     *
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean delete(final String pFile, final boolean pSmooth) {
@@ -838,10 +838,10 @@ public final class IOUtils {
 
     /**
      * Cancella il file.
-     * 
+     *
      * @param pFile
      *            <code>File</code> per cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean delete(final File pFile) {
@@ -850,13 +850,13 @@ public final class IOUtils {
 
     /**
      * Cancella il file.
-     * 
+     *
      * @param pFile
      *            <code>File</code> per cui eseguire l'operazione
      * @param pSmooth
      *            True se NON è richiesto di sollevare una eccezione se la classe non viene trovata, false in caso
      *            contrario
-     * 
+     *
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean delete(final File pFile, final boolean pSmooth) {
@@ -907,10 +907,10 @@ public final class IOUtils {
 
     /**
      * Cancella la directory identificata dal parametro fornito.
-     * 
+     *
      * @param pDirName
      *            Nome della directory per cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operzione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean deleteDir(final String pDirName) {
@@ -919,12 +919,12 @@ public final class IOUtils {
 
     /**
      * Cancella la directory identificata dal parametro fornito.
-     * 
+     *
      * @param pDirName
      *            Nome della directory per cui eseguire l'operazione
      * @param pDeleteContent
      *            True se è richiesta anche la cancellazione dei file eventualmente contenuti, false in caso contrario
-     * 
+     *
      * @return True se l'operzione stata eseguita correttamente, false in caso contrario
      */
     public static boolean deleteDir(final String pDirName, final boolean pDeleteContent) {
@@ -933,7 +933,7 @@ public final class IOUtils {
 
     /**
      * Cancella la directory identificata dal parametro fornito.
-     * 
+     *
      * @param pDirName
      *            Nome della directory per cui eseguire l'operazione
      * @param pDeleteContent
@@ -941,7 +941,7 @@ public final class IOUtils {
      * @param pSmooth
      *            True se NON è richiesto di sollevare una eccezione se la classe non viene trovata, false in caso
      *            contrario
-     * 
+     *
      * @return True se l'operazione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean deleteDir(final String pDirName, final boolean pDeleteContent, final boolean pSmooth) {
@@ -970,7 +970,7 @@ public final class IOUtils {
 
     /**
      * Ritorna la lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso in cui eseguire l'operazione
      * @param pFileFilter
@@ -978,7 +978,7 @@ public final class IOUtils {
      * @param pDeeply
      *            True se eseguire l'operazione in modo ricorsivo sulle cartelle eventualmente presenti, false in caso
      *            contrario
-     * 
+     *
      * @return Lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
      */
     public static List<String> list(final String pFilePath, final FileFilter pFileFilter, final boolean pDeeply) {
@@ -989,7 +989,7 @@ public final class IOUtils {
 
     /**
      * Ritorna la lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso in cui eseguire l'operazione
      * @param pFileFilter
@@ -997,7 +997,7 @@ public final class IOUtils {
      * @param pDeeply
      *            True se eseguire l'operazione in modo ricorsivo sulle cartelle eventualmente presenti, false in caso
      *            contrario
-     * 
+     *
      * @return Lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
      */
     public static List<String> list(final File pFilePath, final FileFilter pFileFilter, final boolean pDeeply) {
@@ -1014,7 +1014,7 @@ public final class IOUtils {
 
     /**
      * Ritorna la lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso in cui eseguire l'operazione
      * @param pFileFilter
@@ -1024,7 +1024,7 @@ public final class IOUtils {
      *            contrario
      * @param pFileList
      *            Lista in cui accodare gli estremi dei file filtrati
-     * 
+     *
      * @return Lista dei file (<code>absolute-path</code>) filtrati dai criteri forniti.
      */
     private static List<File> recursivelyList(final File pFilePath, final FileFilter pFileFilter, final boolean pDeeply,
@@ -1048,12 +1048,12 @@ public final class IOUtils {
 
     /**
      * Ritorna il contenuto di un file.
-     * 
+     *
      * @param pInputStream
      *            Istanza <code>InputStream</code> con cui eseguire l'operazione
-     * 
+     *
      * @return Contenuto di un file.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1069,12 +1069,12 @@ public final class IOUtils {
 
     /**
      * Ritorna il contenuto di un file.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return Contenuto di un file.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1086,14 +1086,14 @@ public final class IOUtils {
 
     /**
      * Ritorna il contenuto di un file.
-     * 
+     *
      * @param pFilePath
      *            Percorso del file con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return Contenuto di un file.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1105,14 +1105,14 @@ public final class IOUtils {
 
     /**
      * Scrive il contenuto su un file.
-     * 
+     *
      * @param pFilePath
      *            Percorso del file con cui eseguire l'operazione
      * @param pFileName
      *            Nome del file con cui eseguire l'operazione
      * @param pBuffer
      *            Array di <code>byte</code> con cui eseguire l'operazione
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1125,12 +1125,12 @@ public final class IOUtils {
 
     /**
      * Scrive il contenuto su un file.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
      * @param pBuffer
      *            Array di <code>byte</code> con cui eseguire l'operazione
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1142,12 +1142,12 @@ public final class IOUtils {
 
     /**
      * Scrive il contenuto su un file
-     * 
+     *
      * @param pFile
      *            <code>File</code> con cui eseguire l'operazione
      * @param pBuffer
      *            Array di <code>byte</code> con cui eseguire l'operazione
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1161,14 +1161,14 @@ public final class IOUtils {
 
     /**
      * Scrive il contenuto su un file.
-     * 
+     *
      * @param pFile
      *            Nome del file con cui eseguire l'operazione
      * @param pContent
      *            Contenuto con cui eseguire l'operazione
      * @param pAppend
      *            True se è richiesto di andare in append al file eventualmente gi presente, false in caso contrario
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1187,12 +1187,12 @@ public final class IOUtils {
 
     /**
      * Ritorna l'array di byte valorizzato con il contenuto della istanza <code>InputStream</code>.
-     * 
+     *
      * @param pInputStream
      *            <code>InputStream</code> per cui eseguire l'operazione
-     * 
+     *
      * @return Array di byte valorizzato con il contenuto della istanza <code>InputStream</code>.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1205,14 +1205,14 @@ public final class IOUtils {
 
     /**
      * Copia il contenuto del file identificato dai parametri forniti.
-     * 
+     *
      * @param pSourceFileCompletePath
      *            Nome del file con cui eseguire l'operazione
      * @param pDestFileCompletePath
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operazione stata eseguita correttamente, false in caso contrario.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1226,14 +1226,14 @@ public final class IOUtils {
 
     /**
      * Copia il contenuto del file identificato dai parametri forniti.
-     * 
+     *
      * @param pSourceFile
      *            Istanza <code>File</code> con cui eseguire l'operazione
      * @param pDestFile
      *            Istanza <code>File</code> con cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operazione stata eseguita correttamente, false in caso contrario.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1252,7 +1252,7 @@ public final class IOUtils {
 
     /**
      * Copia il contenuto del file identificato dai parametri forniti.
-     * 
+     *
      * @param pSourceFilePath
      *            Percorso in cui eseguire l'operazione
      * @param pSourceFileName
@@ -1261,9 +1261,9 @@ public final class IOUtils {
      *            Percorso in cui eseguire l'operazione
      * @param pDestFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operazione è stata eseguita correttamente, false in caso contrario.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1286,16 +1286,16 @@ public final class IOUtils {
 
     /**
      * Copia il contenuto del file identificato dai parametri forniti.
-     * 
+     *
      * @param pFilePath
      *            Percorso in cui eseguire l'operazione
      * @param pSourceFileName
      *            Nome del file per cui eseguire l'operazione
      * @param pDestFileName
      *            Nome del file con cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operazione stata eseguita correttamente, false in caso contrario.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1306,14 +1306,14 @@ public final class IOUtils {
 
     /**
      * Copia il contenuto della istanza <code>InputStream</code>.
-     * 
+     *
      * @param pInputStream
      *            <code>InputStream</code> per cui eseguire l'operazione
      * @param pOutputStream
      *            <code>OutputStream</code> con cui eseguire l'operazione
-     * 
+     *
      * @return Numero di byte copiati.
-     * 
+     *
      * @throws IOException
      *             Eccezione sollevata dalle primitive utilizzate.
      */
@@ -1332,7 +1332,7 @@ public final class IOUtils {
 
     /**
      * Crea le directory per il parametro fornito.
-     * 
+     *
      * @param pFile
      *            Istanza <code>File</code> con cui eseguire l'operazione
      */
@@ -1344,7 +1344,7 @@ public final class IOUtils {
 
     /**
      * Crea le directory per il parametro fornito.
-     * 
+     *
      * @param pFilePath
      *            Percorso con cui eseguire l'operazione
      */
@@ -1356,10 +1356,10 @@ public final class IOUtils {
 
     /**
      * Indica se una directory è vuota.
-     * 
+     *
      * @param pFilePath
      *            Istanza <code>File</code> per cui eseguire l'operazione
-     * 
+     *
      * @return True se una directory è vuota, false in caso contrario
      */
     public static boolean isEmpty(final File pFilePath) {
@@ -1376,12 +1376,12 @@ public final class IOUtils {
      * Rinomina il file presente nella directory, accodando il timestamp al nome del file.
      * <p>
      * Il formato del timestamp utilizzato <code>yyyy-MM-dd_HHmmss</code>.
-     * 
+     *
      * @param pFilePath
      *            Percorso contenente il file per cui eseguire l'operazione
      * @param pFileName
      *            Nome del file per cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operazione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean renameWithTimestamp(final String pFilePath, final String pFileName) {
@@ -1415,10 +1415,10 @@ public final class IOUtils {
      * Rinomina la directory, accodando il timestamp al nome della directory.
      * <p>
      * Il formato del timestamp utilizzato <code>dd-MM-yyyy_HHmmss</code>.
-     * 
+     *
      * @param pDirPath
      *            Percorso contenente la directory per cui eseguire l'operazione
-     * 
+     *
      * @return True se l'operazione è stata eseguita correttamente, false in caso contrario
      */
     public static boolean renameDirWithTimestamp(final String pDirPath) {
@@ -1450,12 +1450,12 @@ public final class IOUtils {
     /**
      * Ritorna il percorso, dopo aver accodato un progressivo al nome della directory.
      * <p>
-     * 
+     *
      * @param pDirPath
      *            Percorso contenente la directory per cui eseguire l'operazione
      * @param pMapDirPrg
      *            Istanza <code>Map</code> con cui eseguire l'operazione
-     * 
+     *
      * @return Percorso con cui eseguire l'operazione
      */
     public static String getDirWithProgressive(final String pDirPath, final Map<String, Integer> pMapDirPrg) {

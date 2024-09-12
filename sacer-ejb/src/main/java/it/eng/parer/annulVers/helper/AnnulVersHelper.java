@@ -17,23 +17,46 @@
 
 package it.eng.parer.annulVers.helper;
 
-import it.eng.parer.annulVers.dto.RicercaRichAnnulVersBean;
-import it.eng.parer.entity.*;
-import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
-import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
-import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.viewEntity.*;
-import it.eng.parer.ws.utils.CostantiDB;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.*;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.parer.annulVers.dto.RicercaRichAnnulVersBean;
+import it.eng.parer.entity.AroDoc;
+import it.eng.parer.entity.AroErrRichAnnulVers;
+import it.eng.parer.entity.AroItemRichAnnulVers;
+import it.eng.parer.entity.AroRichAnnulVers;
+import it.eng.parer.entity.AroStatoRichAnnulVers;
+import it.eng.parer.entity.AroUpdUnitaDoc;
+import it.eng.parer.entity.DecTipoDoc;
+import it.eng.parer.entity.constraint.AroUpdUnitaDoc.AroUpdUDTiStatoUpdElencoVers;
+import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
+import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.viewEntity.AroVLisItemRichAnnvrs;
+import it.eng.parer.viewEntity.AroVLisStatoRichAnnvrs;
+import it.eng.parer.viewEntity.AroVRicRichAnnvrs;
+import it.eng.parer.viewEntity.ElvVLisElencoFascAnnul;
+import it.eng.parer.viewEntity.ElvVLisElencoUdAnnul;
+import it.eng.parer.viewEntity.ElvVLisFascAnnulByElenco;
+import it.eng.parer.viewEntity.ElvVLisUdAnnulByElenco;
+import it.eng.parer.viewEntity.VolVLisUdAnnulByVolume;
+import it.eng.parer.viewEntity.VolVLisVolumeUdAnnul;
+import it.eng.parer.ws.utils.CostantiDB;
 
 /**
  *
@@ -54,7 +77,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            code richiesta annullamento versamento
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true se esiste
      */
     public boolean isRichAnnulVersExisting(String cdRichAnnulVers, BigDecimal idStrut) {
@@ -73,7 +96,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            id unita doc
      * @param idRichAnnulVers
      *            id della richiesta da escludere nel controllo in quanto contiene già l'ud
-     * 
+     *
      * @return true se è presente
      */
     public AroRichAnnulVers getAroRichAnnulVersContainingUd(Long idUnitaDoc, Long idRichAnnulVers) {
@@ -104,7 +127,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            id fascicolo
      * @param idRichAnnulVers
      *            id della richiesta da escludere nel controllo in quanto contiene già il fascicolo
-     * 
+     *
      * @return true se è presente
      */
     public AroRichAnnulVers getAroRichAnnulVersContainingFasc(Long idFascicolo, Long idRichAnnulVers) {
@@ -137,7 +160,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            AGGIUNTA_DOCUMENTO o VERSAMENTO_UNITA_DOC
      * @param dtVers
      *            data di versamento
-     * 
+     *
      * @return numero di documenti versati
      */
     public Long countDocAggListOnDtVers(Long idUnitaDoc, String tiCreazione, Date dtVers) {
@@ -170,7 +193,7 @@ public class AnnulVersHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return true se è versata da PreIngest
      */
     public boolean isUdFromPreIngest(Long idUnitaDoc) {
@@ -205,7 +228,7 @@ public class AnnulVersHelper extends GenericHelper {
      *
      * @param idRichAnnulVers
      *            l'id della richiesta di cui voglio conoscere il progressivo stato maggiore
-     * 
+     *
      * @return il progressivo
      */
     public BigDecimal getUltimoProgressivoStatoRichiesta(long idRichAnnulVers) {
@@ -221,7 +244,7 @@ public class AnnulVersHelper extends GenericHelper {
      *
      * @param idRichAnnulVers
      *            l'id della richiesta di cui voglio conoscere il progressivo stato maggiore
-     * 
+     *
      * @return il progressivo
      */
     public BigDecimal getUltimoProgressivoItemRichiesta(long idRichAnnulVers) {
@@ -237,7 +260,7 @@ public class AnnulVersHelper extends GenericHelper {
      *
      * @param idStatoRichAnnulVersCorr
      *            id stato richieata annullamento corrente
-     * 
+     *
      * @return idUserIam id user IAM
      */
     public long getIdUserIamStatoCorrenteRichiesta(long idStatoRichAnnulVersCorr) {
@@ -252,7 +275,7 @@ public class AnnulVersHelper extends GenericHelper {
      *
      * @param idRichAnnulVers
      *            l'id della richiesta corrente
-     * 
+     *
      * @return lista oggetti di tipo {@link VolVLisVolumeUdAnnul}
      */
     public List<VolVLisVolumeUdAnnul> retrieveVolVLisVolumeUdAnnul(long idRichAnnulVers) {
@@ -278,7 +301,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            l'id della richiesta corrente
      * @param tiStatoUdElencoVers
      *            gli stati ud
-     * 
+     *
      * @return litsa oggetti di tipo {@link AroItemRichAnnulVers}
      */
     public List<AroItemRichAnnulVers> getItem(long idRichAnnulVers, String... tiStatoUdElencoVers) {
@@ -317,12 +340,12 @@ public class AnnulVersHelper extends GenericHelper {
      * Il sistema determina gli aggiornamenti unità doc degli item (della richiesta corrente) di tipo UNI_DOC con stato
      * DA_ANNULLARE_IN_SACER, il cui stato relativo al processo di inclusione in un elenco vale IN_ATTESA_SCHED,
      * NON_SELEZ_SCHED
-     * 
+     *
      * @param idRichAnnulVers
      *            l'id della richiesta corrente
      * @param tiStatoUdElencoVers
      *            gli stati ud
-     * 
+     *
      * @return lista elementi di tipo AroUpdUnitaDoc
      */
     public List<AroUpdUnitaDoc> getUpdItem(long idRichAnnulVers, AroUpdUDTiStatoUpdElencoVers... tiStatoUdElencoVers) {
@@ -365,7 +388,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            l'id della richiesta corrente
      * @param tiStatoFascElencoVers
      *            gli stati fasc
-     * 
+     *
      * @return lista elementi di tipo AroItemRichAnnulVers
      */
     public List<AroItemRichAnnulVers> getItemFasc(long idRichAnnulVers,
@@ -406,7 +429,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            l'id della richiesta corrente
      * @param tiStatoDocElencoVers
      *            gli stati del doc
-     * 
+     *
      * @return lista elementi di tipo AroDoc
      */
     public List<AroDoc> getDocAggiunti(long idRichAnnulVers, String... tiStatoDocElencoVers) {
@@ -449,7 +472,7 @@ public class AnnulVersHelper extends GenericHelper {
      *
      * @param idRichAnnulVers
      *            l'id della richiesta corrente
-     * 
+     *
      * @return lista elementi di tipo ElvVLisElencoUdAnnul
      */
     public List<ElvVLisElencoUdAnnul> retrieveElvVLisElencoUdAnnuls(long idRichAnnulVers) {
@@ -767,7 +790,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            id tipo dato applicativo
      * @param nmClasseTipoDato
      *            nome classe per tipo dato
-     * 
+     *
      * @return true/false
      */
     public boolean isUserAbilitatoToTipoDato(long idUserIam, long idTipoDatoApplic, String nmClasseTipoDato) {
@@ -789,7 +812,7 @@ public class AnnulVersHelper extends GenericHelper {
      *            id richiesta annullamento versamento
      * @param tiGravita
      *            tipo gravita
-     * 
+     *
      * @return la lista di errori sull'item
      */
     public List<AroErrRichAnnulVers> getAroErrRichAnnulVersByGravity(long idItemRichAnnulVers, String tiGravita) {
@@ -836,7 +859,7 @@ public class AnnulVersHelper extends GenericHelper {
      *
      * @param idRichAnnulVers
      *            l'id della richiesta
-     * 
+     *
      * @return l'id utente
      */
     public long getIdUserIamFirstStateRich(BigDecimal idRichAnnulVers) {

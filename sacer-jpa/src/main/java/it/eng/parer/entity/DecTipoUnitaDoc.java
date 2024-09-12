@@ -512,7 +512,7 @@ public class DecTipoUnitaDoc implements Serializable {
     }
 
     @OneToMany(mappedBy = "decTipoUnitaDoc", cascade = CascadeType.PERSIST)
-    @XmlTransient
+    // @XmlTransient
     public List<DecUsoModelloXsdUniDoc> getDecUsoModelloXsdUniDocs() {
         return this.decUsoModelloXsdUniDocs;
     }

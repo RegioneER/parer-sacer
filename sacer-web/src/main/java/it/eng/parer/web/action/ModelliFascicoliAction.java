@@ -17,9 +17,9 @@
 
 package it.eng.parer.web.action;
 
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
 import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -838,7 +838,7 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
     /**
      * Metodo che crea le mappe coi valori e setta le combo presenti nella pagina di ricerca modelli XSD tipi Fascicolo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -872,9 +872,9 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
      *
      * @param filtriModelliXsdTipiFascicolo
      *            oggetto di tipo {@link FiltriModelliXsdTipiFascicolo}
-     * 
+     *
      * @return la lista degli ambienti da utilizzare per la ricerca
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

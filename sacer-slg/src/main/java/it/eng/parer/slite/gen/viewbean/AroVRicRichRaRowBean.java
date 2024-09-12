@@ -151,14 +151,6 @@ public class AroVRicRichRaRowBean extends BaseRow implements JEEBaseRowInterface
         setObject("estratti_totali", estrattiTotali);
     }
 
-    public BigDecimal getPriorita() {
-        return getBigDecimal("priorita");
-    }
-
-    public void setPriorita(BigDecimal priorita) {
-        setObject("priorita", priorita);
-    }
-
     public String getCdErrore() {
         return getString("cd_errore");
     }
@@ -193,7 +185,6 @@ public class AroVRicRichRaRowBean extends BaseRow implements JEEBaseRowInterface
             this.setMaxDtEstrazione(new Timestamp(entity.getMaxDtEstrazione().getTime()));
         }
         this.setEstrattiTotali(entity.getEstrattiTotali());
-        this.setPriorita(entity.getPriorita());
         this.setCdErrore(entity.getCdErrore());
         if (entity.getTsInizio() != null) {
             this.setTsInizio(new Timestamp(entity.getTsInizio().getTime()));
@@ -216,7 +207,6 @@ public class AroVRicRichRaRowBean extends BaseRow implements JEEBaseRowInterface
         entity.setSumDim(this.getSumDim());
         entity.setMaxDtEstrazione(this.getMaxDtEstrazione());
         entity.setEstrattiTotali(this.getEstrattiTotali());
-        entity.setPriorita(this.getPriorita());
         entity.setCdErrore(this.getCdErrore());
         entity.setTsInizio(this.getTsInizio());
         return entity;

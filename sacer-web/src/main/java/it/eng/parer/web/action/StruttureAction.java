@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
@@ -1499,7 +1498,13 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getInsStruttura().setStatus(Status.view);
             setViewModeListeParametri();
             try {
-                loadListeParametriStruttura(idStrut, null, false, false, false, false);
+                // loadListeParametriStruttura(idStrut, null, false, false, false, false, true);
+                loadListaParametriAmnministrazioneStruttura(idStrut, null, false, false,
+                        getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+                loadListaParametriConservazioneStruttura(idStrut, null, false, false,
+                        getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+                loadListaParametriGestioneStruttura(idStrut, null, false, false,
+                        getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
             } catch (ParerUserError ex) {
                 getMessageBox().addError(
                         "Errore durante il ricaricamento dei parametri struttura a seguito del salvataggio degli stessi");
@@ -1866,18 +1871,23 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getInsStruttura().getId_ente_rif().setDecodeMap(new DecodeMap());
 
             try {
-                Object[] parametriObj = amministrazioneEjb.getAplParamApplicStruttura(null, null, null);
+                // Object[] parametriObj = amministrazioneEjb.getAplParamApplicStruttura(null, null, null, true);
+                AplParamApplicTableBean parametriAmministrazione = amministrazioneEjb
+                        .getAplParamApplicAmministrazioneStruttura(null, null, null, true);
+                AplParamApplicTableBean parametriGestione = amministrazioneEjb.getAplParamApplicGestioneStruttura(null,
+                        null, null, true);
+                AplParamApplicTableBean parametriConservazione = amministrazioneEjb
+                        .getAplParamApplicConservazioneStruttura(null, null, null, true);
                 getForm().getParametriAmministrazioneSection().setLoadOpened(true);
                 getForm().getParametriConservazioneSection().setLoadOpened(true);
                 getForm().getParametriGestioneSection().setLoadOpened(true);
-                getForm().getParametriAmministrazioneStrutturaList()
-                        .setTable((AplParamApplicTableBean) parametriObj[0]);
+                getForm().getParametriAmministrazioneStrutturaList().setTable(parametriAmministrazione);
                 getForm().getParametriAmministrazioneStrutturaList().getTable().setPageSize(300);
                 getForm().getParametriAmministrazioneStrutturaList().getTable().first();
-                getForm().getParametriGestioneStrutturaList().setTable((AplParamApplicTableBean) parametriObj[1]);
+                getForm().getParametriGestioneStrutturaList().setTable(parametriGestione);
                 getForm().getParametriGestioneStrutturaList().getTable().setPageSize(300);
                 getForm().getParametriGestioneStrutturaList().getTable().first();
-                getForm().getParametriConservazioneStrutturaList().setTable((AplParamApplicTableBean) parametriObj[2]);
+                getForm().getParametriConservazioneStrutturaList().setTable(parametriConservazione);
                 getForm().getParametriConservazioneStrutturaList().getTable().setPageSize(300);
                 getForm().getParametriConservazioneStrutturaList().getTable().first();
                 getForm().getParametriAmministrazioneStrutturaList().setHideDeleteButton(true);
@@ -3423,7 +3433,14 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getEnteConvenzOrgList().getTable().sort();
             try {
                 // Lista parametri
-                loadListeParametriStruttura(idStrut, null, false, false, false, false);
+                // loadListeParametriStruttura(idStrut, null, false, false, false, false, true);
+                loadListaParametriAmnministrazioneStruttura(idStrut, null, true, false,
+                        getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+                loadListaParametriConservazioneStruttura(idStrut, null, true, false,
+                        getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+                loadListaParametriGestioneStruttura(idStrut, null, true, false,
+                        getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
+
             } catch (ParerUserError ex) {
                 getMessageBox().addError(ex.getMessage());
             }
@@ -5420,7 +5437,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 struttureDaElaborare.put(strutRowBean.getIdStrut(), strutRowBean.getNmStrut());
             }
         }
-        if (struttureDaElaborare.size() > 0) {
+        if (!struttureDaElaborare.isEmpty()) {
             getSession().setAttribute("struttureDaElaborarePerImportaParametri", struttureDaElaborare);
             importaParametriButton();
         } else {
@@ -5751,6 +5768,8 @@ public class StruttureAction extends StruttureAbstractAction {
                 getMessageBox().addInfo("Numero delle strutture selezionate: " + struttureDaElaborare.size() + "<br>");
                 Set<String> strutErrorGenerico = (Set<String>) report[0];
                 Set<String> strutErrorSuModello = (Set<String>) report[1];
+                Set<String> strutErrorSuModelloXsdUd = (Set<String>) report[4];
+                strutErrorGenerico.addAll(strutErrorSuModelloXsdUd);
                 strutErrorGenerico.addAll(strutErrorSuModello);
                 Map<String, String> strutErrorTipiSerie = (Map<String, String>) report[2];
                 Set<String> strutErrorSisMigr = (Set<String>) report[3];
@@ -5915,7 +5934,15 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getParametriFascicolo().setLoadOpened(false);
 
         // Parametri
-        loadListeParametriStruttura(idStrut, null, false, false, false, false);
+        // loadListeParametriStruttura(idStrut, null, false, false, false, false, true);
+        // loadListaParametriAmnministrazioneStruttura(idStrut, null, false, false,
+        // getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+        //
+        // loadListaParametriConservazioneStruttura(idStrut, null, false, false,
+        // getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+        //
+        // loadListaParametriGestioneStruttura(idStrut, null, false, true,
+        // getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
         getSession().removeAttribute("provenienzaParametri");
 
         if ("1".equals(getForm().getInsStruttura().getFl_cessato().parse())) {
@@ -5930,15 +5957,17 @@ public class StruttureAction extends StruttureAbstractAction {
     }
 
     private void loadListeParametriStruttura(BigDecimal idStrut, List<String> funzione, boolean hideDeleteButtons,
-            boolean editModeAmministrazione, boolean editModeConservazione, boolean editModeGestione)
-            throws ParerUserError {
+            boolean editModeAmministrazione, boolean editModeConservazione, boolean editModeGestione,
+            boolean filterValid) throws ParerUserError {
         BigDecimal idAmbiente = null;
         if (idStrut != null) {
             OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(idStrut);
             OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(strut.getIdEnte());
             idAmbiente = ente.getIdAmbiente();
         }
-        Object[] parametriObj = amministrazioneEjb.getAplParamApplicStruttura(idAmbiente, idStrut, funzione);
+
+        Object[] parametriObj = amministrazioneEjb.getAplParamApplicStruttura(idAmbiente, idStrut, funzione,
+                filterValid);
 
         // MEV26587
         AplParamApplicTableBean parametriAmministrazione = (AplParamApplicTableBean) parametriObj[0];
@@ -5985,6 +6014,96 @@ public class StruttureAction extends StruttureAbstractAction {
             getForm().getParametriConservazioneStrutturaList().setStatus(Status.view);
         }
 
+        if (editModeGestione) {
+            getForm().getParametriGestioneStrutturaList().getDs_valore_param_applic_strut_gest().setEditMode();
+            getForm().getParametriGestioneStrutturaList().setStatus(Status.update);
+        } else {
+            getForm().getParametriGestioneStrutturaList().getDs_valore_param_applic_strut_gest().setViewMode();
+            getForm().getParametriGestioneStrutturaList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriAmnministrazioneStruttura(BigDecimal idStrut, List<String> funzione,
+            boolean hideDeleteButtons, boolean editModeAmministrazione, boolean filterValid) throws ParerUserError {
+        BigDecimal idAmbiente = null;
+        if (idStrut != null) {
+            OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(idStrut);
+            OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(strut.getIdEnte());
+            idAmbiente = ente.getIdAmbiente();
+        }
+
+        // MEV26587
+        AplParamApplicTableBean parametriAmministrazione = amministrazioneEjb
+                .getAplParamApplicAmministrazioneStruttura(idAmbiente, idStrut, funzione, filterValid);
+
+        if (!editModeAmministrazione) {
+            parametriAmministrazione = obfuscatePasswordParamApplic(parametriAmministrazione);
+        }
+
+        getForm().getParametriAmministrazioneStrutturaList().setTable(parametriAmministrazione);
+        getForm().getParametriAmministrazioneStrutturaList().getTable().setPageSize(300);
+        getForm().getParametriAmministrazioneStrutturaList().getTable().first();
+        getForm().getParametriAmministrazioneStrutturaList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeAmministrazione) {
+            getForm().getParametriAmministrazioneStrutturaList().getDs_valore_param_applic_strut_amm().setEditMode();
+            getForm().getParametriAmministrazioneStrutturaList().setStatus(Status.update);
+        } else {
+            getForm().getParametriAmministrazioneStrutturaList().getDs_valore_param_applic_strut_amm().setViewMode();
+            getForm().getParametriAmministrazioneStrutturaList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriConservazioneStruttura(BigDecimal idStrut, List<String> funzione,
+            boolean hideDeleteButtons, boolean editModeConservazione, boolean filterValid) throws ParerUserError {
+        BigDecimal idAmbiente = null;
+        if (idStrut != null) {
+            OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(idStrut);
+            OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(strut.getIdEnte());
+            idAmbiente = ente.getIdAmbiente();
+        }
+
+        // MEV26587
+        AplParamApplicTableBean parametriConservazione = amministrazioneEjb
+                .getAplParamApplicConservazioneStruttura(idAmbiente, idStrut, funzione, filterValid);
+
+        if (!editModeConservazione) {
+            parametriConservazione = obfuscatePasswordParamApplic(parametriConservazione);
+        }
+
+        getForm().getParametriConservazioneStrutturaList().setTable(parametriConservazione);
+        getForm().getParametriConservazioneStrutturaList().getTable().setPageSize(300);
+        getForm().getParametriConservazioneStrutturaList().getTable().first();
+        getForm().getParametriConservazioneStrutturaList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeConservazione) {
+            getForm().getParametriConservazioneStrutturaList().getDs_valore_param_applic_strut_cons().setEditMode();
+            getForm().getParametriConservazioneStrutturaList().setStatus(Status.update);
+        } else {
+            getForm().getParametriConservazioneStrutturaList().getDs_valore_param_applic_strut_cons().setViewMode();
+            getForm().getParametriConservazioneStrutturaList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriGestioneStruttura(BigDecimal idStrut, List<String> funzione,
+            boolean hideDeleteButtons, boolean editModeGestione, boolean filterValid) throws ParerUserError {
+        BigDecimal idAmbiente = null;
+        if (idStrut != null) {
+            OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(idStrut);
+            OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(strut.getIdEnte());
+            idAmbiente = ente.getIdAmbiente();
+        }
+
+        // MEV26587
+        AplParamApplicTableBean parametriGestione = amministrazioneEjb.getAplParamApplicGestioneStruttura(idAmbiente,
+                idStrut, funzione, filterValid);
+
+        if (!editModeGestione) {
+            parametriGestione = obfuscatePasswordParamApplic(parametriGestione);
+        }
+
+        getForm().getParametriGestioneStrutturaList().setTable(parametriGestione);
+        getForm().getParametriGestioneStrutturaList().getTable().setPageSize(300);
+        getForm().getParametriGestioneStrutturaList().getTable().first();
+        getForm().getParametriGestioneStrutturaList().setHideDeleteButton(hideDeleteButtons);
         if (editModeGestione) {
             getForm().getParametriGestioneStrutturaList().getDs_valore_param_applic_strut_gest().setEditMode();
             getForm().getParametriGestioneStrutturaList().setStatus(Status.update);
@@ -6708,7 +6827,13 @@ public class StruttureAction extends StruttureAbstractAction {
     public void parametriAmministrazioneStrutturaButton() throws Throwable {
         BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
                 .getBigDecimal("id_strut");
-        loadListeParametriStruttura(idStrut, null, false, true, true, true);
+        // loadListeParametriStruttura(idStrut, null, false, true, true, true, filterValid);
+        loadListaParametriAmnministrazioneStruttura(idStrut, null, false, true,
+                getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+        loadListaParametriConservazioneStruttura(idStrut, null, false, true,
+                getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+        loadListaParametriGestioneStruttura(idStrut, null, false, true,
+                getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
         getForm().getInsStruttura().setStatus(Status.update);
         getForm().getRicercaParametriStruttura().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -6723,7 +6848,13 @@ public class StruttureAction extends StruttureAbstractAction {
     public void parametriConservazioneStrutturaButton() throws Throwable {
         BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
                 .getBigDecimal("id_strut");
-        loadListeParametriStruttura(idStrut, null, false, false, true, true);
+        // loadListeParametriStruttura(idStrut, null, false, false, true, true, filterValid);
+        loadListaParametriAmnministrazioneStruttura(idStrut, null, false, false,
+                getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+        loadListaParametriConservazioneStruttura(idStrut, null, false, true,
+                getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+        loadListaParametriGestioneStruttura(idStrut, null, false, true,
+                getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
         getForm().getInsStruttura().setStatus(Status.update);
         getForm().getRicercaParametriStruttura().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -6738,7 +6869,13 @@ public class StruttureAction extends StruttureAbstractAction {
     public void parametriGestioneStrutturaButton() throws Throwable {
         BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
                 .getBigDecimal("id_strut");
-        loadListeParametriStruttura(idStrut, null, false, false, false, true);
+        // loadListeParametriStruttura(idStrut, null, false, false, false, true, filterValid);
+        loadListaParametriAmnministrazioneStruttura(idStrut, null, false, false,
+                getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+        loadListaParametriConservazioneStruttura(idStrut, null, false, false,
+                getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+        loadListaParametriGestioneStruttura(idStrut, null, false, true,
+                getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
         getForm().getInsStruttura().setStatus(Status.update);
         getForm().getRicercaParametriStruttura().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -6759,21 +6896,40 @@ public class StruttureAction extends StruttureAbstractAction {
             if (getSession().getAttribute("provenienzaParametri") != null) {
                 String provenzienzaParametri = (String) getSession().getAttribute("provenienzaParametri");
                 if (provenzienzaParametri.equals("amministrazione")) {
-                    loadListeParametriStruttura(idStrut, funzione, false, true, true, true);
+                    // loadListeParametriStruttura(idStrut, funzione, false, true, true, true, true);
+                    loadListaParametriAmnministrazioneStruttura(idStrut, funzione, false, true,
+                            getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+                    loadListaParametriConservazioneStruttura(idStrut, funzione, false, true,
+                            getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+                    loadListaParametriGestioneStruttura(idStrut, funzione, false, true,
+                            getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
                     if (getForm().getInsStruttura().getStatus().equals(Status.update)) {
                         setEditModeParametriAmministrazione();
                     } else {
                         setViewModeListeParametri();
                     }
                 } else if (provenzienzaParametri.equals("conservazione")) {
-                    loadListeParametriStruttura(idStrut, funzione, false, false, true, true);
+                    // loadListeParametriStruttura(idStrut, funzione, false, false, true, true, true);
+                    loadListaParametriAmnministrazioneStruttura(idStrut, funzione, false, false,
+                            getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+                    loadListaParametriConservazioneStruttura(idStrut, funzione, false, true,
+                            getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+                    loadListaParametriGestioneStruttura(idStrut, funzione, false, true,
+                            getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
                     if (getForm().getInsStruttura().getStatus().equals(Status.update)) {
                         setEditModeParametriConservazione();
                     } else {
                         setViewModeListeParametri();
                     }
                 } else if (provenzienzaParametri.equals("gestione")) {
-                    loadListeParametriStruttura(idStrut, funzione, false, false, false, true);
+                    // loadListeParametriStruttura(idStrut, funzione, false, false, false, true, true);
+                    loadListaParametriAmnministrazioneStruttura(idStrut, funzione, false, false,
+                            getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
+                    loadListaParametriConservazioneStruttura(idStrut, funzione, false, false,
+                            getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
+                    loadListaParametriGestioneStruttura(idStrut, funzione, false, true,
+                            getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
+
                     if (getForm().getInsStruttura().getStatus().equals(Status.update)) {
                         setEditModeParametriGestione();
                     } else {
@@ -6913,6 +7069,57 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getFormatoFileDocSpecificoList().getTable().remove(index);
         getMessageBox().addInfo("Formato specifico eliminato con successo!");
         SessionManager.removeLastExecutionHistory(getSession());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriAmministrazioneStrutturaList() throws EMFError {
+        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                .getBigDecimal("id_strut");
+        boolean filterValid = getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_STRUTTURA)) {
+                loadListaParametriAmnministrazioneStruttura(idStrut, null, false, true, filterValid);
+            } else {
+                loadListaParametriAmnministrazioneStruttura(idStrut, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di amministrazione della struttura");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriConservazioneStrutturaList() throws EMFError {
+        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                .getBigDecimal("id_strut");
+        boolean filterValid = getForm().getParametriConservazioneStrutturaList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_STRUTTURA)) {
+                loadListaParametriConservazioneStruttura(idStrut, null, false, true, filterValid);
+            } else {
+                loadListaParametriConservazioneStruttura(idStrut, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di conservazione della struttura");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriGestioneStrutturaList() throws EMFError {
+        BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                .getBigDecimal("id_strut");
+        boolean filterValid = getForm().getParametriGestioneStrutturaList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_STRUTTURA)) {
+                loadListaParametriGestioneStruttura(idStrut, null, false, true, filterValid);
+            } else {
+                loadListaParametriGestioneStruttura(idStrut, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di gestione della struttura");
+        }
+        forwardToPublisher(getLastPublisher());
     }
 
 }

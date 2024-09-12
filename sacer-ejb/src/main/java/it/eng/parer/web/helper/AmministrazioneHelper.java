@@ -17,6 +17,8 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -88,7 +90,7 @@ public class AmministrazioneHelper extends GenericHelper {
      *
      * @param tipoParam
      *            tipo parametro
-     * 
+     *
      * @return il tablebean contenente la lista di parametri di configurazione
      */
     public AplParamApplicTableBean getConfigurationViewBean(String tipoParam) {
@@ -119,7 +121,7 @@ public class AmministrazioneHelper extends GenericHelper {
      *            oggetto {@link LogParam}
      * @param row
      *            il parametro da eliminare
-     * 
+     *
      * @return true se eliminato con successo
      */
     public boolean deleteAplParamApplicRowBean(LogParam param, AplParamApplicRowBean row) {
@@ -161,7 +163,7 @@ public class AmministrazioneHelper extends GenericHelper {
      *            flag 1/0 (true/false)
      * @param flAppartAmbiente
      *            flag 1/0 (true/false)
-     * 
+     *
      * @return lista oggetti di tipo {@link AplParamApplic}
      */
     public List<AplParamApplic> getAplParamApplicList(String tiParamApplic, String tiGestioneParam,
@@ -196,6 +198,90 @@ public class AmministrazioneHelper extends GenericHelper {
         if (flAppartAaTipoFascicolo != null) {
             queryStr.append(whereWord).append("paramApplic.flAppartAaTipoFascicolo = :flAppartAaTipoFascicolo ");
         }
+        queryStr.append("ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic ");
+        Query q = getEntityManager().createQuery(queryStr.toString());
+        if (tiParamApplic != null) {
+            q.setParameter("tiParamApplic", tiParamApplic);
+        }
+        if (tiGestioneParam != null) {
+            q.setParameter("tiGestioneParam", tiGestioneParam);
+        }
+        if (flAppartApplic != null) {
+            q.setParameter("flAppartApplic", flAppartApplic);
+        }
+        if (flAppartAmbiente != null) {
+            q.setParameter("flAppartAmbiente", flAppartAmbiente);
+        }
+        if (flAppartStrut != null) {
+            q.setParameter("flAppartStrut", flAppartStrut);
+        }
+        if (flAppartTipoUnitaDoc != null) {
+            q.setParameter("flAppartTipoUnitaDoc", flAppartTipoUnitaDoc);
+        }
+        if (flAppartAaTipoFascicolo != null) {
+            q.setParameter("flAppartAaTipoFascicolo", flAppartAaTipoFascicolo);
+        }
+        return q.getResultList();
+    }
+
+    /**
+     * Metodo che ritorna i parametri di configurazione
+     *
+     * @param tiParamApplic
+     *            tipo parametro applicativo
+     * @param tiGestioneParam
+     *            tipo gestione parametro
+     * @param flAppartApplic
+     *            flag 1/0 (true/false)
+     * @param flAppartStrut
+     *            flag 1/0 (true/false)
+     * @param flAppartTipoUnitaDoc
+     *            flag 1/0 (true/false)
+     * @param flAppartAaTipoFascicolo
+     *            flag 1/0 (true/false)
+     * @param flAppartAmbiente
+     *            flag 1/0 (true/false)
+     * @param filterValid
+     *            true o false per filtrare i parametri attivi (sulla base della versione applicativo
+     *
+     * @return lista oggetti di tipo {@link AplParamApplic}
+     */
+    public List<AplParamApplic> getAplParamApplicList(String tiParamApplic, String tiGestioneParam,
+            String flAppartApplic, String flAppartAmbiente, String flAppartStrut, String flAppartTipoUnitaDoc,
+            String flAppartAaTipoFascicolo, boolean filterValid) {
+        StringBuilder queryStr = new StringBuilder("SELECT paramApplic FROM AplParamApplic paramApplic ");
+        String whereWord = " WHERE ";
+        if (tiParamApplic != null) {
+            queryStr.append(whereWord).append("paramApplic.tiParamApplic = :tiParamApplic ");
+            whereWord = "AND ";
+        }
+        if (tiGestioneParam != null) {
+            queryStr.append(whereWord).append("paramApplic.tiGestioneParam = :tiGestioneParam ");
+            whereWord = "AND ";
+        }
+        if (flAppartApplic != null) {
+            queryStr.append(whereWord).append("paramApplic.flAppartApplic = :flAppartApplic ");
+            whereWord = "AND ";
+        }
+        if (flAppartAmbiente != null) {
+            queryStr.append(whereWord).append("paramApplic.flAppartAmbiente = :flAppartAmbiente ");
+            whereWord = "AND ";
+        }
+        if (flAppartStrut != null) {
+            queryStr.append(whereWord).append("paramApplic.flAppartStrut = :flAppartStrut ");
+            whereWord = "AND ";
+        }
+        if (flAppartTipoUnitaDoc != null) {
+            queryStr.append(whereWord).append("paramApplic.flAppartTipoUnitaDoc = :flAppartTipoUnitaDoc ");
+            whereWord = "AND ";
+        }
+        if (flAppartAaTipoFascicolo != null) {
+            queryStr.append(whereWord).append("paramApplic.flAppartAaTipoFascicolo = :flAppartAaTipoFascicolo ");
+        }
+        if (filterValid) {
+            queryStr.append(whereWord).append("paramApplic.cdVersioneAppFine IS NULL ");
+        }
+
         queryStr.append("ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic ");
         Query q = getEntityManager().createQuery(queryStr.toString());
         if (tiParamApplic != null) {
@@ -272,6 +358,53 @@ public class AmministrazioneHelper extends GenericHelper {
 
     }
 
+    public List<AplParamApplic> getAplParamApplicListAmbiente(List<String> funzione, boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartAmbiente = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        return q.getResultList();
+
+    }
+
+    public List<AplParamApplic> getAplParamApplicListAmbiente(List<String> funzione, String tiGestioneParam,
+            boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartAmbiente = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (tiGestioneParam != null) {
+            queryStr = queryStr + "AND paramApplic.tiGestioneParam = :tiGestioneParam ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        if (tiGestioneParam != null) {
+            q.setParameter("tiGestioneParam", tiGestioneParam);
+        }
+        return q.getResultList();
+
+    }
+
     public List<AplParamApplic> getAplParamApplicListStruttura(List<String> funzione) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartStrut = '1' ";
@@ -284,6 +417,51 @@ public class AmministrazioneHelper extends GenericHelper {
         Query q = getEntityManager().createQuery(queryStr);
         if (funzione != null && !funzione.isEmpty()) {
             q.setParameter("funzione", funzione);
+        }
+        return q.getResultList();
+    }
+
+    public List<AplParamApplic> getAplParamApplicListStruttura(List<String> funzione, boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartStrut = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        return q.getResultList();
+    }
+
+    public List<AplParamApplic> getAplParamApplicListStruttura(List<String> funzione, String tiGestioneParam,
+            boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartStrut = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (tiGestioneParam != null) {
+            queryStr = queryStr + "AND paramApplic.tiGestioneParam = :tiGestioneParam ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        if (tiGestioneParam != null) {
+            q.setParameter("tiGestioneParam", tiGestioneParam);
         }
         return q.getResultList();
     }
@@ -304,6 +482,51 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    public List<AplParamApplic> getAplParamApplicListTipoUd(List<String> funzione, boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartTipoUnitaDoc = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        return q.getResultList();
+    }
+
+    public List<AplParamApplic> getAplParamApplicListTipoUd(List<String> funzione, String tiGestioneParam,
+            boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartTipoUnitaDoc = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (tiGestioneParam != null) {
+            queryStr = queryStr + "AND paramApplic.tiGestioneParam = :tiGestioneParam ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        if (tiGestioneParam != null) {
+            q.setParameter("tiGestioneParam", tiGestioneParam);
+        }
+        return q.getResultList();
+    }
+
     public List<AplParamApplic> getAplParamApplicListAaTipoFascicolo(List<String> funzione) {
         String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartAaTipoFascicolo = '1' ";
@@ -320,10 +543,66 @@ public class AmministrazioneHelper extends GenericHelper {
         return q.getResultList();
     }
 
+    public List<AplParamApplic> getAplParamApplicListAaTipoFascicolo(List<String> funzione, boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartAaTipoFascicolo = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        return q.getResultList();
+    }
+
+    public List<AplParamApplic> getAplParamApplicListAaTipoFascicolo(List<String> funzione, String tiGestioneParam,
+            boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartAaTipoFascicolo = '1' ";
+
+        if (funzione != null && !funzione.isEmpty()) {
+            queryStr = queryStr + "AND paramApplic.tiParamApplic IN (:funzione) ";
+        }
+        if (tiGestioneParam != null) {
+            queryStr = queryStr + "AND paramApplic.tiGestioneParam = :tiGestioneParam ";
+        }
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+
+        Query q = getEntityManager().createQuery(queryStr);
+        if (funzione != null && !funzione.isEmpty()) {
+            q.setParameter("funzione", funzione);
+        }
+        if (tiGestioneParam != null) {
+            q.setParameter("tiGestioneParam", tiGestioneParam);
+        }
+        return q.getResultList();
+    }
+
     public List<AplParamApplic> getAplParamApplicMultiListAmbiente() {
         Query q = getEntityManager().createQuery("SELECT paramApplic FROM AplParamApplic paramApplic "
                 + "WHERE paramApplic.flAppartAmbiente = '1' " + "AND paramApplic.flMulti = '1' "
                 + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic");
+        return q.getResultList();
+    }
+
+    public List<AplParamApplic> getAplParamApplicMultiListAmbiente(boolean filterValid) {
+        String queryStr = "SELECT paramApplic FROM AplParamApplic paramApplic "
+                + "WHERE paramApplic.flAppartAmbiente = '1' " + "AND paramApplic.flMulti = '1' ";
+        if (filterValid) {
+            queryStr = queryStr + "AND paramApplic.cdVersioneAppFine IS NULL ";
+        }
+        queryStr = queryStr + "ORDER BY paramApplic.tiParamApplic, paramApplic.nmParamApplic";
+        Query q = getEntityManager().createQuery(queryStr);
         return q.getResultList();
     }
 

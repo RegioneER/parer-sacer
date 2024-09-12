@@ -37,9 +37,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MultiValuedMap;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +59,7 @@ import it.eng.parer.entity.FasXmlFascicolo;
 import it.eng.parer.entity.FasXmlVersFascicolo;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
 import it.eng.parer.grantedEntity.UsrUser;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.web.helper.AmministrazioneHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UserHelper;
@@ -90,6 +91,8 @@ public class ControlliRecuperoFasc {
     private UserHelper userHelper;
     @EJB
     private AmministrazioneHelper amministrazioneHelper;
+    @EJB
+    private ObjectStorageService objectStorageService;
 
     @Resource
     EJBContext context;
@@ -402,6 +405,7 @@ public class ControlliRecuperoFasc {
             query.setParameter("idFascicolo", idFascicolo);
 
             listaFasFile = query.getResultList();
+
             rispostaControlli.setrObject(listaFasFile);
             rispostaControlli.setrBoolean(true);
         } catch (Exception e) {
@@ -582,10 +586,10 @@ public class ControlliRecuperoFasc {
     // EVO#20972
     /**
      * Restituisce la lista degli utenti applicativi configurati per la firma HSM dato l'ambiente
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return RispostaControlli con risultato del recupero effettuato
      */
     public RispostaControlli leggiListaUserByHsmUsername(BigDecimal idAmbiente) {
@@ -630,7 +634,7 @@ public class ControlliRecuperoFasc {
      *            id user Iam corrente
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return RispostaControlli con risultato del recupero effettuato
      */
     public RispostaControlli leggiRuoloAuthorizedSigner(long idUserIamCor, BigDecimal idAmbiente) {

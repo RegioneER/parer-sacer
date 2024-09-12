@@ -17,6 +17,17 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
 import it.eng.parer.entity.OrgCampoValSubStrut;
 import it.eng.parer.entity.OrgRegolaValSubStrut;
 import it.eng.parer.entity.OrgSubStrut;
@@ -24,19 +35,12 @@ import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.utils.CostantiDB;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Helper di gestione delle sottostrutture
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class SottoStruttureHelper extends GenericHelper {

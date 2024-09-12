@@ -17,6 +17,8 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -89,7 +91,7 @@ import it.eng.spagoCore.error.EMFError;
  * Session Bean implementation class ComponentiHelper Contiene i metodi (implementati di ComponentiHelperLocal), per la
  * gestione della persistenza su DB per le operazioni CRUD su oggetti di ComponentiTableBean e ComponentiRowBean
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 @Stateless
 @LocalBean
 public class ComponentiHelper extends GenericHelper {

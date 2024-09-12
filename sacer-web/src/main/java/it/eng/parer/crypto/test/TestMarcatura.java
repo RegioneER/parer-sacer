@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import it.eng.parer.crypto.model.ParerTSD;
 import it.eng.parer.crypto.model.ParerTST;
+import static it.eng.parer.crypto.test.GestioneCRL.MAX_DIM_FILE_UPLOAD;
 import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
 
@@ -52,7 +54,10 @@ import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
  *
  * @author Quaranta_M
  */
+@WebServlet(urlPatterns = { "/TestMarcatura" }, asyncSupported = true)
 public class TestMarcatura extends HttpServlet {
+
+    private static final long serialVersionUID = 1L;
 
     Logger log = LoggerFactory.getLogger(TestMarcatura.class);
     @EJB
@@ -67,7 +72,7 @@ public class TestMarcatura extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -94,7 +99,8 @@ public class TestMarcatura extends HttpServlet {
                 ServletFileUpload upload = new ServletFileUpload(factory);
 
                 // Set overall request size constraint
-                upload.setSizeMax(1000 * 1000 * 300);
+                // MEV#33156 - Aumento della capacità di upload di lab
+                upload.setSizeMax(1024 * 1024 * MAX_DIM_FILE_UPLOAD);
                 try {
                     // Parse the request
                     List<FileItem> items = upload.parseRequest(request);
@@ -177,10 +183,10 @@ public class TestMarcatura extends HttpServlet {
 
         } finally {
             if (contDaMarcare != null && contDaMarcare.exists()) {
-                contDaMarcare.delete();
+                Files.delete(contDaMarcare.toPath());
             }
             if (contTika != null && contTika.exists()) {
-                contTika.delete();
+                Files.delete(contTika.toPath());
             }
         }
     }
@@ -193,7 +199,7 @@ public class TestMarcatura extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -212,7 +218,7 @@ public class TestMarcatura extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException

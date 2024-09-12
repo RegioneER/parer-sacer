@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>9.3.1-SNAPSHOT</version>
+        <version>10.2.0</version>
     </parent>
 
     <artifactId>sacer-jboss-jpa</artifactId>
@@ -11,26 +11,12 @@
     <description>Strato jpa.</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-         <!-- spagofat bom -->
+        <!-- spagofat bom -->
         <org.eclipse.persistence.moxy.version>2.3.2</org.eclipse.persistence.moxy.version>
         <!-- resource filter -->
         <hibernate.show_sql>false</hibernate.show_sql>
-		<hibernate.hbm2ddl.auto>validate</hibernate.hbm2ddl.auto>
+        <hibernate.hbm2ddl.auto>validate</hibernate.hbm2ddl.auto>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Framework -->
-            <dependency>
-                <groupId>it.eng.parer</groupId>
-                <artifactId>spagofat</artifactId>
-                <version>${spagofat.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 
     <dependencies>
         <dependency>
@@ -85,8 +71,8 @@
             <artifactId>hibernate-core</artifactId>
             <exclusions>
                 <exclusion>
-                   <groupId>antlr</groupId>
-                   <artifactId>antlr</artifactId>
+                    <groupId>antlr</groupId>
+                    <artifactId>antlr</artifactId>
                 </exclusion>
             </exclusions>
             <scope>provided</scope>
@@ -99,9 +85,8 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
-            <scope>compile</scope>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -167,12 +152,12 @@
     </build>
 
     <profiles>
-		<profile>
-			<id>dev</id>
-			<properties>
-				<hibernate.show_sql>true</hibernate.show_sql>
-				<hibernate.hbm2ddl.auto>none</hibernate.hbm2ddl.auto>
-			</properties>
-		</profile>
-	</profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <hibernate.show_sql>true</hibernate.show_sql>
+                <hibernate.hbm2ddl.auto>none</hibernate.hbm2ddl.auto>
+            </properties>
+        </profile>
+    </profiles>
 </project>

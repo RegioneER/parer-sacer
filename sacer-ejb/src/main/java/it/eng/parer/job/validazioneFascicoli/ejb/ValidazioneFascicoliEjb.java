@@ -147,15 +147,15 @@ public class ValidazioneFascicoliEjb {
                 + strutList.size() + " strutture versanti da elaborare");
 
         for (OrgStrut strut : strutList) {
-            // Determina gli elenchi con stato FIRMATO appartenenti alla struttura corrente, in ordine di data di firma
+            // Determina gli elenchi con stato VALIDATO appartenenti alla struttura corrente, in ordine di data di firma
             // crescente
             List<ElvElencoVersFascDaElab> elencoVersFascDaElabList = vfHelper
-                    .getElvElencoVersFascDaElab(strut.getIdStrut(), TiStatoElencoFascDaElab.FIRMATO);
+                    .getElvElencoVersFascDaElab(strut.getIdStrut(), TiStatoElencoFascDaElab.VALIDATO);
             logger.debug(ValidazioneFascicoliEjb.class.getSimpleName()
                     + " --- Validazione fascicoli - Per la struttura " + strut.getNmStrut() + " sono stati ricavati "
-                    + elencoVersFascDaElabList.size() + " elenchi con stato FIRMATO da elaborare");
+                    + elencoVersFascDaElabList.size() + " elenchi con stato VALIDATO da elaborare");
 
-            /* Per ogni elenco FIRMATO */
+            /* Per ogni elenco VALIDATO */
             for (ElvElencoVersFascDaElab elencoVersFascDaElab : elencoVersFascDaElabList) {
                 // Apro nuova transazione
                 context.getBusinessObject(ValidazioneFascicoliEjb.class).elaboraElencoFirmato(strut.getIdStrut(),
@@ -541,10 +541,10 @@ public class ValidazioneFascicoliEjb {
         CSChiave chiave = this.getChiaveUd(aroUnitaDoc);
 
         /*
-         * 
+         *
          * Gestione KEY NORMALIZED / URN PREGRESSI
-         * 
-         * 
+         *
+         *
          */
         // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
         // il sistema aggiorna ARO_UNITA_DOC

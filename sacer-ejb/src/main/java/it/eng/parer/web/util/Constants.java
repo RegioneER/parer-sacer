@@ -111,7 +111,7 @@ public class Constants {
     // Enum per tipo entità sacer su object storage
     public enum TiEntitaSacerObjectStorage {
 
-        COMP_DOC, REPORTVF, XML_VERS, INDICE_AIP
+        COMP_DOC, REPORTVF, XML_VERS, INDICE_AIP, INDICE_AIP_FASC, ELENCO_INDICI_AIP, ELENCO_INDICI_AIP_FASC
     }
 
     // MEV26587

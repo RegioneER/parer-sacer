@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the MON_V_LIS_UPD_UD_KO database table.
- * 
+ *
  */
 @Entity
 @Table(name = "MON_V_LIS_UPD_UD_KO")

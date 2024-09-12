@@ -156,7 +156,7 @@
         <Button Name="selectAllElenchiButton" Description="Aggiungi tutti" Type="STRING"/>
         <Button Name="deselectAllElenchiButton" Description="Rimuovi tutti" Type="STRING"/>
         <Button Name="selectHundredElenchiButton" Description="Aggiungi 100" Type="STRING"/>
-        <Button Name="firmaElenchiHsmButton"  Description="Firma" Type="STRING" />
+<!--        <Button Name="firmaElenchiHsmButton"  Description="Firma" Type="STRING" /> -->
         <Button Name="validaElenchiButton"  Description="Valida" Type="STRING" />
     </ButtonList>
     
@@ -227,8 +227,9 @@
         <Button Name="chiudiElencoButton"  Description="Chiusura manuale elenco di versamento" Type="STRING" />
         <Button Name="listaOperazioniElencoButton"  Description="Lista operazioni sugli elenchi di versamento" Type="STRING" />
         <Button Name="scaricaIndiceElencoButton"  Description="Scarica elenco di versamento" Type="STRING" />
-        <Button Name="generaIndiceElencoButton"  Description="Genera indice elenco di versamento" Type="STRING" />
+        <Button Name="generaIndiceElencoButton"  Description="Scarica indice elenco di versamento" Type="STRING" />
         <Button Name="scaricaElencoIndiciAipButton"  Description="Scarica elenco indici AIP" Type="STRING" />
+        <Button Name="riportaStatoIndietroButton"  Description="Metti AIP alla firma" Type="STRING" />
     </ButtonList>
     
     <!-- Lista degli stati dell'elenco di versamento -->

@@ -59,7 +59,7 @@ public class ReportvfHelper {
 
     /*
      * La stessa directory viene utilizzata nel report zip "confezinato" al versamento e anche alla generazione stesssa
-     * 
+     *
      * Report v0 e v1
      */
     public static final String DIRECTORY_REPORT = "FileTrasformati";
@@ -80,16 +80,16 @@ public class ReportvfHelper {
 
     /**
      * Effettua trasformazione report (xml) in PDF
-     * 
+     *
      * @param report
      *            file del singolo report
      * @param xslt
      *            foglio di stile
      * @param outputPath
      *            path di generazione
-     * 
+     *
      * @return trasformazione (se riuscita) del report in formato PDF
-     * 
+     *
      * @throws SacerException
      *             eccezione generica
      * @throws IOException
@@ -122,16 +122,16 @@ public class ReportvfHelper {
 
     /**
      * "Generica" trasformazione del file report applicando un determinato foglio di stile
-     * 
+     *
      * @param report
      *            file del singolo report
      * @param xslt
      *            foglio di stile
      * @param outputPath
      *            path di generazione
-     * 
+     *
      * @return trasformazione (se riuscita) del report
-     * 
+     *
      * @throws SacerException
      *             eccezione generica
      * @throws IOException
@@ -166,7 +166,7 @@ public class ReportvfHelper {
      *            nome file report
      * @param reportvfExtension
      *            estensione
-     * 
+     *
      * @throws IOException
      *             eccezione generica
      */
@@ -179,14 +179,14 @@ public class ReportvfHelper {
 
     /**
      * Aggiunta entry su file ZIP del report generato (file originale)
-     * 
+     *
      * @param tmpZipOutputStream
      *            zip outputstream
      * @param xmlFile
      *            file report da aggiungere
      * @param fileName
      *            nome file report
-     * 
+     *
      * @throws IOException
      *             eccezione generica
      */

@@ -32,14 +32,6 @@
                     <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.NM_ENTE_STRUT%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                     <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.TS_INIZIO%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                     <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.TS_FINE%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
-                    <c:choose>
-                        <c:when test="${(sessionScope['###_FORM_CONTAINER']['richRestArchList'].status eq 'view') }">
-                             <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.PRIORITA%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
-                        </c:when>
-                        <c:otherwise>
-                            <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.PRIORITA_COMBO%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
-                        </c:otherwise>
-                    </c:choose>
                     <slf:lblField name="<%=RestituzioneArchivioForm.RichRestArchDetail.FTP_PATH%>" width="w100" controlWidth="w30" labelWidth="w20" /><sl:newLine />
                 </slf:section>
                 <slf:section name="<%=RestituzioneArchivioForm.StatoCorrenteSection.NAME%>" styleClass="importantContainer w100">

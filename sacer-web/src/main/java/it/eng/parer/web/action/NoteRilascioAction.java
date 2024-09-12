@@ -197,7 +197,7 @@ public class NoteRilascioAction extends NoteRilascioAbstractAction {
      *
      * @param nmApplic
      *            nome applicazione
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

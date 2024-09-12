@@ -40,11 +40,11 @@ import org.hibernate.id.enhanced.SequenceStyleGenerator;
  */
 /*
  * @Entity
- * 
+ *
  * @XmlRootElement
- * 
+ *
  * @Cacheable(true)
- * 
+ *
  * @Table(name = "ARO_UNITA_DOC_ANNUL")
  */
 public class AroUnitaDocAnnul implements Serializable {

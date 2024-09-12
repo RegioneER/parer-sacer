@@ -17,12 +17,14 @@
 
 package it.eng.parer.util;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class UtilsTest {
 
@@ -49,4 +51,49 @@ public class UtilsTest {
         final String versioni = Utils.composeVersioniString(Arrays.asList("1.0.0", "2.0.0"));
         assertEquals("(vers. 1.0.0,  2.0.0)", versioni);
     }
+
+    @Test
+    public void longFromBigDecimal_null() {
+        assertNull(Utils.longFromBigDecimal(null));
+    }
+
+    @Test
+    public void longFromInteger_null() {
+        assertNull(Utils.longFromBigDecimal(null));
+    }
+
+    @Test
+    public void longFromBigDecimal_conValore() {
+        assertEquals(Long.valueOf(1), Utils.longFromBigDecimal(BigDecimal.ONE));
+    }
+
+    @Test
+    public void longFromInteger_conValore() {
+        assertEquals(Long.valueOf(2), Utils.longFromInteger(Integer.valueOf(2)));
+    }
+
+    @Test
+    public void bigDecimalFromLong_null() {
+        Long nullLong = null;
+        assertEquals(null, Utils.bigDecimalFromLong(nullLong));
+    }
+
+    @Test
+    public void bigDecimalFromLong_conValore() {
+        Long uno = 1L;
+        assertEquals(BigDecimal.ONE, Utils.bigDecimalFromLong(uno));
+    }
+
+    @Test
+    public void bigDecimalFromInteger_null() {
+        Integer nullInt = null;
+        assertEquals(null, Utils.bigDecimalFromInteger(nullInt));
+    }
+
+    @Test
+    public void bigDecimalFromInteger_conValore() {
+        Integer uno = 1;
+        assertEquals(BigDecimal.ONE, Utils.bigDecimalFromInteger(uno));
+    }
+
 }

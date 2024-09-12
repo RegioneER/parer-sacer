@@ -17,27 +17,37 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneTitolario.helper;
 
-import it.eng.parer.entity.*;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.viewEntity.AroVRicUnitaDoc;
-import it.eng.parer.viewEntity.DecVLisValVoceTitol;
-import it.eng.parer.viewEntity.DecVTreeTitol;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+
+import it.eng.parer.entity.DecLivelloTitol;
+import it.eng.parer.entity.DecTitol;
+import it.eng.parer.entity.DecValVoceTitol;
+import it.eng.parer.entity.DecVoceTitol;
+import it.eng.parer.entity.OrgOperTitol;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.viewEntity.AroVRicUnitaDoc;
+import it.eng.parer.viewEntity.DecVLisValVoceTitol;
+import it.eng.parer.viewEntity.DecVTreeTitol;
 
 /**
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class StrutTitolariHelper extends GenericHelper {
@@ -69,12 +79,12 @@ public class StrutTitolariHelper extends GenericHelper {
 
     /**
      * Restituisce tutti i nodi padri a partire dal nodo corrente fino a quello root
-     * 
+     *
      * @param idNodo
      *            id del titolo corrente
      * @param dtVal
      *            dato che ogni voce del titolario ha un periodo di validità, tale data definisce quando fare la ricerca
-     * 
+     *
      * @return lista oggetti di tipo {@link DecVTreeTitol}
      */
     public List<DecVTreeTitol> getVociAllPadri(BigDecimal idNodo, Date dtVal) {

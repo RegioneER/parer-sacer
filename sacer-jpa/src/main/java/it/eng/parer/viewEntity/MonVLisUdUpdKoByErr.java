@@ -29,7 +29,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the MON_V_LIS_UD_UPD_KO_BY_ERR database table.
- * 
+ *
  */
 @Entity
 @Table(name = "MON_V_LIS_UD_UPD_KO_BY_ERR")

@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the SER_V_SEL_UD_NOVERS database table.
- * 
+ *
  */
 @Entity
 @Table(name = "SER_V_SEL_UD_NOVERS")

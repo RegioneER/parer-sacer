@@ -26,8 +26,8 @@
             /* Stile personalizzato alla quinta colonna (visibile))*/            
             td:nth-of-type(6) input {width:100%;}
 
-            /* Stile personalizzato alla sesta colonna (visibile))*/            
-            td:nth-of-type(7) input {width:100%;}
+            /* Stile personalizzato alla ottava colonna (visibile))*/            
+            td:nth-of-type(9) input {width:100%;}
 
         </style>
 

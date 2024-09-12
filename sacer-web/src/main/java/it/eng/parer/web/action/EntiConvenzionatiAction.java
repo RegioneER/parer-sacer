@@ -132,80 +132,111 @@ public class EntiConvenzionatiAction extends EntiConvenzionatiAbstractAction {
 
     @Override
     public void saveDettaglio() throws EMFError {
-        try {
-            if (getTableName().equals(getForm().getEnteConvenzOrgList().getName())
-                    || getTableName().equals(getForm().getEnteConvenzOrg().getName())) {
-                BigDecimal idStrut = getForm().getStrutRif().getId_strut().parse();
-                if (getForm().getEnteConvenzOrg().postAndValidate(getRequest(), getMessageBox())) {
-                    BigDecimal idEnteConvenz = getForm().getEnteConvenzOrg().getId_ente_convenz().parse();
-                    Date dtIniVal = getForm().getEnteConvenzOrg().getDt_ini_val().parse();
-                    Date dtFineVal = getForm().getEnteConvenzOrg().getDt_fine_val().parse();
+        if (getTableName().equals(getForm().getEnteConvenzOrgList().getName())
+                || getTableName().equals(getForm().getEnteConvenzOrg().getName())) {
+            BigDecimal idStrut = getForm().getStrutRif().getId_strut().parse();
+            if (getForm().getEnteConvenzOrg().postAndValidate(getRequest(), getMessageBox())) {
+                BigDecimal idEnteConvenz = getForm().getEnteConvenzOrg().getId_ente_convenz().parse();
+                Date dtIniVal = getForm().getEnteConvenzOrg().getDt_ini_val().parse();
+                Date dtFineVal = getForm().getEnteConvenzOrg().getDt_fine_val().parse();
 
-                    if (dtIniVal.after(dtFineVal)) {
-                        getMessageBox()
-                                .addError("Attenzione: data di inizio validità superiore a data di fine validità");
-                    }
-
-                    if (!getMessageBox().hasError()) {
-
-                        /*
-                         * Codice aggiuntivo per il logging...
-                         */
-                        LogParam param = SpagoliteLogUtil.getLogParam(
-                                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
-                                getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
-                        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-                        if (getForm().getEnteConvenzOrg().getStatus().equals(BaseElements.Status.insert)) {
-                            param.setNomeAzione(SpagoliteLogUtil.getToolbarSave(false));
-                            BigDecimal idEnteConvenzOrg = ambienteEjb.insertEnteConvenzOrg(param, idStrut,
-                                    idEnteConvenz, dtIniVal, dtFineVal);
-                            getForm().getEnteConvenzOrg().getId_ente_convenz_org()
-                                    .setValue(idEnteConvenzOrg.toPlainString());
-
-                            SIOrgEnteConvenzOrgRowBean row = new SIOrgEnteConvenzOrgRowBean();
-                            getForm().getEnteConvenzOrg().copyToBean(row);
-                            row.setBigDecimal("id_ambiente_ente_convenz",
-                                    getForm().getEnteConvenzOrg().getId_ambiente_ente_convenz().parse());
-                            row.setString("nm_ambiente_ente_convenz",
-                                    getForm().getEnteConvenzOrg().getId_ambiente_ente_convenz().getDecodedValue());
-                            row.setString("nm_ente_convenz",
-                                    getForm().getEnteConvenzOrg().getId_ente_convenz().getDecodedValue());
-
-                            getForm().getEnteConvenzOrgList().getTable().last();
-                            getForm().getEnteConvenzOrgList().getTable().add(row);
-                        } else if (getForm().getEnteConvenzOrg().getStatus().equals(BaseElements.Status.update)) {
-                            param.setNomeAzione(SpagoliteLogUtil.getToolbarSave(true));
-                            BigDecimal idEnteConvenzOrg = getForm().getEnteConvenzOrg().getId_ente_convenz_org()
-                                    .parse();
-                            // La modifica, se interessa anche l'ente convenzionato, porta ad una modifica dell'id
-                            // dell'associazione
-                            BigDecimal idEnteConvenzOrgNew = ambienteEjb.updateEnteConvenzOrg(param, idEnteConvenzOrg,
-                                    idEnteConvenz, idStrut, dtIniVal, dtFineVal);
-
-                            if (idEnteConvenzOrg.compareTo(idEnteConvenzOrgNew) != 0) {
-                                getForm().getEnteConvenzOrg().getId_ente_convenz_org()
-                                        .setValue(idEnteConvenzOrgNew.toPlainString());
-                                getForm().getEnteConvenzOrgList().getTable().getCurrentRow()
-                                        .setBigDecimal("id_ente_convenz_org", idEnteConvenzOrgNew);
-                            }
-                        }
-                        getMessageBox().addInfo("Associazione con l'ente convenzionato salvata con successo");
-                        getMessageBox().setViewMode(MessageBox.ViewMode.plain);
-                        loadDettaglio();
-                    }
+                if (dtIniVal.after(dtFineVal)) {
+                    getMessageBox().addError("Attenzione: data di inizio validità superiore a data di fine validità");
                 }
 
                 if (!getMessageBox().hasError()) {
-                    getForm().getEnteConvenzOrgList().setStatus(BaseElements.Status.view);
-                    getForm().getEnteConvenzOrg().setStatus(BaseElements.Status.view);
-                    getForm().getEnteConvenzOrg().setViewMode();
+
+                    // Eseguo il controllo di contiguità sulle date
+                    boolean dateContigueConPrecedenteAssociazione = ambienteEjb.checkDateContigue(idStrut, dtIniVal,
+                            dtFineVal);
+
+                    if (dateContigueConPrecedenteAssociazione) {
+                        eseguiSalvataggioAssociazioneEnteStruttura(idStrut, idEnteConvenz, dtIniVal, dtFineVal);
+                    } else {
+                        Object[] sa = new Object[4];
+                        sa[0] = idStrut;
+                        sa[1] = idEnteConvenz;
+                        sa[2] = dtIniVal;
+                        sa[3] = dtFineVal;
+                        getSession().setAttribute("salvataggioAttributes", sa);
+                        getRequest().setAttribute("customBox", true);
+                    }
+
                 }
-                forwardToPublisher(Application.Publisher.ENTE_CONVENZIONATO_DETAIL);
             }
+
+            forwardToPublisher(Application.Publisher.ENTE_CONVENZIONATO_DETAIL);
+        }
+    }
+
+    public void eseguiSalvataggioAssociazioneEnteStruttura(BigDecimal idStrut, BigDecimal idEnteConvenz, Date dtIniVal,
+            Date dtFineVal) throws EMFError {
+        try {
+
+            /*
+             * Codice aggiuntivo per il logging...
+             */
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            if (getForm().getEnteConvenzOrg().getStatus().equals(BaseElements.Status.insert)) {
+                param.setNomeAzione(SpagoliteLogUtil.getToolbarSave(false));
+                BigDecimal idEnteConvenzOrg = ambienteEjb.insertEnteConvenzOrg(param, idStrut, idEnteConvenz, dtIniVal,
+                        dtFineVal);
+                getForm().getEnteConvenzOrg().getId_ente_convenz_org().setValue(idEnteConvenzOrg.toPlainString());
+
+                SIOrgEnteConvenzOrgRowBean row = new SIOrgEnteConvenzOrgRowBean();
+                getForm().getEnteConvenzOrg().copyToBean(row);
+                row.setBigDecimal("id_ambiente_ente_convenz",
+                        getForm().getEnteConvenzOrg().getId_ambiente_ente_convenz().parse());
+                row.setString("nm_ambiente_ente_convenz",
+                        getForm().getEnteConvenzOrg().getId_ambiente_ente_convenz().getDecodedValue());
+                row.setString("nm_ente_convenz", getForm().getEnteConvenzOrg().getId_ente_convenz().getDecodedValue());
+
+                getForm().getEnteConvenzOrgList().getTable().last();
+                getForm().getEnteConvenzOrgList().getTable().add(row);
+            } else if (getForm().getEnteConvenzOrg().getStatus().equals(BaseElements.Status.update)) {
+                param.setNomeAzione(SpagoliteLogUtil.getToolbarSave(true));
+                BigDecimal idEnteConvenzOrg = getForm().getEnteConvenzOrg().getId_ente_convenz_org().parse();
+                // La modifica, se interessa anche l'ente convenzionato, porta ad una modifica dell'id
+                // dell'associazione
+                BigDecimal idEnteConvenzOrgNew = ambienteEjb.updateEnteConvenzOrg(param, idEnteConvenzOrg,
+                        idEnteConvenz, idStrut, dtIniVal, dtFineVal);
+
+                if (idEnteConvenzOrg.compareTo(idEnteConvenzOrgNew) != 0) {
+                    getForm().getEnteConvenzOrg().getId_ente_convenz_org()
+                            .setValue(idEnteConvenzOrgNew.toPlainString());
+                    getForm().getEnteConvenzOrgList().getTable().getCurrentRow().setBigDecimal("id_ente_convenz_org",
+                            idEnteConvenzOrgNew);
+                }
+            }
+            getMessageBox().addInfo("Associazione con l'ente convenzionato salvata con successo");
+            getMessageBox().setViewMode(MessageBox.ViewMode.plain);
+            // loadDettaglio();
         } catch (ParerUserError ex) {
             getMessageBox().addError(ex.getDescription());
             forwardToPublisher(getLastPublisher());
         }
+        if (!getMessageBox().hasError()) {
+            getForm().getEnteConvenzOrgList().setStatus(BaseElements.Status.view);
+            getForm().getEnteConvenzOrg().setStatus(BaseElements.Status.view);
+            getForm().getEnteConvenzOrg().setViewMode();
+        }
+    }
+
+    public void confermaSalvataggioAssociazioneEnteStruttura() throws Throwable {
+        if (getSession().getAttribute("salvataggioAttributes") != null) {
+            Object[] sa = (Object[]) getSession().getAttribute("salvataggioAttributes");
+            eseguiSalvataggioAssociazioneEnteStruttura((BigDecimal) sa[0], (BigDecimal) sa[1], (Date) sa[2],
+                    (Date) sa[3]);
+        }
+        forwardToPublisher(Application.Publisher.ENTE_CONVENZIONATO_DETAIL);
+    }
+
+    public void annullaSalvataggioAssociazioneEnteStruttura() throws Throwable {
+        getSession().removeAttribute("salvataggioAttributes");
+        forwardToPublisher(Application.Publisher.ENTE_CONVENZIONATO_DETAIL);
     }
 
     @Override

@@ -619,7 +619,7 @@ public class ComponentiAction extends ComponentiAbstractAction {
     /**
      * Metodo utilizzato dal framework quando clicco sul tasto "Indietro" nella barra di scorrimento del dettaglio di un
      * record
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -642,7 +642,7 @@ public class ComponentiAction extends ComponentiAbstractAction {
      * Trigger invocato alla modifica della combo NM_TIPO_STRUT_DOC per caricare i dati sulla combo NM_TIPO_COMP_DOC
      *
      * @return I filtri della form come JSONObject
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

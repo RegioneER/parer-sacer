@@ -129,7 +129,7 @@ public class ModelliSerieEjb {
      *            id struttura
      * @param filterValid
      *            true per prendere i record attivi attualmente
-     * 
+     *
      * @return entity DecModelloTipoSerieTableBean
      */
     public DecModelloTipoSerieTableBean getDecModelloTipoSerieAllAbilitatiTableBean(BigDecimal idStrut,
@@ -175,7 +175,7 @@ public class ModelliSerieEjb {
      *            id ambiente
      * @param filterValid
      *            true per prendere i record attivi attualmente
-     * 
+     *
      * @return entity bean DecModelloTipoSerieTableBean
      */
     public DecModelloTipoSerieTableBean getDecModelloTipoSerieAbilitatiAmbienteTableBean(BigDecimal idAmbiente,
@@ -228,7 +228,7 @@ public class ModelliSerieEjb {
      *            id registro in modifica
      * @param idTipoUnitaDoc
      *            id tipo ud in modifica
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -295,7 +295,7 @@ public class ModelliSerieEjb {
      *            id registro unita doc
      * @param idTipoUnitaDoc
      *            tipo unita doc
-     * 
+     *
      * @return true se esiste
      */
     public boolean checkTipoUdRegNmTipoSerieDaCreare(String nmTipoSerieDaCreare, BigDecimal idStrut,
@@ -320,7 +320,7 @@ public class ModelliSerieEjb {
      *            id registro unita doc
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @return true se esiste
      */
     public boolean checkTipoUdRegCdSerieDaCreare(String cdSerieDaCreare, BigDecimal idStrut,
@@ -337,9 +337,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -374,7 +374,7 @@ public class ModelliSerieEjb {
      *            id modello tipo serie
      * @param idTipoNotaSerie
      *            nota serie
-     * 
+     *
      * @return il massimo progressivo
      */
     public BigDecimal getMaxPgNotaModelloTipoSerie(BigDecimal idModelloTipoSerie, BigDecimal idTipoNotaSerie) {
@@ -399,9 +399,9 @@ public class ModelliSerieEjb {
      *            descrizione nota
      * @param dtNota
      *            data nota
-     * 
+     *
      * @return BigDecimal pk nota
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -451,7 +451,7 @@ public class ModelliSerieEjb {
      *            id utente
      * @param dtNota
      *            data nota
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -479,12 +479,12 @@ public class ModelliSerieEjb {
 
     /**
      * Metodo di eliminazione di un elemento di descrizione del modello di tipo serie
-     * 
+     *
      * @param param
      *            parametri per logging
      * @param idNotaModelloTipoSerie
      *            id nota modello serie
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -512,9 +512,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -532,9 +532,9 @@ public class ModelliSerieEjb {
      *            id modello
      * @param tiCampo
      *            tipo campo delle regole
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -572,7 +572,7 @@ public class ModelliSerieEjb {
      *            tipo campo
      * @param nmCampo
      *            nome campo
-     * 
+     *
      * @return BigDecimal pk modello campo in unita doc
      */
     public BigDecimal getIdModelloCampoInpUd(BigDecimal idModelloTipoSerie, String tiCampo, String nmCampo) {
@@ -590,7 +590,7 @@ public class ModelliSerieEjb {
      *            parametri per il logging
      * @param idModelloCampoInpUd
      *            id modello campo in unita doc
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -621,7 +621,7 @@ public class ModelliSerieEjb {
      *            id modello serie
      * @param datiCompilati
      *            il tablebean con i dati provenienti dall'online a seguito di inserimenti/modifiche/cancellazioni
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -722,9 +722,9 @@ public class ModelliSerieEjb {
      *            id tipo entita
      * @param tiCampo
      *            tipo campo delle regole
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -786,9 +786,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -839,9 +839,9 @@ public class ModelliSerieEjb {
      *            id regola di rappresentazione, se null crea la lista completa di campi
      * @param tiCampo
      *            tipo campo delle regole
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -885,9 +885,9 @@ public class ModelliSerieEjb {
      *            idTipoUnitaDoc o idTipoDoc in base a tiCampo
      * @param tiCampo
      *            tipo campo delle regole
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -960,7 +960,7 @@ public class ModelliSerieEjb {
      *            compilazione
      * @param idModelloTipoSerie
      *            id modello serie
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1010,7 +1010,7 @@ public class ModelliSerieEjb {
      *            formato
      * @param datiCompilati
      *            compilazione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1080,7 +1080,7 @@ public class ModelliSerieEjb {
      *            parametri per il logging
      * @param idModelloOutSelUd
      *            id modello output
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1108,9 +1108,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1137,9 +1137,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1166,9 +1166,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1200,9 +1200,9 @@ public class ModelliSerieEjb {
      *            id tipo unita doc
      * @param idTipoDoc
      *            id tipo documento
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1335,7 +1335,7 @@ public class ModelliSerieEjb {
      *            id modello serie
      * @param datiCompilati
      *            compilazione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1398,7 +1398,7 @@ public class ModelliSerieEjb {
      *            parametri per il logging
      * @param idModelloFiltroSelUdattb
      *            id modello filtro
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1427,9 +1427,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1467,9 +1467,9 @@ public class ModelliSerieEjb {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return il rowBean contenente i dati del modello
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1500,9 +1500,9 @@ public class ModelliSerieEjb {
      *            nome modello
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return il rowBean contenente i dati del modello
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1533,7 +1533,7 @@ public class ModelliSerieEjb {
      *            id modello
      * @param creazioneBean
      *            bean CreazioneModelloSerieBean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1565,9 +1565,9 @@ public class ModelliSerieEjb {
      *            parametri per il logging
      * @param creazioneBean
      *            bean CreazioneModelloSerieBean
-     * 
+     *
      * @return id del nuovo modello
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1643,7 +1643,7 @@ public class ModelliSerieEjb {
      *            parametri per il logging
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1674,7 +1674,7 @@ public class ModelliSerieEjb {
      *            id modello
      * @param nmTipiDocs
      *            tipi documento da inserire
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1728,7 +1728,7 @@ public class ModelliSerieEjb {
      *            parametri per il logging
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1758,7 +1758,7 @@ public class ModelliSerieEjb {
      *            id modello
      * @param strutTable
      *            entity OrgStrutTableBean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1803,7 +1803,7 @@ public class ModelliSerieEjb {
      *            parametri per il logging
      * @param idUsoModelloTipoSerie
      *            id modello
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

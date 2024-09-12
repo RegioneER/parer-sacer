@@ -56,7 +56,7 @@ public class ControlliWSInvioRichiestaAnnullamentoVersamenti {
      *            id struttura
      * @param codice
      *            code
-     * 
+     *
      * @return RispostaControlli risposta con esisto operazione eseguita
      */
     @SuppressWarnings("unchecked")

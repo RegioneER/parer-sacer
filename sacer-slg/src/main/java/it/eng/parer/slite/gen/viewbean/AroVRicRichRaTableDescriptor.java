@@ -52,7 +52,6 @@ public class AroVRicRichRaTableDescriptor extends TableDescriptor {
     public static final String COL_SUM_DIM = "sum_dim";
     public static final String COL_MAX_DT_ESTRAZIONE = "max_dt_estrazione";
     public static final String COL_ESTRATTI_TOTALI = "estratti_totali";
-    public static final String COL_PRIORITA = "priorita";
     public static final String COL_CD_ERRORE = "cd_errore";
     public static final String COL_TS_INIZIO = "ts_inizio";
 
@@ -72,7 +71,6 @@ public class AroVRicRichRaTableDescriptor extends TableDescriptor {
         map.put(COL_SUM_DIM, new ColumnDescriptor(COL_SUM_DIM, Types.DECIMAL, 22, true));
         map.put(COL_MAX_DT_ESTRAZIONE, new ColumnDescriptor(COL_MAX_DT_ESTRAZIONE, Types.TIMESTAMP, 7, true));
         map.put(COL_ESTRATTI_TOTALI, new ColumnDescriptor(COL_ESTRATTI_TOTALI, Types.DECIMAL, 22, true));
-        map.put(COL_PRIORITA, new ColumnDescriptor(COL_PRIORITA, Types.DECIMAL, 22, true));
         map.put(COL_CD_ERRORE, new ColumnDescriptor(COL_CD_ERRORE, Types.VARCHAR, 300, true));
         map.put(COL_TS_INIZIO, new ColumnDescriptor(COL_TS_INIZIO, Types.TIMESTAMP, 11, false));
     }

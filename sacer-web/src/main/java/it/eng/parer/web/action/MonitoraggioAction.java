@@ -6682,7 +6682,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         }
     }
 
-    public void download() throws EMFError {
+    public void download() throws EMFError, IOException {
         String filename = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name());
         String path = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name());
         Boolean deleteFile = Boolean.parseBoolean(
@@ -6694,11 +6694,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                  * Definiamo l'output previsto che sar\u00e0 un file in formato zip di cui si occuper\u00e0 la servlet
                  * per fare il download
                  */
-                OutputStream outUD = getServletOutputStream();
                 getResponse().setContentType("application/zip");
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename);
 
-                try (FileInputStream inputStream = new FileInputStream(fileToDownload);) {
+                try (OutputStream outUD = getServletOutputStream();
+                        FileInputStream inputStream = new FileInputStream(fileToDownload);) {
+
                     getResponse().setHeader("Content-Length", String.valueOf(fileToDownload.length()));
                     byte[] bytes = new byte[8000];
                     int bytesRead;
@@ -6710,13 +6711,11 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                     log.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
-                    IOUtils.closeQuietly(outUD);
-                    outUD = null;
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (Boolean.TRUE.equals(deleteFile)) {
-                    fileToDownload.delete();
+                if (deleteFile.booleanValue()) {
+                    Files.delete(fileToDownload.toPath());
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");

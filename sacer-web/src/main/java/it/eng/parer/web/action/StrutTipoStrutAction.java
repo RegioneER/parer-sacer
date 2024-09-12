@@ -1281,7 +1281,7 @@ public class StrutTipoStrutAction extends StrutTipoStrutAbstractAction {
         /*
          * Propago l'idStruttura che ho salvato in memoria, per passarlo con la nuova form che porterò nella nuova
          * action
-         * 
+         *
          */
         BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
         form.getIdList().getId_strut().setValue(idStrut.toString());

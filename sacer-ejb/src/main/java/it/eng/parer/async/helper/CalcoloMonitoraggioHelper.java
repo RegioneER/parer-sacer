@@ -17,14 +17,7 @@
 
 package it.eng.parer.async.helper;
 
-import it.eng.parer.entity.*;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.objectstorage.ejb.ObjectStorageService;
-import it.eng.parer.viewEntity.*;
-import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
-import it.eng.parer.web.helper.UnitaDocumentarieHelper;
-import it.eng.parer.web.util.Constants;
-import it.eng.parer.ws.utils.CostantiDB;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -33,13 +26,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.ejb.*;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.AroUnitaDoc;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.VrsContenutoFileKo;
+import it.eng.parer.entity.VrsDatiSessioneVersKo;
+import it.eng.parer.entity.VrsDocNonVer;
+import it.eng.parer.entity.VrsFileSessioneKo;
+import it.eng.parer.entity.VrsSessioneVersKo;
+import it.eng.parer.entity.VrsUnitaDocNonVer;
+import it.eng.parer.entity.VrsXmlDatiSessioneVers;
+import it.eng.parer.entity.VrsXmlDatiSessioneVersKo;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
+import it.eng.parer.viewEntity.LogVLisIniSchedJob;
+import it.eng.parer.viewEntity.LogVLisIniSchedJobStrut;
+import it.eng.parer.viewEntity.VrsVAggFallitiRisolto;
+import it.eng.parer.viewEntity.VrsVVersFallitiDaNorisol;
+import it.eng.parer.viewEntity.VrsVVersFallitiDaVerif;
+import it.eng.parer.viewEntity.VrsVVersFallitiRisolto;
+import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
+import it.eng.parer.web.helper.UnitaDocumentarieHelper;
+import it.eng.parer.web.util.Constants;
+import it.eng.parer.ws.utils.CostantiDB;
 
 /**
  *
@@ -83,7 +107,7 @@ public class CalcoloMonitoraggioHelper {
         String queryStr = "SELECT u FROM VrsVVersFallitiDaVerif u " + "WHERE u.idStrut = :idStrut "
                 + "AND u.dtApertura > :ultimaRegistrazione ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idStrut", GenericHelper.bigDecimalFromLong(idStrut));
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
         query.setParameter("ultimaRegistrazione", ultimaRegistrazione);
         return query.getResultList();
     }
@@ -92,7 +116,7 @@ public class CalcoloMonitoraggioHelper {
         String queryStr = "SELECT u FROM VrsVVersFallitiDaNorisol u " + "WHERE u.idStrut = :idStrut "
                 + "AND u.dtApertura > :ultimaRegistrazione ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idStrut", GenericHelper.bigDecimalFromLong(idStrut));
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
         query.setParameter("ultimaRegistrazione", ultimaRegistrazione);
         return query.getResultList();
     }
@@ -102,7 +126,7 @@ public class CalcoloMonitoraggioHelper {
                 + "AND u.idStrut = :idStrut " + "ORDER BY u.dtRegLogJobIni DESC ";
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("nmJob", nmJob);
-        query.setParameter("idStrut", GenericHelper.bigDecimalFromLong(idStrut));
+        query.setParameter("idStrut", bigDecimalFromLong(idStrut));
 
         List<LogVLisIniSchedJobStrut> lastSched = query.getResultList();
 
@@ -737,7 +761,7 @@ public class CalcoloMonitoraggioHelper {
         String queryStr = "SELECT v FROM " + table + " v WHERE v.idSessioneVers = :idSessioneVersKo";
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idSessioneVersKo", GenericHelper.bigDecimalFromLong(idSessioneVersKo));
+        query.setParameter("idSessioneVersKo", bigDecimalFromLong(idSessioneVersKo));
 
         List<?> vrsList = query.getResultList();
         if (vrsList != null && !vrsList.isEmpty()) {

@@ -17,29 +17,31 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
 import it.eng.parer.entity.DecTipoDoc;
 import it.eng.parer.entity.DecTipoStrutDoc;
 import it.eng.parer.entity.DecTipoStrutDocAmmesso;
 import it.eng.parer.entity.DecTipoStrutUdXsd;
 import it.eng.parer.helper.GenericHelper;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-
 /**
  * Helper delle tipologie di documento
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class TipoDocumentoHelper extends GenericHelper {
@@ -51,7 +53,7 @@ public class TipoDocumentoHelper extends GenericHelper {
      *            nome tipo documento
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return l'oggetto DecTipoDoc o null se inesistente
      */
     public DecTipoDoc getDecTipoDocByName(String nmTipoDoc, BigDecimal idStrut) {
@@ -65,7 +67,7 @@ public class TipoDocumentoHelper extends GenericHelper {
      *            nome tipo documento
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return l'oggetto DecTipoDoc o null se inesistente
      */
     public DecTipoDoc getDecTipoDocByName(String nmTipoDoc, long idStrut) {
@@ -88,7 +90,7 @@ public class TipoDocumentoHelper extends GenericHelper {
      *            id utente
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @return DecRegistroUnitaDocTableBean
      */
     public List<DecTipoDoc> getTipiDocAbilitati(long idUtente, BigDecimal idStruttura) {
@@ -104,7 +106,7 @@ public class TipoDocumentoHelper extends GenericHelper {
      *            id utente
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @return DecRegistroUnitaDocTableBean bean DecRegistroUnitaDoc
      */
     public List<DecTipoDoc> getTipiDocPrincipaliAbilitati(long idUtente, BigDecimal idStruttura) {
@@ -123,7 +125,7 @@ public class TipoDocumentoHelper extends GenericHelper {
      *            lista id struttura
      * @param docPrincipale
      *            documento principale true/false
-     * 
+     *
      * @return lista oggetti di tipo {@link DecTipoDoc}
      */
     public List<DecTipoDoc> getTipiDocAbilitatiDaStrutturaList(long idUtente, List<BigDecimal> idStrutturaList,

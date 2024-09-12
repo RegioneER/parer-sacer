@@ -17,17 +17,17 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper;
 
-import it.eng.parer.entity.*;
-import it.eng.parer.grantedEntity.OrgAmbitoTerrit;
-import it.eng.parer.grantedEntity.SIOrgAccordoEnte;
-import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
-import it.eng.parer.grantedEntity.SIOrgEnteSiam;
-import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.job.allineamentoEntiConvenzionati.utils.CostantiAllineaEntiConv;
-import it.eng.parer.viewEntity.*;
-import it.eng.parer.web.util.Constants;
-import org.apache.commons.lang3.StringUtils;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -35,9 +35,30 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.math.BigDecimal;
-import java.util.*;
 
+import org.apache.commons.lang3.StringUtils;
+
+import it.eng.parer.entity.AplSistemaMigraz;
+import it.eng.parer.entity.DecCriterioFiltroMultiplo;
+import it.eng.parer.entity.DecSelCriterioRaggrFasc;
+import it.eng.parer.entity.IamEnteConvenzDaAllinea;
+import it.eng.parer.entity.OrgCategStrut;
+import it.eng.parer.entity.OrgEnte;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.OrgSubStrut;
+import it.eng.parer.grantedEntity.OrgAmbitoTerrit;
+import it.eng.parer.grantedEntity.SIOrgAccordoEnte;
+import it.eng.parer.grantedEntity.SIOrgEnteConvenzOrg;
+import it.eng.parer.grantedEntity.SIOrgEnteSiam;
+import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.job.allineamentoEntiConvenzionati.utils.CostantiAllineaEntiConv;
+import it.eng.parer.viewEntity.OrgVChkStrutPartition;
+import it.eng.parer.viewEntity.OrgVChkTimePartitionFasc;
+import it.eng.parer.viewEntity.OrgVRicStrut;
+import it.eng.parer.web.util.Constants;
+
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class StruttureHelper extends GenericHelper {
@@ -50,7 +71,7 @@ public class StruttureHelper extends GenericHelper {
      *            Classe di tipo entity
      * @param entity
      *            entita jpa
-     * 
+     *
      * @return l'entity aggiornata
      */
     public <T> T updateEntity(T entity) {
@@ -112,7 +133,7 @@ public class StruttureHelper extends GenericHelper {
      *            id ente
      * @param filterValid
      *            true/false
-     * 
+     *
      * @return OrgStrutTableBean bean entity organizzazione struttura
      */
     public List<OrgStrut> retrieveOrgStrutList(long idUtente, BigDecimal idEnte, Boolean filterValid) {
@@ -230,7 +251,7 @@ public class StruttureHelper extends GenericHelper {
      *            id utente
      * @param filterValid
      *            true/false
-     * 
+     *
      * @return lista oggetti di tipo {@link OrgStrut}
      */
     public List<OrgStrut> retrieveOrgStrutList(long idUtente, String nmStrut, BigDecimal idEnte, BigDecimal idAmbiente,
@@ -482,7 +503,7 @@ public class StruttureHelper extends GenericHelper {
      *            id ambiente
      * @param tipoDefTemplateEnte
      *            tipo template ente
-     * 
+     *
      * @return OrgStrut entity OrgStrut
      */
     public OrgStrut getFirstOrgStrutTemplatePerAmbienteAndTipoDefTemplateEnte(BigDecimal idAmbiente,
@@ -517,7 +538,7 @@ public class StruttureHelper extends GenericHelper {
      *            id ambiente
      * @param tipoDefTemplateEnte
      *            tipo template
-     * 
+     *
      * @return OrgStrut entity OrgStrut
      */
     public OrgStrut getFirstOrgStrutTemplatePerAmbienteAndTipoDefTemplateEntePartizionata(BigDecimal idAmbiente,
@@ -557,7 +578,7 @@ public class StruttureHelper extends GenericHelper {
      *
      * @param idEnte
      *            id ente
-     * 
+     *
      * @return OrgStrut entity OrgStrut
      */
     public OrgStrut getFirtsOrgStrutTemplatePerEntePartizionata(BigDecimal idEnte) {
@@ -592,7 +613,7 @@ public class StruttureHelper extends GenericHelper {
      *
      * @param idUserIam
      *            id user IAM
-     * 
+     *
      * @return l'object array con numeroStrutture e ambiente
      */
     public List<Object[]> countOrgStrutTemplateRaggruppati(long idUserIam) {
@@ -628,7 +649,7 @@ public class StruttureHelper extends GenericHelper {
      *            id ente
      * @param tipoDefTemplateEnte
      *            tipo template
-     * 
+     *
      * @return il numero di strutture template ricavate
      */
     public Long countOrgStrutTemplatePerAmbienteEnte(Long idAmbiente, Long idEnte, String tipoDefTemplateEnte) {
@@ -663,7 +684,7 @@ public class StruttureHelper extends GenericHelper {
      *
      * @param idUserIam
      *            id user IAM
-     * 
+     *
      * @return l'object array con numeroStrutture e ambiente
      */
     public List<Object[]> countOrgStrutTemplateWithCompletedPartitioningRaggruppati(long idUserIam) {
@@ -771,7 +792,7 @@ public class StruttureHelper extends GenericHelper {
     /**
      * @param idTipoFascicolo
      *            id del tipo fasciolo
-     * 
+     *
      * @return Lista di {@link DecSelCriterioRaggrFasc}
      */
     public List<DecSelCriterioRaggrFasc> getRelationsByIdTipoFascicolo(long idTipoFascicolo) {
@@ -788,9 +809,9 @@ public class StruttureHelper extends GenericHelper {
      *            id del tipo di dato
      * @param tipoDato
      *            costante Constants.TipoDato
-     * 
+     *
      * @return Lista di {@link DecSelCriterioRaggrFasc}
-     * 
+     *
      * @deprecated ormai gestisce solo il TIPO_FASCICOLO, quindi meglio usare
      *             {@link it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper#getRelationsByIdTipoFascicolo
      *             getRelationsByIdTipoFascicolo}
@@ -949,14 +970,14 @@ public class StruttureHelper extends GenericHelper {
 
     /**
      * @deprecated MAC#21555
-     * 
+     *
      * @param idUserIam
      *            id dell'utente
      * @param idAmbientiSet
      *            identificativi degli ambienti
-     * 
+     *
      * @return Lista delle strutture abilitate
-     * 
+     *
      * @deprecated
      */
     @Deprecated
@@ -1003,7 +1024,7 @@ public class StruttureHelper extends GenericHelper {
      *
      * @param idUtente
      *            id utente
-     * 
+     *
      * @return Object[], l'object array contenente i dati sulle strutture
      */
     public List<Object[]> getAmbEnteStrutDefault(long idUtente) {
@@ -1076,7 +1097,7 @@ public class StruttureHelper extends GenericHelper {
      *            data fine validita
      * @param idEnteConvenzOrg
      *            id ente convenzionato
-     * 
+     *
      * @return true se esiste già l'associazione esiste gia
      */
     public boolean checkEsistenzaAssociazioneEnteConvenzStrutVers(String nmApplic, BigDecimal idStrut, Date dtIniVal,
@@ -1117,7 +1138,7 @@ public class StruttureHelper extends GenericHelper {
      *            data inizio validita
      * @param dtFineVal
      *            data fine validita
-     * 
+     *
      * @return true se esiste accordo valido
      */
     public boolean checkEsistenzaPeriodoValiditaAssociazioneEnteConvenzStrutVers(BigDecimal idEnteConvenz,
@@ -1142,7 +1163,7 @@ public class StruttureHelper extends GenericHelper {
      *
      * @param idEnteConvenz
      *            id ente convenzionato
-     * 
+     *
      * @return true se esiste accordo valido
      */
     public boolean checkEsistenzaAccordoValidoEnteConvenzStrutVers(BigDecimal idEnteConvenz) {
@@ -1168,7 +1189,7 @@ public class StruttureHelper extends GenericHelper {
      *            la data di inizio validità dell'associazione struttura/ente convenzionato
      * @param dtFineVal
      *            la data di fin validità dell'associazione struttura/ente convenzionato
-     * 
+     *
      * @return true se viene soddisfatto il controllo
      */
     public boolean existsPeriodoValiditaAssociazioneEnteConvenzStrutVersAccordi(BigDecimal idEnteConvenz, Date dtIniVal,
@@ -1203,14 +1224,14 @@ public class StruttureHelper extends GenericHelper {
     /**
      * Verifica se per un accordo valido (data odierna compresa nell'intervallo di validità) le date dell'associazione
      * rientrano nell'intervallo tra la data di decorrenza accordo e la data di fine validità dell'ente siam
-     * 
+     *
      * @param idEnteConvenz
      *            l'ente convenzionato su cui controllare se esiste un accordo valido
      * @param dtIniVal
      *            la data di inizio validità dell'associazione
      * @param dtFineVal
      *            la data di fine validità dell'associazione
-     * 
+     *
      * @return vero o falso a seconda che l'intervallo sia valido
      */
     public boolean existsIntervalloValiditaPerAssociazione(BigDecimal idEnteConvenz, Date dtIniVal, Date dtFineVal) {
@@ -1231,7 +1252,7 @@ public class StruttureHelper extends GenericHelper {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true se esiste almeno una struttura non cessata
      */
     public boolean containsStrutEnteNonCessata(BigDecimal idStrut) {
@@ -1315,10 +1336,10 @@ public class StruttureHelper extends GenericHelper {
 
     /**
      * Torna VERO se il codice Struttura normalizzato passato non esiste su db, quindi è univoco
-     * 
+     *
      * @param cdStrutNormaliz
      *            il codice struttura normalizzato
-     * 
+     *
      * @return true se il codice Struttura normalizzato passato non esiste su db
      */
     public boolean isCodStrutturaNormalizzatoUnivoco(String cdStrutNormaliz) {

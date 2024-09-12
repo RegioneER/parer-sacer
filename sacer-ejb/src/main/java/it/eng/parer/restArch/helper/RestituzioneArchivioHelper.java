@@ -17,6 +17,9 @@
 
 package it.eng.parer.restArch.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -163,8 +166,7 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         String clause = " WHERE ";
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicRichRa ("
                 + "r.idRichiestaRa, r.nmEnteConvenz, r.nmEnteStrut, r.idEnte, r.idStrut, r.idEnteConvenz, r.totali, r.estratti, r.errori, "
-                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.priorita, r.tsInizio)"
-                + " FROM AroVRicRichRa r ");
+                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.tsInizio)" + " FROM AroVRicRichRa r ");
         if (idEnteConvenzList != null && !idEnteConvenzList.isEmpty()) {
             if (idEnteConvenzList.size() == 1) {
                 queryStr.append(clause).append("r.idEnteConvenz = :idEnteConvenz ");
@@ -203,17 +205,17 @@ public class RestituzioneArchivioHelper extends GenericHelper {
 
     /**
      * Recupero l'elenco delle strutture associate alla richiesta <code>idRichiestaRa</code>
-     * 
+     *
      * @param idRichiestaRa
      *            l'identificativo della richiesta
-     * 
+     *
      * @return lista oggetti di tipo {@link AroVRicRichRa}
      */
     public List<AroVRicRichRa> retrieveAroVRicRichRa(BigDecimal idRichiestaRa) {
         Query query = getEntityManager().createQuery("SELECT DISTINCT new it.eng.parer.viewEntity.AroVRicRichRa ("
                 + "r.idRichiestaRa, r.nmEnteConvenz, r.nmEnteStrut, r.idEnte, r.idStrut, r.idEnteConvenz, r.totali, r.estratti, r.errori, "
-                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.priorita, r.tsInizio)"
-                + " FROM AroVRicRichRa r " + "WHERE r.idRichiestaRa = :idRichiestaRa " + "ORDER BY r.nmEnteStrut ");
+                + "r.estrattiTotali, r.sumDim, r.maxDtEstrazione, r.tiStato, r.tsInizio)" + " FROM AroVRicRichRa r "
+                + "WHERE r.idRichiestaRa = :idRichiestaRa " + "ORDER BY r.tsInizio");
         query.setParameter("idRichiestaRa", idRichiestaRa);
         return query.getResultList();
     }

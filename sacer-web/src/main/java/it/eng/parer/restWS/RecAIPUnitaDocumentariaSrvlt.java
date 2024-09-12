@@ -28,27 +28,28 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.ejb.EJB;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.bind.MarshalException;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.ValidationException;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,7 @@ import it.eng.spagoCore.configuration.ConfigSingleton;
  *
  * @author Fioravanti_F
  */
+@WebServlet(urlPatterns = { "/RecAIPUnitaDocumentariaSync" }, asyncSupported = true)
 public class RecAIPUnitaDocumentariaSrvlt extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -81,6 +83,15 @@ public class RecAIPUnitaDocumentariaSrvlt extends HttpServlet {
 
     private String uploadDir;
     private String instanceName;
+
+    @EJB(mappedName = "java:app/Parer-ejb/RecuperoSync")
+    private RecuperoSync recuperoSync;
+
+    @EJB(mappedName = "java:app/Parer-ejb/XmlContextCache")
+    private XmlContextCache xmlContextCache;
+
+    @EJB(mappedName = "java:app/Parer-ejb/CreazioneIndiceAipHelper")
+    private CreazioneIndiceAipHelper creazioneIndiceAipHelper;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -102,7 +113,7 @@ public class RecAIPUnitaDocumentariaSrvlt extends HttpServlet {
      *            servlet request
      * @param response
      *            servlet response
-     * 
+     *
      * @throws ServletException
      *             if a servlet-specific error occurs
      * @throws IOException
@@ -111,18 +122,13 @@ public class RecAIPUnitaDocumentariaSrvlt extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // EVO#20972
-        CreazioneIndiceAipHelper creazioneIndiceAipHelper;
-        // end EVO#20972
-        RecuperoSync recuperoSync;
-        XmlContextCache xmlContextCache;
         RispostaWSRecupero rispostaWs;
         RecuperoExt myRecuperoExt;
         StatoConservazione myEsito;
         SyncFakeSessn sessioneFinta = new SyncFakeSessn();
-        Iterator tmpIterator = null;
+        Iterator<FileItem> tmpIterator = null;
         DiskFileItem tmpFileItem = null;
-        List fileItems = null;
+        List<FileItem> fileItems = null;
         AvanzamentoWs tmpAvanzamento;
         RequestPrsr myRequestPrsr = new RequestPrsr();
         RequestPrsr.ReqPrsrConfig tmpPrsrConfig = new RequestPrsr().new ReqPrsrConfig();
@@ -133,33 +139,6 @@ public class RecAIPUnitaDocumentariaSrvlt extends HttpServlet {
 
         tmpAvanzamento = AvanzamentoWs.nuovoAvanzamentoWS(instanceName, AvanzamentoWs.Funzioni.Recupero);
         tmpAvanzamento.logAvanzamento();
-
-        // Recupera l'ejb, se possibile - altrimenti segnala errore
-        try {
-            recuperoSync = (RecuperoSync) new InitialContext().lookup("java:app/Parer-ejb/RecuperoSync");
-        } catch (NamingException ex) {
-            log.error("Errore nel recupero dell'EJB ", ex);
-            throw new ServletException("Impossibile recuperare l'ejb", ex);
-        }
-
-        try {
-            xmlContextCache = (XmlContextCache) new InitialContext().lookup("java:app/Parer-ejb/XmlContextCache");
-        } catch (NamingException ex) {
-            log.error("Errore nel recupero dell'EJB XmlContextCache ", ex);
-            throw new ServletException("Impossibile recuperare l'ejb XmlContextCache ", ex);
-        }
-
-        // EVO#20972
-        try {
-            creazioneIndiceAipHelper = (CreazioneIndiceAipHelper) new InitialContext()
-                    .lookup("java:app/Parer-ejb/CreazioneIndiceAipHelper");
-        } catch (NamingException ex) {
-            log.error("Errore nel recupero dell'EJB CreazioneIndiceAipHelper ", ex);
-            throw new ServletException("Impossibile recuperare l'ejb CreazioneIndiceAipHelper ", ex);
-        }
-        // end EVO#20972
-
-        tmpAvanzamento.setFase("EJB recuperato").logAvanzamento();
 
         recuperoSync.initRispostaWs(rispostaWs, tmpAvanzamento, myRecuperoExt);
         myEsito = rispostaWs.getIstanzaEsito();
@@ -318,56 +297,43 @@ public class RecAIPUnitaDocumentariaSrvlt extends HttpServlet {
             String filename = rispostaWs.getNomeFile();
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename);
-            ServletOutputStream out = null;
-            FileInputStream inputStream = null;
-            try {
+
+            try (ServletOutputStream out = response.getOutputStream();
+                    FileInputStream inputStream = new FileInputStream(
+                            rispostaWs.getRifFileBinario().getFileSuDisco());) {
+
                 response.setHeader("Content-Length",
                         String.valueOf(rispostaWs.getRifFileBinario().getFileSuDisco().length()));
-                out = response.getOutputStream();
-                inputStream = new FileInputStream(rispostaWs.getRifFileBinario().getFileSuDisco());
                 byte[] buffer = new byte[BUFFERSIZE];
                 int bytesRead;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     out.write(buffer, 0, bytesRead);
                 }
                 out.flush();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 log.error("Eccezione nella servlet recupero AIP sync", e);
-            } finally {
-                IOUtils.closeQuietly(inputStream);
-                IOUtils.closeQuietly(out);
-                inputStream = null;
-                out = null;
             }
         } else {
             response.setContentType("application/xml; charset=\"utf-8\"");
-            ServletOutputStream out = null;
-            OutputStreamWriter tmpStreamWriter = null;
 
-            try {
-                out = response.getOutputStream();
-                tmpStreamWriter = new OutputStreamWriter(out, "UTF-8");
+            try (ServletOutputStream out = response.getOutputStream();
+                    OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);) {
 
                 Marshaller marshaller = xmlContextCache.getVersRespStatoCtx_StatoConservazione().createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
                 marshaller.marshal(myEsito, tmpStreamWriter);
-            } catch (MarshalException e) {
+            } catch (JAXBException | IOException e) {
                 log.error("Eccezione nella servlet recupero AIP sync", e);
-            } catch (ValidationException e) {
-                log.error("Eccezione nella servlet recupero AIP sync", e);
-            } catch (Exception e) {
-                log.error("Eccezione nella servlet recupero AIP sync", e);
-            } finally {
-                IOUtils.closeQuietly(tmpStreamWriter);
-                IOUtils.closeQuietly(out);
-                tmpStreamWriter = null;
-                out = null;
             }
         }
 
         // elimina il file zip, in ogni caso
         if (rispostaWs.getRifFileBinario() != null && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
-            rispostaWs.getRifFileBinario().getFileSuDisco().delete();
+            try {
+                Files.delete(rispostaWs.getRifFileBinario().getFileSuDisco().toPath());
+            } catch (IOException e) {
+                log.error("Eccezione nella servlet recupero AIP sync in fase di cancellazione file temporaneo", e);
+            }
         }
 
         tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("").logAvanzamento();

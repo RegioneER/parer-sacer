@@ -17,6 +17,9 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneModelliXsdUd.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +32,7 @@ import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 
 import it.eng.parer.entity.DecModelloXsdUd;
+import it.eng.parer.entity.DecUsoModelloXsdUniDoc;
 import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.slite.gen.form.ModelliUDForm.FiltriModelliXsdUd;
@@ -41,7 +45,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Restituisce una lista di modelli xsd
-     * 
+     *
      * @param idTiEntita
      *            id entità
      * @param tiEntitaSacer
@@ -50,7 +54,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *            VERS / MIGRAZ
      * @param filterValid
      *            se valido o meno
-     * 
+     *
      * @return lista dei modelli xsd
      */
     public List retrieveDecModelliXsdUdListByTiEntitaInUso(BigDecimal idTiEntita, TipiEntitaSacer tiEntitaSacer,
@@ -61,7 +65,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Restiusice l'uso del modello
-     * 
+     *
      * @param idModelloXsdUd
      *            id modello (opzionale)
      * @param idTiEntita
@@ -76,7 +80,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *            true = standard / false = altrimenti
      * @param filterValid
      *            se valido (opzionale)\
-     * 
+     *
      * @return lista uso del modello
      */
     public List retrieveDecUsoModelloXsdUdListByTiEntitaInUso(BigDecimal idModelloXsdUd, BigDecimal idTiEntita,
@@ -142,14 +146,14 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Restituisce la lista dei modelli per ambiente
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiUsoModelloXsd
      *            uso modello
      * @param filterValid
      *            se valido o meno
-     * 
+     *
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4Amb(BigDecimal idAmbiente, String tiUsoModelloXsd,
@@ -159,7 +163,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Restituisce la lista dei modelli per ambiente, tipo modello e versione
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModelloXsd
@@ -170,7 +174,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *            versione
      * @param filterValid
      *            se valido o meno
-     * 
+     *
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4AmbAndTiModAndCdXsd(BigDecimal idAmbiente, String tiModelloXsd,
@@ -181,7 +185,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Restituisce la lista dei modelli per ambiente e tipo modello
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModelloXsd
@@ -190,7 +194,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *            uso modello
      * @param filterValid
      *            se valido o meno
-     * 
+     *
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4AmbAndTiModelloXsd(BigDecimal idAmbiente, String tiModelloXsd,
@@ -200,7 +204,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Restituisce la lista dei modelli per ambiente / tipo modello e default
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModelloXsd
@@ -211,7 +215,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *            1 = default / 0 altrimenti
      * @param filterValid
      *            se valido o meno
-     * 
+     *
      * @return lista modelli
      */
     public List<DecModelloXsdUd> retrieveDecModelliXsdUd4AmbAndTiModelloDefXsd(BigDecimal idAmbiente,
@@ -262,14 +266,14 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Verifica se il modello associato all'entità è in uso, o meno, sui versamenti UD
-     * 
+     *
      * @param idStrut
      *            id struttura
      * @param idUsoModelloXsdUd
      *            id uso modello
      * @param tiEntitaSacer
      *            tipo entità
-     * 
+     *
      * @return true se non esiste modello in uso su versamento / false altrimenti
      */
     public boolean decUsoModelloXsdUdInUseOnVrs(BigDecimal idStrut, BigDecimal idUsoModelloXsdUd,
@@ -313,10 +317,10 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Verifica se il modello associato all'entità è in uso, o meno, sui versamenti UD
-     * 
+     *
      * @param idModelloXsdUd
      *            id modello xsd
-     * 
+     *
      * @return true se non esiste modello in uso su versamento / false altrimenti
      */
     public boolean decModelloXsdUdInUseOnVrs(BigDecimal idModelloXsdUd) {
@@ -342,12 +346,12 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Verifica se il modello già in uso in una delle relazioni
-     * 
+     *
      * @param idModelloXsdUd
      *            id del modello
      * @param filterValid
      *            se valido o meno
-     * 
+     *
      * @return true se il modello è utilizzato / false altrimenti
      */
     public boolean existDecModelliXsdUdListInUso(BigDecimal idModelloXsdUd, boolean filterValid) {
@@ -406,14 +410,14 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
     /**
      * Retituisce la lista dei modelli con filtro applicato
-     * 
+     *
      * @param idAmbientiToFind
      *            lista id ambienti
      * @param tiUsoModelloXsd
      *            tipo uso modello
      * @param filterValid
      *            true = valido / false altrimenti
-     * 
+     *
      * @param cdXsd
      *            Codice xsd
      * @param dsXsd
@@ -422,7 +426,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
      *            flag default
      * @param tiModelloXsd
      *            tipo di modello Xsd
-     * 
+     *
      * @return lista modelli xsd ud
      *
      */
@@ -483,6 +487,92 @@ public class ModelliXsdUdHelper extends GenericHelper {
             query.setParameter("filterDate", Calendar.getInstance().getTime());
         }
         return query.getResultList();
+    }
+
+    /**
+     * Ottiene il modello xsd di tipo ud in base ai dati di chiave unique
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param tiModelloXsd
+     *            tipo modello xsd
+     * @param tiUsoModelloXsd
+     *            tipo modello xsd in uso
+     * @param cdXsd
+     *            codice xsd
+     *
+     * @return modello entity DecModelloXsdUd
+     */
+    public DecModelloXsdUd getDecModelloXsdUd(long idAmbiente, String tiModelloXsd, String tiUsoModelloXsd,
+            String cdXsd) {
+        Query query = getEntityManager()
+                .createQuery("SELECT m FROM DecModelloXsdUd m WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
+                        + "AND m.tiModelloXsd = :tiModelloXsd AND m.tiUsoModelloXsd = :tiUsoModelloXsd AND m.cdXsd = :cdXsd");
+        query.setParameter("idAmbiente", idAmbiente);
+        query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
+        query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+        query.setParameter("cdXsd", cdXsd);
+        List<DecModelloXsdUd> list = query.getResultList();
+        DecModelloXsdUd modello = null;
+        if (!list.isEmpty()) {
+            modello = list.get(0);
+        }
+        return modello;
+    }
+
+    /**
+     * Ottiene il record di uso modello xsd tipo ud in base ai dati di chiave unique
+     *
+     * @param idStrut
+     *            id struttura
+     * @param nmTipoUnitaDoc
+     *            tipo unita doc
+     * @param idModelloXsdUd
+     *            id modello xsd ud
+     *
+     * @return uso modello entity DecUsoModelloXsdUniDoc
+     */
+    public DecUsoModelloXsdUniDoc getDecUsoModelloXsdUniDoc(BigDecimal idStrut, String nmTipoUnitaDoc,
+            Long idModelloXsdUd) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecUsoModelloXsdUniDoc u ");
+        String whereWord = "WHERE ";
+
+        if (idStrut != null) {
+            queryStr.append(whereWord).append("u.decTipoUnitaDoc.orgStrut.idStrut = :idStrut ");
+            whereWord = "AND ";
+        }
+
+        if (nmTipoUnitaDoc != null) {
+            queryStr.append(whereWord).append("u.decTipoUnitaDoc.nmTipoUnitaDoc = :nmTipoUnitaDoc ");
+            whereWord = "AND ";
+        }
+
+        if (idModelloXsdUd != null) {
+            queryStr.append(whereWord).append("u.decModelloXsdUd.idModelloXsdUd = :idModelloXsdUd ");
+        }
+
+        Query query = getEntityManager().createQuery(queryStr.toString());
+
+        if (idStrut != null) {
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        }
+
+        if (nmTipoUnitaDoc != null) {
+            query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
+
+        }
+
+        if (idModelloXsdUd != null) {
+            query.setParameter("idModelloXsdUd", idModelloXsdUd);
+
+        }
+
+        List<DecUsoModelloXsdUniDoc> list = query.getResultList();
+
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
 }

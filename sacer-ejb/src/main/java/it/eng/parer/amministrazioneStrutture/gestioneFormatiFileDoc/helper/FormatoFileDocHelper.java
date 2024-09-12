@@ -17,6 +17,8 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,17 +30,19 @@ import javax.ejb.Stateless;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang3.StringUtils;
+
 import it.eng.parer.entity.DecFormatoFileAmmesso;
 import it.eng.parer.entity.DecFormatoFileDoc;
 import it.eng.parer.entity.DecTipoCompDoc;
 import it.eng.parer.helper.GenericHelper;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Helper dei formati file doc per le strutture
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class FormatoFileDocHelper extends GenericHelper {

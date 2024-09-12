@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the VOL_V_CNT_UD_DOC_COMP_TIPO_UD database table.
- * 
+ *
  */
 @Entity
 @Table(name = "VOL_V_CNT_UD_DOC_COMP_TIPO_UD")

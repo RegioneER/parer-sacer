@@ -1,7 +1,7 @@
 <%@ page import="it.eng.parer.slite.gen.form.ElenchiVersFascicoliForm" pageEncoding="UTF-8" %>
 <%@ include file="../../include.jsp"%>
 <sl:html>
-    <sl:head title="Elenchi di versamento fascicoli da firmare" >
+    <sl:head title="Elenchi di versamento fascicoli da validare" >
         <script type="text/javascript" src="<c:url value='/js/custom/customPollFirmaFasc.js' />" ></script>
         <script type='text/javascript'>
             function leadingZeros(input) {
@@ -168,7 +168,7 @@
                                     } else {
                                         /* TODO LB: Secondo me non dovrebbe ricaricare la pagina degli elenchi ma mostrare un messaggio di info e svuotare la lista selezionati
                                          (Ovviamente chiamando un metodo apposito)*/
-                                        window.location = "ElenchiVersFascicoli.html?operation=loadListaElenchiVersFascicoliDaFirmare&cleanFilter=false";
+                                        window.location = "ElenchiVersFascicoli.html?operation=loadListaElenchiVersFascicoliDaValidare&cleanFilter=false";
                                     }
                                 });
                             },
@@ -210,8 +210,8 @@
             <c:if test="${((fn:length(sessionScope['###_NAVHIS_CONTAINER'])) gt 1 )}">
                 <slf:fieldBarDetailTag name="<%= ElenchiVersFascicoliForm.ElenchiVersFascicoliDetail.NAME%>" hideOperationButton="true" />
             </c:if>
-            <sl:contentTitle title="ELENCHI DI VERSAMENTO FASCICOLI DA FIRMARE"/>
-            <sl:contentTitle title="Selezionare gli elenchi di versamento fascicoli che si desidera firmare" showHelpBtn="false"/>
+            <sl:contentTitle title="ELENCHI DI VERSAMENTO FASCICOLI DA VALIDARE"/>
+            <sl:contentTitle title="Selezionare gli elenchi di versamento fascicoli che si desidera validare" showHelpBtn="false"/>
             <sl:newLine skipLine="true"/>
             <slf:fieldSet borderHidden="true" styleClass="">
                 <slf:lblField colSpan="4" name="<%=ElenchiVersFascicoliForm.FiltriElenchiVersFascDaFirmare.ID_AMBIENTE%>" />
@@ -236,7 +236,7 @@
             </sl:pulsantiera>
             <sl:newLine skipLine="true"/>
             <slf:fieldSet borderHidden="true" styleClass="">
-                <span class="legend">Elenchi di versamento fascicoli da firmare</span>
+                <span class="legend">Elenchi di versamento fascicoli da validare</span>
             </slf:fieldSet>
             <sl:newLine />
             <!--  piazzo la lista con i risultati -->
@@ -249,7 +249,7 @@
                     <slf:lblField name="<%=ElenchiVersFascicoliForm.ListaElenchiVersFascDaFirmareButtonList.SELECT_ALL_ELENCHI_BUTTON%>" colSpan="2"/>
                     <slf:lblField name="<%=ElenchiVersFascicoliForm.ListaElenchiVersFascDaFirmareButtonList.DESELECT_ALL_ELENCHI_BUTTON%>" colSpan="2"/>
                     <slf:lblField name="<%=ElenchiVersFascicoliForm.ListaElenchiVersFascDaFirmareButtonList.SELECT_HUNDRED_ELENCHI_BUTTON%>" colSpan="2"/>
-                    <slf:lblField name="<%=ElenchiVersFascicoliForm.ListaElenchiVersFascDaFirmareButtonList.FIRMA_ELENCHI_HSM_BUTTON%>" colSpan="2"/>
+                    <slf:lblField name="<%=ElenchiVersFascicoliForm.ListaElenchiVersFascDaFirmareButtonList.VALIDA_ELENCHI_BUTTON%>" colSpan="2"/>
                 </slf:buttonList>
             </sl:pulsantiera>
             <sl:newLine skipLine="true"/>

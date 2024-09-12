@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the USR_V_CHK_CREA_AMB_SACER database table.
- * 
+ *
  */
 @Entity
 @Table(schema = "SACER_IAM", name = "USR_V_CHK_CREA_AMB_SACER")

@@ -25,7 +25,7 @@ import java.util.Objects;
 
 /**
  * The persistent class for the MON_V_RIC_CONTA_UD_DOC_COMP database table.
- * 
+ *
  */
 @Entity
 @Table(name = "MON_V_RIC_CONTA_UD_DOC_COMP")

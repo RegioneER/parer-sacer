@@ -27,6 +27,6 @@
  * <p>
  * - <b>DecImageTransform</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione;
