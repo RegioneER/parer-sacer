@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>9.4.1-SNAPSHOT</version>
+    <version>10.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -10,7 +10,7 @@
     <parent>
         <groupId>it.eng.parer</groupId>
         <artifactId>parer-pom</artifactId>
-        <version>5.2.1</version>
+        <version>6.3.1</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,7 +19,7 @@
         <!-- Questa è la versione del modulo sacer-xml che dovrà essere inclusa nel progetto -->
         <sacer.xmlmodule.version>2.10.0</sacer.xmlmodule.version>
         <!-- spagofat bom -->
-        <spagofat.version>5.14.0</spagofat.version>
+        <spagofat.version>6.14.1</spagofat.version>
         <verificafirma-eidas-beans.version>1.9.0</verificafirma-eidas-beans.version>
         <verificafirma-crypto-beans.version>1.4.1</verificafirma-crypto-beans.version>
         <parer-retry.version>2.1.0</parer-retry.version>
@@ -450,6 +450,20 @@
                 <artifactId>spring-test</artifactId>
                 <version>5.0.15.RELEASE</version>
             </dependency>
+        
+         <!--JDK 11 -->
+            <dependency>
+                <groupId>javax.xml.ws</groupId>
+                <artifactId>jaxws-api</artifactId>
+                <version>${jaxws-api.version}</version>
+                <scope>provided</scope>
+            </dependency>  
+            <dependency>
+                <groupId>com.sun.xml.ws</groupId>
+                <artifactId>jaxws-rt</artifactId>
+                <version>2.3.5</version>
+                <scope>provided</scope>
+            </dependency>                               			
         </dependencies>
     </dependencyManagement>
     <build>
@@ -493,7 +507,7 @@
         <module>sacer-ear</module>
     </modules>
     <scm>
-        <developerConnection>scm:git:https://github.com/RegioneER/parer-sacer.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/RegioneER/parer.sacer.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
