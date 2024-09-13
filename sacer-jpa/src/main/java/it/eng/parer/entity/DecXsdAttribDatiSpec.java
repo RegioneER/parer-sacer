@@ -51,6 +51,8 @@ public class DecXsdAttribDatiSpec implements Serializable {
 
     private BigDecimal niOrdAttrib;
 
+    private String dsAttribDatiSpec;
+
     private DecAttribDatiSpec decAttribDatiSpec;
 
     private DecXsdDatiSpec decXsdDatiSpec;
@@ -81,6 +83,15 @@ public class DecXsdAttribDatiSpec implements Serializable {
 
     public void setNiOrdAttrib(BigDecimal niOrdAttrib) {
         this.niOrdAttrib = niOrdAttrib;
+    }
+
+    @Column(name = "DS_ATTRIB_DATI_SPEC")
+    public String getDsAttribDatiSpec() {
+        return this.dsAttribDatiSpec;
+    }
+
+    public void setDsAttribDatiSpec(String dsAttribDatiSpec) {
+        this.dsAttribDatiSpec = dsAttribDatiSpec;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

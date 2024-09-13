@@ -110,6 +110,35 @@ public class AmministrazioneEjb {
         return paramApplicTableBean;
     }
 
+    public AplParamApplicTableBean getAplParamApplicTableBean(String tiParamApplic, String tiGestioneParam,
+            String flAppartApplic, String flAppartAmbiente, String flAppartStrut, String flAppartTipoUnitaDoc,
+            String flAppartAaTipoFascicolo, boolean filterValid) {
+        AplParamApplicTableBean paramApplicTableBean = new AplParamApplicTableBean();
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicList(tiParamApplic,
+                tiGestioneParam, flAppartApplic, flAppartAmbiente, flAppartStrut, flAppartTipoUnitaDoc,
+                flAppartAaTipoFascicolo, filterValid);
+
+        try {
+            if (paramApplicList != null && !paramApplicList.isEmpty()) {
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    paramApplicRowBean.setString("ds_valore_param_applic", "");
+                    for (AplValoreParamApplic valoreParamApplic : paramApplic.getAplValoreParamApplics()) {
+                        if (valoreParamApplic.getTiAppart().equals("APPLIC")) {
+                            paramApplicRowBean.setString("ds_valore_param_applic",
+                                    valoreParamApplic.getDsValoreParamApplic());
+                        }
+                    }
+                    paramApplicTableBean.add(paramApplicRowBean);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return paramApplicTableBean;
+    }
+
     public boolean checkParamApplic(String nmParamApplic, BigDecimal idParamApplic) {
         return amministrazioneHelper.existsAplParamApplic(nmParamApplic, idParamApplic);
     }
@@ -150,6 +179,8 @@ public class AmministrazioneEjb {
             config.setFlAppartTipoUnitaDoc(row.getFlAppartTipoUnitaDoc());
             config.setFlAppartAaTipoFascicolo(row.getFlAppartAaTipoFascicolo());
             config.setTiValoreParamApplic(row.getTiValoreParamApplic());
+            config.setCdVersioneAppIni(row.getCdVersioneAppIni());
+            config.setCdVersioneAppFine(row.getCdVersioneAppFine());
 
             if (newRow) {
                 amministrazioneHelper.getEntityManager().persist(config);
@@ -331,6 +362,135 @@ public class AmministrazioneEjb {
         return parametriObj;
     }
 
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di amministrazione dell'ambiente
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicAmministrazioneAmbiente(BigDecimal idAmbiente,
+            List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicAmministrazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per la STRUTTURA
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListAmbiente(funzione,
+                "amministrazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione e ambiente ricavandoli da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicAmbienteRowBean(paramApplicRowBean, idAmbiente,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicAmministrazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di amministrazione sull'ambiente "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di amministrazione sull'ambiente ");
+            }
+        }
+        return paramApplicAmministrazioneTableBean;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di gestione dell'ambiente
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicGestioneAmbiente(BigDecimal idAmbiente, List<String> funzione,
+            boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicGestioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per l'AMBIENTE
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListAmbiente(funzione, "gestione",
+                filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione e ambiente ricavandoli da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicAmbienteRowBean(paramApplicRowBean, idAmbiente,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicGestioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di gestione sull'ambiente "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di gestione sull'ambiente ");
+            }
+        }
+        return paramApplicGestioneTableBean;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di conservazione sull'ambiente
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicConservazioneAmbiente(BigDecimal idAmbiente, List<String> funzione,
+            boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicConservazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per l'AMBIENTE
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListAmbiente(funzione,
+                "conservazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione e ambiente ricavandoli da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicAmbienteRowBean(paramApplicRowBean, idAmbiente,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicConservazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di conservazione sull'ambiente "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di conservazione sull'ambiente ");
+            }
+        }
+        return paramApplicConservazioneTableBean;
+    }
+
     private void populateParamApplicAmbienteRowBean(AplParamApplicRowBean paramApplicRowBean, BigDecimal idAmbiente,
             String tiGestioneParam) {
         String nomeCampoAmbiente = tiGestioneParam.equals("amministrazione") ? "ds_valore_param_applic_ambiente_amm"
@@ -453,8 +613,46 @@ public class AmministrazioneEjb {
             try {
                 // Per ogni parametro, popolo i valori su ambiente ricavandoli da APL_VAL_PARAM_APPLIC_MULTI
                 for (AplParamApplic paramApplic : paramApplicMultipliAmbienteList) {
-                    AplParamApplicRowBean paramApplicRowBean = new AplParamApplicRowBean();
-                    paramApplicRowBean = (AplParamApplicRowBean) Transform.entity2RowBean(paramApplic);
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicMultiAmbienteRowBean(paramApplicRowBean, idAmbiente);
+                    paramApplicMultipliAmbienteTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri multipli sull'ambiente "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri multipli sull'ambiente ");
+            }
+        }
+        return paramApplicMultipliAmbienteTableBean;
+    }
+
+    /**
+     * Restituisce il tablebean dei parametri multipli
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param filterValid
+     *            true per mostrare i record non cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicMultiAmbiente(BigDecimal idAmbiente, boolean filterValid)
+            throws ParerUserError {
+        AplParamApplicTableBean paramApplicMultipliAmbienteTableBean = new AplParamApplicTableBean();
+        // Ricavo la lista dei parametri definiti per l'AMBIENTE
+        List<AplParamApplic> paramApplicMultipliAmbienteList = amministrazioneHelper
+                .getAplParamApplicMultiListAmbiente(filterValid);
+        if (!paramApplicMultipliAmbienteList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su ambiente ricavandoli da APL_VAL_PARAM_APPLIC_MULTI
+                for (AplParamApplic paramApplic : paramApplicMultipliAmbienteList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
                     populateParamApplicMultiAmbienteRowBean(paramApplicRowBean, idAmbiente);
                     paramApplicMultipliAmbienteTableBean.add(paramApplicRowBean);
                 }
@@ -579,6 +777,153 @@ public class AmministrazioneEjb {
         parametriObj[1] = paramApplicGestioneTableBean;
         parametriObj[2] = paramApplicConservazioneTableBean;
         return parametriObj;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di amministrazione del periodo tipo fascicolo
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idAaTipoFascicolo
+     *            id periodo tipo fascicolo
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicAmministrazioneAaTipoFasc(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo, List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicAmministrazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per il PERIODO TIPO FASCICOLO
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListAaTipoFascicolo(funzione,
+                "amministrazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente, struttura e periodo tipo fascicolo
+                // ricavandoli
+                // da APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicAaTipoFascicoloRowBean(paramApplicRowBean, idAmbiente, idStrut,
+                            idAaTipoFascicolo, paramApplic.getTiGestioneParam());
+                    paramApplicAmministrazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di amministrazione sul periodo tipo fascicolo "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError(
+                        "Errore durante il recupero dei parametri di amministrazione sul periodo tipo fascicolo");
+            }
+        }
+        return paramApplicAmministrazioneTableBean;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di conservazione del periodo tipo fascicolo
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idAaTipoFascicolo
+     *            id periodo tipo fascicolo
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicConservazioneAaTipoFasc(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo, List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicConservazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di conservazione definiti per il PERIODO TIPO FASCICOLO
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListAaTipoFascicolo(funzione,
+                "conservazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente, struttura e periodo tipo fascicolo
+                // ricavandoli
+                // da APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicAaTipoFascicoloRowBean(paramApplicRowBean, idAmbiente, idStrut,
+                            idAaTipoFascicolo, paramApplic.getTiGestioneParam());
+                    paramApplicConservazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di conservazione sul periodo tipo fascicolo "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError(
+                        "Errore durante il recupero dei parametri di conservazione sul periodo tipo fascicolo ");
+            }
+        }
+        return paramApplicConservazioneTableBean;
+    }
+
+    /**
+     * Restituisce il tablebean dei parametri di gestione del periodo tipo fascicolo
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idAaTipoFascicolo
+     *            id periodo tipo fascicolo
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicGestioneAaTipoFasc(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo, List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicGestioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di gestione definiti per il PERIODO TIPO FASCICOLO
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListAaTipoFascicolo(funzione,
+                "gestione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente, struttura e periodo tipo fascicolo
+                // ricavandoli
+                // da APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicAaTipoFascicoloRowBean(paramApplicRowBean, idAmbiente, idStrut,
+                            idAaTipoFascicolo, paramApplic.getTiGestioneParam());
+                    paramApplicGestioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di gestione sul periodo tipo fascicolo "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError(
+                        "Errore durante il recupero dei parametri di gestione sul periodo tipo fascicolo ");
+            }
+        }
+        return paramApplicGestioneTableBean;
     }
 
     private void populateParamApplicAaTipoFascicoloRowBean(AplParamApplicRowBean paramApplicRowBean,
@@ -720,6 +1065,150 @@ public class AmministrazioneEjb {
         return parametriObj;
     }
 
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di amministrazione del tipo ud
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idTipoUnitaDoc
+     *            id tipo unita doc
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicAmministrazioneTipoUd(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idTipoUnitaDoc, List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicAmministrazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per il TIPO UD
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListTipoUd(funzione,
+                "amministrazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente, struttura e tipo unità doc ricavandoli
+                // da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicTipoUdRowBean(paramApplicRowBean, idAmbiente, idStrut, idTipoUnitaDoc,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicAmministrazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di amministrazione sul tipo ud"
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di amministrazione sul tipo ud ");
+            }
+        }
+        return paramApplicAmministrazioneTableBean;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di conservazione del tipo ud
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idTipoUnitaDoc
+     *            id tipo unita doc
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicConservazioneTipoUd(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idTipoUnitaDoc, List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicConservazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di conservazione definiti per il TIPO UD
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListTipoUd(funzione,
+                "conservazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente, struttura e tipo unità doc ricavandoli
+                // da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicTipoUdRowBean(paramApplicRowBean, idAmbiente, idStrut, idTipoUnitaDoc,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicConservazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di conservazione sul tipo ud"
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di conservazione sul tipo ud ");
+            }
+        }
+        return paramApplicConservazioneTableBean;
+    }
+
+    /**
+     * Restituisce il tablebean dei parametri di gestione del tipo ud
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param idTipoUnitaDoc
+     *            id tipo unita doc
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicGestioneTipoUd(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idTipoUnitaDoc, List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicGestioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di gestione definiti per il TIPO UD
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListTipoUd(funzione, "gestione",
+                filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente, struttura e tipo unità doc ricavandoli
+                // da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicTipoUdRowBean(paramApplicRowBean, idAmbiente, idStrut, idTipoUnitaDoc,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicGestioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di gestione sul tipo ud"
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di gestione sul tipo ud ");
+            }
+        }
+        return paramApplicGestioneTableBean;
+    }
+
     private void populateParamApplicTipoUdRowBean(AplParamApplicRowBean paramApplicRowBean, BigDecimal idAmbiente,
             BigDecimal idStrut, BigDecimal idTipoUnitaDoc, String tiGestioneParam) {
         String nomeCampoTipoUd = tiGestioneParam.equals("amministrazione") ? "ds_valore_param_applic_tipo_ud_amm"
@@ -805,27 +1294,30 @@ public class AmministrazioneEjb {
      *            id struttura
      * @param funzione
      *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
      * 
      * @return il tablebean
      * 
      * @throws ParerUserError
      *             errore generico
      */
-    public Object[] getAplParamApplicStruttura(BigDecimal idAmbiente, BigDecimal idStrut, List<String> funzione)
-            throws ParerUserError {
+    public Object[] getAplParamApplicStruttura(BigDecimal idAmbiente, BigDecimal idStrut, List<String> funzione,
+            boolean filterValid) throws ParerUserError {
         Object[] parametriObj = new Object[3];
         AplParamApplicTableBean paramApplicAmministrazioneTableBean = new AplParamApplicTableBean();
         AplParamApplicTableBean paramApplicGestioneTableBean = new AplParamApplicTableBean();
         AplParamApplicTableBean paramApplicConservazioneTableBean = new AplParamApplicTableBean();
         // Ricavo la lista dei parametri definiti per la STRUTTURA
-        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListStruttura(funzione);
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListStruttura(funzione,
+                filterValid);
         if (!paramApplicList.isEmpty()) {
             try {
                 // Per ogni parametro, popolo i valori su applicazione, ambiente e struttura ricavandoli da
                 // APL_VALORE_PARAM_APPLIC
                 for (AplParamApplic paramApplic : paramApplicList) {
-                    AplParamApplicRowBean paramApplicRowBean = new AplParamApplicRowBean();
-                    paramApplicRowBean = (AplParamApplicRowBean) Transform.entity2RowBean(paramApplic);
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
                     populateParamApplicStrutturaRowBean(paramApplicRowBean, idAmbiente, idStrut,
                             paramApplic.getTiGestioneParam());
                     switch (paramApplic.getTiGestioneParam()) {
@@ -853,6 +1345,142 @@ public class AmministrazioneEjb {
         parametriObj[1] = paramApplicGestioneTableBean;
         parametriObj[2] = paramApplicConservazioneTableBean;
         return parametriObj;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di amministrazione della struttura
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicAmministrazioneStruttura(BigDecimal idAmbiente, BigDecimal idStrut,
+            List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicAmministrazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per la STRUTTURA
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListStruttura(funzione,
+                "amministrazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente e struttura ricavandoli da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicStrutturaRowBean(paramApplicRowBean, idAmbiente, idStrut,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicAmministrazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di amministrazione sulla struttura "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError(
+                        "Errore durante il recupero dei parametri di amministrazione sulla struttura ");
+            }
+        }
+        return paramApplicAmministrazioneTableBean;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri di gestione della struttura
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicGestioneStruttura(BigDecimal idAmbiente, BigDecimal idStrut,
+            List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicGestioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per la STRUTTURA
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListStruttura(funzione,
+                "gestione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente e struttura ricavandoli da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = (AplParamApplicRowBean) Transform
+                            .entity2RowBean(paramApplic);
+                    populateParamApplicStrutturaRowBean(paramApplicRowBean, idAmbiente, idStrut,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicGestioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di gestione sulla struttura "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di gestione sulla struttura ");
+            }
+        }
+        return paramApplicGestioneTableBean;
+    }
+
+    /**
+     * Restituisce un array di object con i tablebean dei parametri
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param idStrut
+     *            id struttura
+     * @param funzione
+     *            lista funzioni
+     * @param filterValid
+     *            visualizzare o meno i record parametri cessati
+     * 
+     * @return il tablebean
+     * 
+     * @throws ParerUserError
+     *             errore generico
+     */
+    public AplParamApplicTableBean getAplParamApplicConservazioneStruttura(BigDecimal idAmbiente, BigDecimal idStrut,
+            List<String> funzione, boolean filterValid) throws ParerUserError {
+        AplParamApplicTableBean paramApplicConservazioneTableBean = new AplParamApplicTableBean();
+
+        // Ricavo la lista dei parametri di amministrazione definiti per la STRUTTURA
+        List<AplParamApplic> paramApplicList = amministrazioneHelper.getAplParamApplicListStruttura(funzione,
+                "conservazione", filterValid);
+        if (!paramApplicList.isEmpty()) {
+            try {
+                // Per ogni parametro, popolo i valori su applicazione, ambiente e struttura ricavandoli da
+                // APL_VALORE_PARAM_APPLIC
+                for (AplParamApplic paramApplic : paramApplicList) {
+                    AplParamApplicRowBean paramApplicRowBean = new AplParamApplicRowBean();
+                    paramApplicRowBean = (AplParamApplicRowBean) Transform.entity2RowBean(paramApplic);
+                    populateParamApplicStrutturaRowBean(paramApplicRowBean, idAmbiente, idStrut,
+                            paramApplic.getTiGestioneParam());
+                    paramApplicConservazioneTableBean.add(paramApplicRowBean);
+                }
+            } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                    | NoSuchMethodException | InvocationTargetException e) {
+                logger.error("Errore durante il recupero dei parametri di conservazione sulla struttura "
+                        + ExceptionUtils.getRootCauseMessage(e), e);
+                throw new ParerUserError("Errore durante il recupero dei parametri di conservazione sulla struttura ");
+            }
+        }
+        return paramApplicConservazioneTableBean;
     }
 
     /*

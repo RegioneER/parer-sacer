@@ -34,8 +34,9 @@ public final class ElvElencoVer {
         AUTOMATICA, MANUALE
     }
 
+    // MEV#31945 - Eliminare validazione elenco UD con firma
     /**
-     * ti_valid_elenco IN ('FIRMA', 'NO_FIRMA', 'NO_INDICE')
+     * ti_valid_elenco IN ('NO_FIRMA', 'NO_INDICE')
      */
     public enum TiValidElenco {
         FIRMA, NO_FIRMA, NO_INDICE

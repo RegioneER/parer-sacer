@@ -43,9 +43,9 @@ public class RecuperoDocBean implements java.io.Serializable {
     //
     private transient OutputStream os;
     private TabellaBlob tabellaBlobDaLeggere;
-    // MEV#30395
+    // MEV#30395 MEV #30398
     private TabellaClob tabellaClobDaLeggere;
-    // end MEV#30395
+    // end MEV#30395 MEV #30398
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
             TabellaBlob tabellaBlobDaLeggere) {

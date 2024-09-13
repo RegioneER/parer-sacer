@@ -281,8 +281,17 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
             // Parametri
             disabileAaTipoFascicoloParametersSections(false);
 
-            loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                    idAaTipoFascicolo, null, false, false, false, false);
+            // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+            // idAaTipoFascicolo, null, false, false, false, false);
+            loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                    idAaTipoFascicolo, null, true, false,
+                    getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+            loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                    idAaTipoFascicolo, null, true, false,
+                    getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+            loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                    idAaTipoFascicolo, null, true, false,
+                    getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
 
             if ("1".equals(strutRowBean.getFlCessato())) {
                 getForm().getParametriAaTipoFascButtonList().getParametriAmministrazioneAaTipoFascButton()
@@ -1987,8 +1996,16 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 .getDecTipoFascicoloRowBean(aaTipoFascicoloRowBean.getIdTipoFascicolo());
         OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
         OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
-        loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                idAaTipoFascicolo, null, false, true, true, true);
+        // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+        // idAaTipoFascicolo, null, false, true, true, true);
+        loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                idAaTipoFascicolo, null, false, true,
+                getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+        loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                idAaTipoFascicolo, null, false, true,
+                getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+        loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(), idAaTipoFascicolo,
+                null, false, true, getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
         getForm().getAaTipoFascicoloDetail().setStatus(Status.update);
         getForm().getRicercaParametriAaTipoFasc().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -2009,8 +2026,16 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 .getDecTipoFascicoloRowBean(aaTipoFascicoloRowBean.getIdTipoFascicolo());
         OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
         OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
-        loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                idAaTipoFascicolo, null, false, false, true, true);
+        // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+        // idAaTipoFascicolo, null, false, false, true, true);
+        loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                idAaTipoFascicolo, null, false, false,
+                getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+        loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                idAaTipoFascicolo, null, false, true,
+                getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+        loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(), idAaTipoFascicolo,
+                null, false, true, getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
         getForm().getAaTipoFascicoloDetail().setStatus(Status.update);
         getForm().getRicercaParametriAaTipoFasc().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -2031,8 +2056,16 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 .getDecTipoFascicoloRowBean(aaTipoFascicoloRowBean.getIdTipoFascicolo());
         OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
         OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
-        loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                idAaTipoFascicolo, null, false, false, false, true);
+        // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+        // idAaTipoFascicolo, null, false, false, false, true);
+        loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                idAaTipoFascicolo, null, false, false,
+                getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+        loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                idAaTipoFascicolo, null, false, false,
+                getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+        loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(), idAaTipoFascicolo,
+                null, false, true, getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
         getForm().getAaTipoFascicoloDetail().setStatus(Status.update);
         getForm().getRicercaParametriAaTipoFasc().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -2090,8 +2123,17 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 getForm().getParametriAmministrazioneAaTipoFascList().setViewMode();
                 getForm().getParametriConservazioneAaTipoFascList().setViewMode();
                 getForm().getParametriGestioneAaTipoFascList().setViewMode();
-                loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                        idAaTipoFascicolo, null, true, false, false, false);
+                // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                // idAaTipoFascicolo, null, true, false, false, false);
+                loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, false,
+                        getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+                loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, false,
+                        getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+                loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, false,
+                        getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
             } catch (ParerUserError ex) {
                 getMessageBox().addError(ex.getDescription());
             }
@@ -2119,14 +2161,41 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
             if (getSession().getAttribute("provenienzaParametri") != null) {
                 String provenzienzaParametri = (String) getSession().getAttribute("provenienzaParametri");
                 if (provenzienzaParametri.equals("amministrazione")) {
-                    loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
-                            tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, true, true, true);
+                    // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
+                    // tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, true, true, true);
+                    loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, true,
+                            getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+                    loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, true,
+                            getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+                    loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, true,
+                            getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
                 } else if (provenzienzaParametri.equals("conservazione")) {
-                    loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
-                            tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, false, true, true);
+                    // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
+                    // tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, false, true, true);
+                    loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, false,
+                            getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+                    loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, true,
+                            getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+                    loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, true,
+                            getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
                 } else if (provenzienzaParametri.equals("gestione")) {
-                    loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
-                            tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, false, false, true);
+                    // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
+                    // tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, false, false, true);
+                    loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, false,
+                            getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
+                    loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, false,
+                            getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
+                    loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                            idAaTipoFascicolo, funzione, false, true,
+                            getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
                 }
             }
         } catch (ParerUserError ex) {
@@ -2194,6 +2263,156 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     public void visualizzaModelloXsdFascicolo() throws EMFError {
         throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
                                                                        // Tools | Templates.
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriAmministrazioneAaTipoFascList() throws EMFError {
+        BigDecimal idAaTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
+                .getCurrentRow().getIdAaTipoFascicolo();
+        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idAaTipoFascicolo);
+        OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
+        OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
+        boolean filterValid = getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AA_TIPO_FASC)) {
+                loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, true, filterValid);
+            } else {
+                loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox()
+                    .addError("Errore durante il recupero dei parametri di amministrazione del periodo tipo fascicolo");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriConservazioneAaTipoFascList() throws EMFError {
+        BigDecimal idAaTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
+                .getCurrentRow().getIdAaTipoFascicolo();
+        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idAaTipoFascicolo);
+        OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
+        OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
+        boolean filterValid = getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AA_TIPO_FASC)) {
+                loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, true, filterValid);
+            } else {
+                loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox()
+                    .addError("Errore durante il recupero dei parametri di conservazione del periodo tipo fascicolo");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriGestioneAaTipoFascList() throws EMFError {
+        BigDecimal idAaTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
+                .getCurrentRow().getIdAaTipoFascicolo();
+        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idAaTipoFascicolo);
+        OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
+        OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
+        boolean filterValid = getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AA_TIPO_FASC)) {
+                loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, true, filterValid);
+            } else {
+                loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
+                        idAaTipoFascicolo, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di gestione del tipo ud");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    private void loadListaParametriAmministrazioneAaTipoFasc(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo, List<String> funzione, boolean hideDeleteButtons,
+            boolean editModeAmministrazione, boolean filterValid) throws ParerUserError {
+
+        // MEV26587
+        AplParamApplicTableBean parametriAmministrazione = amministrazioneEjb
+                .getAplParamApplicAmministrazioneAaTipoFasc(idAmbiente, idStrut, idAaTipoFascicolo, funzione,
+                        filterValid);
+
+        if (!editModeAmministrazione) {
+            parametriAmministrazione = obfuscatePasswordParamApplic(parametriAmministrazione);
+        }
+
+        getForm().getParametriAmministrazioneAaTipoFascList().setTable(parametriAmministrazione);
+        getForm().getParametriAmministrazioneAaTipoFascList().getTable().setPageSize(300);
+        getForm().getParametriAmministrazioneAaTipoFascList().getTable().first();
+        getForm().getParametriAmministrazioneAaTipoFascList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeAmministrazione) {
+            getForm().getParametriAmministrazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_amm()
+                    .setEditMode();
+            getForm().getParametriAmministrazioneAaTipoFascList().setStatus(Status.update);
+        } else {
+            getForm().getParametriAmministrazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_amm()
+                    .setViewMode();
+            getForm().getParametriAmministrazioneAaTipoFascList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriConservazioneAaTipoFasc(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo, List<String> funzione, boolean hideDeleteButtons,
+            boolean editModeConservazione, boolean filterValid) throws ParerUserError {
+
+        // MEV26587
+        AplParamApplicTableBean parametriConservazione = amministrazioneEjb
+                .getAplParamApplicConservazioneTipoUd(idAmbiente, idStrut, idAaTipoFascicolo, funzione, filterValid);
+
+        if (!editModeConservazione) {
+            parametriConservazione = obfuscatePasswordParamApplic(parametriConservazione);
+        }
+
+        getForm().getParametriConservazioneAaTipoFascList().setTable(parametriConservazione);
+        getForm().getParametriConservazioneAaTipoFascList().getTable().setPageSize(300);
+        getForm().getParametriConservazioneAaTipoFascList().getTable().first();
+        getForm().getParametriConservazioneAaTipoFascList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeConservazione) {
+            getForm().getParametriConservazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_cons()
+                    .setEditMode();
+            getForm().getParametriConservazioneAaTipoFascList().setStatus(Status.update);
+        } else {
+            getForm().getParametriConservazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_cons()
+                    .setViewMode();
+            getForm().getParametriConservazioneAaTipoFascList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriGestioneAaTipoFasc(BigDecimal idAmbiente, BigDecimal idStrut,
+            BigDecimal idAaTipoFascicolo, List<String> funzione, boolean hideDeleteButtons, boolean editModeGestione,
+            boolean filterValid) throws ParerUserError {
+
+        // MEV26587
+        AplParamApplicTableBean parametriGestione = amministrazioneEjb.getAplParamApplicGestioneAaTipoFasc(idAmbiente,
+                idStrut, idAaTipoFascicolo, funzione, filterValid);
+
+        if (!editModeGestione) {
+            parametriGestione = obfuscatePasswordParamApplic(parametriGestione);
+        }
+
+        getForm().getParametriGestioneAaTipoFascList().setTable(parametriGestione);
+        getForm().getParametriGestioneAaTipoFascList().getTable().setPageSize(300);
+        getForm().getParametriGestioneAaTipoFascList().getTable().first();
+        getForm().getParametriGestioneAaTipoFascList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeGestione) {
+            getForm().getParametriGestioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_gest()
+                    .setEditMode();
+            getForm().getParametriGestioneAaTipoFascList().setStatus(Status.update);
+        } else {
+            getForm().getParametriGestioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_gest()
+                    .setViewMode();
+            getForm().getParametriGestioneAaTipoFascList().setStatus(Status.view);
+        }
     }
 
 }

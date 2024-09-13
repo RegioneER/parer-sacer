@@ -37,6 +37,7 @@
     </Fields>
 
     <Fields Name="XsdDatiSpec" Description="Dettaglio XSD dati specifici"  >
+        <Input Type="INTEGER" Description="Id xsd dati spec" Name="id_xsd_dati_spec" Hidden="true"/>
         <Input Type="STRING" Description="Codice versione" Name="cd_versione_xsd" MaxLength="100" Required="true"/>
         <TextArea Type="STRING" Description="Descrizione versione XSD" Name="ds_versione_xsd" Rows="4" Cols="100" MaxLength="254" />
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" Required="true"/>

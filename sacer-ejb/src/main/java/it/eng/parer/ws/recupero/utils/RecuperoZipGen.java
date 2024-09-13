@@ -57,7 +57,6 @@ import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
 import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
-import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.SacerException;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
@@ -97,7 +96,6 @@ import it.eng.parer.ws.xml.versReqStato.Recupero;
 import it.eng.parer.ws.xml.versReqStato.TokenFileNameType;
 import it.eng.parerxml.xsd.FileXSD;
 import it.eng.parerxml.xsd.FileXSDUtil;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 
 /**
  * @author Fioravanti_F
@@ -1463,7 +1461,20 @@ public class RecuperoZipGen {
                 ZipArchiveEntry zae = new ZipArchiveEntry(fileName + estensione);
                 this.filterZipEntry(zae);
                 zipOutputStream.putArchiveEntry(zae);
-                zipOutputStream.write(fileElencoVers.getBlFileElencoVers());
+
+                // MEV#30397
+                // recupero documento blob vs obj storage
+                // build dto per recupero
+                RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(TiEntitaSacerObjectStorage.ELENCO_INDICI_AIP,
+                        fileElencoVers.getIdFileElencoVers(), zipOutputStream,
+                        RecBlbOracle.TabellaBlob.ELV_FILE_ELENCO);
+                // recupero
+                boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                rispostaControlli.setrBoolean(esitoRecupero);
+                if (!esitoRecupero) {
+                    throw new IOException("Errore non gestito nel recupero del file");
+                }
+                // end MEV#30397
                 zipOutputStream.closeArchiveEntry();
             }
         }
@@ -1532,14 +1543,14 @@ public class RecuperoZipGen {
                                     udAppartInSessione.getSerContenutoVerSerie().getSerVerSerie().getIdVerSerie(),
                                     CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO);
                             if (ix != null) {
-                                String xmlContent = new String(ix, StandardCharsets.UTF_8);
                                 prefisso = "IndiceAIPSerie-"
                                         + udAppartInSessione.getSerContenutoVerSerie().getSerVerSerie().getCdVerSerie()
                                         + "_" + ambiente + "_" + ente + "_" + struttura + "_" + codiceSerie;
                                 ZipArchiveEntry zaeAip = new ZipArchiveEntry(urnZipArchive + prefisso + ".xml.p7m");
                                 this.filterZipEntry(zaeAip);
                                 zipOutputStream.putArchiveEntry(zaeAip);
-                                zipOutputStream.write(xmlContent.getBytes(StandardCharsets.UTF_8));
+                                // MAC 32341
+                                zipOutputStream.write(ix);
                                 closeEntry = true;
                             }
                         }
@@ -1619,13 +1630,26 @@ public class RecuperoZipGen {
                             ZipArchiveEntry zaeMeta = new ZipArchiveEntry(urnZipArchive + urnMeta + ".xml");
                             this.filterZipEntry(zaeMeta);
                             zipOutputStream.putArchiveEntry(zaeMeta);
-                            zipOutputStream.write(meta.getBlFileVerIndiceAip().getBytes());
+
+                            // MEV 30398
+                            String blFile = meta.getBlFileVerIndiceAip();
+                            if (blFile == null) {
+                                Map<String, String> xmls = objectStorageService.getObjectXmlIndiceAipFasc(meta
+                                        .getFasMetaVerAipFascicolo().getFasVerAipFascicolo().getIdVerAipFascicolo());
+                                // recupero oggetti da O.S. (se presenti)
+                                if (!xmls.isEmpty()) {
+                                    blFile = xmls.get("INDICE");
+                                }
+                            }
+                            // end MEV 30398
+
+                            zipOutputStream.write(blFile.getBytes());
                             closeEntry = true;
                         }
 
                         // Controllo se il fascicolo è inserito in un elenco di versamento fascicoli
                         if (unitaDocFascicolo.getFasFascicolo().getElvElencoVersFasc() != null) {
-                            List<ElvFileElencoVersFasc> fileFirma = elencoVersFascHelper.retrieveFileIndiceElenco(
+                            List<ElvFileElencoVersFasc> fileFirma = elencoVersFascHelper.retrieveFileIndiceElenco2(
                                     unitaDocFascicolo.getFasFascicolo().getElvElencoVersFasc().getIdElencoVersFasc(),
                                     new String[] {
                                             it.eng.parer.elencoVersFascicoli.utils.ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP
@@ -1640,7 +1664,19 @@ public class RecuperoZipGen {
                                 ZipArchiveEntry zaeElenco = new ZipArchiveEntry(urnZipArchive + prefisso + ".xml.p7m");
                                 this.filterZipEntry(zaeElenco);
                                 zipOutputStream.putArchiveEntry(zaeElenco);
-                                zipOutputStream.write(fileFirma.get(0).getBlFileElencoVers());
+
+                                // MEV #30399
+                                byte[] blFileElencoVers = fileFirma.get(0).getBlFileElencoVers();
+                                long idFileElencoVersFasc = fileFirma.get(0).getIdFileElencoVersFasc();
+                                if (blFileElencoVers == null) {
+                                    blFileElencoVers = objectStorageService
+                                            .getObjectElencoIndiciAipFasc(idFileElencoVersFasc);
+                                }
+                                // end MEV #30399
+
+                                zipOutputStream.write(blFileElencoVers);
+
+                                // zipOutputStream.write(fileFirma.get(0).getBlFileElencoVers());
                                 closeEntry = true;
                             }
                         }
@@ -1861,7 +1897,9 @@ public class RecuperoZipGen {
                                 if (xmlVersamentoOs.containsKey(idSessioneVers) && tmpXml.getBlXml() == null) {
                                     Map<String, String> allXml = xmlVersamentoOs.get(idSessioneVers);
                                     String blXml = allXml.get(tmpXml.getTiXmlDati());
-                                    zipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                    if (blXml != null) {
+                                        zipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                    }
                                 } else {
                                     zipOutputStream.write(tmpXml.getBlXml().getBytes(StandardCharsets.UTF_8));
                                 }
@@ -1940,7 +1978,9 @@ public class RecuperoZipGen {
                                 if (xmlVersamentoOs.containsKey(idSessioneVers) && tmpXml.getBlXml() == null) {
                                     Map<String, String> allXml = xmlVersamentoOs.get(idSessioneVers);
                                     String blXml = allXml.get(tmpXml.getTiXmlDati());
-                                    zipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                    if (blXml != null) {
+                                        zipOutputStream.write(blXml.getBytes(StandardCharsets.UTF_8));
+                                    }
                                 } else {
                                     zipOutputStream.write(tmpXml.getBlXml().getBytes(StandardCharsets.UTF_8));
                                 }
@@ -1982,8 +2022,7 @@ public class RecuperoZipGen {
             vrsSessioneVerss.stream()
                     .filter(vrs -> vrs.getTiSessioneVers().equals(Constants.TipoSessione.VERSAMENTO.name())
                             && vrs.getAroUnitaDoc() != null)
-                    .forEach(vrs ->
-                    // put on map
+                    .forEach(vrs -> // put on map
                     xmlMapByVrsSessioneVers.put(vrs.getIdSessioneVers(),
                             objectStorageService.getObjectSipUnitaDoc(vrs.getAroUnitaDoc().getIdUnitaDoc())));
 
@@ -1991,8 +2030,7 @@ public class RecuperoZipGen {
             vrsSessioneVerss.stream()
                     .filter(vrs -> vrs.getTiSessioneVers().equals(Constants.TipoSessione.AGGIUNGI_DOCUMENTO.name())
                             && vrs.getAroDoc() != null)
-                    .forEach(vrs ->
-                    // put on map
+                    .forEach(vrs -> // put on map
                     xmlMapByVrsSessioneVers.put(vrs.getIdSessioneVers(),
                             objectStorageService.getObjectSipDoc(vrs.getAroDoc().getIdDoc())));
             // OK

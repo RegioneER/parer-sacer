@@ -484,7 +484,7 @@
     <Section Name="parametriConservazioneSection" Description="" Legend="Parametri di conservazione" ShowButton="true" LoadOpened="false"/>
     <Section Name="parametriGestioneSection" Description="" Legend="Parametri di gestione" ShowButton="true" LoadOpened="false"/>
     
-    <List Name="ParametriAmministrazioneTipoUdList" Description="Parametri di amministrazione" hideDetailButton="true" hideUpdateButton="true">
+    <List Name="ParametriAmministrazioneTipoUdList" Description="Parametri di amministrazione" hideDetailButton="true" hideUpdateButton="true" filterValidRecords="true">
         <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
         <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
         <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
@@ -492,6 +492,8 @@
         <Input Name="nm_param_applic" Description="Codice parametro" Type="STRING" />
         <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
         <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="cd_versione_app_ini" Description="Introdotto con" Type="STRING" MaxLength="11"/>
+        <Input Name="cd_versione_app_fine" Description="Cessato con" Type="STRING" MaxLength="11"/>
         <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
         <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
         <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />        
@@ -499,7 +501,7 @@
         <Input Name="ds_valore_param_applic_tipo_ud_amm" Description="Valore su tipo ud" Type="STRING" />        
     </List>
     
-    <List Name="ParametriConservazioneTipoUdList" Description="Parametri di conservazione" hideDetailButton="true" hideUpdateButton="true">
+    <List Name="ParametriConservazioneTipoUdList" Description="Parametri di conservazione" hideDetailButton="true" hideUpdateButton="true" filterValidRecords="true">
         <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
         <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
         <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
@@ -507,6 +509,8 @@
         <Input Name="nm_param_applic" Description="Codice parametro" Type="STRING" />
         <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
         <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="cd_versione_app_ini" Description="Introdotto con" Type="STRING" MaxLength="11"/>
+        <Input Name="cd_versione_app_fine" Description="Cessato con" Type="STRING" MaxLength="11"/>
         <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
         <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
         <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />        
@@ -514,7 +518,7 @@
         <Input Name="ds_valore_param_applic_tipo_ud_cons" Description="Valore su tipo ud" Type="STRING" />        
     </List>
     
-    <List Name="ParametriGestioneTipoUdList" Description="Parametri di gestione" hideDetailButton="true" hideUpdateButton="true">
+    <List Name="ParametriGestioneTipoUdList" Description="Parametri di gestione" hideDetailButton="true" hideUpdateButton="true" filterValidRecords="true">
         <Input Name="id_param_applic" Description="Id param applic" Type="INTEGER" Hidden="true"/>
         <Input Name="id_valore_param_applic" Description="Id valore param applic" Type="INTEGER" Hidden="true"/>
         <Input Name="ti_param_applic" Description="Funzione" Type="STRING" />
@@ -522,6 +526,8 @@
         <Input Name="nm_param_applic" Description="Codice parametro" Type="STRING" />
         <Input Name="dm_param_applic" Description="Denominazione parametro" Type="STRING" />
         <Input Name="ds_param_applic" Description="Descrizione" Type="STRING" />
+        <Input Name="cd_versione_app_ini" Description="Introdotto con" Type="STRING" MaxLength="11"/>
+        <Input Name="cd_versione_app_fine" Description="Cessato con" Type="STRING" MaxLength="11"/>
         <Input Name="ds_lista_valori_ammessi" Description="Valori possibili" Type="STRING" />
         <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
         <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />                

@@ -150,6 +150,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             getForm().getRiepilogoVersamentiFascicoli().getId_ente().setValue(idEnte.toString());
             getForm().getRiepilogoVersamentiFascicoli().getId_strut().setValue(idStruttura.toString());
             calcolaRiepilogo(idAmbiente, idEnte, idStruttura, null);
+
             postLoad();
         } catch (ParerUserError ex) {
             getMessageBox().addError("Errore inatteso nel caricamento della pagina");

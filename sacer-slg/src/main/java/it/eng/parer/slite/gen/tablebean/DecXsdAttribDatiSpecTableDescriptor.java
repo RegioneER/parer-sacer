@@ -43,6 +43,7 @@ public class DecXsdAttribDatiSpecTableDescriptor extends TableDescriptor {
     public static final String COL_ID_XSD_DATI_SPEC = "id_xsd_dati_spec";
     public static final String COL_ID_ATTRIB_DATI_SPEC = "id_attrib_dati_spec";
     public static final String COL_NI_ORD_ATTRIB = "ni_ord_attrib";
+    public static final String COL_DS_ATTRIB_DATI_SPEC = "ds_attrib_dati_spec";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -52,6 +53,7 @@ public class DecXsdAttribDatiSpecTableDescriptor extends TableDescriptor {
         map.put(COL_ID_XSD_DATI_SPEC, new ColumnDescriptor(COL_ID_XSD_DATI_SPEC, Types.DECIMAL, 22, false));
         map.put(COL_ID_ATTRIB_DATI_SPEC, new ColumnDescriptor(COL_ID_ATTRIB_DATI_SPEC, Types.DECIMAL, 22, false));
         map.put(COL_NI_ORD_ATTRIB, new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, false));
+        map.put(COL_DS_ATTRIB_DATI_SPEC, new ColumnDescriptor(COL_DS_ATTRIB_DATI_SPEC, Types.VARCHAR, 254, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {

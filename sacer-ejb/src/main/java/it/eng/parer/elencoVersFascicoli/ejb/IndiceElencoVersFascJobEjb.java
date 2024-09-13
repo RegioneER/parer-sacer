@@ -34,14 +34,12 @@ import javax.interceptor.Interceptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
 import it.eng.parer.entity.ElvElencoVersFasc;
 import it.eng.parer.entity.ElvElencoVersFascDaElab;
 import it.eng.parer.entity.ElvStatoElencoVersFasc;
 import it.eng.parer.entity.LogJob;
-import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.ElvElencoVersFascDaElab.TiStatoElencoFascDaElab;
 import it.eng.parer.entity.constraint.ElvStatoElencoVersFasc.TiStatoElencoFasc;
@@ -49,12 +47,8 @@ import it.eng.parer.entity.constraint.FasFascicolo.TiStatoFascElencoVers;
 import it.eng.parer.entity.constraint.FasStatoFascicoloElenco.TiStatoFascElenco;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
-import it.eng.parer.viewEntity.ElvVCreaIxElencoFasc;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
-import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 
 /**
@@ -68,10 +62,10 @@ public class IndiceElencoVersFascJobEjb {
 
     Logger log = LoggerFactory.getLogger(IndiceElencoVersFascJobEjb.class);
 
-    @EJB
-    private IndiceElencoVersFascXsdEjb indiceEjb;
-    @EJB
-    private StruttureEjb struttureEjb;
+    // @EJB
+    // private IndiceElencoVersFascXsdEjb indiceEjb;
+    // @EJB
+    // private StruttureEjb struttureEjb;
     @EJB
     private ElencoVersFascicoliHelper elencoHelper;
     @EJB
@@ -125,13 +119,18 @@ public class IndiceElencoVersFascJobEjb {
     }
 
     public void manageIndex(ElvElencoVersFasc elenco, OrgStrut struttura) throws Exception {
-        OrgEnte ente = struttura.getOrgEnte();
-        String nomeStruttura = struttura.getNmStrut();
-        String nomeStrutturaNorm = struttura.getCdStrutNormaliz();
-        String nomeEnte = ente.getNmEnte();
-        String nomeEnteNorm = ente.getCdEnteNormaliz();
+        // OrgEnte ente = struttura.getOrgEnte();
+        // String nomeStruttura = struttura.getNmStrut();
+        // String nomeStrutturaNorm = struttura.getCdStrutNormaliz();
+        // String nomeEnte = ente.getNmEnte();
+        // String nomeEnteNorm = ente.getCdEnteNormaliz();
 
-        buildIndexFile(elenco, nomeStruttura, nomeStrutturaNorm, nomeEnte, nomeEnteNorm);
+        // MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento dei fascicoli
+        // Non viene più generato l'indice nelle tabelle FILE_INDICE in quanto verrà generato dinamicamente
+        // all'occorrenza
+
+        // buildIndexFile(elenco, nomeStruttura, nomeStrutturaNorm, nomeEnte, nomeEnteNorm);
+
         // registro un nuovo stato = CHIUSO e lo lascio nella coda degli elenchi da elaborare assegnando stato = CHIUSO
         ElvStatoElencoVersFasc statoElencoVersFasc = new ElvStatoElencoVersFasc();
         statoElencoVersFasc.setElvElencoVersFasc(elenco);
@@ -153,33 +152,36 @@ public class IndiceElencoVersFascJobEjb {
         // assegno ad ogni fascicolo appartenente all'elenco stato = IN_ELENCO_CHIUSO
         elencoHelper.setFasFascicoliStatus(elenco, TiStatoFascElencoVers.IN_ELENCO_CHIUSO);
     }
+    // MEV#31922 - Introduzione modalità NO FIRMA nella validazione degli elenchi di versamento dei fascicoli
+    //
+    // Non più utilizzato questo metodo
 
-    public void buildIndexFile(ElvElencoVersFasc elenco, String nomeStruttura, String nomeStrutturaNorm,
-            String nomeEnte, String nomeEnteNorm) throws Exception {
-        calcolaUrnElenco(elenco, nomeStruttura, nomeStrutturaNorm, nomeEnte, nomeEnteNorm);
-        byte[] indexFile = null;
-        // creo il file .xml
-        log.info(
-                "Indice Elenco Versamento Fascicoli - creazione indice per elenco id '{}' appartenente alla struttura '{}'",
-                elenco.getIdElencoVersFasc(), elenco.getOrgStrut().getIdStrut());
-        indexFile = indiceEjb.createIndex(elenco, false);
-        // calcolo l'hash SHA-256 del file .xml
-        String hashXmlIndice = new HashCalculator().calculateHashSHAX(indexFile, TipiHash.SHA_256).toHexBinary();
-        // costruisco l'urn dell'indice
-        ElvVCreaIxElencoFasc creaIxElencoFasc = elencoHelper.findViewById(ElvVCreaIxElencoFasc.class,
-                BigDecimal.valueOf(elenco.getIdElencoVersFasc()));
-        // URN originale
-        String urnXmlIndice = creaIxElencoFasc.getDsUrnIndiceElenco();
-        // URN normalizzato
-        String urnXmlIndiceNormaliz = creaIxElencoFasc.getDsUrnIndiceElencoNormaliz();
-        // Registro il file Indice.xml (in ELV_FILE_ELENCO_VERS_FASC)
-        // definendo l'hash dell'indice, l'algoritmo usato per il calcolo hash (=SHA-256),
-        // l'encoding del hash (=hexBinary), la versione del XSD (=1.0) con cui è creato l'indice dell'elenco e
-        // l'urn dell’indice “urn:<sistemaconservazione>:<ente>:<struttura>:ElencoVers-FA-<id elenco>:Indice”
-        elencoHelper.storeFileIntoElenco(elenco, indexFile, ElencoEnums.FileTypeEnum.INDICE_ELENCO.name(), new Date(),
-                hashXmlIndice, TipiHash.SHA_256.descrivi(), TipiEncBinari.HEX_BINARY.descrivi(), urnXmlIndice,
-                urnXmlIndiceNormaliz, ElencoEnums.ElencoInfo.VERSIONE_ELENCO.message());
-    }
+    // public void buildIndexFile(ElvElencoVersFasc elenco, String nomeStruttura, String nomeStrutturaNorm,
+    // String nomeEnte, String nomeEnteNorm) throws Exception {
+    // calcolaUrnElenco(elenco, nomeStruttura, nomeStrutturaNorm, nomeEnte, nomeEnteNorm);
+    // byte[] indexFile = null;
+    // // creo il file .xml
+    // log.info(
+    // "Indice Elenco Versamento Fascicoli - creazione indice per elenco id '{}' appartenente alla struttura '{}'",
+    // elenco.getIdElencoVersFasc(), elenco.getOrgStrut().getIdStrut());
+    // indexFile = indiceEjb.createIndex(elenco, false);
+    // // calcolo l'hash SHA-256 del file .xml
+    // String hashXmlIndice = new HashCalculator().calculateHashSHAX(indexFile, TipiHash.SHA_256).toHexBinary();
+    // // costruisco l'urn dell'indice
+    // ElvVCreaIxElencoFasc creaIxElencoFasc = elencoHelper.findViewById(ElvVCreaIxElencoFasc.class,
+    // BigDecimal.valueOf(elenco.getIdElencoVersFasc()));
+    // // URN originale
+    // String urnXmlIndice = creaIxElencoFasc.getDsUrnIndiceElenco();
+    // // URN normalizzato
+    // String urnXmlIndiceNormaliz = creaIxElencoFasc.getDsUrnIndiceElencoNormaliz();
+    // // Registro il file Indice.xml (in ELV_FILE_ELENCO_VERS_FASC)
+    // // definendo l'hash dell'indice, l'algoritmo usato per il calcolo hash (=SHA-256),
+    // // l'encoding del hash (=hexBinary), la versione del XSD (=1.0) con cui è creato l'indice dell'elenco e
+    // // l'urn dell’indice “urn:<sistemaconservazione>:<ente>:<struttura>:ElencoVers-FA-<id elenco>:Indice”
+    // elencoHelper.storeFileIntoElenco(elenco, indexFile, ElencoEnums.FileTypeEnum.INDICE_ELENCO.name(), new Date(),
+    // hashXmlIndice, TipiHash.SHA_256.descrivi(), TipiEncBinari.HEX_BINARY.descrivi(), urnXmlIndice,
+    // urnXmlIndiceNormaliz, ElencoEnums.ElencoInfo.VERSIONE_ELENCO.message());
+    // }
 
     public void calcolaUrnElenco(ElvElencoVersFasc elenco, String nomeStruttura, String nomeStrutturaNorm,
             String nomeEnte, String nomeEnteNorm) {

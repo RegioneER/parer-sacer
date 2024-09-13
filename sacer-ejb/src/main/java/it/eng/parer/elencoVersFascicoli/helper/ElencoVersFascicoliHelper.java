@@ -1112,6 +1112,15 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         return query.getResultList();
     }
 
+    public List<ElvFileElencoVersFasc> retrieveFileIndiceElenco2(long idElencoVersFasc, String... tiFileElencoVers) {
+        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.idFileElencoVersFasc, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVersFasc u "
+                + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN (:tiFileElencoVers)";
+        Query query = em.createQuery(queryStr);
+        query.setParameter("idElencoVersFasc", idElencoVersFasc);
+        query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
+        return query.getResultList();
+    }
+
     /**
      * Restituisce il numero dei fascicoli versati in elenco
      *
@@ -1136,7 +1145,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
                 + "WHERE elencoDaElab.tiStato = :tiStato " + "AND statoElencoVersoFasc.tiStato = :tiStatoFirmato "
                 + "ORDER BY statoElencoVersoFasc.tsStato ASC");
         q.setParameter("tiStato", TiStatoElencoFascDaElab.AIP_CREATI);
-        q.setParameter("tiStatoFirmato", TiStatoElencoFasc.FIRMATO);
+        q.setParameter("tiStatoFirmato", TiStatoElencoFasc.VALIDATO);
         return q.getResultList();
     }
 

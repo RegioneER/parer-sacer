@@ -21,6 +21,7 @@ import it.eng.parer.entity.*;
 import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
 import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiUsoModelloXsd;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.viewEntity.FasVLisUdInFasc;
 import it.eng.parer.viewEntity.FasVVisFascicolo;
 import it.eng.parer.ws.dto.CSChiaveFasc;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
@@ -143,12 +145,22 @@ public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
     }
 
     public FasFileMetaVerAipFasc registraFasFileMetaVerAipFasc(long idMetaVerAipFascicolo, String file, OrgStrut strut,
-            Date dtCreazione) {
+            Date dtCreazione, BackendStorage backendMetadata, Map<String, String> indiceAipFascicoloBlob) {
         FasFileMetaVerAipFasc fileMetaVerAipFasc = new FasFileMetaVerAipFasc();
         FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager().find(FasMetaVerAipFascicolo.class,
                 idMetaVerAipFascicolo);
         fileMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
-        fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+
+        // MEV#30398
+        if (backendMetadata.isDataBase()) {
+            // clob contenente lo XML in input (canonicalizzato)
+            fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+        } else {
+            indiceAipFascicoloBlob.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name(),
+                    file);
+        }
+        // end MEV#30398
+
         fileMetaVerAipFasc.setOrgStrut(strut);
         fileMetaVerAipFasc.setDtCreazione(dtCreazione);
         getEntityManager().persist(fileMetaVerAipFasc);

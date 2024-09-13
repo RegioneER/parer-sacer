@@ -1263,6 +1263,7 @@ public class ControlliRecupero {
                 if (tiFileElencoVers
                         .equals(it.eng.parer.entity.constraint.ElvFileElencoVer.TiFileElencoVers.FIRMA_ELENCO_INDICI_AIP
                                 .name())) {
+                    // begin: verificare se rimuovere questa query che non viene utilizzata
                     String queryStr2 = "SELECT fileElencoVers FROM AroUnitaDoc unitaDoc "
                             + "JOIN unitaDoc.elvElencoVer elencoVers "
                             + "JOIN elencoVers.elvFileElencoVers fileElencoVers "
@@ -1272,6 +1273,7 @@ public class ControlliRecupero {
                     javax.persistence.Query query2 = entityManager.createQuery(queryStr2);
                     query2.setParameter("idUnitaDoc", idUnitaDoc);
                     query2.setParameter("tiFileElencoVers", tiFileElencoVers2);
+                    // end: verificare se rimuovere questa query che non viene utilizzata
 
                     List<ElvFileElencoVer> listaFileElencoVers2 = query.getResultList();
                     if (!listaFileElencoVers2.isEmpty()) {

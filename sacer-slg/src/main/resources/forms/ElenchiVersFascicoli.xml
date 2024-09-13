@@ -3,7 +3,7 @@
       xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd">
  
     <Section Name="FascicoloSection" Description="" Legend="Fascicolo" ShowButton="true" LoadOpened="true"/>
-    <Section Name="ElenchiVersFascicoliSelSection" Description="" Legend="Elenchi di versamento fascicoli selezionati per la firma" ShowButton="true"/>
+    <Section Name="ElenchiVersFascicoliSelSection" Description="" Legend="Elenchi di versamento fascicoli selezionati per la validazione" ShowButton="true"/>
     
     <!-- TODO: da adeguare, attività relativa agli indici aip dei fascicoli -->
     <Section Name="ElenchiIndiciAipFascSelSection" Description="" Legend="Elenchi indici AIP fascicoli selezionati per la firma" ShowButton="true"/>
@@ -59,7 +59,7 @@
         <Input Type="DATETIME" Description="Firmato il" Name="dt_firma" />
     </List>
     
-    <Fields Name="FiltriElenchiVersFascDaFirmare" Description="Filtri elenchi di versamento fascicoli da firmare" >
+    <Fields Name="FiltriElenchiVersFascDaFirmare" Description="Filtri elenchi di versamento fascicoli da validare" >
         <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true" />
         <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
         <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
@@ -81,7 +81,7 @@
     </Fields>
 
     <!-- Lista degli elenchi di versamento fascicoli da firmare -->
-    <List Name="ElenchiVersFascicoliDaFirmareList" Description="Lista elenchi di versamento fascicoli da firmare" hideInsertButton="true" hideUpdateButton="true" >
+    <List Name="ElenchiVersFascicoliDaFirmareList" Description="Lista elenchi di versamento fascicoli da validare" hideInsertButton="true" hideUpdateButton="true" >
         <Input Type="INTEGER"  Description="Id elenco" Name="id_elenco_vers_fasc" />
         <Input Type="STRING" Description="Struttura" Name="amb_ente_strut"/>
         <CheckBox Type="STRING" Description="Elenco standard" Name="fl_elenco_standard" Readonly="true" />
@@ -116,7 +116,7 @@
         <Button Name="selectAllElenchiButton" Description="Aggiungi tutti" Type="STRING"/>
         <Button Name="deselectAllElenchiButton" Description="Rimuovi tutti" Type="STRING"/>
         <Button Name="selectHundredElenchiButton" Description="Aggiungi 100" Type="STRING"/>
-        <Button Name="firmaElenchiHsmButton"  Description="Firma" Type="STRING" />
+        <Button Name="validaElenchiButton"  Description="Valida" Type="STRING" />
     </ButtonList>
     
     <!-- Dettaglio elenco di versamento fascicoli -->

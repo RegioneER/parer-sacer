@@ -3600,7 +3600,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         }
         // Parametri
         disabileTipoUdParametersSections(false);
-        loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, false);
+        // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, false);
 
         String cessato = getRequest().getParameter("cessato");
         if ((StringUtils.isNotBlank(cessato) && "1".equals(cessato)) || getRequest().getAttribute("cessato") != null) {
@@ -3745,7 +3745,13 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         getForm().getCriteriRaggruppamentoList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
 
         // Liste parametri
-        loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, false);
+        // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, false);
+        loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, true, false,
+                getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, true, false,
+                getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, true, false,
+                getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
 
         getForm().getTipoUnitaDocAmmessoList().getTable().first();
         getForm().getXsdDatiSpecList().getTable().first();
@@ -6160,7 +6166,13 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
         BigDecimal idTipoUnitaDoc = ((BaseRowInterface) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
                 .getBigDecimal("id_tipo_unita_doc");
-        loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, true, true, true);
+        // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, true, true, true);
+        loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true,
+                getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true,
+                getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true,
+                getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
         getForm().getTipoUnitaDoc().setStatus(Status.update);
         getForm().getRicercaParametriTipoUd().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -6176,7 +6188,13 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
         BigDecimal idTipoUnitaDoc = ((BaseRowInterface) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
                 .getBigDecimal("id_tipo_unita_doc");
-        loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, true, true);
+        // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, true, true);
+        loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true,
+                getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true,
+                getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
         getForm().getTipoUnitaDoc().setStatus(Status.update);
         getForm().getRicercaParametriTipoUd().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -6192,7 +6210,13 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
         BigDecimal idTipoUnitaDoc = ((BaseRowInterface) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
                 .getBigDecimal("id_tipo_unita_doc");
-        loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, true);
+        // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, true);
+        loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+        loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true,
+                getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
         getForm().getTipoUnitaDoc().setStatus(Status.update);
         getForm().getRicercaParametriTipoUd().setEditMode();
         BaseTable tb = struttureEjb.getFunzioneParametriTableBean();
@@ -6242,7 +6266,13 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             getForm().getTipoUnitaDoc().setStatus(Status.view);
             setViewModeListeParametri();
             try {
-                loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, false);
+                // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, false);
+                loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                        getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+                loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                        getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+                loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                        getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
             } catch (ParerUserError ex) {
                 getMessageBox().addError(
                         "Errore durante il ricaricamento dei parametri tipo ud a seguito del salvataggio degli stessi");
@@ -6272,11 +6302,29 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             if (getSession().getAttribute("provenienzaParametri") != null) {
                 String provenzienzaParametri = (String) getSession().getAttribute("provenienzaParametri");
                 if (provenzienzaParametri.equals("amministrazione")) {
-                    loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true, true, true);
+                    // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true, true, true);
+                    loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
+                            getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+                    loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
+                            getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+                    loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
+                            getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
                 } else if (provenzienzaParametri.equals("conservazione")) {
-                    loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false, true, true);
+                    // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false, true, true);
+                    loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
+                            getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+                    loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
+                            getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+                    loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
+                            getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
                 } else if (provenzienzaParametri.equals("gestione")) {
-                    loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false, false, true);
+                    // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false, false, true);
+                    loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
+                            getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
+                    loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
+                            getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
+                    loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
+                            getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
                 }
             }
             setViewModeListeParametri();
@@ -6822,6 +6870,152 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         }
 
         return paramApplicTableBean;
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriAmministrazioneTipoUdList() throws EMFError {
+        BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
+        BigDecimal idTipoUnitaDoc = ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable()
+                .getCurrentRow()).getIdTipoUnitaDoc();
+        boolean filterValid = getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_TIPO_UD)) {
+                loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true, filterValid);
+            } else {
+                loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di amministrazione del tipo ud");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriConservazioneTipoUdList() throws EMFError {
+        BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
+        BigDecimal idTipoUnitaDoc = ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable()
+                .getCurrentRow()).getIdTipoUnitaDoc();
+        boolean filterValid = getForm().getParametriConservazioneTipoUdList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_TIPO_UD)) {
+                loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true, filterValid);
+            } else {
+                loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di conservazione del tipo ud");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void filterInactiveRecordsParametriGestioneTipoUdList() throws EMFError {
+        BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
+        BigDecimal idTipoUnitaDoc = ((DecTipoUnitaDocRowBean) getForm().getTipoUnitaDocList().getTable()
+                .getCurrentRow()).getIdTipoUnitaDoc();
+        boolean filterValid = getForm().getParametriGestioneTipoUdList().isFilterValidRecords();
+        try {
+            if (getLastPublisher().equals(Application.Publisher.PARAMETRI_TIPO_UD)) {
+                loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, false, true, filterValid);
+            } else {
+                loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false, filterValid);
+            }
+        } catch (ParerUserError ex) {
+            getMessageBox().addError("Errore durante il recupero dei parametri di gestione del tipo ud");
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    private void loadListaParametriAmministrazioneTipoUd(BigDecimal idStrut, BigDecimal idTipoUnitaDoc,
+            List<String> funzione, boolean hideDeleteButtons, boolean editModeAmministrazione, boolean filterValid)
+            throws ParerUserError {
+        BigDecimal idAmbiente = null;
+        if (idStrut != null) {
+            OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(idStrut);
+            OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(strut.getIdEnte());
+            idAmbiente = ente.getIdAmbiente();
+        }
+
+        // MEV26587
+        AplParamApplicTableBean parametriAmministrazione = amministrazioneEjb
+                .getAplParamApplicAmministrazioneTipoUd(idAmbiente, idStrut, idTipoUnitaDoc, funzione, filterValid);
+
+        if (!editModeAmministrazione) {
+            parametriAmministrazione = obfuscatePasswordParamApplic(parametriAmministrazione);
+        }
+
+        getForm().getParametriAmministrazioneTipoUdList().setTable(parametriAmministrazione);
+        getForm().getParametriAmministrazioneTipoUdList().getTable().setPageSize(300);
+        getForm().getParametriAmministrazioneTipoUdList().getTable().first();
+        getForm().getParametriAmministrazioneTipoUdList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeAmministrazione) {
+            getForm().getParametriAmministrazioneTipoUdList().getDs_valore_param_applic_tipo_ud_amm().setEditMode();
+            getForm().getParametriAmministrazioneTipoUdList().setStatus(Status.update);
+        } else {
+            getForm().getParametriAmministrazioneTipoUdList().getDs_valore_param_applic_tipo_ud_amm().setViewMode();
+            getForm().getParametriAmministrazioneTipoUdList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriConservazioneTipoUd(BigDecimal idStrut, BigDecimal idTipoUnitaDoc,
+            List<String> funzione, boolean hideDeleteButtons, boolean editModeConservazione, boolean filterValid)
+            throws ParerUserError {
+        BigDecimal idAmbiente = null;
+        if (idStrut != null) {
+            OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(idStrut);
+            OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(strut.getIdEnte());
+            idAmbiente = ente.getIdAmbiente();
+        }
+
+        // MEV26587
+        AplParamApplicTableBean parametriConservazione = amministrazioneEjb
+                .getAplParamApplicConservazioneTipoUd(idAmbiente, idStrut, idTipoUnitaDoc, funzione, filterValid);
+
+        if (!editModeConservazione) {
+            parametriConservazione = obfuscatePasswordParamApplic(parametriConservazione);
+        }
+
+        getForm().getParametriConservazioneTipoUdList().setTable(parametriConservazione);
+        getForm().getParametriConservazioneTipoUdList().getTable().setPageSize(300);
+        getForm().getParametriConservazioneTipoUdList().getTable().first();
+        getForm().getParametriConservazioneTipoUdList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeConservazione) {
+            getForm().getParametriConservazioneTipoUdList().getDs_valore_param_applic_tipo_ud_cons().setEditMode();
+            getForm().getParametriConservazioneTipoUdList().setStatus(Status.update);
+        } else {
+            getForm().getParametriConservazioneTipoUdList().getDs_valore_param_applic_tipo_ud_cons().setViewMode();
+            getForm().getParametriConservazioneTipoUdList().setStatus(Status.view);
+        }
+    }
+
+    private void loadListaParametriGestioneTipoUd(BigDecimal idStrut, BigDecimal idTipoUnitaDoc, List<String> funzione,
+            boolean hideDeleteButtons, boolean editModeGestione, boolean filterValid) throws ParerUserError {
+        BigDecimal idAmbiente = null;
+        if (idStrut != null) {
+            OrgStrutRowBean strut = struttureEjb.getOrgStrutRowBean(idStrut);
+            OrgEnteRowBean ente = struttureEjb.getOrgEnteRowBean(strut.getIdEnte());
+            idAmbiente = ente.getIdAmbiente();
+        }
+
+        // MEV26587
+        AplParamApplicTableBean parametriGestione = amministrazioneEjb.getAplParamApplicGestioneTipoUd(idAmbiente,
+                idStrut, idTipoUnitaDoc, funzione, filterValid);
+
+        if (!editModeGestione) {
+            parametriGestione = obfuscatePasswordParamApplic(parametriGestione);
+        }
+
+        getForm().getParametriGestioneTipoUdList().setTable(parametriGestione);
+        getForm().getParametriGestioneTipoUdList().getTable().setPageSize(300);
+        getForm().getParametriGestioneTipoUdList().getTable().first();
+        getForm().getParametriGestioneTipoUdList().setHideDeleteButton(hideDeleteButtons);
+        if (editModeGestione) {
+            getForm().getParametriGestioneTipoUdList().getDs_valore_param_applic_tipo_ud_gest().setEditMode();
+            getForm().getParametriGestioneTipoUdList().setStatus(Status.update);
+        } else {
+            getForm().getParametriGestioneTipoUdList().getDs_valore_param_applic_tipo_ud_gest().setViewMode();
+            getForm().getParametriGestioneTipoUdList().setStatus(Status.view);
+        }
     }
 
 }

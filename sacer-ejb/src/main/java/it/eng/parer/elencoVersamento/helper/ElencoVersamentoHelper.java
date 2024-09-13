@@ -3218,6 +3218,15 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return query.getResultList();
     }
 
+    public List<ElvFileElencoVer> retrieveFileIndiceElenco2(long idElencoVers, String... tiFileElencoVers) {
+        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVer(u.idFileElencoVers, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVer u "
+                + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers AND u.tiFileElencoVers IN (:tiFileElencoVers)";
+        Query query = em.createQuery(queryStr);
+        query.setParameter("idElencoVers", idElencoVers);
+        query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
+        return query.getResultList();
+    }
+
     public ElvFileElencoVer getFileIndiceElenco(long idElencoVers, String tiFileElencoVers) {
         String queryStr = "SELECT u FROM ElvFileElencoVer u " + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers "
                 + "AND u.tiFileElencoVers IN (:tiFileElencoVers)";

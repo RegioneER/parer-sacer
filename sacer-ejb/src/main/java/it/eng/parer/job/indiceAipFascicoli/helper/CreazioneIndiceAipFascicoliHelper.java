@@ -23,6 +23,7 @@ import it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione;
 import it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.viewEntity.ElvVLisIxAipFascByEle;
 import it.eng.parer.volume.helper.VolumeHelper;
 import it.eng.parer.web.helper.ComponentiHelper;
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -528,12 +530,20 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
     }
 
     public FasFileMetaVerAipFasc registraFasFileMetaVerAipFasc(long idMetaVerAipFascicolo, String file, OrgStrut strut,
-            Date dtCreazione) {
+            Date dtCreazione, BackendStorage backendMetadata, Map<String, String> indiceAipFascicoloBlob) {
         FasFileMetaVerAipFasc fileMetaVerAipFasc = new FasFileMetaVerAipFasc();
         FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager().find(FasMetaVerAipFascicolo.class,
                 idMetaVerAipFascicolo);
         fileMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
-        fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+        // MEV#30398
+        if (backendMetadata.isDataBase()) {
+            // clob contenente lo XML in input (canonicalizzato)
+            fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+        } else {
+            indiceAipFascicoloBlob.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE.name(),
+                    file);
+        }
+        // end MEV#30398
         fileMetaVerAipFasc.setOrgStrut(strut);
         fileMetaVerAipFasc.setDtCreazione(dtCreazione);
         getEntityManager().persist(fileMetaVerAipFasc);
@@ -579,5 +589,15 @@ public class CreazioneIndiceAipFascicoliHelper extends GenericHelper {
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
         query.setParameter("tiStatoConservazione", TiStatoConservazione.ANNULLATO);
         return query.getResultList();
+    }
+
+    public DecAaTipoFascicolo retrieveDecAaTipoFascicoloCorrente(long idTipoFascicolo) {
+        Query query = entityManager.createQuery("SELECT aaTipoFascicolo FROM DecAaTipoFascicolo aaTipoFascicolo "
+                + "WHERE aaTipoFascicolo.decTipoFascicolo.idTipoFascicolo = :idTipoFascicolo "
+                + "AND aaTipoFascicolo.aaIniTipoFascicolo <= :aaCorrente AND aaTipoFascicolo.aaFinTipoFascicolo >= :aaCorrente ");
+        query.setParameter("idTipoFascicolo", idTipoFascicolo);
+        query.setParameter("aaCorrente", BigDecimal.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+        List<DecAaTipoFascicolo> lista = query.getResultList();
+        return lista.get(0);
     }
 }
