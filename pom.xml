@@ -501,7 +501,7 @@
         <module>sacer-ear</module>
     </modules>
     <scm>
-        <developerConnection>scm:git:git@gitlab.ente.regione.emr.it:parer/jboss/sacer.git</developerConnection>
-        <tag>sacer-jboss-10.0.0</tag>
+        <developerConnection>scm:git:https://github.com/RegioneER/parer-sacer.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 </project>
