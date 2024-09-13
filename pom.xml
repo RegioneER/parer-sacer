@@ -6,7 +6,6 @@
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
-    <url>https://nexus.ente.regione.emr.it/repository/parer-site/sacer/${project.version}/</url>
 
     <parent>
         <groupId>it.eng.parer</groupId>
@@ -46,12 +45,19 @@
     </properties>
 
     <distributionManagement>
-        <site>
-            <id>site</id>
-            <url>dav:https://nexus.ente.regione.emr.it/repository/parer-site/sacer/${project.version}</url>
-        </site>
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/RegioneER/parer-sacer</url>
+        </repository>      
     </distributionManagement>
-    
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/RegioneER/parer-framework-parerpom</url>           
+        </repository>          
+     </repositories>
+ 
     <dependencyManagement>
         <dependencies>
             <!-- moduli sacer -->
@@ -501,7 +507,7 @@
         <module>sacer-ear</module>
     </modules>
     <scm>
-        <developerConnection>scm:git:https://github.com/RegioneER/parer-sacer.git</developerConnection>
+        <developerConnection>scm:git:https://github.com/RegioneER/parer.sacer.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 </project>
