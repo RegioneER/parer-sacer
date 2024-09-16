@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
@@ -34,6 +35,10 @@ import javax.interceptor.Interceptors;
 import javax.persistence.Query;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.DecModelloXsdFascicolo;
+import it.eng.parer.entity.DecValVoceTitol;
 import it.eng.parer.entity.FasAmminPartec;
 import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasLinkFascicolo;
