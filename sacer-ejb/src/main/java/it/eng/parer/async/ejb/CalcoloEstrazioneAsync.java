@@ -37,7 +37,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Future;
 import javax.annotation.Resource;
+import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -146,7 +148,7 @@ public class CalcoloEstrazioneAsync {
         // ricavo la struttura
         OrgStrut struttura = calcoloHelper.findById(OrgStrut.class, idStrut);
         // Il sistema logga l’inizio di una nuova richiesta di calcolo estrazione AIP sulla tabella ARO_RICHIESTA_RA
-        AroRichiestaRa richiestaRa = calcoloHelper.writeAtomicAroRichiestaRa(idStrut, priorita);
+        AroRichiestaRa richiestaRa = calcoloHelper.writeAtomicAroRichiestaRa(idStrut);
         // Vista per verificare che tutte le ud, le serie e i fascicoli appartenenti all'ente convenzionato in capo alla
         // struttura abbiano i requisiti
         AroVChkRaUd chkRaUdView = calcoloHelper.findViewById(AroVChkRaUd.class, struttura.getIdEnteConvenz());

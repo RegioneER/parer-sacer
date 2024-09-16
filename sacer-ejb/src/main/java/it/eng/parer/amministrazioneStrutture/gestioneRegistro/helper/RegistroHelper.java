@@ -262,12 +262,18 @@ public class RegistroHelper extends GenericHelper {
     public long getMonAaUdRegistroNumber(BigDecimal dataInizio, BigDecimal dataFine, BigDecimal idRegistro) {
         String queryStr = "SELECT COUNT (m) " + "FROM MonAaUnitaDocRegistro m "
                 + "WHERE m.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc "
-                + "AND m.aaUnitaDocRegistro BETWEEN :dataInizio AND :dataFine ";
+                + "AND m.aaUnitaDocRegistro BETWEEN :dataInizio AND :dataFine "
+                + "AND EXISTS ( SELECT ud FROM AroUnitaDoc ud "
+                + "WHERE ud.aaKeyUnitaDoc BETWEEN :dataInizio AND :dataFine "
+                + "AND ud.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc " +
+                // MAC #33854 - verifica che l'ud non sia annullata " +
+                "AND ud.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') )";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idRegistroUnitaDoc", longFromBigDecimal(idRegistro));
         query.setParameter("dataInizio", dataInizio);
         if (dataFine == null) {
-            query.setParameter("dataFine", 9999);
+            // MAC #33801
+            query.setParameter("dataFine", bigDecimalFromLong(9999L));
         } else {
             query.setParameter("dataFine", dataFine);
         }
@@ -314,7 +320,14 @@ public class RegistroHelper extends GenericHelper {
     public boolean checkUnitaDocInDecAaRegUnitaDoc(BigDecimal idAaRegistroUnitaDoc, BigDecimal annoDa, BigDecimal annoA,
             Long idRegistroUnitaDoc, String cdRegistroKeyUnitaDoc, List<Long> subStruts) {
         Query query = getEntityManager().createQuery(
-                "SELECT a FROM DecAaRegistroUnitaDoc a WHERE a.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc AND EXISTS ( SELECT ud FROM AroUnitaDoc ud WHERE ud.orgSubStrut.idSubStrut IN (:subStruts) AND ud.aaKeyUnitaDoc BETWEEN :annoDa AND :annoA AND ud.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc AND ud.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc )");
+                "SELECT a FROM DecAaRegistroUnitaDoc a WHERE a.idAaRegistroUnitaDoc = :idAaRegistroUnitaDoc "
+                        + "AND EXISTS ( SELECT ud FROM AroUnitaDoc ud "
+                        + "WHERE ud.orgSubStrut.idSubStrut IN (:subStruts) "
+                        + "AND ud.aaKeyUnitaDoc BETWEEN :annoDa AND :annoA "
+                        + "AND ud.cdRegistroKeyUnitaDoc = :cdRegistroKeyUnitaDoc "
+                        + "AND ud.decRegistroUnitaDoc.idRegistroUnitaDoc = :idRegistroUnitaDoc "
+                        // MAC #33854 - verifica che l'ud non sia annullata
+                        + "AND ud.dtAnnul = to_date('31/12/2444','dd/mm/yyyy') )");
         query.setParameter("idAaRegistroUnitaDoc", longFromBigDecimal(idAaRegistroUnitaDoc));
         query.setParameter("subStruts", subStruts);
         query.setParameter("annoDa", annoDa);

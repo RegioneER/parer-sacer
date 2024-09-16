@@ -76,7 +76,7 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
     private CalcoloEstrazioneHelper me;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public AroRichiestaRa writeAtomicAroRichiestaRa(Long idStrut, BigDecimal priorita) {
+    public AroRichiestaRa writeAtomicAroRichiestaRa(Long idStrut) {
         Date date = new Date();
         AroRichiestaRa newRichiestaRaJob = new AroRichiestaRa();
         newRichiestaRaJob.setTsInizio(date);
@@ -86,7 +86,6 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
         }
         newRichiestaRaJob.setOrgStrut(orgStrut);
         newRichiestaRaJob.setTiStato(AroRichiestaTiStato.CALCOLO_AIP_IN_CORSO);
-        newRichiestaRaJob.setPriorita(priorita);
 
         return entityManager.merge(newRichiestaRaJob);
     }
@@ -100,6 +99,7 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
         aipRestituzioneArch.setAroRichiestaRa(richiestaRa);
 
         entityManager.persist(aipRestituzioneArch);
+        entityManager.flush();
 
         if (richiestaRa.getAroAipRestituzioneArchivios() == null) {
             richiestaRa.setAroAipRestituzioneArchivios(new ArrayList<>());

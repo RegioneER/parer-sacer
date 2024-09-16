@@ -49,6 +49,7 @@ import it.eng.parer.slite.gen.viewbean.MonVVisUpdUdKoRowBean;
 import it.eng.parer.web.ejb.MonitoraggioAggMetaEjb;
 import it.eng.parer.web.ejb.MonitoraggioAggMetaEjb.Stato;
 import it.eng.parer.web.ejb.MonitoraggioAggMetaEjb.StatoGenerazioneIndiceAip;
+import it.eng.parer.web.ejb.MonitoraggioSinteticoEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
@@ -119,6 +120,8 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
     private ConfigurationHelper configHelper;
     @EJB(mappedName = "java:app/Parer-ejb/ObjectStorageService")
     private ObjectStorageService objectStorageService;
+    @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioSinteticoEjb")
+    private MonitoraggioSinteticoEjb monitSintEjb;
 
     public static final String PAR_TI_CREAZIONE = "ti_creazione";
     public static final String TI_CREAZIONE_OGGI = "OGGI";
@@ -298,17 +301,34 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
         } catch (Exception ex) {
             logger.error("Errore nel recupero ambiente", ex);
         }
+
+        // Ricavo id struttura, ente ed ambiente attuali
+        BigDecimal idStruttura = getUser().getIdOrganizzazioneFoglia();
+        BigDecimal idEnte = monitSintEjb.getEnte(idStruttura);
+        BigDecimal idAmbiente = monitSintEjb.getAmbiente(idEnte);
+        // Ricavo i valori della combo ENTE
+        OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(),
+                idAmbiente.longValue(), Boolean.TRUE);
+        // Ricavo i valori della combo STRUTTURA
+        OrgStrutTableBean tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
+                Boolean.TRUE);
+
         DecodeMap mappaAmbiente = new DecodeMap();
         mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
-        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ambiente().setDecodeMap(mappaAmbiente);
+        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ambiente()
+                .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente"));
+
         if (tmpTableBeanAmbiente.size() == 1) {
             getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ambiente()
                     .setValue("" + tmpTableBeanAmbiente.getRow(0).getIdAmbiente());
         }
-
-        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ente().setDecodeMap(new DecodeMap());
-        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_strut().setDecodeMap(new DecodeMap());
-
+        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ente()
+                .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
+        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_strut()
+                .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStruttura, "id_strut", "nm_strut"));
+        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ambiente().setValue(idAmbiente.toString());
+        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ente().setValue(idEnte.toString());
+        getForm().getFiltriRicercaMonitoraggioAggMeta().getId_strut().setValue(idStruttura.toString());
         // Imposto le combo in editMode
         getForm().getFiltriRicercaMonitoraggioAggMeta().setEditMode();
         getForm().getCalcolaTotaliButtonList().setEditMode();
@@ -317,6 +337,7 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
         getForm().getAggiornamentiMetadati().clear();
         getForm().getAggiornamentiMetadatiFalliti().clear();
 
+        calcolaRiepilogoAggMetaGlobale(idAmbiente, idEnte, idStruttura, null, null, null, null, null, null);
         // Eseguo forward alla stessa pagina
         forwardToPublisher(Application.Publisher.MONITORAGGIO_RIEPILOGO_AGG_META);
     }

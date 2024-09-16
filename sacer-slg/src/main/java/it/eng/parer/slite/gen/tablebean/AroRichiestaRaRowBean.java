@@ -75,14 +75,6 @@ public class AroRichiestaRaRowBean extends BaseRow implements JEEBaseRowInterfac
         setObject("ts_fine", tsFine);
     }
 
-    public BigDecimal getPriorita() {
-        return getBigDecimal("priorita");
-    }
-
-    public void setPriorita(BigDecimal priorita) {
-        setObject("priorita", priorita);
-    }
-
     public String getTiStato() {
         return getString("ti_stato");
     }
@@ -133,7 +125,6 @@ public class AroRichiestaRaRowBean extends BaseRow implements JEEBaseRowInterfac
         if (entity.getTsFine() != null) {
             this.setTsFine(new Timestamp(entity.getTsFine().getTime()));
         }
-        this.setPriorita(entity.getPriorita());
         this.setTiStato(entity.getTiStato().name());
         this.setCdErrore(entity.getCdErrore());
         this.setNote(entity.getNote());
@@ -156,7 +147,6 @@ public class AroRichiestaRaRowBean extends BaseRow implements JEEBaseRowInterfac
         }
         entity.setTsInizio(this.getTsInizio());
         entity.setTsFine(this.getTsFine());
-        entity.setPriorita(this.getPriorita());
         entity.setTiStato(AroRichiestaTiStato.valueOf(this.getTiStato()));
         entity.setCdErrore(this.getCdErrore());
         entity.setNote(this.getNote());

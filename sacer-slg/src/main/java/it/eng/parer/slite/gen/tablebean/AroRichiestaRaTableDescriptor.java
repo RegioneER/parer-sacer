@@ -42,7 +42,6 @@ public class AroRichiestaRaTableDescriptor extends TableDescriptor {
     public static final String COL_ID_RICHIESTA_RA = "id_richiesta_ra";
     public static final String COL_TS_INIZIO = "ts_inizio";
     public static final String COL_TS_FINE = "ts_fine";
-    public static final String COL_PRIORITA = "priorita";
     public static final String COL_TI_STATO = "ti_stato";
     public static final String COL_CD_ERRORE = "cd_errore";
     public static final String COL_NOTE = "note";
@@ -55,7 +54,6 @@ public class AroRichiestaRaTableDescriptor extends TableDescriptor {
         map.put(COL_ID_RICHIESTA_RA, new ColumnDescriptor(COL_ID_RICHIESTA_RA, Types.DECIMAL, 22, true));
         map.put(COL_TS_INIZIO, new ColumnDescriptor(COL_TS_INIZIO, Types.TIMESTAMP, 11, false));
         map.put(COL_TS_FINE, new ColumnDescriptor(COL_TS_FINE, Types.TIMESTAMP, 11, false));
-        map.put(COL_PRIORITA, new ColumnDescriptor(COL_PRIORITA, Types.DECIMAL, 22, false));
         map.put(COL_TI_STATO, new ColumnDescriptor(COL_TI_STATO, Types.VARCHAR, 30, false));
         map.put(COL_CD_ERRORE, new ColumnDescriptor(COL_CD_ERRORE, Types.VARCHAR, 300, false));
         map.put(COL_NOTE, new ColumnDescriptor(COL_NOTE, Types.VARCHAR, 300, false));

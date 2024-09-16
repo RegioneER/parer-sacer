@@ -62,8 +62,6 @@ public class AroRichiestaRa implements Serializable {
 
     private Date tsFine;
 
-    private BigDecimal priorita;
-
     private OrgStrut orgStrut;
 
     private IamUser iamUser;
@@ -113,15 +111,6 @@ public class AroRichiestaRa implements Serializable {
 
     public void setTsFine(Date tsFine) {
         this.tsFine = tsFine;
-    }
-
-    @Column(name = "PRIORITA")
-    public BigDecimal getPriorita() {
-        return this.priorita;
-    }
-
-    public void setPriorita(BigDecimal priorita) {
-        this.priorita = priorita;
     }
 
     @Enumerated(EnumType.STRING)

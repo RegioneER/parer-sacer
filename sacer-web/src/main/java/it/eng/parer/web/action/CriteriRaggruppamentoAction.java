@@ -408,7 +408,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
         getForm().getCreaCriterioRaggr().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
 
         // MEV#31945 - Eliminare validazione elenco UD con firma
-        if (getTableName().equals(getForm().getCriterioRaggrList().getName())
+        if (getTableName().equals(getForm().getCriterioRaggrList().getName()) && getNavigationEvent() != null
                 && (getNavigationEvent().equals(NE_DETTAGLIO_INSERT)
                         || getNavigationEvent().equals(NE_DETTAGLIO_UPDATE))) {
             getForm().getCreaCriterioRaggr().getTi_valid_elenco()
@@ -525,7 +525,9 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
     public void insertDettaglio() throws EMFError {
         // MEV#31945 - Eliminare validazione elenco UD con firma
         // Corretto il bug che se si andava in inserimento senza aver selezionato una struttura da ricercare esplodeva.
-        if (getForm().getFiltriCriteriRaggr().getId_strut().getValue().equals("")) {
+        String id_strut = getForm().getFiltriCriteriRaggr().getId_strut().getValue();
+        if (getForm().getFiltriCriteriRaggr().getId_strut().getValue() != null
+                && getForm().getFiltriCriteriRaggr().getId_strut().getValue().equals("")) {
             getMessageBox().addInfo("Per inserire un nuovo criterio di raggruppamento selezionale una struttura.");
             forwardToPublisher(getLastPublisher());
         } else {

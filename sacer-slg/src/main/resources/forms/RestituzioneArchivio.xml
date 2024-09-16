@@ -18,6 +18,8 @@
         <ComboBox Name="id_ambiente" Description="Ambiente" Type="INTEGER" Trigger="true" Required="true" WithSearchComp="true"/>
         <ComboBox Name="id_ente" Description="Ente" Type="INTEGER" Trigger="true" WithSearchComp="true"/>
         <ComboBox Name="id_strut" Description="Struttura" Type="INTEGER" WithSearchComp="true"/>
+        <!--<ComboBox Name="id_ambiente_ente_convenz" Description="Ambiente ente convenzionato" Type="INTEGER" Trigger="true" Required="true" WithSearchComp="true"/>
+        <ComboBox Name="id_ente_convenz" Description="Ente convenzionato" Type="INTEGER" Trigger="true" WithSearchComp="true"/>-->
 
         <MultiSelect Name="ti_stato_rich_rest_arch_cor" Description="Stato corrente" Type="STRING"/>
 
@@ -28,7 +30,8 @@
     </Fields>
     
     <List Name="RichRestArchList" Description="Richieste restituzione archivio">
-        <Input Name="id_richiesta_ra" Description="Id richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Name="id_richiesta_ra" Description="Id richiesta" Type="INTEGER" />
+        <Input Name="ts_inizio" Description="Data creazione" Type="DATE" />
         <Input Name="id_strut" Description="Id struttura" Type="INTEGER" Hidden="true"/>
         <Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING" />
         <Input Name="nm_ente_strut" Description="Ente - Struttura" Type="STRING" />
@@ -36,11 +39,9 @@
         <Input Name="estratti" Description="Aip estratti" Type="INTEGER" />
         <Input Name="errori" Description="Aip in errore" Type="INTEGER" />
         <Input Name="estratti_totali" Description="% aip estratti" Type="INTEGER" />
-        <Input Name="sum_dim" Description="Dimesione aip estratti (MegaByte)" Type="INTEGER"/>
+        <Input Name="sum_dim" Description="Dimesione aip estratti (MegaByte)" Type="DECIMAL" Format="#.######" GroupingDecimal="true" />
         <Input Name="max_dt_estrazione" Description="Data ultima estrazione" Type="DATETIME"/>
-        <Input Name="ti_stato" Description="Stato corrente" Type="STRING"/>
-        <Input Name="priorita" Description="priorita" Type="INTEGER"/>
-        <Input Name="ts_inizio" Description="Data creazione" Type="DATE" Hidden="true"/>
+        <Input Name="ti_stato" Description="Stato corrente" Type="STRING"/>                
     </List>
     
     <!-- DETTAGLIO RICHIESTE -->
@@ -55,9 +56,7 @@
         <Input Name="nm_ente_convenz" Description="Ente convenzionato" Type="STRING" />
         <Input Name="nm_ente_strut" Description="Ente - Struttura" Type="STRING" />
         <Input Name="ts_inizio" Description="Data inizio" Type="DATE" />
-        <Input Name="ts_fine" Description="Data fine" Type="DATE" />
-        <Input Name="priorita" Description="Priorita" Type="INTEGER" />
-        <ComboBox Name="priorita_combo" Description="Priorita" Type="STRING" Required="true"/>
+        <Input Name="ts_fine" Description="Data fine" Type="DATE" />        
         <!-- Stato corrente -->
         <Input Name="ti_stato" Description="Stato corrente" Type="STRING" />
         <Input Name="nm_userid" Description="Utente" Type="STRING" />  

@@ -3802,6 +3802,117 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return stati != null && !stati.isEmpty();
     }
 
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    //
+    // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO
+    //
+    public boolean isPossibileMettereAipAllaFirma(BigDecimal idElencoVers) {
+        Query query = em.createNativeQuery("SELECT id_elenco_vers FROM ELV_ELENCO_VERS ele "
+                + "JOIN DEC_CRITERIO_RAGGR crit ON (crit.id_criterio_raggr = ele.id_criterio_raggr) "
+                + "WHERE ele.id_elenco_vers = :idElencoVers AND ele.ti_stato_elenco = 'COMPLETATO' "
+                + "AND NOT EXISTS (SELECT * FROM ELV_FILE_ELENCO_VERS file_ele "
+                + "WHERE file_ele.id_elenco_vers = ele.id_elenco_vers "
+                + "AND file_ele.ti_file_elenco_vers = 'ELENCO_INDICI_AIP') "
+                + "AND (ele.ti_gest_elenco in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO') "
+                + "or (ele.ti_gest_elenco is null "
+                + "and crit.ti_gest_elenco_criterio in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO')) "
+                + "or (ele.ti_gest_elenco is null and crit.ti_gest_elenco_criterio is null "
+                + "and case when ele.fl_elenco_standard = '0' "
+                + "then (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_NOSTD') "
+                + "when ele.fl_elenco_standard = '1' and ele.fl_elenco_fisc = '0' "
+                + "then (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_STD_NOFISC') "
+                + "else (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_STD_FISC') "
+                + "end in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO')) )");
+        query.setParameter("idElencoVers", idElencoVers);
+        List<Object> l = query.getResultList();
+        return (l != null && l.size() > 0) ? true : false;
+    }
+
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    //
+    // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO
+    //
+    public boolean isElencoConAlmenoUnaUdSenzaIndiceAip(BigDecimal idElencoVers) {
+        Query query = em.createNativeQuery("SELECT tmp.id_unita_doc "
+                + "FROM (	SELECT ud.id_elenco_vers, ud.id_unita_doc " + "		FROM ARO_UNITA_DOC ud "
+                + "		WHERE ud.id_elenco_vers = :idElencoVers1 "
+                + "		AND ud.ti_stato_conservazione != 'ANNULLATA' " + "		UNION "
+                + "		SELECT doc.id_elenco_vers, ud.id_unita_doc " + "		FROM ARO_DOC doc "
+                + "		JOIN ARO_UNITA_DOC ud " + "			ON (ud.id_unita_doc = doc.id_unita_doc "
+                + "			AND ud.ti_stato_conservazione != 'ANNULLATA') "
+                + "		WHERE doc.id_elenco_vers = :idElencoVers2 "
+                + "UNION        SELECT upd_ud.id_elenco_vers, ud.id_unita_doc " + "FROM ARO_UPD_UNITA_DOC upd_ud "
+                + "join ARO_UNITA_DOC ud ON (ud.id_unita_doc = upd_ud.id_unita_doc "
+                + "	AND ud.ti_stato_conservazione != 'ANNULLATA') " + "WHERE upd_ud.id_elenco_vers = :idElencoVers3 "
+                + ") tmp " + "WHERE NOT EXISTS (SELECT * " + "				  FROM ARO_INDICE_AIP_UD ix "
+                + "				  JOIN ARO_VER_INDICE_AIP_UD ver_ix "
+                + "					ON (ver_ix.id_indice_aip = ix.id_indice_aip "
+                + "					AND ver_ix.id_elenco_vers = tmp.id_elenco_vers) "
+                + "				  WHERE ix.id_unita_doc = tmp.id_unita_doc " + " 				  )");
+        query.setParameter("idElencoVers1", idElencoVers);
+        query.setParameter("idElencoVers2", idElencoVers);
+        query.setParameter("idElencoVers3", idElencoVers);
+        List<Object> l = query.getResultList();
+        return (l != null && l.size() > 0) ? true : false;
+    }
+
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    //
+    // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO
+    //
+    public boolean isElencoConUdConTroppeVersioniIndiceAip(BigDecimal idElencoVers) {
+        Query query = em.createNativeQuery("SELECT tmp.id_unita_doc, (SELECT count(*) "
+                + "	   FROM ARO_INDICE_AIP_UD ix JOIN ARO_VER_INDICE_AIP_UD ver_ix "
+                + "		ON (ver_ix.id_indice_aip = ix.id_indice_aip "
+                + "		AND ver_ix.id_elenco_vers = tmp.id_elenco_vers) "
+                + "	   WHERE ix.id_unita_doc = tmp.id_unita_doc ) ni_ver_ix_aip "
+                + "FROM (	SELECT ud.id_elenco_vers, ud.id_unita_doc FROM ARO_UNITA_DOC ud "
+                + "		WHERE ud.id_elenco_vers = :idElencoVers1 "
+                + "		AND ud.ti_stato_conservazione != 'ANNULLATA' UNION "
+                + "		SELECT doc.id_elenco_vers, ud.id_unita_doc FROM ARO_DOC doc "
+                + "		JOIN ARO_UNITA_DOC ud ON (ud.id_unita_doc = doc.id_unita_doc "
+                + "			AND ud.ti_stato_conservazione != 'ANNULLATA') "
+                + "		WHERE doc.id_elenco_vers = :idElencoVers2 "
+                + "UNION        SELECT upd_ud.id_elenco_vers, ud.id_unita_doc FROM ARO_UPD_UNITA_DOC upd_ud "
+                + "join ARO_UNITA_DOC ud ON (ud.id_unita_doc = upd_ud.id_unita_doc "
+                + "	AND ud.ti_stato_conservazione != 'ANNULLATA') WHERE upd_ud.id_elenco_vers = :idElencoVers3 "
+                + ") tmp " + "WHERE (SELECT count(*) FROM ARO_INDICE_AIP_UD ix "
+                + "	   JOIN ARO_VER_INDICE_AIP_UD ver_ix ON (ver_ix.id_indice_aip = ix.id_indice_aip "
+                + "		AND ver_ix.id_elenco_vers = tmp.id_elenco_vers) "
+                + "	   WHERE ix.id_unita_doc = tmp.id_unita_doc ) > 1");
+        query.setParameter("idElencoVers1", idElencoVers);
+        query.setParameter("idElencoVers2", idElencoVers);
+        query.setParameter("idElencoVers3", idElencoVers);
+        List<Object> l = query.getResultList();
+        return (l != null && l.size() == 1) ? true : false;
+    }
+
+    public List<AroUnitaDoc> findUdPerStatoElencoEConservazioneStatoDiverso(BigDecimal idElencoVers,
+            it.eng.parer.entity.constraint.AroUnitaDoc.TiStatoUdElencoVers tiStatoUdElencoVers,
+            String tiStatoConservazione) {
+        Query query = em.createQuery("SELECT ud FROM AroUnitaDoc ud WHERE ud.elvElencoVer.idElencoVers = :idElencoVers "
+                + "AND ud.tiStatoUdElencoVers = :tiStatoUdElencoVers "
+                + "AND ud.tiStatoConservazione <> :tiStatoConservazione ");
+        query.setParameter("idElencoVers", idElencoVers.longValueExact());
+        query.setParameter("tiStatoUdElencoVers", tiStatoUdElencoVers.name());
+        query.setParameter("tiStatoConservazione", tiStatoConservazione);
+        return query.getResultList();
+    }
+
+    public List<AroDoc> findAroDocPerStatoElencoSenzaUdAnnullate(BigDecimal idElencoVers, String tiStatoDocElencoVers) {
+        Query query = em
+                .createQuery("SELECT doc FROM AroDoc doc " + "WHERE    doc.elvElencoVer.idElencoVers = :idElencoVers "
+                        + "AND      doc.tiStatoDocElencoVers = :tiStatoDocElencoVers "
+                        + "AND EXISTS ( SELECT ud FROM AroUnitaDoc ud WHERE ud.idUnitaDoc=doc.aroUnitaDoc.idUnitaDoc "
+                        + "             AND   ud.tiStatoConservazione <> 'ANNULLATA' )");
+        query.setParameter("idElencoVers", idElencoVers.longValueExact());
+        query.setParameter("tiStatoDocElencoVers", tiStatoDocElencoVers);
+        return query.getResultList();
+    }
+
     // MAC#28509
     public List<ElvElencoVer> getElenchiFiscaliSoloDocAggMdByStrutturaAperti(long idStrut, int anno) {
         Query query = em.createQuery("SELECT elenco FROM ElvElencoVer elenco " + "JOIN elenco.orgStrut strut "

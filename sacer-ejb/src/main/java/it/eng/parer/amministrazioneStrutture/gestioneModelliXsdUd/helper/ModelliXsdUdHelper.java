@@ -32,6 +32,7 @@ import javax.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 
 import it.eng.parer.entity.DecModelloXsdUd;
+import it.eng.parer.entity.DecUsoModelloXsdUniDoc;
 import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.slite.gen.form.ModelliUDForm.FiltriModelliXsdUd;
@@ -486,6 +487,92 @@ public class ModelliXsdUdHelper extends GenericHelper {
             query.setParameter("filterDate", Calendar.getInstance().getTime());
         }
         return query.getResultList();
+    }
+
+    /**
+     * Ottiene il modello xsd di tipo ud in base ai dati di chiave unique
+     *
+     * @param idAmbiente
+     *            id ambiente
+     * @param tiModelloXsd
+     *            tipo modello xsd
+     * @param tiUsoModelloXsd
+     *            tipo modello xsd in uso
+     * @param cdXsd
+     *            codice xsd
+     *
+     * @return modello entity DecModelloXsdUd
+     */
+    public DecModelloXsdUd getDecModelloXsdUd(long idAmbiente, String tiModelloXsd, String tiUsoModelloXsd,
+            String cdXsd) {
+        Query query = getEntityManager()
+                .createQuery("SELECT m FROM DecModelloXsdUd m WHERE m.orgAmbiente.idAmbiente = :idAmbiente "
+                        + "AND m.tiModelloXsd = :tiModelloXsd AND m.tiUsoModelloXsd = :tiUsoModelloXsd AND m.cdXsd = :cdXsd");
+        query.setParameter("idAmbiente", idAmbiente);
+        query.setParameter("tiModelloXsd", TiModelloXsdUd.valueOf(tiModelloXsd));
+        query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+        query.setParameter("cdXsd", cdXsd);
+        List<DecModelloXsdUd> list = query.getResultList();
+        DecModelloXsdUd modello = null;
+        if (!list.isEmpty()) {
+            modello = list.get(0);
+        }
+        return modello;
+    }
+
+    /**
+     * Ottiene il record di uso modello xsd tipo ud in base ai dati di chiave unique
+     *
+     * @param idStrut
+     *            id struttura
+     * @param nmTipoUnitaDoc
+     *            tipo unita doc
+     * @param idModelloXsdUd
+     *            id modello xsd ud
+     *
+     * @return uso modello entity DecUsoModelloXsdUniDoc
+     */
+    public DecUsoModelloXsdUniDoc getDecUsoModelloXsdUniDoc(BigDecimal idStrut, String nmTipoUnitaDoc,
+            Long idModelloXsdUd) {
+        StringBuilder queryStr = new StringBuilder("SELECT u FROM DecUsoModelloXsdUniDoc u ");
+        String whereWord = "WHERE ";
+
+        if (idStrut != null) {
+            queryStr.append(whereWord).append("u.decTipoUnitaDoc.orgStrut.idStrut = :idStrut ");
+            whereWord = "AND ";
+        }
+
+        if (nmTipoUnitaDoc != null) {
+            queryStr.append(whereWord).append("u.decTipoUnitaDoc.nmTipoUnitaDoc = :nmTipoUnitaDoc ");
+            whereWord = "AND ";
+        }
+
+        if (idModelloXsdUd != null) {
+            queryStr.append(whereWord).append("u.decModelloXsdUd.idModelloXsdUd = :idModelloXsdUd ");
+        }
+
+        Query query = getEntityManager().createQuery(queryStr.toString());
+
+        if (idStrut != null) {
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        }
+
+        if (nmTipoUnitaDoc != null) {
+            query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
+
+        }
+
+        if (idModelloXsdUd != null) {
+            query.setParameter("idModelloXsdUd", idModelloXsdUd);
+
+        }
+
+        List<DecUsoModelloXsdUniDoc> list = query.getResultList();
+
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
 }

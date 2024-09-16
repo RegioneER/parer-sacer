@@ -54,7 +54,6 @@ public class AroVRicRichRa implements Serializable {
     private BigDecimal errori;
     private BigDecimal sumDim;
     private BigDecimal estrattiTotali;
-    private BigDecimal priorita;
     private Date tsInizio;
 
     public AroVRicRichRa() {/* Hibernate */
@@ -62,8 +61,7 @@ public class AroVRicRichRa implements Serializable {
 
     public AroVRicRichRa(BigDecimal idRichiestaRa, String nmEnteConvenz, String nmEnteStrut, BigDecimal idEnte,
             BigDecimal idStrut, BigDecimal idEnteConvenz, BigDecimal totali, BigDecimal estratti, BigDecimal errori,
-            BigDecimal estrattiTotali, BigDecimal sumDim, Date maxDtEstrazione, String tiStato, BigDecimal priorita,
-            Date tsInizio) {
+            BigDecimal estrattiTotali, BigDecimal sumDim, Date maxDtEstrazione, String tiStato, Date tsInizio) {
         this.idRichiestaRa = idRichiestaRa;
         this.nmEnteConvenz = nmEnteConvenz;
         this.nmEnteStrut = nmEnteStrut;
@@ -77,7 +75,6 @@ public class AroVRicRichRa implements Serializable {
         this.sumDim = sumDim;
         this.maxDtEstrazione = maxDtEstrazione;
         this.tiStato = tiStato;
-        this.priorita = priorita;
         this.tsInizio = tsInizio;
     }
 
@@ -207,15 +204,6 @@ public class AroVRicRichRa implements Serializable {
 
     public void setEstrattiTotali(BigDecimal estrattiTotali) {
         this.estrattiTotali = estrattiTotali;
-    }
-
-    @Column(name = "PRIORITA")
-    public BigDecimal getPriorita() {
-        return this.priorita;
-    }
-
-    public void setPriorita(BigDecimal priorita) {
-        this.priorita = priorita;
     }
 
     @Column(name = "SUM_DIM")

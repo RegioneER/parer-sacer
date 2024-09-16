@@ -3,29 +3,6 @@
 
 <sl:html>
     <sl:head title="<%=RestituzioneArchivioForm.FiltriRicercaRichRestArch.DESCRIPTION%>" >
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('.creaRichRestArchBox').dialog({
-                    autoOpen: true,
-                    width: 600,
-                    modal: true,
-                    closeOnEscape: true,
-                    resizable: false,
-                    dialogClass: "alertBox",
-                    buttons: {
-                        "Ok": function () {
-                            $(this).dialog("close");
-                            var priorita = $(".creaRichRestArchBox #Priorita").val();
-                            var navTable = $("input[name='mainNavTable']").val();
-                            window.location = "RestituzioneArchivio.html?operation=creaRichRestArch&Priorita=" + priorita + "&mainNavTable=" + navTable;
-                        },
-                        "Annulla": function () {
-                            $(this).dialog("close");
-                        }
-                    }
-                });
-            });
-        </script>
     </sl:head>
     <sl:body>
         <sl:header changeOrganizationBtnDescription="Cambia struttura" />
@@ -33,29 +10,6 @@
         <sl:content>
             <slf:messageBox />
             <c:if test="${!empty requestScope.creaRichRestArchBox}">
-                <div class="messages creaRichRestArchBox ">
-                    <ul>
-                        <li class="message info ">
-                            <p>Inserisci la priorità della richiesta di restituzione archivio</p>
-                        <sl:newLine />
-                        <div class="containerLeft w100">
-                            <label class="slLabel w30" for="Priorita">Priorità</label>
-                            <select id="Priorita" class="w30" name="Priorita">
-                                <option value="1" selected>1</option>
-                                <option value="2">2</option>                                
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>                    
-                                <option value="6">6</option>
-                                <option value="7">7</option>                            
-                                <option value="8">8</option>
-                                <option value="9">9</option>
-                                <option value="10">10</option>
-                            </select>                                
-                        </div>
-                        </li>
-                    </ul>
-                </div>
             </c:if>
             <sl:contentTitle title="<%=RestituzioneArchivioForm.FiltriRicercaRichRestArch.DESCRIPTION%>"/>
             <sl:newLine skipLine="true"/>

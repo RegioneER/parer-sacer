@@ -1918,4 +1918,76 @@ public class ElenchiVersamentoEjb {
         return evHelper.isStatoElencoCorrente(idElencoVers, tiStatoElenco);
     }
 
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    public boolean isPossibileMettereAipAllaFirma(BigDecimal idElencoVers) {
+        boolean ret = false;
+        if (evHelper.isPossibileMettereAipAllaFirma(idElencoVers)) {
+            ret = true;
+        }
+        return ret;
+    }
+
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    public EsitoRiportaIndietroStatoVersamento riportaStatoVersamentoIndietro(BigDecimal idElencoVers,
+            String userName) {
+        EsitoRiportaIndietroStatoVersamento ret = null;
+        if (soloUdAnnul(idElencoVers)) {
+            return EsitoRiportaIndietroStatoVersamento.CHECK_SOLO_UD_E_DOC_ANNULLATI;
+        } else {
+            boolean elencoConAlmenoUnaUdSenzaIndiceAip = evHelper.isElencoConAlmenoUnaUdSenzaIndiceAip(idElencoVers);
+            boolean elencoConUdConTroppeVersioniIndiceAip = evHelper
+                    .isElencoConUdConTroppeVersioniIndiceAip(idElencoVers);
+            if (!elencoConAlmenoUnaUdSenzaIndiceAip && !elencoConUdConTroppeVersioniIndiceAip) {
+                /// MODIFICA LO STATO DEL VERSAMENTO
+                List<AroUnitaDoc> laro = evHelper.findUdPerStatoElencoEConservazioneStatoDiverso(idElencoVers,
+                        it.eng.parer.entity.constraint.AroUnitaDoc.TiStatoUdElencoVers.IN_ELENCO_COMPLETATO,
+                        "ANNULLATA");
+                for (AroUnitaDoc aroUnitaDoc : laro) {
+                    log.debug("Modifico ud {}", aroUnitaDoc.getIdUnitaDoc());
+                    aroUnitaDoc.setTiStatoUdElencoVers(
+                            it.eng.parer.entity.constraint.AroUnitaDoc.TiStatoUdElencoVers.IN_ELENCO_CON_INDICI_AIP_GENERATI
+                                    .name());
+                }
+                List<AroDoc> ldoc = evHelper.findAroDocPerStatoElencoSenzaUdAnnullate(idElencoVers,
+                        "IN_ELENCO_COMPLETATO");
+                for (AroDoc aroDoc : ldoc) {
+                    log.debug("Modifico doc {}", aroDoc.getIdDoc());
+                    aroDoc.setTiStatoDocElencoVers("IN_ELENCO_CON_INDICI_AIP_GENERATI");
+                }
+                ElvElencoVer elenco = evHelper.getEntityManager().find(ElvElencoVer.class,
+                        idElencoVers.longValueExact());
+                log.debug("Modifico ElvElencoVer {}", idElencoVers);
+                elenco.setTiStatoElenco("INDICI_AIP_GENERATI");
+                ElvElencoVersDaElab daElab = new ElvElencoVersDaElab();
+                daElab.setElvElencoVer(elenco);
+                daElab.setAaKeyUnitaDoc(elenco.getAaKeyUnitaDoc());
+                daElab.setIdCriterioRaggr(new BigDecimal(elenco.getDecCriterioRaggr().getIdCriterioRaggr()));
+                daElab.setIdStrut(new BigDecimal(elenco.getOrgStrut().getIdStrut()));
+                daElab.setTiStatoElenco(elenco.getTiStatoElenco());
+                evHelper.getEntityManager().persist(daElab);
+
+                registraStatoElencoVersamento(BigDecimal.valueOf(idElencoVers.longValueExact()),
+                        "ESEGUITA_CREAZIONE_INDICE_AIP", "AIP rimesso alla firma dall'apposita funzione di interfaccia",
+                        it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco.INDICI_AIP_GENERATI, userName);
+                evHelper.flush();
+                ret = EsitoRiportaIndietroStatoVersamento.ESITO_OK;
+
+            } else {
+                if (elencoConAlmenoUnaUdSenzaIndiceAip) {
+                    ret = EsitoRiportaIndietroStatoVersamento.ELENCO_CON_ALMENO_UNA_UD_SENZA_INDICE_AIP;
+                    return ret;
+                }
+                if (elencoConUdConTroppeVersioniIndiceAip) {
+                    ret = EsitoRiportaIndietroStatoVersamento.ELENCO_CON_UD_CON_TROPPE_VERSIONI_INDICE_AIP;
+                }
+            }
+        }
+        return ret;
+    }
+
+    public enum EsitoRiportaIndietroStatoVersamento {
+        CHECK_SOLO_UD_E_DOC_ANNULLATI, ELENCO_CON_ALMENO_UNA_UD_SENZA_INDICE_AIP,
+        ELENCO_CON_UD_CON_TROPPE_VERSIONI_INDICE_AIP, ESITO_OK;
+    }
+
 }

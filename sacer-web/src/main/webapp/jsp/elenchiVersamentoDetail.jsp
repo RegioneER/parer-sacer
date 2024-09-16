@@ -25,6 +25,21 @@
                         }
                     }
                 });
+                
+                //MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+                var pulsanteRiportaIndietro = $("input[name='operation__riportaStatoIndietroButton']");
+                if (pulsanteRiportaIndietro!==null) {
+                    pulsanteRiportaIndietro.unbind();
+                    pulsanteRiportaIndietro.click(function (event) {
+                        var c = confirm("Confermi di rimettere AIP alla firma?");
+                        if (c === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            return c;
+                        }
+                    });
+                }                
+                
             });
         </script>
 
@@ -179,6 +194,7 @@
                     <slf:lblField name="<%= ElenchiVersamentoForm.DettaglioElenchiVersamentoButtonList.GENERA_INDICE_ELENCO_BUTTON%>" width="w20"/>
                     <slf:lblField name="<%= ElenchiVersamentoForm.DettaglioElenchiVersamentoButtonList.SCARICA_ELENCO_INDICI_AIP_BUTTON%>" width="w20"/>
                     <slf:lblField name="<%= ElenchiVersamentoForm.DettaglioElenchiVersamentoButtonList.LISTA_OPERAZIONI_ELENCO_BUTTON%>" width="w20"/>
+                    <slf:lblField name="<%= ElenchiVersamentoForm.DettaglioElenchiVersamentoButtonList.RIPORTA_STATO_INDIETRO_BUTTON%>" width="w20"/>
                 </sl:pulsantiera>
             </slf:tab>
 

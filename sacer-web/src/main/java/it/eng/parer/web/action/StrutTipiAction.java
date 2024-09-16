@@ -173,6 +173,7 @@ import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class StrutTipiAction extends StrutTipiAbstractAction {
 
@@ -2365,12 +2366,19 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             if (Application.Publisher.AA_REGISTRO_UNITA_DOC_DETAIL.equals(lastPublisher)) {
                 goBack();
             }
-        } catch (Exception e) {
-            getMessageBox().addError(e.getLocalizedMessage());
-            if (!Application.Publisher.AA_REGISTRO_UNITA_DOC_DETAIL.equals(lastPublisher)) {
+        } catch (ParerUserError e) {
+            getMessageBox().addError(e.getDescription());
+            if (Application.Publisher.AA_REGISTRO_UNITA_DOC_DETAIL.equals(lastPublisher)) {
                 goBack();
             } else {
-                forwardToPublisher(Application.Publisher.AA_REGISTRO_UNITA_DOC_DETAIL);
+                forwardToPublisher(getLastPublisher());
+            }
+        } catch (Exception e) {
+            getMessageBox().addError(e.getLocalizedMessage());
+            if (Application.Publisher.AA_REGISTRO_UNITA_DOC_DETAIL.equals(lastPublisher)) {
+                goBack();
+            } else {
+                forwardToPublisher(getLastPublisher());
             }
         }
     }

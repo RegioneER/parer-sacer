@@ -1589,8 +1589,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "		and key_tot.id_tipo_doc_princ = tmp.id_tipo_doc_princ  "
                 + "		and key_tot.aa_key_unita_doc = tmp.aa_key_unita_doc)";
         Query q = getEntityManager().createNativeQuery(queryStr);
-        q.setParameter(2, idStrut);
-        q.setParameter(1, data);
+        q.setParameter("due", idStrut);
+        q.setParameter("uno", data);
         return q.getResultList();
     }
 
@@ -1634,8 +1634,8 @@ public class MonitoraggioAggMetaHelper extends GenericHelper {
                 + "		and key_tot_ko.id_tipo_doc_princ = tmp.id_tipo_doc_princ  "
                 + "		and key_tot_ko.aa_key_unita_doc = tmp.aa_key_unita_doc)";
         Query q = getEntityManager().createNativeQuery(queryStr);
-        q.setParameter(1, idStrut);
-        q.setParameter(2, data);
+        q.setParameter("uno", idStrut);
+        q.setParameter("due", data);
         return q.getResultList();
     }
 }

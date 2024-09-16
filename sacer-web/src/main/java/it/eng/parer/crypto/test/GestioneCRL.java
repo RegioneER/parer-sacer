@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+import javax.servlet.annotation.WebServlet;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -54,6 +55,7 @@ import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 public class GestioneCRL extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+    public static final int MAX_DIM_FILE_UPLOAD = 1024;
 
     Logger log = LoggerFactory.getLogger(GestioneCRL.class);
     @EJB
@@ -103,7 +105,8 @@ public class GestioneCRL extends HttpServlet {
             ServletFileUpload upload = new ServletFileUpload(factory);
 
             // Set overall request size constraint
-            upload.setSizeMax(1000 * 1000 * 300);
+            // MEV#33156 - Aumento della capacità di upload di lab
+            upload.setSizeMax(1024 * 1024 * MAX_DIM_FILE_UPLOAD);
             try {
 
                 // Parse the request

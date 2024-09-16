@@ -372,6 +372,9 @@ public class FascicoliAction extends FascicoliAbstractAction {
     private void initRicercaSempliceFascicoli() throws EMFError {
         // Azzero i filtri
         getForm().getFiltriFascicoliRicercaSemplice().reset();
+        getForm().getFiltriFascicoliRicercaSemplice().getId_tipo_fascicolo().clear();
+        getForm().getFiltriFascicoliRicercaSemplice().getId_modello_xsd_fascicolo().clear();
+        getForm().getFiltriFascicoliRicercaSemplice().getCd_xsd().clear();
 
         DecTipoFascicoloTableBean tipiFascicolo = tipoFascicoliEjb.getTipiFascicoloAbilitati(getUser().getIdUtente(),
                 getUser().getIdOrganizzazioneFoglia(), false);
@@ -379,11 +382,17 @@ public class FascicoliAction extends FascicoliAbstractAction {
         mapTipiFascicolo.populatedMap(tipiFascicolo, "id_tipo_fascicolo", "nm_tipo_fascicolo");
         getForm().getFiltriFascicoliRicercaSemplice().getId_tipo_fascicolo().setDecodeMap(mapTipiFascicolo);
 
-        DecModelloXsdFascicoloTableBean tipiXsd = fascicoliEjb.getDecModelloXsdFascicoloTableBeanInit();
-        DecodeMap mapTipiXsd = new DecodeMap();
-        mapTipiXsd.populatedMap(tipiXsd, "id_modello_xsd_fascicolo", "ti_modello_xsd");
-        getForm().getFiltriFascicoliRicercaSemplice().getId_modello_xsd_fascicolo().setDecodeMap(mapTipiXsd);
+        BigDecimal idTipoFascicolo = getForm().getFiltriFascicoliRicercaSemplice().getId_tipo_fascicolo().parse();
 
+        if (idTipoFascicolo != null) {
+            DecModelloXsdFascicoloTableBean tipiXsd = fascicoliEjb.getDecModelloXsdFascicoloTableBeanInit();
+            DecodeMap mapTipiXsd = new DecodeMap();
+            mapTipiXsd.populatedMap(tipiXsd, "id_modello_xsd_fascicolo", "ti_modello_xsd");
+            getForm().getFiltriFascicoliRicercaSemplice().getId_modello_xsd_fascicolo().setDecodeMap(mapTipiXsd);
+        } else {
+            DecodeMap mapTipiXsd = new DecodeMap();
+            getForm().getFiltriFascicoliRicercaSemplice().getId_modello_xsd_fascicolo().setDecodeMap(mapTipiXsd);
+        }
         DecRegistroUnitaDocTableBean tmpTableBeanReg = registroEjb.getRegistriUnitaDocAbilitati(getUser().getIdUtente(),
                 getUser().getIdOrganizzazioneFoglia());
         DecodeMap mapRegistro = new DecodeMap();

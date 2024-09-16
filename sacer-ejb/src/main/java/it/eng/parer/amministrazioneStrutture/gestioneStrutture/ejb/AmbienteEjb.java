@@ -1149,6 +1149,20 @@ public class AmbienteEjb {
         return entiTableBean;
     }
 
+    public BaseRow getSIOrgEnteSiamRowBean(BigDecimal idEnteSiam) {
+        SIOrgEnteSiam enteSiam = ambienteHelper.findById(SIOrgEnteSiam.class, idEnteSiam);
+        BaseRow riga = new BaseRow();
+        try {
+
+            riga.setBigDecimal("id_ente_siam", new BigDecimal(enteSiam.getIdEnteSiam()));
+            riga.setString("nm_ente_siam", enteSiam.getNmEnteSiam());
+        } catch (Exception e) {
+            log.error("Errore nel recupero dell'ente siam" + ExceptionUtils.getRootCauseMessage(e), e);
+            throw new IllegalStateException("Errore inatteso nel recupero dell'ente siam");
+        }
+        return riga;
+    }
+
     /**
      * Ricava il tablebean contenente gli enti convenzionati dell'ambiente ente passato in input
      *

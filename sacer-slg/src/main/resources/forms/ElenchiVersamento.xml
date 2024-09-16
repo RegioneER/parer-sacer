@@ -229,6 +229,7 @@
         <Button Name="scaricaIndiceElencoButton"  Description="Scarica elenco di versamento" Type="STRING" />
         <Button Name="generaIndiceElencoButton"  Description="Scarica indice elenco di versamento" Type="STRING" />
         <Button Name="scaricaElencoIndiciAipButton"  Description="Scarica elenco indici AIP" Type="STRING" />
+        <Button Name="riportaStatoIndietroButton"  Description="Metti AIP alla firma" Type="STRING" />
     </ButtonList>
     
     <!-- Lista degli stati dell'elenco di versamento -->

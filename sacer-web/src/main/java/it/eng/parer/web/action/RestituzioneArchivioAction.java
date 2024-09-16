@@ -38,11 +38,14 @@ import it.eng.parer.viewEntity.AroVChkRaUd;
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVRicRichRaTableDescriptor;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
+import it.eng.spagoLite.db.base.row.BaseRow;
+import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements;
 import it.eng.spagoLite.form.base.BaseElements.Status;
@@ -51,14 +54,17 @@ import it.eng.spagoLite.form.fields.Fields;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.security.Secure;
+import it.eng.spagoLite.security.SuppressLogging;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import javax.ejb.EJB;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.codehaus.jettison.json.JSONObject;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import org.codehaus.jettison.json.JSONException;
 
 /**
  *
@@ -107,10 +113,6 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
     private void loadDettaglioRichiesta(BigDecimal idRichRestArch, BigDecimal idStrut) throws EMFError {
         AroRichiestaRaRowBean detailRow = restArchEjb.getAroRichiestaRaRowBean(idRichRestArch, idStrut);
         getForm().getRichRestArchDetail().copyFromBean(detailRow);
-
-        getForm().getRichRestArchDetail().getPriorita_combo().setDecodeMap(ComboGetter.getSortedMapByStringList(
-                "priorita_combo", Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")));
-        getForm().getRichRestArchDetail().getPriorita_combo().setValue(detailRow.getPriorita().toPlainString());
 
         AroVLisItemRaTableBean listaItem = restArchEjb.getAroVLisItemRaTableBean(idRichRestArch, idStrut);
         getForm().getItemList().setTable(listaItem);
@@ -174,10 +176,9 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             if (getForm().getRichRestArchDetail().postAndValidate(getRequest(), getMessageBox())) {
                 BigDecimal idStrut = getForm().getRichRestArchDetail().getId_strut().parse();
                 BigDecimal idRichRestArch = getForm().getRichRestArchDetail().getId_richiesta_ra().parse();
-                String priorita = getForm().getRichRestArchDetail().getPriorita_combo().parse();
 
                 try {
-                    restArchEjb.saveRichRestArch(idRichRestArch, priorita);
+                    restArchEjb.saveRichRestArch(idRichRestArch);
                     getMessageBox().addInfo("Richiesta modificata con successo");
                     getMessageBox().setViewMode(MessageBox.ViewMode.plain);
 
@@ -274,8 +275,6 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             // Modifica richiesta
             getForm().getRichRestArchList().setStatus(Status.update);
 
-            getForm().getRichRestArchDetail().getPriorita_combo().setEditMode();
-
             getForm().getRichRestArchDetailButtonList().hideAll();
             getForm().getItemList().setHideDetailButton(true);
 
@@ -295,8 +294,16 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             }
         }
 
+        // BigDecimal idEnteConvenz = getForm().getFiltriRicercaRichRestArch().getId_ente_convenz().parse();
+        // if (!getMessageBox().hasError()) {
+        // if (idEnteConvenz == null) {
+        // getMessageBox().addError("Per poter creare la richiesta \u00E8 necessario selezionare un ente
+        // convenzionato");
+        // }
+        // }
+
         if (!getMessageBox().hasError()) {
-            getRequest().setAttribute("creaRichRestArchBox", true);
+            // getRequest().setAttribute("creaRichRestArchBox", true);
 
             if (getSession().getAttribute("tiRichRestArch") != null) {
                 if (((String) getSession().getAttribute("tiRichRestArch")).equals("UNITA_DOC")) {
@@ -307,6 +314,7 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                     getForm().getCreazioneRichRestArch().getTi_rich_rest_arch().setValue("FASCICOLI");
                 }
             }
+            creaRichRestArch();
         }
 
         forwardToPublisher(Application.Publisher.RICERCA_RICH_REST_ARCH);
@@ -318,8 +326,6 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             // NOTA: essendo il bottone attualmente associato solo alla richieste di restituzione archivio delle ud,
             // per ora il parametro è sempre UNITA_DOC
             final String tiRichRestArch = getForm().getCreazioneRichRestArch().getTi_rich_rest_arch().parse();
-            /* Combo priorita preso da finestra pop-up */
-            final String prioritaPopUp = (String) getRequest().getParameter("Priorita");
 
             BigDecimal idStrut = getForm().getFiltriRicercaRichRestArch().getId_strut().parse();
 
@@ -351,8 +357,7 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                 // Gestisco le richieste scadute
                 restArchEjb.elaboraRichRestArchExpired(idStrut);
                 // Salvo la richiesta di restituzione archivio
-                Long idRichRestArch = restArchEjb.saveRichRestArch(getUser().getIdUtente(), idStrut, prioritaPopUp,
-                        tiRichRestArch);
+                Long idRichRestArch = restArchEjb.saveRichRestArch(getUser().getIdUtente(), idStrut, tiRichRestArch);
                 //
                 if (tiRichRestArch.equals("UNITA_DOC")) {
                     List<AroVChkRaUd> chkRaUdViewList = restArchEjb.retrieveChkRaUnitaDocList(idStrut);
@@ -408,17 +413,10 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                         calcoloEstrazioneAsync.creaRichiestaEstrazioneAsync(idRichRestArch, idStrut.longValue());
                     }
                     if (idRichRestArch != null) {
-                        AroVRicRichRaRowBean tmpRow = new AroVRicRichRaRowBean();
-                        tmpRow.setIdRichiestaRa(new BigDecimal(idRichRestArch));
-                        if (getForm().getRichRestArchList().getTable() == null
-                                || getForm().getRichRestArchList().getTable().isEmpty()) {
-                            getForm().getRichRestArchList().setTable(new AroVRicRichRaTableBean());
-                            getForm().getRichRestArchList().getTable().add(tmpRow);
-                        } else {
-                            getForm().getRichRestArchList().getTable().last();
-                            getForm().getRichRestArchList().getTable().add(tmpRow);
-                        }
-                        loadDettaglioRichiesta(new BigDecimal(idRichRestArch), idStrut);
+                        getSession().setAttribute("ricaricaRecordCalcoloInCorso", idRichRestArch);
+                        eseguiRicercaRichRestArch();
+                        getMessageBox().clear();
+                        getMessageBox().addInfo("Richiesta di restituzione archivio creata con successo!");
                     }
                 }
             }
@@ -476,6 +474,7 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
         getForm().getFiltriRicercaRichRestArch().setEditMode();
 
         initFiltriStrut(getForm().getFiltriRicercaRichRestArch().getName());
+        // initFiltriRicercaRestituzioneArchivio(getForm().getFiltriRicercaRichRestArch().getName());
 
         getForm().getRichRestArchList().setTable(new AroVRicRichRaTableBean());
 
@@ -618,20 +617,48 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
     @Override
     public void ricercaRichRestArch() throws EMFError {
         if (getForm().getFiltriRicercaRichRestArch().postAndValidate(getRequest(), getMessageBox())) {
-            /* Imposto il filtro tiRichRestArch in base alla mia provenienza iniziale */
-            if ((String) getSession().getAttribute("tiRichRestArch") != null) {
-                getForm().getFiltriRicercaRichRestArch().getTi_rich_rest_arch()
-                        .setValue((String) getSession().getAttribute("tiRichRestArch"));
-            }
-            RicercaRichRestArchBean filtri = new RicercaRichRestArchBean(getForm().getFiltriRicercaRichRestArch());
-            if (!getMessageBox().hasError()) {
-                AroVRicRichRaTableBean table = restArchEjb.getAroVRicRichRaTableBean(getUser().getIdUtente(), filtri);
-                getForm().getRichRestArchList().setTable(table);
-                getForm().getRichRestArchList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-                getForm().getRichRestArchList().getTable().first();
-            }
+            eseguiRicercaRichRestArch();
         }
         forwardToPublisher(Application.Publisher.RICERCA_RICH_REST_ARCH);
+    }
+
+    public void eseguiRicercaRichRestArch() throws EMFError {
+
+        /* Imposto il filtro tiRichRestArch in base alla mia provenienza iniziale */
+        if ((String) getSession().getAttribute("tiRichRestArch") != null) {
+            getForm().getFiltriRicercaRichRestArch().getTi_rich_rest_arch()
+                    .setValue((String) getSession().getAttribute("tiRichRestArch"));
+        }
+        RicercaRichRestArchBean filtri = new RicercaRichRestArchBean(getForm().getFiltriRicercaRichRestArch());
+        if (!getMessageBox().hasError()) {
+            AroVRicRichRaTableBean table = restArchEjb.getAroVRicRichRaTableBean(getUser().getIdUtente(), filtri);
+            // MEV 31162 - aggiungo il primo record in fase di calcolo
+            if (getSession().getAttribute("ricaricaRecordCalcoloInCorso") != null) {
+                Long idRichiesta = (Long) getSession().getAttribute("ricaricaRecordCalcoloInCorso");
+                getSession().removeAttribute("ricaricaRecordCalcoloInCorso");
+                AroVRicRichRaRowBean rigaDaAggiungere = new AroVRicRichRaRowBean();
+                BigDecimal idRichiestaRa = BigDecimal.valueOf(idRichiesta);
+                AroRichiestaRaRowBean richiestaRB = restArchEjb.getAroRichiestaRaRowBean(idRichiestaRa);
+                OrgStrutRowBean strutRB = struttureEjb.getOrgStrutRowBean(richiestaRB.getIdStrut());
+                OrgEnteRowBean enteRB = struttureEjb.getOrgEnteRowBean(strutRB.getIdEnte());
+                BaseRow enteSiamRB = ambienteEjb.getSIOrgEnteSiamRowBean(strutRB.getIdEnteConvenz());
+                rigaDaAggiungere.setIdRichiestaRa(idRichiestaRa);
+                rigaDaAggiungere.setIdStrut(strutRB.getIdStrut());
+                rigaDaAggiungere.setIdEnte(strutRB.getIdEnte());
+                rigaDaAggiungere.setIdAmbiente(enteRB.getIdAmbiente());
+                rigaDaAggiungere.setNmEnteStrut(enteRB.getNmEnte() + " - " + strutRB.getNmStrut());
+                rigaDaAggiungere.setNmEnteConvenz(enteSiamRB.getString("nm_ente_siam"));
+                rigaDaAggiungere.setTiStato("CALCOLO_AIP_IN_CORSO");
+                rigaDaAggiungere.setTsInizio(richiestaRB.getTsInizio());
+                table.add(rigaDaAggiungere);
+            }
+            table.addSortingRule(SortingRule.getDescending(AroVRicRichRaTableDescriptor.COL_TS_INIZIO));
+            table.sort();
+            getForm().getRichRestArchList().setTable(table);
+            getForm().getRichRestArchList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+            getForm().getRichRestArchList().getTable().first();
+        }
+
     }
     // </editor-fold>
 

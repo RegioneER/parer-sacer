@@ -31,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -110,6 +111,7 @@ public class DecUsoModelloXsdUniDoc implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_UNITA_DOC")
+    @XmlInverseReference(mappedBy = "decUsoModelloXsdUniDocs")
     public DecTipoUnitaDoc getDecTipoUnitaDoc() {
         return this.decTipoUnitaDoc;
     }

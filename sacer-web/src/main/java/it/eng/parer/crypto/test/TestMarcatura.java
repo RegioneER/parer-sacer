@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import it.eng.parer.crypto.model.ParerTSD;
 import it.eng.parer.crypto.model.ParerTST;
+import static it.eng.parer.crypto.test.GestioneCRL.MAX_DIM_FILE_UPLOAD;
 import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
 
@@ -98,7 +99,8 @@ public class TestMarcatura extends HttpServlet {
                 ServletFileUpload upload = new ServletFileUpload(factory);
 
                 // Set overall request size constraint
-                upload.setSizeMax(1000 * 1000 * 300);
+                // MEV#33156 - Aumento della capacità di upload di lab
+                upload.setSizeMax(1024 * 1024 * MAX_DIM_FILE_UPLOAD);
                 try {
                     // Parse the request
                     List<FileItem> items = upload.parseRequest(request);

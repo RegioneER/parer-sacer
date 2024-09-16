@@ -44,6 +44,9 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 import it.eng.parer.entity.constraint.DecModelloXsdUd.TiModelloXsdUd;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
+import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 /**
  * The persistent class for the DEC_MODELLO_XSD_UD database table.
@@ -79,6 +82,7 @@ public class DecModelloXsdUd implements Serializable {
             @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_MODELLO_XSD_UD_IDMODELLOXSDUD_GENERATOR")
     @Column(name = "ID_MODELLO_XSD_UD")
+    @XmlID
     public Long getIdModelloXsdUd() {
         return this.idModelloXsdUd;
     }
@@ -87,6 +91,7 @@ public class DecModelloXsdUd implements Serializable {
         this.idModelloXsdUd = idModelloXsdUd;
     }
 
+    @XmlTransient
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SISTEMA_MIGRAZ")
     public AplSistemaMigraz getAplSistemaMigraz() {
@@ -97,6 +102,7 @@ public class DecModelloXsdUd implements Serializable {
         this.aplSistemaMigraz = aplSistemaMigraz;
     }
 
+    @XmlTransient
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AMBIENTE")
     public OrgAmbiente getOrgAmbiente() {
@@ -116,6 +122,7 @@ public class DecModelloXsdUd implements Serializable {
         this.tiUsoModelloXsd = tiUsoModelloXsd;
     }
 
+    @XmlTransient
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
@@ -136,6 +143,7 @@ public class DecModelloXsdUd implements Serializable {
         this.tiModelloXsd = tiModelloXsd;
     }
 
+    @XmlTransient
     @Column(name = "DS_XSD")
     public String getDsXsd() {
         return this.dsXsd;
@@ -154,6 +162,7 @@ public class DecModelloXsdUd implements Serializable {
         this.cdXsd = cdXsd;
     }
 
+    @XmlTransient
     @Lob
     @Column(name = "BL_XSD")
     public String getBlXsd() {
@@ -164,6 +173,7 @@ public class DecModelloXsdUd implements Serializable {
         this.blXsd = blXsd;
     }
 
+    @XmlTransient
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
@@ -174,6 +184,7 @@ public class DecModelloXsdUd implements Serializable {
         this.dtSoppres = dtSoppres;
     }
 
+    @XmlTransient
     @Column(name = "FL_DEFAULT", columnDefinition = "CHAR")
     public String getFlDefault() {
         return this.flDefault;
@@ -184,6 +195,7 @@ public class DecModelloXsdUd implements Serializable {
     }
 
     @OneToMany(mappedBy = "decModelloXsdUd", cascade = CascadeType.PERSIST)
+    @XmlInverseReference(mappedBy = "decModelloXsdUd")
     public List<DecUsoModelloXsdUniDoc> getDecUsoModelloXsdUniDocs() {
         return this.decUsoModelloXsdUniDocs;
     }
@@ -193,6 +205,7 @@ public class DecModelloXsdUd implements Serializable {
     }
 
     @OneToMany(mappedBy = "decModelloXsdUd", cascade = CascadeType.PERSIST)
+    @XmlTransient
     public List<DecUsoModelloXsdDoc> getDecUsoModelloXsdDocs() {
         return this.decUsoModelloXsdDocs;
     }
@@ -202,6 +215,7 @@ public class DecModelloXsdUd implements Serializable {
     }
 
     @OneToMany(mappedBy = "decModelloXsdUd", cascade = CascadeType.PERSIST)
+    @XmlTransient
     public List<DecUsoModelloXsdCompDoc> getDecUsoModelloXsdCompDocs() {
         return this.decUsoModelloXsdCompDocs;
     }

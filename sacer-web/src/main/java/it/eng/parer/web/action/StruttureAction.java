@@ -5437,7 +5437,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 struttureDaElaborare.put(strutRowBean.getIdStrut(), strutRowBean.getNmStrut());
             }
         }
-        if (struttureDaElaborare.size() > 0) {
+        if (!struttureDaElaborare.isEmpty()) {
             getSession().setAttribute("struttureDaElaborarePerImportaParametri", struttureDaElaborare);
             importaParametriButton();
         } else {
@@ -5768,6 +5768,8 @@ public class StruttureAction extends StruttureAbstractAction {
                 getMessageBox().addInfo("Numero delle strutture selezionate: " + struttureDaElaborare.size() + "<br>");
                 Set<String> strutErrorGenerico = (Set<String>) report[0];
                 Set<String> strutErrorSuModello = (Set<String>) report[1];
+                Set<String> strutErrorSuModelloXsdUd = (Set<String>) report[4];
+                strutErrorGenerico.addAll(strutErrorSuModelloXsdUd);
                 strutErrorGenerico.addAll(strutErrorSuModello);
                 Map<String, String> strutErrorTipiSerie = (Map<String, String>) report[2];
                 Set<String> strutErrorSisMigr = (Set<String>) report[3];
@@ -5941,7 +5943,6 @@ public class StruttureAction extends StruttureAbstractAction {
         //
         // loadListaParametriGestioneStruttura(idStrut, null, false, true,
         // getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
-
         getSession().removeAttribute("provenienzaParametri");
 
         if ("1".equals(getForm().getInsStruttura().getFl_cessato().parse())) {

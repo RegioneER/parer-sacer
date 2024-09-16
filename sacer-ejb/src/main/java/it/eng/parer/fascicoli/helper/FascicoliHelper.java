@@ -1921,13 +1921,13 @@ public class FascicoliHelper extends GenericHelper {
         if ((filtri.getTiModelloXsd() != null && !filtri.getTiModelloXsd().isEmpty()) && filtri.getCdXsd() != null) {
             whereString.append(whereWord).append("f.cd_Versione_Xsd = :cdXsd ");
             whereWord = " AND ";
-            whereString.append(whereWord).append("f.ti_Modello_Xsd = :tiModelloXsd ");
+            whereString.append(whereWord).append("f.modello_Xsd = :tiModelloXsd ");
             whereWord = " AND ";
         }
         if ((filtri.getTiModelloXsd() != null && !filtri.getTiModelloXsd().isEmpty()) && filtri.getCdXsd() == null) {
             whereString.append(whereWord).append("f.cd_Versione_Xsd IS NOT NULL ");
             whereWord = " AND ";
-            whereString.append(whereWord).append("f.ti_Modello_Xsd = :tiModelloXsd ");
+            whereString.append(whereWord).append("f.modello_Xsd = :tiModelloXsd ");
             whereWord = " AND ";
         }
         if (StringUtils.isNotBlank(filtri.getDsOggettoFascicolo())) {

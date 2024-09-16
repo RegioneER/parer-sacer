@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.action;
 
 import it.eng.hsm.beans.HSMUser;
@@ -260,6 +259,15 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     .setDisableHourGlass(true);
         }
 
+        // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+        if (evEjb.isPossibileMettereAipAllaFirma(idElencoVers)) {
+            getForm().getDettaglioElenchiVersamentoButtonList().getRiportaStatoIndietroButton().setEditMode();
+            getForm().getDettaglioElenchiVersamentoButtonList().getRiportaStatoIndietroButton().setHidden(false);
+        } else {
+            getForm().getDettaglioElenchiVersamentoButtonList().getRiportaStatoIndietroButton().setViewMode();
+            getForm().getDettaglioElenchiVersamentoButtonList().getRiportaStatoIndietroButton().setHidden(true);
+        }
+        // ---------------------------------------------------------------------------------------------------
     }
 
     private boolean esisteIndiceVersamento(BigDecimal idElencoVers) {
@@ -2013,7 +2021,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         boolean flSigilloAttivo = Boolean.parseBoolean(
                 configurationHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO, idAmbiente));
         flSigilloAttivo = false; // FORZATO PERCHE' NON è ancora implementata la modifica a questa funzione! (basterà
-                                 // cancellare questa riga!
+        // cancellare questa riga!
         getForm().getFiltriElenchiDaFirmare().getTi_gest_elenco()
                 .setDecodeMap(ComboGetter.getMappaTiGestElencoCriterio(flSigilloAttivo));
         // Imposto la combo tipo validazione e, se vuota, il valore di default
@@ -3107,6 +3115,43 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             getForm().getFiltriElenchiVersamento().getCd_registro_key_unita_doc().setDecodeMap(new DecodeMap());
         }
         return getForm().getFiltriElenchiVersamento().asJSON();
+    }
+
+    // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+    @Override
+    public void riportaStatoIndietroButton() throws Throwable {
+        BigDecimal idElencoVers = getForm().getElenchiVersamentoList().getTable().getCurrentRow()
+                .getBigDecimal(ElvVLisElencoVersStatoTableDescriptor.COL_ID_ELENCO_VERS);
+
+        ElenchiVersamentoEjb.EsitoRiportaIndietroStatoVersamento esito = evEjb
+                .riportaStatoVersamentoIndietro(idElencoVers, getUser().getUsername());
+
+        switch (esito) {
+        case CHECK_SOLO_UD_E_DOC_ANNULLATI:
+            getMessageBox()
+                    .addInfo("Operazione non consentita perché tutte le unità documentarie e documenti sono annullati");
+            forwardToPublisher(getLastPublisher());
+            break;
+        case ELENCO_CON_ALMENO_UNA_UD_SENZA_INDICE_AIP:
+            getMessageBox().addInfo(
+                    "Operazione non consentita perché per almeno una unità documentaria non è definita la versione indice AIP generata da elenco");
+            forwardToPublisher(getLastPublisher());
+            break;
+        case ELENCO_CON_UD_CON_TROPPE_VERSIONI_INDICE_AIP:
+            getMessageBox().addInfo(
+                    "Operazione non consentita perché per almeno una unità documentaria è definita più di una versione di indice AIP generato da elenco");
+            forwardToPublisher(getLastPublisher());
+            break;
+        case ESITO_OK:
+            getMessageBox().addInfo("L'AIP è stato riportato alla Firma.");
+            dettaglioElencoVersamento(idElencoVers);
+            forwardToPublisher(getLastPublisher());
+            break;
+        default:
+            forwardToPublisher(getLastPublisher());
+            break;
+        }
+
     }
 
 }
