@@ -148,7 +148,7 @@ public class AmministrazioneEjb {
      *
      * @param row
      *            il rowBean da salvare su DB
-     * 
+     *
      * @return true in mancanza di eccezioni
      */
     public boolean saveConfiguration(AplParamApplicRowBean row) {
@@ -260,7 +260,7 @@ public class AmministrazioneEjb {
      *
      * @param idValoreParamApplic
      *            id valore parametro applicativo
-     * 
+     *
      * @return true se eliminato con successo
      */
     public boolean deleteParametroAmbiente(BigDecimal idValoreParamApplic) {
@@ -286,7 +286,7 @@ public class AmministrazioneEjb {
      *            id parametro applicativo
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return true se eliminato con successo
      */
     public boolean deleteParametroMultiploAmbiente(BigDecimal idParamApplic, BigDecimal idAmbiente) {
@@ -313,9 +313,9 @@ public class AmministrazioneEjb {
      *            id ambiente
      * @param funzione
      *            lista funzioni
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -371,9 +371,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -414,9 +414,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -457,9 +457,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -598,9 +598,9 @@ public class AmministrazioneEjb {
      *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -635,9 +635,9 @@ public class AmministrazioneEjb {
      *            id ambiente
      * @param filterValid
      *            true per mostrare i record non cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -693,7 +693,7 @@ public class AmministrazioneEjb {
      *            parametri per il logging
      * @param idValoreParamApplic
      *            id valore pametro applicativo
-     * 
+     *
      * @return true se eliminato con successo
      */
     public boolean deleteParametroAaTipoFasc(LogParam param, BigDecimal idValoreParamApplic) {
@@ -729,9 +729,9 @@ public class AmministrazioneEjb {
      *            id anno tipo fascicolo
      * @param funzione
      *            lista funzioni
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -792,9 +792,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -841,9 +841,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -890,9 +890,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -978,7 +978,7 @@ public class AmministrazioneEjb {
      *            parametri per il logging
      * @param idValoreParamApplic
      *            id valore parametro applicativo
-     * 
+     *
      * @return true se eliminato con successo
      */
     public boolean deleteParametroTipoUd(LogParam param, BigDecimal idValoreParamApplic) {
@@ -1015,9 +1015,9 @@ public class AmministrazioneEjb {
      *            id tipo unita doc
      * @param funzione
      *            lista funzioni
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1078,9 +1078,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1126,9 +1126,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1174,9 +1174,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1260,7 +1260,7 @@ public class AmministrazioneEjb {
      *            parametri per il logging
      * @param idValoreParamApplic
      *            id valore parametro applicativo
-     * 
+     *
      * @return true se eliminato con successo
      */
     public boolean deleteParametroStruttura(LogParam param, BigDecimal idValoreParamApplic) {
@@ -1296,9 +1296,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1358,9 +1358,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1404,9 +1404,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1449,9 +1449,9 @@ public class AmministrazioneEjb {
      *            lista funzioni
      * @param filterValid
      *            visualizzare o meno i record parametri cessati
-     * 
+     *
      * @return il tablebean
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1582,12 +1582,12 @@ public class AmministrazioneEjb {
 
     /**
      * Restituisce lo user HSM associato all'utente passato in ingresso per l'ambiente specificato
-     * 
+     *
      * @param idUserIamCor
      *            id user Iam corrente
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return String utente
      */
     public String getHsmUsername(long idUserIamCor, BigDecimal idAmbiente) {

@@ -55,8 +55,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.MarshalException;
 import javax.xml.bind.ValidationException;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -285,9 +285,9 @@ public class SerieEjb {
      *            bean con i parametri di creazione della serie
      * @param file
      *            upload caricato dall'utente
-     * 
+     *
      * @return l'id del record della versione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2577,7 +2577,7 @@ public class SerieEjb {
      *            id tipo serie
      * @param aaSerie
      *            anno serie
-     * 
+     *
      * @return true/false
      */
     public boolean checkChiaveUdConsistenzaAttesa(String cdFirstUdAttesa, String cdLastUdAttesa, BigDecimal idTipoSerie,
@@ -2640,9 +2640,9 @@ public class SerieEjb {
      *            anno unita doc
      * @param cdUnitaDocLast
      *            numero unita doc
-     * 
+     *
      * @return BigDecimal pk
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2682,9 +2682,9 @@ public class SerieEjb {
      *            descrizione documento
      * @param dtComunicConsistVerSerie
      *            data versamento serie
-     * 
+     *
      * @return BigDecimal pk
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -5284,7 +5284,7 @@ public class SerieEjb {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true/false
      */
     public boolean existsFirmataNoMarca(BigDecimal idStrut) {
@@ -5298,7 +5298,7 @@ public class SerieEjb {
      *            id versamento serie
      * @param tiFileVerSerie
      *            entity TipoFileVerSerie
-     * 
+     *
      * @return byte[] blob file
      */
     public byte[] getSerFileVerSerieBlob(long idVerSerie, TipoFileVerSerie tiFileVerSerie) {
@@ -5317,7 +5317,7 @@ public class SerieEjb {
      *            id versamento serie
      * @param tiFileVerSerie
      *            entity TipoFileVerSerie
-     * 
+     *
      * @return byte[] hash file
      */
     public byte[] getSerFileVerSerieHash(long idVerSerie, TipoFileVerSerie tiFileVerSerie) {
@@ -5341,7 +5341,7 @@ public class SerieEjb {
      *            entity TipoFileVerSerie
      * @param hashAlg
      *            algorimento Hash
-     * 
+     *
      * @return byte[] hash in base64
      */
     public byte[] getSerFileVerSerieHash(long idVerSerie, TipoFileVerSerie tiFileVerSerie,
@@ -5901,7 +5901,7 @@ public class SerieEjb {
      *
      * @param filtri
      *            bean RicercaSerieBean
-     * 
+     *
      * @return entity bean SerVRicConsistSerieUdTableBean
      */
     public SerVRicConsistSerieUdTableBean getSerVRicConsistSerieUdTableBean(RicercaSerieBean filtri) {

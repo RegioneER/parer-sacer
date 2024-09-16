@@ -17,6 +17,8 @@
 
 package it.eng.parer.job.indiceAipSerieUd.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,6 +49,7 @@ import it.eng.parer.ws.utils.CostantiDB.TipiHash;
  *
  * @author gilioli_p
  */
+@SuppressWarnings("unchecked")
 @Stateless(mappedName = "CreazioneIndiceVolumeSerieUdHelper")
 @LocalBean
 @Interceptors({ it.eng.parer.aop.TransactionInterceptor.class })
@@ -107,7 +110,7 @@ public class CreazioneIndiceVolumeSerieUdHelper extends GenericHelper {
      *
      * @param idVerSerie
      *            id versamento serie
-     * 
+     *
      * @return lista oggetti di tipo {@link AroUdAppartVerSerie}
      */
     public List<AroUdAppartVerSerie> getUdEffettiveSenzaVolume(Long idVerSerie) {
@@ -126,7 +129,7 @@ public class CreazioneIndiceVolumeSerieUdHelper extends GenericHelper {
      *
      * @param idVerSerie
      *            id versamento serie
-     * 
+     *
      * @return BigDecimal pk risultato
      */
     public BigDecimal getUltimoProgressivoVolVerSerie(Long idVerSerie) {
@@ -142,7 +145,7 @@ public class CreazioneIndiceVolumeSerieUdHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return entity AroVerIndiceAipUd
      */
     public AroVerIndiceAipUd getUltimaVersioneIndiceAip(long idUnitaDoc) {

@@ -1823,9 +1823,9 @@ public class TipoFascicoloEjb {
      *
      * @param tiUsoModelloXsd
      * @param stringaFile
-     * 
+     *
      * @return List xsd attributes
-     * 
+     *
      * @throws ParerUserError
      */
     private List<String> parseStringaXsd(String tiModelloXsd, String stringaFile) throws ParerUserError {
@@ -1875,7 +1875,7 @@ public class TipoFascicoloEjb {
      *            id Xsd fascicolo
      * @param idAaTipoFascicolo
      *            id Aa tipo fascicolo
-     * 
+     *
      * @return DecAttribFascicoloTableBean
      */
     public DecAttribFascicoloTableBean getDecAttribFascicoloTableBeanFromXsd(BigDecimal idXsdFascicolo,
@@ -1902,7 +1902,7 @@ public class TipoFascicoloEjb {
      *            DecAttribFascicolo rowbean
      * @param xsdFascicoloRowBean
      *            DecUsoModelloXsdFasc rowbean
-     * 
+     *
      * @return DecModelloXsdAttribFascicolo
      */
     public DecModelloXsdAttribFascicolo getDecModelloXsdAttribFascicolo(DecAttribFascicoloRowBean row,
@@ -1917,7 +1917,7 @@ public class TipoFascicoloEjb {
     /**
      * @param idAttribFascicolo
      *            id Attributo fascicolo
-     * 
+     *
      * @return row bean DecAttribFascicolo
      */
     public DecAttribFascicoloRowBean getDecAttribFascRowBean(BigDecimal idAttribFascicolo) {
@@ -1939,7 +1939,7 @@ public class TipoFascicoloEjb {
     /**
      * @param idAttribFascicolo
      *            id Attributo fascicolo
-     * 
+     *
      * @return DecModelloXsdAttribFascicoloRowBean
      */
     public DecModelloXsdAttribFascicoloRowBean getDecModelloXsdAttribFascicoloRowBeanByAttrib(
@@ -1963,7 +1963,7 @@ public class TipoFascicoloEjb {
      *            id periodo validita fascicolo
      * @param idModelloXsdFascicolo
      *            id modello xsd fascicolo
-     * 
+     *
      * @return DecUsoModelloXsdFascRowBean
      */
     public DecUsoModelloXsdFascRowBean getDecUsoModelloXsdFascRowBeanByAttrib(BigDecimal idAaTipoFascicolo,

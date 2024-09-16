@@ -17,6 +17,8 @@
 
 package it.eng.parer.serie.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.List;
@@ -54,7 +56,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *            id struttura
      * @param filterValid
      *            true per prendere i record attivi attualmente
-     * 
+     *
      * @return lista di modelli
      */
     public List<DecModelloTipoSerie> retrieveDecModelloTipoSerie(Long idAmbiente, Long idStrut, boolean filterValid) {
@@ -87,7 +89,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *            id struttura
      * @param filterValid
      *            true per prendere i record attivi attualmente
-     * 
+     *
      * @return lista di modelli
      */
     public List<DecModelloTipoSerie> retrieveDecModelloTipoSerieFromDecUsoModello(BigDecimal idStrut,
@@ -113,7 +115,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *            nome modello tipo serie
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return modello entity DecModelloTipoSerie
      */
     public DecModelloTipoSerie getDecModelloTipoSerie(String nmModelloTipoSerie, BigDecimal idAmbiente) {
@@ -134,7 +136,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *
      * @param idModelloTipoSerie
      *            id modello tipo serie
-     * 
+     *
      * @return lista di elementi di descrizione
      */
     public List<DecNotaModelloTipoSerie> retrieveDecNotaModelloTipoSerie(BigDecimal idModelloTipoSerie) {
@@ -149,7 +151,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *
      * @param idModelloTipoSerie
      *            id modello tipo serie
-     * 
+     *
      * @return lista di regole di acquisizione
      */
     public List<DecModelloCampoInpUd> retrieveDecModelloCampoInpUd(BigDecimal idModelloTipoSerie) {
@@ -163,7 +165,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *            id modello tipo serie
      * @param tiCampo
      *            tipo campo
-     * 
+     *
      * @return lista di regole di acquisizione
      */
     public List<DecModelloCampoInpUd> retrieveDecModelloCampoInpUd(BigDecimal idModelloTipoSerie, String tiCampo) {
@@ -190,7 +192,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *            tipo campo
      * @param nmCampo
      *            nome campo
-     * 
+     *
      * @return lista di regole di acquisizione
      */
     public DecModelloCampoInpUd getDecModelloCampoInpUd(BigDecimal idModelloTipoSerie, String tiCampo, String nmCampo) {
@@ -225,7 +227,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *
      * @param idModelloTipoSerie
      *            id modello tipo serie
-     * 
+     *
      * @return lista di regole di rappresentazione
      */
     public List<DecModelloOutSelUd> retrieveDecModelloOutSelUd(BigDecimal idModelloTipoSerie) {
@@ -242,7 +244,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *            id modello unita doc
      * @param tiCampo
      *            tipo campo
-     * 
+     *
      * @return lista di campi della regola di rappresentazione
      */
     public List<DecModelloCampoOutSelUd> retrieveDecModelloCampoOutSelUd(BigDecimal idModelloOutSelUd, String tiCampo) {
@@ -277,7 +279,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *
      * @param idModelloTipoSerie
      *            id modello
-     * 
+     *
      * @return la lista di regole
      */
     public List<DecModelloFiltroTiDoc> retrieveDecModelloFiltroTiDoc(BigDecimal idModelloTipoSerie) {
@@ -305,7 +307,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *
      * @param idModelloTipoSerie
      *            id modello tipo serie
-     * 
+     *
      * @return lista di filtri
      */
     public List<DecModelloFiltroSelUdattb> retrieveDecModelloFiltroSelUdattb(BigDecimal idModelloTipoSerie) {
@@ -333,7 +335,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *
      * @param idModelloTipoSerie
      *            id modello tipo serie
-     * 
+     *
      * @return lista oggetti di tipo {@link DecUsoModelloTipoSerie}
      */
     public List<DecUsoModelloTipoSerie> retrieveDecUsoModelloTipoSerie(BigDecimal idModelloTipoSerie) {
@@ -350,7 +352,7 @@ public class ModelliSerieHelper extends GenericHelper {
      *            id modello tipo serie
      * @param idTipoNotaSerie
      *            id nota serie
-     * 
+     *
      * @return il massimo progressivo
      */
     public BigDecimal getMaxPgDecNotaModelloSerie(BigDecimal idModelloTipoSerie, BigDecimal idTipoNotaSerie) {

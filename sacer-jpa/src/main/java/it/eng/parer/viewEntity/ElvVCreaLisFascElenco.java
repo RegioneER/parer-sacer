@@ -32,7 +32,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the ELV_V_CREA_LIS_FASC_ELENCO database table.
- * 
+ *
  */
 @Entity
 @Table(name = "ELV_V_CREA_LIS_FASC_ELENCO")

@@ -30,7 +30,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the IAM_V_LIS_ORGANIZ_DA_REPLIC database table.
- * 
+ *
  */
 @Entity
 @Table(name = "IAM_V_LIS_ORGANIZ_DA_REPLIC")

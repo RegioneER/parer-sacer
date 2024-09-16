@@ -17,6 +17,8 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.time.ZoneId;
 import java.util.Date;
@@ -41,7 +43,6 @@ import it.eng.parer.entity.VrsArkPathDtVers;
 import it.eng.parer.entity.VrsDtVers;
 import it.eng.parer.entity.VrsFileNoarkPathDtVers;
 import it.eng.parer.entity.VrsPathDtVers;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.slite.gen.tablebean.TpiErrArkTableBean;
 import it.eng.parer.slite.gen.tablebean.TpiPathElabRowBean;
@@ -143,7 +144,7 @@ public class MonitoraggioTpiHelper {
     public VrsPathDtVersTableBean getPathsDateVersamentoArk(BigDecimal idVrsDtVers) {
         Query query = entityManager.createQuery(
                 "SELECT paths from VrsPathDtVers paths WHERE paths.vrsDtVers.idDtVers = :dtVers ORDER BY paths.dlPath");
-        query.setParameter("dtVers", GenericHelper.longFromBigDecimal(idVrsDtVers));
+        query.setParameter("dtVers", longFromBigDecimal(idVrsDtVers));
         List<VrsPathDtVers> pathsList = query.getResultList();
         VrsPathDtVersTableBean pathsTableBean = new VrsPathDtVersTableBean();
         try {
@@ -191,7 +192,7 @@ public class MonitoraggioTpiHelper {
     public VrsFileNoarkPathDtVersTableBean getFilesNoArkPath(BigDecimal idPathDtVers, String tiArkFileNoArk) {
         Query query = entityManager.createQuery(
                 "SELECT noArk FROM VrsFileNoarkPathDtVers noArk WHERE noArk.vrsPathDtVers.idPathDtVers = :path AND noArk.tiArkFileNoark = :tipoArk");
-        query.setParameter("path", GenericHelper.longFromBigDecimal(idPathDtVers));
+        query.setParameter("path", longFromBigDecimal(idPathDtVers));
         query.setParameter("tipoArk", tiArkFileNoArk);
         List<VrsFileNoarkPathDtVers> fileNoArkList = query.getResultList();
         VrsFileNoarkPathDtVersTableBean fileNoArkTableBean = new VrsFileNoarkPathDtVersTableBean();
@@ -307,7 +308,7 @@ public class MonitoraggioTpiHelper {
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = entityManager.createQuery(queryStr.toString());
         if (idTpiDtSched != null) {
-            query.setParameter("idDtSched", GenericHelper.longFromBigDecimal(idTpiDtSched));
+            query.setParameter("idDtSched", longFromBigDecimal(idTpiDtSched));
         }
         if (flMigraz != null) {
             query.setParameter("flMigraz", flMigraz);
@@ -364,7 +365,7 @@ public class MonitoraggioTpiHelper {
     public TpiErrArkTableBean getErrArkJobList(BigDecimal idTpiSchedJob) {
         String queryStr = "SELECT errArk FROM TpiErrArk errArk WHERE errArk.tpiSchedJob.idSchedJob = :idSched";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idSched", GenericHelper.longFromBigDecimal(idTpiSchedJob));
+        query.setParameter("idSched", longFromBigDecimal(idTpiSchedJob));
         List<TpiErrArk> errArkList = query.getResultList();
         TpiErrArkTableBean errArkViewBean = new TpiErrArkTableBean();
         try {
@@ -380,7 +381,7 @@ public class MonitoraggioTpiHelper {
     public TpiPathElabTableBean getPathElabJobList(BigDecimal idTpiSchedJob) {
         String queryStr = "SELECT paths FROM TpiPathElab paths WHERE paths.tpiSchedJob.idSchedJob = :idSched ORDER BY paths.dtVersElab, paths.dlPathElab";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idSched", GenericHelper.longFromBigDecimal(idTpiSchedJob));
+        query.setParameter("idSched", longFromBigDecimal(idTpiSchedJob));
         List<TpiPathElab> pathList = query.getResultList();
         TpiPathElabTableBean pathElabBean = new TpiPathElabTableBean();
         try {

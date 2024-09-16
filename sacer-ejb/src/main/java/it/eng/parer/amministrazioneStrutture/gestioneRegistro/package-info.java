@@ -33,6 +33,6 @@
  * <p>
  * - <b>DecWarnAaRegistroUd</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture.gestioneRegistro;

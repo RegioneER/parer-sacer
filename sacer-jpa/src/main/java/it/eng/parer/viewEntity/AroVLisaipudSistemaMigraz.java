@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the ARO_V_LISAIPUD_SISTEMA_MIGRAZ database table.
- * 
+ *
  */
 @Entity
 @Table(name = "ARO_V_LISAIPUD_SISTEMA_MIGRAZ")

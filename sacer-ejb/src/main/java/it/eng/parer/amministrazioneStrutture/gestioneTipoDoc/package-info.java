@@ -24,6 +24,6 @@
  * <p>
  * - <b>DecTipoStrutDocAmmesso</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture.gestioneTipoDoc;

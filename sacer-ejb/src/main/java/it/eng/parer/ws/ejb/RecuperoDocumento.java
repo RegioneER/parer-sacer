@@ -71,10 +71,10 @@ public class RecuperoDocumento {
 
     /**
      * Passaggio di un wrapper con l'oggetto interessato dall'object storing
-     * 
+     *
      * @param dto
      *            dot recupero
-     * 
+     *
      * @return true se è andato tutto bene, false altrimenti
      */
     public boolean callRecuperoDocSuStream(RecuperoDocBean dto) {

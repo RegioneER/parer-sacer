@@ -38,9 +38,8 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.xml.bind.Marshaller;
 
-import it.eng.parer.entity.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -54,6 +53,22 @@ import org.slf4j.LoggerFactory;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.entity.AroFileVerIndiceAipUd;
+import it.eng.parer.entity.AroUdAppartVerSerie;
+import it.eng.parer.entity.AroUpdUnitaDoc;
+import it.eng.parer.entity.AroUrnVerIndiceAipUd;
+import it.eng.parer.entity.AroVerIndiceAipUd;
+import it.eng.parer.entity.AroXmlUpdUnitaDoc;
+import it.eng.parer.entity.ElvFileElencoVer;
+import it.eng.parer.entity.ElvFileElencoVersFasc;
+import it.eng.parer.entity.FasFileMetaVerAipFasc;
+import it.eng.parer.entity.FasUnitaDocFascicolo;
+import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.VolFileVolumeConserv;
+import it.eng.parer.entity.VolVolumeConserv;
+import it.eng.parer.entity.VrsSessioneVers;
+import it.eng.parer.entity.VrsUrnXmlSessioneVers;
+import it.eng.parer.entity.VrsXmlDatiSessioneVers;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
 import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
@@ -235,7 +250,7 @@ public class RecuperoZipGen {
                 rispostaControlli = controlliRecupero
                         .leggiCompFileInUD(recupero.getParametriRecupero().getIdUnitaDoc());
                 prefisso = "AIP_";
-                includiFileIndiceAIP = true;
+                includiFileIndiceAIPV2 = true;
                 includiSessFileVersamento = true;
                 recuperaDip = false; // per il recupero AIP non si includono mai i file convertiti
                 includiFirmaMarcaElencoIndiceAIP = true;

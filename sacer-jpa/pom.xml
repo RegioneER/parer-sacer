@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.0.1-SNAPSHOT</version>
+        <version>10.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>sacer-jboss-jpa</artifactId>
@@ -17,20 +17,6 @@
         <hibernate.show_sql>false</hibernate.show_sql>
         <hibernate.hbm2ddl.auto>validate</hibernate.hbm2ddl.auto>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Framework -->
-            <dependency>
-                <groupId>it.eng.parer</groupId>
-                <artifactId>spagofat</artifactId>
-                <version>${spagofat.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
 
     <dependencies>
         <dependency>
@@ -99,7 +85,6 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-jpamodelgen</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

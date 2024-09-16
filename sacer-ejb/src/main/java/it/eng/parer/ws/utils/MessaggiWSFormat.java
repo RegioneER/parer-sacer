@@ -612,18 +612,18 @@ public class MessaggiWSFormat {
      *
      * Estrazione, a partire dall'urn, del nome da assegnare al componente (file, per il recupero). Si utilizzano
      * espressioni regolari per il parsing e quindi l'estrazione.
-     * 
+     *
      * Nuovi URN vedere {@link Costanti.UrnFormatter#SPATH_COMP_FILENAME_REGEXP_V2}
-     * 
+     *
      * Vecchi URN vedere {@link Costanti.UrnFormatter#SPATH_COMP_FILENAME_REGEXP}
-     * 
+     *
      * Se l'estrazione con espressione regolare ha successo, si effettua la sostituzione secondo standard previsto
      * ossia, il seperatore ':' con '_'
-     * 
-     * 
+     *
+     *
      * @param urn
      *            urn completo
-     * 
+     *
      * @return risultato estrazione
      */
     public static String estraiNomeFileBreve(String urn) {
@@ -643,25 +643,25 @@ public class MessaggiWSFormat {
     }
 
     /**
-     * 
+     *
      * Estrazione, a partire dall'urn, del nome da assegnare al componente "tivoli", ossia qualora il file sia stato
      * archiviato su nastro (quindi recuperato da filesystem).
-     * 
+     *
      * La logica prevede di effettuare il parsing dell'urn iniziale (se esiste) per estrarre il nome del file del
      * componente recuperato da nastro, per poi passare all'estrazione con espressione regolare, dal nuovo urn.
-     * 
+     *
      * Nuovi URN vedere {@link Costanti.UrnFormatter#SPATH_COMP_FILENAME_REGEXP_V2}
-     * 
+     *
      * Vecchi URN vedere {@link Costanti.UrnFormatter#SPATH_COMP_FILENAME_REGEXP}
-     * 
+     *
      * Se l'estrazione con espressione regolare ha successo, si effettua la sostituzione secondo standard previsto
      * ossia, il seperatore ':' nel caso dei vecchi urn previsto è '-' mentre sui nuovi '_'.
-     * 
+     *
      * @param urnIniziale
      *            urn iniziale (pre URN v2)
      * @param urn
      *            urn completo
-     * 
+     *
      * @return file name
      */
     public static String estraiNomeFilePerTivoli(String urnIniziale, String urn) {
@@ -699,12 +699,12 @@ public class MessaggiWSFormat {
     }
 
     /**
-     * 
+     *
      * Estrazione da urn completo di un nome compliant per file
-     * 
+     *
      * @param urn
      *            urn completo
-     * 
+     *
      * @return estrazione nome file da urn
      */
     public static String estraiNomeFileCompleto(String urn) {
@@ -743,10 +743,10 @@ public class MessaggiWSFormat {
      *
      * Estrazione, a partire dall'urn del report di verifica firma, il nome da assegnare al file da recuperare. Si
      * utilizzano espressioni regolari per il parsing e quindi l'estrazione.
-     * 
+     *
      * @param urn
      *            urn completo report verifica firma
-     * 
+     *
      * @return risultato estrazione
      */
     public static String estraiNomeFileBrevePerReportvf(String urn) {

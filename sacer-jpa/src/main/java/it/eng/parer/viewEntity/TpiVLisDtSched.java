@@ -30,7 +30,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the TPI_V_LIS_DT_SCHED database table.
- * 
+ *
  */
 @Entity
 @Table(name = "TPI_V_LIS_DT_SCHED")

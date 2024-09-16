@@ -29,7 +29,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the DEC_FMT_FIR_BUSTA database table.
- * 
+ *
  */
 @Entity
 @Table(name = "DEC_FMT_FIR_BUSTA")

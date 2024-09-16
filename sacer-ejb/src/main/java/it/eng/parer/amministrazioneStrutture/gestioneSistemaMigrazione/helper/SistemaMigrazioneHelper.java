@@ -17,6 +17,8 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -35,6 +37,8 @@ import it.eng.parer.helper.GenericHelper;
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
+
 @Stateless
 @LocalBean
 public class SistemaMigrazioneHelper extends GenericHelper {
@@ -44,7 +48,7 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return restituisce lista di elementi di tipo AplSistemaMigraz
      */
     public List<AplSistemaMigraz> retrieveAplSistemaMigraz(BigDecimal idStrut) {
@@ -59,7 +63,7 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return restituisce lista di elementi di tipo OrgUsoSistemaMigraz
      */
     public List<OrgUsoSistemaMigraz> retrieveOrgUsoSistemaMigraz(BigDecimal idStrut) {
@@ -122,7 +126,7 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      *
      * @param nmSistemaMigraz
      *            nome sistema migrazione
-     * 
+     *
      * @return l'entity richiesta se esiste, oppure <code>null</code>
      */
     public AplSistemaMigraz getAplSistemaMigraz(String nmSistemaMigraz) {
@@ -146,7 +150,7 @@ public class SistemaMigrazioneHelper extends GenericHelper {
      *
      * @param idSistemaMigraz
      *            id sistema migrazione
-     * 
+     *
      * @return true/false
      */
     public boolean existsOrgUsoSistemaMigraz(BigDecimal idSistemaMigraz) {

@@ -28,7 +28,7 @@ package it.eng.parer.migrazioneObjectStorage.exception;
 public class MigObjStorageCompHashCalcMoreThanOneException extends RuntimeException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9053027977412560684L;
 

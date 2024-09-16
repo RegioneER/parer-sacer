@@ -120,10 +120,10 @@ public class ElaborazioneRigaIndiceVolumeSerieUd {
                 CSVersatore versatore = this.getVersatoreUd(udAppart.getAroUnitaDoc(), sistemaConservazione);
                 CSChiave chiave = this.getChiaveUd(udAppart.getAroUnitaDoc());
                 /*
-                 * 
+                 *
                  * Gestione KEY NORMALIZED / URN PREGRESSI
-                 * 
-                 * 
+                 *
+                 *
                  */
                 // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
                 // il sistema aggiorna ARO_UNITA_DOC

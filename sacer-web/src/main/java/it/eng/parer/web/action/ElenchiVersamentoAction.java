@@ -527,7 +527,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
      *            id struttura
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1929,7 +1929,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
      *            id ente
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

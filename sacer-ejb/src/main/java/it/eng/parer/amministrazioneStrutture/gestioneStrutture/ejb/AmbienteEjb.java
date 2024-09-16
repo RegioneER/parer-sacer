@@ -17,6 +17,40 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.CorrispondenzePingHelper;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
@@ -42,7 +76,6 @@ import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
 import it.eng.parer.grantedViewEntity.OrgVTreeAmbitoTerrit;
 import it.eng.parer.grantedViewEntity.UsrVAbilAmbEnteConvenz;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
 import it.eng.parer.sacerlog.ejb.common.helper.ParamApplicHelper;
@@ -80,36 +113,8 @@ import it.eng.parer.web.util.Transform;
 import it.eng.spagoLite.db.base.BaseTableInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@SuppressWarnings("rawtypes")
 @Stateless
 @LocalBean
 @Interceptors({ TransactionInterceptor.class })
@@ -567,7 +572,7 @@ public class AmbienteEjb {
                     "Eliminazione ambiente non riuscita: esistono elementi ancora associati all'ambiente</br>");
         }
 
-        if (corrispondenzeHelper.checkPingRelations(GenericHelper.longFromBigDecimal(idAmbiente), 2)) {
+        if (corrispondenzeHelper.checkPingRelations(longFromBigDecimal(idAmbiente), 2)) {
             throw new ParerUserError(
                     "Eliminazione dell'ambiente non consentita. Sono presenti corrispondenze con versatori di Ping</br>");
         }
@@ -591,7 +596,7 @@ public class AmbienteEjb {
                     "Eliminazione ente non riuscita: esistono strutture ancora associati all'ente</br>");
         }
 
-        if (corrispondenzeHelper.checkPingRelations(GenericHelper.longFromBigDecimal(idEnte), 1)) {
+        if (corrispondenzeHelper.checkPingRelations(longFromBigDecimal(idEnte), 1)) {
             throw new ParerUserError(
                     "Eliminazione dell'ente non consentita. Sono presenti corrispondenze con versatori di Ping</br>");
         }
@@ -1850,14 +1855,14 @@ public class AmbienteEjb {
     /**
      * Dato in input un range di date, verifica se questo rispetta la contiguità con i range delle associazioni ente
      * convenzionato - struttura già presenti
-     * 
+     *
      * @param idStrut
      *            la struttura di cui estrarre tutte le associazioni
      * @param dtIniVal
      *            data inizio validità associazione trattata (nuova o esistente in fase di modifica)
      * @param dtFineVal
      *            data Fine validità associazione trattata (nuova o esistente in fase di modifica)
-     * 
+     *
      * @return true se se rispetta regola di contiguità / false altrimenti
      */
     public boolean checkDateContigue(BigDecimal idStrut, Date dtIniVal, Date dtFineVal) {

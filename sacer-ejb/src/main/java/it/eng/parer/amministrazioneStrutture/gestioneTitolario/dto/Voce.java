@@ -156,7 +156,7 @@ public class Voce {
 
     /**
      * Costruttore voce con operazione null. Utilizzato per le voci già esistenti su db
-     * 
+     *
      * @param codiceVoceComposito
      *            codice composito
      * @param descrizioneVoce

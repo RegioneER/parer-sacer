@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  * The persistent class for the FAS_V_VIS_FASCICOLO database table.
- * 
+ *
  */
 @Entity
 @Table(name = "FAS_V_VIS_FASCICOLO")

@@ -41,8 +41,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -431,7 +431,7 @@ public class ElenchiVersFascicoliEjb {
      *            lista modifiche di tipo OpTypeEnum
      * @param note
      *            valore
-     * 
+     *
      * @throws DatatypeConfigurationException
      *             errore generico
      * @throws IOException
@@ -567,7 +567,7 @@ public class ElenchiVersFascicoliEjb {
      *            data chiusura
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true/false
      */
     public boolean areAllElenchiNonPresentiFirmati(ElvVRicElencoFascByStatoTableBean elencoTableBean, Date dataChiusura,
@@ -586,7 +586,7 @@ public class ElenchiVersFascicoliEjb {
      *            id elenco
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true/false
      */
     public boolean existIdElenco(BigDecimal idElenco, BigDecimal idStrut) {
@@ -869,7 +869,7 @@ public class ElenchiVersFascicoliEjb {
      *            id utente
      * @param backendMetadata
      *            tipo backend
-     * 
+     *
      * @return ElvFileElencoVersFasc
      */
     public ElvFileElencoVersFasc storeFirmaElencoIndiceAipFasc(Long idElencoVersFasc, byte[] fileFirmato,

@@ -17,11 +17,22 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneTipoUd.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.StringUtils;
 
 import it.eng.parer.entity.AplSistemaVersante;
 import it.eng.parer.entity.DecCategTipoUnitaDoc;
@@ -41,17 +52,13 @@ import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsRowBean;
 import it.eng.parer.viewEntity.DecVCalcTiServOnTipoUd;
 import it.eng.parer.viewEntity.DecVLisTiUniDocAms;
 import it.eng.parer.viewEntity.OrgVServTiServDaErog;
-import org.apache.commons.lang3.StringUtils;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.math.BigDecimal;
 
 /**
  * Helper delle tipologie di unit\u00E0 documentaria
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class TipoUnitaDocHelper extends GenericHelper {

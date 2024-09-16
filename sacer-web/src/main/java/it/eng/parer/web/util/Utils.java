@@ -30,7 +30,7 @@ import java.util.Iterator;
 /**
  *
  * @author Iacolucci_M
- * 
+ *
  *         Dato un table Beanfa una query su nmDesc usando come valore descQuery e torna il valore della colonna nmKey.
  *         Usato per ottenere da un combo box il valore ID data una descrizione
  */

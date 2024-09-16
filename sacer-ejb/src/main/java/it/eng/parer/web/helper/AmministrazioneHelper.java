@@ -17,6 +17,8 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -88,7 +90,7 @@ public class AmministrazioneHelper extends GenericHelper {
      *
      * @param tipoParam
      *            tipo parametro
-     * 
+     *
      * @return il tablebean contenente la lista di parametri di configurazione
      */
     public AplParamApplicTableBean getConfigurationViewBean(String tipoParam) {
@@ -119,7 +121,7 @@ public class AmministrazioneHelper extends GenericHelper {
      *            oggetto {@link LogParam}
      * @param row
      *            il parametro da eliminare
-     * 
+     *
      * @return true se eliminato con successo
      */
     public boolean deleteAplParamApplicRowBean(LogParam param, AplParamApplicRowBean row) {
@@ -161,7 +163,7 @@ public class AmministrazioneHelper extends GenericHelper {
      *            flag 1/0 (true/false)
      * @param flAppartAmbiente
      *            flag 1/0 (true/false)
-     * 
+     *
      * @return lista oggetti di tipo {@link AplParamApplic}
      */
     public List<AplParamApplic> getAplParamApplicList(String tiParamApplic, String tiGestioneParam,
@@ -241,7 +243,7 @@ public class AmministrazioneHelper extends GenericHelper {
      *            flag 1/0 (true/false)
      * @param filterValid
      *            true o false per filtrare i parametri attivi (sulla base della versione applicativo
-     * 
+     *
      * @return lista oggetti di tipo {@link AplParamApplic}
      */
     public List<AplParamApplic> getAplParamApplicList(String tiParamApplic, String tiGestioneParam,

@@ -17,6 +17,8 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneFormatiFileStandard.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import it.eng.parer.entity.DecEstensioneFile;
 import it.eng.parer.entity.DecFormatoFileAmmesso;
 import it.eng.parer.entity.DecFormatoFileBusta;
@@ -43,6 +45,7 @@ import java.util.Set;
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class FormatoFileStandardHelper extends GenericHelper {

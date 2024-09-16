@@ -17,6 +17,9 @@
 
 package it.eng.parer.restArch.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -203,10 +206,10 @@ public class RestituzioneArchivioHelper extends GenericHelper {
 
     /**
      * Recupero l'elenco delle strutture associate alla richiesta <code>idRichiestaRa</code>
-     * 
+     *
      * @param idRichiestaRa
      *            l'identificativo della richiesta
-     * 
+     *
      * @return lista oggetti di tipo {@link AroVRicRichRa}
      */
     public List<AroVRicRichRa> retrieveAroVRicRichRa(BigDecimal idRichiestaRa) {

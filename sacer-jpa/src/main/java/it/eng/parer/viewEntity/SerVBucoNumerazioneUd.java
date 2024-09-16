@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the SER_V_BUCO_NUMERAZIONE_UD database table.
- * 
+ *
  */
 @Entity
 @Table(name = "SER_V_BUCO_NUMERAZIONE_UD")

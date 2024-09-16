@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the DEC_V_TREE_TITOL database table.
- * 
+ *
  */
 @Entity
 @Table(name = "DEC_V_TREE_TITOL")

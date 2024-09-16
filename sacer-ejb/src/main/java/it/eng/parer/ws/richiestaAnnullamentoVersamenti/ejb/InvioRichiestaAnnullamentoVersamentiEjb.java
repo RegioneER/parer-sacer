@@ -330,7 +330,7 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
      *            numero item non annullabili
      * @param flImmediata
      *            flag 1/0 (true/false)
-     * 
+     *
      * @return stato richiesta
      */
     private String checkPostElaborazione(RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs, Long numeroItems,
@@ -463,7 +463,7 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
 
     /**
      * Inizializza la risposta WS ed effettua contestualmente un controllo sulla versione impostata nella richiesta
-     * 
+     *
      * @param rispostaWs
      *            Risposta di cui inizializzare i campi
      * @param ravExt

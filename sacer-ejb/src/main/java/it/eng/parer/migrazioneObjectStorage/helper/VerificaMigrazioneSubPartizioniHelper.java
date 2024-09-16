@@ -17,6 +17,9 @@
 
 package it.eng.parer.migrazioneObjectStorage.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromInteger;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -106,7 +109,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
      *            tipo stato
      * @param numGgMigrazInCorso
      *            numero giorni migrazione in corso
-     * 
+     *
      * @return lista oggetti di tipo {@link OstMigrazFile}
      */
     public List<OstMigrazFile> getOstMigrazFileBeforeNumGiorni(long idMigrazSubPart, String tiStatoCor,
@@ -189,7 +192,7 @@ public class VerificaMigrazioneSubPartizioniHelper extends GenericHelper {
      *            nome table space
      * @param tiStato
      *            tipo stato
-     * 
+     *
      * @return true/false risultato verifica
      */
     public boolean checkAllSubPartitionsWithTableSpaceAndState(String nmTablespace, String tiStato) {

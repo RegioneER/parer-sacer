@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p>
  * Il seguente frammento di schema specifica il contenuto previsto contenuto in questa classe.
  * </p>
- * 
+ *
  * <pre>
  * &lt;simpleType name="esitoServizio"&gt;
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction&gt;
  * &lt;/simpleType&gt;
  * </pre>
- * 
+ *
  */
 @XmlType(name = "esitoServizio")
 @XmlEnum

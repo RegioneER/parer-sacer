@@ -709,7 +709,7 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
 
     /**
      * Metodo che crea le mappe coi valori e setta le combo presenti nella pagina di ricerca modelli XSD tipi Fascicolo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -739,9 +739,9 @@ public class ModelliUDAction extends ModelliUDAbstractAction {
      *
      * @param filtriModelliXsdUd
      *            oggetto di tipo {@link FiltriModelliXsdTipiFascicolo}
-     * 
+     *
      * @return la lista degli ambienti da utilizzare per la ricerca
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

@@ -239,7 +239,7 @@ public class RecuperoFascPrsr {
         /*
          * Nota: non verifico l'eventuale presenza obbligatoria dell'utente alternativo poiché è per definizione
          * opzionale e gestito quando presente
-         * 
+         *
          * MEV #21799 : attenzione questa verifica non viene più effettuata sul tag <Utente>,
          * getGestioneUtenteAlternativo() per default è Ignorato
          */

@@ -378,10 +378,10 @@ public class TipoSerieEjb {
      *            flag 1/0 (true/false)
      * @param idTipoSerieUdDaMod
      *            id tipo esrie
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
-     * 
+     *
      * @return Long pk
      */
     public Long insertRegistroTipoUnitaDocTipoSerie(LogParam param, String idRegistro,
@@ -490,7 +490,7 @@ public class TipoSerieEjb {
      *
      * @param idTipoSerie
      *            id tipo serie
-     * 
+     *
      * @return array di tipo Object[]
      */
     public Object[] getDecFiltroSelUdAndMappaFiltri(BigDecimal idTipoSerie) {
@@ -775,7 +775,7 @@ public class TipoSerieEjb {
      * @param mappa
      *            contiene i dati del filtri che sto per inserire. K = idTipoDoc V = (K = nmTipoDoc, V = idFiltroSelUd)
      *            idFiltroSelUd in inserimento sarà nullo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -913,7 +913,7 @@ public class TipoSerieEjb {
      *            idFiltroSelUd).
      * @param effettuaLogging
      *            true/false
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1225,7 +1225,7 @@ public class TipoSerieEjb {
             DecOutSelUd decOutSelUd) {
         /*
          * "","DATO_SPEC_UNI_DOC","DATO_SPEC_DOC_PRINC"
-         * 
+         *
          */
         List<DecCampoOutSelUd> listaCampiOutSelUd = new ArrayList<>();
         Map<String, String> mappaDatiProfilo = listaAttributiSelezionati.get("DATO_PROFILO");
@@ -1341,12 +1341,12 @@ public class TipoSerieEjb {
 
     /**
      * @deprecated
-     * 
+     *
      * @param idTipoSerie
      *            id del tipo serie
      * @param tipoEntitaSacer
      *            tipo di entità
-     * 
+     *
      * @return {@link DecAttribDatiSpecTableBean}
      */
     @Deprecated
@@ -1489,9 +1489,9 @@ public class TipoSerieEjb {
      *            id tipo serie
      * @param tiCampo
      *            tipo campo delle regole
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1546,9 +1546,9 @@ public class TipoSerieEjb {
      *            id tipo entita
      * @param tiCampo
      *            tipo campo delle regole, DATO_SPEC_UNI_DOC o DATO_SPEC_DOC_PRINC
-     * 
+     *
      * @return il tableBean della lista
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1602,7 +1602,7 @@ public class TipoSerieEjb {
          * "","DATO_SPEC_UNI_DOC","DATO_SPEC_DOC_PRINC" private long idCampoInpUd; private String nmCampo; private
          * BigDecimal pgOrdCampo; private String tiCampo; private String tiTrasformCampo; private DecAttribDatiSpec
          * decAttribDatiSpec; private DecTipoSerie filtroSelUd;
-         * 
+         *
          */
         List<DecCampoInpUd> listaCampiInpUd = new ArrayList<>();
         Map<String, String> mappaDatiProfilo = listaAttributiSelezionati.get("DATO_PROFILO");
@@ -1741,7 +1741,7 @@ public class TipoSerieEjb {
      *            id tipo serie
      * @param datiCompilati
      *            il tablebean con i dati provenienti dall'online a seguito di inserimenti/modifiche/cancellazioni
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2162,9 +2162,9 @@ public class TipoSerieEjb {
      *            id registro unita doc
      * @param idTipoUnitaDoc
      *            id tipo unita doc
-     * 
+     *
      * @return numero di tipi serie creati
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2244,9 +2244,9 @@ public class TipoSerieEjb {
      *            parametri per il logging
      * @param tipoUnitaDoc
      *            tipo unita doc
-     * 
+     *
      * @return numero di tipi serie creati
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2313,7 +2313,7 @@ public class TipoSerieEjb {
      *            registro unita doc
      * @param tipoUnitaDoc
      *            tipo unita doc
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2477,7 +2477,7 @@ public class TipoSerieEjb {
      *            tipo serie
      * @param tipiAmmessi
      *            tipi ammessi
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

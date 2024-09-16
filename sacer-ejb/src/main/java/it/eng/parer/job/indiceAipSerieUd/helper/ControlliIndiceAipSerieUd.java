@@ -17,6 +17,8 @@
 
 package it.eng.parer.job.indiceAipSerieUd.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,7 +38,6 @@ import it.eng.parer.entity.AroIndiceAipUd;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.constraint.SerUrnFileVerSerie.TiUrnFileVerSerie;
 import it.eng.parer.entity.constraint.SerUrnIxVolVerSerie.TiUrnIxVolVerSerie;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.indiceAipSerieUd.dto.FileQuery_1_Bean;
 import it.eng.parer.job.indiceAipSerieUd.dto.SelfDescriptionQuery_1_Bean;
 import it.eng.parer.job.indiceAipSerieUd.dto.VdCQuery_10_Bean;
@@ -374,7 +375,7 @@ public class ControlliIndiceAipSerieUd {
                     + "WHERE verSerieCor.idVerSerie = :idVerSerie " + "ORDER BY reg.cdRegistroUnitaDoc ";
 
             query = entityManager.createQuery(queryStr);
-            query.setParameter("idVerSerie", GenericHelper.longFromBigDecimal(idVerSerie));
+            query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
             List<Object[]> lstDatiObj = query.getResultList();
             for (Object[] dato : lstDatiObj) {
                 VdCQuery_8_Bean vdc = new VdCQuery_8_Bean();
@@ -410,7 +411,7 @@ public class ControlliIndiceAipSerieUd {
                     + "ORDER BY tiUd.nmTipoUnitaDoc ";
 
             query = entityManager.createQuery(queryStr);
-            query.setParameter("idVerSerie", GenericHelper.longFromBigDecimal(idVerSerie));
+            query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
             List<Object[]> lstDatiObj = query.getResultList();
             for (Object[] dato : lstDatiObj) {
                 VdCQuery_9_Bean vdc = new VdCQuery_9_Bean();
@@ -455,7 +456,7 @@ public class ControlliIndiceAipSerieUd {
                     + "WHERE verSerieCor.idVerSerie = :idVerSerie " + "ORDER BY tiDoc.nmTipoDoc ";
 
             query = entityManager.createQuery(queryStr);
-            query.setParameter("idVerSerie", GenericHelper.longFromBigDecimal(idVerSerie));
+            query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
             List<Object[]> lstDatiObj = query.getResultList();
             for (Object[] dato : lstDatiObj) {
                 VdCQuery_10_Bean vdc = new VdCQuery_10_Bean();
@@ -494,7 +495,7 @@ public class ControlliIndiceAipSerieUd {
                     + "ORDER BY tiNota.cdTipoNotaSerie, nota.pgNotaVerSerie ";
 
             query = entityManager.createQuery(queryStr);
-            query.setParameter("idVerSerie", GenericHelper.longFromBigDecimal(idVerSerie));
+            query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
             List<Object[]> lstDatiObj = query.getResultList();
             for (Object[] dato : lstDatiObj) {
                 VdCQuery_11_Bean vdc = new VdCQuery_11_Bean();

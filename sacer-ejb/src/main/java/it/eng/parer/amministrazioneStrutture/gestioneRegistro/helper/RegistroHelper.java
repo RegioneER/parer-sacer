@@ -17,6 +17,11 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneRegistro.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +47,7 @@ import it.eng.parer.ws.dto.CSVersatore;
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class RegistroHelper extends GenericHelper {
@@ -58,7 +64,7 @@ public class RegistroHelper extends GenericHelper {
      *            Struttura in input
      * @param idRegistroUnitaDoc
      *            registro da escludere dal controllo
-     * 
+     *
      * @return true se esiste
      */
     public boolean checkRegistroUnitaDocByCampoStringa(String nmCampo, String valoreCampo, BigDecimal idStrut,
@@ -85,7 +91,7 @@ public class RegistroHelper extends GenericHelper {
      *            codice registro unita doc
      * @param idStrut
      *            struttura
-     * 
+     *
      * @return l'oggetto DecRegistroUnitaDoc o null se inesistente
      */
     public DecRegistroUnitaDoc getDecRegistroUnitaDocByName(String cdRegistroUnitaDoc, BigDecimal idStrut) {
@@ -105,7 +111,7 @@ public class RegistroHelper extends GenericHelper {
      *
      * @param idRegistro
      *            registro
-     * 
+     *
      * @return la lista dei periodi di validità di un registro
      */
     public List<DecAaRegistroUnitaDoc> getDecAARegistroUnitaDocList(BigDecimal idRegistro) {
@@ -124,7 +130,7 @@ public class RegistroHelper extends GenericHelper {
      *
      * @param idAaRegistroUnitaDoc
      *            id anno registro unita doc
-     * 
+     *
      * @return lista oggetti di tipo {@link DecParteNumeroRegistro}
      */
     public List<DecParteNumeroRegistro> getDecParteNumeroRegistroList(Long idAaRegistroUnitaDoc) {
@@ -142,7 +148,7 @@ public class RegistroHelper extends GenericHelper {
      *            id utente
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @return DecRegistroUnitaDocTableBean
      */
     public List<DecRegistroUnitaDoc> getRegistriUnitaDocAbilitati(long idUtente, BigDecimal idStruttura) {

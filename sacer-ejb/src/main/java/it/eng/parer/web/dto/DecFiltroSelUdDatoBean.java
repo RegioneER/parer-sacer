@@ -44,13 +44,13 @@ public class DecFiltroSelUdDatoBean implements Serializable, Comparable<DecFiltr
     private DecFiltroSelUdAttb decCriterioDatiSpec;
 
     /*
-     * 
+     *
      * private long idFiltroSelUdDato; private String dsListaVersioniXsd; private String nmTipoDoc; private String
      * nmTipoUnitaDoc; private String tiEntitaSacer; private DecAttribDatiSpec decAttribDatiSpec; private
      * DecFiltroSelUdAttb decFiltroSelUdAttb;
-     * 
-     * 
-     * 
+     *
+     *
+     *
      */
 
     public DecFiltroSelUdDatoBean() {

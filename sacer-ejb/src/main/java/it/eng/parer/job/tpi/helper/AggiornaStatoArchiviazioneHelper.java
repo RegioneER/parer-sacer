@@ -17,7 +17,7 @@
 
 package it.eng.parer.job.tpi.helper;
 
-import static it.eng.parer.helper.GenericHelper.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;

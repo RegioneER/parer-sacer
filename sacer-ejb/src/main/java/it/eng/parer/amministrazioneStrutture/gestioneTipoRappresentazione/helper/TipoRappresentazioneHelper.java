@@ -17,30 +17,29 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+
 import it.eng.parer.entity.DecImageTrasform;
 import it.eng.parer.entity.DecTipoRapprComp;
 import it.eng.parer.entity.DecTrasformTipoRappr;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.ws.dto.CSVersatore;
 
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Helper delle tipologie di rappresentazione
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class TipoRappresentazioneHelper extends GenericHelper {

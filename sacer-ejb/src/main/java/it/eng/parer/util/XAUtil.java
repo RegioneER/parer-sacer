@@ -180,7 +180,7 @@ public class XAUtil {
      *            la sessione in transazione
      * @param dirPath
      *            la directory
-     * 
+     *
      * @throws XAGenericException
      *             errore generico Xa
      * @throws DirectoryNotEmptyException

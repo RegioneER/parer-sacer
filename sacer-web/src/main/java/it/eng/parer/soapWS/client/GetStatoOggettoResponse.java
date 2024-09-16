@@ -25,10 +25,10 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Classe Java per getStatoOggettoResponse complex type.
- * 
+ *
  * <p>
  * Il seguente frammento di schema specifica il contenuto previsto contenuto in questa classe.
- * 
+ *
  * <pre>
  * &lt;complexType name="getStatoOggettoResponse"&gt;
  *   &lt;complexContent&gt;
@@ -40,8 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getStatoOggettoResponseTipo", propOrder = { "_return" })
@@ -52,9 +52,9 @@ public class GetStatoOggettoResponse {
 
     /**
      * Recupera il valore della proprietà return.
-     * 
+     *
      * @return possible object is {@link RecuperoStatoOggettoRisposta }
-     * 
+     *
      */
     public RecuperoStatoOggettoRisposta getReturn() {
         return _return;
@@ -62,10 +62,10 @@ public class GetStatoOggettoResponse {
 
     /**
      * Imposta il valore della proprietà return.
-     * 
+     *
      * @param value
      *            allowed object is {@link RecuperoStatoOggettoRisposta }
-     * 
+     *
      */
     public void setReturn(RecuperoStatoOggettoRisposta value) {
         this._return = value;

@@ -17,12 +17,10 @@
 
 package it.eng.parer.job.calcoloEstrazione;
 
+import static it.eng.parer.util.Utils.createEmptyDir;
+
 import java.io.File;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +37,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,37 +181,6 @@ public class RestituzioneArchivioJob {
         }
         // Imposto a 0 il flag per cancellare l'area FTP una volta svuotata
         richiesta.setFlSvuotaFtp("0");
-    }
-
-    public static void createEmptyDir(String fullPath) throws IOException {
-        Path dirPath = Paths.get(fullPath);
-        File directory = dirPath.toFile();
-        if (!directory.exists()) {
-            LOGGER.debug("La cartella {} non esiste, la creo", fullPath);
-            Files.createDirectories(dirPath);
-        }
-    }
-
-    public static void createEmptyDirWithDelete(String fullPath) throws IOException {
-        Path dirPath = Paths.get(fullPath);
-        File directory = dirPath.toFile();
-        if (directory.exists()) {
-            LOGGER.debug("La cartella {} esiste, la dobbiamo svuotare", fullPath);
-            File[] files = directory.listFiles((dir, name) -> {
-                boolean toDelete = !name.matches("\\.nfs.+");
-                LOGGER.debug("File {} lo devo cancellare? {}", name, toDelete);
-                return toDelete;
-            });
-            if (files != null) {
-                for (File file : files) {
-                    LOGGER.debug("Procedo alla cancellazione di {}", file.getAbsolutePath());
-                    FileUtils.forceDelete(file);
-                }
-            }
-        } else {
-            LOGGER.debug("La cartella {} non esiste, la creo", fullPath);
-            Files.createDirectories(dirPath);
-        }
     }
 
     public void manageRichiestaEstrazioneJob(long idRichiestaRa, String rootFolderEcRaPath, int totFileCopiati,

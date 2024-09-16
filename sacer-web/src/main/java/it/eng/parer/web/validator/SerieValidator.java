@@ -42,7 +42,7 @@ public class SerieValidator extends TypeValidator {
      *
      * @param listaAttributiSelezionati
      *            mappa chiave/valore
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

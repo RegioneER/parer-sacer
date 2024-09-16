@@ -33,7 +33,7 @@ import javax.persistence.TemporalType;
 
 /**
  * The persistent class for the LOG_ELAB_CONSIST database table.
- * 
+ *
  */
 @Entity
 @Table(name = "LOG_ELAB_CONSIST")

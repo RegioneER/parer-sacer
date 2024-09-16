@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the USR_V_ABIL_AMB_SACER_XSTRUT database table.
- * 
+ *
  */
 @Entity
 @Table(schema = "SACER_IAM", name = "USR_V_ABIL_AMB_SACER_XSTRUT")

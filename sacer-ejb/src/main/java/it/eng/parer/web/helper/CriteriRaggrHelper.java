@@ -17,6 +17,11 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromInteger;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;

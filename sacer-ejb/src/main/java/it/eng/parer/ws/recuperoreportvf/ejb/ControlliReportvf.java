@@ -260,7 +260,7 @@ public class ControlliReportvf {
                  * Questa condizione è sempre verificata in quanto, se una versione di servizio non è censita, viene
                  * assegnato un default "NO_VERSION". Al momento la logica di lettura coincide con la versione 1 del
                  * report zip
-                 * 
+                 *
                  * Parsing report versione v 1.0
                  */
                 // filter by extension (only xml files)

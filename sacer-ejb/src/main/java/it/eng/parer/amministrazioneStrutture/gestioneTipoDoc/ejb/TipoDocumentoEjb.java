@@ -183,7 +183,7 @@ public class TipoDocumentoEjb {
      *            flag principale
      * @param dtSoppres
      *            data soppressione
-     * 
+     *
      * @return DecTipoDocTableBean entity
      */
     public DecTipoDocTableBean getDecTipoDocTableBean(BigDecimal idStrut, boolean flPrinc, Date dtSoppres) {
@@ -211,7 +211,7 @@ public class TipoDocumentoEjb {
      *            flag principale
      * @param isFilterValid
      *            true/false
-     * 
+     *
      * @return DecTipoDocTableBean entity
      */
     public DecTipoDocTableBean getDecTipoDocTableBean(BigDecimal idStrut, boolean flPrinc, boolean isFilterValid) {
@@ -253,7 +253,7 @@ public class TipoDocumentoEjb {
      *            id della struttura
      * @param isFilterValid
      *            true ricerca solo i tipi validi alla data odierna
-     * 
+     *
      * @return DecTipoDocTableBean entity
      */
     public DecTipoDocTableBean getDecTipoDocTableBean(BigDecimal idStrut, boolean isFilterValid) {
@@ -449,9 +449,9 @@ public class TipoDocumentoEjb {
      *            id tipo documento
      * @param isFromDeleteStruttura
      *            true/false
-     * 
+     *
      * @return il record dell'organizzazione da replicare
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

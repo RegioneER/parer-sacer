@@ -61,9 +61,9 @@ public class KeycloakRestUtil {
 
     /**
      * Ottiene il token di autenticazione da keycloak per chiamare le api successivamente con lo stesso token
-     * 
+     *
      * @return true o false
-     * 
+     *
      * @throws Exception
      *             eccezione
      */
@@ -105,13 +105,13 @@ public class KeycloakRestUtil {
 
     /**
      * Invia tramite Keycloak la mail all'utente per l'update della password, in sostanza la mail di attivazione utente
-     * 
+     *
      * Per effettuare questa invocazione dare da keycloak i serguenti service-account-roles a sacer-rest-client:
-     * 
+     *
      * realm-management: view-clients
-     * 
+     *
      * @return true o false
-     * 
+     *
      * @throws Exception
      *             eccezione
      */
@@ -153,12 +153,12 @@ public class KeycloakRestUtil {
 
     /**
      * Ottiene la valorizzazione del secret sulla classe 'c' passata come parametro
-     * 
+     *
      * @param c
      *            parametro
-     * 
+     *
      * @return true o false
-     * 
+     *
      * @throws Exception
      *             eccezione
      */

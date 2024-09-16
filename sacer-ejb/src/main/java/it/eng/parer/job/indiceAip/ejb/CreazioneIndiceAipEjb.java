@@ -101,7 +101,7 @@ public class CreazioneIndiceAipEjb {
 
     /*
      * Questo codice è stato messo in una nuova transazione altrimentirimaneva loccatoil record dell elenco MAC#16424
-     * 
+     *
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void setIndiciAipGeneratiInNewTransaction(long idElenco) {

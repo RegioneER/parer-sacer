@@ -17,8 +17,10 @@
 
 package it.eng.parer.web.helper;
 
-import static it.eng.parer.helper.GenericHelper.bigDecimalFromInteger;
-import static it.eng.parer.helper.GenericHelper.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.bigDecimalFromInteger;
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -44,7 +46,6 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
-import it.eng.parer.entity.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,9 @@ import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.OrgSubStrut;
 import it.eng.parer.entity.RecDtVersRecup;
 import it.eng.parer.entity.RecSessioneRecup;
-import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.entity.VrsDatiSessioneVersKo;
+import it.eng.parer.entity.VrsFileSessioneKo;
+import it.eng.parer.entity.VrsSessioneVersKo;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.form.MonitoraggioForm;
@@ -214,10 +217,10 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
         query.setParameter("idUa", idUtente);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -288,10 +291,10 @@ public class MonitoraggioHelper implements Serializable {
         query.setParameter("idUa", idUtente);
         query.setParameter("idTipo", idTipoUnitaDoc);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -357,10 +360,10 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
         query.setParameter("idUa", idUtente);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -430,10 +433,10 @@ public class MonitoraggioHelper implements Serializable {
         query.setParameter("idUa", idUtente);
         query.setParameter("idTipo", idTipoUnitaDoc);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -496,10 +499,10 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
         query.setParameter("idUa", idUtente);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -564,10 +567,10 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
         query.setParameter("idUa", idUtente);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -2296,9 +2299,8 @@ public class MonitoraggioHelper implements Serializable {
         List<BigDecimal> idCategTipoUnitaDocList = filtriCS.getIdCategTipoUnitaDocList();
         List<BigDecimal> idSottocategTipoUnitaDocList = filtriCS.getIdSottocategTipoUnitaDocList();
         List<String> filtroCategoria = new ArrayList<>();
-        int i = 0;
+
         for (BigDecimal idCateg : idCategTipoUnitaDocList) {
-            i++;
             if (!idSottocategTipoUnitaDocList.isEmpty()) {
                 for (BigDecimal idSotto : idSottocategTipoUnitaDocList) {
                     filtroCategoria.add("/" + idCateg + "/" + idSotto);
@@ -2348,19 +2350,19 @@ public class MonitoraggioHelper implements Serializable {
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = entityManager.createQuery(queryStr.toString());
         if (!idAmbienteList.isEmpty()) {
-            query.setParameter("idAmbienteList", GenericHelper.longListFrom(idAmbienteList));
+            query.setParameter("idAmbienteList", longListFrom(idAmbienteList));
         }
 
         if (!idEnteList.isEmpty()) {
-            query.setParameter("idEnteList", GenericHelper.longListFrom(idEnteList));
+            query.setParameter("idEnteList", longListFrom(idEnteList));
         }
 
         if (!idStrutList.isEmpty()) {
-            query.setParameter("idStrutList", GenericHelper.longListFrom(idStrutList));
+            query.setParameter("idStrutList", longListFrom(idStrutList));
         }
 
         if (!idSubStrutList.isEmpty()) {
-            query.setParameter("idSubStrutList", GenericHelper.longListFrom(idSubStrutList));
+            query.setParameter("idSubStrutList", longListFrom(idSubStrutList));
         }
 
         if (!idRegistroUnitaDocList.isEmpty()) {
@@ -2397,11 +2399,11 @@ public class MonitoraggioHelper implements Serializable {
         }
 
         if (!idCategEnteList.isEmpty()) {
-            query.setParameter("idCategEnteList", GenericHelper.longListFrom(idCategEnteList));
+            query.setParameter("idCategEnteList", longListFrom(idCategEnteList));
         }
 
         if (!idCategStrutList.isEmpty()) {
-            query.setParameter("idCategStrutList", GenericHelper.longListFrom(idCategStrutList));
+            query.setParameter("idCategStrutList", longListFrom(idCategStrutList));
         }
 
         query.setParameter("idUserIam", idUserIam);
@@ -2496,15 +2498,15 @@ public class MonitoraggioHelper implements Serializable {
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = entityManager.createQuery(queryStr.toString());
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
 
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
 
         if (idStrut != null) {
-            query.setParameter("idStrut", GenericHelper.longFromBigDecimal(idStrut));
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
 
         if (dtRifDa != null && dtRifA != null) {
@@ -2939,7 +2941,7 @@ public class MonitoraggioHelper implements Serializable {
                         + "from VrsSessioneVersKo ses JOIN " + "ses.vrsDatiSessioneVersKos datiSes JOIN "
                         + "datiSes.vrsFileSessioneKos fileSes " + "where ses.idSessioneVersKo = :idSessioneVers "
                         + "order by fileSes.pgFileSessione ");
-        query.setParameter("idSessioneVers", GenericHelper.longFromBigDecimal(idSessioneVers));
+        query.setParameter("idSessioneVers", longFromBigDecimal(idSessioneVers));
 
         return lazyListHelper.getTableBean(query, list -> getVrsFileSessioneKoTableBeanFrom(idSessioneVers, list));
     }
@@ -3355,7 +3357,7 @@ public class MonitoraggioHelper implements Serializable {
     public BigDecimal getIdEnte(BigDecimal idStruttura) {
         String queryStr = "SELECT u.orgEnte.idEnte FROM OrgStrut u WHERE u.idStrut = :idstrutturain ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idstrutturain", GenericHelper.longFromBigDecimal(idStruttura));
+        query.setParameter("idstrutturain", longFromBigDecimal(idStruttura));
         Long res = (Long) query.getSingleResult();
         return new BigDecimal(res);
     }
@@ -3383,10 +3385,10 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
         query.setParameter("idUa", idUtente);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -3419,10 +3421,10 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
         query.setParameter("idUa", idUtente);
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
         if (idStruttura != null) {
             query.setParameter("idStrut", idStruttura);
@@ -4269,9 +4271,8 @@ public class MonitoraggioHelper implements Serializable {
         List<BigDecimal> idCategTipoUnitaDocList = filtriCS.getIdCategTipoUnitaDocList();
         List<BigDecimal> idSottocategTipoUnitaDocList = filtriCS.getIdSottocategTipoUnitaDocList();
         List<String> filtroCategoria = new ArrayList<>();
-        int i = 0;
+
         for (BigDecimal idCateg : idCategTipoUnitaDocList) {
-            i++;
             if (!idSottocategTipoUnitaDocList.isEmpty()) {
                 for (BigDecimal idSotto : idSottocategTipoUnitaDocList) {
                     filtroCategoria.add("/" + idCateg + "/" + idSotto);
@@ -4316,19 +4317,19 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
 
         if (idAmbienteList != null) {
-            query.setParameter("idAmbienteList", GenericHelper.longListFrom(idAmbienteList));
+            query.setParameter("idAmbienteList", longListFrom(idAmbienteList));
         }
 
         if (!idEnteList.isEmpty()) {
-            query.setParameter("idEnteList", GenericHelper.longListFrom(idEnteList));
+            query.setParameter("idEnteList", longListFrom(idEnteList));
         }
 
         if (!idStrutList.isEmpty()) {
-            query.setParameter("idStrutList", GenericHelper.longListFrom(idStrutList));
+            query.setParameter("idStrutList", longListFrom(idStrutList));
         }
 
         if (!idSubStrutList.isEmpty()) {
-            query.setParameter("idSubStrutList", GenericHelper.longListFrom(idSubStrutList));
+            query.setParameter("idSubStrutList", longListFrom(idSubStrutList));
         }
 
         if (!idRegistroUnitaDocList.isEmpty()) {
@@ -4361,15 +4362,15 @@ public class MonitoraggioHelper implements Serializable {
         }
 
         if (!idAmbitoTerritList.isEmpty()) {
-            query.setParameter("idAmbitoTerritList", GenericHelper.longListFrom(idAmbitoTerritList));
+            query.setParameter("idAmbitoTerritList", longListFrom(idAmbitoTerritList));
         }
 
         if (!idCategEnteList.isEmpty()) {
-            query.setParameter("idCategEnteList", GenericHelper.longListFrom(idCategEnteList));
+            query.setParameter("idCategEnteList", longListFrom(idCategEnteList));
         }
 
         if (!idCategStrutList.isEmpty()) {
-            query.setParameter("idCategStrutList", GenericHelper.longListFrom(idCategStrutList));
+            query.setParameter("idCategStrutList", longListFrom(idCategStrutList));
         }
 
         query.setParameter("idUserIam", idUserIam);
@@ -4424,15 +4425,15 @@ public class MonitoraggioHelper implements Serializable {
         Query query = entityManager.createQuery(queryStr.toString());
 
         if (idAmbiente != null) {
-            query.setParameter("idAmbiente", GenericHelper.longFromBigDecimal(idAmbiente));
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
         }
 
         if (idEnte != null) {
-            query.setParameter("idEnte", GenericHelper.longFromBigDecimal(idEnte));
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
         }
 
         if (idStrut != null) {
-            query.setParameter("idStrut", GenericHelper.longFromBigDecimal(idStrut));
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
         }
 
         if (dtRifDa != null && dtRifA != null) {

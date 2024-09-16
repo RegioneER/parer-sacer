@@ -103,6 +103,7 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.attribute.FileTime;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -364,7 +365,7 @@ public class FascicoliAction extends FascicoliAbstractAction {
 
     /**
      * Inizializza i combo della form di ricerca
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -681,7 +682,7 @@ public class FascicoliAction extends FascicoliAbstractAction {
         }
     }
 
-    public void download() throws EMFError {
+    public void download() throws EMFError, IOException {
         String filename = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name());
         String path = (String) getSession().getAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name());
         String contentType = (String) getSession()
@@ -695,14 +696,13 @@ public class FascicoliAction extends FascicoliAbstractAction {
                  * Definiamo l'output previsto che sarÃ un file in formato zip di cui si occuperÃ la servlet per fare il
                  * download
                  */
-                OutputStream outUD = getServletOutputStream();
                 getResponse().setContentType(StringUtils.isBlank(contentType) ? "application/zip" : contentType);
                 getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename);
 
-                FileInputStream inputStream = null;
-                try {
+                try (OutputStream outUD = getServletOutputStream();
+                        FileInputStream inputStream = new FileInputStream(fileToDownload);) {
+
                     getResponse().setHeader("Content-Length", String.valueOf(fileToDownload.length()));
-                    inputStream = new FileInputStream(fileToDownload);
                     byte[] bytes = new byte[8000];
                     int bytesRead;
                     while ((bytesRead = inputStream.read(bytes)) != -1) {
@@ -713,15 +713,11 @@ public class FascicoliAction extends FascicoliAbstractAction {
                     logger.error("Eccezione nel recupero del documento ", e);
                     getMessageBox().addError("Eccezione nel recupero del documento");
                 } finally {
-                    IOUtils.closeQuietly(inputStream);
-                    IOUtils.closeQuietly(outUD);
-                    inputStream = null;
-                    outUD = null;
                     freeze();
                 }
                 // Nel caso sia stato richiesto, elimina il file
-                if (deleteFile) {
-                    fileToDownload.delete();
+                if (deleteFile.booleanValue()) {
+                    Files.delete(fileToDownload.toPath());
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");
@@ -756,7 +752,7 @@ public class FascicoliAction extends FascicoliAbstractAction {
 
     /**
      * Metodo di ricerca semplice dei fascicoli (invocato dal bottone di ricerca)
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -856,7 +852,7 @@ public class FascicoliAction extends FascicoliAbstractAction {
     /*
      * Metodo invocato dall'esterno con una redirectrToAction per la visualizzazione del dettaglio fascicolo. Riceve in
      * input il seguente parametro:
-     * 
+     *
      * - idFascicolo: id del fascicolo di cui visualizzare il dettaglio
      */
     /*
@@ -1112,7 +1108,7 @@ public class FascicoliAction extends FascicoliAbstractAction {
      *            l'outputStream da utilizzare
      * @param tb
      *            il tableBean contenente i dati
-     * 
+     *
      * @throws EMFError
      *             errore generico
      * @throws IOException
@@ -1249,7 +1245,7 @@ public class FascicoliAction extends FascicoliAbstractAction {
      *            l'outputStream da utilizzare
      * @param fascRB
      *            il rowBean contenente i dati
-     * 
+     *
      * @throws EMFError
      *             errore generico
      * @throws IOException
@@ -1316,9 +1312,9 @@ public class FascicoliAction extends FascicoliAbstractAction {
 
     /**
      * Trigger sul filtro "Tipo Fascicolo"
-     * 
+     *
      * @return oggetto JSON
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1345,9 +1341,9 @@ public class FascicoliAction extends FascicoliAbstractAction {
     }
 
     /**
-     * 
+     *
      * @return JSONObject oggetto JSON
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

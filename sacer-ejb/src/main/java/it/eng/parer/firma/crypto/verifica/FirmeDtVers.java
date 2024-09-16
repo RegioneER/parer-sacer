@@ -432,9 +432,9 @@ public class FirmeDtVers {
             throw ex;
         }
         /*-
-         * Eseguo lo scarico della CRL solo se si verifica una delle seguenti condizioni: 
-         * - non ho la CRL su DB 
-         * - ho la CRL su DB ma è scaduta e la CA è attiva 
+         * Eseguo lo scarico della CRL solo se si verifica una delle seguenti condizioni:
+         * - non ho la CRL su DB
+         * - ho la CRL su DB ma è scaduta e la CA è attiva
          * - ho la CRL su DB ma è scaduta, la CA è inattiva e la CRL disponibile su DB ha una scadenza precedente alla scadenza del certificato della CA
          */
 

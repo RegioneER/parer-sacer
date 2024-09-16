@@ -243,7 +243,7 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
      *            id utente
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -274,7 +274,7 @@ public class SceltaOrganizzazioneAction extends SceltaOrganizzazioneAbstractActi
      *            id utente
      * @param idEnte
      *            id ente
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

@@ -1803,7 +1803,7 @@ public class ControlliRecupero {
      *
      * @param idAmbiente
      *            id ambiente
-     * 
+     *
      * @return RispostaControlli con risultato del recupero effettuato
      */
     public RispostaControlli leggiAuthorizedSignerLegalPersons(BigDecimal idAmbiente) {

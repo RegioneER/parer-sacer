@@ -604,9 +604,9 @@ public class ObjectStorageService {
      *            id file sessione
      * @param outputStream
      *            Stream su cui scrivere l'oggetto
-     * 
+     *
      * @return true oggetto recuperato da bucket / false altrimenti
-     * 
+     *
      */
     public boolean getObjectComponenteInStaging(long idFileSessione, OutputStream outputStream) {
         boolean result = true;
@@ -710,10 +710,10 @@ public class ObjectStorageService {
     /**
      * Controlla se il versamento fallito sia o meno stato registrato sull'object storage indipendemente dal valore del
      * parametro (il pregresso potrebbe ancora essere su DB).
-     * 
+     *
      * @param idFileSessioneKo
      *            id file sessione
-     * 
+     *
      * @return true se su O.s false altrimenti
      */
     public boolean isComponenteFallitoOnOs(long idFileSessioneKo) {
@@ -728,10 +728,10 @@ public class ObjectStorageService {
     /**
      * Controlla se il componente sia o meno stato registrato sull'object storage indipendemente dal valore del
      * parametro (il pregresso potrebbe ancora essere su DB).
-     * 
+     *
      * @param idCompDoc
      *            id componente documento
-     * 
+     *
      * @return true se su O.s false altrimenti
      */
     public boolean isComponenteOnOs(long idCompDoc) {
@@ -746,10 +746,10 @@ public class ObjectStorageService {
     /**
      * * Controlla se il report verifica firma sia o meno stato registrato sull'object storage indipendemente dal valore
      * del parametro (il pregresso potrebbe ancora essere su DB).
-     * 
+     *
      * @param idCompDoc
      *            id componente documento
-     * 
+     *
      * @return true se su O.s false altrimenti
      */
     public boolean isReportvfOnOsByIdCompDoc(long idCompDoc) {
@@ -824,7 +824,7 @@ public class ObjectStorageService {
     // MEV#30397
     /**
      * Salva il contenuto nel bucket degli Elenchi Indici AIP
-     * 
+     *
      * @param urn
      *            urn
      * @param nomeBackend
@@ -955,15 +955,15 @@ public class ObjectStorageService {
 
     /**
      * Calcola il message digest MD5 (base64 encoded) del dato da inviare via S3
-     * 
+     *
      * Nota: questa scelta deriva dal modello supportato dal vendor
      * (https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) *
-     * 
+     *
      * @param str
      *            contenuto
-     * 
+     *
      * @return rappresentazione base64 del contenuto calcolato
-     * 
+     *
      * @throws NoSuchAlgorithmException
      *             errore generico
      * @throws IOException
@@ -976,10 +976,10 @@ public class ObjectStorageService {
     /**
      * Controlla se l'indice aip sia o meno stato registrato sull'object storage indipendemente dal valore del parametro
      * (il pregresso potrebbe ancora essere su DB).
-     * 
+     *
      * @param idVerIndiceAip
      *            id versione indice aip
-     * 
+     *
      * @return true se su O.s false altrimenti
      */
     public boolean isIndiceAipOnOs(long idVerIndiceAip) {
@@ -993,12 +993,12 @@ public class ObjectStorageService {
 
     /**
      * ###### NB: NON USARE SU O.S. NETAPP ######
-     * 
+     *
      * Ottieni gli attributi dell'oggetto dell'indice aip contenuto nell'object storage
      *
      * @param idVerIndiceAip
      *            id della versione dell'indice aip
-     * 
+     *
      * @return attributi dell'oggetto su O.s.
      */
     public GetObjectAttributesResponse getObjectAttributesIndiceAipUd(long idVerIndiceAip) {
@@ -1018,7 +1018,7 @@ public class ObjectStorageService {
      *
      * @param idVerIndiceAip
      *            id della versione dell'indice aip
-     * 
+     *
      * @return attributi dell'oggetto su O.s.
      */
     public HeadObjectResponse getObjectMetadataIndiceAipUd(long idVerIndiceAip) {
@@ -1150,15 +1150,15 @@ public class ObjectStorageService {
 
     /**
      * Calcola il message digest MD5 (base64 encoded) del file da inviare via S3
-     * 
+     *
      * Nota: questa scelta deriva dal modello supportato dal vendor
      * (https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) *
-     * 
+     *
      * @param path
      *            file
-     * 
+     *
      * @return rappresentazione base64 del contenuto calcolato
-     * 
+     *
      * @throws NoSuchAlgorithmException
      *             errore generico
      * @throws IOException
@@ -1259,10 +1259,10 @@ public class ObjectStorageService {
     /**
      * Controlla se l'indice aip fascicolo sia o meno stato registrato sull'object storage indipendemente dal valore del
      * parametro (il pregresso potrebbe ancora essere su DB).
-     * 
+     *
      * @param idVerAipFascicolo
      *            id versione indice aip fascicolo
-     * 
+     *
      * @return true se su O.s false altrimenti
      */
     public boolean isIndiceAipFascicoloOnOs(long idVerAipFascicolo) {
@@ -1306,7 +1306,7 @@ public class ObjectStorageService {
     // MEV#30399
     /**
      * Salva il contenuto nel bucket degli Elenchi Indici AIP
-     * 
+     *
      * @param urn
      *            urn
      * @param nomeBackend

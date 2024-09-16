@@ -24,7 +24,7 @@ import java.util.Date;
 
 /**
  * The persistent class for the MON_V_LIS_REGISTRO_DT_VERS database table.
- * 
+ *
  */
 @Entity
 @Table(name = "MON_V_LIS_REGISTRO_DT_VERS")

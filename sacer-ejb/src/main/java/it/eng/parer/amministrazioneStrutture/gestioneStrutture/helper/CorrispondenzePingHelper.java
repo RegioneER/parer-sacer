@@ -17,19 +17,23 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper;
 
-import it.eng.parer.helper.GenericHelper;
-import static it.eng.parer.helper.GenericHelper.longFromBigDecimal;
-import it.eng.parer.viewEntity.OrgVCorrPing;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.List;
+
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
+
+import it.eng.parer.helper.GenericHelper;
+import it.eng.parer.viewEntity.OrgVCorrPing;
 
 /**
  *
  * @author gpiccioli
  */
+@SuppressWarnings("unchecked")
 @Stateless
 @LocalBean
 public class CorrispondenzePingHelper extends GenericHelper {

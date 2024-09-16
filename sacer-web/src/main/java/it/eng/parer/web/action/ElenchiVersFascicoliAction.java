@@ -362,7 +362,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 
     /**
      * Creo le mappe coi valori e setto le combo presenti nella pagina di ricerca elenchi
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -424,7 +424,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      *            id struttura
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -462,7 +462,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      *            id ente
      * @param sezione
      *            enumerativo
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -1434,7 +1434,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
      *
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

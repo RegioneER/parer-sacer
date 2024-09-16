@@ -22,7 +22,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 
 /**
  * Table bean per la tabella Org_V_Corr_Ping
- * 
+ *
  * @author gpiccioli
  */
 public class OrgVCorrPingTableBean extends AbstractBaseTable<OrgVCorrPingRowBean> {

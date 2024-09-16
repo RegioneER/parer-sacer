@@ -541,10 +541,10 @@ public class ValidazioneFascicoliEjb {
         CSChiave chiave = this.getChiaveUd(aroUnitaDoc);
 
         /*
-         * 
+         *
          * Gestione KEY NORMALIZED / URN PREGRESSI
-         * 
-         * 
+         *
+         *
          */
         // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
         // il sistema aggiorna ARO_UNITA_DOC

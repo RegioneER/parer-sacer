@@ -65,7 +65,7 @@ public class VolumiValidator extends TypeValidator {
      *            data da
      * @param data_a
      *            data a
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */
@@ -105,7 +105,7 @@ public class VolumiValidator extends TypeValidator {
      *            numero da
      * @param numero_a
      *            numero a
-     * 
+     *
      * @return litsa elementi di Object[] con chiave validata
      */
     public Object[] validaChiaveUnitaDocVolumi(String registro, BigDecimal anno, String numero, BigDecimal anno_da,
@@ -209,7 +209,7 @@ public class VolumiValidator extends TypeValidator {
      *            numero ore in coda
      * @param tiStatoElenco
      *            tipo stato elenco
-     * 
+     *
      * @throws EMFError
      *             errore generico
      */

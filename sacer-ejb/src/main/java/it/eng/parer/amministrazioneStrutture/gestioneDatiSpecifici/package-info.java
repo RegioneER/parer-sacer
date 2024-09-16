@@ -27,6 +27,6 @@
  * <p>
  * - <b>DecAttribDatiSpec</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici;

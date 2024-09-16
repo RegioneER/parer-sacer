@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
 /**
  *
  * @author gpiccioli
- * 
+ *
  *         Bean per la tabella Org_V_Corr_Ping
  */
 public class OrgVCorrPingRowBean extends BaseRow implements JEEBaseRowInterface {

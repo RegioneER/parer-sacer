@@ -17,8 +17,39 @@
 
 package it.eng.parer.async.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.parer.async.utils.UdSerFascObj;
-import it.eng.parer.entity.*;
+import it.eng.parer.entity.AroAipRestituzioneArchivio;
+import it.eng.parer.entity.AroIndiceAipUd;
+import it.eng.parer.entity.AroRichiestaRa;
+import it.eng.parer.entity.AroUnitaDoc;
+import it.eng.parer.entity.AroVerIndiceAipUd;
+import it.eng.parer.entity.DecTipoUnitaDoc;
+import it.eng.parer.entity.IamUser;
+import it.eng.parer.entity.LogJob;
+import it.eng.parer.entity.OrgEnte;
+import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.AroAipRaTipologiaOggetto;
 import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa;
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
@@ -26,19 +57,6 @@ import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.web.util.Constants;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import javax.ejb.*;
-import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -213,7 +231,7 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
      *
      * @param struttura
      *            entity OrgStrut
-     * 
+     *
      * @return lista elementi di tipo UdSerFascObj
      */
     public List<UdSerFascObj> retrieveUdSerFascToProcess(OrgStrut struttura) {
@@ -252,7 +270,7 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
      *            entity AroRichiestaRa
      * @param maxUd2procRa
      *            numero massimo unita doc per processo
-     * 
+     *
      * @return lista elementi di tipo UdSerFascObj
      */
     public List<UdSerFascObj> retrieveAipUdSerFascByRichiesta(AroRichiestaRa richiesta, int maxUd2procRa) {
@@ -289,9 +307,9 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return id indice aip
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */
@@ -331,9 +349,9 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
      *
      * @param idUnitaDoc
      *            id unita doc
-     * 
+     *
      * @return entity versione indice aip
-     * 
+     *
      * @throws ParerInternalError
      *             errore generico
      */

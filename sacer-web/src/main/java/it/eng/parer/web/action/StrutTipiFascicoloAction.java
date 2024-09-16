@@ -390,9 +390,9 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     }
 
     /**
-     * 
+     *
      * @param usoModelloXsdFascRowBean
-     * 
+     *
      * @throws EMFError
      */
     private void loadDettaglioXsdAaTipoFascicoloList(DecUsoModelloXsdFascRowBean usoModelloXsdFascRowBean)
@@ -495,10 +495,10 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     }
 
     /**
-     * 
+     *
      * @param idAttribFascicolo
      * @param idModelloXsdFascicolo
-     * 
+     *
      * @throws EMFError
      */
     private void loadDettaglioAttribFascicolo(BigDecimal idAttribFascicolo) throws EMFError {

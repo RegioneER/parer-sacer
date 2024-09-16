@@ -31,7 +31,7 @@ public class StringPadding {
 
     /**
      * Metodo per l'esecuzione del padding su una stringa.
-     * 
+     *
      * @param str
      *            la stringa di cui effettuare il padding
      * @param paddingChar
@@ -40,7 +40,7 @@ public class StringPadding {
      *            il numero di caratteri della stringa di output
      * @param paddingSide
      *            l'orientamento del padding (sinistra, destra)
-     * 
+     *
      * @return str, la stringa "paddata"
      */
     public static String padString(String str, String paddingChar, int lngth, int paddingSide) {

@@ -70,7 +70,7 @@ public class SistemaMigrazioneEjb {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return il tableBean contenente la lista
      */
     public AplSistemaMigrazTableBean getAplSistemaMigrazTableBean(BigDecimal idStrut) {
@@ -94,7 +94,7 @@ public class SistemaMigrazioneEjb {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return il tableBean contenente la lista
      */
     public OrgUsoSistemaMigrazTableBean getOrgUsoSistemaMigrazTableBean(BigDecimal idStrut) {
@@ -126,7 +126,7 @@ public class SistemaMigrazioneEjb {
      *            id struttura
      * @param idSistemaMigraz
      *            id sistema migrazione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -174,7 +174,7 @@ public class SistemaMigrazioneEjb {
      *            nome sistema migrazione
      * @param dsSistemaMigraz
      *            descrizione sistema migrazione
-     * 
+     *
      * @return il tableBean contenente la lista
      */
     public AplSistemaMigrazTableBean getAplSistemaMigrazTableBean(String nmSistemaMigraz, String dsSistemaMigraz) {
@@ -197,7 +197,7 @@ public class SistemaMigrazioneEjb {
      *
      * @param idSistemaMigraz
      *            id sistema migrazione
-     * 
+     *
      * @return il rowBean del sistema migrazione
      */
     public AplSistemaMigrazRowBean getAplSistemaMigrazRowBean(BigDecimal idSistemaMigraz) {
@@ -223,9 +223,9 @@ public class SistemaMigrazioneEjb {
      *            nome sistema migrazione
      * @param dsSistemaMigraz
      *            descrizione sistema migrazione
-     * 
+     *
      * @return id del nuovo sistema di migrazione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -261,7 +261,7 @@ public class SistemaMigrazioneEjb {
      *            nome sistema migrazione
      * @param dsSistemaMigraz
      *            descrizione sistema migrazione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -294,7 +294,7 @@ public class SistemaMigrazioneEjb {
      *
      * @param idSistemaMigraz
      *            id sistema migrazione
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

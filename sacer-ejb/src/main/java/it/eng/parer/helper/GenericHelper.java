@@ -53,14 +53,6 @@ public class GenericHelper implements HelperInterface {
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
-    public static BigDecimal bigDecimalFromLong(Long numero) {
-        return numero == null ? null : BigDecimal.valueOf(numero);
-    }
-
-    public static BigDecimal bigDecimalFromInteger(Integer numero) {
-        return numero == null ? null : BigDecimal.valueOf(numero);
-    }
-
     @Override
     public EntityManager getEntityManager() {
         return entityManager;
@@ -155,10 +147,6 @@ public class GenericHelper implements HelperInterface {
         }
     }
 
-    public static List<Long> longListFrom(Collection<? extends BigDecimal> idElencoVersFascSelezionatiList) {
-        return idElencoVersFascSelezionatiList.stream().map(BigDecimal::longValue).collect(Collectors.toList());
-    }
-
     protected Date getDataNonAnnullata() {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -170,18 +158,6 @@ public class GenericHelper implements HelperInterface {
 
     protected List<BigDecimal> bigDecimalListFrom(Collection<Long> longList) {
         return longList.stream().map(l -> BigDecimal.valueOf(l)).collect(Collectors.toList());
-    }
-
-    public static List<BigDecimal> bigDecimalFromLong(Collection<Long> longList) {
-        return longList.stream().map(l -> BigDecimal.valueOf(l)).collect(Collectors.toList());
-    }
-
-    public static Long longFromBigDecimal(BigDecimal bigDecimal) {
-        return bigDecimal == null ? null : bigDecimal.longValue();
-    }
-
-    public static Long longFromInteger(Integer integer) {
-        return integer == null ? null : integer.longValue();
     }
 
     protected <T extends Object> T getByColumnName(ResultSet rs, String colName, Class<T> clazz) {

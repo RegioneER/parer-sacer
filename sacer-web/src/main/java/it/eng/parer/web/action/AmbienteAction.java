@@ -890,9 +890,9 @@ public class AmbienteAction extends AmbienteAbstractAction {
     }
 
     /*
-     * 
+     *
      * METODI DI RICERCA AMBIENTE/ENTE/STRUTTURA
-     * 
+     *
      */
     @Override
     public void visAmbienteButton() throws EMFError {
@@ -1018,7 +1018,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
 
     /*
      * Metodi per update Ambienti / Enti / Strutture
-     * 
+     *
      */
     @Override
     public void updateAmbientiList() throws EMFError {
@@ -1127,7 +1127,7 @@ public class AmbienteAction extends AmbienteAbstractAction {
 
     /*
      * Metodi per cancellazione Ambienti / Enti / Strutture
-     * 
+     *
      */
     @Override
     public void deleteAmbientiList() throws EMFError {

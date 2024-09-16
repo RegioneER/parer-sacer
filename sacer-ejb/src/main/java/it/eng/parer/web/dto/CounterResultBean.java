@@ -26,9 +26,11 @@ import it.eng.parer.web.util.Constants;
 
 /**
  * DTO che rappresenta il risultato del WS REST DocCounter. Il ws è presente nello strato web. La sua implementazione è
- * 
+ *
  * <pre>
- * {@code it.eng.parer.restWS.DocCounter}
+ * {@code
+ * it.eng.parer.restWS.DocCounter
+ * }
  * </pre>
  *
  * @author Filippini_M

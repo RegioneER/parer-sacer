@@ -17,7 +17,7 @@
 
 package it.eng.parer.restArch.ejb;
 
-import static it.eng.parer.job.calcoloEstrazione.RestituzioneArchivioJob.createEmptyDir;
+import static it.eng.parer.util.Utils.createEmptyDir;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

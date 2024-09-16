@@ -47,8 +47,8 @@ import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -541,10 +541,10 @@ public class ElenchiVersamentoEjb {
         CSChiave chiave = getChiaveUd(aroUnitaDoc);
 
         /*
-         * 
+         *
          * Gestione KEY NORMALIZED / URN PREGRESSI
-         * 
-         * 
+         *
+         *
          */
         // 1. se il numero normalizzato sull’unità doc nel DB è nullo ->
         // il sistema aggiorna ARO_UNITA_DOC
@@ -1411,7 +1411,7 @@ public class ElenchiVersamentoEjb {
      *            id utente
      * @param isSoloSigillo
      *            Gestione solo sigillo o firma e sigillo insieme
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -1420,7 +1420,7 @@ public class ElenchiVersamentoEjb {
         try {
             /*
              * MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
-             * 
+             *
              * La logica prevede che se viene chiamato dal job sigillo vuol dire che si vogliono processare solanto gli
              * elenchi con getsione SIGILLO o SIGILLO_MARC, altrimenti se richiamati da interfaccia utente per la firma
              * manuale li processa tutti i tipi di gestione, sia di SIGILLO che di FIRMA §/

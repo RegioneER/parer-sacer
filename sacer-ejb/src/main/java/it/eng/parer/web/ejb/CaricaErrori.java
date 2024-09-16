@@ -54,7 +54,8 @@ import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 @Lock(LockType.READ)
 public class CaricaErrori {
 
-    private static Logger logger = LoggerFactory.getLogger(CaricaErrori.class.getName());
+    private static Logger logger = LoggerFactory.getLogger(CaricaErrori.class);
+
     DecodeMap mappaClasseErrore = new DecodeMap();
     // Creo le 3 mappe ordinate che conterranno i vari livelli di codifica errore
     SortedMap<String, String> classeErroreMap = new TreeMap<>();
@@ -98,14 +99,6 @@ public class CaricaErrori {
             IOUtils.closeQuietly(tmpStream);
         }
         mappaClasseErrore.populatedMap(tabellaClasse, "cd_err", "ds_err");
-    }
-
-    public static Logger getLogger() {
-        return logger;
-    }
-
-    public static void setLogger(Logger logger) {
-        CaricaErrori.logger = logger;
     }
 
     public DecodeMap getMappaClasseErrore() {

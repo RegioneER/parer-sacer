@@ -17,6 +17,8 @@
 
 package it.eng.parer.job.allineamentoOrganizzazioni.ejb;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,7 +43,6 @@ import it.eng.parer.entity.OrgAmbiente;
 import it.eng.parer.entity.OrgEnte;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.OrgSubStrut;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.allineamentoOrganizzazioni.utils.CostantiReplicaOrg;
 
 /**
@@ -126,7 +127,7 @@ public class AllineamentoOrganizzazioniHelper {
         String queryStr = "SELECT strut.idEnteConvenz, strut.dtIniVal, strut.dtFineVal FROM OrgStrut strut "
                 + "WHERE strut.idStrut = :idStrut ";
         Query q = entityManager.createQuery(queryStr);
-        q.setParameter("idStrut", GenericHelper.longFromBigDecimal(idStrut));
+        q.setParameter("idStrut", longFromBigDecimal(idStrut));
         List<Object[]> strutObjList = q.getResultList();
         Map<String, Object> mappa = new HashMap<>();
         if (!strutObjList.isEmpty()) {

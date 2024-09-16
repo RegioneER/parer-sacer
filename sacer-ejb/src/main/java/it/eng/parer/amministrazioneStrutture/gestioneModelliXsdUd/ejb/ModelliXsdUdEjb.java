@@ -88,12 +88,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Resitutisce la lista dei modelli xsd associati all'unità documentaria
-     * 
+     *
      * @param idTipoUniDoc
      *            id tipo unita documentaria
      * @param tiUsoModelloXsd
      *            tipo uso modello xsd
-     * 
+     *
      * @return tabella con i modelli
      */
     public DecUsoModelloXsdUniDocTableBean getDecModelliXsdUdInUsoOnUniDoc(BigDecimal idTipoUniDoc,
@@ -105,12 +105,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Resitutisce la lista dei modelli xsd associati al tipo document
-     * 
+     *
      * @param idTipoDoc
      *            id tipo documento
      * @param tiUsoModelloXsd
      *            tipo uso modello xsd
-     * 
+     *
      * @return tabella con i modelli
      */
     public DecUsoModelloXsdDocTableBean getDecModelliXsdUdInUsoOnDoc(BigDecimal idTipoDoc, String tiUsoModelloXsd) {
@@ -121,7 +121,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Resitutisce il dettaglio di un modello a partire dall'Id del modello e dall'id del tipo unità documentaria
-     * 
+     *
      * @param idTipoUniDoc
      *            id tipo unità doc
      * @param idModelloXsdUd
@@ -130,7 +130,7 @@ public class ModelliXsdUdEjb {
      *            tipo uso modello xsd
      * @param cdXsd
      *            versione modello xsd
-     * 
+     *
      * @return row bean
      */
     public DecUsoModelloXsdUniDocRowBean getDecModelloXsdUdInUsoOnUniDoc(BigDecimal idTipoUniDoc,
@@ -149,7 +149,7 @@ public class ModelliXsdUdEjb {
      *            tipo uso modello xsd
      * @param cdXsd
      *            versione modello xsd
-     * 
+     *
      * @return row bean
      */
     public DecUsoModelloXsdDocRowBean getDecModelloXsdUdInUsoOnDoc(BigDecimal idTipoDoc, BigDecimal idModelloXsdUd,
@@ -174,7 +174,7 @@ public class ModelliXsdUdEjb {
 
     /*
      * Uso modello to rowbean
-     * 
+     *
      */
     private DecUsoModelloXsdUniDocRowBean usoModelloXsdUdUniDoc2RowBean(DecUsoModelloXsdUniDoc usoModelloXsdUniDoc) {
         DecUsoModelloXsdUniDocRowBean row = null;
@@ -202,12 +202,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Resitutisce la rappresentazione tabellare filtrando per id ambiente e uso
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiUsoModello
      *            tipo uso modello
-     * 
+     *
      * @return table bean
      */
     public DecModelloXsdUdTableBean getDecModelloXsdUdInUsoByIdAmbAndTiUso(BigDecimal idAmbiente, String tiUsoModello) {
@@ -217,14 +217,14 @@ public class ModelliXsdUdEjb {
 
     /**
      * Resitutisce la rappresentazione tabellare filtrando per tipo modello e uso
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModello
      *            tipo modello
      * @param tiUsoModello
      *            tipo uso modello
-     * 
+     *
      * @return table bean
      */
     public DecModelloXsdUdTableBean getDecModelloXsdUdInUso4AmbAndTiModelloXsd(BigDecimal idAmbiente, String tiModello,
@@ -243,7 +243,7 @@ public class ModelliXsdUdEjb {
      *            tipo uso modello
      * @param key
      *            chiave mappa
-     * 
+     *
      * @return decoded map
      */
     public DecodeMap getTiModelloXsdInUsoByIdAmbTiUso(BigDecimal idAmbiente, String tiUsoModello, final String key) {
@@ -260,7 +260,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Resitutisce una mappa chiave/valore per liste a selezione
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModello
@@ -269,7 +269,7 @@ public class ModelliXsdUdEjb {
      *            tipo uso modello
      * @param key
      *            chiave mappa
-     * 
+     *
      * @return decoded map
      */
     public DecodeMap getCdXsdInUsoByIdAmbTiModUso(BigDecimal idAmbiente, String tiModello, String tiUsoModello,
@@ -329,12 +329,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Inserimento della relazione (uso modello)
-     * 
+     *
      * @param param
      *            log param
      * @param modelloXsdUdRowBean
      *            row bean
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -378,12 +378,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Inserimento della relazione (uso modello)
-     * 
+     *
      * @param param
      *            log param
      * @param modelloXsdUdRowBean
      *            row bean
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -425,14 +425,14 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se per il tipo entita sacer (UNI_DOC) esiste una relazione con il modello xsd ud
-     * 
+     *
      * @param idTipoUniDoc
      *            id tipo unità doc
      * @param tiUsoModelloXsd
      *            tipo uso modello xsd
      * @param cdXsd
      *            versione modello xsd
-     * 
+     *
      * @return true = se esiste relazione, false = altrimenti
      */
     public boolean existDecUsoModelloXsdUdOnUniDoc(BigDecimal idTipoUniDoc, String tiUsoModelloXsd, String cdXsd) {
@@ -442,14 +442,14 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se per il tipo entita sacer (DOC) esiste una relazione con il modello xsd ud
-     * 
+     *
      * @param idTipoDoc
      *            id tipo doc
      * @param tiUsoModelloXsd
      *            tipo uso modello xsd
      * @param cdXsd
      *            versione modello xsd
-     * 
+     *
      * @return true = se esiste relazione, false = altrimenti
      */
     public boolean existDecUsoModelloXsdUdOnDoc(BigDecimal idTipoDoc, String tiUsoModelloXsd, String cdXsd) {
@@ -461,14 +461,14 @@ public class ModelliXsdUdEjb {
     /**
      * Verifica se per il tipo entita sacer (UNI_DOC) esiste un modello standard in uso che non sia idModelloXsdUd
      * (lambda filter)
-     * 
+     *
      * @param idTipoUniDoc
      *            id tipo uni doc
      * @param idModelloXsdUd
      *            id modello xsd
      * @param tiUsoModelloXsd
      *            tipo uso modello xsd
-     * 
+     *
      * @return true = se esiste relazione standard, false = altrimenti
      */
     public boolean existDecUsoModelloXsdUdOnUniDocStandard(BigDecimal idTipoUniDoc, BigDecimal idModelloXsdUd,
@@ -485,14 +485,14 @@ public class ModelliXsdUdEjb {
     /**
      * Verifica se per il tipo entita sacer (DOC) esiste un modello standard in uso che non sia idModelloXsdUd (lambda
      * filter)
-     * 
+     *
      * @param idTipoDoc
      *            id tipo doc
      * @param idModelloXsdUd
      *            id modello xsd
      * @param tiUsoModelloXsd
      *            tipo uso modello xsd
-     * 
+     *
      * @return true = se esiste relazione standard, false = altrimenti
      */
     public boolean existDecUsoModelloXsdUdOnDocStandard(BigDecimal idTipoDoc, BigDecimal idModelloXsdUd,
@@ -520,7 +520,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Restituisce il row bean del modello
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModelloXsd
@@ -531,7 +531,7 @@ public class ModelliXsdUdEjb {
      *            versione modello xsd
      * @param filterValid
      *            true se nel periodo di valità / false altrimenti
-     * 
+     *
      * @return row bean
      */
     public DecModelloXsdUdRowBean getDecModelloXsdUd(BigDecimal idAmbiente, String tiModelloXsd, String tiUsoModelloXsd,
@@ -543,10 +543,10 @@ public class ModelliXsdUdEjb {
 
     /**
      * Restituisce il row bean del modello
-     * 
+     *
      * @param idModelloXsdUd
      *            id modello xsd ud
-     * 
+     *
      * @return row bean
      */
     public DecModelloXsdUdRowBean getDecModelloXsdUd(BigDecimal idModelloXsdUd) {
@@ -556,12 +556,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Aggiornamento uso modello xsd documento
-     * 
+     *
      * @param param
      *            parametro logging
      * @param modelloXsdUdRowBean
      *            row bean del modello
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -588,12 +588,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Aggiornamento uso modello xsd documento
-     * 
+     *
      * @param param
      *            parametro logging
      * @param modelloXsdUdRowBean
      *            row bean del modello
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -622,7 +622,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Cancellazione con controllo dell'uso modello xsd per UNI_DOC
-     * 
+     *
      * @param param
      *            log param
      * @param idStrut
@@ -631,7 +631,7 @@ public class ModelliXsdUdEjb {
      *            id topo unita documentaria
      * @param idUsoModelloXsdUd
      *            id uso modello xsd
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -643,7 +643,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Cancellazione con controllo dell'uso modello xsd per DOC
-     * 
+     *
      * @param param
      *            log param
      * @param idStrut
@@ -652,7 +652,7 @@ public class ModelliXsdUdEjb {
      *            id tipo documento
      * @param idUsoModelloXsdUd
      *            id uso modello
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -706,12 +706,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se il modello in uso nel tipo UNI_DOC
-     * 
+     *
      * @param idStrut
      *            id struttura
      * @param idUsoModelloXsdUd
      *            id uso modello
-     * 
+     *
      * @return true se esiste almeno una sessione di versamento / false altrimenti
      */
     public boolean isUsoModelloXsdUdUniDocInUse(BigDecimal idStrut, BigDecimal idUsoModelloXsdUd) {
@@ -720,12 +720,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se il modello in uso nel tipo DOC
-     * 
+     *
      * @param idStrut
      *            id struttura
      * @param idUsoModelloXsdUd
      *            id uso modello xsd
-     * 
+     *
      * @return true se esiste almeno una sessione di versamento / false altrimenti
      */
     public boolean isUsoModelloXsdUdDocInUse(BigDecimal idStrut, BigDecimal idUsoModelloXsdUd) {
@@ -734,10 +734,10 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se il modello in uso nel tipo UNI_DOC
-     * 
+     *
      * @param idModelloXsdUd
      *            id modello
-     * 
+     *
      * @return true se esiste almeno una sessione di versamento / false altrimenti
      */
     public boolean isModelloXsdUdInUse(BigDecimal idModelloXsdUd) {
@@ -746,14 +746,14 @@ public class ModelliXsdUdEjb {
 
     /**
      * Disattivazione uso modello xsd nel tipo UNI_DOC
-     * 
+     *
      * @param param
      *            log param
      * @param modelloXsdUdRowBean
      *            row bean
-     * 
+     *
      * @return row table aggiornato
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -784,14 +784,14 @@ public class ModelliXsdUdEjb {
 
     /**
      * Disattivazione uso modello xsd nel tipo DOC
-     * 
+     *
      * @param param
      *            log param
      * @param modelloXsdUdRowBean
      *            row bean
-     * 
+     *
      * @return row table aggiornato
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -823,10 +823,10 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se il modello è in uso
-     * 
+     *
      * @param idModelloXsdUd
      *            id modello xsd ud
-     * 
+     *
      * @return true = se esiste relazione, false = altrimenti
      */
     public boolean existDecUsoModelloXsdUdAtMostOnce(BigDecimal idModelloXsdUd) {
@@ -836,7 +836,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Restituisce il table bean dei modelli xsd ud
-     * 
+     *
      * @param filtriModelliXsdUd
      *            filtro modelli xsd
      * @param idAmbientiToFind
@@ -845,9 +845,9 @@ public class ModelliXsdUdEjb {
      *            tipo uso modello
      * @param filterValid
      *            true se nel periodo di valità / false altrimenti
-     * 
+     *
      * @return table bean
-     * 
+     *
      * @throws EMFError
      *             eccezione generico
      */
@@ -883,14 +883,14 @@ public class ModelliXsdUdEjb {
 
     /**
      * Salvataggio modello xsd
-     * 
+     *
      * @param param
      *            log param
      * @param modelloXsdUdRowBean
      *            row bean
-     * 
+     *
      * @return pk del modello
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -919,7 +919,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Aggiornamento modello xsd
-     * 
+     *
      * @param param
      *            log param
      * @param modelloXsdUdRowBean
@@ -945,12 +945,12 @@ public class ModelliXsdUdEjb {
 
     /**
      * Cancellazione modello xsd
-     * 
+     *
      * @param param
      *            log param
      * @param modelloXsdUdRowBean
      *            row bean
-     * 
+     *
      * @throws ParerUserError
      *             eccezione generica
      */
@@ -976,7 +976,7 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se il modello in uso nel tipo UNI_DOC
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param idModelloXsdUd
@@ -985,7 +985,7 @@ public class ModelliXsdUdEjb {
      *            tipo modello
      * @param tiUsoModelloXsd
      *            tipo uso modello
-     * 
+     *
      * @return true se esiste modello standard previsto per l'ambiente
      */
     public boolean existAnotherDecModelloXsdStd(BigDecimal idAmbiente, BigDecimal idModelloXsdUd, String tiModelloXsd,
@@ -1000,16 +1000,16 @@ public class ModelliXsdUdEjb {
 
     /**
      * Verifica se il modello in uso nel tipo UNI_DOC
-     * 
+     *
      * @param idAmbiente
      *            id ambiente
      * @param tiModelloXsd
      *            tipo modello
      * @param tiUsoModelloXsd
      *            tipo uso modello
-     * 
+     *
      * @return true se esiste modello standard previsto per l'ambiente
-     * 
+     *
      */
     public Optional<DecModelloXsdUdRowBean> getDefaultDecModelloXsdUd(BigDecimal idAmbiente, String tiModelloXsd,
             String tiUsoModelloXsd) {

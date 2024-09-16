@@ -30,6 +30,6 @@
  * <p>
  * - <b>DecUsoModelloXsdCompDoc</b>
  * </p>
- * 
+ *
  */
 package it.eng.parer.amministrazioneStrutture.gestioneModelliXsdUd;

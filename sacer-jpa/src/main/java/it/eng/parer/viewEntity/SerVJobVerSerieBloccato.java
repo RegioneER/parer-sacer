@@ -27,7 +27,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the SER_V_JOB_VER_SERIE_BLOCCATO database table.
- * 
+ *
  */
 @Entity
 @Table(name = "SER_V_JOB_VER_SERIE_BLOCCATO")

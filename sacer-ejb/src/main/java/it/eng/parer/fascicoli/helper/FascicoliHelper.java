@@ -17,6 +17,10 @@
 
 package it.eng.parer.fascicoli.helper;
 
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+import static it.eng.parer.util.Utils.longListFrom;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -693,7 +697,7 @@ public class FascicoliHelper extends GenericHelper {
      *            id utente
      * @param idStruttura
      *            id struttura
-     * 
+     *
      * @return lista entity di tipo DecTipoFascicolo
      */
     public List<DecTipoFascicolo> getTipiFascicoloAbilitati(long idUtente, BigDecimal idStruttura) {
@@ -3563,7 +3567,7 @@ public class FascicoliHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @return lista di elementi di tipo DecModelloXsdFascicolo
      */
     public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloDisp() {
@@ -3584,10 +3588,10 @@ public class FascicoliHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @param idTipoFascicolo
      *            id tipo fascicolo
-     * 
+     *
      * @return lista di Object timodelloxsd
      */
     public List<Object[]> getDecModelloXsdFascicoloByTipoFascicolo(long idTipoFascicolo) {
@@ -3609,12 +3613,12 @@ public class FascicoliHelper extends GenericHelper {
     }
 
     /**
-     * 
+     *
      * @param idTipoFascicolo
      *            id tipo fascicolo
      * @param tiModelloXsd
      *            modello xsd
-     * 
+     *
      * @return lista di elementi di tipo DecModelloXsdFascicolo
      */
     public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloByTipoFascicoloAndIdModelloXsd(long idTipoFascicolo,

@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 /**
  * The persistent class for the MON_V_CNT_DOC_AMB database table.
- * 
+ *
  */
 @Entity
 @Table(name = "MON_V_CNT_DOC_AMB")

@@ -142,7 +142,7 @@ public class RecuperoDocBean implements java.io.Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

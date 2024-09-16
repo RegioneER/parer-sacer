@@ -17,6 +17,8 @@
 
 package it.eng.parer.fascicoli.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.util.List;
 

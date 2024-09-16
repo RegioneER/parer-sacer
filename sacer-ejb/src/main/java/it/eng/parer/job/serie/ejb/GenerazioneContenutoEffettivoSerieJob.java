@@ -114,7 +114,7 @@ public class GenerazioneContenutoEffettivoSerieJob {
      *
      * @param idVerSerie
      *            id versamento serie
-     * 
+     *
      * @return true se la preparazione va a buon fine
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

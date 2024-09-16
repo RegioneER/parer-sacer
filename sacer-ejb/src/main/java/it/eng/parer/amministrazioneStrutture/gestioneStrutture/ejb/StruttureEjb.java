@@ -1695,13 +1695,13 @@ public class StruttureEjb {
     }
 
     /**
-     * 
+     *
      * @param struttureDaElaborare
      *            le strutture da elaborare nell'importa parametri massivo
-     * 
+     *
      * @return la stringa con eventuale errore per presenza di strutture appartenenti ad ambienti diversi nell'import
      *         parametri massivo
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -2067,7 +2067,7 @@ public class StruttureEjb {
 
     /**
      * Esegue il metodo dell'ejb per la chiamata al WS di allineamento enti convenzionati
-     * 
+     *
      * @param enteConvenzDaAllineaList
      *            lista IamEnteConvenzDaAllinea
      *

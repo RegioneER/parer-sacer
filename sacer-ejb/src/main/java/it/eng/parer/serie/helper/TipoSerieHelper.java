@@ -17,6 +17,8 @@
 
 package it.eng.parer.serie.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -600,7 +602,7 @@ public class TipoSerieHelper extends GenericHelper {
      *            id unita doc
      * @param tipoCampo
      *            tipo camp
-     * 
+     *
      * @return int risultato cancellazione 1/0
      */
     public int deleteDecCampoOutSelUdsForUpdateDaRegoleFiltraggio(BigDecimal idOutSelUd,
@@ -946,7 +948,7 @@ public class TipoSerieHelper extends GenericHelper {
      *
      * @param idRegistroUnitaDoc
      *            id registro unita doc
-     * 
+     *
      * @return true/false
      */
     public boolean multipleDecRegistroUnitaDocInTipiSerie(BigDecimal idRegistroUnitaDoc) {

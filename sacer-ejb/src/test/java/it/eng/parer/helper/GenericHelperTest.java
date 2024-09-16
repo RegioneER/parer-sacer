@@ -17,26 +17,25 @@
 
 package it.eng.parer.helper;
 
-import it.eng.parer.elencoVersamento.helper.IndiceElencoVersHelperTest;
-import it.eng.parer.web.helper.HelperTest;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.Archive;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.shrinkwrap.api.Archive;
-import static org.junit.Assert.*;
-import org.junit.Test;
 
-import org.junit.runner.RunWith;
-import static it.eng.ArquillianUtils.*;
-import it.eng.ArquillianUtils;
-import org.jboss.arquillian.junit.Arquillian;
 import javax.ejb.EJB;
+
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import it.eng.parer.util.Utils;
+import it.eng.parer.web.helper.HelperTest;
 
 @RunWith(Arquillian.class)
 public class GenericHelperTest {
@@ -57,9 +56,8 @@ public class GenericHelperTest {
 
     @Test
     public void longListFromBigDecimalList() {
-        GenericHelper localHelper = new GenericHelper();
         Collection<BigDecimal> bigDecimalCollection = Arrays.asList(BigDecimal.ZERO, BigDecimal.TEN);
-        List<Long> longList = localHelper.longListFrom(bigDecimalCollection);
+        List<Long> longList = Utils.longListFrom(bigDecimalCollection);
         assertEquals(2, longList.size());
         assertEquals(0L, longList.get(0).longValue());
         assertEquals(10L, longList.get(1).longValue());
@@ -81,50 +79,6 @@ public class GenericHelperTest {
         final String expectedDate = "31/12/2444";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         assertEquals(expectedDate, sdf.format(localHelper.getDataNonAnnullata()));
-    }
-
-    @Test
-    public void longFromBigDecimal_null() {
-        assertNull(GenericHelper.longFromBigDecimal(null));
-    }
-
-    @Test
-    public void longFromInteger_null() {
-        assertNull(GenericHelper.longFromBigDecimal(null));
-    }
-
-    @Test
-    public void longFromBigDecimal_conValore() {
-        assertEquals(Long.valueOf(1), GenericHelper.longFromBigDecimal(BigDecimal.ONE));
-    }
-
-    @Test
-    public void longFromInteger_conValore() {
-        assertEquals(Long.valueOf(2), GenericHelper.longFromInteger(Integer.valueOf(2)));
-    }
-
-    @Test
-    public void bigDecimalFromLong_null() {
-        Long nullLong = null;
-        assertEquals(null, GenericHelper.bigDecimalFromLong(nullLong));
-    }
-
-    @Test
-    public void bigDecimalFromLong_conValore() {
-        Long uno = 1L;
-        assertEquals(BigDecimal.ONE, GenericHelper.bigDecimalFromLong(uno));
-    }
-
-    @Test
-    public void bigDecimalFromInteger_null() {
-        Integer nullInt = null;
-        assertEquals(null, GenericHelper.bigDecimalFromInteger(nullInt));
-    }
-
-    @Test
-    public void bigDecimalFromInteger_conValore() {
-        Integer uno = 1;
-        assertEquals(BigDecimal.ONE, GenericHelper.bigDecimalFromInteger(uno));
     }
 
 }

@@ -113,9 +113,9 @@ public class AnnulVersEjb {
      *
      * @param fileByteArray
      *            file byte array
-     * 
+     *
      * @return true se sono presenti tutti gli header richiesti
-     * 
+     *
      * @throws IOException
      *             eccezione di tipo IO
      */
@@ -150,9 +150,9 @@ public class AnnulVersEjb {
      *
      * @param fileByteArray
      *            file byte array
-     * 
+     *
      * @return true se sono presenti tutti gli header richiesti
-     * 
+     *
      * @throws IOException
      *             eccezione di tipo IO
      */
@@ -188,7 +188,7 @@ public class AnnulVersEjb {
      *            codice richiesta annullamento
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return true se esiste gi\u00E0 una richiesta di annullamento con codice <code>cdRichAnnulVers</code>
      */
     public boolean checkCdRichAnnulVersExisting(String cdRichAnnulVers, BigDecimal idStrut) {
@@ -223,7 +223,7 @@ public class AnnulVersEjb {
      *
      *
      * @return id richiesta
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */
@@ -348,9 +348,9 @@ public class AnnulVersEjb {
      *            tipo annullamento
      * @param ravExt
      *            invio richiesta annullamento
-     * 
+     *
      * @return id richiesta
-     * 
+     *
      * @throws ParerUserError
      *             errore generico
      */

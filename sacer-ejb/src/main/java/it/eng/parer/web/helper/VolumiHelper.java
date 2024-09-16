@@ -17,6 +17,8 @@
 
 package it.eng.parer.web.helper;
 
+import static it.eng.parer.util.Utils.longFromBigDecimal;
+
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -40,7 +42,6 @@ import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.LogOper;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.VolVolumeConserv;
-import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.slite.gen.form.VolumiForm.Filtri;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.viewbean.VolVRicVolumeRowBean;
@@ -362,7 +363,7 @@ public class VolumiHelper {
             String noteVolChiuso) {
         String queryStr = "SELECT u FROM VolVolumeConserv u WHERE u.idVolumeConserv = :idvol ";
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idvol", GenericHelper.longFromBigDecimal(idVolume));
+        query.setParameter("idvol", longFromBigDecimal(idVolume));
 
         List<VolVolumeConserv> volumeConserv = query.getResultList();
         VolVolumeConserv record = volumeConserv.get(0);
@@ -409,7 +410,7 @@ public class VolumiHelper {
         String queryStr = "SELECT u FROM VolVolumeConserv u WHERE u.orgStrut.idStrut = :idstrut and u.nmVolumeConserv = :nomecrit";
 
         Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idstrut", GenericHelper.longFromBigDecimal(idStruttura));
+        query.setParameter("idstrut", longFromBigDecimal(idStruttura));
         query.setParameter("nomecrit", nome);
 
         return !query.getResultList().isEmpty();

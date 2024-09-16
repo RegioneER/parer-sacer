@@ -17,19 +17,33 @@
 
 package it.eng.parer.util;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Iacolucci_M
  */
 public class Utils {
+
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+
     /*
      * Torna una lista di date con tutti i giorni compresi tra due date con orario a 0 fino ai millisecondi
      */
@@ -102,5 +116,63 @@ public class Utils {
             sb.append(")");
         }
         return sb.toString();
+    }
+
+    /* Type conversion */
+    public static BigDecimal bigDecimalFromLong(Long numero) {
+        return numero == null ? null : BigDecimal.valueOf(numero);
+    }
+
+    public static BigDecimal bigDecimalFromInteger(Integer numero) {
+        return numero == null ? null : BigDecimal.valueOf(numero);
+    }
+
+    public static List<BigDecimal> bigDecimalFromLong(Collection<Long> longList) {
+        return longList.stream().map(BigDecimal::valueOf).collect(Collectors.toList());
+    }
+
+    public static List<Long> longListFrom(Collection<? extends BigDecimal> idElencoVersFascSelezionatiList) {
+        return idElencoVersFascSelezionatiList.stream().map(BigDecimal::longValue).collect(Collectors.toList());
+    }
+
+    public static Long longFromBigDecimal(BigDecimal bigDecimal) {
+        return bigDecimal == null ? null : bigDecimal.longValue();
+    }
+
+    public static Long longFromInteger(Integer integer) {
+        return integer == null ? null : integer.longValue();
+    }
+
+    /* Miscelenous */
+
+    public static void createEmptyDir(String fullPath) throws IOException {
+        Path dirPath = Paths.get(fullPath);
+        File directory = dirPath.toFile();
+        if (!directory.exists()) {
+            logger.debug("La cartella {} non esiste, la creo", fullPath);
+            Files.createDirectories(dirPath);
+        }
+    }
+
+    public static void createEmptyDirWithDelete(String fullPath) throws IOException {
+        Path dirPath = Paths.get(fullPath);
+        File directory = dirPath.toFile();
+        if (directory.exists()) {
+            logger.debug("La cartella {} esiste, la dobbiamo svuotare", fullPath);
+            File[] files = directory.listFiles((dir, name) -> {
+                boolean toDelete = !name.matches("\\.nfs.+");
+                logger.debug("File {} lo devo cancellare? {}", name, toDelete);
+                return toDelete;
+            });
+            if (files != null) {
+                for (File file : files) {
+                    logger.debug("Procedo alla cancellazione di {}", file.getAbsolutePath());
+                    FileUtils.forceDelete(file);
+                }
+            }
+        } else {
+            logger.debug("La cartella {} non esiste, la creo", fullPath);
+            Files.createDirectories(dirPath);
+        }
     }
 }

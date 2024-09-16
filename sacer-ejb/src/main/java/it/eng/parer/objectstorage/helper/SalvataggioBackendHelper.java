@@ -178,7 +178,7 @@ public class SalvataggioBackendHelper {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure DATABASE_PRIMARIO
      *
      * @throws ObjectStorageException
@@ -670,9 +670,9 @@ public class SalvataggioBackendHelper {
      *
      * @param idFileSessioneKo
      *            id file sessione
-     * 
+     *
      * @return record contenete il link
-     * 
+     *
      * @throws ObjectStorageException
      *             in caso di errore
      */
@@ -693,12 +693,12 @@ public class SalvataggioBackendHelper {
 
     /**
      * Restitusce un boolean per la verifica del "link" verso object storage
-     * 
+     *
      * @param idFileSessioneKo
      *            id sessione file
-     * 
+     *
      * @return boolean true se effettivamente presente su object storage / false altrimenti
-     * 
+     *
      * @throws ObjectStorageException
      *             eccezione generica
      */
@@ -723,9 +723,9 @@ public class SalvataggioBackendHelper {
      *
      * @param idCompDoc
      *            id componente da verificare
-     * 
+     *
      * @return boolean true se effettivamente presente su object storage / false altrimenti
-     * 
+     *
      * @throws ObjectStorageException
      *             eccezione generica
      */
@@ -746,12 +746,12 @@ public class SalvataggioBackendHelper {
 
     /**
      * Restitusce un boolean per la verifica del "link" verso object storage
-     * 
+     *
      * @param idCompDoc
      *            id componente da verificare
-     * 
+     *
      * @return boolean true se effettivamente presente su object storage / false altrimenti
-     * 
+     *
      * @throws ObjectStorageException
      *             eccezione generica
      */
@@ -1369,12 +1369,12 @@ public class SalvataggioBackendHelper {
 
     /**
      * Restitusce un boolean per la verifica del "link" verso object storage
-     * 
+     *
      * @param idVerIndiceAip
      *            id versione indice aip
-     * 
+     *
      * @return boolean true se effettivamente presente su object storage / false altrimenti
-     * 
+     *
      * @throws ObjectStorageException
      *             eccezione generica
      */
@@ -1559,12 +1559,12 @@ public class SalvataggioBackendHelper {
 
     /**
      * Restitusce un boolean per la verifica del "link" verso object storage
-     * 
+     *
      * @param idVerAipFascicolo
      *            id versione indice aip fascicolo
-     * 
+     *
      * @return boolean true se effettivamente presente su object storage / false altrimenti
-     * 
+     *
      * @throws ObjectStorageException
      *             eccezione generica
      */
@@ -1721,7 +1721,7 @@ public class SalvataggioBackendHelper {
      *
      * @param idStrut
      *            id struttura
-     * 
+     *
      * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure DATABASE_PRIMARIO
      *
      * @throws ObjectStorageException
