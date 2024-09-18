@@ -224,7 +224,7 @@
         <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
         <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />        
         <Input Name="ds_valore_param_applic_strut" Description="Valore su struttura" Type="STRING" />        
-        <Input Name="ds_valore_param_applic_aa_tipo_fascicolo_amm" Description="Valore su aa tipo fasciscolo" Type="STRING" />        
+        <Input Name="ds_valore_param_applic_aa_tipo_fascicolo_amm" Description="Valore su aa tipo fascicolo" Type="STRING" />        
     </List>
     
     <List Name="ParametriConservazioneAaTipoFascList" Description="Parametri di conservazione" hideDetailButton="true" hideUpdateButton="true" filterValidRecords="true">
@@ -241,7 +241,7 @@
         <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
         <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />        
         <Input Name="ds_valore_param_applic_strut" Description="Valore su struttura" Type="STRING" />        
-        <Input Name="ds_valore_param_applic_aa_tipo_fascicolo_cons" Description="Valore su aa tipo fasciscolo" Type="STRING" />        
+        <Input Name="ds_valore_param_applic_aa_tipo_fascicolo_cons" Description="Valore su aa tipo fascicolo" Type="STRING" />        
     </List>
     
     <List Name="ParametriGestioneAaTipoFascList" Description="Parametri di gestione" hideDetailButton="true" hideUpdateButton="true" filterValidRecords="true">
@@ -258,7 +258,7 @@
         <Input Name="ds_valore_param_applic_applic" Description="Valore su applicazione" Type="STRING" />
         <Input Name="ds_valore_param_applic_ambiente" Description="Valore su ambiente" Type="STRING" />                
         <Input Name="ds_valore_param_applic_strut" Description="Valore su struttura" Type="STRING" />                
-        <Input Name="ds_valore_param_applic_aa_tipo_fascicolo_gest" Description="Valore su aa tipo fasciscolo" Type="STRING" />                
+        <Input Name="ds_valore_param_applic_aa_tipo_fascicolo_gest" Description="Valore su aa tipo fascicolo" Type="STRING" />                
     </List>
     
     <ButtonList Name="ParametriAaTipoFascButtonList" Description="">

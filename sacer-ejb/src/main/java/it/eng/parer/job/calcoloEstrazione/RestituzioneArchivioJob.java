@@ -141,7 +141,7 @@ public class RestituzioneArchivioJob {
 
         /*
          * Determino le richieste di estrazione con maggiore priorità di esecuzione, con stato ESTRAZIONE_IN_CORSO o
-         * IN_ATTESA_ESTRAZIONE; le richieste sono selezionate in ordine di priorita DESC e data fine ASC
+         * IN_ATTESA_ESTRAZIONE; le richieste sono selezionate in ordine di data fine ASC
          */
         if (totAipEstratti < maxUd2procRa) {
             List<AroRichiestaRa> richiesteRa = calcoloHelper.retrieveRichiesteRaDaElab();

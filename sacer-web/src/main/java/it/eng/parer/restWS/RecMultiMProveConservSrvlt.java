@@ -51,6 +51,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -287,11 +288,7 @@ public class RecMultiMProveConservSrvlt extends HttpServlet {
 
         // elimina il file zip, in ogni caso
         if (rispostaWs.getRifFileBinario() != null && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
-            try {
-                Files.delete(rispostaWs.getRifFileBinario().getFileSuDisco().toPath());
-            } catch (IOException e) {
-                log.error("Eccezione nella servlet recupero sync in fase di cancellazione file temporaneo", e);
-            }
+            FileUtils.deleteQuietly(rispostaWs.getRifFileBinario().getFileSuDisco());
         }
 
         tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("").logAvanzamento();

@@ -93,7 +93,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler; 
+import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.ws.WebServiceException;
@@ -3331,19 +3331,34 @@ public class StruttureEjb {
 
     public DecUsoModelloXsdFasc inserisciUsoModelloXsdFasc(DecUsoModelloXsdFasc usoModelloXsdFascExp,
             DecAaTipoFascicolo aaTipoFascicolo) {
+
         DecUsoModelloXsdFasc usoModelloXsdFasc = new DecUsoModelloXsdFasc();
         usoModelloXsdFasc.setDecAaTipoFascicolo(aaTipoFascicolo);
-        usoModelloXsdFasc.setDecModelloXsdFascicolo(usoModelloXsdFascExp.getDecModelloXsdFascicolo());
+
         usoModelloXsdFasc.setDtIstituz(usoModelloXsdFascExp.getDtIstituz());
         usoModelloXsdFasc.setDtSoppres(usoModelloXsdFascExp.getDtSoppres());
         usoModelloXsdFasc.setFlStandard(usoModelloXsdFascExp.getFlStandard());
 
-        struttureHelper.insertEntity(usoModelloXsdFasc, true);
-        // e lo associo all'anno
-        if (aaTipoFascicolo.getDecUsoModelloXsdFascs() == null) {
-            aaTipoFascicolo.setDecUsoModelloXsdFascs(new ArrayList<>());
+        DecModelloXsdFascicolo modelloXsdFascicoloExp = usoModelloXsdFascExp.getDecModelloXsdFascicolo();
+        if (modelloXsdFascicoloExp != null) {
+            long idAmbienteCorrente = aaTipoFascicolo.getDecTipoFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente()
+                    .getIdAmbiente();
+
+            DecModelloXsdFascicolo modelloXsdFascicolo = modelliFascicoliHelper.getDecModelloXsdFascicolo(
+                    BigDecimal.valueOf(idAmbienteCorrente), modelloXsdFascicoloExp.getTiModelloXsd().name(),
+                    modelloXsdFascicoloExp.getTiUsoModelloXsd().name(), modelloXsdFascicoloExp.getCdXsd());
+            if (modelloXsdFascicolo != null) {
+
+                usoModelloXsdFasc.setDecModelloXsdFascicolo(modelloXsdFascicolo);
+
+                struttureHelper.insertEntity(usoModelloXsdFasc, true);
+                // e lo associo all'anno
+                if (aaTipoFascicolo.getDecUsoModelloXsdFascs() == null) {
+                    aaTipoFascicolo.setDecUsoModelloXsdFascs(new ArrayList<>());
+                }
+                aaTipoFascicolo.getDecUsoModelloXsdFascs().add(usoModelloXsdFasc);
+            }
         }
-        aaTipoFascicolo.getDecUsoModelloXsdFascs().add(usoModelloXsdFasc);
         return usoModelloXsdFasc;
     }
 

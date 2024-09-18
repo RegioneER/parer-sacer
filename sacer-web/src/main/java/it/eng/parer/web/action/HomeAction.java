@@ -17,50 +17,30 @@
 
 package it.eng.parer.web.action;
 
-import it.eng.integriam.client.ws.IAMSoapClients;
-import it.eng.integriam.client.ws.renews.News;
-import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazione;
-import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazioneRisposta;
-import it.eng.parer.disciplinare.DisciplinareTecnicoEjb;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.slite.gen.Application;
-import it.eng.parer.slite.gen.action.HomeAbstractAction;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.web.helper.MonitoraggioHelper;
-import it.eng.parer.web.util.WebConstants;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.spagoCore.error.EMFError;
-import it.eng.spagoLite.db.base.BaseRowInterface;
-import it.eng.spagoLite.db.base.BaseTableInterface;
-import it.eng.spagoLite.form.fields.Field;
-import it.eng.spagoLite.form.fields.Fields;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import javax.ejb.EJB;
-import java.text.SimpleDateFormat;
-import it.eng.spagoLite.security.auth.PwdUtil;
-import org.apache.commons.codec.binary.Base64;
 import javax.xml.ws.BindingProvider;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.ejb.EJB;
-import java.io.*;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 import it.eng.integriam.client.ws.IAMSoapClients;
 import it.eng.integriam.client.ws.renews.News;
 import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazione;
@@ -73,33 +53,13 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.utils.CostantiDB;
-import org.apache.commons.codec.binary.Base64;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.BaseTableInterface;
 import it.eng.spagoLite.form.fields.Field;
 import it.eng.spagoLite.form.fields.Fields;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import javax.ejb.EJB;
-import java.text.SimpleDateFormat;
 import it.eng.spagoLite.security.auth.PwdUtil;
 import it.eng.util.EncryptionUtil;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import javax.xml.ws.BindingProvider;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class HomeAction extends HomeAbstractAction {
 
@@ -385,7 +345,7 @@ public class HomeAction extends HomeAbstractAction {
                 }
                 // Nel caso sia stato richiesto, elimina il file
                 if (deleteFile.booleanValue()) {
-                    Files.delete(fileToDownload.toPath());
+                    FileUtils.deleteQuietly(fileToDownload);
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");
