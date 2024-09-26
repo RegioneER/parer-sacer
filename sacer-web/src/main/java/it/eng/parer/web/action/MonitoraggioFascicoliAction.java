@@ -22,6 +22,30 @@
  */
 package it.eng.parer.web.action;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Set;
+
+import javax.ejb.EJB;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.codehaus.jettison.json.JSONObject;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.ejb.TipoFascicoloEjb;
@@ -37,7 +61,11 @@ import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm;
 import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm.DettaglioSessFascKo;
 import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm.FiltriFascicoli;
 import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm.RiepilogoVersamentiFascicoli;
-import it.eng.parer.slite.gen.tablebean.*;
+import it.eng.parer.slite.gen.tablebean.DecTipoFascicoloTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
+import it.eng.parer.slite.gen.tablebean.VrsSesFascicoloKoTableBean;
 import it.eng.parer.slite.gen.viewbean.MonVChkCntFascRowBean;
 import it.eng.parer.slite.gen.viewbean.MonVLisFascKoRowBean;
 import it.eng.parer.slite.gen.viewbean.MonVLisFascKoTableBean;
@@ -61,24 +89,6 @@ import it.eng.spagoLite.form.base.BaseForm;
 import it.eng.spagoLite.form.fields.SingleValueField;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.security.Secure;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.codehaus.jettison.json.JSONObject;
-import org.joda.time.DateTime;
-
-import javax.ejb.EJB;
-import java.io.*;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Set;
 
 /**
  *
@@ -797,7 +807,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
                 }
                 // Nel caso sia stato richiesto, elimina il file
                 if (deleteFile.booleanValue()) {
-                    Files.delete(fileToDownload.toPath());
+                    FileUtils.deleteQuietly(fileToDownload);
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");

@@ -724,60 +724,6 @@ public class RegistroEjb {
 
         return replic;
     }
-    //
-    // private DecRegistroUnitaDoc duplicaRegistroEntity(DecRegistroUnitaDoc registroOriginale)
-    // throws NoSuchFieldException {
-    // CopyGroup group = new CopyGroup();
-    // // Imposto il reset delle chiavi primarie
-    // group.setShouldResetPrimaryKey(true);
-    // // Aggiungo al CopyGroup i parametri da duplicare
-    // group.addAttribute("cdRegistroUnitaDoc");
-    // group.addAttribute("dsRegistroUnitaDoc");
-    // group.addAttribute("dtIstituz");
-    // group.addAttribute("dtSoppres");
-    // group.addAttribute("flCreaSerie");
-    // group.addAttribute("flRegistroFisc");
-    // group.addAttribute("niAnniConserv");
-    // group.addAttribute("flCreaSerie");
-    // group.addAttribute("flCreaTipoSerieStandard");
-    // group.addAttribute("decModelloTipoSerie");
-    // group.addAttribute("nmTipoSerieDaCreare");
-    // group.addAttribute("dsTipoSerieDaCreare");
-    // group.addAttribute("cdSerieDaCreare");
-    // group.addAttribute("dsSerieDaCreare");
-    //
-    // // Attributi di decAaRegistroUnitaDoc da duplicare (esclusa la chiave)
-    // group.addAttribute("decAaRegistroUnitaDocs.aaMaxRegistroUnitaDoc");
-    // group.addAttribute("decAaRegistroUnitaDocs.aaMinRegistroUnitaDoc");
-    // group.addAttribute("decAaRegistroUnitaDocs.flUpdFmtNumero");
-    // group.addAttribute("decAaRegistroUnitaDocs.decRegistroUnitaDoc");
-    // group.addAttribute("decAaRegistroUnitaDocs.decErrAaRegistroUnitaDocs");
-    // group.addAttribute("decAaRegistroUnitaDocs.decWarnAaRegistroUds");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros");
-    // // Attributi di decParteNumeroRegistros da duplicare (esclusa la chiave)
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.dlValoriParte");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.dsParteNumeroRegistro");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niMaxCharParte");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niMinCharParte");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.niParteNumeroRegistro");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.nmParteNumeroRegistro");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiCharParte");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiCharSep");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiPadSxParte");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.tiParte");
-    // group.addAttribute("decAaRegistroUnitaDocs.decParteNumeroRegistros.decAaRegistroUnitaDoc");
-    // // Attributi di decTipoUnitaDocAmmessos da duplicare (esclusa la chiave)
-    // group.addAttribute("decTipoUnitaDocAmmessos.decRegistroUnitaDoc");
-    // group.addAttribute("decTipoUnitaDocAmmessos.decTipoUnitaDoc");
-    //
-    // group.addAttribute("orgStrut");
-    // // Imposto la "profondita'" CASCADE_TREE in maniera tale che vengano considerati
-    // // i parametri precedentemente impostati
-    // group.setDepth(CopyGroup.CASCADE_TREE);
-    // DecRegistroUnitaDoc copy = (DecRegistroUnitaDoc) helper.getEntityManager().unwrap(JpaEntityManager.class)
-    // .copy(registroOriginale, group);
-    // return copy;
-    // }
 
     private DecRegistroUnitaDoc duplicaRegistroEntity(DecRegistroUnitaDoc registroOriginale)
             throws NoSuchFieldException {

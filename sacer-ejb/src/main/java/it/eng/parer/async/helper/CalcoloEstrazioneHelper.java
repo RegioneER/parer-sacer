@@ -147,7 +147,7 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
     }
 
     public List<AroRichiestaRa> retrieveRichieste() {
-        Query q = entityManager.createQuery("SELECT r FROM AroRichiestaRa r ORDER BY r.priorita DESC, r.tsFine ASC");
+        Query q = entityManager.createQuery("SELECT r FROM AroRichiestaRa r ORDER BY r.tsFine ASC");
         return q.getResultList();
     }
 
@@ -381,7 +381,7 @@ public class CalcoloEstrazioneHelper extends GenericHelper {
 
     public List<AroRichiestaRa> retrieveRichiesteRaDaElab() {
         String queryStr = "SELECT rich FROM AroRichiestaRa rich " + "WHERE rich.tiStato IN (:tiStato) "
-                + "ORDER BY rich.priorita DESC, rich.tsFine ASC";
+                + "ORDER BY rich.tsFine ASC";
 
         Query query = entityManager.createQuery(queryStr);
         query.setParameter("tiStato",

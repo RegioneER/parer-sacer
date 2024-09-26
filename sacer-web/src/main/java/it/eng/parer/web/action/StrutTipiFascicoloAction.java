@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
@@ -305,6 +304,8 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 getForm().getParametriAaTipoFascButtonList().getParametriGestioneAaTipoFascButton().setEditMode();
             }
 
+            getSession().removeAttribute("provenienzaParametri");
+
             getForm().getMetadatiProfiloFascicoloList().setUserOperations(true, true, true, true);
 
         } catch (EMFError ex) {
@@ -330,14 +331,17 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
         AplParamApplicTableBean parametriGestione = (AplParamApplicTableBean) parametriObj[1];
         AplParamApplicTableBean parametriConservazione = (AplParamApplicTableBean) parametriObj[2];
 
-        if (!editModeAmministrazione)
+        if (!editModeAmministrazione) {
             parametriAmministrazione = obfuscatePasswordParamApplic(parametriAmministrazione);
+        }
 
-        if (!editModeGestione)
+        if (!editModeGestione) {
             parametriGestione = obfuscatePasswordParamApplic(parametriGestione);
+        }
 
-        if (!editModeConservazione)
+        if (!editModeConservazione) {
             parametriConservazione = obfuscatePasswordParamApplic(parametriConservazione);
+        }
 
         getForm().getParametriAmministrazioneAaTipoFascList()
                 .setTable((AplParamApplicTableBean) parametriAmministrazione);
@@ -723,6 +727,12 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
             increaseNiNumeroFascicolo();
             forwardToPublisher(Application.Publisher.AA_TIPO_FASCICOLO_DETAIL);
         } else if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AA_TIPO_FASC)
+                && getForm().getAaTipoFascicoloDetail().getStatus() != null) {
+            ricercaParametriAaTipoFascButton();
+            getForm().getAaTipoFascicoloDetail().setStatus(Status.view);
+            setViewModeListeParametri();
+            forwardToPublisher(Application.Publisher.PARAMETRI_AA_TIPO_FASC);
+        } else if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AA_TIPO_FASC)
                 && getForm().getAaTipoFascicoloDetail().getStatus() != null
                 && getForm().getAaTipoFascicoloDetail().getStatus().toString().equals("update")) {
             getForm().getAaTipoFascicoloDetail().setStatus(Status.view);
@@ -786,7 +796,6 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
 
             // DecUsoModelloXsdFascRowBean usoModelloXsdFascRowBean = new DecUsoModelloXsdFascRowBean();
             // getForm().getMetadatiProfiloDetail().copyFromBean(usoModelloXsdFascRowBean);
-
             getForm().getMetadatiProfiloDetail().reset();
             getForm().getMetadatiProfiloDetail().setEditMode();
             initMetadatiProfilo();
@@ -856,6 +865,88 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     }
 
     @Override
+    public void updateAaTipoFascicoloDetail() throws EMFError {
+        if (getSession().getAttribute("provenienzaParametri") == null) {
+            getForm().getAaTipoFascicoloList().setStatus(Status.update);
+            getForm().getAaTipoFascicoloDetail().setStatus(Status.update);
+
+            getForm().getAaTipoFascicoloDetail().reset();
+            BigDecimal idAaTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
+                    .getCurrentRow().getIdAaTipoFascicolo();
+            DecAaTipoFascicoloRowBean aaTipoFascicoloRowBean = tipoFascicoloEjb
+                    .getDecAaTipoFascicoloRowBean(idAaTipoFascicolo);
+
+            // Recupero i dati di dettaglio del periodo tipo fascicolo
+            getForm().getAaTipoFascicoloDetail().reset();
+            getForm().getAaTipoFascicoloDetail().setEditMode();
+            getForm().getAaTipoFascicoloDetail().copyFromBean(aaTipoFascicoloRowBean);
+
+            // Apro le section
+            getForm().getParametriControlloClassificazioneSection().setLoadOpened(true);
+            getForm().getParametriControlloCollegamentiSection().setLoadOpened(true);
+            getForm().getParametriControlloNumeroFascSection().setLoadOpened(true);
+            forwardToPublisher(Application.Publisher.AA_TIPO_FASCICOLO_DETAIL);
+        } else {
+            if (getSession().getAttribute("provenienzaParametri") != null) {
+                String provenienzaParametri = (String) getSession().getAttribute("provenienzaParametri");
+                try {
+                    if (provenienzaParametri.equals("amministrazione")) {
+
+                        setEditModeParametriAmministrazione();
+
+                    } else if (provenienzaParametri.equals("conservazione")) {
+                        setEditModeParametriConservazione();
+                    } else if (provenienzaParametri.equals("gestione")) {
+                        setEditModeParametriGestione();
+                    }
+                    forwardToPublisher(Application.Publisher.PARAMETRI_AA_TIPO_FASC);
+                } catch (Throwable ex) {
+                    getMessageBox().addError("Errore durante il caricamento dei parametri");
+                }
+            }
+        }
+    }
+
+    private void setEditModeParametriAmministrazione() {
+        getForm().getAaTipoFascicoloDetail().setStatus(Status.update);
+        getForm().getParametriAmministrazioneAaTipoFascList().setStatus(Status.update);
+        getForm().getParametriConservazioneAaTipoFascList().setStatus(Status.update);
+        getForm().getParametriGestioneAaTipoFascList().setStatus(Status.update);
+        getForm().getParametriAmministrazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_amm()
+                .setEditMode();
+        getForm().getParametriConservazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_cons()
+                .setEditMode();
+        getForm().getParametriGestioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_gest().setEditMode();
+    }
+
+    private void setEditModeParametriConservazione() {
+        getForm().getAaTipoFascicoloDetail().setStatus(Status.update);
+        getForm().getParametriConservazioneAaTipoFascList().setStatus(Status.update);
+        getForm().getParametriGestioneAaTipoFascList().setStatus(Status.update);
+        getForm().getParametriConservazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_cons()
+                .setEditMode();
+        getForm().getParametriGestioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_gest().setEditMode();
+    }
+
+    private void setEditModeParametriGestione() {
+        getForm().getAaTipoFascicoloDetail().setStatus(Status.update);
+        getForm().getParametriGestioneAaTipoFascList().setStatus(Status.update);
+        getForm().getParametriGestioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_gest().setEditMode();
+    }
+
+    private void setViewModeListeParametri() {
+        getForm().getAaTipoFascicoloDetail().setStatus(Status.view);
+        getForm().getAaTipoFascicoloDetail().setStatus(Status.view);
+        getForm().getParametriConservazioneAaTipoFascList().setStatus(Status.view);
+        getForm().getParametriGestioneAaTipoFascList().setStatus(Status.view);
+        getForm().getParametriAmministrazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_amm()
+                .setViewMode();
+        getForm().getParametriConservazioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_cons()
+                .setViewMode();
+        getForm().getParametriGestioneAaTipoFascList().getDs_valore_param_applic_aa_tipo_fascicolo_gest().setViewMode();
+    }
+
+    @Override
     public void updateCriteriRaggrFascicoloList() throws EMFError {
         /* Preparo la LISTA CRITERI DI RAGGRUPPAMENTO FASCICOLI */
         CriteriRaggrFascicoliForm form = new CriteriRaggrFascicoliForm();
@@ -881,18 +972,18 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     @Override
     public void saveDettaglio() throws EMFError {
 
-        if (getTableName().equals(getForm().getTipoFascicoloList().getName())
+        if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AA_TIPO_FASC)) {
+            salvaParametriAaTipoFasc();
+        } else if (getLastPublisher().equals(Application.Publisher.XSD_AA_TIPO_FASCICOLO_DETAIL)) {
+            saveModelloXsdFascicolo();
+        } else if (getLastPublisher().equals(Application.Publisher.FORMATO_NUMERO_LISTA_PARTI_DETAIL)) {
+            saveParteNumeroFascicolo();
+        } else if (getTableName().equals(getForm().getTipoFascicoloList().getName())
                 || getTableName().equals(getForm().getTipoFascicoloDetail().getName())) {
             saveTipoFascicolo();
         } else if (getTableName().equals(getForm().getAaTipoFascicoloList().getName())
                 || getTableName().equals(getForm().getAaTipoFascicoloDetail().getName())) {
             savePeriodoValiditaFascicolo();
-        } else if (getLastPublisher().equals(Application.Publisher.XSD_AA_TIPO_FASCICOLO_DETAIL)) {
-            saveModelloXsdFascicolo();
-        } else if (getLastPublisher().equals(Application.Publisher.FORMATO_NUMERO_LISTA_PARTI_DETAIL)) {
-            saveParteNumeroFascicolo();
-        } else if (getLastPublisher().equals(Application.Publisher.PARAMETRI_AA_TIPO_FASC)) {
-            salvaParametriAaTipoFasc();
         }
     }
 
@@ -2080,6 +2171,8 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
         getForm().getParametriAmministrazioneAaTipoFascList().post(getRequest());
         getForm().getParametriConservazioneAaTipoFascList().post(getRequest());
         getForm().getParametriGestioneAaTipoFascList().post(getRequest());
+        getForm().getRicercaParametriAaTipoFasc().post(getRequest());
+        List<String> funzione = getForm().getRicercaParametriAaTipoFasc().getFunzione().parse();
 
         BigDecimal idAaTipoFascicolo = ((BaseRowInterface) getForm().getAaTipoFascicoloList().getTable()
                 .getCurrentRow()).getBigDecimal("id_aa_tipo_fascicolo");
@@ -2120,28 +2213,23 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 getMessageBox().setViewMode(ViewMode.plain);
                 getForm().getAaTipoFascicoloDetail().setViewMode();
                 getForm().getAaTipoFascicoloDetail().setStatus(Status.view);
-                getForm().getParametriAmministrazioneAaTipoFascList().setViewMode();
-                getForm().getParametriConservazioneAaTipoFascList().setViewMode();
-                getForm().getParametriGestioneAaTipoFascList().setViewMode();
+                setViewModeListeParametri();
                 // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
                 // idAaTipoFascicolo, null, true, false, false, false);
                 loadListaParametriAmministrazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                        idAaTipoFascicolo, null, false, false,
+                        idAaTipoFascicolo, funzione, false, false,
                         getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords());
                 loadListaParametriConservazioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                        idAaTipoFascicolo, null, false, false,
+                        idAaTipoFascicolo, funzione, false, false,
                         getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords());
                 loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
-                        idAaTipoFascicolo, null, false, false,
+                        idAaTipoFascicolo, funzione, false, false,
                         getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
             } catch (ParerUserError ex) {
                 getMessageBox().addError(ex.getDescription());
             }
-            forwardToPublisher(Application.Publisher.AA_TIPO_FASCICOLO_DETAIL);
-
-        } else {
-            forwardToPublisher(getLastPublisher());
         }
+        forwardToPublisher(getLastPublisher());
     }
 
     @Override
@@ -2172,6 +2260,11 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                     loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
                             idAaTipoFascicolo, funzione, false, true,
                             getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
+                    if (getForm().getAaTipoFascicoloDetail().getStatus().equals(Status.update)) {
+                        setEditModeParametriAmministrazione();
+                    } else {
+                        setViewModeListeParametri();
+                    }
                 } else if (provenzienzaParametri.equals("conservazione")) {
                     // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
                     // tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, false, true, true);
@@ -2184,6 +2277,11 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                     loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
                             idAaTipoFascicolo, funzione, false, true,
                             getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
+                    if (getForm().getAaTipoFascicoloDetail().getStatus().equals(Status.update)) {
+                        setEditModeParametriConservazione();
+                    } else {
+                        setViewModeListeParametri();
+                    }
                 } else if (provenzienzaParametri.equals("gestione")) {
                     // loadListeParametriPeriodoTipoFascicolo(enteRowBean.getIdAmbiente(),
                     // tipoFascicoloRowBean.getIdStrut(), idAaTipoFascicolo, funzione, false, false, false, true);
@@ -2196,6 +2294,11 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                     loadListaParametriGestioneAaTipoFasc(enteRowBean.getIdAmbiente(), strutRowBean.getIdStrut(),
                             idAaTipoFascicolo, funzione, false, true,
                             getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords());
+                    if (getForm().getAaTipoFascicoloDetail().getStatus().equals(Status.update)) {
+                        setEditModeParametriGestione();
+                    } else {
+                        setViewModeListeParametri();
+                    }
                 }
             }
         } catch (ParerUserError ex) {
@@ -2212,23 +2315,29 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
             if (rowBean.getTiValoreParamApplic().equals(Constants.ComboValueParamentersType.PASSWORD.name())) {
                 rowBean.setString("ds_valore_param_applic", Constants.OBFUSCATED_STRING);
 
-                if (rowBean.getString("ds_valore_param_applic_applic") != null)
+                if (rowBean.getString("ds_valore_param_applic_applic") != null) {
                     rowBean.setString("ds_valore_param_applic_applic", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_ambiente") != null)
+                if (rowBean.getString("ds_valore_param_applic_ambiente") != null) {
                     rowBean.setString("ds_valore_param_applic_ambiente", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_strut") != null)
+                if (rowBean.getString("ds_valore_param_applic_strut") != null) {
                     rowBean.setString("ds_valore_param_applic_strut", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_amm") != null)
+                if (rowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_amm") != null) {
                     rowBean.setString("ds_valore_param_applic_aa_tipo_fascicolo_amm", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_gest") != null)
+                if (rowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_gest") != null) {
                     rowBean.setString("ds_valore_param_applic_aa_tipo_fascicolo_gest", Constants.OBFUSCATED_STRING);
+                }
 
-                if (rowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_cons") != null)
+                if (rowBean.getString("ds_valore_param_applic_aa_tipo_fascicolo_cons") != null) {
                     rowBean.setString("ds_valore_param_applic_aa_tipo_fascicolo_cons", Constants.OBFUSCATED_STRING);
+                }
 
             }
         }
@@ -2239,7 +2348,7 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     @Override
     public void scaricaXsdModelliUdButton() throws EMFError {
         throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
-                                                                       // Tools | Templates.
+        // Tools | Templates.
     }
 
     @Override
@@ -2262,14 +2371,16 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     @Override
     public void visualizzaModelloXsdFascicolo() throws EMFError {
         throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
-                                                                       // Tools | Templates.
+        // Tools | Templates.
     }
 
     @Override
     public void filterInactiveRecordsParametriAmministrazioneAaTipoFascList() throws EMFError {
         BigDecimal idAaTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
                 .getCurrentRow().getIdAaTipoFascicolo();
-        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idAaTipoFascicolo);
+        BigDecimal idTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
+                .getCurrentRow().getIdTipoFascicolo();
+        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idTipoFascicolo);
         OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
         OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
         boolean filterValid = getForm().getParametriAmministrazioneAaTipoFascList().isFilterValidRecords();
@@ -2292,7 +2403,9 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     public void filterInactiveRecordsParametriConservazioneAaTipoFascList() throws EMFError {
         BigDecimal idAaTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
                 .getCurrentRow().getIdAaTipoFascicolo();
-        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idAaTipoFascicolo);
+        BigDecimal idTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
+                .getCurrentRow().getIdTipoFascicolo();
+        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idTipoFascicolo);
         OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
         OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
         boolean filterValid = getForm().getParametriConservazioneAaTipoFascList().isFilterValidRecords();
@@ -2315,7 +2428,9 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
     public void filterInactiveRecordsParametriGestioneAaTipoFascList() throws EMFError {
         BigDecimal idAaTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
                 .getCurrentRow().getIdAaTipoFascicolo();
-        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idAaTipoFascicolo);
+        BigDecimal idTipoFascicolo = ((DecAaTipoFascicoloTableBean) getForm().getAaTipoFascicoloList().getTable())
+                .getCurrentRow().getIdTipoFascicolo();
+        DecTipoFascicoloRowBean tipoFascicoloRowBean = tipoFascicoloEjb.getDecTipoFascicoloRowBean(idTipoFascicolo);
         OrgStrutRowBean strutRowBean = struttureEjb.getOrgStrutRowBean(tipoFascicoloRowBean.getIdStrut());
         OrgEnteRowBean enteRowBean = struttureEjb.getOrgEnteRowBean(strutRowBean.getIdEnte());
         boolean filterValid = getForm().getParametriGestioneAaTipoFascList().isFilterValidRecords();
@@ -2366,8 +2481,8 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
             boolean editModeConservazione, boolean filterValid) throws ParerUserError {
 
         // MEV26587
-        AplParamApplicTableBean parametriConservazione = amministrazioneEjb
-                .getAplParamApplicConservazioneTipoUd(idAmbiente, idStrut, idAaTipoFascicolo, funzione, filterValid);
+        AplParamApplicTableBean parametriConservazione = amministrazioneEjb.getAplParamApplicConservazioneAaTipoFasc(
+                idAmbiente, idStrut, idAaTipoFascicolo, funzione, filterValid);
 
         if (!editModeConservazione) {
             parametriConservazione = obfuscatePasswordParamApplic(parametriConservazione);

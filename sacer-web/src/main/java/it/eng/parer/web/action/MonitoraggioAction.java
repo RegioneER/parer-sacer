@@ -99,6 +99,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 import javax.ejb.EJB;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -6715,7 +6717,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
                 }
                 // Nel caso sia stato richiesto, elimina il file
                 if (deleteFile.booleanValue()) {
-                    Files.delete(fileToDownload.toPath());
+                    FileUtils.deleteQuietly(fileToDownload);
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");

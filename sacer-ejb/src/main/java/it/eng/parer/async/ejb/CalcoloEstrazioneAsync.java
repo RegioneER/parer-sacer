@@ -133,7 +133,7 @@ public class CalcoloEstrazioneAsync {
         log.info("Struttura: id ='" + idStrut + "' nome = '" + struttura.getNmStrut() + "'");
         elaboraRichiesteScadute(idStrut);
 
-        AroRichiestaRa newRichiestaRa = generaRichiestaRa(idStrut, rootFolderEcRaPath, BigDecimal.ONE);
+        AroRichiestaRa newRichiestaRa = generaRichiestaRa(idStrut, rootFolderEcRaPath);
         if (!newRichiestaRa.getTiStato().equals(AroRichiestaTiStato.ANNULLATO)) {
             // Lancio funzione asincrona calcolo AIP da estrarre
             CalcoloEstrazioneAsync newCalcoloEstrazioneAsyncRef1 = context
@@ -142,8 +142,7 @@ public class CalcoloEstrazioneAsync {
         }
     }
 
-    public AroRichiestaRa generaRichiestaRa(long idStrut, String rootFolderEcRaPath, BigDecimal priorita)
-            throws Exception {
+    public AroRichiestaRa generaRichiestaRa(long idStrut, String rootFolderEcRaPath) throws Exception {
         String cdErrore = "";
         // ricavo la struttura
         OrgStrut struttura = calcoloHelper.findById(OrgStrut.class, idStrut);

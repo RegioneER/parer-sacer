@@ -18,17 +18,35 @@
 package it.eng.parer.web.action;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.attribute.FileTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.EJB;
 
+import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipExtraField;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,11 +100,10 @@ import it.eng.parer.ws.recupero.dto.ComponenteRec;
 import it.eng.parer.ws.recuperoFasc.dto.RispostaWSRecuperoFasc;
 import it.eng.parer.ws.recuperoFasc.ejb.ControlliRecuperoFasc;
 import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.parer.ws.xml.versReqStatoFasc.ChiaveFascType;
 import it.eng.parer.ws.xml.versReqStatoFasc.RecuperoFascicolo;
 import it.eng.parer.ws.xml.versReqStatoFasc.VersatoreFascType;
-
-import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.BaseTableInterface;
@@ -97,25 +114,6 @@ import it.eng.spagoLite.form.base.BaseForm;
 import it.eng.spagoLite.form.fields.SingleValueField;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.security.Secure;
-import org.codehaus.jettison.json.JSONObject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipExtraField;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  *
@@ -726,7 +724,7 @@ public class FascicoliAction extends FascicoliAbstractAction {
                 }
                 // Nel caso sia stato richiesto, elimina il file
                 if (deleteFile.booleanValue()) {
-                    Files.delete(fileToDownload.toPath());
+                    FileUtils.deleteQuietly(fileToDownload);
                 }
             } else {
                 getMessageBox().addError("Errore durante il tentativo di download. File non trovato");

@@ -173,7 +173,6 @@ import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class StrutTipiAction extends StrutTipiAbstractAction {
 
@@ -6239,6 +6238,8 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
         getForm().getParametriAmministrazioneTipoUdList().post(getRequest());
         getForm().getParametriConservazioneTipoUdList().post(getRequest());
         getForm().getParametriGestioneTipoUdList().post(getRequest());
+        getForm().getRicercaParametriTipoUd().post(getRequest());
+        List<String> funzione = getForm().getRicercaParametriTipoUd().getFunzione().parse();
 
         BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
         BigDecimal idTipoUnitaDoc = ((BaseRowInterface) getForm().getTipoUnitaDocList().getTable().getCurrentRow())
@@ -6275,11 +6276,11 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
             setViewModeListeParametri();
             try {
                 // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, null, false, false, false, false);
-                loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
                         getForm().getParametriAmministrazioneTipoUdList().isFilterValidRecords());
-                loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                loadListaParametriConservazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
                         getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
-                loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, null, false, false,
+                loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
                         getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
             } catch (ParerUserError ex) {
                 getMessageBox().addError(
@@ -6317,6 +6318,11 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                             getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
                     loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
                             getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
+                    if (getForm().getTipoUnitaDoc().getStatus().equals(Status.update)) {
+                        setEditModeParametriAmministrazione();
+                    } else {
+                        setViewModeListeParametri();
+                    }
                 } else if (provenzienzaParametri.equals("conservazione")) {
                     // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false, true, true);
                     loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
@@ -6325,6 +6331,11 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                             getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
                     loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
                             getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
+                    if (getForm().getTipoUnitaDoc().getStatus().equals(Status.update)) {
+                        setEditModeParametriConservazione();
+                    } else {
+                        setViewModeListeParametri();
+                    }
                 } else if (provenzienzaParametri.equals("gestione")) {
                     // loadListeParametriTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false, false, true);
                     loadListaParametriAmministrazioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, false,
@@ -6333,9 +6344,13 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
                             getForm().getParametriConservazioneTipoUdList().isFilterValidRecords());
                     loadListaParametriGestioneTipoUd(idStrut, idTipoUnitaDoc, funzione, false, true,
                             getForm().getParametriGestioneTipoUdList().isFilterValidRecords());
+                    if (getForm().getTipoUnitaDoc().getStatus().equals(Status.update)) {
+                        setEditModeParametriGestione();
+                    } else {
+                        setViewModeListeParametri();
+                    }
                 }
             }
-            setViewModeListeParametri();
         } catch (ParerUserError ex) {
             getMessageBox().addError("Errore durante il caricamento dei parametri tipo unità documentaria");
         }

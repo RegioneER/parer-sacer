@@ -183,10 +183,10 @@ public class TestMarcatura extends HttpServlet {
 
         } finally {
             if (contDaMarcare != null && contDaMarcare.exists()) {
-                Files.delete(contDaMarcare.toPath());
+                FileUtils.deleteQuietly(contDaMarcare);
             }
             if (contTika != null && contTika.exists()) {
-                Files.delete(contTika.toPath());
+                FileUtils.deleteQuietly(contTika);
             }
         }
     }

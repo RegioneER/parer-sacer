@@ -10,7 +10,7 @@
         <sl:content>
             <slf:messageBox /> 
             <sl:contentTitle title="Dettaglio parametri periodo tipo fascicolo"/>            
-            <slf:fieldBarDetailTag name="<%=StrutTipiFascicoloForm.AaTipoFascicoloDetail.NAME%>" hideBackButton="true" />
+            <slf:fieldBarDetailTag name="<%=StrutTipiFascicoloForm.AaTipoFascicoloDetail.NAME%>" hideBackButton="false" />
             <slf:section name="<%=StrutTipiFascicoloForm.Struttura.NAME%>" styleClass="importantContainer">  
                     <slf:lblField name="<%=StrutTipiFascicoloForm.StrutRif.STRUTTURA%>"  width="w100" controlWidth="w40" labelWidth="w20"/>
                     <sl:newLine />

@@ -1450,9 +1450,12 @@ public class StruttureAction extends StruttureAbstractAction {
         getForm().getParametriAmministrazioneStrutturaList().post(getRequest());
         getForm().getParametriConservazioneStrutturaList().post(getRequest());
         getForm().getParametriGestioneStrutturaList().post(getRequest());
+        getForm().getRicercaParametriStruttura().post(getRequest());
 
         BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
                 .getBigDecimal("id_strut");
+
+        List<String> funzione = getForm().getRicercaParametriStruttura().getFunzione().parse();
 
         // Controllo valori possibili su struttura
         AplParamApplicTableBean parametriAmministrazione = (AplParamApplicTableBean) getForm()
@@ -1499,11 +1502,11 @@ public class StruttureAction extends StruttureAbstractAction {
             setViewModeListeParametri();
             try {
                 // loadListeParametriStruttura(idStrut, null, false, false, false, false, true);
-                loadListaParametriAmnministrazioneStruttura(idStrut, null, false, false,
+                loadListaParametriAmnministrazioneStruttura(idStrut, funzione, false, false,
                         getForm().getParametriAmministrazioneStrutturaList().isFilterValidRecords());
-                loadListaParametriConservazioneStruttura(idStrut, null, false, false,
+                loadListaParametriConservazioneStruttura(idStrut, funzione, false, false,
                         getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
-                loadListaParametriGestioneStruttura(idStrut, null, false, false,
+                loadListaParametriGestioneStruttura(idStrut, funzione, false, false,
                         getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
             } catch (ParerUserError ex) {
                 getMessageBox().addError(
@@ -5812,7 +5815,7 @@ public class StruttureAction extends StruttureAbstractAction {
                 String errore = struttureEjb.checkAppartenenzaAmbiente(struttureDaElaborare);
 
                 // Controllo i modelli xsd periodo tipi fascicolo in base all'ambiente di questa nuova struttura
-                if (errore.equals("")) {
+                if (errore.equalsIgnoreCase("")) {
                     try {
                         struttureEjb.checkAndSetModelliXsdTipiFascicoloStrutturaImpParam(uuid, idStrutturaCorrente,
                                 tipoFascicoloDaImportare);
@@ -6929,7 +6932,6 @@ public class StruttureAction extends StruttureAbstractAction {
                             getForm().getParametriConservazioneStrutturaList().isFilterValidRecords());
                     loadListaParametriGestioneStruttura(idStrut, funzione, false, true,
                             getForm().getParametriGestioneStrutturaList().isFilterValidRecords());
-
                     if (getForm().getInsStruttura().getStatus().equals(Status.update)) {
                         setEditModeParametriGestione();
                     } else {
