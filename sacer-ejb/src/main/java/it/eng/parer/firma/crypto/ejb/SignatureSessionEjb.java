@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 
 import it.eng.parer.common.signature.SignatureSession;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma;
 import it.eng.parer.entity.HsmSessioneFirma;
 import it.eng.parer.entity.IamUser;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
@@ -75,11 +77,14 @@ public interface SignatureSessionEjb {
      *            file firmato in byte
      * @param signingDate
      *            data firma
+     * @param tipoFirma
+     *            tipo firma (XADES o CADES)
      *
      * @throws Exception
      *             errore generico
      */
-    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate) throws Exception;
+    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate, TipoFirma tipoFirma)
+            throws Exception;
 
     /**
      * Stores the signature file
@@ -92,12 +97,14 @@ public interface SignatureSessionEjb {
      *            firmato in byte
      * @param signingDate
      *            data firma
+     * @param tipoFirma
+     *            tipo firma (XADES o CADES)
      *
      * @throws Exception
      *             errore generico
      */
-    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate)
-            throws Exception;
+    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception;
 
     /**
      * Stores the file signing failed and the file status is set the previous one.

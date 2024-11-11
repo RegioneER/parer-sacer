@@ -141,6 +141,8 @@
                     <sl:newLine />
                     <slf:lblField name="<%= ElenchiVersFascicoliForm.ElenchiVersFascicoliDetail.TS_STATO_FIRMATO%>" labelWidth="w30" controlWidth="w70" width="w50" />
                     <sl:newLine />
+                    <slf:lblField name="<%= ElenchiVersFascicoliForm.ElenchiVersFascicoliDetail.TI_FIRMA%>" labelWidth="w30" controlWidth="w70" width="w50" />
+                    <sl:newLine />
                     <slf:lblField name="<%= ElenchiVersFascicoliForm.ElenchiVersFascicoliDetail.CD_VER_XSD_FILE%>" labelWidth="w30" controlWidth="w70" width="w50" />
                     <sl:newLine />
                     <slf:lblField name="<%= ElenchiVersFascicoliForm.ElenchiVersFascicoliDetail.NT_INDICE_ELENCO%>" labelWidth="w30" controlWidth="w70" width="w50" />

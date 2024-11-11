@@ -51,7 +51,10 @@ import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.objectstorage.helper.SalvataggioBackendHelper;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -115,6 +118,11 @@ public class ObjectStorageService {
     // end MEV#30399
     private static final int BUFFER_SIZE = 10 * 1024 * 1024;
 
+    // MEV#30400
+    private static final String WRITE_INDICI_AIP_SERIE_UD = "WRITE_INDICI_AIP_SERIE_UD";
+    private static final String READ_INDICI_AIP_SERIE_UD = "READ_INDICI_AIP_SERIE_UD";
+    // end MEV#30400
+
     @EJB
     private SalvataggioBackendHelper salvataggioBackendHelper;
 
@@ -164,6 +172,29 @@ public class ObjectStorageService {
         }
     }
     // end MEV#30397
+
+    // MEV#30400
+    /**
+     * Effettua la lookup per stabilire come sia configurato il backend per gli indici aip delle serie di ud
+     *
+     * @param idStrut
+     *            id struttura
+     *
+     * @return tipologia di backend.
+     */
+    public BackendStorage lookupBackendIndiciAipSerieUD(long idStrut) {
+        try {
+            String tipoBackend = salvataggioBackendHelper.getBackendIndiciAipSerieUD(idStrut);
+
+            // tipo backend
+            return salvataggioBackendHelper.getBackend(tipoBackend);
+
+        } catch (Exception e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+    // end MEV#30400
 
     /**
      * Ottieni, in una mappa, la lista degli xml di versamento classificati nelle tipologie definite qui
@@ -1447,5 +1478,100 @@ public class ObjectStorageService {
     }
 
     // end MEV#30399
+
+    // MEV#30400
+
+    public ObjectStorageResource createResourcesInIndiciAipSerieUD(SerFileVerSerie serFileVerSerie, String nomeBackend,
+            byte[] blob, long idVerSerie, BigDecimal idStrut, CSVersatore versatore, String codiceSerie,
+            String versioneSerie) {
+        try {
+            ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
+                    WRITE_INDICI_AIP_SERIE_UD);
+
+            // generate std tag
+            Set<Tag> tags = new HashSet<>();
+
+            final String destKey = salvataggioBackendHelper.generateKeyIndiceAipSerieUD(serFileVerSerie, versatore,
+                    codiceSerie, versioneSerie);
+
+            // put on O.S.
+            ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(
+                    new String(blob, StandardCharsets.UTF_8), destKey, configuration, Optional.empty(),
+                    Optional.of(tags), Optional.of(calculateMd5AsBase64(new String(blob, StandardCharsets.UTF_8))));
+
+            log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+            // link
+            if (!salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
+                    serFileVerSerie.getTiFileVerSerie())) {
+                salvataggioBackendHelper.saveObjectStorageLinkIndiceAipSerieUd(savedFile, nomeBackend, idVerSerie,
+                        idStrut, serFileVerSerie.getTiFileVerSerie());
+            }
+            return savedFile;
+        } catch (ObjectStorageException ex) {
+
+            throw new EJBException(ex);
+        }
+    }
+
+    /**
+     * Controlla se l'indice aip sia o meno stato registrato sull'object storage indipendemente dal valore del parametro
+     * (il pregresso potrebbe ancora essere su DB).
+     *
+     * @param idVerSerie
+     *            id versione indice aip
+     *
+     * @param tiFileVerSerie
+     *            tipo file della versione dell'indice aip
+     *
+     * @return true se su O.s false altrimenti
+     */
+    public boolean isSerFileVerSerieUDOnOs(long idVerSerie, String tiFileVerSerie) {
+        try {
+            return salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie, tiFileVerSerie);
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
+     * Ottieni i metadati dell'oggetto dell'indice aip della serie ud contenuto nell'object storage
+     *
+     * @param idVerSerieUd
+     *            id della versione dell'indice aip
+     * @param tiFileVerSerie
+     *            tipo file versione serie
+     *
+     * @return attributi dell'oggetto su O.s.
+     */
+    public HeadObjectResponse getObjectMetadataIndiceAipSerieUD(long idVerSerieUd, String tiFileVerSerie) {
+        try {
+            SerVerSerieObjectStorage link = salvataggioBackendHelper.getLinkSerVerSerieOs(idVerSerieUd, tiFileVerSerie);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), READ_INDICI_AIP_SERIE_UD);
+            return salvataggioBackendHelper.getObjectMetadata(config, link.getNmBucket(), link.getCdKeyFile());
+        } catch (ObjectStorageException e) {
+
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    public void getSerVerSerieObjectStorage(long idVerSerieUd, String tiFileVerSerie, OutputStream outputStream)
+            throws ObjectStorageException {
+        try {
+            SerVerSerieObjectStorage link = salvataggioBackendHelper.getLinkSerVerSerieOs(idVerSerieUd, tiFileVerSerie);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), READ_INDICI_AIP_SERIE_UD);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    link.getNmBucket(), link.getCdKeyFile());
+            IOUtils.copy(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    // end MEV#30400
 
 }

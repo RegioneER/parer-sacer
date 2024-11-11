@@ -68,6 +68,7 @@ import com.csvreader.CsvReader;
 
 import it.eng.parer.common.signature.Digest;
 import it.eng.parer.crypto.model.ParerTST;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.DecCampoInpUd;
@@ -112,6 +113,11 @@ import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.indiceAip.ejb.ElaborazioneRigaIndiceAipDaElab;
 import it.eng.parer.job.indiceAipSerieUd.helper.CreazioneIndiceAipSerieUdHelper;
 import it.eng.parer.job.utils.JobConstants;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.dto.RecuperoDocBean;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
+import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.serie.dto.CampiInputBean;
 import it.eng.parer.serie.dto.CreazioneSerieBean;
 import it.eng.parer.serie.dto.IntervalliSerieAutomBean;
@@ -181,19 +187,24 @@ import it.eng.parer.viewEntity.SerVVisErrContenSerieUd;
 import it.eng.parer.viewEntity.SerVVisErrFileSerieUd;
 import it.eng.parer.viewEntity.SerVVisSerieUd;
 import it.eng.parer.viewEntity.SerVVisVolVerSerieUd;
+import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UserHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.web.util.XmlPrettyPrintFormatter;
 import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.ejb.RecuperoDocumento;
+import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.TipoCreazioneSerie;
 import it.eng.parer.ws.utils.CostantiDB.TipoFileVerSerie;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.message.MessageBox;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 /**
  *
@@ -225,6 +236,20 @@ public class SerieEjb {
     private ConfigurationHelper configurationHelper;
     @EJB
     private UserHelper userHelper;
+    @EJB
+    private AmministrazioneEjb amministrazioneEjb;
+
+    // MEV#30400
+    @EJB
+    private ObjectStorageService objectStorageService;
+
+    private static final String LOG_SALVATAGGIO_OS = "Salvato l'indice aip della serie su Object storage nel bucket {} con chiave {}! ";
+
+    @EJB(mappedName = "java:app/Parer-ejb/RecuperoDocumento")
+    private RecuperoDocumento recuperoDocumento;
+
+    private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
+    // end MEV#30400
 
     public static final String CD_SERIE_REGEX = "[A-Za-z0-9\\.\\-\\_\\:]+";
     public static final Pattern CD_SERIE_PATTERN = Pattern.compile(CD_SERIE_REGEX);
@@ -1755,11 +1780,45 @@ public class SerieEjb {
         if (serie != null) {
             try {
                 row = (SerVVisSerieUdRowBean) Transform.entity2RowBean(serie);
+
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                SerFileVerSerie fi = helper.getFileVerSerieByTipoFile(idVerSerie,
+                        CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO);
+                if (fi != null) {
+                    row.setString("ti_firma", fi.getTiFirma());
+                }
+                //
+
+                XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+
                 if (StringUtils.isNotBlank(row.getBlFileIxAip())) {
-                    XmlPrettyPrintFormatter formatter = new XmlPrettyPrintFormatter();
+
                     String xmlFormatted = formatter
                             .prettyPrintWithDOM3LS(new String(serie.getBlFileIxAip(), Charset.forName("UTF-8")));
                     row.setBlFileIxAip(xmlFormatted);
+                } else {
+                    // MEV#30400
+                    try {
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        // recupero documento blob vs obj storage
+                        // build dto per recupero
+                        RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(
+                                Constants.TiEntitaSacerObjectStorage.INDICE_AIP_SERIE, row.getIdVerSerie().longValue(),
+                                baos, RecBlbOracle.TabellaBlob.SER_FILE_VER_SERIE,
+                                TipoFileVerSerie.IX_AIP_UNISINCRO.name());
+                        // recupero
+                        boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                        if (!esitoRecupero) {
+                            throw new IOException(ECCEZIONE_RECUPERO_INDICE_AIP);
+                        }
+                        String xmlIndice = formatter
+                                .prettyPrintWithDOM3LS(baos.toString(StandardCharsets.UTF_8.displayName()));
+                        row.setBlFileIxAip(xmlIndice);
+                    } catch (IOException ex) {
+                        logger.error("Errore durante il recupero dell'indice aip della serie con id = "
+                                + row.getIdSerie() + " " + ExceptionUtils.getRootCauseMessage(ex), ex);
+                    }
+                    // end MEV#30400
                 }
                 // EVO#16486
                 // Per ogni urn, popolo i campi urn originale e urn normalizzato, ricavandoli da
@@ -5303,9 +5362,25 @@ public class SerieEjb {
      */
     public byte[] getSerFileVerSerieBlob(long idVerSerie, TipoFileVerSerie tiFileVerSerie) {
         byte[] result = null;
-        SerFileVerSerie fileVerSerie = helper.getSerFileVerSerie(idVerSerie, tiFileVerSerie.name());
-        if (fileVerSerie != null) {
-            result = fileVerSerie.getBlFile();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        // recupero documento blob vs obj storage
+        // build dto per recupero
+        RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(Constants.TiEntitaSacerObjectStorage.INDICE_AIP_SERIE,
+                idVerSerie, os, RecBlbOracle.TabellaBlob.SER_FILE_VER_SERIE, tiFileVerSerie.name());
+        // recupero
+        boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+
+        if (esitoRecupero) {
+            result = os.toByteArray();
+        }
+        try {
+            os.flush();
+            os.close();
+        } catch (IOException ex) {
+            String messaggio = "Eccezione imprevista nell'ottenimento del file da scaricare";
+            messaggio += ExceptionUtils.getRootCauseMessage(ex);
+            logger.error(messaggio, ex);
         }
         return result;
     }
@@ -5361,9 +5436,10 @@ public class SerieEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeFirma(Long idVerSerie, byte[] fileFirmato, long idUtente) throws ParerUserError {
+    public void storeFirma(Long idVerSerie, byte[] fileFirmato, long idUtente, ElencoEnums.TipoFirma tipoFirma)
+            throws ParerUserError {
         try {
-            this.storeFirmaNoTransaction(idVerSerie, fileFirmato, idUtente);
+            this.storeFirmaNoTransaction(idVerSerie, fileFirmato, idUtente, tipoFirma);
         } catch (Exception e) {
             /*
              * Perché richiamato da interfaccia -> si gestisce l'errore utente su front-end
@@ -5373,11 +5449,13 @@ public class SerieEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
-    public void storeFirmaMandatoryTransaction(Long idVerSerie, byte[] fileFirmato, long idUtente) throws Exception {
-        this.storeFirmaNoTransaction(idVerSerie, fileFirmato, idUtente);
+    public void storeFirmaMandatoryTransaction(Long idVerSerie, byte[] fileFirmato, long idUtente,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception {
+        this.storeFirmaNoTransaction(idVerSerie, fileFirmato, idUtente, tipoFirma);
     }
 
-    private void storeFirmaNoTransaction(Long idVerSerie, byte[] fileFirmato, long idUtente) throws Exception {
+    private void storeFirmaNoTransaction(Long idVerSerie, byte[] fileFirmato, long idUtente,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception {
         SerVerSerieDaElab verSerieDaElab = helper.getSerVerSerieDaElabByIdVerSerie(idVerSerie);
         /* LOCCO SER_SERIE E SER_VER_SERIE */
         SerVerSerie verSerie = helper.findByIdWithLock(SerVerSerie.class, idVerSerie);
@@ -5399,15 +5477,46 @@ public class SerieEjb {
         String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
         // Ricavo lo stesso cdVerXsdFile del file unisincro
         String cdVerXsdFile = verSerieDaElab.getSerVerSerie().getSerFileVerSeries().get(0).getCdVerXsdFile();
+
+        // MEV#30400
+
+        BackendStorage backendIndiciAip = objectStorageService.lookupBackendIndiciAipSerieUD(
+                verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getIdStrut());
+
+        boolean putOnOs = true;
+        if (objectStorageService.isSerFileVerSerieUDOnOs(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+                CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name())) {
+            String md5LocalContent = calculateMd5AsBase64(new String(fileFirmato, StandardCharsets.UTF_8));
+            String eTagFromObjectMetadata = objectStorageService
+                    .getObjectMetadataIndiceAipSerieUD(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+                            CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name())
+                    .eTag();
+
+            if (md5LocalContent.equals(eTagFromObjectMetadata)) {
+                putOnOs = false;
+            }
+        }
+
         /* Registra nella tabella SER_FILE_VER_SERIE */
         SerFileVerSerie serFileVerSerie = helper.storeFileIntoSerFileVerSerie(idVerSerie,
                 CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name(), fileFirmato, cdVerXsdFile,
-                verSerieDaElab.getIdStrut(), new Date());
+                verSerieDaElab.getIdStrut(), new Date(), putOnOs, tipoFirma);
 
         // EVO#16492
         /* Calcolo e persisto urn dell'indice AIP firmato della serie */
         helper.storeSerUrnFileVerSerieFir(serFileVerSerie, csVersatore, codiceSerie, versioneSerie);
         // end EVO#16492
+
+        ObjectStorageResource indiceAipSuOS;
+
+        if (putOnOs) {
+            indiceAipSuOS = objectStorageService.createResourcesInIndiciAipSerieUD(serFileVerSerie,
+                    backendIndiciAip.getBackendName(), fileFirmato, verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+                    verSerieDaElab.getIdStrut(), csVersatore, codiceSerie, versioneSerie);
+            logger.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+        }
+
+        // end MEV#30400
 
         /* Se il tipo di serie prevede tipo conservazione = IN_ARCHIVIO */
         if (verSerie.getSerSerie().getDecTipoSerie().getTiConservazioneSerie()
@@ -5486,8 +5595,11 @@ public class SerieEjb {
                  * nuovo riferimento a SerieEjb
                  */
                 SerieEjb serieEjb1 = context.getBusinessObject(SerieEjb.class);
+                BigDecimal idStrut = verSerieDaMarcare.getIdStrut();
+                it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
+                        .getTipoFirmaPerStruttura(idStrut);
                 marcaTemporale = serieEjb1.marcaFirma(verSerieDaMarcare.getSerVerSerie().getIdVerSerie(),
-                        fileVerSerieOriginale, verSerieDaMarcareList.size(), idUtente);
+                        fileVerSerieOriginale, verSerieDaMarcareList.size(), idUtente, tipoFirma);
             } catch (Exception ex) {
                 throw new ParerUserError("Errore nella marcatura di una versione serie: marcate " + signed + " su "
                         + verSerieDaMarcareList.size());
@@ -5504,7 +5616,8 @@ public class SerieEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public byte[] marcaFirma(long idVerSerie, byte[] fileVerSerie, int serieSize, long idUtente) throws Exception {
+    public byte[] marcaFirma(long idVerSerie, byte[] fileVerSerie, int serieSize, long idUtente,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception {
         // TimeStampToken tsToken = null;
         ParerTST tsToken = null;
         byte[] marcaTemporale = null;
@@ -5537,15 +5650,46 @@ public class SerieEjb {
             String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
             String cdVerXsdFile = verSerieDaElab.getSerVerSerie().getSerFileVerSeries().get(0).getCdVerXsdFile();
 
+            // MEV#30400
+
+            BackendStorage backendIndiciAip = objectStorageService.lookupBackendIndiciAipSerieUD(
+                    verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getIdStrut());
+
+            boolean putOnOs = true;
+            if (objectStorageService.isSerFileVerSerieUDOnOs(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+                    CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())) {
+                String md5LocalContent = calculateMd5AsBase64(new String(marcaTemporale, StandardCharsets.UTF_8));
+                String eTagFromObjectMetadata = objectStorageService
+                        .getObjectMetadataIndiceAipSerieUD(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+                                CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())
+                        .eTag();
+
+                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
+                    putOnOs = false;
+                }
+            }
+
             /* Registra nella tabella SER_FILE_VER_SERIE la marca */
             SerFileVerSerie serFileVerSerie = helper.storeFileIntoSerFileVerSerie(idVerSerie,
                     CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name(), marcaTemporale, cdVerXsdFile,
-                    verSerieDaElab.getIdStrut(), new Date());
+                    verSerieDaElab.getIdStrut(), new Date(), putOnOs, tipoFirma);
 
             // EVO#16492
             /* Calcolo e persisto urn dell'indice AIP marcato della serie */
             helper.storeSerUrnFileVerSerieMarca(serFileVerSerie, csVersatore, codiceSerie, versioneSerie);
             // end EVO#16492
+
+            ObjectStorageResource indiceAipSuOS;
+
+            if (putOnOs) {
+                indiceAipSuOS = objectStorageService.createResourcesInIndiciAipSerieUD(serFileVerSerie,
+                        backendIndiciAip.getBackendName(), marcaTemporale,
+                        verSerieDaElab.getSerVerSerie().getIdVerSerie(), verSerieDaElab.getIdStrut(), csVersatore,
+                        codiceSerie, versioneSerie);
+                logger.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+            }
+
+            // end MEV#30400
 
             /* Registra il nuovo stato di versione della serie */
             SerStatoVerSerie statoVerSerie = context.getBusinessObject(SerieEjb.class).createSerStatoVerSerie(
@@ -5585,6 +5729,12 @@ public class SerieEjb {
         return marcaTemporale;
     }
 
+    // MEV#30400
+    private String calculateMd5AsBase64(String str) {
+        return java.util.Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+    }
+    // end MEV#30400
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void riavvioValidazioneSerie(BigDecimal idSerie, BigDecimal idVerSerie) throws ParerUserError {
         SerSerie serie = helper.findByIdWithLock(SerSerie.class, idSerie);
@@ -5605,20 +5755,28 @@ public class SerieEjb {
         }
     }
 
-    public byte[] getFile(BigDecimal idVerSerie, String tiFileVerSerie) throws ParerUserError {
-        byte[] file = null;
+    public SerUrnFileVerSerie getUrnFileVerSerieNormalizzatoByIdVerSerieAndTiFile(BigDecimal idVerSerie,
+            String tiFile) {
+        List<TiUrnFileVerSerie> list = new ArrayList<>();
+        list.add(TiUrnFileVerSerie.NORMALIZZATO);
+        return helper.getUrnFileVerSerie(idVerSerie, list, tiFile);
+    }
+
+    // MEV#15967 - Attivazione della firma Xades e XadesT
+    public String getTipoFirmaFileVerSerie(BigDecimal idVerSerie, String tiFileVerSerie) throws ParerUserError {
+        String tipo = null;
         try {
             SerFileVerSerie fileVerSerie = helper.getSerFileVerSerie(idVerSerie.longValue(), tiFileVerSerie);
             if (fileVerSerie != null) {
-                file = fileVerSerie.getBlFile();
+                tipo = fileVerSerie.getTiFirma();
             }
         } catch (Exception e) {
-            String messaggio = "Eccezione imprevista nell'ottenimento del file da scaricare";
+            String messaggio = "Eccezione imprevista nell'ottenimento del tipo firma del file ver serie";
             messaggio += ExceptionUtils.getRootCauseMessage(e);
             logger.error(messaggio, e);
             throw new ParerUserError(messaggio);
         }
-        return file;
+        return tipo;
     }
 
     public String[] ambienteEnteStrutturaSerie(BigDecimal idSerie) {
@@ -5653,16 +5811,36 @@ public class SerieEjb {
         final String marcaIxAipExt = ".tsr";
         final String ixVolExt = ".xml";
 
-        byte[] indiceAip = context.getBusinessObject(SerieEjb.class).getFile(idVerSerie,
-                CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name());
-        byte[] marcaAip = context.getBusinessObject(SerieEjb.class).getFile(idVerSerie,
-                CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name());
+        byte[] indiceAip = context.getBusinessObject(SerieEjb.class).getSerFileVerSerieBlob(idVerSerie.longValue(),
+                CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO);
+        byte[] marcaAip = context.getBusinessObject(SerieEjb.class).getSerFileVerSerieBlob(idVerSerie.longValue(),
+                CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO);
         if (indiceAip == null) {
             throw new ParerUserError(
                     "Errore inaspettato nell'esecuzione del download: indice AIP firmato non presente");
         }
 
-        addEntryToZip(out, indiceAip, ixAIPFileName + ixAipExt);
+        // MEV#15967 - Attivazione della firma Xades e XadesT
+        SerFileVerSerie serFile = helper.getSerFileVerSerie(idVerSerie.longValueExact(),
+                CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name());
+
+        SerUrnFileVerSerie verIndice = context.getBusinessObject(SerieEjb.class)
+                .getUrnFileVerSerieNormalizzatoByIdVerSerieAndTiFile(idVerSerie,
+                        CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name());
+        String filename = null;
+
+        if (verIndice != null) {
+            filename = verIndice.getDsUrn();
+        }
+
+        if (serFile.getTiFirma() != null && serFile.getTiFirma()
+                .equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES.name())) {
+            addEntryToZip(out, indiceAip, filename + ixVolExt);
+        } else {
+            addEntryToZip(out, indiceAip, ixAIPFileName + ixAipExt);
+        }
+        //
+
         if (marcaAip != null) {
             addEntryToZip(out, marcaAip, ixAIPFileName + marcaIxAipExt);
         }

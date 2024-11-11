@@ -41,6 +41,7 @@ import it.eng.parer.restArch.dto.RicercaRichRestArchBean;
 import it.eng.parer.viewEntity.AroVChkRaUd;
 import it.eng.parer.viewEntity.AroVLisItemRa;
 import it.eng.parer.viewEntity.AroVRicRichRa;
+import it.eng.parer.viewEntity.OrgVRicOrganizRestArch;
 import it.eng.parer.web.util.Constants;
 
 /**
@@ -261,6 +262,54 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         return query.getResultList();
     }
 
+    /**
+     * Recupera l'elenco di item all'interno della struttura <code>idStrut</code> di una determinata richiesta
+     * <code>idRichiestaRa</code>
+     *
+     * @param idRichRestArch
+     *            l'identificativo della richiesta
+     * @param idStrut
+     *            l'id della struttura
+     *
+     * @return lista oggetti di tipo {@link Object[]}
+     */
+    public List<Object[]> getAroVLisItemRaFm(BigDecimal idRichRestArch, BigDecimal idStrut) {
+        Query query = getEntityManager().createNativeQuery(
+                "SELECT DISTINCT a.id_Richiesta, a.id_Strut, a.anno, a.tot_Ud, a.num_Aip, a.dimensione, a.num_Docs, a.num_Errori, "
+                        + "a.num_Estratti, a.avanzamento"
+                        + " FROM Aro_V_Lis_Item_Ra_Fm(:idRichRestArch, :idStrut) a ORDER BY a.anno");
+        query.setParameter("idRichRestArch", idRichRestArch);
+        query.setParameter("idStrut", idStrut);
+        return query.getResultList();
+    }
+
+    public List<AroVLisItemRa> getAroVLisItemRaFmList(BigDecimal idRichRestArch, BigDecimal idStrut) {
+        List<Object[]> obList = getAroVLisItemRaFm(idRichRestArch, idStrut);
+        return getAroVLisItemRaList(obList);
+    }
+
+    public List<AroVLisItemRa> getAroVLisItemRaList(List<Object[]> objList) {
+        List<AroVLisItemRa> itemList = new ArrayList<>();
+        for (Object[] obj : objList) {
+            BigDecimal idRichiestaRa = (BigDecimal) obj[0];
+            BigDecimal idStrut = (BigDecimal) obj[1];
+            BigDecimal anno = (BigDecimal) obj[2];
+            BigDecimal totUd = (BigDecimal) obj[3];
+            BigDecimal numAip = (BigDecimal) obj[4];
+            BigDecimal dimensione = (BigDecimal) obj[5];
+            BigDecimal numDocs = (BigDecimal) obj[6];
+            BigDecimal numErrori = (BigDecimal) obj[7];
+            BigDecimal numEstratti = (BigDecimal) obj[8];
+            BigDecimal avanzamento = (BigDecimal) obj[9];
+
+            AroVLisItemRa item = new AroVLisItemRa(idRichiestaRa, idStrut, anno, totUd, numAip, dimensione, numDocs,
+                    numErrori, numEstratti, avanzamento);
+            itemList.add(item);
+        }
+
+        return itemList;
+    }
+
     public Long countAroItemRichRestArch(BigDecimal idRichRestArch, TiStatoAroAipRa... tiStato) {
         List<TiStatoAroAipRa> statiList = Arrays.asList(tiStato);
         StringBuilder queryStr = new StringBuilder(
@@ -329,4 +378,23 @@ public class RestituzioneArchivioHelper extends GenericHelper {
         List<AroVChkRaUd> list = q.getResultList();
         return list;
     }
+
+    // MEV #32535
+    public List<OrgVRicOrganizRestArch> retrieveOrgVRicOrganizRestArchList(BigDecimal idEnteConvenz) {
+        Query q = getEntityManager().createQuery(
+                "SELECT vista FROM OrgVRicOrganizRestArch vista " + "WHERE vista.idEnteConvenz = :idEnteConvenz ");
+        q.setParameter("idEnteConvenz", idEnteConvenz);
+        List<OrgVRicOrganizRestArch> list = q.getResultList();
+        return list;
+    }
+
+    public BigDecimal getIdEnteConvenzDaConsiderare(BigDecimal idOrganizIam) {
+        Query q = getEntityManager().createQuery("SELECT vista.idEnteConvenz FROM OrgVRicOrganizRestArch vista "
+                + "WHERE vista.idOrganizIam = :idOrganizIam ORDER BY vista.dtIniVal DESC");
+        q.setParameter("idOrganizIam", idOrganizIam);
+        List<BigDecimal> list = q.getResultList();
+        return (BigDecimal) list.get(0);
+    }
+
+    // end MEV #32535
 }

@@ -167,7 +167,7 @@ public class CostantiDB {
         public static final String URL_CALCOLO_SERVIZI_EROGATI = "URL_CALCOLO_SERVIZI_EROGATI";
         public static final String USERID_REPLICA_ORG = "USERID_REPLICA_ORG";
         public static final String PSW_REPLICA_ORG = "PSW_REPLICA_ORG";
-        public static final String TIMEOUT_CALCOLO_SERVIZI_EROGATI = "PSW_REPLICA_ORG";
+        public static final String TIMEOUT_CALCOLO_SERVIZI_EROGATI = "TIMEOUT_CALCOLO_SERVIZI_EROGATI";
         //
         public static final String NUM_MAX_COMP_CRITERIO_RAGGR_WARN = "NUM_MAX_COMP_CRITERIO_RAGGR_WARN";
         //
@@ -234,6 +234,8 @@ public class CostantiDB {
         public static final String BACKEND_INDICI_AIP_FASCICOLI = "BACKEND_INDICI_AIP_FASCICOLI";
         public static final String BACKEND_ELENCHI_INDICI_AIP_FASCICOLI = "BACKEND_ELENCHI_INDICI_AIP_FASCICOLI";
 
+        public static final String BACKEND_INDICI_AIP_SERIE_UD = "BACKEND_INDICI_AIP_SERIE_UD";
+
         // Configurazioni S3
         public static final String S3_PRESIGNED_URL_DURATION = "S3_PRESIGNED_URL_DURATION";
         public static final String S3_CLIENT_MAX_CONNECTIONS = "S3_CLIENT_MAX_CONNECTIONS";
@@ -281,6 +283,10 @@ public class CostantiDB {
         public static final String URL_RECUP_OGGETTO_PING = "URL_RECUP_OGGETTO_PING";
         public static final String USERID_RECUP_OGGETTO_PING = "USERID_RECUP_OGGETTO_PING";
         public static final String PSW_RECUP_OGGETTO_PING = "PSW_RECUP_OGGETTO_PING";
+
+        // Coostanti per la firma
+        public static final String TIPO_FIRMA = "TIPO_FIRMA";
+
         // Costanti per Keycloak
         public static final String URL_KEYCLOAK = "URL_KEYCLOAK";
         public static final String KEYCLOAK_CLIENT_SECRET = "KEYCLOAK_CLIENT_SECRET";

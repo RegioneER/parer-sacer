@@ -43,6 +43,8 @@
                         <sl:newLine />
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_KEY_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
                         <sl:newLine />
+                        <slf:lblField name="<%=FascicoliForm.FascicoloDetail.CD_KEY_NORMALIZ_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
+                        <sl:newLine />
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.NM_TIPO_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>
                         <sl:newLine />
                         <slf:lblField name="<%=FascicoliForm.FascicoloDetail.DS_OGGETTO_FASCICOLO%>" width="w100" labelWidth="w15" controlWidth="w70"/>

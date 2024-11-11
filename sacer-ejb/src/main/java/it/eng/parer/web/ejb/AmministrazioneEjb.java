@@ -17,6 +17,7 @@
 
 package it.eng.parer.web.ejb;
 
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -45,6 +46,7 @@ import it.eng.parer.entity.OrgAmbiente;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.AplValoreParamApplic.TiAppart;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.sacer.util.SacerLogConstants;
 import it.eng.parer.sacerlog.ejb.SacerLogEjb;
@@ -1614,5 +1616,30 @@ public class AmministrazioneEjb {
             }
         }
         return hsmUser;
+    }
+
+    public ElencoEnums.TipoFirma getTipoFirmaPerStruttura(BigDecimal idStrut) {
+        BigDecimal idAmbiente = new BigDecimal(
+                amministrazioneHelper.findById(OrgStrut.class, idStrut).getOrgEnte().getOrgAmbiente().getIdAmbiente());
+        AplParamApplic paramApplic = configurationHelper.getParamApplic(CostantiDB.ParametroAppl.TIPO_FIRMA);
+        AplValoreParamApplic valore = amministrazioneHelper.getAplValoreParamApplic(
+                new BigDecimal(paramApplic.getIdParamApplic()), TiAppart.AMBIENTE.name(), idAmbiente, null, null, null);
+        if (valore == null) {
+            valore = amministrazioneHelper.getAplValoreParamApplic(new BigDecimal(paramApplic.getIdParamApplic()),
+                    TiAppart.APPLIC.name(), idAmbiente, null, null, null);
+        }
+        return valore == null ? null : ElencoEnums.TipoFirma.valueOf(valore.getDsValoreParamApplic());
+    }
+
+    public it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma getTipoFirmaPerAmbiente(BigDecimal idAmbiente) {
+        AplParamApplic paramApplic = configurationHelper.getParamApplic(CostantiDB.ParametroAppl.TIPO_FIRMA);
+        AplValoreParamApplic valore = amministrazioneHelper.getAplValoreParamApplic(
+                new BigDecimal(paramApplic.getIdParamApplic()), TiAppart.AMBIENTE.name(), idAmbiente, null, null, null);
+        if (valore == null) {
+            valore = amministrazioneHelper.getAplValoreParamApplic(new BigDecimal(paramApplic.getIdParamApplic()),
+                    TiAppart.APPLIC.name(), null, null, null, null);
+        }
+        return valore == null ? null
+                : it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.valueOf(valore.getDsValoreParamApplic());
     }
 }

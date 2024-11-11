@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <Form Description="Sezione Volumi" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" 
       xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd">
  
@@ -205,6 +204,7 @@
         <ComboBox Name="ti_gest_elenco" Description="Tipo gestione elenco indici AIP" Type="STRING" />
         <Input Name="ti_gest_elenco_criterio" Description="Tipo gestione elenco indici AIP nel criterio di raggruppamento" Type="STRING" Readonly="true"/>
         <Input Name="ti_gest_elenco_amb" Description="Tipo gestione elenco indici AIP nell'ambiente" Type="STRING" Readonly="true"/>
+        <Input Type="STRING" Description="Formato di firma" Name="ti_firma" Required="false"/>
         <ComboBox Name="ti_valid_elenco" Description="Tipo validazione elenco" Type="STRING" />
         <ComboBox Name="ti_mod_valid_elenco" Description="Modalità validazione elenco" Type="STRING" />
         

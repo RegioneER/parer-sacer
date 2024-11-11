@@ -1459,8 +1459,16 @@ public class RecuperoZipGen {
                         ? (ElvFileElencoVer) rispostaControlli.getrObject() : null;
                 prefisso = tiFileElencoVers1.equals(ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name())
                         ? "ElencoIndiceAIP" : "MarcaElencoIndiceAIP";
-                estensione = tiFileElencoVers1.equals(ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name())
-                        ? ".xml.p7m" : ".tsr";
+
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                if (fileElencoVers != null && fileElencoVers.getTiFirma() != null
+                        && fileElencoVers.getTiFirma().equals(ElencoEnums.TipoFirma.XADES.name())) {
+                    estensione = ".xml";
+                } else {
+                    estensione = tiFileElencoVers1.equals(ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name())
+                            ? ".xml.p7m" : ".tsr";
+                }
+
             }
         }
 
@@ -1664,7 +1672,7 @@ public class RecuperoZipGen {
 
                         // Controllo se il fascicolo è inserito in un elenco di versamento fascicoli
                         if (unitaDocFascicolo.getFasFascicolo().getElvElencoVersFasc() != null) {
-                            List<ElvFileElencoVersFasc> fileFirma = elencoVersFascHelper.retrieveFileIndiceElenco2(
+                            List<ElvFileElencoVersFasc> fileFirma = elencoVersFascHelper.retrieveFileIndiceElenco(
                                     unitaDocFascicolo.getFasFascicolo().getElvElencoVersFasc().getIdElencoVersFasc(),
                                     new String[] {
                                             it.eng.parer.elencoVersFascicoli.utils.ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP

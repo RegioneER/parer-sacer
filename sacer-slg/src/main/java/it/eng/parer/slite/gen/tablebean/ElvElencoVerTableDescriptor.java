@@ -78,6 +78,7 @@ public class ElvElencoVerTableDescriptor extends TableDescriptor {
     public static final String COL_DT_FIRMA_ELENCO_IX_AIP = "dt_firma_elenco_ix_aip";
     public static final String COL_DT_MARCA_ELENCO_IX_AIP = "dt_marca_elenco_ix_aip";
     public static final String COL_ID_STATO_ELENCO_VERS_COR = "id_stato_elenco_vers_cor";
+    public static final String COL_TI_FIRMA = "ti_firma";
 
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
@@ -118,6 +119,7 @@ public class ElvElencoVerTableDescriptor extends TableDescriptor {
         map.put(COL_TI_GEST_ELENCO, new ColumnDescriptor(COL_TI_GEST_ELENCO, Types.VARCHAR, 30, false));
         map.put(COL_TI_VALID_ELENCO, new ColumnDescriptor(COL_TI_VALID_ELENCO, Types.VARCHAR, 30, false));
         map.put(COL_TI_MOD_VALID_ELENCO, new ColumnDescriptor(COL_TI_MOD_VALID_ELENCO, Types.VARCHAR, 30, false));
+        map.put(COL_TI_FIRMA, new ColumnDescriptor(COL_TI_FIRMA, Types.VARCHAR, 30, false));
         map.put(COL_DT_CREAZIONE_ELENCO_IX_AIP,
                 new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO_IX_AIP, Types.TIMESTAMP, 7, false));
         map.put(COL_NI_INDICI_AIP, new ColumnDescriptor(COL_NI_INDICI_AIP, Types.DECIMAL, 22, false));

@@ -37,6 +37,7 @@ import it.eng.parer.exception.ParerNoResultException;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipSignatureSessionEjb;
 import it.eng.parer.firma.crypto.ejb.ElencoSignatureSessionEjb;
+import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
 import it.eng.parer.firma.crypto.sign.SigningResponse;
@@ -2336,7 +2337,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
                 getSession().setAttribute(Signature.FUTURE_ATTR_ELENCHI, provaAsync);
             }
-
             if (errorList.isEmpty() && !result.has("status")) {
                 result.put("info", "Sessione di firma avviata!");
             } else if (!errorList.isEmpty()) {
@@ -3028,7 +3028,20 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                         request.addFile(idElenco);
                     }
                 }
-                Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                Future<SigningResponse> provaAsync = null;
+                it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
+                        .getTipoFirmaPerStruttura(getIdStrutCorrente());
+                switch (tipoFirma) {
+                case CADES:
+                    provaAsync = firmaHsmEjb.signP7M(request);
+                    break;
+                case XADES:
+                    provaAsync = firmaHsmEjb.signXades(request);
+                    break;
+                }
+                // VECCHIO CODICE ORIGINALE
+                // Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
                 getSession().setAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP, provaAsync);
             }
 

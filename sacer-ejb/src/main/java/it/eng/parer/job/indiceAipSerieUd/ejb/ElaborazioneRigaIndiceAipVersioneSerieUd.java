@@ -60,6 +60,9 @@ import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.job.indiceAipSerieUd.helper.CreazioneIndiceAipSerieUdHelper;
 import it.eng.parer.job.indiceAipSerieUd.utils.CreazioneIndiceAipSerieUdUtil;
 import it.eng.parer.job.indiceAipSerieUd.utils.CreazioneIndiceAipSerieUdUtilV2;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.serie.ejb.SerieEjb;
 import it.eng.parer.serie.helper.SerieHelper;
 import it.eng.parer.web.helper.ConfigurationHelper;
@@ -70,6 +73,8 @@ import it.eng.parer.ws.ejb.XmlContextCache;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.xml.usmainResp.IdCType;
 import it.eng.parer.ws.xml.usmainRespV2.PIndex;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  *
@@ -98,6 +103,12 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
     private ParamIamHelper paramIamHelper;
     @EJB
     CreazioneIndiceAipSerieUdUtilV2 creazioneIndiceAipSerieUdUtilV2;
+    // MEV#30400
+    @EJB
+    private ObjectStorageService objectStorageService;
+
+    private static final String LOG_SALVATAGGIO_OS = "Salvato l'indice aip della seri su Object storage nel bucket {} con chiave {}! ";
+    // end MEV#30400
 
     /* Ricavo i valori degli Agent dalla tabella APL_PARAM_APPLIC */
     private static final List<String> agentParam = Arrays.asList(AGENT_PRESERVER_FORMALNAME, AGENT_PRESERVER_TAXCODE,
@@ -180,15 +191,49 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
 
             tmpWriter = marshallPIndex(pindex);
         }
+
+        // MEV#30400
+
+        BackendStorage backendIndiciAip = objectStorageService.lookupBackendIndiciAipSerieUD(orgStrut.getIdStrut());
+
+        boolean putOnOs = true;
+        if (objectStorageService.isSerFileVerSerieUDOnOs(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+                CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name())) {
+            String md5LocalContent = calculateMd5AsBase64(tmpWriter.toString());
+            String eTagFromObjectMetadata = objectStorageService
+                    .getObjectMetadataIndiceAipSerieUD(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+                            CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name())
+                    .eTag();
+
+            if (md5LocalContent.equals(eTagFromObjectMetadata)) {
+                putOnOs = false;
+            }
+        }
+
         /* Persisto il file dell'indice AIP versione serie UD */
+        // DATO CHE L'URN DEL FILE è SU UNA TABELLA SEPARATA SONO OBBLIGATO A CREARE SEMPRE IL RECORD SULLA
+        // SerFileVerSerie
         SerFileVerSerie serFileVerSerie = serieHelper.storeFileIntoSerFileVerSerie(
                 verSerieDaElab.getSerVerSerie().getIdVerSerie(), CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name(),
-                tmpWriter.toString().getBytes("UTF-8"), sincroVersion, verSerieDaElab.getIdStrut(), dataRegistrazione);
+                tmpWriter.toString().getBytes("UTF-8"), sincroVersion, verSerieDaElab.getIdStrut(), dataRegistrazione,
+                putOnOs, null);
 
         // EVO#16492
         /* Calcolo e persisto urn dell'indice AIP della serie */
         serieHelper.storeSerUrnFileVerSerie(serFileVerSerie, csv, codiceSerie, versioneSerie);
         // end EVO#16492
+
+        ObjectStorageResource indiceAipSuOS;
+
+        if (putOnOs) {
+            indiceAipSuOS = objectStorageService.createResourcesInIndiciAipSerieUD(serFileVerSerie,
+                    backendIndiciAip.getBackendName(), tmpWriter.toString().getBytes("UTF-8"),
+                    verSerieDaElab.getSerVerSerie().getIdVerSerie(), verSerieDaElab.getIdStrut(), csv, codiceSerie,
+                    versioneSerie);
+            log.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+        }
+
+        // end MEV#30400
 
         log.info(ElaborazioneRigaIndiceAipVersioneSerieUd.class.getSimpleName()
                 + " --- Creazione Indice Aip Versione Serie Ud --- "
@@ -235,6 +280,12 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
         // Aggiorno lo stato della versione serie da elaborare assegnando stato DA_FIRMARE
         verSerieDaElab.setTiStatoVerSerie(CostantiDB.StatoVersioneSerie.DA_FIRMARE.name());
     }
+
+    // MEV#30400
+    private String calculateMd5AsBase64(String str) {
+        return Base64.getEncoder().encodeToString(str.getBytes(StandardCharsets.UTF_8));
+    }
+    // end MEV#30400
 
     private StringWriter marshallIdC(IdCType idc) throws ValidationException, JAXBException, MarshalException {
         it.eng.parer.ws.xml.usmainResp.ObjectFactory objFct_IdCType = new it.eng.parer.ws.xml.usmainResp.ObjectFactory();

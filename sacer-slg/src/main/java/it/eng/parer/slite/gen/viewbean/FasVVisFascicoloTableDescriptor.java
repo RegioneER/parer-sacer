@@ -50,6 +50,7 @@ public class FasVVisFascicoloTableDescriptor extends TableDescriptor {
     public static final String COL_ID_FASCICOLO = "id_fascicolo";
     public static final String COL_AA_FASCICOLO = "aa_fascicolo";
     public static final String COL_CD_KEY_FASCICOLO = "cd_key_fascicolo";
+    public static final String COL_CD_KEY_NORMALIZ_FASCICOLO = "cd_key_normaliz_fascicolo";
     public static final String COL_ID_TIPO_FASCICOLO = "id_tipo_fascicolo";
     public static final String COL_NM_TIPO_FASCICOLO = "nm_tipo_fascicolo";
     public static final String COL_DS_OGGETTO_FASCICOLO = "ds_oggetto_fascicolo";
@@ -147,6 +148,8 @@ public class FasVVisFascicoloTableDescriptor extends TableDescriptor {
         map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, true));
         map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, true));
         map.put(COL_CD_KEY_FASCICOLO, new ColumnDescriptor(COL_CD_KEY_FASCICOLO, Types.VARCHAR, 100, true));
+        map.put(COL_CD_KEY_NORMALIZ_FASCICOLO,
+                new ColumnDescriptor(COL_CD_KEY_NORMALIZ_FASCICOLO, Types.VARCHAR, 100, true));
         map.put(COL_ID_TIPO_FASCICOLO, new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, true));
         map.put(COL_NM_TIPO_FASCICOLO, new ColumnDescriptor(COL_NM_TIPO_FASCICOLO, Types.VARCHAR, 100, true));
         map.put(COL_DS_OGGETTO_FASCICOLO, new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO, Types.VARCHAR, 4000, true));

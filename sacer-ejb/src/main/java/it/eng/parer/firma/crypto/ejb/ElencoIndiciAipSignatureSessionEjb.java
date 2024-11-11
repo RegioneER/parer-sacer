@@ -18,7 +18,6 @@
 package it.eng.parer.firma.crypto.ejb;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -34,11 +33,6 @@ import it.eng.parer.entity.constraint.ElvUrnFileElencoVers;
 import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.Costanti;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.HashCalculator;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -171,25 +165,28 @@ public class ElencoIndiciAipSignatureSessionEjb implements SignatureSessionEjb {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate) throws Exception {
+    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception {
         HsmSessioneFirma session = signHlp.findById(HsmSessioneFirma.class, sessionId);
         // Doesn't open a new transaction
-        this.storeSignature(session, idFile, signedFile, signingDate);
+        this.storeSignature(session, idFile, signedFile, signingDate, tipoFirma);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate)
-            throws Exception {
+    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception {
         // Sets the "log" of the HSMSessionFirma
         HsmElencoSessioneFirma elencoSession = signHlp.findElencoSessione(session, idFile);
         elencoSession.setTiEsito(TiEsitoFirmaElenco.OK);
         elencoSession.setTsEsito(new Date());
+        // elencoEjb.storeFirmaElencoIndiceAip(idFile, signedFile, signingDate, session.getIamUser().getIdUserIam(),
+        // tipoFirma);
         // MEV#30397
         BackendStorage backendIndiciAip = objectStorageService
                 .lookupBackendElenchiIndiciAip(elencoSession.getElvElencoVer().getOrgStrut().getIdStrut());
         ElvFileElencoVer fileElencoVers = elencoEjb.storeFirmaElencoIndiceAip(idFile, signedFile, signingDate,
-                session.getIamUser().getIdUserIam(), backendIndiciAip);
+                session.getIamUser().getIdUserIam(), backendIndiciAip, tipoFirma);
         /*
          * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
          */
@@ -381,5 +378,12 @@ public class ElencoIndiciAipSignatureSessionEjb implements SignatureSessionEjb {
         for (HsmSessioneFirma session : sessions) {
             this.errorSessioneFirma(session, SignatureSession.CdErr.BLOCKED_SESSION);
         }
+    }
+
+    /*
+     * Torna il tipo gestione elenco di un elenco di versamento (FIRMA, MARCA_FIRMA ecc.)
+     */
+    public String getTipoGestioneElenco(Long idElencoVersamento, Long idUserIam) {
+        return this.elencoHlp.retrieveElvVRicElencoVersListByIdAndUser(idElencoVersamento, idUserIam).getTiGestElenco();
     }
 }

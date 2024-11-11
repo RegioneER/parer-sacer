@@ -17,6 +17,8 @@
 
 package it.eng.parer.restArch.ejb;
 
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import static it.eng.parer.util.Utils.createEmptyDir;
 
 import java.io.IOException;
@@ -52,9 +54,13 @@ import it.eng.parer.entity.constraint.AroAipRestituzioneArchivio.TiStatoAroAipRa
 import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
+import it.eng.parer.grantedEntity.SIUsrOrganizIam;
 import it.eng.parer.restArch.dto.RicercaRichRestArchBean;
 import it.eng.parer.restArch.helper.RestituzioneArchivioHelper;
 import it.eng.parer.slite.gen.tablebean.AroRichiestaRaRowBean;
+import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
+import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisItemRaRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVLisItemRaTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVRicRichRaRowBean;
@@ -62,6 +68,7 @@ import it.eng.parer.slite.gen.viewbean.AroVRicRichRaTableBean;
 import it.eng.parer.viewEntity.AroVChkRaUd;
 import it.eng.parer.viewEntity.AroVLisItemRa;
 import it.eng.parer.viewEntity.AroVRicRichRa;
+import it.eng.parer.viewEntity.OrgVRicOrganizRestArch;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
@@ -83,6 +90,10 @@ public class RestituzioneArchivioEjb {
     private RestituzioneArchivioHelper helper;
     @EJB
     private ConfigurationHelper configurationHelper;
+    @EJB
+    private StruttureEjb struttureEjb;
+    @EJB
+    private AmbientiHelper ambientiHelper;
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
@@ -107,9 +118,29 @@ public class RestituzioneArchivioEjb {
 
     public List<AroVChkRaUd> retrieveChkRaUnitaDocList(BigDecimal idStrut) {
         // ricavo la struttura
-        OrgStrut struttura = helper.findById(OrgStrut.class, idStrut);
-        return helper.retrieveAroVChkRaUdList(struttura.getIdEnteConvenz());
+        SIUsrOrganizIam organiz = ambientiHelper.getSIUsrOrganizIam(idStrut);
+        BigDecimal idEnteConvenz = helper.getIdEnteConvenzDaConsiderare(BigDecimal.valueOf(organiz.getIdOrganizIam()));
+        return helper.retrieveAroVChkRaUdList(idEnteConvenz);
     }
+
+    // MEV #32535
+    public List<OrgVRicOrganizRestArch> retrieveOrgVRcOrganizRestArchList(BigDecimal idStrut) {
+        // ricavo la struttura
+        SIUsrOrganizIam organiz = ambientiHelper.getSIUsrOrganizIam(idStrut);
+        BigDecimal idEnteConvenz = helper.getIdEnteConvenzDaConsiderare(BigDecimal.valueOf(organiz.getIdOrganizIam()));
+        return helper.retrieveOrgVRicOrganizRestArchList(idEnteConvenz);
+    }
+
+    public String getStrutturaDaOrganizIam(BigDecimal idOrganizIam) {
+        // ricavo l'organizzazione iam
+        SIUsrOrganizIam organizIam = helper.findById(SIUsrOrganizIam.class, idOrganizIam);
+        OrgStrutRowBean strutRB = struttureEjb.getOrgStrutRowBean(BigDecimal.valueOf(organizIam.getIdOrganizApplic()));
+        OrgEnteRowBean enteRB = struttureEjb.getOrgEnteRowBean(strutRB.getIdEnte());
+        OrgAmbienteRowBean ambienteRB = struttureEjb.getOrgAmbienteRowBean(enteRB.getIdAmbiente());
+        return ambienteRB.getNmAmbiente() + " / " + enteRB.getNmEnte() + " / " + strutRB.getNmStrut();
+    }
+
+    // end MEV #32535
 
     /**
      * Verifica l'esistenza e i permessi in lettura/scrittura delle cartelle per l’estrazione degli AIP
@@ -475,6 +506,37 @@ public class RestituzioneArchivioEjb {
     public AroVLisItemRaTableBean getAroVLisItemRaTableBean(BigDecimal idRichRestArch, BigDecimal idStrut) {
         AroVLisItemRaTableBean table = new AroVLisItemRaTableBean();
         List<AroVLisItemRa> list = helper.getAroVLisItemRa(idRichRestArch, idStrut);
+        if (list != null && !list.isEmpty()) {
+            try {
+                for (AroVLisItemRa richiesta : list) {
+                    AroVLisItemRaRowBean row = (AroVLisItemRaRowBean) Transform.entity2RowBean(richiesta);
+                    table.add(row);
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
+                    | IllegalArgumentException | InvocationTargetException ex) {
+                logger.error(
+                        "Errore durante il recupero della lista di item della richiesta di restituzione archivio {}",
+                        ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalStateException(
+                        "Errore durante il recupero della lista di item della richiesta di restituzione archivio");
+            }
+        }
+        return table;
+    }
+
+    /**
+     * Recupera la lista di item all'interno di una richiesta di restituzione archivio di una determinata struttura
+     *
+     * @param idRichRestArch
+     *            l'id richiesta restituzione archivio
+     * @param idStrut
+     *            la struttura specifica della richiesta
+     *
+     * @return il tablebean di item
+     */
+    public AroVLisItemRaTableBean getAroVLisItemRaFmTableBean(BigDecimal idRichRestArch, BigDecimal idStrut) {
+        AroVLisItemRaTableBean table = new AroVLisItemRaTableBean();
+        List<AroVLisItemRa> list = helper.getAroVLisItemRaFmList(idRichRestArch, idStrut);
         if (list != null && !list.isEmpty()) {
             try {
                 for (AroVLisItemRa richiesta : list) {

@@ -16,9 +16,9 @@
  */
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+* To change this template, choose Tools | Templates
+* and open the template in the editor.
+*/
 package it.eng.parer.restWS.util;
 
 import java.util.Iterator;
@@ -108,11 +108,20 @@ public class RequestPrsr extends AbsRequestPrsr {
         }
     }
 
+    /*
+     * Metodo che chiama il parse passando il parametro aggiuntivo true. In questo modo si dice al parsing di verificare
+     * il contenuto del CommonName dell'header e di bypassare il controllo su LOGINNAME e PASSWORD.
+     */
+    // public List<FileItem> parseWithCommonName(IRispostaWS rispostaWs, ReqPrsrConfig configurazione)
+    // throws FileUploadException {
+    // return parse(rispostaWs, configurazione, null, true);
+    // }
+
     /**
-     * Nota bene: è fondamentale che questo metodo ritorni la collection di FileItem, e che il chiamante ne tenga una
+     * Nota bene: E' fondamentale che questo metodo ritorni la collection di FileItem, e che il chiamante ne tenga una
      * copia: la deallocazione del DiskFileItem a causa della GC e la conseguente chiamata del metodo finalize()
      * comporta la cancellazione del file fisico e mantenere una copia dell'istanza della classe File sortisce l'unico
-     * effetto di avere un File handler che non punta a nulla; il fenomeno è difficile da replicare ma estremamente
+     * effetto di avere un File handler che non punta a nulla; il fenomeno Ã¨ difficile da replicare ma estremamente
      * insidioso. Si manifesta con errori apparentemente casuali in cui le procedure di lettura del file (verifica firma
      * e persistenza) vanno in eccezione per mancanza di file. (File not found exception)
      *
@@ -128,11 +137,11 @@ public class RequestPrsr extends AbsRequestPrsr {
      *
      */
     public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione) throws FileUploadException {
-        return parse(rispostaWs, configurazione, null);
+        return parse(rispostaWs, configurazione, null, false);
     }
 
-    public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione, AccessToken accessToken)
-            throws FileUploadException {
+    public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione, AccessToken accessToken,
+            boolean commonNamePassato) throws FileUploadException {
         Iterator<FileItem> tmpIterator = null;
         DiskFileItem tmpFileItem = null;
         List<FileItem> fileItems = null;
@@ -144,7 +153,8 @@ public class RequestPrsr extends AbsRequestPrsr {
         HttpServletRequest request = configurazione.getRequest();
         ServletFileUpload upload = configurazione.getUploadHandler();
 
-        // nella riga sotto arrivano i dati e vengono scritti su disco, la sua esecuzione può richiedere parecchio tempo
+        // nella riga sotto arrivano i dati e vengono scritti su disco, la sua esecuzione puÃ² richiedere parecchio
+        // tempo
         fileItems = upload.parseRequest(request);
         tmpIterator = fileItems.iterator();
         tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.TrasferimentoPayloadIn).setFase("Payload ricevuto")
@@ -155,7 +165,7 @@ public class RequestPrsr extends AbsRequestPrsr {
                 .logAvanzamento();
 
         /*
-         * verifica della struttura della chiamata al WS: non è un WS SOAP perciò la signature del WS va controllata a
+         * verifica della struttura della chiamata al WS: non Ã¨ un WS SOAP perciÃ² la signature del WS va controllata a
          * mano, leggendo quanto effettivamente versato.
          */
         // verifica strutturale del campo VERSIONE e memorizzazione dello stesso nella sessione finta
@@ -177,30 +187,32 @@ public class RequestPrsr extends AbsRequestPrsr {
                     "Il campo VERSIONE deve essere di tipo FORM"));
             rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
         }
-
+        // String commonName = this.leggiCertCommonName(request);
         // verifica strutturale del campo LOGINNAME e memorizzazione dello stesso nella sessione finta
         // Il controllo sullo username viene fatto se non è presente il CommonName nell'Header HTTP
         if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
             if (Objects.isNull(accessToken)) {
-                tmpFileItem = (DiskFileItem) tmpIterator.next();
-                if (tmpFileItem.isFormField()) {
-                    if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
-                        log.info("LOGINNAME {}", tmpFileItem.getString());
-                        sessioneFinta.setLoginName(tmpFileItem.getString());
-                        tmpAvanzamento.setVrsUser(tmpFileItem.getString()).logAvanzamento();
+                if (!commonNamePassato) { // In caso di chiamata tradizionale con controllo LOGINNAME E PASSWORD
+                    tmpFileItem = (DiskFileItem) tmpIterator.next();
+                    if (tmpFileItem.isFormField()) {
+                        if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
+                            log.info("LOGINNAME {}", tmpFileItem.getString());
+                            sessioneFinta.setLoginName(tmpFileItem.getString());
+                            tmpAvanzamento.setVrsUser(tmpFileItem.getString()).logAvanzamento();
+                        } else {
+                            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                            rispostaWs.setErrorMessage(
+                                    MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo LOGINNAME"));
+                            rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                        }
                     } else {
                         rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
                         rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-                        rispostaWs.setErrorMessage(
-                                MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo LOGINNAME"));
+                        rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                                "Il campo LOGINNAME deve essere di tipo FORM"));
                         rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
                     }
-                } else {
-                    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-                    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-                    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-                            "Il campo LOGINNAME deve essere di tipo FORM"));
-                    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
                 }
             } else {
                 String oauth2PreferredUsername = accessToken.getPreferredUsername();
@@ -212,25 +224,27 @@ public class RequestPrsr extends AbsRequestPrsr {
         }
 
         // verifica strutturale del campo PASSWORD e memorizzazione dello stesso nella sessione finta
-        // Il controllo sulla password viene fatto se non è presente il CommonName nell'Header HTTP
+        // Il controllo sulla password viene fatto se non Ã¨ presente il CommonName nell'Header HTTP
         if (Objects.isNull(accessToken) && rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-            tmpFileItem = (DiskFileItem) tmpIterator.next();
-            if (tmpFileItem.isFormField()) {
-                if (tmpFileItem.getFieldName().equals("PASSWORD")) {
-                    sessioneFinta.setPassword(tmpFileItem.getString());
+            if (!commonNamePassato) { // In caso di chiamata tradizionale con controllo LOGINNAME E PASSWORD
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+                if (tmpFileItem.isFormField()) {
+                    if (tmpFileItem.getFieldName().equals("PASSWORD")) {
+                        sessioneFinta.setPassword(tmpFileItem.getString());
+                    } else {
+                        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                        rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                        rispostaWs.setErrorMessage(
+                                MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo PASSWORD"));
+                        rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                    }
                 } else {
                     rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
                     rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-                    rispostaWs.setErrorMessage(
-                            MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo PASSWORD"));
+                    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                            "Il campo PASSWORD deve essere di tipo FORM"));
                     rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
                 }
-            } else {
-                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-                rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-                rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-                        "Il campo PASSWORD deve essere di tipo FORM"));
-                rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
             }
         }
 
@@ -238,6 +252,16 @@ public class RequestPrsr extends AbsRequestPrsr {
             // verifica strutturale del campo XMLINDICE e memorizzazione dello stesso nella sessione finta
             if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
                 tmpFileItem = (DiskFileItem) tmpIterator.next();
+                /*
+                 * Nel caso in cui si entra col certificato ma vengono passati LOGINNAME e/o PASSWORD bisogna comunque
+                 * scartarli scorrendoli sequenzialmente
+                 */
+                if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
+                    tmpFileItem = (DiskFileItem) tmpIterator.next();
+                }
+                if (tmpFileItem.getFieldName().equals("PASSWORD")) {
+                    tmpFileItem = (DiskFileItem) tmpIterator.next();
+                }
                 if (tmpFileItem.isFormField()) {
                     if (tmpFileItem.getFieldName().equals("XMLINDICE")) {
                         sessioneFinta.setDatiPackInfoSipXml(tmpFileItem.getString());
@@ -262,6 +286,16 @@ public class RequestPrsr extends AbsRequestPrsr {
         // verifica strutturale del campo XMLSIP e memorizzazione dello stesso nella sessione finta
         if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
             tmpFileItem = (DiskFileItem) tmpIterator.next();
+            /*
+             * Nel caso in cui si entra col certificato ma vengono passati LOGINNAME e/o PASSWORD bisogna comunque
+             * scartarli scorrendoli sequenzialmente
+             */
+            if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+            }
+            if (tmpFileItem.getFieldName().equals("PASSWORD")) {
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+            }
             if (tmpFileItem.isFormField()) {
                 if (tmpFileItem.getFieldName().equals("XMLSIP")) {
                     sessioneFinta.setDatiIndiceSipXml(tmpFileItem.getString());

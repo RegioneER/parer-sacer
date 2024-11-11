@@ -51,6 +51,7 @@ import it.eng.parer.firma.crypto.sign.SigningResponse;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.viewEntity.ElvVLisElencoVersStato;
+import it.eng.parer.web.ejb.AmministrazioneEjb;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.ElenchiVersamentoHelper;
@@ -88,6 +89,9 @@ public class SigilloEjb {
     private SignerHsmEjb firmaHsmEjb;
     @EJB
     private UserHelper userHelper;
+    @EJB
+    private AmministrazioneEjb amministrazioneEjb;
+
     @Resource
     private SessionContext context;
 
@@ -173,7 +177,7 @@ public class SigilloEjb {
                             idAmbiente, idUserPerJob);
                     // Passa al prossimo elenco da firmare
                 } else {
-                    sessioneDiFirma(l, user, passwd, otp, idUserPerJob, usernamePerJob);
+                    sessioneDiFirma(l, user, passwd, otp, idUserPerJob, usernamePerJob, idAmbiente);
                 }
             }
         } else {
@@ -193,7 +197,7 @@ public class SigilloEjb {
     }
 
     private void sessioneDiFirma(List<ElvVLisElencoVersStato> l, String user, String passwd, String otp,
-            long idUserPerJob, String usernamePerJob) throws SigilloException {
+            long idUserPerJob, String usernamePerJob, BigDecimal idAmbiente) throws SigilloException {
         SigningRequest request = new SigningRequest(idUserPerJob);
         HSMUser userHSM = new HSMUser(user, passwd.toCharArray());
         userHSM.setOTP(otp.toCharArray());
@@ -205,8 +209,26 @@ public class SigilloEjb {
          */
         context.getBusinessObject(SigilloEjb.class).registraStato(request, l, usernamePerJob);
         Future<SigningResponse> future = null;
+
         try {
-            future = firmaHsmEjb.signP7M(request);
+
+            // MEV#15967 - Attivazione della firma Xades e XadesT
+            it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
+                    .getTipoFirmaPerAmbiente(idAmbiente);
+            switch (tipoFirma) {
+            case XADES:
+                future = firmaHsmEjb.signXades(request);
+                break;
+            case CADES:
+                future = firmaHsmEjb.signP7M(request);
+                break;
+            default:
+                future = firmaHsmEjb.signP7M(request);
+                break;
+            }
+            //
+
+            // future = firmaHsmEjb.signP7M(request);
             SigningResponse response = null;
             try {
                 // la get() blocca il Thread finché non ha finito di firmare...

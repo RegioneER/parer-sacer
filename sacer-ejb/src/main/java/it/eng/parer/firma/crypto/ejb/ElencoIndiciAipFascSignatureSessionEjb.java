@@ -38,6 +38,7 @@ import it.eng.parer.common.signature.SignatureSession;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
 import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums.ElencoStatusEnum;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma;
 import it.eng.parer.entity.ElvElencoVersFasc;
 import it.eng.parer.entity.ElvElencoVersFascDaElab;
 import it.eng.parer.entity.ElvFileElencoVersFasc;
@@ -178,24 +179,28 @@ public class ElencoIndiciAipFascSignatureSessionEjb implements SignatureSessionE
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate) {
+    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate,
+            it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma) {
         HsmSessioneFirma session = signHlp.findById(HsmSessioneFirma.class, sessionId);
         // Doesn't open a new transaction
-        this.storeSignature(session, idFile, signedFile, signingDate);
+        this.storeSignature(session, idFile, signedFile, signingDate, tipoFirma);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate) {
+    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate,
+            it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma) {
         // Sets the "log" of the HSMSessionFirma
         HsmElencoFascSesFirma elencoSession = signHlp.findElencoFascSes(session, idFile);
         elencoSession.setTiEsito(TiEsitoFirmaElencoFasc.OK);
         elencoSession.setTsEsito(new Date());
+        // elencoEjb.storeFirmaElencoIndiceAipFasc(idFile, signedFile, signingDate, session.getIamUser().getIdUserIam(),
+        // tipoFirma);
         // MEV#30399
         BackendStorage backendIndiciAip = objectStorageService
                 .lookupBackendElenchiIndiciAipFasc(elencoSession.getElvElencoVersFasc().getOrgStrut().getIdStrut());
         ElvFileElencoVersFasc fileElencoVers = elencoEjb.storeFirmaElencoIndiceAipFasc(idFile, signedFile, signingDate,
-                session.getIamUser().getIdUserIam(), backendIndiciAip);
+                session.getIamUser().getIdUserIam(), backendIndiciAip, tipoFirma);
         /*
          * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
          */

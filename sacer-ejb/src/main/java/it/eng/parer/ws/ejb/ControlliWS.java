@@ -137,11 +137,21 @@ public class ControlliWS {
 
     public RispostaControlli checkCredenziali(String loginName, String password, String indirizzoIP,
             TipiWSPerControlli tipows) {
-        return checkCredenziali(loginName, password, indirizzoIP, tipows, null);
+        return checkCredenziali(loginName, password, indirizzoIP, tipows, null, false);
+    }
+
+    public RispostaControlli checkCredenziali(String loginName, String password, String indirizzoIP,
+            TipiWSPerControlli tipows, boolean isOAuth2) {
+        return checkCredenziali(loginName, password, indirizzoIP, tipows, null, isOAuth2);
     }
 
     public RispostaControlli checkCredenziali(String loginName, String password, String indirizzoIP,
             TipiWSPerControlli tipows, String certCommonName) {
+        return checkCredenziali(loginName, password, indirizzoIP, tipows, certCommonName, false);
+    }
+
+    public RispostaControlli checkCredenziali(String loginName, String password, String indirizzoIP,
+            TipiWSPerControlli tipows, String certCommonName, boolean isOAuth2) {
         User utente = null;
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
@@ -183,7 +193,7 @@ public class ControlliWS {
             if (certCommonName != null && !certCommonName.isEmpty()) {
                 WSLoginHandler.login(certCommonName, entityManager);
             } else {
-                WSLoginHandler.login(loginName, password, indirizzoIP, entityManager);
+                WSLoginHandler.login(loginName, password, indirizzoIP, entityManager, isOAuth2);
             }
             // se l'autenticazione riesce, non va in eccezione.
             // passo quindi a leggere i dati dell'utente dal db
@@ -244,7 +254,8 @@ public class ControlliWS {
             } else if (e.getCodiceErrore().equals(AuthWSException.CodiceErrore.UTENTE_NON_ATTIVO)) {
                 tmpLogDto.setTipoEvento(LogDto.TipiEvento.LOCKED);
                 tmpLogDto.setDsEvento("WS, " + e.getDescrizioneErrore());
-            } else if (e.getCodiceErrore().equals(AuthWSException.CodiceErrore.LOGIN_FALLITO)) {
+            } else if (e.getCodiceErrore().equals(AuthWSException.CodiceErrore.LOGIN_FALLITO)
+                    && StringUtils.isNotBlank(password)) {
                 // se l'autenticazione fallisce, devo capire se è stato sbagliata la password oppure
                 // non esiste l'utente. Provo a caricarlo e verifico la cosa.
                 String queryStr = "select count(iu) from IamUser iu where iu.nmUserid = :nmUseridIn";
@@ -258,6 +269,10 @@ public class ControlliWS {
                     tmpLogDto.setTipoEvento(LogDto.TipiEvento.BAD_USER);
                     tmpLogDto.setDsEvento("WS, utente sconosciuto");
                 }
+            } else if (e.getCodiceErrore().equals(AuthWSException.CodiceErrore.LOGIN_FALLITO)
+                    && StringUtils.isBlank(password)) {
+                tmpLogDto.setTipoEvento(LogDto.TipiEvento.BAD_PASS);
+                tmpLogDto.setDsEvento("WS, null password");
             }
         } catch (Exception e) {
             rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
@@ -267,7 +282,7 @@ public class ControlliWS {
         }
 
         // scrittura log
-        idpLogger.scriviLog(tmpLogDto);
+        idpLogger.scriviLog(tmpLogDto, password);
         //
         return rispostaControlli;
     }

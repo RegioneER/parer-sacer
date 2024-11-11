@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.action;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
@@ -39,6 +38,7 @@ import it.eng.parer.entity.constraint.AroRichiestaRa.AroRichiestaTiStato;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVRicRichRaTableDescriptor;
+import it.eng.parer.viewEntity.OrgVRicOrganizRestArch;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.WebConstants;
@@ -54,17 +54,14 @@ import it.eng.spagoLite.form.fields.Fields;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.security.Secure;
-import it.eng.spagoLite.security.SuppressLogging;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import javax.ejb.EJB;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.codehaus.jettison.json.JSONObject;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import org.codehaus.jettison.json.JSONException;
 
 /**
  *
@@ -114,7 +111,7 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
         AroRichiestaRaRowBean detailRow = restArchEjb.getAroRichiestaRaRowBean(idRichRestArch, idStrut);
         getForm().getRichRestArchDetail().copyFromBean(detailRow);
 
-        AroVLisItemRaTableBean listaItem = restArchEjb.getAroVLisItemRaTableBean(idRichRestArch, idStrut);
+        AroVLisItemRaTableBean listaItem = restArchEjb.getAroVLisItemRaFmTableBean(idRichRestArch, idStrut);
         getForm().getItemList().setTable(listaItem);
         getForm().getItemList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
         getForm().getItemList().getTable().first();
@@ -294,17 +291,7 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
             }
         }
 
-        // BigDecimal idEnteConvenz = getForm().getFiltriRicercaRichRestArch().getId_ente_convenz().parse();
-        // if (!getMessageBox().hasError()) {
-        // if (idEnteConvenz == null) {
-        // getMessageBox().addError("Per poter creare la richiesta \u00E8 necessario selezionare un ente
-        // convenzionato");
-        // }
-        // }
-
         if (!getMessageBox().hasError()) {
-            // getRequest().setAttribute("creaRichRestArchBox", true);
-
             if (getSession().getAttribute("tiRichRestArch") != null) {
                 if (((String) getSession().getAttribute("tiRichRestArch")).equals("UNITA_DOC")) {
                     getForm().getCreazioneRichRestArch().getTi_rich_rest_arch().setValue("UNITA_DOC");
@@ -353,71 +340,44 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                             "Cartella per l’estrazione degli AIP non definita o non si hanno i permessi in lettura/scrittura");
                 }
             }
-            if (!getMessageBox().hasError()) {
-                // Gestisco le richieste scadute
-                restArchEjb.elaboraRichRestArchExpired(idStrut);
-                // Salvo la richiesta di restituzione archivio
-                Long idRichRestArch = restArchEjb.saveRichRestArch(getUser().getIdUtente(), idStrut, tiRichRestArch);
-                //
-                if (tiRichRestArch.equals("UNITA_DOC")) {
-                    List<AroVChkRaUd> chkRaUdViewList = restArchEjb.retrieveChkRaUnitaDocList(idStrut);
-                    // I controlli fanno riferimento all'ente convenzionato associato alla struttura passata in ingresso
-                    // dunque si possono ricavare informazioni anche riguardanti le altre strutture associate
-                    String messaggio1 = "Richiesta annullata - ci sono unità documentarie non inserite in un elenco di versamento in: <br>";
-                    String messaggio2 = "Richiesta annullata - Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato in: <br>";
-                    boolean trovatoMsg1 = false;
-                    boolean trovatoMsg2 = false;
 
-                    for (AroVChkRaUd chk : chkRaUdViewList) {
-                        OrgStrutRowBean strutRB = struttureEjb.getOrgStrutRowBean(chk.getAroVChkRaUdId().getIdStrut());
-                        OrgEnteRowBean enteRB = struttureEjb.getOrgEnteRowBean(strutRB.getIdEnte());
-                        OrgAmbienteRowBean ambienteRB = struttureEjb.getOrgAmbienteRowBean(enteRB.getIdAmbiente());
-                        if (chk.getFlUdNonInElenco().equals("1")) {
-                            restArchEjb.setDaAnnullareAtomic(
-                                    "Ci sono unità documentarie non inserite in un elenco di versamento",
-                                    idRichRestArch, "RICHIESTA ANNULLATA");
-                            messaggio1 = messaggio1 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
-                                    + strutRB.getNmStrut() + "<br>";
-                            trovatoMsg1 = true;
-                        } else if (chk.getFlElencoNonCompletato().equals("1")) {
-                            restArchEjb.setDaAnnullareAtomic(
-                                    "Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato",
-                                    idRichRestArch, "RICHIESTA ANNULLATA");
-                            messaggio2 = messaggio2 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
-                                    + strutRB.getNmStrut() + "<br>";
-                            trovatoMsg2 = true;
-                        } else if (chk.getFlUdAipNonFirmato().equals("1")) {
-                            restArchEjb.setDaAnnullareAtomic(
-                                    "Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato",
-                                    idRichRestArch, "RICHIESTA ANNULLATA");
-                            messaggio2 = messaggio2 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
-                                    + strutRB.getNmStrut() + "<br>";
-                            trovatoMsg2 = true;
-                        }
-                    }
-                    if (trovatoMsg1) {
-                        getMessageBox().addError(messaggio1);
-                    }
-                    if (trovatoMsg2) {
-                        getMessageBox().addError(messaggio2);
-                    }
+            // MEV #32535 - Recupero le informazioni sulle associazioni con gli enti convenzionati delle strutture
+            // soggette alla restituzione archivio
+            // String listaAssocazioniScadute = "";
+            // String listaAssocazioniScaduteConFuture = "";
+            List<String> listaAssocazioniScadute = new ArrayList<>();
+            List<String> listaAssocazioniScaduteConFuture = new ArrayList<>();
+            List<OrgVRicOrganizRestArch> strutturePerRestArch = restArchEjb.retrieveOrgVRcOrganizRestArchList(idStrut);
+            for (OrgVRicOrganizRestArch strutturaPerRestArch : strutturePerRestArch) {
+                if (strutturaPerRestArch.getFlAssociazioneScaduta() != null
+                        && strutturaPerRestArch.getFlAssociazioneScaduta().equals("1")
+                        && strutturaPerRestArch.getFlAssociazioniFuture() != null
+                        && strutturaPerRestArch.getFlAssociazioniFuture().equals("0")) {
+                    restArchEjb.getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam());
+                    listaAssocazioniScadute
+                            .add(restArchEjb.getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam()));
+                } else if (strutturaPerRestArch.getFlAssociazioneScaduta() != null
+                        && strutturaPerRestArch.getFlAssociazioneScaduta().equals("1")
+                        && strutturaPerRestArch.getFlAssociazioniFuture() != null
+                        && strutturaPerRestArch.getFlAssociazioniFuture().equals("1")) {
+                    restArchEjb.getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam());
+                    listaAssocazioniScaduteConFuture
+                            .add(restArchEjb.getStrutturaDaOrganizIam(strutturaPerRestArch.getIdOrganizIam()));
                 }
-                if (tiRichRestArch.equals("SERIE")) {
-                    // TODO
-                }
-                if (tiRichRestArch.equals("FASCICOLI")) {
-                    // TODO
-                }
-                if (!getMessageBox().hasError()) {
-                    if (idRichRestArch != null) {
-                        calcoloEstrazioneAsync.creaRichiestaEstrazioneAsync(idRichRestArch, idStrut.longValue());
-                    }
-                    if (idRichRestArch != null) {
-                        getSession().setAttribute("ricaricaRecordCalcoloInCorso", idRichRestArch);
-                        eseguiRicercaRichRestArch();
-                        getMessageBox().clear();
-                        getMessageBox().addInfo("Richiesta di restituzione archivio creata con successo!");
-                    }
+            }
+
+            // if (!listaAssocazioniScadute.equals("") || !listaAssocazioniScaduteConFuture.equals("")) {
+            if (!listaAssocazioniScadute.isEmpty() || !listaAssocazioniScaduteConFuture.isEmpty()) {
+                Object[] attributiAssociazioniScadute = new Object[2];
+                attributiAssociazioniScadute[0] = idStrut;
+                attributiAssociazioniScadute[1] = tiRichRestArch;
+                getSession().setAttribute("attributiAssociazioniScadute", attributiAssociazioniScadute);
+                getRequest().setAttribute("associazioniScadute", listaAssocazioniScadute);
+                getRequest().setAttribute("associazioniScaduteConFuture", listaAssocazioniScaduteConFuture);
+                getRequest().setAttribute("customBoxAssociazioniScaduteRestArch", true);
+            } else {
+                if (!getMessageBox().hasError() && !getMessageBox().hasWarning()) {
+                    eseguiCreazioneRichiestaRestituzioneArchivio(idStrut, tiRichRestArch);
                 }
             }
         } catch (ParerUserError ex) {
@@ -429,14 +389,106 @@ public class RestituzioneArchivioAction extends RestituzioneArchivioAbstractActi
                     "Si \u00E8 verificata un'eccezione nella creazione della richiesta di restituzione archivio");
         }
 
-        if (getMessageBox().hasError()) {
+        if (getMessageBox().hasError() || getMessageBox().hasWarning()) {
             forwardToPublisher(Application.Publisher.RICERCA_RICH_REST_ARCH);
         } else {
             forwardToPublisher(Application.Publisher.RICH_REST_ARCH_DETAIL);
         }
     }
-    // </editor-fold>
 
+    public void confermaCreazioneRichiestaRestituzioneArchivio() {
+        if (getSession().getAttribute("attributiAssociazioniScadute") != null) {
+            Object[] attributiAssociazioniScadute = (Object[]) getSession()
+                    .getAttribute("attributiAssociazioniScadute");
+            BigDecimal idStrut = (BigDecimal) attributiAssociazioniScadute[0];
+            String tiRichRestArch = (String) attributiAssociazioniScadute[1];
+            try {
+                eseguiCreazioneRichiestaRestituzioneArchivio(idStrut, tiRichRestArch);
+            } catch (ParerUserError ex) {
+                logger.error("Errore nel salvataggio della richiesta di restituzione archivio", ex);
+                getMessageBox().addError("Errore nel salvataggio della richiesta di restituzione archivio");
+            } catch (Exception ex) {
+                logger.error(ex.getMessage());
+                getMessageBox().addError(ex.getMessage());
+            }
+        }
+    }
+
+    public void annullaCreazioneRichiestaRestituzioneArchivio() {
+        getSession().removeAttribute("attributiAssociazioniScadute");
+        forwardToPublisher(Application.Publisher.RICERCA_RICH_REST_ARCH);
+    }
+
+    public void eseguiCreazioneRichiestaRestituzioneArchivio(BigDecimal idStrut, String tiRichRestArch)
+            throws ParerUserError, Exception {
+        // Gestisco le richieste scadute
+        restArchEjb.elaboraRichRestArchExpired(idStrut);
+        // Salvo la richiesta di restituzione archivio
+        Long idRichRestArch = restArchEjb.saveRichRestArch(getUser().getIdUtente(), idStrut, tiRichRestArch);
+        //
+        if (tiRichRestArch.equals("UNITA_DOC")) {
+            List<AroVChkRaUd> chkRaUdViewList = restArchEjb.retrieveChkRaUnitaDocList(idStrut);
+            // I controlli fanno riferimento all'ente convenzionato associato alla struttura passata in ingresso
+            // dunque si possono ricavare informazioni anche riguardanti le altre strutture associate
+            String messaggio1 = "Richiesta annullata - ci sono unità documentarie non inserite in un elenco di versamento in: <br>";
+            String messaggio2 = "Richiesta annullata - Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato in: <br>";
+            boolean trovatoMsg1 = false;
+            boolean trovatoMsg2 = false;
+
+            for (AroVChkRaUd chk : chkRaUdViewList) {
+                OrgStrutRowBean strutRB = struttureEjb.getOrgStrutRowBean(chk.getAroVChkRaUdId().getIdStrut());
+                OrgEnteRowBean enteRB = struttureEjb.getOrgEnteRowBean(strutRB.getIdEnte());
+                OrgAmbienteRowBean ambienteRB = struttureEjb.getOrgAmbienteRowBean(enteRB.getIdAmbiente());
+                if (chk.getFlUdNonInElenco().equals("1")) {
+                    restArchEjb.setDaAnnullareAtomic(
+                            "Ci sono unità documentarie non inserite in un elenco di versamento", idRichRestArch,
+                            "RICHIESTA ANNULLATA");
+                    messaggio1 = messaggio1 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
+                            + strutRB.getNmStrut() + "<br>";
+                    trovatoMsg1 = true;
+                } else if (chk.getFlElencoNonCompletato().equals("1")) {
+                    restArchEjb.setDaAnnullareAtomic(
+                            "Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato",
+                            idRichRestArch, "RICHIESTA ANNULLATA");
+                    messaggio2 = messaggio2 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
+                            + strutRB.getNmStrut() + "<br>";
+                    trovatoMsg2 = true;
+                } else if (chk.getFlUdAipNonFirmato().equals("1")) {
+                    restArchEjb.setDaAnnullareAtomic(
+                            "Il processo di conservazione delle unità documentarie presenti in archivio non è ancora completato",
+                            idRichRestArch, "RICHIESTA ANNULLATA");
+                    messaggio2 = messaggio2 + ambienteRB.getNmAmbiente() + "/" + enteRB.getNmEnte() + "/"
+                            + strutRB.getNmStrut() + "<br>";
+                    trovatoMsg2 = true;
+                }
+            }
+            if (trovatoMsg1) {
+                getMessageBox().addError(messaggio1);
+            }
+            if (trovatoMsg2) {
+                getMessageBox().addError(messaggio2);
+            }
+        }
+        if (tiRichRestArch.equals("SERIE")) {
+            // TODO
+        }
+        if (tiRichRestArch.equals("FASCICOLI")) {
+            // TODO
+        }
+        if (!getMessageBox().hasError()) {
+            if (idRichRestArch != null) {
+                calcoloEstrazioneAsync.creaRichiestaEstrazioneAsync(idRichRestArch, idStrut.longValue());
+            }
+            if (idRichRestArch != null) {
+                getSession().setAttribute("ricaricaRecordCalcoloInCorso", idRichRestArch);
+                eseguiRicercaRichRestArch();
+                getMessageBox().clear();
+                getMessageBox().addInfo("Richiesta di restituzione archivio creata con successo!");
+            }
+        }
+    }
+
+    // </editor-fold>
     // <editor-fold defaultstate="expand" desc="UI Ricerca restituzione archivio">
     @Secure(action = "Menu.RestituzioneArchivio.RicercaRestArchUd")
     public void loadRicercaRestArchUd() throws EMFError {

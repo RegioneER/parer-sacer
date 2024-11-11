@@ -71,6 +71,8 @@ public class ElvFileElencoVer implements Serializable {
 
     private String tiFileElencoVers;
 
+    private String tiFirma;
+
     private ElvElencoVer elvElencoVer;
 
     private List<ElvUrnFileElencoVers> elvUrnFileElencoVerss = new ArrayList<>();
@@ -84,12 +86,28 @@ public class ElvFileElencoVer implements Serializable {
         this.tiFileElencoVers = tiFileElencoVers;
     }
 
+    public ElvFileElencoVer(byte[] blFileElencoVers, String cdVerXsdFile, String tiFileElencoVers, String tiFirma) {
+        this.blFileElencoVers = blFileElencoVers;
+        this.cdVerXsdFile = cdVerXsdFile;
+        this.tiFileElencoVers = tiFileElencoVers;
+        this.tiFirma = tiFirma;
+    }
+
     public ElvFileElencoVer(long idFileElencoVers, byte[] blFileElencoVers, String cdVerXsdFile,
             String tiFileElencoVers) {
         this.idFileElencoVers = idFileElencoVers;
         this.blFileElencoVers = blFileElencoVers;
         this.cdVerXsdFile = cdVerXsdFile;
         this.tiFileElencoVers = tiFileElencoVers;
+    }
+
+    public ElvFileElencoVer(long idFileElencoVers, byte[] blFileElencoVers, String cdVerXsdFile,
+            String tiFileElencoVers, String tiFirma) {
+        this.idFileElencoVers = idFileElencoVers;
+        this.blFileElencoVers = blFileElencoVers;
+        this.cdVerXsdFile = cdVerXsdFile;
+        this.tiFileElencoVers = tiFileElencoVers;
+        this.tiFirma = tiFirma;
     }
 
     @Id
@@ -179,6 +197,15 @@ public class ElvFileElencoVer implements Serializable {
 
     public void setTiFileElencoVers(String tiFileElencoVers) {
         this.tiFileElencoVers = tiFileElencoVers;
+    }
+
+    @Column(name = "TI_FIRMA")
+    public String getTiFirma() {
+        return tiFirma;
+    }
+
+    public void setTiFirma(String tiFirma) {
+        this.tiFirma = tiFirma;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

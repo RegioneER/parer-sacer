@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.parer.elencoVersFascicoli.utils.FasFascicoloObj;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroDoc;
 import it.eng.parer.entity.AroUnitaDoc;
@@ -946,7 +947,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
 
     public void storeFileIntoElenco(ElvElencoVersFasc elenco, byte[] file, String fileType, Date dtCreazioneFile,
             String dsHashFile, String dsAlgoHashFile, String cdEncodingHashFile, String dsUrnFile,
-            String dsUrnNormalizFile, String cdVerXsdFile) {
+            String dsUrnNormalizFile, String cdVerXsdFile, ElencoEnums.TipoFirma tipoFirma) {
         ElvFileElencoVersFasc fileIndexElencoVersFasc = new ElvFileElencoVersFasc();
         fileIndexElencoVersFasc.setBlFileElencoVers(file);
         fileIndexElencoVersFasc.setTiFileElencoVers(fileType);
@@ -958,6 +959,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         fileIndexElencoVersFasc.setCdEncodingHashFile(cdEncodingHashFile);
         fileIndexElencoVersFasc.setDsUrnFile(dsUrnFile);
         fileIndexElencoVersFasc.setDsUrnNormalizFile(dsUrnNormalizFile);
+        fileIndexElencoVersFasc.setTiFirma(tipoFirma == null ? null : tipoFirma.name());
         fileIndexElencoVersFasc.setCdVerXsdFile(cdVerXsdFile);
         List<ElvFileElencoVersFasc> fileIndexElencoConservList = elenco.getElvFileElencoVersFasc();
         fileIndexElencoConservList.add(fileIndexElencoVersFasc);
@@ -1107,7 +1109,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
     }
 
     public List<ElvFileElencoVersFasc> retrieveFileIndiceElenco(long idElencoVersFasc, String... tiFileElencoVers) {
-        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVersFasc u "
+        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.idFileElencoVersFasc, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers, u.tiFirma) FROM ElvFileElencoVersFasc u "
                 + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN (:tiFileElencoVers)";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVersFasc", idElencoVersFasc);
@@ -1115,15 +1117,14 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
         return query.getResultList();
     }
 
-    public List<ElvFileElencoVersFasc> retrieveFileIndiceElenco2(long idElencoVersFasc, String... tiFileElencoVers) {
-        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.idFileElencoVersFasc, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVersFasc u "
-                + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN (:tiFileElencoVers)";
-        Query query = em.createQuery(queryStr);
-        query.setParameter("idElencoVersFasc", idElencoVersFasc);
-        query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers));
-        return query.getResultList();
-    }
-
+    /*
+     * public List<ElvFileElencoVersFasc> retrieveFileIndiceElenco2(long idElencoVersFasc, String... tiFileElencoVers) {
+     * String queryStr =
+     * "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.idFileElencoVersFasc, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVersFasc u "
+     * + "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN (:tiFileElencoVers)";
+     * Query query = em.createQuery(queryStr); query.setParameter("idElencoVersFasc", idElencoVersFasc);
+     * query.setParameter("tiFileElencoVers", Arrays.asList(tiFileElencoVers)); return query.getResultList(); }
+     */
     /**
      * Restituisce il numero dei fascicoli versati in elenco
      *

@@ -23,10 +23,12 @@ import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
 import it.eng.parer.common.signature.Signature;
+import it.eng.parer.entity.SerUrnFileVerSerie;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiSessioneFirma;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.ejb.SerieSignatureSessionEjb;
+import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
 import it.eng.parer.firma.crypto.sign.SigningResponse;
@@ -34,6 +36,7 @@ import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
 import it.eng.parer.firma.crypto.verifica.VerFormatiEnums;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.job.utils.JobConstants;
+import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.serie.dto.CreazioneSerieBean;
 import it.eng.parer.serie.dto.IntervalliSerieAutomBean;
 import it.eng.parer.serie.dto.RicercaSerieBean;
@@ -104,9 +107,10 @@ import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.web.validator.TypeValidator;
-import it.eng.parer.ws.dto.CSChiave;
 import it.eng.parer.ws.dto.CSChiaveSerie;
 import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.ejb.RecuperoDocumento;
+import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
@@ -141,7 +145,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -159,6 +162,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipOutputStream;
 import javax.ejb.EJB;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -205,6 +210,10 @@ public class SerieUDAction extends SerieUDAbstractAction {
     private SerieSignatureSessionEjb serieSignSessionEjb;
     @EJB(mappedName = "java:app/Parer-ejb/AmministrazioneEjb")
     private AmministrazioneEjb amministrazioneEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/RecuperoDocumento")
+    private RecuperoDocumento recuperoDocumento;
+
+    private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
 
     @Override
     public void initOnClick() throws EMFError {
@@ -4190,22 +4199,44 @@ public class SerieUDAction extends SerieUDAbstractAction {
             extension = ".xml";
             tiFileVerSerie = CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name();
         } else if (tiStatoVerSerie.equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())) {
-            extension = ".xml.p7m";
             tiFileVerSerie = CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name();
+
+            // MEV#15967 - Attivazione della firma Xades e XadesT
+            try {
+                String tiFirma = serieEjb.getTipoFirmaFileVerSerie(idVerSerie, tiFileVerSerie);
+                if (tiFirma != null
+                        && tiFirma.equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES.name())) {
+                    extension = ".xml";
+                } else {
+                    extension = ".xml.p7m";
+                }
+            } catch (ParerUserError ex) {
+                throw new EMFError(ex.getMessage(), ex);
+            }
+            //
+
         } else {
             getMessageBox().addError(
                     "Errore inaspettato per il download dell'indice AIP : stato versione diverso da 'DA_FIRMARE' o 'FIRMATA'");
         }
-        byte[] indiceAip = null;
-        try {
-            indiceAip = serieEjb.getFile(idVerSerie, tiFileVerSerie);
-        } catch (ParerUserError ex) {
-            getMessageBox().addError(ex.getDescription());
+
+        String maxResultStandard = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
+        SerUrnFileVerSerie verIndice = serieEjb.getUrnFileVerSerieNormalizzatoByIdVerSerieAndTiFile(idVerSerie,
+                tiFileVerSerie);
+        String filename = null;
+
+        if (verIndice != null) {
+            filename = verIndice.getDsUrn();
         }
 
-        if (!getMessageBox().hasError()) {
-            if (indiceAip != null) {
-                // Ricavo il file da scaricare
+        if (StringUtils.isNotBlank(filename)) {
+            ZipArchiveOutputStream out = new ZipArchiveOutputStream(getServletOutputStream());
+            getResponse().setContentType("application/zip");
+            getResponse().setHeader("Content-Disposition",
+                    "attachment; filename=\"" + MessaggiWSFormat.bonificaUrnPerNomeFile(filename) + ".zip");
+
+            try {
                 // Nome del file IndiceAIPSerieUD-<versione serie>_<ambiente>_<ente>_<struttura>_<codice serie>”
                 String cdVersioneSerie = getForm().getSerieDetail().getCd_ver_serie().parse();
                 String[] ambEnteStrutSerie = serieEjb.ambienteEnteStrutturaSerie(idSerie);
@@ -4215,33 +4246,38 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
                 nomeXml = nomeXml + extension;
 
-                getResponse().setContentType(it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.XML.getContentType());
-                getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeXml);
-                // Ricavo lo stream di output
-                OutputStream out = getServletOutputStream();
-                try {
-                    // Caccio dentro nello zippone il blobbo
-                    scriviBlobboSuStream(out, indiceAip);
-                    out.flush();
-                } catch (IOException e) {
-                    getMessageBox().addMessage(
-                            new Message(MessageLevel.ERR, "Errore nel recupero del file XML relativo all'indice AIP "));
-                    log.error("Eccezione", e);
-                } finally {
-                    IOUtils.closeQuietly(out);
-                    out = null;
-                    if (!getMessageBox().hasError()) {
-                        freeze();
-                    }
-                }
-            } else {
-                getMessageBox().addError("Errore nel recupero del file XML relativo all'indice AIP");
+                zippaIndiceAIPOs(out, idVerSerie.longValue(), nomeXml, tiFileVerSerie);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                log.error("Eccezione", e);
+            } finally {
+                freeze();
             }
         }
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(Application.Publisher.SERIE_UD_DETAIL);
-        }
     }
+
+    // MEV#30400
+    private void zippaIndiceAIPOs(ZipArchiveOutputStream zipOutputStream, Long idVerIndiceAip, String nomeXml,
+            String tiFile) throws IOException {
+
+        ZipArchiveEntry verIndiceAipZae = new ZipArchiveEntry(nomeXml);
+        zipOutputStream.putArchiveEntry(verIndiceAipZae);
+
+        // recupero documento blob vs obj storage
+        // build dto per recupero
+        RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(Constants.TiEntitaSacerObjectStorage.INDICE_AIP_SERIE,
+                idVerIndiceAip, zipOutputStream, RecBlbOracle.TabellaBlob.SER_FILE_VER_SERIE, tiFile);
+        // recupero
+        boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+
+        if (!esitoRecupero) {
+            throw new IOException(ECCEZIONE_RECUPERO_INDICE_AIP);
+        }
+
+        zipOutputStream.closeArchiveEntry();
+    }
+    // end MEV#30400
 
     public void scriviBlobboSuStream(OutputStream out, byte[] blobbo) throws IOException {
         // Ricavo lo stream di input
@@ -5662,7 +5698,19 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     BigDecimal idSerie = serie.getBigDecimal("id_ver_serie");
                     request.addFile(idSerie);
                 }
-                Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                Future<SigningResponse> provaAsync = null;
+                it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
+                        .getTipoFirmaPerStruttura(getIdStrutCorrente());
+                switch (tipoFirma) {
+                case CADES:
+                    provaAsync = firmaHsmEjb.signP7M(request);
+                    break;
+                case XADES:
+                    provaAsync = firmaHsmEjb.signXades(request);
+                    break;
+                }
+                //
                 getSession().setAttribute(Signature.FUTURE_ATTR_SERIE, provaAsync);
             }
 
@@ -5735,6 +5783,11 @@ public class SerieUDAction extends SerieUDAbstractAction {
             forwardToPublisher(getLastPublisher());
             getSession().removeAttribute(Signature.FUTURE_ATTR_SERIE);
         }
+    }
+
+    /* Getter di valori utilizzati all'interno della action */
+    private BigDecimal getIdStrutCorrente() {
+        return getUser().getIdOrganizzazioneFoglia();
     }
 
     // </editor-fold>

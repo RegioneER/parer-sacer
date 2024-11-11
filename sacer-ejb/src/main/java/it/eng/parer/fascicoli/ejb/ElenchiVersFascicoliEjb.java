@@ -144,6 +144,16 @@ public class ElenchiVersFascicoliEjb {
         try {
             elencoRowBean = (ElvElencoVersFascRowBean) Transform.entity2RowBean(elenco);
             final OrgAmbiente orgAmbiente = elenco.getOrgStrut().getOrgEnte().getOrgAmbiente();
+
+            // MEV#15967 - Attivazione della firma Xades e XadesT
+            List<ElvFileElencoVersFasc> elencoIndiceAipFirmato = evfHelper.retrieveFileIndiceElenco(
+                    idElencoVersFasc.longValue(),
+                    new String[] { ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name() });
+            if (elencoIndiceAipFirmato != null && !elencoIndiceAipFirmato.isEmpty()) {
+                elencoRowBean.setString("ti_firma", elencoIndiceAipFirmato.get(0).getTiFirma());
+            }
+            //
+
             elencoRowBean.setString("nm_criterio_raggr", elenco.getDecCriterioRaggrFasc().getNmCriterioRaggr());
             elencoRowBean.setString("ds_criterio_raggr", elenco.getDecCriterioRaggrFasc().getDsCriterioRaggr());
             elencoRowBean.setString("ti_stato", statoElenco.getTiStato().name());
@@ -478,7 +488,7 @@ public class ElenchiVersFascicoliEjb {
         // elenco>:Indice”
         evfHelper.storeFileIntoElenco(elenco, indexFile, ElencoEnums.FileTypeEnum.INDICE_ELENCO.name(), new Date(),
                 hashXmlIndice, TipiHash.SHA_256.descrivi(), TipiEncBinari.HEX_BINARY.descrivi(), urnXmlIndice,
-                urnXmlIndiceNormaliz, ElencoEnums.ElencoInfo.VERSIONE_ELENCO.message());
+                urnXmlIndiceNormaliz, ElencoEnums.ElencoInfo.VERSIONE_ELENCO.message(), null);
 
         // Registro un nuovo stato = CHIUSO e lo lascio nella coda degli elenchi da elaborare assegnando stato = CHIUSO
         ElvStatoElencoVersFasc statoElencoVersFasc = new ElvStatoElencoVersFasc();
@@ -685,13 +695,23 @@ public class ElenchiVersFascicoliEjb {
 
     public void streamOutFileIndiceElenco(ZipOutputStream out, String fileNamePrefix, String fileNameSuffix,
             long idElencoVersFasc, FileTypeEnum... fileTypes) throws IOException {
-        List<ElvFileElencoVersFasc> retrieveFileIndiceElenco = evfHelper.retrieveFileIndiceElenco2(idElencoVersFasc,
+        List<ElvFileElencoVersFasc> retrieveFileIndiceElenco = evfHelper.retrieveFileIndiceElenco(idElencoVersFasc,
                 FileTypeEnum.getStringEnumsList(fileTypes));
         for (ElvFileElencoVersFasc elvFileElencoVersFasc : retrieveFileIndiceElenco) {
             FileTypeEnum fileType = ElencoEnums.FileTypeEnum.valueOf(elvFileElencoVersFasc.getTiFileElencoVers());
             fileNamePrefix = StringUtils.defaultString(fileNamePrefix);
             fileNameSuffix = StringUtils.defaultString(fileNameSuffix);
-            String fileExtension = fileType.getFileExtension();
+
+            // MEV#15967 - Attivazione della firma Xades e XadesT
+            String fileExtension = null;
+            String tiFirma = elvFileElencoVersFasc.getTiFirma();
+            if (tiFirma != null
+                    && tiFirma.equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES.name())) {
+                fileExtension = ".xml";
+            } else {
+                fileExtension = fileType.getFileExtension();
+            }
+            //
             switch (fileType) {
             case INDICE_ELENCO:
             case FIRMA_INDICE_ELENCO:
@@ -736,7 +756,8 @@ public class ElenchiVersFascicoliEjb {
         }
     }
 
-    public void storeFirma(Long idElencoVersFasc, byte[] fileFirmato, Date signatureDate, long idUtente)
+    public void storeFirma(Long idElencoVersFasc, byte[] fileFirmato, Date signatureDate, long idUtente,
+            it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma)
             throws NoSuchAlgorithmException, IOException {
         ElvElencoVersFasc elenco = evfHelper.retrieveElencoById(idElencoVersFasc);
         // calcolo l'hash SHA-256 del file .p7m
@@ -760,7 +781,7 @@ public class ElenchiVersFascicoliEjb {
         // elenco>:IndiceFirmato”
         evfHelper.storeFileIntoElenco(elenco, fileFirmato, ElencoEnums.FileTypeEnum.FIRMA_INDICE_ELENCO.name(),
                 signatureDate, hashXmlIndice, TipiHash.SHA_256.descrivi(), TipiEncBinari.HEX_BINARY.descrivi(),
-                urnXmlIndice, urnXmlIndiceNormaliz, ElencoEnums.ElencoInfo.VERSIONE_ELENCO.message());
+                urnXmlIndice, urnXmlIndiceNormaliz, ElencoEnums.ElencoInfo.VERSIONE_ELENCO.message(), tipoFirma);
 
         /* Registro un nuovo stato = FIRMATO */
         ElvStatoElencoVersFasc statoElencoVersFasc = new ElvStatoElencoVersFasc();
@@ -869,11 +890,14 @@ public class ElenchiVersFascicoliEjb {
      *            id utente
      * @param backendMetadata
      *            tipo backend
+     * @param tipoFirma
+     *            tipo firma (XADES o CADES)
      *
      * @return ElvFileElencoVersFasc
      */
     public ElvFileElencoVersFasc storeFirmaElencoIndiceAipFasc(Long idElencoVersFasc, byte[] fileFirmato,
-            Date signatureDate, long idUtente, BackendStorage backendMetadata) {
+            Date signatureDate, long idUtente, BackendStorage backendMetadata,
+            it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma) {
         ElvElencoVersFasc elenco = evfHelper.retrieveElencoById(idElencoVersFasc);
         evfHelper.lockElenco(elenco);
 
@@ -917,6 +941,7 @@ public class ElenchiVersFascicoliEjb {
         fileElencoVersFasc.setDsUrnFile(urnElencoIndiceAIPFirmato);
         fileElencoVersFasc.setDsUrnNormalizFile(urnNormalizElencoIndiceAIPFirmato);
         fileElencoVersFasc.setDsAlgoHashFile(TipiHash.SHA_256.descrivi());
+        fileElencoVersFasc.setTiFirma(tipoFirma == null ? null : tipoFirma.name());
         fileElencoVersFasc.setCdEncodingHashFile(TipiEncBinari.HEX_BINARY.descrivi());
         if (elenco.getElvFileElencoVersFasc() == null) {
             elenco.setElvFileElencoVersFasc(new ArrayList<>());

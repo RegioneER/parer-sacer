@@ -46,6 +46,9 @@ public class RecuperoDocBean implements java.io.Serializable {
     // MEV#30395 MEV #30398
     private TabellaClob tabellaClobDaLeggere;
     // end MEV#30395 MEV #30398
+    // MEV#30400
+    private String tiFile; // per distinguere i diversi tipi di file per una stessa versione
+    // end MEV#30400
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
             TabellaBlob tabellaBlobDaLeggere) {
@@ -63,6 +66,16 @@ public class RecuperoDocBean implements java.io.Serializable {
         this.id = id;
         this.os = os;
         this.tabellaClobDaLeggere = tabellaClobDaLeggere;
+    }
+
+    public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os, TabellaBlob tabellaBlobDaLeggere,
+            String tiFile) {
+        super();
+        this.tipo = tipo;
+        this.id = id;
+        this.os = os;
+        this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+        this.tiFile = tiFile;
     }
 
     /**
@@ -148,6 +161,21 @@ public class RecuperoDocBean implements java.io.Serializable {
     @Override
     public String toString() {
         return "id=" + id + ", tipo=" + tipo + ", tabellaBlobDaLeggere=" + tabellaBlobDaLeggere;
+    }
+
+    /**
+     * @return tiFile
+     */
+    public String getTiFile() {
+        return tiFile;
+    }
+
+    /**
+     * @param tiFile
+     *            tipo file
+     */
+    public void setTiFile(String tiFile) {
+        this.tiFile = tiFile;
     }
 
 }
