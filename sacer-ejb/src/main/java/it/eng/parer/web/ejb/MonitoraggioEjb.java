@@ -221,7 +221,8 @@ public class MonitoraggioEjb {
             //
             return objectStorageService.getObjectComponenteInStaging(idFileSessioneKo, out);
         } else { // file è su DB
-            return recBlbOracle.recuperaBlobCompSuStream(idFileSessioneKo, out, RecBlbOracle.TabellaBlob.ERRORI_VERS);
+            return recBlbOracle.recuperaBlobCompSuStream(idFileSessioneKo, out, RecBlbOracle.TabellaBlob.ERRORI_VERS,
+                    null);
         }
     }
 

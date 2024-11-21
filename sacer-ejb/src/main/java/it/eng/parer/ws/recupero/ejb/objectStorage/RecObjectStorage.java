@@ -145,6 +145,9 @@ public class RecObjectStorage {
             rc = this.recuperaObjectStorageElencoIndiciAipFascSuStream(dto.getId(), dto.getOs());
             break;
         // end MEV #30399
+        case INDICE_AIP_SERIE:
+            rc = this.recuperaObjectStorageIndiceAipSerieUDSuStream(dto.getId(), dto.getOs(), dto.getTiFile());
+            break;
         default:
             log.warn("Tipo oggetto {} non supportato", dto.getTipo());
             break;
@@ -185,4 +188,21 @@ public class RecObjectStorage {
         return rc;
     }
     // end MEV #30399
+
+    // MEV #30400
+    private boolean recuperaObjectStorageIndiceAipSerieUDSuStream(long serVerSerie, OutputStream outputStream,
+            String tiFile) {
+        boolean rc = false;
+
+        try {
+            objectStorageService.getSerVerSerieObjectStorage(serVerSerie, tiFile, outputStream);
+            rc = true;
+        } catch (Exception e) {
+
+            log.error(LOG_EXCEPTION_OS, e);
+        }
+
+        return rc;
+    }
+    // end MEV #30400
 }

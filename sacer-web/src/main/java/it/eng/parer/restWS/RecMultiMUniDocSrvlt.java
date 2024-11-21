@@ -154,6 +154,7 @@ public class RecMultiMUniDocSrvlt extends HttpServlet {
         sessioneFinta.setTmApertura(new Date());
         //
         sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(request));
+        // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con certificato
         sessioneFinta.setCertCommonName(myRequestPrsr.leggiCertCommonName(request));
         // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
@@ -185,7 +186,11 @@ public class RecMultiMUniDocSrvlt extends HttpServlet {
                     tmpPrsrConfig.setRequest(request);
                     tmpPrsrConfig.setUploadHandler(upload);
                     //
-                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig);
+                    // fileItems = myRequestPrsr.parseWithCommonName(rispostaWs, tmpPrsrConfig);
+                    // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con
+                    // certificato
+                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, null,
+                            sessioneFinta.getCertCommonName() == null ? false : true);
                     //
                     if (rispostaWs.getSeverity() != SeverityEnum.OK) {
                         rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(), rispostaWs.getErrorMessage());

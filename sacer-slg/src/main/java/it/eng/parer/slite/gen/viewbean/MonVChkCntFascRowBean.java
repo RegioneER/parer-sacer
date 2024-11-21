@@ -43,7 +43,6 @@ public class MonVChkCntFascRowBean extends BaseRow implements JEEBaseRowInterfac
 
     public MonVChkCntFascRowBean() {
         super();
-        resetCounters();
     }
 
     public TableDescriptor getTableDescriptor() {

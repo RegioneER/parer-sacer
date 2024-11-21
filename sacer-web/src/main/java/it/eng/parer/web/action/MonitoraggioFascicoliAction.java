@@ -125,7 +125,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
     public static final String TI_STATO_IN_ATTESA_SCHED = "IN_ATTESA_SCHED";
 
     @Secure(action = "Menu.Monitoraggio.RiepilogoVersamentiFascicoli")
-    public void loadRiepilogoVersamentiFascicoli() throws EMFError {
+    public void loadRiepilogoVersamentiFascicoli() throws EMFError, Throwable {
         try {
             // BigDecimal idStrut = new BigDecimal(getRequest().getParameter("idStrut") != null ? (String)
             // getRequest().getParameter("idStrut") : "0");
@@ -162,6 +162,8 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             getForm().getRiepilogoVersamentiFascicoli().getId_strut().setValue(idStruttura.toString());
             calcolaRiepilogo(idAmbiente, idEnte, idStruttura, null);
 
+            calcTotFascicoliVersatiButton();
+            calcTotFascicoliVersFallitiButton();
             postLoad();
         } catch (ParerUserError ex) {
             getMessageBox().addError("Errore inatteso nel caricamento della pagina");

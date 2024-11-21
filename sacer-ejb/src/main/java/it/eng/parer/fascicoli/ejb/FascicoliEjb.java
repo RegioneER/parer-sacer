@@ -964,7 +964,7 @@ public class FascicoliEjb {
         } else {
             throw new RuntimeException("Errore parametri nella chiamata al metodo calcolaRiepilogo() dell'ejb!");
         }
-        rowBean.resetCounters();
+        // rowBean.resetCounters();
         if (l != null && !l.isEmpty()) {
             rowBean.entityToRowBean(l.iterator().next());
         }

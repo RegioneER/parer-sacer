@@ -181,6 +181,10 @@ public class ElencoEnums {
         }
     }
 
+    public enum TipoFirma {
+        CADES, XADES
+    }
+
     public enum ModeEnum {
 
         BATCH, ONLINE, ADD, SUB

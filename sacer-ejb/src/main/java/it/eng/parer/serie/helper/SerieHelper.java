@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.paginator.helper.LazyListHelper;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.DecCampoInpUd;
@@ -475,6 +476,27 @@ public class SerieHelper extends GenericHelper {
         query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
         query.setParameter("tiUrn", tiUrn);
         return query.getResultList();
+    }
+
+    public SerUrnFileVerSerie getUrnFileVerSerie(BigDecimal idVerSerie, List<TiUrnFileVerSerie> tiUrn, String tiFile) {
+        Query query = getEntityManager()
+                .createQuery("SELECT s FROM SerUrnFileVerSerie s " + "JOIN s.serFileVerSerie fileVerSerie "
+                        + "JOIN fileVerSerie.serVerSerie verSerie " + "WHERE verSerie.idVerSerie = :idVerSerie "
+                        + "AND s.tiUrn IN :tiUrn AND fileVerSerie.tiFileVerSerie = :tiFile");
+        query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
+        query.setParameter("tiUrn", tiUrn);
+        query.setParameter("tiFile", tiFile);
+        return (SerUrnFileVerSerie) query.getSingleResult();
+    }
+
+    public SerFileVerSerie getFileVerSerieByTipoFile(BigDecimal idVerSerie,
+            CostantiDB.TipoFileVerSerie tipoFileVerSerie) {
+        Query query = getEntityManager().createQuery("SELECT s FROM SerFileVerSerie s "
+                + "WHERE s.serVerSerie.idVerSerie = :idVerSerie AND s.tiFileVerSerie IN :tiFileVerSerie");
+        query.setParameter("idVerSerie", longFromBigDecimal(idVerSerie));
+        query.setParameter("tiFileVerSerie", tipoFileVerSerie.name());
+        List<SerFileVerSerie> l = query.getResultList();
+        return (l != null && !l.isEmpty()) ? l.get(0) : null;
     }
 
     public List<SerUrnIxVolVerSerie> getUrnIxVolVerSerieByTipiUrn(BigDecimal idVolVerSerie,
@@ -1473,6 +1495,11 @@ public class SerieHelper extends GenericHelper {
      *            id struttura
      * @param dtCreazione
      *            data creazione
+     * @param tipoFirma
+     *            tipo firma (XADES o CADES)
+     *
+     * @param putOnOs
+     *            parametro per decidere se salvare anche il blob
      *
      * @return entity SerFileVerSerie
      *
@@ -1483,12 +1510,17 @@ public class SerieHelper extends GenericHelper {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public SerFileVerSerie storeFileIntoSerFileVerSerie(long idVerSerie, String tiFileVerSerie, byte[] blFile,
-            String cdVerXsdFile, BigDecimal idStrut, Date dtCreazione) throws NoSuchAlgorithmException, IOException {
+            String cdVerXsdFile, BigDecimal idStrut, Date dtCreazione, boolean putOnOs, ElencoEnums.TipoFirma tipoFirma)
+            throws NoSuchAlgorithmException, IOException {
         SerFileVerSerie fileVerSerie = new SerFileVerSerie();
         SerVerSerie verSerie = getEntityManager().find(SerVerSerie.class, idVerSerie);
         fileVerSerie.setSerVerSerie(verSerie);
         fileVerSerie.setTiFileVerSerie(tiFileVerSerie);
-        fileVerSerie.setBlFile(blFile);
+
+        if (!putOnOs) {
+            fileVerSerie.setBlFile(blFile);
+        }
+
         String hash = new HashCalculator().calculateHashSHAX(blFile, TipiHash.SHA_256).toHexBinary();
         fileVerSerie.setDsHashFile(hash);
         fileVerSerie.setDsAlgoHashFile(TipiHash.SHA_256.descrivi());
@@ -1496,6 +1528,7 @@ public class SerieHelper extends GenericHelper {
         fileVerSerie.setCdVerXsdFile(cdVerXsdFile);
         fileVerSerie.setIdStrut(idStrut);
         fileVerSerie.setDtCreazione(dtCreazione);
+        fileVerSerie.setTiFirma(tipoFirma == null ? null : tipoFirma.name());
         OrgStrut strut = findById(OrgStrut.class, idStrut);
         fileVerSerie.setIdEnteConserv(strut.getOrgEnte().getOrgAmbiente().getIdEnteConserv());
         getEntityManager().persist(fileVerSerie);

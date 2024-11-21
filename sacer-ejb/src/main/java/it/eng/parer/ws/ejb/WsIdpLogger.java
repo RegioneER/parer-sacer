@@ -45,6 +45,7 @@ import it.eng.parer.util.ejb.AppServerInstance;
 import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.util.JpaUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -68,7 +69,7 @@ public class WsIdpLogger {
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
-    public void scriviLog(LogDto logDto) {
+    public void scriviLog(LogDto logDto, String password) {
         HashMap<String, String> iamDefaults = null;
 
         RispostaControlli rispostaControlli = controlliSemantici
@@ -94,8 +95,11 @@ public class WsIdpLogger {
                 IdpConfigLog icl = new IdpConfigLog();
                 icl.setQryRegistraEventoUtente(
                         iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_REGISTRA_EVENTO_UTENTE));
-                icl.setQryVerificaDisattivazioneUtente(
-                        iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE));
+
+                if (!StringUtils.isBlank(password)) {
+                    icl.setQryVerificaDisattivazioneUtente(
+                            iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_VERIFICA_DISATTIVAZIONE_UTENTE));
+                }
                 icl.setQryDisabilitaUtente(iamDefaults.get(CostantiDB.ParametroAppl.IDP_QRY_DISABLE_USER));
                 icl.setMaxTentativi(
                         Integer.parseInt(iamDefaults.get(CostantiDB.ParametroAppl.IDP_MAX_TENTATIVI_FALLITI)));
@@ -104,7 +108,7 @@ public class WsIdpLogger {
                 logDto.setServername(asi.getName());
                 IdpLogger.EsitiLog risposta = (new IdpLogger(icl).scriviLog(logDto, connection));
 
-                if (risposta == IdpLogger.EsitiLog.UTENTE_DISATTIVATO) {
+                if (risposta == IdpLogger.EsitiLog.UTENTE_DISATTIVATO && !StringUtils.isBlank(password)) {
                     String queryStr = "update IamUser iu " + "set iu.flAttivo = :flAttivoIn "
                             + "where iu.nmUserid = :nmUseridIn ";
 

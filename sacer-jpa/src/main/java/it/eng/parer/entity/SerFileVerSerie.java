@@ -71,6 +71,8 @@ public class SerFileVerSerie implements Serializable {
 
     private String tiFileVerSerie;
 
+    private String tiFirma;
+
     private SerVerSerie serVerSerie;
 
     private BigDecimal idEnteConserv;
@@ -186,6 +188,15 @@ public class SerFileVerSerie implements Serializable {
 
     public void setIdEnteConserv(BigDecimal idEnteConserv) {
         this.idEnteConserv = idEnteConserv;
+    }
+
+    @Column(name = "TI_FIRMA")
+    public String getTiFirma() {
+        return tiFirma;
+    }
+
+    public void setTiFirma(String tiFirma) {
+        this.tiFirma = tiFirma;
     }
 
     @OneToMany(mappedBy = "serFileVerSerie", cascade = CascadeType.PERSIST)

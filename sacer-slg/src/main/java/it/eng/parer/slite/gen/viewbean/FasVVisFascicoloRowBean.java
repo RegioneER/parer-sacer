@@ -118,8 +118,16 @@ public class FasVVisFascicoloRowBean extends BaseRow implements BaseRowInterface
         return getString("cd_key_fascicolo");
     }
 
+    public String getCdKeyNormalizFascicolo() {
+        return getString("cd_key_normaliz_fascicolo");
+    }
+
     public void setCdKeyFascicolo(String cd_key_fascicolo) {
         setObject("cd_key_fascicolo", cd_key_fascicolo);
+    }
+
+    public void setCdKeyNormalizFascicolo(String cd_key_normaliz_fascicolo) {
+        setObject("cd_key_normaliz_fascicolo", cd_key_normaliz_fascicolo);
     }
 
     public BigDecimal getIdTipoFascicolo() {
@@ -798,6 +806,7 @@ public class FasVVisFascicoloRowBean extends BaseRow implements BaseRowInterface
         this.setIdFascicolo(entity.getIdFascicolo());
         this.setAaFascicolo(entity.getAaFascicolo());
         this.setCdKeyFascicolo(entity.getCdKeyFascicolo());
+        this.setCdKeyNormalizFascicolo(entity.getCdKeyNormalizFascicolo());
         this.setIdTipoFascicolo(entity.getIdTipoFascicolo());
         this.setNmTipoFascicolo(entity.getNmTipoFascicolo());
         this.setDsOggettoFascicolo(entity.getDsOggettoFascicolo());
@@ -901,6 +910,7 @@ public class FasVVisFascicoloRowBean extends BaseRow implements BaseRowInterface
         entity.setIdFascicolo(this.getIdFascicolo());
         entity.setAaFascicolo(this.getAaFascicolo());
         entity.setCdKeyFascicolo(this.getCdKeyFascicolo());
+        entity.setCdKeyNormalizFascicolo(this.getCdKeyNormalizFascicolo());
         entity.setIdTipoFascicolo(this.getIdTipoFascicolo());
         entity.setNmTipoFascicolo(this.getNmTipoFascicolo());
         entity.setDsOggettoFascicolo(this.getDsOggettoFascicolo());

@@ -17,6 +17,7 @@
 
 package it.eng.parer.web.action;
 
+import bsh.StringUtil;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,8 +43,10 @@ import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
+import it.eng.parer.entity.SerUrnFileVerSerie;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.verifica.VerFormatiEnums;
+import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.serie.dto.RicercaSerieBean;
 import it.eng.parer.serie.dto.RicercaUdAppartBean;
 import it.eng.parer.serie.ejb.SerieEjb;
@@ -70,12 +73,17 @@ import it.eng.parer.slite.gen.viewbean.SerVRicSerieUdUsrRowBean;
 import it.eng.parer.slite.gen.viewbean.SerVRicSerieUdUsrTableBean;
 import it.eng.parer.slite.gen.viewbean.SerVVisSerieUdRowBean;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
+import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.ActionUtils;
 import it.eng.parer.web.util.ComboGetter;
+import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.dto.CSChiaveSerie;
 import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.ejb.RecuperoDocumento;
+import it.eng.parer.ws.recupero.dto.ComponenteRec;
+import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
@@ -89,6 +97,9 @@ import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.security.Secure;
+import java.util.List;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 
 /**
  *
@@ -112,6 +123,12 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
     private RegistroEjb registroEjb;
     @EJB(mappedName = "java:app/Parer-ejb/AmbienteEjb")
     private AmbienteEjb ambienteEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
+    private ConfigurationHelper configurationHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/RecuperoDocumento")
+    private RecuperoDocumento recuperoDocumento;
+
+    private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
 
     // <editor-fold defaultstate="collapsed" desc="Ricerca serie per utenti esterni">
     @Secure(action = "Menu.Serie.RicercaSeriePerUtentiExt")
@@ -323,22 +340,44 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
             extension = ".xml";
             tiFileVerSerie = CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name();
         } else if (tiStatoVerSerie.equals(CostantiDB.StatoVersioneSerie.FIRMATA.name())) {
-            extension = ".xml.p7m";
             tiFileVerSerie = CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO_FIRMATO.name();
+
+            // MEV#15967 - Attivazione della firma Xades e XadesT
+            try {
+                String tiFirma = serieEjb.getTipoFirmaFileVerSerie(idVerSerie, tiFileVerSerie);
+                if (tiFirma != null
+                        && tiFirma.equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES.name())) {
+                    extension = ".xml";
+                } else {
+                    extension = ".xml.p7m";
+                }
+            } catch (ParerUserError ex) {
+                throw new EMFError(ex.getMessage(), ex);
+            }
+            //
+
         } else {
             getMessageBox().addError(
                     "Errore inaspettato per il download dell'indice AIP : stato versione diverso da 'DA_FIRMARE' o 'FIRMATA'");
         }
-        byte[] indiceAip = null;
-        try {
-            indiceAip = serieEjb.getFile(idVerSerie, tiFileVerSerie);
-        } catch (ParerUserError ex) {
-            getMessageBox().addError(ex.getDescription());
+
+        String maxResultStandard = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
+        SerUrnFileVerSerie verIndice = serieEjb.getUrnFileVerSerieNormalizzatoByIdVerSerieAndTiFile(idVerSerie,
+                tiFileVerSerie);
+        String filename = null;
+
+        if (verIndice != null) {
+            filename = verIndice.getDsUrn();
         }
 
-        if (!getMessageBox().hasError()) {
-            if (indiceAip != null) {
-                // Ricavo il file da scaricare
+        if (StringUtils.isNotBlank(filename)) {
+            ZipArchiveOutputStream out = new ZipArchiveOutputStream(getServletOutputStream());
+            getResponse().setContentType("application/zip");
+            getResponse().setHeader("Content-Disposition",
+                    "attachment; filename=\"" + MessaggiWSFormat.bonificaUrnPerNomeFile(filename) + ".zip");
+
+            try {
                 // Nome del file IndiceAIPSerieUD-<versione serie>_<ambiente>_<ente>_<struttura>_<codice serie>”
                 String cdVersioneSerie = getForm().getSerieDetail().getCd_ver_serie().parse();
                 String[] ambEnteStrutSerie = serieEjb.ambienteEnteStrutturaSerie(idSerie);
@@ -348,31 +387,38 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
 
                 nomeXml = nomeXml + extension;
 
-                File tmpFile = new File(System.getProperty("java.io.tmpdir"), nomeXml);
-                try {
-                    FileUtils.writeByteArrayToFile(tmpFile, indiceAip);
-
-                    getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
-                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
-                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(), tmpFile.getPath());
-                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name(),
-                            Boolean.toString(true));
-                    getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
-                            VerFormatiEnums.XML_MIME);
-                } catch (IOException ex) {
-                    log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
-                    getMessageBox().addError("Errore inatteso nella preparazione del download");
-                }
-            } else {
-                getMessageBox().addError("Errore nel recupero del file XML relativo all'indice AIP");
+                zippaIndiceAIPOs(out, idVerSerie.longValue(), nomeXml, tiFileVerSerie);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                log.error("Eccezione", e);
+            } finally {
+                freeze();
             }
         }
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(getLastPublisher());
-        } else {
-            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
-        }
     }
+
+    // MEV#30400
+    private void zippaIndiceAIPOs(ZipArchiveOutputStream zipOutputStream, Long idVerIndiceAip, String nomeXml,
+            String tiFile) throws IOException {
+
+        ZipArchiveEntry verIndiceAipZae = new ZipArchiveEntry(nomeXml);
+        zipOutputStream.putArchiveEntry(verIndiceAipZae);
+
+        // recupero documento blob vs obj storage
+        // build dto per recupero
+        RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(Constants.TiEntitaSacerObjectStorage.INDICE_AIP_SERIE,
+                idVerIndiceAip, zipOutputStream, RecBlbOracle.TabellaBlob.SER_FILE_VER_SERIE, tiFile);
+        // recupero
+        boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+
+        if (!esitoRecupero) {
+            throw new IOException(ECCEZIONE_RECUPERO_INDICE_AIP);
+        }
+
+        zipOutputStream.closeArchiveEntry();
+    }
+    // end MEV#30400
 
     @Override
     public void downloadPacchettoArk() throws EMFError {

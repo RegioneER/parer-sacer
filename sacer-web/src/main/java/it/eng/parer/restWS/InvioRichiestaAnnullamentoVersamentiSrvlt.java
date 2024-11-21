@@ -174,7 +174,7 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
 
                     if (isOauth2Request(wrapper)) {
                         super.doPost(request, response);
-                        fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, super.session.getToken());
+                        fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, super.session.getToken(), false);
                     } else {
                         fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig);
                     }
@@ -196,7 +196,8 @@ public class InvioRichiestaAnnullamentoVersamentiSrvlt extends Oauth2Srvlt {
                     if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
                         tmpAvanzamento.setFase("verifica credenziali").logAvanzamento();
                         invioRichiestaAnnullamentoVersamentiEjb.verificaCredenziali(sessioneFinta.getLoginName(),
-                                sessioneFinta.getPassword(), sessioneFinta.getIpChiamante(), rispostaWs, ravExt);
+                                sessioneFinta.getPassword(), sessioneFinta.getIpChiamante(), rispostaWs, ravExt,
+                                isOauth2Request(request));
                     }
 
                     /* CONTROLLI VERSIONE XSD (RICH_ANN_VERS_003) */

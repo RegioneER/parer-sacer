@@ -60,27 +60,28 @@ public class ElvFileElencoVersFasc implements Serializable {
 
     private String tiFileElencoVers;
 
+    private String tiFirma;
+
     private ElvElencoVersFasc elvElencoVersFasc;
 
     public ElvFileElencoVersFasc() {/* Hibernate */
     }
 
-    public ElvFileElencoVersFasc(byte[] blFileElencoVers, String cdVerXsdFile, String tiFileElencoVers) {
-        this.blFileElencoVers = blFileElencoVers;
-        this.cdVerXsdFile = cdVerXsdFile;
-        this.tiFileElencoVers = tiFileElencoVers;
-    }
-
+    /*
+     * public ElvFileElencoVersFasc(byte[] blFileElencoVers, String cdVerXsdFile, String tiFileElencoVers) {
+     * this.blFileElencoVers = blFileElencoVers; this.cdVerXsdFile = cdVerXsdFile; this.tiFileElencoVers =
+     * tiFileElencoVers; }
+     */
     public ElvFileElencoVersFasc(long idFileElencoVersFasc, byte[] blFileElencoVers, String cdVerXsdFile,
-            String tiFileElencoVers) {
+            String tiFileElencoVers, String tiFirma) {
         this.idFileElencoVersFasc = idFileElencoVersFasc;
         this.blFileElencoVers = blFileElencoVers;
         this.cdVerXsdFile = cdVerXsdFile;
         this.tiFileElencoVers = tiFileElencoVers;
+        this.tiFirma = tiFirma;
     }
 
     @Id
-
     @Column(name = "ID_FILE_ELENCO_VERS_FASC")
     @GenericGenerator(name = "SELV_FILE_ELENCO_VERS_FASC_ID_FILE_ELENCO_VERS_FASC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_FILE_ELENCO_VERS_FASC"),
@@ -184,6 +185,15 @@ public class ElvFileElencoVersFasc implements Serializable {
 
     public void setTiFileElencoVers(String tiFileElencoVers) {
         this.tiFileElencoVers = tiFileElencoVers;
+    }
+
+    @Column(name = "TI_FIRMA")
+    public String getTiFirma() {
+        return tiFirma;
+    }
+
+    public void setTiFirma(String tiFirma) {
+        this.tiFirma = tiFirma;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)

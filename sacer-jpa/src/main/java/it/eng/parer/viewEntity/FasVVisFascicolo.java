@@ -55,6 +55,7 @@ public class FasVVisFascicolo implements Serializable {
     private String cdIndServer;
     private String cdIpaAmminTitol;
     private String cdKeyFascicolo;
+    private String cdKeyNormalizFascicolo;
     private String cdKeyFascicoloPadre;
     private String cdKeyUnitaDocFirst;
     private String cdKeyUnitaDocLast;
@@ -352,6 +353,15 @@ public class FasVVisFascicolo implements Serializable {
 
     public void setCdKeyFascicolo(String cdKeyFascicolo) {
         this.cdKeyFascicolo = cdKeyFascicolo;
+    }
+
+    @Column(name = "CD_KEY_NORMALIZ_FASCICOLO")
+    public String getCdKeyNormalizFascicolo() {
+        return this.cdKeyNormalizFascicolo;
+    }
+
+    public void setCdKeyNormalizFascicolo(String cdKeyNormalizFascicolo) {
+        this.cdKeyNormalizFascicolo = cdKeyNormalizFascicolo;
     }
 
     @Column(name = "CD_KEY_FASCICOLO_PADRE")

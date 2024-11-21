@@ -86,7 +86,7 @@ public class RecuperoDocumento {
         // default (ASIS : pre object storage)
         if (dto.getTabellaBlobDaLeggere() != null) {
             log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from BlbOracle, doc = {}", dto);
-            return recBlbOracle.recuperaBlobCompSuStream(dto.getId(), dto.getOs(), dto.getTabellaBlobDaLeggere());
+            return recBlbOracle.recuperaBlobCompSuStream(dto.getId(), dto.getOs(), dto.getTabellaBlobDaLeggere(), dto);
         } else {
             log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from ClbOracle, doc = {}", dto);
             return recClbOracle.recuperaClobDataSuStream(dto.getId(), dto.getOs(), dto.getTabellaClobDaLeggere());
@@ -123,6 +123,11 @@ public class RecuperoDocumento {
             result = objectStorageService.isElencoIndiciAipFascOnOs(doc.getId());
             break;
         // end MEV #30399
+        // MEV#30400
+        case INDICE_AIP_SERIE:
+            result = objectStorageService.isSerFileVerSerieUDOnOs(doc.getId(), doc.getTiFile());
+            break;
+        // end MEV#30400
         default:
             break;
         }

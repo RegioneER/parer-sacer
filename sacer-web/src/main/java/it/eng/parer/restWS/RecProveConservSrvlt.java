@@ -139,6 +139,7 @@ public class RecProveConservSrvlt extends HttpServlet {
         sessioneFinta.setTmApertura(new Date());
         //
         sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(request));
+        // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con certificato
         sessioneFinta.setCertCommonName(myRequestPrsr.leggiCertCommonName(request));
         // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
@@ -171,7 +172,11 @@ public class RecProveConservSrvlt extends HttpServlet {
                     tmpPrsrConfig.setRequest(request);
                     tmpPrsrConfig.setUploadHandler(upload);
                     //
-                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig);
+                    // fileItems = myRequestPrsr.parseWithCommonName(rispostaWs, tmpPrsrConfig);
+                    // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con
+                    // certificato
+                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, null,
+                            sessioneFinta.getCertCommonName() == null ? false : true);
                     //
                     if (rispostaWs.getSeverity() != SeverityEnum.OK) {
                         rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(), rispostaWs.getErrorMessage());
@@ -185,7 +190,7 @@ public class RecProveConservSrvlt extends HttpServlet {
                      * verifica della struttura/signature del web service. Verifica dei dati effettivamente versati
                      * ********************************************************************************
                      */
-                    // testa se la versione è corretta
+                    // testa se la versione Ã¨ corretta
                     if (rispostaWs.getSeverity() == SeverityEnum.OK) {
                         tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.VerificaSemantica)
                                 .setFase("verifica versione").logAvanzamento();
@@ -242,8 +247,8 @@ public class RecProveConservSrvlt extends HttpServlet {
                 }
             } else {
                 rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.WS_CHECK, "La chiamata non è multipart/formdata ");
-                log.error("Errore nella servlet recupero sync: la chiamata non è multipart/formdata ");
+                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.WS_CHECK, "La chiamata non Ã¨ multipart/formdata ");
+                log.error("Errore nella servlet recupero sync: la chiamata non Ã¨ multipart/formdata ");
             }
         }
 

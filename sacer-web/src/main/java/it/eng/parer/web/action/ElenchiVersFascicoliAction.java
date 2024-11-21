@@ -53,6 +53,7 @@ import it.eng.parer.fascicoli.ejb.FascicoliEjb;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
 import it.eng.parer.firma.crypto.ejb.ElencoFascSignatureSessionEjb;
 import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipFascSignatureSessionEjb;
+import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
 import it.eng.parer.firma.crypto.sign.SigningResponse;
@@ -130,7 +131,6 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
     private CriteriRaggrFascicoliEjb criteriRaggrFascicoliEjb;
     @EJB(mappedName = "java:app/Parer-ejb/AmbienteEjb")
     private AmbienteEjb ambienteEjb;
-
     @EJB(mappedName = "java:app/Parer-ejb/FascicoliEjb")
     private FascicoliEjb fascicoliEjb;
     @EJB(mappedName = "java:app/Parer-ejb/FascicoliHelper")
@@ -1748,7 +1748,21 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                     BigDecimal idElenco = elenco.getIdElencoVersFasc();
                     request.addFile(idElenco);
                 }
-                Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
+
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                Future<SigningResponse> provaAsync = null;
+                it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
+                        .getTipoFirmaPerStruttura(getIdStrutCorrente());
+                switch (tipoFirma) {
+                case CADES:
+                    provaAsync = firmaHsmEjb.signP7M(request);
+                    break;
+                case XADES:
+                    provaAsync = firmaHsmEjb.signXades(request);
+                    break;
+                }
+                // VECCHIO CODICE ORIGINALE
+                // Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
                 getSession().setAttribute(Signature.FUTURE_ATTR_ELENCHI_FASC, provaAsync);
             }
 
@@ -2432,7 +2446,20 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
                     BigDecimal idElenco = elenco.getIdElencoVersFasc();
                     request.addFile(idElenco);
                 }
-                Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                Future<SigningResponse> provaAsync = null;
+                it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
+                        .getTipoFirmaPerStruttura(getIdStrutCorrente());
+                switch (tipoFirma) {
+                case CADES:
+                    provaAsync = firmaHsmEjb.signP7M(request);
+                    break;
+                case XADES:
+                    provaAsync = firmaHsmEjb.signXades(request);
+                    break;
+                }
+                // VECCHIO CODICE ORIGINALE
+                // Future<SigningResponse> provaAsync = firmaHsmEjb.signP7M(request);
                 getSession().setAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP_FASC, provaAsync);
             }
 

@@ -89,6 +89,14 @@ public class ElvElencoVerRowBean extends BaseRow implements JEEBaseRowInterface 
         return getString("ti_stato_elenco");
     }
 
+    public String getTiFirma() {
+        return getString("ti_firma");
+    }
+
+    public void setTiFirma(String tiFirma) {
+        setObject("ti_firma", tiFirma);
+    }
+
     public void setTiStatoElenco(String tiStatoElenco) {
         setObject("ti_stato_elenco", tiStatoElenco);
     }

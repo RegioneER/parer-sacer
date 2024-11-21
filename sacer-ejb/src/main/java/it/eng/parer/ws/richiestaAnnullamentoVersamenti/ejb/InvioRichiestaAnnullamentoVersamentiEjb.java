@@ -517,11 +517,14 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
      *            bean RispostaWSInvioRichiestaAnnullamentoVersamenti
      * @param ravExt
      *            bean InvioRichiestaAnnullamentoVersamentiExt
+     * @param isOAuth2
+     *            flag isOAuth2
      */
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
-            RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs, InvioRichiestaAnnullamentoVersamentiExt ravExt) {
+            RispostaWSInvioRichiestaAnnullamentoVersamenti rispostaWs, InvioRichiestaAnnullamentoVersamentiExt ravExt,
+            boolean isOAuth2) {
         RispostaControlli tmpRispostaControlli = controlliWS.checkCredenziali(loginName, password, indirizzoIp,
-                TipiWSPerControlli.ANNULLAMENTO);
+                TipiWSPerControlli.ANNULLAMENTO, isOAuth2);
         if (!tmpRispostaControlli.isrBoolean()) {
             rispostaWs.setSeverity(SeverityEnum.ERROR);
             rispostaWs.setEsitoWsError(tmpRispostaControlli.getCodErr(), tmpRispostaControlli.getDsErr());

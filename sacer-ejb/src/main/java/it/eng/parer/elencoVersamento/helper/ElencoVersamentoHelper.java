@@ -124,6 +124,7 @@ import it.eng.parer.viewEntity.ElvVLisAllUdByElenco;
 import it.eng.parer.viewEntity.ElvVLisElencoDaMarcare;
 import it.eng.parer.viewEntity.ElvVLisModifByUd;
 import it.eng.parer.viewEntity.ElvVLisUdByStato;
+import it.eng.parer.viewEntity.ElvVRicElencoVers;
 import it.eng.parer.viewEntity.ElvVSelUdDocUpdByCrit;
 import it.eng.parer.viewEntity.OrgVLisStrutPerEle;
 import it.eng.parer.volume.utils.DatiSpecQueryParams;
@@ -138,6 +139,7 @@ import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
+import it.eng.spagoCore.error.EMFError;
 
 /**
  *
@@ -156,6 +158,14 @@ public class ElencoVersamentoHelper extends GenericHelper {
 
     @EJB
     private ObjectStorageService objectStorageService;
+
+    public ElvVRicElencoVers retrieveElvVRicElencoVersListByIdAndUser(long idElencoVers, long idUserIam) {
+        TypedQuery<ElvVRicElencoVers> query = getEntityManager().createQuery("SELECT u FROM ElvVRicElencoVers u "
+                + "WHERE u.idElencoVers=:idElencoVers AND u.idUserIam = :idUserIam ", ElvVRicElencoVers.class);
+        query.setParameter("idElencoVers", new BigDecimal(idElencoVers));
+        query.setParameter("idUserIam", new BigDecimal(idUserIam));
+        return query.getResultList().get(0);
+    }
 
     public List<Long> retrieveElenchiScadutiDaProcessare(long idStrut) {
         Date systemDate = new Date();
@@ -3213,7 +3223,7 @@ public class ElencoVersamentoHelper extends GenericHelper {
     }
 
     public List<ElvFileElencoVer> retrieveFileIndiceElenco(long idElencoVers, String... tiFileElencoVers) {
-        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVer(u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers) FROM ElvFileElencoVer u "
+        String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVer(u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers, u.tiFirma) FROM ElvFileElencoVer u "
                 + "WHERE u.elvElencoVer.idElencoVers = :idElencoVers AND u.tiFileElencoVers IN (:tiFileElencoVers)";
         Query query = em.createQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers);

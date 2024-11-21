@@ -172,6 +172,8 @@
                         <sl:newLine />
                         <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.TI_GEST_ELENCO_AMB%>"  labelWidth="w30" controlWidth="w70" width="w90" />
                         <sl:newLine />
+                        <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.TI_FIRMA%>"  labelWidth="w30" controlWidth="w70" width="w90" />
+                        <sl:newLine />
                         <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.TI_GEST_ELENCO_CRITERIO%>"  labelWidth="w30" controlWidth="w70" width="w90" />
                         <sl:newLine />
                         <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.TI_GEST_ELENCO%>"  labelWidth="w30" controlWidth="w70" width="w90" />

@@ -68,6 +68,9 @@ import it.eng.parer.entity.FasXmlFascObjectStorage;
 import it.eng.parer.entity.FasXmlVersFascObjectStorage;
 import it.eng.parer.entity.FirReport;
 import it.eng.parer.entity.OrgStrut;
+import it.eng.parer.entity.SerFileVerSerie;
+import it.eng.parer.entity.SerVerSerie;
+import it.eng.parer.entity.SerVerSerieObjectStorage;
 import it.eng.parer.entity.VrsFileSesObjectStorageKo;
 import it.eng.parer.entity.VrsXmlDatiSesObjectStorageKo;
 import it.eng.parer.entity.VrsXmlSesFascErrObjectStorage;
@@ -85,8 +88,13 @@ import it.eng.parer.objectstorage.ejb.AwsClient;
 import it.eng.parer.objectstorage.ejb.AwsPresigner;
 import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.Costanti.AwsConstants;
+import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.ParametroAppl;
+import it.eng.parer.ws.utils.MessaggiWSFormat;
+import java.text.MessageFormat;
 import java.io.InputStream;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -113,8 +121,16 @@ public class SalvataggioBackendHelper {
     private static final String NO_PARAMETER = "Impossibile ottenere il parametro {0}";
     private static final String LOG_MESSAGE_NO_SAVED = "Impossibile salvare il link dell'oggetto su DB";
     private static final String ID_COMP_DOC = "idCompDoc";
+    private static final String ID_VER_SERIE = "idVerSerie";
+    private static final String TI_FILE_VER_SERIE = "tiFileVerSerie";
+
+    public static final String URN_INDICE_AIP_SERIE_UD_NON_FIRMATI_FMT_STRING = "{0}/IndiceAIP-SE-{1}-NonFirmato";
+    public static final String URN_INDICE_AIP_SERIE_UD_MARCA_FMT_STRING = "{0}:IndiceAIP-SE-{1}:Indice-Marca";
+    public static final String URN_INDICE_AIP_SERIE_UD_FIR_FMT_STRING = "{0}:IndiceAIP-SE-{1}";
 
     private static final String NOME_BACKEND_PARAMETER = "nomeBackend";
+
+    private static final String TIPO_USO_OS_PARAMETER = "tipoUsoOs";
 
     @EJB
     protected SalvataggioBackendHelper me;
@@ -198,6 +214,34 @@ public class SalvataggioBackendHelper {
         }
     }
     // end MEV#30397
+
+    // MEV#30400
+    /**
+     * Ottieni la configurazione applicativa relativa alla tipologia di Backend per il salvataggio degli indici aip di
+     * serie di ud
+     *
+     * @param idStrut
+     *            id struttura
+     *
+     * @return configurazione del backend. Può essere, per esempio OBJECT_STORAGE_STAGING oppure DATABASE_PRIMARIO
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore di recupero del parametro
+     */
+    public String getBackendIndiciAipSerieUD(long idStrut) throws ObjectStorageException {
+        try {
+            OrgStrut strut = entityManager.find(OrgStrut.class, idStrut);
+
+            long idAmbiente = strut.getOrgEnte().getOrgAmbiente().getIdAmbiente();
+            return configurationHelper.getValoreParamApplicByStrut(ParametroAppl.BACKEND_INDICI_AIP_SERIE_UD,
+                    BigDecimal.valueOf(idAmbiente), BigDecimal.valueOf(idStrut));
+
+        } catch (ParamApplicNotFoundException | IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(NO_PARAMETER, ParametroAppl.BACKEND_INDICI_AIP_SERIE_UD)
+                    .cause(e).build();
+        }
+    }
+    // end MEV#30400
 
     public DecBackend getBackendEntity(String nomeBackend) {
         TypedQuery<DecBackend> query = entityManager
@@ -831,7 +875,8 @@ public class SalvataggioBackendHelper {
         TypedQuery<DecConfigObjectStorage> query = entityManager.createQuery(
                 "Select c from DecConfigObjectStorage c where c.tiUsoConfigObjectStorage = :tipoUsoOs and c.decBackend.nmBackend = :nomeBackend order by c.nmConfigObjectStorage",
                 DecConfigObjectStorage.class);
-        query.setParameter("tipoUsoOs", tipoUsoOs).setParameter(NOME_BACKEND_PARAMETER, nomeBackend);
+        query.setParameter(TIPO_USO_OS_PARAMETER, tipoUsoOs);
+        query.setParameter(NOME_BACKEND_PARAMETER, nomeBackend);
         List<DecConfigObjectStorage> resultList = query.getResultList();
         String bucket = null;
         String nomeSystemPropertyAccessKeyId = null;
@@ -1769,5 +1814,149 @@ public class SalvataggioBackendHelper {
     }
 
     // end MEV #30399
+
+    // MEV#30400
+
+    /**
+     * Effettua il salvataggio del collegamento tra la versione dell'indice aip della seire dell'ud e la chiave
+     * sull'object storage
+     *
+     * @param object
+     *            informazioni dell'oggetto salvato
+     * @param nmBackend
+     *            nome del backend (di tipo OS) su cui è stato salvato
+     * @param idVerSerie
+     *            id versione indice aip serie ud
+     * @param idStrut
+     *            id struttura
+     * @param tiFileVerSerie
+     *            tipo file versione serie
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public void saveObjectStorageLinkIndiceAipSerieUd(ObjectStorageResource object, String nmBackend, long idVerSerie,
+            BigDecimal idStrut, String tiFileVerSerie) throws ObjectStorageException {
+        try {
+            DecBackend decBackend = me.getBackendEntity(nmBackend);
+            SerVerSerie serVerSerie = entityManager.find(SerVerSerie.class, idVerSerie);
+
+            SerVerSerieObjectStorage osLink = new SerVerSerieObjectStorage();
+            osLink.setSerVerSerie(serVerSerie);
+
+            osLink.setIdStrut(idStrut);
+
+            osLink.setCdKeyFile(object.getKey());
+            osLink.setNmBucket(object.getBucket());
+            osLink.setNmTenant(object.getTenant());
+            osLink.setTiFileVerSerie(tiFileVerSerie);
+
+            osLink.setDecBackend(decBackend);
+            entityManager.persist(osLink);
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message(LOG_MESSAGE_NO_SAVED).cause(e).build();
+        }
+    }
+
+    public String generateKeyIndiceAipSerieUD(SerFileVerSerie serFileVerSerie, CSVersatore versatore,
+            String codiceSerie, String versioneSerie) throws ObjectStorageException {
+        try {
+
+            String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnSerie(
+                    MessaggiWSFormat.formattaUrnPartVersatore(versatore, true, Costanti.UrnFormatter.VERS_FMT_STRING),
+                    codiceSerie);
+
+            String fmt = null;
+
+            switch (serFileVerSerie.getTiFileVerSerie()) {
+            case "MARCA_IX_AIP_UNISINCRO":
+                fmt = URN_INDICE_AIP_SERIE_UD_MARCA_FMT_STRING;
+                break;
+            case "IX_AIP_UNISINCRO":
+                fmt = URN_INDICE_AIP_SERIE_UD_NON_FIRMATI_FMT_STRING;
+                break;
+            case "IX_AIP_UNISINCRO_FIRMATO":
+                fmt = URN_INDICE_AIP_SERIE_UD_FIR_FMT_STRING;
+                break;
+
+            }
+            return createKeyIndiciAipSerieUd(fmt, tmpUrnNorm, versioneSerie);
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message("Impossibile generare la chiave del componente").cause(e)
+                    .build();
+        }
+    }
+
+    private String createKeyIndiciAipSerieUd(String fmt, String urnBase, String versioneSerie) {
+        return MessageFormat.format(fmt, urnBase, versioneSerie);
+    }
+
+    /**
+     * Restitusce un boolean per la verifica del "link" verso object storage
+     *
+     * @param idVerSerie
+     *            id versione indice aip di serie ud
+     *
+     * @param tiFileVerSerie
+     *            tipo file della versione dell'indice aip
+     *
+     * @return boolean true se effettivamente presente su object storage / false altrimenti
+     *
+     * @throws ObjectStorageException
+     *             eccezione generica
+     */
+    public boolean existIndiceAipSerieUDObjectStorage(long idVerSerie, String tiFileVerSerie)
+            throws ObjectStorageException {
+        try {
+            TypedQuery<Long> query = entityManager.createQuery(
+                    "Select count(ix_aip_os) from SerVerSerieObjectStorage ix_aip_os where ix_aip_os.serVerSerie.idVerSerie = :idVerSerie and ix_aip_os.tiFileVerSerie = :tiFileVerSerie",
+                    Long.class);
+            query.setParameter("idVerSerie", idVerSerie);
+            query.setParameter("tiFileVerSerie", tiFileVerSerie);
+            Long result = query.getSingleResult();
+            return result > 0;
+        } catch (NonUniqueResultException e) {
+            throw ObjectStorageException.builder()
+                    .message("Errore verifica presenza SerVerSerieObjectStorage per id versione indice aip {0} ",
+                            idVerSerie)
+                    .cause(e).build();
+        }
+    }
+
+    /**
+     * Ottieni il collegamento tra l'indice aip della serie e il suo bucket/chiave su OS.
+     *
+     * @param idVerSerie
+     *            id dellindice aip della serie *
+     * @param tiFileVerSerie
+     *            tipo file della versione
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public SerVerSerieObjectStorage getLinkSerVerSerieOs(long idVerSerie, String tiFileVerSerie)
+            throws ObjectStorageException {
+        try {
+            TypedQuery<SerVerSerieObjectStorage> query = entityManager.createQuery(
+                    "select t from SerVerSerieObjectStorage t where t.serVerSerie.idVerSerie = :idVerSerie "
+                            + "AND t.tiFileVerSerie = :tiFileVerSerie",
+                    SerVerSerieObjectStorage.class);
+            query.setParameter(ID_VER_SERIE, idVerSerie);
+            query.setParameter(TI_FILE_VER_SERIE, tiFileVerSerie);
+            return query.getSingleResult();
+
+        } catch (NonUniqueResultException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da SerVerSerieObjectStorage per id_ver_serie {0} e ti_file_ver_serie {1}",
+                    idVerSerie, tiFileVerSerie).cause(e).build();
+        }
+
+    }
+
+    // end mev#30400
 
 }

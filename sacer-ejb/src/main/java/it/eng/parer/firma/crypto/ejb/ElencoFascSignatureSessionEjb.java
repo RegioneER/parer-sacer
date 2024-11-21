@@ -161,21 +161,22 @@ public class ElencoFascSignatureSessionEjb implements SignatureSessionEjb {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate) throws Exception {
+    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate,
+            it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma) throws Exception {
         HsmSessioneFirma session = signHlp.findById(HsmSessioneFirma.class, sessionId);
         // Doesn't open a new transaction
-        this.storeSignature(session, idFile, signedFile, signingDate);
+        this.storeSignature(session, idFile, signedFile, signingDate, tipoFirma);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate)
-            throws Exception {
+    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate,
+            it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma) throws Exception {
         // Sets the "log" of the HSMSessionFirma
         HsmElencoFascSesFirma elencoSession = signHlp.findElencoSessione(session, idFile);
         elencoSession.setTiEsito(TiEsitoFirmaElencoFasc.OK);
         elencoSession.setTsEsito(new Date());
-        elencoEjb.storeFirma(idFile, signedFile, signingDate, session.getIamUser().getIdUserIam());
+        elencoEjb.storeFirma(idFile, signedFile, signingDate, session.getIamUser().getIdUserIam(), tipoFirma);
 
         logger.info("Firmato elenco (id: {}) nella sessione con id {}", idFile, session.getIdSessioneFirma());
     }

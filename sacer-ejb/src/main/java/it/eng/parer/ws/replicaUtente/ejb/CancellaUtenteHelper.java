@@ -85,10 +85,10 @@ public class CancellaUtenteHelper {
     @SuppressWarnings("unchecked")
     public boolean isReferenced(Integer idUserIam) {
         String queryStr = "SELECT u FROM IamUser u " + "WHERE u.idUserIam = :idUserIam "
-                + "AND( EXISTS (SELECT s FROM VrsSessioneVers s "
+                + "AND ( EXISTS (SELECT s FROM VrsSessioneVers s "
                 + "            WHERE s.iamUser.idUserIam = :idUserIam ) "
-                + "OR EXISTS (SELECT s FROM VrsSessioneVersKo sk "
-                + "            WHERE s.iamUser.idUserIam = :idUserIam ) \" "
+                + "OR EXISTS (SELECT sk FROM VrsSessioneVersKo sk "
+                + "            WHERE sk.iamUser.idUserIam = :idUserIam ) "
                 + "OR EXISTS (SELECT s2 FROM RecSessioneRecup s2 "
                 + "           WHERE s2.iamUser.idUserIam = :idUserIam ) " + "OR EXISTS (SELECT ud FROM AroUnitaDoc ud "
                 + "           WHERE ud.iamUser.idUserIam = :idUserIam ) "

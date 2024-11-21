@@ -54,7 +54,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.crypto.model.ParerTST;
 import it.eng.parer.crypto.model.exceptions.CryptoParerException;
 import it.eng.parer.elencoVersamento.ejb.IndiceElencoVersXsdEjb;
@@ -93,6 +92,7 @@ import it.eng.parer.exception.ParerErrorSeverity;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerNoResultException;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.indiceAip.elenchi.ElaborazioneElencoIndiceAip;
@@ -158,9 +158,9 @@ public class ElenchiVersamentoEjb {
     @EJB
     private ElaborazioneElencoIndiceAip elabElencoIndiceAipEjb;
     @EJB
-    private ConfigurationHelper configurationHelper;
+    private AmministrazioneEjb amministrazioneEjb;
     @EJB
-    private StruttureEjb struttureEjb;
+    private ConfigurationHelper configurationHelper;
     @EJB
     private CryptoInvoker cryptoInvoker;
     @EJB
@@ -186,6 +186,14 @@ public class ElenchiVersamentoEjb {
         ElvElencoVerRowBean elencoRowBean = new ElvElencoVerRowBean();
         try {
             elencoRowBean = (ElvElencoVerRowBean) Transform.entity2RowBean(elenco);
+            // MEV#15967 - Attivazione della firma Xades e XadesT
+            List<ElvFileElencoVer> elencoIndiceAipFirmati = evHelper.retrieveFileIndiceElenco(idElencoVers.longValue(),
+                    new String[] { ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name() });
+            if (elencoIndiceAipFirmati != null && !elencoIndiceAipFirmati.isEmpty()) {
+                elencoRowBean.setTiFirma(elencoIndiceAipFirmati.get(0).getTiFirma());
+            }
+            //
+
             final OrgAmbiente orgAmbiente = elenco.getOrgStrut().getOrgEnte().getOrgAmbiente();
             elencoRowBean.setString("nm_criterio_raggr", elenco.getDecCriterioRaggr().getNmCriterioRaggr());
             elencoRowBean.setString("ds_criterio_raggr", elenco.getDecCriterioRaggr().getDsCriterioRaggr());
@@ -1150,7 +1158,17 @@ public class ElenchiVersamentoEjb {
             FileTypeEnum fileType = ElencoEnums.FileTypeEnum.valueOf(elvFileElencoVer.getTiFileElencoVers());
             fileNamePrefix = StringUtils.defaultString(fileNamePrefix).replace(" ", "_");
             fileNameSuffix = StringUtils.defaultString(fileNameSuffix).replace(" ", "_");
-            String fileExtension = fileType.getFileExtension();
+
+            // MEV#15967 - Attivazione della firma Xades e XadesT
+            String fileExtension = null;
+            String tiFirma = elvFileElencoVer.getTiFirma();
+            if (tiFirma != null
+                    && tiFirma.equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES.name())) {
+                fileExtension = ".xml";
+            } else {
+                fileExtension = fileType.getFileExtension();
+            }
+            //
             switch (fileType) {
             case INDICE:
             case INDICE_FIRMATO:
@@ -1276,6 +1294,8 @@ public class ElenchiVersamentoEjb {
      *            id utente
      * @param backendMetadata
      *            tipo backend
+     * @param tipoFirma
+     *            tipo firma (XADES o CADES)
      *
      * @return ElvFileElencoVer
      *
@@ -1285,7 +1305,8 @@ public class ElenchiVersamentoEjb {
      *             errore generico
      */
     public ElvFileElencoVer storeFirmaElencoIndiceAip(Long idElencoVers, byte[] fileFirmato, Date signatureDate,
-            long idUtente, BackendStorage backendMetadata) throws NoSuchAlgorithmException, IOException {
+            long idUtente, BackendStorage backendMetadata, ElencoEnums.TipoFirma tipoFirma)
+            throws NoSuchAlgorithmException, IOException {
         ElvElencoVer elenco = evHelper.retrieveElencoById(idElencoVers);
         evHelper.lockElenco(elenco);
 
@@ -1306,6 +1327,7 @@ public class ElenchiVersamentoEjb {
             fileElencoVers.setBlFileElencoVers(fileFirmato);
         }
         // end MEV#30397
+        fileElencoVers.setTiFirma(tipoFirma.name());
         fileElencoVers.setIdStrut(BigDecimal.valueOf(orgStrut.getIdStrut()));
         fileElencoVers.setDtCreazioneFile(new Date());
         fileElencoVers.setDsHashFile(hash);
@@ -1422,8 +1444,8 @@ public class ElenchiVersamentoEjb {
              * MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
              *
              * La logica prevede che se viene chiamato dal job sigillo vuol dire che si vogliono processare solanto gli
-             * elenchi con getsione SIGILLO o SIGILLO_MARC, altrimenti se richiamati da interfaccia utente per la firma
-             * manuale li processa tutti i tipi di gestione, sia di SIGILLO che di FIRMA §/
+             * elenchi con getsione SIGILLO o SIGILLO_MARCA, altrimenti se richiamati da interfaccia utente per la firma
+             * manuale li processa tutti i tipi di gestione, sia di SIGILLO che di FIRMA
              */
             ArrayList<String> tipiGestione = new ArrayList<>();
             tipiGestione.add(ElencoEnums.GestioneElencoEnum.SIGILLO.name());
@@ -1544,47 +1566,63 @@ public class ElenchiVersamentoEjb {
                 }
                 // end MEV#30397
 
-                try {
-                    /* Richiedo la marca per il file firmato */
-                    ParerTST tsToken = cryptoInvoker.requestTST(firmaElencoIndiciAip);
-                    byte[] marcaTemporale = tsToken.getEncoded();
-                    /* Verifico l'avvenuta acquisizione della marcatura temporale */
-                    if (marcaTemporale != null) {
-                        log.info("Marca temporale valida");
-                        ElvFileElencoVer marcaElencoIxAip = saveMarcaElencoIndiceAip(elenco, marcaTemporale, idUtente,
-                                backendIndiciAip);
-                        // MEV#30397
-                        /*
-                         * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
-                         */
-                        if (backendIndiciAip.isObjectStorage()) {
-                            // retrieve normalized URN
-                            final String urn = marcaElencoIxAip.getElvUrnFileElencoVerss().stream()
-                                    .filter(tmpUrnNorm -> ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO
-                                            .equals(tmpUrnNorm.getTiUrn()))
-                                    .findAny().get().getDsUrn().substring(4);
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                /*
+                 * Nel caso la firma sia di tipo XADES non è richiesta la marca temporale in quanto già inclusa nell'XML
+                 * firmato.
+                 */
+                if (amministrazioneEjb.getTipoFirmaPerStruttura(new BigDecimal(elenco.getOrgStrut().getIdStrut()))
+                        .equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES)) {
+                    log.debug("Marca non necessaria per Xades");
+                    // MEV#15967 - Attivazione della firma Xades e XadesT
+                    impostaStatoCompletatoElencoIndiceAip(elenco, idUtente);
+                    //
+                } else {
 
-                            ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(urn,
-                                    backendIndiciAip.getBackendName(), marcaTemporale,
-                                    marcaElencoIxAip.getIdFileElencoVers(), marcaElencoIxAip.getIdStrut());
-                            log.debug(
-                                    "Salvato il file dell'elenco indici aip firmato su cui è stata apposta la marca temporale nel bucket {} con chiave {} ",
-                                    res.getBucket(), res.getKey());
+                    try {
+                        /* Richiedo la marca per il file firmato */
+                        ParerTST tsToken = cryptoInvoker.requestTST(firmaElencoIndiciAip);
+                        byte[] marcaTemporale = tsToken.getEncoded();
+                        /* Verifico l'avvenuta acquisizione della marcatura temporale */
+                        if (marcaTemporale != null) {
+                            log.info("Marca temporale valida");
+                            ElvFileElencoVer marcaElencoIxAip = saveMarcaElencoIndiceAip(elenco, marcaTemporale,
+                                    idUtente, backendIndiciAip);
+                            // MEV#30397
+                            /*
+                             * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
+                             */
+                            if (backendIndiciAip.isObjectStorage()) {
+                                // retrieve normalized URN
+                                final String urn = marcaElencoIxAip.getElvUrnFileElencoVerss().stream()
+                                        .filter(tmpUrnNorm -> ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO
+                                                .equals(tmpUrnNorm.getTiUrn()))
+                                        .findAny().get().getDsUrn().substring(4);
+
+                                ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(urn,
+                                        backendIndiciAip.getBackendName(), marcaTemporale,
+                                        marcaElencoIxAip.getIdFileElencoVers(), marcaElencoIxAip.getIdStrut());
+                                log.debug(
+                                        "Salvato il file dell'elenco indici aip firmato su cui è stata apposta la marca temporale nel bucket {} con chiave {} ",
+                                        res.getBucket(), res.getKey());
+                            }
+                            // end MEV#30397
+                        } else {
+                            throw new ParerInternalError("Acquisizione marca temporale fallita");
                         }
-                        // end MEV#30397
-                    } else {
-                        throw new ParerInternalError("Acquisizione marca temporale fallita");
+                    } catch (ParerInternalError ex) {
+                        throw ex;
+                    } catch (CryptoParerException ex) {
+                        throw new ParerInternalError(ParerErrorSeverity.ERROR, ExceptionUtils.getRootCauseMessage(ex),
+                                ex);
                     }
-                } catch (ParerInternalError ex) {
-                    throw ex;
-                } catch (CryptoParerException ex) {
-                    throw new ParerInternalError(ParerErrorSeverity.ERROR, ExceptionUtils.getRootCauseMessage(ex), ex);
                 }
             } else {
                 log.warn("Impossibile completare l'elenco indice AIP con id {}, NON è nello stato di quelli marcabili",
                         elenco.getIdElencoVers());
             }
             break;
+
         case NO_FIRMA:
             break;
         default:
@@ -1595,7 +1633,6 @@ public class ElenchiVersamentoEjb {
     private boolean isElencoToMark(ElvElencoVer elenco) {
         String elencoFirmato = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name();
         String elencoErroreMarca = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name();
-
         return elenco.getTiStatoElenco().equals(elencoFirmato) || elenco.getTiStatoElenco().equals(elencoErroreMarca);
     }
 
@@ -1681,6 +1718,14 @@ public class ElenchiVersamentoEjb {
                 ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO);
 
         elenco.setDtMarcaElencoIxAip(fileElencoVers.getDtCreazioneFile());
+        // MEV#15967 - Attivazione della firma Xades e XadesT
+        impostaStatoCompletatoElencoIndiceAip(elenco, idUtente);
+        return fileElencoVers;
+    }
+
+    // MEV#15967 - Attivazione della firma Xades e XadesT
+    private void impostaStatoCompletatoElencoIndiceAip(ElvElencoVer elenco, long idUtente) {
+        final OrgStrut orgStrut = elenco.getOrgStrut();
         List<String> statiUdDocDaCompletare = new ArrayList<>(
                 Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name(),
                         ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name()));
@@ -1692,8 +1737,7 @@ public class ElenchiVersamentoEjb {
         registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()), "MARCA_ELENCO_INDICI_AIP",
                 "Marca assunta con successo; gestione elenco = MARCA_FIRMA",
                 it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco.COMPLETATO, user.getNmUserid());
-
-        return fileElencoVers;
+        log.debug("Impostazione stato elenco a COMPLETATO.");
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

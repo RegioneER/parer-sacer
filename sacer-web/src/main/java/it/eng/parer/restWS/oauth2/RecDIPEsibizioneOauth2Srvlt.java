@@ -188,7 +188,7 @@ public class RecDIPEsibizioneOauth2Srvlt extends HttpServlet {
                     // keycloak session
                     KeycloakSecurityContext session = getKeycloakSession(request);
                     //
-                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, session.getToken());
+                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, session.getToken(), false);
                     //
                     if (rispostaWs.getSeverity() != SeverityEnum.OK) {
                         rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(), rispostaWs.getErrorMessage());

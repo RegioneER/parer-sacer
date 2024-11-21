@@ -911,4 +911,24 @@
     <ButtonList Name="MostraNascondiIdButtonList" Description="">
         <Button Name="mostraIdConsistenzaButton" Description="" Type="STRING" />
     </ButtonList>
+    
+    <!-- Lista sessioni errate e/o fallite eliminate automaticamente da job o procedure oracle -->
+    <List Name="SessioniErrateFalliteEliminateList" Description="Riepilogo sessioni fallite cancellate" hideInsertButton="true" hideDeleteButton="true" >
+        <Input Type="STRING" Description="Ambiente / Ente / Struttura" Name="dl_composito_organiz" />
+        <Input Type="INTEGER" Description="Numero sessioni eliminate" Name="ni_ses_eliminate"/>
+        <Input Type="DATE" Description="Data di elaborazione" Name="dt_elab"/>
+        <Input Type="DATE" Description="Data di riferimento" Name="dt_rif"/>
+    </List>
+    
+    <Fields Name="FiltriSessioniErrateFalliteEliminate" Description="Filtri Sessioni errate e/o fallite eliminate" >
+        <ComboBox  Type="STRING" Description="Sessioni errate e/o fallite" Trigger="true" Name="sess_errate_fallite" />
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
+        <Input Type="DATE" Description="Data di elaborazione da" Name="data_elab_da"/>
+        <Input Type="DATE" Description="Data di elaborazione a" Name="data_elab_a"/>
+        <Input Type="DATE" Description="Data di riferimento da" Name="data_rif_da"/>
+        <Input Type="DATE" Description="Data di riferimento a" Name="data_rif_a"/>
+        <Button Name="cercaSessioniErrateFalliteEliminate" Description="Cerca sessioni fallite" Type="STRING" />
+    </Fields>
 </Form>

@@ -134,6 +134,7 @@
         <Input Type="DATETIME" Description="Creato il" Name="ts_creazione_elenco" Required="true"/>
         <Input Type="INTEGER" Description="Numero massimo fascicoli" Name="ni_max_fasc_crit" GroupingDecimal="true" />
         <Input Type="STRING" Description="Tipo scadenza (chiusura)" Name="ti_scad_chius_crit"/>
+        <Input Type="STRING" Description="Formato di firma" Name="ti_firma" Required="false"/>
         <Input Type="INTEGER" Description="Scadenza chiusura" Name="ni_tempo_scad_chius_crit" GroupingDecimal="true" />
         <Input Type="STRING" Description="Scadenza chiusura" Name="ti_tempo_scad_chius_crit"/>
         <!--<Input Type="STRING" Description="Criterio di raggruppamento" Name="nm_criterio_raggr" />-->

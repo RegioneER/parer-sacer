@@ -16,9 +16,9 @@
  */
 
 /*
-* To change this template, choose Tools | Templates
-* and open the template in the editor.
-*/
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package it.eng.parer.ws.recuperoFasc.utils;
 
 import java.io.File;
@@ -54,6 +54,8 @@ import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasXmlFascicolo;
 import it.eng.parer.entity.FasXmlVersFascicolo;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
+
+import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
@@ -401,8 +403,18 @@ public class RecuperoZipFascGen {
                         ? (ElvFileElencoVersFasc) rispostaControlli.getrObject() : null;
                 prefisso = tiFileElencoVersFasc1.equals(ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name())
                         ? "ElencoIndiceAIP" : "MarcaElencoIndiceAIP";
-                estensione = tiFileElencoVersFasc1.equals(ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name())
-                        ? ".xml.p7m" : ".tsr";
+                // MEV#15967 - Attivazione della firma Xades e XadesT
+                if (fileElencoVersFasc != null) {
+                    String tiFirma = fileElencoVersFasc.getTiFirma();
+                    if (tiFirma != null
+                            && tiFirma.equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES.name())) {
+                        estensione = "xml";
+                    } else {
+                        estensione = tiFileElencoVersFasc1.equals(ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name())
+                                ? ".xml.p7m" : ".tsr";
+                    }
+                }
+                //
             }
         }
 

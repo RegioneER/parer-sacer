@@ -21,18 +21,32 @@
  */
 package it.eng.parer.restWS;
 
+import it.eng.parer.restWS.util.RequestPrsr;
+import it.eng.parer.restWS.util.RequestPrsr.ReqPrsrConfig;
+import it.eng.parer.restWS.util.Response405;
+import it.eng.parer.ws.dto.IRispostaWS.SeverityEnum;
+import it.eng.parer.ws.ejb.XmlContextCache;
+import it.eng.parer.ws.recuperoFasc.dto.RecuperoFascExt;
+import it.eng.parer.ws.recuperoFasc.dto.RispostaWSRecuperoFasc;
+import it.eng.parer.ws.recuperoFasc.dto.WSDescRecAipFasc;
+import java.io.IOException;
+
+import it.eng.parer.ws.recuperoFasc.ejb.RecuperoFascSync;
+import it.eng.parer.ws.utils.AvanzamentoWs;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
+import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
+import it.eng.parer.ws.xml.versRespStatoFasc.StatoConservazioneFasc;
 import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.WS_INSTANCE_NAME;
 import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.WS_STAGING_UPLOAD_DIR;
-
+import it.eng.spagoCore.configuration.ConfigSingleton;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import javax.ejb.EJB;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -43,7 +57,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
+import javax.xml.bind.PropertyException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
@@ -52,21 +66,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import it.eng.parer.restWS.util.RequestPrsr;
-import it.eng.parer.restWS.util.Response405;
-import it.eng.parer.ws.dto.IRispostaWS.SeverityEnum;
-import it.eng.parer.ws.ejb.XmlContextCache;
-import it.eng.parer.ws.recuperoFasc.dto.RecuperoFascExt;
-import it.eng.parer.ws.recuperoFasc.dto.RispostaWSRecuperoFasc;
-import it.eng.parer.ws.recuperoFasc.dto.WSDescRecAipFasc;
-import it.eng.parer.ws.recuperoFasc.ejb.RecuperoFascSync;
-import it.eng.parer.ws.utils.AvanzamentoWs;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
-import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
-import it.eng.parer.ws.xml.versRespStatoFasc.StatoConservazioneFasc;
-import it.eng.spagoCore.configuration.ConfigSingleton;
 
 /**
  *
@@ -142,6 +141,7 @@ public class RecAIPFascicoloSrvlt extends HttpServlet {
         sessioneFinta.setTmApertura(new Date());
         //
         sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(request));
+        // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con certificato
         sessioneFinta.setCertCommonName(myRequestPrsr.leggiCertCommonName(request));
         // log.info("Request, indirizzo IP di provenienza: " + sessioneFinta.getIpChiamante());
 
@@ -174,7 +174,12 @@ public class RecAIPFascicoloSrvlt extends HttpServlet {
                     tmpPrsrConfig.setRequest(request);
                     tmpPrsrConfig.setUploadHandler(upload);
                     //
-                    fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig);
+                    // fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig);
+                    // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con
+                    // certificato
+                    fileItems = myRequestPrsr.parse(rispostaWsFasc, tmpPrsrConfig, null,
+                            sessioneFinta.getCertCommonName() == null ? false : true);
+
                     //
                     if (rispostaWsFasc.getSeverity() != SeverityEnum.OK) {
                         rispostaWsFasc.setEsitoWsError(rispostaWsFasc.getErrorCode(), rispostaWsFasc.getErrorMessage());

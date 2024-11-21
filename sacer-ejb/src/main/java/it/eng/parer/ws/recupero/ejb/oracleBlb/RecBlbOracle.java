@@ -42,6 +42,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import it.eng.parer.exception.ConnectionException;
+import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.spagoCore.util.JpaUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,13 +80,15 @@ public class RecBlbOracle {
             + "where t.id_file_elenco_vers = ?";
     private static final String QRY_ELV_FILE_ELENCO_VERS_FASC = "SELECT BL_FILE_ELENCO_VERS FROM ELV_FILE_ELENCO_VERS_FASC t "
             + "where t.id_file_elenco_vers_fasc = ?";
+    private static final String QRY_SER_FILE_VER_SERIE_INDICE_AIP = "SELECT BL_FILE FROM SER_FILE_VER_SERIE t "
+            + "where t.id_ver_serie = ? AND t.ti_file_ver_serie = ?";
     //
     private static final String QRY_FIR_REPORT_COMP = "SELECT BL_CONTENUTO_REPORT FROM FIR_REPORT t "
             + "where t.id_comp_doc = ?";
     private static final int BUFFERSIZE = 10 * 1024 * 1024; // 10 megabyte
 
     public enum TabellaBlob {
-        BLOB, ERRORI_VERS, FIR_REPORT, ERRORI_VERS_TMP, ELV_FILE_ELENCO, ELV_FILE_ELENCO_FASC
+        BLOB, ERRORI_VERS, FIR_REPORT, ERRORI_VERS_TMP, ELV_FILE_ELENCO, ELV_FILE_ELENCO_FASC, SER_FILE_VER_SERIE
     }
 
     /**
@@ -128,10 +131,13 @@ public class RecBlbOracle {
      *            stream su cui scrivere (può essere uno ZipOutputStream o un semplice FileOutputStream
      * @param tabellaBlobDaLeggere
      *            una delle due tabelle di Sacer da cui leggere il blob
+     * @param dto
+     *            dto recupero
      *
      * @return true se è andato tutto bene, false altrimenti
      */
-    public boolean recuperaBlobCompSuStream(long idPadre, OutputStream outputStream, TabellaBlob tabellaBlobDaLeggere) {
+    public boolean recuperaBlobCompSuStream(long idPadre, OutputStream outputStream, TabellaBlob tabellaBlobDaLeggere,
+            RecuperoDocBean dto) {
         boolean rispostaControlli = false;
         Blob blob = null;
         ResultSet rs = null;
@@ -157,12 +163,18 @@ public class RecBlbOracle {
         case ELV_FILE_ELENCO_FASC:
             queryStr = QRY_ELV_FILE_ELENCO_VERS_FASC;
             break;
+        case SER_FILE_VER_SERIE:
+            queryStr = QRY_SER_FILE_VER_SERIE_INDICE_AIP;
+            break;
         }
         try {
             java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
             try (PreparedStatement pstmt = conn.prepareStatement(queryStr)) {
                 log.info(queryStr);
                 pstmt.setLong(1, idPadre);
+                if (dto != null && dto.getTiFile() != null) {
+                    pstmt.setString(2, dto.getTiFile());
+                }
                 rs = pstmt.executeQuery();
                 while (rs.next()) {
                     blob = rs.getBlob(1);
@@ -189,7 +201,7 @@ public class RecBlbOracle {
                  * lo cerco su VRS_CONTENUTO_FILE perché evidentemente non è ancora stato spostato il CLOB
                  */
                 if (TabellaBlob.ERRORI_VERS.equals(tabellaBlobDaLeggere)) {
-                    recuperaBlobCompSuStream(idPadre, outputStream, TabellaBlob.ERRORI_VERS_TMP);
+                    recuperaBlobCompSuStream(idPadre, outputStream, TabellaBlob.ERRORI_VERS_TMP, null);
                 }
                 log.error("Eccezione nella lettura della tabella dei dati componente: il blob è nullo");
             }

@@ -179,6 +179,7 @@
         <Input Description="Numero" Name="cd_key_fascicolo_titolo" Type="STRING"/>
         <Input Description="Anno" MaxLength="4" Name="aa_fascicolo" Type="INTEGER"/>
         <Input Description="Numero" Name="cd_key_fascicolo" Type="STRING"/>
+        <Input Description="Numero normalizzato" Name="cd_key_normaliz_fascicolo" Type="STRING"/>
         <Input Description="Tipo fascicolo" Name="nm_tipo_fascicolo" Type="STRING"/>
         <Input Description="Oggetto" Name="ds_oggetto_fascicolo" Type="STRING"/>
         <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>

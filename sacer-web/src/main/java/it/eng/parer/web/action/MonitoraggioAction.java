@@ -68,6 +68,7 @@ import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.db.decodemap.DecodeMapIF;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements.Status;
+import it.eng.spagoLite.form.fields.Field;
 import it.eng.spagoLite.form.fields.Fields;
 import it.eng.spagoLite.form.fields.impl.Button;
 import it.eng.spagoLite.form.fields.impl.CheckBox;
@@ -8858,6 +8859,127 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
         }
 
+    }
+
+    private void initFiltriStrut(String fieldSetName) throws EMFError {
+        /* Ricavo Ambiente, Ente e Struttura CORRENTI */
+        OrgStrutRowBean strutWithAmbienteEnte = evEjb
+                .getOrgStrutRowBeanWithAmbienteEnte(getUser().getIdOrganizzazioneFoglia());
+        // Ricavo id struttura, ente ed ambiente attuali
+        BigDecimal idAmbiente = strutWithAmbienteEnte.getBigDecimal("id_ambiente");
+        BigDecimal idEnte = strutWithAmbienteEnte.getIdEnte();
+        BigDecimal idStrut = strutWithAmbienteEnte.getIdStrut();
+
+        // Inizializzo le combo settando la struttura corrente
+        OrgAmbienteTableBean tmpTableBeanAmbiente = null;
+        OrgEnteTableBean tmpTableBeanEnte = null;
+        OrgStrutTableBean tmpTableBeanStruttura = null;
+        try {
+            // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
+            tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
+
+            // Ricavo i valori della combo ENTE
+            tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(), idAmbiente.longValue(),
+                    Boolean.FALSE);
+
+            // Ricavo i valori della combo STRUTTURA
+            tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.FALSE);
+
+        } catch (Exception ex) {
+            logger.error("Errore durante il recupero dei filtri Ambiente - Ente - Struttura", ex);
+        }
+
+        DecodeMap mappaAmbiente = new DecodeMap();
+        mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
+        ComboBox<BigDecimal> comboAmbiente = ((ComboBox<BigDecimal>) ((Fields<Field>) getForm()
+                .getComponent(fieldSetName)).getComponent("Id_ambiente"));
+        comboAmbiente.setDecodeMap(mappaAmbiente);
+        comboAmbiente.setValue(idAmbiente.toString());
+
+        DecodeMap mappaEnte = new DecodeMap();
+        mappaEnte.populatedMap(tmpTableBeanEnte, "id_ente", "nm_ente");
+        ComboBox<BigDecimal> comboEnte = ((ComboBox<BigDecimal>) ((Fields<Field>) getForm().getComponent(fieldSetName))
+                .getComponent("Id_ente"));
+        comboEnte.setDecodeMap(mappaEnte);
+        comboEnte.setValue(idEnte.toString());
+
+        DecodeMap mappaStrut = new DecodeMap();
+        mappaStrut.populatedMap(tmpTableBeanStruttura, "id_strut", "nm_strut");
+        ComboBox<BigDecimal> comboStrut = ((ComboBox<BigDecimal>) ((Fields<Field>) getForm().getComponent(fieldSetName))
+                .getComponent("Id_strut"));
+        comboStrut.setDecodeMap(mappaStrut);
+        comboStrut.setValue(idStrut.toString());
+    }
+
+    public enum TiSessioniEliminate {
+        ERRATE, FALLITE
+    }
+
+    @Secure(action = "Menu.Monitoraggio.RiepilogoSessioniFalliteCancellate")
+    public void monitoraggioSessioniErrateFalliteEliminate() throws EMFError {
+        getUser().getMenu().reset();
+        getUser().getMenu().select("Menu.Monitoraggio.RiepilogoSessioniFalliteCancellate");
+        getForm().getFiltriSessioniErrateFalliteEliminate().reset();
+        getForm().getFiltriSessioniErrateFalliteEliminate().setEditMode();
+
+        initFiltriStrut(getForm().getFiltriSessioniErrateFalliteEliminate().getName());
+
+        getForm().getFiltriSessioniErrateFalliteEliminate().getSess_errate_fallite().setDecodeMap(
+                ComboGetter.getMappaSortedGenericEnum("sess_errate_fallite", TiSessioniEliminate.values()));
+        getForm().getSessioniErrateFalliteEliminateList().setTable(new VrsSessioneVersKoEliminateTableBean());
+        // Eseguo il forward alla stessa pagina
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_SESSIONI_ERRATE_FALLITE_ELIMINATE);
+    }
+
+    @Override
+    public JSONObject triggerFiltriSessioniErrateFalliteEliminateId_ambienteOnTrigger() throws EMFError {
+        triggerAmbienteGenerico(getForm().getFiltriSessioniErrateFalliteEliminate(),
+                ActionEnums.SezioneMonitoraggio.SESSIONI_ERRATE_FALLITE_ELIMINATE);
+        FiltriSessioniErrateFalliteEliminate filtri = getForm().getFiltriSessioniErrateFalliteEliminate();
+        if (filtri.getSess_errate_fallite().getValue().equals("ERRATE")) {
+            filtri.getSess_errate_fallite().setValue("");
+        }
+        return getForm().getFiltriSessioniErrateFalliteEliminate().asJSON();
+    }
+
+    @Override
+    public JSONObject triggerFiltriSessioniErrateFalliteEliminateId_enteOnTrigger() throws EMFError {
+        // // Azzero i totali della tabella riepilogo versamenti
+        triggerEnteGenerico(getForm().getFiltriSessioniErrateFalliteEliminate(),
+                ActionEnums.SezioneMonitoraggio.SESSIONI_ERRATE_FALLITE_ELIMINATE);
+        return getForm().getFiltriSessioniErrateFalliteEliminate().asJSON();
+    }
+
+    public void cercaSessioniErrateFalliteEliminate() throws EMFError {
+        getForm().getFiltriSessioniErrateFalliteEliminate().post(getRequest());
+        // Setto la lista delle sessioni fallite
+        String maxResultStandard = configurationHelper
+                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
+        VrsSessioneVersKoEliminateTableBean listaSess = monitoraggioHelper.getVrsSessioneVersKoEliminateTableBean(
+                getForm().getFiltriSessioniErrateFalliteEliminate(), Integer.parseInt(maxResultStandard));
+        getForm().getSessioniErrateFalliteEliminateList().setTable(listaSess);
+        getForm().getSessioniErrateFalliteEliminateList().getTable().setPageSize(10);
+        getForm().getSessioniErrateFalliteEliminateList().getTable().first();
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_SESSIONI_ERRATE_FALLITE_ELIMINATE);
+    }
+
+    @Override
+    public JSONObject triggerFiltriSessioniErrateFalliteEliminateSess_errate_falliteOnTrigger() throws EMFError {
+        FiltriSessioniErrateFalliteEliminate filtri = getForm().getFiltriSessioniErrateFalliteEliminate();
+        filtri.post(getRequest());
+        ComboBox<?> ambienteCombo = (ComboBox<?>) filtri.getComponent("Id_ambiente");
+        ComboBox<?> enteCombo = (ComboBox<?>) filtri.getComponent("Id_ente");
+        ComboBox<?> strutCombo = (ComboBox<?>) filtri.getComponent("Id_strut");
+        if (filtri.getSess_errate_fallite().getValue().equals("ERRATE")) {
+            ambienteCombo.setValue("");
+            enteCombo.setDecodeMap(new DecodeMap());
+            enteCombo.setValue("");
+            strutCombo.setDecodeMap(new DecodeMap());
+            strutCombo.setValue("");
+        }
+
+        // redirectToAjax(getForm().getFiltriSessioniErrateFalliteEliminate().asJSON());
+        return filtri.asJSON();
     }
 
 }

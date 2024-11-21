@@ -148,6 +148,7 @@
         <Input Name="ds_serie" Description="Descrizione" Type="STRING" />
         <Link Name="nm_tipo_serie" Description="Tipo serie" Type="STRING" Target="loadTipoSerieDetail" Tooltip="Visualizza tipo serie" isTargetList="false"/>
         <Input Name="cd_ver_serie" Description="Versione" Type="STRING" />
+        <Input Name="ti_firma" Description="Formato di firma" Type="STRING" />
         <CheckBox Name="fl_upd_annul_unita_doc" Description="Presenza di unità documentarie annullate" Type="STRING" />
         <CheckBox Name="fl_upd_modif_unita_doc" Description="Presenza di unità documentarie aggiornate" Type="STRING" />
         <Input Name="dt_inizio_sel_serie" Description="Data inizio selezione" Type="DATE" />

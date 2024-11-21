@@ -64,6 +64,7 @@ import it.eng.parer.entity.RecSessioneRecup;
 import it.eng.parer.entity.VrsDatiSessioneVersKo;
 import it.eng.parer.entity.VrsFileSessioneKo;
 import it.eng.parer.entity.VrsSessioneVersKo;
+import it.eng.parer.entity.VrsSessioneVersKoEliminate;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.form.MonitoraggioForm;
@@ -74,6 +75,8 @@ import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriOperazioniVolumi;
 import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriReplicaOrg;
 import it.eng.parer.slite.gen.tablebean.VrsFileSessioneKoRowBean;
 import it.eng.parer.slite.gen.tablebean.VrsFileSessioneKoTableBean;
+import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoEliminateRowBean;
+import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoEliminateTableBean;
 import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoRowBean;
 import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVDocRangeDtRowBean;
@@ -5511,6 +5514,136 @@ public class MonitoraggioHelper implements Serializable {
         }
 
         return monTableBean;
+    }
+
+    public VrsSessioneVersKoEliminateTableBean getVrsSessioneVersKoEliminateTableBean(
+            MonitoraggioForm.FiltriSessioniErrateFalliteEliminate filtri, Integer maxResults) throws EMFError {
+        String whereWord = "WHERE ";
+        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT u FROM VrsSessioneVersKoEliminate u ");
+
+        String sessErrateFallite = filtri.getSess_errate_fallite().parse();
+        if (sessErrateFallite != null) {
+            if (StringUtils.equals("ERRATE", sessErrateFallite)) {
+                queryStr.append(whereWord).append("u.orgStrut IS NULL ");
+            } else { // ERRATE
+                queryStr.append(whereWord).append("u.orgStrut IS NOT NULL ");
+            }
+
+            whereWord = "AND ";
+        }
+
+        // Inserimento nella query del filtro id ambiente
+        BigDecimal idAmbiente = filtri.getId_ambiente().parse();
+        if (idAmbiente != null) {
+            queryStr.append(whereWord).append("u.orgStrut.orgEnte.orgAmbiente.idAmbiente = :idAmbiente ");
+            whereWord = "AND ";
+        }
+        // Inserimento nella query del filtro id ente
+        BigDecimal idEnte = filtri.getId_ente().parse();
+        if (idEnte != null) {
+            queryStr.append(whereWord).append("u.orgStrut.orgEnte.idEnte = :idEnte ");
+            whereWord = "AND ";
+        }
+
+        // Inserimento nella query del filtro id strut
+        BigDecimal idStrut = filtri.getId_strut().parse();
+        if (idStrut != null) {
+            queryStr.append(whereWord).append("u.orgStrut.idStrut = :idStrut ");
+            whereWord = "AND ";
+        }
+
+        Date dtElabDa = filtri.getData_elab_da().parse();
+        if (dtElabDa != null) {
+            queryStr.append(whereWord).append("u.dtElab >= :dtElabDa ");
+            whereWord = "AND ";
+        }
+
+        Date dtElabA = filtri.getData_elab_a().parse();
+        if (dtElabA != null) {
+            queryStr.append(whereWord).append("u.dtElab <= :dtElabA ");
+            whereWord = "AND ";
+        }
+
+        Date dtRifDa = filtri.getData_rif_da().parse();
+        if (dtRifDa != null) {
+            queryStr.append(whereWord).append("u.dtRif >= :dtRifDa ");
+            whereWord = "AND ";
+        }
+
+        Date dtRifA = filtri.getData_rif_a().parse();
+        if (dtRifA != null) {
+            queryStr.append(whereWord).append("u.dtRif <= :dtRifA ");
+            whereWord = "AND ";
+        }
+
+        queryStr.append("order by u.dtElab desc");
+
+        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
+        Query query = entityManager.createQuery(queryStr.toString());
+
+        if (idAmbiente != null) {
+            query.setParameter("idAmbiente", idAmbiente.longValue());
+        }
+
+        if (idEnte != null) {
+            query.setParameter("idEnte", idEnte.longValue());
+        }
+
+        if (idStrut != null) {
+            query.setParameter("idStrut", idStrut.longValue());
+        }
+
+        if (dtElabDa != null) {
+            query.setParameter("dtElabDa", dtElabDa);
+        }
+
+        if (dtElabA != null) {
+            query.setParameter("dtElabA", dtElabA);
+        }
+
+        if (dtRifDa != null) {
+            query.setParameter("dtRifDa", dtRifDa);
+        }
+
+        if (dtRifA != null) {
+            query.setParameter("dtRifA", dtRifA);
+        }
+
+        if (maxResults != null) {
+            query.setMaxResults(maxResults);
+        }
+
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        List<VrsSessioneVersKoEliminate> listaRes = query.getResultList();
+
+        VrsSessioneVersKoEliminateTableBean sessTableBean = new VrsSessioneVersKoEliminateTableBean();
+
+        try {
+            if (listaRes != null && !listaRes.isEmpty()) {
+                sessTableBean = (VrsSessioneVersKoEliminateTableBean) Transform.entities2TableBean(listaRes);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        try {
+            if (listaRes != null && !listaRes.isEmpty()) {
+                sessTableBean = (VrsSessioneVersKoEliminateTableBean) Transform.entities2TableBean(listaRes);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        for (VrsSessioneVersKoEliminateRowBean row : sessTableBean) {
+            if (row.getNmAmbiente() != null && row.getNmEnte() != null && row.getNmStrut() != null) {
+                row.setString("dl_composito_organiz",
+                        row.getNmAmbiente() + ", " + row.getNmEnte() + ", " + row.getNmStrut());
+            } else {
+                row.setString("dl_composito_organiz", "");
+            }
+        }
+
+        return sessTableBean;
     }
 
     static class FiltriOperazioniVolumiPlain {

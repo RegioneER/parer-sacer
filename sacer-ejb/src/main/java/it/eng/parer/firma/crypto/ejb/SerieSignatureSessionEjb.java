@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 
 import it.eng.parer.common.signature.Digest;
 import it.eng.parer.common.signature.SignatureSession;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma;
 import it.eng.parer.entity.HsmSessioneFirma;
 import it.eng.parer.entity.HsmVerSerieSessioneFirma;
 import it.eng.parer.entity.IamUser;
@@ -135,23 +137,24 @@ public class SerieSignatureSessionEjb implements SignatureSessionEjb {
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate) throws Exception {
+    public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception {
         HsmSessioneFirma session = signHlp.findById(HsmSessioneFirma.class, sessionId);
         // Doesn't open a new transaction
-        this.storeSignature(session, idFile, signedFile, signingDate);
+        this.storeSignature(session, idFile, signedFile, signingDate, tipoFirma);
     }
 
     @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate)
-            throws Exception {
+    public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile, Date signingDate,
+            ElencoEnums.TipoFirma tipoFirma) throws Exception {
         // Sets the "log" of the HSMSessionFirma
         HsmVerSerieSessioneFirma serieSession = signHlp.findSerieSessione(session, idFile);
         serieSession.setTiEsito(TiEsitoFirmaVerSerie.OK);
         serieSession.setTsEsito(new Date());
 
         // The signingDate in this method isn't used because the time is detech inside the method storeFirma
-        serieEjb.storeFirmaMandatoryTransaction(idFile, signedFile, session.getIamUser().getIdUserIam());
+        serieEjb.storeFirmaMandatoryTransaction(idFile, signedFile, session.getIamUser().getIdUserIam(), tipoFirma);
 
         logger.info("Firmata serie (id: {}) nella sessione con id {}", idFile, session.getIdSessioneFirma());
     }
