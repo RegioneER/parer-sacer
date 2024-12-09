@@ -190,6 +190,13 @@ public class RequestPrsr extends AbsRequestPrsr {
         // String commonName = this.leggiCertCommonName(request);
         // verifica strutturale del campo LOGINNAME e memorizzazione dello stesso nella sessione finta
         // Il controllo sullo username viene fatto se non è presente il CommonName nell'Header HTTP
+        if (commonNamePassato) {
+            log.info("Il controllo su LOGINNAME e PASSWORD non viene fatto perché è presente il parametro header [{}]",
+                    AbsRequestPrsr.NOME_HEADER_CERTIFICATO);
+        } else {
+            log.info("Il controllo su LOGINNAME e PASSWORD viene fatto perché NON è presente il parametro header [{}]",
+                    AbsRequestPrsr.NOME_HEADER_CERTIFICATO);
+        }
         if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
             if (Objects.isNull(accessToken)) {
                 if (!commonNamePassato) { // In caso di chiamata tradizionale con controllo LOGINNAME E PASSWORD

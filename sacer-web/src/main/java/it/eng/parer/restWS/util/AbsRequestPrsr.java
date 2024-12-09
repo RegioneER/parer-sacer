@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbsRequestPrsr {
     private static final Logger log = LoggerFactory.getLogger(AbsRequestPrsr.class);
 
+    public static final String NOME_HEADER_CERTIFICATO = "RERCommonNameCert";
+
     /**
      * lettura dell'indirizzo IP del chiamante. Si presuppone che il load balancer o il reverse proxy impostino la
      * variabile RERFwFor tra gli header HTTP della request. Questo è l'unico sistema per recepire l'IP nel caso in cui
@@ -67,7 +69,15 @@ public abstract class AbsRequestPrsr {
      */
     public String leggiCertCommonName(HttpServletRequest request) {
         // cerco l'header custom della RERCommonNameCer
-        return request.getHeader("RERCommonNameCert");
+        String valoreHeaderCertificato = request.getHeader(NOME_HEADER_CERTIFICATO);
+        // MAC#34747 - Introduzione log su parametro header per servizi di recupero con certificato
+        if (valoreHeaderCertificato == null) {
+            log.info("Il parametro [{}] NON è presente nell'header della richiesta.", NOME_HEADER_CERTIFICATO);
+        } else {
+            log.info("Il parametro [{}] è presente nell'header della richiesta con valore [{}].",
+                    NOME_HEADER_CERTIFICATO, valoreHeaderCertificato);
+        }
+        return valoreHeaderCertificato;
     }
 
 }
