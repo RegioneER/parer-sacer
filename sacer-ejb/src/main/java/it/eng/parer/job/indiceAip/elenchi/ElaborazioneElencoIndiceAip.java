@@ -64,6 +64,7 @@ import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.ElvElencoVersDaElab;
 import it.eng.parer.entity.ElvFileElencoVer;
+import it.eng.parer.entity.IamUser;
 import it.eng.parer.entity.LogJob;
 import it.eng.parer.entity.OrgAmbiente;
 import it.eng.parer.entity.OrgEnte;
@@ -78,6 +79,7 @@ import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.ElvVChkSoloUdAnnul;
 import it.eng.parer.viewEntity.ElvVLisaipudUrndacalcByele;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
+import it.eng.parer.web.ejb.UnitaDocumentarieEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.dto.CSChiave;
@@ -113,6 +115,10 @@ public class ElaborazioneElencoIndiceAip {
     private ConfigurationHelper configurationHelper;
     @EJB
     private UniformResourceNameUtilHelper urnHelper;
+    // MEV #31162
+    @EJB
+    private UnitaDocumentarieEjb udEjb;
+    // end MEV #31162
 
     @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
     public void creaElencoIndiciAIP(long idElencoVers, long idLogJob)
@@ -364,7 +370,8 @@ public class ElaborazioneElencoIndiceAip {
 
     // <editor-fold desc="Questi metodi potrebbero essere unificati">
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void setCompletato(ElvElencoVer elenco, List<String> statiUdDocDaCompletare) {
+    public void setCompletato(ElvElencoVer elenco, List<String> statiUdDocDaCompletare, long idUtente,
+            String modalitaLog) {
         ElvElencoVersDaElab elencoDaElab = elencoHelper.retrieveElencoInQueue(elenco);
         elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.COMPLETATO.name());
         // Elimino l'elenco da elaborare
@@ -384,6 +391,12 @@ public class ElaborazioneElencoIndiceAip {
             elencoHelper.lockUnitaDoc(ud);
             if (ud.getTiStatoConservazione().equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name())) {
                 ud.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name());
+                // MEV #31162
+                IamUser utente = ciaHelper.findById(IamUser.class, idUtente);
+                udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), utente.getNmUserid(),
+                        Constants.MARCA_ELENCO_INDICE_AIP_UD, CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(),
+                        modalitaLog);
+                // end MEV #31162
             }
         }
     }

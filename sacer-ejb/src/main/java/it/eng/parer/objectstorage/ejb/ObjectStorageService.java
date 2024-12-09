@@ -14,16 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.objectstorage.ejb;
 
+import it.eng.parer.crypto.model.CryptoSignedP7mUri;
 import java.io.*;
-import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +34,6 @@ import javax.ejb.Stateless;
 
 import it.eng.parer.entity.*;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +73,9 @@ import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.utils.Md5Utils;
 import it.eng.spagoCore.util.UUIDMdcLogUtil;
 import java.io.ByteArrayInputStream;
+import java.net.URL;
+import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
+import java.net.URISyntaxException;
 
 @Stateless(mappedName = "ObjectStorageService")
 @LocalBean
@@ -125,6 +122,10 @@ public class ObjectStorageService {
 
     @EJB
     private SalvataggioBackendHelper salvataggioBackendHelper;
+    @EJB
+    protected CryptoInvoker cryptoInvoker;
+    @EJB
+    protected AwsPresigner awsPresigner;
 
     /**
      * Effettua il lookup per stabilire come sia configurato il backend
@@ -592,16 +593,44 @@ public class ObjectStorageService {
      *
      */
     public void getObjectComponente(long idCompDoc, OutputStream outputStream) {
+        getObjectComponente(idCompDoc, outputStream, false);
+    }
+
+    /**
+     * Ottieni lo stream del componente contenuto nell'object storage
+     *
+     * @param idCompDoc
+     *            id del componente
+     * @param fileDaSbustare
+     *            indica se sbustare il file o no
+     * @param outputStream
+     *            Stream su cui scrivere l'oggetto
+     *
+     */
+    public void getObjectComponente(long idCompDoc, OutputStream outputStream, boolean fileDaSbustare) {
+        // File fileP7m = null;
+        File fileP7m = null;
         try {
             AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
             ObjectStorageBackend config = salvataggioBackendHelper
                     .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), COMPONENTI_R);
             ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
                     link.getNmBucket(), link.getCdKeyFile());
-            IOUtils.copyLarge(object, outputStream);
-        } catch (IOException | ObjectStorageException e) {
+            // MEV#34239 - Estensione servizio per recupero file sbustati
+            if (fileDaSbustare) {
+                URL url = awsPresigner.getPresignedUrl(config, link.getCdKeyFile());
+                CryptoSignedP7mUri dto = new CryptoSignedP7mUri(url.toURI());
+                cryptoInvoker.sbustaDaOsEStrimmaOutput(dto, outputStream);
+            } else {
+                IOUtils.copyLarge(object, outputStream);
+            }
+        } catch (IOException | ObjectStorageException | URISyntaxException e) {
             // EJB spec (14.2.2 in the EJB 3)
             throw new EJBException(e);
+        } finally {
+            if (fileP7m != null) {
+                fileP7m.delete();
+            }
         }
     }
 
@@ -1333,7 +1362,6 @@ public class ObjectStorageService {
     }
 
     // end MEV #30398
-
     // MEV#30399
     /**
      * Salva il contenuto nel bucket degli Elenchi Indici AIP
@@ -1478,7 +1506,6 @@ public class ObjectStorageService {
     }
 
     // end MEV#30399
-
     // MEV#30400
 
     public ObjectStorageResource createResourcesInIndiciAipSerieUD(SerFileVerSerie serFileVerSerie, String nomeBackend,

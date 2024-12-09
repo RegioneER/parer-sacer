@@ -97,6 +97,7 @@ import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarie
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.UnitaDocumentarieList;
 import it.eng.parer.slite.gen.form.VolumiForm;
+import it.eng.parer.slite.gen.tablebean.AroLogStatoConservUdTableBean;
 import it.eng.parer.slite.gen.tablebean.AroUpdUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.AroVerIndiceAipUdRowBean;
 import it.eng.parer.slite.gen.tablebean.AroVerIndiceAipUdTableBean;
@@ -2220,6 +2221,18 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         getForm().getNoteList().getTable().first();
         getForm().getUnitaDocumentarieDettaglioListsTabs().getListaNoteUD().setHidden(false);
         // end MEV#24597
+
+        // MEV #31162
+        AroLogStatoConservUdTableBean logStatoConservUdTableBean = udHelper.getAroLogStatoConservUdTableBean(idUnitDoc);
+        int logStatoConservUdPageSize = 10;
+        if (getForm().getStatiConservazioneUdList().getTable() != null) {
+            logStatoConservUdPageSize = getForm().getStatiConservazioneUdList().getTable().getPageSize();
+        }
+        getForm().getStatiConservazioneUdList().setTable(logStatoConservUdTableBean);
+        getForm().getStatiConservazioneUdList().getTable().setPageSize(logStatoConservUdPageSize);
+        getForm().getStatiConservazioneUdList().getTable().first();
+        // end MEV #31162
+
     }
 
     @Override
@@ -2521,6 +2534,13 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     public void tabListaDocumentiUDOnClick() throws EMFError {
         getForm().getUnitaDocumentarieDettaglioListsTabs()
                 .setCurrentTab(getForm().getUnitaDocumentarieDettaglioListsTabs().getListaDocumentiUD());
+        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
+    }
+
+    @Override
+    public void tabListaStatiConservUDOnClick() throws EMFError {
+        getForm().getUnitaDocumentarieDettaglioListsTabs()
+                .setCurrentTab(getForm().getUnitaDocumentarieDettaglioListsTabs().getListaStatiConservUD());
         forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_DETAIL);
     }
 
@@ -3067,9 +3087,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             } else {
                 forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
             }
-        } catch (ParerInternalError e) {
-            log.error("Eccezione nel recupero AIP ", e);
-            getMessageBox().addError("Eccezione nel recupero AIP: " + e.getDescription());
+            // } catch (ParerInternalError e) {
+            // log.error("Eccezione nel recupero AIP ", e);
+            // getMessageBox().addError("Eccezione nel recupero AIP: " + e.getDescription());
         } catch (Exception e) {
             String message = "Eccezione nel recupero AIP " + ExceptionUtils.getRootCauseMessage(e);
             getMessageBox().addError("Eccezione nel recupero AIP: " + message);

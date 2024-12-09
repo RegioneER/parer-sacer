@@ -176,9 +176,9 @@
                     <!--  piazzo i campi da visualizzare nel dettaglio -->   
                     <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.ISSUER_CERTIF_FIRMATARIO%>" colSpan="2"/>
                     <sl:newLine />
-                    <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.NI_SERIAL_CERTIF_CA%>" colSpan="2" />
+                    <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DS_SERIAL_CERTIF_CA%>" colSpan="2" />
                     <sl:newLine />
-                    <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.NI_SERIAL_CERTIF_FIRMATARIO%>" colSpan="4" controlWidth="w100"/>
+                    <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DS_SERIAL_CERTIF_FIRMATARIO%>" colSpan="4" controlWidth="w100"/>
                     <sl:newLine />
                     <slf:lblField name="<%=ComponentiForm.FirmeUnitaDocumentarieDetail.DT_INI_VAL_CERTIF_FIRMATARIO%>" colSpan="2" />
                     <sl:newLine />

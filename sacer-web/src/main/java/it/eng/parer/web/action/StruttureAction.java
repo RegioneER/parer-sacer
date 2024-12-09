@@ -249,6 +249,8 @@ public class StruttureAction extends StruttureAbstractAction {
     private AmministrazioneEjb amministrazioneEjb;
     @EJB(mappedName = "java:app/Parer-ejb/RestituzioneArchivioEjb")
     private RestituzioneArchivioEjb restArchEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/DatiSpecificiEjb")
+    private DatiSpecificiEjb datiSpecificiEjb;
 
     // Pattern per l'inserimento del nome struttura conforme al set di caratteri ammessi
     private static final String NOME_STRUT = "^[A-Za-z0-9_][A-Za-z0-9\\. _-]*$";
@@ -1556,67 +1558,9 @@ public class StruttureAction extends StruttureAbstractAction {
             redirectToCreaCriterioRaggrPage();
         } else if (lista.equals(getForm().getSistemiMigrazioneList().getName())) {
             forwardToPublisher(Application.Publisher.XSD_MIGR_STRUT);
-        } else if (getForm().getXsdDatiSpecList().getName().equals(lista)) {
-            String nmSistemaMigraz = getForm().getGestioneXsdMigrazione().getNm_sistema_migraz().getDecodedValue();
-            if (StringUtils.isBlank(nmSistemaMigraz)) {
-                getMessageBox().addError("Errore inatteso nel recupero del sistema di migrazione");
-            }
-            if (getMessageBox().isEmpty()) {
-                StrutDatiSpecForm form = new StrutDatiSpecForm();
-                Integer row = getForm().getXsdDatiSpecList().getTable().getCurrentRowIndex();
-                if (idStrut == null) {
-                    idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
-                            .getBigDecimal("id_strut");
-                }
-
-                StringBuilder string = new StringBuilder(
-                        "?operation=listNavigationOnClick&navigationEvent=" + getNavigationEvent() + "&table="
-                                + StrutDatiSpecForm.XsdDatiSpecList.NAME + "&riga=" + row.toString());
-                form.getXsdDatiSpecList().setTable(getForm().getXsdDatiSpecList().getTable());
-
-                // Non controllo il publisher da cui arrivo perché sono sicuro di essere in quello della migrazione
-                // controllo invece quale tabella di strutture ha richiamato la funzione, se quella normale o quella di
-                // duplica
-                form.getIdList().getId_strut().setValue(idStrut.toString());
-                form.getIdList().getNm_sys_migraz().setValue(nmSistemaMigraz);
-
-                if (getForm().getXsdMigrStrutTab().getCurrentTab()
-                        .equals(getForm().getXsdMigrStrutTab().getXsdMigrTipoDoc())) {
-                    form.getIdList().getNm_sacer_type().setValue("DOC");
-                    getSession().setAttribute("elementoRif", "Documento");
-
-                } else if (getForm().getXsdMigrStrutTab().getCurrentTab()
-                        .equals(getForm().getXsdMigrStrutTab().getXsdMigrTipoUnitaDoc())) {
-                    form.getIdList().getNm_sacer_type().setValue("UNI_DOC");
-                    getSession().setAttribute("elementoRif", "UD");
-
-                } else if (getForm().getXsdMigrStrutTab().getCurrentTab()
-                        .equals(getForm().getXsdMigrStrutTab().getXsdMigrTipoCompDoc())) {
-                    form.getIdList().getNm_sacer_type().setValue("COMP");
-                    getSession().setAttribute("elementoRif", "Componente");
-
-                }
-                getRequest().setAttribute("lastPage", "migraz");
-
-                string.append("&idStrut=").append(idStrut);
-                string.append("&cessato=").append(getForm().getInsStruttura().getFl_cessato().parse());
-                // form = form nuova
-                BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
-
-                form.getStrutRif().getNm_strut().setValue(rowBean.getString("nm_strut"));
-                form.getStrutRif().getDs_strut().setValue(rowBean.getString("ds_strut"));
-                OrgEnteRowBean enteTemp = struttureEjb.getOrgEnteRowBean(rowBean.getBigDecimal("id_ente"));
-                form.getStrutRif().getId_ente().setValue(enteTemp.getNmEnte());
-                form.getStrutRif().getStruttura()
-                        .setValue(rowBean.getString("nm_strut") + " (" + rowBean.getString("ds_strut") + ")");
-
-                // fisso a false tutte le autorizzazioni a procedere con le altre fasi della listNavigationOnClick in
-                // questa action
-                this.setInsertAction(false);
-                this.setEditAction(false);
-                this.setDeleteAction(false);
-                redirectToAction(Application.Actions.STRUT_DATI_SPEC, string.toString(), form);
-            }
+        } else if (getForm().getXsdDatiSpecList().getName().equals(lista)
+                && action.equals(ListAction.NE_DETTAGLIO_VIEW)) {
+            redirectToXsdDatiSpecPage();
         } else if (lista.equals(getForm().getTitolariList().getName()) && action.equals(ListAction.NE_DETTAGLIO_VIEW)) {
             redirectToTitolarioPage(action);
         } else if (lista.equals(getForm().getTipologieSerieList().getName())
@@ -2036,6 +1980,8 @@ public class StruttureAction extends StruttureAbstractAction {
             redirectToFormatoFileDocPage();
         } else if (lista.equals(getForm().getCriteriRaggruppamentoList().getName())) {
             redirectToCreaCriterioRaggrPage();
+        } else if (lista.equals(getForm().getXsdDatiSpecList().getName())) {
+            redirectToXsdDatiSpecPage();
         } else if (lista.equals(getForm().getTipoCompAmmessoDaTipoRapprCompList().getName())) {
             // Lista "Tipo Rappresentazione Componente"
             BigDecimal idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
@@ -4560,6 +4506,71 @@ public class StruttureAction extends StruttureAbstractAction {
         return form;
     }
 
+    private StrutDatiSpecForm prepareRedirectToStrutDatiSpec() throws EMFError {
+        StrutDatiSpecForm form = new StrutDatiSpecForm();
+        BigDecimal idStrut = getForm().getStruttureList().getTable().getCurrentRow().getBigDecimal("id_strut");
+        String nmSistemaMigraz = getForm().getGestioneXsdMigrazione().getNm_sistema_migraz().getDecodedValue();
+        if (StringUtils.isBlank(nmSistemaMigraz)) {
+            getMessageBox().addError("Errore inatteso nel recupero del sistema di migrazione");
+        }
+        if (getMessageBox().isEmpty()) {
+
+            Integer row = getForm().getXsdDatiSpecList().getTable().getCurrentRowIndex();
+            if (idStrut == null) {
+                idStrut = ((BaseRowInterface) getForm().getStruttureList().getTable().getCurrentRow())
+                        .getBigDecimal("id_strut");
+            }
+
+            StringBuilder string = new StringBuilder(
+                    "?operation=listNavigationOnClick&navigationEvent=" + getNavigationEvent() + "&table="
+                            + StrutDatiSpecForm.XsdDatiSpecList.NAME + "&riga=" + row.toString());
+            form.getXsdDatiSpecList().setTable(getForm().getXsdDatiSpecList().getTable());
+
+            // Non controllo il publisher da cui arrivo perché sono sicuro di essere in quello della migrazione
+            // controllo invece quale tabella di strutture ha richiamato la funzione, se quella normale o quella di
+            // duplica
+            form.getIdList().getId_strut().setValue(idStrut.toString());
+            form.getIdList().getNm_sys_migraz().setValue(nmSistemaMigraz);
+
+            if (getForm().getXsdMigrStrutTab().getCurrentTab()
+                    .equals(getForm().getXsdMigrStrutTab().getXsdMigrTipoDoc())) {
+                form.getIdList().getNm_sacer_type().setValue("DOC");
+                getSession().setAttribute("elementoRif", "Documento");
+
+            } else if (getForm().getXsdMigrStrutTab().getCurrentTab()
+                    .equals(getForm().getXsdMigrStrutTab().getXsdMigrTipoUnitaDoc())) {
+                form.getIdList().getNm_sacer_type().setValue("UNI_DOC");
+                getSession().setAttribute("elementoRif", "UD");
+
+            } else if (getForm().getXsdMigrStrutTab().getCurrentTab()
+                    .equals(getForm().getXsdMigrStrutTab().getXsdMigrTipoCompDoc())) {
+                form.getIdList().getNm_sacer_type().setValue("COMP");
+                getSession().setAttribute("elementoRif", "Componente");
+
+            }
+            getRequest().setAttribute("lastPage", "migraz");
+
+            string.append("&idStrut=").append(idStrut);
+            string.append("&cessato=").append(getForm().getInsStruttura().getFl_cessato().parse());
+            // form = form nuova
+            BaseRowInterface rowBean = getForm().getStruttureList().getTable().getCurrentRow();
+
+            form.getStrutRif().getNm_strut().setValue(rowBean.getString("nm_strut"));
+            form.getStrutRif().getDs_strut().setValue(rowBean.getString("ds_strut"));
+            OrgEnteRowBean enteTemp = struttureEjb.getOrgEnteRowBean(rowBean.getBigDecimal("id_ente"));
+            form.getStrutRif().getId_ente().setValue(enteTemp.getNmEnte());
+            form.getStrutRif().getStruttura()
+                    .setValue(rowBean.getString("nm_strut") + " (" + rowBean.getString("ds_strut") + ")");
+
+            // fisso a false tutte le autorizzazioni a procedere con le altre fasi della listNavigationOnClick in
+            // questa action
+            this.setInsertAction(false);
+            this.setEditAction(false);
+            this.setDeleteAction(false);
+        }
+        return form;
+    }
+
     private void redirectToRegistroPage() throws EMFError {
         StrutTipiForm form = prepareRedirectToStrutTipi();
         form.getRegistroUnitaDocList()
@@ -4642,6 +4653,14 @@ public class StruttureAction extends StruttureAbstractAction {
                         + getForm().getCriteriRaggruppamentoList().getTable().getCurrentRowIndex() + "&cessato="
                         + getForm().getInsStruttura().getFl_cessato().parse(),
                 form);
+    }
+
+    private void redirectToXsdDatiSpecPage() throws EMFError {
+        StrutDatiSpecForm form = prepareRedirectToStrutDatiSpec();
+
+        form.getXsdDatiSpecList().setFilterValidRecords(getForm().getXsdDatiSpecList().isFilterValidRecords());
+        redirectToPage(Application.Actions.STRUT_DATI_SPEC, form, form.getXsdDatiSpecList().getName(),
+                getForm().getXsdDatiSpecList().getTable(), getNavigationEvent());
     }
 
     private void redirectToPage(final String action, BaseForm form, String listToPopulate, BaseTableInterface<?> table,
@@ -7122,6 +7141,110 @@ public class StruttureAction extends StruttureAbstractAction {
             getMessageBox().addError("Errore durante il recupero dei parametri di gestione della struttura");
         }
         forwardToPublisher(getLastPublisher());
+    }
+
+    @Override
+    public void deleteXsdDatiSpecList() throws EMFError {
+
+        DecXsdDatiSpecRowBean xsdDatiSpecRowBean = ((DecXsdDatiSpecRowBean) getForm().getXsdDatiSpecList().getTable()
+                .getCurrentRow());
+        getMessageBox().clear();
+        Date dtSoppres = xsdDatiSpecRowBean.getDtSoppres();
+        Date today = Calendar.getInstance().getTime();
+        if (dtSoppres.compareTo(today) < 0) {
+            getMessageBox().addError("Versione XSD gi\u00E0 disattivata in precedenza");
+            forwardToPublisher(getLastPublisher());
+        } else {
+            // Il sistema controlla che tale attributo non sia associato a nessun tipo serie, altrimenti da errore
+            if (datiSpecificiEjb.isXsdDatiSpecInUseInTipiSerie(xsdDatiSpecRowBean.getIdXsdDatiSpec())) {
+                getMessageBox().addError(
+                        "Almeno un attributo dell'xsd \u00E8 utilizzato da un tipo serie . L'eliminazione dell'xsd non \u00E8 consentita");
+            }
+            if (!getMessageBox().hasError()) {
+                boolean isInUse = datiSpecificiEjb.isXsdDatiSpecInUse(xsdDatiSpecRowBean);
+                boolean isInUseOnCampiRegole = datiSpecificiEjb.isXsdDatiSpecInUseOnCampi(
+                        xsdDatiSpecRowBean.getIdXsdDatiSpec(), "DATO_SPEC_UNI_DOC", "DATO_SPEC_DOC_PRINC");
+                // se in uso non posso cancellare, ma posso disattivare
+                if (isInUse || isInUseOnCampiRegole) {
+                    if (StringUtils.isNotBlank(getLastPublisher())) {
+                        // Mostra messaggio di disattivazione
+                        getRequest().setAttribute("confermaDisattivazioneXsd", true);
+                        forwardToPublisher(getLastPublisher());
+                        SessionManager.removeLastExecutionHistory(getSession());
+                    } else {
+                        deleteXsd(xsdDatiSpecRowBean);
+                    }
+                } else {
+                    deleteXsd(xsdDatiSpecRowBean);
+                }
+            } else {
+                forwardToPublisher(getLastPublisher());
+                SessionManager.removeLastExecutionHistory(getSession());
+            }
+        }
+    }
+
+    private void deleteXsd(DecXsdDatiSpecRowBean xsdDatiSpecRowBean) throws EMFError {
+        // se non in uso e ultimo in lista
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        if (Application.Publisher.XSD_DATI_SPEC_DETAIL.equalsIgnoreCase(param.getNomePagina())) {
+            param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
+        } else {
+            param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(getForm(), getForm().getXsdDatiSpecList()));
+        }
+
+        try {
+            datiSpecificiEjb.delXsdDatiSpec(param, xsdDatiSpecRowBean);
+            getMessageBox().addInfo("Eliminazione xsd avvenuta con successo");
+        } catch (ParerUserError ex) {
+            logger.error(ex.getMessage(), ex);
+            getMessageBox().addError("Errore inatteso nell'eliminazione del xsd");
+        }
+        if (!getMessageBox().hasError()) {
+            DecXsdDatiSpecTableBean xsdDatiSpecTableBean = datiSpecEjb.getDecXsdDatiSpecTableBean(
+                    xsdDatiSpecRowBean.getIdStrut(), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                    xsdDatiSpecRowBean.getTiEntitaSacer(), xsdDatiSpecRowBean.getNmSistemaMigraz());
+
+            getForm().getXsdDatiSpecList().setTable(xsdDatiSpecTableBean);
+            getForm().getXsdDatiSpecList().getTable().first();
+            getForm().getXsdDatiSpecList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+        }
+        forwardToPublisher(getLastPublisher());
+        SessionManager.removeLastExecutionHistory(getSession());
+    }
+
+    public void confermaDisattivazione() throws EMFError {
+        DecXsdDatiSpecRowBean xsdDatiSpecRowBean = ((DecXsdDatiSpecRowBean) getForm().getXsdDatiSpecList().getTable()
+                .getCurrentRow());
+        disattivaXsd(xsdDatiSpecRowBean.getIdXsdDatiSpec());
+        if (!getMessageBox().hasError()) {
+            DecXsdDatiSpecTableBean xsdDatiSpecTableBean = datiSpecEjb.getDecXsdDatiSpecTableBean(
+                    xsdDatiSpecRowBean.getIdStrut(), CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(),
+                    xsdDatiSpecRowBean.getTiEntitaSacer(), xsdDatiSpecRowBean.getNmSistemaMigraz());
+
+            getForm().getXsdDatiSpecList().setTable(xsdDatiSpecTableBean);
+            getForm().getXsdDatiSpecList().getTable().first();
+            getForm().getXsdDatiSpecList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+        }
+        forwardToPublisher(getLastPublisher());
+    }
+
+    private void disattivaXsd(BigDecimal idXsdDatiSpec) throws EMFError {
+        /*
+         * Codice aggiuntivo per il logging...
+         */
+        LogParam param = SpagoliteLogUtil.getLogParam(
+                configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+        param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
+        param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+        datiSpecificiEjb.deactivateXsdAndLog(param, idXsdDatiSpec);
     }
 
 }

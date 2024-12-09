@@ -534,6 +534,14 @@
         <Input Description="Utente" Name="nm_userid" Type="STRING" />
         <Link Description="Indice AIP" Name="id_ver_indice_aip" Type="INTEGER" Target="loadDettaglioVersioneIndiceAip" Tooltip="Visualizza versione indice aip" isTargetList="false"/>
     </List>
+    <!-- Lista stati conservazione dell'unità documentaria -->
+    <List Description="Stati di conservazione dell'unità documentaria" Name="StatiConservazioneUdList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
+        <Input Description="Data stato" Name="dt_stato" Type="DATETIME"/>
+        <Input Description="Evento" Name="ti_evento" Type="STRING"/>
+        <Input Description="Modalità" Name="ti_mod" Type="STRING"/>
+        <Input Description="Agente" Name="nm_agente" Type="STRING"/>
+        <Input Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>        
+    </List>
     <Tab Description="Dettaglio Unità Documentaria" Name="UnitaDocumentarieDettaglioTabs">
         <TabElement Description="Informazioni principali" Name="InfoPrincipaliUD"/>
         <TabElement Description="Informazioni versamento" Name="InfoVersamentoUD"/>
@@ -557,6 +565,7 @@
         <TabElement Description="Fascicoli di appartenenza" Name="ListaFascicoliAppartenenzaUD"/>
         <TabElement Description="Aggiornamenti metadati" Name="ListaAggiornamentiMetadatiUD"/>
         <TabElement Description="Note unità documentaria" Name="ListaNoteUD"/>
+        <TabElement Description="Stati conservazione ud" Name="ListaStatiConservUD"/>
     </Tab>
     <!-- PAGINA documento -->
     <Fields Description="Documento" Name="DocumentiUnitaDocumentarieDetail">

@@ -25,8 +25,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import it.eng.spagoCore.util.JpaUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,13 +33,6 @@ import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.ws.recupero.ejb.objectStorage.RecObjectStorage;
 import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.recupero.ejb.oracleClb.RecClbOracle;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.sql.Clob;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  *
@@ -88,6 +79,9 @@ public class RecuperoDocumento {
             log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from BlbOracle, doc = {}", dto);
             return recBlbOracle.recuperaBlobCompSuStream(dto.getId(), dto.getOs(), dto.getTabellaBlobDaLeggere(), dto);
         } else {
+            // MEV#34239 - Estensione servizio per recupero file sbustati
+            // In questo ramo per quanto riguarda lo sbustamento dei .p7m non ci parrerà mai
+            // perché sono dei binari, quindi BLOB
             log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from ClbOracle, doc = {}", dto);
             return recClbOracle.recuperaClobDataSuStream(dto.getId(), dto.getOs(), dto.getTabellaClobDaLeggere());
         }

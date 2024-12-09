@@ -67,7 +67,8 @@ public class ControlliRecuperoTest extends HelperTest<ControlliRecupero> {
     @Test
     public void leggiCompFileInUDQueryIsOk() {
         Long idUnitaDoc = 28L;
-        RispostaControlli rispostaControlli = helper.leggiCompFileInUD(idUnitaDoc);
+        boolean estraiFileIndiceAip = false;
+        RispostaControlli rispostaControlli = helper.leggiCompFileInUD(idUnitaDoc, estraiFileIndiceAip);
         assertNotEquals("666", rispostaControlli.getCodErr());
     }
 

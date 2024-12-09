@@ -309,6 +309,11 @@
                 <slf:list name="<%= UnitaDocumentarieForm.NoteList.NAME%>" />
                 <slf:listNavBar  name="<%= UnitaDocumentarieForm.NoteList.NAME%>" />
             </slf:tab>
+            <slf:tab  name="<%= UnitaDocumentarieForm.UnitaDocumentarieDettaglioListsTabs.NAME%>" tabElement="ListaStatiConservUD">
+                <slf:listNavBar name="<%= UnitaDocumentarieForm.StatiConservazioneUdList.NAME%>" pageSizeRelated="true"/>
+                <slf:list name="<%= UnitaDocumentarieForm.StatiConservazioneUdList.NAME%>" />
+                <slf:listNavBar  name="<%= UnitaDocumentarieForm.StatiConservazioneUdList.NAME%>" />
+            </slf:tab>
 
         </sl:content>
         <sl:footer />

@@ -1355,6 +1355,17 @@ public class SerieHelper extends GenericHelper {
         return query.executeUpdate();
     }
 
+    // MEV #31162
+    public List<Long> getStatoConservazioneAroUnitaDocInContenuto(Long idContenutoVerSerie,
+            String tiStatoConservazioneOld) {
+        Query query = getEntityManager().createQuery(
+                "SELECT ud.idUnitaDoc FROM AroUnitaDoc ud WHERE ud.tiStatoConservazione = :tiStatoConservazioneOld AND EXISTS (SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie WHERE udVerSerie.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND udVerSerie.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc)");
+        query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
+        query.setParameter("tiStatoConservazioneOld", tiStatoConservazioneOld);
+        return query.getResultList();
+    }
+    // end MEV #31162
+
     public int updateStatoConservazioneAroUnitaDocInContenuto(Long idContenutoVerSerie,
             List<String> tiStatoConservazioneOld, String tiStatoConservazioneNew) {
         Query query = getEntityManager().createQuery(
@@ -1364,6 +1375,17 @@ public class SerieHelper extends GenericHelper {
         query.setParameter("tiStatoConservazioneNew", tiStatoConservazioneNew);
         return query.executeUpdate();
     }
+
+    // MEV #31162
+    public List<Long> getStatoConservazioneAroUnitaDocInContenuto(Long idContenutoVerSerie,
+            List<String> tiStatoConservazioneOld) {
+        Query query = getEntityManager().createQuery(
+                "SELECT ud.idUnitaDoc FROM AroUnitaDoc ud WHERE ud.tiStatoConservazione IN (:tiStatoConservazioneOld) AND EXISTS (SELECT udVerSerie FROM AroUdAppartVerSerie udVerSerie WHERE udVerSerie.serContenutoVerSerie.idContenutoVerSerie = :idContenutoVerSerie AND udVerSerie.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc)");
+        query.setParameter("idContenutoVerSerie", idContenutoVerSerie);
+        query.setParameter("tiStatoConservazioneOld", tiStatoConservazioneOld);
+        return query.getResultList();
+    }
+    // end MEV #31162
 
     public int updateStatoConservazioneAroUnitaDocWithoutOtherSeries(BigDecimal idSerie, Long idVerSerie,
             String tiStatoConservazioneOld, String tiStatoConservazioneNew) {
@@ -1435,6 +1457,38 @@ public class SerieHelper extends GenericHelper {
         query.setParameter("defaultAnnul", c.getTime());
 
         return query.executeUpdate();
+    }
+
+    public List<Long> getStatoConservazioneAroUnitaDocWithoutOtherSeries(BigDecimal idSerie, Long idVerSerie,
+            List<String> tiStatoConservazioneOld) {
+        Query query = getEntityManager().createQuery("SELECT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE ud.tiStatoConservazione IN (:tiStatoConservazioneOld) AND "
+                + "EXISTS (SELECT udVerSerie_1 FROM AroUdAppartVerSerie udVerSerie_1 "
+                + "JOIN udVerSerie_1.serContenutoVerSerie contenuto_1 " + "JOIN contenuto_1.serVerSerie verSerie_1 "
+                + "JOIN verSerie_1.serSerie serie_1 WHERE serie_1.idSerie = :idSerie "
+                + "AND verSerie_1.idVerSerie = :idVerSerie "
+                + "AND udVerSerie_1.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_1.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc )"
+                + "AND NOT EXISTS (SELECT udVerSerie_2 FROM AroUdAppartVerSerie udVerSerie_2 "
+                + "JOIN udVerSerie_2.serContenutoVerSerie contenuto_2 " + "JOIN contenuto_2.serVerSerie verSerie_2 "
+                + "JOIN verSerie_2.serSerie serie_2 WHERE serie_2.idSerie != :idSerie "
+                + "AND udVerSerie_2.serContenutoVerSerie.tiContenutoVerSerie = 'EFFETTIVO' AND udVerSerie_2.aroUnitaDoc.idUnitaDoc = ud.idUnitaDoc "
+                + "AND serie_2.dtAnnul = :defaultAnnul )");
+        query.setParameter("idSerie", longFromBigDecimal(idSerie));
+        query.setParameter("idVerSerie", idVerSerie);
+        query.setParameter("tiStatoConservazioneOld", tiStatoConservazioneOld);
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        c.set(Calendar.YEAR, 2444);
+        c.set(Calendar.MONTH, Calendar.DECEMBER);
+        c.set(Calendar.DATE, 31);
+
+        query.setParameter("defaultAnnul", c.getTime());
+
+        return query.getResultList();
     }
 
     public List<AroUdAppartVerSerie> getAroUdAppartVerSerieInContenEff(Long idVerSerie, String tiStatoConservazioneUd) {

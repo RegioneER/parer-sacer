@@ -451,7 +451,7 @@ public class InvioRichiestaAnnullamentoVersamentiEjb {
         log.debug("controlloItemWsRichiestaAnnul - FINE");
         // Evasione richiesta
         log.debug("evasioneRichiestaAnnullamento - INIZIO");
-        avEjb.evasioneRichiestaAnnullamento(richiestaAnnullamento);
+        avEjb.evasioneRichiestaAnnullamento(richiestaAnnullamento, idUserIam);
         log.debug("evasioneRichiestaAnnullamento - FINE");
     }
 

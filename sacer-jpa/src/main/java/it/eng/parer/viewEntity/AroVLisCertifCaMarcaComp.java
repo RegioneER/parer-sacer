@@ -45,12 +45,12 @@ public class AroVLisCertifCaMarcaComp implements Serializable {
     private BigDecimal idContrMarcaComp;
     private BigDecimal idMarcaComp;
     private BigDecimal idUsoCertifCaContrMarca;
-    private BigDecimal niSerialCertifCa;
-    private BigDecimal niSerialCertifCrl;
-    private BigDecimal niSerialCrl;
+    private String dsSerialCertifCa;
+    private String dsSerialCertifCrl;
+    private String dsSerialCrl;
     private BigDecimal pgCertifCa;
     private String dlDnIssuerCertifOcsp;
-    private BigDecimal niSerialCertifOcsp;
+    private String dsSerialCertifOcsp;
     private Date dtIniValCertifOcsp;
     private Date dtFinValCertifOcsp;
     private String tiContr;
@@ -134,31 +134,31 @@ public class AroVLisCertifCaMarcaComp implements Serializable {
         this.idUsoCertifCaContrMarca = idUsoCertifCaContrMarca;
     }
 
-    @Column(name = "NI_SERIAL_CERTIF_CA")
-    public BigDecimal getNiSerialCertifCa() {
-        return this.niSerialCertifCa;
+    @Column(name = "DS_SERIAL_CERTIF_CA")
+    public String getDsSerialCertifCa() {
+        return this.dsSerialCertifCa;
     }
 
-    public void setNiSerialCertifCa(BigDecimal niSerialCertifCa) {
-        this.niSerialCertifCa = niSerialCertifCa;
+    public void setDsSerialCertifCa(String dsSerialCertifCa) {
+        this.dsSerialCertifCa = dsSerialCertifCa;
     }
 
-    @Column(name = "NI_SERIAL_CERTIF_CRL")
-    public BigDecimal getNiSerialCertifCrl() {
-        return this.niSerialCertifCrl;
+    @Column(name = "DS_SERIAL_CERTIF_CRL")
+    public String getDsSerialCertifCrl() {
+        return this.dsSerialCertifCrl;
     }
 
-    public void setNiSerialCertifCrl(BigDecimal niSerialCertifCrl) {
-        this.niSerialCertifCrl = niSerialCertifCrl;
+    public void setDsSerialCertifCrl(String dsSerialCertifCrl) {
+        this.dsSerialCertifCrl = dsSerialCertifCrl;
     }
 
-    @Column(name = "NI_SERIAL_CRL")
-    public BigDecimal getNiSerialCrl() {
-        return this.niSerialCrl;
+    @Column(name = "DS_SERIAL_CRL")
+    public String getDsSerialCrl() {
+        return this.dsSerialCrl;
     }
 
-    public void setNiSerialCrl(BigDecimal niSerialCrl) {
-        this.niSerialCrl = niSerialCrl;
+    public void setDsSerialCrl(String dsSerialCrl) {
+        this.dsSerialCrl = dsSerialCrl;
     }
 
     @Column(name = "PG_CERTIF_CA")
@@ -179,13 +179,13 @@ public class AroVLisCertifCaMarcaComp implements Serializable {
         this.dlDnIssuerCertifOcsp = dlDnIssuerCertifOcsp;
     }
 
-    @Column(name = "NI_SERIAL_CERTIF_OCSP")
-    public BigDecimal getNiSerialCertifOcsp() {
-        return niSerialCertifOcsp;
+    @Column(name = "DS_SERIAL_CERTIF_OCSP")
+    public String getDsSerialCertifOcsp() {
+        return dsSerialCertifOcsp;
     }
 
-    public void setNiSerialCertifOcsp(BigDecimal niSerialCertifOcsp) {
-        this.niSerialCertifOcsp = niSerialCertifOcsp;
+    public void setDsSerialCertifOcsp(String dsSerialCertifOcsp) {
+        this.dsSerialCertifOcsp = dsSerialCertifOcsp;
     }
 
     @Temporal(TemporalType.TIMESTAMP)

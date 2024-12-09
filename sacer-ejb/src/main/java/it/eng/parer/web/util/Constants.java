@@ -45,6 +45,35 @@ public class Constants {
     public static final String TI_USO_XSD_VERS = "VERS";
     public static final String TI_USO_XSD_MIGR = "MIGRAZ";
 
+    // Costanti per log stato conservazione unità documentaria
+    public static final String FIRMA_ELENCO_INDICE_AIP_UD = "FIRMA_ELENCO_INDICE_AIP_UD";
+    public static final String FIRMA_ELENCO_INDICE_AIP_FASC = "Firma indice AIP fascicolo";
+    public static final String CREAZIONE_INDICE_AIP_UD = "Creazione indice AIP";
+    public static final String CREAZIONE_INDICE_AIP_UD_OS = "Creazione indice AIP";
+    public static final String CREAZIONE_INDICE_AIP_UD_OS_20 = "Creazione indice AIP";
+    public static final String MARCA_ELENCO_INDICE_AIP_UD = "Firma e apposizione marcatura indice AIP";
+    public static final String VALIDA_FASCICOLO = "Validazione fascicolo";
+    public static final String VALIDA_FASCICOLO_VDC = "Inserimento UD in VDC in un fascicolo";
+    public static final String EVASIONE_RICHIESTA_ANNULLAMENTO_UD = "Annullamento unità documentaria";
+    public static final String EVASIONE_RICHIESTA_ANNULLAMENTO_FASC = "Annullamento fascicolo";
+    public static final String CAMBIA_STATO_SERIE_VDC = "Inserimento UD in VDC in una serie";
+    public static final String CAMBIA_STATO_SERIE_GEN_AIP = "Generazione AIP di UD";
+    public static final String CAMBIA_STATO_SERIE_ANNUL = "Annullamento serie";
+    public static final String FIRMA_SERIE = "Firma indice AIP serie";
+    public static final String MARCA_FIRMA_SERIE = "Firma e marcatura indice AIP serie";
+    public static final String VALIDA_SERIE = "Validazione serie";
+
+    public static final String NM_AGENTE_SACER = "Sacer";
+
+    // Modalità
+    public static final String WS_ANNULLAMENTO = "WS Annullamento";
+    public static final String ANNULLAMENTO_ONLINE = "Annullamento online";
+    public static final String FUNZIONALITA_ONLINE = "Funzionalità online";
+    public static final String JOB_CREAZIONE_INDICE_AIP = "JOB Creazione Indice AIP";
+    public static final String JOB_VALIDAZIONE_FASCICOLO = "JOB Validazione fascicolo";
+    public static final String JOB_SIGILLO = "JOB Sigillo";
+    public static final String JOB_VALIDA_SERIE = "JOB Validazione serie";
+
     // Formato data/ora
     public static final String DATE_FORMAT_TIMESTAMP_TYPE = "dd/MM/yyyy HH:mm:ss";
     public static final String DATE_FORMAT_DATE_TYPE = "dd/MM/yyyy";

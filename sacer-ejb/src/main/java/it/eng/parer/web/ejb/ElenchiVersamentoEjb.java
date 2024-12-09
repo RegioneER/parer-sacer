@@ -1533,7 +1533,7 @@ public class ElenchiVersamentoEjb {
             if (elenco.getTiStatoElenco().equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name())) {
                 List<String> statiUdDocDaCompletare = new ArrayList<>(
                         Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name()));
-                elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare);
+                elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare, idUtente, Constants.JOB_SIGILLO);
                 // EVO 19304
                 evWebEjb.registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()),
                         "MARCA_ELENCO_INDICI_AIP", "Gestione elenco = " + tiGestioneEnum.name(),
@@ -1575,7 +1575,7 @@ public class ElenchiVersamentoEjb {
                         .equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES)) {
                     log.debug("Marca non necessaria per Xades");
                     // MEV#15967 - Attivazione della firma Xades e XadesT
-                    impostaStatoCompletatoElencoIndiceAip(elenco, idUtente);
+                    impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, Constants.FUNZIONALITA_ONLINE);
                     //
                 } else {
 
@@ -1587,7 +1587,7 @@ public class ElenchiVersamentoEjb {
                         if (marcaTemporale != null) {
                             log.info("Marca temporale valida");
                             ElvFileElencoVer marcaElencoIxAip = saveMarcaElencoIndiceAip(elenco, marcaTemporale,
-                                    idUtente, backendIndiciAip);
+                                    idUtente, backendIndiciAip, Constants.JOB_SIGILLO);
                             // MEV#30397
                             /*
                              * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
@@ -1665,7 +1665,7 @@ public class ElenchiVersamentoEjb {
     }
 
     private ElvFileElencoVer saveMarcaElencoIndiceAip(ElvElencoVer elenco, byte[] marcaTemporale, long idUtente,
-            BackendStorage backendMetadata) {
+            BackendStorage backendMetadata, String modalitaLog) {
         final OrgStrut orgStrut = elenco.getOrgStrut();
         final OrgEnte orgEnte = orgStrut.getOrgEnte();
         final String nmStrut = orgStrut.getNmStrut();
@@ -1719,17 +1719,17 @@ public class ElenchiVersamentoEjb {
 
         elenco.setDtMarcaElencoIxAip(fileElencoVers.getDtCreazioneFile());
         // MEV#15967 - Attivazione della firma Xades e XadesT
-        impostaStatoCompletatoElencoIndiceAip(elenco, idUtente);
+        impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, modalitaLog);
         return fileElencoVers;
     }
 
     // MEV#15967 - Attivazione della firma Xades e XadesT
-    private void impostaStatoCompletatoElencoIndiceAip(ElvElencoVer elenco, long idUtente) {
+    private void impostaStatoCompletatoElencoIndiceAip(ElvElencoVer elenco, long idUtente, String modalitaLog) {
         final OrgStrut orgStrut = elenco.getOrgStrut();
         List<String> statiUdDocDaCompletare = new ArrayList<>(
                 Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name(),
                         ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name()));
-        elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare);
+        elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare, idUtente, modalitaLog);
         /* Registro sul log delle operazioni */
         evHelper.writeLogElencoVers(elenco, orgStrut, idUtente, ElencoEnums.OpTypeEnum.MARCA_ELENCO_INDICI_AIP.name());
         IamUser user = genericHelper.findById(IamUser.class, idUtente);

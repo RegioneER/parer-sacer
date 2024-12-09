@@ -287,7 +287,7 @@ public class TipoUnitaDocHelperTest {
     @Test
     public void getAplSistemiVersantiSeparatiPerTipoUd_queryIsOk() {
         BigDecimal idTipoUnitaDoc = aBigDecimal();
-        helper.getAplSistemiVersantiSeparatiPerTipoUd(idTipoUnitaDoc);
+        helper.getNmSistemiVersantiRaggruppatiPerTipoUd(idTipoUnitaDoc);
         assertTrue(true);
     }
 

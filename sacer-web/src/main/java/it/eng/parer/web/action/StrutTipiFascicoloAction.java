@@ -804,15 +804,26 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
             // getForm().getMetadatiProfiloFascicoloList().setUserOperations(true, true, true, true);
             forwardToPublisher(Application.Publisher.XSD_AA_TIPO_FASCICOLO_DETAIL);
         } else if (getTableName().equals(getForm().getParteNumeroFascicoloList().getName())) {
-            getForm().getParteNumeroFascicoloList().setStatus(Status.insert);
-            getForm().getParteNumeroFascicoloDetail().setStatus(Status.insert);
+            // MAC #34027 - controllo per proseguire o meno
+            DecParteNumeroFascicoloTableBean tb = (DecParteNumeroFascicoloTableBean) getForm()
+                    .getParteNumeroFascicoloList().getTable();
+            // Recupero la colonna TiCharParte dal tablebean ed eseguo il controllo sul tipo GENERICO
+            List<Object> tipiCarattere = tb.toList(DecParteNumeroFascicoloTableDescriptor.COL_TI_CHAR_PARTE);
+            if (tipiCarattere.size() == 1 && tipiCarattere.contains(TiCharParte.GENERICO.name())) {
+                getMessageBox().addError(
+                        "Impossibile inserire ulteriori parti in quanto ne \u00E8 già presente una con il carattere GENERICO");
+                forwardToPublisher(getLastPublisher());
+            } else {
+                getForm().getParteNumeroFascicoloList().setStatus(Status.insert);
+                getForm().getParteNumeroFascicoloDetail().setStatus(Status.insert);
 
-            getForm().getParteNumeroFascicoloDetail().reset();
-            getForm().getParteNumeroFascicoloDetail().setEditMode();
-            // Inizializzo le combo
-            initParteNumeroFascicoloDetail();
-            increaseNiNumeroFascicolo();
-            forwardToPublisher(Application.Publisher.FORMATO_NUMERO_LISTA_PARTI_DETAIL);
+                getForm().getParteNumeroFascicoloDetail().reset();
+                getForm().getParteNumeroFascicoloDetail().setEditMode();
+                // Inizializzo le combo
+                initParteNumeroFascicoloDetail();
+                increaseNiNumeroFascicolo();
+                forwardToPublisher(Application.Publisher.FORMATO_NUMERO_LISTA_PARTI_DETAIL);
+            }
         }
     }
 
@@ -1052,8 +1063,8 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
                 BigDecimal idTipoFascicolo = getForm().getTipoFascicoloDetail().getId_tipo_fascicolo().parse();
 
-                DecParteNumeroFascicoloTableBean tb = (DecParteNumeroFascicoloTableBean) getForm()
-                        .getParteNumeroFascicoloList().getTable();
+                DecParteNumeroFascicoloTableBean tb = getDecParteNumeroFascicoloTableBeanPerControlli(
+                        partenumeroFascicoloRowBean);
                 tb.clearSortingRule();
                 tb.addSortingRule(DecParteNumeroFascicoloTableDescriptor.COL_NI_PARTE_NUMERO);
                 tb.sort();
@@ -1061,7 +1072,7 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                 // Recupero la colonna TiCharParte dal tablebean ed eseguo il controllo sul tipo GENERICO
                 if (!getMessageBox().hasError()) {
                     List<Object> tipiCarattere = tb.toList(DecParteNumeroFascicoloTableDescriptor.COL_TI_CHAR_PARTE);
-                    if (tipiCarattere.size() >= 1 && tipiCarattere.contains(TiCharParte.GENERICO.name())) {
+                    if (tipiCarattere.size() > 1 && tipiCarattere.contains(TiCharParte.GENERICO.name())) {
                         getMessageBox().addError(
                                 "Il carattere GENERICO \u00E8 ammesso solo se il tipo fascicolo si compone di una sola parte");
                     }
@@ -1171,6 +1182,27 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
             postLoad();
         }
         return !getMessageBox().hasError();
+    }
+
+    private DecParteNumeroFascicoloTableBean getDecParteNumeroFascicoloTableBeanPerControlli(
+            DecParteNumeroFascicoloRowBean partenumeroFascicoloRowBean) {
+        DecParteNumeroFascicoloTableBean tb = (DecParteNumeroFascicoloTableBean) getForm().getParteNumeroFascicoloList()
+                .getTable();
+
+        DecParteNumeroFascicoloTableBean tbForCheck = new DecParteNumeroFascicoloTableBean();
+        tbForCheck.addAll(tb);
+        // Id nullo, significa che il record è nuovo
+        if (partenumeroFascicoloRowBean.getIdParteNumeroFascicolo() == null) {
+            tbForCheck.add(partenumeroFascicoloRowBean);
+        } // altrimenti il record già esiste e va "sostituito" con quello modificato per i controlli
+        else {
+            for (DecParteNumeroFascicoloRowBean rb : tbForCheck) {
+                if (rb.getIdParteNumeroFascicolo().equals(partenumeroFascicoloRowBean.getIdParteNumeroFascicolo())) {
+                    rb.copyFromBaseRow(partenumeroFascicoloRowBean);
+                }
+            }
+        }
+        return tbForCheck;
     }
 
     private boolean savePeriodoValiditaFascicolo() throws EMFError {

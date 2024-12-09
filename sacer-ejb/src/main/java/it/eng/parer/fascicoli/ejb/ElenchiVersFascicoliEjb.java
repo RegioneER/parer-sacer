@@ -94,7 +94,9 @@ import it.eng.parer.viewEntity.ElvVChkSoloFascAnnul;
 import it.eng.parer.viewEntity.ElvVRicElencoFasc;
 import it.eng.parer.viewEntity.ElvVRicElencoFascByFas;
 import it.eng.parer.viewEntity.ElvVRicElencoFascByStato;
+import it.eng.parer.web.ejb.UnitaDocumentarieEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.dto.CSVersatore;
 import it.eng.parer.ws.utils.Costanti;
@@ -131,6 +133,8 @@ public class ElenchiVersFascicoliEjb {
     @EJB
     private ObjectStorageService objectStorageService;
     // end MEV#30399
+    @EJB
+    private UnitaDocumentarieEjb udEjb;
 
     public ElvElencoVersFascRowBean getElvElencoVersFascRowBean(BigDecimal idElencoVersFasc) {
         ElvElencoVersFasc elenco = evfWebHelper.findById(ElvElencoVersFasc.class, idElencoVersFasc.longValue());
@@ -956,7 +960,8 @@ public class ElenchiVersFascicoliEjb {
         /* Setto l'elenco a stato COMPLETATO */
         statoElencoVersFasc.setTiStato(TiStatoElencoFasc.COMPLETATO);
         /* Imposto l'utente firmatario */
-        statoElencoVersFasc.setIamUser(evfWebHelper.findById(IamUser.class, idUtente));
+        IamUser utente = evfWebHelper.findById(IamUser.class, idUtente);
+        statoElencoVersFasc.setIamUser(utente);
         elenco.getElvStatoElencoVersFascicoli().add(statoElencoVersFasc);
         /* Aggiorno l’elenco specificando l’identificatore dello stato corrente */
         Long idStatoElencoVersFasc = evfHelper
@@ -1007,6 +1012,12 @@ public class ElenchiVersFascicoliEjb {
                             .equals(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name())) {
                         unitaDocFascicolo.getAroUnitaDoc()
                                 .setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+                        // MEV #31162
+                        udEjb.insertLogStatoConservUd(unitaDocFascicolo.getAroUnitaDoc().getIdUnitaDoc(),
+                                utente.getNmUserid(), Constants.FIRMA_ELENCO_INDICE_AIP_FASC,
+                                CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(),
+                                Constants.FUNZIONALITA_ONLINE);
+                        // end MEV #31162
                     }
                 }
             }

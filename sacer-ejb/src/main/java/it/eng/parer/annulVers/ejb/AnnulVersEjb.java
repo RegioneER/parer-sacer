@@ -37,6 +37,7 @@ import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.serie.helper.SerieHelper;
 import it.eng.parer.slite.gen.viewbean.*;
 import it.eng.parer.viewEntity.*;
+import it.eng.parer.web.ejb.UnitaDocumentarieEjb;
 import it.eng.parer.web.helper.ComponentiHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.Constants;
@@ -103,6 +104,11 @@ public class AnnulVersEjb {
     private SerieHelper serieHelper;
     @EJB
     private FascicoliHelper fascicoliHelper;
+    // MEV #31162
+    @EJB
+    private UnitaDocumentarieEjb udEjb;
+    // end MEV #31162
+
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
@@ -1160,23 +1166,24 @@ public class AnnulVersEjb {
         //////////////////////// richiesta non ci sono item da
         //////////////////////// annullare in ping procedo
         if (proseguiAnnullamento && !richAnnulInPing) {
-            context.getBusinessObject(AnnulVersEjb.class).evasioneRichiestaAnnullamento(richiestaAnnullamento);
+            context.getBusinessObject(AnnulVersEjb.class).evasioneRichiestaAnnullamento(richiestaAnnullamento,
+                    idUserIam);
         }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void evasioneRichiestaAnnullamento(AroRichAnnulVers richiestaAnnullamento) {
+    public void evasioneRichiestaAnnullamento(AroRichAnnulVers richiestaAnnullamento, long idUserIam) {
         richiestaAnnullamento = entityManager.find(AroRichAnnulVers.class, richiestaAnnullamento.getIdRichAnnulVers(),
                 LockModeType.PESSIMISTIC_WRITE);
         if (richiestaAnnullamento.getTiRichAnnulVers().equals(CostantiDB.TiRichAnnulVers.UNITA_DOC.name())) {
-            evadiAnnullamentoVersamentiUnitaDoc(richiestaAnnullamento);
+            evadiAnnullamentoVersamentiUnitaDoc(richiestaAnnullamento, idUserIam);
         } else if (richiestaAnnullamento.getTiRichAnnulVers().equals(CostantiDB.TiRichAnnulVers.FASCICOLI.name())) {
-            evadiAnnullamentoVersamentiFascicoli(richiestaAnnullamento);
+            evadiAnnullamentoVersamentiFascicoli(richiestaAnnullamento, idUserIam);
         }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void evadiAnnullamentoVersamentiUnitaDoc(AroRichAnnulVers richiestaAnnullamento) {
+    public void evadiAnnullamentoVersamentiUnitaDoc(AroRichAnnulVers richiestaAnnullamento, long idUserIam) {
         long idRichAnnulVers = richiestaAnnullamento.getIdRichAnnulVers();
         logger.debug("{} Id richiesta annullamento versamento {}", LOG_MESSAGE_ANNULLA_UD, idRichAnnulVers);
         AroStatoRichAnnulVers statoRichAnnulVers = helper.findById(AroStatoRichAnnulVers.class,
@@ -1420,10 +1427,25 @@ public class AnnulVersEjb {
 
         logger.debug("{} - Modifica ud, doc e collegamenti della richiesta avente id: {}", LOG_MESSAGE_ANNULLA_UD,
                 idRichAnnulVers);
+
+        // MEV #31162
+        List<Long> idUnitaDocList = helper.getUnitaDocumentarieItem(idRichAnnulVers);
+        // end MEV #31162
+
         // Modifico le ud corrispondenti agli item
         helper.updateUnitaDocumentarieItem(idRichAnnulVers, dataAnnullamento,
                 CostantiDB.TipoAnnullamentoUnitaDoc.ANNULLAMENTO.name(),
                 CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name(), richiestaAnnullamento.getNtRichAnnulVers());
+
+        // MEV #31162
+        IamUser utente = helper.findById(IamUser.class, idUserIam);
+        for (Long idUnitaDoc : idUnitaDocList) {
+            udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                    Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_UD,
+                    CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name(), Constants.ANNULLAMENTO_ONLINE);
+        }
+        // end MEV #31162
+
         // Modifico le upd corrispondenti agli item
         helper.updateUpdUnitaDocumentarieItem(idRichAnnulVers, dataAnnullamento,
                 richiestaAnnullamento.getNtRichAnnulVers());
@@ -1477,7 +1499,7 @@ public class AnnulVersEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void evadiAnnullamentoVersamentiFascicoli(AroRichAnnulVers richiestaAnnullamento) {
+    public void evadiAnnullamentoVersamentiFascicoli(AroRichAnnulVers richiestaAnnullamento, long idUserIam) {
         long idRichAnnulVers = richiestaAnnullamento.getIdRichAnnulVers();
         AroStatoRichAnnulVers statoRichAnnulVers = helper.findById(AroStatoRichAnnulVers.class,
                 richiestaAnnullamento.getIdStatoRichAnnulVersCor());
@@ -1600,6 +1622,19 @@ public class AnnulVersEjb {
         // MAC#22156
         logger.debug(
                 "Annullamento Versamenti Fascicoli - Aggiorna le unit\u00E0 doc appartenenti ai fascicoli della richiesta, assegnando stato = AIP_GENERATO o AIP_FIRMATO, purch\u00E8 tali unit\u00E0 doc non appartengano ad altro fascicolo con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO");
+
+        // MEV #31162
+        List<Long> idUnitaDocListAipGenerato = helper.getAroUnitaDocWithoutOtherFascicolos(idRichAnnulVers,
+                Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()),
+                "");
+
+        List<Long> idUnitaDocListAipFirmato = helper.getAroUnitaDocWithoutOtherFascicolos(idRichAnnulVers,
+                Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()),
+                "NOT");
+        // end MEV #31162
+
         helper.updateStatoConsAipGeneratoAroUnitaDocWithoutOtherFascicolos(idRichAnnulVers,
                 Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                         CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()));
@@ -1607,6 +1642,22 @@ public class AnnulVersEjb {
                 Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                         CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()));
         // end MAC#22156
+
+        // MEV #31162
+        IamUser utente = helper.findById(IamUser.class, idUserIam);
+        for (Long idUnitaDoc : idUnitaDocListAipGenerato) {
+            udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                    Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
+                    CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(), Constants.WS_ANNULLAMENTO);
+        }
+
+        for (Long idUnitaDoc : idUnitaDocListAipFirmato) {
+            udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                    Constants.EVASIONE_RICHIESTA_ANNULLAMENTO_FASC,
+                    CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(), Constants.WS_ANNULLAMENTO);
+        }
+        // end MEV #31162
+
         logger.debug("Annullamento Versamenti Fascicoli - Registro il nuovo stato della richiesta avente id: {}",
                 idRichAnnulVers);
         // Registra il nuovo stato della richiesta

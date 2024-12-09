@@ -503,6 +503,15 @@ public class AnnulVersHelper extends GenericHelper {
         q.executeUpdate();
     }
 
+    // MEV #31162
+    public List<Long> getUnitaDocumentarieItem(long idRichAnnulVers) {
+        Query q = getEntityManager().createQuery("SELECT unitaDoc.idUnitaDoc FROM AroUnitaDoc unitaDoc "
+                + "WHERE EXISTS (SELECT itemRichAnnulVers FROM AroItemRichAnnulVers itemRichAnnulVers WHERE itemRichAnnulVers.aroRichAnnulVers.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers.aroUnitaDoc.idUnitaDoc = unitaDoc.idUnitaDoc AND itemRichAnnulVers.tiStatoItem = 'DA_ANNULLARE_IN_SACER' ) ");
+        q.setParameter("idRichAnnulVers", idRichAnnulVers);
+        return q.getResultList();
+    }
+    // end MEV #31162
+
     public void updateUpdUnitaDocumentarieItem(long idRichAnnulVers, Date dtAnnul, String ntAnnul) {
         Query q = getEntityManager().createQuery(
                 "UPDATE AroUpdUnitaDoc updUnitaDoc SET updUnitaDoc.dtAnnul = :dtAnnul, updUnitaDoc.ntAnnul = :ntAnnul "
@@ -993,6 +1002,43 @@ public class AnnulVersHelper extends GenericHelper {
         return query.executeUpdate();
     }
     // end MAC#22156
+
+    // MEV #31162
+    public List<Long> getAroUnitaDocWithoutOtherFascicolos(long idRichAnnulVers, List<String> statiUdExcluded,
+            String clause) {
+        Query query = getEntityManager().createQuery("SELECT ud.idUnitaDoc FROM AroUnitaDoc ud "
+                + "WHERE ud.tiStatoConservazione IN :statiUdExcluded AND "
+                + "EXISTS (SELECT udFasc_1 FROM AroItemRichAnnulVers itemRichAnnulVers_1, FasUnitaDocFascicolo udFasc_1 "
+                + "JOIN itemRichAnnulVers_1.aroRichAnnulVers richAnnulVers_1 " + "JOIN udFasc_1.fasFascicolo fasc_1 "
+                + "JOIN udFasc_1.aroUnitaDoc ud_1 "
+                + "WHERE richAnnulVers_1.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_1.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
+                + "AND itemRichAnnulVers_1.fasFascicolo = fasc_1 AND ud_1 = ud ) "
+                + "AND NOT EXISTS (SELECT udFasc_2 FROM AroItemRichAnnulVers itemRichAnnulVers_2, FasUnitaDocFascicolo udFasc_2 "
+                + "JOIN itemRichAnnulVers_2.aroRichAnnulVers richAnnulVers_2 " + "JOIN udFasc_2.fasFascicolo fasc_2 "
+                + "JOIN udFasc_2.aroUnitaDoc ud_2 "
+                + "WHERE richAnnulVers_2.idRichAnnulVers = :idRichAnnulVers AND itemRichAnnulVers_2.tiStatoItem = 'DA_ANNULLARE_IN_SACER' "
+                + "AND itemRichAnnulVers_2.fasFascicolo != fasc_2 AND ud_2.idUnitaDoc = ud.idUnitaDoc "
+                + "AND fasc_2.dtAnnull = :defaultAnnull) " + "AND " + clause
+                + " EXISTS (SELECT eleDaElab FROM ElvElencoVersDaElab eleDaElab "
+                + "JOIN eleDaElab.elvElencoVer elenco " + "WHERE elenco = ud.elvElencoVer)");
+        query.setParameter("idRichAnnulVers", idRichAnnulVers);
+        query.setParameter("statiUdExcluded", statiUdExcluded);
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        c.set(Calendar.YEAR, 2444);
+        c.set(Calendar.MONTH, Calendar.DECEMBER);
+        c.set(Calendar.DATE, 31);
+
+        query.setParameter("defaultAnnull", c.getTime());
+
+        return query.getResultList();
+    }
+
+    // end MEV #31162
 
     public List<ElvVLisFascAnnulByElenco> retrieveElvVLisFascAnnulByElenco(long idRichAnnulVers,
             long idElencoVersFasc) {

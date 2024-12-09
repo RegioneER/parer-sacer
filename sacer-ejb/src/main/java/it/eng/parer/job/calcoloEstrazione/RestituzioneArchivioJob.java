@@ -41,7 +41,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.async.ejb.CalcoloEstrazioneAsync;
 import it.eng.parer.async.helper.CalcoloEstrazioneHelper;
 import it.eng.parer.async.utils.IOUtils;
 import it.eng.parer.async.utils.UdSerFascObj;
@@ -59,8 +58,10 @@ import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.grantedEntity.SIOrgEnteSiam;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.utils.JobConstants;
+import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVChkAipRestArchUd;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.RecuperoWeb;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.utils.CostantiDB;
@@ -83,11 +84,13 @@ public class RestituzioneArchivioJob {
     @EJB
     private JobHelper jobHelper;
     @EJB
-    private CalcoloEstrazioneAsync calcoloAsync;
-    @EJB
     private CalcoloEstrazioneHelper calcoloHelper;
     @EJB
     private ConfigurationHelper configurationHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/UnitaDocumentarieHelper")
+    private UnitaDocumentarieHelper udHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/UniformResourceNameUtilHelper")
+    private UniformResourceNameUtilHelper urnHelper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestituzioneArchivioJob.class);
 

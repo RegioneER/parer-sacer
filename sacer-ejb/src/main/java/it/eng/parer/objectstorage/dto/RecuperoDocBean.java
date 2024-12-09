@@ -49,6 +49,7 @@ public class RecuperoDocBean implements java.io.Serializable {
     // MEV#30400
     private String tiFile; // per distinguere i diversi tipi di file per una stessa versione
     // end MEV#30400
+    private boolean fileDaSbustare;
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
             TabellaBlob tabellaBlobDaLeggere) {
@@ -151,6 +152,14 @@ public class RecuperoDocBean implements java.io.Serializable {
      */
     public void setTabellaClobDaLeggere(TabellaClob tabellaClobDaLeggere) {
         this.tabellaClobDaLeggere = tabellaClobDaLeggere;
+    }
+
+    public boolean isFileDaSbustare() {
+        return fileDaSbustare;
+    }
+
+    public void setFileDaSbustare(boolean fileDaSbustare) {
+        this.fileDaSbustare = fileDaSbustare;
     }
 
     /*

@@ -39,6 +39,8 @@ public class IamParamApplic implements Serializable {
 
     private static final long serialVersionUID = 1L;
     private Long idParamApplic;
+    private String cdVersioneAppIni;
+    private String cdVersioneAppFine;
     private String dsParamApplic;
     private String dsListaValoriAmmessi;
     private String flAppartAmbiente;
@@ -60,6 +62,24 @@ public class IamParamApplic implements Serializable {
 
     public void setIdParamApplic(Long idParamApplic) {
         this.idParamApplic = idParamApplic;
+    }
+
+    @Column(name = "CD_VERSIONE_APP_INI")
+    public String getCdVersioneAppIni() {
+        return this.cdVersioneAppIni;
+    }
+
+    public void setCdVersioneAppIni(String cdVersioneAppIni) {
+        this.cdVersioneAppIni = cdVersioneAppIni;
+    }
+
+    @Column(name = "CD_VERSIONE_APP_FINE")
+    public String getCdVersioneAppFine() {
+        return this.cdVersioneAppFine;
+    }
+
+    public void setCdVersioneAppFine(String cdVersioneAppFine) {
+        this.cdVersioneAppFine = cdVersioneAppFine;
     }
 
     @Column(name = "DS_PARAM_APPLIC")
