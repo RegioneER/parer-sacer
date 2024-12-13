@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.ws.recupero.utils;
 
+import it.eng.parer.entity.AroLogStatoConservUd;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +50,14 @@ import it.eng.parer.ws.xml.versRespStato.PCVolumeType;
 import it.eng.parer.ws.xml.versRespStato.SCVersatoreType;
 import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
 import it.eng.parer.ws.xml.versRespStato.StatoConservazioneType;
+import it.eng.parer.ws.xml.versRespStato.LogStatoConservazioneType;
+import it.eng.parer.ws.xml.versRespStato.LogType;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 
 /**
  *
@@ -231,5 +239,52 @@ public class RecuperoXmlGen {
         rispostaWs.setSeverity(SeverityEnum.ERROR);
         rispostaWs.setErrorCode(rispostaControlli.getCodErr());
         rispostaWs.setErrorMessage(rispostaControlli.getDsErr());
+    }
+
+    public void generaLogStatoConservazione(RecuperoExt recupero) {
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        AvanzamentoWs myAvanzamentoWs = rispostaWs.getAvanzamento();
+        parsedUnitaDoc = recupero.getStrutturaRecupero();
+
+        // compila Log Stato Conservazione
+        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
+            rispostaControlli.reset();
+            rispostaControlli = controlliRecupero
+                    .leggiLogStatoConservazione(recupero.getParametriRecupero().getIdUnitaDoc());
+            if (rispostaControlli.isrBoolean() == false) {
+                setRispostaWsError();
+                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
+            } else {
+                List<AroLogStatoConservUd> list = (List<AroLogStatoConservUd>) rispostaControlli.getrObject();
+                if (!list.isEmpty()) {
+                    List<LogType> l = new ArrayList<>();
+                    list.forEach(logStato -> {
+                        LogType logUD = new LogType();
+                        Instant i = new java.util.Date(logStato.getDtStato().getTime()).toInstant();
+                        String dateTimeString = i.toString();
+                        XMLGregorianCalendar date2 = null;
+                        try {
+                            date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(dateTimeString);
+                        } catch (DatatypeConfigurationException ex) {
+                            Logger.getLogger(RecuperoXmlGen.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        if (date2 != null) {
+                            logUD.setDataEvento(date2);
+                        }
+
+                        logUD.setNomeAgente(logStato.getNmAgente());
+                        logUD.setTipoEvento(logStato.getTiEvento());
+                        logUD.setTipoStatoConservazione(logStato.getTiStatoConservazione());
+                        logUD.setModalita(logStato.getTiMod());
+                        l.add(logUD);
+                    });
+
+                    if (!l.isEmpty()) {
+                        myEsito.setLogStatoConservazione(new LogStatoConservazioneType());
+                        myEsito.getLogStatoConservazione().getLog().addAll(l);
+                    }
+                }
+            }
+        }
     }
 }

@@ -164,11 +164,7 @@ public class TipoUnitaDocEjb {
     @EJB
     private ModelliSerieHelper modelliSerieHelper;
     @EJB
-    private RegistroHelper registroHelper;
-    @EJB
     private AmministrazioneEjb amministrazioneEjb;
-    @EJB
-    private AmministrazioneHelper amministrazioneHelper;
     @EJB
     private ObjectStorageService objectStorageService;
 
@@ -996,18 +992,14 @@ public class TipoUnitaDocEjb {
                     String a = null;
 
                     // Recupero i Sistemi versanti
-                    tipoUnitaRow.setString("nm_sistema_versante", helper
-                            .getAplSistemiVersantiSeparatiPerTipoUd(new BigDecimal(tipoUnitaDoc.getIdTipoUnitaDoc())));
+                    tipoUnitaRow.setString("nm_sistema_versante", helper.getNmSistemiVersantiRaggruppatiPerTipoUd(
+                            new BigDecimal(tipoUnitaDoc.getIdTipoUnitaDoc())));
 
-                    // Sistemi versanti
-                    AplSistemaVersanteTableBean listaSistemiVersanti = getAplSistemaVersanteTableBean(
-                            tipoUnitaRow.getIdTipoUnitaDoc());
-                    AplSistemaVersanteRowBean rigaSistemaVersante = listaSistemiVersanti.getRow(0);
-                    if (rigaSistemaVersante != null && rigaSistemaVersante.getObject("dt_first_vers") != null) {
-                        Date d = (Date) rigaSistemaVersante.getObject("dt_first_vers");
-                        tipoUnitaRow.setObject("dt_first_vers", d);
-                        Date dLast = (Date) rigaSistemaVersante.getObject("dt_last_vers");
-                        tipoUnitaRow.setObject("dt_last_vers", dLast);
+                    Object[] sisVersPerTipoUd = helper
+                            .getDtErogSistemiVersantiPerTipoUd(new BigDecimal(tipoUnitaDoc.getIdTipoUnitaDoc()));
+                    if (sisVersPerTipoUd != null) {
+                        tipoUnitaRow.setObject("dt_first_vers", (Date) sisVersPerTipoUd[0]);
+                        tipoUnitaRow.setObject("dt_last_vers", (Date) sisVersPerTipoUd[1]);
                     }
 
                     boolean existsValoreParamApplicTipoUd = helper
@@ -1017,7 +1009,8 @@ public class TipoUnitaDocEjb {
                     tipoUnitaTableBean.add(tipoUnitaRow);
                 }
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                | NoSuchMethodException | InvocationTargetException e) {
             logger.error(e.getMessage(), e);
         }
 

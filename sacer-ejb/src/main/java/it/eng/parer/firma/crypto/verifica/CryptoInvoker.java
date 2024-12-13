@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.firma.crypto.verifica;
 
+import it.eng.parer.crypto.model.CryptoSignedP7mUri;
 import java.net.URI;
 import java.util.Base64;
 import java.util.List;
@@ -45,8 +45,18 @@ import it.eng.parer.crypto.model.ParerTSD;
 import it.eng.parer.crypto.model.ParerTST;
 import it.eng.parer.crypto.model.exceptions.CryptoParerException;
 import it.eng.parer.firma.crypto.helper.CryptoRestConfiguratorHelper;
+import it.eng.parer.objectstorage.ejb.AwsPresigner;
 import it.eng.parer.retry.ParerRetryConfiguration;
 import it.eng.parer.retry.RestRetryInterceptor;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import javax.ejb.EJBException;
+import org.springframework.core.io.FileSystemResource;
 
 /**
  * Invoca la Cryptolibrary.
@@ -60,9 +70,14 @@ public class CryptoInvoker {
     private static final String CRL_CTX = "/api/crl";
     private static final String TST_CTX = "/api/tst";
     private static final String TSD_CTX = "/api/tsd";
+    private static final String UNSIGNED_P7M_CTX = "/api/unsigned-p7m";
+
+    private static final Logger log = LoggerFactory.getLogger(CryptoInvoker.class);
 
     @EJB
     protected CryptoRestConfiguratorHelper restInvoker;
+
+    private static final int BUFFERSIZE = 10 * 1024 * 1024; // 10 megabyte
 
     /**
      * Health check per il cluster.(Attualmente non è utilizzato)
@@ -213,6 +228,162 @@ public class CryptoInvoker {
         result = restTemplate.postForObject(endpoint, requestEntity, ParerTST.class);
 
         return result;
+    }
+
+    /**
+     * Ottieni il file sbustato dal .p7m passato.
+     *
+     * @param fileP7m
+     *            contenuto da sbustare.
+     *
+     * @return Oggetto sbustato.
+     */
+    // @ParerRetry(contextDataValue = RestInvoker.CURRENT_URL, retryException = RestClientException.class)
+    public ResponseEntity<byte[]> sbustaP7m(File fileP7m) {
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
+        ResponseEntity<byte[]> result = null;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        List<MediaType> l = new ArrayList();
+        l.add(MediaType.APPLICATION_XML);
+        headers.setAccept(l);
+        /*
+         * org.springframework.core.io.Resource resource = new ByteArrayResource(fileP7m) {
+         *
+         * @Override public String getFilename() { return "sbustaP7m"; } };
+         */
+        org.springframework.core.io.Resource resource = new FileSystemResource(fileP7m);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("description", "Richiesta sbustamento p7m");
+        // body.add("file", resource);
+        body.add("signed-p7m", resource);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        String preferredEndPoint = restInvoker.preferredEndpoint();
+
+        String endpoint = preferredEndPoint + UNSIGNED_P7M_CTX;
+        LOG.debug("post per  " + endpoint);
+
+        result = restTemplate.postForEntity(endpoint, requestEntity, byte[].class);
+        // new ByteArrayInputStream(response.getBody().getBytes())
+        return result;
+    }
+
+    public ResponseEntity<byte[]> sbustaDaOs(CryptoSignedP7mUri dto) {
+        RestTemplate restTemplate = buildRestTemplateWithRetry();
+        ResponseEntity<byte[]> result = null;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<CryptoSignedP7mUri> entity = new HttpEntity<>(dto, headers);
+
+        String preferredEndPoint = restInvoker.preferredEndpoint();
+
+        String endpoint = preferredEndPoint + UNSIGNED_P7M_CTX;
+        LOG.debug("post per  " + endpoint);
+
+        result = restTemplate.postForEntity(endpoint, entity, byte[].class);
+        return result;
+    }
+
+    /**
+     * Copia uno stream in input su un file temporaneo, sbusta il .p7m e strimma il file sbustato nell'outputStream.
+     *
+     * @param is
+     *            Stream di input.
+     * @param os
+     *            Stream di output.
+     */
+    public void copiaStreamsESbustaP7m(InputStream is, OutputStream os) {
+        int len;
+        byte[] buffer = new byte[BUFFERSIZE];
+        File fileP7m = null;
+        try {
+            // Inizia a Strimmare l'input su file temporaneo
+            fileP7m = File.createTempFile("tempFilePerP7m", ".p7m");
+            log.debug("Creo file temporaneo di appoggio...");
+            try (OutputStream outFileTemp = new FileOutputStream(fileP7m)) {
+                while ((len = is.read(buffer)) > 0) {
+                    outFileTemp.write(buffer, 0, len);
+                }
+            }
+            log.info("Scritto file temporaneo {}", fileP7m.getName());
+            // Ora sbusta il p7m uploadando il file temporaneo sul servizio di sbustamento ottenendo il file sbustato
+            // come array di bytes
+            ResponseEntity<byte[]> fileSbustato = sbustaP7m(fileP7m);
+            // AdessoStrimma il file sbustato ricevut come array di byte sull'output
+            log.debug("Inizio a sttimmare il file sbustato appena ricevuto nello ZIP...");
+            try (InputStream is2 = new ByteArrayInputStream(fileSbustato.getBody());) {
+                int len2;
+                while ((len2 = is2.read(buffer)) > 0) {
+                    os.write(buffer, 0, len2);
+                    log.debug("letto blob e scritto su stream...");
+                }
+            }
+        } catch (IOException ex) {
+            log.error("Eccezione CryptoInvoker.copiaStreamsESbusta()", ex);
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(ex);
+        } finally {
+            // Cancella il file temporaneo!
+            if (fileP7m != null) {
+                fileP7m.delete();
+            }
+        }
+    }
+
+    /**
+     * Copia uno stream in input su un file temporaneo, sbusta il .p7m e strimma il file sbustato nell'outputStream.
+     *
+     * @param fileP7m
+     *            File .p7m da sbustare.
+     * @param os
+     *            Stream di output.
+     */
+    public void sbustaFileP7mEStrimmaOutput(File fileP7m, OutputStream os) {
+        byte[] buffer = new byte[BUFFERSIZE];
+
+        // Ora sbusta il p7m uploadando il file temporaneo sul servizio di sbustamento ottenendo il file sbustato
+        // come array di bytes
+        ResponseEntity<byte[]> fileSbustato = sbustaP7m(fileP7m);
+        // Adesso strimma il file sbustato ricevuto come array di byte sull'output
+        log.debug("Inizio a steamare il file sbustato appena ricevuto nello ZIP...");
+        try (InputStream is2 = new ByteArrayInputStream(fileSbustato.getBody());) {
+            int len2;
+            while ((len2 = is2.read(buffer)) > 0) {
+                os.write(buffer, 0, len2);
+                log.debug("letto blob e scritto su stream...");
+            }
+        } catch (IOException ex) {
+            log.error("Eccezione CryptoInvoker.sbustaFileP7mEStrimmaOutput()", ex);
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(ex);
+        }
+    }
+
+    public void sbustaDaOsEStrimmaOutput(CryptoSignedP7mUri dto, OutputStream os) {
+        byte[] buffer = new byte[BUFFERSIZE];
+
+        // Ora sbusta il p7m uploadando il file temporaneo sul servizio di sbustamento ottenendo il file sbustato
+        // come array di bytes
+        ResponseEntity<byte[]> fileSbustato = sbustaDaOs(dto);
+        // Adesso strimma il file sbustato ricevuto come array di byte sull'output
+        log.debug("Inizio a steamare il file sbustato da OS nello ZIP...");
+        try (InputStream is2 = new ByteArrayInputStream(fileSbustato.getBody());) {
+            int len2;
+            while ((len2 = is2.read(buffer)) > 0) {
+                os.write(buffer, 0, len2);
+                log.debug("letto blob e scritto su stream...");
+            }
+        } catch (IOException ex) {
+            log.error("Eccezione CryptoInvoker.sbustaDaOsEStrimmaOutput()", ex);
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(ex);
+        }
     }
 
     /**

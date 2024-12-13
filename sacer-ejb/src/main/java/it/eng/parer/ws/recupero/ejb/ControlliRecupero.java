@@ -58,6 +58,7 @@ import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroCompUrnCalc;
 import it.eng.parer.entity.AroDoc;
 import it.eng.parer.entity.AroFileVerIndiceAipUd;
+import it.eng.parer.entity.AroLogStatoConservUd;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUnitaDoc;
 import it.eng.parer.entity.AroUpdUnitaDoc;
@@ -211,6 +212,8 @@ public class ControlliRecupero {
      *
      * @param idUnitaDoc
      *            id unita doc
+     * @param estraiFileIndiceAip
+     *            se true considera solo i file dei componenti per i quali è stato calcolato l'indice AIP
      *
      * @return istanza di RispostaControlli con i campi valorizzati come segue: se va in errore: rBoolean è false se ok:
      *         rBoolean è true rObject contiene una lista di ComponenteRec corrispondenti ai componenti ed rString
@@ -218,7 +221,7 @@ public class ControlliRecupero {
      */
     // OK
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public RispostaControlli leggiCompFileInUD(long idUnitaDoc) {
+    public RispostaControlli leggiCompFileInUD(long idUnitaDoc, boolean estraiFileIndiceAip) {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
@@ -228,9 +231,18 @@ public class ControlliRecupero {
         try {
             lstComp = new ArrayList<>();
 
-            String queryStr = "select acd from AroCompDoc acd "
-                    + "where acd.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
-                    + "and acd.tiSupportoComp = 'FILE'";
+            String queryStr = "";
+
+            if (estraiFileIndiceAip) {
+                // MAC #34605
+                queryStr = "select DISTINCT acd from AroCompDoc acd join acd.aroCompVerIndiceAipUds acviau "
+                        + "where acviau.aroVerIndiceAipUd.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc and acd.tiSupportoComp = 'FILE'";
+                // end MAC #34605
+            } else {
+                queryStr = "select acd from AroCompDoc acd "
+                        + "where acd.aroStrutDoc.aroDoc.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                        + "and acd.tiSupportoComp = 'FILE'";
+            }
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -239,13 +251,24 @@ public class ControlliRecupero {
             for (AroCompDoc tmpCmp : lstComponenti) {
                 // urn
                 String urnCompletoIniz = null;
-                String urnCompleto = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.NORMALIZZATO)
-                        .getDsUrn();
+                String urnCompleto = null;
+
+                AroCompUrnCalc compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp,
+                        TiUrn.NORMALIZZATO);
+                if (compUrnCalc != null) {
+                    urnCompleto = compUrnCalc.getDsUrn();
+                } else {
+                    urnCompleto = tmpCmp.getDsUrnCompCalc();
+                }
+
                 // urn iniz
-                AroCompUrnCalc compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.INIZIALE);
+                compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.INIZIALE);
                 if (compUrnCalc != null) {
                     urnCompletoIniz = compUrnCalc.getDsUrn();
+                } else {
+                    urnCompletoIniz = tmpCmp.getDsUrnCompCalc();
                 }
+
                 ComponenteRec tmpCRec = new ComponenteRec(urnCompleto, urnCompletoIniz);
                 // MEV#22921 Parametrizzazione servizi di recupero
                 tmpCRec.setUrnOriginaleVersata(tmpCmp.getDlUrnCompVers());
@@ -307,12 +330,22 @@ public class ControlliRecupero {
             for (AroCompDoc tmpCmp : lstComponenti) {
                 // urn
                 String urnCompletoIniz = null;
-                String urnCompleto = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.NORMALIZZATO)
-                        .getDsUrn();
+                String urnCompleto = null;
+
+                AroCompUrnCalc compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp,
+                        TiUrn.NORMALIZZATO);
+                if (compUrnCalc != null) {
+                    urnCompleto = compUrnCalc.getDsUrn();
+                } else {
+                    urnCompleto = tmpCmp.getDsUrnCompCalc();
+                }
+
                 // urn iniz
-                AroCompUrnCalc compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.INIZIALE);
+                compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.INIZIALE);
                 if (compUrnCalc != null) {
                     urnCompletoIniz = compUrnCalc.getDsUrn();
+                } else {
+                    urnCompletoIniz = tmpCmp.getDsUrnCompCalc();
                 }
                 ComponenteRec tmpCRec = new ComponenteRec(urnCompleto, urnCompletoIniz);
                 // MEV#22921 Parametrizzazione servizi di recupero
@@ -1157,6 +1190,32 @@ public class ControlliRecupero {
         return rispostaControlli;
     }
 
+    public RispostaControlli leggiXMLIndiceAIPOs(long idUnitaDoc) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            String queryStr = "SELECT aro FROM AroVerIndiceAipUd aro "
+                    + "WHERE aro.aroIndiceAipUd.aroUnitaDoc.idUnitaDoc = :idUnitaDoc "
+                    + "AND aro.aroIndiceAipUd.tiFormatoIndiceAip = 'UNISYNCRO' ";
+
+            javax.persistence.Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idUnitaDoc", idUnitaDoc);
+
+            List<AroVerIndiceAipUd> listaAroVer = query.getResultList();
+            listaAroVer.stream().forEach(this::loadAroUrnVerIndiceAipUdsOs);
+            rispostaControlli.setrObject(listaAroVer);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setrBoolean(false);
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecupero.leggiXMLIndiceAIP " + e.getMessage()));
+            log.error(ERROR_FILE_V_INDICE_AIP, e);
+        }
+        return rispostaControlli;
+    }
+
     // MEV#30395
     public RispostaControlli leggiXMLIndiceAIPV2Os(long idUnitaDoc) {
         RispostaControlli rispostaControlli;
@@ -1879,6 +1938,17 @@ public class ControlliRecupero {
         }
     }
 
+    private void loadAroUrnVerIndiceAipUdsOs(AroVerIndiceAipUd aroVerIndiceAipUd) {
+        if (aroVerIndiceAipUd != null) {
+            final String PARAM_NAME = "aroVerIndiceAipUd";
+            TypedQuery<AroUrnVerIndiceAipUd> query = entityManager.createQuery(
+                    "SELECT t FROM AroUrnVerIndiceAipUd t WHERE t.aroVerIndiceAipUd=:" + PARAM_NAME,
+                    AroUrnVerIndiceAipUd.class);
+            query.setParameter(PARAM_NAME, aroVerIndiceAipUd);
+            aroVerIndiceAipUd.setAroUrnVerIndiceAipUds(query.getResultList());
+        }
+    }
+
     public VrsUrnXmlSessioneVers findVrsUrnXmlSessioneVersByTiUrn(VrsXmlDatiSessioneVers vrsXmlDatiSessioneVers,
             it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers tiUrn) {
         final String vrsXmlDatiSessioneVersParam = "vrsXmlDatiSessioneVers";
@@ -2067,6 +2137,30 @@ public class ControlliRecupero {
                     ex);
         }
 
+        return rispostaControlli;
+    }
+
+    public RispostaControlli leggiLogStatoConservazione(long idUnitaDoc) {
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        List<AroLogStatoConservUd> aroLog = null;
+
+        try {
+            String queryStr = "select t from AroLogStatoConservUd t "
+                    + "where t.aroUnitaDoc.idUnitaDoc = :idUnitaDoc order by t.dtStato desc";
+
+            javax.persistence.Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idUnitaDoc", idUnitaDoc);
+            aroLog = query.getResultList();
+            rispostaControlli.setrObject(aroLog);
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "Eccezione ControlliRecupero.leggiVolumeConserv " + e.getMessage()));
+            log.error("Eccezione nella lettura  della tabella dei volumi di conservazione ", e);
+        }
         return rispostaControlli;
     }
 

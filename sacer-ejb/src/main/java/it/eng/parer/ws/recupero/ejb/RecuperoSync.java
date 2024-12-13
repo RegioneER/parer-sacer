@@ -425,4 +425,31 @@ public class RecuperoSync {
         return rs;
     }
 
+    // questo metodo viene usato nel WS di recupero stato conservazione UD
+    public void recuperaLogStatoConservazioneUD(RispostaWSRecupero rispostaWs, RecuperoExt rec) {
+        StatoConservazione myEsito = rispostaWs.getIstanzaEsito();
+        AvanzamentoWs tmpAvanzamentoWs = rispostaWs.getAvanzamento();
+
+        if (rec.getParametriRecupero().getUtente() == null) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, "Errore: l'utente non è autenticato.");
+            return;
+        }
+
+        try {
+            RecuperoXmlGen tmpGen = new RecuperoXmlGen(rispostaWs);
+            tmpGen.generaLogStatoConservazione(rec);
+            tmpAvanzamentoWs.resetFase();
+        } catch (Exception e) {
+            rispostaWs.setSeverity(SeverityEnum.ERROR);
+            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+                    "Errore nella fase di generazione dell'XML di risposta del EJB " + e.getMessage());
+            log.error("Errore nella fase di generazione dell'XML di risposta del EJB ", e);
+        }
+
+        if (rispostaWs.getSeverity() == SeverityEnum.ERROR) {
+            myEsito.setXMLRichiesta(rec.getDatiXml());
+        }
+    }
+
 }

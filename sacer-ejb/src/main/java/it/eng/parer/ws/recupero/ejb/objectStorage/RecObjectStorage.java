@@ -47,11 +47,12 @@ public class RecObjectStorage {
     @EJB
     private ObjectStorageService objectStorageService;
 
-    private boolean recuperaObjectStorageCompSuStream(long idCompDoc, OutputStream outputStream) {
+    private boolean recuperaObjectStorageCompSuStream(long idCompDoc, OutputStream outputStream,
+            boolean fileDaSbustare) {
         boolean rc = false;
 
         try {
-            objectStorageService.getObjectComponente(idCompDoc, outputStream);
+            objectStorageService.getObjectComponente(idCompDoc, outputStream, fileDaSbustare);
             rc = true;
         } catch (Exception e) {
 
@@ -120,7 +121,7 @@ public class RecObjectStorage {
         boolean rc = false;
         switch (dto.getTipo()) {
         case COMP_DOC:
-            rc = this.recuperaObjectStorageCompSuStream(dto.getId(), dto.getOs());
+            rc = this.recuperaObjectStorageCompSuStream(dto.getId(), dto.getOs(), dto.isFileDaSbustare());
             break;
         case REPORTVF:
             rc = this.recuperaObjectStorageReportvfSuStream(dto.getId(), dto.getOs());

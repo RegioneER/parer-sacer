@@ -151,6 +151,20 @@ public class ValidazioneFascicoliHelper extends GenericHelper {
         getEntityManager().flush();
     }
 
+    // MEV #31162
+    public List<Long> getIdUnitaDocDaFascicolo(long idFascicolo, List<String> statiOld) {
+        Query q = getEntityManager().createQuery(
+                "SELECT unitaDoc.idUnitaDoc FROM AroUnitaDoc unitaDoc WHERE unitaDoc.tiStatoConservazione IN (:statiOld) "
+                        + "AND unitaDoc.idUnitaDoc IN (SELECT unitaDoc1.idUnitaDoc FROM FasUnitaDocFascicolo unitaDocFascicolo "
+                        + "JOIN unitaDocFascicolo.aroUnitaDoc unitaDoc1 "
+                        + "JOIN unitaDocFascicolo.fasFascicolo fascicolo "
+                        + "WHERE fascicolo.idFascicolo = :idFascicolo)");
+        q.setParameter("idFascicolo", idFascicolo);
+        q.setParameter("statiOld", statiOld);
+        return q.getResultList();
+    }
+    // end MEV #31162
+
     /**
      * Ricavo il progressivo più alto della versione indice AIP
      *

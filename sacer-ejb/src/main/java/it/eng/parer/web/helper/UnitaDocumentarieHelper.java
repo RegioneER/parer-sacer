@@ -59,6 +59,7 @@ import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroCompUrnCalc;
 import it.eng.parer.entity.AroDoc;
 import it.eng.parer.entity.AroFileVerIndiceAipUd;
+import it.eng.parer.entity.AroLogStatoConservUd;
 import it.eng.parer.entity.AroNotaUnitaDoc;
 import it.eng.parer.entity.AroRichAnnulVers;
 import it.eng.parer.entity.AroStrutDoc;
@@ -89,6 +90,7 @@ import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice;
 import it.eng.parer.slite.gen.tablebean.AroFileVerIndiceAipUdRowBean;
+import it.eng.parer.slite.gen.tablebean.AroLogStatoConservUdTableBean;
 import it.eng.parer.slite.gen.tablebean.AroUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.AroUpdUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.AroVerIndiceAipUdRowBean;
@@ -5485,4 +5487,23 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         query.setParameter("tiWs", tiWs);
         return query.getResultList();
     }
+
+    // MEV #31162
+    public AroLogStatoConservUdTableBean getAroLogStatoConservUdTableBean(BigDecimal idUnitaDoc) {
+        String queryStr = "SELECT u FROM AroLogStatoConservUd u WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ORDER BY u.dtStato";
+        Query query = getEntityManager().createQuery(queryStr);
+        query.setParameter("idUnitaDoc", idUnitaDoc.longValue());
+        List<AroLogStatoConservUd> listaLog = query.getResultList();
+        AroLogStatoConservUdTableBean logTableBean = new AroLogStatoConservUdTableBean();
+        try {
+            if (listaLog != null && !listaLog.isEmpty()) {
+                logTableBean = (AroLogStatoConservUdTableBean) Transform.entities2TableBean(listaLog);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return logTableBean;
+    }
+
+    // end MEV #31162
 }

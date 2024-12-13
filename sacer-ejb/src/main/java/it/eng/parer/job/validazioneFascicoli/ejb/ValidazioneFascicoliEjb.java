@@ -82,6 +82,7 @@ import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.job.validazioneFascicoli.helper.ValidazioneFascicoliHelper;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.FasVLisUdByFasc;
+import it.eng.parer.web.ejb.UnitaDocumentarieEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UserHelper;
 import it.eng.parer.web.util.Constants;
@@ -136,6 +137,10 @@ public class ValidazioneFascicoliEjb {
     private UniformResourceNameUtilHelper urnHelper;
     @EJB
     private RecuperoZipGen zipGen;
+    // MEV #31162
+    @EJB
+    private UnitaDocumentarieEjb udEjb;
+    // end MEV #31162
 
     // <editor-fold defaultstate="collapsed" desc="Validazione fascicoli">
     public void validazioneFascicoli() throws ParerInternalError, ParerUserError, IOException, NoSuchAlgorithmException,
@@ -370,7 +375,7 @@ public class ValidazioneFascicoliEjb {
             avEjb.controlloItemValidazioneFascicoli(rich, idUserIam);
 
             // Evasione richiesta
-            avEjb.evasioneRichiestaAnnullamento(rich);
+            avEjb.evasioneRichiestaAnnullamento(rich, idUserIam);
         }
     }
 
@@ -399,7 +404,20 @@ public class ValidazioneFascicoliEjb {
                             CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(),
                             CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name()));
             String statoUdNuovo = CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name();
+
+            // MEV #31162
+            List<Long> idUnitaDocDaFascicoloList = vfHelper.getIdUnitaDocDaFascicolo(idFascicolo, statiUdDocDaCambiare);
+            // end MEV #31162
+
             vfHelper.updateStatoConservazioneUdFascicolo(idFascicolo, statiUdDocDaCambiare, statoUdNuovo);
+
+            // MEV #31162
+            for (Long idUnitaDocDaFascicolo : idUnitaDocDaFascicoloList) {
+                udEjb.insertLogStatoConservUd(idUnitaDocDaFascicolo, Constants.NM_AGENTE_SACER,
+                        Constants.VALIDA_FASCICOLO, CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+                        Constants.JOB_VALIDAZIONE_FASCICOLO);
+            }
+            // end MEV #31162
 
             /*
              * Aggiorna le unità doc appartenenti al fascicolo con stato di conservazione = IN_VOLUME_DI_CONSERVAZIONE,
@@ -408,7 +426,20 @@ public class ValidazioneFascicoliEjb {
             statiUdDocDaCambiare = new ArrayList<>(
                     Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.IN_VOLUME_DI_CONSERVAZIONE.name()));
             statoUdNuovo = CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name();
+
+            // MEV #31162
+            idUnitaDocDaFascicoloList = vfHelper.getIdUnitaDocDaFascicolo(idFascicolo, statiUdDocDaCambiare);
+            // end MEV #31162
+
             vfHelper.updateStatoConservazioneUdFascicolo(idFascicolo, statiUdDocDaCambiare, statoUdNuovo);
+
+            // MEV #31162
+            for (Long idUnitaDocDaFascicolo : idUnitaDocDaFascicoloList) {
+                udEjb.insertLogStatoConservUd(idUnitaDocDaFascicolo, Constants.NM_AGENTE_SACER,
+                        Constants.VALIDA_FASCICOLO, CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name(),
+                        Constants.VALIDA_FASCICOLO_VDC);
+            }
+            // end MEV #31162
 
             // Determina le unità doc del fascicolo con stato di conservazione = AIP_DA_GENERARE
             List<AroUnitaDoc> udAipDaGenerareList = vfHelper.getUdFascicoloByStatoCons(idFascicolo,
@@ -509,6 +540,10 @@ public class ValidazioneFascicoliEjb {
         creaPrimoIndiceAipUniSincro(unitaDoc.getIdUnitaDoc(), causale);
         // Aggiorno lo stato dell'ud
         unitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+        // MEV #31162
+        udEjb.insertLogStatoConservUd(idUnitaDoc, Constants.NM_AGENTE_SACER, Constants.VALIDA_FASCICOLO,
+                CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(), Constants.VALIDA_FASCICOLO);
+        // end MEV #31162
     }
 
     public void creaPrimoIndiceAipUniSincro(Long idUnitaDoc, String causale)

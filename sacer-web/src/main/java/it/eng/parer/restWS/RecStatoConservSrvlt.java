@@ -60,6 +60,7 @@ import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.recupero.dto.WSDescRecStatoCons;
 import it.eng.parer.ws.recupero.ejb.RecuperoSync;
 import it.eng.parer.ws.utils.AvanzamentoWs;
+import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
 import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
@@ -223,6 +224,15 @@ public class RecStatoConservSrvlt extends HttpServlet {
                         tmpAvanzamento.setFase("generazione xml").logAvanzamento();
 
                         recuperoSync.recuperaStatoConservazioneUD(rispostaWs, myRecuperoExt);
+                    }
+
+                    // inserisco i record della tabella ARO_LOG_STATO_CONSERVAZIONE
+                    myEsito = rispostaWs.getIstanzaEsito();
+                    if (rispostaWs.getSeverity() == SeverityEnum.OK && myRecuperoExt.getModificatoriWSCalc()
+                            .contains(Costanti.ModificatoriWS.TAG_LOG_STATO_CONSERV_UD)) {
+                        tmpAvanzamento.setFase("inserimento dati ARO_LOG_STATO_CONSERVAZIONE").logAvanzamento();
+
+                        recuperoSync.recuperaLogStatoConservazioneUD(rispostaWs, myRecuperoExt);
                     }
 
                     myEsito = rispostaWs.getIstanzaEsito();

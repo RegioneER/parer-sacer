@@ -16,20 +16,20 @@
  */
 
 /*
- Attenzione
- Il codice di questo modulo software è legato:
- * al DBMS Oracle
- * al driver JDBC proprietario di Oracle (compatibile JDBC 4)
- * alla gestione propria di Oracle delle colonne di tipo BLOB
+Attenzione
+Il codice di questo modulo software Ã¨ legato:
+* al DBMS Oracle
+* al driver JDBC proprietario di Oracle (compatibile JDBC 4)
+* alla gestione propria di Oracle delle colonne di tipo BLOB
 
- Questo codice non è direttamente usabile su altre architetture di database e presumibilmente
- dovrà essere riscritto in parte o del tutto per gestire la modalità di gestione delle colonne
- di tipo BLOB impiegata da un eventuale altro DBMS.
+Questo codice non Ã¨ direttamente usabile su altre architetture di database e presumibilmente
+dovrÃ  essere riscritto in parte o del tutto per gestire la modalitÃ  di gestione delle colonne
+di tipo BLOB impiegata da un eventuale altro DBMS.
 
- La scelta di utilizzare una modalità di accesso non portabile per scrivere su tabella nasce
- dall'esigenza di dover leggere e scrivere colonne di tipo BLOB potenzialmente enormi e
- dall'incapacità dell'architettura JPA di effettuare queste operazioni tramite stream.
- */
+La scelta di utilizzare una modalitÃ  di accesso non portabile per scrivere su tabella nasce
+dall'esigenza di dover leggere e scrivere colonne di tipo BLOB potenzialmente enormi e
+dall'incapacitÃ  dell'architettura JPA di effettuare queste operazioni tramite stream.
+*/
 package it.eng.parer.ws.recupero.ejb.oracleBlb;
 
 import java.io.IOException;
@@ -44,8 +44,13 @@ import java.sql.SQLException;
 import it.eng.parer.exception.ConnectionException;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.spagoCore.util.JpaUtils;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import javax.ejb.EJB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 
 import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
@@ -54,6 +59,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.http.ResponseEntity;
 
 /**
  * @author Fioravanti_F
@@ -62,6 +68,9 @@ import javax.persistence.PersistenceContext;
 @LocalBean
 @TransactionAttribute(value = TransactionAttributeType.REQUIRES_NEW)
 public class RecBlbOracle {
+
+    @EJB
+    private CryptoInvoker cryptoInvoker;
 
     private static final Logger log = LoggerFactory.getLogger(RecBlbOracle.class);
     @PersistenceContext(unitName = "ParerJPA")
@@ -128,7 +137,7 @@ public class RecBlbOracle {
      * @param idPadre
      *            id del record padre (relazione 1 a 0/1) della riga da cui recuperare il blob
      * @param outputStream
-     *            stream su cui scrivere (può essere uno ZipOutputStream o un semplice FileOutputStream
+     *            stream su cui scrivere (puÃ² essere uno ZipOutputStream o un semplice FileOutputStream
      * @param tabellaBlobDaLeggere
      *            una delle due tabelle di Sacer da cui leggere il blob
      * @param dto
@@ -186,11 +195,18 @@ public class RecBlbOracle {
                 closeConnection(conn);
             }
             if (blob != null) {
-                try (InputStream is = blob.getBinaryStream();) {
-                    int len;
-                    while ((len = is.read(buffer)) > 0) {
-                        outputStream.write(buffer, 0, len);
-                        log.debug("letto blob e scritto su stream...");
+                // MEV#34239 - Estensione servizio per recupero file sbustati
+                if (dto != null && dto.isFileDaSbustare()) {
+                    try (InputStream is = blob.getBinaryStream();) {
+                        cryptoInvoker.copiaStreamsESbustaP7m(is, outputStream);
+                    }
+                } else {
+                    try (InputStream is = blob.getBinaryStream();) {
+                        int len;
+                        while ((len = is.read(buffer)) > 0) {
+                            outputStream.write(buffer, 0, len);
+                            log.debug("letto blob e scritto su stream...");
+                        }
                     }
                 }
                 rispostaControlli = true;
@@ -198,10 +214,10 @@ public class RecBlbOracle {
                 /*
                  * MEV 30369 - TODO da rimuovere quando viene completata la migrazione dei BLOB
                  * (https://parermine.regione.emilia-romagna.it/issues/29978) se non lo trovo su VRS_CONTENUTO_FILE_KO
-                 * lo cerco su VRS_CONTENUTO_FILE perché evidentemente non è ancora stato spostato il CLOB
+                 * lo cerco su VRS_CONTENUTO_FILE perchÃ© evidentemente non è ancora stato spostato il CLOB
                  */
                 if (TabellaBlob.ERRORI_VERS.equals(tabellaBlobDaLeggere)) {
-                    recuperaBlobCompSuStream(idPadre, outputStream, TabellaBlob.ERRORI_VERS_TMP, null);
+                    recuperaBlobCompSuStream(idPadre, outputStream, TabellaBlob.ERRORI_VERS_TMP, dto);
                 }
                 log.error("Eccezione nella lettura della tabella dei dati componente: il blob è nullo");
             }

@@ -98,8 +98,8 @@ public class AroVVisFirmaComp implements Serializable {
     private String msgEsitoOcspDtVers;
     private String msgEsitoCrlVol;
     private BigDecimal niOrdCompDoc;
-    private BigDecimal niSerialCertifCa;
-    private BigDecimal niSerialCertifFirmatario;
+    private String dsSerialCertifCa;
+    private String dsSerialCertifFirmatario;
     private String nmAmbiente;
     private String nmCognomeFirmatario;
     private String nmCognomeFirmatarioPadre;
@@ -117,10 +117,10 @@ public class AroVVisFirmaComp implements Serializable {
     private BigDecimal pgBusta;
     private BigDecimal pgDoc;
     private BigDecimal pgFirma;
-    private BigDecimal serialCaCrl;
-    private BigDecimal serialCrl;
-    private BigDecimal serialCrlDtVers;
-    private BigDecimal serialCrlVol;
+    private String serialCaCrl;
+    private String serialCrl;
+    private String serialCrlDtVers;
+    private String serialCrlVol;
     private String tiAnnulDoc;
     private String tiAnnulUnitaDoc;
     private String tiDoc;
@@ -689,22 +689,22 @@ public class AroVVisFirmaComp implements Serializable {
         this.niOrdCompDoc = niOrdCompDoc;
     }
 
-    @Column(name = "NI_SERIAL_CERTIF_CA")
-    public BigDecimal getNiSerialCertifCa() {
-        return this.niSerialCertifCa;
+    @Column(name = "DS_SERIAL_CERTIF_CA")
+    public String getDsSerialCertifCa() {
+        return this.dsSerialCertifCa;
     }
 
-    public void setNiSerialCertifCa(BigDecimal niSerialCertifCa) {
-        this.niSerialCertifCa = niSerialCertifCa;
+    public void setDsSerialCertifCa(String dsSerialCertifCa) {
+        this.dsSerialCertifCa = dsSerialCertifCa;
     }
 
-    @Column(name = "NI_SERIAL_CERTIF_FIRMATARIO")
-    public BigDecimal getNiSerialCertifFirmatario() {
-        return this.niSerialCertifFirmatario;
+    @Column(name = "DS_SERIAL_CERTIF_FIRMATARIO")
+    public String getDsSerialCertifFirmatario() {
+        return this.dsSerialCertifFirmatario;
     }
 
-    public void setNiSerialCertifFirmatario(BigDecimal niSerialCertifFirmatario) {
-        this.niSerialCertifFirmatario = niSerialCertifFirmatario;
+    public void setDsSerialCertifFirmatario(String dsSerialCertifFirmatario) {
+        this.dsSerialCertifFirmatario = dsSerialCertifFirmatario;
     }
 
     @Column(name = "NM_AMBIENTE")
@@ -861,38 +861,38 @@ public class AroVVisFirmaComp implements Serializable {
     }
 
     @Column(name = "SERIAL_CA_CRL")
-    public BigDecimal getSerialCaCrl() {
+    public String getSerialCaCrl() {
         return this.serialCaCrl;
     }
 
-    public void setSerialCaCrl(BigDecimal serialCaCrl) {
+    public void setSerialCaCrl(String serialCaCrl) {
         this.serialCaCrl = serialCaCrl;
     }
 
     @Column(name = "SERIAL_CRL")
-    public BigDecimal getSerialCrl() {
+    public String getSerialCrl() {
         return this.serialCrl;
     }
 
-    public void setSerialCrl(BigDecimal serialCrl) {
+    public void setSerialCrl(String serialCrl) {
         this.serialCrl = serialCrl;
     }
 
     @Column(name = "SERIAL_CRL_DT_VERS")
-    public BigDecimal getSerialCrlDtVers() {
+    public String getSerialCrlDtVers() {
         return this.serialCrlDtVers;
     }
 
-    public void setSerialCrlDtVers(BigDecimal serialCrlDtVers) {
+    public void setSerialCrlDtVers(String serialCrlDtVers) {
         this.serialCrlDtVers = serialCrlDtVers;
     }
 
     @Column(name = "SERIAL_CRL_VOL")
-    public BigDecimal getSerialCrlVol() {
+    public String getSerialCrlVol() {
         return this.serialCrlVol;
     }
 
-    public void setSerialCrlVol(BigDecimal serialCrlVol) {
+    public void setSerialCrlVol(String serialCrlVol) {
         this.serialCrlVol = serialCrlVol;
     }
 
@@ -1042,7 +1042,7 @@ public class AroVVisFirmaComp implements Serializable {
         this.issuerCertiftOcsp = issuerCertiftOcsp;
     }
 
-    @Column(name = "SERIAL_CERTIF_OCSP", columnDefinition = "NUMBER")
+    @Column(name = "SERIAL_CERTIF_OCSP")
     public String getSerialCertifOcsp() {
         return this.serialCertifOcsp;
     }
@@ -1069,7 +1069,7 @@ public class AroVVisFirmaComp implements Serializable {
         this.issuerCertiftOcspDtVers = issuerCertiftOcspDtVers;
     }
 
-    @Column(name = "SERIAL_CERTIF_OCSP_DT_VERS", columnDefinition = "NUMBER")
+    @Column(name = "SERIAL_CERTIF_OCSP_DT_VERS")
     public String getSerialCertifOcspDtVers() {
         return this.serialCertifOcspDtVers;
     }

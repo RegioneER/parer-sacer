@@ -335,20 +335,20 @@ public class AroVVisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
         setObject("issuer_certif_firmatario", issuerCertifFirmatario);
     }
 
-    public BigDecimal getNiSerialCertifCa() {
-        return getBigDecimal("ni_serial_certif_ca");
+    public String getDsSerialCertifCa() {
+        return getString("ds_serial_certif_ca");
     }
 
-    public void setNiSerialCertifCa(BigDecimal niSerialCertifCa) {
-        setObject("ni_serial_certif_ca", niSerialCertifCa);
+    public void setDsSerialCertifCa(String dsSerialCertifCa) {
+        setObject("ds_serial_certif_ca", dsSerialCertifCa);
     }
 
-    public BigDecimal getNiSerialCertifFirmatario() {
-        return getBigDecimal("ni_serial_certif_firmatario");
+    public String getDsSerialCertifFirmatario() {
+        return getString("ds_serial_certif_firmatario");
     }
 
-    public void setNiSerialCertifFirmatario(BigDecimal niSerialCertifFirmatario) {
-        setObject("ni_serial_certif_firmatario", niSerialCertifFirmatario);
+    public void setDsSerialCertifFirmatario(String dsSerialCertifFirmatario) {
+        setObject("ds_serial_certif_firmatario", dsSerialCertifFirmatario);
     }
 
     public Timestamp getDtIniValCertifFirmatario() {
@@ -527,19 +527,19 @@ public class AroVVisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
         setObject("issuer_crl", issuerCrl);
     }
 
-    public BigDecimal getSerialCaCrl() {
-        return getBigDecimal("serial_ca_crl");
+    public String getSerialCaCrl() {
+        return getString("serial_ca_crl");
     }
 
-    public void setSerialCaCrl(BigDecimal serialCaCrl) {
+    public void setSerialCaCrl(String serialCaCrl) {
         setObject("serial_ca_crl", serialCaCrl);
     }
 
-    public BigDecimal getSerialCrl() {
-        return getBigDecimal("serial_crl");
+    public String getSerialCrl() {
+        return getString("serial_crl");
     }
 
-    public void setSerialCrl(BigDecimal serialCrl) {
+    public void setSerialCrl(String serialCrl) {
         setObject("serial_crl", serialCrl);
     }
 
@@ -655,11 +655,11 @@ public class AroVVisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
         setObject("msg_esito_crl_vol", msgEsitoCrlVol);
     }
 
-    public BigDecimal getSerialCrlVol() {
-        return getBigDecimal("serial_crl_vol");
+    public String getSerialCrlVol() {
+        return getString("serial_crl_vol");
     }
 
-    public void setSerialCrlVol(BigDecimal serialCrlVol) {
+    public void setSerialCrlVol(String serialCrlVol) {
         setObject("serial_crl_vol", serialCrlVol);
     }
 
@@ -751,11 +751,11 @@ public class AroVVisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
         setObject("msg_esito_crl_dt_vers", msgEsitoCrlDtVers);
     }
 
-    public BigDecimal getSerialCrlDtVers() {
-        return getBigDecimal("serial_crl_dt_vers");
+    public String getSerialCrlDtVers() {
+        return getString("serial_crl_dt_vers");
     }
 
-    public void setSerialCrlDtVers(BigDecimal serialCrlDtVers) {
+    public void setSerialCrlDtVers(String serialCrlDtVers) {
         setObject("serial_crl_dt_vers", serialCrlDtVers);
     }
 
@@ -906,8 +906,8 @@ public class AroVVisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
         this.setTiFormatoFirma(entity.getTiFormatoFirma());
         this.setPgBusta(entity.getPgBusta());
         this.setIssuerCertifFirmatario(entity.getIssuerCertifFirmatario());
-        this.setNiSerialCertifCa(entity.getNiSerialCertifCa());
-        this.setNiSerialCertifFirmatario(entity.getNiSerialCertifFirmatario());
+        this.setDsSerialCertifCa(entity.getDsSerialCertifCa());
+        this.setDsSerialCertifFirmatario(entity.getDsSerialCertifFirmatario());
         if (entity.getDtIniValCertifFirmatario() != null) {
             this.setDtIniValCertifFirmatario(new Timestamp(entity.getDtIniValCertifFirmatario().getTime()));
         }
@@ -1033,8 +1033,8 @@ public class AroVVisFirmaCompRowBean extends BaseRow implements JEEBaseRowInterf
         entity.setTiFormatoFirma(this.getTiFormatoFirma());
         entity.setPgBusta(this.getPgBusta());
         entity.setIssuerCertifFirmatario(this.getIssuerCertifFirmatario());
-        entity.setNiSerialCertifCa(this.getNiSerialCertifCa());
-        entity.setNiSerialCertifFirmatario(this.getNiSerialCertifFirmatario());
+        entity.setDsSerialCertifCa(this.getDsSerialCertifCa());
+        entity.setDsSerialCertifFirmatario(this.getDsSerialCertifFirmatario());
         entity.setDtIniValCertifFirmatario(this.getDtIniValCertifFirmatario());
         entity.setDtFinValCertifFirmatario(this.getDtFinValCertifFirmatario());
         entity.setDtFirma(this.getDtFirma());

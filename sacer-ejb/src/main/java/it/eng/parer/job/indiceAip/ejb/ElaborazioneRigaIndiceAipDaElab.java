@@ -84,6 +84,7 @@ import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
 import it.eng.parer.viewEntity.AroVLisLinkUnitaDoc;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
+import it.eng.parer.web.ejb.UnitaDocumentarieEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.ParamIamHelper;
 import it.eng.parer.web.util.Constants;
@@ -129,6 +130,10 @@ public class ElaborazioneRigaIndiceAipDaElab {
     @EJB
     private ObjectStorageService objectStorageService;
     // end MEV#30395
+    // MEV #31162
+    @EJB
+    private UnitaDocumentarieEjb udEjb;
+    // end MEV #31162
 
     @Resource(mappedName = "jms/ProducerConnectionFactory")
     private ConnectionFactory connectionFactory;
@@ -477,8 +482,19 @@ public class ElaborazioneRigaIndiceAipDaElab {
             // end MAC#27786
             ) {
                 aroUnitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name());
+                // MEV #31162
+                udEjb.insertLogStatoConservUd(aroUnitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
+                        Constants.CREAZIONE_INDICE_AIP_UD,
+                        CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name(),
+                        Constants.JOB_CREAZIONE_INDICE_AIP);
+                // end MEV #31162
             } else {
                 aroUnitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
+                // MEV #31162
+                udEjb.insertLogStatoConservUd(aroUnitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
+                        Constants.CREAZIONE_INDICE_AIP_UD, CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
+                        Constants.JOB_CREAZIONE_INDICE_AIP);
+                // end MEV #31162
             }
         }
 
@@ -657,6 +673,13 @@ public class ElaborazioneRigaIndiceAipDaElab {
         AroIndiceAipUd aroIndice = lastVer.getAroIndiceAipUd();
         aroIndice.setIdVerIndiceAipLast(new BigDecimal(lastVer.getIdVerIndiceAip()));
         unitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
+
+        // MEV #31162
+        udEjb.insertLogStatoConservUd(unitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
+                Constants.CREAZIONE_INDICE_AIP_UD_OS_20, CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
+                Constants.JOB_CREAZIONE_INDICE_AIP);
+        // end MEV #31162
+
         log.debug("Creazione Indice AIP - Operazione di inserimento completata con successo");
     }
 
@@ -737,6 +760,13 @@ public class ElaborazioneRigaIndiceAipDaElab {
         AroIndiceAipUd aroIndice = lastVer.getAroIndiceAipUd();
         aroIndice.setIdVerIndiceAipLast(new BigDecimal(lastVer.getIdVerIndiceAip()));
         unitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
+
+        // MEV #31162
+        udEjb.insertLogStatoConservUd(unitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
+                Constants.CREAZIONE_INDICE_AIP_UD_OS_20, CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
+                Constants.JOB_CREAZIONE_INDICE_AIP);
+        // end MEV #31162
+
         log.debug("Creazione Indice AIP v2.0 - Operazione di inserimento completata con successo");
     }
     // end EVO#20972

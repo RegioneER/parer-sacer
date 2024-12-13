@@ -667,7 +667,7 @@ public class TipoUnitaDocHelper extends GenericHelper {
     }
 
     /**
-     * Restituisce i sistemi versanti associati al tipo unità documentaria
+     * Restituisce la lista di sistemi versanti associati al tipo unità documentaria
      *
      * @param idTipoUnitaDoc
      *            id tipo unita doc
@@ -684,19 +684,39 @@ public class TipoUnitaDocHelper extends GenericHelper {
     }
 
     /**
-     * Restituisce i sistemi versanti associati al tipo unità documentaria.
+     * Restituisce i sistemi versanti, concatenati, associati al tipo unità documentaria.
      *
      * @param idTipoUnitaDoc
      *            id tipo unita doc
      *
      * @return String sistemi versanti
      */
-    public String getAplSistemiVersantiSeparatiPerTipoUd(BigDecimal idTipoUnitaDoc) {
+    public String getNmSistemiVersantiRaggruppatiPerTipoUd(BigDecimal idTipoUnitaDoc) {
         Query q = getEntityManager().createQuery("SELECT dec.nmSistemaVersante FROM DecVLisSisVersByTipoUd dec "
                 + "WHERE dec.id.idTipoUnitaDoc = :idTipoUnitaDoc " + "ORDER BY dec.nmSistemaVersante ASC");
         q.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
         List<String> sList = q.getResultList();
         return StringUtils.join(sList, ", ");
+    }
+
+    /**
+     * Restituisce le date di primo e ultimo versamento del tipo unità documentaria.
+     *
+     * @param idTipoUnitaDoc
+     *            id tipo unita doc
+     *
+     * @return Object[] le date
+     */
+    public Object[] getDtErogSistemiVersantiPerTipoUd(BigDecimal idTipoUnitaDoc) {
+        Query q = getEntityManager()
+                .createQuery("SELECT MIN(dec.dtErog), MAX(dec.dtLastErog) FROM DecVLisSisVersByTipoUd dec "
+                        + "WHERE dec.id.idTipoUnitaDoc = :idTipoUnitaDoc ");
+        q.setParameter("idTipoUnitaDoc", idTipoUnitaDoc);
+        List<Object[]> sList = q.getResultList();
+        if (!sList.isEmpty()) {
+            return sList.get(0);
+        }
+        return null;
     }
 
     public List<AplSistemaVersante> retrieveAplSistemaVersanteList() {

@@ -75,8 +75,8 @@ public class AroVVisFirmaCompTableDescriptor extends TableDescriptor {
     public static final String COL_TI_FORMATO_FIRMA = "ti_formato_firma";
     public static final String COL_PG_BUSTA = "pg_busta";
     public static final String COL_ISSUER_CERTIF_FIRMATARIO = "issuer_certif_firmatario";
-    public static final String COL_NI_SERIAL_CERTIF_CA = "ni_serial_certif_ca";
-    public static final String COL_NI_SERIAL_CERTIF_FIRMATARIO = "ni_serial_certif_firmatario";
+    public static final String COL_DS_SERIAL_CERTIF_CA = "ds_serial_certif_ca";
+    public static final String COL_DS_SERIAL_CERTIF_FIRMATARIO = "ds_serial_certif_firmatario";
     public static final String COL_DT_INI_VAL_CERTIF_FIRMATARIO = "dt_ini_val_certif_firmatario";
     public static final String COL_DT_FIN_VAL_CERTIF_FIRMATARIO = "dt_fin_val_certif_firmatario";
     public static final String COL_DT_FIRMA = "dt_firma";
@@ -174,9 +174,9 @@ public class AroVVisFirmaCompTableDescriptor extends TableDescriptor {
         map.put(COL_PG_BUSTA, new ColumnDescriptor(COL_PG_BUSTA, Types.DECIMAL, 22, true));
         map.put(COL_ISSUER_CERTIF_FIRMATARIO,
                 new ColumnDescriptor(COL_ISSUER_CERTIF_FIRMATARIO, Types.VARCHAR, 1024, true));
-        map.put(COL_NI_SERIAL_CERTIF_CA, new ColumnDescriptor(COL_NI_SERIAL_CERTIF_CA, Types.DECIMAL, 22, true));
-        map.put(COL_NI_SERIAL_CERTIF_FIRMATARIO,
-                new ColumnDescriptor(COL_NI_SERIAL_CERTIF_FIRMATARIO, Types.DECIMAL, 22, true));
+        map.put(COL_DS_SERIAL_CERTIF_CA, new ColumnDescriptor(COL_DS_SERIAL_CERTIF_CA, Types.VARCHAR, 100, true));
+        map.put(COL_DS_SERIAL_CERTIF_FIRMATARIO,
+                new ColumnDescriptor(COL_DS_SERIAL_CERTIF_FIRMATARIO, Types.VARCHAR, 100, true));
         map.put(COL_DT_INI_VAL_CERTIF_FIRMATARIO,
                 new ColumnDescriptor(COL_DT_INI_VAL_CERTIF_FIRMATARIO, Types.TIMESTAMP, 7, true));
         map.put(COL_DT_FIN_VAL_CERTIF_FIRMATARIO,
@@ -206,8 +206,8 @@ public class AroVVisFirmaCompTableDescriptor extends TableDescriptor {
         map.put(COL_ESITO_CRL, new ColumnDescriptor(COL_ESITO_CRL, Types.VARCHAR, 30, true));
         map.put(COL_MSG_ESITO_CRL, new ColumnDescriptor(COL_MSG_ESITO_CRL, Types.VARCHAR, 1024, true));
         map.put(COL_ISSUER_CRL, new ColumnDescriptor(COL_ISSUER_CRL, Types.VARCHAR, 1024, true));
-        map.put(COL_SERIAL_CA_CRL, new ColumnDescriptor(COL_SERIAL_CA_CRL, Types.DECIMAL, 22, true));
-        map.put(COL_SERIAL_CRL, new ColumnDescriptor(COL_SERIAL_CRL, Types.DECIMAL, 22, true));
+        map.put(COL_SERIAL_CA_CRL, new ColumnDescriptor(COL_SERIAL_CA_CRL, Types.VARCHAR, 100, true));
+        map.put(COL_SERIAL_CRL, new ColumnDescriptor(COL_SERIAL_CRL, Types.VARCHAR, 100, true));
         map.put(COL_DT_SCAD_CRL, new ColumnDescriptor(COL_DT_SCAD_CRL, Types.TIMESTAMP, 7, true));
         map.put(COL_NM_VOLUME_CONSERV, new ColumnDescriptor(COL_NM_VOLUME_CONSERV, Types.VARCHAR, 100, true));
         map.put(COL_DS_VOLUME_CONSERV, new ColumnDescriptor(COL_DS_VOLUME_CONSERV, Types.VARCHAR, 254, true));
@@ -226,7 +226,7 @@ public class AroVVisFirmaCompTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_MSG_ESITO_CERTIFICATO_VOL, Types.VARCHAR, 1024, true));
         map.put(COL_ESITO_CRL_VOL, new ColumnDescriptor(COL_ESITO_CRL_VOL, Types.VARCHAR, 30, true));
         map.put(COL_MSG_ESITO_CRL_VOL, new ColumnDescriptor(COL_MSG_ESITO_CRL_VOL, Types.VARCHAR, 1024, true));
-        map.put(COL_SERIAL_CRL_VOL, new ColumnDescriptor(COL_SERIAL_CRL_VOL, Types.DECIMAL, 22, true));
+        map.put(COL_SERIAL_CRL_VOL, new ColumnDescriptor(COL_SERIAL_CRL_VOL, Types.VARCHAR, 100, true));
         map.put(COL_DT_SCAD_CRL_VOL, new ColumnDescriptor(COL_DT_SCAD_CRL_VOL, Types.TIMESTAMP, 7, true));
         map.put(COL_TI_ESITO_VERIF_FIRMA_DT_VERS,
                 new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRMA_DT_VERS, Types.VARCHAR, 20, true));
@@ -244,7 +244,7 @@ public class AroVVisFirmaCompTableDescriptor extends TableDescriptor {
                 new ColumnDescriptor(COL_MSG_ESITO_CERTIFICATO_DT_VERS, Types.VARCHAR, 1024, true));
         map.put(COL_ESITO_CRL_DT_VERS, new ColumnDescriptor(COL_ESITO_CRL_DT_VERS, Types.VARCHAR, 30, true));
         map.put(COL_MSG_ESITO_CRL_DT_VERS, new ColumnDescriptor(COL_MSG_ESITO_CRL_DT_VERS, Types.VARCHAR, 1024, true));
-        map.put(COL_SERIAL_CRL_DT_VERS, new ColumnDescriptor(COL_SERIAL_CRL_DT_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_SERIAL_CRL_DT_VERS, new ColumnDescriptor(COL_SERIAL_CRL_DT_VERS, Types.VARCHAR, 100, true));
         map.put(COL_DT_SCAD_CRL_DT_VERS, new ColumnDescriptor(COL_DT_SCAD_CRL_DT_VERS, Types.TIMESTAMP, 7, true));
         map.put(COL_BL_FIRMA_BASE64, new ColumnDescriptor(COL_BL_FIRMA_BASE64, Types.CLOB, 4000, true));
     }

@@ -4,12 +4,41 @@
 
 <sl:html>
     <sl:head title="Dettaglio Xsd Migrazione">
+        <script src="<c:url value='/js/help/inithighlightingjs.js' />" type="text/javascript"></script>    
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.confermaDisattivazioneXsd').dialog({
+                    autoOpen: true,
+                    width: 600,
+                    modal: true,
+                    closeOnEscape: true,
+                    resizable: false,
+                    dialogClass: "alertBox",
+                    buttons: {
+                        "Ok": function () {
+                            $(this).dialog("close");
+                            window.location = "Strutture.html?operation=confermaDisattivazione";
+                        },
+                        "Annulla": function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            });
+        </script>
     </sl:head>
     <sl:body>
         <sl:header changeOrganizationBtnDescription="Cambia struttura" />
         <sl:menu />
         <sl:content>
             <slf:messageBox />
+            <c:if test="${!empty requestScope.confermaDisattivazioneXsd}">
+                <div class="messages confermaDisattivazioneXsd ">
+                    <ul>
+                        <li class="message info ">Desideri disattivare la versione di XSD ?</li>
+                    </ul>
+                </div>
+            </c:if>
             <sl:contentTitle title="Gestione Xsd Migrazione"/>
             <slf:fieldBarDetailTag name="<%= StruttureForm.GestioneXsdMigrazione.NAME%>" 
                                    hideBackButton="${!(sessionScope['###_FORM_CONTAINER']['gestioneXsdMigrazione'].status eq 'view')}"

@@ -366,6 +366,7 @@
         <Input Type="INTEGER" Description="Id tipo documento" Name="id_tipo_doc" />
         <Input Type="INTEGER" Description="Id tipo unità documentaria" Name="id_tipo_unita_doc" />
         <Input Type="INTEGER" Description="Id tipo componente documento" Name="id_tipo_comp_doc" />
+        <Input Type="INTEGER" Description="Id sistema migrazione" Name="id_sistema_migraz" />
         <Input Type="STRING" Description="Nome sistema migrazione" Name="nm_sys_migraz" />
         <Input Type="STRING" Description="Nome tipo" Name="nm_sacer_type" />
     </List>

@@ -87,12 +87,12 @@ public class AroVLisCertifCaFirmaCompRowBean extends BaseRow implements JEEBaseR
         setObject("dl_dn_issuer_certif_ca", dlDnIssuerCertifCa);
     }
 
-    public BigDecimal getNiSerialCertifCa() {
-        return getBigDecimal("ni_serial_certif_ca");
+    public String getDsSerialCertifCa() {
+        return getString("ds_serial_certif_ca");
     }
 
-    public void setNiSerialCertifCa(BigDecimal niSerialCertifCa) {
-        setObject("ni_serial_certif_ca", niSerialCertifCa);
+    public void setDsSerialCertifCa(String dsSerialCertifCa) {
+        setObject("ds_serial_certif_ca", dsSerialCertifCa);
     }
 
     public Timestamp getDtIniValCertifCa() {
@@ -119,20 +119,20 @@ public class AroVLisCertifCaFirmaCompRowBean extends BaseRow implements JEEBaseR
         setObject("dl_dn_issuer_crl", dlDnIssuerCrl);
     }
 
-    public BigDecimal getNiSerialCertifCrl() {
-        return getBigDecimal("ni_serial_certif_crl");
+    public String getDsSerialCertifCrl() {
+        return getString("ds_serial_certif_crl");
     }
 
-    public void setNiSerialCertifCrl(BigDecimal niSerialCertifCrl) {
-        setObject("ni_serial_certif_crl", niSerialCertifCrl);
+    public void setDsSerialCertifCrl(String dsSerialCertifCrl) {
+        setObject("ds_serial_certif_crl", dsSerialCertifCrl);
     }
 
-    public BigDecimal getNiSerialCrl() {
-        return getBigDecimal("ni_serial_crl");
+    public String getDsSerialCrl() {
+        return getString("ds_serial_crl");
     }
 
-    public void setNiSerialCrl(BigDecimal niSerialCrl) {
-        setObject("ni_serial_crl", niSerialCrl);
+    public void setDsSerialCrl(String dsSerialCrl) {
+        setObject("ds_serial_crl", dsSerialCrl);
     }
 
     public Timestamp getDtScadCrl() {
@@ -151,12 +151,12 @@ public class AroVLisCertifCaFirmaCompRowBean extends BaseRow implements JEEBaseR
         setObject("dl_dn_issuer_certif_ocsp", dl_dn_issuer_certif_ocsp);
     }
 
-    public BigDecimal getNiSerialCertifOcsp() {
-        return getBigDecimal("ni_serial_certif_ocsp");
+    public String getDsSerialCertifOcsp() {
+        return getString("ds_serial_certif_ocsp");
     }
 
-    public void setNiSerialCertifOcsp(BigDecimal ni_serial_certif_ocsp) {
-        setObject("ni_serial_certif_ocsp", ni_serial_certif_ocsp);
+    public void setDsSerialCertifOcsp(String ds_serial_certif_ocsp) {
+        setObject("ds_serial_certif_ocsp", ds_serial_certif_ocsp);
     }
 
     public Timestamp getDtIniValCertifOcsp() {
@@ -183,7 +183,7 @@ public class AroVLisCertifCaFirmaCompRowBean extends BaseRow implements JEEBaseR
         this.setIdContrFirmaComp(entity.getIdContrFirmaComp());
         this.setPgCertifCa(entity.getPgCertifCa());
         this.setDlDnIssuerCertifCa(entity.getDlDnIssuerCertifCa());
-        this.setNiSerialCertifCa(entity.getNiSerialCertifCa());
+        this.setDsSerialCertifCa(entity.getDsSerialCertifCa());
         if (entity.getDtIniValCertifCa() != null) {
             this.setDtIniValCertifCa(new Timestamp(entity.getDtIniValCertifCa().getTime()));
         }
@@ -191,13 +191,13 @@ public class AroVLisCertifCaFirmaCompRowBean extends BaseRow implements JEEBaseR
             this.setDtFinValCertifCa(new Timestamp(entity.getDtFinValCertifCa().getTime()));
         }
         this.setDlDnIssuerCrl(entity.getDlDnIssuerCrl());
-        this.setNiSerialCertifCrl(entity.getNiSerialCertifCrl());
-        this.setNiSerialCrl(entity.getNiSerialCrl());
+        this.setDsSerialCertifCrl(entity.getDsSerialCertifCrl());
+        this.setDsSerialCrl(entity.getDsSerialCrl());
         if (entity.getDtScadCrl() != null) {
             this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
         }
         this.setDlDnIssuerCertifOcsp(entity.getDlDnIssuerCertifOcsp());
-        this.setNiSerialCertifOcsp(entity.getNiSerialCertifOcsp());
+        this.setDsSerialCertifOcsp(entity.getDsSerialCertifOcsp());
         if (entity.getDtIniValCertifOcsp() != null) {
             this.setDtIniValCertifOcsp(new Timestamp(entity.getDtIniValCertifOcsp().getTime()));
         }
@@ -214,15 +214,15 @@ public class AroVLisCertifCaFirmaCompRowBean extends BaseRow implements JEEBaseR
         entity.setIdContrFirmaComp(this.getIdContrFirmaComp());
         entity.setPgCertifCa(this.getPgCertifCa());
         entity.setDlDnIssuerCertifCa(this.getDlDnIssuerCertifCa());
-        entity.setNiSerialCertifCa(this.getNiSerialCertifCa());
+        entity.setDsSerialCertifCa(this.getDsSerialCertifCa());
         entity.setDtIniValCertifCa(this.getDtIniValCertifCa());
         entity.setDtFinValCertifCa(this.getDtFinValCertifCa());
         entity.setDlDnIssuerCrl(this.getDlDnIssuerCrl());
-        entity.setNiSerialCertifCrl(this.getNiSerialCertifCrl());
-        entity.setNiSerialCrl(this.getNiSerialCrl());
+        entity.setDsSerialCertifCrl(this.getDsSerialCertifCrl());
+        entity.setDsSerialCrl(this.getDsSerialCrl());
         entity.setDtScadCrl(this.getDtScadCrl());
         entity.setDlDnIssuerCertifOcsp(this.getDlDnIssuerCertifOcsp());
-        entity.setNiSerialCertifOcsp(this.getNiSerialCertifOcsp());
+        entity.setDsSerialCertifOcsp(this.getDsSerialCertifOcsp());
         entity.setDtIniValCertifOcsp(this.getDtIniValCertifOcsp());
         entity.setDtFinValCertifOcsp(this.getDtFinValCertifOcsp());
         return entity;

@@ -157,7 +157,7 @@
     </List>
     
     <List Name="ParteNumeroFascicoloList" Description="Lista delle parti del periodo di validità del tipo fascicolo" >
-        <Input Name="id_parte_numero_fascicolo" Description="" Type="INTEGER" Hidden="true"/>
+        <Input Type="INTEGER" Description="" Name="id_parte_numero_fascicolo" Hidden="true"/>
         <Input Type="INTEGER" Description="Numero d'ordine" Name="ni_parte_numero" />
         <Input Type="STRING" Description="Nome" Name="nm_parte_numero" />
         <Input Type="STRING" Description="Descrizione" Name="ds_parte_numero" />

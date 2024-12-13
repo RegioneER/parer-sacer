@@ -188,10 +188,13 @@ public class AroUnitaDoc implements Serializable {
 
     private List<AroUpdUnitaDoc> aroUpdUnitaDocs = new ArrayList<>();
 
+    private List<AroLogStatoConservUd> aroLogStatoConservUds;
+
     public AroUnitaDoc() {/* Hibernate */
     }
 
     @Id
+
     @Column(name = "ID_UNITA_DOC")
     @GenericGenerator(name = "SARO_UNITA_DOC_ID_UNITA_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
             @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_UNITA_DOC"),
@@ -725,6 +728,7 @@ public class AroUnitaDoc implements Serializable {
     }
 
     @OneToMany(mappedBy = "aroUnitaDoc")
+
     public List<RecUnitaDocRecup> getRecUnitaDocRecups() {
         return this.recUnitaDocRecups;
     }
@@ -891,4 +895,12 @@ public class AroUnitaDoc implements Serializable {
         this.aroXmlUnitaDocObjectStorage = aroXmlUnitaDocObjectStorage;
     }
 
+    @OneToMany(mappedBy = "aroUnitaDoc")
+    public List<AroLogStatoConservUd> getAroLogStatoConservUds() {
+        return this.aroLogStatoConservUds;
+    }
+
+    public void setAroLogStatoConservUds(List<AroLogStatoConservUd> aroLogStatoConservUds) {
+        this.aroLogStatoConservUds = aroLogStatoConservUds;
+    }
 }

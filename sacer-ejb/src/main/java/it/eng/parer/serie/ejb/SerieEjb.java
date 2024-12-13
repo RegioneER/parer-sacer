@@ -188,6 +188,7 @@ import it.eng.parer.viewEntity.SerVVisErrFileSerieUd;
 import it.eng.parer.viewEntity.SerVVisSerieUd;
 import it.eng.parer.viewEntity.SerVVisVolVerSerieUd;
 import it.eng.parer.web.ejb.AmministrazioneEjb;
+import it.eng.parer.web.ejb.UnitaDocumentarieEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UserHelper;
 import it.eng.parer.web.util.Constants;
@@ -250,6 +251,11 @@ public class SerieEjb {
 
     private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
     // end MEV#30400
+
+    // MEV #31162
+    @EJB
+    private UnitaDocumentarieEjb udEjb;
+    // end MEV #31162
 
     public static final String CD_SERIE_REGEX = "[A-Za-z0-9\\.\\-\\_\\:]+";
     public static final Pattern CD_SERIE_PATTERN = Pattern.compile(CD_SERIE_REGEX);
@@ -4248,9 +4254,26 @@ public class SerieEjb {
                         }
                         if (stato.equals(CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name())
                                 && udInSerie != null) {
+                            // MEV #31162
+                            List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
+                                    idContenutoVerSerie.longValue(),
+                                    CostantiDB.StatoConservazioneUnitaDoc.IN_VOLUME_DI_CONSERVAZIONE.name());
+                            // end MEV #31162
+
                             helper.updateStatoConservazioneAroUnitaDocInContenuto(idContenutoVerSerie.longValue(),
                                     CostantiDB.StatoConservazioneUnitaDoc.IN_VOLUME_DI_CONSERVAZIONE.name(),
                                     CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name());
+
+                            // MEV #31162
+                            IamUser utente = helper.findById(IamUser.class, idUser);
+                            for (Long idUnitaDoc : idUnitaDocList) {
+                                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                                        Constants.CAMBIA_STATO_SERIE_VDC,
+                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name(),
+                                        Constants.FUNZIONALITA_ONLINE);
+                            }
+                            // end MEV #31162
+
                             // AGGIORNAMENTO ANALISI STATO INCONSISTENTE
                             // helper.updateStatoConservazioneAroUnitaDocInContenuto(idContenutoVerSerie.longValue(),
                             // CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
@@ -4267,10 +4290,29 @@ public class SerieEjb {
                                     CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name());
                             helper.deleteSerVolVerSerie(idVerSerie);
                             helper.deleteSerVerSerieDaElab(idVerSerie);
+
+                            // MEV #31162
+                            List<String> statiConservOld = new ArrayList<>();
+                            statiConservOld.add(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+                            List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocWithoutOtherSeries(
+                                    idSerie, verSerie.getIdVerSerie(), statiConservOld);
+                            // end MEV #31162
+
                             helper.updateStatoConservazioneAroUnitaDocWithoutOtherSeries(idSerie,
                                     verSerie.getIdVerSerie(),
                                     CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                                     CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
+
+                            // MEV #31162
+                            IamUser utente = helper.findById(IamUser.class, idUser);
+                            for (Long idUnitaDoc : idUnitaDocList) {
+                                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                                        Constants.CAMBIA_STATO_SERIE_GEN_AIP,
+                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
+                                        Constants.FUNZIONALITA_ONLINE);
+                            }
+                            // end MEV #31162
+
                         }
                         if (stato.equals(CostantiDB.StatoVersioneSerie.DA_VALIDARE.name())) {
                             SerVerSerieDaElab serVerSerieDaElab = helper
@@ -4477,12 +4519,33 @@ public class SerieEjb {
                             }
                             logger.debug(SerieEjb.class.getSimpleName()
                                     + " --- Aggiorna le unit\u00E0 doc appartenenti al contenuto di tipo EFFETTIVO della nuova versione, assegnando stato = AIP_GENERATO, purch\u00E8 tali unit\u00E0 doc non appartengano al contenuto di tipo EFFETTIVO di altra serie con stato = VERSAMENTO_IN_ARCHIVIO o IN_ARCHIVIO o IN_CUSTODIA");
+
+                            // MEV #31162
+                            List<String> statiConservOld = new ArrayList<>();
+                            statiConservOld.add(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+                            statiConservOld.add(CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+                            statiConservOld.add(CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA.name());
+                            List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocWithoutOtherSeries(
+                                    idSerie, verSerieToUpdate.getIdVerSerie(), statiConservOld);
+                            // end MEV #31162
+
                             helper.updateStatoConservazioneAroUnitaDocWithoutOtherSeries(idSerie,
                                     verSerieToUpdate.getIdVerSerie(),
                                     CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
                                     Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                                             CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(),
                                             CostantiDB.StatoConservazioneUnitaDoc.IN_CUSTODIA.name()));
+
+                            // MEV #31162
+                            IamUser utente = helper.findById(IamUser.class, idUser);
+                            for (Long idUnitaDoc : idUnitaDocList) {
+                                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
+                                        Constants.CAMBIA_STATO_SERIE_ANNUL,
+                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
+                                        Constants.FUNZIONALITA_ONLINE);
+                            }
+                            // end MEV #31162
+
                         }
                     } else {
                         throw new IllegalArgumentException("Impossibile caricare il contenuto di tipo EFFETTIVO");
@@ -5245,8 +5308,20 @@ public class SerieEjb {
         List<String> statiConservazioneDaCambiare = new ArrayList<>(
                 Arrays.asList(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
                         CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name()));
+        // MEV #31162
+        List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
+                contenEff.getIdContenutoVerSerie(), statiConservazioneDaCambiare);
+        // end MEV #31162
+
         helper.updateStatoConservazioneAroUnitaDocInContenuto(contenEff.getIdContenutoVerSerie(),
                 statiConservazioneDaCambiare, CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+
+        // MEV #31162
+        for (Long idUnitaDoc : idUnitaDocList) {
+            udEjb.insertLogStatoConservUd(idUnitaDoc, Constants.NM_AGENTE_SACER, Constants.VALIDA_SERIE,
+                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(), Constants.JOB_VALIDA_SERIE);
+        }
+        // end MEV #31162
 
         Date now = Calendar.getInstance().getTime();
         SerStatoVerSerie statoCorrente = helper.findById(SerStatoVerSerie.class, verSerie.getIdStatoVerSerieCor());
@@ -5552,9 +5627,24 @@ public class SerieEjb {
              */
             SerContenutoVerSerie contenutoVerSerie = helper.getSerContenutoVerSerie(idVerSerie,
                     CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
+
+            // MEV #31162
+            List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
+                    contenutoVerSerie.getIdContenutoVerSerie(),
+                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+            // end MEV #31162
+
             helper.updateStatoConservazioneAroUnitaDocInContenuto(contenutoVerSerie.getIdContenutoVerSerie(),
                     CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                     CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+
+            // MEV #31162
+            IamUser utente = helper.findById(IamUser.class, idUtente);
+            for (Long idUnitaDoc : idUnitaDocList) {
+                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(), Constants.FIRMA_SERIE,
+                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(), Constants.FUNZIONALITA_ONLINE);
+            }
+            // end MEV #31162
         }
 
         /*
@@ -5722,9 +5812,25 @@ public class SerieEjb {
              */
             SerContenutoVerSerie contenutoVerSerie = helper.getSerContenutoVerSerie(idVerSerie,
                     CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
+
+            // MEV #31162
+            List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
+                    contenutoVerSerie.getIdContenutoVerSerie(),
+                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+            // end MEV #31162
+
             helper.updateStatoConservazioneAroUnitaDocInContenuto(contenutoVerSerie.getIdContenutoVerSerie(),
                     CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
                     CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+
+            // MEV #31162
+            IamUser utente = helper.findById(IamUser.class, idUtente);
+            for (Long idUnitaDoc : idUnitaDocList) {
+                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(), Constants.MARCA_FIRMA_SERIE,
+                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(), Constants.FUNZIONALITA_ONLINE);
+            }
+            // end MEV #31162
+
         }
         return marcaTemporale;
     }
