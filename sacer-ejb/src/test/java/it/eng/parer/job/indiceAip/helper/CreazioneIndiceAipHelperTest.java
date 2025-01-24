@@ -167,21 +167,6 @@ public class CreazioneIndiceAipHelperTest {
     }
 
     @Test
-    public void checkPartizioneStrutturaQueryIsOk() {
-        Long idStrut = aLong();
-        helper.checkPartizioneStruttura(idStrut);
-        assertTrue(true);
-    }
-
-    @Test
-    public void checkSottopartizioneAnnoMeseQueryIsOk() {
-        Long idPartition = aLong();
-        String annoMese = aString();
-        helper.checkSottopartizioneAnnoMese(idPartition, annoMese);
-        assertTrue(true);
-    }
-
-    @Test
     public void findAroIndiceAipUdDaElabQueryIsOk() {
         long idAroIndiceAipUdDaElab = aLong();
         helper.findAroIndiceAipUdDaElab(idAroIndiceAipUdDaElab);

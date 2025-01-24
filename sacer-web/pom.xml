@@ -4,7 +4,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.4.1-SNAPSHOT</version>
+        <version>10.5.0</version>
     </parent>
     
     <artifactId>sacer-jboss-web</artifactId>
@@ -19,11 +19,33 @@
         <web.session-config.cookie-config.secure>true</web.session-config.cookie-config.secure>
     </properties>
     <dependencies>
-        <dependency>  
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-jakartaee-8.0</artifactId>
-            <type>pom</type>
+        <!-- BOM per JBoss EAP 7.4 (jboss-eap-jakartaee8) dependencies -->
+        <!-- jboss-ejb-api_3.2_spec -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <scope>provided</scope>
         </dependency>
+        <!-- jboss-servlet-api_4.0_spec -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_4.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--jakarta.inject-api -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--jboss-jaxrs-api_2.1_spec -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.ws.rs</groupId>
+            <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-webresources</artifactId>
@@ -50,6 +72,12 @@
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-middle</artifactId>
             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>

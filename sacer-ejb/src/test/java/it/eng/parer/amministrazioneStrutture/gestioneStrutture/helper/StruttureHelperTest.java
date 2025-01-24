@@ -298,15 +298,6 @@ public class StruttureHelperTest {
     }
 
     @Test
-    public void checkPartizioni_queryIsOk() {
-        BigDecimal idStrut = aBigDecimal();
-        Date data = todayTs();
-        String tiPartition = aString();
-        helper.checkPartizioni(idStrut, data, tiPartition);
-        assertTrue(true);
-    }
-
-    @Test
     public void getIdStrutAbilitatiFromAmbienteSet_queryIsOk() {
         long idUserIam = aLong();
         Set<? extends BigDecimal> idAmbientiSet = aSetOfBigDecimal(2);

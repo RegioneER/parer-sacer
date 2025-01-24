@@ -17,6 +17,15 @@
 
 package it.eng.parer.ws.ejb;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Objects;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -25,9 +34,14 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.parer.crypto.model.CryptoSignedP7mUri;
+import it.eng.parer.crypto.model.exceptions.CryptoParerException;
+import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.ws.recupero.ejb.objectStorage.RecObjectStorage;
@@ -60,11 +74,14 @@ public class RecuperoDocumento {
     @EJB
     ObjectStorageService objectStorageService;
 
+    @EJB
+    CryptoInvoker cryptoInvoker;
+
     /**
      * Passaggio di un wrapper con l'oggetto interessato dall'object storing
      *
      * @param dto
-     *            dot recupero
+     *            bean con informazioni per il recupero
      *
      * @return true se è andato tutto bene, false altrimenti
      */
@@ -79,12 +96,77 @@ public class RecuperoDocumento {
             log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from BlbOracle, doc = {}", dto);
             return recBlbOracle.recuperaBlobCompSuStream(dto.getId(), dto.getOs(), dto.getTabellaBlobDaLeggere(), dto);
         } else {
-            // MEV#34239 - Estensione servizio per recupero file sbustati
-            // In questo ramo per quanto riguarda lo sbustamento dei .p7m non ci parrerà mai
-            // perché sono dei binari, quindi BLOB
             log.debug("RecuperoDocumento.callRecuperoDocSuStream : recupero from ClbOracle, doc = {}", dto);
             return recClbOracle.recuperaClobDataSuStream(dto.getId(), dto.getOs(), dto.getTabellaClobDaLeggere());
         }
+    }
+
+    /**
+     * Recupare il file originale da documento firmato del componente se richiesto. Nota: supporto esclusivo per P7M
+     *
+     * @param dto
+     *            bean con informazioni per il recupero
+     *
+     * @return true se è andato tutto bene, false altrimenti
+     */
+    public boolean callRecuperoOriginalDocFromSignedSuStream(RecuperoDocBean dto) {
+        boolean result = false;
+        // verifica esistenza object storage
+        try {
+            if (existInObjectStorage(dto)) {
+                log.debug(
+                        "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : recupero from ObjectStorage, doc = {} e invoca servizio",
+                        dto);
+                // get URL
+                URL url = getPresignedURLFromOS(dto);
+                // call service
+                if (Objects.nonNull(url)) {
+                    log.debug(
+                            "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : invoca servizio per recupero documento 7m originale da URL generato {}",
+                            url);
+                    CryptoSignedP7mUri signed = new CryptoSignedP7mUri(url.toURI());
+                    byte[] response = cryptoInvoker.retriveOriginalP7mFromURL(signed);
+                    IOUtils.copyLarge(new ByteArrayInputStream(response), dto.getOs());
+                    result = true; // ok
+                } else {
+                    log.warn(
+                            "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : URL del documento su object storage non generato, impossibile recuperare p7m originale per tipo documento {} con id {}",
+                            dto.getTipo().name(), dto.getId());
+                }
+            } else if (dto.getTabellaBlobDaLeggere() != null) {
+                log.debug(
+                        "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : recupero from BlbOracle, doc = {} e invoca servizio",
+                        dto);
+                //
+                File tmpDoc = File.createTempFile("original-doc", ".p7m");
+                try (OutputStream out = new FileOutputStream(tmpDoc);) {
+                    if (recBlbOracle.recuperaBlobCompSuStream(dto.getId(), out, dto.getTabellaBlobDaLeggere(), dto)) {
+                        byte[] response = cryptoInvoker.retriveOriginalP7mFromFile(tmpDoc);
+                        IOUtils.copyLarge(new ByteArrayInputStream(response), dto.getOs());
+                        result = true;
+                    }
+                } finally {
+                    FileUtils.deleteQuietly(tmpDoc);
+                }
+            } else {
+                log.warn(
+                        "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : impossibile recuperare p7m originale, documento con id {} non presente su object storage o su base dati",
+                        dto.getId());
+            }
+        } catch (CryptoParerException ex) {
+            log.warn(
+                    "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : errore restituito da invocazione servizio",
+                    ex);
+        } catch (URISyntaxException ex) {
+            log.error(
+                    "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : errore elaborazione presigned URI da object storage",
+                    ex);
+        } catch (IOException ex) {
+            log.error(
+                    "RecuperoDocumento.callRecuperoOriginalDocFromSignedSuStream : errore generico in fase di recupero",
+                    ex);
+        }
+        return result;
     }
 
     private boolean existInObjectStorage(RecuperoDocBean doc) {
@@ -122,6 +204,20 @@ public class RecuperoDocumento {
             result = objectStorageService.isSerFileVerSerieUDOnOs(doc.getId(), doc.getTiFile());
             break;
         // end MEV#30400
+        default:
+            break;
+        }
+
+        return result;
+    }
+
+    private URL getPresignedURLFromOS(RecuperoDocBean doc) {
+        URL result = null;
+
+        switch (doc.getTipo()) {
+        case COMP_DOC:
+            result = objectStorageService.getPresignedURLComponente(doc.getId());
+            break;
         default:
             break;
         }

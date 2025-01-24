@@ -934,40 +934,6 @@ public class StruttureHelper extends GenericHelper {
         }
     }
 
-    public String checkPartizioni(BigDecimal idStrut, Date data, String tiPartition) {
-        /* Controllo se esistono partizioni di tipo passato in input per la struttura considerata */
-        String query1Str = "SELECT COUNT(partitionStrut) FROM OrgPartitionStrut partitionStrut "
-                + "JOIN partitionStrut.orgStrut strut2 " + "WHERE strut2.idStrut = :idStrut "
-                + "AND partitionStrut.tiPartition = :tiPartition ";
-
-        Query query1 = getEntityManager().createQuery(query1Str);
-        query1.setParameter("idStrut", longFromBigDecimal(idStrut));
-        query1.setParameter("tiPartition", tiPartition);
-        Long result1 = (Long) query1.getSingleResult();
-
-        // Se già non ho partizioni mi fermo, altrimenti proseguo
-        if (result1 == 0L) {
-            return String.valueOf(result1);
-        } else {
-            String query2NativeSQL = "SELECT CASE " + "WHEN NOT EXISTS (SELECT * FROM ORG_PARTITION_STRUT part_strut "
-                    + "JOIN ORG_PARTITION part " + "ON (part.id_partition = part_strut.id_partition) "
-                    + "JOIN ORG_SUB_PARTITION subpart " + "ON (subpart.id_partition = part.id_partition) "
-                    + "JOIN ORG_VAL_SUB_PARTITION val_subpart "
-                    + "ON (val_subpart.id_sub_partition = subpart.id_sub_partition "
-                    + "AND val_subpart.id_partition = part.id_partition "
-                    + "AND TO_DATE(val_subpart.cd_val_sub_partition, 'dd/mm/yyyy') > TRUNC(?1)) "
-                    + "WHERE part_strut.id_strut = strut.id_strut " + "AND part_strut.ti_partition = ?2 )" + "THEN '0' "
-                    + "ELSE '1' " + "END fl_part_file_ele_vers_data_ok " + "FROM ORG_STRUT strut "
-                    + "WHERE strut.id_strut = ?3 ";
-
-            Query query2 = getEntityManager().createNativeQuery(query2NativeSQL);
-            query2.setParameter(1, data);
-            query2.setParameter(2, tiPartition);
-            query2.setParameter(3, idStrut);
-            return query2.getSingleResult().toString();
-        }
-    }
-
     /**
      * @deprecated MAC#21555
      *

@@ -41,17 +41,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import it.eng.parer.exception.ConnectionException;
-import it.eng.parer.objectstorage.dto.RecuperoDocBean;
-import it.eng.spagoCore.util.JpaUtils;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import javax.ejb.EJB;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 
+import javax.ejb.EJB;
 import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -59,7 +50,14 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.springframework.http.ResponseEntity;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.parer.exception.ConnectionException;
+import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
+import it.eng.parer.objectstorage.dto.RecuperoDocBean;
+import it.eng.spagoCore.util.JpaUtils;
 
 /**
  * @author Fioravanti_F
@@ -195,18 +193,11 @@ public class RecBlbOracle {
                 closeConnection(conn);
             }
             if (blob != null) {
-                // MEV#34239 - Estensione servizio per recupero file sbustati
-                if (dto != null && dto.isFileDaSbustare()) {
-                    try (InputStream is = blob.getBinaryStream();) {
-                        cryptoInvoker.copiaStreamsESbustaP7m(is, outputStream);
-                    }
-                } else {
-                    try (InputStream is = blob.getBinaryStream();) {
-                        int len;
-                        while ((len = is.read(buffer)) > 0) {
-                            outputStream.write(buffer, 0, len);
-                            log.debug("letto blob e scritto su stream...");
-                        }
+                try (InputStream is = blob.getBinaryStream();) {
+                    int len;
+                    while ((len = is.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, len);
+                        log.debug("letto blob e scritto su stream...");
                     }
                 }
                 rispostaControlli = true;

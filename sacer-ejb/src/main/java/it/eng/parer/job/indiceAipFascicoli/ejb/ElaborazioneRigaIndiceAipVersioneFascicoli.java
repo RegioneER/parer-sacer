@@ -104,13 +104,7 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
      * v2.0)
      */
     private static final String UNISINCRO_V2_REF = "2.0";
-    /*
-     * Determino le versioni del servizio di versamento fascicolo per le quali forzare la generazione dell'indice aip
-     * conforme alla versione Unisincro di riferimento (default: v1.0 e v1.1)
-     */
-    private static final List<String> FORZA_VERSIONI_XML_NOT_STRICT = Arrays.asList("1.0", "1.1");
     //
-    private static final String LOG_ERR_CONF_PROFILO = "Il modello di tipo AIP_UNISYNCRO per la data corrente e l'ambiente %s non è definito per la versione %s del servizio di versamento";
     private static final String LOG_ERR_CONF_PROFILO_NOT_STRICT = "Il modello di tipo AIP_UNISYNCRO per la data corrente e l'ambiente %s non è definito";
     // end MEV#29589
 
@@ -119,43 +113,10 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
             BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob)
             throws ParerInternalError, Exception {
 
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        String desJobMessage = "";
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        } else {
-            // MEV#26576
-            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
-                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
-                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
-            // end MEV#26576
-        }
-        // end MEV#29589
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
-        // // workaround per gestione versione xml versamento fascicolo 3.0
-        // if ("3.0".equals(cdVersioneXml)) {
-        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        // }
         FasVerAipFascicolo verAipFascicolo = ciafHelper.findById(FasVerAipFascicolo.class, idVerAipFascicolo);
         long idAmbiente = verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente();
-
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        String usoVersioneXml = (STRICT_MODE.equals(Boolean.FALSE)
-                && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) ? UNISINCRO_V2_REF : cdVersioneXml;
-        // end MEV#29589
-
-        // workaround per gestione versione xml versamento fascicolo 3.0
-        if ("3.0".equals(cdVersioneXml)) {
-            usoVersioneXml = UNISINCRO_V2_REF;
-        }
 
         /*
          * Determino il modello xsd attivo per l'ambiente di appartenenza della struttura a cui il fascicolo appartiene
@@ -163,29 +124,15 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
          * forzata (MEV#29589), con il tipo "AIP_UNISYNCRO"
          */
         List<DecModelloXsdFascicolo> modelloAttivoList = ciafHelper.retrieveIdModelliDaElaborareV2(idAmbiente,
-                CostantiDB.TiModelloXsd.AIP_UNISYNCRO.name(), usoVersioneXml);
+                CostantiDB.TiModelloXsd.AIP_UNISYNCRO.name(), UNISINCRO_V2_REF);
 
         log.info("{} - ambiente id {}: trovati {} modelli xsd attivi di tipo AIP_UNISYNCRO da processare",
                 desJobMessage, idAmbiente, modelloAttivoList.size());
 
         /* Se per l'ambiente il modello XSD non viene trovato */
         if (modelloAttivoList.isEmpty()) {
-            // MEV#29589
-            // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-            // Unisincro specificata dalla costante UNISINCRO_V2_REF
-            // per le versioni del servizio di versamento fascicolo specificate dalla costante
-            // FORZA_VERSIONI_XML_NOT_STRICT
-            String description = "";
-            if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                    && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-                description = String.format(LOG_ERR_CONF_PROFILO_NOT_STRICT,
-                        verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
-            } else {
-                description = String.format(LOG_ERR_CONF_PROFILO,
-                        verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente(),
-                        cdVersioneXml);
-            }
-            // end MEV#29589
+            String description = String.format(LOG_ERR_CONF_PROFILO_NOT_STRICT,
+                    verAipFascicolo.getFasFascicolo().getOrgStrut().getOrgEnte().getOrgAmbiente().getNmAmbiente());
             throw new ParerInternalError(description);
         }
 
@@ -202,27 +149,7 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
             String sistemaConservazione, String creatingApplicationProducer, String cdVersioneXml,
             BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob) throws Exception {
 
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        String desJobMessage = "";
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        } else {
-            // MEV#26576
-            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
-                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
-                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
-            // end MEV#26576
-        }
-        // end MEV#29589
-
-        // // workaround per gestione versione xml versamento fascicolo 3.0
-        // if ("3.0".equals(cdVersioneXml)) {
-        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        // }
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
         log.info("{} - Inizio creazione XML indice AIP per la versione fascicolo {}", desJobMessage,
                 verAipFascicolo.getIdVerAipFascicolo());
@@ -248,55 +175,20 @@ public class ElaborazioneRigaIndiceAipVersioneFascicoli {
         SIOrgEnteSiam enteSiam = ciafHelper.findById(SIOrgEnteSiam.class,
                 verAipFascicolo.getFasFascicolo().getOrgStrut().getIdEnteConvenz());
         StringWriter indexFile = null;
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
 
-            Map<String, String> mappaAgent = confHelper.getParamApplicMapValue(agentParamV2, idAmbienteFas, idStrutFas,
-                    null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
+        Map<String, String> mappaAgent = confHelper.getParamApplicMapValue(agentParamV2, idAmbienteFas, idStrutFas,
+                null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
 
-            mappaAgent.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
-                    BigDecimal.valueOf(enteSiam.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
-                    BigDecimal.valueOf(enteSiam.getIdEnteSiam()), CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
+        mappaAgent.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
+                BigDecimal.valueOf(enteSiam.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
+                BigDecimal.valueOf(enteSiam.getIdEnteSiam()), CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
 
-            CreazioneIndiceAipFascicoliUtilV2 indiceAipFascicoliUtilV2 = new CreazioneIndiceAipFascicoliUtilV2();
-            PIndex pindex = indiceAipFascicoliUtilV2.generaIndiceAIPV2NotStrict(verAipFascicolo, codiceVersione,
-                    codiceVersioneMetadati, mappaAgent, sistemaConservazione, creatingApplicationProducer);
+        CreazioneIndiceAipFascicoliUtilV2 indiceAipFascicoliUtilV2 = new CreazioneIndiceAipFascicoliUtilV2();
+        PIndex pindex = indiceAipFascicoliUtilV2.generaIndiceAIPV2Strict(verAipFascicolo, codiceVersione,
+                codiceVersioneMetadati, mappaAgent, sistemaConservazione, creatingApplicationProducer);
 
-            log.debug("{} - Eseguo il marshalling del pindex", desJobMessage);
-            indexFile = marshallPIndex(pindex);
-        } // end MEV#29589
-        else if (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)) {
-
-            Map<String, String> mappaAgent = confHelper.getParamApplicMapValue(agentParam, idAmbienteFas, idStrutFas,
-                    null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-
-            CreazioneIndiceAipFascicoliUtil indiceAipFascicoliUtil = new CreazioneIndiceAipFascicoliUtil();
-            IdCType idc = indiceAipFascicoliUtil.generaIndiceAIP(verAipFascicolo, codiceVersione, mappaAgent,
-                    sistemaConservazione, enteSiam, creatingApplicationProducer);
-
-            log.debug("{} - Eseguo il marshalling dell'idc", desJobMessage);
-            indexFile = marshallIdC(idc);
-        } else {
-
-            Map<String, String> mappaAgent = confHelper.getParamApplicMapValue(agentParamV2, idAmbienteFas, idStrutFas,
-                    null, null, CostantiDB.TipoAplVGetValAppart.STRUT);
-
-            mappaAgent.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
-                    BigDecimal.valueOf(enteSiam.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
-                    BigDecimal.valueOf(enteSiam.getIdEnteSiam()), CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
-
-            CreazioneIndiceAipFascicoliUtilV2 indiceAipFascicoliUtilV2 = new CreazioneIndiceAipFascicoliUtilV2();
-            PIndex pindex = indiceAipFascicoliUtilV2.generaIndiceAIPV2Strict(verAipFascicolo, codiceVersione,
-                    codiceVersioneMetadati, mappaAgent, sistemaConservazione, creatingApplicationProducer);
-
-            log.debug("{} - Eseguo il marshalling del pindex", desJobMessage);
-            indexFile = marshallPIndex(pindex);
-        }
-        // end MEV#26576
+        log.debug("{} - Eseguo il marshalling del pindex", desJobMessage);
+        indexFile = marshallPIndex(pindex);
 
         // Eseguo la validazione dell'xml prodotto con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO
         log.info("{} - Eseguo validazione dell'xml con l'xsd recuperato da DEC_MODELLO_XSD_FASCICOLO", desJobMessage);

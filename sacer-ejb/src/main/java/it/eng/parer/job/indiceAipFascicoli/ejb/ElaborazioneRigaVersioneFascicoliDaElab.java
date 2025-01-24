@@ -95,11 +95,6 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
      * v2.0)
      */
     private static final String UNISINCRO_V2_REF = "2.0";
-    /*
-     * Determino le versioni del servizio di versamento fascicolo per le quali forzare la generazione dell'indice aip
-     * conforme alla versione Unisincro di riferimento (default: v1.0 e v1.1)
-     */
-    private static final List<String> FORZA_VERSIONI_XML_NOT_STRICT = Arrays.asList("1.0", "1.1");
     // end MEV#29589
 
     // MEV#26576
@@ -127,27 +122,7 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
         Map<String, String> indiciAipFascicoliBlob = new HashMap<>();
         // end MEV #30398
 
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        String desJobMessage = "";
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        } else {
-            // MEV#26576
-            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
-                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
-                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
-            // end MEV#26576
-        }
-        // end MEV#29589
-
-        // // workaround per gestione versione xml versamento fascicolo 3.0
-        // if ("3.0".equals(cdVersioneXml)) {
-        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        // }
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
         /* Recupero il fascicolo da elaborare */
         log.debug("{} - Elaboro il fascicolo {}", desJobMessage, fascDaElab.getFasFascicolo().getIdFascicolo());
@@ -167,25 +142,8 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
 
         /* Determino il codice di versione dell'AIP */
         String codiceVersione = ciafHelper.getVersioneAIP(fascicolo.getIdFascicolo(), tiCreazione);
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        /* Determino il codice di versione dei metadati dell'AIP */
-        String codiceVersioneMetadati = "";
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-            codiceVersioneMetadati = codiceVersione;
-        } else {
-            codiceVersioneMetadati = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)) ? codiceVersione
-                    : ciafHelper.getVersioneMetadatiAIPV2(fascicolo.getIdFascicolo(), tiCreazione);
-        }
-        // end MEV#29589
 
-        // // workaround per gestione versione xml versamento fascicolo 3.0
-        // if ("3.0".equals(cdVersioneXml)) {
-        // codiceVersioneMetadati = UNISINCRO_V2_REF;
-        // }
+        String codiceVersioneMetadati = ciafHelper.getVersioneMetadatiAIPV2(fascicolo.getIdFascicolo(), tiCreazione);
 
         /* Determino il sistema di conservazione */
         String sistemaConservazione = configurationHelper

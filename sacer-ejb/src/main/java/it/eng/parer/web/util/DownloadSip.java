@@ -37,7 +37,7 @@ import it.eng.parer.ws.recupero.dto.ParametriParser;
 import it.eng.parer.ws.recupero.dto.ParametriRecupero;
 import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
-import it.eng.parer.ws.recupero.utils.RecuperoZipGen;
+import it.eng.parer.ws.recupero.ejb.RecuperoZipGen;
 import it.eng.parer.ws.recupero.utils.XmlDateUtility;
 import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.MessaggiWSBundle;

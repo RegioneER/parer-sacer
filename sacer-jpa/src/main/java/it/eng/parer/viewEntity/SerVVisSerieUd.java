@@ -387,7 +387,7 @@ public class SerVVisSerieUd implements Serializable {
         this.dsSerie = dsSerie;
     }
 
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_IX_AIP")
     public Date getDtCreazioneIxAip() {
         return this.dtCreazioneIxAip;

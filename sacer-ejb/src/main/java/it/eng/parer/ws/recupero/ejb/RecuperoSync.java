@@ -44,7 +44,6 @@ import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
 import it.eng.parer.ws.recupero.utils.IndiceMMPrsr;
 import it.eng.parer.ws.recupero.utils.RecuperoPrsr;
 import it.eng.parer.ws.recupero.utils.RecuperoXmlGen;
-import it.eng.parer.ws.recupero.utils.RecuperoZipGen;
 import it.eng.parer.ws.recupero.utils.XmlDateUtility;
 import it.eng.parer.ws.recuperoTpi.utils.GestSessRecupero;
 import it.eng.parer.ws.utils.AvanzamentoWs;

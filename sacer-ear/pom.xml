@@ -4,7 +4,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.4.1-SNAPSHOT</version>
+        <version>10.5.0</version>
     </parent>
 
     <artifactId>sacer-jboss-ear</artifactId>    
@@ -47,7 +47,13 @@
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
-            <artifactId>spagofat-middle</artifactId>       
+            <artifactId>spagofat-middle</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.apache.logging.log4j</groupId>
+            		<artifactId>log4j-api</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.security.extensions</groupId>
