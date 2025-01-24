@@ -1820,10 +1820,6 @@
             <rollback>false</rollback>
         </application-exception>
         <application-exception>
-            <exception-class>it.eng.parer.eidas.model.exception.EidasParerException</exception-class>
-            <rollback>false</rollback>
-        </application-exception>     
-        <application-exception>
             <exception-class>org.springframework.web.client.RestClientException</exception-class>
             <rollback>false</rollback>
         </application-exception>   

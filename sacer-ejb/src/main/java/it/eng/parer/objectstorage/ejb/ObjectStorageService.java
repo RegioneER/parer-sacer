@@ -16,41 +16,13 @@
  */
 package it.eng.parer.objectstorage.ejb;
 
-import it.eng.parer.crypto.model.CryptoSignedP7mUri;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.ejb.EJB;
-import javax.ejb.EJBException;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-
-import it.eng.parer.entity.*;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.eng.parer.entity.inheritance.oop.AroXmlObjectStorage;
-import it.eng.parer.objectstorage.dto.BackendStorage;
-import it.eng.parer.objectstorage.dto.ObjectStorageBackend;
-import it.eng.parer.objectstorage.dto.ObjectStorageResource;
-import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
-import it.eng.parer.objectstorage.helper.SalvataggioBackendHelper;
-import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
-import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
-import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.Costanti;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.utils.MessaggiWSFormat;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
@@ -59,23 +31,66 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+
 import org.apache.commons.collections4.SetUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import it.eng.parer.entity.AroCompObjectStorage;
+import it.eng.parer.entity.AroUpdDatiSpecUdObjectStorage;
+import it.eng.parer.entity.AroVerIndiceAipUdObjectStorage;
+import it.eng.parer.entity.AroVersIniDatiSpecObjectStorage;
+import it.eng.parer.entity.AroXmlUpdUdObjectStorage;
+import it.eng.parer.entity.ElvFileElencoVersFascObjectStorage;
+import it.eng.parer.entity.ElvFileElencoVersObjectStorage;
+import it.eng.parer.entity.FasFileMetaVerAipFascObjectStorage;
+import it.eng.parer.entity.FasXmlFascObjectStorage;
+import it.eng.parer.entity.FasXmlVersFascObjectStorage;
+import it.eng.parer.entity.FirReport;
+import it.eng.parer.entity.SerFileVerSerie;
+import it.eng.parer.entity.SerVerSerieObjectStorage;
+import it.eng.parer.entity.VrsFileSesObjectStorageKo;
+import it.eng.parer.entity.VrsXmlDatiSesObjectStorageKo;
+import it.eng.parer.entity.VrsXmlSesFascErrObjectStorage;
+import it.eng.parer.entity.VrsXmlSesFascKoObjectStorage;
+import it.eng.parer.entity.VrsXmlSesUpdUdErrObjectStorage;
+import it.eng.parer.entity.VrsXmlSesUpdUdKoObjectStorage;
+import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
+import it.eng.parer.entity.constraint.AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec;
+import it.eng.parer.entity.inheritance.oop.AroXmlObjectStorage;
+import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
+import it.eng.parer.objectstorage.dto.BackendStorage;
+import it.eng.parer.objectstorage.dto.ObjectStorageBackend;
+import it.eng.parer.objectstorage.dto.ObjectStorageResource;
+import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
+import it.eng.parer.objectstorage.helper.SalvataggioBackendHelper;
+import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.spagoCore.util.UUIDMdcLogUtil;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectAttributesResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.Tag;
 import software.amazon.awssdk.utils.Md5Utils;
-import it.eng.spagoCore.util.UUIDMdcLogUtil;
-import java.io.ByteArrayInputStream;
-import java.net.URL;
-import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
-import java.net.URISyntaxException;
 
 @Stateless(mappedName = "ObjectStorageService")
 @LocalBean
@@ -593,44 +608,16 @@ public class ObjectStorageService {
      *
      */
     public void getObjectComponente(long idCompDoc, OutputStream outputStream) {
-        getObjectComponente(idCompDoc, outputStream, false);
-    }
-
-    /**
-     * Ottieni lo stream del componente contenuto nell'object storage
-     *
-     * @param idCompDoc
-     *            id del componente
-     * @param fileDaSbustare
-     *            indica se sbustare il file o no
-     * @param outputStream
-     *            Stream su cui scrivere l'oggetto
-     *
-     */
-    public void getObjectComponente(long idCompDoc, OutputStream outputStream, boolean fileDaSbustare) {
-        // File fileP7m = null;
-        File fileP7m = null;
         try {
             AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
             ObjectStorageBackend config = salvataggioBackendHelper
                     .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), COMPONENTI_R);
             ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
                     link.getNmBucket(), link.getCdKeyFile());
-            // MEV#34239 - Estensione servizio per recupero file sbustati
-            if (fileDaSbustare) {
-                URL url = awsPresigner.getPresignedUrl(config, link.getCdKeyFile());
-                CryptoSignedP7mUri dto = new CryptoSignedP7mUri(url.toURI());
-                cryptoInvoker.sbustaDaOsEStrimmaOutput(dto, outputStream);
-            } else {
-                IOUtils.copyLarge(object, outputStream);
-            }
-        } catch (IOException | ObjectStorageException | URISyntaxException e) {
+            IOUtils.copyLarge(object, outputStream);
+        } catch (IOException | ObjectStorageException e) {
             // EJB spec (14.2.2 in the EJB 3)
             throw new EJBException(e);
-        } finally {
-            if (fileP7m != null) {
-                fileP7m.delete();
-            }
         }
     }
 
@@ -1601,4 +1588,16 @@ public class ObjectStorageService {
 
     // end MEV#30400
 
+    public URL getPresignedURLComponente(long idCompDoc) {
+        try {
+            AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
+            ObjectStorageBackend config = salvataggioBackendHelper
+                    .getObjectStorageConfiguration(link.getDecBackend().getNmBackend(), COMPONENTI_R);
+            return awsPresigner.getPresignedUrl(config, link.getCdKeyFile());
+
+        } catch (ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
 }

@@ -31,7 +31,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.SerVerSerieDaElab;
 import it.eng.parer.exception.ParerInternalError;
@@ -64,8 +63,6 @@ public class CreazioneIndiceAipSerieUdEjb {
     private ConfigurationHelper configurationHelper;
     @EJB
     private SerieHelper serieHelper;
-    @EJB
-    private StruttureEjb struttureEjb;
     @EJB
     private JobHelper jobHelper;
 
@@ -111,8 +108,6 @@ public class CreazioneIndiceAipSerieUdEjb {
                     "{} --- Creazione Indice Aip Versione Serie Ud --- Elaborate {} versioni serie con successo per la struttura {}",
                     this.getClass().getSimpleName(), verSerieDaElabList.size(), idStrut);
         } catch (Exception ex) {
-            // log.fatal(CreazioneIndiceAipSerieUdEjb.class.getSimpleName()
-            // + "--- Creazione Indice Aip Versione Serie Ud --- Errore: "
             log.error("{}--- Creazione Indice Aip Versione Serie Ud --- Errore: {}", this.getClass().getSimpleName(),
                     ExceptionUtils.getRootCauseMessage(ex));
             throw new ParerInternalError(CreazioneIndiceAipSerieUdEjb.class.getSimpleName()

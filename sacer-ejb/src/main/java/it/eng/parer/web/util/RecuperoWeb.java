@@ -45,7 +45,6 @@ import it.eng.spagoLite.security.User;
 public class RecuperoWeb {
 
     private static final Logger log = LoggerFactory.getLogger(RecuperoWeb.class);
-    // private String instanceName;
     private final Recupero recupero;
     private final User user;
     private final BigDecimal idUnitaDoc;

@@ -566,37 +566,6 @@ public class ElaborazioneRigaIndiceAipDaElab {
         return tmpWriter;
     }
 
-    private String checkPartition(AroUnitaDoc unitaDoc) throws ParerInternalError {
-        /*
-         * Verifica la presenza della partizione per la struttura e l'esistenza della sottopartizione per l'anno ed il
-         * mese di creazione
-         */
-        Long idStrut = unitaDoc.getOrgStrut().getIdStrut();
-        Long idPartition = ciaHelper.checkPartizioneStruttura(idStrut);
-        String annoMese = "";
-        if (idPartition == null) {
-            String errore = "Creazione Indice AIP - Per la struttura " + idStrut
-                    + " non è definita la partizione di tipo AIP_UD";
-            log.error(errore);
-            throw new ParerInternalError(errore);
-        } else {
-            Calendar c = Calendar.getInstance();
-            String anno = "" + c.get(Calendar.YEAR);
-            int meseNum = c.get(Calendar.MONTH) + 1;
-            String mese = meseNum < 10 ? "0" + meseNum : "" + meseNum;
-            annoMese = anno + mese;
-            idPartition = ciaHelper.checkSottopartizioneAnnoMese(idPartition, annoMese);
-            if (idPartition == null) {
-                String errore = "Creazione Indice AIP - Per la struttura " + idStrut
-                        + " non è definita la sotto-partizione di tipo AIP_UD " + "relativa al mese " + annoMese
-                        + " di creazione indice AIP";
-                log.error(errore);
-                throw new ParerInternalError(errore);
-            }
-        }
-        return annoMese;
-    }
-
     /*
      * Crea la prima versione dell'indice AIP dell'unita doc appartenente alla serie o al fascicolo con stato di
      * conservazione = IN_VOLUME_DI_CONSERVAZIONE. Metodo richiamato dalla Validazione Serie o Validazione Fascicoli
@@ -610,7 +579,11 @@ public class ElaborazioneRigaIndiceAipDaElab {
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getIdStrut()), null, null,
                 CostantiDB.TipoAplVGetValAppart.STRUT);
-        String annoMese = checkPartition(unitaDoc);
+        Calendar c = Calendar.getInstance();
+        String anno = "" + c.get(Calendar.YEAR);
+        int meseNum = c.get(Calendar.MONTH) + 1;
+        String mese = meseNum < 10 ? "0" + meseNum : "" + meseNum;
+        String annoMese = anno + mese;
         /* Determino il progressivo di versione dell'indice AIP e lo aumento di 1 */
         int progressivoVersione = ciaHelper.getProgressivoVersione(unitaDoc.getIdUnitaDoc());
         progressivoVersione++;
@@ -698,7 +671,11 @@ public class ElaborazioneRigaIndiceAipDaElab {
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getIdStrut()), null, null,
                 CostantiDB.TipoAplVGetValAppart.STRUT);
-        String annoMese = checkPartition(unitaDoc);
+        Calendar c = Calendar.getInstance();
+        String anno = "" + c.get(Calendar.YEAR);
+        int meseNum = c.get(Calendar.MONTH) + 1;
+        String mese = meseNum < 10 ? "0" + meseNum : "" + meseNum;
+        String annoMese = anno + mese;
         /* Determino il progressivo di versione dell'indice AIP e lo aumento di 1 */
         int progressivoVersione = ciaHelper.getProgressivoVersione(unitaDoc.getIdUnitaDoc());
         progressivoVersione++;

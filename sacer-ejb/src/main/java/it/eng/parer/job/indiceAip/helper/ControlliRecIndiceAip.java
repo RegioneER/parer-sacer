@@ -271,7 +271,7 @@ public class ControlliRecIndiceAip {
              * vengono sempre riportati.
              */
             query = entityManager.createQuery(
-                    "SELECT DISTINCT ad FROM AroStrutDoc strutDoc JOIN strutDoc.aroDoc ad JOIN ad.aroUnitaDoc ud JOIN strutDoc.aroCompDocs cd where ud.idUnitaDoc = :idUnitaDoc order by ad.dtCreazione, ad.niOrdDoc, ad.pgDoc ");
+                    "SELECT DISTINCT ad FROM AroDoc ad where ad.aroUnitaDoc.idUnitaDoc = :idUnitaDoc order by ad.dtCreazione, ad.niOrdDoc, ad.pgDoc ");
             query.setParameter("idUnitaDoc", idUnitaDoc);
             EntityGraph<AroDoc> entityGraph = entityManager.createEntityGraph(AroDoc.class);
             entityGraph.addAttributeNodes("decTipoDoc");

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.4.1-SNAPSHOT</version>
+        <version>10.5.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>sacer-jboss-jpa</artifactId>
@@ -33,12 +33,6 @@
             <groupId>org.jboss</groupId>
             <artifactId>jboss-vfs</artifactId>
             <version>${jboss-vfs.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.spec</groupId>
-            <artifactId>jboss-jakartaee-8.0</artifactId>
-            <type>pom</type>
             <scope>provided</scope>
         </dependency>
         <dependency>

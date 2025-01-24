@@ -87,37 +87,13 @@ public class ElaborazioneRigaIndiceMetaFascicoli {
      * v2.0)
      */
     private static final String UNISINCRO_V2_REF = "2.0";
-    /*
-     * Determino le versioni del servizio di versamento fascicolo per le quali forzare la generazione dell'indice aip
-     * conforme alla versione Unisincro di riferimento (default: v1.0 e v1.1)
-     */
-    private static final List<String> FORZA_VERSIONI_XML_NOT_STRICT = Arrays.asList("1.0", "1.1");
     // end MEV#29589
 
     public void creaMetaVerFascicolo(Long idVerAipFascicolo, String codiceVersioneMetadati, String sistemaConservazione,
             String cdVersioneXml, BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob)
             throws ParerInternalError, Exception {
 
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        String desJobMessage = "";
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        } else {
-            // MEV#26576
-            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
-                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
-                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
-            // end MEV#26576
-        }
-        // end MEV#29589
-
-        // if ("3.0".equals(cdVersioneXml)) {
-        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        // }
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
         FasVerAipFascicolo verAipFascicolo = cimfHelper.findById(FasVerAipFascicolo.class, idVerAipFascicolo);
         FasFascicolo fascicolo = cimfHelper.findById(FasFascicolo.class,
@@ -145,27 +121,7 @@ public class ElaborazioneRigaIndiceMetaFascicoli {
             String codiceVersioneMetadati, String sistemaConservazione, String cdVersioneXml,
             BackendStorage backendIndiciAipFascicoli, Map<String, String> indiciAipFascicoliBlob) throws Exception {
 
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        String desJobMessage = "";
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        } else {
-            // MEV#26576
-            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
-                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
-                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
-            // end MEV#26576
-        }
-        // end MEV#29589
-
-        // // workaround per gestione versione xml versamento fascicolo 3.0
-        // if ("3.0".equals(cdVersioneXml)) {
-        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        // }
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
         log.info("{} - Inizio creazione XML fascicolo per la versione fascicolo {}", desJobMessage, idVerAipFascicolo);
 
@@ -223,27 +179,7 @@ public class ElaborazioneRigaIndiceMetaFascicoli {
 
     public String buildIndexFile(FasFascicolo fascicolo, String cdVersioneXml) throws Exception {
 
-        // MEV#29589
-        // Se la modalità strict non è attiva la logica forza la generazione dell'indice aip conforme alla versione
-        // Unisincro specificata dalla costante UNISINCRO_V2_REF
-        // per le versioni del servizio di versamento fascicolo specificate dalla costante FORZA_VERSIONI_XML_NOT_STRICT
-        String desJobMessage = "";
-        if (STRICT_MODE.equals(Boolean.FALSE) && FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)
-                && UNISINCRO_V2_REF.compareTo(cdVersioneXml) > 0) {
-            desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        } else {
-            // MEV#26576
-            desJobMessage = (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml))
-                    ? "Creazione Indice AIP Fascicoli v" + cdVersioneXml
-                    : "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
-            // end MEV#26576
-        }
-        // end MEV#29589
-
-        // // workaround per gestione versione xml versamento fascicolo 3.0
-        // if ("3.0".equals(cdVersioneXml)) {
-        // desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF + " (not strict)";
-        // }
+        String desJobMessage = "Creazione Indice AIP Fascicoli v" + UNISINCRO_V2_REF;
 
         log.info("{} - Creazione XML fascicolo id {} appartenente all'ambiente id {} ", desJobMessage,
                 fascicolo.getIdFascicolo(), fascicolo.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente());
@@ -253,20 +189,11 @@ public class ElaborazioneRigaIndiceMetaFascicoli {
         // MEV#26576
         StringWriter tmpWriter = null;
         log.debug("{} - Eseguo il marshalling del Fascicolo", desJobMessage);
-        if (FORZA_VERSIONI_XML_NOT_STRICT.contains(cdVersioneXml)) {
-            CreazioneIndiceMetaFascicoliUtil indiceMetaFascicoliUtil = new CreazioneIndiceMetaFascicoliUtil();
+        CreazioneIndiceMetaFascicoliUtilV2 indiceMetaFascicoliUtilV2 = new CreazioneIndiceMetaFascicoliUtilV2();
+        it.eng.parer.aipFascicoli.xml.usprofascRespV2.Fascicolo indiceMetaFascicoloV2 = indiceMetaFascicoliUtilV2
+                .generaIndiceMetaFascicoloV2(creaMeta, cdVersioneXml);
 
-            it.eng.parer.aipFascicoli.xml.usprofascResp.Fascicolo indiceMetaFascicolo = indiceMetaFascicoliUtil
-                    .generaIndiceMetaFascicolo(creaMeta, cdVersioneXml);
-
-            tmpWriter = marshallFascicolo(indiceMetaFascicolo);
-        } else {
-            CreazioneIndiceMetaFascicoliUtilV2 indiceMetaFascicoliUtilV2 = new CreazioneIndiceMetaFascicoliUtilV2();
-            it.eng.parer.aipFascicoli.xml.usprofascRespV2.Fascicolo indiceMetaFascicoloV2 = indiceMetaFascicoliUtilV2
-                    .generaIndiceMetaFascicoloV2(creaMeta, cdVersioneXml);
-
-            tmpWriter = marshallFascicoloV2(indiceMetaFascicoloV2);
-        }
+        tmpWriter = marshallFascicoloV2(indiceMetaFascicoloV2);
         // end MEV#26576
 
         return tmpWriter.toString();

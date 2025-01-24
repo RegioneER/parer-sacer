@@ -19,24 +19,15 @@ package it.eng.parer.job.indiceAipFascicoli.ejb;
 
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
-import it.eng.parer.entity.ElvElencoVersFasc;
-import it.eng.parer.entity.OrgAmbiente;
-import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.job.helper.JobHelper;
 import it.eng.parer.job.indiceAipFascicoli.elenchi.ElaborazioneElencoIndiceAipFascicoli;
 import it.eng.parer.job.indiceAipFascicoli.helper.CreazioneIndiceAipFascicoliHelper;
 import it.eng.parer.job.utils.JobConstants;
-import it.eng.parer.ws.utils.CostantiDB;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -69,12 +60,9 @@ public class CreazioneIndiceAipFascicoliEjb {
     private ElaborazioneElencoIndiceAipFascicoli elabElencoIndiciAipFascicoli;
     @EJB
     private ElencoVersFascicoliHelper elencoHelper;
-    @EJB
-    private StruttureHelper struttureHelper;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void creazioneIndiceAipFascicoli()
-            throws ParerInternalError, NamingException, NoSuchAlgorithmException, Exception {
+    public void creazioneIndiceAipFascicoli() throws ParerInternalError, Exception {
         /* Il sistema apre una nuova transazione */
         log.debug("Creazione Indice AIP Fascicoli - Inizio transazione di creazione indice");
         /* Reupero gli indici da elaborare */
@@ -88,7 +76,6 @@ public class CreazioneIndiceAipFascicoliEjb {
                 elaborazione.gestisciIndiceAipFascicoliDaElab(fascDaElab);
             }
         } catch (IOException | NamingException | NoSuchAlgorithmException ex) {
-            // log.fatal("Creazione Indice AIP fascicoli - Errore: " + ex);
             log.error("Creazione Indice AIP fascicoli - Errore: " + ex);
             throw new ParerInternalError(ex);
         }
@@ -103,27 +90,8 @@ public class CreazioneIndiceAipFascicoliEjb {
     public void creazioneElenchiIndiceAipFascicoli(long idLogJob) throws ParerInternalError, IOException,
             DatatypeConfigurationException, JAXBException, ParseException, NoSuchAlgorithmException {
         List<Long> idElenchi = elencoHelper.retrieveElenchiIndiciAipFascicoliDaProcessare();
-        Set<Long> struttureVerificate = new HashSet<>();
         if (!idElenchi.isEmpty()) {
             for (Long idElenco : idElenchi) {
-                ElvElencoVersFasc elenco = ciafHelper.findById(ElvElencoVersFasc.class, idElenco);
-                if (struttureVerificate.add(elenco.getOrgStrut().getIdStrut())) {
-                    String checkPartizioni = struttureHelper.checkPartizioni(
-                            BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()), new Date(),
-                            CostantiDB.TiPartition.FILE_ELENCO_VERS_FASC.name());
-                    String flPartFileEleVrsFascOk = struttureHelper
-                            .partitionFileEleVersFascOK(BigDecimal.valueOf(elenco.getOrgStrut().getIdStrut()));
-                    if ("0".equals(checkPartizioni) && "0".equals(flPartFileEleVrsFascOk)) {
-                        OrgStrut strut = elenco.getOrgStrut();
-                        OrgEnte ente = strut.getOrgEnte();
-                        OrgAmbiente ambiente = ente.getOrgAmbiente();
-                        String strutComposita = ambiente.getNmAmbiente() + "-" + ente.getNmEnte() + "-"
-                                + strut.getNmStrut();
-                        throw new ParerInternalError("La partizione di tipo "
-                                + CostantiDB.TiPartition.FILE_ELENCO_VERS_FASC.name()
-                                + " per la data corrente e la struttura " + strutComposita + " non \u00E8 definita");
-                    }
-                }
                 elabElencoIndiciAipFascicoli.creaElencoIndiciAIPFascicoli(idElenco, idLogJob);
             }
         }

@@ -174,7 +174,7 @@
             <div class="box">
                 <label>
                     <span>VERSIONE</span>
-                    <input type="text" size="10" name="VERSIONE" class="input-text" value="1.0"></input>
+                    <input type="text" size="10" name="VERSIONE" class="input-text" value="3.0"></input>
                 </label>
                 <label>
                     <span>LOGINNAME</span>

@@ -587,53 +587,6 @@ public class CreazioneIndiceAipHelper extends GenericHelper {
     }
     // end MEV#30395
 
-    /**
-     * Controllo l'esistenza della partizione per la struttura in questione
-     *
-     * @param idStrut
-     *            id struttura
-     *
-     * @return l'id della partizione se esiste
-     */
-    public Long checkPartizioneStruttura(Long idStrut) {
-        Long idPartition = null;
-        List<Long> idPartitionList;
-        String queryStr = "SELECT u.orgPartition.idPartition FROM OrgPartitionStrut u "
-                + "WHERE u.orgStrut.idStrut = :idStrut " + "AND u.tiPartition = 'AIP_UD' ";
-        javax.persistence.Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idStrut", idStrut);
-        idPartitionList = query.getResultList();
-        if (idPartitionList != null && !idPartitionList.isEmpty()) {
-            idPartition = idPartitionList.get(0);
-        }
-        return idPartition;
-    }
-
-    /**
-     * Controllo l'esistenza della sotto-partizione della partizione in questione relativa ad un determinato anno e mese
-     *
-     * @param idPartition
-     *            id partizione
-     * @param annoMese
-     *            anno e mese
-     *
-     * @return l'id della sotto-partizione se esiste
-     */
-    public Long checkSottopartizioneAnnoMese(Long idPartition, String annoMese) {
-        Long idSottoPartition = null;
-        List<Long> idSottoPartitionList;
-        String queryStr = "SELECT u.orgSubPartition.idSubPartition FROM OrgValSubPartition u "
-                + "WHERE u.orgPartition.idPartition = :idPartition " + "AND u.cdValSubPartition = :annoMese ";
-        javax.persistence.Query query = entityManager.createQuery(queryStr);
-        query.setParameter("idPartition", idPartition);
-        query.setParameter("annoMese", annoMese);
-        idSottoPartitionList = query.getResultList();
-        if (idSottoPartitionList != null && !idSottoPartitionList.isEmpty()) {
-            idSottoPartition = idSottoPartitionList.get(0);
-        }
-        return idSottoPartition;
-    }
-
     public void eliminaIndiceAipDaElab(AroIndiceAipUdDaElab udDaElab) {
         entityManager.remove(udDaElab);
         entityManager.flush();

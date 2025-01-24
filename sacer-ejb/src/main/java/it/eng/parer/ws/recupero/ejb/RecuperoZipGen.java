@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.eng.parer.ws.recupero.utils;
+package it.eng.parer.ws.recupero.ejb;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,13 +38,13 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.xml.bind.Marshaller;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Predicate;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipExtraField;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.AroFileVerIndiceAipUd;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUpdUnitaDoc;
 import it.eng.parer.entity.AroUrnVerIndiceAipUd;
@@ -94,9 +93,9 @@ import it.eng.parer.ws.ejb.XmlContextCache;
 import it.eng.parer.ws.recupero.dto.ComponenteRec;
 import it.eng.parer.ws.recupero.dto.RecuperoExt;
 import it.eng.parer.ws.recupero.dto.RispostaWSRecupero;
-import it.eng.parer.ws.recupero.ejb.ControlliRecupero;
 import it.eng.parer.ws.recupero.ejb.oracleBlb.RecBlbOracle;
 import it.eng.parer.ws.recupero.ejb.oracleClb.RecClbOracle;
+import it.eng.parer.ws.recupero.utils.RecuperoTxtGen;
 import it.eng.parer.ws.recuperoDip.dto.DatiRecuperoDip;
 import it.eng.parer.ws.recuperoDip.ejb.ControlliRecDip;
 import it.eng.parer.ws.recuperoDip.utils.GestSessRecDip;
@@ -137,8 +136,6 @@ public class RecuperoZipGen {
     private static final String DIRECTORY_FASC_AIPV2 = "fascicoli";
     // end EVO#20972
 
-    private static final String SUFFISSO_P7M = ".p7m";
-
     // The ZipArchiveEntry.setXxxTime() methods write the time taking into account
     // the local time zone,
     // so we must first convert the desired timestamp value in the local time zone
@@ -178,8 +175,8 @@ public class RecuperoZipGen {
     @EJB
     private ObjectStorageService objectStorageService;
 
-    public File getZip(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip,
-            RispostaWSRecupero rispostaWs) {
+    public File getZip(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip, RispostaWSRecupero rispostaWs)
+            throws IOException {
         generaZipOggetto(outputPath, recupero, tentaRecuperoDip, rispostaWs);
 
         if (rispostaWs.getRifFileBinario() != null && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
@@ -191,7 +188,7 @@ public class RecuperoZipGen {
     }
 
     public void generaZipOggetto(String outputPath, RecuperoExt recupero, boolean tentaRecuperoDip,
-            RispostaWSRecupero rispostaWs) {
+            RispostaWSRecupero rispostaWs) throws IOException {
         List<ComponenteRec> lstComp = null;
         String prefisso = null;
         String nomeFileZip = null;
@@ -212,8 +209,6 @@ public class RecuperoZipGen {
         boolean includiFileXsdAIPV2 = false;
         // end EVO#20972
         FileBinario zipDaScaricare = null;
-        FileOutputStream tmpOutputStream = null;
-        ZipArchiveOutputStream tmpZipOutputStream = null;
         RispostaControlli rispostaControlli = new RispostaControlli();
         // legge l'elenco dei componenti di tipo file nell'UD, per estrarre i relativi
         // blob
@@ -316,10 +311,12 @@ public class RecuperoZipGen {
 
         if (rispostaWs.getSeverity() == SeverityEnum.OK) {
             zipDaScaricare = new FileBinario();
-            try {
-                zipDaScaricare.setFileSuDisco(File.createTempFile("output_", ".zip", new File(outputPath)));
-                tmpOutputStream = new FileOutputStream(zipDaScaricare.getFileSuDisco());
-                tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
+            File tmpOutput = File.createTempFile("output_", ".zip", new File(outputPath));
+
+            try (FileOutputStream tmpOutputStream = new FileOutputStream(tmpOutput);
+                    ZipArchiveOutputStream tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);) {
+                // set tmp file
+                zipDaScaricare.setFileSuDisco(tmpOutput);
 
                 if (recuperaDip && rispostaWs.getSeverity() == SeverityEnum.OK) {
                     this.aggiungiComponentiDIP(tmpZipOutputStream, recupero, rispostaWs);
@@ -330,7 +327,8 @@ public class RecuperoZipGen {
                 }
 
                 if (includiSessFileVersamento && rispostaWs.getSeverity() == SeverityEnum.OK) {
-                    this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero, TipiLetturaXml.SOLO_FILE_RECUPERATI,
+                    // MAC #34838
+                    this.aggiungiXMLVersamentoUd(tmpZipOutputStream, recupero, TipiLetturaXml.RECUPERO_PER_ZIP_AIP,
                             TipiXmlDaIncludere.TUTTI, rispostaWs);
                 }
 
@@ -416,12 +414,8 @@ public class RecuperoZipGen {
                 rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, ERRORE_GENERAZIONE_ZIP + ex.getMessage());
                 log.error("Errore nella generazione dello zip da scaricare ", ex);
             } finally {
-                IOUtils.closeQuietly(tmpZipOutputStream);
-                IOUtils.closeQuietly(tmpOutputStream);
-                tmpZipOutputStream = null;
-                tmpOutputStream = null;
                 if (rispostaWs.getSeverity() == SeverityEnum.ERROR && zipDaScaricare.getFileSuDisco() != null) {
-                    zipDaScaricare.getFileSuDisco().delete();
+                    FileUtils.deleteQuietly(zipDaScaricare.getFileSuDisco());
                     zipDaScaricare.setFileSuDisco(null);
                 }
             }
@@ -822,8 +816,10 @@ public class RecuperoZipGen {
         Set<String> entryGiaInserite = new HashSet<>();
         TokenFileNameType tipoNomeFile = recupero.getStrutturaRecupero().getChiave().getTipoNomeFile();
         for (ComponenteRec tmpCmp : lstComp) {
-            ZipArchiveEntry zae = null;
-            boolean fileDaSbustare = false;
+            // define file name
+            String archiveEntryFinalName = null;
+            // check single entry
+            boolean checkEntry = true; // verify or not zip entry on HashSet entryGiaInserite
             // Se viene passato NIENTE oppure NOME_FILE_URN_SACER si vuole il vecchio
             // comportamento
             if (tipoNomeFile == null || tipoNomeFile.value().trim().equals("")
@@ -832,16 +828,17 @@ public class RecuperoZipGen {
                 if (!recupero.getParametriRecupero().getTipoEntitaSacer()
                         .equals(CostantiDB.TipiEntitaRecupero.UNI_DOC_UNISYNCRO_V2)) {
                     // Vecchio comportamento
-                    zae = new ZipArchiveEntry(DIRECTORY_REC + "/" + tmpCmp.getNomeFilePerZip());
+                    // elab file name
+                    archiveEntryFinalName = DIRECTORY_REC + "/" + tmpCmp.getNomeFilePerZip();
                 } else {
-                    zae = new ZipArchiveEntry(DIRECTORY_REC_AIPV2 + "/"
+                    // elab file name
+                    archiveEntryFinalName = DIRECTORY_REC_AIPV2 + "/"
                             + it.eng.parer.async.utils.IOUtils.getFilename(
                                     it.eng.parer.async.utils.IOUtils.extractPartUrnName(tmpCmp.getUrnCompleto(), true),
-                                    tmpCmp.getEstensioneFile()));
+                                    tmpCmp.getEstensioneFile());
                 }
                 // end EVO#20972
-                this.filterZipEntry(zae);
-                zipOutputStream.putArchiveEntry(zae);
+                checkEntry = false;
             } else if (tipoNomeFile.equals(TokenFileNameType.NOME_FILE_VERSATO)) {
                 // Nuovo comportamento
                 String nomeFileOriginaleVersato = tmpCmp.getNomeFileOriginaleVersato();
@@ -870,9 +867,8 @@ public class RecuperoZipGen {
                     pathCompleto = aggiungiConSlashInMezzo("", nomeFileOriginaleVersato);
                 }
                 pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
-                provaAdInserireEntry(zipOutputStream,
-                        DIRECTORY_REC + MessaggiWSFormat.normalizingFileName(pathCompleto), entryGiaInserite);
-
+                // elab file name
+                archiveEntryFinalName = DIRECTORY_REC + MessaggiWSFormat.normalizingFileName(pathCompleto);
             } else if (tipoNomeFile.equals(TokenFileNameType.NOME_FILE_URN_VERSATO)) {
                 // Nuovo comportamento
                 String nomeFileOriginaleVersato = tmpCmp.getNomeFileOriginaleVersato();
@@ -924,38 +920,62 @@ public class RecuperoZipGen {
                     }
                 }
                 pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
-                // MEV#34239 - Estensione servizio per recupero file sbustati
-                String suffissoFile = pathCompleto.substring(pathCompleto.length() - 4, pathCompleto.length());
-                if (recupero.getStrutturaRecupero().getChiave().isFileSbustato() != null
-                        && recupero.getStrutturaRecupero().getChiave().isFileSbustato()
-                        && suffissoFile.equalsIgnoreCase(SUFFISSO_P7M)) {
-                    pathCompleto = pathCompleto.substring(0, pathCompleto.length() - 4);
-                    fileDaSbustare = true;
-                }
-                provaAdInserireEntry(zipOutputStream,
-                        DIRECTORY_REC + MessaggiWSFormat.normalizingFileName(pathCompleto), entryGiaInserite);
+                // elab file name
+                archiveEntryFinalName = DIRECTORY_REC + MessaggiWSFormat.normalizingFileName(pathCompleto);
             }
+
+            // MEV#34239 (define zip entry)
+            boolean invokeUnsignedDocService = recupero.getStrutturaRecupero().getChiave().isFileSbustato() != null
+                    && recupero.getStrutturaRecupero().getChiave().isFileSbustato();
+            if (invokeUnsignedDocService) {
+                // 1. remove (more) external extension
+                archiveEntryFinalName = FilenameUtils.removeExtension(archiveEntryFinalName); // remove original
+                                                                                              // extension from file (in
+                                                                                              // case of unsigned)
+                // 2. check if extension is present
+                if (StringUtils.isBlank(FilenameUtils.getExtension(archiveEntryFinalName))) {
+                    final String archiveEntryFinalNameExt = StringUtils.isNotBlank(tmpCmp.getEstensioneFile())
+                            ? tmpCmp.getEstensioneFile() : Costanti.UKNOWN_EXT;
+                    // 2.1 check for multiple extensions -> if true select the first one
+                    archiveEntryFinalName = archiveEntryFinalName.concat(FilenameUtils.EXTENSION_SEPARATOR_STR)
+                            .concat(StringUtils.substringBefore(archiveEntryFinalNameExt,
+                                    FilenameUtils.EXTENSION_SEPARATOR_STR));
+                }
+            }
+            // create zip entry
+            createAndCheckZipArchiveEntry(zipOutputStream, archiveEntryFinalName, entryGiaInserite, checkEntry);
 
             if (recupero.getTipoSalvataggioFile() == CostantiDB.TipoSalvataggioFile.FILE && recupero.isTpiAbilitato()) {
                 // su file system
                 rispostaControlli = recuperoCompFS.recuperaFileCompSuStream(tmpCmp, zipOutputStream, recupero);
             } else {
-                // recupero documento blob vs obj storage
+                boolean esitoRecupero = false;
 
-                // build dto per recupero
+                // recupero documento blob vs obj storage
                 RecuperoDocBean csRecuperoDoc = new RecuperoDocBean(TiEntitaSacerObjectStorage.COMP_DOC,
                         tmpCmp.getIdCompDoc(), zipOutputStream,
                         RecBlbOracle.TabellaBlob.valueOf(recupero.getTipoSalvataggioFile().name()));
-                // recupero
-                csRecuperoDoc.setFileDaSbustare(fileDaSbustare);
-                boolean esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+
+                /* MEV#34239 - Estensione servizio per recupero file sbustati */
+                // Se richiesto viene aggiunto allo zip finale la componente "unsigned" (originale)
+                // a partire dal documento firmato, se l'esisto del recupero è negativo viene gestito il
+                // recupero della componente "standard"
+                // Nota : gestitione esclusiva dei soli p7m
+                if (invokeUnsignedDocService) {
+                    // get unsigned p7m
+                    esitoRecupero = recuperoDocumento.callRecuperoOriginalDocFromSignedSuStream(csRecuperoDoc);
+                }
+                // recupero componente standard
+                if (!invokeUnsignedDocService || !esitoRecupero) {
+                    esitoRecupero = recuperoDocumento.callRecuperoDocSuStream(csRecuperoDoc);
+                }
+                //
                 rispostaControlli.setrBoolean(esitoRecupero);
                 if (!esitoRecupero) {
                     rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
                     rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                             "Errore nel recupero dei file per lo zip"));
                 }
-
             }
             zipOutputStream.closeArchiveEntry();
             if (!rispostaControlli.isrBoolean()) {
@@ -1001,14 +1021,14 @@ public class RecuperoZipGen {
         }
     }
 
-    private void provaAdInserireEntry(ZipArchiveOutputStream zipStream, String path, Set<String> entryGiaInserite)
-            throws IOException {
+    private void createAndCheckZipArchiveEntry(ZipArchiveOutputStream zipStream, String path,
+            Set<String> entryGiaInserite, boolean checkEntry) throws IOException {
         final int MAX_ITERAZIONI = 1000;
         int i = 0;
         int contatoreCopie = 0;
         String nuovoNomeFile = path;
         for (i = 0; i < MAX_ITERAZIONI; i++) {
-            if (entryGiaInserite.contains(nuovoNomeFile)) {
+            if (checkEntry && entryGiaInserite.contains(nuovoNomeFile)) {
                 contatoreCopie++;
                 int posPunto = path.lastIndexOf(".");
                 if (posPunto < 0) {
@@ -1030,58 +1050,6 @@ public class RecuperoZipGen {
                     "Raggiunto il numero massimo di iterazioni per gestire uno stesso nome file: [" + path + "]");
         }
 
-    }
-
-    private void aggiungiIndiciAipUd(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc,
-            RispostaWSRecupero rispostaWs) throws IOException {
-
-        RispostaControlli rispostaControlli = new RispostaControlli();
-        List<AroFileVerIndiceAipUd> lstVrsFileIndice = null;
-        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            rispostaControlli.reset();
-            rispostaControlli = controlliRecupero.leggiXMLIndiceAIP(idUnitaDoc);
-
-            if (!rispostaControlli.isrBoolean()) {
-                setRispostaWsError(rispostaWs, rispostaControlli);
-                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
-            } else {
-                lstVrsFileIndice = (List<AroFileVerIndiceAipUd>) rispostaControlli.getrObject();
-            }
-        }
-
-        if (rispostaWs.getSeverity() == SeverityEnum.OK) {
-            if (lstVrsFileIndice != null && !lstVrsFileIndice.isEmpty()) {
-                for (AroFileVerIndiceAipUd fileIndice : lstVrsFileIndice) {
-                    // EVO#16486
-                    String fileName = "";
-                    if (fileIndice.getAroVerIndiceAipUd() != null) {
-                        if (fileIndice.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds() != null
-                                && !fileIndice.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds().isEmpty()) {
-                            // Recupero lo urn ORIGINALE
-                            AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils.find(
-                                    fileIndice.getAroVerIndiceAipUd().getAroUrnVerIndiceAipUds(), new Predicate() {
-                                        @Override
-                                        public boolean evaluate(final Object object) {
-                                            return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                    .equals(TiUrnVerIxAipUd.ORIGINALE);
-                                        }
-                                    });
-                            if (urnVerIndiceAipUd != null) {
-                                fileName = urnVerIndiceAipUd.getDsUrn();
-                            }
-                        } else {
-                            fileName = fileIndice.getAroVerIndiceAipUd().getDsUrn();
-                        }
-                    }
-                    // end EVO#16486
-                    ZipArchiveEntry zae = new ZipArchiveEntry(ComponenteRec.estraiNomeFileCompleto(fileName) + ".xml");
-                    this.filterZipEntry(zae);
-                    zipOutputStream.putArchiveEntry(zae);
-                    zipOutputStream.write(fileIndice.getBlFileVerIndiceAip().getBytes());
-                    zipOutputStream.closeArchiveEntry();
-                }
-            }
-        }
     }
 
     private void aggiungiIndiciAipUdOs(ZipArchiveOutputStream zipOutputStream, long idUnitaDoc,
@@ -1111,14 +1079,9 @@ public class RecuperoZipGen {
                     if (verIndiceLastVers.getAroUrnVerIndiceAipUds() != null
                             && !verIndiceLastVers.getAroUrnVerIndiceAipUds().isEmpty()) {
                         // Recupero lo urn ORIGINALE
-                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(verIndiceLastVers.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.ORIGINALE);
-                                    }
-                                });
+                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = IterableUtils.find(
+                                verIndiceLastVers.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                         if (urnVerIndiceAipUd != null) {
                             fileName = urnVerIndiceAipUd.getDsUrn();
                         }
@@ -1204,14 +1167,9 @@ public class RecuperoZipGen {
                     if (verIndicePrecVers.getAroUrnVerIndiceAipUds() != null
                             && !verIndicePrecVers.getAroUrnVerIndiceAipUds().isEmpty()) {
                         // Recupero lo urn ORIGINALE
-                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = (AroUrnVerIndiceAipUd) CollectionUtils
-                                .find(verIndicePrecVers.getAroUrnVerIndiceAipUds(), new Predicate() {
-                                    @Override
-                                    public boolean evaluate(final Object object) {
-                                        return ((AroUrnVerIndiceAipUd) object).getTiUrn()
-                                                .equals(TiUrnVerIxAipUd.ORIGINALE);
-                                    }
-                                });
+                        AroUrnVerIndiceAipUd urnVerIndiceAipUd = IterableUtils.find(
+                                verIndicePrecVers.getAroUrnVerIndiceAipUds(),
+                                object -> (object).getTiUrn().equals(TiUrnVerIxAipUd.ORIGINALE));
                         urnIxAip = urnVerIndiceAipUd.getDsUrn();
                     } else {
                         urnIxAip = verIndicePrecVers.getDsUrn();
@@ -1882,7 +1840,6 @@ public class RecuperoZipGen {
         // MAC#30890
         RECUPERO_PER_ZIP_AIP // specifico per recupero ZIP AIP
         // end MAC#30890
-
     }
 
     private enum TipiXmlDaIncludere {
