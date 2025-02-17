@@ -231,6 +231,43 @@
         <Button Description="Aggiungi alla richiesta di annullamento" Name="addToRichAnnul" Type="STRING"/>
         <Button Description="Ricerca" Name="ricercaUDAnnullate" Type="STRING"/>
     </ButtonList>
+    
+    
+    
+    <!-- RICERCA OTTIMIZZATA DATI SPEC -->
+    
+    <!-- Filtri di Ricerca Unità Documentarie Per Dati Specifici -->
+    <Fields Description="Filtri unità documentaria ricerca dati spec" Name="FiltriUnitaDocumentarieDatiSpec">        
+        <MultiSelect Description="Registro" Name="cd_registro_key_unita_doc" Type="INTEGER"/>        
+        <Input Description="Anno da" MaxLength="4" Name="aa_key_unita_doc_da" Type="INTEGER"/>
+        <Input Description="Anno a" MaxLength="4" Name="aa_key_unita_doc_a" Type="INTEGER"/>
+        <Input Description="Numero da" Name="cd_key_unita_doc_da" Type="STRING"/>
+        <Input Description="Numero a" Name="cd_key_unita_doc_a" Type="STRING"/>        
+        <MultiSelect Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Trigger="true" Type="INTEGER"/>
+        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_ud" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_ud" Type="STRING"/>        
+        <MultiSelect Description="Tipo documento" Name="nm_tipo_doc" Trigger="true" Type="INTEGER"/>
+        <CheckBox Description="Dati specifici presenti" Name="flag_dati_spec_presenti_doc" Readonly="true" Type="STRING"/>
+        <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>                
+        <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="true" Type="INTEGER"/>      
+        <TextArea Cols="5" Description="Filtri valorizzati sui dati specifici" MaxLength="100000" Name="filtri_dati_spec" Readonly="true" Rows="5" Type="STRING"/>  
+    </Fields>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <!-- FINE RICERCA OTTIMIZZATA -->
+    
+    
+    
     <!-- Lista delle unità documentarie trovate in base ai parametri di ricerca -->
     <List Description="Unità documentarie" Name="UnitaDocumentarieList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" visibilityProperty="addSerie">
         <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>

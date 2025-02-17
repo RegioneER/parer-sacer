@@ -209,6 +209,26 @@ public class CalcoloContenutoSacerHelper {
         return cal;
     }
 
+    public Calendar getUltimaDataEsecuzione() {
+        String queryString = "SELECT MAX(u.dtRifConta) FROM MonContaUdDocComp u ";
+        Query query = entityManager.createQuery(queryString);
+        Date d = (Date) query.getSingleResult();
+        Calendar cal = Calendar.getInstance();
+        if (d != null) {
+            cal.setTime(d);
+        } else {
+            // Imposto la data all'1 dicembre 2011
+            cal.set(Calendar.YEAR, 2011);
+            cal.set(Calendar.MONTH, Calendar.DECEMBER);
+            cal.set(Calendar.DATE, 1);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+        }
+        return cal;
+    }
+
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void insertTotaliPerGiorno(Date dataCalcoloDa) {
         Date dataCalcoloA = DateUtils.addDays(dataCalcoloDa, 1);

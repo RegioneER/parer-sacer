@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.annulVers.ejb;
 
 import com.csvreader.CsvReader;
@@ -1682,26 +1681,33 @@ public class AnnulVersEjb {
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void updateTotaliElenco(long idElencoVers, long idUserIam, String dtString) {
         ElvElencoVer elenco = helper.findById(ElvElencoVer.class, idElencoVers);
-        elenco.setNiUnitaDocVersElenco(new BigDecimal(evHelper.contaUdVersate(idElencoVers)));
-        elenco.setNiDocVersElenco(new BigDecimal(evHelper.contaDocVersati(idElencoVers)));
-        Object[] objVers = evHelper.contaCompVersati(idElencoVers);
-        elenco.setNiCompVersElenco(new BigDecimal((Long) objVers[0]));
-        elenco.setNiSizeVersElenco(objVers[1] != null ? (BigDecimal) objVers[1] : BigDecimal.ZERO);
-        elenco.setNiUnitaDocModElenco(new BigDecimal(evHelper.contaUdModificatePerDocAggiunti(idElencoVers)));
-        elenco.setNiDocAggElenco(new BigDecimal(evHelper.contaDocAggiunti(idElencoVers)));
-        Object[] objAgg = evHelper.contaCompPerDocAggiunti(idElencoVers);
-        elenco.setNiCompAggElenco(new BigDecimal((Long) objAgg[0]));
-        elenco.setNiSizeAggElenco(objAgg[1] != null ? (BigDecimal) objAgg[1] : BigDecimal.ZERO);
 
-        if (elenco.getNiUnitaDocVersElenco().compareTo(BigDecimal.ZERO) == 0
-                && elenco.getNiDocAggElenco().compareTo(BigDecimal.ZERO) == 0
-                && elenco.getNiUpdUnitaDoc().compareTo(BigDecimal.ZERO) == 0) {
+        // Ricalcolo alcuni totali dell'elenco soggetti a verifiche
+        long niUnitaDocVersElenco = evHelper.contaUdVersate(idElencoVers);
+        long niDocAggElenco = evHelper.contaDocAggiunti(idElencoVers);
+        long niUpdUnitaDoc = elenco.getNiUpdUnitaDoc().longValue();
+
+        // Se questi tre totali sono a 0, cancello l'elenco
+        if (niUnitaDocVersElenco == 0 && niDocAggElenco == 0 && niUpdUnitaDoc == 0) {
             /* Cancello l'elenco di versamento corrente */
             evHelper.deleteElvElencoVer(new BigDecimal(idElencoVers));
             /* Scrivo nel log l'avvenuta cancellazione */
             evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUserIam,
                     ElencoEnums.OpTypeEnum.ELIMINA_ELENCO.name());
+        } // altrimenti aggiorno i conteggi dell'elenco
+        else {
+            elenco.setNiUnitaDocVersElenco(new BigDecimal(niUnitaDocVersElenco));
+            elenco.setNiDocVersElenco(new BigDecimal(evHelper.contaDocVersati(idElencoVers)));
+            Object[] objVers = evHelper.contaCompVersati(idElencoVers);
+            elenco.setNiCompVersElenco(new BigDecimal((Long) objVers[0]));
+            elenco.setNiSizeVersElenco(objVers[1] != null ? (BigDecimal) objVers[1] : BigDecimal.ZERO);
+            elenco.setNiUnitaDocModElenco(new BigDecimal(evHelper.contaUdModificatePerDocAggiunti(idElencoVers)));
+            elenco.setNiDocAggElenco(new BigDecimal(niDocAggElenco));
+            Object[] objAgg = evHelper.contaCompPerDocAggiunti(idElencoVers);
+            elenco.setNiCompAggElenco(new BigDecimal((Long) objAgg[0]));
+            elenco.setNiSizeAggElenco(objAgg[1] != null ? (BigDecimal) objAgg[1] : BigDecimal.ZERO);
         }
+
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)

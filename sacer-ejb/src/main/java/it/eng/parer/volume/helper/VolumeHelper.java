@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.volume.helper;
 
 import java.util.ArrayList;
@@ -43,6 +42,9 @@ import it.eng.parer.web.dto.DefinitoDaBean;
 import it.eng.parer.web.util.Constants.TipoEntitaSacer;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.TipoOperatoreDatiSpec;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -74,6 +76,29 @@ public class VolumeHelper {
         clauseExists.append("and UPPER(ric_dati_spec" + entityNameSuffix + ".dlValore) ");
         clauseExists.append(operatore);
         clauseExists.append(filtro);
+        clauseExists.append(") ");
+        return clauseExists.toString();
+    }
+
+    private String buildClauseExistsRicercaDatiSpec(String conjunctionWord, int entityNameSuffix, int indiceidattribds,
+            String operatore, String filtro, String filtroVersioneDs, String initialBracket, String from, String where,
+            String entitaSacer, String and1, String and2, String tipoSuffissoEntita) {
+        StringBuilder clauseExists = new StringBuilder();
+        clauseExists.append(conjunctionWord).append(initialBracket + " exists (select 1 from " + from + " ric_dati_spec"
+                + entityNameSuffix + " WHERE ric_dati_spec" + entityNameSuffix + where + " ");
+        clauseExists.append("and ric_dati_spec" + entityNameSuffix + and1 + indiceidattribds + " ");
+        if (!and2.isEmpty()) {
+            clauseExists.append("and ric_dati_spec" + entityNameSuffix + and2 + indiceidattribds + " ");
+        }
+        clauseExists.append("and ric_dati_spec" + entityNameSuffix + ".ti_Entita_Sacer = " + entitaSacer + " ");
+        clauseExists.append("and ric_dati_spec" + entityNameSuffix + ".dl_Valore ");
+        clauseExists.append(operatore);
+        clauseExists.append(filtro);
+        if (filtroVersioneDs != null) {
+            clauseExists.append(" and ric_dati_spec" + entityNameSuffix + ".cd_versione_xsd_" + tipoSuffissoEntita);
+            clauseExists.append(" = ");
+            clauseExists.append(filtroVersioneDs);
+        }
         clauseExists.append(") ");
         return clauseExists.toString();
     }
@@ -207,6 +232,536 @@ public class VolumeHelper {
                             entityNameSuffix++;
                             indiceidattribds++;
                         }
+                        mappone.add(datiSpecQueryParams);
+                    } // END IF
+                } // END FOR di ListaDefinitoDa
+                queryStr.append(") ");
+            } // END WHILE sull'insieme dei TipiUnitàDoc
+            queryStr.append(") ");
+        }
+
+        /*
+         * Comincio a costruire la query con i dati presenti nell'insieme tipi doc. appena creato
+         */
+        if (!insiemeTipiDoc.isEmpty()) {
+            boolean firstTimeDefinitoDa = true;
+            Iterator<String> it = insiemeTipiDoc.iterator();
+
+            // Per ogni nm_tipo_doc presente in insiemeTipiDoc
+            while (it.hasNext()) {
+                if (firstTimeDefinitoDa) {
+                    queryStr.append("AND ((");
+                    firstTimeDefinitoDa = false;
+                } else {
+                    queryStr.append("OR (");
+                }
+
+                String conjunctionWord = "";
+                String nmTipoDoc = it.next();
+                boolean firstTimeTipoDoc = true;
+
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (definitoDa.getNmTipoDoc() != null && definitoDa.getNmTipoDoc().equals(nmTipoDoc)) {
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        if (firstTimeTipoDoc) {
+                            // (---3---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "AroVRicDatiSpec";
+                            String where = ".idDoc = u.idDoc";
+                            String entitaSacer = "'DOC'";
+                            String and1 = ".idAttribDatiSpec = :idattribdatispecin";
+                            String and2 = "";
+                            queryStr.append(buildClauseExists(conjunctionWord, entityNameSuffix, indiceidattribds,
+                                    operatore, filtro, initialBracket, from, where, entitaSacer, and1, and2));
+                            conjunctionWord = " AND ";
+                            firstTimeTipoDoc = false;
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        } else {
+                            // (---4---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "AroVRicDatiSpec";
+                            String where = ".idDoc = u.idDoc";
+                            String entitaSacer = "'DOC'";
+                            String and1 = ".idAttribDatiSpec = :idattribdatispecin";
+                            String and2 = "";
+                            queryStr.append(buildClauseExists(conjunctionWord, entityNameSuffix, indiceidattribds,
+                                    operatore, filtro, initialBracket, from, where, entitaSacer, and1, and2));
+                            conjunctionWord = " AND ";
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        }
+                        mappone.add(datiSpecQueryParams);
+                    } // END IF
+                } // END FOR di ListaDefinitoDa
+                queryStr.append(") ");
+            } // END WHILE sull'insieme dei TipiDoc
+            queryStr.append(") ");
+        }
+
+        /*
+         * Comincio a costruire la query con i dati presenti nell'insieme sistemi di migrazione doc. UNI_DOC appena
+         * creato
+         */
+        if (!insiemeSistemiMigrazUniDoc.isEmpty()) {
+            boolean firstTimeDefinitoDa = true;
+            Iterator<String> it = insiemeSistemiMigrazUniDoc.iterator();
+
+            // Per ogni nm_sistema_migraz presente in insiemeSistemiMigrazUniDoc
+            while (it.hasNext()) {
+                if (firstTimeDefinitoDa) {
+                    queryStr.append("AND ((");
+                    firstTimeDefinitoDa = false;
+                } else {
+                    queryStr.append("OR (");
+                }
+
+                String conjunctionWord = "";
+                String nmSisMigr = it.next();
+                boolean firstTimeSisMigrTipoUD = true;
+
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (definitoDa.getNmSistemaMigraz() != null && definitoDa.getNmSistemaMigraz().equals(nmSisMigr)
+                            && definitoDa.getTiEntitaSacer().equals("UNI_DOC")) {
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        if (firstTimeSisMigrTipoUD) {
+                            // (---5---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "AroVRicDatiSpecMigraz";
+                            String where = ".idUnitaDoc = u.idUnitaDoc";
+                            String entitaSacer = "'UNI_DOC'";
+                            String and1 = ".nmSistemaMigraz = :nmsistemamigrazin";
+                            String and2 = ".idAttribDatiSpec = :idattribdatispecin";
+                            queryStr.append(buildClauseExists(conjunctionWord, entityNameSuffix, indiceidattribds,
+                                    operatore, filtro, initialBracket, from, where, entitaSacer, and1, and2));
+                            conjunctionWord = " AND ";
+                            firstTimeSisMigrTipoUD = false;
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        } else {
+                            // (---6---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "AroVRicDatiSpecMigraz";
+                            String where = ".idUnitaDoc = u.idUnitaDoc";
+                            String entitaSacer = "'UNI_DOC'";
+                            String and1 = ".nmSistemaMigraz = :nmsistemamigrazin";
+                            String and2 = ".idAttribDatiSpec = :idattribdatispecin";
+                            queryStr.append(buildClauseExists(conjunctionWord, entityNameSuffix, indiceidattribds,
+                                    operatore, filtro, initialBracket, from, where, entitaSacer, and1, and2));
+                            conjunctionWord = " AND ";
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        }
+                        mappone.add(datiSpecQueryParams);
+                    } // END IF
+                } // END FOR di ListaDefinitoDa
+                queryStr.append(") ");
+            } // END WHILE sull'insieme dei SistemiMigrazUniDoc
+            queryStr.append(") ");
+        }
+
+        /*
+         * Comincio a costruire la query con i dati presenti nell'insieme sistemi di migrazione doc. DOC appena creato
+         */
+        if (!insiemeSistemiMigrazDoc.isEmpty()) {
+            boolean firstTimeDefinitoDa = true;
+            Iterator<String> it = insiemeSistemiMigrazDoc.iterator();
+
+            // Per ogni nm_sistema_migraz presente in insiemeSistemiMigrazUniDoc
+            while (it.hasNext()) {
+                if (firstTimeDefinitoDa) {
+                    queryStr.append("AND ((");
+                    firstTimeDefinitoDa = false;
+                } else {
+                    queryStr.append("OR (");
+                }
+
+                String conjunctionWord = "";
+                String nmSisMigr = it.next();
+                boolean firstTimeSisMigrTipoDoc = true;
+
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (definitoDa.getNmSistemaMigraz() != null && definitoDa.getNmSistemaMigraz().equals(nmSisMigr)
+                            && definitoDa.getTiEntitaSacer().equals("DOC")) {
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        if (firstTimeSisMigrTipoDoc) {
+                            // (---7---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "AroVRicDatiSpecMigraz";
+                            String where = ".idDoc = u.idDoc";
+                            String entitaSacer = "'DOC'";
+                            String and1 = ".nmSistemaMigraz = :nmsistemamigrazin";
+                            String and2 = ".idAttribDatiSpec = :idattribdatispecin";
+                            queryStr.append(buildClauseExists(conjunctionWord, entityNameSuffix, indiceidattribds,
+                                    operatore, filtro, initialBracket, from, where, entitaSacer, and1, and2));
+                            conjunctionWord = " AND ";
+                            firstTimeSisMigrTipoDoc = false;
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        } else {
+                            // (---8---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "AroVRicDatiSpecMigraz";
+                            String where = ".idDoc = u.idDoc";
+                            String entitaSacer = "'DOC'";
+                            String and1 = ".nmSistemaMigraz = :nmsistemamigrazin";
+                            String and2 = ".idAttribDatiSpec = :idattribdatispecin";
+                            queryStr.append(buildClauseExists(conjunctionWord, entityNameSuffix, indiceidattribds,
+                                    operatore, filtro, initialBracket, from, where, entitaSacer, and1, and2));
+                            conjunctionWord = " AND ";
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        }
+                        mappone.add(datiSpecQueryParams);
+                    } // END IF
+                } // END FOR di ListaDefinitoDa
+                queryStr.append(") ");
+            } // END WHILE sull'insieme dei SistemiMigrazUniDoc
+            queryStr.append(") ");
+        }
+
+        retParams.setMappone(mappone);
+        retParams.setQuery(queryStr);
+        return retParams;
+    }
+
+    public ReturnParams buildConditionsForRicDatiSpec(List<?> datiSpecList, String filtroVersioneDsUd,
+            String filtroVersioneDsDoc) {
+        ReturnParams retParams = new ReturnParams();
+        StringBuilder queryStr = new StringBuilder();
+        // UTILIZZO DEI DATI SPECIFICI
+        String operatore = null;
+        String filtro = null;
+        int entityNameSuffix = 0;
+        int indiceidattribds = 0;
+        List<DatiSpecQueryParams> mappone = new ArrayList<>();
+        List<DefinitoDaBean> listaDefinitoDa = new ArrayList<>();
+        Set<String> insiemeTipiUnitaDoc = new HashSet<>();
+        Set<String> insiemeTipiDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazUniDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazDoc = new HashSet<>();
+
+        // Per ogni dato specifico
+        for (Object datiSpecObj : datiSpecList) {
+            if (datiSpecObj instanceof DecCriterioDatiSpecBean) {
+                DecCriterioDatiSpecBean datiSpec = (DecCriterioDatiSpecBean) datiSpecObj;
+                /*
+                 * Se il filtro è compilato, ricavo le informazioni che mi servono: aggiungo un elemento in
+                 * ListaDefinitoDa e nel relativo insieme
+                 */
+                if ((StringUtils.isNotBlank(datiSpec.getTiOper()) && StringUtils.isNotBlank(datiSpec.getDlValore()))
+                        || (datiSpec.getTiOper() != null
+                                && datiSpec.getTiOper().equals(CostantiDB.TipoOperatoreDatiSpec.NULLO.name())
+                                && StringUtils.isWhitespace(datiSpec.getDlValore()))
+                        || (datiSpec.getTiOper() != null
+                                && datiSpec.getTiOper().equals(CostantiDB.TipoOperatoreDatiSpec.NON_NULLO.name())
+                                && StringUtils.isWhitespace(datiSpec.getDlValore()))) {
+
+                    // Ricavo la listaDefinitoDa di quel preciso dato specifico
+                    List<DecCriterioAttribBean> decCriterioAttribList = datiSpec.getDecCriterioAttribs();
+
+                    /*
+                     * Scorro questa lista per andare ad inserire l'elemento nella lista principale, ovvero
+                     * ListaDefinitoDa
+                     */
+                    for (DecCriterioAttribBean decCriterioAttrib : decCriterioAttribList) {
+                        DefinitoDaBean definitoDa = new DefinitoDaBean();
+                        definitoDa.setIdAttribDatiSpec(decCriterioAttrib.getIdAttribDatiSpec());
+                        definitoDa.setTiEntitaSacer(decCriterioAttrib.getTiEntitaSacer());
+                        definitoDa.setNmTipoDoc(decCriterioAttrib.getNmTipoDoc());
+                        definitoDa.setNmTipoUnitaDoc(decCriterioAttrib.getNmTipoUnitaDoc());
+                        definitoDa.setNmSistemaMigraz(decCriterioAttrib.getNmSistemaMigraz());
+                        definitoDa.setNmAttribDatiSpec(datiSpec.getNmAttribDatiSpec());
+                        definitoDa.setTiOper(datiSpec.getTiOper());
+                        definitoDa.setDlValore(datiSpec.getDlValore());
+                        listaDefinitoDa.add(definitoDa);
+                        // Annoto quale elemento sto trattando inserendolo nel relativo insieme
+                        // Caso UNI_DOC
+                        if (definitoDa.getNmTipoUnitaDoc() != null) {
+                            insiemeTipiUnitaDoc.add(definitoDa.getNmTipoUnitaDoc());
+                        } // Caso DOC
+                        else if (definitoDa.getNmTipoDoc() != null) {
+                            insiemeTipiDoc.add(definitoDa.getNmTipoDoc());
+                        } // Caso Sistema Migrazione con entità Sacer UNI_DOC
+                        else if (definitoDa.getTiEntitaSacer().equals(TipoEntitaSacer.UNI_DOC.name())) {
+                            insiemeSistemiMigrazUniDoc.add(definitoDa.getNmSistemaMigraz());
+                        } // Caso Sistema Migrazione con entità Sacer DOC
+                        else if (definitoDa.getTiEntitaSacer().equals(TipoEntitaSacer.DOC.name())) {
+                            insiemeSistemiMigrazDoc.add(definitoDa.getNmSistemaMigraz());
+                        }
+                    }
+                }
+            }
+        }
+
+        ///////////////////////
+        // COSTRUZIONE QUERY //
+        ///////////////////////
+
+        /*
+         * Comincio a costruire la query con i dati presenti nell'insieme tipi unità doc. appena creato
+         */
+        if (!insiemeTipiUnitaDoc.isEmpty()) {
+            boolean firstTimeDefinitoDa = true;
+            Iterator<String> it = insiemeTipiUnitaDoc.iterator();
+            String tipoSuffissoEntita = "ud";
+            if (filtroVersioneDsUd != null) {
+                filtroVersioneDsUd = "'" + filtroVersioneDsUd + "'";
+            }
+            // Per ogni nm_tipo_unita_doc presente in insiemeTipiUnitaDoc
+            while (it.hasNext()) {
+                if (firstTimeDefinitoDa) {
+                    queryStr.append("AND ((");
+                    firstTimeDefinitoDa = false;
+                } else {
+                    queryStr.append("OR (");
+                }
+
+                String conjunctionWord = "";
+                String nmTipoUnitaDoc = it.next();
+                boolean firstTimeTipoUD = true;
+
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (definitoDa.getNmTipoUnitaDoc() != null
+                            && definitoDa.getNmTipoUnitaDoc().equals(nmTipoUnitaDoc)) {
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        if (firstTimeTipoUD) {
+                            // (---1---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
+                            String where = ".id_Unita_Doc = b.id_Unita_Doc";
+                            String entitaSacer = "'UNI_DOC'";
+                            String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
+                            String and2 = "";
+                            queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
+                                    indiceidattribds, operatore, filtro, filtroVersioneDsUd, initialBracket, from,
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                            conjunctionWord = " AND ";
+                            firstTimeTipoUD = false;
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        } else {
+                            // (---2---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
+                            String where = ".id_Unita_Doc = b.id_Unita_Doc";
+                            String entitaSacer = "'UNI_DOC'";
+                            String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
+                            String and2 = "";
+                            queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
+                                    indiceidattribds, operatore, filtro, filtroVersioneDsUd, initialBracket, from,
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                            conjunctionWord = " AND ";
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        }
+                        mappone.add(datiSpecQueryParams);
+                    } // END IF
+                } // END FOR di ListaDefinitoDa
+                queryStr.append(") ");
+            } // END WHILE sull'insieme dei TipiUnitàDoc
+            queryStr.append(") ");
+        }
+
+        /*
+         * Comincio a costruire la query con i dati presenti nell'insieme tipi doc. appena creato
+         */
+        if (!insiemeTipiDoc.isEmpty()) {
+            boolean firstTimeDefinitoDa = true;
+            Iterator<String> it = insiemeTipiDoc.iterator();
+            String tipoSuffissoEntita = "doc";
+            if (filtroVersioneDsDoc != null) {
+                filtroVersioneDsDoc = "'" + filtroVersioneDsDoc + "'";
+            }
+            // Per ogni nm_tipo_doc presente in insiemeTipiDoc
+            while (it.hasNext()) {
+                if (firstTimeDefinitoDa) {
+                    queryStr.append("AND ((");
+                    firstTimeDefinitoDa = false;
+                } else {
+                    queryStr.append("OR (");
+                }
+
+                String conjunctionWord = "";
+                String nmTipoDoc = it.next();
+                boolean firstTimeTipoDoc = true;
+
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (definitoDa.getNmTipoDoc() != null && definitoDa.getNmTipoDoc().equals(nmTipoDoc)) {
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        if (firstTimeTipoDoc) {
+                            // (---3---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
+                            String where = ".id_Doc = c.id_Doc";
+                            String entitaSacer = "'DOC'";
+                            String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
+                            String and2 = "";
+                            queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
+                                    indiceidattribds, operatore, filtro, filtroVersioneDsDoc, initialBracket, from,
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                            conjunctionWord = " AND ";
+                            firstTimeTipoDoc = false;
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        } else {
+                            // (---4---) aggiungo il predicato alla query
+                            String initialBracket = "";
+                            String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
+                            String where = ".id_Doc = c.id_Doc";
+                            String entitaSacer = "'DOC'";
+                            String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
+                            String and2 = "";
+                            queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
+                                    indiceidattribds, operatore, filtro, filtroVersioneDsDoc, initialBracket, from,
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                            conjunctionWord = " AND ";
+                            entityNameSuffix++;
+                            indiceidattribds++;
+                        }
+                        mappone.add(datiSpecQueryParams);
+                    } // END IF
+                } // END FOR di ListaDefinitoDa
+                queryStr.append(") ");
+            } // END WHILE sull'insieme dei TipiDoc
+            queryStr.append(") ");
+        }
+
+        retParams.setMappone(mappone);
+        retParams.setQuery(queryStr);
+        return retParams;
+    }
+
+    public ReturnParams buildQueryForDatiSpecRicercaDatiSpec(List<?> datiSpecList) {
+        ReturnParams retParams = new ReturnParams();
+        StringBuilder queryStr = new StringBuilder();
+        // UTILIZZO DEI DATI SPECIFICI
+        String operatore = null;
+        String filtro = null;
+        int entityNameSuffix = 0;
+        int indiceidattribds = 0;
+        List<DatiSpecQueryParams> mappone = new ArrayList<>();
+        List<DefinitoDaBean> listaDefinitoDa = new ArrayList<>();
+        Set<String> insiemeTipiUnitaDoc = new HashSet<>();
+        Set<String> insiemeTipiDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazUniDoc = new HashSet<>();
+        Set<String> insiemeSistemiMigrazDoc = new HashSet<>();
+
+        // Per ogni dato specifico
+        for (Object datiSpecObj : datiSpecList) {
+            if (datiSpecObj instanceof DecCriterioDatiSpecBean) {
+                DecCriterioDatiSpecBean datiSpec = (DecCriterioDatiSpecBean) datiSpecObj;
+                /*
+                 * Se il filtro è compilato, ricavo le informazioni che mi servono: aggiungo un elemento in
+                 * ListaDefinitoDa e nel relativo insieme
+                 */
+                if ((StringUtils.isNotBlank(datiSpec.getTiOper()) && StringUtils.isNotBlank(datiSpec.getDlValore()))
+                        || (datiSpec.getTiOper() != null
+                                && datiSpec.getTiOper().equals(CostantiDB.TipoOperatoreDatiSpec.NULLO.name())
+                                && StringUtils.isWhitespace(datiSpec.getDlValore()))
+                        || (datiSpec.getTiOper() != null
+                                && datiSpec.getTiOper().equals(CostantiDB.TipoOperatoreDatiSpec.NON_NULLO.name())
+                                && StringUtils.isWhitespace(datiSpec.getDlValore()))) {
+
+                    // Ricavo la listaDefinitoDa di quel preciso dato specifico
+                    List<DecCriterioAttribBean> decCriterioAttribList = datiSpec.getDecCriterioAttribs();
+
+                    /*
+                     * Scorro questa lista per andare ad inserire l'elemento nella lista principale, ovvero
+                     * ListaDefinitoDa
+                     */
+                    for (DecCriterioAttribBean decCriterioAttrib : decCriterioAttribList) {
+                        DefinitoDaBean definitoDa = new DefinitoDaBean();
+                        definitoDa.setIdAttribDatiSpec(decCriterioAttrib.getIdAttribDatiSpec());
+                        definitoDa.setTiEntitaSacer(decCriterioAttrib.getTiEntitaSacer());
+                        definitoDa.setNmTipoDoc(decCriterioAttrib.getNmTipoDoc());
+                        definitoDa.setNmTipoUnitaDoc(decCriterioAttrib.getNmTipoUnitaDoc());
+                        definitoDa.setNmSistemaMigraz(decCriterioAttrib.getNmSistemaMigraz());
+                        definitoDa.setNmAttribDatiSpec(datiSpec.getNmAttribDatiSpec());
+                        definitoDa.setTiOper(datiSpec.getTiOper());
+                        definitoDa.setDlValore(datiSpec.getDlValore());
+                        listaDefinitoDa.add(definitoDa);
+                        // Annoto quale elemento sto trattando inserendolo nel relativo insieme
+                        // Caso UNI_DOC
+                        if (definitoDa.getNmTipoUnitaDoc() != null) {
+                            insiemeTipiUnitaDoc.add(definitoDa.getNmTipoUnitaDoc());
+                        } // Caso DOC
+                        else if (definitoDa.getNmTipoDoc() != null) {
+                            insiemeTipiDoc.add(definitoDa.getNmTipoDoc());
+                        } // Caso Sistema Migrazione con entità Sacer UNI_DOC
+                        else if (definitoDa.getTiEntitaSacer().equals(TipoEntitaSacer.UNI_DOC.name())) {
+                            insiemeSistemiMigrazUniDoc.add(definitoDa.getNmSistemaMigraz());
+                        } // Caso Sistema Migrazione con entità Sacer DOC
+                        else if (definitoDa.getTiEntitaSacer().equals(TipoEntitaSacer.DOC.name())) {
+                            insiemeSistemiMigrazDoc.add(definitoDa.getNmSistemaMigraz());
+                        }
+                    }
+                }
+            }
+        }
+
+        ///////////////////////
+        // COSTRUZIONE QUERY //
+        ///////////////////////
+
+        /*
+         * Comincio a costruire la query con i dati presenti nell'insieme tipi unità doc. appena creato
+         */
+        if (!insiemeTipiUnitaDoc.isEmpty()) {
+            boolean firstTimeDefinitoDa = true;
+            Iterator<String> it = insiemeTipiUnitaDoc.iterator();
+
+            // Per ogni nm_tipo_unita_doc presente in insiemeTipiUnitaDoc
+            while (it.hasNext()) {
+                if (firstTimeDefinitoDa) {
+                    queryStr.append("AND ((");
+                    firstTimeDefinitoDa = false;
+                } else {
+                    queryStr.append("OR (");
+                }
+
+                String conjunctionWord = "";
+                String nmTipoUnitaDoc = it.next();
+                boolean firstTimeTipoUD = true;
+
+                for (DefinitoDaBean definitoDa : listaDefinitoDa) {
+                    if (definitoDa.getNmTipoUnitaDoc() != null
+                            && definitoDa.getNmTipoUnitaDoc().equals(nmTipoUnitaDoc)) {
+                        int j = mappone.size();
+                        Object[] obj = translateFiltroToSql(definitoDa, j);
+                        DatiSpecQueryParams datiSpecQueryParams = (DatiSpecQueryParams) obj[0];
+                        operatore = (String) obj[1];
+                        filtro = (String) obj[2];
+
+                        queryStr.append(
+                                "u.tiEntitaSacer = 'UNI_DOC' AND u.idAttribDatiSpec = :idattribdatispecin AND u.dlValore");
+                        queryStr.append(operatore);
+                        queryStr.append(filtro);
                         mappone.add(datiSpecQueryParams);
                     } // END IF
                 } // END FOR di ListaDefinitoDa

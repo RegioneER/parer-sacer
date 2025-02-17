@@ -16,6 +16,7 @@
  */
 package it.eng.parer.web.ejb;
 
+import it.eng.parer.job.calcoloContenutoSacer.ejb.CalcoloContenutoSacerEjb;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -101,6 +102,8 @@ import it.eng.parer.web.helper.MonitoraggioHelper;
 import it.eng.parer.web.helper.MonitoraggioSinteticoHelper;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoLite.db.base.BaseRowInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -109,6 +112,8 @@ import it.eng.spagoLite.db.base.BaseRowInterface;
 @Stateless(mappedName = "MonitoraggioSinteticoEjb")
 @LocalBean
 public class MonitoraggioSinteticoEjb {
+
+    Logger log = LoggerFactory.getLogger(CalcoloContenutoSacerEjb.class);
 
     public static final String VIEW_ID_TIPO_UNITA_DOC = "view.id.idTipoUnitaDoc";
     public static final String VIEW_ID_STRUT = "view.id.idStrut";
@@ -142,7 +147,7 @@ public class MonitoraggioSinteticoEjb {
             BigDecimal idEnte, BigDecimal idStrut, BigDecimal idTipoUnitaDoc, Set<String> fieldsWithCnt) {
         LinkedHashMap<String, BaseRowInterface> map = new LinkedHashMap<>();
 
-        System.out.println("Inizio calcoli");
+        log.debug("Inizio calcoli");
 
         // Caricamento dati unità doc versate
         MonVChkCntUdRowBean rowBeanUd;
@@ -160,7 +165,7 @@ public class MonitoraggioSinteticoEjb {
 
         map.put(MonitoraggioSinteticoForm.UnitaDocVersate.NAME, rowBeanUd);
 
-        System.out.println("Fine calcolo ud versate");
+        log.debug("Fine calcolo ud versate");
         MonVChkCntDocRowBean rowBeanDoc;
         if (fieldsWithCnt.contains(fieldSetToPopulate.DOC_AGGIUNTI.name())
                 || fieldsWithCnt.contains(fieldSetToPopulate.DOC_AGGIUNTI_B30.name())) {
@@ -173,7 +178,7 @@ public class MonitoraggioSinteticoEjb {
                     fieldSetToPopulate.DOC_AGGIUNTI));
         }
         map.put(MonitoraggioSinteticoForm.DocAggiunti.NAME, rowBeanDoc);
-        System.out.println("Fine calcolo doc versati");
+        log.debug("Fine calcolo doc versati");
 
         MonVChkCntVersRowBean rowBeanVers = new MonVChkCntVersRowBean();
         MonVChkCntAggRowBean rowBeanAgg = new MonVChkCntAggRowBean();
@@ -190,7 +195,7 @@ public class MonitoraggioSinteticoEjb {
                 rowBeanVers.entityToRowBean(buildQueryChk(idUtente, idAmbiente, idEnte, idStrut, idTipoUnitaDoc,
                         fieldSetToPopulate.VERS_FALLITI));
             }
-            System.out.println("Fine calcolo versamenti falliti");
+            log.debug("Fine calcolo versamenti falliti");
 
             if (fieldsWithCnt.contains(fieldSetToPopulate.AGGIUNTE_DOC_FALLITE.name())
                     || fieldsWithCnt.contains(fieldSetToPopulate.AGGIUNTE_DOC_FALLITE_B30.name())) {
@@ -203,7 +208,7 @@ public class MonitoraggioSinteticoEjb {
                         fieldSetToPopulate.AGGIUNTE_DOC_FALLITE));
             }
 
-            System.out.println("Fine calcolo aggiunte doc fallite");
+            log.debug("Fine calcolo aggiunte doc fallite");
 
             if (fieldsWithCnt.contains(fieldSetToPopulate.UNITA_DOC_VERS_FALLITI.name())) {
                 rowBeanUdNonVers = (MonVChkCntUdNonversRowBean) calcolaTot(idUtente, idAmbiente, idEnte, idStrut,
@@ -213,7 +218,7 @@ public class MonitoraggioSinteticoEjb {
                         fieldSetToPopulate.UNITA_DOC_VERS_FALLITI));
             }
 
-            System.out.println("Fine calcolo ud derivanti da versamenti falliti");
+            log.debug("Fine calcolo ud derivanti da versamenti falliti");
 
             if (fieldsWithCnt.contains(fieldSetToPopulate.DOC_AGGIUNTI_VERS_FALLITI.name())) {
                 rowBeanDocNonVers = (MonVChkCntDocNonversRowBean) calcolaTot(idUtente, idAmbiente, idEnte, idStrut,
@@ -223,7 +228,7 @@ public class MonitoraggioSinteticoEjb {
                         fieldSetToPopulate.DOC_AGGIUNTI_VERS_FALLITI));
             }
 
-            System.out.println("Fine calcolo documenti derivanti da aggiunte fallite");
+            log.debug("Fine calcolo documenti derivanti da aggiunte fallite");
         }
         map.put(MonitoraggioSinteticoForm.VersamentiFalliti.NAME, rowBeanVers);
         map.put(MonitoraggioSinteticoForm.AggiunteDocumentiFallite.NAME, rowBeanAgg);
@@ -240,7 +245,7 @@ public class MonitoraggioSinteticoEjb {
                     fieldSetToPopulate.UNITA_DOC_ANNUL));
         }
 
-        System.out.println("Fine calcolo versamenti annullati o in corso di annullamento");
+        log.debug("Fine calcolo versamenti annullati o in corso di annullamento");
 
         map.put(MonitoraggioSinteticoForm.UnitaDocAnnul.NAME, rowBeanUdAnnul);
 

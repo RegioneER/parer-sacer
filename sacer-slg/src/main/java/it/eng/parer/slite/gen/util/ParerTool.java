@@ -36,10 +36,6 @@ public class ParerTool extends SpringLiteTool {
 
     public static void main(String[] args)
             throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
-        System.setProperty("file.encoding", "UTF-8");
-        java.lang.reflect.Field charset = Charset.class.getDeclaredField("defaultCharset");
-        charset.setAccessible(true);
-        charset.set(null, null);
 
         if (args.length == 0) {
             throw new IllegalArgumentException();

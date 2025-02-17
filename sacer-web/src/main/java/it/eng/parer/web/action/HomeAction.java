@@ -47,6 +47,7 @@ import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazione;
 import it.eng.integriam.client.ws.renews.RestituzioneNewsApplicazioneRisposta;
 import it.eng.parer.disciplinare.DisciplinareTecnicoEjb;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.job.calcoloContenutoSacer.ejb.CalcoloContenutoSacerHelper;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.HomeAbstractAction;
 import it.eng.parer.web.helper.ConfigurationHelper;
@@ -72,6 +73,8 @@ public class HomeAction extends HomeAbstractAction {
     private MonitoraggioHelper monitoraggioHelper;
     @EJB(mappedName = "java:app/Parer-ejb/DisciplinareTecnicoEjb")
     private DisciplinareTecnicoEjb disciplinareTecnicoEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/CalcoloContenutoSacerHelper")
+    private CalcoloContenutoSacerHelper ccsHelper;
 
     @Override
     public void initOnClick() throws EMFError {
@@ -249,14 +252,10 @@ public class HomeAction extends HomeAbstractAction {
         getForm().getContenutoSacerTotaliUdDocComp().copyFromBean(totali);
         Map<String, String> organizzazione = getUser().getOrganizzazioneMap();
 
-        // MEV #18740 - calcolo la data effettiva di aggiornamento del contenuto dell'archivio
-        // data dal giorno precedente a quello in cui il job calcolo contenuto sacer ha girato senza errori
-        Calendar ieri = monitoraggioHelper.getLastPositiveRunCalcoloContenutoSacer();
+        Calendar dataArchivio = ccsHelper.getUltimaDataEsecuzione();
 
-        // Calendar ieri = Calendar.getInstance();
-        ieri.add(Calendar.DATE, -1);
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        String ieriString = format.format(ieri.getTime());
+        String ieriString = format.format(dataArchivio.getTime());
         String titolo = " " + organizzazione.get("ENTE") + " - " + organizzazione.get("STRUTTURA") + " al "
                 + ieriString;
         getSession().setAttribute("TitoloHomeDinamico",
