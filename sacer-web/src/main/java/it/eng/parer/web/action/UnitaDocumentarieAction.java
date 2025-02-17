@@ -94,6 +94,7 @@ import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriComponentiUnitaDo
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriFascicoliUnitaDocumentarie;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriFirmatariUnitaDocumentarie;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieAvanzata;
+import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.UnitaDocumentarieList;
 import it.eng.parer.slite.gen.form.VolumiForm;
@@ -396,6 +397,27 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
+     * Metodo di inizializzazione form di ricerca unità documentarie dati spec
+     *
+     * @throws EMFError
+     *             errore generico
+     */
+    @Secure(action = "Menu.Amministrazione.UnitaDocumentarieRicercaDatiSpec")
+    public void unitaDocumentarieRicercaDatiSpec() throws EMFError {
+        getUser().getMenu().reset();
+        getUser().getMenu().select("Menu.Amministrazione.UnitaDocumentarieRicercaDatiSpec");
+        String cleanHistory = getRequest().getParameter(CLEAN_HISTORY);
+        if (Boolean.parseBoolean(cleanHistory)) {
+            getForm().getUnitaDocumentariePerSerie().reset();
+        }
+
+        getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(), TipoRicercaAttribute.AVANZATA.name());
+        setUnitaDocumentarieRicercaDatiSpec();
+        // getForm().getFiltriUnitaDocumentarieDatiSpec().getFl_unita_doc_annul().setValue("0");
+        postLoad();
+    }
+
+    /**
      * Metodo di inizializzazione form di ricerca unita documentarie di versamenti annullati
      *
      * @throws EMFError
@@ -604,6 +626,87 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         }
     }
 
+    public void setUnitaDocumentarieRicercaDatiSpec() throws EMFError {
+        /*
+         * Azzero violentamente la UnitaDocumentarieList per evitare problemi di visualizzazione del primo record della
+         * lista che si manifesta quando passo da una selectedList (ricerca avanzata) ad una list normale (ricerca
+         * semplice) all'interno della stessa action
+         */
+        getForm().addComponent(new UnitaDocumentarieList());
+
+        // Pulisco i filtri di ricerca unità documentarie avanzata
+        getForm().getFiltriUnitaDocumentarieDatiSpec().reset();
+        getForm().getFiltriCollegamentiUnitaDocumentarie().reset();
+        getForm().getFiltriComponentiUnitaDocumentarie().reset();
+        getForm().getFiltriFirmatariUnitaDocumentarie().reset();
+        getForm().getFiltriFascicoliUnitaDocumentarie().reset();
+
+        getForm().getUDRicercaSection().setLegend("Unità documentaria");
+        getForm().getUnitaDocumentarieTabs().getFiltriRicercaAvanzata().setDescription("Filtri base");
+
+        /*
+         * Azzero la struttura in memoria che memorizza le info dei filtri dati specifici
+         */
+        if (getSession().getAttribute("listaDatiSpecOnLine") != null) {
+            getSession().removeAttribute("listaDatiSpecOnLine");
+        }
+
+        getSession().removeAttribute(WebConstants.DOWNLOAD_DIP.DIP_RISPOSTA_WS.name());
+        getSession().removeAttribute(WebConstants.DOWNLOAD_DIP.DIP_RECUPERO_EXT.name());
+        getSession().removeAttribute(WebConstants.DOWNLOAD_DIP.DIP_ENTITA.name());
+
+        initMappeTipiDato();
+
+        // Setto le varie combo dei FILTRI di ricerca Unità Documentarie
+        getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_unita_doc().setDecodeMap(mappaTipoUD);
+        getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_doc().setDecodeMap(mappaTipoDoc);
+        getForm().getFiltriUnitaDocumentarieDatiSpec().getCd_registro_key_unita_doc().setDecodeMap(mappaRegistro);
+        // getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_sistema_migraz().setDecodeMap(mappaSisMig);
+
+        /* Filtro sottostrutture */
+        OrgSubStrutTableBean tmpSubStrutsTableBean = subStrutEjb
+                .getOrgSubStrutTableBeanAbilitate(getUser().getIdUtente(), getIdStrut());
+        DecodeMap mappaSubStruts = DecodeMap.Factory.newInstance(tmpSubStrutsTableBean, "id_sub_strut", "nm_sub_strut");
+        getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_sub_strut().setDecodeMap(mappaSubStruts);
+        // Precompilo la mappa con tutti i valori
+        Iterator it = mappaSubStruts.keySet().iterator();
+        String[] chiavi = new String[mappaSubStruts.keySet().size()];
+        int i = 0;
+        while (it.hasNext()) {
+            BigDecimal chiave = (BigDecimal) it.next();
+            chiavi[i] = "" + chiave;
+            i++;
+        }
+        getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_sub_strut().setValues(chiavi);
+
+        getForm().getFiltriDatiSpecUnitaDocumentarieList().getTi_oper().setDecodeMap(
+                ComboGetter.getMappaSortedGenericEnum("operatore", CostantiDB.TipoOperatoreDatiSpec.values()));
+
+        // Carico la pagina di ricerca
+        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC);
+
+        // Imposto i filtri in edit mode
+        getForm().getFiltriUnitaDocumentarieDatiSpec().setEditMode();
+        getForm().getUnitaDocumentarieRicercaButtonList().setEditMode();
+        getForm().getFiltriCollegamentiUnitaDocumentarie().setEditMode();
+        getForm().getFiltriFirmatariUnitaDocumentarie().setEditMode();
+        getForm().getFiltriComponentiUnitaDocumentarie().setEditMode();
+        getForm().getFiltriFascicoliUnitaDocumentarie().setEditMode();
+
+        // Inizializzo la lista di unità documentarie vuota e con 10 righe per pagina
+        getForm().getUnitaDocumentarieList().setTable(null);
+
+        // Se popolata, svuoto la lista di filtri dati specifici
+        if (getForm().getFiltriDatiSpecUnitaDocumentarieList() != null
+                && getForm().getFiltriDatiSpecUnitaDocumentarieList().getTable() != null) {
+            getForm().getFiltriDatiSpecUnitaDocumentarieList().getTable().removeAll();
+        }
+
+        // Setto la tab corrente sulla quale posizionarmi
+        getForm().getUnitaDocumentarieTabs()
+                .setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriRicercaAvanzata());
+    }
+
     public void setUnitaDocumentarieRicercaUDAnnullate() throws EMFError {
         // Pulisco i filtri di ricerca unità documentarie annullate
         getForm().getFiltriUnitaDocumentarieAnnullate().reset();
@@ -768,7 +871,180 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             }
             // Carico la pagina di ricerca
             forwardToPublisher(pageToForward);
-        } // RICERCA UNITA' DOCUMENTARIE AVANZATA
+        } // RICERCA UNITA' DOCUMENTARIE DATI SPEC
+        else if (getLastPublisher().equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC)) {
+            /*
+             * Resetto la lista per evitare conflitti tra la ricerca avanzata (con selectedList) e la ricerca versamenti
+             * annullati (lista "normale") aolo se non sto facendo download altrimenti quando builda il csv non trova
+             * nulla nella table
+             */
+            if (!effettuaDownload) {
+                getForm().getUnitaDocumentarieList().setTable(null);
+            }
+            // Pulisce lo stack di id unità documentarie, necessario per il caricamento delle ud collegate
+            getSession().setAttribute("idUdStack", new ArrayList<BigDecimal>());
+            final FiltriUnitaDocumentarieDatiSpec filtri = getForm().getFiltriUnitaDocumentarieDatiSpec();
+
+            int numTipiUdAbil = getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_unita_doc().getDecodeMap()
+                    .keySet().size();
+            int numTipiDocAbil = getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_doc().getDecodeMap().keySet()
+                    .size();
+
+            // Esegue la post dei filtri compilati
+            filtri.post(getRequest());
+
+            boolean almenoUnTipoUdSelPerRicercaDatiSpec = false;
+            boolean almenoUnTipoDocSelPerRicercaDatiSpec = false;
+            // Recupero l'informazione se l'utente ha selezionato almeno un TIPO UNITA DOC: mi servirà in fase di
+            // costruzione della query sui dati specifici
+            // <= infatti se il numero è uguale significa che li ho selezionati tutti e dunque compariranno i filtri
+            // dati specifici (che dunque non è il caso di come se non avessi selezionato nessuno)
+            if (getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_unita_doc().parse().size() >= 1 && getForm()
+                    .getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_unita_doc().parse().size() <= numTipiUdAbil) {
+                almenoUnTipoUdSelPerRicercaDatiSpec = true;
+            }
+            // Recupero l'informazione se l'utente ha selezionato almeno un TIPO DOCUMENTO: mi servirà in fase di
+            // costruzione della query sui dati specifici
+            // <= infatti se il numero è uguale significa che li ho selezionati tutti e dunque compariranno i filtri
+            // dati specifici (che dunque non è il caso di come se non avessi selezionato nessuno)
+            if (getForm().getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_doc().parse().size() >= 1 && getForm()
+                    .getFiltriUnitaDocumentarieDatiSpec().getNm_tipo_doc().parse().size() <= numTipiDocAbil) {
+                almenoUnTipoDocSelPerRicercaDatiSpec = true;
+            }
+
+            String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC;
+            // Valida i filtri per verificare quelli obbligatori e che siano del tipo corretto
+            if (filtri.validate(getMessageBox())
+
+            ) {
+                // Valida i campi di ricerca
+                UnitaDocumentarieValidator validator = new UnitaDocumentarieValidator(getMessageBox());
+
+                //
+                // if (!getMessageBox().hasError()) {
+                // // Controllo l'obbligatorietà di anno o range anni di chiave unità documentaria
+                // validator.controllaPresenzaAnno(filtri.getAa_key_unita_doc().parse(),
+                // filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse());
+                // }
+
+                Set<String> cdRegistroKeyUnitaDocSetPerRicerca = getValoriForQueryFromFiltroCdRegistroMultiselect(
+                        filtri.getCd_registro_key_unita_doc());
+                List<BigDecimal> idTipoUnitaDocListPerRicerca = getValoriForQueryFromFiltroIdTipoUdMultiselect(
+                        filtri.getNm_tipo_unita_doc());
+                List<BigDecimal> idTipoDocListPerRicerca = getValoriForQueryFromFiltroIdTipoDocMultiselect(
+                        filtri.getNm_tipo_doc());
+
+                // Valida i campi di Range di chiavi unitÃ documentaria
+                Object[] chiavi = null;
+                if (!getMessageBox().hasError()) {
+                    String[] registro = Arrays.copyOf(
+                            filtri.getCd_registro_key_unita_doc().getDecodedValues().toArray(),
+                            filtri.getCd_registro_key_unita_doc().getDecodedValues().toArray().length, String[].class);
+                    chiavi = validator.validaChiaviUnitaDocRicUdDatiSpec(registro,
+                            filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse(),
+                            filtri.getCd_key_unita_doc_da().parse(), filtri.getCd_key_unita_doc_a().parse());
+                }
+
+                // Ricavo la Lista Dati Specifici compilati a video
+                List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = (ArrayList) getSession()
+                        .getAttribute("listaDatiSpecOnLine") != null
+                                ? (ArrayList) getSession().getAttribute("listaDatiSpecOnLine") : new ArrayList();
+
+                boolean entitaPresente = true;
+                if (listaDatiSpecOnLine.isEmpty()) {
+                    getMessageBox().addError("Deve essere selezionata almeno un'entità con dati specifici");
+                    entitaPresente = false;
+                }
+
+                boolean filtroPresente = false;
+                if (entitaPresente) {
+                    for (DecCriterioDatiSpecBean ds : listaDatiSpecOnLine) {
+                        if (ds.getTiOper() != null) {
+                            filtroPresente = true;
+                        }
+                    }
+
+                    if (!filtroPresente) {
+                        getMessageBox().addError("Deve essere compilato almeno un filtro su un dato specifico");
+                    }
+                }
+
+                if (!getMessageBox().hasError()) {
+                    // La validazione non ha riportato errori.
+                    // Setto i filtri di chiavi unità documentaria impostando gli eventuali valori di default
+                    if (chiavi != null && chiavi.length == 5) {
+                        filtri.getAa_key_unita_doc_da()
+                                .setValue(chiavi[1] != null ? ((BigDecimal) chiavi[1]).toString() : null);
+                        filtri.getAa_key_unita_doc_a()
+                                .setValue(chiavi[2] != null ? ((BigDecimal) chiavi[2]).toString() : null);
+                        filtri.getCd_key_unita_doc_da().setValue(chiavi[3] != null ? (String) chiavi[3] : null);
+                        filtri.getCd_key_unita_doc_a().setValue(chiavi[4] != null ? (String) chiavi[4] : null);
+                    }
+
+                    boolean addSerie = getForm().getUnitaDocumentariePerSerie().getId_contenuto_serie().parse() != null;
+                    boolean addRichAnnulVers = getForm().getUnitaDocumentariePerRichAnnulVers().getId_rich_annul_vers()
+                            .parse() != null;
+
+                    if (effettuaDownload) {
+                        AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicDatiSpecViewBeanNoLimit(filtri,
+                                idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocSetPerRicerca,
+                                idTipoDocListPerRicerca, listaDatiSpecOnLine, getIdStrut(),
+                                addSerie || addRichAnnulVers, almenoUnTipoUdSelPerRicercaDatiSpec,
+                                almenoUnTipoDocSelPerRicercaDatiSpec);
+                        if (!getMessageBox().hasError()) {
+                            File tmpFile = new File(System.getProperty("java.io.tmpdir"),
+                                    "Contenuto_ricerca_unita_documentarie.csv");
+                            try {
+                                ActionUtils.buildCsvString(getForm().getUnitaDocumentarieList(), tb,
+                                        AroVRicUnitaDocTableBean.TABLE_DESCRIPTOR, tmpFile);
+                                getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(),
+                                        getControllerName());
+                                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(),
+                                        tmpFile.getName());
+                                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(),
+                                        tmpFile.getPath());
+                                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name(),
+                                        Boolean.toString(true));
+                                getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
+                                        "text/csv");
+                            } catch (IOException ex) {
+                                log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+                                getMessageBox().addError("Errore inatteso nella preparazione del download");
+                            }
+                        }
+
+                        if (getMessageBox().hasError()) {
+                            pageToRedirect = getLastPublisher();
+                        } else {
+                            pageToRedirect = Application.Publisher.DOWNLOAD_PAGE;
+                        }
+
+                    } else {
+                        AroVRicUnitaDocTableBean tb = udHelper.getAroVRicUnitaDocRicDatiSpecViewBeanNoLimit(filtri,
+                                idTipoUnitaDocListPerRicerca, cdRegistroKeyUnitaDocSetPerRicerca,
+                                idTipoDocListPerRicerca, listaDatiSpecOnLine, getIdStrut(),
+                                addSerie || addRichAnnulVers, almenoUnTipoUdSelPerRicercaDatiSpec,
+                                almenoUnTipoDocSelPerRicercaDatiSpec);
+                        // Carico la tabella con i filtri impostati
+                        getForm().getUnitaDocumentarieList().setTable(tb);
+                        getForm().getUnitaDocumentarieList().getTable().setPageSize(10);
+                        // Aggiungo alla lista una regola di ordinamento
+                        getForm().getUnitaDocumentarieList().getTable()
+                                .addSortingRule(AroVRicUnitaDocTableDescriptor.COL_DS_KEY_ORD, SortingRule.ASC);
+
+                        /* Salvo i filtri per eventuale creazione criteri di raggruppamento */
+                        getSession().setAttribute("filtriUD", filtri);
+
+                        // Workaround in modo che la lista punti al primo record, non all'ultimo
+                        getForm().getUnitaDocumentarieList().getTable().first();
+                    }
+                }
+            }
+            // Carico la pagina di ricerca
+            forwardToPublisher(pageToRedirect);
+
+        }
+        // RICERCA UNITA' DOCUMENTARIE AVANZATA
         else {
             /*
              * Resetto la lista per evitare conflitti tra la ricerca avanzata (con selectedList) e la ricerca versamenti
@@ -2425,7 +2701,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
         // Controlla che i filtri dati specifici siano stati compilati correttamente
         checkFiltriSettatiSuDatiSpecifici();
 
-        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA);
+        forwardToPublisher(getLastPublisher());
     }
 
     private void salvaFiltriDatiSpecCompilati() {
@@ -2454,18 +2730,28 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     }
 
     /**
-     * Attiva il tab Filtri Dati Specifici di Ricerca UnitÃ Documentarie
+     * Attiva il tab Filtri Dati Specifici di Ricerca Unità Documentarie
      *
      * @throws EMFError
      *             errore generico
      */
     @Override
     public void tabFiltriDatiSpecOnClick() throws EMFError {
-        // mi salvo i filtri compilati nel tab precedente
-        getForm().getFiltriUnitaDocumentarieAvanzata().post(getRequest());
-        getForm().getUnitaDocumentarieTabs().setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriDatiSpec());
-        // Workaround per evitare che il trigger scarichi la pagina HTML anzichÃ¨ visualizzarla sul browser
-        forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA);
+        if (getLastPublisher().equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA)) {
+            // mi salvo i filtri compilati nel tab precedente
+            getForm().getFiltriUnitaDocumentarieAvanzata().post(getRequest());
+            getForm().getUnitaDocumentarieTabs()
+                    .setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriDatiSpec());
+            // Workaround per evitare che il trigger scarichi la pagina HTML anzichè visualizzarla sul browser
+            forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_AVANZATA);
+        } else if (getLastPublisher().equals(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC)) {
+            // mi salvo i filtri compilati nel tab precedente
+            getForm().getFiltriUnitaDocumentarieDatiSpec().post(getRequest());
+            getForm().getUnitaDocumentarieTabs()
+                    .setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriDatiSpec());
+            // Workaround per evitare che il trigger scarichi la pagina HTML anzichè visualizzarla sul browser
+            forwardToPublisher(Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC);
+        }
     }
 
     // Gestione DETTAGLIO UNITA' DOCUMENTARIE TABS
@@ -4003,10 +4289,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // rimuovo il riferimento al sistema migrazione
             for (DecCriterioDatiSpecBean datoSpec : listaDatiSpecOnLine) {
                 List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
-                for (int i = 0; i < tabellaDefinitoDa.size(); i++) {
-                    if (tabellaDefinitoDa.get(i).getNmSistemaMigraz() != null
-                            && tabellaDefinitoDa.get(i).getNmSistemaMigraz().equals(nmSistemaMigraz)) {
-                        tabellaDefinitoDa.remove(i);
+                Iterator<DecCriterioAttribBean> iterator = tabellaDefinitoDa.iterator();
+                while (iterator.hasNext()) {
+                    DecCriterioAttribBean attribBean = iterator.next();
+                    if (attribBean.getNmSistemaMigraz() != null
+                            && attribBean.getNmSistemaMigraz().equals(nmSistemaMigraz)) {
+                        iterator.remove();
                     }
                 }
             }
@@ -4086,6 +4374,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // Se passo di qua, significa che ho dei dati specifici
             // per questo Tipo UnitÃ Documentaria e dunque spunto il flag a video
             getForm().getFiltriUnitaDocumentarieAvanzata().getFlag_dati_spec_presenti_ud().setChecked(true);
+            getForm().getFiltriUnitaDocumentarieDatiSpec().getFlag_dati_spec_presenti_ud().setChecked(true);
 
             // Ricavo l'informazione "Definito da" per il TIPO UNITA' DOCUMENTARIA
             DecCriterioAttribBean criterioAttrib = new DecCriterioAttribBean();
@@ -4116,6 +4405,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // Se passo di qua, significa che ho dei dati specifici
             // per questo Tipo Documento e dunque spunto il flag a video
             getForm().getFiltriUnitaDocumentarieAvanzata().getFlag_dati_spec_presenti_doc().setChecked(true);
+            getForm().getFiltriUnitaDocumentarieDatiSpec().getFlag_dati_spec_presenti_doc().setChecked(true);
 
             // Ricavo l'informazione "Definito da" per il TIPO DOCUMENTO
             DecCriterioAttribBean criterioAttrib = new DecCriterioAttribBean();
@@ -4145,6 +4435,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // Se passo di qua, significa che ho dei dati specifici
             // per questo Tipo Sistema Migrazione e dunque spunto il flag a video
             getForm().getFiltriUnitaDocumentarieAvanzata().getFlag_dati_spec_presenti_sm().setChecked(true);
+            // getForm().getFiltriUnitaDocumentarieDatiSpec().getFlag_dati_spec_presenti_sm().setChecked(true);
 
             // Ricavo l'informazione "Definito da" per il TIPO SISTEMA MIGRAZIONE
             DecCriterioAttribBean criterioAttrib = new DecCriterioAttribBean();
@@ -4389,6 +4680,9 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             getForm().getFiltriUnitaDocumentarieAvanzata().getFiltri_dati_spec().setValue(filtriDatiSpec.toString());
             getForm().getUnitaDocumentarieTabs()
                     .setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriRicercaAvanzata());
+
+            getForm().getFiltriUnitaDocumentarieDatiSpec().getFiltri_dati_spec().setValue(filtriDatiSpec.toString());
+
         } else {
             getForm().getUnitaDocumentarieTabs()
                     .setCurrentTab(getForm().getUnitaDocumentarieTabs().getFiltriDatiSpec());
@@ -5978,5 +6272,253 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
         return csv;
     }
+
+    @Override
+    public JSONObject triggerFiltriUnitaDocumentarieDatiSpecNm_tipo_unita_docOnTrigger() throws EMFError {
+        FiltriUnitaDocumentarieDatiSpec udfa = getForm().getFiltriUnitaDocumentarieDatiSpec();
+        // Ricavo l'elenco dei tipi unitÃ documentaria PRIMA di modificare (aggiunta/rimozione) il relativo filtro
+        List<BigDecimal> tipoUnitaDocPre = udfa.getNm_tipo_unita_doc().parse();
+        // Eseguo la post del filtri
+        udfa.post(getRequest());
+        // Ricavo l'elenco dei tipi unitÃ documentaria DOPO aver modificato (aggiunta/rimozione) il relativo filtro
+        List<BigDecimal> tipoUnitaDocPost = udfa.getNm_tipo_unita_doc().parse();
+        // Confronto i due elenchi: se la lunghezza di tipoUnitaDocPre Ã¨ inferiore
+        // a quella di tipoUnitaDocPost significa che ho fatto un'aggiunta
+        boolean aggiunta = false;
+        List<BigDecimal> elementoDiverso = (List<BigDecimal>) CollectionUtils.disjunction(tipoUnitaDocPre,
+                tipoUnitaDocPost);
+        if (tipoUnitaDocPre.size() < tipoUnitaDocPost.size()) {
+            aggiunta = true;
+        }
+
+        // Ricavo la Lista Dati Specifici compilati a video
+        List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = (ArrayList) getSession()
+                .getAttribute("listaDatiSpecOnLine") != null
+                        ? (ArrayList) getSession().getAttribute("listaDatiSpecOnLine") : new ArrayList();
+
+        // HO FATTO UN'AGGIUNTA
+        if (aggiunta) {
+            // Ricavo i dati specifici di quel TIPO UNITA' DOCUMENTARIA aggiunto o tolto
+            DecAttribDatiSpecTableBean datiSpecTB = udHelper.getDecAttribDatiSpecTableBean(elementoDiverso.get(0),
+                    TipoEntitaSacer.UNI_DOC);
+            aggiungiDatiSpecPerTipoUnitaDoc(datiSpecTB, listaDatiSpecOnLine);
+        } // HO FATTO UNA RIMOZIONE
+        else {
+            // Ricavo il nome del TIPO UNITA' DOCUMENTARIA RIMOSSO
+            String nmTipoUnitaDoc = udHelper.getDecTipoUnitaDocRowBean(elementoDiverso.get(0)).getNmTipoUnitaDoc();
+
+            // Per ogni DATO SPECIFICO di questo TIPO UNITA' DOCUMENTARIA
+            // rimuovo il riferimento al tipo unitÃ documentaria
+            for (DecCriterioDatiSpecBean datoSpec : listaDatiSpecOnLine) {
+                List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
+                for (int i = 0; i < tabellaDefinitoDa.size(); i++) {
+                    if (tabellaDefinitoDa.get(i).getNmTipoUnitaDoc() != null
+                            && tabellaDefinitoDa.get(i).getNmTipoUnitaDoc().equals(nmTipoUnitaDoc)) {
+                        tabellaDefinitoDa.remove(i);
+                    }
+                }
+            }
+
+            // Controllo se ho ancora dati specifici per tutti i tipi unitÃ documentaria
+            // e nel frattempo rimuovo gli eventuali dati specifici che non hanno piÃ¹ elementi
+            // del tipo "definitoDa"
+            boolean hasDSsuTipiUnitaDoc = false;
+            Iterator it = listaDatiSpecOnLine.iterator();
+            while (it.hasNext()) {
+                DecCriterioDatiSpecBean datoSpec = (DecCriterioDatiSpecBean) it.next();
+                List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
+                if (tabellaDefinitoDa.isEmpty()) {
+                    it.remove();
+                } else {
+                    for (DecCriterioAttribBean rigaDefinitoDa : tabellaDefinitoDa) {
+                        if (rigaDefinitoDa.getNmTipoUnitaDoc() != null) {
+                            hasDSsuTipiUnitaDoc = true;
+                        }
+                    }
+                }
+            }
+
+            // Se non ho piÃ¹ dati specifici, tolgo la spunta alla CheckBox
+            if (!hasDSsuTipiUnitaDoc) {
+                getForm().getFiltriUnitaDocumentarieDatiSpec().getFlag_dati_spec_presenti_ud().setChecked(false);
+            }
+
+            // Aggiorno l'interfaccia online
+            updateInterfacciaOnLineDatiSpec(listaDatiSpecOnLine, false);
+        } // end ELSE
+
+        if (tipoUnitaDocPost.size() == 1) {
+            // Recupero le versioni XSD associate al tipo unità documentaria selezionato
+            DecodeMap mappaVersioniXsd = new DecodeMap();
+            mappaVersioniXsd.populatedMap(datiSpecEjb
+                    .getXsdDatiSpecTableBeanByTipoEntita(tipoUnitaDocPost.get(0).longValue(), TipoEntitaSacer.UNI_DOC),
+                    "cd_versione_xsd", "cd_versione_xsd");
+            getForm().getFiltriUnitaDocumentarieDatiSpec().getCd_versione_xsd_ud().setDecodeMap(mappaVersioniXsd);
+        } else {
+            getForm().getFiltriUnitaDocumentarieDatiSpec().getCd_versione_xsd_ud().setDecodeMap(new DecodeMap());
+        }
+
+        return getForm().getFiltriUnitaDocumentarieDatiSpec().asJSON();
+    }
+
+    @Override
+    public JSONObject triggerFiltriUnitaDocumentarieDatiSpecNm_tipo_docOnTrigger() throws EMFError {
+        FiltriUnitaDocumentarieDatiSpec udfa = getForm().getFiltriUnitaDocumentarieDatiSpec();
+        // Ricavo l'elenco dei tipi documento PRIMA di modificare (aggiunta/rimozione) il relativo filtro
+        List<BigDecimal> tipoDocPre = udfa.getNm_tipo_doc().parse();
+        // Eseguo la post del filtri
+        udfa.post(getRequest());
+        // Ricavo l'elenco dei tipi documento DOPO aver modificato (aggiunta/rimozione) il relativo filtro
+        List<BigDecimal> tipoDocPost = udfa.getNm_tipo_doc().parse();
+        // Confronto i due elenchi: se la lunghezza di tipoDocPre Ã¨ inferiore
+        // a quella di tipoDocPost significa che ho fatto un'aggiunta
+        boolean aggiunta = false;
+        List<BigDecimal> elementoDiverso = (List<BigDecimal>) CollectionUtils.disjunction(tipoDocPre, tipoDocPost);
+        if (tipoDocPre.size() < tipoDocPost.size()) {
+            aggiunta = true;
+        }
+
+        // Ricavo la Lista Dati Specifici compilati a video
+        List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = (ArrayList) getSession()
+                .getAttribute("listaDatiSpecOnLine") != null
+                        ? (ArrayList) getSession().getAttribute("listaDatiSpecOnLine") : new ArrayList();
+
+        // HO FATTO UN'AGGIUNTA
+        if (aggiunta) {
+            DecAttribDatiSpecTableBean datiSpecTB = udHelper.getDecAttribDatiSpecTableBean(elementoDiverso.get(0),
+                    TipoEntitaSacer.DOC);
+            aggiungiDatiSpecPerTipoDoc(datiSpecTB, listaDatiSpecOnLine);
+        } // HO FATTO UNA RIMOZIONE
+        else {
+            // Ricavo il nome del tipo documento
+            String nmTipoDoc = udHelper.getDecTipoDocRowBean(elementoDiverso.get(0)).getNmTipoDoc();
+
+            // Per ogni DATO SPECIFICO di questo TIPO DOCUMENTO
+            // rimuovo il riferimento al tipo documento
+            for (DecCriterioDatiSpecBean datoSpec : listaDatiSpecOnLine) {
+                List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
+                for (int i = 0; i < tabellaDefinitoDa.size(); i++) {
+                    if (tabellaDefinitoDa.get(i).getNmTipoDoc() != null
+                            && tabellaDefinitoDa.get(i).getNmTipoDoc().equals(nmTipoDoc)) {
+                        tabellaDefinitoDa.remove(i);
+                    }
+                }
+            }
+
+            // Controllo se ho ancora dati specifici per tutti i tipi documento
+            boolean hasDSsuTipiDoc = false;
+            Iterator it = listaDatiSpecOnLine.iterator();
+            while (it.hasNext()) {
+                DecCriterioDatiSpecBean datoSpec = (DecCriterioDatiSpecBean) it.next();
+                List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
+                if (tabellaDefinitoDa.isEmpty()) {
+                    it.remove();
+                } else {
+                    for (DecCriterioAttribBean rigaDefinitoDa : tabellaDefinitoDa) {
+                        if (rigaDefinitoDa.getNmTipoDoc() != null) {
+                            hasDSsuTipiDoc = true;
+                        }
+                    }
+                }
+            }
+
+            if (!hasDSsuTipiDoc) {
+                getForm().getFiltriUnitaDocumentarieDatiSpec().getFlag_dati_spec_presenti_doc().setChecked(false);
+            }
+
+            // Aggiorno l'interfaccia online
+            updateInterfacciaOnLineDatiSpec(listaDatiSpecOnLine, false);
+        } // end ELSE
+
+        if (tipoDocPost.size() == 1) {
+            // Recupero le versioni XSD associate al tipo documento selezionato
+            DecodeMap mappaVersioniXsd = new DecodeMap();
+            mappaVersioniXsd.populatedMap(datiSpecEjb.getXsdDatiSpecTableBeanByTipoEntita(
+                    tipoDocPost.get(0).longValue(), TipoEntitaSacer.DOC), "cd_versione_xsd", "cd_versione_xsd");
+            getForm().getFiltriUnitaDocumentarieDatiSpec().getCd_versione_xsd_doc().setDecodeMap(mappaVersioniXsd);
+
+            // Gestione Elemento
+            // getForm().getFiltriUnitaDocumentarieDatiSpec().getTi_doc()
+            // .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_doc", Constants.TiDoc.values()));
+        } else {
+            getForm().getFiltriUnitaDocumentarieDatiSpec().getCd_versione_xsd_doc().setDecodeMap(new DecodeMap());
+            // getForm().getFiltriUnitaDocumentarieDatiSpec().getTi_doc().setDecodeMap(new DecodeMap());
+        }
+
+        return getForm().getFiltriUnitaDocumentarieDatiSpec().asJSON();
+    }
+
+    // @Override
+    // public JSONObject triggerFiltriUnitaDocumentarieDatiSpecNm_sistema_migrazOnTrigger() throws EMFError {
+    // FiltriUnitaDocumentarieDatiSpec udfa = getForm().getFiltriUnitaDocumentarieDatiSpec();
+    // // Ricavo l'elenco dei sitemi di migrazione PRIMA di modificare (aggiunta/rimozione) il relativo filtro
+    // List<String> tipoSisMigrPre = udfa.getNm_sistema_migraz().parse();
+    // // Eseguo la post del filtri
+    // udfa.post(getRequest());
+    // // Ricavo l'elenco dei sistemi di migrazione DOPO aver modificato (aggiunta/rimozione) il relativo filtro
+    // List<String> tipoSisMigrPost = udfa.getNm_sistema_migraz().parse();
+    // // Confronto i due elenchi: se la lunghezza di tipoSisMigrPre Ã¨ inferiore
+    // // a quella di tipoSisMigrPost significa che ho fatto un'aggiunta
+    // boolean aggiunta = false;
+    // List<String> elementoDiverso = (List<String>) CollectionUtils.disjunction(tipoSisMigrPre, tipoSisMigrPost);
+    // if (tipoSisMigrPre.size() < tipoSisMigrPost.size()) {
+    // aggiunta = true;
+    // }
+    //
+    // // Ricavo la Lista Dati Specifici compilati a video
+    // List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = (ArrayList) getSession()
+    // .getAttribute("listaDatiSpecOnLine") != null
+    // ? (ArrayList) getSession().getAttribute("listaDatiSpecOnLine") : new ArrayList();
+    //
+    // // HO FATTO UN'AGGIUNTA
+    // if (aggiunta) {
+    // DecAttribDatiSpecTableBean datiSpecTB = udHelper.getDecAttribDatiSpecSisMigrTableBean(
+    // elementoDiverso.get(0), getUser().getIdOrganizzazioneFoglia());
+    // aggiungiDatiSpecPerSisMigr(datiSpecTB, listaDatiSpecOnLine);
+    // } // HO FATTO UNA RIMOZIONE
+    // else {
+    // // Ricavo il nome del sistema di migrazione
+    // String nmSistemaMigraz = elementoDiverso.get(0);
+    //
+    // // Per ogni DATO SPECIFICO di questo SISTEMA MIGRAZIONE
+    // // rimuovo il riferimento al sistema migrazione
+    // for (DecCriterioDatiSpecBean datoSpec : listaDatiSpecOnLine) {
+    // List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
+    // Iterator<DecCriterioAttribBean> iterator = tabellaDefinitoDa.iterator();
+    // while (iterator.hasNext()) {
+    // DecCriterioAttribBean attribBean = iterator.next();
+    // if (attribBean.getNmSistemaMigraz() != null
+    // && attribBean.getNmSistemaMigraz().equals(nmSistemaMigraz)) {
+    // iterator.remove();
+    // }
+    // }
+    // }
+    //
+    // // Controllo se ho ancora dati specifici per tutti i sistemi migrazione
+    // boolean hasDSsuSisMigr = false;
+    // Iterator it = listaDatiSpecOnLine.iterator();
+    // while (it.hasNext()) {
+    // DecCriterioDatiSpecBean datoSpec = (DecCriterioDatiSpecBean) it.next();
+    // List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
+    // if (tabellaDefinitoDa.isEmpty()) {
+    // it.remove();
+    // } else {
+    // for (DecCriterioAttribBean rigaDefinitoDa : tabellaDefinitoDa) {
+    // if (rigaDefinitoDa.getNmSistemaMigraz() != null) {
+    // hasDSsuSisMigr = true;
+    // }
+    // }
+    // }
+    // }
+    //
+    // if (!hasDSsuSisMigr) {
+    // getForm().getFiltriUnitaDocumentarieDatiSpec().getFlag_dati_spec_presenti_sm().setChecked(false);
+    // }
+    //
+    // // Aggiorno l'interfaccia online
+    // updateInterfacciaOnLineDatiSpec(listaDatiSpecOnLine, false);
+    // } // end ELSE
+    // return getForm().getFiltriUnitaDocumentarieDatiSpec().asJSON();
+    // }
 
 }

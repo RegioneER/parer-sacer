@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>10.5.1-SNAPSHOT</version>
+    <version>10.6.0</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -514,21 +514,6 @@
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-			<!-- BOM per JBoss EAP 7.4 (jboss-eap-jakartaee8) dependencies -->
-			<!-- jboss-ejb-api_3.2_spec -->
-            <dependency>
-                <groupId>org.jboss.spec.javax.xml.bind</groupId>
-                <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
-                <scope>provided</scope>
-            </dependency>
-			<!--JDK 11 -->
-			<!-- jboss-jaxws-api_2.3_spec -->
-            <dependency>
-                <groupId>org.jboss.spec.javax.xml.ws</groupId>
-                <artifactId>jboss-jaxws-api_2.3_spec</artifactId>
-                <scope>provided</scope>
-            </dependency>
-
 			<!--            <dependency>
                 <groupId>com.sun.xml.ws</groupId>
                 <artifactId>jaxws-rt</artifactId>

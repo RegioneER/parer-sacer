@@ -237,6 +237,46 @@ public class UnitaDocumentarieValidator extends TypeValidator {
         return result;
     }
 
+    public Object[] validaChiaviUnitaDocRicUdDatiSpec(String[] registro, BigDecimal anno_da, BigDecimal anno_a,
+            String numero_da, String numero_a) {
+        boolean chiave = false;
+        boolean range = false;
+        boolean num = false;
+        Object[] result = new Object[5];
+        result[0] = registro;
+        if (anno_da != null && anno_a == null) {
+            result[1] = anno_da;
+            result[2] = new BigDecimal(GregorianCalendar.getInstance().get(Calendar.YEAR));
+        } else if (anno_da == null && anno_a != null) {
+            result[1] = new BigDecimal(2000);
+            result[2] = anno_a;
+        } else {
+            result[1] = anno_da;
+            result[2] = anno_a;
+        }
+
+        if (numero_da != null && numero_a == null) {
+            result[3] = numero_da;
+            result[4] = "zzzzzzzzzzzz";
+        } else if (numero_da == null && numero_a != null) {
+            result[3] = "000000000000";
+            result[4] = numero_a;
+        } else {
+            result[3] = numero_da;
+            result[4] = numero_a;
+        }
+
+        if ((result[1] != null || result[2] != null)
+                && ((BigDecimal) result[1]).compareTo((BigDecimal) result[2]) > 0) {
+            getMessageBox().addError("Range di chiavi unità documentaria: Anno Da maggiore di Anno A");
+        }
+        if ((result[3] != null || result[4] != null) && ((String) result[3]).compareTo((String) result[4]) > 0) {
+            getMessageBox().addError("Range di chiavi unità documentaria: Numero Da maggiore di Numero A");
+        }
+
+        return result;
+    }
+
     public Object[] validaChiaviUnitaDocRicUd(String registro, BigDecimal anno, String numero, BigDecimal anno_da,
             BigDecimal anno_a, String numero_da, String numero_a, String numero_contiene) {
         String[] registroArr = new String[1];
