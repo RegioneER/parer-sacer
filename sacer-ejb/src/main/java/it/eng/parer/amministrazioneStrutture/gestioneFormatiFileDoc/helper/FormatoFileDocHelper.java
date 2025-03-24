@@ -675,7 +675,7 @@ public class FormatoFileDocHelper extends GenericHelper {
                 + joinNomeFormato + "                 where uso.ni_ord_uso = 1   " + whereNomeFormato
                 + whereMimetypeFormato
                 + "                 AND formato_file_doc.nm_formato_file_doc = formato_file_standard.nm_formato_file_standard   "
-                + "                 UNION ALL    select  " + "                 formato_file_doc.id_strut as id_strut, "
+                + "                 UNION    select  " + "                 formato_file_doc.id_strut as id_strut, "
                 + "                 formato_file_doc.id_formato_file_doc as id_formato_file_doc,   "
                 + "                 formato_file_doc.nm_formato_file_doc as nm_formato_file_doc,   "
                 + "                 "
@@ -710,7 +710,7 @@ public class FormatoFileDocHelper extends GenericHelper {
                 + joinNomeFormato
                 + "                 where ammesso.id_tipo_comp_doc = :idTipoCompDoc    AND uso.ni_ord_uso = 1   "
                 + "                 AND formato_file_doc.nm_formato_file_doc = formato_file_standard.nm_formato_file_standard   "
-                + whereNomeFormato + whereMimetypeFormato + "                 UNION ALL    select      "
+                + whereNomeFormato + whereMimetypeFormato + "                 UNION    select      "
                 + "                 ammesso.id_formato_file_ammesso as id_formato_file_ammesso,  "
                 + "                 formato_file_doc.id_formato_file_doc as id_formato_file_doc,   "
                 + "                 formato_file_doc.nm_formato_file_doc as nm_formato_file_doc,   "

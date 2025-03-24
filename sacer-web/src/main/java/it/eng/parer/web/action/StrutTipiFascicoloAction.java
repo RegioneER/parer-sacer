@@ -192,7 +192,7 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
                             .getTable()).getCurrentRow().getIdAaTipoFascicolo();
                     loadDettaglioAaTipoFascicolo(idAaTipoFascicolo);
                 } else if (getTableName().equals(getForm().getMetadatiProfiloFascicoloList().getName())) {
-                    initMetadatiProfilo();
+                    initMetadatiProfiloDetail();
                     loadDettaglioXsdAaTipoFascicolo();
                     if (getNavigationEvent().equals(ListAction.NE_DETTAGLIO_UPDATE)) {
                         getForm().getMetadatiProfiloFascicoloList().setStatus(Status.update);
@@ -439,7 +439,7 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
 
         DecodeMap mappaModelliXsd = new DecodeMap();
         mappaModelliXsd.populatedMap(
-                tipoFascicoloEjb.getDecModelloXsdFascicoloTableBeanByTiModelloXsd(
+                tipoFascicoloEjb.getDecModelloXsdFascicoloTableBeanByTiModelloXsdDetail(
                         getForm().getMetadatiProfiloDetail().getTi_modello_xsd().parse()),
                 "id_modello_xsd_fascicolo", "cd_xsd");
         getForm().getMetadatiProfiloDetail().getId_modello_xsd_fascicolo().setDecodeMap(mappaModelliXsd);
@@ -975,7 +975,7 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
         getForm().getMetadatiProfiloDetail()
                 .copyFromBean(((DecUsoModelloXsdFascTableBean) getForm().getMetadatiProfiloFascicoloList().getTable())
                         .getCurrentRow());
-        initMetadatiProfilo();
+        initMetadatiProfiloDetail();
         loadDettaglioXsdAaTipoFascicolo();
         forwardToPublisher(Application.Publisher.XSD_AA_TIPO_FASCICOLO_DETAIL);
     }
@@ -1648,20 +1648,32 @@ public class StrutTipiFascicoloAction extends StrutTipiFascicoloAbstractAction {
         getForm().getParteNumeroFascicoloDetail().getNi_parte_numero().setViewMode();
     }
 
-    private void initMetadatiProfilo() throws EMFError {
+    private void initMetadatiProfilo(boolean includeDate) throws EMFError {
         // Combo tipo xsd
         getForm().getMetadatiProfiloDetail().getTi_modello_xsd()
                 .setDecodeMap(ComboGetter.getMappaTiModelloXsdProfilo());
+
         // Combo versioni di xsd
+        Date dateFilter = includeDate ? new Date() : null;
         DecModelloXsdFascicoloTableBean modelloXsdFascicoloTableBean = tipoFascicoloEjb
-                .getDecModelloXsdFascicoloTableBean(getForm().getStrutRif().getId_ambiente().parse(), new Date(), null,
+                .getDecModelloXsdFascicoloTableBean(getForm().getStrutRif().getId_ambiente().parse(), dateFilter, null,
                         CostantiDB.TiUsoModelloXsd.VERS.name());
+
         getForm().getMetadatiProfiloDetail().getId_modello_xsd_fascicolo().setDecodeMap(
                 DecodeMap.Factory.newInstance(modelloXsdFascicoloTableBean, "id_modello_xsd_fascicolo", "cd_xsd"));
 
+        // Imposta le date
         getForm().getMetadatiProfiloDetail().getDt_istituz()
                 .setValue(ActionUtils.getStringDate(Calendar.getInstance().getTime()));
         getForm().getMetadatiProfiloDetail().getDt_soppres().setValue(ActionUtils.getStringDate(null));
+    }
+
+    private void initMetadatiProfilo() throws EMFError {
+        initMetadatiProfilo(true);
+    }
+
+    private void initMetadatiProfiloDetail() throws EMFError {
+        initMetadatiProfilo(false);
     }
 
     private void initParteNumeroFascicoloDetail() {

@@ -573,7 +573,7 @@
     </List>
     <!-- Lista stati conservazione dell'unità documentaria -->
     <List Description="Stati di conservazione dell'unità documentaria" Name="StatiConservazioneUdList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true">
-        <Input Description="Data stato" Name="dt_stato" Type="DATETIME"/>
+        <Input Description="Data stato" Name="dt_stato_string" Type="STRING"/>
         <Input Description="Evento" Name="ti_evento" Type="STRING"/>
         <Input Description="Modalità" Name="ti_mod" Type="STRING"/>
         <Input Description="Agente" Name="nm_agente" Type="STRING"/>

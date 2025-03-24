@@ -876,9 +876,13 @@ public class ComponentiHelper extends GenericHelper {
             for (int i = 0; i < certifCaNameList.size(); i++) {
                 BigDecimal idCertif = new BigDecimal(certifCaNameList.get(i).toString());
                 FirCertifCa fircertif = getEntityManager().find(FirCertifCa.class, idCertif.longValue());
-                BlobObject bocertif = new BlobObject(idCertif.longValue(),
-                        fircertif.getFirFilePerFirma().getBlFilePerFirma());
-                listaBlobbiCertif.add(bocertif);
+                // corretto controllo mancante su !=null con MAC 35187
+                if (fircertif != null && fircertif.getFirFilePerFirma() != null) {
+                    // recupero finalmente il file del certificato
+                    BlobObject bocertif = new BlobObject(idCertif.longValue(),
+                            fircertif.getFirFilePerFirma().getBlFilePerFirma());
+                    listaBlobbiCertif.add(bocertif);
+                }
             }
         }
         blobbi[0] = listaBlobbiCRL;

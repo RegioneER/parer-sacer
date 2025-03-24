@@ -20,7 +20,7 @@ package it.eng.parer.entity;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Timestamp;
 
 /**
  * The persistent class for the ARO_LOG_STATO_CONSERV_UD database table.
@@ -33,7 +33,7 @@ public class AroLogStatoConservUd implements Serializable {
     private static final long serialVersionUID = 1L;
     private long idLogStatoConservUd;
     private BigDecimal aaKeyUnitaDoc;
-    private Date dtStato;
+    private Timestamp dtStato;
     private String nmAgente;
     private String tiEvento;
     private String tiMod;
@@ -64,13 +64,12 @@ public class AroLogStatoConservUd implements Serializable {
         this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "DT_STATO")
-    public Date getDtStato() {
+    public Timestamp getDtStato() {
         return this.dtStato;
     }
 
-    public void setDtStato(Date dtStato) {
+    public void setDtStato(Timestamp dtStato) {
         this.dtStato = dtStato;
     }
 

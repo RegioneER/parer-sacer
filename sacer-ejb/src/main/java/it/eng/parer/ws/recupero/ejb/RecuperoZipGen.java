@@ -1915,13 +1915,33 @@ public class RecuperoZipGen {
                 switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
                 case UNI_DOC_UNISYNCRO_V2:
                     boolean closeEntry = false;
-                    for (VrsXmlDatiSessioneVers tmpXml : lstVrsXml) {
+                    for (VrsXmlDatiSessioneVers tmpXmlPre : lstVrsXml) {
+                        // Recupero l'oggetto VrsXmlDatiSessioneVers per avere "in pancia" anche eventuali figli della
+                        // stessa transazione
+                        // inseriti nel caso di Validazione Fascicolo
+                        VrsXmlDatiSessioneVers tmpXml = udHelper.findById(VrsXmlDatiSessioneVers.class,
+                                tmpXmlPre.getIdXmlDatiSessioneVers());
+
+                        // VrsUrnXmlSessioneVers urnXmlSessioneVers = controlliRecupero
+                        // .findVrsUrnXmlSessioneVersByTiUrn(tmpXml, TiUrnXmlSessioneVers.ORIGINALE);
+                        // String urnXmlVers = (urnXmlSessioneVers != null) ? urnXmlSessioneVers.getDsUrn()
+                        // : tmpXml.getDsUrnXmlVers();
+
                         // urn
                         // Recupero lo urn ORIGINALE dalla tabella VRS_URN_XML_SESSIONE_VERS
-                        VrsUrnXmlSessioneVers urnXmlSessioneVers = controlliRecupero
-                                .findVrsUrnXmlSessioneVersByTiUrn(tmpXml, TiUrnXmlSessioneVers.ORIGINALE);
-                        String urnXmlVers = (urnXmlSessioneVers != null) ? urnXmlSessioneVers.getDsUrn()
-                                : tmpXml.getDsUrnXmlVers();
+                        // MAC 35187
+                        String urnXmlVers = "";
+                        boolean trovato = false;
+                        for (VrsUrnXmlSessioneVers urn : tmpXml.getVrsUrnXmlSessioneVers()) {
+                            if (urn.getTiUrn().equals(TiUrnXmlSessioneVers.ORIGINALE)) {
+                                urnXmlVers = urn.getDsUrn();
+                                trovato = true;
+                            }
+                        }
+                        if (!trovato) {
+                            urnXmlVers = tmpXml.getDsUrnXmlVers();
+                        }
+
                         /* Definisco la folder relativa al sistema di conservazione */
                         Constants.TipoSessione tipoSessione = controlliRecupero.getTipoSessioneFrom(tmpXml);
                         String tmpPath = (tipoSessione.equals(Constants.TipoSessione.VERSAMENTO))

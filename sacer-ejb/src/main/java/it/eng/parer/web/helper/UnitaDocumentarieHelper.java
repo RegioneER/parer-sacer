@@ -91,6 +91,7 @@ import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarie
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieDatiSpec;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm.FiltriUnitaDocumentarieSemplice;
 import it.eng.parer.slite.gen.tablebean.AroFileVerIndiceAipUdRowBean;
+import it.eng.parer.slite.gen.tablebean.AroLogStatoConservUdRowBean;
 import it.eng.parer.slite.gen.tablebean.AroLogStatoConservUdTableBean;
 import it.eng.parer.slite.gen.tablebean.AroUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.AroUpdUnitaDocTableBean;
@@ -162,6 +163,7 @@ import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.base.table.BaseTable;
+import java.text.SimpleDateFormat;
 import java.util.stream.Stream;
 
 /**
@@ -177,6 +179,34 @@ public class UnitaDocumentarieHelper extends GenericHelper {
     private static final Logger log = LoggerFactory.getLogger(UnitaDocumentarieHelper.class.getName());
 
     private static final String ID_VER_INDICE_AIP_PARAMETER = "idVerIndiceAip";
+
+    private static final String RIC_UD_DATI_SPEC_BASE = "SELECT distinct ud.id_Unita_Doc, ud.aa_Key_Unita_Doc, ud.cd_Key_Unita_Doc, ud.cd_Registro_Key_Unita_Doc, ud.dt_Creazione, ud.dt_Reg_Unita_Doc, ud.fl_Unita_Doc_Firmato, "
+            + "ud.ti_Esito_Verif_Firme, ud.ds_Msg_Esito_Verif_Firme, tipo_ud.nm_Tipo_Unita_Doc, ud.fl_Forza_Accettazione, ud.fl_Forza_Conservazione, ud.ds_Key_Ord, ud.ni_Alleg, ud.ni_Annessi, ud.ni_Annot, ud.ti_Stato_Conservazione, ";
+
+    private static final String RIC_UD_DATI_SPEC_NM_TIPO_DOC_PRINC = "(SELECT tipo_doc_princ.nm_tipo_doc "
+            + "              FROM sacer.ARO_DOC  doc_princ "
+            + "                   JOIN sacer.DEC_TIPO_DOC tipo_doc_princ "
+            + "                       ON (tipo_doc_princ.id_tipo_doc = doc_princ.id_tipo_doc) "
+            + "             WHERE     " + "                   doc_princ.id_unita_doc = ud.id_unita_doc "
+            + "                   AND doc_princ.ti_doc = 'PRINCIPALE' "
+            + "                   and rownum = 1                   " + "                   ) nm_tipo_doc_princ, ";
+
+    private static final String RIC_UD_DATI_SPEC_STATI_ELENCO_VERS = "(SELECT LISTAGG (tmp.ti_stato_elenco_vers, '; ') "
+            + "              WITHIN GROUP (ORDER BY tmp.ti_stato_elenco_vers) "
+            + "              FROM (SELECT ud_elenco.ti_stato_ud_elenco_vers    ti_stato_elenco_vers "
+            + "                      FROM sacer.ARO_UNITA_DOC ud_elenco "
+            + "                     WHERE ud_elenco.id_unita_doc = ud.id_unita_doc " + "                    UNION "
+            + "                    SELECT "
+            + "                           doc_elenco.ti_stato_doc_elenco_vers    ti_stato_elenco_vers "
+            + "                      FROM sacer.ARO_DOC doc_elenco "
+            + "                     WHERE     doc_elenco.id_unita_doc = ud.id_unita_doc "
+            + "                           AND doc_elenco.ti_stato_doc_elenco_vers "
+            + "                                   IS NOT NULL) tmp "
+            + "                                   )       ds_lista_stati_elenco_vers ";
+
+    private static final String RIC_UD_DATI_SPEC_BASE_FROM = "FROM sacer.aro_unita_doc ud "
+            + "JOIN sacer.dec_tipo_unita_doc tipo_ud on (tipo_ud.id_tipo_unita_doc = ud.id_tipo_unita_doc) "
+            + "JOIN sacer.aro_doc doc on (doc.id_unita_doc = ud.id_unita_doc) ";
 
     @EJB(mappedName = "java:app/Parer-ejb/VolumeHelper")
     private VolumeHelper volumeHelper;
@@ -1839,36 +1869,29 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             FiltriUnitaDocumentarieDatiSpecPlain filtri, boolean lazy, boolean almenoUnTipoUnitaDocSePerRicercaDatiSpec,
             boolean almenoUnTipoDocSelPerRicercaDatiSpec) throws EMFError {
         String whereWord = " WHERE ";
-        // Creo la parte iniziale della query di ricerca che invocherà in distinct una versione "lite" di
-        // ARO_V_RIC_UNITA_DOC
-        StringBuilder queryInvolucro = new StringBuilder(
-                "select distinct u.id_Unita_Doc, u.aa_Key_Unita_Doc, u.cd_Key_Unita_Doc, u.cd_Registro_Key_Unita_Doc, "
-                        + "u.dt_Creazione, u.dt_Reg_Unita_Doc,u.fl_Unita_Doc_Firmato, u.ti_Esito_Verif_Firme, u.ds_Msg_Esito_Verif_Firme, u.nm_Tipo_Unita_Doc, "
-                        + "u.fl_Forza_Accettazione, u.fl_Forza_Conservazione, u.ds_Key_Ord, u.ni_Alleg, u.ni_Annessi, u.ni_Annot, u.nm_Tipo_Doc_Princ, "
-                        + "u.ds_Lista_Stati_Elenco_Vers, u.ti_Stato_Conservazione from aro_v_ric_unita_Doc_ric_ds u WHERE u.id_Unita_Doc in (");
+        // Creo la parte iniziale della query di ricerca
+        StringBuilder queryInvolucro = new StringBuilder(RIC_UD_DATI_SPEC_BASE + RIC_UD_DATI_SPEC_NM_TIPO_DOC_PRINC
+                + RIC_UD_DATI_SPEC_STATI_ELENCO_VERS + RIC_UD_DATI_SPEC_BASE_FROM);
 
-        // List<String> sisMigrazList = filtri.getNmSistemaMigraz();
+        StringBuilder queryWhereConditions = new StringBuilder();
 
-        StringBuilder queryPrincipale = new StringBuilder(" SELECT b.id_unita_doc FROM aro_unita_doc b ");
-
-        if (almenoUnTipoDocSelPerRicercaDatiSpec) { // || !sisMigrazList.isEmpty()
-            queryPrincipale.append(" JOIN aro_doc c on (c.id_unita_doc = b.id_unita_doc) ");
-            // Inserimento nella query del filtro Tipo doc
-            queryPrincipale.append(whereWord).append(" c.id_tipo_doc IN (:listtipodoc) ");
+        if (!cdRegistroUnitaDocSet.isEmpty()) {
+            // Inserimento nella query del filtro Registro
+            queryWhereConditions.append(whereWord).append(" ud.cd_Registro_Key_Unita_Doc IN (:setregistro) ");
             whereWord = "AND ";
         }
 
-        if (almenoUnTipoUnitaDocSePerRicercaDatiSpec) {
+        if (!idTipoDocList.isEmpty()) {
             // Inserimento nella query del filtro Tipo doc
-            queryPrincipale.append(whereWord).append(" b.id_tipo_unita_doc IN (:listtipoud) ");
+            queryWhereConditions.append(whereWord).append(" doc.id_tipo_doc IN (:listtipodoc) ");
             whereWord = "AND ";
         }
 
-        // // Inserimento nella query del filtro NM_SISTEMA_MIGRAZ in versione multiselect
-        // if (!sisMigrazList.isEmpty()) {
-        // queryPrincipale.append(whereWord).append(" (b.nm_Sistema_Migraz IN (:listasismigraz)) ");
-        // whereWord = " AND ";
-        // }
+        if (!idTipoUnitaDocList.isEmpty()) {
+            // Inserimento nella query del filtro Tipo doc
+            queryWhereConditions.append(whereWord).append(" ud.id_tipo_unita_doc IN (:listtipoud) ");
+            whereWord = "AND ";
+        }
 
         // Inserimento nella query dei filtri sui range di anno e numero
         BigDecimal annoRangeDa = filtri.getAaKeyUnitaDocDa();
@@ -1877,62 +1900,40 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String codiceRangeA = filtri.getCdKeyUnitaDocA();
 
         if (annoRangeDa != null && annoRangeA != null) {
-            queryPrincipale.append(whereWord).append(" (b.aa_Key_Unita_Doc BETWEEN :annoin_da AND :annoin_a) ");
+            queryWhereConditions.append(whereWord).append(" (ud.aa_Key_Unita_Doc BETWEEN :annoin_da AND :annoin_a) ");
             whereWord = " AND ";
         }
 
         if (codiceRangeDa != null && codiceRangeA != null) {
             codiceRangeDa = StringPadding.padString(codiceRangeDa, "0", 12, StringPadding.PADDING_LEFT);
             codiceRangeA = StringPadding.padString(codiceRangeA, "0", 12, StringPadding.PADDING_LEFT);
-            queryPrincipale.append(whereWord)
-                    .append(" LPAD( b.cd_Key_Unita_Doc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
+            queryWhereConditions.append(whereWord)
+                    .append(" LPAD( ud.cd_Key_Unita_Doc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
             whereWord = " AND ";
-        }
-
-        queryPrincipale.append(whereWord).append(" b.id_Strut = :idstrutin ");
-        whereWord = " AND ";
-        queryPrincipale.append(whereWord).append(" b.ti_annul is null ");
-
-        // UTILIZZO DEI DATI SPECIFICI
-        String cdVersioneXsdUd = filtri.getCdVersioneXsdUd();
-        String cdVersioneXsdDoc = filtri.getCdVersioneXsdDoc();
-        ReturnParams params = volumeHelper.buildConditionsForRicDatiSpec(listaDatiSpecOnLine, cdVersioneXsdUd,
-                cdVersioneXsdDoc);
-        List<DatiSpecQueryParams> mappone = params.getMappone();
-
-        // Aggrego le varie sottoquery
-        queryInvolucro.append(queryPrincipale);
-        queryInvolucro.append(params.getQuery());
-        queryInvolucro.append(")");
-
-        // Inserimento nella query del filtro Tipo unita doc
-        if (!almenoUnTipoUnitaDocSePerRicercaDatiSpec) {
-            queryInvolucro.append(whereWord).append(" u.id_tipo_unita_doc IN (:listtipoud) ");
-            whereWord = "AND ";
-        }
-
-        // Passaggio dei filtri dei parametri tipi dato soggetti ad abilitazione (REGISTRO, TIPO_UD, TIPO_DOC,
-        // SUB_STRUTTURA)
-        // Inserimento nella query del filtro Tipo doc
-        if (!almenoUnTipoDocSelPerRicercaDatiSpec) { // && sisMigrazList.isEmpty()
-            queryInvolucro.append(whereWord).append(" u.id_tipo_doc IN (:listtipodoc) ");
-            whereWord = "AND ";
-        }
-
-        // Inserimento nella query del filtro Registro
-        if (!cdRegistroUnitaDocSet.isEmpty()) {
-            queryInvolucro.append(whereWord).append(" u.cd_Registro_Key_Unita_Doc IN (:setregistro) ");
-            whereWord = "AND ";
         }
 
         // Inserimento nella query del filtro sottostruttura
         List<BigDecimal> subStruts = filtri.getNmSubStrut();
         if (!subStruts.isEmpty()) {
-            queryInvolucro.append(whereWord).append(" u.id_Sub_Strut IN (:subStruts) ");
+            queryWhereConditions.append(whereWord).append(" ud.id_Sub_Strut IN (:subStruts) ");
         }
 
+        whereWord = " AND ";
+        queryWhereConditions.append(whereWord).append(" ud.ti_annul is null ");
+
+        // UTILIZZO DEI DATI SPECIFICI
+        String cdVersioneXsdUd = filtri.getCdVersioneXsdUd();
+        String cdVersioneXsdDoc = filtri.getCdVersioneXsdDoc();
+        ReturnParams params = volumeHelper.buildConditionsForRicDatiSpec(listaDatiSpecOnLine, cdVersioneXsdUd,
+                cdVersioneXsdDoc, annoRangeDa, annoRangeA, idStruttura);
+        List<DatiSpecQueryParams> mappone = params.getMappone();
+
+        // Aggrego le varie sottoquery
+        queryInvolucro.append(queryWhereConditions);
+        queryInvolucro.append(params.getQuery());
+
         // ordina per dsKeyDoc crescente
-        queryInvolucro.append(" ORDER BY u.ds_Key_Ord");
+        queryInvolucro.append(" ORDER BY ud.ds_Key_Ord");
 
         // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
         Query query = getEntityManager().createNativeQuery(queryInvolucro.toString());
@@ -1972,10 +1973,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
             query.setParameter("setregistro", cdRegistroUnitaDocSet);
         }
 
-        // if (!sisMigrazList.isEmpty()) {
-        // query.setParameter("listasismigraz", sisMigrazList);
-        // }
-
         if (annoRangeDa != null && annoRangeA != null) {
             query.setParameter("annoin_da", annoRangeDa);
             query.setParameter("annoin_a", annoRangeA);
@@ -1984,10 +1981,6 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         if (codiceRangeDa != null && codiceRangeA != null) {
             query.setParameter("codicein_da", codiceRangeDa);
             query.setParameter("codicein_a", codiceRangeA);
-        }
-
-        if (idStruttura != null) {
-            query.setParameter("idstrutin", idStruttura);
         }
 
         if (!subStruts.isEmpty()) {
@@ -2026,9 +2019,9 @@ public class UnitaDocumentarieHelper extends GenericHelper {
                         (BigDecimal) row[13], // niAlleg
                         (BigDecimal) row[14], // niAnnessi
                         (BigDecimal) row[15], // niAnnot
-                        (String) row[16], // nmTipoDocPrinc
-                        (String) row[17], // dsListaStatiElencoVers
-                        (String) row[18] // tiStatoConservazione
+                        (String) row[16], // tiStatoConservazione
+                        (String) row[17], // nmTipoDocPrinc
+                        (String) row[18] // dsListaStatiElencoVers
                 );
             }).collect(Collectors.toList());
         }
@@ -5816,14 +5809,19 @@ public class UnitaDocumentarieHelper extends GenericHelper {
 
     // MEV #31162
     public AroLogStatoConservUdTableBean getAroLogStatoConservUdTableBean(BigDecimal idUnitaDoc) {
-        String queryStr = "SELECT u FROM AroLogStatoConservUd u WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ORDER BY u.dtStato";
+        String queryStr = "SELECT u FROM AroLogStatoConservUd u WHERE u.aroUnitaDoc.idUnitaDoc = :idUnitaDoc ORDER BY u.dtStato DESC";
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("idUnitaDoc", idUnitaDoc.longValue());
         List<AroLogStatoConservUd> listaLog = query.getResultList();
         AroLogStatoConservUdTableBean logTableBean = new AroLogStatoConservUdTableBean();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS"); // Formato desiderato
         try {
-            if (listaLog != null && !listaLog.isEmpty()) {
-                logTableBean = (AroLogStatoConservUdTableBean) Transform.entities2TableBean(listaLog);
+            for (AroLogStatoConservUd udLog : listaLog) {
+                AroLogStatoConservUdRowBean logRowBean = new AroLogStatoConservUdRowBean();
+                logRowBean = (AroLogStatoConservUdRowBean) Transform.entity2RowBean(udLog);
+                String dtStatoString = sdf.format(udLog.getDtStato());
+                logRowBean.setString("dt_stato_string", dtStatoString);
+                logTableBean.add(logRowBean);
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);

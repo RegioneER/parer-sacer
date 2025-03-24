@@ -244,14 +244,15 @@ public class UnitaDocumentarieValidator extends TypeValidator {
         boolean num = false;
         Object[] result = new Object[5];
         result[0] = registro;
-        if (anno_da != null && anno_a == null) {
+        // Valori di default
+        result[1] = new BigDecimal(2000);
+        result[2] = new BigDecimal(GregorianCalendar.getInstance().get(Calendar.YEAR));
+
+        // Sovrascrivi i valori di default se anno_da e/o anno_a sono presenti
+        if (anno_da != null) {
             result[1] = anno_da;
-            result[2] = new BigDecimal(GregorianCalendar.getInstance().get(Calendar.YEAR));
-        } else if (anno_da == null && anno_a != null) {
-            result[1] = new BigDecimal(2000);
-            result[2] = anno_a;
-        } else {
-            result[1] = anno_da;
+        }
+        if (anno_a != null) {
             result[2] = anno_a;
         }
 

@@ -6211,6 +6211,16 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
             // eseguo registra urn aip pregressi
             urnHelper.scriviUrnAipUdPreg(aroUnitaDoc, versatore, chiave);
         }
+
+        // ATTENZIONE: lo stesso metodo è presente in ElaborazioneRigaIndiceAipDaElab (nell'ambito della creazione
+        // indice AIP)
+        // dove, oltre alla logica sopra presente, è riportato il calcolo degli URN delle UD collegate. Tale logica
+        // è correttamente presente per la creazione indice AIP (informazioni che sono necessarie) mentre in questo caso
+        // non è
+        // presente in quanto si sta scaricando solo l'UD in questione. Nel caso, gli URN delle UD collegate verranno
+        // comunque generati
+        // proprio nel processo di scarica UD dell'ud collegata.
+
     }
 
     public void sistemaUrnUnitaDoc(AroUnitaDoc aroUnitaDoc, Date dataInizio, CSVersatore versatore, CSChiave chiave)

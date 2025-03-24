@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.ejb.TransactionAttribute;
@@ -90,7 +92,11 @@ public class UnitaDocumentarieEjb {
             AroLogStatoConservUd logStatoConservUd = new AroLogStatoConservUd();
             logStatoConservUd.setAroUnitaDoc(unitaDoc);
             logStatoConservUd.setOrgSubStrut(unitaDoc.getOrgSubStrut());
-            logStatoConservUd.setDtStato(new Date());
+            // Ottieni l'istante corrente
+            Instant now = Instant.now();
+            // Crea un Timestamp dall'Instant
+            Timestamp istante = Timestamp.from(now);
+            logStatoConservUd.setDtStato(istante);
             logStatoConservUd.setAaKeyUnitaDoc(unitaDoc.getAaKeyUnitaDoc());
             logStatoConservUd.setNmAgente(nmAgente);
             logStatoConservUd.setTiEvento(tiEvento);

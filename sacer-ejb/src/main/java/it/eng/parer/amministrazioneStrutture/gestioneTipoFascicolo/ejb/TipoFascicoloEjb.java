@@ -1097,12 +1097,10 @@ public class TipoFascicoloEjb {
 
     public DecUsoModelloXsdFascRowBean getVersioneXsdMetadati(BigDecimal idAaTipoFascicolo,
             BigDecimal idModelloXsdFascicolo) throws ParerUserError {
-        DecUsoModelloXsdFascRowBean usoModelloXsdFascRowBean = new DecUsoModelloXsdFascRowBean();
         List<DecUsoModelloXsdFasc> usoModelloXsdFascList = helper.getDecUsoModelloXsdFascList(idAaTipoFascicolo,
                 idModelloXsdFascicolo, null);
         DecUsoModelloXsdFasc usoModelloXsdFasc = usoModelloXsdFascList.get(0);
-        usoModelloXsdFascRowBean = getDecUsoModelloXsdFascRowBean(usoModelloXsdFasc);
-        return usoModelloXsdFascRowBean;
+        return getDecUsoModelloXsdFascRowBean(usoModelloXsdFasc);
     }
 
     private DecUsoModelloXsdFascRowBean getDecUsoModelloXsdFascRowBean(DecUsoModelloXsdFasc usoModelloXsdFasc)
@@ -1165,14 +1163,12 @@ public class TipoFascicoloEjb {
                 flDefault, tiUsoModelloXsd);
         try {
             for (DecModelloXsdFascicolo modelloXsdFascicolo : modelloXsdFascicoloList) {
-                DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = new DecModelloXsdFascicoloRowBean();
-                modelloXsdFascicoloRowBean = (DecModelloXsdFascicoloRowBean) Transform
+                DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = (DecModelloXsdFascicoloRowBean) Transform
                         .entity2RowBean(modelloXsdFascicolo);
-                // modelloXsdFascicoloRowBean.setString("codice_descrizione",
-                // modelloXsdFascicolo.getCdXsd() + " - " + modelloXsdFascicolo.getDsXsd());
                 modelloXsdFascicoloTableBean.add(modelloXsdFascicoloRowBean);
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                | NoSuchMethodException | InvocationTargetException e) {
             logger.error(e.getMessage(), e);
             throw new IllegalStateException("Errore durante il recupero dei modelli xsd fascicolo");
         }
@@ -1989,22 +1985,36 @@ public class TipoFascicoloEjb {
      * @return TableBean DecModelloXsdFascicolo
      */
     public DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBeanByTiModelloXsd(String tiModelloXsd) {
+        return getDecModelloXsdFascicoloTableBean(tiModelloXsd, false);
+    }
+
+    /**
+     *
+     * @param tiModelloXsd
+     *            modello xsd
+     *
+     * @return TableBean DecModelloXsdFascicolo
+     */
+    public DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBeanByTiModelloXsdDetail(String tiModelloXsd) {
+        return getDecModelloXsdFascicoloTableBean(tiModelloXsd, true);
+    }
+
+    private DecModelloXsdFascicoloTableBean getDecModelloXsdFascicoloTableBean(String tiModelloXsd, boolean isDetail) {
         DecModelloXsdFascicoloTableBean decModelloXsdFascicoloTableBean = new DecModelloXsdFascicoloTableBean();
         try {
+            List<DecModelloXsdFascicolo> modelliXsdFascicolo = isDetail
+                    ? helper.getDecModelloXsdFascicoloByTiModelloXsdDetail(tiModelloXsd)
+                    : helper.getDecModelloXsdFascicoloByTiModelloXsd(tiModelloXsd);
 
-            List<DecModelloXsdFascicolo> modelliXsdFascicolo = helper
-                    .getDecModelloXsdFascicoloByTiModelloXsd(tiModelloXsd);
             if (modelliXsdFascicolo != null && !modelliXsdFascicolo.isEmpty()) {
-
                 for (DecModelloXsdFascicolo modelloXsdFascicolo : modelliXsdFascicolo) {
-                    DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = new DecModelloXsdFascicoloRowBean();
-                    modelloXsdFascicoloRowBean = (DecModelloXsdFascicoloRowBean) Transform
+                    DecModelloXsdFascicoloRowBean modelloXsdFascicoloRowBean = (DecModelloXsdFascicoloRowBean) Transform
                             .entity2RowBean(modelloXsdFascicolo);
                     decModelloXsdFascicoloTableBean.add(modelloXsdFascicoloRowBean);
                 }
             }
-
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InstantiationException
+                | NoSuchMethodException | InvocationTargetException e) {
             logger.error(e.getMessage(), e);
         }
         return decModelloXsdFascicoloTableBean;

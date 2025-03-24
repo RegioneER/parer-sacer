@@ -191,8 +191,13 @@ public class ControlliRecupero {
         List<VolVolumeConserv> lstVolumi = null;
 
         try {
-            String queryStr = "select t  from VolAppartUnitaDocVolume audv " + "join audv.volVolumeConserv t "
-                    + "where audv.aroUnitaDoc.idUnitaDoc = :idUnitaDoc";
+            // String queryStr = "select t from VolAppartUnitaDocVolume audv "
+            // + "join FETCH audv.volVolumeConserv t JOIN FETCH t.orgStrut strut "
+            // + "where audv.aroUnitaDoc.idUnitaDoc = :idUnitaDoc";
+            // MAC 35187
+            String queryStr = "select t from VolVolumeConserv t " + "JOIN FETCH t.volAppartUnitaDocVolumes audv "
+                    + "JOIN FETCH t.orgStrut strut " + "JOIN FETCH strut.orgEnte ente "
+                    + "JOIN FETCH ente.orgAmbiente ambiente " + "where audv.aroUnitaDoc.idUnitaDoc = :idUnitaDoc";
 
             javax.persistence.Query query = entityManager.createQuery(queryStr);
             query.setParameter("idUnitaDoc", idUnitaDoc);
@@ -253,15 +258,22 @@ public class ControlliRecupero {
                 String urnCompletoIniz = null;
                 String urnCompleto = null;
 
-                AroCompUrnCalc compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp,
-                        TiUrn.NORMALIZZATO);
+                // Ricavo l'URN normalizzato o iniziale:
+                // - se presente l'iniziale, prendo quello (significa che avevo creato un indice AIP con la vecchia
+                // nomenclatura)
+                // - se non presente l'iniziale, prendo il normalizzato (nuovo urn)
+                AroCompUrnCalc tmpUrnIniziale = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp,
+                        TiUrn.INIZIALE);
+
+                AroCompUrnCalc compUrnCalc = tmpUrnIniziale != null ? tmpUrnIniziale
+                        : unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.NORMALIZZATO);
                 if (compUrnCalc != null) {
                     urnCompleto = compUrnCalc.getDsUrn();
                 } else {
                     urnCompleto = tmpCmp.getDsUrnCompCalc();
                 }
 
-                // urn iniz
+                // urn iniz (per Tivoli)
                 compUrnCalc = unitaDocumentarieHelper.findAroCompUrnCalcByType(tmpCmp, TiUrn.INIZIALE);
                 if (compUrnCalc != null) {
                     urnCompletoIniz = compUrnCalc.getDsUrn();
