@@ -136,11 +136,11 @@
         <Input Type="STRING" Description="Tipo uso modello" Name="ti_uso_modello_xsd" Hidden="true"/>
         <Input Type="STRING" Description="Tipo modello" Name="ti_modello_xsd" />
         <Input Type="STRING" Description="Versione" Name="cd_xsd" />
+        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
         <Input Type="STRING" Description="Descrizione" Name="ds_xsd" />
         <CheckBox Type="STRING" Description="Standard" Name="fl_standard" Readonly="true"/>
         <Input Type="DATE" Description="Data attivazione" Name="dt_istituz" />
         <Input Type="DATE" Description="Data fine validità" Name="dt_soppres" />
-        <CheckBox Type="STRING" Description="Attivo" Name="fl_attivo" Readonly="true"/>
     </List>
     
     <List Name="AttribFascicoloList" Description="Lista attributi fascicolo" hideInsertButton="true">

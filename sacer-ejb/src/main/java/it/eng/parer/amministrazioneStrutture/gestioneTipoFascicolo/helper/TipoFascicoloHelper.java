@@ -472,18 +472,36 @@ public class TipoFascicoloHelper extends GenericHelper {
      * @return lista di elementi di tipo DecModelloXsdFascicolo
      */
     public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloByTiModelloXsd(String tiModelloXsd) {
+        return getDecModelloXsdFascicolo(tiModelloXsd, true);
+    }
 
-        List<DecModelloXsdFascicolo> result = null;
+    /**
+     *
+     * @param tiModelloXsd
+     *            tipo modello xsd
+     *
+     * @return lista di elementi di tipo DecModelloXsdFascicolo
+     */
+    public List<DecModelloXsdFascicolo> getDecModelloXsdFascicoloByTiModelloXsdDetail(String tiModelloXsd) {
+        return getDecModelloXsdFascicolo(tiModelloXsd, false);
+    }
 
+    private List<DecModelloXsdFascicolo> getDecModelloXsdFascicolo(String tiModelloXsd, boolean withDateFilter) {
         String queryStr = "SELECT modelloXsdFasc FROM DecModelloXsdFascicolo modelloXsdFasc WHERE modelloXsdFasc.tiModelloXsd = :tiModelloXsd";
+
+        if (withDateFilter) {
+            queryStr += " AND modelloXsdFasc.dtIstituz <= :data AND modelloXsdFasc.dtSoppres >= :data";
+        }
+
         Query query = getEntityManager().createQuery(queryStr);
         query.setParameter("tiModelloXsd",
                 it.eng.parer.entity.constraint.DecModelloXsdFascicolo.TiModelloXsd.valueOf(tiModelloXsd));
 
-        result = query.getResultList();
+        if (withDateFilter) {
+            query.setParameter("data", new Date());
+        }
 
-        return result;
-
+        return query.getResultList();
     }
 
     /**

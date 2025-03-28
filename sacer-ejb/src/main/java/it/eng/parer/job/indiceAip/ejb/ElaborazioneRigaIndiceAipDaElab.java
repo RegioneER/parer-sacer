@@ -671,6 +671,16 @@ public class ElaborazioneRigaIndiceAipDaElab {
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getOrgEnte().getOrgAmbiente().getIdAmbiente()),
                 BigDecimal.valueOf(unitaDoc.getOrgStrut().getIdStrut()), null, null,
                 CostantiDB.TipoAplVGetValAppart.STRUT);
+
+        SIOrgEnteSiam orgEnteConvenz = null;
+        if (unitaDoc.getOrgStrut().getIdEnteConvenz() != null) {
+            orgEnteConvenz = ciaHelper.findById(SIOrgEnteSiam.class, unitaDoc.getOrgStrut().getIdEnteConvenz());
+        }
+
+        mappaAgent.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
+                BigDecimal.valueOf(orgEnteConvenz.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
+                BigDecimal.valueOf(orgEnteConvenz.getIdEnteSiam()), CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
+
         Calendar c = Calendar.getInstance();
         String anno = "" + c.get(Calendar.YEAR);
         int meseNum = c.get(Calendar.MONTH) + 1;

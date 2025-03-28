@@ -43,8 +43,6 @@ import it.eng.parer.web.util.Constants.TipoEntitaSacer;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.TipoOperatoreDatiSpec;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -82,11 +80,17 @@ public class VolumeHelper {
 
     private String buildClauseExistsRicercaDatiSpec(String conjunctionWord, int entityNameSuffix, int indiceidattribds,
             String operatore, String filtro, String filtroVersioneDs, String initialBracket, String from, String where,
-            String entitaSacer, String and1, String and2, String tipoSuffissoEntita) {
+            String entitaSacer, String and1, String and2, String tipoSuffissoEntita, BigDecimal annoRangeDa,
+            BigDecimal annoRangeA, BigDecimal idStrut) {
         StringBuilder clauseExists = new StringBuilder();
         clauseExists.append(conjunctionWord).append(initialBracket + " exists (select 1 from " + from + " ric_dati_spec"
                 + entityNameSuffix + " WHERE ric_dati_spec" + entityNameSuffix + where + " ");
+        // aggiungo i filtri su anno e struttura
         clauseExists.append("and ric_dati_spec" + entityNameSuffix + and1 + indiceidattribds + " ");
+
+        clauseExists.append("and ric_dati_spec" + entityNameSuffix + ".aa_key_unita_doc BETWEEN " + annoRangeDa
+                + " AND " + annoRangeA + " ");
+        clauseExists.append("and ric_dati_spec" + entityNameSuffix + ".id_strut = " + idStrut + " ");
         if (!and2.isEmpty()) {
             clauseExists.append("and ric_dati_spec" + entityNameSuffix + and2 + indiceidattribds + " ");
         }
@@ -441,7 +445,7 @@ public class VolumeHelper {
     }
 
     public ReturnParams buildConditionsForRicDatiSpec(List<?> datiSpecList, String filtroVersioneDsUd,
-            String filtroVersioneDsDoc) {
+            String filtroVersioneDsDoc, BigDecimal annoRangeDa, BigDecimal annoRangeA, BigDecimal idStrut) {
         ReturnParams retParams = new ReturnParams();
         StringBuilder queryStr = new StringBuilder();
         // UTILIZZO DEI DATI SPECIFICI
@@ -549,13 +553,14 @@ public class VolumeHelper {
                             // (---1---) aggiungo il predicato alla query
                             String initialBracket = "";
                             String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
-                            String where = ".id_Unita_Doc = b.id_Unita_Doc";
+                            String where = ".id_Unita_Doc = ud.id_Unita_Doc";
                             String entitaSacer = "'UNI_DOC'";
                             String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
                             String and2 = "";
                             queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
                                     indiceidattribds, operatore, filtro, filtroVersioneDsUd, initialBracket, from,
-                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita, annoRangeDa, annoRangeA,
+                                    idStrut));
                             conjunctionWord = " AND ";
                             firstTimeTipoUD = false;
                             entityNameSuffix++;
@@ -564,13 +569,14 @@ public class VolumeHelper {
                             // (---2---) aggiungo il predicato alla query
                             String initialBracket = "";
                             String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
-                            String where = ".id_Unita_Doc = b.id_Unita_Doc";
+                            String where = ".id_Unita_Doc = ud.id_Unita_Doc";
                             String entitaSacer = "'UNI_DOC'";
                             String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
                             String and2 = "";
                             queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
                                     indiceidattribds, operatore, filtro, filtroVersioneDsUd, initialBracket, from,
-                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita, annoRangeDa, annoRangeA,
+                                    idStrut));
                             conjunctionWord = " AND ";
                             entityNameSuffix++;
                             indiceidattribds++;
@@ -618,13 +624,14 @@ public class VolumeHelper {
                             // (---3---) aggiungo il predicato alla query
                             String initialBracket = "";
                             String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
-                            String where = ".id_Doc = c.id_Doc";
+                            String where = ".id_Doc = doc.id_Doc";
                             String entitaSacer = "'DOC'";
                             String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
                             String and2 = "";
                             queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
                                     indiceidattribds, operatore, filtro, filtroVersioneDsDoc, initialBracket, from,
-                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita, annoRangeDa, annoRangeA,
+                                    idStrut));
                             conjunctionWord = " AND ";
                             firstTimeTipoDoc = false;
                             entityNameSuffix++;
@@ -633,13 +640,14 @@ public class VolumeHelper {
                             // (---4---) aggiungo il predicato alla query
                             String initialBracket = "";
                             String from = "ARO_VALORE_ATTRIB_DATI_SPEC_RIC_DS";
-                            String where = ".id_Doc = c.id_Doc";
+                            String where = ".id_Doc = doc.id_Doc";
                             String entitaSacer = "'DOC'";
                             String and1 = ".id_Attrib_Dati_Spec = :idattribdatispecin";
                             String and2 = "";
                             queryStr.append(buildClauseExistsRicercaDatiSpec(conjunctionWord, entityNameSuffix,
                                     indiceidattribds, operatore, filtro, filtroVersioneDsDoc, initialBracket, from,
-                                    where, entitaSacer, and1, and2, tipoSuffissoEntita));
+                                    where, entitaSacer, and1, and2, tipoSuffissoEntita, annoRangeDa, annoRangeA,
+                                    idStrut));
                             conjunctionWord = " AND ";
                             entityNameSuffix++;
                             indiceidattribds++;
