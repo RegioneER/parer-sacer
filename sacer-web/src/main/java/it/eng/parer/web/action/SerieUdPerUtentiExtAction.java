@@ -436,11 +436,10 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
 
         if (!getMessageBox().hasError()) {
             File tmpFile = new File(System.getProperty("java.io.tmpdir"), filename);
-            FileOutputStream fileOs = null;
-            ZipOutputStream out = null;
-            try {
-                fileOs = new FileOutputStream(tmpFile);
-                out = new ZipOutputStream(fileOs);
+            // FileOutputStream fileOs = null;
+            // ZipOutputStream out = null;
+            try (FileOutputStream fileOs = new FileOutputStream(tmpFile); // Try with resources
+                    ZipOutputStream out = new ZipOutputStream(fileOs)) {
 
                 serieEjb.createZipPacchettoArk(idVerSerie, out, aipFirmato, volIx);
 
@@ -456,16 +455,16 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
                 log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
                 getMessageBox().addError("Errore inatteso nella preparazione del download");
             } finally {
-                IOUtils.closeQuietly(out);
-                IOUtils.closeQuietly(fileOs);
+                // IOUtils.closeQuietly(out);
+                // IOUtils.closeQuietly(fileOs);
+                if (getMessageBox().hasError()) {
+                    forwardToPublisher(getLastPublisher());
+                } else {
+                    forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+                }
             }
         }
 
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(getLastPublisher());
-        } else {
-            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
-        }
     }
 
     @Override
@@ -805,7 +804,6 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
     }
 
     public void scaricaIndiceVolume() throws EMFError {
-        // BigDecimal idVolumeVerSerie = getForm().getVolumeDetail().getId_vol_ver_serie().parse();
         String riga = getRequest().getParameter("riga");
         BigDecimal numberRiga = BigDecimal.ZERO;
         if (StringUtils.isNotBlank(riga)) {
@@ -823,41 +821,36 @@ public class SerieUdPerUtentiExtAction extends SerieUdPerUtentiExtAbstractAction
 
             // Nome del file IndiceAIPSerieUD-<versione serie>_<ambiente>_<ente>_<struttura>_<codice serie>”
             getResponse().setContentType("application/xml");
-            getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeFileVolume + ".xml");
-            // Ricavo lo stream di output
-            OutputStream out = getServletOutputStream();
-            try {
-                // Caccio dentro nello zippone il blobbo
-                if (fileVolume != null) {
-                    // Ricavo lo stream di input
-                    InputStream is = new ByteArrayInputStream(fileVolume.getBytes());
+            getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeFileVolume + ".xml\"");
+
+            // Caccio dentro nello zippone il blobbo
+            if (fileVolume != null) {
+                try (InputStream is = new ByteArrayInputStream(fileVolume.getBytes());
+                        OutputStream out = getServletOutputStream()) { // gestione automatica chiusura risorse
                     byte[] data = new byte[1024];
                     int count;
 
                     while ((count = is.read(data, 0, 1024)) != -1) {
                         out.write(data, 0, count);
                     }
-                    IOUtils.closeQuietly(is);
+                    out.flush();
                 }
-                out.flush();
-            } catch (IOException e) {
-                getMessageBox().addMessage(new Message(Message.MessageLevel.ERR,
-                        "Errore nel recupero del file XML relativo all'indice del volume "));
-                log.error("Eccezione", e);
-            } finally {
-                IOUtils.closeQuietly(out);
-                out = null;
-                if (!getMessageBox().hasError()) {
-                    freeze();
-                }
+
             }
         } catch (ParerUserError ex) {
             log.error("Errore nel recupero del file XML relativo all'indice del volume:" + ex.getMessage());
             getMessageBox().addError("Errore nel recupero del file XML relativo all'indice del volume");
-        }
-
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(Application.Publisher.VOLUME_SERIE_UD_DETAIL);
+        } catch (IOException e) {
+            getMessageBox().addMessage(new Message(Message.MessageLevel.ERR,
+                    "Errore nel recupero del file XML relativo all'indice del volume "));
+            log.error("Eccezione", e);
+        } finally {
+            if (!getMessageBox().hasError()) {
+                freeze();
+            }
+            if (getMessageBox().hasError()) {
+                forwardToPublisher(Application.Publisher.VOLUME_SERIE_UD_DETAIL);
+            }
         }
     }
 
