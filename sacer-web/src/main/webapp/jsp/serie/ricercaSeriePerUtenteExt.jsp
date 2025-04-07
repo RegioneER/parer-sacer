@@ -28,7 +28,7 @@
                 <sl:newLine />
                 <slf:lblField name="<%=SerieUdPerUtentiExtForm.FiltriRicercaSerie.NM_TIPO_UNITA_DOC%>" width="w50" controlWidth="w20" labelWidth="w40" />
                 <sl:newLine />
-                <slf:lblField name="<%=SerieUdPerUtentiExtForm.FiltriRicercaSerie.CD_REGISTRO_UNITA_DOC%>" width="w50" controlWidth="w20" labelWidth="w40" />
+                <slf:lblField name="<%=SerieUdPerUtentiExtForm.FiltriRicercaSerie.CD_REGISTRO_UNITA_DOC%>" width="w100" controlWidth="w20" labelWidth="w20" />
                 <sl:newLine />
             </slf:fieldSet>
             <sl:newLine skipLine="true"/>

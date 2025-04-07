@@ -49,6 +49,7 @@ import it.eng.parer.crypto.model.ParerTST;
 import static it.eng.parer.crypto.test.GestioneCRL.MAX_DIM_FILE_UPLOAD;
 import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 import it.eng.parer.firma.crypto.verifica.SpringTikaSingleton;
+import java.io.InputStream;
 
 /**
  *
@@ -127,24 +128,30 @@ public class TestMarcatura extends HttpServlet {
             }
 
             if (contDaMarcare != null) {
-                // CMSTimeStampedData tsdData = null;
-                // TimeStampToken tst = null;
-                ParerTSD tsdData = null;
-                ParerTST tst = null;
+                // Elaborazione Time Stamping
+                byte[] fileContent = FileUtils.readFileToByteArray(contDaMarcare);
+                byte[] encodedTs = null; // Definisco fuori perche serve dopo il try with resources
+
                 if (tsd) {
                     try {
-                        tsdData = cryInv.generateTSD(FileUtils.readFileToByteArray(contDaMarcare));
+                        ParerTSD tsdData = cryInv.generateTSD(fileContent);
                         request.setAttribute("tstTime",
                                 tsdData.getTimeStampTokens()[0].getTimeStampInfo().getGenTime());
+                        encodedTs = tsdData.getEncoded();
                     } catch (Exception ex) {
-                        log.error("Errore nell'acquisizione della marca temporale", ex);
+                        log.error("Errore nell'acquisizione della marca temporale TSD", ex);
+                        throw new ServletException("Errore nell'acquisizione della marca temporale TSD", ex); // Rilancio
+                                                                                                              // eccezione
                     }
                 } else {
                     try {
-                        tst = cryInv.requestTST(FileUtils.readFileToByteArray(contDaMarcare));
+                        ParerTST tst = cryInv.requestTST(fileContent);
                         request.setAttribute("tstTime", tst.getTimeStampInfo().getGenTime());
+                        encodedTs = tst.getEncoded();
                     } catch (Exception ex) {
-                        log.error("Errore nell'acquisizione della marca temporale", ex);
+                        log.error("Errore nell'acquisizione della marca temporale TST", ex);
+                        throw new ServletException("Errore nell'acquisizione della marca temporale TST", ex); // Rilancio
+                                                                                                              // eccezione
                     }
                 }
 
@@ -153,39 +160,33 @@ public class TestMarcatura extends HttpServlet {
                 response.setContentType("application/octet-stream");
                 response.setHeader("Content-Disposition", "attachment;filename=" + filename);
 
-                ByteArrayInputStream is = new ByteArrayInputStream(
-                        tst == null ? tsdData.getEncoded() : tst.getEncoded());
-                int read;
+                try (InputStream is = new ByteArrayInputStream(encodedTs); // Try with resources per InputStream
+                        OutputStream os = response.getOutputStream()) { // Try with resources per OutputStream
+                    byte[] bytes = new byte[1024];
+                    int read;
+                    while ((read = is.read(bytes)) != -1) {
+                        os.write(bytes, 0, read);
+                    }
+                    os.flush();
+                } // Chiusura automatica stream
 
-                byte[] bytes = new byte[1024];
-                OutputStream os = response.getOutputStream();
-                while ((read = is.read(bytes)) != -1) {
-                    os.write(bytes, 0, read);
-                }
-
-                os.flush();
-                os.close();
             } else if (contTika != null) {
                 String detectMimeType = ejbFormati.detectMimeType(Files.readAllBytes(contTika.toPath()));
                 request.setAttribute("mimeType", detectMimeType);
-                // Tika tika = ejbFormati.getTikaInstance();
-                // Metadata metadata = new Metadata();
-                // try (InputStream stream = TikaInputStream.get(contTika.toURI().toURL(), metadata)) {
-                // metadata.set(Metadata.RESOURCE_NAME_KEY, null);
-                // String text = tika.detect(stream, metadata);
-                // request.setAttribute("mimeType", text);
-                // }
-
                 request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
             } else {
                 request.getRequestDispatcher("JobMarche.jsp").forward(request, response);
             }
 
+        } catch (ServletException ex) { // Catturo eccezione lanciata nei vari try
+            log.error("Si è verificato un errore durante l'elaborazione della richiesta", ex);
+            throw ex;
         } finally {
-            if (contDaMarcare != null && contDaMarcare.exists()) {
+            // Cleanup dei file temporanei
+            if (contDaMarcare != null) {
                 FileUtils.deleteQuietly(contDaMarcare);
             }
-            if (contTika != null && contTika.exists()) {
+            if (contTika != null) {
                 FileUtils.deleteQuietly(contTika);
             }
         }

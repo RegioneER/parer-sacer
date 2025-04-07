@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License along with this program.
  * If not, see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.action;
 
 import java.io.File;
@@ -65,6 +64,8 @@ import it.eng.util.EncryptionUtil;
 public class HomeAction extends HomeAbstractAction {
 
     private static final long serialVersionUID = 1L;
+
+    private static final String ERRORE_DOWNLOAD_MESSAGE = "Errore in download ";
 
     private static Logger logger = LoggerFactory.getLogger(HomeAction.class.getName());
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
@@ -271,7 +272,6 @@ public class HomeAction extends HomeAbstractAction {
     @Override
     public void scaricaDisciplinareButton() throws EMFError {
         File tmpFile = null;
-        FileOutputStream out = null;
         try {
             long idStrut = getUser().getIdOrganizzazioneFoglia().longValueExact();
             Date dat = new Date();
@@ -280,10 +280,12 @@ public class HomeAction extends HomeAbstractAction {
                     + sdf.format(dat) + ".pdf";
             // Ottiene l'idStrut della struttura selezionata
             byte[] pdf = disciplinareTecnicoEjb.generaDisciplinareTecnicoPDF(idStrut);
-
             tmpFile = new File(System.getProperty("java.io.tmpdir"), nomeFile);
-            out = new FileOutputStream(tmpFile);
-            IOUtils.write(pdf, out);
+
+            try (FileOutputStream out = new FileOutputStream(tmpFile)) { // <-- try-with-resources
+                IOUtils.write(pdf, out);
+            } // 'out' viene automaticamente chiuso qui
+
             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(), tmpFile.getPath());
@@ -291,19 +293,20 @@ public class HomeAction extends HomeAbstractAction {
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
                     WebConstants.MIME_TYPE_PDF);
         } catch (ParerUserError ex) {
-            logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+            logger.error(ERRORE_DOWNLOAD_MESSAGE + ExceptionUtils.getRootCauseMessage(ex), ex);
             getMessageBox().addError(ex.getDescription());
+        } catch (IOException ex) {
+            logger.error(ERRORE_DOWNLOAD_MESSAGE + ExceptionUtils.getRootCauseMessage(ex), ex);
+            getMessageBox().addError("Errore durante la scrittura del file PDF.");
         } catch (Exception ex) {
-            logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
+            logger.error(ERRORE_DOWNLOAD_MESSAGE + ExceptionUtils.getRootCauseMessage(ex), ex);
             getMessageBox().addError("Errore inatteso nella preparazione del download<br/>");
         } finally {
-            IOUtils.closeQuietly(out);
-        }
-
-        if (getMessageBox().hasError() || getMessageBox().hasWarning()) {
-            forwardToPublisher(getLastPublisher());
-        } else {
-            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+            if (getMessageBox().hasError() || getMessageBox().hasWarning()) {
+                forwardToPublisher(getLastPublisher());
+            } else {
+                forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+            }
         }
     }
 

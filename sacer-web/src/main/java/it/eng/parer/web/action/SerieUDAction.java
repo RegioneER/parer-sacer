@@ -28,7 +28,6 @@ import it.eng.parer.entity.constraint.HsmSessioneFirma.TiSessioneFirma;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.ejb.SerieSignatureSessionEjb;
-import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
 import it.eng.parer.firma.crypto.sign.SigningResponse;
@@ -165,7 +164,6 @@ import javax.ejb.EJB;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -214,6 +212,8 @@ public class SerieUDAction extends SerieUDAbstractAction {
     private RecuperoDocumento recuperoDocumento;
 
     private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
+    private static final String ERRORE_DOWNLOAD_MESSAGE_INIT = "Errore in download ";
+    private static final String ERRORE_DOWNLOAD_MESSAGE = "Errore inatteso nella preparazione del download";
 
     @Override
     public void initOnClick() throws EMFError {
@@ -3559,20 +3559,18 @@ public class SerieUDAction extends SerieUDAbstractAction {
         String cdVerSerie = getForm().getContenutoSerieDetail().getCd_ver_serie().parse();
         String filename = "FileInput_" + cdCompSerie + "_" + anno.toPlainString() + "_" + cdVerSerie + ".csv";
         File tmpFile = new File(System.getProperty("java.io.tmpdir"), filename);
-
-        FileOutputStream file = null;
-        InputStream is = null;
         try {
             String fileString = serieEjb.getFileAcquisito(idVerSerie);
             if (fileString != null) {
-                file = new FileOutputStream(tmpFile);
-                is = new ByteArrayInputStream(fileString.getBytes(Charset.forName("UTF-8")));
-                byte[] data = new byte[1024];
-                int count;
-                while ((count = is.read(data, 0, 1024)) != -1) {
-                    file.write(data, 0, count);
-                }
 
+                try (FileOutputStream fileOs = new FileOutputStream(tmpFile); // Try With Resources
+                        InputStream is = new ByteArrayInputStream(fileString.getBytes(Charset.forName("UTF-8")))) {
+                    byte[] data = new byte[1024];
+                    int count;
+                    while ((count = is.read(data, 0, 1024)) != -1) {
+                        fileOs.write(data, 0, count);
+                    }
+                }
                 getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
                 getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), tmpFile.getName());
                 getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(), tmpFile.getPath());
@@ -3584,18 +3582,18 @@ public class SerieUDAction extends SerieUDAbstractAction {
         } catch (ParerUserError ex) {
             getMessageBox().addError(ex.getDescription());
         } catch (IOException ex) {
-            log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
-            getMessageBox().addError("Errore inatteso nella preparazione del download");
+            log.error(ERRORE_DOWNLOAD_MESSAGE_INIT + ExceptionUtils.getRootCauseMessage(ex), ex);
+            getMessageBox().addError(ERRORE_DOWNLOAD_MESSAGE);
         } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(file);
+            // MAC #37610: rimuovo le chiusure degli stream, non più necessarie in quanto ci pensa il blocco
+            // try-with-resource
+            if (getMessageBox().hasError()) {
+                forwardToPublisher(getLastPublisher());
+            } else {
+                forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+            }
         }
 
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(getLastPublisher());
-        } else {
-            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
-        }
     }
 
     @Override
@@ -3626,7 +3624,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     VerFormatiEnums.CSV_MIME);
         } catch (IOException ex) {
             log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
-            getMessageBox().addError("Errore inatteso nella preparazione del download");
+            getMessageBox().addError(ERRORE_DOWNLOAD_MESSAGE);
         }
 
         if (getMessageBox().hasError()) {
@@ -3659,7 +3657,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     VerFormatiEnums.CSV_MIME);
         } catch (IOException ex) {
             log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
-            getMessageBox().addError("Errore inatteso nella preparazione del download");
+            getMessageBox().addError(ERRORE_DOWNLOAD_MESSAGE);
         }
 
         if (getMessageBox().hasError()) {
@@ -3682,11 +3680,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 + cdVerSerie + ".zip";
         File tmpFile = new File(System.getProperty("java.io.tmpdir"), filename);
 
-        FileOutputStream fileOs = null;
-        ZipOutputStream out = null;
-        try {
-            fileOs = new FileOutputStream(tmpFile);
-            out = new ZipOutputStream(fileOs);
+        try (FileOutputStream fileOs = new FileOutputStream(tmpFile); // Try With Resources
+                ZipOutputStream out = new ZipOutputStream(fileOs)) {
+
             serieEjb.createZipSerQueryContenutoVerSerie(idContenutoVerSerie, out, prefixFile, suffixFile);
 
             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
@@ -3694,18 +3690,16 @@ public class SerieUDAction extends SerieUDAbstractAction {
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(), tmpFile.getPath());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name(), Boolean.toString(true));
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(), "application/zip");
+
         } catch (IOException ex) {
             log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
-            getMessageBox().addError("Errore inatteso nella preparazione del download");
+            getMessageBox().addError(ERRORE_DOWNLOAD_MESSAGE);
         } finally {
-            IOUtils.closeQuietly(out);
-            IOUtils.closeQuietly(fileOs);
-        }
-
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(getLastPublisher());
-        } else {
-            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+            if (getMessageBox().hasError()) {
+                forwardToPublisher(getLastPublisher());
+            } else {
+                forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+            }
         }
     }
 
@@ -3732,7 +3726,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     VerFormatiEnums.CSV_MIME);
         } catch (IOException ex) {
             log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
-            getMessageBox().addError("Errore inatteso nella preparazione del download");
+            getMessageBox().addError(ERRORE_DOWNLOAD_MESSAGE);
         }
 
         if (getMessageBox().hasError()) {
@@ -4775,42 +4769,38 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
             // Nome del file IndiceAIPSerieUD-<versione serie>_<ambiente>_<ente>_<struttura>_<codice serie>”
             getResponse().setContentType(it.eng.parer.async.utils.IOUtils.CONTENT_TYPE.XML.getContentType());
-            getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeFileVolume + ".xml");
-            // Ricavo lo stream di output
-            OutputStream out = getServletOutputStream();
-            try {
-                // Caccio dentro nello zippone il blobbo
-                if (fileVolume != null) {
-                    // Ricavo lo stream di input
-                    InputStream is = new ByteArrayInputStream(fileVolume.getBytes());
+            getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + nomeFileVolume + ".xml\"");
+
+            // Caccio dentro nello zippone il blobbo
+            if (fileVolume != null) {
+                try (InputStream is = new ByteArrayInputStream(fileVolume.getBytes());
+                        OutputStream out = getServletOutputStream()) { // Try with resources
                     byte[] data = new byte[1024];
                     int count;
 
                     while ((count = is.read(data, 0, 1024)) != -1) {
                         out.write(data, 0, count);
                     }
-                    IOUtils.closeQuietly(is);
-                }
-                out.flush();
-            } catch (IOException e) {
-                getMessageBox().addMessage(new Message(MessageLevel.ERR,
-                        "Errore nel recupero del file XML relativo all'indice del volume "));
-                log.error("Eccezione", e);
-            } finally {
-                IOUtils.closeQuietly(out);
-                out = null;
-                if (!getMessageBox().hasError()) {
-                    freeze();
-                }
+                    out.flush();
+                } // Gli stream vengono chiusi automaticamente
             }
+
         } catch (ParerUserError ex) {
             log.error("Errore nel recupero del file XML relativo all'indice del volume: {}", ex.getMessage());
             getMessageBox().addError("Errore nel recupero del file XML relativo all'indice del volume");
+        } catch (IOException e) {
+            getMessageBox().addMessage(
+                    new Message(MessageLevel.ERR, "Errore nel recupero del file XML relativo all'indice del volume "));
+            log.error("Eccezione", e);
+        } finally {
+            if (!getMessageBox().hasError()) {
+                freeze();
+            }
+            if (getMessageBox().hasError()) {
+                forwardToPublisher(Application.Publisher.VOLUME_SERIE_UD_DETAIL);
+            }
         }
 
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(Application.Publisher.VOLUME_SERIE_UD_DETAIL);
-        }
     }
 
     /**
@@ -4893,11 +4883,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
         if (!getMessageBox().hasError()) {
             File tmpFile = new File(System.getProperty("java.io.tmpdir"), filename);
-            FileOutputStream fileOs = null;
-            ZipOutputStream out = null;
-            try {
-                fileOs = new FileOutputStream(tmpFile);
-                out = new ZipOutputStream(fileOs);
+
+            try (FileOutputStream fileOs = new FileOutputStream(tmpFile);
+                    ZipOutputStream out = new ZipOutputStream(fileOs)) {
 
                 serieEjb.createZipPacchettoArk(idVerSerie, out, aipFirmato, volIx);
 
@@ -4911,18 +4899,18 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 getMessageBox().addError(ex.getDescription());
             } catch (IOException ex) {
                 log.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
-                getMessageBox().addError("Errore inatteso nella preparazione del download");
+                getMessageBox().addError(ERRORE_DOWNLOAD_MESSAGE);
             } finally {
-                IOUtils.closeQuietly(out);
-                IOUtils.closeQuietly(fileOs);
+                // MAC 37610: Rimossa la parte di codice che chiudeva i flussi nel blocco finally poiché il
+                // try-with-resources si occupa automaticamente della chiusura degli stream
+                if (getMessageBox().hasError()) {
+                    forwardToPublisher(getLastPublisher());
+                } else {
+                    forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+                }
             }
         }
 
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(getLastPublisher());
-        } else {
-            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
-        }
     }
 
     @Override

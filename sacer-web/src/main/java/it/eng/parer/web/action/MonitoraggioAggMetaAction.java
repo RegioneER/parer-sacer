@@ -1196,8 +1196,7 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
 
     private void downloadFileCommon(String xmlRich, String xmlRisp, String nomeFileZip, BigDecimal idSessione,
             String nomeFileXmlRich, String nomeFileXmlRisp) throws EMFError {
-        ZipArchiveOutputStream tmpZipOutputStream = null;
-        FileOutputStream tmpOutputStream = null;
+        File zipDaScaricare = null;
         try {
             // Controllo per scrupolo
             if (xmlRich == null) {
@@ -1210,36 +1209,46 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
             if (idSessione != null) {
                 strIdSessione = idSessione.toPlainString();
             }
-            File zipDaScaricare = new File(System.getProperty("java.io.tmpdir"), nomeFileZip + strIdSessione + ".zip");
-            tmpOutputStream = new FileOutputStream(zipDaScaricare);
-            tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream);
-            tmpZipOutputStream.putArchiveEntry(new ZipArchiveEntry(nomeFileXmlRich + ".xml"));
-            tmpZipOutputStream.write((byte[]) xmlRich.getBytes("UTF-8"));
-            tmpZipOutputStream.closeArchiveEntry();
-            tmpZipOutputStream.putArchiveEntry(new ZipArchiveEntry(nomeFileXmlRisp + ".xml"));
-            tmpZipOutputStream.write((byte[]) xmlRisp.getBytes("UTF-8"));
-            tmpZipOutputStream.closeArchiveEntry();
-            tmpZipOutputStream.flush();
+            zipDaScaricare = new File(System.getProperty("java.io.tmpdir"), nomeFileZip + strIdSessione + ".zip");
+
+            // Try-with-resources per FileOutputStream e ZipArchiveOutputStream
+            try (FileOutputStream tmpOutputStream = new FileOutputStream(zipDaScaricare);
+                    ZipArchiveOutputStream tmpZipOutputStream = new ZipArchiveOutputStream(tmpOutputStream)) {
+
+                // Aggiunta file XML Richiesta
+                ZipArchiveEntry richEntry = new ZipArchiveEntry(nomeFileXmlRich + ".xml");
+                tmpZipOutputStream.putArchiveEntry(richEntry);
+                tmpZipOutputStream.write(xmlRich.getBytes("UTF-8"));
+                tmpZipOutputStream.closeArchiveEntry();
+
+                // Aggiunta file XML Risposta
+                ZipArchiveEntry rispEntry = new ZipArchiveEntry(nomeFileXmlRisp + ".xml");
+                tmpZipOutputStream.putArchiveEntry(rispEntry);
+                tmpZipOutputStream.write(xmlRisp.getBytes("UTF-8"));
+                tmpZipOutputStream.closeArchiveEntry();
+
+                tmpZipOutputStream.flush();
+            }
             getRequest().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_ACTION.name(), getControllerName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILENAME.name(), zipDaScaricare.getName());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_FILEPATH.name(), zipDaScaricare.getPath());
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_DELETEFILE.name(), Boolean.toString(true));
             getSession().setAttribute(WebConstants.DOWNLOAD_ATTRS.DOWNLOAD_CONTENTTYPE.name(),
                     WebConstants.MIME_TYPE_ZIP);
+        } catch (IOException ex) {
+            logger.error("Errore in download: " + ExceptionUtils.getRootCauseMessage(ex), ex);
+            getMessageBox().addError("Errore inatteso nella preparazione del download<br/>");
         } catch (Exception ex) {
             logger.error("Errore in download " + ExceptionUtils.getRootCauseMessage(ex), ex);
             getMessageBox().addError("Errore inatteso nella preparazione del download<br/>");
         } finally {
-            IOUtils.closeQuietly(tmpZipOutputStream);
-            IOUtils.closeQuietly(tmpOutputStream);
-            tmpZipOutputStream = null;
-            tmpOutputStream = null;
-        }
-
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(getLastPublisher());
-        } else {
-            forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+            // MAC 37610: Rimossa la parte di codice che chiudeva i flussi nel blocco finally poiché il
+            // try-with-resources si occupa automaticamente della chiusura
+            if (getMessageBox().hasError()) {
+                forwardToPublisher(getLastPublisher());
+            } else {
+                forwardToPublisher(Application.Publisher.DOWNLOAD_PAGE);
+            }
         }
     }
 
