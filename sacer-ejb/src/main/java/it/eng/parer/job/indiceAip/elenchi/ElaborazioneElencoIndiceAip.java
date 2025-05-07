@@ -92,6 +92,9 @@ import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
 import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
+import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.FIRMA;
+import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.MARCA_FIRMA;
+import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.SIGILLO;
 
 /**
  *
@@ -371,7 +374,7 @@ public class ElaborazioneElencoIndiceAip {
     // <editor-fold desc="Questi metodi potrebbero essere unificati">
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void setCompletato(ElvElencoVer elenco, List<String> statiUdDocDaCompletare, long idUtente,
-            String modalitaLog) {
+            ElencoEnums.GestioneElencoEnum tiGestioneEnum, String modalitaLog) {
         ElvElencoVersDaElab elencoDaElab = elencoHelper.retrieveElencoInQueue(elenco);
         elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.COMPLETATO.name());
         // Elimino l'elenco da elaborare
@@ -387,15 +390,34 @@ public class ElaborazioneElencoIndiceAip {
         Set<Long> idUnitaDocSet = elencoHelper.retrieveUdVersOrAggInElenco(elenco.getIdElencoVers());
         for (Long idUnitaDoc : idUnitaDocSet) {
             AroUnitaDoc ud = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
+            // MEV #31162
+            // Recupero il nome agente: utente o JOB del Sigillo
+            String agente = "";
+            if (modalitaLog.equals(Constants.FUNZIONALITA_ONLINE)) {
+                IamUser utente = ciaHelper.findById(IamUser.class, idUtente);
+                agente = utente.getNmUserid();
+            } else {
+                agente = Constants.JOB_SIGILLO;
+            }
+            // Recupero se solo firma o firma e marca
+            String evento = (tiGestioneEnum.equals(FIRMA) || tiGestioneEnum.equals(SIGILLO))
+                    ? Constants.FIRMA_ELENCO_INDICE_AIP_UD : Constants.MARCA_ELENCO_INDICE_AIP_UD;
+            // end MEV #31162
+
             // Lock su ud
             elencoHelper.lockUnitaDoc(ud);
             if (ud.getTiStatoConservazione().equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name())) {
                 ud.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name());
                 // MEV #31162
-                IamUser utente = ciaHelper.findById(IamUser.class, idUtente);
-                udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), utente.getNmUserid(),
-                        Constants.MARCA_ELENCO_INDICE_AIP_UD, CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(),
-                        modalitaLog);
+                udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), agente, evento,
+                        CostantiDB.StatoConservazioneUnitaDoc.AIP_FIRMATO.name(), modalitaLog);
+                // end MEV #31162
+            } // MAC 34839
+            else if (ud.getTiStatoConservazione()
+                    .equals(CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name())) {
+                // MEV #31162
+                udEjb.insertLogStatoConservUd(ud.getIdUnitaDoc(), agente, evento,
+                        CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name(), modalitaLog);
                 // end MEV #31162
             }
         }

@@ -4031,12 +4031,13 @@ public class SerieUDAction extends SerieUDAbstractAction {
         String stato = getForm().getCambioStatoSerie().getTi_stato_ver_serie().parse();
         String nota = getForm().getCambioStatoSerie().getDs_nota_azione().parse();
         String statoSerieCorrente = getForm().getSerieDetail().getTi_stato_ver_serie().getValue();
+        String tipoOperazione = "CAMBIA_STATO";
 
         if (idSerie != null && idVerSerie != null && StringUtils.isNotBlank(azione) && StringUtils.isNotBlank(stato)
                 && StringUtils.isNotBlank(statoSerieCorrente)) {
             try {
                 serieEjb.cambiaStatoSerie(getUser().getIdUtente(), idSerie, idVerSerie, idContenutoVerSerie, azione,
-                        stato, nota, statoSerieCorrente);
+                        stato, nota, statoSerieCorrente, tipoOperazione);
                 if (stato.equals(CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name())) {
                     String cdSerie = getForm().getContenutoSerieDetail().getCd_composito_serie().parse();
                     BigDecimal aaSerie = getForm().getContenutoSerieDetail().getAa_serie().parse();
@@ -5089,6 +5090,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
     @Override
     public void validaSerie() throws EMFError {
+        String tipoOperazione = "VALIDA_SERIE";
         if (getForm().getSerieSelezionateDaValidareList().getTable().isEmpty()) {
             getMessageBox().addError("Selezionare almeno una serie da validare");
         } else {
@@ -5102,7 +5104,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     serieEjb.cambiaStatoSerie(getUser().getIdUtente(), row.getIdSerie(), row.getIdVerSerie(),
                             row.getIdContenutoVerSerie(), SerieEjb.AZIONE_SERIE_VALIDAZIONE_IN_CORSO,
                             CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name(), null,
-                            CostantiDB.StatoVersioneSerie.DA_VALIDARE.name());
+                            CostantiDB.StatoVersioneSerie.DA_VALIDARE.name(), tipoOperazione);
 
                     String keyFuture = FutureUtils.buildKeyFuture(CostantiDB.TipoChiamataAsync.VALIDAZIONE_SERIE.name(),
                             row.getCdCompositoSerie(), row.getAaSerie(), getUser().getIdOrganizzazioneFoglia(),
@@ -5118,7 +5120,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                         serieEjb.cambiaStatoSerie(getUser().getIdUtente(), row.getIdSerie(), row.getIdVerSerie(),
                                 row.getIdContenutoVerSerie(), SerieEjb.AZIONE_SERIE_VALIDAZIONE_IN_CORSO,
                                 CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name(), null,
-                                CostantiDB.StatoVersioneSerie.DA_VALIDARE.name());
+                                CostantiDB.StatoVersioneSerie.DA_VALIDARE.name(), tipoOperazione);
 
                         String keyFuture = FutureUtils.buildKeyFuture(
                                 CostantiDB.TipoChiamataAsync.VALIDAZIONE_SERIE.name(), row.getCdCompositoSerie(),

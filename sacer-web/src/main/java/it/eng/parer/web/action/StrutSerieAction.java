@@ -1402,7 +1402,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
                         // Aggiungere gestione redirect dettaglio.
                         tipoSerieDetail.setViewMode();
                         tipoSerieDetail.setStatus(BaseElements.Status.view);
-                        // caricaListeSerie(rowBean.getIdTipoSerie());
+                        caricaListeSerie(rowBean.getIdTipoSerie());
                         getForm().getTipologieSerieList().setStatus(BaseElements.Status.view);
                         msgBox.setViewMode(MessageBox.ViewMode.plain);
                         forwardToPublisher(Application.Publisher.TIPO_SERIE_DETAIL);

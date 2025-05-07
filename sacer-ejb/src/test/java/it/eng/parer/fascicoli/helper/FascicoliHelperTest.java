@@ -513,14 +513,6 @@ public class FascicoliHelperTest extends HelperTest<FascicoliHelper> {
     }
 
     @Test
-    public void retrieveOrgVChkPartitionFascByAaByStrutAnno_queryIsOk() {
-        BigDecimal idStrut = aBigDecimal();
-        BigDecimal anno = aBigDecimal();
-        helper.retrieveOrgVChkPartitionFascByAaByStrutAnno(idStrut, anno);
-        assertTrue(true);
-    }
-
-    @Test
     public void retrieveFasVLisUdInFasc_queryIsOk() {
         long idFascicolo = aLong();
         long userId = aLong();

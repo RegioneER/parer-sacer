@@ -61,6 +61,8 @@ import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.ElencoStatusEnum;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.FileTypeEnum;
+import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.FIRMA;
+import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.MARCA_FIRMA;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.UdDocStatusEnum;
 import it.eng.parer.entity.AroCompDoc;
 import it.eng.parer.entity.AroDoc;
@@ -92,7 +94,6 @@ import it.eng.parer.exception.ParerErrorSeverity;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerNoResultException;
 import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.indiceAip.elenchi.ElaborazioneElencoIndiceAip;
@@ -133,6 +134,7 @@ import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
+import java.util.logging.Level;
 
 /**
  *
@@ -173,22 +175,26 @@ public class ElenchiVersamentoEjb {
     @EJB
     private ObjectStorageService objectStorageService;
     // end MEV#30397
+    // MEV #31162
+    @EJB
+    private UnitaDocumentarieEjb udEjb;
+    // end MEV #31162
 
     public ElvElencoVerRowBean getElvElencoVersRowBean(BigDecimal idElencoVers) {
         ElvElencoVer elenco = evWebHelper.findById(ElvElencoVer.class, idElencoVers.longValue());
         DecCriterioRaggr criterio = evWebHelper.findById(DecCriterioRaggr.class,
                 elenco.getDecCriterioRaggr().getIdCriterioRaggr());
         List<ElvFileElencoVer> elencoIndice = evHelper.retrieveFileIndiceElenco(idElencoVers.longValue(),
-                new String[] { ElencoEnums.FileTypeEnum.INDICE.name() });
+                new String[] { FileTypeEnum.INDICE.name() });
         List<ElvFileElencoVer> elencoIndiceAip = evHelper.retrieveFileIndiceElenco(idElencoVers.longValue(),
-                new String[] { ElencoEnums.FileTypeEnum.ELENCO_INDICI_AIP.name() });
+                new String[] { FileTypeEnum.ELENCO_INDICI_AIP.name() });
         List<ElvUrnElencoVers> elencoUrn = evHelper.retrieveUrnElencoVersList(idElencoVers.longValue());
         ElvElencoVerRowBean elencoRowBean = new ElvElencoVerRowBean();
         try {
             elencoRowBean = (ElvElencoVerRowBean) Transform.entity2RowBean(elenco);
             // MEV#15967 - Attivazione della firma Xades e XadesT
             List<ElvFileElencoVer> elencoIndiceAipFirmati = evHelper.retrieveFileIndiceElenco(idElencoVers.longValue(),
-                    new String[] { ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name() });
+                    new String[] { FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name() });
             if (elencoIndiceAipFirmati != null && !elencoIndiceAipFirmati.isEmpty()) {
                 elencoRowBean.setTiFirma(elencoIndiceAipFirmati.get(0).getTiFirma());
             }
@@ -377,11 +383,10 @@ public class ElenchiVersamentoEjb {
 
     public ElvVLisElencoVersStatoTableBean getElenchiDaFirmareTableBean(BigDecimal idAmbiente, BigDecimal idEnte,
             BigDecimal idStrut, BigDecimal idElencoVers, String note, String flElencoFisc, List<String> tiGestElenco,
-            Date[] dateCreazioneElencoValidate, long idUserIam, ElencoEnums.ElencoStatusEnum... statiElenco)
-            throws EMFError {
+            Date[] dateCreazioneElencoValidate, long idUserIam, ElencoStatusEnum... statiElenco) throws EMFError {
         List<ElvVLisElencoVersStato> listaElenchiVersamento = evWebHelper.getListaElenchiDaFirmare(idAmbiente, idEnte,
                 idStrut, idElencoVers, note, flElencoFisc, tiGestElenco, dateCreazioneElencoValidate, idUserIam,
-                ElencoEnums.ElencoStatusEnum.getStringEnumsList(statiElenco));
+                ElencoStatusEnum.getStringEnumsList(statiElenco));
         ElvVLisElencoVersStatoTableBean elenchiVersTableBean = new ElvVLisElencoVersStatoTableBean();
         try {
             if (listaElenchiVersamento != null && !listaElenchiVersamento.isEmpty()) {
@@ -470,9 +475,9 @@ public class ElenchiVersamentoEjb {
             if (aroUnitaDoc.getDtAnnul().getTime() == fineDelMondo.getTime().getTime()) {
                 // MAC#27493
                 /* Assegna stato NON_SELEZ_SCHED all'UD */
-                aroUnitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+                aroUnitaDoc.setTiStatoUdElencoVers(UdDocStatusEnum.NON_SELEZ_SCHED.name());
                 /* Registra l'UD nella coda delle UD da elaborare */
-                evHelper.insertUdCodaUdDaElab(aroUnitaDoc.getIdUnitaDoc(), ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED);
+                evHelper.insertUdCodaUdDaElab(aroUnitaDoc.getIdUnitaDoc(), UdDocStatusEnum.NON_SELEZ_SCHED);
                 // end MAC#27493
             } else {
                 /* Assegna stato di generazione indice AIP = nullo */
@@ -698,10 +703,10 @@ public class ElenchiVersamentoEjb {
         log.info("Creazione indice per elenco di versamento avente id '{}'", elenco.getIdElencoVers());
 
         /* Setto l'elenco a stato chiuso */
-        elenco.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.CHIUSO.name());
+        elenco.setTiStatoElenco(ElencoStatusEnum.CHIUSO.name());
 
         // MEV #24534 non devo creare l'indice se TI_VALID_ELENCO = NO_INDICE
-        if (!it.eng.parer.entity.constraint.ElvElencoVer.TiValidElenco.NO_INDICE.equals(elenco.getTiValidElenco())) {
+        if (!TiValidElenco.NO_INDICE.equals(elenco.getTiValidElenco())) {
             creaIndice(elenco);
         }
         /* Imposto l'utente che ha lanciato la chiusura manuale */
@@ -709,11 +714,11 @@ public class ElenchiVersamentoEjb {
 
         /* Lo lascio nella coda degli elenchi da elaborare */
         ElvElencoVersDaElab elencoDaElab = evHelper.getElvElencoVersDaElabByIdElencoVers(idElencoVers.longValue());
-        elencoDaElab.setTiStatoElenco(ElencoEnums.ElencoStatusEnum.CHIUSO.name());
+        elencoDaElab.setTiStatoElenco(ElencoStatusEnum.CHIUSO.name());
         /* Per ogni unità documentaria appartenente all'elenco */
         for (AroUnitaDoc aroUnitaDoc : elenco.getAroUnitaDocs()) {
             /* Assegna stato IN_ELENCO_CHIUSO all'UD */
-            aroUnitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CHIUSO.name());
+            aroUnitaDoc.setTiStatoUdElencoVers(UdDocStatusEnum.IN_ELENCO_CHIUSO.name());
             /* Elimina l'UD dalla coda delle UD da elaborare */
             evHelper.deleteUdDocFromQueue(aroUnitaDoc);
         }
@@ -743,15 +748,15 @@ public class ElenchiVersamentoEjb {
     /**
      * Crea puntualmente l'indice elenco di versamento per l'elenco passato in input.
      *
-     * Il metodo è stato estratto e reso pubblico da
-     * {@link #manualClosingElenco(long, java.math.BigDecimal, java.util.List, java.lang.String) } per la MEV #24534
+     * Il metodo è stato estratto e reso pubblico da {@link #manualClosingElenco(long, BigDecimal, List, String) } per
+     * la MEV #24534
      *
      * @param idElencoVers
      *            id elenco di versamento
      *
      * @throws ParerNoResultException
      *             se non viene restituito alcun risultato da
-     *             {@link IndiceElencoVersXsdEjb#createIndex(it.eng.parer.entity.ElvElencoVer, boolean) }
+     *             {@link IndiceElencoVersXsdEjb#createIndex(ElvElencoVer, boolean) }
      * @throws NoSuchAlgorithmException
      *             se l'algoritmo di HASH per il calcolo dell'URN non è supportato dalla JVM
      * @throws IOException
@@ -774,7 +779,7 @@ public class ElenchiVersamentoEjb {
         byte[] indexFile = iejEjb.createIndex(elenco, true);
         /* Registro nella tabella ElvFileElencoVers */
         ElvFileElencoVer elvFileElencoVers = evHelper.storeFileIntoElenco(elenco, indexFile,
-                ElencoEnums.FileTypeEnum.INDICE.name());
+                FileTypeEnum.INDICE.name());
         /* Setto i campi relativi all'hash */
         // Calcolo l'hash SHA-256 del file indiceElencoVers.xml
         CSVersatore csv = new CSVersatore();
@@ -1023,10 +1028,9 @@ public class ElenchiVersamentoEjb {
                 if (unitaDoc.getDtAnnul().getTime() == fineDelMondo.getTime().getTime()) {
                     // MAC#27493
                     /* Assegno stato NON_SELEZ_SCHED all'unità documentaria */
-                    unitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+                    unitaDoc.setTiStatoUdElencoVers(UdDocStatusEnum.NON_SELEZ_SCHED.name());
                     /* Registro l'unità documentaria nella coda delle unità documentarie da elaborare */
-                    evHelper.insertUdCodaUdDaElab(unitaDoc.getIdUnitaDoc(),
-                            ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED);
+                    evHelper.insertUdCodaUdDaElab(unitaDoc.getIdUnitaDoc(), UdDocStatusEnum.NON_SELEZ_SCHED);
                     // end MAC#27493
                 }
 
@@ -1155,15 +1159,15 @@ public class ElenchiVersamentoEjb {
         List<ElvFileElencoVer> retrieveFileIndiceElenco = evHelper.retrieveFileIndiceElenco2(idElencoVers,
                 FileTypeEnum.getStringEnumsList(fileTypes));
         for (ElvFileElencoVer elvFileElencoVer : retrieveFileIndiceElenco) {
-            FileTypeEnum fileType = ElencoEnums.FileTypeEnum.valueOf(elvFileElencoVer.getTiFileElencoVers());
+            FileTypeEnum fileType = FileTypeEnum.valueOf(elvFileElencoVer.getTiFileElencoVers());
             fileNamePrefix = StringUtils.defaultString(fileNamePrefix).replace(" ", "_");
             fileNameSuffix = StringUtils.defaultString(fileNameSuffix).replace(" ", "_");
 
+            boolean requiresDifferentRead = true;
             // MEV#15967 - Attivazione della firma Xades e XadesT
             String fileExtension = null;
             String tiFirma = elvFileElencoVer.getTiFirma();
-            if (tiFirma != null
-                    && tiFirma.equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES.name())) {
+            if (tiFirma != null && tiFirma.equals(ElencoEnums.TipoFirma.XADES.name())) {
                 fileExtension = ".xml";
             } else {
                 fileExtension = fileType.getFileExtension();
@@ -1181,25 +1185,31 @@ public class ElenchiVersamentoEjb {
                 fileNameSuffix += "_firma";
                 break;
             case ELENCO_INDICI_AIP:
+                requiresDifferentRead = false;
                 fileNamePrefix = "ElencoIndiciAIP_";
                 break;
             case FIRMA_ELENCO_INDICI_AIP:
+                requiresDifferentRead = false;
                 fileNamePrefix = "FirmaElencoIndiciAIP_";
                 break;
             case MARCA_FIRMA_ELENCO_INDICI_AIP:
+                requiresDifferentRead = false;
                 fileNamePrefix = "MarcaElencoIndiciAIP_";
                 break;
             default:
                 throw new AssertionError(fileType.name());
             }
 
-            // MEV#30397
             byte[] blFileElencoVers = elvFileElencoVer.getBlFileElencoVers();
             if (blFileElencoVers == null) {
-                blFileElencoVers = objectStorageService
-                        .getObjectElencoIndiciAip(elvFileElencoVer.getIdFileElencoVers());
+                if (requiresDifferentRead) {
+                    blFileElencoVers = objectStorageService
+                            .getObjectElencoIndici(elvFileElencoVer.getIdFileElencoVers());
+                } else {
+                    blFileElencoVers = objectStorageService
+                            .getObjectElencoIndiciAip(elvFileElencoVer.getIdFileElencoVers());
+                }
             }
-            // end MEV#30397
 
             addEntryToZip(out, blFileElencoVers, fileNamePrefix + fileNameSuffix + fileExtension);
         }
@@ -1264,7 +1274,7 @@ public class ElenchiVersamentoEjb {
         elenco.setTiStatoElenco(ElencoStatusEnum.VALIDATO.name());
         /* Cambio stato a unità documentarie e documenti associati all'elenco */
         for (AroUnitaDoc aroUnitaDoc : elenco.getAroUnitaDocs()) {
-            aroUnitaDoc.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.IN_ELENCO_VALIDATO.name());
+            aroUnitaDoc.setTiStatoUdElencoVers(UdDocStatusEnum.IN_ELENCO_VALIDATO.name());
         }
         for (AroDoc aroDoc : elenco.getAroDocs()) {
             aroDoc.setTiStatoDocElencoVers(ElencoEnums.DocStatusEnum.IN_ELENCO_VALIDATO.name());
@@ -1321,7 +1331,7 @@ public class ElenchiVersamentoEjb {
 
         ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
         fileElencoVers.setCdVerXsdFile(Costanti.VERSIONE_ELENCO_INDICE_AIP);
-        fileElencoVers.setTiFileElencoVers(ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
+        fileElencoVers.setTiFileElencoVers(FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
         // MEV#30397
         if (backendMetadata.isDataBase()) {
             fileElencoVers.setBlFileElencoVers(fileFirmato);
@@ -1400,13 +1410,13 @@ public class ElenchiVersamentoEjb {
 
         /* Cambio stato a unità documentarie e documenti associati all'elenco e aggiornamenti metadati */
         List<String> statiUdDocDaPortareAipFirmato = new ArrayList<>(
-                Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO.name()));
+                Arrays.asList(UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO.name()));
         List<AroUpdUDTiStatoUpdElencoVers> statiUpdDaPortareAipFirmato = new ArrayList<>(
                 Arrays.asList(AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_ELENCO_INDICI_AIP_CREATO));
         elabElencoIndiceAipEjb.updateUnitaDocElencoIndiceAIP(idElencoVers, statiUdDocDaPortareAipFirmato,
-                ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name());
+                UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name());
         elabElencoIndiceAipEjb.updateDocumentiElencoIndiceAIP(idElencoVers, statiUdDocDaPortareAipFirmato,
-                ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name());
+                UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name());
         elabElencoIndiceAipEjb.updateAggiornamentiElencoIndiceAIP(idElencoVers, statiUpdDaPortareAipFirmato,
                 AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO);
         /* Cambio lo stato dell'elenco nella coda di elaborazione */
@@ -1524,20 +1534,23 @@ public class ElenchiVersamentoEjb {
         ElencoEnums.GestioneElencoEnum tiGestioneEnum = ElencoEnums.GestioneElencoEnum.valueOf(tiGestElenco);
         switch (tiGestioneEnum) {
         // MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
+        // FIRMA: --> solo firma online
         case FIRMA:
+            // SIGILLO: --> solo firma tramite Sigillo
         case SIGILLO:
             /*
              * Aggiunto un controllo per determinare se l'elenco indice AIP si trova realmente nello stato desiderato In
              * caso negativo scrive un log di warning
              */
-            if (elenco.getTiStatoElenco().equals(ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name())) {
+            if (elenco.getTiStatoElenco().equals(ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name())) {
                 List<String> statiUdDocDaCompletare = new ArrayList<>(
-                        Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name()));
-                elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare, idUtente, Constants.JOB_SIGILLO);
+                        Arrays.asList(UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name()));
+                elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare, idUtente, tiGestioneEnum,
+                        tiGestioneEnum.equals(FIRMA) ? Constants.FUNZIONALITA_ONLINE : Constants.JOB_SIGILLO);
                 // EVO 19304
                 evWebEjb.registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()),
                         "MARCA_ELENCO_INDICI_AIP", "Gestione elenco = " + tiGestioneEnum.name(),
-                        it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco.COMPLETATO, null);
+                        TiStatoElenco.COMPLETATO, null);
             } else {
                 log.warn(
                         "Impossibile completare l'elenco indice AIP con id {}, NON è in stato ELENCO_INDICI_AIP_FIRMATO",
@@ -1545,7 +1558,9 @@ public class ElenchiVersamentoEjb {
             }
             break;
         // MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
+        // MARCA_FIRMA: --> marcatura online
         case MARCA_FIRMA:
+            // MARCA_SIGILLO: --> marcatura tramite Sigillo
         case MARCA_SIGILLO:
             /*
              * Aggiunto un controllo per determinare se l'elenco indice AIP si trova realmente in uno degli stati
@@ -1557,7 +1572,7 @@ public class ElenchiVersamentoEjb {
                         .lookupBackendElenchiIndiciAip(elenco.getOrgStrut().getIdStrut());
 
                 ElvFileElencoVer firmaElencoIxAip = evHelper.getFileIndiceElenco(idElencoVers,
-                        ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
+                        FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
 
                 byte[] firmaElencoIndiciAip = firmaElencoIxAip.getBlFileElencoVers();
                 if (firmaElencoIndiciAip == null) {
@@ -1572,10 +1587,11 @@ public class ElenchiVersamentoEjb {
                  * firmato.
                  */
                 if (amministrazioneEjb.getTipoFirmaPerStruttura(new BigDecimal(elenco.getOrgStrut().getIdStrut()))
-                        .equals(it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma.XADES)) {
+                        .equals(ElencoEnums.TipoFirma.XADES)) {
                     log.debug("Marca non necessaria per Xades");
                     // MEV#15967 - Attivazione della firma Xades e XadesT
-                    impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, Constants.FUNZIONALITA_ONLINE);
+                    impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, tiGestioneEnum,
+                            tiGestioneEnum.equals(MARCA_FIRMA) ? Constants.FUNZIONALITA_ONLINE : Constants.JOB_SIGILLO);
                     //
                 } else {
 
@@ -1587,7 +1603,8 @@ public class ElenchiVersamentoEjb {
                         if (marcaTemporale != null) {
                             log.info("Marca temporale valida");
                             ElvFileElencoVer marcaElencoIxAip = saveMarcaElencoIndiceAip(elenco, marcaTemporale,
-                                    idUtente, backendIndiciAip, Constants.JOB_SIGILLO);
+                                    idUtente, backendIndiciAip, tiGestioneEnum, tiGestioneEnum.equals(MARCA_FIRMA)
+                                            ? Constants.FUNZIONALITA_ONLINE : Constants.JOB_SIGILLO);
                             // MEV#30397
                             /*
                              * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
@@ -1631,27 +1648,26 @@ public class ElenchiVersamentoEjb {
     }
 
     private boolean isElencoToMark(ElvElencoVer elenco) {
-        String elencoFirmato = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name();
-        String elencoErroreMarca = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name();
+        String elencoFirmato = ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name();
+        String elencoErroreMarca = ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name();
         return elenco.getTiStatoElenco().equals(elencoFirmato) || elenco.getTiStatoElenco().equals(elencoErroreMarca);
     }
 
     private boolean isElencoFirmato(ElvElencoVer elenco, DecCriterioRaggr criterio) {
-        String elencoFirmaInCorso = ElencoEnums.ElencoStatusEnum.FIRMA_IN_CORSO.name();
-        String elencoValidato = ElencoEnums.ElencoStatusEnum.VALIDATO.name();
-        String elencoFirmeVerificateDtVers = ElencoEnums.ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS.name();
-        String elencoInCodaIndiceAip = ElencoEnums.ElencoStatusEnum.IN_CODA_INDICE_AIP.name();
-        String elencoIndiciAipGenerati = ElencoEnums.ElencoStatusEnum.INDICI_AIP_GENERATI.name();
-        String elencoElencoIndiciAipCreato = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO.name();
-        String elencoElencoIndiciAipFirmaInCorso = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMA_IN_CORSO.name();
-        String elencoElencoIndiciAipFirmato = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name();
-        String elencoElencoIndiciAipErrMarca = ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name();
-        String elencoCompletato = ElencoEnums.ElencoStatusEnum.COMPLETATO.name();
+        String elencoFirmaInCorso = ElencoStatusEnum.FIRMA_IN_CORSO.name();
+        String elencoValidato = ElencoStatusEnum.VALIDATO.name();
+        String elencoFirmeVerificateDtVers = ElencoStatusEnum.FIRME_VERIFICATE_DT_VERS.name();
+        String elencoInCodaIndiceAip = ElencoStatusEnum.IN_CODA_INDICE_AIP.name();
+        String elencoIndiciAipGenerati = ElencoStatusEnum.INDICI_AIP_GENERATI.name();
+        String elencoElencoIndiciAipCreato = ElencoStatusEnum.ELENCO_INDICI_AIP_CREATO.name();
+        String elencoElencoIndiciAipFirmaInCorso = ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMA_IN_CORSO.name();
+        String elencoElencoIndiciAipFirmato = ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO.name();
+        String elencoElencoIndiciAipErrMarca = ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name();
+        String elencoCompletato = ElencoStatusEnum.COMPLETATO.name();
 
         boolean firma = (elenco.getTiValidElenco() != null)
                 ? elenco.getTiValidElenco().name().equals(ElencoEnums.GestioneElencoEnum.FIRMA.name())
-                : criterio.getTiValidElenco().name()
-                        .equals(it.eng.parer.entity.constraint.ElvElencoVer.TiValidElenco.FIRMA.name());
+                : criterio.getTiValidElenco().name().equals(TiValidElenco.FIRMA.name());
 
         return (elenco.getTiStatoElenco().equals(elencoFirmaInCorso) || elenco.getTiStatoElenco().equals(elencoValidato)
                 || elenco.getTiStatoElenco().equals(elencoFirmeVerificateDtVers)
@@ -1665,7 +1681,7 @@ public class ElenchiVersamentoEjb {
     }
 
     private ElvFileElencoVer saveMarcaElencoIndiceAip(ElvElencoVer elenco, byte[] marcaTemporale, long idUtente,
-            BackendStorage backendMetadata, String modalitaLog) {
+            BackendStorage backendMetadata, ElencoEnums.GestioneElencoEnum tiGestioneEnum, String modalitaLog) {
         final OrgStrut orgStrut = elenco.getOrgStrut();
         final OrgEnte orgEnte = orgStrut.getOrgEnte();
         final String nmStrut = orgStrut.getNmStrut();
@@ -1676,7 +1692,7 @@ public class ElenchiVersamentoEjb {
                 .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
 
         ElvFileElencoVer fileElencoVers = new ElvFileElencoVer();
-        fileElencoVers.setTiFileElencoVers(ElencoEnums.FileTypeEnum.MARCA_FIRMA_ELENCO_INDICI_AIP.name());
+        fileElencoVers.setTiFileElencoVers(FileTypeEnum.MARCA_FIRMA_ELENCO_INDICI_AIP.name());
         // MEV#30397
         if (backendMetadata.isDataBase()) {
             fileElencoVers.setBlFileElencoVers(marcaTemporale);
@@ -1719,24 +1735,25 @@ public class ElenchiVersamentoEjb {
 
         elenco.setDtMarcaElencoIxAip(fileElencoVers.getDtCreazioneFile());
         // MEV#15967 - Attivazione della firma Xades e XadesT
-        impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, modalitaLog);
+        impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, tiGestioneEnum, modalitaLog);
         return fileElencoVers;
     }
 
     // MEV#15967 - Attivazione della firma Xades e XadesT
-    private void impostaStatoCompletatoElencoIndiceAip(ElvElencoVer elenco, long idUtente, String modalitaLog) {
+    private void impostaStatoCompletatoElencoIndiceAip(ElvElencoVer elenco, long idUtente,
+            ElencoEnums.GestioneElencoEnum tiGestioneEnum, String modalitaLog) {
         final OrgStrut orgStrut = elenco.getOrgStrut();
         List<String> statiUdDocDaCompletare = new ArrayList<>(
-                Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name(),
-                        ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name()));
-        elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare, idUtente, modalitaLog);
+                Arrays.asList(UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name(),
+                        UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name()));
+        elabElencoIndiceAipEjb.setCompletato(elenco, statiUdDocDaCompletare, idUtente, tiGestioneEnum, modalitaLog);
         /* Registro sul log delle operazioni */
         evHelper.writeLogElencoVers(elenco, orgStrut, idUtente, ElencoEnums.OpTypeEnum.MARCA_ELENCO_INDICI_AIP.name());
         IamUser user = genericHelper.findById(IamUser.class, idUtente);
         // EVO 19304
         registraStatoElencoVersamento(BigDecimal.valueOf(elenco.getIdElencoVers()), "MARCA_ELENCO_INDICI_AIP",
-                "Marca assunta con successo; gestione elenco = MARCA_FIRMA",
-                it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco.COMPLETATO, user.getNmUserid());
+                "Marca assunta con successo; gestione elenco = MARCA_FIRMA", TiStatoElenco.COMPLETATO,
+                user.getNmUserid());
         log.debug("Impostazione stato elenco a COMPLETATO.");
     }
 
@@ -1747,13 +1764,13 @@ public class ElenchiVersamentoEjb {
         elenco.setTiStatoElenco(ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name());
         /* Cambio stato a unità documentarie e documenti associati all'elenco */
         List<String> statiUdDocDaPortareErrMarca = new ArrayList<>(
-                Arrays.asList(ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name()));
+                Arrays.asList(UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO.name()));
         List<AroUpdUDTiStatoUpdElencoVers> statiUpdDaPortareErrMarca = new ArrayList<>(
                 Arrays.asList(AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_ELENCO_INDICI_AIP_FIRMATO));
         elabElencoIndiceAipEjb.updateUnitaDocElencoIndiceAIP(idElencoVers, statiUdDocDaPortareErrMarca,
-                ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name());
+                UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name());
         elabElencoIndiceAipEjb.updateDocumentiElencoIndiceAIP(idElencoVers, statiUdDocDaPortareErrMarca,
-                ElencoEnums.UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name());
+                UdDocStatusEnum.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA.name());
         elabElencoIndiceAipEjb.updateAggiornamentiElencoIndiceAIP(idElencoVers, statiUpdDaPortareErrMarca,
                 AroUpdUDTiStatoUpdElencoVers.IN_ELENCO_CON_ELENCO_INDICI_AIP_ERR_MARCA);
         /* Cambio lo stato dell'elenco nella coda di elaborazione */
@@ -1813,10 +1830,9 @@ public class ElenchiVersamentoEjb {
                     .equals(CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name())) {
                 // MAC#27493
                 // Assegno stato ud nell'elenco di vers uguale a NON_SELEZ_SCHED
-                unitaDocElenco.setTiStatoUdElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+                unitaDocElenco.setTiStatoUdElencoVers(UdDocStatusEnum.NON_SELEZ_SCHED.name());
                 // Registro l'ud nella coda delle ud da elaborare (tabella ELV_UD_VERS_DA_ELAB_ELENCO)
-                evHelper.insertUdCodaUdDaElab(unitaDocElenco.getIdUnitaDoc(),
-                        ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED);
+                evHelper.insertUdCodaUdDaElab(unitaDocElenco.getIdUnitaDoc(), UdDocStatusEnum.NON_SELEZ_SCHED);
                 // end MAC#27493
             } else {
                 // Assegno stato ud nell'elenco di vers uguale a null
@@ -1831,7 +1847,7 @@ public class ElenchiVersamentoEjb {
                     .equals(CostantiDB.StatoConservazioneUnitaDoc.ANNULLATA.name())) {
                 // MAC#27493
                 // Assegno stato doc nell'elenco di vers uguale a NON_SELEZ_SCHED
-                docAggiuntoElenco.setTiStatoDocElencoVers(ElencoEnums.UdDocStatusEnum.NON_SELEZ_SCHED.name());
+                docAggiuntoElenco.setTiStatoDocElencoVers(UdDocStatusEnum.NON_SELEZ_SCHED.name());
                 // Registro il doc nella coda dei doc da elaborare (tabella ELV_DOC_AGG_DA_ELAB_ELENCO)
                 evHelper.insertDocCodaDocDaElab(docAggiuntoElenco.getIdDoc(),
                         ElencoEnums.DocStatusEnum.NON_SELEZ_SCHED);
@@ -1957,8 +1973,7 @@ public class ElenchiVersamentoEjb {
         // MAC#28509
     }
 
-    public boolean isStatoElencoCorrente(long idElencoVers,
-            it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco tiStatoElenco) {
+    public boolean isStatoElencoCorrente(long idElencoVers, TiStatoElenco tiStatoElenco) {
         return evHelper.isStatoElencoCorrente(idElencoVers, tiStatoElenco);
     }
 
@@ -2012,7 +2027,7 @@ public class ElenchiVersamentoEjb {
 
                 registraStatoElencoVersamento(BigDecimal.valueOf(idElencoVers.longValueExact()),
                         "ESEGUITA_CREAZIONE_INDICE_AIP", "AIP rimesso alla firma dall'apposita funzione di interfaccia",
-                        it.eng.parer.entity.constraint.ElvStatoElencoVer.TiStatoElenco.INDICI_AIP_GENERATI, userName);
+                        TiStatoElenco.INDICI_AIP_GENERATI, userName);
                 evHelper.flush();
                 ret = EsitoRiportaIndietroStatoVersamento.ESITO_OK;
 

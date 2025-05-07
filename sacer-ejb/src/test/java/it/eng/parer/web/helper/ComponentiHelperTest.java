@@ -43,7 +43,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.runner.RunWith;
 import static it.eng.ArquillianUtils.*;
-import it.eng.ArquillianUtils;
 import org.jboss.arquillian.junit.Arquillian;
 import javax.ejb.EJB;
 
@@ -222,45 +221,9 @@ public class ComponentiHelperTest {
     public void testGetElvVListaCompElvViewBean_jpqlIsValid() {
         System.out.println("getElvVListaCompElvViewBean");
         BigDecimal idElencoVers = aBigDecimal();
-        Date[] dateValidate = aDateArray(2);
-        String registro = aString();
-        BigDecimal anno = aBigDecimal();
-        String codice = aString();
-        BigDecimal annoRangeDa = aBigDecimal();
-        BigDecimal annoRangeA = aBigDecimal();
-        String codiceRangeDa = aString();
-        String codiceRangeA = aString();
-        BigDecimal tipoStrutDoc = aBigDecimal();
-        BigDecimal tipoCompDoc = aBigDecimal();
-        String formato = aString();
-        BigDecimal fileSizeDa = aBigDecimal();
-        BigDecimal fileSizeA = aBigDecimal();
-        String presenza = aString();
-        String conformita = aString();
-        String esitoFirme = aString();
-        Timestamp dtScadFirmaCompDa = todayTs();
-        Timestamp dtScadFirmaCompA = tomorrowTs();
-        String dsNomeCompVers = aString();
-        String dsHashFileVers = aString();
-        String nmMimetypeFile = aString();
-        String dlUrnCompVers = aString();
-        String dsFormatoRapprCalc = aString();
-        String dsFormatoRapprEstesoCalc = aString();
-        String forzaAcc = aString();
-        String forzaConserva = aString();
-        String tiEsitoContrFormatoFile = aString();
-        String dsHashFileCalc = aString();
-        String dsAlgoHashFileCalc = aString();
-        String cdEncodingHashFileCalc = aString();
-        String dsUrnCompCalc = aString();
         long idUtente = aLong();
         BigDecimal idStrut = aBigDecimal();
-        ElvVListaCompElvTableBean tableBean = helper.getElvVListaCompElvViewBean(idElencoVers, dateValidate, registro,
-                anno, codice, annoRangeDa, annoRangeA, codiceRangeDa, codiceRangeA, tipoStrutDoc, tipoCompDoc, formato,
-                fileSizeDa, fileSizeA, presenza, conformita, esitoFirme, dtScadFirmaCompDa, dtScadFirmaCompA,
-                dsNomeCompVers, dsHashFileVers, nmMimetypeFile, dlUrnCompVers, dsFormatoRapprCalc,
-                dsFormatoRapprEstesoCalc, forzaAcc, forzaConserva, tiEsitoContrFormatoFile, dsHashFileCalc,
-                dsAlgoHashFileCalc, cdEncodingHashFileCalc, dsUrnCompCalc, idUtente, idStrut);
+        ElvVListaCompElvTableBean tableBean = helper.getElvVListaCompElvViewBean(idElencoVers, idUtente, idStrut);
         assertNotNull(tableBean);
     }
 

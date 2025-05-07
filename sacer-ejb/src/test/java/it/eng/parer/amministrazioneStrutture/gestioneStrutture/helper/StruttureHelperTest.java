@@ -263,28 +263,6 @@ public class StruttureHelperTest {
     }
 
     @Test
-    public void partitionFileEleVersFascOK_queryIsOk() {
-        BigDecimal idStrut = aBigDecimal();
-        try {
-            helper.partitionFileEleVersFascOK(idStrut);
-            assertTrue(true);
-        } catch (Exception e) {
-            assertNoResultException(e);
-        }
-    }
-
-    @Test
-    public void partitionFileEleVersFascDataOK_queryIsOk() {
-        BigDecimal idStrut = aBigDecimal();
-        try {
-            helper.partitionFileEleVersFascDataOK(idStrut);
-            assertTrue(true);
-        } catch (Exception e) {
-            assertNoResultException(e);
-        }
-    }
-
-    @Test
     public void getProgressiviTemplatePresentiSuDB_queryIsOk() {
         helper.getProgressiviTemplatePresentiSuDB();
         assertTrue(true);

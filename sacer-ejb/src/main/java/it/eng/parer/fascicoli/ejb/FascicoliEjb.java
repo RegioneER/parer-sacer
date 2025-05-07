@@ -120,7 +120,6 @@ import it.eng.parer.viewEntity.MonVCntFascKoByAmb;
 import it.eng.parer.viewEntity.MonVCntFascKoByEnte;
 import it.eng.parer.viewEntity.MonVCntFascKoByStrut;
 import it.eng.parer.viewEntity.MonVCntFascKoByTiFasc;
-import it.eng.parer.viewEntity.OrgVChkPartitionFascByAa;
 import it.eng.parer.viewEntity.VrsVUpdFascicoloKo;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.MonitoraggioHelper;
@@ -1420,21 +1419,45 @@ public class FascicoliEjb {
         // Punto 1 dell'analisi
         if (amb != null && ente != null && str != null && tip != null && annoFascicolo != null
                 && (numFascicolo != null && !numFascicolo.equals(""))) {
-            // Controllo partizionamento
-            List<OrgVChkPartitionFascByAa> lp = fascicoliHelper.retrieveOrgVChkPartitionFascByAaByStrutAnno(idStrut,
-                    annoFascicolo);
-            if (lp != null && !lp.isEmpty() && lp.iterator().next().getFlPartFascOk().equals("1")) {
-                // Partizionamento ok, FLUSSO ALTERNATIVO DI TRASFORMAZIONE SESSIONE
-                List<FasFascicolo> fascicoli = fascicoliHelper.retrieveFasFascicoloByStrutAnnoNumValid(str,
-                        annoFascicolo.longValueExact(), numFascicolo);
-                // SE IL FASCICOLO ESISTE
-                // Punto 2 dell'analisi
-                if (fascicoli != null && !fascicoli.isEmpty()) {
-                    FasFascicolo fs = fascicoli.get(0);
-                    fs.setFlSesFascicoloKo("1");
+            // FLUSSO ALTERNATIVO DI TRASFORMAZIONE SESSIONE
+            List<FasFascicolo> fascicoli = fascicoliHelper.retrieveFasFascicoloByStrutAnnoNumValid(str,
+                    annoFascicolo.longValueExact(), numFascicolo);
+            // SE IL FASCICOLO ESISTE
+            // Punto 2 dell'analisi
+            if (fascicoli != null && !fascicoli.isEmpty()) {
+                FasFascicolo fs = fascicoli.get(0);
+                fs.setFlSesFascicoloKo("1");
+                sessFasKo = new VrsSesFascicoloKo();
+                fascicoliHelper.getEntityManager().persist(sessFasKo);
+                sessFasKo.setFasFascicolo(fs);
+                sessFasKo.setDecTipoFascicolo(tip);
+                sessFasKo.setTsIniSes(new Timestamp(sess.getTsIniSes().getTime()));
+                sessFasKo.setTsFineSes(new Timestamp(sess.getTsFineSes().getTime()));
+                sessFasKo.setCdVersioneWs(sess.getCdVersioneWs());
+                List<IamUser> lUsr = null;
+                if (sess.getNmUseridWs() != null) {
+                    lUsr = userHelper.findIamUserList(sess.getNmUseridWs());
+                    if (lUsr != null && !lUsr.isEmpty()) {
+                        sessFasKo.setIamUser(lUsr.get(0));
+                    }
+                }
+                sessFasKo.setDecErrSacer(sess.getDecErrSacer());
+                sessFasKo.setDsErrPrinc(sess.getDecErrSacer().getDsErr());
+                sessFasKo.setTiStatoSes(statoSessioneFascicoloKo.RISOLTO.name());
+                sessFasKo.setOrgStrut(sess.getOrgStrut());
+                sessFasKo.setAaFascicolo(annoFascicolo);
+                sessFasKo.setCdIndIpClient(sess.getCdIndIpClient());
+                sessFasKo.setCdIndServer(sess.getCdIndServer());
+                // SE IL FASCICOLO NON ESISTE
+                // Punto 3 dell'analisi
+            } else {
+                List<VrsFascicoloKo> fasKo = fascicoliHelper.retrieveFasNonVersatoByStrutAnnoNum(str,
+                        annoFascicolo.longValueExact(), numFascicolo, true); // RICHIEDE LOCK PESSIMISTICO
+                // SE ESISTE UN FASCICOLO NON VERSATO (punto b dell'analisi)
+                if (fasKo != null && !fasKo.isEmpty()) {
+                    VrsFascicoloKo fko = fasKo.get(0);
                     sessFasKo = new VrsSesFascicoloKo();
-                    fascicoliHelper.getEntityManager().persist(sessFasKo);
-                    sessFasKo.setFasFascicolo(fs);
+                    sessFasKo.setVrsFascicoloKo(fko);
                     sessFasKo.setDecTipoFascicolo(tip);
                     sessFasKo.setTsIniSes(new Timestamp(sess.getTsIniSes().getTime()));
                     sessFasKo.setTsFineSes(new Timestamp(sess.getTsFineSes().getTime()));
@@ -1448,197 +1471,169 @@ public class FascicoliEjb {
                     }
                     sessFasKo.setDecErrSacer(sess.getDecErrSacer());
                     sessFasKo.setDsErrPrinc(sess.getDecErrSacer().getDsErr());
-                    sessFasKo.setTiStatoSes(statoSessioneFascicoloKo.RISOLTO.name());
+                    sessFasKo.setTiStatoSes(sess.getTiStatoSes());
                     sessFasKo.setOrgStrut(sess.getOrgStrut());
                     sessFasKo.setAaFascicolo(annoFascicolo);
                     sessFasKo.setCdIndIpClient(sess.getCdIndIpClient());
                     sessFasKo.setCdIndServer(sess.getCdIndServer());
-                    // SE IL FASCICOLO NON ESISTE
-                    // Punto 3 dell'analisi
-                } else {
-                    List<VrsFascicoloKo> fasKo = fascicoliHelper.retrieveFasNonVersatoByStrutAnnoNum(str,
-                            annoFascicolo.longValueExact(), numFascicolo, true); // RICHIEDE LOCK PESSIMISTICO
-                    // SE ESISTE UN FASCICOLO NON VERSATO (punto b dell'analisi)
-                    if (fasKo != null && !fasKo.isEmpty()) {
-                        VrsFascicoloKo fko = fasKo.get(0);
-                        sessFasKo = new VrsSesFascicoloKo();
-                        sessFasKo.setVrsFascicoloKo(fko);
-                        sessFasKo.setDecTipoFascicolo(tip);
-                        sessFasKo.setTsIniSes(new Timestamp(sess.getTsIniSes().getTime()));
-                        sessFasKo.setTsFineSes(new Timestamp(sess.getTsFineSes().getTime()));
-                        sessFasKo.setCdVersioneWs(sess.getCdVersioneWs());
-                        List<IamUser> lUsr = null;
-                        if (sess.getNmUseridWs() != null) {
-                            lUsr = userHelper.findIamUserList(sess.getNmUseridWs());
-                            if (lUsr != null && !lUsr.isEmpty()) {
-                                sessFasKo.setIamUser(lUsr.get(0));
-                            }
+                    fascicoliHelper.getEntityManager().persist(sessFasKo);
+                    // Aggiorna contatore
+                    // Punto b) III
+                    List<MonContaFascicoliKo> cntKo = fascicoliHelper.retrieveMonContaFascicoliKoByChiaveTotaliz(
+                            fko.getTsIniLastSes(), str, fko.getTiStatoFascicoloKo(),
+                            fko.getAaFascicolo().longValueExact(), fko.getDecTipoFascicolo(), true); // ASSSUME IL
+                    // LOCK
+                    // PESSIMISTICO
+                    if (cntKo != null && !cntKo.isEmpty()) {
+                        MonContaFascicoliKo monCnt = cntKo.get(0);
+                        // Punto b) IV
+                        monCnt.setNiFascicoliKo(monCnt.getNiFascicoliKo().subtract(BigDecimal.ONE));
+                    }
+                    // Punto b) V
+                    List<VrsVUpdFascicoloKo> listaVrs = fascicoliHelper
+                            .retrieveVrsVUpdFascicoloKoByFascKo(fko.getIdFascicoloKo());
+                    if (listaVrs != null && !listaVrs.isEmpty()) {
+                        VrsVUpdFascicoloKo vrsUpd = listaVrs.get(0);
+                        fko.setTsIniFirstSes(vrsUpd.getTsIniFirstSes());
+                        fko.setTsIniLastSes(vrsUpd.getTsIniLastSes());
+                        fko.setIdSesFascicoloKoFirst(vrsUpd.getIdSesFascicoloKoFirst());
+                        fko.setIdSesFascicoloKoLast(vrsUpd.getIdSesFascicoloKoLast());
+                        fko.setDecTipoFascicolo(
+                                fascicoliHelper.findById(DecTipoFascicolo.class, vrsUpd.getIdTipoFascicoloLast()));
+                        fko.setTiStatoFascicoloKo(vrsUpd.getTiStatoFascicoloKo());
+                        BigDecimal idErrPrinc = vrsUpd.getIdErrSacerPrinc();
+                        if (idErrPrinc != null) {
+                            DecErrSacer errSac = fascicoliHelper.findById(DecErrSacer.class,
+                                    vrsUpd.getIdErrSacerPrinc());
+                            fko.setDecErrSacer(errSac);
+                            fko.setDsErrPrinc(errSac.getDsErr());
                         }
-                        sessFasKo.setDecErrSacer(sess.getDecErrSacer());
-                        sessFasKo.setDsErrPrinc(sess.getDecErrSacer().getDsErr());
-                        sessFasKo.setTiStatoSes(sess.getTiStatoSes());
-                        sessFasKo.setOrgStrut(sess.getOrgStrut());
-                        sessFasKo.setAaFascicolo(annoFascicolo);
-                        sessFasKo.setCdIndIpClient(sess.getCdIndIpClient());
-                        sessFasKo.setCdIndServer(sess.getCdIndServer());
-                        fascicoliHelper.getEntityManager().persist(sessFasKo);
-                        // Aggiorna contatore
-                        // Punto b) III
-                        List<MonContaFascicoliKo> cntKo = fascicoliHelper.retrieveMonContaFascicoliKoByChiaveTotaliz(
+                    }
+                    // Punto b) VI
+                    List<LogVVisLastSched> logVs = monitoraggioHelper
+                            .getLogVVisLastSched(JobConstants.JobEnum.CALCOLO_CONTENUTO_FASCICOLI.name());
+                    if (logVs != null && !logVs.isEmpty()
+                            && fko.getTsIniLastSes().before(logVs.get(0).getDtRegLogJobIni())) {
+                        // SE DATA MINORE...
+                        List<MonContaFascicoliKo> cntKo2 = fascicoliHelper.retrieveMonContaFascicoliKoByChiaveTotaliz(
                                 fko.getTsIniLastSes(), str, fko.getTiStatoFascicoloKo(),
                                 fko.getAaFascicolo().longValueExact(), fko.getDecTipoFascicolo(), true); // ASSSUME IL
-                        // LOCK
-                        // PESSIMISTICO
-                        if (cntKo != null && !cntKo.isEmpty()) {
-                            MonContaFascicoliKo monCnt = cntKo.get(0);
-                            // Punto b) IV
-                            monCnt.setNiFascicoliKo(monCnt.getNiFascicoliKo().subtract(BigDecimal.ONE));
-                        }
-                        // Punto b) V
-                        List<VrsVUpdFascicoloKo> listaVrs = fascicoliHelper
-                                .retrieveVrsVUpdFascicoloKoByFascKo(fko.getIdFascicoloKo());
-                        if (listaVrs != null && !listaVrs.isEmpty()) {
-                            VrsVUpdFascicoloKo vrsUpd = listaVrs.get(0);
-                            fko.setTsIniFirstSes(vrsUpd.getTsIniFirstSes());
-                            fko.setTsIniLastSes(vrsUpd.getTsIniLastSes());
-                            fko.setIdSesFascicoloKoFirst(vrsUpd.getIdSesFascicoloKoFirst());
-                            fko.setIdSesFascicoloKoLast(vrsUpd.getIdSesFascicoloKoLast());
-                            fko.setDecTipoFascicolo(
-                                    fascicoliHelper.findById(DecTipoFascicolo.class, vrsUpd.getIdTipoFascicoloLast()));
-                            fko.setTiStatoFascicoloKo(vrsUpd.getTiStatoFascicoloKo());
-                            BigDecimal idErrPrinc = vrsUpd.getIdErrSacerPrinc();
-                            if (idErrPrinc != null) {
-                                DecErrSacer errSac = fascicoliHelper.findById(DecErrSacer.class,
-                                        vrsUpd.getIdErrSacerPrinc());
-                                fko.setDecErrSacer(errSac);
-                                fko.setDsErrPrinc(errSac.getDsErr());
-                            }
-                        }
-                        // Punto b) VI
-                        List<LogVVisLastSched> logVs = monitoraggioHelper
-                                .getLogVVisLastSched(JobConstants.JobEnum.CALCOLO_CONTENUTO_FASCICOLI.name());
-                        if (logVs != null && !logVs.isEmpty()
-                                && fko.getTsIniLastSes().before(logVs.get(0).getDtRegLogJobIni())) {
-                            // SE DATA MINORE...
-                            List<MonContaFascicoliKo> cntKo2 = fascicoliHelper
-                                    .retrieveMonContaFascicoliKoByChiaveTotaliz(fko.getTsIniLastSes(), str,
-                                            fko.getTiStatoFascicoloKo(), fko.getAaFascicolo().longValueExact(),
-                                            fko.getDecTipoFascicolo(), true); // ASSSUME IL LOCK PESSIMISTICO
-                            if (cntKo2 != null && !cntKo2.isEmpty()) {
-                                MonContaFascicoliKo mcfk = cntKo2.get(0);
-                                mcfk.setNiFascicoliKo(mcfk.getNiFascicoliKo().add(BigDecimal.ONE));
-                            } else {
-                                MonContaFascicoliKo mcfk = new MonContaFascicoliKo();
-                                mcfk.setAaFascicolo(fko.getAaFascicolo());
-                                mcfk.setDecTipoFascicolo(fko.getDecTipoFascicolo());
-                                mcfk.setDtRifConta(fko.getTsIniLastSes());
-                                mcfk.setOrgStrut(str);
-                                mcfk.setTiStatoFascicoloKo(fko.getTiStatoFascicoloKo());
-                                mcfk.setNiFascicoliKo(BigDecimal.ONE);
-                                fascicoliHelper.getEntityManager().persist(mcfk);
-                            }
-                        }
-                    } else {
-                        // SE NON ESISTE UN FASCICOLO NON VERSATO, Registra un fascicolo non versato
-                        // punto C)
-                        VrsFascicoloKo vrsFasKo = new VrsFascicoloKo();
-                        vrsFasKo.setOrgStrut(sess.getOrgStrut());
-                        vrsFasKo.setAaFascicolo(sess.getAaFascicolo());
-                        vrsFasKo.setCdKeyFascicolo(sess.getCdKeyFascicolo());
-                        vrsFasKo.setTsIniFirstSes(new Timestamp(sess.getTsIniSes().getTime()));
-                        vrsFasKo.setIdSesFascicoloKoFirst(new BigDecimal(sess.getIdSesFascicoloErr()));
-                        vrsFasKo.setTsIniLastSes(new Timestamp(sess.getTsIniSes().getTime()));
-                        vrsFasKo.setIdSesFascicoloKoLast(new BigDecimal(sess.getIdSesFascicoloErr()));
-                        vrsFasKo.setDecErrSacer(sess.getDecErrSacer());
-                        vrsFasKo.setDsErrPrinc(sess.getDsErr());
-                        vrsFasKo.setDecTipoFascicolo(sess.getDecTipoFascicolo());
-                        vrsFasKo.setTiStatoFascicoloKo(sess.getTiStatoSes());
-                        fascicoliHelper.getEntityManager().persist(vrsFasKo);
-                        // Registra un fascicolo non versato
-                        // Punto c) II
-                        sessFasKo = new VrsSesFascicoloKo();
-                        sessFasKo.setVrsFascicoloKo(vrsFasKo);
-                        sessFasKo.setDecTipoFascicolo(sess.getDecTipoFascicolo());
-                        sessFasKo.setTsIniSes(new Timestamp(sess.getTsIniSes().getTime()));
-                        sessFasKo.setTsFineSes(new Timestamp(sess.getTsFineSes().getTime()));
-                        String cdVersWs = sess.getCdVersioneWs();
-                        // Se la versione non è valorizzata imposta "N/A"
-                        if (cdVersWs != null && !cdVersWs.trim().equals("")) {
-                            sessFasKo.setCdVersioneWs(cdVersWs);
-                        } else {
-                            sessFasKo.setCdVersioneWs(DATO_NON_DISPONIBILE);
-                        }
-                        List<IamUser> lUsr = null;
-                        if (sess.getNmUseridWs() != null) {
-                            lUsr = userHelper.findIamUserList(sess.getNmUseridWs());
-                            if (lUsr != null && !lUsr.isEmpty()) {
-                                sessFasKo.setIamUser(lUsr.get(0));
-                            }
-                        }
-                        sessFasKo.setDecErrSacer(sess.getDecErrSacer());
-                        sessFasKo.setDsErrPrinc(sess.getDsErr());
-                        sessFasKo.setTiStatoSes(sess.getTiStatoSes());
-                        sessFasKo.setOrgStrut(sess.getOrgStrut());
-                        sessFasKo.setAaFascicolo(sess.getAaFascicolo());
-                        sessFasKo.setCdIndIpClient(sess.getCdIndIpClient());
-                        sessFasKo.setCdIndServer(sess.getCdIndServer());
-                        fascicoliHelper.getEntityManager().persist(sessFasKo);
-                        // Aggiorna i contatori
-                        // Punto c) III
-                        List<MonContaFascicoliKo> cntKo3 = fascicoliHelper.retrieveMonContaFascicoliKoByChiaveTotaliz(
-                                vrsFasKo.getTsIniLastSes(), vrsFasKo.getOrgStrut(), vrsFasKo.getTiStatoFascicoloKo(),
-                                vrsFasKo.getAaFascicolo().longValueExact(), vrsFasKo.getDecTipoFascicolo(), true); // ASSSUME
-                        // IL
-                        // LOCK
-                        // PESSIMISTICO
-                        if (cntKo3 != null && !cntKo3.isEmpty()) {
-                            MonContaFascicoliKo ogg = cntKo3.get(0);
-                            ogg.setNiFascicoliKo(ogg.getNiFascicoliKo().add(BigDecimal.ONE));
+                                                                                                         // LOCK
+                                                                                                         // PESSIMISTICO
+                        if (cntKo2 != null && !cntKo2.isEmpty()) {
+                            MonContaFascicoliKo mcfk = cntKo2.get(0);
+                            mcfk.setNiFascicoliKo(mcfk.getNiFascicoliKo().add(BigDecimal.ONE));
                         } else {
                             MonContaFascicoliKo mcfk = new MonContaFascicoliKo();
-                            mcfk.setAaFascicolo(vrsFasKo.getAaFascicolo());
-                            mcfk.setDecTipoFascicolo(vrsFasKo.getDecTipoFascicolo());
-                            mcfk.setDtRifConta(vrsFasKo.getTsIniLastSes());
-                            mcfk.setOrgStrut(vrsFasKo.getOrgStrut());
-                            mcfk.setTiStatoFascicoloKo(vrsFasKo.getTiStatoFascicoloKo());
+                            mcfk.setAaFascicolo(fko.getAaFascicolo());
+                            mcfk.setDecTipoFascicolo(fko.getDecTipoFascicolo());
+                            mcfk.setDtRifConta(fko.getTsIniLastSes());
+                            mcfk.setOrgStrut(str);
+                            mcfk.setTiStatoFascicoloKo(fko.getTiStatoFascicoloKo());
                             mcfk.setNiFascicoliKo(BigDecimal.ONE);
                             fascicoliHelper.getEntityManager().persist(mcfk);
                         }
                     }
-                }
-                // Registrazione degli XML di richiesta e risposta
-                // Punto 4 dell'analisi
-                List<VrsXmlSesFascicoloErr> xmls = sess.getVrsXmlSesFascicoloErrs();
-                if (xmls != null) {
-                    for (Iterator<VrsXmlSesFascicoloErr> iterator = xmls.iterator(); iterator.hasNext();) {
-                        VrsXmlSesFascicoloErr xmlErr = iterator.next();
-                        VrsXmlSesFascicoloKo xmlKo = new VrsXmlSesFascicoloKo();
-                        xmlKo.setVrsSesFascicoloKo(sessFasKo);
-                        xmlKo.setTiXml(xmlErr.getTiXml());
-                        xmlKo.setCdVersioneXml(xmlErr.getCdVersioneXml());
-                        xmlKo.setBlXml(xmlErr.getBlXml());
-                        xmlKo.setIdStrut(new BigDecimal(sess.getOrgStrut().getIdStrut()));
-                        xmlKo.setDtRegXmlSesKo(LocalDate.now());
-                        fascicoliHelper.getEntityManager().persist(xmlKo);
+                } else {
+                    // SE NON ESISTE UN FASCICOLO NON VERSATO, Registra un fascicolo non versato
+                    // punto C)
+                    VrsFascicoloKo vrsFasKo = new VrsFascicoloKo();
+                    vrsFasKo.setOrgStrut(sess.getOrgStrut());
+                    vrsFasKo.setAaFascicolo(sess.getAaFascicolo());
+                    vrsFasKo.setCdKeyFascicolo(sess.getCdKeyFascicolo());
+                    vrsFasKo.setTsIniFirstSes(new Timestamp(sess.getTsIniSes().getTime()));
+                    vrsFasKo.setIdSesFascicoloKoFirst(new BigDecimal(sess.getIdSesFascicoloErr()));
+                    vrsFasKo.setTsIniLastSes(new Timestamp(sess.getTsIniSes().getTime()));
+                    vrsFasKo.setIdSesFascicoloKoLast(new BigDecimal(sess.getIdSesFascicoloErr()));
+                    vrsFasKo.setDecErrSacer(sess.getDecErrSacer());
+                    vrsFasKo.setDsErrPrinc(sess.getDsErr());
+                    vrsFasKo.setDecTipoFascicolo(sess.getDecTipoFascicolo());
+                    vrsFasKo.setTiStatoFascicoloKo(sess.getTiStatoSes());
+                    fascicoliHelper.getEntityManager().persist(vrsFasKo);
+                    // Registra un fascicolo non versato
+                    // Punto c) II
+                    sessFasKo = new VrsSesFascicoloKo();
+                    sessFasKo.setVrsFascicoloKo(vrsFasKo);
+                    sessFasKo.setDecTipoFascicolo(sess.getDecTipoFascicolo());
+                    sessFasKo.setTsIniSes(new Timestamp(sess.getTsIniSes().getTime()));
+                    sessFasKo.setTsFineSes(new Timestamp(sess.getTsFineSes().getTime()));
+                    String cdVersWs = sess.getCdVersioneWs();
+                    // Se la versione non è valorizzata imposta "N/A"
+                    if (cdVersWs != null && !cdVersWs.trim().equals("")) {
+                        sessFasKo.setCdVersioneWs(cdVersWs);
+                    } else {
+                        sessFasKo.setCdVersioneWs(DATO_NON_DISPONIBILE);
+                    }
+                    List<IamUser> lUsr = null;
+                    if (sess.getNmUseridWs() != null) {
+                        lUsr = userHelper.findIamUserList(sess.getNmUseridWs());
+                        if (lUsr != null && !lUsr.isEmpty()) {
+                            sessFasKo.setIamUser(lUsr.get(0));
+                        }
+                    }
+                    sessFasKo.setDecErrSacer(sess.getDecErrSacer());
+                    sessFasKo.setDsErrPrinc(sess.getDsErr());
+                    sessFasKo.setTiStatoSes(sess.getTiStatoSes());
+                    sessFasKo.setOrgStrut(sess.getOrgStrut());
+                    sessFasKo.setAaFascicolo(sess.getAaFascicolo());
+                    sessFasKo.setCdIndIpClient(sess.getCdIndIpClient());
+                    sessFasKo.setCdIndServer(sess.getCdIndServer());
+                    fascicoliHelper.getEntityManager().persist(sessFasKo);
+                    // Aggiorna i contatori
+                    // Punto c) III
+                    List<MonContaFascicoliKo> cntKo3 = fascicoliHelper.retrieveMonContaFascicoliKoByChiaveTotaliz(
+                            vrsFasKo.getTsIniLastSes(), vrsFasKo.getOrgStrut(), vrsFasKo.getTiStatoFascicoloKo(),
+                            vrsFasKo.getAaFascicolo().longValueExact(), vrsFasKo.getDecTipoFascicolo(), true); // ASSSUME
+                    // IL
+                    // LOCK
+                    // PESSIMISTICO
+                    if (cntKo3 != null && !cntKo3.isEmpty()) {
+                        MonContaFascicoliKo ogg = cntKo3.get(0);
+                        ogg.setNiFascicoliKo(ogg.getNiFascicoliKo().add(BigDecimal.ONE));
+                    } else {
+                        MonContaFascicoliKo mcfk = new MonContaFascicoliKo();
+                        mcfk.setAaFascicolo(vrsFasKo.getAaFascicolo());
+                        mcfk.setDecTipoFascicolo(vrsFasKo.getDecTipoFascicolo());
+                        mcfk.setDtRifConta(vrsFasKo.getTsIniLastSes());
+                        mcfk.setOrgStrut(vrsFasKo.getOrgStrut());
+                        mcfk.setTiStatoFascicoloKo(vrsFasKo.getTiStatoFascicoloKo());
+                        mcfk.setNiFascicoliKo(BigDecimal.ONE);
+                        fascicoliHelper.getEntityManager().persist(mcfk);
                     }
                 }
-                // Punto nuovo dell'analisi: 4.5
-                // Copia l'unico errore della sessione errata nella sessione KO
-                if (sessFasKo != null) {
-                    VrsErrSesFascicoloKo errSess = new VrsErrSesFascicoloKo();
-                    errSess.setVrsSesFascicoloKo(sessFasKo);
-                    errSess.setPgErr(BigDecimal.ONE);
-                    errSess.setFlErrPrinc("1");
-                    errSess.setTiErr(sess.getDecErrSacer().getTiErrSacer());
-                    errSess.setDecErrSacer(sess.getDecErrSacer());
-                    errSess.setDsErr(sess.getDsErr());
-                    fascicoliHelper.getEntityManager().persist(errSess);
+            }
+            // Registrazione degli XML di richiesta e risposta
+            // Punto 4 dell'analisi
+            List<VrsXmlSesFascicoloErr> xmls = sess.getVrsXmlSesFascicoloErrs();
+            if (xmls != null) {
+                for (Iterator<VrsXmlSesFascicoloErr> iterator = xmls.iterator(); iterator.hasNext();) {
+                    VrsXmlSesFascicoloErr xmlErr = iterator.next();
+                    VrsXmlSesFascicoloKo xmlKo = new VrsXmlSesFascicoloKo();
+                    xmlKo.setVrsSesFascicoloKo(sessFasKo);
+                    xmlKo.setTiXml(xmlErr.getTiXml());
+                    xmlKo.setCdVersioneXml(xmlErr.getCdVersioneXml());
+                    xmlKo.setBlXml(xmlErr.getBlXml());
+                    xmlKo.setIdStrut(new BigDecimal(sess.getOrgStrut().getIdStrut()));
+                    xmlKo.setDtRegXmlSesKo(LocalDate.now());
+                    fascicoliHelper.getEntityManager().persist(xmlKo);
                 }
-                // Punto 5 dell'analisi
-                // Elimina la sessiojne errata
-                fascicoliHelper.removeEntity(sess, false);
-                ret.setSessioneCancellata(true);
-            } // Fine controllo partizionamento
+            }
+            // Punto nuovo dell'analisi: 4.5
+            // Copia l'unico errore della sessione errata nella sessione KO
+            if (sessFasKo != null) {
+                VrsErrSesFascicoloKo errSess = new VrsErrSesFascicoloKo();
+                errSess.setVrsSesFascicoloKo(sessFasKo);
+                errSess.setPgErr(BigDecimal.ONE);
+                errSess.setFlErrPrinc("1");
+                errSess.setTiErr(sess.getDecErrSacer().getTiErrSacer());
+                errSess.setDecErrSacer(sess.getDecErrSacer());
+                errSess.setDsErr(sess.getDsErr());
+                fascicoliHelper.getEntityManager().persist(errSess);
+            }
+            // Punto 5 dell'analisi
+            // Elimina la sessiojne errata
+            fascicoliHelper.removeEntity(sess, false);
+            ret.setSessioneCancellata(true);
         } // FINE delle verifiche iniziali
         return ret;
     }

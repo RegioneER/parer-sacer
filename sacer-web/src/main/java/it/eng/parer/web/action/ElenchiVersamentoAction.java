@@ -573,7 +573,9 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         String azione = getNavigationEvent();
 
         /* Il caricamento del dettaglio va effettuato in tutti i casi TRANNE che in fase di inserimento */
-        if (lista != null && azione != null && !azione.equals(NE_DETTAGLIO_INSERT)) {
+        if (lista != null && azione != null
+                && (azione.equals(ListAction.NE_DETTAGLIO_VIEW) || azione.equals(ListAction.NE_DETTAGLIO_UPDATE)
+                        || azione.equals(ListAction.NE_NEXT) || azione.equals(ListAction.NE_PREV))) {
             /* Se ho cliccato sul DETTAGLIO della LISTA ELENCHI DI VERSAMENTO */
             if (lista.equals(getForm().getElenchiVersamentoList().getName())) {
                 BigDecimal idElencoVers = getForm().getElenchiVersamentoList().getTable().getCurrentRow()
@@ -1195,9 +1197,14 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
                 /* Effettuo la ricerca */
                 if (chiavi != null) {
-                    // Se sono presenti i filtri dell'UD
-                    getForm().getElenchiVersamentoList().setTable(
-                            evEjb.getElvVRicElencoVersByUdTableBean(getUser().getIdUtente(), filtriElenchiVersamento));
+                    // Se sono presenti i filtri dell'UD, devo controllare sia stata settata la struttura
+                    if (filtriElenchiVersamento.getId_strut().parse() != null) {
+                        getForm().getElenchiVersamentoList().setTable(evEjb
+                                .getElvVRicElencoVersByUdTableBean(getUser().getIdUtente(), filtriElenchiVersamento));
+                    } else {
+                        getMessageBox().addError(
+                                "Attenzione: sono stati selezionati uno o più filtri della chiave unità documentaria, è necessario impostare anche il filtro Struttura");
+                    }
                 } else {
                     // Se non sono presenti i filtri dell'UD
                     List<String> tiStatoElenco = filtriElenchiVersamento.getTi_stato_elenco().parse();
@@ -1670,7 +1677,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         try (ZipOutputStream out = new ZipOutputStream(getServletOutputStream());) {
             evEjb.streamOutFileIndiceElenco(out, "IndiceElencoVersamento_", filesSuffix, idElencoVers.longValue(),
                     FileTypeEnum.getIndiceFileTypes());
-            out.close();
             freeze();
         } catch (Exception e) {
             logger.error("Eccezione", e);
@@ -1702,7 +1708,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             byte[] xml = evEjb.generaIndice(idElencoVers.longValue());
             evEjb.addEntryToZip(out, xml, "IndiceElencoVersamento_" + filesSuffix + ".xml");
             out.flush();
-            out.close();
             freeze();
         } catch (Exception e) {
             logger.error("Eccezione", e);
@@ -2544,7 +2549,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         try {
             evEjb.streamOutFileIndiceElenco(out, "", filesSuffix, idElencoVers.longValue(),
                     FileTypeEnum.getElencoIndiciFileTypes());
-            out.close();
             freeze();
         } catch (Exception e) {
             logger.error("Eccezione", e);

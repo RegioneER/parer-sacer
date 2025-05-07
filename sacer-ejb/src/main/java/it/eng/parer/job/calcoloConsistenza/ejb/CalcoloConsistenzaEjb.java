@@ -69,7 +69,7 @@ public class CalcoloConsistenzaEjb {
         dtRifContaA.set(Calendar.MINUTE, 0);
         dtRifContaA.set(Calendar.SECOND, 0);
         dtRifContaA.set(Calendar.MILLISECOND, 0);
-        dtRifContaA.add(Calendar.DATE, -2);
+        dtRifContaA.add(Calendar.DATE, -1);
 
         Date dtRifContaDateDa = dtRifContaDa.getTime();
         Date dtRifContaDateA = dtRifContaA.getTime();

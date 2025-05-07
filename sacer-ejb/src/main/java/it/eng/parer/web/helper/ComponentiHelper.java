@@ -80,7 +80,6 @@ import it.eng.parer.viewEntity.AroVVisComp;
 import it.eng.parer.viewEntity.AroVVisCompVol;
 import it.eng.parer.viewEntity.AroVVisFirmaComp;
 import it.eng.parer.viewEntity.AroVVisMarcaComp;
-import it.eng.parer.viewEntity.ElvVListaCompElv;
 import it.eng.parer.viewEntity.VolVListaCompVol;
 import it.eng.parer.web.util.BlobObject;
 import it.eng.parer.web.util.StringPadding;
@@ -1151,300 +1150,57 @@ public class ComponentiHelper extends GenericHelper {
             BigDecimal idElencoVers, ElenchiVersamentoForm.ComponentiFiltri filtri, Date[] dateValidate, long idUtente,
             BigDecimal idStrut) throws it.eng.spagoCore.error.EMFError {
 
-        return getElvVListaCompElvViewBean(idElencoVers, dateValidate, filtri.getCd_registro_key_unita_doc().parse(),
-                filtri.getAa_key_unita_doc().parse(), filtri.getCd_key_unita_doc().parse(),
-                filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse(),
-                filtri.getCd_key_unita_doc_da().parse(), filtri.getCd_key_unita_doc_a().parse(),
-                filtri.getNm_tipo_strut_doc().parse(), filtri.getNm_tipo_comp_doc().parse(),
-                filtri.getNm_formato_file_vers().parse(), filtri.getNi_size_file_da().parse(),
-                filtri.getNi_size_file_a().parse(), filtri.getFl_comp_firmato().parse(),
-                filtri.getTi_esito_contr_conforme().parse(), filtri.getTi_esito_verif_firme_vers().parse(),
-                filtri.getDt_scad_firma_comp_da().parse(), filtri.getDt_scad_firma_comp_a().parse(),
-                filtri.getDs_nome_comp_vers().parse(), filtri.getDs_hash_file_vers().parse(),
-                filtri.getNm_mimetype_file().parse(), filtri.getDl_urn_comp_vers().parse(),
-                filtri.getDs_formato_rappr_calc().parse(), filtri.getDs_formato_rappr_esteso_calc().parse(),
-                filtri.getFl_forza_accettazione().parse(), filtri.getFl_forza_conservazione().parse(),
-                filtri.getTi_esito_contr_formato_file().parse(), filtri.getDs_hash_file_calc().parse(),
-                filtri.getDs_algo_hash_file_calc().parse(), filtri.getCd_encoding_hash_file_calc().parse(),
-                filtri.getDs_urn_comp_calc().parse(), idUtente, idStrut);
+        return getElvVListaCompElvViewBean(idElencoVers, idUtente, idStrut);
     }
 
-    public ElvVListaCompElvTableBean getElvVListaCompElvViewBean(BigDecimal idElencoVers, Date[] dateValidate,
-            final String registro, final BigDecimal anno, final String codice, BigDecimal annoRangeDa,
-            final BigDecimal annoRangeA, String codiceRangeDa, String codiceRangeA, final BigDecimal tipoStrutDoc,
-            final BigDecimal tipoCompDoc, final String formato, BigDecimal fileSizeDa, final BigDecimal fileSizeA,
-            final String presenza, final String conformita, final String esitoFirme, final Timestamp dtScadFirmaCompDa,
-            final Timestamp dtScadFirmaCompA, final String dsNomeCompVers, final String dsHashFileVers,
-            final String nmMimetypeFile, final String dlUrnCompVers, final String dsFormatoRapprCalc,
-            final String dsFormatoRapprEstesoCalc, final String forzaAcc, final String forzaConserva,
-            final String tiEsitoContrFormatoFile, final String dsHashFileCalc, final String dsAlgoHashFileCalc,
-            final String cdEncodingHashFileCalc, final String dsUrnCompCalc, long idUtente, BigDecimal idStrut) {
-        String whereWord = "AND ";
-        StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.ElvVListaCompElv"
-                + "(u.idElencoVers, u.id.idCompDoc, "
-                + "u.dsUrnCompCalc, u.dsUrnCompCalcShort, u.dsNomeCompVers, u.dsOrdComp, u.tiSupportoComp, "
-                + "u.nmTipoStrutDoc, u.nmTipoCompDoc, u.nmFormatoFileDocVers, u.dtCreazioneDoc, u.niSizeFileCalc, "
-                + "u.flCompFirmato, u.tiEsitoVerifFirmeVers, u.idUnitaDoc, u.idDoc, "
-                + "u.cdRegistroKeyUnitaDoc, u.idTipoUnitaDoc, u.idTipoDoc, u.idSubStrut, u.tiStatoElencoVers, u.tiStatoConservazione) "
-                + "FROM ElvVListaCompElv u, " + "DecTipoUnitaDoc tud, " + "IamAbilTipoDato iatdtud, "
-                + "DecTipoDoc td, " + "IamAbilTipoDato iatdtd, " + "OrgSubStrut ss, " + "IamAbilTipoDato iatdss "
-                + "where u.idTipoUnitaDoc = tud.idTipoUnitaDoc and iatdtud.idTipoDatoApplic = tud.idTipoUnitaDoc and iatdtud.nmClasseTipoDato = 'TIPO_UNITA_DOC' and iatdtud.iamAbilOrganiz.iamUser.idUserIam = :idUtente and iatdtud.iamAbilOrganiz.idOrganizApplic = :idStrut "
-                + "and u.idTipoDoc = td.idTipoDoc and iatdtd.idTipoDatoApplic = td.idTipoDoc and iatdtd.nmClasseTipoDato = 'TIPO_DOC' AND iatdtd.iamAbilOrganiz.iamUser.idUserIam = :idUtente and iatdtd.iamAbilOrganiz.idOrganizApplic = :idStrut "
-                + "and u.idSubStrut = ss.idSubStrut and iatdss.idTipoDatoApplic = ss.idSubStrut and iatdss.nmClasseTipoDato = 'SUB_STRUTTURA' AND iatdss.iamAbilOrganiz.iamUser.idUserIam = :idUtente and iatdss.iamAbilOrganiz.idOrganizApplic = :idStrut "
-                + "and u.idElencoVers = :idElencoVers ");
-
-        // Inserimento nella query del filtro CHIAVE DOCUMENTO
-        if (registro != null) {
-            queryStr.append(whereWord).append("u.cdRegistroKeyUnitaDoc = :registroin ");
-            whereWord = "and ";
-        }
-        if (anno != null) {
-            queryStr.append(whereWord).append("u.aaKeyUnitaDoc = :annoin ");
-            whereWord = "and ";
-        }
-        if (codice != null) {
-            queryStr.append(whereWord).append("u.cdKeyUnitaDoc = :codicein ");
-            whereWord = "and ";
-        }
-        if (annoRangeDa != null && annoRangeA != null) {
-            queryStr.append(whereWord).append("(u.aaKeyUnitaDoc BETWEEN :annoin_da AND :annoin_a) ");
-            whereWord = " AND ";
-        }
-        if (codiceRangeDa != null && codiceRangeA != null) {
-            codiceRangeDa = StringPadding.padString(codiceRangeDa, "0", 12, StringPadding.PADDING_LEFT);
-            codiceRangeA = StringPadding.padString(codiceRangeA, "0", 12, StringPadding.PADDING_LEFT);
-            queryStr.append(whereWord).append("LPAD( u.cdKeyUnitaDoc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
-            whereWord = " AND ";
-        }
-        // Inserimento nella query del filtro DATA CREAZIONE DA - A
-        Date dataDa = (dateValidate != null ? dateValidate[0] : null);
-        Date dataA = (dateValidate != null ? dateValidate[1] : null);
-        if ((dataDa != null) && (dataA != null)) {
-            queryStr.append(whereWord).append("(u.dtCreazioneDoc between :datada AND :dataa) ");
-            whereWord = "and ";
-        }
-        // Inserimento nella query del filtro Tipo Struttura Documento
-        if (tipoStrutDoc != null) {
-            queryStr.append(whereWord).append("u.idTipoStrutDoc = :tipostrutdocin ");
-            whereWord = "and ";
-        }
-        // Inserimento nella query del filtro Tipo Componente Documento
-        if (tipoCompDoc != null) {
-            queryStr.append(whereWord).append("u.idTipoCompDoc = :tipocompdocin ");
-            whereWord = "and ";
-        }
-        // Inserimento nella query del filtro Formato
-        if (formato != null) {
-            queryStr.append(whereWord).append("u.nmFormatoFileDocVers = :formatoin ");
-            whereWord = "and ";
-        }
-        // Inserimento nella query del filtro file size
-        if (fileSizeDa == null && fileSizeA != null) {
-            fileSizeDa = BigDecimal.ZERO;
-        }
-        if (fileSizeDa != null && fileSizeA != null) {
-            queryStr.append(whereWord).append("u.niSizeFileCalc between :filesizedain AND :filesizeain ");
-            whereWord = "and ";
-        }
-        // Inserimento nella query del filtro PRESENZA FIRME
-        if (presenza != null) {
-            queryStr.append(whereWord).append("u.flCompFirmato = :presenzain ");
-            whereWord = "and ";
-        }
-        // Inserimento nella query del filtro Conformita FIRME
-        if (conformita != null) {
-            queryStr.append(whereWord).append("u.tiEsitoContrConforme = :conformitain ");
-            whereWord = "and ";
-        }
-        // Inserimento nella query del filtro Esito Firme
-        if (esitoFirme != null) {
-            queryStr.append(whereWord).append("u.tiEsitoVerifFirmeVers = :esitofirmein ");
-            whereWord = "and ";
-        }
-        Date dataValDa = null;
-        Date dataValA = null;
-        // Inserimento nella query del filtro DATA SCADENZA FIRMA DA - A
-        if (dtScadFirmaCompDa != null) {
-            dataValDa = new Date(dtScadFirmaCompDa.getTime());
-            if (dtScadFirmaCompA != null) {
-                dataValA = new Date(dtScadFirmaCompA.getTime());
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(dataValA);
-                calendar.add(Calendar.DATE, 1);
-                dataValA = calendar.getTime();
-            } else {
-                dataValA = new Date();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(dataValA);
-                calendar.add(Calendar.DATE, 1);
-                dataValA = calendar.getTime();
-            }
-        }
-        if ((dataValDa != null) && (dataValA != null)) {
-            queryStr.append(whereWord).append("(u.dtScadCertifFirmatario between :datavalda AND :datavala) ");
-            whereWord = "and ";
-        }
-        if (StringUtils.isNotBlank(dsNomeCompVers)) {
-            queryStr.append(whereWord).append("UPPER(u.dsNomeCompVers) LIKE :nomeCompVersIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(dsHashFileVers)) {
-            queryStr.append(whereWord).append("u.dsHashFileVers = :hashFileVersIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(nmMimetypeFile)) {
-            queryStr.append(whereWord).append("UPPER(u.nmMimetypeFile) LIKE :mimetypeIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(dlUrnCompVers)) {
-            queryStr.append(whereWord).append("UPPER(u.dlUrnCompVers) LIKE :urnCompVersIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(dsFormatoRapprCalc)) {
-            queryStr.append(whereWord).append("u.dsFormatoRapprCalc = :formatoRapprCalcIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(dsFormatoRapprEstesoCalc)) {
-            queryStr.append(whereWord).append("u.dsFormatoRapprEstesoCalc = :formatoRapprEstesoCalcIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(forzaAcc)) {
-            queryStr.append(whereWord).append("u.flForzaAccettazione = :forzaaccin ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(forzaConserva)) {
-            queryStr.append(whereWord).append("u.flForzaConservazione = :forzaconservain ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(tiEsitoContrFormatoFile)) {
-            queryStr.append(whereWord).append("u.tiEsitoContrFormatoFile = :esitoContrFormatoFileIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(dsHashFileCalc)) {
-            queryStr.append(whereWord).append("u.dsHashFileCalc = :hashFileCalcIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(dsAlgoHashFileCalc)) {
-            queryStr.append(whereWord).append("u.dsAlgoHashFileCalc = :algoHashFileCalcIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(cdEncodingHashFileCalc)) {
-            queryStr.append(whereWord).append("u.cdEncodingHashFileCalc = :encodingHashFileCalcIn ");
-            whereWord = " AND ";
-        }
-        if (StringUtils.isNotBlank(dsUrnCompCalc)) {
-            queryStr.append(whereWord).append("UPPER(u.dsUrnCompCalc) LIKE :urnCompCalcIn ");
-        }
-        queryStr.append("ORDER BY u.dsOrdComp ");
-        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
-        Query query = getEntityManager().createQuery(queryStr.toString());
+    public ElvVListaCompElvTableBean getElvVListaCompElvViewBean(BigDecimal idElencoVers, long idUtente,
+            BigDecimal idStrut) {
+        String queryStr = "SELECT u.* FROM Elv_Vp_Lista_Comp_Elv(:idElencoVers, :idStrut, :idUserIam) u ";
+        Query query = getEntityManager().createNativeQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers);
-
-        if (registro != null) {
-            query.setParameter("registroin", registro);
-        }
-        if (anno != null) {
-            query.setParameter("annoin", anno);
-        }
-        if (codice != null) {
-            query.setParameter("codicein", codice);
-        }
-        if (annoRangeDa != null && annoRangeA != null) {
-            query.setParameter("annoin_da", annoRangeDa);
-            query.setParameter("annoin_a", annoRangeA);
-        }
-        if (codiceRangeDa != null && codiceRangeA != null) {
-            query.setParameter("codicein_da", codiceRangeDa);
-            query.setParameter("codicein_a", codiceRangeA);
-        }
-        if (dataDa != null && dataA != null) {
-            query.setParameter("datada", dataDa, TemporalType.TIMESTAMP);
-            query.setParameter("dataa", dataA, TemporalType.TIMESTAMP);
-        }
-        if (tipoStrutDoc != null) {
-            query.setParameter("tipostrutdocin", tipoStrutDoc);
-        }
-        if (tipoCompDoc != null) {
-            query.setParameter("tipocompdocin", tipoCompDoc);
-        }
-        if (formato != null) {
-            query.setParameter("formatoin", formato);
-        }
-        if (fileSizeDa != null && fileSizeA != null) {
-            query.setParameter("filesizedain", fileSizeDa);
-            query.setParameter("filesizeain", fileSizeA);
-        }
-        if (presenza != null) {
-            query.setParameter("presenzain", presenza);
-        }
-        if (conformita != null) {
-            query.setParameter("conformitain", conformita);
-        }
-        if (esitoFirme != null) {
-            query.setParameter("esitofirmein", esitoFirme);
-        }
-        if (dataValDa != null && dataValA != null) {
-            query.setParameter("datavalda", dataValDa, TemporalType.DATE);
-            query.setParameter("datavala", dataValA, TemporalType.DATE);
-        }
-        if (StringUtils.isNotBlank(dsNomeCompVers)) {
-            query.setParameter("nomeCompVersIn", "%" + dsNomeCompVers.toUpperCase() + "%");
-        }
-        if (StringUtils.isNotBlank(dsHashFileVers)) {
-            query.setParameter("hashFileVersIn", dsHashFileVers);
-        }
-        if (StringUtils.isNotBlank(nmMimetypeFile)) {
-            query.setParameter("mimetypeIn", "%" + nmMimetypeFile.toUpperCase() + "%");
-        }
-        if (StringUtils.isNotBlank(dlUrnCompVers)) {
-            query.setParameter("urnCompVersIn", "%" + dlUrnCompVers.toUpperCase() + "%");
-        }
-        if (StringUtils.isNotBlank(dsFormatoRapprCalc)) {
-            query.setParameter("formatoRapprCalcIn", dsFormatoRapprCalc);
-        }
-        if (StringUtils.isNotBlank(dsFormatoRapprEstesoCalc)) {
-            query.setParameter("formatoRapprEstesoCalcIn", dsFormatoRapprEstesoCalc);
-        }
-        if (StringUtils.isNotBlank(forzaAcc)) {
-            query.setParameter("forzaaccin", forzaAcc);
-        }
-        if (StringUtils.isNotBlank(forzaConserva)) {
-            query.setParameter("forzaconservain", forzaConserva);
-        }
-        if (StringUtils.isNotBlank(tiEsitoContrFormatoFile)) {
-            query.setParameter("esitoContrFormatoFileIn", tiEsitoContrFormatoFile);
-        }
-        if (StringUtils.isNotBlank(dsHashFileCalc)) {
-            query.setParameter("hashFileCalcIn", dsHashFileCalc);
-        }
-        if (StringUtils.isNotBlank(dsAlgoHashFileCalc)) {
-            query.setParameter("algoHashFileCalcIn", dsAlgoHashFileCalc);
-        }
-        if (StringUtils.isNotBlank(cdEncodingHashFileCalc)) {
-            query.setParameter("encodingHashFileCalcIn", cdEncodingHashFileCalc);
-        }
-        if (StringUtils.isNotBlank(dsUrnCompCalc)) {
-            query.setParameter("urnCompCalcIn", "%" + dsUrnCompCalc.toUpperCase() + "%");
-        }
-
-        query.setParameter("idUtente", idUtente);
+        query.setParameter("idUserIam", idUtente);
         query.setParameter("idStrut", idStrut);
-        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
-        List<ElvVListaCompElv> listaComponenti = query.getResultList();
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA DI COMPONENTI
         ElvVListaCompElvTableBean componentiTableBean = new ElvVListaCompElvTableBean();
-        try {
-            if (listaComponenti != null && !listaComponenti.isEmpty()) {
-                componentiTableBean = (ElvVListaCompElvTableBean) Transform.entities2TableBean(listaComponenti);
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
+        List<Object[]> listaComponentiObj = (List<Object[]>) query.getResultList();
+        for (Object[] componenteObj : listaComponentiObj) {
+            ElvVListaCompElvRowBean componentiRowBean = new ElvVListaCompElvRowBean();
+
+            // Applica l'operatore ternario a tutti i campi per gestire potenziali null e cast
+            componentiRowBean.setIdElencoVers(componenteObj[0] != null ? (BigDecimal) componenteObj[0] : null);
+            componentiRowBean.setIdCompDoc(componenteObj[1] != null ? (BigDecimal) componenteObj[1] : null);
+            componentiRowBean.setDsUrnCompCalc(componenteObj[2] != null ? (String) componenteObj[2] : null);
+            componentiRowBean.setDsUrnCompCalcShort(componenteObj[3] != null ? (String) componenteObj[3] : null);
+            componentiRowBean.setDsNomeCompVers(componenteObj[4] != null ? (String) componenteObj[4] : null);
+            componentiRowBean.setDsOrdComp(componenteObj[5] != null ? (String) componenteObj[5] : null);
+            componentiRowBean.setTiSupportoComp(componenteObj[6] != null ? (String) componenteObj[6] : null);
+            componentiRowBean.setNmTipoStrutDoc(componenteObj[7] != null ? (String) componenteObj[7] : null);
+            componentiRowBean.setNmTipoCompDoc(componenteObj[8] != null ? (String) componenteObj[8] : null);
+            componentiRowBean.setNmFormatoFileDocVers(componenteObj[9] != null ? (String) componenteObj[9] : null);
+            componentiRowBean.setDtCreazioneDoc(componenteObj[10] != null ? (Timestamp) componenteObj[10] : null);
+            componentiRowBean.setNiSizeFileCalc(componenteObj[11] != null ? (BigDecimal) componenteObj[11] : null);
+            // Caso speciale per Character -> String
+            componentiRowBean
+                    .setFlCompFirmato(componenteObj[12] != null ? ((Character) componenteObj[12]).toString() : null);
+            componentiRowBean.setTiEsitoVerifFirmeVers(componenteObj[13] != null ? (String) componenteObj[13] : null);
+            componentiRowBean.setIdUnitaDoc(componenteObj[14] != null ? (BigDecimal) componenteObj[14] : null);
+            componentiRowBean.setIdDoc(componenteObj[15] != null ? (BigDecimal) componenteObj[15] : null);
+            componentiRowBean.setCdRegistroKeyUnitaDoc(componenteObj[16] != null ? (String) componenteObj[16] : null);
+            componentiRowBean.setIdTipoUnitaDoc(componenteObj[17] != null ? (BigDecimal) componenteObj[17] : null);
+            componentiRowBean.setIdTipoDoc(componenteObj[18] != null ? (BigDecimal) componenteObj[18] : null);
+            componentiRowBean.setIdSubStrut(componenteObj[19] != null ? (BigDecimal) componenteObj[19] : null);
+            componentiRowBean.setTiStatoElencoVers(componenteObj[20] != null ? (String) componenteObj[20] : null);
+            componentiRowBean.setTiStatoConservazione(componenteObj[21] != null ? (String) componenteObj[21] : null);
+
+            // setta il campo relativo alla checkbox select_comp non ceccato
+            // Questo campo è impostato manualmente, non proviene dalla query, quindi rimane invariato
+            componentiRowBean.setString("select_comp", "0");
+
+            componentiTableBean.add(componentiRowBean);
         }
-        // setta il campo relativo alla checkbox select_comp non ceccato
-        for (int i = 0; i < componentiTableBean.size(); i++) {
-            ElvVListaCompElvRowBean row = componentiTableBean.getRow(i);
-            row.setString("select_comp", "0");
-        }
+
         return componentiTableBean;
+
     }
 
     public boolean isComponenteInElenco(BigDecimal idCompDoc) {

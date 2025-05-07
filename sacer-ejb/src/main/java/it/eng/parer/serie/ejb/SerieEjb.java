@@ -117,7 +117,6 @@ import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
-import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.serie.dto.CampiInputBean;
 import it.eng.parer.serie.dto.CreazioneSerieBean;
 import it.eng.parer.serie.dto.IntervalliSerieAutomBean;
@@ -205,7 +204,6 @@ import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.message.MessageBox;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.logging.Level;
 
 /**
  *
@@ -4192,7 +4190,8 @@ public class SerieEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void cambiaStatoSerie(long idUser, BigDecimal idSerie, BigDecimal idVerSerie, BigDecimal idContenutoVerSerie,
-            String azione, String stato, String nota, String statoSerieCorrente) throws ParerUserError {
+            String azione, String stato, String nota, String statoSerieCorrente, String tipoOperazione)
+            throws ParerUserError {
         SerSerie serie = helper.findByIdWithLock(SerSerie.class, idSerie);
         if (serie != null) {
             try {
@@ -4266,11 +4265,20 @@ public class SerieEjb {
 
                             // MEV #31162
                             IamUser utente = helper.findById(IamUser.class, idUser);
+                            String modalita = null;
+                            String agente = null;
+                            String tipoEvento = Constants.PREDISPOSIZIONE_INDICE_AIP;
+
+                            if (tipoOperazione.equals("VALIDA_SERIE")) {
+                                agente = Constants.JOB_VALIDA_SERIE;
+                                modalita = Constants.NM_AGENTE_JOB_SACER;
+                            } else if (tipoOperazione.equals("CAMBIA_STATO")) {
+                                agente = utente.getNmUserid();
+                                modalita = Constants.FUNZIONALITA_ONLINE;
+                            }
                             for (Long idUnitaDoc : idUnitaDocList) {
-                                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
-                                        Constants.CAMBIA_STATO_SERIE_VDC,
-                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name(),
-                                        Constants.FUNZIONALITA_ONLINE);
+                                udEjb.insertLogStatoConservUd(idUnitaDoc, agente, tipoEvento,
+                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name(), modalita);
                             }
                             // end MEV #31162
 
@@ -4305,11 +4313,12 @@ public class SerieEjb {
 
                             // MEV #31162
                             IamUser utente = helper.findById(IamUser.class, idUser);
+                            String agente = utente.getNmUserid();
+                            String modalita = Constants.FUNZIONALITA_ONLINE;
+                            String tipoEvento = Constants.VERIFICA_SERIE;
                             for (Long idUnitaDoc : idUnitaDocList) {
-                                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(),
-                                        Constants.CAMBIA_STATO_SERIE_GEN_AIP,
-                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
-                                        Constants.FUNZIONALITA_ONLINE);
+                                udEjb.insertLogStatoConservUd(idUnitaDoc, agente, tipoEvento,
+                                        CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(), modalita);
                             }
                             // end MEV #31162
 
@@ -5285,9 +5294,9 @@ public class SerieEjb {
         String sincroVersion = configurationHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.UNISINCRO_VERSION,
                 idAmbiente);
         if (!"2.0".equals(sincroVersion)) {
-            elabIndiceAip.gestisciIndiceAipOs(ud.getIdUnitaDoc());
+            elabIndiceAip.gestisciIndiceAipOs(ud.getIdUnitaDoc(), Constants.JOB_VALIDA_SERIE);
         } else {
-            elabIndiceAip.gestisciIndiceAipV2Os(ud.getIdUnitaDoc());
+            elabIndiceAip.gestisciIndiceAipV2Os(ud.getIdUnitaDoc(), Constants.JOB_VALIDA_SERIE);
         }
         // end MEV#30395
         // AGGIORNAMENTO STATO INCONSISTENTE
@@ -5318,8 +5327,8 @@ public class SerieEjb {
 
         // MEV #31162
         for (Long idUnitaDoc : idUnitaDocList) {
-            udEjb.insertLogStatoConservUd(idUnitaDoc, Constants.NM_AGENTE_SACER, Constants.VALIDA_SERIE,
-                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(), Constants.JOB_VALIDA_SERIE);
+            udEjb.insertLogStatoConservUd(idUnitaDoc, Constants.JOB_VALIDA_SERIE, Constants.BLOCCO_AGGIORNAMENTI_AIP,
+                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(), Constants.NM_AGENTE_JOB_SACER);
         }
         // end MEV #31162
 
