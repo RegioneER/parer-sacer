@@ -253,7 +253,9 @@ public class HomeAction extends HomeAbstractAction {
         getForm().getContenutoSacerTotaliUdDocComp().copyFromBean(totali);
         Map<String, String> organizzazione = getUser().getOrganizzazioneMap();
 
-        Calendar dataArchivio = ccsHelper.getUltimaDataEsecuzione();
+        Calendar dataArchivio = ccsHelper.getUltimaDataEsecuzioneOkCCS();
+        // torno al giorno precedente l'ultima esecuzione OK di Calcolo Contenuto SACER
+        dataArchivio.add(Calendar.DATE, -1);
 
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         String ieriString = format.format(dataArchivio.getTime());

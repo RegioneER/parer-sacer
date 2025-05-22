@@ -468,7 +468,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Range di date
         getForm().getFiltriContenutoSacer().getDt_rif_da().setValue("01/12/2011");
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -2);
+        cal.add(Calendar.DATE, -1);
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getFiltriContenutoSacer().getDt_rif_a().setValue(df.format(cal.getTime()));
 
@@ -515,7 +515,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Range di date
         getForm().getFiltriConsistenzaSacer().getDt_rif_da().setValue("01/12/2011");
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -2);
+        cal.add(Calendar.DATE, -1);
         SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
         getForm().getFiltriConsistenzaSacer().getDt_rif_a().setValue(df.format(cal.getTime()));
 

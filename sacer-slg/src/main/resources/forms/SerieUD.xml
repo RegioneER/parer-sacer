@@ -671,7 +671,7 @@
         <Button Name="selectAllSerieButton" Description="Aggiungi tutti" Type="STRING"/>
         <Button Name="deselectAllSerieButton" Description="Rimuovi tutti" Type="STRING"/>
         <Button Name="firmaIndiciAIPSerieHsmButton"  Description="Firma" Type="STRING" />
-        <Button Name="marcaturaIndiciAIPSerieButton"  Description="Marca serie firmate" Type="STRING" />
+<!--        <Button Name="marcaturaIndiciAIPSerieButton"  Description="Marca serie firmate" Type="STRING" /> -->
     </ButtonList>
     
     <!-- Lista serie da validare -->

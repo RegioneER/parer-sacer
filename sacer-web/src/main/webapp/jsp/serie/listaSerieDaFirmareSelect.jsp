@@ -185,7 +185,6 @@
                     <slf:lblField name="<%=SerieUDForm.ListaSerieDaFirmareButtonList.SELECT_ALL_SERIE_BUTTON%>" colSpan="2"/>
                     <slf:lblField name="<%=SerieUDForm.ListaSerieDaFirmareButtonList.DESELECT_ALL_SERIE_BUTTON%>" colSpan="2"/>
                     <slf:lblField name="<%=SerieUDForm.ListaSerieDaFirmareButtonList.FIRMA_INDICI_AIPSERIE_HSM_BUTTON%>" colSpan="2"/>
-                    <slf:lblField name="<%=SerieUDForm.ListaSerieDaFirmareButtonList.MARCATURA_INDICI_AIPSERIE_BUTTON%>" colSpan="2"/>
                 </slf:buttonList>
             </sl:pulsantiera>
             <sl:newLine skipLine="true"/>

@@ -54,7 +54,6 @@ import it.eng.parer.grantedViewEntity.OrgVRicEnteConvenzByEsterno;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.allineamentoEntiConvenzionati.utils.CostantiAllineaEntiConv;
 import it.eng.parer.viewEntity.OrgVChkStrutPartition;
-import it.eng.parer.viewEntity.OrgVChkTimePartitionFasc;
 import it.eng.parer.viewEntity.OrgVRicStrut;
 import it.eng.parer.web.util.Constants;
 
@@ -883,14 +882,6 @@ public class StruttureHelper extends GenericHelper {
 
     public String partitionOK(BigDecimal idStrut) {
         return getEntityManager().find(OrgVChkStrutPartition.class, idStrut).getFlPartOk();
-    }
-
-    public String partitionFileEleVersFascOK(BigDecimal idStrut) {
-        return getEntityManager().find(OrgVChkTimePartitionFasc.class, idStrut).getFlPartFileelevrsfascOk();
-    }
-
-    public String partitionFileEleVersFascDataOK(BigDecimal idStrut) {
-        return getEntityManager().find(OrgVChkTimePartitionFasc.class, idStrut).getFlPartFileelevrsfascDataOk();
     }
 
     public List<Integer> getProgressiviTemplatePresentiSuDB() {

@@ -4031,12 +4031,13 @@ public class SerieUDAction extends SerieUDAbstractAction {
         String stato = getForm().getCambioStatoSerie().getTi_stato_ver_serie().parse();
         String nota = getForm().getCambioStatoSerie().getDs_nota_azione().parse();
         String statoSerieCorrente = getForm().getSerieDetail().getTi_stato_ver_serie().getValue();
+        String tipoOperazione = "CAMBIA_STATO";
 
         if (idSerie != null && idVerSerie != null && StringUtils.isNotBlank(azione) && StringUtils.isNotBlank(stato)
                 && StringUtils.isNotBlank(statoSerieCorrente)) {
             try {
                 serieEjb.cambiaStatoSerie(getUser().getIdUtente(), idSerie, idVerSerie, idContenutoVerSerie, azione,
-                        stato, nota, statoSerieCorrente);
+                        stato, nota, statoSerieCorrente, tipoOperazione);
                 if (stato.equals(CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name())) {
                     String cdSerie = getForm().getContenutoSerieDetail().getCd_composito_serie().parse();
                     BigDecimal aaSerie = getForm().getContenutoSerieDetail().getAa_serie().parse();
@@ -4487,9 +4488,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
         /* Rendo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaSerieDaFirmareButtonList().setEditMode();
         // Se non ci sono serie in stato FIRMATA_NO_MARCA, nascondo il bottone per "marcare"
-        if (!serieEjb.existsFirmataNoMarca(null)) {
-            getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
-        }
+        // if (!serieEjb.existsFirmataNoMarca(null)) {
+        // getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
+        // }
 
         // Check if some signature session is active
         Future<Boolean> futureFirma = (Future<Boolean>) getSession().getAttribute(Signature.FUTURE_ATTR_SERIE);
@@ -4678,9 +4679,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
         /* Rengo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaSerieDaFirmareButtonList().setEditMode();
         // Se non ci sono serie in stato FIRMATA_NO_MARCA, nascondo il bottone per "marcare"
-        if (!serieEjb.existsFirmataNoMarca(null)) {
-            getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
-        }
+        // if (!serieEjb.existsFirmataNoMarca(null)) {
+        // getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
+        // }
 
         /* Inizializzo la lista delle serie selezionate */
         getForm().getSerieSelezionateList().setTable(new BaseTable());
@@ -4710,23 +4711,23 @@ public class SerieUDAction extends SerieUDAbstractAction {
         forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
     }
 
-    @Override
-    public void marcaturaIndiciAIPSerieButton() throws EMFError {
-        long idUtente = SessionManager.getUser(getSession()).getIdUtente();
-        try {
-            int marcati = serieEjb.marcaturaIndici(idUtente);
-            if (marcati > 0) {
-                getMessageBox().addMessage(new Message(MessageLevel.INF,
-                        "Marcatura eseguita correttamente: marcati tutti i " + marcati + " indici AIP versione serie"));
-                getMessageBox().setViewMode(ViewMode.plain);
-            }
-        } catch (ParerUserError ex) {
-            /* Se non ho marcato tutti gli indici mostro un warning */
-            getMessageBox().addMessage(new Message(MessageLevel.WAR, ex.getDescription()));
-            getMessageBox().setViewMode(ViewMode.plain);
-        }
-        forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
-    }
+    // @Override
+    // public void marcaturaIndiciAIPSerieButton() throws EMFError {
+    // long idUtente = SessionManager.getUser(getSession()).getIdUtente();
+    // try {
+    // int marcati = serieEjb.marcaturaIndici(idUtente);
+    // if (marcati > 0) {
+    // getMessageBox().addMessage(new Message(MessageLevel.INF,
+    // "Marcatura eseguita correttamente: marcati tutti i " + marcati + " indici AIP versione serie"));
+    // getMessageBox().setViewMode(ViewMode.plain);
+    // }
+    // } catch (ParerUserError ex) {
+    // /* Se non ho marcato tutti gli indici mostro un warning */
+    // getMessageBox().addMessage(new Message(MessageLevel.WAR, ex.getDescription()));
+    // getMessageBox().setViewMode(ViewMode.plain);
+    // }
+    // forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
+    // }
 
     @Override
     public void tabInfoPrincipaliVolumeOnClick() throws EMFError {
@@ -5089,6 +5090,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
     @Override
     public void validaSerie() throws EMFError {
+        String tipoOperazione = "VALIDA_SERIE";
         if (getForm().getSerieSelezionateDaValidareList().getTable().isEmpty()) {
             getMessageBox().addError("Selezionare almeno una serie da validare");
         } else {
@@ -5102,7 +5104,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     serieEjb.cambiaStatoSerie(getUser().getIdUtente(), row.getIdSerie(), row.getIdVerSerie(),
                             row.getIdContenutoVerSerie(), SerieEjb.AZIONE_SERIE_VALIDAZIONE_IN_CORSO,
                             CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name(), null,
-                            CostantiDB.StatoVersioneSerie.DA_VALIDARE.name());
+                            CostantiDB.StatoVersioneSerie.DA_VALIDARE.name(), tipoOperazione);
 
                     String keyFuture = FutureUtils.buildKeyFuture(CostantiDB.TipoChiamataAsync.VALIDAZIONE_SERIE.name(),
                             row.getCdCompositoSerie(), row.getAaSerie(), getUser().getIdOrganizzazioneFoglia(),
@@ -5118,7 +5120,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                         serieEjb.cambiaStatoSerie(getUser().getIdUtente(), row.getIdSerie(), row.getIdVerSerie(),
                                 row.getIdContenutoVerSerie(), SerieEjb.AZIONE_SERIE_VALIDAZIONE_IN_CORSO,
                                 CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name(), null,
-                                CostantiDB.StatoVersioneSerie.DA_VALIDARE.name());
+                                CostantiDB.StatoVersioneSerie.DA_VALIDARE.name(), tipoOperazione);
 
                         String keyFuture = FutureUtils.buildKeyFuture(
                                 CostantiDB.TipoChiamataAsync.VALIDAZIONE_SERIE.name(), row.getCdCompositoSerie(),

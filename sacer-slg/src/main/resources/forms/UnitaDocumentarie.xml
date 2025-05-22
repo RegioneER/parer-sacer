@@ -602,7 +602,7 @@
         <TabElement Description="Fascicoli di appartenenza" Name="ListaFascicoliAppartenenzaUD"/>
         <TabElement Description="Aggiornamenti metadati" Name="ListaAggiornamentiMetadatiUD"/>
         <TabElement Description="Note unità documentaria" Name="ListaNoteUD"/>
-        <TabElement Description="Stati conservazione ud" Name="ListaStatiConservUD"/>
+        <TabElement Description="Processo di conservazione" Name="ListaStatiConservUD"/>
     </Tab>
     <!-- PAGINA documento -->
     <Fields Description="Documento" Name="DocumentiUnitaDocumentarieDetail">

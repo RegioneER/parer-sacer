@@ -113,7 +113,6 @@ import it.eng.parer.viewEntity.MonVLisFasc;
 import it.eng.parer.viewEntity.MonVLisFascDaElab;
 import it.eng.parer.viewEntity.MonVLisFascKo;
 import it.eng.parer.viewEntity.MonVLisFascKoByErr;
-import it.eng.parer.viewEntity.OrgVChkPartitionFascByAa;
 import it.eng.parer.viewEntity.VrsVUpdFascicoloKo;
 import it.eng.parer.web.util.ApplEnum;
 import it.eng.parer.web.util.StringPadding;
@@ -1067,20 +1066,6 @@ public class FascicoliHelper extends GenericHelper {
             return query.getResultList();
         } catch (RuntimeException ex) {
             logger.error("Errore nell'estrazione di MonContaFascicoliKo", ex);
-            throw ex;
-        }
-    }
-
-    public List<OrgVChkPartitionFascByAa> retrieveOrgVChkPartitionFascByAaByStrutAnno(BigDecimal idStrut,
-            BigDecimal anno) {
-        try {
-            Query query = getEntityManager().createNamedQuery("OrgVChkPartitionFascByAa.findByStrutAnno",
-                    OrgVChkPartitionFascByAa.class);
-            query.setParameter("idStrut", idStrut);
-            query.setParameter("anno", anno);
-            return query.getResultList();
-        } catch (RuntimeException ex) {
-            logger.error("Errore nell'estrazione di OrgVChkPartitionFascByAa", ex);
             throw ex;
         }
     }

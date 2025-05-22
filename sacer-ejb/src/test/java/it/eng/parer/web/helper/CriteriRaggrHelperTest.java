@@ -22,16 +22,10 @@ import it.eng.parer.entity.DecRegistroUnitaDoc;
 import it.eng.parer.entity.DecTipoDoc;
 import it.eng.parer.entity.DecTipoUnitaDoc;
 import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.job.calcoloContenutoSacer.ejb.CalcoloContenutoSacerHelper;
-import it.eng.parer.job.calcoloContenutoSacer.ejb.CalcoloContenutoSacerHelperTest;
-import it.eng.parer.sacer.util.SacerLogConstants;
-import it.eng.parer.sacerlog.util.LogParam;
-import it.eng.parer.sacerlog.util.TransactionLogContext;
 import it.eng.parer.slite.gen.form.CriteriRaggruppamentoForm;
 import it.eng.parer.web.util.ApplEnum;
 import it.eng.parer.web.util.Constants;
 import java.math.BigDecimal;
-import it.eng.parer.web.helper.HelperTest;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -51,8 +45,7 @@ public class CriteriRaggrHelperTest extends HelperTest<CriteriRaggrHelper> {
         return HelperTest.createEnterpriseArchive(CriteriRaggrHelperTest.class.getSimpleName(),
                 HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
                 HelperTest.createSacerJavaArchive(Arrays.asList(""), CriteriRaggrHelper.class, Constants.class,
-                        ApplEnum.class, CriteriRaggrHelperTest.class,
-                        it.eng.parer.web.helper.ConfigurationHelper.class));
+                        ApplEnum.class, CriteriRaggrHelperTest.class, ConfigurationHelper.class));
     }
 
     @Test
@@ -105,9 +98,11 @@ public class CriteriRaggrHelperTest extends HelperTest<CriteriRaggrHelper> {
         BigDecimal idTipoDoc = aBigDecimal();
         BigDecimal aaKeyUnitaDoc = aBigDecimal();
         String criterioAttivo = aString();
+        long idUtente = aBigDecimal().longValue();
+
         helper.getCriteriRaggr(idAmbiente, idEnte, idAmbiente, nmCriterioRaggr, flCriterioRaggrStandard,
                 flCriterioRaggrFisc, tiValidElenco, tiModValidElenco, tiGestElencoCriterio, idRegistroUnitaDoc,
-                idTipoUnitaDoc, idTipoDoc, aaKeyUnitaDoc, criterioAttivo);
+                idTipoUnitaDoc, idTipoDoc, aaKeyUnitaDoc, criterioAttivo, idUtente);
         assertTrue(true);
     }
 

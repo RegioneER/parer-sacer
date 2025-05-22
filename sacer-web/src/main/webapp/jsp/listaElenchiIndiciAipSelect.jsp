@@ -254,7 +254,6 @@
                 <slf:lblField name="<%=ElenchiVersamentoForm.ElenchiIndiciAipDaFirmareButtonList.SELECT_HUNDRED_ELENCHI_INDICI_AIP%>" colSpan="1"/>
                 <slf:lblField name="<%=ElenchiVersamentoForm.ElenchiIndiciAipDaFirmareButtonList.FIRMA_ELENCHI_INDICI_AIP_HSM%>" colSpan="1"/>
                 <sl:newLine />
-                <slf:lblField name="<%=ElenchiVersamentoForm.ElenchiIndiciAipDaFirmareButtonList.MARCA_ELENCHI_INDICI_AIP%>" colSpan="1"/>
             </sl:pulsantiera>
             <sl:newLine skipLine="true"/>
 
