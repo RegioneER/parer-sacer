@@ -75,7 +75,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.springframework.security.saml.trust.X509KeyManager;
+//import org.springframework.security.saml.trust.X509KeyManager;
 
 @RunWith(Arquillian.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -118,7 +118,7 @@ public abstract class HelperTest<T> {
                 .addClass(DecCriterioDatiSpecBean.class).addClass(StringUtils.class)
                 .addClass(OracleSqlInterceptor.class).addClass(FascicoliHelperTest.class)
                 .addClass(org.springframework.util.Assert.class)
-                .addClass(org.springframework.beans.PropertyAccessor.class).addClass(X509KeyManager.class)
+                // .addClass(org.springframework.beans.PropertyAccessor.class).addClass(X509KeyManager.class)
                 // with subpackages
                 .addPackages(true, "it.eng.spagoLite.form", "it.eng.parer.jboss.timer.common", "it.eng.spagoLite.db",
                         "it.eng.parer.entity", "it.eng.parer.grantedEntity", "it.eng.parer.viewEntity",

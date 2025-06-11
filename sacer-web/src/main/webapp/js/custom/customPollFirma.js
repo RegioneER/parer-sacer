@@ -163,85 +163,11 @@ function pollIndiciAip() {
                             }
                         },
                         resizable: false,
-                        dialogClass: "alertBox",
+                        dialogClass: "aler  tBox",
                         buttons: {
-                            "Completa processo": function () {
-                                // Change message and disable button
-                                var box="infobox";
-                                var icon="info";
-                                var message="info";
-                                var description="Marcatura avviata! Attendere...";
-                                var msg = '<div class="messages ' + box + '"><ul><span class="ui-icon ui-icon-' + icon + '"></span><li class="message ' + message + '">';
-                                msg += description;
-                                msg += '</li></ul></div>';
-                                $('.firmaBox').html(msg);
-                                $(".ui-dialog-buttonpane button:contains('Completa processo')").attr("disabled", true).addClass("ui-state-disabled");
-
-                                // Launch marca
-                                $.ajax({
-                                    type: 'POST',
-                                    datatype: 'json',
-                                    url: 'ElenchiVersamento.html',
-                                    async: false,
-                                    data: {
-                                        operation: "startMarcaFromJs",
-                                        Id_ambiente: $("#Id_ambiente").val(),
-                                        Id_ente: $("#Id_ente").val(),
-                                        Id_strut: $("#Id_strut").val(),
-                                        Fl_elenco_fisc: $("#Fl_elenco_fisc").val(),
-                                        Ti_gest_elenco: $("#Ti_gest_elenco").val()
-                                    },
-                                    success: function (data) {
-                                        var box;
-                                        var icon;
-                                        var message;
-                                        var description;
-                                        var object = data.map[0];
-                                        switch (object.status) {
-                                            case "OK":
-                                                box = "infobox";
-                                                icon = message = "info";
-                                                description = object.info;
-                                                break;
-                                            case "WARNING":
-                                                box = "warnbox";
-                                                icon = "alert";
-                                                message = "warning";
-                                                description = object.info;
-                                                break;
-                                            default:
-                                                // ERROR
-                                                box = "errorbox";
-                                                icon = "alert";
-                                                message = "error";
-                                                description = object.error;
-                                                break;
-                                        }
-                                        var msg = '<div class="messages ' + box + '"><ul><span class="ui-icon ui-icon-' + icon + '"></span><li class="message ' + message + '">';
-                                        var counter = 0;
-                                        if (object.status !== 'WORKING' && object.status !== 'NO_SESSION') {
-                                            counter++;
-                                            msg += description;
-                                        }
-                                        msg += '</li></ul></div>';
-
-                                        if (counter > 0) {
-                                            $('.firmaBox').html(msg);
-                                        } else {
-                                            if (!$('.firmaBox').data('POPUP')) {
-                                                $('.firmaBox').html('');
-                                            }
-                                        }
-                                    },
-                                    complete: function () {
-                                        // Returns the result and enable close button
-                                        var buttons = $('.firmaBox').dialog('option', 'buttons');
-                                        $('.firmaBox').dialog('option', 'buttons', buttons);
-                                        $('.firmaBox').dialog( "option", "closeOnEscape", true);
-                                        $(".ui-dialog-buttonpane button:contains('Completa processo')").attr("disabled", true).addClass("ui-state-disabled");
-                                    }
-                                });
-                            },
+                            // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip UD
+                            // Eliminato il pulsante completamento della vecchia marcatura perché il secondo step è stato
+                            // già invocato in fase di firma
                             "Chiudi" : function () {
                                 $('.firmaBox').removeData('POPUP');
                                 $(this).dialog("close");
@@ -251,7 +177,10 @@ function pollIndiciAip() {
                     });
 
                     if( $('.firmaBox').data('TO_MARK') ) {
-                        $(".ui-dialog-buttonpane button:contains('Chiudi')").attr("disabled", true).addClass("ui-state-disabled");
+                        // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip UD
+                        $(".ui-dialog-buttonpane button:contains('Chiudi')").prop("disabled", false).addClass("ui-state-enabled");
+                        $(".ui-dialog-buttonpane button:contains('Completa processo')").attr("disabled", true).removeClass("ui-state-disabled").addClass("ui-state-enabled");
+                        $(".ui-dialog-buttonpane button:contains('Completa processo')").hide();
                     } else {
                         $(".ui-dialog-buttonpane button:contains('Completa processo')").attr("disabled", true).addClass("ui-state-disabled");
                     }

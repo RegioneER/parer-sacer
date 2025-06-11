@@ -226,6 +226,8 @@ public class XmlContextCache {
             // end EVO#13993
 
             SchemaFactory schemaFctry = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            schemaFctry.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            schemaFctry.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             versReqStatoSchema = schemaFctry.newSchema(FileXSDUtil.getURLFileXSD(FileXSD.VERS_REQ_STATO_XSD));
             // EVO#13993
             versReqStatoFascSchema = schemaFctry.newSchema(FileXSDUtil.getURLFileXSD(FileXSD.VERS_REQ_STATO_FASC_XSD));

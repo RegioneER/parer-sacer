@@ -533,7 +533,7 @@ public class TipoSerieHelper extends GenericHelper {
         final List<Object[]> resultList = query.getResultList();
         final List<DecAttribDatiSpec> decAttribDatiSpecList = resultList.stream().map(record -> {
             Long idDec = Long.class.cast(record[0]);
-            return findById(DecAttribDatiSpec.class, idDec.longValue());
+            return findById(DecAttribDatiSpec.class, idDec);
         }).collect(Collectors.toList());
         return decAttribDatiSpecList;
     }

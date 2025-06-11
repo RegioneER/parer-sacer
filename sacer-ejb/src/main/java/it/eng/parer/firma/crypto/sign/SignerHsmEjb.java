@@ -132,12 +132,16 @@ public class SignerHsmEjb {
 
         if (request != null) {
             SignatureSessionEjb ejb = getSignatureEjb(request.getType());
-
-            if (!ejb.hasUserActiveSessions(request.getIdUtente())) {
-                HsmSessioneFirma sessione = ejb.startSessioneFirma(request);
-                result = context.getBusinessObject(SignerHsmEjb.class).signP7m(sessione, request.getUserHSM());
+            if (ejb != null) {
+                if (!ejb.hasUserActiveSessions(request.getIdUtente())) {
+                    HsmSessioneFirma sessione = ejb.startSessioneFirma(request);
+                    result = context.getBusinessObject(SignerHsmEjb.class).signP7m(sessione, request.getUserHSM());
+                } else {
+                    result = new AsyncResult<>(SigningResponse.ACTIVE_SESSION_YET);
+                }
             } else {
-                result = new AsyncResult<>(SigningResponse.ACTIVE_SESSION_YET);
+                logger.error("SignatureSessionEjb non trovato per il tipo: {}", request.getType());
+                result = new AsyncResult<>(SigningResponse.UNKNOWN_ERROR);
             }
         } else {
             result = new AsyncResult<>(SigningResponse.UNKNOWN_ERROR);
@@ -180,7 +184,43 @@ public class SignerHsmEjb {
 
                 byte[] file2sign = ejb.getFile2Sign(idFile);
                 try {
-                    byte[] signedFile = clientHsm.signP7M(hsmSession, file2sign);
+                    // byte[] signedFile = clientHsm.signP7M(hsmSession, file2sign);
+
+                    // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi
+                    // indici aip UD
+                    byte[] signedFile = null;
+                    /*
+                     * Nel caso in cui si tratti di gestione elenchi indici AIP la cui gestione può essere MARCA o
+                     * SIGILLO con anche MARCA allora il parametro generico di entrata "marcaTemporale" viene ignorato e
+                     * si richiede per XADES la sola firma oppure anche la marca in base al tipo gestione dell'elenco di
+                     * versamento.
+                     */
+                    if (sessione.getTiSessioneFirma().equals(sessione.getTiSessioneFirma().ELENCO_INDICI_AIP)) {
+                        String tipoGestione = elencoIndiciAipSignEjb.getTipoGestioneElenco(idFile,
+                                sessione.getIamUser().getIdUserIam());
+                        if (tipoGestione != null
+                                && (tipoGestione.equals(ElencoEnums.GestioneElencoEnum.MARCA_FIRMA.name())
+                                        || tipoGestione.equals(ElencoEnums.GestioneElencoEnum.MARCA_SIGILLO.name()))) {
+                            signedFile = clientHsm.signP7M(hsmSession, file2sign, true);
+                        } else {
+                            signedFile = clientHsm.signP7M(hsmSession, file2sign, false);
+                        }
+                    } else if (sessione.getTiSessioneFirma().equals(sessione.getTiSessioneFirma().SERIE)) {
+                        /*
+                         * Per le serie si è deciso che la firma è sempre Xades senza marca in quanto il tipo di
+                         * conservazione fiscale probabilmente diventerà deprecato, quindi quella parte di codice che
+                         * gestisce lo stato della serie rimane che lo stato lo mette a FIRMATA_NO_MARCA
+                         */
+                        signedFile = clientHsm.signP7M(hsmSession, file2sign, false);
+                    } else if (sessione.getTiSessioneFirma()
+                            .equals(sessione.getTiSessioneFirma().ELENCHI_INDICI_AIP_FASC)) {
+                        signedFile = clientHsm.signP7M(hsmSession, file2sign, false); // Richiede sempre firma senza
+                        // marca
+                    } else {
+                        signedFile = clientHsm.signP7M(hsmSession, file2sign, false); // Richiede sempre firma senza
+                        // marca in tutti gli altri casi
+                    }
+                    // Fine MAC
 
                     if (signedFile != null) {
                         Date signingDate = new Date();
@@ -352,7 +392,7 @@ public class SignerHsmEjb {
                     /*
                      * Nel caso in cui si tratti di gestione elenchi indici AIP la cui gestione può essere MARCA o
                      * SIGILLO con anche MARCA allora il parametro generico di entrata "marcaTemporale" viene ignorato e
-                     * si richiede per XADES la sola firma oppure anche la marca in base al tipo getione dell'elenco di
+                     * si richiede per XADES la sola firma oppure anche la marca in base al tipo gestione dell'elenco di
                      * versamento.
                      */
                     if (sessione.getTiSessioneFirma().equals(sessione.getTiSessioneFirma().ELENCO_INDICI_AIP)) {
@@ -367,9 +407,9 @@ public class SignerHsmEjb {
                         }
                     } else if (sessione.getTiSessioneFirma().equals(sessione.getTiSessioneFirma().SERIE)) {
                         /*
-                         * Per le serie si è deciso che la firma è sempre Xades senza marca in quanto il tipo di
-                         * conservazione fiscale probabilmente diventerà deprecato, quindi quella parte di codice che
-                         * gestisce lo stato della serie rimane che lo stato lo mette a FIRMATA_NO_MARCA
+                         * Per le serie si è deciso che la firma è sempre senza marca in quanto il tipo di conservazione
+                         * fiscale probabilmente diventerà deprecato, quindi quella parte di codice che gestisce lo
+                         * stato della serie rimane che lo stato lo mette a FIRMATA_NO_MARCA
                          */
                         signedFile = clientHsm.signXAdES(hsmSession, file2sign, false);
                     } else if (sessione.getTiSessioneFirma()

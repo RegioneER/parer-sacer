@@ -18,6 +18,7 @@
 package it.eng.parer.web.util;
 
 import javax.ejb.EJB;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -30,6 +31,7 @@ import it.eng.spagoLite.security.User;
  *
  * @author fioravanti_f
  */
+@WebListener
 public class AuditSessionListener implements HttpSessionListener {
 
     public static final String CLIENT_IP_ADDRESS = "###_LOG#_CLIENT_IP_ADDRESS";

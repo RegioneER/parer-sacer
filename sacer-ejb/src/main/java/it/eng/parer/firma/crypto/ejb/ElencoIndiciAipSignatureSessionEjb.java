@@ -198,7 +198,7 @@ public class ElencoIndiciAipSignatureSessionEjb implements SignatureSessionEjb {
 
             ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(urn,
                     backendIndiciAip.getBackendName(), signedFile, fileElencoVers.getIdFileElencoVers(),
-                    fileElencoVers.getIdStrut());
+                    fileElencoVers.getIdStrut(), tipoFirma);
             logger.debug("Salvato il file dell'elenco indici aip firmato nel bucket {} con chiave {} ", res.getBucket(),
                     res.getKey());
         }

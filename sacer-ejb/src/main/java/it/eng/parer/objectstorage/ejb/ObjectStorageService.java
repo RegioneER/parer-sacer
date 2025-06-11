@@ -48,6 +48,7 @@ import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -83,8 +84,10 @@ import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.objectstorage.helper.SalvataggioBackendHelper;
 import it.eng.parer.ws.dto.CSVersatore;
+import it.eng.parer.ws.utils.CRC32CChecksum;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.util.UUIDMdcLogUtil;
+import java.nio.file.StandardOpenOption;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.model.GetObjectAttributesResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
@@ -120,7 +123,9 @@ public class ObjectStorageService {
     private static final String READ_ELV_IX_AIP = "READ_ELV_IX_AIP";
     private static final String WRITE_ELV_IX_AIP = "WRITE_ELV_IX_AIP";
     // end MEV#30397
-    // MEV#30398
+    // MEV#37041
+    private static final String READ_ELV_IX = "READ_ELV_IX";
+    // MEV#37041
     private static final String READ_INDICI_AIP_FASCICOLI = "READ_INDICI_AIP_FASCICOLI";
     private static final String WRITE_INDICI_AIP_FASCICOLI = "WRITE_INDICI_AIP_FASCICOLI";
     // end MEV#30398
@@ -146,7 +151,7 @@ public class ObjectStorageService {
      * Effettua il lookup per stabilire come sia configurato il backend
      *
      * @param idTipoUnitaDoc
-     *            id tipologia di unità documentaria
+     *            id tipologia di unitÃ  documentaria
      * @param paramName
      *            nome del parametro
      *
@@ -329,7 +334,7 @@ public class ObjectStorageService {
      * @param idEntitaSacerUpd
      *            id aggiornamento metadati
      * @param tiEntitaSacerUpd
-     *            tipo entità aggiornamento metadati
+     *            tipo entitÃ  aggiornamento metadati
      *
      * @return mappa degli XML dei dati specifici aggiornati
      */
@@ -365,7 +370,7 @@ public class ObjectStorageService {
      * @param idEntitaSacerVersIni
      *            id versamento iniziale
      * @param tiEntitaSacerVersIni
-     *            tipo entità versamento iniziale
+     *            tipo entitÃ  versamento iniziale
      *
      * @return mappa degli XML dei dati specifici relativi ai metadati iniziali
      */
@@ -465,7 +470,7 @@ public class ObjectStorageService {
                     xmlDatiSpec.put(CostantiDB.TipiUsoDatiSpec.MIGRAZ.name(), value);
                 } else {
                     log.warn(
-                            "Attenzione, l'entry con nome {} non è stata riconosciuta nel file zip dei Dati Specifici dell'aggiornamento metadati",
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei Dati Specifici dell'aggiornamento metadati",
                             ze.getName());
                 }
                 zis.closeEntry();
@@ -723,6 +728,24 @@ public class ObjectStorageService {
     }
 
     /**
+     * Ottieni, sotto forma di byte array, il file dell'elenco indice contenuto nell'object storage
+     *
+     * @param idFileElencoVers
+     *            id file elenco versamento
+     *
+     * @return file XML dell'elenco indice
+     */
+    public byte[] getObjectElencoIndici(long idFileElencoVers) {
+        try {
+
+            return getObjectFileElencoIx(salvataggioBackendHelper.getLinkElvFileElencoVersOs(idFileElencoVers));
+        } catch (IOException | ObjectStorageException e) {
+            // EJB spec (14.2.2 in the EJB 3)
+            throw new EJBException(e);
+        }
+    }
+
+    /**
      * Ottieni, sotto forma di byte array, il file dell'elenco indici aip contenuto nell'object storage
      *
      * @param idFileElencoVers
@@ -752,8 +775,21 @@ public class ObjectStorageService {
             return IOUtils.byteArray();
         }
     }
-    // end MEV#30397
 
+    private byte[] getObjectFileElencoIx(ElvFileElencoVersObjectStorage fileElencoVersObjectStorage)
+            throws ObjectStorageException, IOException {
+        if (!Objects.isNull(fileElencoVersObjectStorage)) {
+            ObjectStorageBackend config = salvataggioBackendHelper.getObjectStorageConfiguration(
+                    fileElencoVersObjectStorage.getDecBackend().getNmBackend(), READ_ELV_IX);
+            ResponseInputStream<GetObjectResponse> object = salvataggioBackendHelper.getObject(config,
+                    fileElencoVersObjectStorage.getNmBucket(), fileElencoVersObjectStorage.getCdKeyFile());
+            return IOUtils.toByteArray(object);
+        } else {
+            return IOUtils.byteArray();
+        }
+    }
+
+    // end MEV#30397
     /**
      * Controlla se il versamento fallito sia o meno stato registrato sull'object storage indipendemente dal valore del
      * parametro (il pregresso potrebbe ancora essere su DB).
@@ -826,7 +862,7 @@ public class ObjectStorageService {
                     xmlVers.put(CostantiDB.TipiXmlDati.INDICE_FILE, value);
                 } else {
                     log.warn(
-                            "Attenzione, l'entry con nome {} non è stata riconosciuta nel file zip dei SIP di versamento",
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei SIP di versamento",
                             ze.getName());
                 }
                 zis.closeEntry();
@@ -858,7 +894,7 @@ public class ObjectStorageService {
                     xmlProf.put(CostantiDB.TiModelloXsdProfilo.PROFILO_SPECIFICO_FASCICOLO.name(), value);
                 } else {
                     log.warn(
-                            "Attenzione, l'entry con nome {} non è stata riconosciuta nel file zip dei profili del fascicolo",
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip dei profili del fascicolo",
                             ze.getName());
                 }
                 zis.closeEntry();
@@ -870,40 +906,67 @@ public class ObjectStorageService {
 
     // MEV#30397
     /**
-     * Salva il contenuto nel bucket degli Elenchi Indici AIP
+     * Salva il contenuto nel bucket degli Elenchi Indici AIP.
      *
      * @param urn
-     *            urn
+     *            Identificativo univoco normalizzato del file.
      * @param nomeBackend
-     *            backend configurato (per esempio OBJECT_STORAGE_PRIMARIO)
+     *            Nome del backend configurato (es. OBJECT_STORAGE_PRIMARIO).
      * @param contenuto
-     *            byte array da salvare
+     *            Contenuto del file da salvare come array di byte.
      * @param idFileElencoVers
-     *            id file elenco indice aip
+     *            ID del file elenco indice AIP.
      * @param idStrut
-     *            id struttura
+     *            ID della struttura versante.
+     * @param tipoFirma
+     *            Tipo di firma associata al file (es. digitale o marcatura temporale).
      *
-     * @return risorsa su OS che identifica il contenuto caricato
+     * @return Risorsa su Object Storage che identifica il contenuto caricato.
+     *
      */
     public ObjectStorageResource createResourcesInElenchiIndiciAip(final String urn, String nomeBackend,
-            byte[] contenuto, long idFileElencoVers, BigDecimal idStrut) {
+            byte[] contenuto, long idFileElencoVers, BigDecimal idStrut, ElencoEnums.TipoFirma tipoFirma) {
+        Path tempFile = null;
         try {
             ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
                     WRITE_ELV_IX_AIP);
-
             // generate std tag
             Set<Tag> tags = new HashSet<>();
-
             // create key
-            final String estensione = urn.toUpperCase().contains("MARCA") ? ".tsr" : ".xml.p7m";
-            final String destKey = createRandomKey(urn) + estensione;
+            // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip
+            // UD
+            String estensione = "";
+            switch (tipoFirma) {
+            case XADES:
+                estensione = ".xml";
+                break;
+            case CADES:
+                estensione = ".xml.p7m";
+                break;
+            default:
+                estensione = "";
+                log.warn("Estensione mancante nel file da salvare sull'ObjectStorage!");
+            }
+            // MAC #37222
+            String suffisso = "Indice";
+            // if (urn.toUpperCase().contains("MARCA")) {
+            // suffisso = "IndiceMarca";
+            // } else {
+            // suffisso = "Indice";
+            // }
+            String urnRielaborato = salvataggioBackendHelper.generateKeyElencoIndiceAip(idFileElencoVers, suffisso);
+            final String destKey = createRandomKey(urnRielaborato) + estensione;
+
+            tempFile = Files.createTempFile("temp-elenco-indici", ".xml");
+            // Scrivi il contenuto byte[] nel file temporaneo
+            Files.write(tempFile, contenuto, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
             // put on O.S. + save link
             try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
 
                 ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais, contenuto.length, destKey,
                         configuration, Optional.empty(), Optional.of(tags),
-                        Optional.of(Md5Utils.md5AsBase64(contenuto)));
+                        Optional.of(calculateFileCRC32CBase64(tempFile)));
                 log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
                 // link
                 salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAip(savedFile, nomeBackend, idFileElencoVers,
@@ -913,6 +976,16 @@ public class ObjectStorageService {
 
         } catch (ObjectStorageException | IOException ex) {
             throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione originale.
+                }
+            }
         }
     }
 
@@ -974,9 +1047,13 @@ public class ObjectStorageService {
      *            anno chiave unità documentaria
      *
      * @return risorsa su OS che identifica il contenuto caricato
+     *
+     * @throws java.io.IOException
+     *             eccezione
      */
     public ObjectStorageResource createResourcesInIndiciAipUnitaDoc(String nomeBackend, String contenuto,
-            long idVerIndiceAip, BigDecimal idSubStrut, BigDecimal aaKeyUnitaDoc) {
+            long idVerIndiceAip, BigDecimal idSubStrut, BigDecimal aaKeyUnitaDoc) throws IOException {
+        Path tempFile = Files.createTempFile("temp-indice", ".xml");
         try {
             ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
                     WRITE_INDICI_AIP);
@@ -984,11 +1061,17 @@ public class ObjectStorageService {
             // generate std tag
             Set<Tag> tags = new HashSet<>();
 
-            final String destKey = salvataggioBackendHelper.generateKeyIndiceAip(idVerIndiceAip);
+            // MAC #37222
+            final String estensione = ".xml";
+            final String destKey = salvataggioBackendHelper.generateKeyIndiceAip(idVerIndiceAip) + estensione;
+
+            // Scrivi il contenuto String nel file temporaneo (usa UTF-8 encoding)
+            Files.write(tempFile, contenuto.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE);
 
             // put on O.S.
             ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(contenuto, destKey, configuration,
-                    Optional.empty(), Optional.of(tags), Optional.of(calculateMd5AsBase64(contenuto)));
+                    Optional.empty(), Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
 
             log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
             // link
@@ -997,14 +1080,26 @@ public class ObjectStorageService {
             return savedFile;
         } catch (ObjectStorageException ex) {
             throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione originale.
+                }
+            }
         }
     }
 
     /**
-     * Calcola il message digest MD5 (base64 encoded) del dato da inviare via S3
+     * @deprecated
      *
-     * Nota: questa scelta deriva dal modello supportato dal vendor
-     * (https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) *
+     *             Calcola il message digest MD5 (base64 encoded) del dato da inviare via S3
+     *
+     *             Nota: questa scelta deriva dal modello supportato dal vendor
+     *             (https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html) *
      *
      * @param str
      *            contenuto
@@ -1016,6 +1111,7 @@ public class ObjectStorageService {
      * @throws IOException
      *             errore generico
      */
+    @Deprecated(forRemoval = true, since = "10.8.0")
     private String calculateMd5AsBase64(String str) {
         return Md5Utils.md5AsBase64(str.getBytes(StandardCharsets.UTF_8));
     }
@@ -1103,8 +1199,11 @@ public class ObjectStorageService {
         try {
             ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
                     WRITE_INDICI_AIP_FASCICOLI);
+
+            String urnKey = salvataggioBackendHelper.generateKeyIndiceAipFasc(idVerAipFascicolo);
+
             // put on O.S.
-            ObjectStorageResource savedFile = createSipXmlMapAndPutOnBucket(urn, xmlFiles, configuration,
+            ObjectStorageResource savedFile = createSipXmlMapAndPutOnBucket(urnKey, xmlFiles, configuration,
                     SetUtils.emptySet());
             // link
             salvataggioBackendHelper.saveObjectStorageLinkIndiceAipFasc(savedFile, nomeBackend, idVerAipFascicolo,
@@ -1133,11 +1232,17 @@ public class ObjectStorageService {
             createZipFile(xmlFiles, tempZip);
             // put on O.S.
             savedFile = salvataggioBackendHelper.putObject(is, Files.size(tempZip), key, configuration,
-                    Optional.empty(), Optional.of(tags), Optional.of(calculateFileBase64(tempZip)));
+                    Optional.empty(), Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempZip)));
             log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
         } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
             if (tempZip != null) {
-                Files.delete(tempZip);
+                try {
+                    Files.deleteIfExists(tempZip);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempZip, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione originale.
+                }
             }
         }
 
@@ -1171,8 +1276,8 @@ public class ObjectStorageService {
     /**
      * Crea i file zip contenente gli xml dell'indice AIP fascicolo.Possono essere di tipo:
      * <ul>
-     * <li>{@link CostantiDB.TiMeta#FASCICOLO}, obbligatorio è l'XML dei metadati fascicolo</li>
-     * <li>{@link CostantiDB.TiMeta#INDICE}, obbligatorio è l'XML dell'indice AIP fascicolo</li>
+     * <li>{@link CostantiDB.TiMeta#FASCICOLO}, obbligatorio Ã¨ l'XML dei metadati fascicolo</li>
+     * <li>{@link CostantiDB.TiMeta#INDICE}, obbligatorio Ã¨ l'XML dell'indice AIP fascicolo</li>
      * </ul>
      *
      *
@@ -1338,7 +1443,7 @@ public class ObjectStorageService {
                     xmlVers.put(it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.INDICE.name(), value);
                 } else {
                     log.warn(
-                            "Attenzione, l'entry con nome {} non è stata riconosciuta nel file zip degli AIP fascicolo",
+                            "Attenzione, l'entry con nome {} non Ã¨ stata riconosciuta nel file zip degli AIP fascicolo",
                             ze.getName());
                 }
                 zis.closeEntry();
@@ -1368,6 +1473,7 @@ public class ObjectStorageService {
      */
     public ObjectStorageResource createResourcesInElenchiIndiciAipFasc(final String urn, String nomeBackend,
             byte[] contenuto, long idFileElencoVersFasc, BigDecimal idStrut) {
+        Path tempFile = null;
         try {
             ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
                     WRITE_ELV_IX_AIP_FASCICOLI);
@@ -1376,15 +1482,21 @@ public class ObjectStorageService {
             Set<Tag> tags = new HashSet<>();
 
             // create key
+            // MAC #37222
             final String estensione = urn.toUpperCase().contains("MARCA") ? ".tsr" : ".xml.p7m";
-            final String destKey = createRandomKey(urn) + estensione;
+            String urnRielaborato = salvataggioBackendHelper.generateKeyElencoIndiceAipFasc(idFileElencoVersFasc);
+            final String destKey = createRandomKey(urnRielaborato) + estensione;
+
+            tempFile = Files.createTempFile("temp-elenco-indici-fasc", ".xml");
+            // Scrivi il contenuto byte[] nel file temporaneo
+            Files.write(tempFile, contenuto, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
             // put on O.S. + save link
             try (ByteArrayInputStream bais = new ByteArrayInputStream(contenuto)) {
 
                 ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais, contenuto.length, destKey,
                         configuration, Optional.empty(), Optional.of(tags),
-                        Optional.of(Md5Utils.md5AsBase64(contenuto)));
+                        Optional.of(calculateFileCRC32CBase64(tempFile)));
                 log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
                 // link
                 salvataggioBackendHelper.saveObjectStorageLinkElencoIndiceAipFasc(savedFile, nomeBackend,
@@ -1394,6 +1506,16 @@ public class ObjectStorageService {
 
         } catch (ObjectStorageException | IOException ex) {
             throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione originale.
+                }
+            }
         }
     }
 
@@ -1493,11 +1615,12 @@ public class ObjectStorageService {
     }
 
     // end MEV#30399
-    // MEV#30400
 
+    // MEV#30400
     public ObjectStorageResource createResourcesInIndiciAipSerieUD(SerFileVerSerie serFileVerSerie, String nomeBackend,
             byte[] blob, long idVerSerie, BigDecimal idStrut, CSVersatore versatore, String codiceSerie,
-            String versioneSerie) {
+            String versioneSerie) throws IOException {
+        Path tempFile = null;
         try {
             ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
                     WRITE_INDICI_AIP_SERIE_UD);
@@ -1508,22 +1631,53 @@ public class ObjectStorageService {
             final String destKey = salvataggioBackendHelper.generateKeyIndiceAipSerieUD(serFileVerSerie, versatore,
                     codiceSerie, versioneSerie);
 
-            // put on O.S.
-            ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(
-                    new String(blob, StandardCharsets.UTF_8), destKey, configuration, Optional.empty(),
-                    Optional.of(tags), Optional.of(calculateMd5AsBase64(new String(blob, StandardCharsets.UTF_8))));
-
-            log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
-            // link
-            if (!salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
-                    serFileVerSerie.getTiFileVerSerie())) {
-                salvataggioBackendHelper.saveObjectStorageLinkIndiceAipSerieUd(savedFile, nomeBackend, idVerSerie,
-                        idStrut, serFileVerSerie.getTiFileVerSerie());
+            // MAC #37222
+            String estensione = "";
+            // compliant
+            if (serFileVerSerie.getTiFileVerSerie().equals("IX_AIP_UNISINCRO")) {
+                estensione = ".xml";
+            } else {
+                if (serFileVerSerie.getTiFileVerSerie().equals("IX_AIP_UNISINCRO_FIRMATO")) {
+                    estensione = ".xml.p7m";
+                } else {
+                    estensione = ".tsr";
+                }
             }
-            return savedFile;
-        } catch (ObjectStorageException ex) {
 
+            // create key
+            final String destKeyNewFormat = createRandomKey(destKey) + estensione;
+
+            tempFile = Files.createTempFile("temp-blob", ".tmp");
+            // Scrivi i dati del blob nel file temporaneo
+            Files.write(tempFile, blob, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+
+            // put on O.S.
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(blob)) {
+                ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais, blob.length,
+                        destKeyNewFormat, configuration, Optional.empty(), Optional.of(tags),
+                        Optional.of(calculateFileCRC32CBase64(tempFile)));
+
+                log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+                // link
+                if (!salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
+                        serFileVerSerie.getTiFileVerSerie())) {
+                    salvataggioBackendHelper.saveObjectStorageLinkIndiceAipSerieUd(savedFile, nomeBackend, idVerSerie,
+                            idStrut, serFileVerSerie.getTiFileVerSerie());
+                }
+                return savedFile;
+            }
+        } catch (ObjectStorageException | IOException ex) {
             throw new EJBException(ex);
+        } finally {
+            // Elimina il file temporaneo (anche in caso di eccezione)
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (IOException e) {
+                    log.error("Impossibile eliminare il file temporaneo: " + tempFile, e);
+                    // Logga l'errore, ma non rilanciare l'eccezione per non mascherare l'eccezione originale.
+                }
+            }
         }
     }
 
@@ -1587,7 +1741,6 @@ public class ObjectStorageService {
     }
 
     // end MEV#30400
-
     public URL getPresignedURLComponente(long idCompDoc) {
         try {
             AroCompObjectStorage link = salvataggioBackendHelper.getLinkCompDocOs(idCompDoc);
@@ -1600,4 +1753,33 @@ public class ObjectStorageService {
             throw new EJBException(e);
         }
     }
+
+    // MEV 37576
+    /**
+     * Calcola il checksum CRC32C (base64 encoded) del file da inviare via S3
+     *
+     * Nota: questa scelta deriva dal modello supportato dal vendor
+     * (https://docs.aws.amazon.com/AmazonS3/latest/userguide/checking-object-integrity.html)
+     *
+     * @param path
+     *            file
+     *
+     * @return rappresentazione base64 del contenuto calcolato
+     *
+     * @throws IOException
+     *             errore generico
+     */
+    private String calculateFileCRC32CBase64(Path resource) throws IOException {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int readed;
+        CRC32CChecksum crc32c = new CRC32CChecksum();
+        try (InputStream is = Files.newInputStream(resource)) {
+            while ((readed = is.read(buffer)) != -1) {
+                crc32c.update(buffer, 0, readed);
+            }
+        }
+        return Base64.getEncoder().encodeToString(crc32c.getValueAsBytes());
+    }
+    // End MEV 37576
+
 }

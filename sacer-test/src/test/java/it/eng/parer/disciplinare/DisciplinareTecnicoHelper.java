@@ -34,6 +34,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -97,6 +98,8 @@ public class DisciplinareTecnicoHelper {
         String xmlRet = null;
         try {
             TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Source xslt = new StreamSource(new StringReader(xsl));
             Transformer transformer = factory.newTransformer(xslt);
             Source source = new StreamSource(new StringReader(xml));
@@ -133,6 +136,8 @@ public class DisciplinareTecnicoHelper {
             out = new ByteArrayOutputStream();
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
             TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Transformer transformer = factory.newTransformer(); // identity transformer
             Source src = new StreamSource(new StringReader(foString));
             Result res = new SAXResult(fop.getDefaultHandler());

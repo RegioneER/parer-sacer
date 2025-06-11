@@ -40,9 +40,6 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.ConfigurationException;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -54,6 +51,14 @@ import org.xml.sax.SAXException;
 
 import it.eng.parer.exception.ParerErrorCategory.SacerErrorCategory;
 import it.eng.parer.exception.SacerException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.XMLConstants;
+import org.apache.fop.apps.FopConfParser;
+import org.apache.fop.apps.FopFactoryBuilder;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
+import org.apache.fop.configuration.ConfigurationException;
 
 public class ReportvfHelper {
 
@@ -101,21 +106,27 @@ public class ReportvfHelper {
         try (FileOutputStream out = new FileOutputStream(tmpPdf)) {
             DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
             Configuration cfg = cfgBuilder
-                    .build(ReportvfHelper.class.getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
-            FopFactory fopFactory = FopFactory.newInstance();
-            fopFactory.setUserConfig(cfg);
+                    .build(ReportvfHelper.class.getClass().getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
+            FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI()).setConfiguration(cfg);
+
+            FopFactory fopFactory = fopFactoryBuilder.build();
             Fop fop = fopFactory.newFop(MIME_PDF, out);
-            TransformerFactory factory = TransformerFactory
-                    .newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Templates templates = factory.newTemplates(new StreamSource(new StringReader(xslt)));
             Source src = new StreamSource(new FileInputStream(report));
             Result res = new SAXResult(fop.getDefaultHandler());
             Transformer transformer = templates.newTransformer();
             transformer.transform(src, res);
-        } catch (TransformerException | ConfigurationException | SAXException ex) {
+        } catch (TransformerException | SAXException ex) {
             Files.delete(tmpPdf.toPath()); // delete file
             tmpPdf = null;
             throw new SacerException(ex, SacerErrorCategory.INTERNAL_ERROR);
+        } catch (ConfigurationException ex) {
+            Files.delete(tmpPdf.toPath()); // delete file
+            tmpPdf = null;
+            Logger.getLogger(ReportvfHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
         return tmpPdf;
     }
@@ -141,8 +152,9 @@ public class ReportvfHelper {
             throws SacerException, IOException {
         File tmpResult = File.createTempFile("output_", ".tmp", new File(outputPath));
         try (FileOutputStream out = new FileOutputStream(tmpResult)) {
-            TransformerFactory factory = TransformerFactory
-                    .newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Templates templates = factory.newTemplates(new StreamSource(new StringReader(xslt)));
             Source src = new StreamSource(new FileInputStream(report));
             Transformer transformer = templates.newTransformer();

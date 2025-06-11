@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -34,16 +35,15 @@ import javax.ejb.Stateless;
 import javax.interceptor.Interceptors;
 import javax.persistence.Query;
 
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
+import it.eng.parer.entity.*;
+import it.eng.parer.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.parer.aop.TransactionInterceptor;
-import it.eng.parer.entity.DecCriterioFiltroMultiplo;
-import it.eng.parer.entity.DecCriterioRaggr;
-import it.eng.parer.entity.DecRegistroUnitaDoc;
-import it.eng.parer.entity.DecTipoDoc;
-import it.eng.parer.entity.DecTipoUnitaDoc;
-import it.eng.parer.entity.OrgStrut;
 import it.eng.parer.entity.constraint.DecCriterioRaggr.TiModValidElencoCriterio;
 import it.eng.parer.entity.constraint.DecCriterioRaggr.TiValidElencoCriterio;
 import it.eng.parer.exception.ParerUserError;
@@ -80,6 +80,10 @@ public class CriteriRaggrHelper extends GenericHelper {
     private SacerLogEjb sacerLogEjb;
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configurationHelper;
+    @EJB
+    private AmbientiHelper ambienteHelper;
+    @EJB
+    private StruttureHelper struttureHelper;
 
     private static final Logger log = LoggerFactory.getLogger(CriteriRaggrHelper.class.getName());
 
@@ -375,8 +379,8 @@ public class CriteriRaggrHelper extends GenericHelper {
         return !query.getResultList().isEmpty();
     }
 
-    public DecVRicCriterioRaggrTableBean getCriteriRaggr(CriteriRaggruppamentoForm.FiltriCriteriRaggr filtriCriteri)
-            throws EMFError {
+    public DecVRicCriterioRaggrTableBean getCriteriRaggr(CriteriRaggruppamentoForm.FiltriCriteriRaggr filtriCriteri,
+            long idUtente) throws EMFError {
         return getCriteriRaggr(filtriCriteri.getId_ambiente().parse(), filtriCriteri.getId_ente().parse(),
                 filtriCriteri.getId_strut().parse(), filtriCriteri.getNm_criterio_raggr().parse(),
                 filtriCriteri.getFl_criterio_raggr_standard().parse(),
@@ -384,7 +388,7 @@ public class CriteriRaggrHelper extends GenericHelper {
                 filtriCriteri.getTi_mod_valid_elenco().parse(), filtriCriteri.getTi_gest_elenco_criterio().parse(),
                 filtriCriteri.getId_registro_unita_doc().parse(), filtriCriteri.getId_tipo_unita_doc().parse(),
                 filtriCriteri.getId_tipo_doc().parse(), filtriCriteri.getAa_key_unita_doc().parse(),
-                filtriCriteri.getCriterio_attivo().parse());
+                filtriCriteri.getCriterio_attivo().parse(), idUtente);
     }
 
     public List<DecCriterioRaggr> retrieveDecCriterioRaggrList(BigDecimal idAmbiente, BigDecimal idEnte,
@@ -1034,7 +1038,14 @@ public class CriteriRaggrHelper extends GenericHelper {
     public DecVRicCriterioRaggrTableBean getCriteriRaggr(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
             String nmCriterioRaggr, String flCriterioRaggrStandard, String flCriterioRaggrFisc, String tiValidElenco,
             String tiModValidElenco, String tiGestElencoCriterio, BigDecimal idRegistroUnitaDoc,
-            BigDecimal idTipoUnitaDoc, BigDecimal idTipoDoc, BigDecimal aaKeyUnitaDoc, String criterioAttivo) {
+            BigDecimal idTipoUnitaDoc, BigDecimal idTipoDoc, BigDecimal aaKeyUnitaDoc, String criterioAttivo,
+            long idUtente) {
+
+        List<OrgAmbiente> listaAmbienti = ambienteHelper.retrieveOrgAmbienteFromAbil(idUtente);
+        List<OrgEnte> listaEnti = ambienteHelper.retrieveOrgEnteAbilNoTemplate(idUtente,
+                idAmbiente != null ? idAmbiente.longValue() : null, Boolean.TRUE);
+        List<OrgStrut> strutList = struttureHelper.retrieveOrgStrutList(idUtente, idEnte, Boolean.TRUE);
+
         StringBuilder queryStr = new StringBuilder("SELECT DISTINCT new it.eng.parer.viewEntity.DecVRicCriterioRaggr "
                 + "(u.idAmbiente, u.nmAmbiente, u.idEnte, u.nmEnte, u.idStrut, u.nmStrut, u.id.idCriterioRaggr, u.nmCriterioRaggr, u.nmTipoUnitaDoc, "
                 + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
@@ -1043,16 +1054,32 @@ public class CriteriRaggrHelper extends GenericHelper {
         if (idAmbiente != null) {
             queryStr.append(whereWord).append("u.idAmbiente = :idAmbiente ");
             whereWord = "AND ";
+        } else {
+            if (listaAmbienti != null && !listaAmbienti.isEmpty()) {
+                queryStr.append(whereWord).append("u.idAmbiente IN :ambientiAbilitati ");
+                whereWord = "AND ";
+            }
         }
         /* Inserimento nella query del filtro ID_ENTE */
         if (idEnte != null) {
             queryStr.append(whereWord).append("u.idEnte = :idEnte ");
             whereWord = "AND ";
+        } else {
+            if (listaEnti != null && !listaEnti.isEmpty()) {
+                queryStr.append(whereWord).append("u.idEnte IN :entiAbilitati ");
+                whereWord = "AND ";
+            }
         }
+
         /* Inserimento nella query del filtro ID_STRUT */
         if (idStrut != null) {
             queryStr.append(whereWord).append("u.idStrut = :idStrut ");
             whereWord = "AND ";
+        } else {
+            if (strutList != null && !strutList.isEmpty()) {
+                queryStr.append(whereWord).append("u.idStrut IN :struttureAbilitate ");
+                whereWord = "AND ";
+            }
         }
         if (nmCriterioRaggr != null) {
             queryStr.append(whereWord).append("UPPER(u.nmCriterioRaggr) LIKE :nmCriterioRaggr ");
@@ -1109,12 +1136,22 @@ public class CriteriRaggrHelper extends GenericHelper {
         Query query = getEntityManager().createQuery(queryStr.toString());
         if (idAmbiente != null) {
             query.setParameter("idAmbiente", idAmbiente);
+        } else if (listaAmbienti != null && !listaAmbienti.isEmpty()) {
+            List<Long> ambientiAbilitati = listaAmbienti.stream().map(OrgAmbiente::getIdAmbiente)
+                    .collect(Collectors.toList());
+            query.setParameter("ambientiAbilitati", Utils.bigDecimalFromLong(ambientiAbilitati));
         }
         if (idEnte != null) {
             query.setParameter("idEnte", idEnte);
+        } else if (listaEnti != null && !listaEnti.isEmpty()) {
+            List<Long> entiAbilitati = listaEnti.stream().map(OrgEnte::getIdEnte).collect(Collectors.toList());
+            query.setParameter("entiAbilitati", Utils.bigDecimalFromLong(entiAbilitati));
         }
         if (idStrut != null) {
             query.setParameter("idStrut", idStrut);
+        } else if (strutList != null && !strutList.isEmpty()) {
+            List<Long> struttureAbilitate = strutList.stream().map(OrgStrut::getIdStrut).collect(Collectors.toList());
+            query.setParameter("struttureAbilitate", Utils.bigDecimalFromLong(struttureAbilitate));
         }
         if (nmCriterioRaggr != null) {
             query.setParameter("nmCriterioRaggr", "%" + nmCriterioRaggr.toUpperCase() + "%");

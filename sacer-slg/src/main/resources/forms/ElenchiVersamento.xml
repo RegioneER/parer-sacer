@@ -1,4 +1,5 @@
-<Form Description="Sezione Volumi" xmlns="http://www.spagoLite.eng.it/xmlbean/form" xmlns:xsi="http://www.w3.org/2001/XMLSchema" 
+<Form xmlns:xsi="http://www.w3.org/2001/XMLSchema" Description="Sezione Volumi"
+      xmlns="http://www.spagoLite.eng.it/xmlbean/form"
       xsi:schemaLocation="http://www.spagoLite.eng.it/xmlbean/form http://ibc3850.ente.regione.emr.it/xsd/latest/Form.xsd">
  
     <Section Name="ChiaveSection" Description="" Legend="Chiave Unità documentaria" ShowButton="true" LoadOpened="true"/>
@@ -10,6 +11,7 @@
     <Section Name="DocAggiuntiSection" Description="" Legend="Documenti aggiunti" ShowButton="true" LoadOpened="true"/>
     <Section Name="InfoElencoIndiciAipSection" Description="" Legend="Informazioni su elenco indici AIP" ShowButton="true" LoadOpened="true"/>
      
+
     <!-- Filtri di ricerca elenchi di versamento -->
     <Fields Name="FiltriElenchiVersamento" Description="Filtri per elenchi di versamento" >
         <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
@@ -30,6 +32,7 @@
         <Input Type="STRING" Description="Note su elenco chiuso" Name="nt_elenco_chiuso"/>
         <Input Type="STRING" Description="Note su indice elenco" Name="nt_indice_elenco"/>
         <ComboBox Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <MultiSelect Type="STRING" Description="Stato conservazione UD" Name="ti_stato_conservazione" />
         <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
         <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
         <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
@@ -48,6 +51,7 @@
         
         <Button Name="ricercaElenchiButton" Description="Ricerca" Type="STRING" />
         <Button Name="pulisciFiltriRicercaElenchiButton" Description="Pulisci" Type="STRING" />
+        <Button Name="riportaStatoIndietroDaRicercaButton"  Description="Metti AIP alla firma" Type="STRING" />
     </Fields>
 
     <!-- Lista elenchi di versamento -->
@@ -210,7 +214,7 @@
         
         <Input Name="dt_creazione_elenco_ix_aip" Description="Data creazione" Type="DATETIME" />
         <Input Name="dt_firma_elenco_ix_aip" Description="Data firma" Type="DATETIME" />
-        <Input Name="dt_marca_elenco_ix_aip" Description="Data marca temporale" Type="DATETIME" />
+        <Input Name="dt_marca_elenco_ix_aip" Description="Data marca temporale detached" Type="DATETIME" />
         <Input Type="INTEGER" Description="Numero indici AIP" Name="ni_indici_aip" GroupingDecimal="true" />
         <Input Type="STRING" Description="Versione XSD indice elenchi AIP" Name="cd_versione_xsd"/>
     </Fields>
@@ -337,19 +341,6 @@
         <Button Name="eliminaAppartenenzaUpdDaElenco" Description="Rimuovi gli aggiornamenti selezionati" Type="STRING"  />
     </ButtonList>
     
-    <!--    <List Name="DocDaRimuovereList" Description="Documenti" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true" hideInsertButton="true">
-        <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
-        <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
-        <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
-        <Input Type="DATETIME" Description="Data creazione" Name="dt_creazione" />
-        <CheckBox Type="STRING" Description="Firmato" Name="fl_unita_doc_firmato" Readonly="true"/>
-        <Input Type="STRING" Description="Esito verifica versamento" Name="ti_esito_verif_firme"/>
-        <Input Type="STRING" Description="Descrizione esito verifica versamento" Name="ds_msg_esito_verif_firme"/>
-        <ComboBox Type="STRING" Description="Tipo unità documentaria" Name="nm_tipo_unita_doc"/>
-        <ComboBox Type="STRING" Description="Forzatura accettazione" Name="fl_forza_accettazione" />
-        <ComboBox Type="STRING" Description="Forzatura conservazione" Name="fl_forza_conservazione" />
-    </List>-->
-    
     <!-- Lista dei documenti dell'unità documentaria -->
     <List Name="DocDaRimuovereList" Description="Lista documenti da rimuovere" hideDeleteButton="true" hideUpdateButton="true" hideDetailButton="true" hideInsertButton="true">
         <Input Type="STRING" Description="Elemento" Name="ti_doc"/>
@@ -413,7 +404,7 @@
         <Button Name="deselectAllElenchiIndiciAip" Description="Rimuovi tutti" Type="STRING"/>
         <Button Name="selectHundredElenchiIndiciAip" Description="Aggiungi 100" Type="STRING"/>
         <Button Name="firmaElenchiIndiciAipHsm"  Description="Firma" Type="STRING" />
-        <Button Name="marcaElenchiIndiciAip"  Description="Marca elenchi indici AIP" Type="STRING" />
+<!--        <Button Name="marcaElenchiIndiciAip"  Description="Marca elenchi indici AIP" Type="STRING" /> -->
     </ButtonList>
     
     <List Name="ElenchiIndiciAipDaFirmareList" Description="Lista elenchi indici AIP da firmare" hideInsertButton="true" hideUpdateButton="true" hideDeleteButton="true">

@@ -1,4 +1,50 @@
 
+## 10.9.0 (11-06-2025)
+
+### Bugfix: 4
+- [#38184](https://parermine.regione.emilia-romagna.it/issues/38184) Correzione controllo gestione formati ammessi 
+- [#38030](https://parermine.regione.emilia-romagna.it/issues/38030) Inserire i default corretti per le security policy
+- [#38025](https://parermine.regione.emilia-romagna.it/issues/38025) Correzione del messaggio di errore relativo all'impossibilità di aggiungere un documento a una UD in stato IN_ARCHIVIO
+- [#36875](https://parermine.regione.emilia-romagna.it/issues/36875) Correzione problema legato all'annullamento di una UD contenuta in un elenco con tutte UD annullate
+
+### Novità: 10
+- [#38027](https://parermine.regione.emilia-romagna.it/issues/38027) Rimozione all'interno del codice dei riferimenti di utilizzo della tabella VRS_CONENUTO_FILE sostituita dalla tabella VRS_CONTENUTO_FILE_KO
+- [#38023](https://parermine.regione.emilia-romagna.it/issues/38023) Ottimizzazione ricerca UD derivanti da versamenti falliti con filtri su classe errore
+- [#37955](https://parermine.regione.emilia-romagna.it/issues/37955) Sostituzione partizionamenti manuali per  tabelle ELV_FILE_ELENCO_VERS e tabelle correlate by reference.
+- [#37769](https://parermine.regione.emilia-romagna.it/issues/37769)  Ottimizzazioni e refactor codice per recupero debito tecnico (SonarQube)
+- [#37218](https://parermine.regione.emilia-romagna.it/issues/37218) Aggiornamento librerie ESAPI (OWASP) e SAML + Spring Security 5
+- [#35549](https://parermine.regione.emilia-romagna.it/issues/35549) Configurazione modulo jaxp-jdk per JBoss 7 per JDK 11
+- [#34792](https://parermine.regione.emilia-romagna.it/issues/34792) Aggiunta nuova tabella nel disciplinare - Utenti automi versatori
+- [#34195](https://parermine.regione.emilia-romagna.it/issues/34195) Funzione massiva per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
+- [#34194](https://parermine.regione.emilia-romagna.it/issues/34194) Modifiche alla pagina Ricerca elenchi di versamento unità documentarie per individuare gli elenchi da rimandare indietro per la firma dell'AIP
+- [#34000](https://parermine.regione.emilia-romagna.it/issues/34000) Migrazione alle nuove dipendenze / pattern legate a xecers, xalan, jaxb, ecc
+
+## 10.8.1 (22-05-2025)
+
+### Bugfix: 8
+- [#38165](https://parermine.regione.emilia-romagna.it/issues/38165) Correzione visualizzazione data contenuto dell'archivio nella home page
+- [#37919](https://parermine.regione.emilia-romagna.it/issues/37919) Fascicolo annullato visualizzabile dal dettaglio UD
+- [#37730](https://parermine.regione.emilia-romagna.it/issues/37730) Correzione salvataggio calcolo UD, DOC e COMPONENTI annullati in calcolo contenuto Sacer
+- [#37703](https://parermine.regione.emilia-romagna.it/issues/37703) Correzione dell'utilizzo del carattere underscore nel filtro Numero contiene
+- [#35396](https://parermine.regione.emilia-romagna.it/issues/35396) Correzione ricerca criteri raggruppamento UD 
+- [#35254](https://parermine.regione.emilia-romagna.it/issues/35254) Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip UD
+- [#34849](https://parermine.regione.emilia-romagna.it/issues/34849) Correzione funzionamento parametro tipo firma
+- [#33816](https://parermine.regione.emilia-romagna.it/issues/33816) Monitoraggio: integrazione menù filtro "Sottoclasse errore" con UD-014
+
+## 10.8.0 (07-05-2025)
+
+### Bugfix: 3
+- [#37373](https://parermine.regione.emilia-romagna.it/issues/37373) Adeguamento procedura di calcolo contenuto sacer e calcolo consistenza
+- [#37354](https://parermine.regione.emilia-romagna.it/issues/37354) Rimozione controlli su partizionamenti logici per le sessioni di versamento errate a livello di fascicoli
+- [#37222](https://parermine.regione.emilia-romagna.it/issues/37222) Correzione Chiave Object Storage su SACER
+
+### Novità: 5
+- [#37737](https://parermine.regione.emilia-romagna.it/issues/37737) Ottimizzazione performance ricerca elenchi di versamento per chiave UD
+- [#37576](https://parermine.regione.emilia-romagna.it/issues/37576) SACER - Refactor migrazione a GCP mantenendo S3
+- [#37041](https://parermine.regione.emilia-romagna.it/issues/37041) Implementazione recupero indici elenchi di versamento firmati da object storage
+- [#35333](https://parermine.regione.emilia-romagna.it/issues/35333) Ottimizzazione navigazione dei risultati di ricerca degli elenchi di versamento e apertura del dettaglio degli stessi
+- [#34839](https://parermine.regione.emilia-romagna.it/issues/34839) Migliorie al log del processo di conservazione delle unità documentarie
+
 ## 10.7.0 (31-03-2025)
 
 ### Bugfix: 1

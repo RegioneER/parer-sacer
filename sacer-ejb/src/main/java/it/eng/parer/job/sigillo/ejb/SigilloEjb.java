@@ -131,7 +131,7 @@ public class SigilloEjb {
             idAmbiente = new BigDecimal(orgAmbiente.getIdAmbiente());
             // Se l'ambiente è abilitato e elenchi processati correttamente passa alla marca per ambiente.
             if (processaElenchiPerAmbiente(idAmbiente, idUserPerJob, usernamePerJob)) {
-                processaMarcaturaPerAmbiente(idAmbiente, idUserPerJob);
+                completaProcessoDiFirmaPerAmbiente(idAmbiente, idUserPerJob);
             }
         }
     }
@@ -186,11 +186,11 @@ public class SigilloEjb {
         return ambienteAbilitato;
     }
 
-    private void processaMarcaturaPerAmbiente(BigDecimal idAmbiente, long idUserPerJob) throws SigilloException {
+    private void completaProcessoDiFirmaPerAmbiente(BigDecimal idAmbiente, long idUserPerJob) throws SigilloException {
         // SESSIONE DI MARCATURA PER AMBIENTE
         try {
             log.info("Marcatura per l'ambiente {}", idAmbiente);
-            evEjb.marcaturaFirmaElenchiIndiciAip(idAmbiente, null, null, idUserPerJob, true);
+            evEjb.completaFirmaElenchiIndiciAip(idAmbiente, null, null, idUserPerJob, true);
         } catch (ParerUserError ex) {
             throw new SigilloException("Errore marcatura:" + ex.getMessage(), ex);
         }

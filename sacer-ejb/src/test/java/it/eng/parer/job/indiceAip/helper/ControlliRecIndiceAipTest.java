@@ -262,7 +262,6 @@ public class ControlliRecIndiceAipTest extends HelperTest<ControlliRecIndiceAip>
                         ConfigurationHelper.class, ReturnParams.class, DefinitoDaBean.class,
                         ElencoVersamentoHelper.class, UnitaDocumentarieHelper.class, Constants.class, CSVersatore.class,
                         CSChiave.class, ElencoEnums.class, SessioneVersamentoExt.class,
-                        it.eng.spagoCore.util.UUIDMdcLogUtil.class,
-                        it.eng.spagoCore.configuration.ConfigSingleton.class));
+                        it.eng.spagoCore.util.UUIDMdcLogUtil.class, it.eng.spagoCore.ConfigSingleton.class));
     }
 }

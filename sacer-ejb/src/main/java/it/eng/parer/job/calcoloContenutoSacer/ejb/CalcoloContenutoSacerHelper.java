@@ -209,8 +209,8 @@ public class CalcoloContenutoSacerHelper {
         return cal;
     }
 
-    public Calendar getUltimaDataEsecuzione() {
-        String queryString = "SELECT MAX(u.dtRifConta) FROM MonContaUdDocComp u ";
+    public Calendar getUltimaDataEsecuzioneOkCCS() {
+        String queryString = "SELECT MAX(u.dtRegLogJob) FROM LogJob u WHERE u.nmJob = 'CALCOLO_CONTENUTO_SACER' AND u.tiRegLogJob = 'FINE_SCHEDULAZIONE' ";
         Query query = entityManager.createQuery(queryString);
         Date d = (Date) query.getSingleResult();
         Calendar cal = Calendar.getInstance();
@@ -267,10 +267,10 @@ public class CalcoloContenutoSacerHelper {
                     contaAnnul.getIdOrgSubStrut(), contaAnnul.getAaKeyUnitaDoc(), contaAnnul.getIdDecRegistroUnitaDoc(),
                     contaAnnul.getIdDecTipoUnitaDoc(), contaAnnul.getIdDecTipoDoc());
             if (contaDaAgg != null) {
-                contaDaAgg.setNiUnitaDocAnnul(contaAnnul.getNiUnitaDocAnnul());
-                contaDaAgg.setNiDocAnnulUd(contaAnnul.getNiDocAnnulUd());
-                contaDaAgg.setNiCompAnnulUd(contaAnnul.getNiCompAnnulUd());
-                contaDaAgg.setNiSizeAnnulUd(contaAnnul.getNiSizeAnnulUd());
+                contaDaAgg.setNiUnitaDocAnnul(contaDaAgg.getNiUnitaDocAnnul().add(contaAnnul.getNiUnitaDocAnnul()));
+                contaDaAgg.setNiDocAnnulUd(contaDaAgg.getNiDocAnnulUd().add(contaAnnul.getNiDocAnnulUd()));
+                contaDaAgg.setNiCompAnnulUd(contaDaAgg.getNiCompAnnulUd().add(contaAnnul.getNiCompAnnulUd()));
+                contaDaAgg.setNiSizeAnnulUd(contaDaAgg.getNiSizeAnnulUd().add(contaAnnul.getNiSizeAnnulUd()));
             }
         }
 

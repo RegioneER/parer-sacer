@@ -38,7 +38,6 @@ import it.eng.parer.common.signature.SignatureSession;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums;
 import it.eng.parer.elencoVersFascicoli.utils.ElencoEnums.ElencoStatusEnum;
-import it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma;
 import it.eng.parer.entity.ElvElencoVersFasc;
 import it.eng.parer.entity.ElvElencoVersFascDaElab;
 import it.eng.parer.entity.ElvFileElencoVersFasc;
@@ -206,8 +205,7 @@ public class ElencoIndiciAipFascSignatureSessionEjb implements SignatureSessionE
          */
         if (backendIndiciAip.isObjectStorage()) {
             // retrieve normalized URN
-            // final String urn = "provaURNElencoVersFasc";
-            final String urn = fileElencoVers.getDsUrnNormalizFile().substring(4);
+            final String urn = fileElencoVers.getDsUrnNormalizFile();
 
             ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAipFasc(urn,
                     backendIndiciAip.getBackendName(), signedFile, fileElencoVers.getIdFileElencoVersFasc(),

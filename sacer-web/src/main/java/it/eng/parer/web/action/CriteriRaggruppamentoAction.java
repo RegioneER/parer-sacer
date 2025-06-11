@@ -589,7 +589,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
 
             try {
                 DecVRicCriterioRaggrTableBean critRaggrTableBean = (DecVRicCriterioRaggrTableBean) crHelper
-                        .getCriteriRaggr(getForm().getFiltriCriteriRaggr());
+                        .getCriteriRaggr(getForm().getFiltriCriteriRaggr(), getUser().getIdUtente());
                 getForm().getCriterioRaggrList().setTable(critRaggrTableBean);
                 getForm().getCriterioRaggrList().getTable().setPageSize(pageSize);
                 getForm().getCriterioRaggrList().getTable().first();
@@ -969,7 +969,7 @@ public class CriteriRaggruppamentoAction extends CriteriRaggruppamentoAbstractAc
     public void ricercaCriteri(FiltriCriteriRaggr filtriCriteri) throws EMFError {
         if (filtriCriteri.validate(getMessageBox())) {
             DecVRicCriterioRaggrTableBean critRaggrTableBean = (DecVRicCriterioRaggrTableBean) crHelper
-                    .getCriteriRaggr(filtriCriteri);
+                    .getCriteriRaggr(filtriCriteri, getUser().getIdUtente());
 
             getForm().getCriterioRaggrList().setTable(critRaggrTableBean);
             getForm().getCriterioRaggrList().getTable().setPageSize(10);

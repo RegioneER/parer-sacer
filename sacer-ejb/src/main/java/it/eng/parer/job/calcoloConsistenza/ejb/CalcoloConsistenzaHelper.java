@@ -173,11 +173,11 @@ public class CalcoloConsistenzaHelper {
             + "id_tipo_doc_princ, ni_comp_aip_generato, ni_comp_aip_in_aggiorn, ni_comp_presa_in_carico,	ni_comp_in_volume, ni_comp_annul) "
             + "SELECT SMON_CONTA_BY_STATO_CONSERV_NEW.nextval, dt_creazione, id_strut, id_sub_strut, aa_key_unita_doc, id_registro_unita_doc, id_tipo_unita_doc, "
             + " id_tipo_doc, ni_comp_aip_generato, ni_comp_aip_in_agg, ni_comp_presa_in_carico,	ni_comp_volume, ni_comp_annul	"
-            + "FROM MON_V_CONTA_BY_STATO_CONSERV_NEW " + "WHERE id_strut IN ?1 AND dt_creazione >= ?2 ";
+            + "FROM MON_V_CONTA_BY_STATO_CONSERV_NEW " + "WHERE id_strut IN ?1 AND dt_creazione BETWEEN ?2 AND ?3 ";
 
     // Cancellazione record dalla tabella dei conteggi
     private static final String DELETE_UD_AIP_GENERATO_E_NON_GENERATO_PER_RICALCOLO_ANNUL = "Delete from MON_CONTA_BY_STATO_CONSERV_NEW "
-            + "WHERE id_strut IN ?1 AND dt_rif_conta >= ?2 ";
+            + "WHERE id_strut IN ?1 AND dt_rif_conta BETWEEN ?2 AND ?3 ";
 
     // "Trasferimento" record dalla tabella di appoggio a quella dei conteggi
     private static final String UD_AIP_GENERATO_E_NON_GENERATO_NATIVA_RIPRISTINA = "Insert /*+ append */ into "
@@ -387,10 +387,12 @@ public class CalcoloConsistenzaHelper {
         query.executeUpdate();
     }
 
-    private void executeNativeQueryDeleteAndExecute(Set<Long> idStrut, Date dataCalcolo, String queryString) {
+    private void executeNativeQueryDeleteAndExecute(Set<Long> idStrut, Date dataCalcoloRipartenza, Date dataCalcoloA,
+            String queryString) {
         Query query = entityManager.createNativeQuery(queryString);
         query.setParameter(1, idStrut);
-        query.setParameter(2, dataCalcolo);
+        query.setParameter(2, dataCalcoloRipartenza);
+        query.setParameter(3, dataCalcoloA);
 
         query.executeUpdate();
     }
@@ -926,10 +928,10 @@ public class CalcoloConsistenzaHelper {
                 dataDaDoveRipartire = formatter.parse(formatter.format(dataDaDoveRipartire));
 
                 // Calcolo i dati e li inserisco in una tabella di "appoggio"
-                executeNativeQueryDeleteAndExecute(idStrutDaRicalcolare, dataDaDoveRipartire,
+                executeNativeQueryDeleteAndExecute(idStrutDaRicalcolare, dataDaDoveRipartire, dtRifContaA,
                         UD_AIP_GENERATO_E_NON_GENERATO_NATIVA_APPOGGIO);
                 // Delete massiva delle sottostrutture
-                executeNativeQueryDeleteAndExecute(idStrutDaRicalcolare, dataDaDoveRipartire,
+                executeNativeQueryDeleteAndExecute(idStrutDaRicalcolare, dataDaDoveRipartire, dtRifContaA,
                         DELETE_UD_AIP_GENERATO_E_NON_GENERATO_PER_RICALCOLO_ANNUL);
                 // Ricalcolo massivo delle sottostrutture
                 executeNativeQueryWithoutParameters(UD_AIP_GENERATO_E_NON_GENERATO_NATIVA_RIPRISTINA);

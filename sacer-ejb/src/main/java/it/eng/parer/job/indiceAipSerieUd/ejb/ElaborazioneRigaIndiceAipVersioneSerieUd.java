@@ -182,10 +182,15 @@ public class ElaborazioneRigaIndiceAipVersioneSerieUd {
             if (strut.getIdEnteConvenz() != null) {
                 orgEnteConvenz = ciasudHelper.findById(SIOrgEnteSiam.class, strut.getIdEnteConvenz());
             }
-            mappaAgenti.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
-                    BigDecimal.valueOf(orgEnteConvenz.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
-                    BigDecimal.valueOf(orgEnteConvenz.getIdEnteSiam()), CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
-
+            if (orgEnteConvenz != null && orgEnteConvenz.getSiOrgAmbienteEnteConvenz() != null) {
+                mappaAgenti.putAll(paramIamHelper.getParamApplicMapValue(agentParamIamV2,
+                        BigDecimal.valueOf(orgEnteConvenz.getSiOrgAmbienteEnteConvenz().getIdAmbienteEnteConvenz()),
+                        BigDecimal.valueOf(orgEnteConvenz.getIdEnteSiam()),
+                        CostantiDB.TipoIamVGetValAppart.ENTECONVENZ));
+            } else {
+                log.warn("orgEnteConvenz o il suo ambiente è nullo per la struttura con id: {}", strut.getIdStrut());
+                // Gestisci il caso di errore secondo la logica applicativa
+            }
             PIndex pindex = creazioneIndiceAipSerieUdUtilV2.generaIndiceAIPSerieUd(verSerieDaElab, dataRegistrazione,
                     mappaAgenti, creatingApplicationProducer);
 

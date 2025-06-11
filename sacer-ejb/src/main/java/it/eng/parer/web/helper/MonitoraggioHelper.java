@@ -4465,40 +4465,31 @@ public class MonitoraggioHelper implements Serializable {
         /*
          * Query per confronto totali tra MON_CONTA_UD_DOC_COMP e MON_CONTA_BY_STATO_CONSERV_NEW
          */
-        String confrontoConteggiNativeQuery = "SELECT id_strut, amb.nm_ambiente, "
-                + "ente.nm_ente, tmp.nm_strut, tmp.ni_comp_vers, tmp.ni_comp_aip_generato, "
+        String confrontoConteggiNativeQuery = "SELECT tmp.id_strut, tmp.nm_ambiente, "
+                + "tmp.nm_ente, tmp.nm_strut, tmp.ni_comp_vers, tmp.ni_comp_aip_generato, "
                 + "tmp.ni_comp_aip_in_aggiorn, tmp.ni_comp_presa_in_carico, tmp.ni_comp_in_volume, tmp.ni_comp_annul, "
                 + "(tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
                 + "+ tmp.ni_comp_presa_in_carico + tmp.ni_comp_in_volume + tmp.ni_comp_annul)) delta_versati_gestiti "
-                + "FROM (SELECT id_strut, nm_strut, ";
+                + "FROM ";
 
-        String parte2 = " (SELECT nvl(sum (ni_comp_vers + ni_comp_agg), 0) "
-                + "FROM sacer.MON_V_RIC_CONTA_UD_DOC_COMP conta_ud "
-                + "WHERE conta_ud.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') "
-                + " AND conta_ud.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') AND conta_ud.id_strut = strut.id_strut "
-                + ") ni_comp_vers, " + "     (select nvl(sum(ni_comp_aip_generato), 0)"
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_aip_generato, " + "      "
-                + "     (select nvl(sum(ni_comp_aip_in_aggiorn), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_aip_in_aggiorn, " + "      "
-                + "     (select nvl(sum(ni_comp_presa_in_carico), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_presa_in_carico, " + "      "
-                + "     (select nvl(sum(ni_comp_in_volume), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_in_volume, " + "      "
-                + "     (select nvl(sum(ni_comp_annul), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_annul "
-                + "    from org_strut strut " + " join sacer.org_ente entesub " + "on(entesub.id_ente = strut.id_ente) "
-                + "    join sacer.org_ambiente ambientesub " + "on(ambientesub.id_ambiente = entesub.id_ambiente) "
-                + "    where strut.fl_template = '0' ";
+        String parte2 = "(SELECT ambientesub.id_ambiente, ambientesub.nm_ambiente, entesub.id_ente, entesub.nm_ente, strut.id_Strut, strut.nm_strut, "
+                + "NVL (SUM (ni_comp_aip_generato), 0) ni_comp_aip_generato, "
+                + "NVL (SUM (ni_comp_aip_in_aggiorn), 0) ni_comp_aip_in_aggiorn, "
+                + "NVL (SUM (ni_comp_presa_in_carico), 0) ni_comp_presa_in_carico, "
+                + "NVL (SUM (ni_comp_in_volume), 0) ni_comp_in_volume, "
+                + "NVL (SUM (ni_comp_annul), 0) ni_comp_annul, "
+                // interrogo MON_V_RIC_CONTA_UD_DOC_COMP per recuperare ni_comp_vers
+                + "(SELECT NVL (SUM (ni_comp_vers + ni_comp_agg), 0) "
+                + "FROM sacer.MON_v_ric_CONTA_UD_DOC_COMP conta_ud "
+                + "WHERE conta_ud.dt_rif_conta BETWEEN TO_DATE(?1, 'dd-mm-yyyy') AND TO_DATE(?2, 'dd-mm-yyyy') "
+                + "AND conta_ud.id_strut = strut.id_strut) ni_comp_vers "
+                //
+                + "FROM sacer.MON_v_ric_CONTA_BY_STATO_CONSERV_NEW conta_stato "
+                + "right JOIN sacer.org_strut strut ON (strut.ID_STRUT = conta_stato.ID_STRUT "
+                + "and conta_stato.dt_rif_conta BETWEEN TO_DATE(?1, 'dd-mm-yyyy') " + "AND TO_DATE(?2, 'dd-mm-yyyy') ) "
+                + "join sacer.org_ente entesub " + "on(entesub.id_ente = strut.id_ente) "
+                + "join sacer.org_ambiente ambientesub " + "on(ambientesub.id_ambiente = entesub.id_ambiente) "
+                + "where strut.fl_template = '0' ";
 
         int i = 3;
         int k = 3;
@@ -4514,7 +4505,7 @@ public class MonitoraggioHelper implements Serializable {
             parte2 = parte2 + lista;
         }
 
-        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " entesub.id_ente, " + parte2;
+        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + parte2;
 
         if (filtri.getId_ente().parse() != null) {
             confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " AND entesub.id_ente = ?" + i++;
@@ -4523,24 +4514,23 @@ public class MonitoraggioHelper implements Serializable {
             confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " AND strut.id_strut = ?" + i++;
         }
 
-        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " ) tmp " + "join sacer.org_ente ente "
-                + "    on (ente.id_ente = tmp.id_ente) " + "join sacer.org_ambiente amb "
-                + "    on (amb.id_ambiente = ente.id_ambiente) ";
+        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
+                + " GROUP BY ambientesub.id_ambiente, ambientesub.nm_ambiente, entesub.id_ente, entesub.NM_ENTE, strut.id_Strut, strut.NM_STRUT) tmp ";
 
         if (filtri.getDifferenza_zero().parse() != null) {
             if (filtri.getDifferenza_zero().parse().equals("1")) {
                 confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
-                        + " WHERE  (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
+                        + " where  (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
                         + "+ tmp.ni_comp_presa_in_carico + tmp.ni_comp_in_volume + tmp.ni_comp_annul)) != 0 ";
             } else {
                 confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
-                        + " WHERE (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
+                        + " where (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
                         + "+ tmp.ni_comp_presa_in_carico + tmp.ni_comp_in_volume + tmp.ni_comp_annul)) = 0 ";
             }
         }
 
         confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
-                + "order by  amb.nm_ambiente, ente.nm_ente, tmp.nm_strut ";
+                + "order by tmp.nm_ambiente, tmp.nm_ente, tmp.nm_strut ";
 
         Query query = entityManager.createNativeQuery(confrontoConteggiNativeQuery);
 
@@ -5314,6 +5304,251 @@ public class MonitoraggioHelper implements Serializable {
             for (MonVLisUdNonVersIam row : listaUdNonVers) {
                 MonVLisUdNonVersIamRowBean rb = (MonVLisUdNonVersIamRowBean) Transform.entity2RowBean(row);
                 rb.setString("nm_strut", row.getNmAmbiente() + ", " + row.getNmEnte() + ", " + row.getNmStrut());
+                if (rb.getFlVerif() != null) {
+                    rb.setFlVerif(rb.getFlVerif().equals("1") ? "SI" : "NO");
+                }
+                if (rb.getFlNonRisolub() != null) {
+                    rb.setFlNonRisolub(rb.getFlNonRisolub().equals("1") ? "SI" : "NO");
+                }
+                monTableBean.add(rb);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+
+        return monTableBean;
+    }
+
+    public MonVLisUdNonVersIamTableBean getMonVpLisUdNonVersIamViewBeanScaricaContenuto(
+            MonitoraggioFiltriListaVersFallitiDistintiDocBean filtri, Integer maxResult) {
+        String whereWord = "WHERE ";
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT DISTINCT u.* FROM Mon_Vp_Lis_Ud_Non_Vers_Iam(:idUserIam) u ");
+
+        // Inserimento nella query del filtro id ambiente
+        BigDecimal idAmbiente = filtri.getIdAmbiente();
+        if (idAmbiente != null) {
+            queryStr.append(whereWord).append("u.id_Ambiente = :idAmbiente ");
+            whereWord = "AND ";
+        }
+        // Inserimento nella query del filtro id ente
+        BigDecimal idEnte = filtri.getIdEnte();
+        if (idEnte != null) {
+            queryStr.append(whereWord).append("u.id_Ente = :idEnte ");
+            whereWord = "AND ";
+        }
+        // Inserimento nella query del filtro id strut
+        BigDecimal idStrut = filtri.getIdStrut();
+        if (idStrut != null) {
+            queryStr.append(whereWord).append("u.id_Strut = :idStrut ");
+            whereWord = "AND ";
+        }
+
+        String flVerificato = filtri.getFlVerificato();
+        if (flVerificato != null) {
+            queryStr.append(whereWord).append("u.fl_Verif = :flverificato ");
+            whereWord = "AND ";
+        }
+
+        String flNonRisolub = filtri.getFlNonRisolub();
+        if (flNonRisolub != null) {
+            queryStr.append(whereWord).append("u.fl_Non_Risolub = :flnonrisolub ");
+            whereWord = "AND ";
+        }
+
+        // Ricavo le date per eventuale inserimento nella query del filtro giorno versamento
+        Date dataFirstOrarioDa = (filtri.getGiornoFirstVersDaValidato() != null ? filtri.getGiornoFirstVersDaValidato()
+                : null);
+        Date dataFirstOrarioA = (filtri.getGiornoFirstVersAValidato() != null ? filtri.getGiornoFirstVersAValidato()
+                : null);
+
+        Date dataLastOrarioDa = (filtri.getGiornoLastVersDaValidato() != null ? filtri.getGiornoLastVersDaValidato()
+                : null);
+        Date dataLastOrarioA = (filtri.getGiornoLastVersAValidato() != null ? filtri.getGiornoLastVersAValidato()
+                : null);
+
+        // Inserimento nella query del filtro data già impostato con data e ora
+        if ((dataFirstOrarioDa != null) && (dataFirstOrarioA != null)) {
+            queryStr.append(whereWord).append("u.dt_First_Ses_Err between :datafirstda AND :datafirsta ");
+            whereWord = "AND ";
+        }
+
+        // Inserimento nella query del filtro data già impostato con data e ora
+        if ((dataLastOrarioDa != null) && (dataLastOrarioA != null)) {
+            queryStr.append(whereWord).append("u.dt_Last_Ses_Err between :datalastda AND :datalasta ");
+            whereWord = "AND ";
+        }
+
+        // // Inserimento nella query del filtro data già impostato con data e ora
+        // if ((dataOrarioDa != null) && (dataOrarioA != null)) {
+        // queryStr.append(whereWord).append("u.dtLastSesErr between :datada AND :dataa ");
+        // whereWord = "AND ";
+        // }
+        // Inserimento nella query del filtro CHIAVE UNITA DOC singola con registro in versione multiselect
+        Set<String> registroSet = filtri.getRegistro();
+        if (registroSet != null && !registroSet.isEmpty()) {
+            queryStr.append(whereWord).append("(u.cd_Registro_Key_Unita_Doc IN :setregistro)");
+            whereWord = " AND ";
+        }
+
+        BigDecimal anno = filtri.getAnno();
+        String codice = filtri.getNumero();
+
+        if (anno != null) {
+            queryStr.append(whereWord).append("u.aa_Key_Unita_Doc = :annoin ");
+            whereWord = " AND ";
+        }
+
+        if (codice != null) {
+            queryStr.append(whereWord).append("u.cd_Key_Unita_Doc = :codicein ");
+            whereWord = " AND ";
+        }
+
+        // Inserimento nella query del filtro CHIAVE UNITA DOC range con registro in
+        // versione multiselect
+        BigDecimal annoRangeDa = filtri.getAnno_range_da();
+        BigDecimal annoRangeA = filtri.getAnno_range_a();
+        String codiceRangeDa = filtri.getNumero_range_da();
+        String codiceRangeA = filtri.getNumero_range_a();
+
+        if (annoRangeDa != null && annoRangeA != null) {
+            queryStr.append(whereWord).append("(u.aa_Key_Unita_Doc BETWEEN :annoin_da AND :annoin_a) ");
+            whereWord = " AND ";
+        }
+
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            codiceRangeDa = StringPadding.padString(codiceRangeDa, "0", 12, StringPadding.PADDING_LEFT);
+            codiceRangeA = StringPadding.padString(codiceRangeA, "0", 12, StringPadding.PADDING_LEFT);
+            queryStr.append(whereWord)
+                    .append("FUNCTION('lpad', u.cd_Key_Unita_Doc, 12, '0') BETWEEN :codicein_da AND :codicein_a ");
+            whereWord = " AND ";
+        }
+
+        queryStr.append(whereWord).append("u.nr = 1 ");
+        if (StringUtils.isNotBlank(filtri.getClasseErrore()) || StringUtils.isNotBlank(filtri.getSottoClasseErrore())
+                || StringUtils.isNotBlank(filtri.getCodiceErrore())) {
+            queryStr.append(whereWord).append(" EXISTS (" + "SELECT vrserrsess1_.id_err_sessione_vers_ko "
+                    + "FROM Vrs_Err_Sessione_Vers_Ko vrserrsess1_ "
+                    + "JOIN VRS_DATI_SESSIONE_VERS_KO vrsdatises2_ ON vrserrsess1_.ID_DATI_SESSIONE_VERS_KO = vrsdatises2_.ID_DATI_SESSIONE_VERS_KO "
+                    + "JOIN VRS_SESSIONE_VERS_KO vrssession3_ ON vrsdatises2_.ID_SESSIONE_VERS_KO = vrssession3_.ID_SESSIONE_VERS_KO "
+                    + "WHERE vrssession3_.ti_Sessione_Vers = 'VERSAMENTO' " + "AND vrssession3_.id_Strut = u.id_Strut "
+                    + "AND vrssession3_.cd_Registro_Key_Unita_Doc = u.cd_Registro_Key_Unita_Doc "
+                    + "AND vrssession3_.aa_Key_Unita_Doc = u.aa_Key_Unita_Doc "
+                    + "AND vrssession3_.cd_Key_Unita_Doc = u.cd_Key_Unita_Doc "
+                    + "AND (vrsdatises2_.id_Strut = :idStrut or vrsdatises2_.id_strut is null) "
+                    + "AND (vrserrsess1_.id_Strut = :idStrut or vrserrsess1_.id_strut is null) " + "AND ");
+            if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
+                queryStr.append("vrserrsess1_.cd_Err = :codErr");
+            } else if (StringUtils.isNotBlank(filtri.getClasseErrore())
+                    || StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+                queryStr.append("vrserrsess1_.cd_Err like :codErr");
+            }
+            queryStr.append(" )");
+        }
+
+        // Ordina per ambiente, ente, struttura e chiave di ordinamento
+        queryStr.append("ORDER BY u.nm_Ambiente, u.nm_Ente, u.nm_Strut, u.ds_Key_Ord");
+
+        // CREO LA QUERY ATTRAVERSO L'ENTITY MANAGER
+        Query query = entityManager.createNativeQuery(queryStr.toString());
+
+        if (idAmbiente != null) {
+            query.setParameter("idAmbiente", idAmbiente);
+        }
+
+        if (idEnte != null) {
+            query.setParameter("idEnte", idEnte);
+        }
+
+        if (idStrut != null) {
+            query.setParameter("idStrut", idStrut);
+        }
+
+        if (flVerificato != null) {
+            query.setParameter("flverificato", flVerificato);
+        }
+
+        if (flNonRisolub != null) {
+            query.setParameter("flnonrisolub", flNonRisolub);
+        }
+
+        if (dataFirstOrarioDa != null && dataFirstOrarioA != null) {
+            query.setParameter("datafirstda", dataFirstOrarioDa, TemporalType.TIMESTAMP);
+            query.setParameter("datafirsta", dataFirstOrarioA, TemporalType.TIMESTAMP);
+        }
+
+        if (dataLastOrarioDa != null && dataLastOrarioA != null) {
+            query.setParameter("datalastda", dataLastOrarioDa, TemporalType.TIMESTAMP);
+            query.setParameter("datalasta", dataLastOrarioA, TemporalType.TIMESTAMP);
+        }
+
+        if (registroSet != null && !registroSet.isEmpty()) {
+            query.setParameter("setregistro", registroSet);
+        }
+
+        if (anno != null) {
+            query.setParameter("annoin", anno);
+        }
+
+        if (codice != null) {
+            query.setParameter("codicein", codice);
+        }
+
+        if (annoRangeDa != null && annoRangeA != null) {
+            query.setParameter("annoin_da", annoRangeDa);
+            query.setParameter("annoin_a", annoRangeA);
+        }
+
+        if (codiceRangeDa != null && codiceRangeA != null) {
+            query.setParameter("codicein_da", codiceRangeDa);
+            query.setParameter("codicein_a", codiceRangeA);
+        }
+
+        query.setParameter("idUserIam", filtri.getIdUserIam());
+        if (StringUtils.isNotBlank(filtri.getCodiceErrore())) {
+            query.setParameter("codErr", filtri.getCodiceErrore());
+        } else if (StringUtils.isNotBlank(filtri.getSottoClasseErrore())) {
+            query.setParameter("codErr", filtri.getSottoClasseErrore() + "%");
+        } else if (StringUtils.isNotBlank(filtri.getClasseErrore())) {
+            query.setParameter("codErr", filtri.getClasseErrore() + "%");
+        }
+
+        if (maxResult != null) {
+            query.setMaxResults(maxResult);
+        }
+
+        // ESEGUO LA QUERY E PIAZZO I RISULTATI IN UNA LISTA
+        List<Object[]> listaUdNonVers = query.getResultList();
+
+        MonVLisUdNonVersIamTableBean monTableBean = new MonVLisUdNonVersIamTableBean();
+
+        try {
+            for (Object[] row : listaUdNonVers) {
+                MonVLisUdNonVersIamRowBean rb = new MonVLisUdNonVersIamRowBean();
+                rb.setAaKeyUnitaDoc(row[8] == null ? null : (BigDecimal) row[8]);
+                rb.setCdErrLast(row[15] == null ? null : (String) row[15]);
+                rb.setCdKeyUnitaDoc(row[10] == null ? null : (String) row[10]);
+                rb.setCdRegistroKeyUnitaDoc(row[9] == null ? null : (String) row[9]);
+                rb.setClErrLast(row[14] == null ? null : (String) row[14]);
+                rb.setDsErrLast(row[16] == null ? null : (String) row[16]);
+                rb.setDsKeyOrd(row[17] == null ? null : (String) row[17]);
+                rb.setDtFirstSesErr(row[11] == null ? null : (Timestamp) row[11]);
+                rb.setDtLastSesErr(row[12] == null ? null : (Timestamp) row[12]);
+
+                // Gestione speciale per Character -> String per evitare NullPointerException su .toString()
+                rb.setFlDiversiErr(row[20] == null ? null : ((Character) row[20]).toString());
+                rb.setFlNonRisolub(row[21] == null ? null : ((Character) row[21]).toString());
+                rb.setFlVerif(row[19] == null ? null : ((Character) row[19]).toString());
+
+                rb.setIdAmbiente(row[1] == null ? null : (BigDecimal) row[1]);
+                rb.setIdEnte(row[3] == null ? null : (BigDecimal) row[3]);
+                rb.setIdStrut(row[5] == null ? null : (BigDecimal) row[5]);
+                rb.setIdUnitaDocNonVers(row[13] == null ? null : (BigDecimal) row[13]);
+                rb.setIdUserIam(row[0] == null ? null : (BigDecimal) row[0]);
+                rb.setNmAmbiente(row[2] == null ? null : (String) row[2]);
+                rb.setNmEnte(row[4] == null ? null : (String) row[4]);
+                rb.setNmStrut((String) row[2] + ", " + (String) row[4] + ", " + (String) row[6]);
+                // rb.setString("nm_strut", row.getNmAmbiente() + ", " + row.getNmEnte() + ", " + row.getNmStrut());
                 if (rb.getFlVerif() != null) {
                     rb.setFlVerif(rb.getFlVerif().equals("1") ? "SI" : "NO");
                 }

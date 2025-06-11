@@ -235,6 +235,7 @@ public class CostantiDB {
         public static final String BACKEND_ELENCHI_INDICI_AIP_FASCICOLI = "BACKEND_ELENCHI_INDICI_AIP_FASCICOLI";
 
         public static final String BACKEND_INDICI_AIP_SERIE_UD = "BACKEND_INDICI_AIP_SERIE_UD";
+        public static final String BACKEND_INDICI_ELENCHI_UD = "BACKEND_INDICI_ELENCHI_UD";
 
         // Configurazioni S3
         public static final String S3_PRESIGNED_URL_DURATION = "S3_PRESIGNED_URL_DURATION";
@@ -320,6 +321,9 @@ public class CostantiDB {
         public static final String USO_VP_UD_NONVERS_AMB = "USO_VP_UD_NONVERS_AMB";
         public static final String USO_VP_DOC_NONVERS_AMB = "USO_VP_DOC_NONVERS_AMB";
         public static final String USO_VP_UD_ANNUL_AMB = "USO_VP_UD_ANNUL_AMB";
+
+        // Costante vista parametrica ricerca ud da vers falliti
+        public static final String FL_USO_MON_VP_LIS_UD_NON_VERS_IAM = "FL_USO_MON_VP_LIS_UD_NON_VERS_IAM";
     }
 
     //

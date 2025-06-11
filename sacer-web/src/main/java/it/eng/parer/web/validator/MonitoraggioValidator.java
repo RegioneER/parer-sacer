@@ -98,8 +98,8 @@ public class MonitoraggioValidator extends TypeValidator {
         dataInizio.set(Calendar.MINUTE, 0);
         dataInizio.set(Calendar.SECOND, 0);
         dataInizio.set(Calendar.MILLISECOND, 0);
-        Calendar altroIeri = Calendar.getInstance();
-        altroIeri.add(Calendar.DATE, -2);
+        Calendar ieri = Calendar.getInstance();
+        ieri.add(Calendar.DATE, -1);
 
         if (dataRifDa.after(dataRifA)) {
             getMessageBox()
@@ -109,16 +109,16 @@ public class MonitoraggioValidator extends TypeValidator {
             getMessageBox()
                     .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da inferiore al 1 gennaio 2000"));
         }
-        if (dataRifDa.after(altroIeri.getTime())) {
+        if (dataRifDa.after(ieri.getTime())) {
             getMessageBox()
-                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di data odierna - 2 gg"));
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di data odierna - 1 gg"));
         }
         if (dataRifA.before(dataInizio.getTime())) {
             getMessageBox().addMessage(new Message(MessageLevel.ERR, "Data riferimento A inferiore al 1 gennaio 2000"));
         }
-        if (dataRifA.after(altroIeri.getTime())) {
+        if (dataRifA.after(ieri.getTime())) {
             getMessageBox()
-                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento A maggiore di data odierna - 2 gg"));
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento A maggiore di data odierna - 1 gg"));
         }
     }
 
@@ -131,8 +131,8 @@ public class MonitoraggioValidator extends TypeValidator {
         dataInizio.set(Calendar.MINUTE, 0);
         dataInizio.set(Calendar.SECOND, 0);
         dataInizio.set(Calendar.MILLISECOND, 0);
-        Calendar altroIeri = Calendar.getInstance();
-        altroIeri.add(Calendar.DATE, -2);
+        Calendar ieri = Calendar.getInstance();
+        ieri.add(Calendar.DATE, -1);
 
         if (dataRifDa.after(dataRifA)) {
             getMessageBox()
@@ -142,17 +142,17 @@ public class MonitoraggioValidator extends TypeValidator {
             getMessageBox()
                     .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da inferiore al 1 dicembre 2011"));
         }
-        if (dataRifDa.after(altroIeri.getTime())) {
+        if (dataRifDa.after(ieri.getTime())) {
             getMessageBox()
-                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di data odierna - 2 gg"));
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento Da maggiore di data odierna - 1 gg"));
         }
         if (dataRifA.before(dataInizio.getTime())) {
             getMessageBox()
                     .addMessage(new Message(MessageLevel.ERR, "Data riferimento A inferiore al 1 dicembre 2011"));
         }
-        if (dataRifA.after(altroIeri.getTime())) {
+        if (dataRifA.after(ieri.getTime())) {
             getMessageBox()
-                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento A maggiore di data odierna - 2 gg"));
+                    .addMessage(new Message(MessageLevel.ERR, "Data riferimento A maggiore di data odierna - 1 gg"));
         }
     }
 }

@@ -483,17 +483,17 @@ public class ElaborazioneRigaIndiceAipDaElab {
             ) {
                 aroUnitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name());
                 // MEV #31162
-                udEjb.insertLogStatoConservUd(aroUnitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
+                udEjb.insertLogStatoConservUd(aroUnitaDoc.getIdUnitaDoc(), Constants.JOB_CREAZIONE_INDICE_AIP,
                         Constants.CREAZIONE_INDICE_AIP_UD,
                         CostantiDB.StatoConservazioneUnitaDoc.AIP_IN_AGGIORNAMENTO.name(),
-                        Constants.JOB_CREAZIONE_INDICE_AIP);
+                        Constants.NM_AGENTE_JOB_SACER);
                 // end MEV #31162
             } else {
                 aroUnitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
                 // MEV #31162
-                udEjb.insertLogStatoConservUd(aroUnitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
+                udEjb.insertLogStatoConservUd(aroUnitaDoc.getIdUnitaDoc(), Constants.JOB_CREAZIONE_INDICE_AIP,
                         Constants.CREAZIONE_INDICE_AIP_UD, CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
-                        Constants.JOB_CREAZIONE_INDICE_AIP);
+                        Constants.NM_AGENTE_JOB_SACER);
                 // end MEV #31162
             }
         }
@@ -571,7 +571,7 @@ public class ElaborazioneRigaIndiceAipDaElab {
      * conservazione = IN_VOLUME_DI_CONSERVAZIONE. Metodo richiamato dalla Validazione Serie o Validazione Fascicoli
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void gestisciIndiceAipOs(long idUnitaDoc)
+    public void gestisciIndiceAipOs(long idUnitaDoc, String nomeAgente)
             throws ParerInternalError, NamingException, NoSuchAlgorithmException, IOException, JAXBException {
         log.debug("Creazione Indice AIP - Elaboro l'unit\u00E0 documentaria {}", idUnitaDoc);
         AroUnitaDoc unitaDoc = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
@@ -648,9 +648,8 @@ public class ElaborazioneRigaIndiceAipDaElab {
         unitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
 
         // MEV #31162
-        udEjb.insertLogStatoConservUd(unitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
-                Constants.CREAZIONE_INDICE_AIP_UD_OS_20, CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
-                Constants.JOB_CREAZIONE_INDICE_AIP);
+        udEjb.insertLogStatoConservUd(unitaDoc.getIdUnitaDoc(), nomeAgente, Constants.CREAZIONE_INDICE_AIP_UD,
+                CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(), Constants.NM_AGENTE_JOB_SACER);
         // end MEV #31162
 
         log.debug("Creazione Indice AIP - Operazione di inserimento completata con successo");
@@ -663,7 +662,7 @@ public class ElaborazioneRigaIndiceAipDaElab {
      * Fascicoli
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void gestisciIndiceAipV2Os(long idUnitaDoc)
+    public void gestisciIndiceAipV2Os(long idUnitaDoc, String tipoValidazione)
             throws ParerInternalError, NamingException, NoSuchAlgorithmException, IOException, JAXBException {
         log.debug("Creazione Indice AIP v2.0 - Elaboro l'unit\u00E0 documentaria {}", idUnitaDoc);
         AroUnitaDoc unitaDoc = ciaHelper.findById(AroUnitaDoc.class, idUnitaDoc);
@@ -749,9 +748,8 @@ public class ElaborazioneRigaIndiceAipDaElab {
         unitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name());
 
         // MEV #31162
-        udEjb.insertLogStatoConservUd(unitaDoc.getIdUnitaDoc(), Constants.NM_AGENTE_SACER,
-                Constants.CREAZIONE_INDICE_AIP_UD_OS_20, CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(),
-                Constants.JOB_CREAZIONE_INDICE_AIP);
+        udEjb.insertLogStatoConservUd(unitaDoc.getIdUnitaDoc(), tipoValidazione, Constants.CREAZIONE_INDICE_AIP_UD,
+                CostantiDB.StatoConservazioneUnitaDoc.AIP_GENERATO.name(), Constants.NM_AGENTE_JOB_SACER);
         // end MEV #31162
 
         log.debug("Creazione Indice AIP v2.0 - Operazione di inserimento completata con successo");
