@@ -66,7 +66,7 @@ maintenance:
 name: Parer - Sacer
 platforms:
   - linux
-releaseDate: '2023-11-13'
+releaseDate: '2026-23-12'
 softwareType: standalone/backend
 url: 'https://github.com/RegioneER/parer-sacer.git'
 applicationSuite: SACER
