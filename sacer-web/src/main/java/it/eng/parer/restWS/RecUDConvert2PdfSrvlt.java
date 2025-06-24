@@ -21,8 +21,8 @@
  */
 package it.eng.parer.restWS;
 
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.WS_INSTANCE_NAME;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.WS_STAGING_UPLOAD_DIR;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.WS_INSTANCE_NAME;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.WS_STAGING_UPLOAD_DIR;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,7 +69,7 @@ import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
 import it.eng.parer.ws.versamento.dto.SyncFakeSessn;
 import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
-import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.ConfigSingleton;
 
 /**
  *

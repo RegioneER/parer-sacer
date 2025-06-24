@@ -1626,7 +1626,7 @@ public class AmministrazioneEjb {
                 new BigDecimal(paramApplic.getIdParamApplic()), TiAppart.AMBIENTE.name(), idAmbiente, null, null, null);
         if (valore == null) {
             valore = amministrazioneHelper.getAplValoreParamApplic(new BigDecimal(paramApplic.getIdParamApplic()),
-                    TiAppart.APPLIC.name(), idAmbiente, null, null, null);
+                    TiAppart.APPLIC.name(), null, null, null, null);
         }
         return valore == null ? null : ElencoEnums.TipoFirma.valueOf(valore.getDsValoreParamApplic());
     }

@@ -18,9 +18,7 @@
 package it.eng.parer.job.indiceAipFascicoli.ejb;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
@@ -190,9 +188,8 @@ public class ElaborazioneRigaVersioneFascicoliDaElab {
             String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnFascicolo(
                     MessaggiWSFormat.formattaUrnPartVersatore(versatore, true, Costanti.UrnFormatter.VERS_FMT_STRING),
                     MessaggiWSFormat.formattaUrnPartFasc(chiaveFasc, true, Costanti.UrnFormatter.FASC_FMT_STRING));
-            final String urn = MessaggiWSFormat.formattaUrnAipFascicolo(tmpUrnNorm).substring(4);
 
-            ObjectStorageResource indiceAipFascSuOS = objectStorageService.createResourcesInIndiciAipFasc(urn,
+            ObjectStorageResource indiceAipFascSuOS = objectStorageService.createResourcesInIndiciAipFasc(tmpUrnNorm,
                     backendIndiciAipFascicoli.getBackendName(), indiciAipFascicoliBlob, lastVer.getIdVerAipFascicolo(),
                     BigDecimal.valueOf(fascDaElab.getFasFascicolo().getOrgStrut().getIdStrut()));
             log.debug("Salvati i file indice AIP fascicolo nel bucket {} con chiave {} ", indiceAipFascSuOS.getBucket(),

@@ -22,8 +22,11 @@
  */
 package it.eng.parer.ws.recuperoDip.utils;
 
+import java.io.File;
 import java.io.StringWriter;
+import java.util.logging.Level;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -37,13 +40,18 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
@@ -81,15 +89,18 @@ public class XslFoToPdfTransform implements ICompTransformer {
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
 
-        // Inizializzo la factory (sarebbe consigliabile riusarla...)
-        FopFactory fopFactory = FopFactory.newInstance();
-        fopFactory.setStrictValidation(false);
-        SysOutEventListener tmpOutListener = new SysOutEventListener();
-
-        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        foUserAgent.getEventBroadcaster().addEventListener(tmpOutListener);
-
         try {
+            // Inizializzo la factory (sarebbe consigliabile riusarla...)
+            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+            Configuration cfg = cfgBuilder
+                    .build(this.getClass().getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
+            FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI()).setConfiguration(cfg);
+
+            FopFactory fopFactory = fopFactoryBuilder.build();
+            SysOutEventListener tmpOutListener = new SysOutEventListener();
+
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            foUserAgent.getEventBroadcaster().addEventListener(tmpOutListener);
             Fop fop = null;
 
             // inizializzo FOP con il tipo di output desiderato
@@ -108,8 +119,9 @@ public class XslFoToPdfTransform implements ICompTransformer {
             // inizializzazione (parola con troppe z)
             // Nota: al fine di evitare problemi di classloading e "override" del parser (vedi libreria Saxon-HE)
             // viene esplicitato a codice quale impementazione (xalan standard in questo caso) utilizzare
-            TransformerFactory factory = TransformerFactory
-                    .newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Transformer transformer = null;
             transformer = factory.newTransformer(); // identity transformer
 
@@ -147,6 +159,12 @@ public class XslFoToPdfTransform implements ICompTransformer {
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione XslFoToPdfTransform.convertiSuStream " + ex.getMessage()));
             log.error("Eccezione XslFoToPdfTransform.convertiSuStream " + ex);
+        } catch (SAXException ex) {
+            IOUtils.closeQuietly(parametri.getFileXslFo());
+            java.util.logging.Logger.getLogger(XslFoToPdfTransform.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ConfigurationException ex) {
+            IOUtils.closeQuietly(parametri.getFileXslFo());
+            java.util.logging.Logger.getLogger(XslFoToPdfTransform.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             IOUtils.closeQuietly(parametri.getFileXslFo());
         }

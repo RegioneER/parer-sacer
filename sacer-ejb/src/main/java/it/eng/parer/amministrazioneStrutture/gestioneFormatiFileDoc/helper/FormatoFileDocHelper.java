@@ -563,7 +563,10 @@ public class FormatoFileDocHelper extends GenericHelper {
                 + " = '0' ) tmp "
                 + "    JOIN dec_tipo_strut_doc tipo_strut_doc on (tipo_strut_doc.id_tipo_strut_doc = tmp.id_tipo_strut_doc) "
                 + "WHERE " + "    nm_formato_file_doc LIKE ?2 " + "    AND b.ni_ord_uso = 2 "
-                + "    AND a.id_strut = tipo_strut_doc.id_strut)tab1";
+                + "    AND a.id_strut = tipo_strut_doc.id_strut)tab1"
+                + " WHERE NOT EXISTS ( SELECT 1 FROM dec_formato_file_ammesso dfa "
+                + " WHERE dfa.id_tipo_comp_doc = tab1.id_tipo_comp_doc "
+                + " AND dfa.id_formato_file_doc = tab1.id_formato_file_doc) ";
     }
 
     public String getAmmessiSingoloEConcatenatiQueryDeleteForUpdateTiControFormato(String oldFlag, String newFlag) {

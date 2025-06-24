@@ -20,6 +20,7 @@ package it.eng.parer.web.util;
 import it.eng.parer.serie.utils.FutureUtils;
 import java.util.Map;
 import java.util.concurrent.Future;
+import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpSessionListener;
  *
  * @author bonora_l
  */
+@WebListener
 public class SerieSessionListener implements HttpSessionListener {
 
     @Override

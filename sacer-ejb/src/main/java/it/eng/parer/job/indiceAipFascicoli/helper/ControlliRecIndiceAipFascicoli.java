@@ -105,7 +105,7 @@ public class ControlliRecIndiceAipFascicoli {
     public RispostaControlli getVersioneSacer() {
         RispostaControlli rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
-        String appVersion = it.eng.spagoCore.configuration.ConfigSingleton.getInstance().getAppVersion();
+        String appVersion = it.eng.spagoCore.ConfigSingleton.getInstance().getAppVersion();
         rispostaControlli.setrString(appVersion);
         rispostaControlli.setrBoolean(true);
         return rispostaControlli;

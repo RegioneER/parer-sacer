@@ -17,7 +17,7 @@
 
 package it.eng.parer.crypto.test;
 
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.DISABLE_SECURITY;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.DISABLE_SECURITY;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.ConfigSingleton;
 import it.eng.spagoLite.SessionManager;
 import it.eng.spagoLite.actions.ActionBase;
 import it.eng.spagoLite.security.IUser;

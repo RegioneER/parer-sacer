@@ -81,8 +81,6 @@ public class RecBlbOracle {
             + "where t.id_comp_strut_doc = ?";
     private static final String QRY_VRS_CONTENUTO_FILE_KO = "SELECT BL_CONTENUTO_FILE_SESSIONE FROM VRS_CONTENUTO_FILE_KO t "
             + "where t.ID_FILE_SESSIONE_KO = ?";
-    private static final String QRY_VRS_CONTENUTO_FILE = "SELECT BL_CONTENUTO_FILE_SESSIONE FROM VRS_CONTENUTO_FILE t "
-            + "where t.ID_FILE_SESSIONE = ?";
     private static final String QRY_ELV_FILE_ELENCO_VERS = "SELECT BL_FILE_ELENCO_VERS FROM ELV_FILE_ELENCO_VERS t "
             + "where t.id_file_elenco_vers = ?";
     private static final String QRY_ELV_FILE_ELENCO_VERS_FASC = "SELECT BL_FILE_ELENCO_VERS FROM ELV_FILE_ELENCO_VERS_FASC t "
@@ -158,9 +156,6 @@ public class RecBlbOracle {
         case ERRORI_VERS:
             queryStr = QRY_VRS_CONTENUTO_FILE_KO;
             break;
-        case ERRORI_VERS_TMP:
-            queryStr = QRY_VRS_CONTENUTO_FILE;
-            break;
         case FIR_REPORT:
             queryStr = QRY_FIR_REPORT_COMP;
             break;
@@ -202,14 +197,6 @@ public class RecBlbOracle {
                 }
                 rispostaControlli = true;
             } else {
-                /*
-                 * MEV 30369 - TODO da rimuovere quando viene completata la migrazione dei BLOB
-                 * (https://parermine.regione.emilia-romagna.it/issues/29978) se non lo trovo su VRS_CONTENUTO_FILE_KO
-                 * lo cerco su VRS_CONTENUTO_FILE perchÃ© evidentemente non è ancora stato spostato il CLOB
-                 */
-                if (TabellaBlob.ERRORI_VERS.equals(tabellaBlobDaLeggere)) {
-                    recuperaBlobCompSuStream(idPadre, outputStream, TabellaBlob.ERRORI_VERS_TMP, dto);
-                }
                 log.error("Eccezione nella lettura della tabella dei dati componente: il blob è nullo");
             }
         } catch (SQLException | IOException ex) {

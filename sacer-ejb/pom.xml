@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.7.1-SNAPSHOT</version>
+        <version>10.9.1</version>
     </parent>
 
     <artifactId>sacer-jboss-ejb</artifactId>
@@ -70,9 +70,19 @@
             <artifactId>jboss-connector-api_1.7_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- jboss-jaxb-api_2.3_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.xml.bind</groupId>
+			<artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>   
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-si-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.eng.parer</groupId>
+            <artifactId>spagofat-middle</artifactId>
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
@@ -191,14 +201,6 @@
             <artifactId>Saxon-HE</artifactId>
         </dependency>
         <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>serializer</artifactId>
-		</dependency>
-        <dependency>
             <groupId>net.sourceforge.javacsv</groupId>
             <artifactId>javacsv</artifactId>
         </dependency>
@@ -245,7 +247,6 @@
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
         </dependency>
-
 
         <dependency>
             <groupId>it.eng.parer</groupId>
@@ -313,6 +314,11 @@
             <artifactId>operadriver</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

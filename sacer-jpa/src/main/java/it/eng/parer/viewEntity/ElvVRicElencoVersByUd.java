@@ -24,10 +24,16 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import it.eng.parer.entity.AroUnitaDoc;
+import javax.persistence.OneToOne;
 
 /**
  * The persistent class for the ELV_V_RIC_ELENCO_VERS_BY_UD database table.
@@ -110,6 +116,8 @@ public class ElvVRicElencoVersByUd implements Serializable {
     private String tiGestElenco;
 
     private Date tsStatoElencoInCodaJms;
+
+    private AroUnitaDoc aroUnitaDoc;
 
     public ElvVRicElencoVersByUd() {/* Hibernate */
     }
@@ -486,5 +494,15 @@ public class ElvVRicElencoVersByUd implements Serializable {
 
     public void setElvVRicElencoVersByUdId(ElvVRicElencoVersByUdId elvVRicElencoVersByUdId) {
         this.elvVRicElencoVersByUdId = elvVRicElencoVersByUdId;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ID_UNITA_DOC", insertable = false, updatable = false)
+    public AroUnitaDoc getAroUnitaDoc() {
+        return this.aroUnitaDoc;
+    }
+
+    public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
+        this.aroUnitaDoc = aroUnitaDoc;
     }
 }

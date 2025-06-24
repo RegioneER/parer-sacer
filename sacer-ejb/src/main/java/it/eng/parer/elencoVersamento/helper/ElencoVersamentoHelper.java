@@ -3841,6 +3841,36 @@ public class ElencoVersamentoHelper extends GenericHelper {
         return (l != null && l.size() > 0) ? true : false;
     }
 
+    // MEV#34195 - Funzione per riportare indietro lo stato di una lista di elenchi per consentire la firma dell'AIP
+    //
+    // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO
+    //
+    public List<BigDecimal> isPossibileMettereAipAllaFirma(List<BigDecimal> idElencoVersList) {
+        Query query = em.createNativeQuery("SELECT id_elenco_vers FROM ELV_ELENCO_VERS ele "
+                + "JOIN DEC_CRITERIO_RAGGR crit ON (crit.id_criterio_raggr = ele.id_criterio_raggr) "
+                + "WHERE ele.id_elenco_vers IN :idElencoVersList AND ele.ti_stato_elenco = 'COMPLETATO' "
+                + "AND NOT EXISTS (SELECT * FROM ELV_FILE_ELENCO_VERS file_ele "
+                + "WHERE file_ele.id_elenco_vers = ele.id_elenco_vers "
+                + "AND file_ele.ti_file_elenco_vers = 'ELENCO_INDICI_AIP') "
+                + "AND (ele.ti_gest_elenco in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO') "
+                + "or (ele.ti_gest_elenco is null "
+                + "and crit.ti_gest_elenco_criterio in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO')) "
+                + "or (ele.ti_gest_elenco is null and crit.ti_gest_elenco_criterio is null "
+                + "and case when ele.fl_elenco_standard = '0' "
+                + "then (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_NOSTD') "
+                + "when ele.fl_elenco_standard = '1' and ele.fl_elenco_fisc = '0' "
+                + "then (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_STD_NOFISC') "
+                + "else (select ds_valore_param_applic from APL_V_GETVAL_PARAM_BY_STRUT "
+                + "where id_strut = ele.id_strut and nm_param_applic = 'TI_GEST_ELENCO_STD_FISC') "
+                + "end in ('FIRMA', 'MARCA_FIRMA', 'SIGILLO', 'MARCA_SIGILLO')) )");
+        query.setParameter("idElencoVersList", idElencoVersList);
+        @SuppressWarnings("unchecked")
+        List<BigDecimal> resultList = (List<BigDecimal>) query.getResultList();
+        return resultList;
+    }
+
     // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
     //
     // Codice ripreso e rielaborato dalla procedura Oracle RIELABORA_ELENCO_COMPLETATO

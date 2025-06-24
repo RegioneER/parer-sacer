@@ -413,9 +413,9 @@ public class ValidazioneFascicoliEjb {
 
             // MEV #31162
             for (Long idUnitaDocDaFascicolo : idUnitaDocDaFascicoloList) {
-                udEjb.insertLogStatoConservUd(idUnitaDocDaFascicolo, Constants.NM_AGENTE_SACER,
+                udEjb.insertLogStatoConservUd(idUnitaDocDaFascicolo, Constants.JOB_VALIDAZIONE_FASCICOLO,
                         Constants.VALIDA_FASCICOLO, CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-                        Constants.JOB_VALIDAZIONE_FASCICOLO);
+                        Constants.NM_AGENTE_JOB_SACER);
             }
             // end MEV #31162
 
@@ -435,9 +435,9 @@ public class ValidazioneFascicoliEjb {
 
             // MEV #31162
             for (Long idUnitaDocDaFascicolo : idUnitaDocDaFascicoloList) {
-                udEjb.insertLogStatoConservUd(idUnitaDocDaFascicolo, Constants.NM_AGENTE_SACER,
-                        Constants.VALIDA_FASCICOLO, CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name(),
-                        Constants.VALIDA_FASCICOLO_VDC);
+                udEjb.insertLogStatoConservUd(idUnitaDocDaFascicolo, Constants.JOB_VALIDAZIONE_FASCICOLO,
+                        Constants.PREDISPOSIZIONE_INDICE_AIP,
+                        CostantiDB.StatoConservazioneUnitaDoc.AIP_DA_GENERARE.name(), Constants.NM_AGENTE_JOB_SACER);
             }
             // end MEV #31162
 
@@ -541,8 +541,9 @@ public class ValidazioneFascicoliEjb {
         // Aggiorno lo stato dell'ud
         unitaDoc.setTiStatoConservazione(CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
         // MEV #31162
-        udEjb.insertLogStatoConservUd(idUnitaDoc, Constants.NM_AGENTE_SACER, Constants.VALIDA_FASCICOLO,
-                CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(), Constants.VALIDA_FASCICOLO);
+        udEjb.insertLogStatoConservUd(idUnitaDoc, Constants.JOB_VALIDAZIONE_FASCICOLO,
+                Constants.BLOCCO_AGGIORNAMENTI_AIP, CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+                Constants.NM_AGENTE_JOB_SACER);
         // end MEV #31162
     }
 
@@ -558,9 +559,9 @@ public class ValidazioneFascicoliEjb {
         String sincroVersion = confHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.UNISINCRO_VERSION,
                 idAmbiente);
         if (!"2.0".equals(sincroVersion)) {
-            elabIndiceAip.gestisciIndiceAipOs(ud.getIdUnitaDoc());
+            elabIndiceAip.gestisciIndiceAipOs(ud.getIdUnitaDoc(), Constants.JOB_VALIDAZIONE_FASCICOLO);
         } else {
-            elabIndiceAip.gestisciIndiceAipV2Os(ud.getIdUnitaDoc());
+            elabIndiceAip.gestisciIndiceAipV2Os(ud.getIdUnitaDoc(), Constants.JOB_VALIDAZIONE_FASCICOLO);
         }
         // end MEV#30395
     }

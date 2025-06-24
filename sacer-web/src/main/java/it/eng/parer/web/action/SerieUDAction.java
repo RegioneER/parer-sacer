@@ -572,7 +572,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     getMessageBox().addError(ex.getDescription());
                 }
             }
-            if (!getMessageBox().hasError()) {
+            if (!getMessageBox().hasError() && creaAutomBean != null) {
                 IntervalliSerieAutomBean tmpBean = new IntervalliSerieAutomBean(calInizio.getTime(), calFine.getTime(),
                         null, null);
                 if (!creaAutomBean.getIntervalli().contains(tmpBean)) {
@@ -824,19 +824,31 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 loadDettaglioSerie(row.getIdVerSerie(), false);
                 getForm().getSerieDetail().getId_ver_serie_corr().setValue(row.getIdVerSerieInput().toPlainString());
 
+                VerSerieDetailBean lastDetailStack = getLastIdVerSerieDetailStack();
+
                 if (getNavigationEvent().equals(ListAction.NE_NEXT)
                         || getNavigationEvent().equals(ListAction.NE_PREV)) {
-                    if (getLastIdVerSerieDetailStack() != null
-                            && level.intValue() == getLastIdVerSerieDetailStack().getLevel()) {
+
+                    if (lastDetailStack != null && level.intValue() == lastDetailStack.getLevel()) {
                         popIdVerSerieDetailStack();
                         getForm().getSerieDetail().getLevel_ver_serie().setValue(String.valueOf(level));
-                    } else {
-                        int nextLevel = getLastIdVerSerieDetailStack().getLevel() + 1;
+                    } else if (lastDetailStack != null) {
+                        int nextLevel = lastDetailStack.getLevel() + 1;
                         getForm().getSerieDetail().getLevel_ver_serie().setValue(String.valueOf(nextLevel));
+                    } else {
+                        // fallback se non c'è uno stack precedente
+                        getForm().getSerieDetail().getLevel_ver_serie().setValue("1"); // o un altro valore sensato
+                        log.warn("Nessun VerSerieDetailStack trovato nella sessione.");
                     }
+
                 } else {
-                    int nextLevel = getLastIdVerSerieDetailStack().getLevel() + 1;
-                    getForm().getSerieDetail().getLevel_ver_serie().setValue(String.valueOf(nextLevel));
+                    if (lastDetailStack != null) {
+                        int nextLevel = lastDetailStack.getLevel() + 1;
+                        getForm().getSerieDetail().getLevel_ver_serie().setValue(String.valueOf(nextLevel));
+                    } else {
+                        getForm().getSerieDetail().getLevel_ver_serie().setValue("1");
+                        log.warn("Nessun VerSerieDetailStack trovato nella sessione.");
+                    }
                 }
                 pushIdVerSerieDetailStack(row.getIdVerSerie(), getForm().getVersioniPrecedentiList().getName(),
                         getForm().getVersioniPrecedentiDetailList().getTable(),
@@ -1052,9 +1064,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
         loadDettaglioSerie(listRow.getBigDecimal("id_ver_serie"), true);
         getForm().getSerieDetail().getId_ver_serie_corr().setValue(idVerSerie.toPlainString());
         getForm().getSerieDetail().getLevel_ver_serie().setValue(BigDecimal.ONE.toPlainString());
+        VerSerieDetailBean lastStackItem = getLastIdVerSerieDetailStack();
         if ((getNavigationEvent().equals(ListAction.NE_NEXT) || getNavigationEvent().equals(ListAction.NE_PREV))
-                && getLastIdVerSerieDetailStack() != null
-                && level.intValue() == getLastIdVerSerieDetailStack().getLevel()) {
+                && lastStackItem != null && level.intValue() == lastStackItem.getLevel()) {
             // Se mi sono spostato nella collezione eseguo una pop dallo stack per gli elementi dello stesso livello
             popIdVerSerieDetailStack();
         }
@@ -2177,7 +2189,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                 String subTab = getForm().getSerieDetailSubTabs().getCurrentTab().getName();
 
                 loadDettaglioSerie(idVerSerie, versioneCorrente);
-                if (versioneCorrente) {
+                if (versioneCorrente && idVerSerie != null) {
                     getForm().getSerieDetail().getId_ver_serie_corr().setValue(idVerSerie.toPlainString());
                 }
                 getForm().getSerieDetail().getLevel_ver_serie().setValue(String.valueOf(level));
@@ -4031,12 +4043,13 @@ public class SerieUDAction extends SerieUDAbstractAction {
         String stato = getForm().getCambioStatoSerie().getTi_stato_ver_serie().parse();
         String nota = getForm().getCambioStatoSerie().getDs_nota_azione().parse();
         String statoSerieCorrente = getForm().getSerieDetail().getTi_stato_ver_serie().getValue();
+        String tipoOperazione = "CAMBIA_STATO";
 
         if (idSerie != null && idVerSerie != null && StringUtils.isNotBlank(azione) && StringUtils.isNotBlank(stato)
                 && StringUtils.isNotBlank(statoSerieCorrente)) {
             try {
                 serieEjb.cambiaStatoSerie(getUser().getIdUtente(), idSerie, idVerSerie, idContenutoVerSerie, azione,
-                        stato, nota, statoSerieCorrente);
+                        stato, nota, statoSerieCorrente, tipoOperazione);
                 if (stato.equals(CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name())) {
                     String cdSerie = getForm().getContenutoSerieDetail().getCd_composito_serie().parse();
                     BigDecimal aaSerie = getForm().getContenutoSerieDetail().getAa_serie().parse();
@@ -4360,7 +4373,11 @@ public class SerieUDAction extends SerieUDAbstractAction {
             }
             futureListObject.put("array", array);
             redirectToAjax(futureListObject);
-        } catch (JSONException | InterruptedException | ExecutionException ex) {
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            getMessageBox().addError(ExceptionUtils.getRootCauseMessage(ex));
+            forwardToPublisher(getLastPublisher());
+        } catch (ExecutionException | JSONException ex) {
             getMessageBox().addError(ExceptionUtils.getRootCauseMessage(ex));
             forwardToPublisher(getLastPublisher());
         }
@@ -4487,9 +4504,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
         /* Rendo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaSerieDaFirmareButtonList().setEditMode();
         // Se non ci sono serie in stato FIRMATA_NO_MARCA, nascondo il bottone per "marcare"
-        if (!serieEjb.existsFirmataNoMarca(null)) {
-            getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
-        }
+        // if (!serieEjb.existsFirmataNoMarca(null)) {
+        // getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
+        // }
 
         // Check if some signature session is active
         Future<Boolean> futureFirma = (Future<Boolean>) getSession().getAttribute(Signature.FUTURE_ATTR_SERIE);
@@ -4678,9 +4695,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
         /* Rengo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaSerieDaFirmareButtonList().setEditMode();
         // Se non ci sono serie in stato FIRMATA_NO_MARCA, nascondo il bottone per "marcare"
-        if (!serieEjb.existsFirmataNoMarca(null)) {
-            getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
-        }
+        // if (!serieEjb.existsFirmataNoMarca(null)) {
+        // getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
+        // }
 
         /* Inizializzo la lista delle serie selezionate */
         getForm().getSerieSelezionateList().setTable(new BaseTable());
@@ -4710,23 +4727,23 @@ public class SerieUDAction extends SerieUDAbstractAction {
         forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
     }
 
-    @Override
-    public void marcaturaIndiciAIPSerieButton() throws EMFError {
-        long idUtente = SessionManager.getUser(getSession()).getIdUtente();
-        try {
-            int marcati = serieEjb.marcaturaIndici(idUtente);
-            if (marcati > 0) {
-                getMessageBox().addMessage(new Message(MessageLevel.INF,
-                        "Marcatura eseguita correttamente: marcati tutti i " + marcati + " indici AIP versione serie"));
-                getMessageBox().setViewMode(ViewMode.plain);
-            }
-        } catch (ParerUserError ex) {
-            /* Se non ho marcato tutti gli indici mostro un warning */
-            getMessageBox().addMessage(new Message(MessageLevel.WAR, ex.getDescription()));
-            getMessageBox().setViewMode(ViewMode.plain);
-        }
-        forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
-    }
+    // @Override
+    // public void marcaturaIndiciAIPSerieButton() throws EMFError {
+    // long idUtente = SessionManager.getUser(getSession()).getIdUtente();
+    // try {
+    // int marcati = serieEjb.marcaturaIndici(idUtente);
+    // if (marcati > 0) {
+    // getMessageBox().addMessage(new Message(MessageLevel.INF,
+    // "Marcatura eseguita correttamente: marcati tutti i " + marcati + " indici AIP versione serie"));
+    // getMessageBox().setViewMode(ViewMode.plain);
+    // }
+    // } catch (ParerUserError ex) {
+    // /* Se non ho marcato tutti gli indici mostro un warning */
+    // getMessageBox().addMessage(new Message(MessageLevel.WAR, ex.getDescription()));
+    // getMessageBox().setViewMode(ViewMode.plain);
+    // }
+    // forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
+    // }
 
     @Override
     public void tabInfoPrincipaliVolumeOnClick() throws EMFError {
@@ -5089,6 +5106,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
 
     @Override
     public void validaSerie() throws EMFError {
+        String tipoOperazione = "VALIDA_SERIE";
         if (getForm().getSerieSelezionateDaValidareList().getTable().isEmpty()) {
             getMessageBox().addError("Selezionare almeno una serie da validare");
         } else {
@@ -5102,7 +5120,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                     serieEjb.cambiaStatoSerie(getUser().getIdUtente(), row.getIdSerie(), row.getIdVerSerie(),
                             row.getIdContenutoVerSerie(), SerieEjb.AZIONE_SERIE_VALIDAZIONE_IN_CORSO,
                             CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name(), null,
-                            CostantiDB.StatoVersioneSerie.DA_VALIDARE.name());
+                            CostantiDB.StatoVersioneSerie.DA_VALIDARE.name(), tipoOperazione);
 
                     String keyFuture = FutureUtils.buildKeyFuture(CostantiDB.TipoChiamataAsync.VALIDAZIONE_SERIE.name(),
                             row.getCdCompositoSerie(), row.getAaSerie(), getUser().getIdOrganizzazioneFoglia(),
@@ -5118,7 +5136,7 @@ public class SerieUDAction extends SerieUDAbstractAction {
                         serieEjb.cambiaStatoSerie(getUser().getIdUtente(), row.getIdSerie(), row.getIdVerSerie(),
                                 row.getIdContenutoVerSerie(), SerieEjb.AZIONE_SERIE_VALIDAZIONE_IN_CORSO,
                                 CostantiDB.StatoVersioneSerie.VALIDAZIONE_IN_CORSO.name(), null,
-                                CostantiDB.StatoVersioneSerie.DA_VALIDARE.name());
+                                CostantiDB.StatoVersioneSerie.DA_VALIDARE.name(), tipoOperazione);
 
                         String keyFuture = FutureUtils.buildKeyFuture(
                                 CostantiDB.TipoChiamataAsync.VALIDAZIONE_SERIE.name(), row.getCdCompositoSerie(),
@@ -5754,6 +5772,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
             }
             redirectToAjax(result);
         } catch (InterruptedException | ExecutionException ex) {
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione
+            }
             log.error("Errore inatteso nell'esecuzione del metodo asincrono di firma", ex);
             try {
                 result.put("status", SigningResponse.UNKNOWN_ERROR.name());

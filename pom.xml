@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>10.7.1-SNAPSHOT</version>
+    <version>10.9.1</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>it.eng.parer</groupId>
 		<artifactId>parer-pom</artifactId>
-		<version>6.5.0</version>
+		<version>7.0.0</version>
 	</parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,29 +19,29 @@
 		<!-- Questa è la versione del modulo sacer-xml che dovrà essere inclusa nel progetto -->
         <sacer.xmlmodule.version>2.12.0</sacer.xmlmodule.version>
         <!-- spagofat bom -->
-        <spagofat.version>6.16.0</spagofat.version>
+        <spagofat.version>7.0.1</spagofat.version>
         <verificafirma-crypto-beans.version>1.6.0</verificafirma-crypto-beans.version>
         <parer-retry.version>2.2.0</parer-retry.version>
         <idp-jaas-rdbms.version>0.0.9</idp-jaas-rdbms.version>
 		<!-- hsm -->
-        <client-hsm.version>2.0.0</client-hsm.version>
+        <client-hsm.version>2.0.1</client-hsm.version>
 		<!-- third party lib -->
         <org.apache.wss4j.version>2.2.4</org.apache.wss4j.version>
         <blob-info.version>1.0.0</blob-info.version>
-        <software.amazon.awssdk.version>2.27.7</software.amazon.awssdk.version>  
-        <netty.version>4.1.108.Final</netty.version>
+        <software.amazon.awssdk.version>2.31.12</software.amazon.awssdk.version>
+        <netty.version>4.1.118.Final</netty.version>
         <xadisk.version>1.2.2.5</xadisk.version>
         <ojdbc7.version>12.1.0.1</ojdbc7.version>
         <naming-java.version>0.8</naming-java.version>
         <javacsv.version>2.0</javacsv.version>
         <avalon-framework.version>4.2.0</avalon-framework.version>
-        <saxon-he.version>9.6.0-5</saxon-he.version>
+        <saxon-he.version>12.5</saxon-he.version>
         <asm-debug-all.version>4.1</asm-debug-all.version>
         <javax.mail.version>1.4.7</javax.mail.version>
 		<!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
 		<!--        <ooxml-schemas.version>1.4</ooxml-schemas.version> -->
         <pdf-box.version>2.0.32</pdf-box.version>
-        <fop.version>1.1</fop.version>
+        <fop.version>2.9</fop.version>
         <jaxws-rt.version>2.3.5</jaxws-rt.version>  
         <tika.version>2.9.2</tika.version>
         <apache-mime4j.version>0.8.11</apache-mime4j.version>
@@ -50,6 +50,7 @@
         <operadriver.version>1.5</operadriver.version>
 		<!-- JBoss EAP -->
         <cxf-rt.version>3.3.9.redhat-00001</cxf-rt.version>
+        <jaxp-jdk11.version>0.0.3</jaxp-jdk11.version>
     </properties>
 
 <distributionManagement>
@@ -165,6 +166,10 @@
 						<groupId>xerces</groupId>
 						<artifactId>xercesImpl</artifactId>
 					</exclusion>
+					<exclusion>
+						<groupId>xalan</groupId>
+						<artifactId>xalan</artifactId>
+					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>
@@ -255,8 +260,12 @@
 	            	<exclusion>
 	            		<groupId>xml-apis</groupId>
 	            		<artifactId>xml-apis</artifactId>
-	            	</exclusion>
-					<!--					<exclusion>
+	            	</exclusion>					           
+	            	<exclusion>
+	            		<groupId>xerces</groupId>
+	            		<artifactId>xercesImpl</artifactId>
+	            	</exclusion>	
+<!--					<exclusion>
 						<groupId>org.apache.logging.log4j</groupId>
 						<artifactId>log4j-api</artifactId>
 					</exclusion>-->
@@ -328,24 +337,6 @@
             </dependency>
 			<!-- Xerces & co -->
             <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>${xerces.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>${xalan.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-			<dependency>
-				<groupId>xalan</groupId>
-				<artifactId>serializer</artifactId>
-				<version>${xalan.version}</version>
-				<scope>runtime</scope>
-			</dependency>
-            <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm-debug-all</artifactId>
                 <version>${asm-debug-all.version}</version>
@@ -409,48 +400,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-			<!-- Netty AWS-->
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-common</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-buffer</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-transport</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-codec</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-handler</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-resolver</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-transport-native-unix-common</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-transport-classes-epoll</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-				
+            <!-- Netty AWS-->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency> 
                 <groupId>joda-time</groupId> 
                 <artifactId>joda-time</artifactId> 
@@ -496,7 +453,23 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-			<!--                     
+            <dependency>
+                <groupId>org.opensaml</groupId>
+                <artifactId>opensaml-core</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensaml</groupId>
+                <artifactId>opensaml-saml-api</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensaml</groupId>
+                <artifactId>opensaml-saml-impl</artifactId>
+                <version>${opensaml.version}</version>
+            </dependency>
+
+            <!--
                         <dependency>
                             <groupId>org.apache.poi</groupId>
                             <artifactId>poi-ooxml</artifactId>
@@ -514,12 +487,6 @@
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-			<!--            <dependency>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-rt</artifactId>
-                <version>${jaxws-rt.version}</version>
-                <scope>provided</scope>
-            </dependency>-->
             <dependency>
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>

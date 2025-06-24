@@ -35,13 +35,15 @@ import it.eng.parer.ws.utils.CostantiDB.ParametroAppl;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.checksums.RequestChecksumCalculation;
+import software.amazon.awssdk.core.checksums.ResponseChecksumValidation;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
 /**
- * Cache per i client AWS. Siccome la creazione di un client è un'attività computazionalmente pesante e a noi ne servono
- * pochi (direi al massimo 2) lasciamoli in memoria
+ * Cache per i client AWS. Siccome la creazione di un client ï¿½ un'attivitï¿½ computazionalmente pesante e a noi ne
+ * servono pochi (direi al massimo 2) lasciamoli in memoria
  *
  * @author Snidero_L
  */
@@ -67,8 +69,8 @@ public class AwsClient {
     }
 
     /*
-     * Nota: con l'introduzione di https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html è
-     * necessario abilitare "forzatamente" la modalità path style (attenzione: in futuro sarà deprecata!)
+     * Nota: con l'introduzione di https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html ï¿½
+     * necessario abilitare "forzatamente" la modalitï¿½ path style (attenzione: in futuro sarï¿½ deprecata!)
      */
     private S3Client createS3Client(URI storageAddress, String accessKeyId, String secretKey) {
 
@@ -77,6 +79,8 @@ public class AwsClient {
 
         return S3Client.builder().endpointOverride(storageAddress).region(Region.US_EAST_1)
                 .credentialsProvider(credProvider).forcePathStyle(true)
+                .responseChecksumValidation(ResponseChecksumValidation.WHEN_REQUIRED)
+                .requestChecksumCalculation(RequestChecksumCalculation.WHEN_REQUIRED)
                 .httpClientBuilder(ApacheHttpClient.builder().maxConnections(maxConnections())
                         .connectionTimeout(connectionTimeoutOfMinutes()).socketTimeout(socketTimeoutOfMinutes()))
                 .build();

@@ -56,6 +56,8 @@
                 <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.NT_ELENCO_CHIUSO%>" colSpan="2"/>
                 <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.NT_INDICE_ELENCO%>" colSpan="2"/>
                 <sl:newLine />
+                <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.TI_STATO_CONSERVAZIONE%>" colSpan="2"/> 
+                <sl:newLine />
                 <slf:section name="<%=ElenchiVersamentoForm.ChiaveSection.NAME%>" styleClass="importantContainer">
                     <slf:lblField colSpan="2" name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.CD_REGISTRO_KEY_UNITA_DOC%>" />
                     <slf:lblField colSpan="1" name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.AA_KEY_UNITA_DOC%>" />
@@ -79,7 +81,8 @@
             <sl:newLine skipLine="true" />
             <sl:pulsantiera>
                 <!-- piazzo i bottoni di ricerca ed inserimento -->
-                <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.RICERCA_ELENCHI_BUTTON%>" width="w25" />
+                <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.RICERCA_ELENCHI_BUTTON%>" width="w25" />                
+                <slf:lblField name="<%=ElenchiVersamentoForm.FiltriElenchiVersamento.RIPORTA_STATO_INDIETRO_DA_RICERCA_BUTTON%>" width="w25" />
             </sl:pulsantiera>
             <sl:newLine skipLine="true"/>
 

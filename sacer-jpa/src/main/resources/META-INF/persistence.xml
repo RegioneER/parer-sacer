@@ -51,10 +51,6 @@
             <property name="hibernate.id.new_generator_mappings" value="true"/>
             <property name="hibernate.session.events.log" value="false"/>
             <property name="hibernate.session_factory.session_scoped_interceptor" value="it.eng.paginator.hibernate.OracleSqlInterceptor"/>
-
         </properties>
-
-
-
     </persistence-unit>
 </persistence>

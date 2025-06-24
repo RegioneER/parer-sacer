@@ -1,5 +1,5 @@
 <%@page import="it.eng.parer.slite.gen.form.SceltaOrganizzazioneForm" pageEncoding="UTF-8"%>
-<%@page import="it.eng.spagoCore.configuration.ConfigSingleton"%>
+<%@page import="it.eng.spagoCore.ConfigSingleton"%>
 <%@ include file="../include.jsp"%>
 
 <sl:html>

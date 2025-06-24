@@ -17,9 +17,9 @@
 
 package it.eng.parer.web.action;
 
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -91,7 +91,7 @@ import it.eng.parer.ws.ejb.XmlContextCache;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.versamento.dto.FileBinario;
 import it.eng.parer.xml.utils.XmlUtils;
-import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseRowInterface;
@@ -375,10 +375,10 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
         // Eseguo l'unmarshalling dell'xml
         T titolarioObj = null;
         log.info("Eseguo l'unmarshalling dell'xml");
-        InputStream titolarioIS = new ByteArrayInputStream(titolario);
-        try {
+        try (InputStream titolarioIS = new ByteArrayInputStream(titolario)) {
             JAXBContext titolarioCtx = null;
             String xsd = null;
+
             if (classType.equals(CreaTitolario.class)) {
                 titolarioCtx = xmlContextCache.getCreaTitolarioCtx();
                 xsd = CREA_XSD_FILENAME;
@@ -387,10 +387,16 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
                 xsd = MODIFICA_XSD_FILENAME;
             }
 
+            if (titolarioCtx == null || xsd == null) {
+                log.error("Tipo non supportato per unmarshalling: {}", classType.getName());
+                getMessageBox().addError("Tipo XML non supportato: " + classType.getSimpleName());
+                return null;
+            }
+
             Unmarshaller um = titolarioCtx.createUnmarshaller();
             um.setSchema(XmlUtils.getSchemaValidation(this.getClass().getClassLoader().getResourceAsStream(xsd)));
             titolarioObj = XmlUtils.unmarshallResponse(um, titolarioIS, classType);
-        } catch (SAXException | JAXBException ex) {
+        } catch (SAXException | JAXBException | IOException ex) {
             log.error(ex.getMessage(), ex);
             getMessageBox().addError("Eccezione nel parsing del xml: " + ExceptionUtils.getRootCauseMessage(ex));
         }
@@ -1591,20 +1597,27 @@ public class StrutTitolariAction extends StrutTitolariAbstractAction {
         if (!getMessageBox().hasError()) {
             codiceVoce = getForm().getVociInserimento().getCd_composito_voce_titol().parse();
             voceDaEliminare = getVoce(vociMap, livelli, codiceVoce, livello.intValue() - 1);
-            voceDaEliminare.setOperation(Voce.Operation.CHIUDI);
-            voceDaEliminare.setDataFineValidita(dataFineValidita);
-            voceDaEliminare.setNoteVoceTitolario(note);
 
-            Date dataInizioValiditaTitolario = new Date(
-                    getForm().getDatiTitolarioInserimento().getDt_istituz().parse().getTime());
+            if (voceDaEliminare != null) {
+                voceDaEliminare.setOperation(Voce.Operation.CHIUDI);
+                voceDaEliminare.setDataFineValidita(dataFineValidita);
+                voceDaEliminare.setNoteVoceTitolario(note);
 
-            checker.checkVoci(voceDaEliminare, livelli, livello.intValue() - 1, vociMap, dataInizioValiditaTitolario,
-                    getMessageBox());
+                Date dataInizioValiditaTitolario = new Date(
+                        getForm().getDatiTitolarioInserimento().getDt_istituz().parse().getTime());
+
+                checker.checkVoci(voceDaEliminare, livelli, livello.intValue() - 1, vociMap,
+                        dataInizioValiditaTitolario, getMessageBox());
+            } else {
+                log.warn("Voce da eliminare non trovata con codice '{}'", codiceVoce);
+                getMessageBox().addError("Voce non trovata per la rimozione.");
+                return;
+            }
         }
 
         if (!getMessageBox().hasError()) {
 
-            if (livello.equals(BigDecimal.ONE)) {
+            if (livello.equals(BigDecimal.ONE) && voceDaEliminare != null) {
                 numOrdinePrimoLivello.remove(voceDaEliminare.getNumeroOrdine());
             }
 

@@ -107,6 +107,7 @@ import it.eng.parer.entity.OrgUsoSistemaMigraz;
 import it.eng.parer.fascicoli.helper.CriteriRaggrFascicoliHelper;
 import it.eng.parer.fascicoli.helper.ModelliFascicoliHelper;
 import java.nio.charset.StandardCharsets;
+import javax.xml.XMLConstants;
 import javax.xml.ws.BindingProvider;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -228,8 +229,9 @@ public class StruttureEjb {
         JAXBContext jaxbCtx = JAXBContext.newInstance(OrgStrut.class);
         // Nota: al fine di evitare problemi di classloading e "override" del parser (vedi libreria Saxon-HE)
         // viene esplicitato a codice quale impementazione (xalan standard in questo caso) utilizzare
-        TransformerFactory transFact = TransformerFactory
-                .newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+        TransformerFactory transFact = TransformerFactory.newInstance();
+        transFact.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        transFact.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         Result outputResult = new StreamResult(sw);
 
         TransformerHandler handler = null;

@@ -86,6 +86,24 @@ public class DisciplinareTecnicoEjb {
                 // ********** ESTRAE PDF *****************
                 arrayPDF = disciplinareTecnicoHelper.trasformaInPDF(xmlFo);
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                // XXE: This is the PRIMARY defense. If DTDs (doctypes) are disallowed,
+                // almost all XML entity attacks are prevented
+                final String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+                factory.setFeature(FEATURE, true);
+                factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+                // ... and these as well, per Timothy Morgan's 2014 paper:
+                // "XML Schema, DTD, and Entity Attacks" (see reference below)
+                factory.setXIncludeAware(false);
+                factory.setExpandEntityReferences(false);
+                // ... and, per Timothy Morgan:
+                // "If for some reason support for inline DOCTYPEs are a requirement, then
+                // ensure the entity settings are disabled (as shown above) and beware that SSRF
+                // attacks
+                // (http://cwe.mitre.org/data/definitions/918.html) and denial
+                // of service attacks (such as billion laughs or decompression bombs via "jar:")
+                // are a risk."
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 byte[] xmlIniziale = disciplinareTecnicoHelper.getClobAsByteArray(risultato);
                 InputSource is = new InputSource(new StringReader(new String(xmlIniziale, "UTF-8")));

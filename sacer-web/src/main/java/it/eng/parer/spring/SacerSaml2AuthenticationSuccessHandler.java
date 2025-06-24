@@ -15,29 +15,29 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package it.eng.parer.web.security;
+package it.eng.parer.spring;
 
+import it.eng.spagoLite.spring.CustomSaml2AuthenticationSuccessHandler;
+import it.eng.parer.grantedEntity.UsrUser;
 import it.eng.parer.web.helper.UserHelper;
-import it.eng.spagoLite.security.saml.SliteSAMLUserDetail;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
-import it.eng.parer.grantedEntity.UsrUser;
-import java.util.ArrayList;
-
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  *
- * @author MIacolucci
+ * @author Marco Iacolucci
  */
-public class SacerSAMLUserDetail extends SliteSAMLUserDetail {
+@Component
+public class SacerSaml2AuthenticationSuccessHandler extends CustomSaml2AuthenticationSuccessHandler {
 
     @EJB(mappedName = "java:app/Parer-ejb/UserHelper")
     private UserHelper userHelper;
 
     @Override
     protected List<UtenteDb> findUtentiPerCodiceFiscale(String codiceFiscale) {
-        ArrayList al = new ArrayList<UtenteDb>();
+        ArrayList<UtenteDb> al = new ArrayList<>();
         List<UsrUser> l = userHelper.findByCodiceFiscale(codiceFiscale);
         for (UsrUser usrUser : l) {
             UtenteDb u = new UtenteDb();

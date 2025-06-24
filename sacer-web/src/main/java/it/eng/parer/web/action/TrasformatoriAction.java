@@ -17,9 +17,9 @@
 
 package it.eng.parer.web.action;
 
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -78,7 +78,7 @@ import it.eng.parer.ws.xml.versRespStato.ECEsitoPosNegType;
 import it.eng.parer.ws.xml.versRespStato.EsitoChiamataWSType;
 import it.eng.parer.ws.xml.versRespStato.EsitoGenericoType;
 import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
-import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.message.Message;

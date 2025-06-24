@@ -4,7 +4,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.7.1-SNAPSHOT</version>
+        <version>10.9.1</version>
     </parent>
 
     <artifactId>sacer-jboss-ear</artifactId>    
@@ -54,10 +54,6 @@
             		<artifactId>log4j-api</artifactId>
             	</exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security.extensions</groupId>
-            <artifactId>spring-security-saml2-core</artifactId>
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
@@ -116,13 +112,21 @@
             <artifactId>pdfbox</artifactId>
             <version>${pdf-box.version}</version>
         </dependency>
-        <!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
-<!--        
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>ooxml-schemas</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-saml2-service-provider</artifactId>
         </dependency>
--->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>  
+            <groupId>jaxp.jdk</groupId>  
+            <artifactId>jaxp-jdk11</artifactId>  
+            <version>${jaxp-jdk11.version}</version>  
+            <type>jar</type>  
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>   
     <build>
         <finalName>sacer-${project.version}</finalName>

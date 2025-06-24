@@ -19,6 +19,7 @@ package it.eng.parer.ws.richiestaAnnullamentoVersamenti.utils;
 
 import java.io.StringReader;
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.naming.InitialContext;
@@ -252,38 +253,46 @@ public class InvioRichiestaAnnullamentoVersamentiParser {
 
         /* CONTROLLO TAG IMMEDIATA (RICH_ANN_VERS_018) */
         if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
-            VersamentoDaAnnullareType versamentoDaAnnullare = richiesta.getVersamentiDaAnnullare()
-                    .getVersamentoDaAnnullare().stream().findFirst().get();
-            if (versamentoDaAnnullare.getTipoVersamento().value().equals(TipoVersamentoType.FASCICOLO.value())) {
-                if (ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isImmediata() != null
-                        && !ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isImmediata()) {
-                    // Per il Tipo Versamento specificato nella richiesta è necessario definire una richiesta Immediata
-                    rispostaWs.setSeverity(SeverityEnum.ERROR);
-                    rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_018,
-                            MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_018));
-                    // Popolo i tag da dare in risposta in questo caso
-                    // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
-                    // popolaVersatoreRichiestaEsito(myEsito, ravExt);
-                    // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
+            Optional<VersamentoDaAnnullareType> optVersamento = richiesta.getVersamentiDaAnnullare()
+                    .getVersamentoDaAnnullare().stream().findFirst();
+
+            if (optVersamento.isPresent()) {
+                VersamentoDaAnnullareType versamentoDaAnnullare = optVersamento.get();
+                if (versamentoDaAnnullare.getTipoVersamento().value().equals(TipoVersamentoType.FASCICOLO.value())) {
+                    if (ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isImmediata() != null
+                            && !ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isImmediata()) {
+                        // Per il Tipo Versamento specificato nella richiesta è necessario definire una richiesta
+                        // Immediata
+                        rispostaWs.setSeverity(SeverityEnum.ERROR);
+                        rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_018,
+                                MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_018));
+                        // Popolo i tag da dare in risposta in questo caso
+                        // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
+                        // popolaVersatoreRichiestaEsito(myEsito, ravExt);
+                        // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
+                    }
                 }
             }
         }
 
         /* CONTROLLO TAG RICHIESTADAPREINGEST (RICH_ANN_VERS_019) */
         if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
-            VersamentoDaAnnullareType versamentoDaAnnullare = richiesta.getVersamentiDaAnnullare()
-                    .getVersamentoDaAnnullare().stream().findFirst().get();
-            if (versamentoDaAnnullare.getTipoVersamento().value().equals(TipoVersamentoType.FASCICOLO.value())) {
-                if (ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isRichiestaDaPreIngest() != null
-                        && ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isRichiestaDaPreIngest()) {
-                    // Richiesta da PreIngest definita ma il Tipo Versamento specificato non lo supporta
-                    rispostaWs.setSeverity(SeverityEnum.ERROR);
-                    rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_019,
-                            MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_019));
-                    // Popolo i tag da dare in risposta in questo caso
-                    // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
-                    // popolaVersatoreRichiestaEsito(myEsito, ravExt);
-                    // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
+            Optional<VersamentoDaAnnullareType> optVersamento = richiesta.getVersamentiDaAnnullare()
+                    .getVersamentoDaAnnullare().stream().findFirst();
+            if (optVersamento.isPresent()) {
+                VersamentoDaAnnullareType versamentoDaAnnullare = optVersamento.get();
+                if (versamentoDaAnnullare.getTipoVersamento().value().equals(TipoVersamentoType.FASCICOLO.value())) {
+                    if (ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isRichiestaDaPreIngest() != null
+                            && ravExt.getRichiestaAnnullamentoVersamenti().getRichiesta().isRichiestaDaPreIngest()) {
+                        // Richiesta da PreIngest definita ma il Tipo Versamento specificato non lo supporta
+                        rispostaWs.setSeverity(SeverityEnum.ERROR);
+                        rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_019,
+                                MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_019));
+                        // Popolo i tag da dare in risposta in questo caso
+                        // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
+                        // popolaVersatoreRichiestaEsito(myEsito, ravExt);
+                        // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
+                    }
                 }
             }
         }
@@ -292,31 +301,35 @@ public class InvioRichiestaAnnullamentoVersamentiParser {
         // RICH_ANN_VERS_021
         /* CONTROLLO TAG TIPOREGISTRO */
         if (rispostaWs.getSeverity() != SeverityEnum.ERROR) {
-            VersamentoDaAnnullareType versamentoDaAnnullare = richiesta.getVersamentiDaAnnullare()
-                    .getVersamentoDaAnnullare().stream().findFirst().get();
-            if (versamentoDaAnnullare.getTipoVersamento().value().equals(TipoVersamentoType.FASCICOLO.value())
-                    && richiesta.getVersamentiDaAnnullare().getVersamentoDaAnnullare().stream()
-                            .map(VersamentoDaAnnullareType::getTipoRegistro).anyMatch(x -> x != null)) {
-                // Per almeno un fascicolo definito nella richiesta è presente il Tipo Registro ma non è previsto
-                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_020,
-                        MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_020));
-                // Popolo i tag da dare in risposta in questo caso
-                // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
-                // popolaVersatoreRichiestaEsito(myEsito, ravExt);
-                // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
-            } else if (versamentoDaAnnullare.getTipoVersamento().value()
-                    .equals(TipoVersamentoType.UNITA_DOCUMENTARIA.value())
-                    && richiesta.getVersamentiDaAnnullare().getVersamentoDaAnnullare().stream()
-                            .map(VersamentoDaAnnullareType::getTipoRegistro).anyMatch(x -> x == null)) {
-                // Per almeno una unità documentaria definita nella richiesta è necessario specificare il Tipo Registro
-                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_021,
-                        MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_021));
-                // Popolo i tag da dare in risposta in questo caso
-                // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
-                // popolaVersatoreRichiestaEsito(myEsito, ravExt);
-                // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
+            Optional<VersamentoDaAnnullareType> optVersamento = richiesta.getVersamentiDaAnnullare()
+                    .getVersamentoDaAnnullare().stream().findFirst();
+            if (optVersamento.isPresent()) {
+                VersamentoDaAnnullareType versamentoDaAnnullare = optVersamento.get();
+                if (versamentoDaAnnullare.getTipoVersamento().value().equals(TipoVersamentoType.FASCICOLO.value())
+                        && richiesta.getVersamentiDaAnnullare().getVersamentoDaAnnullare().stream()
+                                .map(VersamentoDaAnnullareType::getTipoRegistro).anyMatch(x -> x != null)) {
+                    // Per almeno un fascicolo definito nella richiesta è presente il Tipo Registro ma non è previsto
+                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                    rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_020,
+                            MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_020));
+                    // Popolo i tag da dare in risposta in questo caso
+                    // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
+                    // popolaVersatoreRichiestaEsito(myEsito, ravExt);
+                    // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
+                } else if (versamentoDaAnnullare.getTipoVersamento().value()
+                        .equals(TipoVersamentoType.UNITA_DOCUMENTARIA.value())
+                        && richiesta.getVersamentiDaAnnullare().getVersamentoDaAnnullare().stream()
+                                .map(VersamentoDaAnnullareType::getTipoRegistro).anyMatch(x -> x == null)) {
+                    // Per almeno una unità documentaria definita nella richiesta è necessario specificare il Tipo
+                    // Registro
+                    rispostaWs.setSeverity(SeverityEnum.ERROR);
+                    rispostaWs.setEsitoWsError(MessaggiWSBundle.RICH_ANN_VERS_021,
+                            MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_021));
+                    // Popolo i tag da dare in risposta in questo caso
+                    // popolaVersioniEDataEsito(myEsito, ravExt.getVersioneCalc(), ravExt.getDataElaborazione());
+                    // popolaVersatoreRichiestaEsito(myEsito, ravExt);
+                    // rispostaWs.setEsitoRichiestaAnnullamentoVersamenti(myEsito);
+                }
             }
         }
         // end MEV#26446

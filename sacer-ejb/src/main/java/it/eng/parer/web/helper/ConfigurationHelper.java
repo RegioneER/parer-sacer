@@ -471,6 +471,12 @@ public class ConfigurationHelper {
         }
     }
 
+    /**
+     * Ottieni il valore del parametro indicato dal codice in input. Il valore viene ottenuto filtrando per tipologia
+     * <em>APPLIC</em> {@link TipoAplVGetValAppart#APPLIC}
+     *
+     * @return valore del parametro filtrato per tipologia <em>APPLIC</em>.
+     */
     public String getUrlBackAssociazioneUtenteCf() {
         return getValoreParamApplicByApplic(URL_BACK_ASSOCIAZIONE_UTENTE_CF);
     }
