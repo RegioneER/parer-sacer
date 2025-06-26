@@ -17,7 +17,6 @@
 
 package it.eng.parer.objectstorage.helper;
 
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
@@ -58,8 +57,6 @@ import it.eng.parer.entity.DecAaTipoFascicolo;
 import it.eng.parer.entity.DecBackend;
 import it.eng.parer.entity.DecConfigObjectStorage;
 import it.eng.parer.entity.DecTipoUnitaDoc;
-import it.eng.parer.entity.FasFileMetaVerAipFascObjectStorage;
-import it.eng.parer.entity.FasVerAipFascicolo;
 import it.eng.parer.entity.ElvFileElencoVersFasc;
 import it.eng.parer.entity.ElvFileElencoVersFascObjectStorage;
 import it.eng.parer.entity.FasFileMetaVerAipFascObjectStorage;
@@ -89,13 +86,12 @@ import it.eng.parer.objectstorage.ejb.AwsPresigner;
 import it.eng.parer.objectstorage.exceptions.ObjectStorageException;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.ws.dto.CSVersatore;
-import it.eng.parer.ws.utils.Costanti;
 import it.eng.parer.ws.utils.Costanti.AwsConstants;
-import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.CostantiDB.ParametroAppl;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import java.text.MessageFormat;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -124,9 +120,12 @@ public class SalvataggioBackendHelper {
     private static final String ID_VER_SERIE = "idVerSerie";
     private static final String TI_FILE_VER_SERIE = "tiFileVerSerie";
 
-    public static final String URN_INDICE_AIP_SERIE_UD_NON_FIRMATI_FMT_STRING = "{0}/IndiceAIP-SE-{1}-NonFirmato";
-    public static final String URN_INDICE_AIP_SERIE_UD_MARCA_FMT_STRING = "{0}:IndiceAIP-SE-{1}:Indice-Marca";
-    public static final String URN_INDICE_AIP_SERIE_UD_FIR_FMT_STRING = "{0}:IndiceAIP-SE-{1}";
+    public static final String URN_INDICE_AIP_SERIE_UD_NON_FIRMATI_FMT_STRING = "{0}_IndiceAIPSE_{1}_NonFirmato";
+    public static final String URN_INDICE_AIP_SERIE_UD_MARCA_FMT_STRING = "{0}_IndiceAIPSE_{1}_IndiceMarca";
+    public static final String URN_INDICE_AIP_SERIE_UD_FIR_FMT_STRING = "{0}_IndiceAIPSE_{1}";
+
+    public static final String VERS_FMT_STRING_SERIE_OS_KEY = "{1}/{2}";
+    public static final String URN_VERS_SERIE_FMT_STRING_OS_KEY = "{0}/{1}";
 
     private static final String NOME_BACKEND_PARAMETER = "nomeBackend";
 
@@ -984,8 +983,8 @@ public class SalvataggioBackendHelper {
      *            eventuali metadati (nel caso non vengano passati vengono utilizzati quelli predefiniti)
      * @param tags
      *            eventuali tag (nel caso non vengano passati non vengono apposti)
-     * @param base64md5
-     *            eventuale base64-encoded MD5 del dato per data integrity check
+     * @param base64crc32c
+     *            eventuale base64-encoded CRC32 del file per data integrity check
      *
      * @return riferimento alla risorsa appena inserita
      *
@@ -993,7 +992,7 @@ public class SalvataggioBackendHelper {
      *             in caso di errore
      */
     public ObjectStorageResource putObject(String contenuto, final String key, ObjectStorageBackend configuration,
-            Optional<Map<String, String>> metadata, Optional<Set<Tag>> tags, Optional<String> base64md5)
+            Optional<Map<String, String>> metadata, Optional<Set<Tag>> tags, Optional<String> base64crc32c)
             throws ObjectStorageException {
 
         checkFullConfiguration(configuration);
@@ -1018,8 +1017,9 @@ public class SalvataggioBackendHelper {
             if (tags.isPresent()) {
                 putObjectBuilder.tagging(Tagging.builder().tagSet(tags.get()).build());
             }
-            if (base64md5.isPresent()) {
-                putObjectBuilder.contentMD5(base64md5.get());
+            if (base64crc32c.isPresent()) {
+                // MEV 37576
+                putObjectBuilder.checksumCRC32C(base64crc32c.get());
             }
 
             PutObjectRequest objectRequest = putObjectBuilder.build();
@@ -1092,8 +1092,8 @@ public class SalvataggioBackendHelper {
      *            eventuali metadati (nel caso non vengano passati vengono utilizzati quelli predefiniti)
      * @param tags
      *            eventuali tag (nel caso non vengano passati non vengnono apposti)
-     * @param base64md5
-     *            eventuale base64-encoded MD5 del file per data integrity check
+     * @param base64crc32c
+     *            eventuale base64-encoded CRC32 del file per data integrity check
      *
      * @return riferimento alla risorsa appena inserita
      *
@@ -1102,7 +1102,7 @@ public class SalvataggioBackendHelper {
      */
     public ObjectStorageResource putObject(InputStream blob, long blobLength, final String key,
             ObjectStorageBackend configuration, Optional<Map<String, String>> metadata, Optional<Set<Tag>> tags,
-            Optional<String> base64md5) throws ObjectStorageException {
+            Optional<String> base64crc32c) throws ObjectStorageException {
 
         checkFullConfiguration(configuration);
 
@@ -1126,8 +1126,9 @@ public class SalvataggioBackendHelper {
             if (tags.isPresent()) {
                 putObjectBuilder.tagging(Tagging.builder().tagSet(tags.get()).build());
             }
-            if (base64md5.isPresent()) {
-                putObjectBuilder.contentMD5(base64md5.get());
+            if (base64crc32c.isPresent()) {
+                // MEV 37576
+                putObjectBuilder.checksumCRC32C(base64crc32c.get());
             }
 
             PutObjectRequest objectRequest = putObjectBuilder.build();
@@ -1276,6 +1277,34 @@ public class SalvataggioBackendHelper {
     }
     // end MEV#30397
 
+    /**
+     * Ottieni il collegamento tra l'elenco indice e il suo bucket/chiave su OS.
+     *
+     * @param idFileElencoVers
+     *            id file elenco indice firmato
+     *
+     * @return record contenete il link
+     *
+     * @throws ObjectStorageException
+     *             in caso di errore
+     */
+    public ElvFileElencoVersObjectStorage getLinkElvFileElencoVersFirmatoOs(long idFileElencoVers)
+            throws ObjectStorageException {
+        try {
+            TypedQuery<ElvFileElencoVersObjectStorage> query = entityManager.createQuery(
+                    "Select elv_file_os from ElvFileElencoVersObjectStorage elv_file_os where elv_file_os.elvFileElencoVer.idFileElencoVers = :idFileElencoVers",
+                    ElvFileElencoVersObjectStorage.class);
+            query.setParameter("idFileElencoVers", idFileElencoVers);
+            return query.getSingleResult();
+
+        } catch (IllegalArgumentException e) {
+            throw ObjectStorageException.builder().message(
+                    "Errore durante il recupero da ElvFileElencoVersObjectStorage per id file elenco vers  {0} ",
+                    idFileElencoVers).cause(e).build();
+        }
+    }
+    // end MEV#37041
+
     private Map<String, String> defaultMetadata() {
 
         Map<String, String> defaultMetadata = new HashMap<>();
@@ -1351,9 +1380,10 @@ public class SalvataggioBackendHelper {
 
             String cdRegistroNorm = unitaDoc.getDecRegistroUnitaDoc().getCdRegistroNormaliz();
             int anno = unitaDoc.getAaKeyUnitaDoc().intValue();
+            String cdKeyUnitaDocNorm = unitaDoc.getCdKeyUnitaDocNormaliz();
 
-            return createKeyIndiciAip(nmEnteNorm, nmStrutNorm, cdRegistroNorm, anno, unitaDoc.getIdUnitaDoc(),
-                    verIndiceAipUd.getPgVerIndiceAip());
+            return createKeyIndiciAip(nmEnteNorm, nmStrutNorm, cdRegistroNorm, anno, cdKeyUnitaDocNorm,
+                    unitaDoc.getIdUnitaDoc(), verIndiceAipUd.getPgVerIndiceAip());
 
         } catch (Exception e) {
             throw ObjectStorageException.builder().message("Impossibile generare la chiave del componente").cause(e)
@@ -1366,14 +1396,111 @@ public class SalvataggioBackendHelper {
 
     }
 
+    // MAC #37222 - creazione chiave secondo le "linee guida"
     private String createKeyIndiciAip(String nmEnteNorm, String nmStrutNorm, String cdRegistroNorm, int anno,
-            long idUnitaDoc, BigDecimal pgVerIndiceAip) {
-        // Non serve a nulla
-        String nmTenant = getDefaultTenant();
+            String cdKeyUnitaDocNorm, long idUnitaDoc, BigDecimal pgVerIndiceAip) {
 
-        return nmTenant + "/" + nmEnteNorm + "/" + nmStrutNorm + "/" + cdRegistroNorm + "/" + anno + "/" + idUnitaDoc
-                + "/" + pgVerIndiceAip;
+        return nmEnteNorm + "/" + nmStrutNorm + "/" + cdRegistroNorm + "-" + anno + "-" + cdKeyUnitaDocNorm
+                + "_IndiceAIPUD_" + idUnitaDoc + "_" + pgVerIndiceAip;
     }
+
+    public String generateKeyElencoIndiceAip(long idFileElencoVers, String suffisso) throws ObjectStorageException {
+        try {
+
+            ElvFileElencoVer fileElencoVers = entityManager.find(ElvFileElencoVer.class, idFileElencoVers);
+
+            // devo "pescare" l'elenco passando dalla ELV_FILE_ELENCO_VER
+            ElvElencoVer elenco = fileElencoVers.getElvElencoVer();
+
+            String nmStrutNorm = elenco.getOrgStrut().getCdStrutNormaliz();
+
+            String nmEnteNorm = elenco.getOrgStrut().getOrgEnte().getCdEnteNormaliz();
+
+            // Formatto la data di creazione
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+            String dataCreazione = formatter.format(elenco.getDtCreazioneElenco());
+
+            return createKeyElenchiIndiciAip(nmEnteNorm, nmStrutNorm, dataCreazione, elenco.getIdElencoVers(),
+                    suffisso);
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message("Impossibile generare la chiave dell'elenco ").cause(e)
+                    .build();
+        }
+    }
+
+    private String createKeyElenchiIndiciAip(String nmEnteNorm, String nmStrutNorm, String dtCreazione,
+            long idElencoVers, String suffisso) {
+
+        // MAC #37222 - creazione chiave secondo le "linee guida"
+        return nmEnteNorm + "/" + nmStrutNorm + "_" + "ElencoIndiciAIPUD_" + dtCreazione + "_" + idElencoVers + "_"
+                + suffisso;
+    }
+
+    public String generateKeyIndiceAipFasc(long idVerAipFasc) throws ObjectStorageException {
+        try {
+
+            FasVerAipFascicolo verAipFascicolo = entityManager.find(FasVerAipFascicolo.class, idVerAipFasc);
+
+            // devo "pescare" il fascicolo passando dalla FAS_VER_AIP_FASCICOLO
+            FasFascicolo fascicolo = verAipFascicolo.getFasFascicolo();
+
+            String nmStrutNorm = fascicolo.getOrgStrut().getCdStrutNormaliz();
+
+            String nmEnteNorm = fascicolo.getOrgStrut().getOrgEnte().getCdEnteNormaliz();
+
+            int anno = fascicolo.getAaFascicolo().intValue();
+            String cdKeyFascicoloNorm = fascicolo.getCdKeyNormalizFascicolo();
+
+            return createKeyIndiciAipFasc(nmEnteNorm, nmStrutNorm, anno, cdKeyFascicoloNorm,
+                    verAipFascicolo.getPgVerAipFascicolo());
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message("Impossibile generare la chiave del componente").cause(e)
+                    .build();
+        }
+    }
+
+    private String createKeyIndiciAipFasc(String nmEnteNorm, String nmStrutNorm, int anno, String cdKeyFascicoloNorm,
+            BigDecimal pgVerAipFascicolo) {
+
+        return nmEnteNorm + "/" + nmStrutNorm + "/" + anno + "-" + cdKeyFascicoloNorm + "_IndiceAIPFA_"
+                + pgVerAipFascicolo;
+    }
+
+    public String generateKeyElencoIndiceAipFasc(long idFileElencoVersFasc) throws ObjectStorageException {
+        try {
+
+            ElvFileElencoVersFasc fileElencoVersFasc = entityManager.find(ElvFileElencoVersFasc.class,
+                    idFileElencoVersFasc);
+
+            // devo "pescare" l'elenco passando dalla ELV_FILE_ELENCO_VERS_FASC
+            ElvElencoVersFasc elenco = fileElencoVersFasc.getElvElencoVersFasc();
+
+            String nmStrutNorm = elenco.getOrgStrut().getCdStrutNormaliz();
+
+            String nmEnteNorm = elenco.getOrgStrut().getOrgEnte().getCdEnteNormaliz();
+
+            // Formatto la data di creazione
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+            String dataCreazione = formatter.format(elenco.getTsCreazioneElenco());
+
+            return createKeyElenchiIndiciAipFasc(nmEnteNorm, nmStrutNorm, dataCreazione, elenco.getIdElencoVersFasc());
+
+        } catch (Exception e) {
+            throw ObjectStorageException.builder().message("Impossibile generare la chiave dell'elenco ").cause(e)
+                    .build();
+        }
+    }
+
+    private String createKeyElenchiIndiciAipFasc(String nmEnteNorm, String nmStrutNorm, String dtCreazione,
+            long idElencoVersFasc) {
+
+        return nmEnteNorm + "/" + nmStrutNorm + "_" + "ElencoIndiciAIPFA_" + dtCreazione + "_" + idElencoVersFasc
+                + "_Indice";
+    }
+
+    // end MAC #37222 - creazione chiave secondo le "linee guida"
 
     /*
      * Full configuration = S3 URI + access_key + secret_key + bucket name
@@ -1863,8 +1990,11 @@ public class SalvataggioBackendHelper {
             String codiceSerie, String versioneSerie) throws ObjectStorageException {
         try {
 
-            String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnSerie(
-                    MessaggiWSFormat.formattaUrnPartVersatore(versatore, true, Costanti.UrnFormatter.VERS_FMT_STRING),
+            // MAC #37222
+            versioneSerie = versioneSerie.replace(".", "_");
+
+            String tmpUrnNorm = formattaBaseUrnSerieOs(
+                    MessaggiWSFormat.formattaUrnPartVersatore(versatore, true, VERS_FMT_STRING_SERIE_OS_KEY),
                     codiceSerie);
 
             String fmt = null;
@@ -1891,6 +2021,10 @@ public class SalvataggioBackendHelper {
 
     private String createKeyIndiciAipSerieUd(String fmt, String urnBase, String versioneSerie) {
         return MessageFormat.format(fmt, urnBase, versioneSerie);
+    }
+
+    public static String formattaBaseUrnSerieOs(String versatore, String codiceSerie) {
+        return MessageFormat.format(URN_VERS_SERIE_FMT_STRING_OS_KEY, versatore, codiceSerie);
     }
 
     /**
