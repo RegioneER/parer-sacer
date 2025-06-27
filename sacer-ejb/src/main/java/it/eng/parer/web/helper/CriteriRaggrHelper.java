@@ -69,6 +69,8 @@ import it.eng.parer.web.util.Constants.TipoDato;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("unchecked")
 @Stateless
@@ -86,6 +88,8 @@ public class CriteriRaggrHelper extends GenericHelper {
     private StruttureHelper struttureHelper;
 
     private static final Logger log = LoggerFactory.getLogger(CriteriRaggrHelper.class.getName());
+
+    private static final int IN_CLAUSE_CHUNK_SIZE = 999;
 
     public Long saveCritRaggr(LogParam param, CreaCriterioRaggr filtri, Date[] dateCreazioneValidate,
             BigDecimal idStruttura, String nome, String criterioStandard) throws EMFError, ParerUserError {
@@ -1051,12 +1055,21 @@ public class CriteriRaggrHelper extends GenericHelper {
                 + "u.cdRegistroUnitaDoc, u.cdRegistroRangeUnitaDoc, u.nmTipoDoc, u.flCriterioRaggrStandard, u.flCriterioRaggrFisc, u.tiValidElenco, u.tiModValidElenco, "
                 + "u.tiGestElencoCriterio, u.aaKeyUnitaDoc, u.aaKeyUnitaDocDa, u.aaKeyUnitaDocA, u.niMaxComp, u.dsScadChius, u.dtIstituz, u.dtSoppres) FROM DecVRicCriterioRaggr u ");
         String whereWord = "WHERE ";/* Inserimento nella query del filtro ID_AMBIENTE */
+
+        // Mappa per tenere traccia dei parametri dei chunk (nel caso in cui vengano passati più di 1000 valori), gli
+        // altri verranno impostati direttamente
+        Map<String, Object> chunkParameters = new HashMap<>();
+
         if (idAmbiente != null) {
             queryStr.append(whereWord).append("u.idAmbiente = :idAmbiente ");
             whereWord = "AND ";
         } else {
             if (listaAmbienti != null && !listaAmbienti.isEmpty()) {
-                queryStr.append(whereWord).append("u.idAmbiente IN :ambientiAbilitati ");
+                List<BigDecimal> ambientiAbilitati = Utils.bigDecimalFromLong(
+                        listaAmbienti.stream().map(OrgAmbiente::getIdAmbiente).collect(Collectors.toList()));
+                queryStr.append(whereWord);
+                appendInClauseWithChunking(queryStr, "u.idAmbiente", "ambientiAbilitati", ambientiAbilitati.size(),
+                        chunkParameters, ambientiAbilitati);
                 whereWord = "AND ";
             }
         }
@@ -1066,7 +1079,11 @@ public class CriteriRaggrHelper extends GenericHelper {
             whereWord = "AND ";
         } else {
             if (listaEnti != null && !listaEnti.isEmpty()) {
-                queryStr.append(whereWord).append("u.idEnte IN :entiAbilitati ");
+                List<BigDecimal> entiAbilitati = Utils
+                        .bigDecimalFromLong(listaEnti.stream().map(OrgEnte::getIdEnte).collect(Collectors.toList()));
+                queryStr.append(whereWord);
+                appendInClauseWithChunking(queryStr, "u.idEnte", "entiAbilitati", entiAbilitati.size(), chunkParameters,
+                        entiAbilitati);
                 whereWord = "AND ";
             }
         }
@@ -1077,7 +1094,11 @@ public class CriteriRaggrHelper extends GenericHelper {
             whereWord = "AND ";
         } else {
             if (strutList != null && !strutList.isEmpty()) {
-                queryStr.append(whereWord).append("u.idStrut IN :struttureAbilitate ");
+                List<BigDecimal> struttureAbilitate = Utils
+                        .bigDecimalFromLong(strutList.stream().map(OrgStrut::getIdStrut).collect(Collectors.toList()));
+                queryStr.append(whereWord);
+                appendInClauseWithChunking(queryStr, "u.idStrut", "struttureAbilitate", struttureAbilitate.size(),
+                        chunkParameters, struttureAbilitate);
                 whereWord = "AND ";
             }
         }
@@ -1134,6 +1155,11 @@ public class CriteriRaggrHelper extends GenericHelper {
         queryStr.append("ORDER BY u.nmCriterioRaggr ");
 
         Query query = getEntityManager().createQuery(queryStr.toString());
+        // Imposta i parametri dei chunk
+        for (Map.Entry<String, Object> entry : chunkParameters.entrySet()) {
+            query.setParameter(entry.getKey(), entry.getValue());
+        }
+
         if (idAmbiente != null) {
             query.setParameter("idAmbiente", idAmbiente);
         } else if (listaAmbienti != null && !listaAmbienti.isEmpty()) {
@@ -1224,6 +1250,45 @@ public class CriteriRaggrHelper extends GenericHelper {
             log.error(e.getMessage(), e);
         }
         return critRaggrTableBean;
+    }
+
+    /**
+     * Metodo helper per aggiungere clausole IN suddivise in chunk alla query JPQL.
+     *
+     * @param queryStr
+     *            StringBuilder della query a cui aggiungere.
+     * @param columnName
+     *            Nome della colonna dell'entità (es. "u.idEnte").
+     * @param baseParamName
+     *            Nome base per i parametri generati (es. "entiAbilitati").
+     * @param totalSize
+     *            Dimensione totale della lista di valori.
+     * @param parameters
+     *            Mappa dove aggiungere i parametri per la query JPA (solo per i chunk).
+     * @param values
+     *            Lista completa dei valori da usare nella clausola IN.
+     */
+    private void appendInClauseWithChunking(StringBuilder queryStr, String columnName, String baseParamName,
+            int totalSize, Map<String, Object> parameters, List<?> values) {
+        if (values == null || values.isEmpty()) {
+            // Se la lista di abilitazioni è vuota, significa che l'utente non ha accesso
+            // a nulla per quella dimensione, quindi aggiungiamo una condizione che non sarà mai vera.
+            queryStr.append("1=0 "); // Condizione sempre falsa per escludere risultati
+            return;
+        }
+
+        queryStr.append("(");
+        for (int i = 0; i < totalSize; i += IN_CLAUSE_CHUNK_SIZE) {
+            if (i > 0) {
+                queryStr.append(" OR ");
+            }
+            String chunkParamName = baseParamName + "Chunk" + (i / IN_CLAUSE_CHUNK_SIZE);
+            queryStr.append(columnName).append(" IN (:").append(chunkParamName).append(")");
+
+            List<?> chunk = values.subList(i, Math.min(i + IN_CLAUSE_CHUNK_SIZE, totalSize));
+            parameters.put(chunkParamName, chunk);
+        }
+        queryStr.append(") ");
     }
 
     public List<DecVRicCriterioRaggr> getDecVRicCriterioRaggrsByAmministrazioneStruttura(BigDecimal idStrut,

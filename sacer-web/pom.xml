@@ -4,7 +4,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.9.1-SNAPSHOT</version>
+        <version>10.9.1</version>
     </parent>
 
     <artifactId>sacer-jboss-web</artifactId>
@@ -44,14 +44,24 @@
             <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- jboss-jaxb-api_2.3_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.xml.bind</groupId>
+			<artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>   
         <!-- Jakarta Web Services Metadata API -->
-
         <dependency>
             <groupId>jakarta.jws</groupId>
             <artifactId>jakarta.jws-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
+		<!-- jboss-jaxws-api_2.3_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.xml.ws</groupId>
+			<artifactId>jboss-jaxws-api_2.3_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>spagofat-webresources</artifactId>
@@ -135,8 +145,8 @@
             <artifactId>verificafirma-crypto-beans</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
-        <!--
+		<!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
+		<!--
                 <dependency>
                     <groupId>org.apache.poi</groupId>
                     <artifactId>ooxml-schemas</artifactId>
@@ -148,7 +158,7 @@
             <artifactId>poi-ooxml-lite</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- OpenSaML -->
+		<!-- OpenSaML -->
         <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-core</artifactId>
@@ -164,7 +174,7 @@
             <artifactId>opensaml-saml-impl</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Spring -->
+		<!-- Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -202,12 +212,13 @@
         </dependency>
 
 
+
     </dependencies>
     <build>
         <resources>
             <resource>
-                <!-- il filtraggio riguarda solo questo file: verranno sostituite  -->
-                <!-- le proprietà del repo GIT fornite dal plugin git-commit-id-plugin  -->
+				<!-- il filtraggio riguarda solo questo file: verranno sostituite  -->
+				<!-- le proprietà del repo GIT fornite dal plugin git-commit-id-plugin  -->
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
@@ -234,9 +245,9 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                            <!-- il riferimento alla directory, posizionata sul progetto padre -->
+							<!-- il riferimento alla directory, posizionata sul progetto padre -->
                             <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
-                            <!-- -->
+							<!-- -->
                             <failOnNoGitDirectory>false</failOnNoGitDirectory>
                             <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
                             <gitDescribe>
@@ -252,7 +263,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <!-- DISABILITATO: Skinny WAR non supportato da NetBeans https://netbeans.org/bugzilla/show_bug.cgi?id=213960 ; tutte le dipendenze devono essere di tipo PROVIDED e dichiarate COMPILE nel pom dell'ear! -->
+					<!-- DISABILITATO: Skinny WAR non supportato da NetBeans https://netbeans.org/bugzilla/show_bug.cgi?id=213960 ; tutte le dipendenze devono essere di tipo PROVIDED e dichiarate COMPILE nel pom dell'ear! -->
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                     <archive>
@@ -285,7 +296,7 @@
                         <overlay>
                             <groupId>it.eng.parer</groupId>
                             <artifactId>spagofat-sl-web</artifactId>
-                            <!-- 
+							<!-- 
                                 Escludo i .class perché sono già contenuti 
                                 nell'artifact it.eng.parer/spagofat-sl-web con 
                                 il classifier "classes"

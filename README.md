@@ -17,7 +17,7 @@ Requisiti minimi per installazione:
 - JBoss 7 EAP;
 - Oracle DB (versione consigliata 19c).
 
-## Instalazione JDK 
+## Installazione JDK 
 
 Consigliata adozione della OpenJDK alla versione 8, guida all'installazione https://openjdk.org/install/.
 

@@ -460,7 +460,6 @@ public class TipoDocumentoEjb {
         DecTipoDoc tipoDoc = helper.findById(DecTipoDoc.class, idTipoDoc);
         String nmTipoDoc = tipoDoc.getNmTipoDoc();
         long idStrut = tipoDoc.getOrgStrut().getIdStrut();
-        String flTipoDocPrincipale = tipoDoc.getFlTipoDocPrincipale();
 
         boolean existsRelationsWithTipiSerie = tipoSerieHelper.existsRelationsWithTipiSerie(tipoDoc.getIdTipoDoc(),
                 Constants.TipoDato.TIPO_DOC);
@@ -518,15 +517,14 @@ public class TipoDocumentoEjb {
                 param.getNomeAzione(), listaBeforeModifying, param.getNomePagina());
         OrgStrut struttura = helper.findById(OrgStrut.class, idStrut);
         /*
-         * Il Tipo Documento va replicato solo se \u00E8 PRINCIPALE se il tipo documento appartiene ad una struttura non
-         * appartenente ad un ente di tipo template
+         * Il Tipo Documento va replicato solo se appartiene ad una struttura che non appartenente ad un ente di tipo
+         * template
          */
         IamOrganizDaReplic replic = null;
-        if (flTipoDocPrincipale != null && flTipoDocPrincipale.equals("1")
-                && (struttura.getOrgEnte().getTipoDefTemplateEnte()
-                        .equals(CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_ENTE.name())
-                        || struttura.getOrgEnte().getTipoDefTemplateEnte()
-                                .equals(CostantiDB.TipoDefTemplateEnte.NO_TEMPLATE.name()))
+        if ((struttura.getOrgEnte().getTipoDefTemplateEnte()
+                .equals(CostantiDB.TipoDefTemplateEnte.TEMPLATE_DEF_ENTE.name())
+                || struttura.getOrgEnte().getTipoDefTemplateEnte()
+                        .equals(CostantiDB.TipoDefTemplateEnte.NO_TEMPLATE.name()))
                 && !isFromDeleteStruttura) {
             replic = struttureEjb.insertStrutIamOrganizDaReplic(struttura, ApplEnum.TiOperReplic.MOD);
         }
