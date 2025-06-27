@@ -1666,7 +1666,6 @@ public class ObjectStorageService {
                 }
                 return savedFile;
             }
-            return savedFile;
         } catch (ObjectStorageException | IOException ex) {
             throw new EJBException(ex);
         } finally {
