@@ -1162,12 +1162,22 @@ public class CriteriRaggrHelper extends GenericHelper {
 
         if (idAmbiente != null) {
             query.setParameter("idAmbiente", idAmbiente);
+        } else if (listaAmbienti != null && !listaAmbienti.isEmpty()) {
+            List<Long> ambientiAbilitati = listaAmbienti.stream().map(OrgAmbiente::getIdAmbiente)
+                    .collect(Collectors.toList());
+            query.setParameter("ambientiAbilitati", Utils.bigDecimalFromLong(ambientiAbilitati));
         }
         if (idEnte != null) {
             query.setParameter("idEnte", idEnte);
+        } else if (listaEnti != null && !listaEnti.isEmpty()) {
+            List<Long> entiAbilitati = listaEnti.stream().map(OrgEnte::getIdEnte).collect(Collectors.toList());
+            query.setParameter("entiAbilitati", Utils.bigDecimalFromLong(entiAbilitati));
         }
         if (idStrut != null) {
             query.setParameter("idStrut", idStrut);
+        } else if (strutList != null && !strutList.isEmpty()) {
+            List<Long> struttureAbilitate = strutList.stream().map(OrgStrut::getIdStrut).collect(Collectors.toList());
+            query.setParameter("struttureAbilitate", Utils.bigDecimalFromLong(struttureAbilitate));
         }
         if (nmCriterioRaggr != null) {
             query.setParameter("nmCriterioRaggr", "%" + nmCriterioRaggr.toUpperCase() + "%");
