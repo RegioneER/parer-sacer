@@ -132,12 +132,16 @@ public class SignerHsmEjb {
 
         if (request != null) {
             SignatureSessionEjb ejb = getSignatureEjb(request.getType());
-
-            if (!ejb.hasUserActiveSessions(request.getIdUtente())) {
-                HsmSessioneFirma sessione = ejb.startSessioneFirma(request);
-                result = context.getBusinessObject(SignerHsmEjb.class).signP7m(sessione, request.getUserHSM());
+            if (ejb != null) {
+                if (!ejb.hasUserActiveSessions(request.getIdUtente())) {
+                    HsmSessioneFirma sessione = ejb.startSessioneFirma(request);
+                    result = context.getBusinessObject(SignerHsmEjb.class).signP7m(sessione, request.getUserHSM());
+                } else {
+                    result = new AsyncResult<>(SigningResponse.ACTIVE_SESSION_YET);
+                }
             } else {
-                result = new AsyncResult<>(SigningResponse.ACTIVE_SESSION_YET);
+                logger.error("SignatureSessionEjb non trovato per il tipo: {}", request.getType());
+                result = new AsyncResult<>(SigningResponse.UNKNOWN_ERROR);
             }
         } else {
             result = new AsyncResult<>(SigningResponse.UNKNOWN_ERROR);

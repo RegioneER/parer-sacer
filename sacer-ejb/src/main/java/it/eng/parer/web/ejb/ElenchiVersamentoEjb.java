@@ -1956,6 +1956,13 @@ public class ElenchiVersamentoEjb {
         return ret;
     }
 
+    // MEV#34195 - Funzione per riportare indietro lo stato di una lista di elenchi per consentire la firma dell'AIP
+    // Viene passata una lista di elenchi che verrà "filtrata" restituendo solo gli elenchi idonei per consentire la
+    // firma dell'AIP
+    public List<BigDecimal> isPossibileMettereAipAllaFirma(List<BigDecimal> idElencoVersList) {
+        return evHelper.isPossibileMettereAipAllaFirma(idElencoVersList);
+    }
+
     // MEV#32249 - Funzione per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
     public EsitoRiportaIndietroStatoVersamento riportaStatoVersamentoIndietro(BigDecimal idElencoVers,
             String userName) {

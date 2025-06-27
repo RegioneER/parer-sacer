@@ -32,6 +32,7 @@
         <Input Type="STRING" Description="Note su elenco chiuso" Name="nt_elenco_chiuso"/>
         <Input Type="STRING" Description="Note su indice elenco" Name="nt_indice_elenco"/>
         <ComboBox Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
+        <MultiSelect Type="STRING" Description="Stato conservazione UD" Name="ti_stato_conservazione" />
         <Input Type="INTEGER" Description="Anno" Name="aa_key_unita_doc" MaxLength="4"/>
         <Input Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
         <Input Type="INTEGER" Description="Anno da" Name="aa_key_unita_doc_da" MaxLength="4"/>
@@ -50,6 +51,7 @@
         
         <Button Name="ricercaElenchiButton" Description="Ricerca" Type="STRING" />
         <Button Name="pulisciFiltriRicercaElenchiButton" Description="Pulisci" Type="STRING" />
+        <Button Name="riportaStatoIndietroDaRicercaButton"  Description="Metti AIP alla firma" Type="STRING" />
     </Fields>
 
     <!-- Lista elenchi di versamento -->

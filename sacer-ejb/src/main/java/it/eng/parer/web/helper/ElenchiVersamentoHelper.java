@@ -210,8 +210,54 @@ public class ElenchiVersamentoHelper extends GenericHelper {
 
     public List<ElvVRicElencoVersByUd> retrieveElvVRicElencoVersByUdList(long idUserIam,
             FiltriElenchiVersamento filtriElenchiVersamento) throws EMFError {
-        return convertToElvVRicElencoVersByUd(
-                retrieveElvVRicElencoVersByUdList(idUserIam, new Filtri(filtriElenchiVersamento)));
+        if (filtriElenchiVersamento.getTi_stato_conservazione().parse().isEmpty()) {
+            return convertToElvVRicElencoVersByUd(
+                    retrieveElvVRicElencoVersByUdList(idUserIam, new Filtri(filtriElenchiVersamento)));
+        } else {
+            return retrieveElvVRicElencoVersByStatoConservazioneUdList(idUserIam, new Filtri(filtriElenchiVersamento));
+        }
+    }
+
+    private List<ElvVRicElencoVersByUd> retrieveElvVRicElencoVersByStatoConservazioneUdList(long idUserIam,
+            Filtri filtri) {
+        Query query = createElvVRicElencoVersQuery("SELECT DISTINCT new it.eng.parer.viewEntity.ElvVRicElencoVersByUd "
+                + "(u.id.idElencoVers, u.nmElenco, u.dsElenco, u.tiStatoElenco, u.tiGestElenco, u.niCompAggElenco, u.niCompVersElenco, "
+                + "u.niSizeVersElenco, u.niSizeAggElenco, u.dtCreazioneElenco, u.dtChius, u.dtFirmaIndice, "
+                + "u.idCriterioRaggr, u.nmCriterioRaggr, u.nmAmbiente, u.nmEnte, u.nmStrut, "
+                + "u.flElencoFisc, u.flElencoStandard, u.flElencoFirmato, u.niIndiciAip, "
+                + "u.dtCreazioneElencoIxAip, u.dtFirmaElencoIxAip, u.tsStatoElencoInCodaJms) "
+                + "FROM ElvVRicElencoVersByUd u WHERE u.idUserIam = :idUserIam ", filtri);
+        setElvVRicElencoCommonParameters(query, idUserIam, filtri);
+
+        String cdRegistroKeyUnitaDoc = filtri.getCdRegistroKeyUnitaDoc();
+        BigDecimal aaKeyUnitaDoc = filtri.getAaKeyUnitaDoc();
+        String cdKeyUnitaDoc = filtri.getCdKeyUnitaDoc();
+        BigDecimal aaKeyUnitaDocDa = filtri.getAaKeyUnitaDocDa();
+        BigDecimal aaKeyUnitaDocA = filtri.getAaKeyUnitaDocA();
+        String cdKeyUnitaDocDa = filtri.getCdKeyUnitaDocDa();
+        String cdKeyUnitaDocA = filtri.getCdKeyUnitaDocA();
+        if (StringUtils.isNotBlank(cdRegistroKeyUnitaDoc)) {
+            query.setParameter("cdRegistroKeyUnitaDoc", cdRegistroKeyUnitaDoc);
+        }
+        if (aaKeyUnitaDoc != null) {
+            query.setParameter("aaKeyUnitaDoc", aaKeyUnitaDoc);
+        }
+        if (cdKeyUnitaDoc != null) {
+            query.setParameter("cdKeyUnitaDoc", cdKeyUnitaDoc);
+        }
+        if (aaKeyUnitaDocDa != null && aaKeyUnitaDocA != null) {
+            query.setParameter("aaKeyUnitaDocDa", aaKeyUnitaDocDa);
+            query.setParameter("aaKeyUnitaDocA", aaKeyUnitaDocA);
+        }
+        if (cdKeyUnitaDocDa != null && cdKeyUnitaDocA != null) {
+            cdKeyUnitaDocDa = StringPadding.padString(cdKeyUnitaDocDa, "0", 12, StringPadding.PADDING_LEFT);
+            cdKeyUnitaDocA = StringPadding.padString(cdKeyUnitaDocA, "0", 12, StringPadding.PADDING_LEFT);
+            query.setParameter("cdKeyUnitaDocDa", cdKeyUnitaDocDa);
+            query.setParameter("cdKeyUnitaDocA", cdKeyUnitaDocA);
+        }
+
+        List<ElvVRicElencoVersByUd> sourceList = query.getResultList();
+        return sourceList;
     }
 
     private List<ElvVRicElencoVersByUd> convertToElvVRicElencoVersByUd(List<Object[]> sourceList) {
@@ -497,6 +543,10 @@ public class ElenchiVersamentoHelper extends GenericHelper {
             query.setParameter("dtFirmaElencoIxAipDa", dtFirmaElencoIxAipDa, TemporalType.DATE);
             query.setParameter("dtFirmaElencoIxAipA", dtFirmaElencoIxAipA, TemporalType.DATE);
         }
+
+        if (!filtri.getTiStatoConservazione().isEmpty()) {
+            query.setParameter("tiStatoConservazione", filtri.getTiStatoConservazione());
+        }
     }
 
     private void setElvVpRicElencoVersByUdParameters(Query query, long idUserIam, Filtri filtri) {
@@ -709,6 +759,11 @@ public class ElenchiVersamentoHelper extends GenericHelper {
         /* Inserimento nella query del filtro TI_GEST_ELENCO */
         if (filtri.getTiGestElenco() != null) {
             queryStr.append(whereWord).append("u.tiGestElenco = :tiGestElenco ");
+        }
+
+        /* Inserimento nella query del filtro TI_STATO_CONSERVAZIONE */
+        if (!filtri.getTiStatoConservazione().isEmpty()) {
+            queryStr.append(whereWord).append("u.aroUnitaDoc.tiStatoConservazione IN :tiStatoConservazione ");
         }
 
         /* Inserimento nella query del filtro DATA CREAZIONE DA - A */
@@ -1353,6 +1408,7 @@ public class ElenchiVersamentoHelper extends GenericHelper {
         BigDecimal aaKeyUnitaDocA;
         String cdKeyUnitaDocDa;
         String cdKeyUnitaDocA;
+        List<String> tiStatoConservazione;
         String nmCriterioRaggr;
         String flElencoStandard;
         String flElencoFisc;
@@ -1405,6 +1461,7 @@ public class ElenchiVersamentoHelper extends GenericHelper {
             idAmbiente = filtriElenchiVersamento.getId_ambiente().parse();
             idEnte = filtriElenchiVersamento.getId_ente().parse();
             idStrut = filtriElenchiVersamento.getId_strut().parse();
+            tiStatoConservazione = filtriElenchiVersamento.getTi_stato_conservazione().parse();
         }
 
         public BigDecimal getIdElencoVers() {
@@ -1565,6 +1622,14 @@ public class ElenchiVersamentoHelper extends GenericHelper {
 
         void setCdKeyUnitaDocA(String cdKeyUnitaDocA) {
             this.cdKeyUnitaDocA = cdKeyUnitaDocA;
+        }
+
+        public List<String> getTiStatoConservazione() {
+            return tiStatoConservazione;
+        }//
+
+        void setTiStatoConservazione(List<String> tiStatoConservazione) {
+            this.tiStatoConservazione = tiStatoConservazione;
         }
 
         public String getNmCriterioRaggr() {

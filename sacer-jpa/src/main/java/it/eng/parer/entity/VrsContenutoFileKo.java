@@ -36,7 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
- * The persistent class for the VRS_CONTENUTO_FILE database table.
+ * The persistent class for the VRS_CONTENUTO_FILE_KO database table.
  */
 @Entity
 @Table(name = "VRS_CONTENUTO_FILE_KO")

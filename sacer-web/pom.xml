@@ -4,9 +4,9 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.8.1</version>
+        <version>10.9.1-SNAPSHOT</version>
     </parent>
-    
+
     <artifactId>sacer-jboss-web</artifactId>
     <packaging>war</packaging>
     <name>sacer-web</name>
@@ -44,7 +44,13 @@
             <artifactId>jboss-jaxrs-api_2.1_spec</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- Jakarta Web Services Metadata API -->
 
+        <dependency>
+            <groupId>jakarta.jws</groupId>
+            <artifactId>jakarta.jws-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>it.eng.parer</groupId>
@@ -73,10 +79,10 @@
             <artifactId>spagofat-middle</artifactId>
             <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>org.apache.logging.log4j</groupId>
-            		<artifactId>log4j-api</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -88,7 +94,7 @@
             <groupId>it.eng.parer</groupId>
             <artifactId>sacer-jboss-ejb</artifactId>
             <type>ejb</type>
-            <scope>provided</scope>           
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
@@ -123,25 +129,78 @@
             <groupId>it.eng.parer</groupId>
             <artifactId>client-hsm</artifactId>
             <scope>provided</scope>
-        </dependency> 
+        </dependency>
         <dependency>
             <groupId>it.eng.parer</groupId>
             <artifactId>verificafirma-crypto-beans</artifactId>
             <scope>provided</scope>
-        </dependency> 
-        <!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP --> 
-<!--        
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>ooxml-schemas</artifactId>
-            <scope>provided</scope>
         </dependency>
--->
+        <!-- MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file MPP -->
+        <!--
+                <dependency>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>ooxml-schemas</artifactId>
+                    <scope>provided</scope>
+                </dependency>
+        -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-lite</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!-- OpenSaML -->
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-saml-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opensaml</groupId>
+            <artifactId>opensaml-saml-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-saml2-service-provider</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
     <build>
@@ -242,7 +301,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <profiles>
         <profile>
             <id>dev</id>
@@ -252,5 +311,5 @@
             </properties>
         </profile>
     </profiles>
-     
+
 </project>

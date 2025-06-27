@@ -17,56 +17,9 @@
 
 package it.eng.parer.job.indiceAip.helper;
 
-import static it.eng.parer.util.Utils.bigDecimalFromLong;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.persistence.EntityGraph;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.apache.commons.collections4.IterableUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.rometools.utils.Strings;
-
 import it.eng.paginator.util.HibernateUtils;
-import it.eng.parer.entity.AroArchivSec;
-import it.eng.parer.entity.AroCompDoc;
-import it.eng.parer.entity.AroDoc;
-import it.eng.parer.entity.AroIndiceAipUd;
-import it.eng.parer.entity.AroIndiceAipUdDaElab;
-import it.eng.parer.entity.AroLinkUnitaDoc;
-import it.eng.parer.entity.AroUpdArchivSec;
-import it.eng.parer.entity.AroUpdCompUnitaDoc;
-import it.eng.parer.entity.AroUpdDocUnitaDoc;
-import it.eng.parer.entity.AroUpdLinkUnitaDoc;
-import it.eng.parer.entity.AroUpdUnitaDoc;
-import it.eng.parer.entity.AroVerIndiceAipUd;
-import it.eng.parer.entity.AroVersIniArchivSec;
-import it.eng.parer.entity.AroVersIniComp;
-import it.eng.parer.entity.AroVersIniDatiSpec;
-import it.eng.parer.entity.AroVersIniDoc;
-import it.eng.parer.entity.AroVersIniLinkUnitaDoc;
-import it.eng.parer.entity.AroVersIniUnitaDoc;
-import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.VolAppartUnitaDocVolume;
-import it.eng.parer.entity.VrsSessioneVers;
-import it.eng.parer.entity.VrsUrnXmlSessioneVers;
-import it.eng.parer.entity.VrsXmlDatiSessioneVers;
-import it.eng.parer.entity.VrsXmlModelloSessioneVers;
+import it.eng.parer.entity.*;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc;
 import it.eng.parer.entity.constraint.AroUpdDatiSpecUnitaDoc.TiUsoXsdAroUpdDatiSpecUnitaDoc;
@@ -82,6 +35,19 @@ import it.eng.parer.web.util.Constants;
 import it.eng.parer.ws.dto.RispostaControlli;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.utils.MessaggiWSBundle;
+import org.apache.commons.collections4.IterableUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.*;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static it.eng.parer.util.Utils.bigDecimalFromLong;
 
 /**
  *
@@ -822,7 +788,7 @@ public class ControlliRecIndiceAip {
     public RispostaControlli getVersioneSacer() {
         RispostaControlli rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
-        String appVersion = it.eng.spagoCore.configuration.ConfigSingleton.getInstance().getAppVersion();
+        String appVersion = it.eng.spagoCore.ConfigSingleton.getInstance().getAppVersion();
         rispostaControlli.setrString(appVersion);
         rispostaControlli.setrBoolean(true);
         return rispostaControlli;

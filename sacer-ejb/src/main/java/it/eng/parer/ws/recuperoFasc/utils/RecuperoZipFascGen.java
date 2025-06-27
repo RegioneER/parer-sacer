@@ -31,9 +31,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -54,9 +57,6 @@ import it.eng.parer.entity.FasFileMetaVerAipFasc;
 import it.eng.parer.entity.FasXmlFascicolo;
 import it.eng.parer.entity.FasXmlVersFascicolo;
 import it.eng.parer.fascicoli.helper.FascicoliHelper;
-
-import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
-import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.objectstorage.dto.RecuperoDocBean;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.web.util.Constants;
@@ -81,10 +81,6 @@ import it.eng.parer.ws.xml.versReqStatoFasc.VersatoreFascType;
 import it.eng.parerxml.xsd.FileXSD;
 import it.eng.parerxml.xsd.FileXSDUtil;
 import it.eng.spagoLite.security.User;
-import javax.xml.datatype.DatatypeConfigurationException;
-import java.util.Map;
-import java.util.Map;
-import javax.ejb.EJB;
 
 /**
  *

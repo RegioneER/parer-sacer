@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import javax.xml.XMLConstants;
 
 /**
  *
@@ -82,9 +83,13 @@ public class XmlUtils {
 
     public static void validateXml(Source xsdSource, Source xmlSource) throws SAXException, IOException {
         Schema xsdSchema;
-        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         xsdSchema = schemaFactory.newSchema(xsdSource);
         Validator validator = xsdSchema.newValidator();
+        validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         validator.validate(xmlSource);
     }
 
@@ -94,15 +99,41 @@ public class XmlUtils {
 
     public static Schema getSchemaValidation(Source xsdSource) throws SAXException {
         Schema xsdSchema;
-        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         xsdSchema = schemaFactory.newSchema(xsdSource);
         return xsdSchema;
     }
 
     public static Document getXmlDocument(String xml) throws SAXException, IOException {
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
+            // XXE: This is the PRIMARY defense. If DTDs (doctypes) are disallowed,
+            // almost all XML entity attacks are prevented
+            final String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+            dbf.setFeature(FEATURE, true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            // ... and these as well, per Timothy Morgan's 2014 paper:
+            // "XML Schema, DTD, and Entity Attacks" (see reference below)
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            // As stated in the documentation, "Feature for Secure Processing (FSP)" is the central mechanism that will
+            // help you safeguard XML processing. It instructs XML processors, such as parsers, validators,
+            // and transformers, to try and process XML securely, and the FSP can be used as an alternative to
+            // dbf.setExpandEntityReferences(false); to allow some safe level of Entity Expansion
+            // Exists from JDK6.
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            // ... and, per Timothy Morgan:
+            // "If for some reason support for inline DOCTYPEs are a requirement, then
+            // ensure the entity settings are disabled (as shown above) and beware that SSRF
+            // attacks
+            // (http://cwe.mitre.org/data/definitions/918.html) and denial
+            // of service attacks (such as billion laughs or decompression bombs via "jar:")
+            // are a risk."
+            DocumentBuilder builder = dbf.newDocumentBuilder();
             Document xmlDocument = builder.parse(new ByteArrayInputStream(xml.getBytes()));
             return xmlDocument;
         } catch (ParserConfigurationException e) {

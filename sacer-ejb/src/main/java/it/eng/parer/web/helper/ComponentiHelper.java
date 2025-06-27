@@ -1155,7 +1155,7 @@ public class ComponentiHelper extends GenericHelper {
 
     public ElvVListaCompElvTableBean getElvVListaCompElvViewBean(BigDecimal idElencoVers, long idUtente,
             BigDecimal idStrut) {
-        String queryStr = "SELECT u.* FROM Elv_Vp_Lista_Comp_Elv(:idElencoVers, :idStrut, :idUserIam) u ";
+        String queryStr = "SELECT u.* FROM TABLE(Elv_Vp_Lista_Comp_Elv(:idElencoVers, :idStrut, :idUserIam)) u ";
         Query query = getEntityManager().createNativeQuery(queryStr);
         query.setParameter("idElencoVers", idElencoVers);
         query.setParameter("idUserIam", idUtente);

@@ -223,15 +223,21 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
-        mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
-        getForm().getRiepilogoStruttura().getId_ambiente().setDecodeMap(mappaAmbiente);
 
-        /*
-         * Se ho un solo ambiente lo setto gi\u00e0  impostato nella combo e procedo con i controlli successivi
-         */
-        if (tmpTableBeanAmbiente.size() == 1) {
-            getForm().getRiepilogoStruttura().getId_ambiente()
-                    .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
+        if (tmpTableBeanAmbiente != null) {
+            mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
+            getForm().getRiepilogoStruttura().getId_ambiente().setDecodeMap(mappaAmbiente);
+
+            /*
+             * Se ho un solo ambiente lo setto gi\u00e0  impostato nella combo e procedo con i controlli successivi
+             */
+            if (tmpTableBeanAmbiente.size() == 1) {
+                getForm().getRiepilogoStruttura().getId_ambiente()
+                        .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
+            }
+        } else {
+            log.warn("Tabella ambiente nulla, inizializzo decode vuota");
+            getForm().getRiepilogoStruttura().getId_ambiente().setDecodeMap(new DecodeMap());
         }
         /*
          * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in particolare e
@@ -242,6 +248,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         getForm().getRiepilogoStruttura().getRicercaRiepilogoStrutturaButton().setEditMode();
         // Imposto le combo in editMode
         getForm().getRiepilogoStruttura().setEditMode();
+        forwardToPublisher(Application.Publisher.MONITORAGGIO_RIEPILOGO_STRUTTURA);
     }
 
     @Override
@@ -334,27 +341,28 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         // Inizializzo la combo Ambiente
         OrgAmbienteTableBean tmpTableBeanAmbiente = null;
         try {
-            // Ricavo i valori della combo AMBIENTE dalla tabella ORG_AMBIENTE
             tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
         } catch (Exception ex) {
             log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
-        DecodeMap mappaAmbiente = new DecodeMap();
-        mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
-        getForm().getFiltriOperazioniVolumi().getId_ambiente().setDecodeMap(mappaAmbiente);
 
-        /*
-         * Se ho un solo ambiente lo setto gi\u00e0  impostato nella combo e procedo con i controlli successivi
-         */
-        if (tmpTableBeanAmbiente.size() == 1) {
-            getForm().getFiltriOperazioniVolumi().getId_ambiente()
-                    .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
-            BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
-            checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.OPERAZIONI_VOLUMI);
-        } /*
-           * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in particolare e
-           * imposto vuote le altre combo
-           */ else {
+        if (tmpTableBeanAmbiente != null) {
+            DecodeMap mappaAmbiente = new DecodeMap();
+            mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
+            getForm().getFiltriOperazioniVolumi().getId_ambiente().setDecodeMap(mappaAmbiente);
+
+            if (tmpTableBeanAmbiente.size() == 1) {
+                getForm().getFiltriOperazioniVolumi().getId_ambiente()
+                        .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
+                BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
+                checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.OPERAZIONI_VOLUMI);
+            } else {
+                getForm().getFiltriOperazioniVolumi().getId_ente().setDecodeMap(new DecodeMap());
+                getForm().getFiltriOperazioniVolumi().getId_strut().setDecodeMap(new DecodeMap());
+            }
+        } else {
+            // Fallimento: niente ambienti, quindi resetto le combo comunque
+            getForm().getFiltriOperazioniVolumi().getId_ambiente().setDecodeMap(new DecodeMap());
             getForm().getFiltriOperazioniVolumi().getId_ente().setDecodeMap(new DecodeMap());
             getForm().getFiltriOperazioniVolumi().getId_strut().setDecodeMap(new DecodeMap());
         }
@@ -2774,11 +2782,20 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
             // Setto la lista dei documenti non versati
             if (filtriListaVersFallitiDistintiDoc.getTipoLista().equals("UNITA_DOC")) {
-                MonVLisUdNonVersIamTableBean monVLisUdNonVersTableBean = monitoraggioHelper
-                        .getMonVLisUdNonVersIamViewBeanScaricaContenuto(
-                                (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
-                                        .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                null);
+                MonVLisUdNonVersIamTableBean monVLisUdNonVersTableBean = new MonVLisUdNonVersIamTableBean();
+                boolean flUsoVp = Boolean.parseBoolean(configurationHelper
+                        .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.FL_USO_MON_VP_LIS_UD_NON_VERS_IAM));
+                if (flUsoVp) {
+                    monVLisUdNonVersTableBean = monitoraggioHelper.getMonVpLisUdNonVersIamViewBeanScaricaContenuto(
+                            (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
+                                    .getAttribute("filtriListaVersFallitiDistintiDoc"),
+                            null);
+                } else {
+                    monVLisUdNonVersTableBean = monitoraggioHelper.getMonVLisUdNonVersIamViewBeanScaricaContenuto(
+                            (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
+                                    .getAttribute("filtriListaVersFallitiDistintiDoc"),
+                            null);
+                }
                 getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLisUdNonVersTableBean);
             } else {
                 MonVLisDocNonVersIamTableBean monVLisDocNonVersTableBean = monitoraggioHelper
@@ -3234,13 +3251,21 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         if (filtri.validate(getMessageBox())) {
             if (!getMessageBox().hasError()) {
                 if (filtriListaVersFallitiDistintiDoc.getTipoLista().equals("UNITA_DOC")) {
-                    // Setto la lista delle unit\u00e0  documentarie non versate
-                    MonVLisUdNonVersIamTableBean monVLiUdNonVersTableBean = monitoraggioHelper
-                            .getMonVLisUdNonVersIamViewBeanScaricaContenuto(
-                                    (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
-                                            .getAttribute("filtriListaVersFallitiDistintiDoc"),
-                                    null);
-                    getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLiUdNonVersTableBean);
+                    MonVLisUdNonVersIamTableBean monVLisUdNonVersTableBean = new MonVLisUdNonVersIamTableBean();
+                    boolean flUsoVp = Boolean.parseBoolean(configurationHelper
+                            .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.FL_USO_MON_VP_LIS_UD_NON_VERS_IAM));
+                    if (flUsoVp) {
+                        monVLisUdNonVersTableBean = monitoraggioHelper.getMonVpLisUdNonVersIamViewBeanScaricaContenuto(
+                                (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
+                                        .getAttribute("filtriListaVersFallitiDistintiDoc"),
+                                null);
+                    } else {
+                        monVLisUdNonVersTableBean = monitoraggioHelper.getMonVLisUdNonVersIamViewBeanScaricaContenuto(
+                                (MonitoraggioFiltriListaVersFallitiDistintiDocBean) getSession()
+                                        .getAttribute("filtriListaVersFallitiDistintiDoc"),
+                                null);
+                    }
+                    getForm().getDocumentiDerivantiDaVersFallitiList().setTable(monVLisUdNonVersTableBean);
                 } else {
                     // Setto la lista delle unit\u00e0  documentarie non versate
                     MonVLisDocNonVersIamTableBean monVLisDocNonVersTableBean = monitoraggioHelper
@@ -4438,26 +4463,32 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             log.error("Errore in ricerca ambiente", ex);
         }
 
-        DecodeMap mappaAmbiente = new DecodeMap();
-        mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
-        getForm().getSessioniErrateDetail().getId_ambiente().setDecodeMap(mappaAmbiente);
+        if (tmpTableBeanAmbiente != null) {
+            DecodeMap mappaAmbiente = new DecodeMap();
+            mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
+            getForm().getSessioniErrateDetail().getId_ambiente().setDecodeMap(mappaAmbiente);
 
-        /*
-         * Se ho un solo ambiente lo setto gi\u00e0  impostato nella combo e procedo con i controlli successivi
-         */
-        if (tmpTableBeanAmbiente.size() == 1) {
-            getForm().getSessioniErrateDetail().getId_ambiente()
-                    .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
-            BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
-            checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.SESSIONI_ERRATE);
-        } /*
-           * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in particolare e
-           * imposto vuote le altre combo
-           */ else {
+            /*
+             * Se ho un solo ambiente lo setto gi\u00e0  impostato nella combo e procedo con i controlli successivi
+             */
+            if (tmpTableBeanAmbiente.size() == 1) {
+                getForm().getSessioniErrateDetail().getId_ambiente()
+                        .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
+                BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
+                checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.SESSIONI_ERRATE);
+            } /*
+               * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in
+               * particolare e imposto vuote le altre combo
+               */ else {
+                getForm().getSessioniErrateDetail().getId_ente().setDecodeMap(new DecodeMap());
+                getForm().getSessioniErrateDetail().getId_strut().setDecodeMap(new DecodeMap());
+            }
+        } else {
+            log.warn("Nessun ambiente disponibile per l’utente corrente. DecodeMap non inizializzata.");
+            getForm().getSessioniErrateDetail().getId_ambiente().setDecodeMap(new DecodeMap());
             getForm().getSessioniErrateDetail().getId_ente().setDecodeMap(new DecodeMap());
             getForm().getSessioniErrateDetail().getId_strut().setDecodeMap(new DecodeMap());
         }
-
         getForm().getSessioniErrateList().setStatus(Status.update);
         // Imposto in sessione l'info sulla provenienza: mi servir\u00e0  in fase di conferma salvataggio o annullamento
         getSession().setAttribute("provenienza", "SE");
@@ -6807,25 +6838,32 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
             log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
         DecodeMap mappaAmbiente = new DecodeMap();
-        mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
-        getForm().getFiltriReplicaOrg().getId_ambiente().setDecodeMap(mappaAmbiente);
 
-        /*
-         * Se ho un solo ambiente lo setto gi\u00e0 impostato nella combo e procedo con i controlli successivi
-         */
-        if (tmpTableBeanAmbiente.size() == 1) {
-            getForm().getFiltriReplicaOrg().getId_ambiente()
-                    .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
-            BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
-            checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.REPLICA_ORG);
-        } /*
-           * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in particolare e
-           * imposto vuote le altre combo
-           */ else {
+        if (tmpTableBeanAmbiente != null) {
+            mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
+            getForm().getFiltriReplicaOrg().getId_ambiente().setDecodeMap(mappaAmbiente);
+
+            /*
+             * Se ho un solo ambiente lo setto gi\u00e0 impostato nella combo e procedo con i controlli successivi
+             */
+            if (tmpTableBeanAmbiente.size() == 1) {
+                getForm().getFiltriReplicaOrg().getId_ambiente()
+                        .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
+                BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
+                checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.REPLICA_ORG);
+            } /*
+               * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in
+               * particolare e imposto vuote le altre combo
+               */ else {
+                getForm().getFiltriReplicaOrg().getId_ente().setDecodeMap(new DecodeMap());
+                getForm().getFiltriReplicaOrg().getId_strut().setDecodeMap(new DecodeMap());
+            }
+        } else {
+            log.warn("Nessun ambiente disponibile: combo vuota");
+            getForm().getFiltriReplicaOrg().getId_ambiente().setDecodeMap(new DecodeMap());
             getForm().getFiltriReplicaOrg().getId_ente().setDecodeMap(new DecodeMap());
             getForm().getFiltriReplicaOrg().getId_strut().setDecodeMap(new DecodeMap());
         }
-
         // Popolo le combo "Tipo operatore" e "Stato replica"
         getForm().getFiltriReplicaOrg().getTi_oper_replic()
                 .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_oper", Constants.TiOperReplic.values()));
@@ -7167,22 +7205,23 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         } catch (Exception ex) {
             log.error(ERRORE_RECUPERO_AMBIENTE, ex);
         }
-        DecodeMap mappaAmbiente = new DecodeMap();
-        mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
-        getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente().setDecodeMap(mappaAmbiente);
+        if (tmpTableBeanAmbiente != null) {
+            DecodeMap mappaAmbiente = new DecodeMap();
+            mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
+            getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente().setDecodeMap(mappaAmbiente);
 
-        /*
-         * Se ho un solo ambiente lo setto gi\u00e0 impostato nella combo e procedo con i controlli successivi
-         */
-        if (tmpTableBeanAmbiente.size() == 1) {
-            getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente()
-                    .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
-            BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
-            checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.OPERAZIONI_ELENCHI_VERSAMENTO);
-        } /*
-           * altrimenti imposto la combo ambiente con i diversi valori ma senza averne selezionato uno in particolare e
-           * imposto vuote le altre combo
-           */ else {
+            if (tmpTableBeanAmbiente.size() == 1) {
+                getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente()
+                        .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
+                BigDecimal idAmbiente = tmpTableBeanAmbiente.getRow(0).getIdAmbiente();
+                checkUniqueAmbienteInCombo(idAmbiente, ActionEnums.SezioneMonitoraggio.OPERAZIONI_ELENCHI_VERSAMENTO);
+            } else {
+                getForm().getFiltriOperazioniElenchiVersamento().getId_ente().setDecodeMap(new DecodeMap());
+                getForm().getFiltriOperazioniElenchiVersamento().getId_strut().setDecodeMap(new DecodeMap());
+            }
+        } else {
+            // Combo vuote se non ho ambienti recuperabili
+            getForm().getFiltriOperazioniElenchiVersamento().getId_ambiente().setDecodeMap(new DecodeMap());
             getForm().getFiltriOperazioniElenchiVersamento().getId_ente().setDecodeMap(new DecodeMap());
             getForm().getFiltriOperazioniElenchiVersamento().getId_strut().setDecodeMap(new DecodeMap());
         }
@@ -7224,9 +7263,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
         getForm().getFiltriVerificaVersamenti().getNm_strut()
                 .setValue(getForm().getFiltriUdDocDerivantiDaVersFalliti().getId_strut().getDecodedValue());
         BigDecimal idStrut = getForm().getFiltriUdDocDerivantiDaVersFalliti().getId_strut().parse();
-        getForm().getFiltriVerificaVersamenti().getId_strut().setValue(idStrut.toPlainString());
-
-        if (idStrut != null) {
+        if (getForm().getFiltriUdDocDerivantiDaVersFalliti().getId_strut().getValue() != null) {
+            getForm().getFiltriVerificaVersamenti().getId_strut().setValue(idStrut.toPlainString());
             /* Calcolo l'istante pi\u00e0¹ recente di registrazione INIZIO_SCHEDULAZIONE in LogJob */
             Date ultimaRegistrazione = calcoloAsync.getUltimaRegistrazione(
                     JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),

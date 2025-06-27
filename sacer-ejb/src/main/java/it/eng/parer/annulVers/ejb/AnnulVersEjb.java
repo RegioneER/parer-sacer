@@ -1685,15 +1685,17 @@ public class AnnulVersEjb {
         // Ricalcolo alcuni totali dell'elenco soggetti a verifiche
         long niUnitaDocVersElenco = evHelper.contaUdVersate(idElencoVers);
         long niDocAggElenco = evHelper.contaDocAggiunti(idElencoVers);
-        long niUpdUnitaDoc = elenco.getNiUpdUnitaDoc().longValue();
+        long niUpdUnitaDoc = evHelper.contaUpdUd(idElencoVers);
 
-        // Se questi tre totali sono a 0, cancello l'elenco
+        // Se questi tre totali sono a 0, cancello l'elenco e lo scrivo nel log
         if (niUnitaDocVersElenco == 0 && niDocAggElenco == 0 && niUpdUnitaDoc == 0) {
-            /* Cancello l'elenco di versamento corrente */
-            evHelper.deleteElvElencoVer(new BigDecimal(idElencoVers));
             /* Scrivo nel log l'avvenuta cancellazione */
             evHelper.writeLogElencoVers(elenco, elenco.getOrgStrut(), idUserIam,
                     ElencoEnums.OpTypeEnum.ELIMINA_ELENCO.name());
+
+            /* Cancello l'elenco di versamento corrente */
+            evHelper.deleteElvElencoVer(new BigDecimal(idElencoVers));
+
         } // altrimenti aggiorno i conteggi dell'elenco
         else {
             elenco.setNiUnitaDocVersElenco(new BigDecimal(niUnitaDocVersElenco));

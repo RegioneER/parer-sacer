@@ -3967,7 +3967,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
             }
         }
         attribSelezionati = request.getParameterValues(flagSelezionato);
-        if (attribSelezionati != null) {
+        if (table != null && attribSelezionati != null) {
             for (int i = 0; i < attribSelezionati.length; i++) {
                 int rigaSelezionata = Integer.parseInt(attribSelezionati[i]);
                 BaseRowInterface row = table.getRow(rigaSelezionata);
@@ -3992,6 +3992,8 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
                     row.setString(pg_ord_campo, pg_ord_campoValue);
                 }
             }
+        } else {
+            logger.warn("Table non inizializzata o nessun attributo selezionato nella request.");
         }
     }
 

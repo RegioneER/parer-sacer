@@ -17,9 +17,9 @@
 
 package it.eng.parer.web.action;
 
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -83,7 +83,7 @@ import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.web.util.XmlPrettyPrintFormatter;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.versamento.dto.FileBinario;
-import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.actions.form.ListAction;
 import it.eng.spagoLite.db.base.BaseTableInterface;
@@ -272,7 +272,9 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
                     if (StringUtils.isNotBlank(clob)) {
                         // compilazione schema
                         // 1. Lookup a factory for the W3C XML Schema language
-                        SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+                        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+                        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
                         // anche in questo caso l'eccezione non deve mai verificarsi, a meno di non aver caricato
                         // nel database un xsd danneggiato...
                         try {
@@ -559,6 +561,30 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            // XXE: This is the PRIMARY defense. If DTDs (doctypes) are disallowed,
+            // almost all XML entity attacks are prevented
+            final String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+            dbf.setFeature(FEATURE, true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            // ... and these as well, per Timothy Morgan's 2014 paper:
+            // "XML Schema, DTD, and Entity Attacks" (see reference below)
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            // As stated in the documentation, "Feature for Secure Processing (FSP)" is the central mechanism that will
+            // help you safeguard XML processing. It instructs XML processors, such as parsers, validators,
+            // and transformers, to try and process XML securely, and the FSP can be used as an alternative to
+            // dbf.setExpandEntityReferences(false); to allow some safe level of Entity Expansion
+            // Exists from JDK6.
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            // ... and, per Timothy Morgan:
+            // "If for some reason support for inline DOCTYPEs are a requirement, then
+            // ensure the entity settings are disabled (as shown above) and beware that SSRF
+            // attacks
+            // (http://cwe.mitre.org/data/definitions/918.html) and denial
+            // of service attacks (such as billion laughs or decompression bombs via "jar:")
+            // are a risk."
             dbf.setNamespaceAware(true);
             DocumentBuilder db;
             db = dbf.newDocumentBuilder();

@@ -18,10 +18,12 @@
 package it.eng.parer.disciplinare;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -45,9 +47,11 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopConfParser;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.slf4j.Logger;
@@ -57,6 +61,9 @@ import it.eng.parer.exception.ConnectionException;
 import it.eng.parer.grantedEntity.AplParamApplicReport;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.spagoCore.util.JpaUtils;
+import java.net.URI;
+import javax.xml.XMLConstants;
+import org.apache.fop.servlet.ServletContextURIResolver;
 
 /**
  * @author Iacolucci_M
@@ -121,8 +128,9 @@ public class DisciplinareTecnicoHelper extends GenericHelper {
         try {
             // Nota: al fine di evitare problemi di classloading e "override" del parser (vedi libreria Saxon-HE)
             // viene esplicitato a codice quale impementazione (xalan standard in questo caso) utilizzare
-            TransformerFactory factory = TransformerFactory
-                    .newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Source xslt = new StreamSource(new StringReader(xsl));
             Transformer transformer = factory.newTransformer(xslt);
             Source source = new StreamSource(new StringReader(xml));
@@ -161,20 +169,25 @@ public class DisciplinareTecnicoHelper extends GenericHelper {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public byte[] trasformaInPDF(String foString) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();) {
+
             DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
             Configuration cfg = cfgBuilder
                     .build(this.getClass().getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
-            FopFactory fopFactory = FopFactory.newInstance();
-            fopFactory.setUserConfig(cfg);
+            FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI()).setConfiguration(cfg);
+
+            FopFactory fopFactory = fopFactoryBuilder.build();
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+
             // Nota: al fine di evitare problemi di classloading e "override" del parser (vedi libreria Saxon-HE)
             // viene esplicitato a codice quale impementazione (xalan standard in questo caso) utilizzare
-            TransformerFactory factory = TransformerFactory
-                    .newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Transformer transformer = factory.newTransformer(); // identity transformer
             Source src = new StreamSource(new StringReader(foString));
             Result res = new SAXResult(fop.getDefaultHandler());
             transformer.transform(src, res);
+
             return out.toByteArray();
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);

@@ -41,6 +41,7 @@ import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
 import it.eng.parer.firma.crypto.sign.SigningResponse;
+import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.ElenchiVersamentoAbstractAction;
 import it.eng.parer.slite.gen.form.ComponentiForm;
@@ -65,6 +66,7 @@ import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.SessionManager;
 import it.eng.spagoLite.actions.form.ListAction;
+import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.base.BaseElements.Status;
@@ -512,6 +514,10 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         getForm().getFiltriElenchiVersamento().getTi_valid_elenco().setDecodeMap(ComboGetter.getMappaTiValidElenco());
         getForm().getFiltriElenchiVersamento().getTi_mod_valid_elenco()
                 .setDecodeMap(ComboGetter.getMappaTiModValidElenco());
+
+        getForm().getFiltriElenchiVersamento().getTi_stato_conservazione()
+                .setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_stato_conservazione",
+                        CostantiDB.StatoConservazioneUnitaDocNonAnnullata.values()));
 
         boolean flSigilloAttivo = Boolean.parseBoolean(
                 configurationHelper.getValoreParamApplicByAmb(CostantiDB.ParametroAppl.FL_ABILITA_SIGILLO, idAmbiente));
@@ -1205,7 +1211,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 }
 
                 /* Effettuo la ricerca */
-                if (chiavi != null) {
+                if (chiavi != null || !filtriElenchiVersamento.getTi_stato_conservazione().parse().isEmpty()) {
                     // Se sono presenti i filtri dell'UD, devo controllare sia stata settata la struttura
                     if (filtriElenchiVersamento.getId_strut().parse() != null) {
                         getForm().getElenchiVersamentoList().setTable(evEjb
@@ -1753,7 +1759,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 filtriElenchiVersamento.getCd_key_unita_doc_da().parse(),
                 filtriElenchiVersamento.getCd_key_unita_doc_a().parse());
 
-        if (chiavi != null) {
+        if (chiavi != null || !filtriElenchiVersamento.getTi_stato_conservazione().parse().isEmpty()) {
             // Se sono presenti i filtri dell'UD
             getForm().getElenchiVersamentoList().setTable(
                     evEjb.getElvVRicElencoVersByUdTableBean(getUser().getIdUtente(), filtriElenchiVersamento));
@@ -2494,7 +2500,11 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 }
             }
             redirectToAjax(result);
-        } catch (InterruptedException | ExecutionException | JSONException ex) {
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt(); // Ripristina lo stato di interruzione
+            getMessageBox().addError(ExceptionUtils.getRootCauseMessage(ex));
+            forwardToPublisher(getLastPublisher());
+        } catch (ExecutionException | JSONException ex) {
             getMessageBox().addError(ExceptionUtils.getRootCauseMessage(ex));
             forwardToPublisher(getLastPublisher());
         }
@@ -3136,6 +3146,88 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             forwardToPublisher(getLastPublisher());
             break;
         }
+
+    }
+
+    // MEV#34195 - Funzione per riportare indietro lo stato di una lista di elenchi per consentire la firma dell'AIP
+    @Override
+    public void riportaStatoIndietroDaRicercaButton() throws EMFError {
+        // Recupero gli elenchi restituiti dalla ricerca
+        List<BigDecimal> idElencoVersList = new ArrayList<>();
+
+        if (getForm().getElenchiVersamentoList().getTable() != null
+                && !getForm().getElenchiVersamentoList().getTable().isEmpty()) {
+
+            if (getForm().getElenchiVersamentoList().getTable().size() < 1000) {
+
+                for (BaseRowInterface riga : getForm().getElenchiVersamentoList().getTable()) {
+                    idElencoVersList.add(riga.getBigDecimal("id_elenco_vers"));
+                }
+
+                // Filtro gli elenchi, tenendo solo quelli idonei alla firma dell'AIP
+                List<BigDecimal> idElencoVersIdoneiList = evEjb.isPossibileMettereAipAllaFirma(idElencoVersList);
+
+                int countUdDocAnnul = 0;
+                int countNoVerIndiceAip = 0;
+                int countPiuVersioniIndiceAip = 0;
+                int countOK = 0;
+
+                // Per ogni elenco, tra quelli idonei, eseguo l'algoritmo per riportare indietro lo stato
+                for (BigDecimal idElencoVers : idElencoVersIdoneiList) {
+                    ElenchiVersamentoEjb.EsitoRiportaIndietroStatoVersamento esito = evEjb
+                            .riportaStatoVersamentoIndietro(idElencoVers, getUser().getUsername());
+
+                    switch (esito) {
+                    case CHECK_SOLO_UD_E_DOC_ANNULLATI:
+                        countUdDocAnnul++;
+                        break;
+                    case ELENCO_CON_ALMENO_UNA_UD_SENZA_INDICE_AIP:
+                        countNoVerIndiceAip++;
+                        break;
+                    case ELENCO_CON_UD_CON_TROPPE_VERSIONI_INDICE_AIP:
+                        countPiuVersioniIndiceAip++;
+                        break;
+                    case ESITO_OK:
+                        countOK++;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+
+                StringBuilder reportElenchiAllaFirma = new StringBuilder(
+                        "Dalla ricerca risultano " + idElencoVersIdoneiList.size()
+                                + " elenchi di versamento idonei per mettere l'AIP alla firma<br><br>");
+                final String OP_NO_CONS = "Operazione non consentita per ";
+
+                if (countUdDocAnnul != 0) {
+                    reportElenchiAllaFirma.append(OP_NO_CONS).append(countUdDocAnnul)
+                            .append(" elenchi perché tutte le unità documentarie e documenti sono annullati<br><br>");
+                }
+                if (countNoVerIndiceAip != 0) {
+                    reportElenchiAllaFirma.append(OP_NO_CONS).append(countNoVerIndiceAip).append(
+                            " elenchi perché per almeno una unità documentaria non è definita la versione indice AIP generata da elenco<br><br>");
+                }
+                if (countPiuVersioniIndiceAip != 0) {
+                    reportElenchiAllaFirma.append(OP_NO_CONS).append(countPiuVersioniIndiceAip).append(
+                            " elenchi perché per almeno una unità documentaria è definita più di una versione di indice AIP generato da elenco<br><br>");
+                }
+                if (countOK != 0) {
+                    reportElenchiAllaFirma.append("Per ").append(countOK)
+                            .append(" elenchi l'AIP è stato riportato alla Firma");
+                }
+
+                getMessageBox().addInfo(reportElenchiAllaFirma.toString());
+            } else {
+                getMessageBox().addWarning(
+                        "Il risultato della ricerca è superiore a 1000. Per utilizzare la funzionalità 'Metti AIP alla firma', ripetere la ricerca imponendo vincoli più restrittivi per diminuire il numero di risultati");
+            }
+
+        } else {
+            getMessageBox().addWarning("La lista elenchi di versamento è vuota, impossibile eseguire l'operazione");
+        }
+
+        forwardToPublisher(Application.Publisher.ELENCHI_VERSAMENTO_RICERCA);
 
     }
 

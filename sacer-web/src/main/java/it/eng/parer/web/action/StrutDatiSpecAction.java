@@ -17,9 +17,9 @@
 
 package it.eng.parer.web.action;
 
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
-import static it.eng.spagoCore.configuration.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -82,13 +82,16 @@ import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.versamento.dto.FileBinario;
-import it.eng.spagoCore.configuration.ConfigSingleton;
+import it.eng.spagoCore.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.db.base.sorting.SortingRule;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
+import java.util.logging.Level;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
@@ -178,12 +181,10 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
         // definiamo il buffer per lo stream di bytes
         byte[] data = new byte[1000];
-        InputStream is = null;
         if (xsdRowBean != null) {
 
             byte[] blob = xsdRowBean.getBlXsd().getBytes();
-            if (blob != null) {
-                is = new ByteArrayInputStream(blob);
+            try (InputStream is = new ByteArrayInputStream(blob)) {
                 int count;
                 out.putNextEntry(new ZipEntry(filename + ".xsd"));
                 while ((count = is.read(data, 0, 1000)) != -1) {
@@ -192,7 +193,6 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
                 out.closeEntry();
             }
         }
-        is.close();
     }
 
     @Override
@@ -516,12 +516,12 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
                 }
             }
 
-            if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_CANCEL)) {
+            if (tmpOperation != null && tmpOperation.getFieldName().contains(NE_DETTAGLIO_CANCEL)) {
                 goBack();
-            } else if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_SAVE)) {
+            } else if (tmpOperation != null && tmpOperation.getFieldName().contains(NE_DETTAGLIO_SAVE)) {
                 if (getForm().getXsdDatiSpec().getStatus().equals(Status.insert)) {
                     // controllo esistenza del file
-                    if (StringUtils.isBlank(tmpFileItem.getName())) {
+                    if (tmpFileItem == null || StringUtils.isBlank(tmpFileItem.getName())) {
                         getMessageBox().addError("Nessun file selezionato");
                     }
                 }
@@ -904,6 +904,30 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            // XXE: This is the PRIMARY defense. If DTDs (doctypes) are disallowed,
+            // almost all XML entity attacks are prevented
+            final String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+            dbf.setFeature(FEATURE, true);
+            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+
+            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            // ... and these as well, per Timothy Morgan's 2014 paper:
+            // "XML Schema, DTD, and Entity Attacks" (see reference below)
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+            // As stated in the documentation, "Feature for Secure Processing (FSP)" is the central mechanism that will
+            // help you safeguard XML processing. It instructs XML processors, such as parsers, validators,
+            // and transformers, to try and process XML securely, and the FSP can be used as an alternative to
+            // dbf.setExpandEntityReferences(false); to allow some safe level of Entity Expansion
+            // Exists from JDK6.
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            // ... and, per Timothy Morgan:
+            // "If for some reason support for inline DOCTYPEs are a requirement, then
+            // ensure the entity settings are disabled (as shown above) and beware that SSRF
+            // attacks
+            // (http://cwe.mitre.org/data/definitions/918.html) and denial
+            // of service attacks (such as billion laughs or decompression bombs via "jar:")
+            // are a risk."
             dbf.setNamespaceAware(true);
             DocumentBuilder db;
             db = dbf.newDocumentBuilder();

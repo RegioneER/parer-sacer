@@ -107,24 +107,28 @@ public class DetailController {
         SessionManager.initMessageBox(request.getSession());
         SessionManager.addPrevExecutionToHistory(request.getSession(), true, false, null);
         User user = checkUser(request.getSession());
-        user.setIdOrganizzazioneFoglia(id);
-        Map<String, String> organizzazione = new LinkedHashMap<>();
-        organizzazione.put(WebConstants.Organizzazione.AMBIENTE.name(), row.getString("nm_ambiente"));
-        organizzazione.put(WebConstants.Organizzazione.ENTE.name(), row.getString("nm_ente"));
-        organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(), row.getNmStrut());
-        user.setOrganizzazioneMap(organizzazione);
-        user.setConfigurazione(configurationHelper.getConfiguration());
-        try {
-            authenticator.recuperoAutorizzazioni(request.getSession());
-            // ?operation=listNavigationOnClick&table=StruttureList&navigationEvent=dettaglioView&riga=0
-            res.sendRedirect(request.getServletContext().getContextPath() + "/" + action.getControllerName()
-                    + "?operation=listNavigationOnClick&table=" + form.getStruttureList().getName()
-                    + "&navigationEvent=" + StruttureAction.NE_DETTAGLIO_VIEW + "&riga=0");
-        } catch (WebServiceException ex) {
-            logger.error("Eccezione", ex);
-            // TODO : Inviare a una pagina che indica l'impossibilità di caricare la pagina? Direi di si
-        } catch (IOException ex) {
-            logger.error("Errore nel caricamento del dettaglio struttura", ex);
+        if (user != null) {
+            user.setIdOrganizzazioneFoglia(id);
+            Map<String, String> organizzazione = new LinkedHashMap<>();
+            organizzazione.put(WebConstants.Organizzazione.AMBIENTE.name(), row.getString("nm_ambiente"));
+            organizzazione.put(WebConstants.Organizzazione.ENTE.name(), row.getString("nm_ente"));
+            organizzazione.put(WebConstants.Organizzazione.STRUTTURA.name(), row.getNmStrut());
+            user.setOrganizzazioneMap(organizzazione);
+            user.setConfigurazione(configurationHelper.getConfiguration());
+            try {
+                authenticator.recuperoAutorizzazioni(request.getSession());
+                // ?operation=listNavigationOnClick&table=StruttureList&navigationEvent=dettaglioView&riga=0
+                res.sendRedirect(request.getServletContext().getContextPath() + "/" + action.getControllerName()
+                        + "?operation=listNavigationOnClick&table=" + form.getStruttureList().getName()
+                        + "&navigationEvent=" + StruttureAction.NE_DETTAGLIO_VIEW + "&riga=0");
+            } catch (WebServiceException ex) {
+                logger.error("Eccezione", ex);
+                // TODO : Inviare a una pagina che indica l'impossibilità di caricare la pagina? Direi di si
+            } catch (IOException ex) {
+                logger.error("Errore nel caricamento del dettaglio struttura", ex);
+            }
+        } else {
+            logger.error("Utente non autenticato: impossibile valorizzare i dati utente.");
         }
     }
 

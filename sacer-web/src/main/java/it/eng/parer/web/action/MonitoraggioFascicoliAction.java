@@ -1022,34 +1022,37 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             cbxTipoFascicolo = d.getId_tipo_fascicolo();
         }
 
-        BigDecimal idAmbiente = cbxAmbiente.parse();
-        if (idAmbiente != null) {
-            OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(),
-                    idAmbiente.longValue(), Boolean.TRUE);
-            cbxEnte.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
-            if (tmpTableBeanEnte.size() == 1) {
-                // Esiste solo un ente, la setto immediatamente e verifico le strutture
-                cbxEnte.setValue(tmpTableBeanEnte.getRow(0).getIdEnte().toString());
-                OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(),
-                        tmpTableBeanEnte.getRow(0).getIdEnte(), Boolean.TRUE);
-                cbxStruttura.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStrut, "id_strut", "nm_strut"));
-                if (tmpTableBeanStrut.size() == 1) {
-                    cbxStruttura.setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
-                    DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb.getTipiFascicoloAbilitati(
-                            getUser().getIdUtente(), tmpTableBeanStrut.getRow(0).getIdStrut(), false);
-                    cbxTipoFascicolo.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanFascicolo,
-                            "id_tipo_fascicolo", "nm_tipo_fascicolo"));
+        if (cbxAmbiente != null) {
+            BigDecimal idAmbiente = cbxAmbiente.parse();
+            if (idAmbiente != null) {
+
+                OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(getUser().getIdUtente(),
+                        idAmbiente.longValue(), Boolean.TRUE);
+                cbxEnte.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
+                if (tmpTableBeanEnte.size() == 1) {
+                    // Esiste solo un ente, la setto immediatamente e verifico le strutture
+                    cbxEnte.setValue(tmpTableBeanEnte.getRow(0).getIdEnte().toString());
+                    OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(),
+                            tmpTableBeanEnte.getRow(0).getIdEnte(), Boolean.TRUE);
+                    cbxStruttura.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStrut, "id_strut", "nm_strut"));
+                    if (tmpTableBeanStrut.size() == 1) {
+                        cbxStruttura.setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
+                        DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb.getTipiFascicoloAbilitati(
+                                getUser().getIdUtente(), tmpTableBeanStrut.getRow(0).getIdStrut(), false);
+                        cbxTipoFascicolo.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanFascicolo,
+                                "id_tipo_fascicolo", "nm_tipo_fascicolo"));
+                    } else {
+                        cbxTipoFascicolo.setDecodeMap(new DecodeMap());
+                    }
                 } else {
+                    cbxStruttura.setDecodeMap(new DecodeMap());
                     cbxTipoFascicolo.setDecodeMap(new DecodeMap());
                 }
             } else {
+                cbxEnte.setDecodeMap(new DecodeMap());
                 cbxStruttura.setDecodeMap(new DecodeMap());
                 cbxTipoFascicolo.setDecodeMap(new DecodeMap());
             }
-        } else {
-            cbxEnte.setDecodeMap(new DecodeMap());
-            cbxStruttura.setDecodeMap(new DecodeMap());
-            cbxTipoFascicolo.setDecodeMap(new DecodeMap());
         }
         return comp.asJSON();
     }
@@ -1095,23 +1098,25 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             cbxStruttura = d.getId_strut();
             cbxTipoFascicolo = d.getId_tipo_fascicolo();
         }
-        BigDecimal idEnte = cbxEnte.parse();
-        if (idEnte != null) {
-            OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
-                    Boolean.TRUE);
-            cbxStruttura.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStrut, "id_strut", "nm_strut"));
-            if (tmpTableBeanStrut.size() == 1) {
-                cbxStruttura.setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
-                DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb.getTipiFascicoloAbilitati(
-                        getUser().getIdUtente(), tmpTableBeanStrut.getRow(0).getIdStrut(), false);
-                cbxTipoFascicolo.setDecodeMap(
-                        DecodeMap.Factory.newInstance(tmpTableBeanFascicolo, "id_tipo_fascicolo", "nm_tipo_fascicolo"));
+        if (cbxEnte != null) {
+            BigDecimal idEnte = cbxEnte.parse();
+            if (idEnte != null) {
+                OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(getUser().getIdUtente(), idEnte,
+                        Boolean.TRUE);
+                cbxStruttura.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanStrut, "id_strut", "nm_strut"));
+                if (tmpTableBeanStrut.size() == 1) {
+                    cbxStruttura.setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
+                    DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb.getTipiFascicoloAbilitati(
+                            getUser().getIdUtente(), tmpTableBeanStrut.getRow(0).getIdStrut(), false);
+                    cbxTipoFascicolo.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanFascicolo,
+                            "id_tipo_fascicolo", "nm_tipo_fascicolo"));
+                } else {
+                    cbxTipoFascicolo.setDecodeMap(new DecodeMap());
+                }
             } else {
+                cbxStruttura.setDecodeMap(new DecodeMap());
                 cbxTipoFascicolo.setDecodeMap(new DecodeMap());
             }
-        } else {
-            cbxStruttura.setDecodeMap(new DecodeMap());
-            cbxTipoFascicolo.setDecodeMap(new DecodeMap());
         }
         return comp.asJSON();
     }
@@ -1153,14 +1158,16 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
             cbxStruttura = d.getId_strut();
             cbxTipoFascicolo = d.getId_tipo_fascicolo();
         }
-        BigDecimal idStrut = cbxStruttura.parse();
-        if (idStrut != null) {
-            DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb
-                    .getTipiFascicoloAbilitati(getUser().getIdUtente(), idStrut, false);
-            cbxTipoFascicolo.setDecodeMap(
-                    DecodeMap.Factory.newInstance(tmpTableBeanFascicolo, "id_tipo_fascicolo", "nm_tipo_fascicolo"));
-        } else {
-            cbxTipoFascicolo.setDecodeMap(new DecodeMap());
+        if (cbxStruttura != null) {
+            BigDecimal idStrut = cbxStruttura.parse();
+            if (idStrut != null) {
+                DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb
+                        .getTipiFascicoloAbilitati(getUser().getIdUtente(), idStrut, false);
+                cbxTipoFascicolo.setDecodeMap(
+                        DecodeMap.Factory.newInstance(tmpTableBeanFascicolo, "id_tipo_fascicolo", "nm_tipo_fascicolo"));
+            } else {
+                cbxTipoFascicolo.setDecodeMap(new DecodeMap());
+            }
         }
         return comp.asJSON();
     }

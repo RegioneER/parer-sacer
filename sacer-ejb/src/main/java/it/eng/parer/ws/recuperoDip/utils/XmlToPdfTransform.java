@@ -22,8 +22,11 @@
  */
 package it.eng.parer.ws.recuperoDip.utils;
 
+import java.io.File;
 import java.io.StringWriter;
+import java.util.logging.Level;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -37,7 +40,11 @@ import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.FOUserAgent;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.configuration.Configuration;
+import org.apache.fop.configuration.ConfigurationException;
+import org.apache.fop.configuration.DefaultConfigurationBuilder;
 import org.apache.fop.events.Event;
 import org.apache.fop.events.EventFormatter;
 import org.apache.fop.events.EventListener;
@@ -80,13 +87,18 @@ public class XmlToPdfTransform implements ICompTransformer {
         RispostaControlli rispostaControlli;
         rispostaControlli = new RispostaControlli();
         rispostaControlli.setrBoolean(false);
-        // Inizializzo la factory (sarebbe consigliabile riusarla...)
-        FopFactory fopFactory = FopFactory.newInstance();
-        fopFactory.setStrictValidation(false);
-        SysOutEventListener tmpOutListener = new SysOutEventListener();
-        FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
-        foUserAgent.getEventBroadcaster().addEventListener(tmpOutListener);
+
         try {
+            // Inizializzo la factory (sarebbe consigliabile riusarla...)
+            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+            Configuration cfg = cfgBuilder
+                    .build(this.getClass().getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
+            FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI()).setConfiguration(cfg);
+
+            FopFactory fopFactory = fopFactoryBuilder.build();
+            SysOutEventListener tmpOutListener = new SysOutEventListener();
+            FOUserAgent foUserAgent = fopFactory.newFOUserAgent();
+            foUserAgent.getEventBroadcaster().addEventListener(tmpOutListener);
             Fop fop = null;
             // inizializzo FOP con il tipo di output desiderato
             fop = fopFactory.newFop(MimeConstants.MIME_PDF, foUserAgent, parametri.getFileXmlOut());
@@ -102,8 +114,9 @@ public class XmlToPdfTransform implements ICompTransformer {
             // iniz. JAXP
             // Nota: al fine di evitare problemi di classloading e "override" del parser (vedi libreria Saxon-HE)
             // viene esplicitato a codice quale impementazione (xalan standard in questo caso) utilizzare
-            TransformerFactory factory = TransformerFactory
-                    .newInstance("org.apache.xalan.processor.TransformerFactoryImpl", null);
+            TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             Transformer transformer = null;
             // verifico se devo effettuare la trasformazione XSLT o solo quella FO
             if (parametri.getFileXslt() != null) {
@@ -149,6 +162,8 @@ public class XmlToPdfTransform implements ICompTransformer {
             rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
                     "Eccezione XmlToPdfTransform.convertiSuStream " + ex.getMessage()));
             log.error("Eccezione XmlToPdfTransform.convertiSuStream " + ex);
+        } catch (ConfigurationException ex) {
+            java.util.logging.Logger.getLogger(XmlToPdfTransform.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             IOUtils.closeQuietly(parametri.getFileXslt());
             IOUtils.closeQuietly(parametri.getFileXslFo());
