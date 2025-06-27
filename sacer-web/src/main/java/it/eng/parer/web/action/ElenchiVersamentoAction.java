@@ -84,6 +84,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.AsyncResult;
 import javax.ejb.EJB;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
@@ -618,6 +619,14 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
         /* Carico i valori dei filtri nel tab Filtri Componenti */
         initComboFiltriComponenti(elencoVersRowBean.getIdStrut());
+
+        // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip UD
+        // Se la data marca non è valorizzata la si fa scomparire del tutto!
+        if (elencoVersRowBean.getDtMarcaElencoIxAip() == null) {
+            getForm().getElenchiVersamentoDetail().getDt_marca_elenco_ix_aip().setHidden(true);
+        } else {
+            getForm().getElenchiVersamentoDetail().getDt_marca_elenco_ix_aip().setHidden(false);
+        }
 
         /* Metto lista e dettaglio in viewMode e status view */
         getForm().getElenchiVersamentoDetail().setViewMode();
@@ -2514,8 +2523,26 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                         break;
                     case WARNING:
                     case OK:
-                        result.put("info", resp.getDescription()
-                                + "! Cliccare per completare il processo di firma (con l'eventuale apposizione di marche temporali, se prevista)");
+                        // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli
+                        // elenchi indici aip UD
+                        // result.put("info", resp.getDescription()
+                        // + "! Cliccare per completare il processo di firma (con l'eventuale apposizione di marche
+                        // temporali, se prevista)");
+                        BigDecimal idAmbiente = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_ambiente().parse();
+                        BigDecimal idEnte = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_ente().parse();
+                        BigDecimal idStrut = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_strut().parse();
+                        try {
+                            evEjb.completaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, getUser().getIdUtente(),
+                                    false);
+                            result.put("status", "OK");
+                            result.put("info",
+                                    "Il processo di firma (inclusa eventuale marcatura temporale) degli Elenchi Indici AIP è terminata correttamente");
+                        } catch (ParerUserError ex) {
+                            result.put("status", "ERROR");
+                            result.put("error",
+                                    "Attenzione! Il processo di firma è terminato in errore a causa di un problema");
+                        }
+                        // FINE MAC ---
                         getForm().getElenchiIndiciAipSelezionatiList().getTable().clear();
                         break;
                     default:
@@ -2528,9 +2555,15 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 }
             }
             redirectToAjax(result);
-        } catch (InterruptedException | ExecutionException | JSONException ex) {
+        } catch (ExecutionException | JSONException | EMFError ex) {
             getMessageBox().addError(ExceptionUtils.getRootCauseMessage(ex));
             forwardToPublisher(getLastPublisher());
+        } catch (InterruptedException ex) {
+            getMessageBox().addError(ExceptionUtils.getRootCauseMessage(ex));
+            forwardToPublisher(getLastPublisher());
+            // come suggerito sa Sonar.
+            logger.warn("Interrupted!", ex);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -2596,7 +2629,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
             OrgStrutRowBean strut = evEjb.getOrgStrutRowBeanWithAmbienteEnte(idStrut);
             /* Inizializza le combo dei filtri ambiente/ente/struttura */
             initFiltriElenchiIndiciAipDaFirmare(strut.getIdStrut());
-            getForm().getElenchiIndiciAipDaFirmareButtonList().getMarcaElenchiIndiciAip().setHidden(true);
 
             if (cleanList) {
                 if (getForm().getFiltriElenchiIndiciAipDaFirmare().validate(getMessageBox())) {
@@ -2648,11 +2680,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                             getForm().getElenchiIndiciAipSelezionatiList().getTable().addSortingRule(getForm()
                                     .getElenchiIndiciAipSelezionatiList().getDt_creazione_elenco_ix_aip().getName(),
                                     SortingRule.ASC);
-
-                            if (isMarcaButtonVisible(getUser().getIdUtente())) {
-                                getForm().getElenchiIndiciAipDaFirmareButtonList().getMarcaElenchiIndiciAip()
-                                        .setHidden(false);
-                            }
                         }
                     }
                 }
@@ -2688,12 +2715,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
         getSession().setAttribute("idStrutRif", idStrut);
         forwardToPublisher(Application.Publisher.LISTA_ELENCHI_INDICI_AIP_SELECT);
-    }
-
-    private boolean isMarcaButtonVisible(long idUser) {
-        boolean signActive = elencoIndiciAipSignSessionEjb.hasUserActiveSessions(getUser().getIdUtente());
-
-        return !signActive && evEjb.getElenchiIndiciAipToMark(idUser);
     }
 
     @Override
@@ -2762,15 +2783,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                             getForm().getElenchiIndiciAipDaFirmareList().getDt_creazione_elenco_ix_aip().getName(),
                             SortingRule.ASC);
 
-                    if (!evEjb.getElenchiDaFirmareTableBean(idAmbiente, idEnte, idStrut, idElencoVers, null,
-                            flElencoFisc, tiGestElenco, dateCreazioneElencoIdxAipValidate, getUser().getIdUtente(),
-                            ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA,
-                            ElencoEnums.ElencoStatusEnum.ELENCO_INDICI_AIP_FIRMATO).isEmpty()) {
-                        getForm().getElenchiIndiciAipDaFirmareButtonList().getMarcaElenchiIndiciAip().setHidden(false);
-                    } else {
-                        getForm().getElenchiIndiciAipDaFirmareButtonList().getMarcaElenchiIndiciAip().setHidden(true);
-                    }
-
                     /* Inizializzo la lista degli elenchi di versamento selezionati */
                     getForm().getElenchiIndiciAipSelezionatiList().setTable(new ElvVLisElencoVersStatoTableBean());
                     getForm().getElenchiIndiciAipSelezionatiList().getTable().setPageSize(10);
@@ -2780,7 +2792,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                 }
             }
         }
-
         forwardToPublisher(Application.Publisher.LISTA_ELENCHI_INDICI_AIP_SELECT);
     }
 
@@ -3033,9 +3044,11 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
                     }
                 }
                 // MEV#15967 - Attivazione della firma Xades e XadesT
+                // Estrae l'ambiente selezionato per la ricerca
+                BigDecimal idAmbiente = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_ambiente().parse();
                 Future<SigningResponse> provaAsync = null;
                 it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
-                        .getTipoFirmaPerStruttura(getIdStrutCorrente());
+                        .getTipoFirmaPerAmbiente(idAmbiente);
                 switch (tipoFirma) {
                 case CADES:
                     provaAsync = firmaHsmEjb.signP7M(request);
@@ -3063,51 +3076,6 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
         } else {
             forwardToPublisher(getLastPublisher());
         }
-    }
-
-    @Override
-    public void marcaElenchiIndiciAip() throws EMFError {
-        getForm().getFiltriElenchiIndiciAipDaFirmare().post(getRequest());
-        BigDecimal idAmbiente = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_ambiente().parse();
-        BigDecimal idEnte = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_ente().parse();
-        BigDecimal idStrut = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_strut().parse();
-
-        try {
-            evEjb.marcaturaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, getUser().getIdUtente(), false);
-            getMessageBox().addInfo(
-                    "Il processo di firma (inclusa eventuale marcatura temporale) degli Elenchi Indici AIP è terminata correttamente");
-            loadListaElenchiIndiciAipDaFirmare();
-        } catch (ParerUserError ex) {
-            getMessageBox().addError(ex.getDescription());
-        }
-
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(getLastPublisher());
-        }
-    }
-
-    public void startMarcaFromJs() throws EMFError {
-        JSONObject result = new JSONObject();
-        BigDecimal idAmbiente = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_ambiente().parse();
-        BigDecimal idEnte = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_ente().parse();
-        BigDecimal idStrut = getForm().getFiltriElenchiIndiciAipDaFirmare().getId_strut().parse();
-
-        try {
-            try {
-                evEjb.marcaturaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, getUser().getIdUtente(), false);
-                result.put("status", "OK");
-                result.put("info",
-                        "Il processo di firma (inclusa eventuale marcatura temporale) degli Elenchi Indici AIP è terminata correttamente");
-            } catch (ParerUserError ex) {
-                result.put("status", "ERROR");
-                result.put("error",
-                        "Attenzione! Il processo di firma è terminato in errore a causa di un problema in fase di marcatura");
-            }
-        } catch (JSONException ex) {
-            logger.error("Errore inatteso nella gestione della marcatura dei file Elenchi Indici AIP", ex);
-        }
-
-        redirectToAjax(result);
     }
 
     @Override

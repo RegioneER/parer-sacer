@@ -420,7 +420,12 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String codiceNumContiene = filtri.getCdKeyUnitaDocContiene();
 
         if (codiceNumContiene != null) {
-            queryStrBuilder.append(whereWord).append(" UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene ");
+            String escape = "";
+            if (codiceNumContiene.contains("_")) {
+                escape = "ESCAPE '|' ";
+                codiceNumContiene = codiceNumContiene.replaceAll("_", "|_");
+            }
+            queryStrBuilder.append(whereWord).append(" UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene ").append(escape);
             whereWord = " AND ";
             codiceNumContiene = codiceNumContiene.toUpperCase();
         }
@@ -1118,7 +1123,11 @@ public class UnitaDocumentarieHelper extends GenericHelper {
         String codiceNumContiene = filtri.getCdKeyUnitaDocContiene();
 
         if (codiceNumContiene != null) {
-            queryStr.append(whereWord).append(" UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene ");
+            String escape = "";
+            if (codiceNumContiene.contains("_")) {
+                escape = "ESCAPE '\\' ";
+            }
+            queryStr.append(whereWord).append(" UPPER(u.cdKeyUnitaDoc) LIKE :codicein_contiene " + escape);
             whereWord = " AND ";
             codiceNumContiene = codiceNumContiene.toUpperCase();
         }

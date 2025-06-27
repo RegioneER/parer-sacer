@@ -1447,14 +1447,14 @@ public class ElenchiVersamentoEjb {
      * @throws ParerUserError
      *             errore generico
      */
-    public void marcaturaFirmaElenchiIndiciAip(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
+    public void completaFirmaElenchiIndiciAip(BigDecimal idAmbiente, BigDecimal idEnte, BigDecimal idStrut,
             long idUtente, boolean isSoloSigillo) throws ParerUserError {
         try {
             /*
              * MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
              *
-             * La logica prevede che se viene chiamato dal job sigillo vuol dire che si vogliono processare solanto gli
-             * elenchi con getsione SIGILLO o SIGILLO_MARCA, altrimenti se richiamati da interfaccia utente per la firma
+             * La logica prevede che se viene chiamato dal job sigillo vuol dire che si vogliono processare soltanto gli
+             * elenchi con gestione SIGILLO o SIGILLO_MARCA, altrimenti se richiamati da interfaccia utente per la firma
              * manuale li processa tutti i tipi di gestione, sia di SIGILLO che di FIRMA
              */
             ArrayList<String> tipiGestione = new ArrayList<>();
@@ -1464,7 +1464,8 @@ public class ElenchiVersamentoEjb {
             }
             List<ElvVLisElencoDaMarcare> elenchiCompletati = evHelper.retrieveElenchiIndiciAipDaMarcare(idAmbiente,
                     idEnte, idStrut, idUtente, tipiGestione);
-            gestioneMarcaturaElenchiIndiciAip(null, elenchiCompletati, idUtente);
+            log.info("Elenchi da completare [{}]", elenchiCompletati.size());
+            gestioneCompletamentoFirmaElenchiIndiciAip(null, elenchiCompletati, idUtente);
             Set<Long> struts = new HashSet<>();
             // MODIFICATO PER IL SIGILLO: MEV#27824 - Introduzione del JOB per l'apposizione del sigillo elettronico
             tipiGestione.clear();
@@ -1474,27 +1475,27 @@ public class ElenchiVersamentoEjb {
             }
             List<ElvVLisElencoDaMarcare> elenchiDaMarcare = evHelper.retrieveElenchiIndiciAipDaMarcare(idAmbiente,
                     idEnte, idStrut, idUtente, tipiGestione);
-            log.info("Elenchi da marcare [{}]", elenchiDaMarcare.size());
-            gestioneMarcaturaElenchiIndiciAip(struts, elenchiDaMarcare, idUtente);
+            log.info("Elenchi da completare [{}]", elenchiDaMarcare.size());
+            gestioneCompletamentoFirmaElenchiIndiciAip(struts, elenchiDaMarcare, idUtente);
             // Presente un requisito che richiede la marcatura di tutti Elenchi Indici AIP nello stato ERR_MARCA
             List<ElvVLisElencoVersStato> listaElenchiErrati = evWebHelper.getListaElenchiDaFirmare(null, null, null,
                     null, null, null, null, null, idUtente, ElencoStatusEnum.ELENCO_INDICI_AIP_ERR_MARCA.name());
-            log.info("Elenchi errati da marcare [{}]", listaElenchiErrati.size());
-            gestioneMarcaturaElenchiIndiciAipErrati(struts, listaElenchiErrati, idUtente);
+            log.info("Elenchi errati da completare [{}]", listaElenchiErrati.size());
+            gestioneCompletamentoElenchiIndiciAipErrati(struts, listaElenchiErrati, idUtente);
         } catch (ParerInternalError ex) {
             log.error("Errore durante marcatura: ", ex);
-            throw new ParerUserError("Errore durante la fase di marcatura");
+            throw new ParerUserError("Errore durante la fase di completamento della firma");
         }
     }
 
-    private void gestioneMarcaturaElenchiIndiciAipErrati(Set<Long> struts,
+    private void gestioneCompletamentoElenchiIndiciAipErrati(Set<Long> struts,
             List<ElvVLisElencoVersStato> elenchiDaMarcare, long idUtente) throws ParerInternalError {
         for (ElvVLisElencoVersStato elvVLisElencoDaMarcare : elenchiDaMarcare) {
             try {
                 if (struts != null) {
                     struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue());
                 }
-                context.getBusinessObject(ElenchiVersamentoEjb.class).gestioneMarcaturaElenchiIndiciAip(
+                context.getBusinessObject(ElenchiVersamentoEjb.class).gestioneCompletamentoElenchiIndiciAip(
                         elvVLisElencoDaMarcare.getIdElencoVers().longValue(),
                         ElencoEnums.GestioneElencoEnum.MARCA_FIRMA.name(), idUtente);
             } catch (ParerInternalError ex) {
@@ -1506,14 +1507,14 @@ public class ElenchiVersamentoEjb {
         }
     }
 
-    private void gestioneMarcaturaElenchiIndiciAip(Set<Long> struts, List<ElvVLisElencoDaMarcare> elenchiDaMarcare,
-            long idUtente) throws ParerInternalError {
+    private void gestioneCompletamentoFirmaElenchiIndiciAip(Set<Long> struts,
+            List<ElvVLisElencoDaMarcare> elenchiDaMarcare, long idUtente) throws ParerInternalError {
         for (ElvVLisElencoDaMarcare elvVLisElencoDaMarcare : elenchiDaMarcare) {
             try {
                 if (struts != null) {
                     struts.add(elvVLisElencoDaMarcare.getIdStrut().longValue());
                 }
-                context.getBusinessObject(ElenchiVersamentoEjb.class).gestioneMarcaturaElenchiIndiciAip(
+                context.getBusinessObject(ElenchiVersamentoEjb.class).gestioneCompletamentoElenchiIndiciAip(
                         elvVLisElencoDaMarcare.getIdElencoVers().longValue(), elvVLisElencoDaMarcare.getTiGestElenco(),
                         idUtente);
             } catch (ParerInternalError ex) {
@@ -1526,7 +1527,7 @@ public class ElenchiVersamentoEjb {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void gestioneMarcaturaElenchiIndiciAip(long idElencoVers, String tiGestElenco, long idUtente)
+    public void gestioneCompletamentoElenchiIndiciAip(long idElencoVers, String tiGestElenco, long idUtente)
             throws ParerInternalError {
         final ElvElencoVer elenco = evHelper.retrieveElencoById(idElencoVers);
         evHelper.lockElenco(elenco);
@@ -1588,51 +1589,20 @@ public class ElenchiVersamentoEjb {
                  */
                 if (amministrazioneEjb.getTipoFirmaPerStruttura(new BigDecimal(elenco.getOrgStrut().getIdStrut()))
                         .equals(ElencoEnums.TipoFirma.XADES)) {
-                    log.debug("Marca non necessaria per Xades");
+                    log.debug("Marca detatched non necessaria per Xades");
                     // MEV#15967 - Attivazione della firma Xades e XadesT
                     impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, tiGestioneEnum,
                             tiGestioneEnum.equals(MARCA_FIRMA) ? Constants.FUNZIONALITA_ONLINE : Constants.JOB_SIGILLO);
                     //
                 } else {
-
-                    try {
-                        /* Richiedo la marca per il file firmato */
-                        ParerTST tsToken = cryptoInvoker.requestTST(firmaElencoIndiciAip);
-                        byte[] marcaTemporale = tsToken.getEncoded();
-                        /* Verifico l'avvenuta acquisizione della marcatura temporale */
-                        if (marcaTemporale != null) {
-                            log.info("Marca temporale valida");
-                            ElvFileElencoVer marcaElencoIxAip = saveMarcaElencoIndiceAip(elenco, marcaTemporale,
-                                    idUtente, backendIndiciAip, tiGestioneEnum, tiGestioneEnum.equals(MARCA_FIRMA)
-                                            ? Constants.FUNZIONALITA_ONLINE : Constants.JOB_SIGILLO);
-                            // MEV#30397
-                            /*
-                             * Se backendMetadata di tipo O.S. si effettua il salvataggio (con link su apposita entity)
-                             */
-                            if (backendIndiciAip.isObjectStorage()) {
-                                // retrieve normalized URN
-                                final String urn = marcaElencoIxAip.getElvUrnFileElencoVerss().stream()
-                                        .filter(tmpUrnNorm -> ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO
-                                                .equals(tmpUrnNorm.getTiUrn()))
-                                        .findAny().get().getDsUrn().substring(4);
-
-                                ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(urn,
-                                        backendIndiciAip.getBackendName(), marcaTemporale,
-                                        marcaElencoIxAip.getIdFileElencoVers(), marcaElencoIxAip.getIdStrut());
-                                log.debug(
-                                        "Salvato il file dell'elenco indici aip firmato su cui è stata apposta la marca temporale nel bucket {} con chiave {} ",
-                                        res.getBucket(), res.getKey());
-                            }
-                            // end MEV#30397
-                        } else {
-                            throw new ParerInternalError("Acquisizione marca temporale fallita");
-                        }
-                    } catch (ParerInternalError ex) {
-                        throw ex;
-                    } catch (CryptoParerException ex) {
-                        throw new ParerInternalError(ParerErrorSeverity.ERROR, ExceptionUtils.getRootCauseMessage(ex),
-                                ex);
-                    }
+                    log.debug("Marca detatched non necessaria per Cades");
+                    // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi
+                    // indici aip UD
+                    impostaStatoCompletatoElencoIndiceAip(elenco, idUtente, tiGestioneEnum,
+                            Constants.FUNZIONALITA_ONLINE);
+                    // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi
+                    // indici aip UD
+                    // Eliminato tutto il codice che richiamava il CryptoInvoker
                 }
             } else {
                 log.warn("Impossibile completare l'elenco indice AIP con id {}, NON è nello stato di quelli marcabili",

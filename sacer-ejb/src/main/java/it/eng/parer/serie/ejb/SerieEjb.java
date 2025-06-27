@@ -5676,173 +5676,173 @@ public class SerieEjb {
         }
     }
 
-    public int marcaturaIndici(long idUtente) throws ParerUserError {
-        /* Recupero la lista di tutte le versione serie con stato FIRMATO_NO_MARCA appartenente a qualunque struttura */
-        byte[] marcaTemporale;
-        List<SerVerSerieDaElab> verSerieDaMarcareList = helper.getSerVerSerieDaElab(null,
-                CostantiDB.StatoVersioneSerieDaElab.FIRMATA_NO_MARCA.name());
-        /* Per ogni versione serie su cui acquisire la marca temporale per la firma */
-        int signed = 0;
-        for (SerVerSerieDaElab verSerieDaMarcare : verSerieDaMarcareList) {
-            /* Recupero il file originale */
-            byte[] fileVerSerieOriginale = helper.retrieveFileVerSerie(verSerieDaMarcare.getSerVerSerie(),
-                    CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name());
-            try {
-                /*
-                 * Il metodo marcaFirma deve essere eseguito in modo atomico (in una nuova transazione REQUIRES_NEW).
-                 * Per fare cio' devo passare nuovamente dal container quindi utilizzo getBusinessObject per ottenere un
-                 * nuovo riferimento a SerieEjb
-                 */
-                SerieEjb serieEjb1 = context.getBusinessObject(SerieEjb.class);
-                BigDecimal idStrut = verSerieDaMarcare.getIdStrut();
-                it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
-                        .getTipoFirmaPerStruttura(idStrut);
-                marcaTemporale = serieEjb1.marcaFirma(verSerieDaMarcare.getSerVerSerie().getIdVerSerie(),
-                        fileVerSerieOriginale, verSerieDaMarcareList.size(), idUtente, tipoFirma);
-            } catch (Exception ex) {
-                throw new ParerUserError("Errore nella marcatura di una versione serie: marcate " + signed + " su "
-                        + verSerieDaMarcareList.size());
-            }
+    // public int marcaturaIndici(long idUtente) throws ParerUserError {
+    // /* Recupero la lista di tutte le versione serie con stato FIRMATO_NO_MARCA appartenente a qualunque struttura */
+    // byte[] marcaTemporale;
+    // List<SerVerSerieDaElab> verSerieDaMarcareList = helper.getSerVerSerieDaElab(null,
+    // CostantiDB.StatoVersioneSerieDaElab.FIRMATA_NO_MARCA.name());
+    // /* Per ogni versione serie su cui acquisire la marca temporale per la firma */
+    // int signed = 0;
+    // for (SerVerSerieDaElab verSerieDaMarcare : verSerieDaMarcareList) {
+    // /* Recupero il file originale */
+    // byte[] fileVerSerieOriginale = helper.retrieveFileVerSerie(verSerieDaMarcare.getSerVerSerie(),
+    // CostantiDB.TipoFileVerSerie.IX_AIP_UNISINCRO.name());
+    // try {
+    // /*
+    // * Il metodo marcaFirma deve essere eseguito in modo atomico (in una nuova transazione REQUIRES_NEW).
+    // * Per fare cio' devo passare nuovamente dal container quindi utilizzo getBusinessObject per ottenere un
+    // * nuovo riferimento a SerieEjb
+    // */
+    // SerieEjb serieEjb1 = context.getBusinessObject(SerieEjb.class);
+    // BigDecimal idStrut = verSerieDaMarcare.getIdStrut();
+    // it.eng.parer.elencoVersamento.utils.ElencoEnums.TipoFirma tipoFirma = amministrazioneEjb
+    // .getTipoFirmaPerStruttura(idStrut);
+    // marcaTemporale = serieEjb1.marcaFirma(verSerieDaMarcare.getSerVerSerie().getIdVerSerie(),
+    // fileVerSerieOriginale, verSerieDaMarcareList.size(), idUtente, tipoFirma);
+    // } catch (Exception ex) {
+    // throw new ParerUserError("Errore nella marcatura di una versione serie: marcate " + signed + " su "
+    // + verSerieDaMarcareList.size());
+    // }
+    //
+    // if (marcaTemporale != null) {
+    // signed++;
+    // } else {
+    // /* Problema nell'acquisizione della marcatura temporale */
+    // throw new ParerUserError("Errore durante l'acquisizione della marca temporale");
+    // }
+    // }
+    // return signed;
+    // }
 
-            if (marcaTemporale != null) {
-                signed++;
-            } else {
-                /* Problema nell'acquisizione della marcatura temporale */
-                throw new ParerUserError("Errore durante l'acquisizione della marca temporale");
-            }
-        }
-        return signed;
-    }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public byte[] marcaFirma(long idVerSerie, byte[] fileVerSerie, int serieSize, long idUtente,
-            ElencoEnums.TipoFirma tipoFirma) throws Exception {
-        // TimeStampToken tsToken = null;
-        ParerTST tsToken = null;
-        byte[] marcaTemporale = null;
-        /*
-         * Devo recuperare la serie dal suo id e non utilizzare direttamente l'oggetto perche siamo in una nuova
-         * transazione e utilizzando l'oggetto passato in input non avrei il riferimento agli oggetti figli (la versione
-         * serie sarebbe detached e non avrei piu il collegamento al db).
-         */
-        SerVerSerieDaElab verSerieDaElab = helper.getSerVerSerieDaElabByIdVerSerie(idVerSerie);
-        List<AroUdAppartVerSerie> udAppartVerSerieList = helper.getLockAroUdAppartVerSerie(idVerSerie,
-                CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
-        /* Richiedo la marca per il file firmato */
-        tsToken = cryptoInvoker.requestTST(fileVerSerie);
-        marcaTemporale = tsToken.getEncoded();
-        /* Verifico l'avvenuta acquisizione della marcatura temporale */
-        if (marcaTemporale != null) {
-            logger.info("Marca temporale valida");
-
-            /* Urn marca */
-            String versioneSerie = verSerieDaElab.getSerVerSerie().getCdVerSerie();
-            final String sistema = configurationHelper
-                    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
-            CSVersatore csVersatore = new CSVersatore();
-            csVersatore.setAmbiente(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte()
-                    .getOrgAmbiente().getNmAmbiente());
-            csVersatore.setEnte(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte().getNmEnte());
-            csVersatore.setStruttura(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getNmStrut());
-            // sistema (new URN)
-            csVersatore.setSistemaConservazione(sistema);
-            String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
-            String cdVerXsdFile = verSerieDaElab.getSerVerSerie().getSerFileVerSeries().get(0).getCdVerXsdFile();
-
-            // MEV#30400
-
-            BackendStorage backendIndiciAip = objectStorageService.lookupBackendIndiciAipSerieUD(
-                    verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getIdStrut());
-
-            boolean putOnOs = true;
-            if (objectStorageService.isSerFileVerSerieUDOnOs(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
-                    CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())) {
-                String md5LocalContent = calculateMd5AsBase64(new String(marcaTemporale, StandardCharsets.UTF_8));
-                String eTagFromObjectMetadata = objectStorageService
-                        .getObjectMetadataIndiceAipSerieUD(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
-                                CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())
-                        .eTag();
-
-                if (md5LocalContent.equals(eTagFromObjectMetadata)) {
-                    putOnOs = false;
-                }
-            }
-
-            /* Registra nella tabella SER_FILE_VER_SERIE la marca */
-            SerFileVerSerie serFileVerSerie = helper.storeFileIntoSerFileVerSerie(idVerSerie,
-                    CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name(), marcaTemporale, cdVerXsdFile,
-                    verSerieDaElab.getIdStrut(), new Date(), putOnOs, tipoFirma);
-
-            // EVO#16492
-            /* Calcolo e persisto urn dell'indice AIP marcato della serie */
-            helper.storeSerUrnFileVerSerieMarca(serFileVerSerie, csVersatore, codiceSerie, versioneSerie);
-            // end EVO#16492
-
-            ObjectStorageResource indiceAipSuOS;
-
-            if (putOnOs) {
-                indiceAipSuOS = objectStorageService.createResourcesInIndiciAipSerieUD(serFileVerSerie,
-                        backendIndiciAip.getBackendName(), marcaTemporale,
-                        verSerieDaElab.getSerVerSerie().getIdVerSerie(), verSerieDaElab.getIdStrut(), csVersatore,
-                        codiceSerie, versioneSerie);
-                logger.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
-            }
-
-            // end MEV#30400
-
-            /* Registra il nuovo stato di versione della serie */
-            SerStatoVerSerie statoVerSerie = context.getBusinessObject(SerieEjb.class).createSerStatoVerSerie(
-                    ciasudHelper.getUltimoProgressivoSerStatoVerSerie(idVerSerie).add(BigDecimal.ONE),
-                    CostantiDB.StatoVersioneSerie.FIRMATA.name(), "Apposizione marca indice AIP serie", null, idUtente,
-                    new Date(), idVerSerie);
-
-            /* Aggiorna l'identificatore dello stato corrente della versione della serie */
-            helper.insertEntity(statoVerSerie, false);
-            verSerieDaElab.getSerVerSerie().setIdStatoVerSerieCor(new BigDecimal(statoVerSerie.getIdStatoVerSerie()));
-
-            /* Registra un nuovo stato della serie */
-            long idSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getIdSerie();
-            SerStatoSerie statoSerie = context.getBusinessObject(SerieEjb.class).createSerStatoSerie(
-                    ciasudHelper.getUltimoProgressivoSerStatoSerie(idSerie).add(BigDecimal.ONE),
-                    CostantiDB.StatoConservazioneSerie.IN_ARCHIVIO.name(), "Firma e marcatura indice AIP serie", null,
-                    idUtente, new Date(), idSerie);
-
-            /* Aggiorna l'identificatore dello stato corrente della serie */
-            helper.insertEntity(statoSerie, false);
-            verSerieDaElab.getSerVerSerie().getSerSerie()
-                    .setIdStatoSerieCor(new BigDecimal(statoSerie.getIdStatoSerie()));
-
-            /* Aggiorna la versione serie da elaborare in FIRMATA */
-            verSerieDaElab.setTiStatoVerSerie(CostantiDB.StatoVersioneSerie.FIRMATA.name());
-
-            /*
-             * Aggiorna tutte le unit doc appartenenti al contenuto di tipo EFFETTIVO della versione serie con stato =
-             * AIP_GENERATO, assegnando stato conservazione = IN_ARCHIVIO
-             */
-            SerContenutoVerSerie contenutoVerSerie = helper.getSerContenutoVerSerie(idVerSerie,
-                    CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
-
-            // MEV #31162
-            List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
-                    contenutoVerSerie.getIdContenutoVerSerie(),
-                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
-            // end MEV #31162
-
-            helper.updateStatoConservazioneAroUnitaDocInContenuto(contenutoVerSerie.getIdContenutoVerSerie(),
-                    CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
-                    CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
-
-            // MEV #31162
-            IamUser utente = helper.findById(IamUser.class, idUtente);
-            for (Long idUnitaDoc : idUnitaDocList) {
-                udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(), Constants.MARCA_FIRMA_SERIE,
-                        CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(), Constants.FUNZIONALITA_ONLINE);
-            }
-            // end MEV #31162
-
-        }
-        return marcaTemporale;
-    }
+    // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    // public byte[] marcaFirma(long idVerSerie, byte[] fileVerSerie, int serieSize, long idUtente,
+    // ElencoEnums.TipoFirma tipoFirma) throws Exception {
+    // // TimeStampToken tsToken = null;
+    // ParerTST tsToken = null;
+    // byte[] marcaTemporale = null;
+    // /*
+    // * Devo recuperare la serie dal suo id e non utilizzare direttamente l'oggetto perché siamo in una nuova
+    // * transazione e utilizzando l'oggetto passato in input non avrei il riferimento agli oggetti figli (la versione
+    // * serie sarebbe detached e non avrei piu il collegamento al db).
+    // */
+    // SerVerSerieDaElab verSerieDaElab = helper.getSerVerSerieDaElabByIdVerSerie(idVerSerie);
+    // List<AroUdAppartVerSerie> udAppartVerSerieList = helper.getLockAroUdAppartVerSerie(idVerSerie,
+    // CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
+    // /* Richiedo la marca per il file firmato */
+    // tsToken = cryptoInvoker.requestTST(fileVerSerie);
+    // marcaTemporale = tsToken.getEncoded();
+    // /* Verifico l'avvenuta acquisizione della marcatura temporale */
+    // if (marcaTemporale != null) {
+    // logger.info("Marca temporale valida");
+    //
+    // /* Urn marca */
+    // String versioneSerie = verSerieDaElab.getSerVerSerie().getCdVerSerie();
+    // final String sistema = configurationHelper
+    // .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_SISTEMACONSERVAZIONE);
+    // CSVersatore csVersatore = new CSVersatore();
+    // csVersatore.setAmbiente(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte()
+    // .getOrgAmbiente().getNmAmbiente());
+    // csVersatore.setEnte(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getOrgEnte().getNmEnte());
+    // csVersatore.setStruttura(verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getNmStrut());
+    // // sistema (new URN)
+    // csVersatore.setSistemaConservazione(sistema);
+    // String codiceSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getCdCompositoSerie();
+    // String cdVerXsdFile = verSerieDaElab.getSerVerSerie().getSerFileVerSeries().get(0).getCdVerXsdFile();
+    //
+    // // MEV#30400
+    //
+    // BackendStorage backendIndiciAip = objectStorageService.lookupBackendIndiciAipSerieUD(
+    // verSerieDaElab.getSerVerSerie().getSerSerie().getOrgStrut().getIdStrut());
+    //
+    // boolean putOnOs = true;
+    // if (objectStorageService.isSerFileVerSerieUDOnOs(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+    // CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())) {
+    // String md5LocalContent = calculateMd5AsBase64(new String(marcaTemporale, StandardCharsets.UTF_8));
+    // String eTagFromObjectMetadata = objectStorageService
+    // .getObjectMetadataIndiceAipSerieUD(verSerieDaElab.getSerVerSerie().getIdVerSerie(),
+    // CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name())
+    // .eTag();
+    //
+    // if (md5LocalContent.equals(eTagFromObjectMetadata)) {
+    // putOnOs = false;
+    // }
+    // }
+    //
+    // /* Registra nella tabella SER_FILE_VER_SERIE la marca */
+    // SerFileVerSerie serFileVerSerie = helper.storeFileIntoSerFileVerSerie(idVerSerie,
+    // CostantiDB.TipoFileVerSerie.MARCA_IX_AIP_UNISINCRO.name(), marcaTemporale, cdVerXsdFile,
+    // verSerieDaElab.getIdStrut(), new Date(), putOnOs, tipoFirma);
+    //
+    // // EVO#16492
+    // /* Calcolo e persisto urn dell'indice AIP marcato della serie */
+    // helper.storeSerUrnFileVerSerieMarca(serFileVerSerie, csVersatore, codiceSerie, versioneSerie);
+    // // end EVO#16492
+    //
+    // ObjectStorageResource indiceAipSuOS;
+    //
+    // if (putOnOs) {
+    // indiceAipSuOS = objectStorageService.createResourcesInIndiciAipSerieUD(serFileVerSerie,
+    // backendIndiciAip.getBackendName(), marcaTemporale,
+    // verSerieDaElab.getSerVerSerie().getIdVerSerie(), verSerieDaElab.getIdStrut(), csVersatore,
+    // codiceSerie, versioneSerie);
+    // logger.debug(LOG_SALVATAGGIO_OS, indiceAipSuOS.getBucket(), indiceAipSuOS.getKey());
+    // }
+    //
+    // // end MEV#30400
+    //
+    // /* Registra il nuovo stato di versione della serie */
+    // SerStatoVerSerie statoVerSerie = context.getBusinessObject(SerieEjb.class).createSerStatoVerSerie(
+    // ciasudHelper.getUltimoProgressivoSerStatoVerSerie(idVerSerie).add(BigDecimal.ONE),
+    // CostantiDB.StatoVersioneSerie.FIRMATA.name(), "Apposizione marca indice AIP serie", null, idUtente,
+    // new Date(), idVerSerie);
+    //
+    // /* Aggiorna l'identificatore dello stato corrente della versione della serie */
+    // helper.insertEntity(statoVerSerie, false);
+    // verSerieDaElab.getSerVerSerie().setIdStatoVerSerieCor(new BigDecimal(statoVerSerie.getIdStatoVerSerie()));
+    //
+    // /* Registra un nuovo stato della serie */
+    // long idSerie = verSerieDaElab.getSerVerSerie().getSerSerie().getIdSerie();
+    // SerStatoSerie statoSerie = context.getBusinessObject(SerieEjb.class).createSerStatoSerie(
+    // ciasudHelper.getUltimoProgressivoSerStatoSerie(idSerie).add(BigDecimal.ONE),
+    // CostantiDB.StatoConservazioneSerie.IN_ARCHIVIO.name(), "Firma e marcatura indice AIP serie", null,
+    // idUtente, new Date(), idSerie);
+    //
+    // /* Aggiorna l'identificatore dello stato corrente della serie */
+    // helper.insertEntity(statoSerie, false);
+    // verSerieDaElab.getSerVerSerie().getSerSerie()
+    // .setIdStatoSerieCor(new BigDecimal(statoSerie.getIdStatoSerie()));
+    //
+    // /* Aggiorna la versione serie da elaborare in FIRMATA */
+    // verSerieDaElab.setTiStatoVerSerie(CostantiDB.StatoVersioneSerie.FIRMATA.name());
+    //
+    // /*
+    // * Aggiorna tutte le unit doc appartenenti al contenuto di tipo EFFETTIVO della versione serie con stato =
+    // * AIP_GENERATO, assegnando stato conservazione = IN_ARCHIVIO
+    // */
+    // SerContenutoVerSerie contenutoVerSerie = helper.getSerContenutoVerSerie(idVerSerie,
+    // CostantiDB.TipoContenutoVerSerie.EFFETTIVO.name());
+    //
+    // // MEV #31162
+    // List<Long> idUnitaDocList = helper.getStatoConservazioneAroUnitaDocInContenuto(
+    // contenutoVerSerie.getIdContenutoVerSerie(),
+    // CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name());
+    // // end MEV #31162
+    //
+    // helper.updateStatoConservazioneAroUnitaDocInContenuto(contenutoVerSerie.getIdContenutoVerSerie(),
+    // CostantiDB.StatoConservazioneUnitaDoc.VERSAMENTO_IN_ARCHIVIO.name(),
+    // CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name());
+    //
+    // // MEV #31162
+    // IamUser utente = helper.findById(IamUser.class, idUtente);
+    // for (Long idUnitaDoc : idUnitaDocList) {
+    // udEjb.insertLogStatoConservUd(idUnitaDoc, utente.getNmUserid(), Constants.MARCA_FIRMA_SERIE,
+    // CostantiDB.StatoConservazioneUnitaDoc.IN_ARCHIVIO.name(), Constants.FUNZIONALITA_ONLINE);
+    // }
+    // // end MEV #31162
+    //
+    // }
+    // return marcaTemporale;
+    // }
 
     // MEV#30400
     private String calculateMd5AsBase64(String str) {

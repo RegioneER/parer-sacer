@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sacer-jboss</artifactId>
-    <version>10.8.1-SNAPSHOT</version>
+    <version>10.8.1</version>
     <packaging>pom</packaging>
     <name>sacer</name>
     <description>Progetto SACER</description>
@@ -24,12 +24,12 @@
         <parer-retry.version>2.2.0</parer-retry.version>
         <idp-jaas-rdbms.version>0.0.9</idp-jaas-rdbms.version>
 		<!-- hsm -->
-        <client-hsm.version>2.0.0</client-hsm.version>
+        <client-hsm.version>2.0.1</client-hsm.version>
 		<!-- third party lib -->
         <org.apache.wss4j.version>2.2.4</org.apache.wss4j.version>
         <blob-info.version>1.0.0</blob-info.version>
-        <software.amazon.awssdk.version>2.30.37</software.amazon.awssdk.version>  
-        <netty.version>4.1.108.Final</netty.version>
+        <software.amazon.awssdk.version>2.31.12</software.amazon.awssdk.version>
+        <netty.version>4.1.118.Final</netty.version>
         <xadisk.version>1.2.2.5</xadisk.version>
         <ojdbc7.version>12.1.0.1</ojdbc7.version>
         <naming-java.version>0.8</naming-java.version>
@@ -409,48 +409,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-			<!-- Netty AWS-->
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-common</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-buffer</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-transport</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-codec</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-handler</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-resolver</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-transport-native-unix-common</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>io.netty</groupId>
-				<artifactId>netty-transport-classes-epoll</artifactId>
-				<version>${netty.version}</version>
-			</dependency>
-				
+            <!-- Netty AWS-->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency> 
                 <groupId>joda-time</groupId> 
                 <artifactId>joda-time</artifactId> 

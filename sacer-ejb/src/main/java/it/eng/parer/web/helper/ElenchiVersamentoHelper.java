@@ -1160,8 +1160,7 @@ public class ElenchiVersamentoHelper extends GenericHelper {
     public List<ElvVLisElencoVersStato> getListaElenchiDaFirmare(List<BigDecimal> idElencoVersList, Long idUserIam) {
         List<ElvVLisElencoVersStato> listaElenchiVersamento = null;
         if (idElencoVersList != null && !idElencoVersList.isEmpty() && idUserIam != null) {
-            String queryStr = "SELECT u FROM ElvVLisElencoVersStato u " + "WHERE u.idElencoVers IN (:idElencoVersList) "
-                    + "AND u.idUserIam = :idUserIam";
+            String queryStr = "SELECT u FROM ElvVLisElencoVersStato u WHERE u.idElencoVers IN (:idElencoVersList) AND u.idUserIam = :idUserIam";
             Query query = getEntityManager().createQuery(queryStr);
             query.setParameter("idElencoVersList", idElencoVersList);
             query.setParameter("idUserIam", new BigDecimal(idUserIam));

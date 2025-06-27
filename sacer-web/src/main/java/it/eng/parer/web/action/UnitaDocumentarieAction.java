@@ -49,6 +49,7 @@ import java.util.zip.ZipOutputStream;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 
+import it.eng.parer.slite.gen.viewbean.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -122,34 +123,6 @@ import it.eng.parer.slite.gen.tablebean.DecVersioneWsTableBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerRowBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgSubStrutTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisArchivUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisCompDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisDatiSpecTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisElvVerTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisFascTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisUpdCompUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisUpdDocUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisUpdKoRisoltiTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisVolCorTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVLisVolNoValDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableDescriptor;
-import it.eng.parer.slite.gen.viewbean.AroVVisDocIamRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisDocIamTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisNotaUnitaDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisUnitaDocIamRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocTableBean;
-import it.eng.parer.slite.gen.viewbean.ElvVRicElencoVersTableBean;
-import it.eng.parer.slite.gen.viewbean.FasVVisFascicoloTableBean;
-import it.eng.parer.slite.gen.viewbean.SerVRicSerieUdTableBean;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
 import it.eng.parer.volume.utils.VolumeEnums;
@@ -1564,11 +1537,21 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
                 FasVVisFascicoloTableBean fascicoli2 = new FasVVisFascicoloTableBean();
                 fascicoli2.load(fascicoli);
                 fascicoliForm.getFascicoliList().setTable(fascicoli2);
-                redirectToAction(Application.Actions.FASCICOLI,
-                        "?operation=listNavigationOnClick&navigationEvent=" + ListAction.NE_DETTAGLIO_VIEW + "&table="
-                                + FascicoliForm.FascicoliList.NAME + "&riga="
-                                + getForm().getFascicoliAppartenenzaList().getTable().getCurrentRowIndex(),
-                        fascicoliForm);
+
+                if (!((AroVLisFascRowBean) getForm().getFascicoliAppartenenzaList().getTable().getCurrentRow())
+                        .getTiStatoConservazione()
+                        .equals(it.eng.parer.entity.constraint.FasFascicolo.TiStatoConservazione.ANNULLATO.name())) {
+                    redirectToAction(Application.Actions.FASCICOLI,
+                            "?operation=listNavigationOnClick&navigationEvent=" + ListAction.NE_DETTAGLIO_VIEW
+                                    + "&table=" + FascicoliForm.FascicoliList.NAME + "&riga="
+                                    + getForm().getFascicoliAppartenenzaList().getTable().getCurrentRowIndex(),
+                            fascicoliForm);
+                } else {
+                    getMessageBox().addError(
+                            "Operazione non possibile in quanto il fascicolo ha stato di conservazione = ANNULLATO");
+                    forwardToPublisher(getLastPublisher());
+                }
+
             } else if (getRequest().getParameter("table").equals(getForm().getUnitaDocumentarieList().getName())) {
                 // Lista unitÃ documentarie
                 getForm().getUnitaDocumentarieDettaglioTabs()

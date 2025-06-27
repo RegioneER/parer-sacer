@@ -48,6 +48,7 @@ import javax.ejb.EJBException;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -905,42 +906,54 @@ public class ObjectStorageService {
 
     // MEV#30397
     /**
-     * Salva il contenuto nel bucket degli Elenchi Indici AIP
+     * Salva il contenuto nel bucket degli Elenchi Indici AIP.
      *
      * @param urn
-     *            urn
+     *            Identificativo univoco normalizzato del file.
      * @param nomeBackend
-     *            backend configurato (per esempio OBJECT_STORAGE_PRIMARIO)
+     *            Nome del backend configurato (es. OBJECT_STORAGE_PRIMARIO).
      * @param contenuto
-     *            byte array da salvare
+     *            Contenuto del file da salvare come array di byte.
      * @param idFileElencoVers
-     *            id file elenco indice aip
+     *            ID del file elenco indice AIP.
      * @param idStrut
-     *            id struttura
+     *            ID della struttura versante.
+     * @param tipoFirma
+     *            Tipo di firma associata al file (es. digitale o marcatura temporale).
      *
-     * @return risorsa su OS che identifica il contenuto caricato
+     * @return Risorsa su Object Storage che identifica il contenuto caricato.
+     *
      */
     public ObjectStorageResource createResourcesInElenchiIndiciAip(final String urn, String nomeBackend,
-            byte[] contenuto, long idFileElencoVers, BigDecimal idStrut) {
+            byte[] contenuto, long idFileElencoVers, BigDecimal idStrut, ElencoEnums.TipoFirma tipoFirma) {
         Path tempFile = null;
         try {
             ObjectStorageBackend configuration = salvataggioBackendHelper.getObjectStorageConfiguration(nomeBackend,
                     WRITE_ELV_IX_AIP);
-
             // generate std tag
             Set<Tag> tags = new HashSet<>();
-
             // create key
-            // MAC #37222
+            // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip
+            // UD
             String estensione = "";
-            String suffisso = "";
-            if (urn.toUpperCase().contains("MARCA")) {
-                estensione = ".tsr";
-                suffisso = "IndiceMarca";
-            } else {
+            switch (tipoFirma) {
+            case XADES:
+                estensione = ".xml";
+                break;
+            case CADES:
                 estensione = ".xml.p7m";
-                suffisso = "Indice";
+                break;
+            default:
+                estensione = "";
+                log.warn("Estensione mancante nel file da salvare sull'ObjectStorage!");
             }
+            // MAC #37222
+            String suffisso = "Indice";
+            // if (urn.toUpperCase().contains("MARCA")) {
+            // suffisso = "IndiceMarca";
+            // } else {
+            // suffisso = "Indice";
+            // }
             String urnRielaborato = salvataggioBackendHelper.generateKeyElencoIndiceAip(idFileElencoVers, suffisso);
             final String destKey = createRandomKey(urnRielaborato) + estensione;
 
@@ -1639,18 +1652,20 @@ public class ObjectStorageService {
             Files.write(tempFile, blob, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
 
             // put on O.S.
-            ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(
-                    new String(blob, StandardCharsets.UTF_8), destKeyNewFormat, configuration, Optional.empty(),
-                    Optional.of(tags), Optional.of(calculateFileCRC32CBase64(tempFile)));
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(blob)) {
+                ObjectStorageResource savedFile = salvataggioBackendHelper.putObject(bais, blob.length,
+                        destKeyNewFormat, configuration, Optional.empty(), Optional.of(tags),
+                        Optional.of(calculateFileCRC32CBase64(tempFile)));
 
-            log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
-            // link
-            if (!salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
-                    serFileVerSerie.getTiFileVerSerie())) {
-                salvataggioBackendHelper.saveObjectStorageLinkIndiceAipSerieUd(savedFile, nomeBackend, idVerSerie,
-                        idStrut, serFileVerSerie.getTiFileVerSerie());
+                log.debug("Salvato file {}/{}", savedFile.getBucket(), savedFile.getKey());
+                // link
+                if (!salvataggioBackendHelper.existIndiceAipSerieUDObjectStorage(idVerSerie,
+                        serFileVerSerie.getTiFileVerSerie())) {
+                    salvataggioBackendHelper.saveObjectStorageLinkIndiceAipSerieUd(savedFile, nomeBackend, idVerSerie,
+                            idStrut, serFileVerSerie.getTiFileVerSerie());
+                }
+                return savedFile;
             }
-            return savedFile;
         } catch (ObjectStorageException | IOException ex) {
             throw new EJBException(ex);
         } finally {

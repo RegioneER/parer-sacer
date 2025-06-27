@@ -4488,9 +4488,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
         /* Rendo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaSerieDaFirmareButtonList().setEditMode();
         // Se non ci sono serie in stato FIRMATA_NO_MARCA, nascondo il bottone per "marcare"
-        if (!serieEjb.existsFirmataNoMarca(null)) {
-            getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
-        }
+        // if (!serieEjb.existsFirmataNoMarca(null)) {
+        // getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
+        // }
 
         // Check if some signature session is active
         Future<Boolean> futureFirma = (Future<Boolean>) getSession().getAttribute(Signature.FUTURE_ATTR_SERIE);
@@ -4679,9 +4679,9 @@ public class SerieUDAction extends SerieUDAbstractAction {
         /* Rengo visibili i bottoni delle operazioni sulla lista che mi interessano */
         getForm().getListaSerieDaFirmareButtonList().setEditMode();
         // Se non ci sono serie in stato FIRMATA_NO_MARCA, nascondo il bottone per "marcare"
-        if (!serieEjb.existsFirmataNoMarca(null)) {
-            getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
-        }
+        // if (!serieEjb.existsFirmataNoMarca(null)) {
+        // getForm().getListaSerieDaFirmareButtonList().getMarcaturaIndiciAIPSerieButton().setViewMode();
+        // }
 
         /* Inizializzo la lista delle serie selezionate */
         getForm().getSerieSelezionateList().setTable(new BaseTable());
@@ -4711,23 +4711,23 @@ public class SerieUDAction extends SerieUDAbstractAction {
         forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
     }
 
-    @Override
-    public void marcaturaIndiciAIPSerieButton() throws EMFError {
-        long idUtente = SessionManager.getUser(getSession()).getIdUtente();
-        try {
-            int marcati = serieEjb.marcaturaIndici(idUtente);
-            if (marcati > 0) {
-                getMessageBox().addMessage(new Message(MessageLevel.INF,
-                        "Marcatura eseguita correttamente: marcati tutti i " + marcati + " indici AIP versione serie"));
-                getMessageBox().setViewMode(ViewMode.plain);
-            }
-        } catch (ParerUserError ex) {
-            /* Se non ho marcato tutti gli indici mostro un warning */
-            getMessageBox().addMessage(new Message(MessageLevel.WAR, ex.getDescription()));
-            getMessageBox().setViewMode(ViewMode.plain);
-        }
-        forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
-    }
+    // @Override
+    // public void marcaturaIndiciAIPSerieButton() throws EMFError {
+    // long idUtente = SessionManager.getUser(getSession()).getIdUtente();
+    // try {
+    // int marcati = serieEjb.marcaturaIndici(idUtente);
+    // if (marcati > 0) {
+    // getMessageBox().addMessage(new Message(MessageLevel.INF,
+    // "Marcatura eseguita correttamente: marcati tutti i " + marcati + " indici AIP versione serie"));
+    // getMessageBox().setViewMode(ViewMode.plain);
+    // }
+    // } catch (ParerUserError ex) {
+    // /* Se non ho marcato tutti gli indici mostro un warning */
+    // getMessageBox().addMessage(new Message(MessageLevel.WAR, ex.getDescription()));
+    // getMessageBox().setViewMode(ViewMode.plain);
+    // }
+    // forwardToPublisher(Application.Publisher.LISTA_SERIE_DA_FIRMARE_SELECT);
+    // }
 
     @Override
     public void tabInfoPrincipaliVolumeOnClick() throws EMFError {

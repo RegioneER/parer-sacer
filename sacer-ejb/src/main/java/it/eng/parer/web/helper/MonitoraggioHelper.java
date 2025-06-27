@@ -4465,40 +4465,31 @@ public class MonitoraggioHelper implements Serializable {
         /*
          * Query per confronto totali tra MON_CONTA_UD_DOC_COMP e MON_CONTA_BY_STATO_CONSERV_NEW
          */
-        String confrontoConteggiNativeQuery = "SELECT id_strut, amb.nm_ambiente, "
-                + "ente.nm_ente, tmp.nm_strut, tmp.ni_comp_vers, tmp.ni_comp_aip_generato, "
+        String confrontoConteggiNativeQuery = "SELECT tmp.id_strut, tmp.nm_ambiente, "
+                + "tmp.nm_ente, tmp.nm_strut, tmp.ni_comp_vers, tmp.ni_comp_aip_generato, "
                 + "tmp.ni_comp_aip_in_aggiorn, tmp.ni_comp_presa_in_carico, tmp.ni_comp_in_volume, tmp.ni_comp_annul, "
                 + "(tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
                 + "+ tmp.ni_comp_presa_in_carico + tmp.ni_comp_in_volume + tmp.ni_comp_annul)) delta_versati_gestiti "
-                + "FROM (SELECT id_strut, nm_strut, ";
+                + "FROM ";
 
-        String parte2 = " (SELECT nvl(sum (ni_comp_vers + ni_comp_agg), 0) "
-                + "FROM sacer.MON_V_RIC_CONTA_UD_DOC_COMP conta_ud "
-                + "WHERE conta_ud.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') "
-                + " AND conta_ud.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') AND conta_ud.id_strut = strut.id_strut "
-                + ") ni_comp_vers, " + "     (select nvl(sum(ni_comp_aip_generato), 0)"
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_aip_generato, " + "      "
-                + "     (select nvl(sum(ni_comp_aip_in_aggiorn), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_aip_in_aggiorn, " + "      "
-                + "     (select nvl(sum(ni_comp_presa_in_carico), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_presa_in_carico, " + "      "
-                + "     (select nvl(sum(ni_comp_in_volume), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_in_volume, " + "      "
-                + "     (select nvl(sum(ni_comp_annul), 0) "
-                + "      from sacer.MON_V_RIC_CONTA_BY_STATO_CONSERV_NEW conta_stato "
-                + "      where conta_stato.dt_rif_conta >= TO_DATE(?1, 'dd-mm-yyyy') AND conta_stato.dt_rif_conta <= TO_DATE(?2, 'dd-mm-yyyy') "
-                + "      and conta_stato.id_strut = strut.id_strut " + "      ) ni_comp_annul "
-                + "    from org_strut strut " + " join sacer.org_ente entesub " + "on(entesub.id_ente = strut.id_ente) "
-                + "    join sacer.org_ambiente ambientesub " + "on(ambientesub.id_ambiente = entesub.id_ambiente) "
-                + "    where strut.fl_template = '0' ";
+        String parte2 = "(SELECT ambientesub.id_ambiente, ambientesub.nm_ambiente, entesub.id_ente, entesub.nm_ente, strut.id_Strut, strut.nm_strut, "
+                + "NVL (SUM (ni_comp_aip_generato), 0) ni_comp_aip_generato, "
+                + "NVL (SUM (ni_comp_aip_in_aggiorn), 0) ni_comp_aip_in_aggiorn, "
+                + "NVL (SUM (ni_comp_presa_in_carico), 0) ni_comp_presa_in_carico, "
+                + "NVL (SUM (ni_comp_in_volume), 0) ni_comp_in_volume, "
+                + "NVL (SUM (ni_comp_annul), 0) ni_comp_annul, "
+                // interrogo MON_V_RIC_CONTA_UD_DOC_COMP per recuperare ni_comp_vers
+                + "(SELECT NVL (SUM (ni_comp_vers + ni_comp_agg), 0) "
+                + "FROM sacer.MON_v_ric_CONTA_UD_DOC_COMP conta_ud "
+                + "WHERE conta_ud.dt_rif_conta BETWEEN TO_DATE(?1, 'dd-mm-yyyy') AND TO_DATE(?2, 'dd-mm-yyyy') "
+                + "AND conta_ud.id_strut = strut.id_strut) ni_comp_vers "
+                //
+                + "FROM sacer.MON_v_ric_CONTA_BY_STATO_CONSERV_NEW conta_stato "
+                + "right JOIN sacer.org_strut strut ON (strut.ID_STRUT = conta_stato.ID_STRUT "
+                + "and conta_stato.dt_rif_conta BETWEEN TO_DATE(?1, 'dd-mm-yyyy') " + "AND TO_DATE(?2, 'dd-mm-yyyy') ) "
+                + "join sacer.org_ente entesub " + "on(entesub.id_ente = strut.id_ente) "
+                + "join sacer.org_ambiente ambientesub " + "on(ambientesub.id_ambiente = entesub.id_ambiente) "
+                + "where strut.fl_template = '0' ";
 
         int i = 3;
         int k = 3;
@@ -4514,7 +4505,7 @@ public class MonitoraggioHelper implements Serializable {
             parte2 = parte2 + lista;
         }
 
-        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " entesub.id_ente, " + parte2;
+        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + parte2;
 
         if (filtri.getId_ente().parse() != null) {
             confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " AND entesub.id_ente = ?" + i++;
@@ -4523,24 +4514,23 @@ public class MonitoraggioHelper implements Serializable {
             confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " AND strut.id_strut = ?" + i++;
         }
 
-        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery + " ) tmp " + "join sacer.org_ente ente "
-                + "    on (ente.id_ente = tmp.id_ente) " + "join sacer.org_ambiente amb "
-                + "    on (amb.id_ambiente = ente.id_ambiente) ";
+        confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
+                + " GROUP BY ambientesub.id_ambiente, ambientesub.nm_ambiente, entesub.id_ente, entesub.NM_ENTE, strut.id_Strut, strut.NM_STRUT) tmp ";
 
         if (filtri.getDifferenza_zero().parse() != null) {
             if (filtri.getDifferenza_zero().parse().equals("1")) {
                 confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
-                        + " WHERE  (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
+                        + " where  (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
                         + "+ tmp.ni_comp_presa_in_carico + tmp.ni_comp_in_volume + tmp.ni_comp_annul)) != 0 ";
             } else {
                 confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
-                        + " WHERE (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
+                        + " where (tmp.ni_comp_vers - (tmp.ni_comp_aip_generato + tmp.ni_comp_aip_in_aggiorn "
                         + "+ tmp.ni_comp_presa_in_carico + tmp.ni_comp_in_volume + tmp.ni_comp_annul)) = 0 ";
             }
         }
 
         confrontoConteggiNativeQuery = confrontoConteggiNativeQuery
-                + "order by  amb.nm_ambiente, ente.nm_ente, tmp.nm_strut ";
+                + "order by tmp.nm_ambiente, tmp.nm_ente, tmp.nm_strut ";
 
         Query query = entityManager.createNativeQuery(confrontoConteggiNativeQuery);
 

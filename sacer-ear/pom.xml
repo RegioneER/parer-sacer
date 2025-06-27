@@ -4,9 +4,9 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.8.1-SNAPSHOT</version>
+        <version>10.8.1</version>
     </parent>
-
+  
     <artifactId>sacer-jboss-ear</artifactId>    
     <packaging>ear</packaging>
     <name>sacer-ear</name>
