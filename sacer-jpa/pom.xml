@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.8.1</version>
+        <version>10.8.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>sacer-jboss-jpa</artifactId>
