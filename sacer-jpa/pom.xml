@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.9.1-SNAPSHOT</version>
+        <version>10.9.1</version>
     </parent>
 
     <artifactId>sacer-jboss-jpa</artifactId>
@@ -84,6 +84,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <!-- jboss-jaxb-api_2.3_spec -->
+		<dependency>
+			<groupId>org.jboss.spec.javax.xml.bind</groupId>
+			<artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>   
     </dependencies>
     <build>
         <resources>

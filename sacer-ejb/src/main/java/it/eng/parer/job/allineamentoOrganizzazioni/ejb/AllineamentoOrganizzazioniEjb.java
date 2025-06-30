@@ -80,7 +80,7 @@ public class AllineamentoOrganizzazioniEjb {
 
     /**
      * Metodo chiamato per la duplicazione su IAM delle organizzazioni inserite, modificate o cancellate su SACER La
-     * lista delle organizzazioni è recuperata dalla tabella IAM_ORGANIZ_DA_REPLIC
+     * lista delle organizzazioni Ã¨ recuperata dalla tabella IAM_ORGANIZ_DA_REPLIC
      *
      */
     public void allineamentoOrganizzazioni() {
@@ -108,7 +108,7 @@ public class AllineamentoOrganizzazioniEjb {
             arrivoDaOnLine = true;
         }
 
-        /* Mi tengo una variabile che mi dice se la replica è andata o meno a buon fine */
+        /* Mi tengo una variabile che mi dice se la replica Ã¨ andata o meno a buon fine */
         boolean replicaOK = true;
 
         log.info("Replica Organizzazioni SACER - ottenute {} organizzazioni da replicare", organizList.size());
@@ -120,7 +120,7 @@ public class AllineamentoOrganizzazioniEjb {
                 ReplicaOrganizzazioneRispostaAbstract resp = new ReplicaOrganizzazioneRispostaAbstract() {
                 };
 
-                /* Se l'organizzazione è presente */
+                /* Se l'organizzazione Ã¨ presente */
                 ReplicaOrganizzazione client = IAMSoapClients.replicaOrganizzazioneClient(pa.getNmUserid(),
                         pa.getCdPsw(), pa.getUrlReplicaOrganizzazioni());
                 // MEV #23814, configurazione timeout
@@ -145,7 +145,7 @@ public class AllineamentoOrganizzazioniEjb {
                                 dtFineValGreg = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
                             }
 
-                            /* Se tipo operazione è INSERIMENTO */
+                            /* Se tipo operazione Ã¨ INSERIMENTO */
                             if (organizDaReplic.getTiOperReplic().equals(ApplEnum.TiOperReplic.INS.name())) {
                                 log.info("Replica Organizzazioni SACER - Chiamo il ws di Inserimento Organizzazione");
                                 resp = client.inserimentoOrganizzazione(pa.getNmApplic(), pa.getIdOrganizApplic(),
@@ -153,7 +153,7 @@ public class AllineamentoOrganizzazioniEjb {
                                         pa.getIdOrganizApplicPadre(), pa.getNmTipoOrganizPadre(), pa.getNmOrganiz(),
                                         pa.getDsOrganiz(), pa.getIdEnteConvenz(), dtIniValGreg, dtFineValGreg,
                                         pa.getListaTipiDato());
-                            } /* Se tipo operazione è MODIFICA */ else {
+                            } /* Se tipo operazione Ã¨ MODIFICA */ else {
                                 log.info("Replica Organizzazioni SACER - Chiamo il ws di Modifica Organizzazione");
                                 resp = client.modificaOrganizzazione(pa.getNmApplic(), pa.getIdOrganizApplic(),
                                         pa.getNmTipoOrganiz(), pa.getIdEnteConserv(), pa.getIdEnteGestore(),
@@ -164,7 +164,7 @@ public class AllineamentoOrganizzazioniEjb {
                         } else {
                             resp.setCdEsito(it.eng.integriam.client.ws.reporg.EsitoServizio.OK);
                         }
-                    } /* Se tipo operazione è CANCELLAZIONE */ else {
+                    } /* Se tipo operazione Ã¨ CANCELLAZIONE */ else {
                         log.info("Replica Organizzazioni SACER - Chiamo il ws di Cancellazione Organizzazione");
                         resp = client.cancellaOrganizzazione(pa.getNmApplic(), pa.getIdOrganizApplic(),
                                 pa.getNmTipoOrganiz());
@@ -190,7 +190,7 @@ public class AllineamentoOrganizzazioniEjb {
                     }
 
                 } else {
-                    /* Se il client è null, ci sono stati problemi */
+                    /* Se il client Ã¨ null, ci sono stati problemi */
                     aoHelper.writeEsitoIamOrganizDaReplic(organizDaReplic.getIdOrganizDaReplic(),
                             CostantiReplicaOrg.EsitoServizio.KO, CostantiReplicaOrg.SERVIZI_ORG_001,
                             "Errore nella creazione del client per la chiamata al WS di ReplicaOrganizzazioni");
@@ -268,13 +268,13 @@ public class AllineamentoOrganizzazioniEjb {
 
         /* Ricavo il timeout per la chiamata */
         String timeoutString = coHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_REPLICA_ORG);
-        // imposto il valore di timeout solo se è configurato, altrimenti utillizo il default
+        // imposto il valore di timeout solo se Ã¨ configurato, altrimenti utillizo il default
         if (timeoutString != null && timeoutString.matches("^[0-9]+$")) {
             int timeoutReplicaOrganizzazione = Integer.parseInt(timeoutString);
             parametriInputOrganizzazioni.setTimeout(timeoutReplicaOrganizzazione);
         } else {
             log.warn(
-                    "Il valore personalizzato {} per il parametro TIMEOUT_REPLICA_ORG non è corretto. Utilizzo il valore predefinito",
+                    "Il valore personalizzato {} per il parametro TIMEOUT_REPLICA_ORG non Ã¨ corretto. Utilizzo il valore predefinito",
                     timeoutString);
         }
 
@@ -294,7 +294,7 @@ public class AllineamentoOrganizzazioniEjb {
                 || organizDaReplic.getTiOperReplic().equals(ApplEnum.TiOperReplic.MOD.name())) {
             ListaTipiDato lista = new ListaTipiDato();
             /*
-             * Devo recuperare l'organizzazione da passare al WS, se non c'è (esempio è stata cancellata da SACER) non
+             * Devo recuperare l'organizzazione da passare al WS, se non c'Ã¨ (esempio Ã¨ stata cancellata da SACER) non
              * posso passare nulla
              */
             switch (organizDaReplic.getNmTipoOrganiz()) {
@@ -353,7 +353,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecTipoUnitaDoc tipoUD : listaTipiUD) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.TIPO_UNITA_DOC.name());
-                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(tipoUD.getIdTipoUnitaDoc()));
+                        tipoDato.setIdTipoDatoApplic(tipoUD.getIdTipoUnitaDoc());
                         tipoDato.setNmTipoDato(tipoUD.getNmTipoUnitaDoc());
                         tipoDato.setDsTipoDato(tipoUD.getDsTipoUnitaDoc());
                         lista.getTipoDato().add(tipoDato);
@@ -364,7 +364,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecRegistroUnitaDoc registro : listaRegistri) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.REGISTRO.name());
-                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(registro.getIdRegistroUnitaDoc()));
+                        tipoDato.setIdTipoDatoApplic(registro.getIdRegistroUnitaDoc());
                         tipoDato.setNmTipoDato(registro.getCdRegistroUnitaDoc());
                         tipoDato.setDsTipoDato(registro.getDsRegistroUnitaDoc());
                         lista.getTipoDato().add(tipoDato);
@@ -375,7 +375,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (OrgSubStrut sottoStruttura : listaSottoStrutture) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.SUB_STRUTTURA.name());
-                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(sottoStruttura.getIdSubStrut()));
+                        tipoDato.setIdTipoDatoApplic(sottoStruttura.getIdSubStrut());
                         tipoDato.setNmTipoDato(sottoStruttura.getNmSubStrut());
                         tipoDato.setDsTipoDato(sottoStruttura.getDsSubStrut());
                         lista.getTipoDato().add(tipoDato);
@@ -386,7 +386,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecTipoDoc tipoDoc : listaTipiDoc) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.TIPO_DOC.name());
-                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(tipoDoc.getIdTipoDoc()));
+                        tipoDato.setIdTipoDatoApplic(tipoDoc.getIdTipoDoc());
                         tipoDato.setNmTipoDato(tipoDoc.getNmTipoDoc());
                         tipoDato.setDsTipoDato(tipoDoc.getDsTipoDoc());
                         lista.getTipoDato().add(tipoDato);
@@ -397,7 +397,7 @@ public class AllineamentoOrganizzazioniEjb {
                     for (DecTipoFascicolo tipoFascicolo : listaTipiFascicolo) {
                         TipoDato tipoDato = new TipoDato();
                         tipoDato.setNmClasseTipoDato(Constants.TipoDato.TIPO_FASCICOLO.name());
-                        tipoDato.setIdTipoDatoApplic(Math.toIntExact(tipoFascicolo.getIdTipoFascicolo()));
+                        tipoDato.setIdTipoDatoApplic(tipoFascicolo.getIdTipoFascicolo());
                         tipoDato.setNmTipoDato(tipoFascicolo.getNmTipoFascicolo());
                         tipoDato.setDsTipoDato(tipoFascicolo.getDsTipoFascicolo());
                         lista.getTipoDato().add(tipoDato);

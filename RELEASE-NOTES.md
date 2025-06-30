@@ -1,3 +1,9 @@
+## 10.9.1 (24-06-2025)
+
+### Bugfix: 2
+- [#38323](https://parermine.regione.emilia-romagna.it/issues/38323) Correzione join di allineamento organizzazioni
+- [#38296](https://parermine.regione.emilia-romagna.it/issues/38296) Correzione dell'errore critico quando di effettuano ricerche sui criteri di raggruppamento
+
 ## 10.9.0 (11-06-2025)
 
 ### Bugfix: 4
@@ -17,3 +23,4 @@
 - [#34195](https://parermine.regione.emilia-romagna.it/issues/34195) Funzione massiva per riportare indietro lo stato di un elenco per consentire la firma dell'AIP
 - [#34194](https://parermine.regione.emilia-romagna.it/issues/34194) Modifiche alla pagina Ricerca elenchi di versamento unità documentarie per individuare gli elenchi da rimandare indietro per la firma dell'AIP
 - [#34000](https://parermine.regione.emilia-romagna.it/issues/34000) Migrazione alle nuove dipendenze / pattern legate a xecers, xalan, jaxb, ecc
+
