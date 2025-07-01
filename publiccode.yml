@@ -2,7 +2,7 @@
 # metadata file that makes public software easily discoverable.
 # More info at https://github.com/italia/publiccode.yml
 
-publiccodeYmlVersion: '0.3'
+publiccodeYmlVersion: '0.4'
 categories:
   - data-collection
   - data-visualization
@@ -17,7 +17,6 @@ description:
   it:
     features:
       - archiviazione documentale
-    genericName: Sacer
     longDescription: |
       SACER (Sistema per l'archivio di conservazione dell'Emilia-Romagna) è il modulo centrale del Sistema di conservazione di Parer e gestisce l'intero processo di conservazione 
       di Unità documentarie, Fascicoli e Serie, a partire dall'acquisizione dei Pacchetti di versamento (SIP)  
@@ -61,7 +60,7 @@ maintenance:
       name: Cristiano Casagni
   contractors:
     - name: ' Engineering Ingegneria Informatica S.p.A.'
-      until: '2024-06-30'
+      until: '2026-12-23'
   type: contract
 name: Parer - Sacer
 platforms:
