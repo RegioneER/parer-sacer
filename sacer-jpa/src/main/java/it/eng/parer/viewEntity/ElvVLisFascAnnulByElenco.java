@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -46,39 +42,39 @@ public class ElvVLisFascAnnulByElenco implements Serializable {
 
     @Column(name = "DS_URN_FASCICOLO_ANNUL")
     public String getDsUrnFascicoloAnnul() {
-        return this.dsUrnFascicoloAnnul;
+	return this.dsUrnFascicoloAnnul;
     }
 
     public void setDsUrnFascicoloAnnul(String dsUrnFascicoloAnnul) {
-        this.dsUrnFascicoloAnnul = dsUrnFascicoloAnnul;
+	this.dsUrnFascicoloAnnul = dsUrnFascicoloAnnul;
     }
 
     @Column(name = "ID_ELENCO_VERS_FASC")
     public BigDecimal getIdElencoVersFasc() {
-        return this.idElencoVersFasc;
+	return this.idElencoVersFasc;
     }
 
     public void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
-        this.idElencoVersFasc = idElencoVersFasc;
+	this.idElencoVersFasc = idElencoVersFasc;
     }
 
     @Id
     @Column(name = "ID_FASCICOLO")
     public BigDecimal getIdFascicolo() {
-        return this.idFascicolo;
+	return this.idFascicolo;
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-        this.idFascicolo = idFascicolo;
+	this.idFascicolo = idFascicolo;
     }
 
     @Column(name = "ID_RICH_ANNUL_VERS")
     public BigDecimal getIdRichAnnulVers() {
-        return this.idRichAnnulVers;
+	return this.idRichAnnulVers;
     }
 
     public void setIdRichAnnulVers(BigDecimal idRichAnnulVers) {
-        this.idRichAnnulVers = idRichAnnulVers;
+	this.idRichAnnulVers = idRichAnnulVers;
     }
 
 }

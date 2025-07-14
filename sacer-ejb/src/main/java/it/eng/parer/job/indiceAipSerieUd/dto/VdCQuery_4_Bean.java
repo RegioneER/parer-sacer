@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.job.indiceAipSerieUd.dto;
@@ -29,35 +25,35 @@ public class VdCQuery_4_Bean {
     private String nmTipoUnitaDoc;
 
     public Long getIdVerSerieCor() {
-        return idVerSerieCor;
+	return idVerSerieCor;
     }
 
     public void setIdVerSerieCor(Long idVerSerieCor) {
-        this.idVerSerieCor = idVerSerieCor;
+	this.idVerSerieCor = idVerSerieCor;
     }
 
     public Long getIdTipoSerieUd() {
-        return idTipoSerieUd;
+	return idTipoSerieUd;
     }
 
     public void setIdTipoSerieUd(Long idTipoSerieUd) {
-        this.idTipoSerieUd = idTipoSerieUd;
+	this.idTipoSerieUd = idTipoSerieUd;
     }
 
     public String getCdRegistroUnitaDoc() {
-        return cdRegistroUnitaDoc;
+	return cdRegistroUnitaDoc;
     }
 
     public void setCdRegistroUnitaDoc(String cdRegistroUnitaDoc) {
-        this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
+	this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
     }
 
     public String getNmTipoUnitaDoc() {
-        return nmTipoUnitaDoc;
+	return nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
 }

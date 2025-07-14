@@ -1,23 +1,18 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.ws.recupero.dto;
 
@@ -70,208 +65,208 @@ public class RecuperoExt implements IRecuperoExt {
 
     @Override
     public String getDatiXml() {
-        return datiXml;
+	return datiXml;
     }
 
     @Override
     public void setDatiXml(String datiXml) {
-        this.datiXml = datiXml;
+	this.datiXml = datiXml;
     }
 
     @Override
     public Recupero getStrutturaRecupero() {
-        return strutturaRecupero;
+	return strutturaRecupero;
     }
 
     @Override
     public void setStrutturaRecupero(Recupero strutturaRecupero) {
-        this.strutturaRecupero = strutturaRecupero;
+	this.strutturaRecupero = strutturaRecupero;
     }
 
     public ParametriRecupero getParametriRecupero() {
-        return parametriRecupero;
+	return parametriRecupero;
     }
 
     public void setParametriRecupero(ParametriRecupero parametriRecupero) {
-        this.parametriRecupero = parametriRecupero;
+	this.parametriRecupero = parametriRecupero;
     }
 
     public ParametriParser getParametriParser() {
-        return parametriParser;
+	return parametriParser;
     }
 
     public void setParametriParser(ParametriParser parametriParser) {
-        this.parametriParser = parametriParser;
+	this.parametriParser = parametriParser;
     }
 
     public DatiSessioneRecupero getDatiSessioneRecupero() {
-        return datiSessioneRecupero;
+	return datiSessioneRecupero;
     }
 
     public void setDatiSessioneRecupero(DatiSessioneRecupero datiSessioneRecupero) {
-        this.datiSessioneRecupero = datiSessioneRecupero;
+	this.datiSessioneRecupero = datiSessioneRecupero;
     }
 
     @Override
     public IWSDesc getDescrizione() {
-        return descrizione;
+	return descrizione;
     }
 
     @Override
     public void setDescrizione(IWSDesc descrizione) {
-        this.descrizione = descrizione;
+	this.descrizione = descrizione;
     }
 
     @Override
     public String getLoginName() {
-        return loginName;
+	return loginName;
     }
 
     @Override
     public void setLoginName(String loginName) {
-        this.loginName = loginName;
+	this.loginName = loginName;
     }
 
     @Override
     public String getVersioneWsChiamata() {
-        return versioneWsChiamata;
+	return versioneWsChiamata;
     }
 
     @Override
     public void setVersioneWsChiamata(String versioneWsChiamata) {
-        this.versioneWsChiamata = versioneWsChiamata;
+	this.versioneWsChiamata = versioneWsChiamata;
     }
 
     public long getIdStruttura() {
-        return idStruttura;
+	return idStruttura;
     }
 
     public void setIdStruttura(long idStruttura) {
-        this.idStruttura = idStruttura;
+	this.idStruttura = idStruttura;
     }
 
     public TipoSalvataggioFile getTipoSalvataggioFile() {
-        return tipoSalvataggioFile;
+	return tipoSalvataggioFile;
     }
 
     public void setTipoSalvataggioFile(TipoSalvataggioFile tipoSalvataggioFile) {
-        this.tipoSalvataggioFile = tipoSalvataggioFile;
+	this.tipoSalvataggioFile = tipoSalvataggioFile;
     }
 
     //
     @Override
     public RispostaControlli checkVersioneRequest(String versione) {
-        RispostaControlli rispostaControlli;
-        rispostaControlli = new RispostaControlli();
-        rispostaControlli.setrBoolean(true);
+	RispostaControlli rispostaControlli;
+	rispostaControlli = new RispostaControlli();
+	rispostaControlli.setrBoolean(true);
 
-        versioneCalc = versione;
-        modificatoriWS = EnumSet.noneOf(Costanti.ModificatoriWS.class);
-        if (versione.equals("1.3")) {
-            this.versioneCalc = "1.3";
-            this.modificatoriWS.add(ModificatoriWS.TAG_LOG_STATO_CONSERV_UD);
-            this.modificatoriWS.add(ModificatoriWS.TAG_REC_USR_DOC_COMP);
-        } else if (versione.equals("1.2")) {
-            this.versioneCalc = "1.2";
-            this.modificatoriWS.add(ModificatoriWS.TAG_REC_USR_DOC_COMP);
-        } else if (versione.equals("1.1")) {
-            this.versioneCalc = "1.1";
-        } else {
-            this.versioneCalc = "1.1";
-        }
+	versioneCalc = versione;
+	modificatoriWS = EnumSet.noneOf(Costanti.ModificatoriWS.class);
+	if (versione.equals("1.3")) {
+	    this.versioneCalc = "1.3";
+	    this.modificatoriWS.add(ModificatoriWS.TAG_LOG_STATO_CONSERV_UD);
+	    this.modificatoriWS.add(ModificatoriWS.TAG_REC_USR_DOC_COMP);
+	} else if (versione.equals("1.2")) {
+	    this.versioneCalc = "1.2";
+	    this.modificatoriWS.add(ModificatoriWS.TAG_REC_USR_DOC_COMP);
+	} else if (versione.equals("1.1")) {
+	    this.versioneCalc = "1.1";
+	} else {
+	    this.versioneCalc = "1.1";
+	}
 
-        return rispostaControlli;
+	return rispostaControlli;
     }
 
     @Override
     public EnumSet<ModificatoriWS> getModificatoriWSCalc() {
-        return this.modificatoriWS;
+	return this.modificatoriWS;
     }
 
     @Override
     public String getVersioneCalc() {
-        return this.versioneCalc;
+	return this.versioneCalc;
     }
 
     //
     public boolean isTpiAbilitato() {
-        return tpiAbilitato;
+	return tpiAbilitato;
     }
 
     public void setTpiAbilitato(boolean tpiAbilitato) {
-        this.tpiAbilitato = tpiAbilitato;
+	this.tpiAbilitato = tpiAbilitato;
     }
 
     public String getTpiRootTpi() {
-        return tpiRootTpi;
+	return tpiRootTpi;
     }
 
     public void setTpiRootTpi(String tpiRootTpi) {
-        this.tpiRootTpi = tpiRootTpi;
+	this.tpiRootTpi = tpiRootTpi;
     }
 
     public String getTpiRootTpiDaSacer() {
-        return tpiRootTpiDaSacer;
+	return tpiRootTpiDaSacer;
     }
 
     public void setTpiRootTpiDaSacer(String tpiRootTpiDaSacer) {
-        this.tpiRootTpiDaSacer = tpiRootTpiDaSacer;
+	this.tpiRootTpiDaSacer = tpiRootTpiDaSacer;
     }
 
     public String getTpiRootRecup() {
-        return tpiRootRecup;
+	return tpiRootRecup;
     }
 
     public void setTpiRootRecup(String tpiRootRecup) {
-        this.tpiRootRecup = tpiRootRecup;
+	this.tpiRootRecup = tpiRootRecup;
     }
 
     public String getTpiListaFile() {
-        return tpiListaFile;
+	return tpiListaFile;
     }
 
     public void setTpiListaFile(String tpiListaFile) {
-        this.tpiListaFile = tpiListaFile;
+	this.tpiListaFile = tpiListaFile;
     }
 
     public String getSubPathVersatoreArk() {
-        return subPathVersatoreArk;
+	return subPathVersatoreArk;
     }
 
     public void setSubPathVersatoreArk(String subPathVersatoreArk) {
-        this.subPathVersatoreArk = subPathVersatoreArk;
+	this.subPathVersatoreArk = subPathVersatoreArk;
     }
 
     public String getSubPathUnitaDocArk() {
-        return subPathUnitaDocArk;
+	return subPathUnitaDocArk;
     }
 
     public void setSubPathUnitaDocArk(String subPathUnitaDocArk) {
-        this.subPathUnitaDocArk = subPathUnitaDocArk;
+	this.subPathUnitaDocArk = subPathUnitaDocArk;
     }
 
     public String getFileLogRetrieve() {
-        return fileLogRetrieve;
+	return fileLogRetrieve;
     }
 
     public void setFileLogRetrieve(String fileLogRetrieve) {
-        this.fileLogRetrieve = fileLogRetrieve;
+	this.fileLogRetrieve = fileLogRetrieve;
     }
 
     public String getDipRootImg() {
-        return dipRootImg;
+	return dipRootImg;
     }
 
     public void setDipRootImg(String dipRootImg) {
-        this.dipRootImg = dipRootImg;
+	this.dipRootImg = dipRootImg;
     }
 
     public HashMap<String, String> getWsVersions() {
-        return wsVersions;
+	return wsVersions;
     }
 
     public void setWsVersions(HashMap<String, String> wsVersions) {
-        this.wsVersions = wsVersions;
+	this.wsVersions = wsVersions;
     }
 
 }

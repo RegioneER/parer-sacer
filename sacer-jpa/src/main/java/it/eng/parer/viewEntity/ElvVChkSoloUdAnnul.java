@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -46,39 +42,39 @@ public class ElvVChkSoloUdAnnul implements Serializable {
 
     @Column(name = "FL_SOLO_DOC_ANNUL", columnDefinition = "char(1)")
     public String getFlSoloDocAnnul() {
-        return this.flSoloDocAnnul;
+	return this.flSoloDocAnnul;
     }
 
     public void setFlSoloDocAnnul(String flSoloDocAnnul) {
-        this.flSoloDocAnnul = flSoloDocAnnul;
+	this.flSoloDocAnnul = flSoloDocAnnul;
     }
 
     @Column(name = "FL_SOLO_UD_ANNUL", columnDefinition = "char(1)")
     public String getFlSoloUdAnnul() {
-        return this.flSoloUdAnnul;
+	return this.flSoloUdAnnul;
     }
 
     public void setFlSoloUdAnnul(String flSoloUdAnnul) {
-        this.flSoloUdAnnul = flSoloUdAnnul;
+	this.flSoloUdAnnul = flSoloUdAnnul;
     }
 
     @Column(name = "FL_SOLO_UPD_UD_ANNUL", columnDefinition = "char(1)")
     public String getFlSoloUpdUdAnnul() {
-        return flSoloUpdUdAnnul;
+	return flSoloUpdUdAnnul;
     }
 
     public void setFlSoloUpdUdAnnul(String flSoloUpdUdAnnul) {
-        this.flSoloUpdUdAnnul = flSoloUpdUdAnnul;
+	this.flSoloUpdUdAnnul = flSoloUpdUdAnnul;
     }
 
     @Id
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-        return this.idElencoVers;
+	return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-        this.idElencoVers = idElencoVers;
+	this.idElencoVers = idElencoVers;
     }
 
 }

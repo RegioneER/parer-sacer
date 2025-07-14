@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ page import="it.eng.parer.slite.gen.form.StrutSerieForm" pageEncoding="UTF-8"%>
 <%@ include file="../../include.jsp"%>
 
@@ -125,7 +142,7 @@
                         <%--<slf:listNavBar  name="<%= StrutSerieForm.AttributiTipoDocList.NAME%>" />--%>
                     </slf:section>
                     <sl:newLine />
-                    <div class="livello1"><b><font color="#d3101c">Definizione del formato di output</font></b></div>
+                    <div class="livello1"><b style="color: #d3101c;">Definizione del formato di output</b></div>
                             <sl:newLine />
                             <slf:lblField name="<%=StrutSerieForm.RegoleRapprDetail.DL_FORMATO_OUT%>" colSpan= "2" labelWidth="w20" controlWidth="w100" />
 
@@ -135,7 +152,7 @@
             <sl:newLine skipLine="true"/>
             <sl:newLine skipLine="true"/>
             <%--            <c:if test="${(sessionScope['###_FORM_CONTAINER']['registroRegoleFiltraggioList'].status eq 'view') }">
-                            <div class="livello1"><b><font color="#d3101c">Registri - Tipologie di Unità documentarie legate alla serie</font></b></div>
+                            <div class="livello1"><b style="color: #d3101c;">Registri - Tipologie di Unità documentarie legate alla serie</b></div>
                             <slf:listNavBar name="<%= StrutSerieForm.RegistroRegoleFiltraggioList.NAME%>" pageSizeRelated="true"/>
 <slf:list name="<%= StrutSerieForm.RegistroRegoleFiltraggioList.NAME%>"  />
                             <slf:listNavBar  name="<%= StrutSerieForm.RegistroRegoleFiltraggioList.NAME%>"  />

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -68,72 +64,72 @@ public class AroStatoRichAnnulVers implements Serializable {
     @Id
     @Column(name = "ID_STATO_RICH_ANNUL_VERS")
     @GenericGenerator(name = "SARO_STATO_RICH_ANNUL_VERS_ID_STATO_RICH_ANNUL_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_STATO_RICH_ANNUL_VERS"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_STATO_RICH_ANNUL_VERS"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_STATO_RICH_ANNUL_VERS_ID_STATO_RICH_ANNUL_VERS_GENERATOR")
     public Long getIdStatoRichAnnulVers() {
-        return this.idStatoRichAnnulVers;
+	return this.idStatoRichAnnulVers;
     }
 
     public void setIdStatoRichAnnulVers(Long idStatoRichAnnulVers) {
-        this.idStatoRichAnnulVers = idStatoRichAnnulVers;
+	this.idStatoRichAnnulVers = idStatoRichAnnulVers;
     }
 
     @Column(name = "DS_NOTA_RICH_ANNUL_VERS")
     public String getDsNotaRichAnnulVers() {
-        return this.dsNotaRichAnnulVers;
+	return this.dsNotaRichAnnulVers;
     }
 
     public void setDsNotaRichAnnulVers(String dsNotaRichAnnulVers) {
-        this.dsNotaRichAnnulVers = dsNotaRichAnnulVers;
+	this.dsNotaRichAnnulVers = dsNotaRichAnnulVers;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_STATO_RICH_ANNUL_VERS")
     public Date getDtRegStatoRichAnnulVers() {
-        return this.dtRegStatoRichAnnulVers;
+	return this.dtRegStatoRichAnnulVers;
     }
 
     public void setDtRegStatoRichAnnulVers(Date dtRegStatoRichAnnulVers) {
-        this.dtRegStatoRichAnnulVers = dtRegStatoRichAnnulVers;
+	this.dtRegStatoRichAnnulVers = dtRegStatoRichAnnulVers;
     }
 
     @Column(name = "PG_STATO_RICH_ANNUL_VERS")
     public BigDecimal getPgStatoRichAnnulVers() {
-        return this.pgStatoRichAnnulVers;
+	return this.pgStatoRichAnnulVers;
     }
 
     public void setPgStatoRichAnnulVers(BigDecimal pgStatoRichAnnulVers) {
-        this.pgStatoRichAnnulVers = pgStatoRichAnnulVers;
+	this.pgStatoRichAnnulVers = pgStatoRichAnnulVers;
     }
 
     @Column(name = "TI_STATO_RICH_ANNUL_VERS")
     public String getTiStatoRichAnnulVers() {
-        return this.tiStatoRichAnnulVers;
+	return this.tiStatoRichAnnulVers;
     }
 
     public void setTiStatoRichAnnulVers(String tiStatoRichAnnulVers) {
-        this.tiStatoRichAnnulVers = tiStatoRichAnnulVers;
+	this.tiStatoRichAnnulVers = tiStatoRichAnnulVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_RICH_ANNUL_VERS")
     public AroRichAnnulVers getAroRichAnnulVers() {
-        return this.aroRichAnnulVers;
+	return this.aroRichAnnulVers;
     }
 
     public void setAroRichAnnulVers(AroRichAnnulVers aroRichAnnulVers) {
-        this.aroRichAnnulVers = aroRichAnnulVers;
+	this.aroRichAnnulVers = aroRichAnnulVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public IamUser getIamUser() {
-        return this.iamUser;
+	return this.iamUser;
     }
 
     public void setIamUser(IamUser iamUser) {
-        this.iamUser = iamUser;
+	this.iamUser = iamUser;
     }
 
 }

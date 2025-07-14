@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -39,26 +35,26 @@ public class MonVCntDocAmbB30 implements Serializable {
     private BigDecimal niDoc;
 
     public MonVCntDocAmbB30() {
-        /* hibernate */
+	/* hibernate */
     }
 
     @Column(name = "NI_DOC")
     public BigDecimal getNiDoc() {
-        return this.niDoc;
+	return this.niDoc;
     }
 
     public void setNiDoc(BigDecimal niDoc) {
-        this.niDoc = niDoc;
+	this.niDoc = niDoc;
     }
 
     private MonVCntDocAmbB30Id monVCntDocAmbB30Id;
 
     @EmbeddedId()
     public MonVCntDocAmbB30Id getMonVCntDocAmbB30Id() {
-        return monVCntDocAmbB30Id;
+	return monVCntDocAmbB30Id;
     }
 
     public void setMonVCntDocAmbB30Id(MonVCntDocAmbB30Id monVCntDocAmbB30Id) {
-        this.monVCntDocAmbB30Id = monVCntDocAmbB30Id;
+	this.monVCntDocAmbB30Id = monVCntDocAmbB30Id;
     }
 }

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.job.indiceAipSerieUd.dto;
@@ -31,35 +27,35 @@ public class SelfDescriptionQuery_1_Bean {
     private String dsHashFilePrec;
 
     public Long getIdVerSerieCor() {
-        return idVerSerieCor;
+	return idVerSerieCor;
     }
 
     public void setIdVerSerieCor(Long idVerSerieCor) {
-        this.idVerSerieCor = idVerSerieCor;
+	this.idVerSerieCor = idVerSerieCor;
     }
 
     public BigDecimal getPgVerSeriePrec() {
-        return pgVerSeriePrec;
+	return pgVerSeriePrec;
     }
 
     public void setPgVerSeriePrec(BigDecimal pgVerSeriePrec) {
-        this.pgVerSeriePrec = pgVerSeriePrec;
+	this.pgVerSeriePrec = pgVerSeriePrec;
     }
 
     public String getDsUrnFilePrec() {
-        return dsUrnFilePrec;
+	return dsUrnFilePrec;
     }
 
     public void setDsUrnFilePrec(String dsUrnFilePrec) {
-        this.dsUrnFilePrec = dsUrnFilePrec;
+	this.dsUrnFilePrec = dsUrnFilePrec;
     }
 
     public String getDsHashFilePrec() {
-        return dsHashFilePrec;
+	return dsHashFilePrec;
     }
 
     public void setDsHashFilePrec(String dsHashFilePrec) {
-        this.dsHashFilePrec = dsHashFilePrec;
+	this.dsHashFilePrec = dsHashFilePrec;
     }
 
 }

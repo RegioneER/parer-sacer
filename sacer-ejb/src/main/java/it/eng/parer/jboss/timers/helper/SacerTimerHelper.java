@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.jboss.timers.helper;
@@ -54,39 +50,40 @@ public class SacerTimerHelper extends AbstractJbossTimerHelper implements JbossT
 
     @Override
     public String getApplicationName() {
-        return configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
+	return configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
     }
 
     @Override
     public List<JobTable> getJobs() {
-        return em.createQuery("Select d From DecJob d", JobTable.class).getResultList();
+	return em.createQuery("Select d From DecJob d", JobTable.class).getResultList();
     }
 
     @Override
     public JobTable getJob(String jobName) throws TimerNotFoundException {
-        TypedQuery<JobTable> query = em.createQuery("Select d From DecJob d Where d.nmJob = :nmJob", JobTable.class)
-                .setParameter("nmJob", jobName);
-        List<JobTable> list = query.setMaxResults(1).getResultList();
+	TypedQuery<JobTable> query = em
+		.createQuery("Select d From DecJob d Where d.nmJob = :nmJob", JobTable.class)
+		.setParameter("nmJob", jobName);
+	List<JobTable> list = query.setMaxResults(1).getResultList();
 
-        if (list.isEmpty()) {
-            throw new TimerNotFoundException(jobName);
-        }
-        return list.get(0);
+	if (list.isEmpty()) {
+	    throw new TimerNotFoundException(jobName);
+	}
+	return list.get(0);
     }
 
     @Override
     public JbossJobTimer getTimer(String jobName) throws TimerNotFoundException {
-        JbossJobTimer job = timerRepository.getConfiguredTimer(jobName);
-        if (job != null) {
-            return job;
-        }
+	JbossJobTimer job = timerRepository.getConfiguredTimer(jobName);
+	if (job != null) {
+	    return job;
+	}
 
-        throw new TimerNotFoundException(jobName);
+	throw new TimerNotFoundException(jobName);
     }
 
     @Override
     public Set<String> getApplicationTimerNames() {
-        return timerRepository.getConfiguredTimersName();
+	return timerRepository.getConfiguredTimersName();
     }
 
 }

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -71,22 +67,23 @@ public class AroVLisFasc implements Serializable {
 
     private Date tsIniSes;
 
-    public AroVLisFasc(BigDecimal idFascicolo, BigDecimal aaFascicolo, String cdKeyFascicolo, String nmTipoFascicolo,
-            Date dtApeFascicolo, Date dtChiuFascicolo, String cdCompositoVoceTitol, BigDecimal niUnitaDoc,
-            Date tsIniSes, String tiEsito, String tiStatoFascElencoVers, String tiStatoConservazione) {
-        this.aroVLisFascId = new AroVLisFascId();
-        aroVLisFascId.setIdFascicolo(idFascicolo);
-        this.aaFascicolo = aaFascicolo;
-        this.cdKeyFascicolo = cdKeyFascicolo;
-        this.nmTipoFascicolo = nmTipoFascicolo;
-        this.dtApeFascicolo = dtApeFascicolo;
-        this.dtChiuFascicolo = dtChiuFascicolo;
-        this.cdCompositoVoceTitol = cdCompositoVoceTitol;
-        this.niUnitaDoc = niUnitaDoc;
-        this.tsIniSes = tsIniSes;
-        this.tiEsito = tiEsito;
-        this.tiStatoFascElencoVers = tiStatoFascElencoVers;
-        this.tiStatoConservazione = tiStatoConservazione;
+    public AroVLisFasc(BigDecimal idFascicolo, BigDecimal aaFascicolo, String cdKeyFascicolo,
+	    String nmTipoFascicolo, Date dtApeFascicolo, Date dtChiuFascicolo,
+	    String cdCompositoVoceTitol, BigDecimal niUnitaDoc, Date tsIniSes, String tiEsito,
+	    String tiStatoFascElencoVers, String tiStatoConservazione) {
+	this.aroVLisFascId = new AroVLisFascId();
+	aroVLisFascId.setIdFascicolo(idFascicolo);
+	this.aaFascicolo = aaFascicolo;
+	this.cdKeyFascicolo = cdKeyFascicolo;
+	this.nmTipoFascicolo = nmTipoFascicolo;
+	this.dtApeFascicolo = dtApeFascicolo;
+	this.dtChiuFascicolo = dtChiuFascicolo;
+	this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+	this.niUnitaDoc = niUnitaDoc;
+	this.tsIniSes = tsIniSes;
+	this.tiEsito = tiEsito;
+	this.tiStatoFascElencoVers = tiStatoFascElencoVers;
+	this.tiStatoConservazione = tiStatoConservazione;
     }
 
     public AroVLisFasc() {/* Hibernate */
@@ -94,159 +91,159 @@ public class AroVLisFasc implements Serializable {
 
     @Column(name = "CD_KEY_FASCICOLO")
     public String getCdKeyFascicolo() {
-        return this.cdKeyFascicolo;
+	return this.cdKeyFascicolo;
     }
 
     public void setCdKeyFascicolo(String cdKeyFascicolo) {
-        this.cdKeyFascicolo = cdKeyFascicolo;
+	this.cdKeyFascicolo = cdKeyFascicolo;
     }
 
     @Column(name = "CD_COMPOSITO_VOCE_TITOL")
     public String getCdCompositoVoceTitol() {
-        return this.cdCompositoVoceTitol;
+	return this.cdCompositoVoceTitol;
     }
 
     public void setCdCompositoVoceTitol(String cdCompositoVoceTitol) {
-        this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+	this.cdCompositoVoceTitol = cdCompositoVoceTitol;
     }
 
     @Column(name = "TI_ESITO")
     public String getTiEsito() {
-        return this.tiEsito;
+	return this.tiEsito;
     }
 
     public void setTiEsito(String tiEsito) {
-        this.tiEsito = tiEsito;
+	this.tiEsito = tiEsito;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_APE_FASCICOLO")
     public Date getDtApeFascicolo() {
-        return this.dtApeFascicolo;
+	return this.dtApeFascicolo;
     }
 
     public void setDtApeFascicolo(Date dtApeFascicolo) {
-        this.dtApeFascicolo = dtApeFascicolo;
+	this.dtApeFascicolo = dtApeFascicolo;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CHIU_FASCICOLO")
     public Date getDtChiuFascicolo() {
-        return this.dtChiuFascicolo;
+	return this.dtChiuFascicolo;
     }
 
     public void setDtChiuFascicolo(Date dtChiuFascicolo) {
-        this.dtChiuFascicolo = dtChiuFascicolo;
+	this.dtChiuFascicolo = dtChiuFascicolo;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_INI_SES")
     public Date getTsIniSes() {
-        return this.tsIniSes;
+	return this.tsIniSes;
     }
 
     public void setTsIniSes(Date tsIniSes) {
-        this.tsIniSes = tsIniSes;
+	this.tsIniSes = tsIniSes;
     }
 
     @Column(name = "DS_OGGETTO_FASCICOLO")
     public String getDsOggettoFascicolo() {
-        return this.dsOggettoFascicolo;
+	return this.dsOggettoFascicolo;
     }
 
     public void setDsOggettoFascicolo(String dsOggettoFascicolo) {
-        this.dsOggettoFascicolo = dsOggettoFascicolo;
+	this.dsOggettoFascicolo = dsOggettoFascicolo;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @Column(name = "NM_TIPO_FASCICOLO")
     public String getNmTipoFascicolo() {
-        return this.nmTipoFascicolo;
+	return this.nmTipoFascicolo;
     }
 
     public void setNmTipoFascicolo(String nmTipoFascicolo) {
-        this.nmTipoFascicolo = nmTipoFascicolo;
+	this.nmTipoFascicolo = nmTipoFascicolo;
     }
 
     @Column(name = "TI_STATO_CONSERVAZIONE")
     public String getTiStatoConservazione() {
-        return this.tiStatoConservazione;
+	return this.tiStatoConservazione;
     }
 
     public void setTiStatoConservazione(String tiStatoConservazione) {
-        this.tiStatoConservazione = tiStatoConservazione;
+	this.tiStatoConservazione = tiStatoConservazione;
     }
 
     @Column(name = "TI_STATO_FASC_ELENCO_VERS")
     public String getTiStatoFascElencoVers() {
-        return this.tiStatoFascElencoVers;
+	return this.tiStatoFascElencoVers;
     }
 
     public void setTiStatoFascElencoVers(String tiStatoFascElencoVers) {
-        this.tiStatoFascElencoVers = tiStatoFascElencoVers;
+	this.tiStatoFascElencoVers = tiStatoFascElencoVers;
     }
 
     @Column(name = "ID_TIPO_FASCICOLO")
     public BigDecimal getIdTipoFascicolo() {
-        return this.idTipoFascicolo;
+	return this.idTipoFascicolo;
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-        this.idTipoFascicolo = idTipoFascicolo;
+	this.idTipoFascicolo = idTipoFascicolo;
     }
 
     @Column(name = "ID_VOCE_TITOL")
     public BigDecimal getIdVoceTitol() {
-        return this.idVoceTitol;
+	return this.idVoceTitol;
     }
 
     public void setIdVoceTitol(BigDecimal idVoceTitol) {
-        this.idVoceTitol = idVoceTitol;
+	this.idVoceTitol = idVoceTitol;
     }
 
     @Column(name = "ID_USER_IAM_CORRENTE")
     public BigDecimal getIdUserIamCorrente() {
-        return this.idUserIamCorrente;
+	return this.idUserIamCorrente;
     }
 
     public void setIdUserIamCorrente(BigDecimal idUserIamCorrente) {
-        this.idUserIamCorrente = idUserIamCorrente;
+	this.idUserIamCorrente = idUserIamCorrente;
     }
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-        return this.aaFascicolo;
+	return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-        this.aaFascicolo = aaFascicolo;
+	this.aaFascicolo = aaFascicolo;
     }
 
     @Column(name = "NI_UNITA_DOC")
     public BigDecimal getNiUnitaDoc() {
-        return this.niUnitaDoc;
+	return this.niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-        this.niUnitaDoc = niUnitaDoc;
+	this.niUnitaDoc = niUnitaDoc;
     }
 
     private AroVLisFascId aroVLisFascId;
 
     @EmbeddedId()
     public AroVLisFascId getAroVLisFascId() {
-        return aroVLisFascId;
+	return aroVLisFascId;
     }
 
     public void setAroVLisFascId(AroVLisFascId aroVLisFascId) {
-        this.aroVLisFascId = aroVLisFascId;
+	this.aroVLisFascId = aroVLisFascId;
     }
 }

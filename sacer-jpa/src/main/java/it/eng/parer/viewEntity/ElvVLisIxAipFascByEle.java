@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -52,93 +48,93 @@ public class ElvVLisIxAipFascByEle implements Serializable {
 
     @Column(name = "DS_HASH_FILE")
     public String getDsHashFile() {
-        return this.dsHashFile;
+	return this.dsHashFile;
     }
 
     public void setDsHashFile(String dsHashFile) {
-        this.dsHashFile = dsHashFile;
+	this.dsHashFile = dsHashFile;
     }
 
     @Column(name = "CD_VER_AIP")
     public String getCdVerAip() {
-        return this.cdVerAip;
+	return this.cdVerAip;
     }
 
     public void setCdVerAip(String cdVerAip) {
-        this.cdVerAip = cdVerAip;
+	this.cdVerAip = cdVerAip;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-        return this.nmAmbiente;
+	return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-        this.nmAmbiente = nmAmbiente;
+	this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-        return this.nmEnte;
+	return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-        this.nmEnte = nmEnte;
+	this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-        return this.nmStrut;
+	return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-        this.nmStrut = nmStrut;
+	this.nmStrut = nmStrut;
     }
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-        return this.aaFascicolo;
+	return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-        this.aaFascicolo = aaFascicolo;
+	this.aaFascicolo = aaFascicolo;
     }
 
     @Column(name = "CD_KEY_FASCICOLO")
     public String getCdKeyFascicolo() {
-        return this.cdKeyFascicolo;
+	return this.cdKeyFascicolo;
     }
 
     public void setCdKeyFascicolo(String cdKeyFascicolo) {
-        this.cdKeyFascicolo = cdKeyFascicolo;
+	this.cdKeyFascicolo = cdKeyFascicolo;
     }
 
     @Column(name = "CD_KEY_ORD")
     public String getCdKeyOrd() {
-        return this.cdKeyOrd;
+	return this.cdKeyOrd;
     }
 
     public void setCdKeyOrd(String cdKeyOrd) {
-        this.cdKeyOrd = cdKeyOrd;
+	this.cdKeyOrd = cdKeyOrd;
     }
 
     @Id
     @Column(name = "ID_ELENCO_VERS_FASC")
     public BigDecimal getIdElencoVersFasc() {
-        return this.idElencoVersFasc;
+	return this.idElencoVersFasc;
     }
 
     public void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
-        this.idElencoVersFasc = idElencoVersFasc;
+	this.idElencoVersFasc = idElencoVersFasc;
     }
 
     @Column(name = "ID_VER_AIP_FASCICOLO")
     public BigDecimal getIdVerAipFascicolo() {
-        return this.idVerAipFascicolo;
+	return this.idVerAipFascicolo;
     }
 
     public void setIdVerAipFascicolo(BigDecimal idVerAipFascicolo) {
-        this.idVerAipFascicolo = idVerAipFascicolo;
+	this.idVerAipFascicolo = idVerAipFascicolo;
     }
 
 }

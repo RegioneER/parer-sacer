@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -76,292 +72,292 @@ public class SerVRicConsistSerieUd implements Serializable {
 
     @Column(name = "AA_SERIE")
     public BigDecimal getAaSerie() {
-        return this.aaSerie;
+	return this.aaSerie;
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-        this.aaSerie = aaSerie;
+	this.aaSerie = aaSerie;
     }
 
     @Column(name = "CD_COMPOSITO_SERIE")
     public String getCdCompositoSerie() {
-        return this.cdCompositoSerie;
+	return this.cdCompositoSerie;
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-        this.cdCompositoSerie = cdCompositoSerie;
+	this.cdCompositoSerie = cdCompositoSerie;
     }
 
     @Column(name = "CD_VER_SERIE")
     public String getCdVerSerie() {
-        return this.cdVerSerie;
+	return this.cdVerSerie;
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-        this.cdVerSerie = cdVerSerie;
+	this.cdVerSerie = cdVerSerie;
     }
 
     @Column(name = "DS_SERIE")
     public String getDsSerie() {
-        return this.dsSerie;
+	return this.dsSerie;
     }
 
     public void setDsSerie(String dsSerie) {
-        this.dsSerie = dsSerie;
+	this.dsSerie = dsSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_COMUNIC_CONSIST_VER_SERIE")
     public Date getDtComunicConsistVerSerie() {
-        return this.dtComunicConsistVerSerie;
+	return this.dtComunicConsistVerSerie;
     }
 
     public void setDtComunicConsistVerSerie(Date dtComunicConsistVerSerie) {
-        this.dtComunicConsistVerSerie = dtComunicConsistVerSerie;
+	this.dtComunicConsistVerSerie = dtComunicConsistVerSerie;
     }
 
     @Column(name = "FL_PRESENZA_CONSIST_ATTESA", columnDefinition = "char(1)")
     public String getFlPresenzaConsistAttesa() {
-        return this.flPresenzaConsistAttesa;
+	return this.flPresenzaConsistAttesa;
     }
 
     public void setFlPresenzaConsistAttesa(String flPresenzaConsistAttesa) {
-        this.flPresenzaConsistAttesa = flPresenzaConsistAttesa;
+	this.flPresenzaConsistAttesa = flPresenzaConsistAttesa;
     }
 
     @Column(name = "FL_PRESENZA_CONTEN_EFF", columnDefinition = "char(1)")
     public String getFlPresenzaContenEff() {
-        return this.flPresenzaContenEff;
+	return this.flPresenzaContenEff;
     }
 
     public void setFlPresenzaContenEff(String flPresenzaContenEff) {
-        this.flPresenzaContenEff = flPresenzaContenEff;
+	this.flPresenzaContenEff = flPresenzaContenEff;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-        return this.idAmbiente;
+	return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-        this.idAmbiente = idAmbiente;
+	this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_CONSIST_VER_SERIE")
     public BigDecimal getIdConsistVerSerie() {
-        return this.idConsistVerSerie;
+	return this.idConsistVerSerie;
     }
 
     public void setIdConsistVerSerie(BigDecimal idConsistVerSerie) {
-        this.idConsistVerSerie = idConsistVerSerie;
+	this.idConsistVerSerie = idConsistVerSerie;
     }
 
     @Column(name = "ID_CONTENUTO_ACQ")
     public BigDecimal getIdContenutoAcq() {
-        return this.idContenutoAcq;
+	return this.idContenutoAcq;
     }
 
     public void setIdContenutoAcq(BigDecimal idContenutoAcq) {
-        this.idContenutoAcq = idContenutoAcq;
+	this.idContenutoAcq = idContenutoAcq;
     }
 
     @Column(name = "ID_CONTENUTO_CALC")
     public BigDecimal getIdContenutoCalc() {
-        return this.idContenutoCalc;
+	return this.idContenutoCalc;
     }
 
     public void setIdContenutoCalc(BigDecimal idContenutoCalc) {
-        this.idContenutoCalc = idContenutoCalc;
+	this.idContenutoCalc = idContenutoCalc;
     }
 
     @Column(name = "ID_CONTENUTO_EFF")
     public BigDecimal getIdContenutoEff() {
-        return this.idContenutoEff;
+	return this.idContenutoEff;
     }
 
     public void setIdContenutoEff(BigDecimal idContenutoEff) {
-        this.idContenutoEff = idContenutoEff;
+	this.idContenutoEff = idContenutoEff;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-        return this.idEnte;
+	return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-        this.idEnte = idEnte;
+	this.idEnte = idEnte;
     }
 
     @Column(name = "ID_REGISTRO_UNITA_DOC")
     public BigDecimal getIdRegistroUnitaDoc() {
-        return this.idRegistroUnitaDoc;
+	return this.idRegistroUnitaDoc;
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-        this.idRegistroUnitaDoc = idRegistroUnitaDoc;
+	this.idRegistroUnitaDoc = idRegistroUnitaDoc;
     }
 
     @Column(name = "ID_SERIE")
     public BigDecimal getIdSerie() {
-        return this.idSerie;
+	return this.idSerie;
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-        this.idSerie = idSerie;
+	this.idSerie = idSerie;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @Column(name = "ID_TIPO_SERIE")
     public BigDecimal getIdTipoSerie() {
-        return this.idTipoSerie;
+	return this.idTipoSerie;
     }
 
     public void setIdTipoSerie(BigDecimal idTipoSerie) {
-        this.idTipoSerie = idTipoSerie;
+	this.idTipoSerie = idTipoSerie;
     }
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-        return this.idTipoUnitaDoc;
+	return this.idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-        this.idTipoUnitaDoc = idTipoUnitaDoc;
+	this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-        return this.idVerSerie;
+	return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-        this.idVerSerie = idVerSerie;
+	this.idVerSerie = idVerSerie;
     }
 
     @Column(name = "NI_LACUNE_MANCANTI")
     public BigDecimal getNiLacuneMancanti() {
-        return this.niLacuneMancanti;
+	return this.niLacuneMancanti;
     }
 
     public void setNiLacuneMancanti(BigDecimal niLacuneMancanti) {
-        this.niLacuneMancanti = niLacuneMancanti;
+	this.niLacuneMancanti = niLacuneMancanti;
     }
 
     @Column(name = "NI_LACUNE_NON_PRODOTTE")
     public BigDecimal getNiLacuneNonProdotte() {
-        return this.niLacuneNonProdotte;
+	return this.niLacuneNonProdotte;
     }
 
     public void setNiLacuneNonProdotte(BigDecimal niLacuneNonProdotte) {
-        this.niLacuneNonProdotte = niLacuneNonProdotte;
+	this.niLacuneNonProdotte = niLacuneNonProdotte;
     }
 
     @Column(name = "NI_UNITA_DOC")
     public BigDecimal getNiUnitaDoc() {
-        return this.niUnitaDoc;
+	return this.niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-        this.niUnitaDoc = niUnitaDoc;
+	this.niUnitaDoc = niUnitaDoc;
     }
 
     @Column(name = "NI_UNITA_DOC_ATTESE")
     public BigDecimal getNiUnitaDocAttese() {
-        return this.niUnitaDocAttese;
+	return this.niUnitaDocAttese;
     }
 
     public void setNiUnitaDocAttese(BigDecimal niUnitaDocAttese) {
-        this.niUnitaDocAttese = niUnitaDocAttese;
+	this.niUnitaDocAttese = niUnitaDocAttese;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-        return this.nmAmbiente;
+	return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-        this.nmAmbiente = nmAmbiente;
+	this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-        return this.nmEnte;
+	return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-        this.nmEnte = nmEnte;
+	this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-        return this.nmStrut;
+	return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-        this.nmStrut = nmStrut;
+	this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_TIPO_SERIE")
     public String getNmTipoSerie() {
-        return this.nmTipoSerie;
+	return this.nmTipoSerie;
     }
 
     public void setNmTipoSerie(String nmTipoSerie) {
-        this.nmTipoSerie = nmTipoSerie;
+	this.nmTipoSerie = nmTipoSerie;
     }
 
     @Column(name = "TI_MOD_CONSIST_FIRST_LAST")
     public String getTiModConsistFirstLast() {
-        return this.tiModConsistFirstLast;
+	return this.tiModConsistFirstLast;
     }
 
     public void setTiModConsistFirstLast(String tiModConsistFirstLast) {
-        this.tiModConsistFirstLast = tiModConsistFirstLast;
+	this.tiModConsistFirstLast = tiModConsistFirstLast;
     }
 
     @Column(name = "TI_STATO_CONTENUTO_ACQ")
     public String getTiStatoContenutoAcq() {
-        return this.tiStatoContenutoAcq;
+	return this.tiStatoContenutoAcq;
     }
 
     public void setTiStatoContenutoAcq(String tiStatoContenutoAcq) {
-        this.tiStatoContenutoAcq = tiStatoContenutoAcq;
+	this.tiStatoContenutoAcq = tiStatoContenutoAcq;
     }
 
     @Column(name = "TI_STATO_CONTENUTO_CALC")
     public String getTiStatoContenutoCalc() {
-        return this.tiStatoContenutoCalc;
+	return this.tiStatoContenutoCalc;
     }
 
     public void setTiStatoContenutoCalc(String tiStatoContenutoCalc) {
-        this.tiStatoContenutoCalc = tiStatoContenutoCalc;
+	this.tiStatoContenutoCalc = tiStatoContenutoCalc;
     }
 
     @Column(name = "TI_STATO_CONTENUTO_EFF")
     public String getTiStatoContenutoEff() {
-        return this.tiStatoContenutoEff;
+	return this.tiStatoContenutoEff;
     }
 
     public void setTiStatoContenutoEff(String tiStatoContenutoEff) {
-        this.tiStatoContenutoEff = tiStatoContenutoEff;
+	this.tiStatoContenutoEff = tiStatoContenutoEff;
     }
 
     @Column(name = "TI_STATO_VER_SERIE")
     public String getTiStatoVerSerie() {
-        return this.tiStatoVerSerie;
+	return this.tiStatoVerSerie;
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-        this.tiStatoVerSerie = tiStatoVerSerie;
+	this.tiStatoVerSerie = tiStatoVerSerie;
     }
 
 }

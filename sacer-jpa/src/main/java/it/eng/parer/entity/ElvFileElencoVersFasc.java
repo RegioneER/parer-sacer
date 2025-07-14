@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -68,141 +64,141 @@ public class ElvFileElencoVersFasc implements Serializable {
     }
 
     /*
-     * public ElvFileElencoVersFasc(byte[] blFileElencoVers, String cdVerXsdFile, String tiFileElencoVers) {
-     * this.blFileElencoVers = blFileElencoVers; this.cdVerXsdFile = cdVerXsdFile; this.tiFileElencoVers =
-     * tiFileElencoVers; }
+     * public ElvFileElencoVersFasc(byte[] blFileElencoVers, String cdVerXsdFile, String
+     * tiFileElencoVers) { this.blFileElencoVers = blFileElencoVers; this.cdVerXsdFile =
+     * cdVerXsdFile; this.tiFileElencoVers = tiFileElencoVers; }
      */
-    public ElvFileElencoVersFasc(long idFileElencoVersFasc, byte[] blFileElencoVers, String cdVerXsdFile,
-            String tiFileElencoVers, String tiFirma) {
-        this.idFileElencoVersFasc = idFileElencoVersFasc;
-        this.blFileElencoVers = blFileElencoVers;
-        this.cdVerXsdFile = cdVerXsdFile;
-        this.tiFileElencoVers = tiFileElencoVers;
-        this.tiFirma = tiFirma;
+    public ElvFileElencoVersFasc(long idFileElencoVersFasc, byte[] blFileElencoVers,
+	    String cdVerXsdFile, String tiFileElencoVers, String tiFirma) {
+	this.idFileElencoVersFasc = idFileElencoVersFasc;
+	this.blFileElencoVers = blFileElencoVers;
+	this.cdVerXsdFile = cdVerXsdFile;
+	this.tiFileElencoVers = tiFileElencoVers;
+	this.tiFirma = tiFirma;
     }
 
     @Id
     @Column(name = "ID_FILE_ELENCO_VERS_FASC")
     @GenericGenerator(name = "SELV_FILE_ELENCO_VERS_FASC_ID_FILE_ELENCO_VERS_FASC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_FILE_ELENCO_VERS_FASC"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_FILE_ELENCO_VERS_FASC"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SELV_FILE_ELENCO_VERS_FASC_ID_FILE_ELENCO_VERS_FASC_GENERATOR")
     public Long getIdFileElencoVersFasc() {
-        return this.idFileElencoVersFasc;
+	return this.idFileElencoVersFasc;
     }
 
     public void setIdFileElencoVersFasc(Long idFileElencoVersFasc) {
-        this.idFileElencoVersFasc = idFileElencoVersFasc;
+	this.idFileElencoVersFasc = idFileElencoVersFasc;
     }
 
     @Lob
     @Column(name = "BL_FILE_ELENCO_VERS")
     public byte[] getBlFileElencoVers() {
-        return this.blFileElencoVers;
+	return this.blFileElencoVers;
     }
 
     public void setBlFileElencoVers(byte[] blFileElencoVers) {
-        this.blFileElencoVers = blFileElencoVers;
+	this.blFileElencoVers = blFileElencoVers;
     }
 
     @Column(name = "CD_ENCODING_HASH_FILE")
     public String getCdEncodingHashFile() {
-        return this.cdEncodingHashFile;
+	return this.cdEncodingHashFile;
     }
 
     public void setCdEncodingHashFile(String cdEncodingHashFile) {
-        this.cdEncodingHashFile = cdEncodingHashFile;
+	this.cdEncodingHashFile = cdEncodingHashFile;
     }
 
     @Column(name = "CD_VER_XSD_FILE")
     public String getCdVerXsdFile() {
-        return this.cdVerXsdFile;
+	return this.cdVerXsdFile;
     }
 
     public void setCdVerXsdFile(String cdVerXsdFile) {
-        this.cdVerXsdFile = cdVerXsdFile;
+	this.cdVerXsdFile = cdVerXsdFile;
     }
 
     @Column(name = "DS_ALGO_HASH_FILE")
     public String getDsAlgoHashFile() {
-        return this.dsAlgoHashFile;
+	return this.dsAlgoHashFile;
     }
 
     public void setDsAlgoHashFile(String dsAlgoHashFile) {
-        this.dsAlgoHashFile = dsAlgoHashFile;
+	this.dsAlgoHashFile = dsAlgoHashFile;
     }
 
     @Column(name = "DS_HASH_FILE")
     public String getDsHashFile() {
-        return this.dsHashFile;
+	return this.dsHashFile;
     }
 
     public void setDsHashFile(String dsHashFile) {
-        this.dsHashFile = dsHashFile;
+	this.dsHashFile = dsHashFile;
     }
 
     @Column(name = "DS_URN_FILE")
     public String getDsUrnFile() {
-        return this.dsUrnFile;
+	return this.dsUrnFile;
     }
 
     public void setDsUrnFile(String dsUrnFile) {
-        this.dsUrnFile = dsUrnFile;
+	this.dsUrnFile = dsUrnFile;
     }
 
     @Column(name = "DS_URN_NORMALIZ_FILE")
     public String getDsUrnNormalizFile() {
-        return this.dsUrnNormalizFile;
+	return this.dsUrnNormalizFile;
     }
 
     public void setDsUrnNormalizFile(String dsUrnNormalizFile) {
-        this.dsUrnNormalizFile = dsUrnNormalizFile;
+	this.dsUrnNormalizFile = dsUrnNormalizFile;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_FILE")
     public Date getDtCreazioneFile() {
-        return this.dtCreazioneFile;
+	return this.dtCreazioneFile;
     }
 
     public void setDtCreazioneFile(Date dtCreazioneFile) {
-        this.dtCreazioneFile = dtCreazioneFile;
+	this.dtCreazioneFile = dtCreazioneFile;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @Column(name = "TI_FILE_ELENCO_VERS")
     public String getTiFileElencoVers() {
-        return this.tiFileElencoVers;
+	return this.tiFileElencoVers;
     }
 
     public void setTiFileElencoVers(String tiFileElencoVers) {
-        this.tiFileElencoVers = tiFileElencoVers;
+	this.tiFileElencoVers = tiFileElencoVers;
     }
 
     @Column(name = "TI_FIRMA")
     public String getTiFirma() {
-        return tiFirma;
+	return tiFirma;
     }
 
     public void setTiFirma(String tiFirma) {
-        this.tiFirma = tiFirma;
+	this.tiFirma = tiFirma;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ELENCO_VERS_FASC")
     public ElvElencoVersFasc getElvElencoVersFasc() {
-        return this.elvElencoVersFasc;
+	return this.elvElencoVersFasc;
     }
 
     public void setElvElencoVersFasc(ElvElencoVersFasc elvElencoVersFasc) {
-        this.elvElencoVersFasc = elvElencoVersFasc;
+	this.elvElencoVersFasc = elvElencoVersFasc;
     }
 }

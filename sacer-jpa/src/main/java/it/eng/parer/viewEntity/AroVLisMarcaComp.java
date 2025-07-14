@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -68,67 +64,67 @@ public class AroVLisMarcaComp implements Serializable {
     }
 
     public BigDecimal getIdCompDoc() {
-        return this.idCompDoc;
+	return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-        this.idCompDoc = idCompDoc;
+	this.idCompDoc = idCompDoc;
     }
 
     public BigDecimal getIdMarcaComp() {
-        return this.idMarcaComp;
+	return this.idMarcaComp;
     }
 
     public void setIdMarcaComp(BigDecimal idMarcaComp) {
-        this.idMarcaComp = idMarcaComp;
+	this.idMarcaComp = idMarcaComp;
     }
 
     public String getIssuerCertifTsa() {
-        return this.issuerCertifTsa;
+	return this.issuerCertifTsa;
     }
 
     public void setIssuerCertifTsa(String issuerCertifTsa) {
-        this.issuerCertifTsa = issuerCertifTsa;
+	this.issuerCertifTsa = issuerCertifTsa;
     }
 
     public BigDecimal getPgMarca() {
-        return this.pgMarca;
+	return this.pgMarca;
     }
 
     public void setPgMarca(BigDecimal pgMarca) {
-        this.pgMarca = pgMarca;
+	this.pgMarca = pgMarca;
     }
 
     public String getTiEsitoContrConforme() {
-        return this.tiEsitoContrConforme;
+	return this.tiEsitoContrConforme;
     }
 
     public void setTiEsitoContrConforme(String tiEsitoContrConforme) {
-        this.tiEsitoContrConforme = tiEsitoContrConforme;
+	this.tiEsitoContrConforme = tiEsitoContrConforme;
     }
 
     public String getTiEsitoVerifMarca() {
-        return this.tiEsitoVerifMarca;
+	return this.tiEsitoVerifMarca;
     }
 
     public void setTiEsitoVerifMarca(String tiEsitoVerifMarca) {
-        this.tiEsitoVerifMarca = tiEsitoVerifMarca;
+	this.tiEsitoVerifMarca = tiEsitoVerifMarca;
     }
 
     public String getTiFormatoMarca() {
-        return this.tiFormatoMarca;
+	return this.tiFormatoMarca;
     }
 
     public void setTiFormatoMarca(String tiFormatoMarca) {
-        this.tiFormatoMarca = tiFormatoMarca;
+	this.tiFormatoMarca = tiFormatoMarca;
     }
 
     public Date getTmMarcaTemp() {
-        return this.tmMarcaTemp;
+	return this.tmMarcaTemp;
     }
 
     public void setTmMarcaTemp(Date tmMarcaTemp) {
-        this.tmMarcaTemp = tmMarcaTemp;
+	this.tmMarcaTemp = tmMarcaTemp;
     }
 
 }

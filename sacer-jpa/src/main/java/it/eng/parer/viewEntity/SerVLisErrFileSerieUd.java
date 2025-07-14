@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -48,66 +44,66 @@ public class SerVLisErrFileSerieUd implements Serializable {
 
     @Column(name = "DS_REC_ERR")
     public String getDsRecErr() {
-        return this.dsRecErr;
+	return this.dsRecErr;
     }
 
     public void setDsRecErr(String dsRecErr) {
-        this.dsRecErr = dsRecErr;
+	this.dsRecErr = dsRecErr;
     }
 
     @Id
     @Column(name = "ID_ERR_FILE_INPUT")
     public BigDecimal getIdErrFileInput() {
-        return this.idErrFileInput;
+	return this.idErrFileInput;
     }
 
     public void setIdErrFileInput(BigDecimal idErrFileInput) {
-        this.idErrFileInput = idErrFileInput;
+	this.idErrFileInput = idErrFileInput;
     }
 
     @Column(name = "ID_FILE_INPUT_VER_SERIE")
     public BigDecimal getIdFileInputVerSerie() {
-        return this.idFileInputVerSerie;
+	return this.idFileInputVerSerie;
     }
 
     public void setIdFileInputVerSerie(BigDecimal idFileInputVerSerie) {
-        this.idFileInputVerSerie = idFileInputVerSerie;
+	this.idFileInputVerSerie = idFileInputVerSerie;
     }
 
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-        return this.idVerSerie;
+	return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-        this.idVerSerie = idVerSerie;
+	this.idVerSerie = idVerSerie;
     }
 
     @Column(name = "NI_REC_ERR")
     public BigDecimal getNiRecErr() {
-        return this.niRecErr;
+	return this.niRecErr;
     }
 
     public void setNiRecErr(BigDecimal niRecErr) {
-        this.niRecErr = niRecErr;
+	this.niRecErr = niRecErr;
     }
 
     @Column(name = "TI_ERR_REC")
     public String getTiErrRec() {
-        return this.tiErrRec;
+	return this.tiErrRec;
     }
 
     public void setTiErrRec(String tiErrRec) {
-        this.tiErrRec = tiErrRec;
+	this.tiErrRec = tiErrRec;
     }
 
     @Column(name = "TI_SCOPO_FILE_INPUT_VER_SERIE")
     public String getTiScopoFileInputVerSerie() {
-        return this.tiScopoFileInputVerSerie;
+	return this.tiScopoFileInputVerSerie;
     }
 
     public void setTiScopoFileInputVerSerie(String tiScopoFileInputVerSerie) {
-        this.tiScopoFileInputVerSerie = tiScopoFileInputVerSerie;
+	this.tiScopoFileInputVerSerie = tiScopoFileInputVerSerie;
     }
 
 }

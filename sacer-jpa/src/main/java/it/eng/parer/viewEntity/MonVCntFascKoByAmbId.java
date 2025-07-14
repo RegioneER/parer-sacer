@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -31,81 +27,81 @@ public class MonVCntFascKoByAmbId implements Serializable {
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-        return idAmbiente;
+	return idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-        this.idAmbiente = idAmbiente;
+	this.idAmbiente = idAmbiente;
     }
 
     private BigDecimal idUserIam;
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-        return idUserIam;
+	return idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-        this.idUserIam = idUserIam;
+	this.idUserIam = idUserIam;
     }
 
     private String tiDtCreazione;
 
     @Column(name = "TI_DT_CREAZIONE")
     public String getTiDtCreazione() {
-        return tiDtCreazione;
+	return tiDtCreazione;
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-        this.tiDtCreazione = tiDtCreazione;
+	this.tiDtCreazione = tiDtCreazione;
     }
 
     private String tiStatoFascKo;
 
     @Column(name = "TI_STATO_FASC_KO")
     public String getTiStatoFascKo() {
-        return tiStatoFascKo;
+	return tiStatoFascKo;
     }
 
     public void setTiStatoFascKo(String tiStatoFascKo) {
-        this.tiStatoFascKo = tiStatoFascKo;
+	this.tiStatoFascKo = tiStatoFascKo;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + Objects.hashCode(this.idAmbiente);
-        hash = 37 * hash + Objects.hashCode(this.idUserIam);
-        hash = 37 * hash + Objects.hashCode(this.tiDtCreazione);
-        hash = 37 * hash + Objects.hashCode(this.tiStatoFascKo);
-        return hash;
+	int hash = 7;
+	hash = 37 * hash + Objects.hashCode(this.idAmbiente);
+	hash = 37 * hash + Objects.hashCode(this.idUserIam);
+	hash = 37 * hash + Objects.hashCode(this.tiDtCreazione);
+	hash = 37 * hash + Objects.hashCode(this.tiStatoFascKo);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final MonVCntFascKoByAmbId other = (MonVCntFascKoByAmbId) obj;
-        if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
-            return false;
-        }
-        if (!Objects.equals(this.tiStatoFascKo, other.tiStatoFascKo)) {
-            return false;
-        }
-        if (!Objects.equals(this.idAmbiente, other.idAmbiente)) {
-            return false;
-        }
-        if (!Objects.equals(this.idUserIam, other.idUserIam)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final MonVCntFascKoByAmbId other = (MonVCntFascKoByAmbId) obj;
+	if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
+	    return false;
+	}
+	if (!Objects.equals(this.tiStatoFascKo, other.tiStatoFascKo)) {
+	    return false;
+	}
+	if (!Objects.equals(this.idAmbiente, other.idAmbiente)) {
+	    return false;
+	}
+	if (!Objects.equals(this.idUserIam, other.idUserIam)) {
+	    return false;
+	}
+	return true;
     }
 
 }

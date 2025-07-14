@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -47,48 +43,48 @@ public class AroVChkAipRestArchUd implements Serializable {
 
     @Column(name = "FL_ESTRATTO", columnDefinition = "number")
     public String getFlEstratto() {
-        return this.flEstratto;
+	return this.flEstratto;
     }
 
     public void setFlEstratto(String flEstratto) {
-        this.flEstratto = flEstratto;
+	this.flEstratto = flEstratto;
     }
 
     @Column(name = "FL_ERRORE", columnDefinition = "number")
     public String getFlErrore() {
-        return this.flErrore;
+	return this.flErrore;
     }
 
     public void setFlErrore(String flErrore) {
-        this.flErrore = flErrore;
+	this.flErrore = flErrore;
     }
 
     @Column(name = "FL_DA_ELABORARE", columnDefinition = "number")
     public String getFlDaElaborare() {
-        return flDaElaborare;
+	return flDaElaborare;
     }
 
     public void setFlDaElaborare(String flDaElaborare) {
-        this.flDaElaborare = flDaElaborare;
+	this.flDaElaborare = flDaElaborare;
     }
 
     @Column(name = "FL_ALL_DA_ELAB", columnDefinition = "number")
     public String getFlAllDaElab() {
-        return flAllDaElab;
+	return flAllDaElab;
     }
 
     public void setFlAllDaElab(String flAllDaElab) {
-        this.flAllDaElab = flAllDaElab;
+	this.flAllDaElab = flAllDaElab;
     }
 
     @Id
     @Column(name = "ID_RICHIESTA_RA")
     public BigDecimal getIdRichiestaRa() {
-        return this.idRichiestaRa;
+	return this.idRichiestaRa;
     }
 
     public void setIdRichiestaRa(BigDecimal idRichiestaRa) {
-        this.idRichiestaRa = idRichiestaRa;
+	this.idRichiestaRa = idRichiestaRa;
     }
 
 }

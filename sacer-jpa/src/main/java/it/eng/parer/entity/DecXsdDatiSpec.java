@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -96,200 +92,202 @@ public class DecXsdDatiSpec implements Serializable {
     @Column(name = "ID_XSD_DATI_SPEC")
     @XmlID
     @GenericGenerator(name = "SDEC_XSD_DATI_SPEC_ID_XSD_DATI_SPEC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_XSD_DATI_SPEC"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_XSD_DATI_SPEC"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_XSD_DATI_SPEC_ID_XSD_DATI_SPEC_GENERATOR")
     public Long getIdXsdDatiSpec() {
-        return this.idXsdDatiSpec;
+	return this.idXsdDatiSpec;
     }
 
     public void setIdXsdDatiSpec(Long idXsdDatiSpec) {
-        this.idXsdDatiSpec = idXsdDatiSpec;
+	this.idXsdDatiSpec = idXsdDatiSpec;
     }
 
     @Lob()
     @Column(name = "BL_XSD")
     public String getBlXsd() {
-        return this.blXsd;
+	return this.blXsd;
     }
 
     public void setBlXsd(String blXsd) {
-        this.blXsd = blXsd;
+	this.blXsd = blXsd;
     }
 
     @Column(name = "CD_VERSIONE_XSD")
     public String getCdVersioneXsd() {
-        return this.cdVersioneXsd;
+	return this.cdVersioneXsd;
     }
 
     public void setCdVersioneXsd(String cdVersioneXsd) {
-        this.cdVersioneXsd = cdVersioneXsd;
+	this.cdVersioneXsd = cdVersioneXsd;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-        return dtIstituz;
+	return dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-        this.dtIstituz = dtIstituz;
+	this.dtIstituz = dtIstituz;
     }
 
     @Column(name = "DT_SOPPRES")
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDtSoppres() {
-        return dtSoppres;
+	return dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-        this.dtSoppres = dtSoppres;
+	this.dtSoppres = dtSoppres;
     }
 
     @Column(name = "NM_SISTEMA_MIGRAZ")
     public String getNmSistemaMigraz() {
-        return this.nmSistemaMigraz;
+	return this.nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-        this.nmSistemaMigraz = nmSistemaMigraz;
+	this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     @Column(name = "TI_ENTITA_SACER")
     public String getTiEntitaSacer() {
-        return this.tiEntitaSacer;
+	return this.tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-        this.tiEntitaSacer = tiEntitaSacer;
+	this.tiEntitaSacer = tiEntitaSacer;
     }
 
     @Column(name = "TI_USO_XSD")
     public String getTiUsoXsd() {
-        return this.tiUsoXsd;
+	return this.tiUsoXsd;
     }
 
     public void setTiUsoXsd(String tiUsoXsd) {
-        this.tiUsoXsd = tiUsoXsd;
+	this.tiUsoXsd = tiUsoXsd;
     }
 
     @Column(name = "DS_VERSIONE_XSD")
     public String getDsVersioneXsd() {
-        return dsVersioneXsd;
+	return dsVersioneXsd;
     }
 
     public void setDsVersioneXsd(String dsVersioneXsd) {
-        this.dsVersioneXsd = dsVersioneXsd;
+	this.dsVersioneXsd = dsVersioneXsd;
     }
 
     @OneToMany(mappedBy = "decXsdDatiSpec")
     @XmlTransient
     public List<AroUsoXsdDatiSpec> getAroUsoXsdDatiSpecs() {
-        return this.aroUsoXsdDatiSpecs;
+	return this.aroUsoXsdDatiSpecs;
     }
 
     public void setAroUsoXsdDatiSpecs(List<AroUsoXsdDatiSpec> aroUsoXsdDatiSpecs) {
-        this.aroUsoXsdDatiSpecs = aroUsoXsdDatiSpecs;
+	this.aroUsoXsdDatiSpecs = aroUsoXsdDatiSpecs;
     }
 
     public AroUsoXsdDatiSpec addAroUsoXsdDatiSpec(AroUsoXsdDatiSpec aroUsoXsdDatiSpec) {
-        getAroUsoXsdDatiSpecs().add(aroUsoXsdDatiSpec);
-        aroUsoXsdDatiSpec.setDecXsdDatiSpec(this);
-        return aroUsoXsdDatiSpec;
+	getAroUsoXsdDatiSpecs().add(aroUsoXsdDatiSpec);
+	aroUsoXsdDatiSpec.setDecXsdDatiSpec(this);
+	return aroUsoXsdDatiSpec;
     }
 
     public AroUsoXsdDatiSpec removeAroUsoXsdDatiSpec(AroUsoXsdDatiSpec aroUsoXsdDatiSpec) {
-        getAroUsoXsdDatiSpecs().remove(aroUsoXsdDatiSpec);
-        aroUsoXsdDatiSpec.setDecXsdDatiSpec(null);
-        return aroUsoXsdDatiSpec;
+	getAroUsoXsdDatiSpecs().remove(aroUsoXsdDatiSpec);
+	aroUsoXsdDatiSpec.setDecXsdDatiSpec(null);
+	return aroUsoXsdDatiSpec;
     }
 
     @OneToMany(mappedBy = "decXsdDatiSpec", cascade = CascadeType.PERSIST)
     @OrderBy("niOrdAttrib ASC")
     @XmlIDREF
     public List<DecXsdAttribDatiSpec> getDecXsdAttribDatiSpecs() {
-        return this.decXsdAttribDatiSpecs;
+	return this.decXsdAttribDatiSpecs;
     }
 
     public void setDecXsdAttribDatiSpecs(List<DecXsdAttribDatiSpec> decXsdAttribDatiSpecs) {
-        this.decXsdAttribDatiSpecs = decXsdAttribDatiSpecs;
+	this.decXsdAttribDatiSpecs = decXsdAttribDatiSpecs;
     }
 
     public DecXsdAttribDatiSpec addDecXsdAttribDatiSpec(DecXsdAttribDatiSpec decXsdAttribDatiSpec) {
-        getDecXsdAttribDatiSpecs().add(decXsdAttribDatiSpec);
-        decXsdAttribDatiSpec.setDecXsdDatiSpec(this);
-        return decXsdAttribDatiSpec;
+	getDecXsdAttribDatiSpecs().add(decXsdAttribDatiSpec);
+	decXsdAttribDatiSpec.setDecXsdDatiSpec(this);
+	return decXsdAttribDatiSpec;
     }
 
-    public DecXsdAttribDatiSpec removeDecXsdAttribDatiSpec(DecXsdAttribDatiSpec decXsdAttribDatiSpec) {
-        getDecXsdAttribDatiSpecs().remove(decXsdAttribDatiSpec);
-        decXsdAttribDatiSpec.setDecXsdDatiSpec(null);
-        return decXsdAttribDatiSpec;
+    public DecXsdAttribDatiSpec removeDecXsdAttribDatiSpec(
+	    DecXsdAttribDatiSpec decXsdAttribDatiSpec) {
+	getDecXsdAttribDatiSpecs().remove(decXsdAttribDatiSpec);
+	decXsdAttribDatiSpec.setDecXsdDatiSpec(null);
+	return decXsdAttribDatiSpec;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_COMP_DOC")
     @XmlInverseReference(mappedBy = "decXsdDatiSpecs")
     public DecTipoCompDoc getDecTipoCompDoc() {
-        return this.decTipoCompDoc;
+	return this.decTipoCompDoc;
     }
 
     public void setDecTipoCompDoc(DecTipoCompDoc decTipoCompDoc) {
-        this.decTipoCompDoc = decTipoCompDoc;
+	this.decTipoCompDoc = decTipoCompDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_DOC")
     @XmlInverseReference(mappedBy = "decXsdDatiSpecs")
     public DecTipoDoc getDecTipoDoc() {
-        return this.decTipoDoc;
+	return this.decTipoDoc;
     }
 
     public void setDecTipoDoc(DecTipoDoc decTipoDoc) {
-        this.decTipoDoc = decTipoDoc;
+	this.decTipoDoc = decTipoDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decXsdDatiSpecs")
     public DecTipoUnitaDoc getDecTipoUnitaDoc() {
-        return this.decTipoUnitaDoc;
+	return this.decTipoUnitaDoc;
     }
 
     public void setDecTipoUnitaDoc(DecTipoUnitaDoc decTipoUnitaDoc) {
-        this.decTipoUnitaDoc = decTipoUnitaDoc;
+	this.decTipoUnitaDoc = decTipoUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlInverseReference(mappedBy = "decXsdDatiSpecs")
     public OrgStrut getOrgStrut() {
-        return this.orgStrut;
+	return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-        this.orgStrut = orgStrut;
+	this.orgStrut = orgStrut;
     }
 
-    @OneToMany(mappedBy = "decXsdDatiSpec", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @OneToMany(mappedBy = "decXsdDatiSpec", cascade = {
+	    CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlTransient
     public List<DecTipoStrutUdXsd> getDecTipoStrutUdXsds() {
-        return this.decTipoStrutUdXsds;
+	return this.decTipoStrutUdXsds;
     }
 
     public void setDecTipoStrutUdXsds(List<DecTipoStrutUdXsd> decTipoStrutUdXsds) {
-        this.decTipoStrutUdXsds = decTipoStrutUdXsds;
+	this.decTipoStrutUdXsds = decTipoStrutUdXsds;
     }
 
     public DecTipoStrutUdXsd addDecTipoStrutUdXsd(DecTipoStrutUdXsd decTipoStrutUdXsd) {
-        getDecTipoStrutUdXsds().add(decTipoStrutUdXsd);
-        decTipoStrutUdXsd.setDecXsdDatiSpec(this);
-        return decTipoStrutUdXsd;
+	getDecTipoStrutUdXsds().add(decTipoStrutUdXsd);
+	decTipoStrutUdXsd.setDecXsdDatiSpec(this);
+	return decTipoStrutUdXsd;
     }
 
     public DecTipoStrutUdXsd removeDecTipoStrutUdXsd(DecTipoStrutUdXsd decTipoStrutUdXsd) {
-        getDecTipoStrutUdXsds().remove(decTipoStrutUdXsd);
-        decTipoStrutUdXsd.setDecXsdDatiSpec(null);
-        return decTipoStrutUdXsd;
+	getDecTipoStrutUdXsds().remove(decTipoStrutUdXsd);
+	decTipoStrutUdXsd.setDecXsdDatiSpec(null);
+	return decTipoStrutUdXsd;
     }
 }

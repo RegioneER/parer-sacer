@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.grantedViewEntity;
@@ -58,112 +54,112 @@ public class OrgVEnteConvenzByOrganiz implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FINE_VAL")
     public Date getDtFineVal() {
-        return this.dtFineVal;
+	return this.dtFineVal;
     }
 
     public void setDtFineVal(Date dtFineVal) {
-        this.dtFineVal = dtFineVal;
+	this.dtFineVal = dtFineVal;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INI_VAL")
     public Date getDtIniVal() {
-        return this.dtIniVal;
+	return this.dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-        this.dtIniVal = dtIniVal;
+	this.dtIniVal = dtIniVal;
     }
 
     @Column(name = "ID_APPLIC")
     public BigDecimal getIdApplic() {
-        return this.idApplic;
+	return this.idApplic;
     }
 
     public void setIdApplic(BigDecimal idApplic) {
-        this.idApplic = idApplic;
+	this.idApplic = idApplic;
     }
 
     @Column(name = "ID_ENTE_CONVENZ")
     public BigDecimal getIdEnteConvenz() {
-        return this.idEnteConvenz;
+	return this.idEnteConvenz;
     }
 
     public void setIdEnteConvenz(BigDecimal idEnteConvenz) {
-        this.idEnteConvenz = idEnteConvenz;
+	this.idEnteConvenz = idEnteConvenz;
     }
 
     @Id
     @Column(name = "ID_ENTE_CONVENZ_ORG")
     public BigDecimal getIdEnteConvenzOrg() {
-        return this.idEnteConvenzOrg;
+	return this.idEnteConvenzOrg;
     }
 
     public void setIdEnteConvenzOrg(BigDecimal idEnteConvenzOrg) {
-        this.idEnteConvenzOrg = idEnteConvenzOrg;
+	this.idEnteConvenzOrg = idEnteConvenzOrg;
     }
 
     @Column(name = "ID_ORGANIZ_APPLIC")
     public BigDecimal getIdOrganizApplic() {
-        return this.idOrganizApplic;
+	return this.idOrganizApplic;
     }
 
     public void setIdOrganizApplic(BigDecimal idOrganizApplic) {
-        this.idOrganizApplic = idOrganizApplic;
+	this.idOrganizApplic = idOrganizApplic;
     }
 
     @Column(name = "ID_ORGANIZ_IAM")
     public BigDecimal getIdOrganizIam() {
-        return this.idOrganizIam;
+	return this.idOrganizIam;
     }
 
     public void setIdOrganizIam(BigDecimal idOrganizIam) {
-        this.idOrganizIam = idOrganizIam;
+	this.idOrganizIam = idOrganizIam;
     }
 
     @Column(name = "ID_TIPO_ORGANIZ")
     public BigDecimal getIdTipoOrganiz() {
-        return this.idTipoOrganiz;
+	return this.idTipoOrganiz;
     }
 
     public void setIdTipoOrganiz(BigDecimal idTipoOrganiz) {
-        this.idTipoOrganiz = idTipoOrganiz;
+	this.idTipoOrganiz = idTipoOrganiz;
     }
 
     @Column(name = "NM_APPLIC")
     public String getNmApplic() {
-        return this.nmApplic;
+	return this.nmApplic;
     }
 
     public void setNmApplic(String nmApplic) {
-        this.nmApplic = nmApplic;
+	this.nmApplic = nmApplic;
     }
 
     @Column(name = "NM_ENTE_CONVENZ")
     public String getNmEnteConvenz() {
-        return this.nmEnteConvenz;
+	return this.nmEnteConvenz;
     }
 
     public void setNmEnteConvenz(String nmEnteConvenz) {
-        this.nmEnteConvenz = nmEnteConvenz;
+	this.nmEnteConvenz = nmEnteConvenz;
     }
 
     @Column(name = "NM_ORGANIZ")
     public String getNmOrganiz() {
-        return this.nmOrganiz;
+	return this.nmOrganiz;
     }
 
     public void setNmOrganiz(String nmOrganiz) {
-        this.nmOrganiz = nmOrganiz;
+	this.nmOrganiz = nmOrganiz;
     }
 
     @Column(name = "NM_TIPO_ORGANIZ")
     public String getNmTipoOrganiz() {
-        return this.nmTipoOrganiz;
+	return this.nmTipoOrganiz;
     }
 
     public void setNmTipoOrganiz(String nmTipoOrganiz) {
-        this.nmTipoOrganiz = nmTipoOrganiz;
+	this.nmTipoOrganiz = nmTipoOrganiz;
     }
 
 }

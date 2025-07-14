@@ -1,24 +1,19 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.ws.monitoraggio.ejb;
 
@@ -55,51 +50,53 @@ public class StatusMonitorSync {
     //
 
     public void initRispostaWs(RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
-        log.debug("sono nel metodo init");
-        HostMonitor myEsito = new HostMonitor();
+	log.debug("sono nel metodo init");
+	HostMonitor myEsito = new HostMonitor();
 
-        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.OK);
-        rispostaWs.setErrorCode("");
-        rispostaWs.setErrorMessage("");
+	rispostaWs.setSeverity(IRispostaWS.SeverityEnum.OK);
+	rispostaWs.setErrorCode("");
+	rispostaWs.setErrorMessage("");
 
-        rispostaWs.setIstanzaEsito(myEsito);
-        myEsito.setVersione(mon.getDescrizione().getVersione());
+	rispostaWs.setIstanzaEsito(myEsito);
+	myEsito.setVersione(mon.getDescrizione().getVersione());
 
-        // tutto molto più semplice di quanto non accada negli altri ws:
-        // è una risposta JSON quindi molto meno strutturata
+	// tutto molto più semplice di quanto non accada negli altri ws:
+	// è una risposta JSON quindi molto meno strutturata
     }
 
     public void verificaCredenziali(String loginName, String password, String indirizzoIp,
-            RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
-        RispostaControlli tmpRispostaControlli = null;
+	    RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
+	RispostaControlli tmpRispostaControlli = null;
 
-        tmpRispostaControlli = myControlliWs.checkCredenziali(loginName, password, indirizzoIp,
-                Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO);
-        if (!tmpRispostaControlli.isrBoolean()) {
-            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsError(tmpRispostaControlli.getCodErr(), tmpRispostaControlli.getDsErr());
-        }
+	tmpRispostaControlli = myControlliWs.checkCredenziali(loginName, password, indirizzoIp,
+		Costanti.TipiWSPerControlli.VERSAMENTO_RECUPERO);
+	if (!tmpRispostaControlli.isrBoolean()) {
+	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+	    rispostaWs.setEsitoWsError(tmpRispostaControlli.getCodErr(),
+		    tmpRispostaControlli.getDsErr());
+	}
 
-        mon.setLoginName(loginName);
-        mon.setUtente((User) tmpRispostaControlli.getrObject());
+	mon.setLoginName(loginName);
+	mon.setUtente((User) tmpRispostaControlli.getrObject());
     }
 
     public void recuperaStatus(RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
 
-        if (mon.getUtente() == null) {
-            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666, "Errore: l'utente non è autenticato.");
-            return;
-        }
+	if (mon.getUtente() == null) {
+	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+		    "Errore: l'utente non è autenticato.");
+	    return;
+	}
 
-        try {
-            statusMonitorGen.calcolaStatus(rispostaWs, mon);
-        } catch (Exception e) {
-            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                    "Errore dell'EJB nella fase di generazione dello status " + e.getMessage());
-            log.error("Errore dell'EJB nella fase di generazione dello status", e);
-        }
+	try {
+	    statusMonitorGen.calcolaStatus(rispostaWs, mon);
+	} catch (Exception e) {
+	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+		    "Errore dell'EJB nella fase di generazione dello status " + e.getMessage());
+	    log.error("Errore dell'EJB nella fase di generazione dello status", e);
+	}
 
     }
 

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.spring;
@@ -45,40 +41,42 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @EnableWebMvc
 // DA SISTEMARE!!!
-@ComponentScan(basePackages = { "it.eng.parer.web", "it.eng.parer.web.rest.controller", "it.eng.parer.ws",
-        "it.eng.parer.spring", "it.eng.parer.web.action", "it.eng.parer.slite.gen.action", "it.eng.spagoCore",
-        "it.eng.spagoLite" })
+@ComponentScan(basePackages = {
+	"it.eng.parer.web", "it.eng.parer.web.rest.controller", "it.eng.parer.ws",
+	"it.eng.parer.spring", "it.eng.parer.web.action", "it.eng.parer.slite.gen.action",
+	"it.eng.spagoCore", "it.eng.spagoLite" })
 @Configuration
 public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+	registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        /*
-         * qui si dichiarano le risorse statiche
-         */
-        registry.addResourceHandler("/css/**", "/images/**", "/img/**", "/js/**", "/webjars/**")
-                .addResourceLocations("/css/", "/images/", "/img/", "/js/", "/webjars/").setCachePeriod(0);
-        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+	/*
+	 * qui si dichiarano le risorse statiche
+	 */
+	registry.addResourceHandler("/css/**", "/images/**", "/img/**", "/js/**", "/webjars/**")
+		.addResourceLocations("/css/", "/images/", "/img/", "/js/", "/webjars/")
+		.setCachePeriod(0);
+	registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Bean
     public InternalResourceViewResolver resolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setViewClass(JstlView.class);
-        resolver.setPrefix("/jsp/");
-        resolver.setSuffix(".jsp");
-        // resolver.setExposedContextBeanNames("ricercheLoader");
-        return resolver;
+	InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+	resolver.setViewClass(JstlView.class);
+	resolver.setPrefix("/jsp/");
+	resolver.setSuffix(".jsp");
+	// resolver.setExposedContextBeanNames("ricercheLoader");
+	return resolver;
     }
 
     @Bean(name = "paginator")
     PaginatorImpl paginatorImpl() {
-        return new PaginatorImpl();
+	return new PaginatorImpl();
     }
 
     /*
@@ -86,266 +84,266 @@ public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements
      */
     @Bean(name = "authenticator")
     SacerAuthenticator sacerAuthenticator() {
-        return new SacerAuthenticator();
+	return new SacerAuthenticator();
     }
 
     @Bean
     RestTemplate restTemplate() {
-        SimpleClientHttpRequestFactory c = new SimpleClientHttpRequestFactory();
-        c.setReadTimeout(10000);
-        c.setConnectTimeout(10000);
-        return new RestTemplate(c);
+	SimpleClientHttpRequestFactory c = new SimpleClientHttpRequestFactory();
+	c.setReadTimeout(10000);
+	c.setConnectTimeout(10000);
+	return new RestTemplate(c);
     }
 
     /*
-     * Template da inserire nelle applicazioni che usano SpagoLite e che utilizzano l' Help On line. Deve implementare
-     * l'interfaccia IApplicationBasePropertiesSevice
+     * Template da inserire nelle applicazioni che usano SpagoLite e che utilizzano l' Help On line.
+     * Deve implementare l'interfaccia IApplicationBasePropertiesSevice
      *
      */
     @Bean
     ApplicationBasePropertiesSeviceImpl applicationBasePropertiesSeviceImpl() {
-        return new ApplicationBasePropertiesSeviceImpl();
+	return new ApplicationBasePropertiesSeviceImpl();
     }
 
     /*
-     * Serve per parametrizzare l'applicazione specifica per esempio per caricare le variabili di sistema che hanno come
-     * suffisso ad esempio "sacer".
+     * Serve per parametrizzare l'applicazione specifica per esempio per caricare le variabili di
+     * sistema che hanno come suffisso ad esempio "sacer".
      */
     @Bean
     String nomeApplicazione() {
-        return "sacer";
+	return "sacer";
     }
 
     /*
-     * CONFIGURAZIONE DEI BEAN DELLE ACTION che prima erano nell'xml di springweb Configurazione delle action ereditate
-     * dal framework
+     * CONFIGURAZIONE DEI BEAN DELLE ACTION che prima erano nell'xml di springweb Configurazione
+     * delle action ereditate dal framework
      */
     @Bean(value = "/View.html")
     RedirectAction redirectAction() {
-        return new RedirectAction();
+	return new RedirectAction();
     }
 
     @Bean(value = "/Login.html")
     LoginAction loginAction() {
-        return new LoginAction();
+	return new LoginAction();
     }
 
     @Bean(value = "/Logout.html")
     LogoutAction logoutAction() {
-        return new LogoutAction();
+	return new LogoutAction();
     }
 
     /* Configurazione delle action specifiche del modulo web */
     @Bean(value = "/Home.html")
     HomeAction homeAction() {
-        return new HomeAction();
+	return new HomeAction();
     }
 
     @Bean(value = "/SceltaOrganizzazione.html")
     SceltaOrganizzazioneAction sceltaOrganizzazioneAction() {
-        return new SceltaOrganizzazioneAction();
+	return new SceltaOrganizzazioneAction();
     }
 
     /* Action specifiche di SACER */
 
     @Bean(value = "/Volumi.html")
     VolumiAction volumiAction() {
-        return new VolumiAction();
+	return new VolumiAction();
     }
 
     @Bean(value = "/Componenti.html")
     ComponentiAction componentiAction() {
-        return new ComponentiAction();
+	return new ComponentiAction();
     }
 
     @Bean(value = "/UnitaDocumentarie.html")
     UnitaDocumentarieAction unitaDocumentarieAction() {
-        return new UnitaDocumentarieAction();
+	return new UnitaDocumentarieAction();
     }
 
     @Bean(value = "/CriteriRaggruppamento.html")
     CriteriRaggruppamentoAction criteriRaggruppamentoAction() {
-        return new CriteriRaggruppamentoAction();
+	return new CriteriRaggruppamentoAction();
     }
 
     @Bean(value = "/Strutture.html")
     StruttureAction struttureAction() {
-        return new StruttureAction();
+	return new StruttureAction();
     }
 
     @Bean(value = "/StrutDatiSpec.html")
     StrutDatiSpecAction strutDatiSpecAction() {
-        return new StrutDatiSpecAction();
+	return new StrutDatiSpecAction();
     }
 
     @Bean(value = "/StrutTipi.html")
     StrutTipiAction strutTipiAction() {
-        return new StrutTipiAction();
+	return new StrutTipiAction();
     }
 
     @Bean(value = "/Ambiente.html")
     AmbienteAction AmbienteAction() {
-        return new AmbienteAction();
+	return new AmbienteAction();
     }
 
     @Bean(value = "/Amministrazione.html")
     AmministrazioneAction amministrazioneAction() {
-        return new AmministrazioneAction();
+	return new AmministrazioneAction();
     }
 
     @Bean(value = "/Monitoraggio.html")
     MonitoraggioAction monitoraggioAction() {
-        return new MonitoraggioAction();
+	return new MonitoraggioAction();
     }
 
     @Bean(value = "/MonitoraggioFascicoli.html")
     MonitoraggioFascicoliAction monitoraggioFascicoliAction() {
-        return new MonitoraggioFascicoliAction();
+	return new MonitoraggioFascicoliAction();
     }
 
     @Bean(value = "/ListaSessFascicoliErr.html")
     MonitoraggioFascicoliAction listaSessFascicoliErr() {
-        return new MonitoraggioFascicoliAction();
+	return new MonitoraggioFascicoliAction();
     }
 
     @Bean(value = "/MonitoraggioTpi.html")
     MonitoraggioTpiAction monitoraggioTpiAction() {
-        return new MonitoraggioTpiAction();
+	return new MonitoraggioTpiAction();
     }
 
     @Bean(value = "/GestioneJob.html")
     GestioneJobAction gestioneJobAction() {
-        return new GestioneJobAction();
+	return new GestioneJobAction();
     }
 
     @Bean(value = "/Formati.html")
     FormatiAction formatiAction() {
-        return new FormatiAction();
+	return new FormatiAction();
     }
 
     @Bean(value = "/StrutFormatoFile.html")
     StrutFormatoFileAction strutFormatoFileAction() {
-        return new StrutFormatoFileAction();
+	return new StrutFormatoFileAction();
     }
 
     @Bean(value = "/StrutTipoStrut.html")
     StrutTipoStrutAction strutTipoStrutAction() {
-        return new StrutTipoStrutAction();
+	return new StrutTipoStrutAction();
     }
 
     @Bean(value = "/StrutTitolari.html")
     StrutTitolariAction strutTitolariAction() {
-        return new StrutTitolariAction();
+	return new StrutTitolariAction();
     }
 
     @Bean(value = "/MonitoraggioSintetico.html")
     MonitoraggioSinteticoAction monitoraggioSinteticoAction() {
-        return new MonitoraggioSinteticoAction();
+	return new MonitoraggioSinteticoAction();
     }
 
     @Bean(value = "/MonitoraggioAggMeta.html")
     MonitoraggioAggMetaAction monitoraggioAggMetaAction() {
-        return new MonitoraggioAggMetaAction();
+	return new MonitoraggioAggMetaAction();
     }
 
     @Bean(value = "/MonitoraggioIndiceAIP.html")
     MonitoraggioIndiceAIPAction monitoraggioIndiceAIPAction() {
-        return new MonitoraggioIndiceAIPAction();
+	return new MonitoraggioIndiceAIPAction();
     }
 
     @Bean(value = "/Trasformatori.html")
     TrasformatoriAction trasformatoriAction() {
-        return new TrasformatoriAction();
+	return new TrasformatoriAction();
     }
 
     @Bean(value = "/SubStrutture.html")
     SubStruttureAction subStruttureAction() {
-        return new SubStruttureAction();
+	return new SubStruttureAction();
     }
 
     @Bean(value = "/StrutSerie.html")
     StrutSerieAction strutSerieAction() {
-        return new StrutSerieAction();
+	return new StrutSerieAction();
     }
 
     @Bean(value = "/SerieUD.html")
     SerieUDAction serieUDAction() {
-        return new SerieUDAction();
+	return new SerieUDAction();
     }
 
     @Bean(value = "/SerieUdPerUtentiExt.html")
     SerieUdPerUtentiExtAction serieUdPerUtentiExtAction() {
-        return new SerieUdPerUtentiExtAction();
+	return new SerieUdPerUtentiExtAction();
     }
 
     @Bean(value = "/ElenchiVersamento.html")
     ElenchiVersamentoAction elenchiVersamentoAction() {
-        return new ElenchiVersamentoAction();
+	return new ElenchiVersamentoAction();
     }
 
     @Bean(value = "/AnnulVers.html")
     AnnulVersAction annulVersAction() {
-        return new AnnulVersAction();
+	return new AnnulVersAction();
     }
 
     @Bean(value = "/ModelliSerie.html")
     ModelliSerieAction modelliSerieAction() {
-        return new ModelliSerieAction();
+	return new ModelliSerieAction();
     }
 
     @Bean(value = "/EntiConvenzionati.html")
     EntiConvenzionatiAction entiConvenzionatiAction() {
-        return new EntiConvenzionatiAction();
+	return new EntiConvenzionatiAction();
     }
 
     @Bean(value = "/Fascicoli.html")
     FascicoliAction fascicoliAction() {
-        return new FascicoliAction();
+	return new FascicoliAction();
     }
 
     @Bean(value = "/CriteriRaggrFascicoli.html")
     CriteriRaggrFascicoliAction criteriRaggrFascicoliAction() {
-        return new CriteriRaggrFascicoliAction();
+	return new CriteriRaggrFascicoliAction();
     }
 
     @Bean(value = "/StrutTipiFascicolo.html")
     StrutTipiFascicoloAction strutTipiFascicoloAction() {
-        return new StrutTipiFascicoloAction();
+	return new StrutTipiFascicoloAction();
     }
 
     @Bean(value = "/ElenchiVersFascicoli.html")
     ElenchiVersFascicoliAction elenchiVersFascicoliAction() {
-        return new ElenchiVersFascicoliAction();
+	return new ElenchiVersFascicoliAction();
     }
 
     @Bean(value = "/ModelliFascicoli.html")
     ModelliFascicoliAction modelliFascicoliAction() {
-        return new ModelliFascicoliAction();
+	return new ModelliFascicoliAction();
     }
 
     @Bean(value = "/NoteRilascio.html")
     NoteRilascioAction noteRilascioAction() {
-        return new NoteRilascioAction();
+	return new NoteRilascioAction();
     }
 
     @Bean(value = "/RestituzioneArchivio.html")
     RestituzioneArchivioAction restituzioneArchivioAction() {
-        return new RestituzioneArchivioAction();
+	return new RestituzioneArchivioAction();
     }
 
     @Bean(value = "/ModelliUD.html")
     ModelliUDAction modelliUDAction() {
-        return new ModelliUDAction();
+	return new ModelliUDAction();
     }
 
     @Bean(value = "/UtilizzoMicroservizi.html")
     UtilizzoMicroserviziAction utilizzoMicroserviziAction() {
-        return new UtilizzoMicroserviziAction();
+	return new UtilizzoMicroserviziAction();
     }
 
     @Bean(value = "/VerificaFirme")
     VerificaFirme verificaFirme() {
-        return new VerificaFirme();
+	return new VerificaFirme();
     }
 
 }

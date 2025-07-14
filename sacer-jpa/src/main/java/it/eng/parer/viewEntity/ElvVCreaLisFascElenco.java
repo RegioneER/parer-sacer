@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -59,140 +55,140 @@ public class ElvVCreaLisFascElenco implements Serializable {
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-        return this.aaFascicolo;
+	return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-        this.aaFascicolo = aaFascicolo;
+	this.aaFascicolo = aaFascicolo;
     }
 
     @Column(name = "CD_ENCODING_HASH_FASCICOLO")
     public String getCdEncodingHashFascicolo() {
-        return this.cdEncodingHashFascicolo;
+	return this.cdEncodingHashFascicolo;
     }
 
     public void setCdEncodingHashFascicolo(String cdEncodingHashFascicolo) {
-        this.cdEncodingHashFascicolo = cdEncodingHashFascicolo;
+	this.cdEncodingHashFascicolo = cdEncodingHashFascicolo;
     }
 
     @Column(name = "CD_KEY_FASCICOLO")
     public String getCdKeyFascicolo() {
-        return this.cdKeyFascicolo;
+	return this.cdKeyFascicolo;
     }
 
     public void setCdKeyFascicolo(String cdKeyFascicolo) {
-        this.cdKeyFascicolo = cdKeyFascicolo;
+	this.cdKeyFascicolo = cdKeyFascicolo;
     }
 
     @Column(name = "DS_ALGO_HASH_FASCICOLO")
     public String getDsAlgoHashFascicolo() {
-        return this.dsAlgoHashFascicolo;
+	return this.dsAlgoHashFascicolo;
     }
 
     public void setDsAlgoHashFascicolo(String dsAlgoHashFascicolo) {
-        this.dsAlgoHashFascicolo = dsAlgoHashFascicolo;
+	this.dsAlgoHashFascicolo = dsAlgoHashFascicolo;
     }
 
     @Column(name = "DS_HASH_FASCICOLO")
     public String getDsHashFascicolo() {
-        return this.dsHashFascicolo;
+	return this.dsHashFascicolo;
     }
 
     public void setDsHashFascicolo(String dsHashFascicolo) {
-        this.dsHashFascicolo = dsHashFascicolo;
+	this.dsHashFascicolo = dsHashFascicolo;
     }
 
     @Column(name = "DS_OGGETTO_FASCICOLO")
     public String getDsOggettoFascicolo() {
-        return this.dsOggettoFascicolo;
+	return this.dsOggettoFascicolo;
     }
 
     public void setDsOggettoFascicolo(String dsOggettoFascicolo) {
-        this.dsOggettoFascicolo = dsOggettoFascicolo;
+	this.dsOggettoFascicolo = dsOggettoFascicolo;
     }
 
     @Column(name = "DS_URN_FASCICOLO")
     public String getDsUrnFascicolo() {
-        return this.dsUrnFascicolo;
+	return this.dsUrnFascicolo;
     }
 
     public void setDsUrnFascicolo(String dsUrnFascicolo) {
-        this.dsUrnFascicolo = dsUrnFascicolo;
+	this.dsUrnFascicolo = dsUrnFascicolo;
     }
 
     @Column(name = "DS_URN_SIP_FASCICOLO")
     public String getDsUrnSipFascicolo() {
-        return this.dsUrnSipFascicolo;
+	return this.dsUrnSipFascicolo;
     }
 
     public void setDsUrnSipFascicolo(String dsUrnSipFascicolo) {
-        this.dsUrnSipFascicolo = dsUrnSipFascicolo;
+	this.dsUrnSipFascicolo = dsUrnSipFascicolo;
     }
 
     @Column(name = "DS_URN_RAPP_VERS")
     public String getDsUrnRappVers() {
-        return this.dsUrnRappVers;
+	return this.dsUrnRappVers;
     }
 
     public void setDsUrnRappVers(String dsUrnRappVers) {
-        this.dsUrnRappVers = dsUrnRappVers;
+	this.dsUrnRappVers = dsUrnRappVers;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_APE_FASCICOLO")
     public Date getDtApeFascicolo() {
-        return this.dtApeFascicolo;
+	return this.dtApeFascicolo;
     }
 
     public void setDtApeFascicolo(Date dtApeFascicolo) {
-        this.dtApeFascicolo = dtApeFascicolo;
+	this.dtApeFascicolo = dtApeFascicolo;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_CHIU_FASCICOLO")
     public Date getDtChiuFascicolo() {
-        return this.dtChiuFascicolo;
+	return this.dtChiuFascicolo;
     }
 
     public void setDtChiuFascicolo(Date dtChiuFascicolo) {
-        this.dtChiuFascicolo = dtChiuFascicolo;
+	this.dtChiuFascicolo = dtChiuFascicolo;
     }
 
     @Column(name = "NI_UNITA_DOC")
     public BigDecimal getNiUnitaDoc() {
-        return this.niUnitaDoc;
+	return this.niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-        this.niUnitaDoc = niUnitaDoc;
+	this.niUnitaDoc = niUnitaDoc;
     }
 
     @Column(name = "NM_TIPO_FASCICOLO")
     public String getNmTipoFascicolo() {
-        return this.nmTipoFascicolo;
+	return this.nmTipoFascicolo;
     }
 
     public void setNmTipoFascicolo(String nmTipoFascicolo) {
-        this.nmTipoFascicolo = nmTipoFascicolo;
+	this.nmTipoFascicolo = nmTipoFascicolo;
     }
 
     @Column(name = "TS_INI_SES")
     public Timestamp getTsIniSes() {
-        return this.tsIniSes;
+	return this.tsIniSes;
     }
 
     public void setTsIniSes(Timestamp tsIniSes) {
-        this.tsIniSes = tsIniSes;
+	this.tsIniSes = tsIniSes;
     }
 
     private ElvVCreaLisFascElencoId elvVCreaLisFascElencoId;
 
     @EmbeddedId()
     public ElvVCreaLisFascElencoId getElvVCreaLisFascElencoId() {
-        return elvVCreaLisFascElencoId;
+	return elvVCreaLisFascElencoId;
     }
 
     public void setElvVCreaLisFascElencoId(ElvVCreaLisFascElencoId elvVCreaLisFascElencoId) {
-        this.elvVCreaLisFascElencoId = elvVCreaLisFascElencoId;
+	this.elvVCreaLisFascElencoId = elvVCreaLisFascElencoId;
     }
 }

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -59,169 +55,170 @@ public class AroVRicRichRa implements Serializable {
     public AroVRicRichRa() {/* Hibernate */
     }
 
-    public AroVRicRichRa(BigDecimal idRichiestaRa, String nmEnteConvenz, String nmEnteStrut, BigDecimal idEnte,
-            BigDecimal idStrut, BigDecimal idEnteConvenz, BigDecimal totali, BigDecimal estratti, BigDecimal errori,
-            BigDecimal estrattiTotali, BigDecimal sumDim, Date maxDtEstrazione, String tiStato, Date tsInizio) {
-        this.idRichiestaRa = idRichiestaRa;
-        this.nmEnteConvenz = nmEnteConvenz;
-        this.nmEnteStrut = nmEnteStrut;
-        this.idEnte = idEnte;
-        this.idStrut = idStrut;
-        this.idEnteConvenz = idEnteConvenz;
-        this.totali = totali;
-        this.estratti = estratti;
-        this.errori = errori;
-        this.estrattiTotali = estrattiTotali;
-        this.sumDim = sumDim;
-        this.maxDtEstrazione = maxDtEstrazione;
-        this.tiStato = tiStato;
-        this.tsInizio = tsInizio;
+    public AroVRicRichRa(BigDecimal idRichiestaRa, String nmEnteConvenz, String nmEnteStrut,
+	    BigDecimal idEnte, BigDecimal idStrut, BigDecimal idEnteConvenz, BigDecimal totali,
+	    BigDecimal estratti, BigDecimal errori, BigDecimal estrattiTotali, BigDecimal sumDim,
+	    Date maxDtEstrazione, String tiStato, Date tsInizio) {
+	this.idRichiestaRa = idRichiestaRa;
+	this.nmEnteConvenz = nmEnteConvenz;
+	this.nmEnteStrut = nmEnteStrut;
+	this.idEnte = idEnte;
+	this.idStrut = idStrut;
+	this.idEnteConvenz = idEnteConvenz;
+	this.totali = totali;
+	this.estratti = estratti;
+	this.errori = errori;
+	this.estrattiTotali = estrattiTotali;
+	this.sumDim = sumDim;
+	this.maxDtEstrazione = maxDtEstrazione;
+	this.tiStato = tiStato;
+	this.tsInizio = tsInizio;
     }
 
     @Column(name = "TOTALI")
     public BigDecimal getTotali() {
-        return this.totali;
+	return this.totali;
     }
 
     public void setTotali(BigDecimal totali) {
-        this.totali = totali;
+	this.totali = totali;
     }
 
     @Column(name = "ESTRATTI")
     public BigDecimal getEstratti() {
-        return this.estratti;
+	return this.estratti;
     }
 
     public void setEstratti(BigDecimal estratti) {
-        this.estratti = estratti;
+	this.estratti = estratti;
     }
 
     @Column(name = "ERRORI")
     public BigDecimal getErrori() {
-        return this.errori;
+	return this.errori;
     }
 
     public void setErrori(BigDecimal errori) {
-        this.errori = errori;
+	this.errori = errori;
     }
 
     @Column(name = "NM_ENTE_CONVENZ")
     public String getNmEnteConvenz() {
-        return this.nmEnteConvenz;
+	return this.nmEnteConvenz;
     }
 
     public void setNmEnteConvenz(String nmEnteConvenz) {
-        this.nmEnteConvenz = nmEnteConvenz;
+	this.nmEnteConvenz = nmEnteConvenz;
     }
 
     @Column(name = "NM_ENTE_STRUT")
     public String getNmEnteStrut() {
-        return this.nmEnteStrut;
+	return this.nmEnteStrut;
     }
 
     public void setNmEnteStrut(String nmEnteStrut) {
-        this.nmEnteStrut = nmEnteStrut;
+	this.nmEnteStrut = nmEnteStrut;
     }
 
     @Column(name = "CD_ERRORE")
     public String getCdErrore() {
-        return this.cdErrore;
+	return this.cdErrore;
     }
 
     public void setCdErrore(String cdErrore) {
-        this.cdErrore = cdErrore;
+	this.cdErrore = cdErrore;
     }
 
     @Column(name = "TI_STATO")
     public String getTiStato() {
-        return this.tiStato;
+	return this.tiStato;
     }
 
     public void setTiStato(String tiStato) {
-        this.tiStato = tiStato;
+	this.tiStato = tiStato;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "MAX_DT_ESTRAZIONE")
     public Date getMaxDtEstrazione() {
-        return this.maxDtEstrazione;
+	return this.maxDtEstrazione;
     }
 
     public void setMaxDtEstrazione(Date maxDtEstrazione) {
-        this.maxDtEstrazione = maxDtEstrazione;
+	this.maxDtEstrazione = maxDtEstrazione;
     }
 
     @Id
     @Column(name = "ID_RICHIESTA_RA")
     public BigDecimal getIdRichiestaRa() {
-        return this.idRichiestaRa;
+	return this.idRichiestaRa;
     }
 
     public void setIdRichiestaRa(BigDecimal idRichiestaRa) {
-        this.idRichiestaRa = idRichiestaRa;
+	this.idRichiestaRa = idRichiestaRa;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-        return this.idEnte;
+	return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-        this.idEnte = idEnte;
+	this.idEnte = idEnte;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-        return this.idAmbiente;
+	return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-        this.idAmbiente = idAmbiente;
+	this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @Column(name = "ID_ENTE_CONVENZ")
     public BigDecimal getIdEnteConvenz() {
-        return this.idEnteConvenz;
+	return this.idEnteConvenz;
     }
 
     public void setIdEnteConvenz(BigDecimal idEnteConvenz) {
-        this.idEnteConvenz = idEnteConvenz;
+	this.idEnteConvenz = idEnteConvenz;
     }
 
     @Column(name = "ESTRATTI_TOTALI")
     public BigDecimal getEstrattiTotali() {
-        return this.estrattiTotali;
+	return this.estrattiTotali;
     }
 
     public void setEstrattiTotali(BigDecimal estrattiTotali) {
-        this.estrattiTotali = estrattiTotali;
+	this.estrattiTotali = estrattiTotali;
     }
 
     @Column(name = "SUM_DIM")
     public BigDecimal getSumDim() {
-        return this.sumDim;
+	return this.sumDim;
     }
 
     public void setSumDim(BigDecimal sumDim) {
-        this.sumDim = sumDim;
+	this.sumDim = sumDim;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_INIZIO")
     public Date getTsInizio() {
-        return this.tsInizio;
+	return this.tsInizio;
     }
 
     public void setTsInizio(Date tsInizio) {
-        this.tsInizio = tsInizio;
+	this.tsInizio = tsInizio;
     }
 }

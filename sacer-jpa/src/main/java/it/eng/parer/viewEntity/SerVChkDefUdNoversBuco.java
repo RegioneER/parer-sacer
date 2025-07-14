@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -44,30 +40,30 @@ public class SerVChkDefUdNoversBuco implements Serializable {
 
     @Column(name = "FL_DEF_UD_NON_VERS", columnDefinition = "char(1)")
     public String getFlDefUdNonVers() {
-        return this.flDefUdNonVers;
+	return this.flDefUdNonVers;
     }
 
     public void setFlDefUdNonVers(String flDefUdNonVers) {
-        this.flDefUdNonVers = flDefUdNonVers;
+	this.flDefUdNonVers = flDefUdNonVers;
     }
 
     @Column(name = "ID_SERIE")
     public BigDecimal getIdSerie() {
-        return this.idSerie;
+	return this.idSerie;
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-        this.idSerie = idSerie;
+	this.idSerie = idSerie;
     }
 
     @Id
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-        return this.idVerSerie;
+	return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-        this.idVerSerie = idVerSerie;
+	this.idVerSerie = idVerSerie;
     }
 
 }

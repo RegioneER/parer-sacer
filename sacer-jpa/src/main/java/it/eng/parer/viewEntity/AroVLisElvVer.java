@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -51,69 +47,69 @@ public class AroVLisElvVer implements Serializable {
 
     @EmbeddedId
     public AroVLisElvVerId getAroVLisElvVerId() {
-        return aroVLisElvVerId;
+	return aroVLisElvVerId;
     }
 
     public void setAroVLisElvVerId(AroVLisElvVerId aroVLisElvVerId) {
-        this.aroVLisElvVerId = aroVLisElvVerId;
+	this.aroVLisElvVerId = aroVLisElvVerId;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_ELENCO")
     public Date getDtCreazioneElenco() {
-        return this.dtCreazioneElenco;
+	return this.dtCreazioneElenco;
     }
 
     public void setDtCreazioneElenco(Date dtCreazioneElenco) {
-        this.dtCreazioneElenco = dtCreazioneElenco;
+	this.dtCreazioneElenco = dtCreazioneElenco;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_ELENCO_IX_AIP")
     public Date getDtCreazioneElencoIxAip() {
-        return this.dtCreazioneElencoIxAip;
+	return this.dtCreazioneElencoIxAip;
     }
 
     public void setDtCreazioneElencoIxAip(Date dtCreazioneElencoIxAip) {
-        this.dtCreazioneElencoIxAip = dtCreazioneElencoIxAip;
+	this.dtCreazioneElencoIxAip = dtCreazioneElencoIxAip;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIRMA_ELENCO_IX_AIP")
     public Date getDtFirmaElencoIxAip() {
-        return this.dtFirmaElencoIxAip;
+	return this.dtFirmaElencoIxAip;
     }
 
     public void setDtFirmaElencoIxAip(Date dtFirmaElencoIxAip) {
-        this.dtFirmaElencoIxAip = dtFirmaElencoIxAip;
+	this.dtFirmaElencoIxAip = dtFirmaElencoIxAip;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_MARCA_ELENCO_IX_AIP")
     public Date getDtMarcaElencoIxAip() {
-        return this.dtMarcaElencoIxAip;
+	return this.dtMarcaElencoIxAip;
     }
 
     public void setDtMarcaElencoIxAip(Date dtMarcaElencoIxAip) {
-        this.dtMarcaElencoIxAip = dtMarcaElencoIxAip;
+	this.dtMarcaElencoIxAip = dtMarcaElencoIxAip;
     }
 
     @Column(name = "NM_ELENCO")
     public String getNmElenco() {
-        return this.nmElenco;
+	return this.nmElenco;
     }
 
     public void setNmElenco(String nmElenco) {
-        this.nmElenco = nmElenco;
+	this.nmElenco = nmElenco;
     }
 
     @Column(name = "TI_STATO_ELENCO")
     public String getTiStatoElenco() {
-        return this.tiStatoElenco;
+	return this.tiStatoElenco;
     }
 
     public void setTiStatoElenco(String tiStatoElenco) {
-        this.tiStatoElenco = tiStatoElenco;
+	this.tiStatoElenco = tiStatoElenco;
     }
 
 }

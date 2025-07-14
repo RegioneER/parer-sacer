@@ -1,24 +1,19 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.web.security;
 
@@ -55,53 +50,60 @@ public class SacerAuthenticator extends Authenticator {
      */
     @Override
     public User recuperoAutorizzazioni(HttpSession httpSession) {
-        User utente = (User) SessionManager.getUser(httpSession);
-        /*
-         * try { // recupero l'ID utente nella tabella locale, partendo da nmUserid IAM univoco UsrUser user =
-         * userHelper.findUsrUser(utente.getUsername()); utente.setIdUtente(user.getIdUserIam());
-         * utente.setScadenzaPwd(user.getDtScadPsw()); } catch (Exception e) { throw new WebServiceException(
-         * "L'Utente non è ancora censito nella tabella IAMUSER locale:  " + e.getMessage()); }
-         */
-        //
-        // RecuperoAutorizzazioni client =
-        // IAMSoapClients.recuperoAutorizzazioniClient(utente.getConfigurazione().get("USERID_RECUP_INFO"),
-        // utente.getConfigurazione().get("PSW_RECUP_INFO"), "http://localhost:8080/saceriam/RecuperoAutorizzazioni");
-        String psw = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
-        String user = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
-        String url = configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_AUTOR_USER);
-        String timeoutString = configHelper
-                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_RECUP_AUTOR_USER);
+	User utente = (User) SessionManager.getUser(httpSession);
+	/*
+	 * try { // recupero l'ID utente nella tabella locale, partendo da nmUserid IAM univoco
+	 * UsrUser user = userHelper.findUsrUser(utente.getUsername());
+	 * utente.setIdUtente(user.getIdUserIam()); utente.setScadenzaPwd(user.getDtScadPsw()); }
+	 * catch (Exception e) { throw new WebServiceException(
+	 * "L'Utente non è ancora censito nella tabella IAMUSER locale:  " + e.getMessage()); }
+	 */
+	//
+	// RecuperoAutorizzazioni client =
+	// IAMSoapClients.recuperoAutorizzazioniClient(utente.getConfigurazione().get("USERID_RECUP_INFO"),
+	// utente.getConfigurazione().get("PSW_RECUP_INFO"),
+	// "http://localhost:8080/saceriam/RecuperoAutorizzazioni");
+	String psw = configHelper
+		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_INFO);
+	String user = configHelper
+		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_INFO);
+	String url = configHelper
+		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_AUTOR_USER);
+	String timeoutString = configHelper
+		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.TIMEOUT_RECUP_AUTOR_USER);
 
-        RecuperoAutorizzazioni client = IAMSoapClients.recuperoAutorizzazioniClient(user, psw, url);
-        if (client == null) {
-            throw new WebServiceException("Non è stato possibile recuperare la lista delle autorizzazioni da SIAM");
-        }
+	RecuperoAutorizzazioni client = IAMSoapClients.recuperoAutorizzazioniClient(user, psw, url);
+	if (client == null) {
+	    throw new WebServiceException(
+		    "Non è stato possibile recuperare la lista delle autorizzazioni da SIAM");
+	}
 
-        // imposto il valore di timeout. vedi MEV #23814
-        if (timeoutString != null && timeoutString.matches("^[0-9]+$")) {
-            int timeoutRecuperoAutorizzazioni = Integer.parseInt(timeoutString);
-            IAMSoapClients.changeRequestTimeout((BindingProvider) client, timeoutRecuperoAutorizzazioni);
-        } else {
-            log.warn("Il valore personalizzato \"" + timeoutString
-                    + "\" per il parametro TIMEOUT_RECUP_AUTOR_USER non è corretto. Utilizzo il valore predefinito");
-        }
+	// imposto il valore di timeout. vedi MEV #23814
+	if (timeoutString != null && timeoutString.matches("^[0-9]+$")) {
+	    int timeoutRecuperoAutorizzazioni = Integer.parseInt(timeoutString);
+	    IAMSoapClients.changeRequestTimeout((BindingProvider) client,
+		    timeoutRecuperoAutorizzazioni);
+	} else {
+	    log.warn("Il valore personalizzato \"" + timeoutString
+		    + "\" per il parametro TIMEOUT_RECUP_AUTOR_USER non è corretto. Utilizzo il valore predefinito");
+	}
 
-        RecuperoAutorizzazioniRisposta resp;
-        try {
-            resp = client.recuperoAutorizzazioniPerNome(utente.getUsername(), getAppName(),
-                    utente.getIdOrganizzazioneFoglia().intValue());
-        } catch (AuthWSException_Exception e) {
-            throw new RuntimeException(e);
-        }
-        UserUtil.fillComponenti(utente, resp);
-        SessionManager.setUser(httpSession, utente);
-        return utente;
+	RecuperoAutorizzazioniRisposta resp;
+	try {
+	    resp = client.recuperoAutorizzazioniPerNome(utente.getUsername(), getAppName(),
+		    utente.getIdOrganizzazioneFoglia().intValue());
+	} catch (AuthWSException_Exception e) {
+	    throw new RuntimeException(e);
+	}
+	UserUtil.fillComponenti(utente, resp);
+	SessionManager.setUser(httpSession, utente);
+	return utente;
 
     }
 
     @Override
     protected String getAppName() {
-        return configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
+	return configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC);
     }
 
 }

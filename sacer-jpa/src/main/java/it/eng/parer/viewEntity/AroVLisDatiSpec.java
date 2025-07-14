@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -59,148 +55,148 @@ public class AroVLisDatiSpec implements Serializable {
 
     @Column(name = "CD_VERSIONE_XSD")
     public String getCdVersioneXsd() {
-        return this.cdVersioneXsd;
+	return this.cdVersioneXsd;
     }
 
     public void setCdVersioneXsd(String cdVersioneXsd) {
-        this.cdVersioneXsd = cdVersioneXsd;
+	this.cdVersioneXsd = cdVersioneXsd;
     }
 
     @Column(name = "DL_VALORE")
     public String getDlValore() {
-        return this.dlValore;
+	return this.dlValore;
     }
 
     public void setDlValore(String dlValore) {
-        this.dlValore = dlValore;
+	this.dlValore = dlValore;
     }
 
     @Column(name = "DS_ATTRIB_DATI_SPEC")
     public String getDsAttribDatiSpec() {
-        return this.dsAttribDatiSpec;
+	return this.dsAttribDatiSpec;
     }
 
     public void setDsAttribDatiSpec(String dsAttribDatiSpec) {
-        this.dsAttribDatiSpec = dsAttribDatiSpec;
+	this.dsAttribDatiSpec = dsAttribDatiSpec;
     }
 
     @Column(name = "DS_VERSIONE_XSD")
     public String getDsVersioneXsd() {
-        return this.dsVersioneXsd;
+	return this.dsVersioneXsd;
     }
 
     public void setDsVersioneXsd(String dsVersioneXsd) {
-        this.dsVersioneXsd = dsVersioneXsd;
+	this.dsVersioneXsd = dsVersioneXsd;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-        return this.dtIstituz;
+	return this.dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-        this.dtIstituz = dtIstituz;
+	this.dtIstituz = dtIstituz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
-        return this.dtSoppres;
+	return this.dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-        this.dtSoppres = dtSoppres;
+	this.dtSoppres = dtSoppres;
     }
 
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-        return this.idCompDoc;
+	return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-        this.idCompDoc = idCompDoc;
+	this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-        return this.idDoc;
+	return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-        this.idDoc = idDoc;
+	this.idDoc = idDoc;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-        return this.idUnitaDoc;
+	return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-        this.idUnitaDoc = idUnitaDoc;
+	this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "ID_USO_XSD_DATI_SPEC")
     public BigDecimal getIdUsoXsdDatiSpec() {
-        return this.idUsoXsdDatiSpec;
+	return this.idUsoXsdDatiSpec;
     }
 
     public void setIdUsoXsdDatiSpec(BigDecimal idUsoXsdDatiSpec) {
-        this.idUsoXsdDatiSpec = idUsoXsdDatiSpec;
+	this.idUsoXsdDatiSpec = idUsoXsdDatiSpec;
     }
 
     @Id
     @Column(name = "ID_VALORE_ATTRIB_DATI_SPEC")
     public BigDecimal getIdValoreAttribDatiSpec() {
-        return this.idValoreAttribDatiSpec;
+	return this.idValoreAttribDatiSpec;
     }
 
     public void setIdValoreAttribDatiSpec(BigDecimal idValoreAttribDatiSpec) {
-        this.idValoreAttribDatiSpec = idValoreAttribDatiSpec;
+	this.idValoreAttribDatiSpec = idValoreAttribDatiSpec;
     }
 
     @Column(name = "NI_ORD_ATTRIB")
     public BigDecimal getNiOrdAttrib() {
-        return this.niOrdAttrib;
+	return this.niOrdAttrib;
     }
 
     public void setNiOrdAttrib(BigDecimal niOrdAttrib) {
-        this.niOrdAttrib = niOrdAttrib;
+	this.niOrdAttrib = niOrdAttrib;
     }
 
     @Column(name = "NM_ATTRIB_DATI_SPEC")
     public String getNmAttribDatiSpec() {
-        return this.nmAttribDatiSpec;
+	return this.nmAttribDatiSpec;
     }
 
     public void setNmAttribDatiSpec(String nmAttribDatiSpec) {
-        this.nmAttribDatiSpec = nmAttribDatiSpec;
+	this.nmAttribDatiSpec = nmAttribDatiSpec;
     }
 
     @Column(name = "NM_SISTEMA_MIGRAZ")
     public String getNmSistemaMigraz() {
-        return this.nmSistemaMigraz;
+	return this.nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-        this.nmSistemaMigraz = nmSistemaMigraz;
+	this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     @Column(name = "TI_ENTITA_SACER")
     public String getTiEntitaSacer() {
-        return this.tiEntitaSacer;
+	return this.tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-        this.tiEntitaSacer = tiEntitaSacer;
+	this.tiEntitaSacer = tiEntitaSacer;
     }
 
     @Column(name = "TI_USO_XSD")
     public String getTiUsoXsd() {
-        return this.tiUsoXsd;
+	return this.tiUsoXsd;
     }
 
     public void setTiUsoXsd(String tiUsoXsd) {
-        this.tiUsoXsd = tiUsoXsd;
+	this.tiUsoXsd = tiUsoXsd;
     }
 }

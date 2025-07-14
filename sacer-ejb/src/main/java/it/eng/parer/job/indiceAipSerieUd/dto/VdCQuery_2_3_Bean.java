@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.job.indiceAipSerieUd.dto;
@@ -33,51 +29,51 @@ public class VdCQuery_2_3_Bean {
     private String dlNotaLacuna;
 
     public Long getIdVerSerieCor() {
-        return idVerSerieCor;
+	return idVerSerieCor;
     }
 
     public void setIdVerSerieCor(Long idVerSerieCor) {
-        this.idVerSerieCor = idVerSerieCor;
+	this.idVerSerieCor = idVerSerieCor;
     }
 
     public String getTiModLacuna() {
-        return tiModLacuna;
+	return tiModLacuna;
     }
 
     public void setTiModLacuna(String tiModLacuna) {
-        this.tiModLacuna = tiModLacuna;
+	this.tiModLacuna = tiModLacuna;
     }
 
     public BigDecimal getNiIniLacuna() {
-        return niIniLacuna;
+	return niIniLacuna;
     }
 
     public void setNiIniLacuna(BigDecimal niIniLacuna) {
-        this.niIniLacuna = niIniLacuna;
+	this.niIniLacuna = niIniLacuna;
     }
 
     public BigDecimal getNiFinLacuna() {
-        return niFinLacuna;
+	return niFinLacuna;
     }
 
     public void setNiFinLacuna(BigDecimal niFinLacuna) {
-        this.niFinLacuna = niFinLacuna;
+	this.niFinLacuna = niFinLacuna;
     }
 
     public String getDlLacuna() {
-        return dlLacuna;
+	return dlLacuna;
     }
 
     public void setDlLacuna(String dlLacuna) {
-        this.dlLacuna = dlLacuna;
+	this.dlLacuna = dlLacuna;
     }
 
     public String getDlNotaLacuna() {
-        return dlNotaLacuna;
+	return dlNotaLacuna;
     }
 
     public void setDlNotaLacuna(String dlNotaLacuna) {
-        this.dlNotaLacuna = dlNotaLacuna;
+	this.dlNotaLacuna = dlNotaLacuna;
     }
 
 }

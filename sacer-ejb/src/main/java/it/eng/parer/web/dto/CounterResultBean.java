@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.web.dto;
@@ -25,7 +21,8 @@ import java.util.Date;
 import it.eng.parer.web.util.Constants;
 
 /**
- * DTO che rappresenta il risultato del WS REST DocCounter. Il ws è presente nello strato web. La sua implementazione è
+ * DTO che rappresenta il risultato del WS REST DocCounter. Il ws è presente nello strato web. La
+ * sua implementazione è
  *
  * <pre>
  * {@code
@@ -49,32 +46,30 @@ public class CounterResultBean implements Serializable {
     /**
      * Costrutture parametrico. Imposta gli attributi dell'oggetto solamente se rispondenti.
      *
-     * @param date
-     *            data
-     * @param counter
-     *            contatore
+     * @param date    data
+     * @param counter contatore
      */
     public CounterResultBean(Object date, BigDecimal counter) {
-        if (date != null && date instanceof Date && counter != null) {
-            this.date = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE).format(date);
-            this.counter = counter.longValue();
-        }
+	if (date != null && date instanceof Date && counter != null) {
+	    this.date = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE).format(date);
+	    this.counter = counter.longValue();
+	}
     }
 
     public String getDate() {
-        return date;
+	return date;
     }
 
     public void setDate(String date) {
-        this.date = date;
+	this.date = date;
     }
 
     public long getCounter() {
-        return counter;
+	return counter;
     }
 
     public void setCounter(long counter) {
-        this.counter = counter;
+	this.counter = counter;
     }
 
 }

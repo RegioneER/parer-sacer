@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ page import="it.eng.parer.slite.gen.form.ElenchiVersamentoForm" pageEncoding="UTF-8"%>
 <%@ include file="../include.jsp"%>
 <c:set scope="request" var="navTable" value="${(empty param.mainNavTable) ? (fn:escapeXml(param.table)) : (fn:escapeXml(param.mainNavTable))  }" />
@@ -88,8 +105,8 @@
             <slf:tab  name="<%= ElenchiVersamentoForm.DettaglioElencoTabs.NAME%>" tabElement="DettaglioElencoTab">
                 <!--  piazzo i campi da visualizzare nel dettaglio -->
                 <slf:fieldSet borderHidden="false">
-                    <label class="slLabel w50" for="Ds_volume_label" style="text-align:center;"><font color="#d3101c">Informazioni descrittive dell'elenco di versamento</font></label>
-                    <label class="slLabel w50" for="Ds_criterio_label" style="text-align:center;"><font color="#d3101c">Informazioni descrittive del criterio di raggruppamento</font></label>
+                    <label class="slLabel w50" for="Ds_volume_label" style="text-align:center; color: #d3101c;">Informazioni descrittive dell'elenco di versamento</label>
+                    <label class="slLabel w50" for="Ds_criterio_label" style="text-align:center; color: #d3101c;">Informazioni descrittive del criterio di raggruppamento</label>
                     <sl:newLine skipLine="true"/>
                     <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.ID_ELENCO_VERS%>" labelWidth="w30" controlWidth="w70" width="w50" />
                     <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.NM_CRITERIO_RAGGR%>" labelWidth="w40" controlWidth="60" width="w50" />
@@ -140,7 +157,7 @@
                     <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.NT_ELENCO_CHIUSO%>" labelWidth="w30" controlWidth="w70" width="w50" />
                     <sl:newLine skipLine="true"/>
                     <slf:section name="<%=ElenchiVersamentoForm.UdVersateSection.NAME%>" styleClass="importantContainer">
-                        <%--<label class="slLabel w50" for="Ds_volume_label" style="text-align:center;"><font color="#d3101c">Unità documentarie versate:</font></label>--%>
+                        <%--<label class="slLabel w50" for="Ds_volume_label" style="text-align:center; color: #d3101c;">Unità documentarie versate:</label>--%>
                         <sl:newLine />
                         <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.NI_UNITA_DOC_VERS_ELENCO%>" labelWidth="w30" controlWidth="w70" width="w90" />
                         <sl:newLine />
@@ -152,7 +169,7 @@
                     </slf:section>
                     <sl:newLine skipLine="true"/>
                     <slf:section name="<%=ElenchiVersamentoForm.DocAggiuntiSection.NAME%>" styleClass="importantContainer" >
-                        <%--<label class="slLabel w50" for="Ds_volume_label" style="text-align:center;"><font color="#d3101c">Documenti aggiunti:</font></label>--%>
+                        <%--<label class="slLabel w50" for="Ds_volume_label" style="text-align:center; color: #d3101c;">Documenti aggiunti:</label>--%>
                         <sl:newLine />
                         <slf:lblField name="<%= ElenchiVersamentoForm.ElenchiVersamentoDetail.NI_UNITA_DOC_MOD_ELENCO%>"  labelWidth="w30" controlWidth="w70" width="w90" />
                         <sl:newLine />

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -59,71 +55,71 @@ public class AplSistemaVersante implements Serializable {
     @Id
     @Column(name = "ID_SISTEMA_VERSANTE")
     public Long getIdSistemaVersante() {
-        return this.idSistemaVersante;
+	return this.idSistemaVersante;
     }
 
     public void setIdSistemaVersante(Long idSistemaVersante) {
-        this.idSistemaVersante = idSistemaVersante;
+	this.idSistemaVersante = idSistemaVersante;
     }
 
     @XmlTransient
     @Column(name = "CD_VERSIONE")
     public String getCdVersione() {
-        return this.cdVersione;
+	return this.cdVersione;
     }
 
     public void setCdVersione(String cdVersione) {
-        this.cdVersione = cdVersione;
+	this.cdVersione = cdVersione;
     }
 
     @XmlTransient
     @Column(name = "DS_SISTEMA_VERSANTE")
     public String getDsSistemaVersante() {
-        return this.dsSistemaVersante;
+	return this.dsSistemaVersante;
     }
 
     public void setDsSistemaVersante(String dsSistemaVersante) {
-        this.dsSistemaVersante = dsSistemaVersante;
+	this.dsSistemaVersante = dsSistemaVersante;
     }
 
     @Column(name = "NM_SISTEMA_VERSANTE")
     public String getNmSistemaVersante() {
-        return this.nmSistemaVersante;
+	return this.nmSistemaVersante;
     }
 
     public void setNmSistemaVersante(String nmSistemaVersante) {
-        this.nmSistemaVersante = nmSistemaVersante;
+	this.nmSistemaVersante = nmSistemaVersante;
     }
 
     @OneToMany(mappedBy = "aplSistemaVersante")
     @XmlTransient
     public List<UsrUser> getUsrUsers() {
-        return this.usrUsers;
+	return this.usrUsers;
     }
 
     public void setUsrUsers(List<UsrUser> usrUsers) {
-        this.usrUsers = usrUsers;
+	this.usrUsers = usrUsers;
     }
 
     public UsrUser addUsrUser(UsrUser usrUser) {
-        getUsrUsers().add(usrUser);
-        usrUser.setAplSistemaVersante(this);
-        return usrUser;
+	getUsrUsers().add(usrUser);
+	usrUser.setAplSistemaVersante(this);
+	return usrUser;
     }
 
     public UsrUser removeUsrUser(UsrUser usrUser) {
-        getUsrUsers().remove(usrUser);
-        usrUser.setAplSistemaVersante(null);
-        return usrUser;
+	getUsrUsers().remove(usrUser);
+	usrUser.setAplSistemaVersante(null);
+	return usrUser;
     }
 
     @OneToMany(mappedBy = "aplSistemaVersante", cascade = CascadeType.PERSIST)
     @XmlTransient
     public List<DecTipoStrutUdSisVer> getDecTipoStrutUdSisVers() {
-        return this.decTipoStrutUdSisVers;
+	return this.decTipoStrutUdSisVers;
     }
 
     public void setDecTipoStrutUdSisVers(List<DecTipoStrutUdSisVer> decTipoStrutUdSisVers) {
-        this.decTipoStrutUdSisVers = decTipoStrutUdSisVers;
+	this.decTipoStrutUdSisVers = decTipoStrutUdSisVers;
     }
 }

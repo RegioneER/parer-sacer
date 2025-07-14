@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.web.dto;
@@ -34,66 +30,66 @@ public class DefinitoDaBean {
     private String dlValore;
 
     public BigDecimal getIdAttribDatiSpec() {
-        return idAttribDatiSpec;
+	return idAttribDatiSpec;
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-        this.idAttribDatiSpec = idAttribDatiSpec;
+	this.idAttribDatiSpec = idAttribDatiSpec;
     }
 
     public String getTiEntitaSacer() {
-        return tiEntitaSacer;
+	return tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-        this.tiEntitaSacer = tiEntitaSacer;
+	this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public String getNmTipoDoc() {
-        return nmTipoDoc;
+	return nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-        this.nmTipoDoc = nmTipoDoc;
+	this.nmTipoDoc = nmTipoDoc;
     }
 
     public String getNmTipoUnitaDoc() {
-        return nmTipoUnitaDoc;
+	return nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     public String getNmSistemaMigraz() {
-        return nmSistemaMigraz;
+	return nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-        this.nmSistemaMigraz = nmSistemaMigraz;
+	this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     public String getNmAttribDatiSpec() {
-        return nmAttribDatiSpec;
+	return nmAttribDatiSpec;
     }
 
     public void setNmAttribDatiSpec(String nmAttribDatiSpec) {
-        this.nmAttribDatiSpec = nmAttribDatiSpec;
+	this.nmAttribDatiSpec = nmAttribDatiSpec;
     }
 
     public String getTiOper() {
-        return tiOper;
+	return tiOper;
     }
 
     public void setTiOper(String tiOper) {
-        this.tiOper = tiOper;
+	this.tiOper = tiOper;
     }
 
     public String getDlValore() {
-        return dlValore;
+	return dlValore;
     }
 
     public void setDlValore(String dlValore) {
-        this.dlValore = dlValore;
+	this.dlValore = dlValore;
     }
 }

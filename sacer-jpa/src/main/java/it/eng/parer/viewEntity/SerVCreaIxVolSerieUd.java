@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -58,123 +54,123 @@ public class SerVCreaIxVolSerieUd implements Serializable {
 
     @Column(name = "CD_FIRST_UNITA_DOC_VOL")
     public String getCdFirstUnitaDocVol() {
-        return this.cdFirstUnitaDocVol;
+	return this.cdFirstUnitaDocVol;
     }
 
     public void setCdFirstUnitaDocVol(String cdFirstUnitaDocVol) {
-        this.cdFirstUnitaDocVol = cdFirstUnitaDocVol;
+	this.cdFirstUnitaDocVol = cdFirstUnitaDocVol;
     }
 
     @Column(name = "CD_LAST_UNITA_DOC_VOL")
     public String getCdLastUnitaDocVol() {
-        return this.cdLastUnitaDocVol;
+	return this.cdLastUnitaDocVol;
     }
 
     public void setCdLastUnitaDocVol(String cdLastUnitaDocVol) {
-        this.cdLastUnitaDocVol = cdLastUnitaDocVol;
+	this.cdLastUnitaDocVol = cdLastUnitaDocVol;
     }
 
     @Column(name = "CD_VER_SERIE")
     public String getCdVerSerie() {
-        return this.cdVerSerie;
+	return this.cdVerSerie;
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-        this.cdVerSerie = cdVerSerie;
+	this.cdVerSerie = cdVerSerie;
     }
 
     @Column(name = "CD_VER_XSD_IX_VOL", columnDefinition = "char")
     public String getCdVerXsdIxVol() {
-        return this.cdVerXsdIxVol;
+	return this.cdVerXsdIxVol;
     }
 
     public void setCdVerXsdIxVol(String cdVerXsdIxVol) {
-        this.cdVerXsdIxVol = cdVerXsdIxVol;
+	this.cdVerXsdIxVol = cdVerXsdIxVol;
     }
 
     @Column(name = "DS_AUTORE_CRITERIO_ORDINAMENTO")
     public String getDsAutoreCriterioOrdinamento() {
-        return this.dsAutoreCriterioOrdinamento;
+	return this.dsAutoreCriterioOrdinamento;
     }
 
     public void setDsAutoreCriterioOrdinamento(String dsAutoreCriterioOrdinamento) {
-        this.dsAutoreCriterioOrdinamento = dsAutoreCriterioOrdinamento;
+	this.dsAutoreCriterioOrdinamento = dsAutoreCriterioOrdinamento;
     }
 
     @Column(name = "DS_CRITERIO_ORDINAMENTO")
     public String getDsCriterioOrdinamento() {
-        return this.dsCriterioOrdinamento;
+	return this.dsCriterioOrdinamento;
     }
 
     public void setDsCriterioOrdinamento(String dsCriterioOrdinamento) {
-        this.dsCriterioOrdinamento = dsCriterioOrdinamento;
+	this.dsCriterioOrdinamento = dsCriterioOrdinamento;
     }
 
     @Column(name = "DS_ID_SERIE")
     public String getDsIdSerie() {
-        return this.dsIdSerie;
+	return this.dsIdSerie;
     }
 
     public void setDsIdSerie(String dsIdSerie) {
-        this.dsIdSerie = dsIdSerie;
+	this.dsIdSerie = dsIdSerie;
     }
 
     @Column(name = "DS_SERIE")
     public String getDsSerie() {
-        return this.dsSerie;
+	return this.dsSerie;
     }
 
     public void setDsSerie(String dsSerie) {
-        this.dsSerie = dsSerie;
+	this.dsSerie = dsSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CRITERIO_ORDINAMENTO")
     public Date getDtCriterioOrdinamento() {
-        return this.dtCriterioOrdinamento;
+	return this.dtCriterioOrdinamento;
     }
 
     public void setDtCriterioOrdinamento(Date dtCriterioOrdinamento) {
-        this.dtCriterioOrdinamento = dtCriterioOrdinamento;
+	this.dtCriterioOrdinamento = dtCriterioOrdinamento;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIRST_UNITA_DOC_VOL")
     public Date getDtFirstUnitaDocVol() {
-        return this.dtFirstUnitaDocVol;
+	return this.dtFirstUnitaDocVol;
     }
 
     public void setDtFirstUnitaDocVol(Date dtFirstUnitaDocVol) {
-        this.dtFirstUnitaDocVol = dtFirstUnitaDocVol;
+	this.dtFirstUnitaDocVol = dtFirstUnitaDocVol;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_LAST_UNITA_DOC_VOL")
     public Date getDtLastUnitaDocVol() {
-        return this.dtLastUnitaDocVol;
+	return this.dtLastUnitaDocVol;
     }
 
     public void setDtLastUnitaDocVol(Date dtLastUnitaDocVol) {
-        this.dtLastUnitaDocVol = dtLastUnitaDocVol;
+	this.dtLastUnitaDocVol = dtLastUnitaDocVol;
     }
 
     @Id
     @Column(name = "ID_VOL_VER_SERIE")
     public BigDecimal getIdVolVerSerie() {
-        return this.idVolVerSerie;
+	return this.idVolVerSerie;
     }
 
     public void setIdVolVerSerie(BigDecimal idVolVerSerie) {
-        this.idVolVerSerie = idVolVerSerie;
+	this.idVolVerSerie = idVolVerSerie;
     }
 
     @Column(name = "NI_UNITA_DOC_VOL")
     public BigDecimal getNiUnitaDocVol() {
-        return this.niUnitaDocVol;
+	return this.niUnitaDocVol;
     }
 
     public void setNiUnitaDocVol(BigDecimal niUnitaDocVol) {
-        this.niUnitaDocVol = niUnitaDocVol;
+	this.niUnitaDocVol = niUnitaDocVol;
     }
 
 }

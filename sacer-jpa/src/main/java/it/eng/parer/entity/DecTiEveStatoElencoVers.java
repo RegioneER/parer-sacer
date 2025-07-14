@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -53,29 +49,29 @@ public class DecTiEveStatoElencoVers implements Serializable {
     @Column(name = "ID_TI_EVE_STATO_ELENCO_VERS")
     @XmlID
     public long getIdTiEveStatoElencoVers() {
-        return this.idTiEveStatoElencoVers;
+	return this.idTiEveStatoElencoVers;
     }
 
     public void setIdTiEveStatoElencoVers(long idTiEveStatoElencoVers) {
-        this.idTiEveStatoElencoVers = idTiEveStatoElencoVers;
+	this.idTiEveStatoElencoVers = idTiEveStatoElencoVers;
     }
 
     @Column(name = "CD_TI_EVE_STATO_ELENCO_VERS")
     public String getCdTiEveStatoElencoVers() {
-        return this.cdTiEveStatoElencoVers;
+	return this.cdTiEveStatoElencoVers;
     }
 
     public void setCdTiEveStatoElencoVers(String cdTiEveStatoElencoVers) {
-        this.cdTiEveStatoElencoVers = cdTiEveStatoElencoVers;
+	this.cdTiEveStatoElencoVers = cdTiEveStatoElencoVers;
     }
 
     @Column(name = "DS_TI_EVE_STATO_ELENCO_VERS")
     public String getDsTiEveStatoElencoVers() {
-        return this.dsTiEveStatoElencoVers;
+	return this.dsTiEveStatoElencoVers;
     }
 
     public void setDsTiEveStatoElencoVers(String dsTiEveStatoElencoVers) {
-        this.dsTiEveStatoElencoVers = dsTiEveStatoElencoVers;
+	this.dsTiEveStatoElencoVers = dsTiEveStatoElencoVers;
     }
 
 }

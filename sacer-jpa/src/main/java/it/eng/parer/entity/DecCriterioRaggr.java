@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -157,414 +153,416 @@ public class DecCriterioRaggr implements Serializable {
 
     @Column(name = "ID_CRITERIO_RAGGR")
     @GenericGenerator(name = "SDEC_CRITERIO_RAGGR_ID_CRITERIO_RAGGR_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CRITERIO_RAGGR"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_CRITERIO_RAGGR"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_CRITERIO_RAGGR_ID_CRITERIO_RAGGR_GENERATOR")
     public Long getIdCriterioRaggr() {
-        return this.idCriterioRaggr;
+	return this.idCriterioRaggr;
     }
 
     public void setIdCriterioRaggr(Long idCriterioRaggr) {
-        this.idCriterioRaggr = idCriterioRaggr;
+	this.idCriterioRaggr = idCriterioRaggr;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-        return this.aaKeyUnitaDoc;
+	return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC_A")
     public BigDecimal getAaKeyUnitaDocA() {
-        return this.aaKeyUnitaDocA;
+	return this.aaKeyUnitaDocA;
     }
 
     public void setAaKeyUnitaDocA(BigDecimal aaKeyUnitaDocA) {
-        this.aaKeyUnitaDocA = aaKeyUnitaDocA;
+	this.aaKeyUnitaDocA = aaKeyUnitaDocA;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC_DA")
     public BigDecimal getAaKeyUnitaDocDa() {
-        return this.aaKeyUnitaDocDa;
+	return this.aaKeyUnitaDocDa;
     }
 
     public void setAaKeyUnitaDocDa(BigDecimal aaKeyUnitaDocDa) {
-        this.aaKeyUnitaDocDa = aaKeyUnitaDocDa;
+	this.aaKeyUnitaDocDa = aaKeyUnitaDocDa;
     }
 
     @Lob()
     @Column(name = "BL_FILTRI_DATI_SPEC_DOC")
     public String getBlFiltriDatiSpecDoc() {
-        return this.blFiltriDatiSpecDoc;
+	return this.blFiltriDatiSpecDoc;
     }
 
     public void setBlFiltriDatiSpecDoc(String blFiltriDatiSpecDoc) {
-        this.blFiltriDatiSpecDoc = blFiltriDatiSpecDoc;
+	this.blFiltriDatiSpecDoc = blFiltriDatiSpecDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-        return this.cdKeyUnitaDoc;
+	return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC_A")
     public String getCdKeyUnitaDocA() {
-        return this.cdKeyUnitaDocA;
+	return this.cdKeyUnitaDocA;
     }
 
     public void setCdKeyUnitaDocA(String cdKeyUnitaDocA) {
-        this.cdKeyUnitaDocA = cdKeyUnitaDocA;
+	this.cdKeyUnitaDocA = cdKeyUnitaDocA;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC_DA")
     public String getCdKeyUnitaDocDa() {
-        return this.cdKeyUnitaDocDa;
+	return this.cdKeyUnitaDocDa;
     }
 
     public void setCdKeyUnitaDocDa(String cdKeyUnitaDocDa) {
-        this.cdKeyUnitaDocDa = cdKeyUnitaDocDa;
+	this.cdKeyUnitaDocDa = cdKeyUnitaDocDa;
     }
 
     @Column(name = "DL_DOC")
     public String getDlDoc() {
-        return this.dlDoc;
+	return this.dlDoc;
     }
 
     public void setDlDoc(String dlDoc) {
-        this.dlDoc = dlDoc;
+	this.dlDoc = dlDoc;
     }
 
     @Column(name = "DL_OGGETTO_UNITA_DOC")
     public String getDlOggettoUnitaDoc() {
-        return this.dlOggettoUnitaDoc;
+	return this.dlOggettoUnitaDoc;
     }
 
     public void setDlOggettoUnitaDoc(String dlOggettoUnitaDoc) {
-        this.dlOggettoUnitaDoc = dlOggettoUnitaDoc;
+	this.dlOggettoUnitaDoc = dlOggettoUnitaDoc;
     }
 
     @Column(name = "DS_AUTORE_DOC")
     public String getDsAutoreDoc() {
-        return this.dsAutoreDoc;
+	return this.dsAutoreDoc;
     }
 
     public void setDsAutoreDoc(String dsAutoreDoc) {
-        this.dsAutoreDoc = dsAutoreDoc;
+	this.dsAutoreDoc = dsAutoreDoc;
     }
 
     @Column(name = "DS_CRITERIO_RAGGR")
     public String getDsCriterioRaggr() {
-        return this.dsCriterioRaggr;
+	return this.dsCriterioRaggr;
     }
 
     public void setDsCriterioRaggr(String dsCriterioRaggr) {
-        this.dsCriterioRaggr = dsCriterioRaggr;
+	this.dsCriterioRaggr = dsCriterioRaggr;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_UNITA_DOC_A")
     public Date getDtCreazioneUnitaDocA() {
-        return this.dtCreazioneUnitaDocA;
+	return this.dtCreazioneUnitaDocA;
     }
 
     public void setDtCreazioneUnitaDocA(Date dtCreazioneUnitaDocA) {
-        this.dtCreazioneUnitaDocA = dtCreazioneUnitaDocA;
+	this.dtCreazioneUnitaDocA = dtCreazioneUnitaDocA;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE_UNITA_DOC_DA")
     public Date getDtCreazioneUnitaDocDa() {
-        return this.dtCreazioneUnitaDocDa;
+	return this.dtCreazioneUnitaDocDa;
     }
 
     public void setDtCreazioneUnitaDocDa(Date dtCreazioneUnitaDocDa) {
-        this.dtCreazioneUnitaDocDa = dtCreazioneUnitaDocDa;
+	this.dtCreazioneUnitaDocDa = dtCreazioneUnitaDocDa;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-        return this.dtIstituz;
+	return this.dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-        this.dtIstituz = dtIstituz;
+	this.dtIstituz = dtIstituz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_UNITA_DOC_A")
     public Date getDtRegUnitaDocA() {
-        return this.dtRegUnitaDocA;
+	return this.dtRegUnitaDocA;
     }
 
     public void setDtRegUnitaDocA(Date dtRegUnitaDocA) {
-        this.dtRegUnitaDocA = dtRegUnitaDocA;
+	this.dtRegUnitaDocA = dtRegUnitaDocA;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_UNITA_DOC_DA")
     public Date getDtRegUnitaDocDa() {
-        return this.dtRegUnitaDocDa;
+	return this.dtRegUnitaDocDa;
     }
 
     public void setDtRegUnitaDocDa(Date dtRegUnitaDocDa) {
-        this.dtRegUnitaDocDa = dtRegUnitaDocDa;
+	this.dtRegUnitaDocDa = dtRegUnitaDocDa;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
-        return this.dtSoppres;
+	return this.dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-        this.dtSoppres = dtSoppres;
+	this.dtSoppres = dtSoppres;
     }
 
     @Column(name = "FL_CRITERIO_RAGGR_FISC", columnDefinition = "char(1)")
     public String getFlCriterioRaggrFisc() {
-        return this.flCriterioRaggrFisc;
+	return this.flCriterioRaggrFisc;
     }
 
     public void setFlCriterioRaggrFisc(String flCriterioRaggrFisc) {
-        this.flCriterioRaggrFisc = flCriterioRaggrFisc;
+	this.flCriterioRaggrFisc = flCriterioRaggrFisc;
     }
 
     @Column(name = "FL_CRITERIO_RAGGR_STANDARD", columnDefinition = "char(1)")
     public String getFlCriterioRaggrStandard() {
-        return flCriterioRaggrStandard;
+	return flCriterioRaggrStandard;
     }
 
     public void setFlCriterioRaggrStandard(String flCriterioRaggrStandard) {
-        this.flCriterioRaggrStandard = flCriterioRaggrStandard;
+	this.flCriterioRaggrStandard = flCriterioRaggrStandard;
     }
 
     @Column(name = "FL_FILTRO_RANGE_REGISTRO_KEY", columnDefinition = "char(1)")
     public String getFlFiltroRangeRegistroKey() {
-        return this.flFiltroRangeRegistroKey;
+	return this.flFiltroRangeRegistroKey;
     }
 
     public void setFlFiltroRangeRegistroKey(String flFiltroRangeRegistroKey) {
-        this.flFiltroRangeRegistroKey = flFiltroRangeRegistroKey;
+	this.flFiltroRangeRegistroKey = flFiltroRangeRegistroKey;
     }
 
     @Column(name = "FL_FILTRO_REGISTRO_KEY", columnDefinition = "char(1)")
     public String getFlFiltroRegistroKey() {
-        return this.flFiltroRegistroKey;
+	return this.flFiltroRegistroKey;
     }
 
     public void setFlFiltroRegistroKey(String flFiltroRegistroKey) {
-        this.flFiltroRegistroKey = flFiltroRegistroKey;
+	this.flFiltroRegistroKey = flFiltroRegistroKey;
     }
 
     @Column(name = "FL_FILTRO_SISTEMA_MIGRAZ", columnDefinition = "char(1)")
     public String getFlFiltroSistemaMigraz() {
-        return this.flFiltroSistemaMigraz;
+	return this.flFiltroSistemaMigraz;
     }
 
     public void setFlFiltroSistemaMigraz(String flFiltroSistemaMigraz) {
-        this.flFiltroSistemaMigraz = flFiltroSistemaMigraz;
+	this.flFiltroSistemaMigraz = flFiltroSistemaMigraz;
     }
 
     @Column(name = "FL_FILTRO_TI_ESITO_VERIF_FIRME", columnDefinition = "char(1)")
     public String getFlFiltroTiEsitoVerifFirme() {
-        return this.flFiltroTiEsitoVerifFirme;
+	return this.flFiltroTiEsitoVerifFirme;
     }
 
     public void setFlFiltroTiEsitoVerifFirme(String flFiltroTiEsitoVerifFirme) {
-        this.flFiltroTiEsitoVerifFirme = flFiltroTiEsitoVerifFirme;
+	this.flFiltroTiEsitoVerifFirme = flFiltroTiEsitoVerifFirme;
     }
 
     @Column(name = "FL_FILTRO_TIPO_DOC", columnDefinition = "char(1)")
     public String getFlFiltroTipoDoc() {
-        return this.flFiltroTipoDoc;
+	return this.flFiltroTipoDoc;
     }
 
     public void setFlFiltroTipoDoc(String flFiltroTipoDoc) {
-        this.flFiltroTipoDoc = flFiltroTipoDoc;
+	this.flFiltroTipoDoc = flFiltroTipoDoc;
     }
 
     @Column(name = "FL_FILTRO_TIPO_UNITA_DOC", columnDefinition = "char(1)")
     public String getFlFiltroTipoUnitaDoc() {
-        return this.flFiltroTipoUnitaDoc;
+	return this.flFiltroTipoUnitaDoc;
     }
 
     public void setFlFiltroTipoUnitaDoc(String flFiltroTipoUnitaDoc) {
-        this.flFiltroTipoUnitaDoc = flFiltroTipoUnitaDoc;
+	this.flFiltroTipoUnitaDoc = flFiltroTipoUnitaDoc;
     }
 
     @Column(name = "FL_FORZA_ACCETTAZIONE", columnDefinition = "char(1)")
     public String getFlForzaAccettazione() {
-        return this.flForzaAccettazione;
+	return this.flForzaAccettazione;
     }
 
     public void setFlForzaAccettazione(String flForzaAccettazione) {
-        this.flForzaAccettazione = flForzaAccettazione;
+	this.flForzaAccettazione = flForzaAccettazione;
     }
 
     @Column(name = "FL_FORZA_CONSERVAZIONE", columnDefinition = "char(1)")
     public String getFlForzaConservazione() {
-        return this.flForzaConservazione;
+	return this.flForzaConservazione;
     }
 
     public void setFlForzaConservazione(String flForzaConservazione) {
-        this.flForzaConservazione = flForzaConservazione;
+	this.flForzaConservazione = flForzaConservazione;
     }
 
     @Column(name = "FL_UNITA_DOC_FIRMATO", columnDefinition = "char(1)")
     public String getFlUnitaDocFirmato() {
-        return this.flUnitaDocFirmato;
+	return this.flUnitaDocFirmato;
     }
 
     public void setFlUnitaDocFirmato(String flUnitaDocFirmato) {
-        this.flUnitaDocFirmato = flUnitaDocFirmato;
+	this.flUnitaDocFirmato = flUnitaDocFirmato;
     }
 
     @Column(name = "NI_MAX_COMP")
     public BigDecimal getNiMaxComp() {
-        return this.niMaxComp;
+	return this.niMaxComp;
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-        this.niMaxComp = niMaxComp;
+	this.niMaxComp = niMaxComp;
     }
 
     @Column(name = "NI_TEMPO_SCAD_CHIUS")
     public BigDecimal getNiTempoScadChius() {
-        return this.niTempoScadChius;
+	return this.niTempoScadChius;
     }
 
     public void setNiTempoScadChius(BigDecimal niTempoScadChius) {
-        this.niTempoScadChius = niTempoScadChius;
+	this.niTempoScadChius = niTempoScadChius;
     }
 
     @Column(name = "NM_CRITERIO_RAGGR")
     public String getNmCriterioRaggr() {
-        return this.nmCriterioRaggr;
+	return this.nmCriterioRaggr;
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-        this.nmCriterioRaggr = nmCriterioRaggr;
+	this.nmCriterioRaggr = nmCriterioRaggr;
     }
 
     @Column(name = "NT_CRITERIO_RAGGR")
     public String getNtCriterioRaggr() {
-        return this.ntCriterioRaggr;
+	return this.ntCriterioRaggr;
     }
 
     public void setNtCriterioRaggr(String ntCriterioRaggr) {
-        this.ntCriterioRaggr = ntCriterioRaggr;
+	this.ntCriterioRaggr = ntCriterioRaggr;
     }
 
     @Column(name = "TI_CONSERVAZIONE")
     public String getTiConservazione() {
-        return this.tiConservazione;
+	return this.tiConservazione;
     }
 
     public void setTiConservazione(String tiConservazione) {
-        this.tiConservazione = tiConservazione;
+	this.tiConservazione = tiConservazione;
     }
 
     @Column(name = "TI_GEST_ELENCO_CRITERIO")
     public String getTiGestElencoCriterio() {
-        return this.tiGestElencoCriterio;
+	return this.tiGestElencoCriterio;
     }
 
     public void setTiGestElencoCriterio(String tiGestElencoCriterio) {
-        this.tiGestElencoCriterio = tiGestElencoCriterio;
+	this.tiGestElencoCriterio = tiGestElencoCriterio;
     }
 
     @Column(name = "TI_SCAD_CHIUS_VOLUME")
     public String getTiScadChiusVolume() {
-        return this.tiScadChiusVolume;
+	return this.tiScadChiusVolume;
     }
 
     public void setTiScadChiusVolume(String tiScadChiusVolume) {
-        this.tiScadChiusVolume = tiScadChiusVolume;
+	this.tiScadChiusVolume = tiScadChiusVolume;
     }
 
     @Column(name = "TI_TEMPO_SCAD_CHIUS")
     public String getTiTempoScadChius() {
-        return this.tiTempoScadChius;
+	return this.tiTempoScadChius;
     }
 
     public void setTiTempoScadChius(String tiTempoScadChius) {
-        this.tiTempoScadChius = tiTempoScadChius;
+	this.tiTempoScadChius = tiTempoScadChius;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_VALID_ELENCO")
     public TiValidElencoCriterio getTiValidElenco() {
-        return this.tiValidElenco;
+	return this.tiValidElenco;
     }
 
     public void setTiValidElenco(TiValidElencoCriterio tiValidElencoCriterio) {
-        this.tiValidElenco = tiValidElencoCriterio;
+	this.tiValidElenco = tiValidElencoCriterio;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_MOD_VALID_ELENCO")
     public TiModValidElencoCriterio getTiModValidElenco() {
-        return this.tiModValidElenco;
+	return this.tiModValidElenco;
     }
 
     public void setTiModValidElenco(TiModValidElencoCriterio tiModValidElencoCriterio) {
-        this.tiModValidElenco = tiModValidElencoCriterio;
+	this.tiModValidElenco = tiModValidElencoCriterio;
     }
 
     @Column(name = "NI_MAX_ELENCHI_BY_GG")
     public BigDecimal getNiMaxElenchiByGg() {
-        return this.niMaxElenchiByGg;
+	return this.niMaxElenchiByGg;
     }
 
     public void setNiMaxElenchiByGg(BigDecimal niMaxElenchiByGg) {
-        this.niMaxElenchiByGg = niMaxElenchiByGg;
+	this.niMaxElenchiByGg = niMaxElenchiByGg;
     }
 
-    @OneToMany(mappedBy = "decCriterioRaggr", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @OneToMany(mappedBy = "decCriterioRaggr", cascade = {
+	    CascadeType.PERSIST, CascadeType.REMOVE })
     public List<DecCriterioFiltroMultiplo> getDecCriterioFiltroMultiplos() {
-        return this.decCriterioFiltroMultiplos;
+	return this.decCriterioFiltroMultiplos;
     }
 
-    public void setDecCriterioFiltroMultiplos(List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiplos) {
-        this.decCriterioFiltroMultiplos = decCriterioFiltroMultiplos;
+    public void setDecCriterioFiltroMultiplos(
+	    List<DecCriterioFiltroMultiplo> decCriterioFiltroMultiplos) {
+	this.decCriterioFiltroMultiplos = decCriterioFiltroMultiplos;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlInverseReference(mappedBy = "decCriterioRaggrs")
     public OrgStrut getOrgStrut() {
-        return this.orgStrut;
+	return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-        this.orgStrut = orgStrut;
+	this.orgStrut = orgStrut;
     }
 
     @OneToMany(mappedBy = "decCriterioRaggr")
     @XmlTransient
     public List<VolVolumeConserv> getVolVolumeConservs() {
-        return this.volVolumeConservs;
+	return this.volVolumeConservs;
     }
 
     public void setVolVolumeConservs(List<VolVolumeConserv> volVolumeConservs) {
-        this.volVolumeConservs = volVolumeConservs;
+	this.volVolumeConservs = volVolumeConservs;
     }
 
     @OneToMany(mappedBy = "decCriterioRaggr")
     @XmlTransient
     public List<ElvElencoVer> getElvElencoVers() {
-        return this.elvElencoVers;
+	return this.elvElencoVers;
     }
 
     public void setElvElencoVers(List<ElvElencoVer> elvElencoVers) {
-        this.elvElencoVers = elvElencoVers;
+	this.elvElencoVers = elvElencoVers;
     }
 }

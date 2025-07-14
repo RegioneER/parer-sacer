@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -51,58 +47,58 @@ public class OstVPayloadMigrazFileBlob implements Serializable {
 
     @Column(name = "DS_URN_INIZIALE")
     public String getDsUrnIniziale() {
-        return this.dsUrnIniziale;
+	return this.dsUrnIniziale;
     }
 
     public void setDsUrnIniziale(String dsUrnIniziale) {
-        this.dsUrnIniziale = dsUrnIniziale;
+	this.dsUrnIniziale = dsUrnIniziale;
     }
 
     @Column(name = "DS_URN_NORMALIZ")
     public String getDsUrnNormaliz() {
-        return this.dsUrnNormaliz;
+	return this.dsUrnNormaliz;
     }
 
     public void setDsUrnNormaliz(String dsUrnNormaliz) {
-        this.dsUrnNormaliz = dsUrnNormaliz;
+	this.dsUrnNormaliz = dsUrnNormaliz;
     }
 
     @Column(name = "DS_URN_ORIGINALE")
     public String getDsUrnOriginale() {
-        return this.dsUrnOriginale;
+	return this.dsUrnOriginale;
     }
 
     public void setDsUrnOriginale(String dsUrnOriginale) {
-        this.dsUrnOriginale = dsUrnOriginale;
+	this.dsUrnOriginale = dsUrnOriginale;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-        return this.dtCreazione;
+	return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-        this.dtCreazione = dtCreazione;
+	this.dtCreazione = dtCreazione;
     }
 
     @Id
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-        return this.idCompDoc;
+	return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-        this.idCompDoc = idCompDoc;
+	this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "NI_SIZE_FILE_CALC")
     public BigDecimal getNiSizeFileCalc() {
-        return this.niSizeFileCalc;
+	return this.niSizeFileCalc;
     }
 
     public void setNiSizeFileCalc(BigDecimal niSizeFileCalc) {
-        this.niSizeFileCalc = niSizeFileCalc;
+	this.niSizeFileCalc = niSizeFileCalc;
     }
 
 }

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -57,43 +53,43 @@ public class VrsFileNoarkPathDtVers implements Serializable {
 
     @Column(name = "ID_FILE_NO_ARK_PATH_DT_VERS")
     @GenericGenerator(name = "SVRS_FILE_NOARK_PATH_DT_VERS_ID_FILE_NO_ARK_PATH_DT_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_FILE_NOARK_PATH_DT_VERS"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVRS_FILE_NOARK_PATH_DT_VERS"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVRS_FILE_NOARK_PATH_DT_VERS_ID_FILE_NO_ARK_PATH_DT_VERS_GENERATOR")
     public Long getIdFileNoArkPathDtVers() {
-        return this.idFileNoArkPathDtVers;
+	return this.idFileNoArkPathDtVers;
     }
 
     public void setIdFileNoArkPathDtVers(Long idFileNoArkPathDtVers) {
-        this.idFileNoArkPathDtVers = idFileNoArkPathDtVers;
+	this.idFileNoArkPathDtVers = idFileNoArkPathDtVers;
     }
 
     @Column(name = "DS_FILE_NOARK")
     public String getDsFileNoark() {
-        return this.dsFileNoark;
+	return this.dsFileNoark;
     }
 
     public void setDsFileNoark(String dsFileNoark) {
-        this.dsFileNoark = dsFileNoark;
+	this.dsFileNoark = dsFileNoark;
     }
 
     @Column(name = "TI_ARK_FILE_NOARK")
     public String getTiArkFileNoark() {
-        return this.tiArkFileNoark;
+	return this.tiArkFileNoark;
     }
 
     public void setTiArkFileNoark(String tiArkFileNoark) {
-        this.tiArkFileNoark = tiArkFileNoark;
+	this.tiArkFileNoark = tiArkFileNoark;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_PATH_DT_VERS")
     public VrsPathDtVers getVrsPathDtVers() {
-        return this.vrsPathDtVers;
+	return this.vrsPathDtVers;
     }
 
     public void setVrsPathDtVers(VrsPathDtVers vrsPathDtVers) {
-        this.vrsPathDtVers = vrsPathDtVers;
+	this.vrsPathDtVers = vrsPathDtVers;
     }
 
 }

@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ page import="it.eng.parer.slite.gen.form.UnitaDocumentarieForm" pageEncoding="UTF-8"%>
 <%@ include file="../include.jsp"%>
 <c:set scope="request" var="navTable" value="${(empty param.mainNavTable) ? (fn:escapeXml(param.table)) : (fn:escapeXml(param.mainNavTable))  }" />
@@ -26,13 +43,13 @@
             </c:choose>
 
             <slf:section name="<%=UnitaDocumentarieForm.VersamentoAnnullatoDocSection.NAME%>" styleClass="importantContainer">
-                <h2><b><font color="#d3101c">Il versamento del presente documento è stato annullato</font></b></h2>
+                <h2><b style="color: #d3101c;">Il versamento del presente documento è stato annullato</b></h2>
                         <slf:lblField name="<%=UnitaDocumentarieForm.DocumentiUnitaDocumentarieDetail.DT_ANNUL_DOC%>" width="w100" controlWidth="w80" labelWidth="w20"/>
                         <sl:newLine />
                         <slf:lblField name="<%=UnitaDocumentarieForm.DocumentiUnitaDocumentarieDetail.NT_ANNUL_DOC%>" width="w100" controlWidth="w80" labelWidth="w20"/>
                     </slf:section>
                     <slf:section name="<%=UnitaDocumentarieForm.VersamentoAnnullatoUDSection.NAME%>" styleClass="importantContainer">
-                <h2><b><font color="#d3101c">Il versamento della presente unità documentaria è stato annullato</font></b></h2>
+                <h2><b style="color: #d3101c;">Il versamento della presente unità documentaria è stato annullato</b></h2>
                         <slf:lblField name="<%=UnitaDocumentarieForm.DocumentiUnitaDocumentarieDetail.DT_ANNUL_UNITA_DOC%>" width="w100" controlWidth="w70" labelWidth="w30"/>
                         <sl:newLine />
                         <slf:lblField name="<%=UnitaDocumentarieForm.DocumentiUnitaDocumentarieDetail.NT_ANNUL_UNITA_DOC%>" width="w100" controlWidth="w70" labelWidth="w30"/>

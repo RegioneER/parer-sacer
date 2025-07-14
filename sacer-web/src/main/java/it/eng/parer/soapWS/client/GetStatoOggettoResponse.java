@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.soapWS.client;
@@ -44,7 +40,8 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getStatoOggettoResponseTipo", propOrder = { "_return" })
+@XmlType(name = "getStatoOggettoResponseTipo", propOrder = {
+	"_return" })
 public class GetStatoOggettoResponse {
 
     @XmlElement(name = "return")
@@ -57,18 +54,17 @@ public class GetStatoOggettoResponse {
      *
      */
     public RecuperoStatoOggettoRisposta getReturn() {
-        return _return;
+	return _return;
     }
 
     /**
      * Imposta il valore della proprietà return.
      *
-     * @param value
-     *            allowed object is {@link RecuperoStatoOggettoRisposta }
+     * @param value allowed object is {@link RecuperoStatoOggettoRisposta }
      *
      */
     public void setReturn(RecuperoStatoOggettoRisposta value) {
-        this._return = value;
+	this._return = value;
     }
 
 }

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -52,59 +48,59 @@ public class LogVLisIniSchedJobStrut implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_LOG_JOB_FINE_SUC")
     public Date getDtRegLogJobFineSuc() {
-        return this.dtRegLogJobFineSuc;
+	return this.dtRegLogJobFineSuc;
     }
 
     public void setDtRegLogJobFineSuc(Date dtRegLogJobFineSuc) {
-        this.dtRegLogJobFineSuc = dtRegLogJobFineSuc;
+	this.dtRegLogJobFineSuc = dtRegLogJobFineSuc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_LOG_JOB_INI")
     public Date getDtRegLogJobIni() {
-        return this.dtRegLogJobIni;
+	return this.dtRegLogJobIni;
     }
 
     public void setDtRegLogJobIni(Date dtRegLogJobIni) {
-        this.dtRegLogJobIni = dtRegLogJobIni;
+	this.dtRegLogJobIni = dtRegLogJobIni;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_LOG_JOB_INI_SUC")
     public Date getDtRegLogJobIniSuc() {
-        return this.dtRegLogJobIniSuc;
+	return this.dtRegLogJobIniSuc;
     }
 
     public void setDtRegLogJobIniSuc(Date dtRegLogJobIniSuc) {
-        this.dtRegLogJobIniSuc = dtRegLogJobIniSuc;
+	this.dtRegLogJobIniSuc = dtRegLogJobIniSuc;
     }
 
     @Id
     @Column(name = "ID_LOG_JOB")
     public BigDecimal getIdLogJob() {
-        return this.idLogJob;
+	return this.idLogJob;
     }
 
     public void setIdLogJob(BigDecimal idLogJob) {
-        this.idLogJob = idLogJob;
+	this.idLogJob = idLogJob;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @Column(name = "NM_JOB")
     public String getNmJob() {
-        return this.nmJob;
+	return this.nmJob;
     }
 
     public void setNmJob(String nmJob) {
-        this.nmJob = nmJob;
+	this.nmJob = nmJob;
     }
 
 }

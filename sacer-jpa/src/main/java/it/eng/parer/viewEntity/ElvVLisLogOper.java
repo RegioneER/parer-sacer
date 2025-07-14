@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -64,176 +60,176 @@ public class ElvVLisLogOper implements Serializable {
 
     @Column(name = "CD_DOC")
     public String getCdDoc() {
-        return this.cdDoc;
+	return this.cdDoc;
     }
 
     public void setCdDoc(String cdDoc) {
-        this.cdDoc = cdDoc;
+	this.cdDoc = cdDoc;
     }
 
     @Column(name = "DL_MOTIVO_CHIUS")
     public String getDlMotivoChius() {
-        return this.dlMotivoChius;
+	return this.dlMotivoChius;
     }
 
     public void setDlMotivoChius(String dlMotivoChius) {
-        this.dlMotivoChius = dlMotivoChius;
+	this.dlMotivoChius = dlMotivoChius;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SCAD_CHIUS")
     public Date getDtScadChius() {
-        return this.dtScadChius;
+	return this.dtScadChius;
     }
 
     public void setDtScadChius(Date dtScadChius) {
-        this.dtScadChius = dtScadChius;
+	this.dtScadChius = dtScadChius;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-        return this.idAmbiente;
+	return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-        this.idAmbiente = idAmbiente;
+	this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-        return this.idElencoVers;
+	return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-        this.idElencoVers = idElencoVers;
+	this.idElencoVers = idElencoVers;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-        return this.idEnte;
+	return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-        this.idEnte = idEnte;
+	this.idEnte = idEnte;
     }
 
     @Id
     @Column(name = "ID_LOG_ELENCO_VERS")
     public BigDecimal getIdLogElencoVers() {
-        return this.idLogElencoVers;
+	return this.idLogElencoVers;
     }
 
     public void setIdLogElencoVers(BigDecimal idLogElencoVers) {
-        this.idLogElencoVers = idLogElencoVers;
+	this.idLogElencoVers = idLogElencoVers;
     }
 
     @Column(name = "ID_LOG_JOB")
     public BigDecimal getIdLogJob() {
-        return this.idLogJob;
+	return this.idLogJob;
     }
 
     public void setIdLogJob(BigDecimal idLogJob) {
-        this.idLogJob = idLogJob;
+	this.idLogJob = idLogJob;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @Column(name = "NI_MAX_COMP")
     public BigDecimal getNiMaxComp() {
-        return this.niMaxComp;
+	return this.niMaxComp;
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-        this.niMaxComp = niMaxComp;
+	this.niMaxComp = niMaxComp;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-        return this.nmAmbiente;
+	return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-        this.nmAmbiente = nmAmbiente;
+	this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_COGNOME_FIRMATARIO")
     public String getNmCognomeFirmatario() {
-        return this.nmCognomeFirmatario;
+	return this.nmCognomeFirmatario;
     }
 
     public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
-        this.nmCognomeFirmatario = nmCognomeFirmatario;
+	this.nmCognomeFirmatario = nmCognomeFirmatario;
     }
 
     @Column(name = "NM_ELENCO")
     public String getNmElenco() {
-        return this.nmElenco;
+	return this.nmElenco;
     }
 
     public void setNmElenco(String nmElenco) {
-        this.nmElenco = nmElenco;
+	this.nmElenco = nmElenco;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-        return this.nmEnte;
+	return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-        this.nmEnte = nmEnte;
+	this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_NOME_FIRMATARIO")
     public String getNmNomeFirmatario() {
-        return this.nmNomeFirmatario;
+	return this.nmNomeFirmatario;
     }
 
     public void setNmNomeFirmatario(String nmNomeFirmatario) {
-        this.nmNomeFirmatario = nmNomeFirmatario;
+	this.nmNomeFirmatario = nmNomeFirmatario;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-        return this.nmStrut;
+	return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-        this.nmStrut = nmStrut;
+	this.nmStrut = nmStrut;
     }
 
     @Column(name = "TI_MOD_OPER")
     public String getTiModOper() {
-        return this.tiModOper;
+	return this.tiModOper;
     }
 
     public void setTiModOper(String tiModOper) {
-        this.tiModOper = tiModOper;
+	this.tiModOper = tiModOper;
     }
 
     @Column(name = "TI_OPER")
     public String getTiOper() {
-        return this.tiOper;
+	return this.tiOper;
     }
 
     public void setTiOper(String tiOper) {
-        this.tiOper = tiOper;
+	this.tiOper = tiOper;
     }
 
     @Column(name = "TM_OPER")
     @Temporal(TemporalType.TIMESTAMP)
     public Date getTmOper() {
-        return this.tmOper;
+	return this.tmOper;
     }
 
     public void setTmOper(Date tmOper) {
-        this.tmOper = tmOper;
+	this.tmOper = tmOper;
     }
 
 }

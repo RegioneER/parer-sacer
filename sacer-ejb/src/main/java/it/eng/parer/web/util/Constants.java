@@ -1,23 +1,18 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.web.util;
 
@@ -92,62 +87,63 @@ public class Constants {
     // Enum per tipo sessione
     public enum TipoSessione {
 
-        VERSAMENTO, AGGIUNGI_DOCUMENTO
+	VERSAMENTO, AGGIUNGI_DOCUMENTO
     }
 
     // Enum per tipo entità sacer
     public enum TipoEntitaSacer {
 
-        UNI_DOC, DOC, UPD, COMP, FASC, SER
+	UNI_DOC, DOC, UPD, COMP, FASC, SER
     }
     // Enum per tipo sistema migrazione
 
     public enum TipoSisMigr {
 
-        ASC
+	ASC
     }
 
     // Enum per esito su calcoli nel monitoraggio
     public enum EsitoCalcolo {
 
-        OK, OKNOUPDATE
+	OK, OKNOUPDATE
     }
 
     // Enum per tipo dato
     public enum TipoDato {
 
-        REGISTRO, TIPO_UNITA_DOC, TIPO_DOC, TIPO_DOC_PRINC, SUB_STRUTTURA, TIPO_FASCICOLO, TIPO_OBJECT
+	REGISTRO, TIPO_UNITA_DOC, TIPO_DOC, TIPO_DOC_PRINC, SUB_STRUTTURA, TIPO_FASCICOLO,
+	TIPO_OBJECT
     }
 
     public enum TiOperReplic {
 
-        INS, MOD, CANC
+	INS, MOD, CANC
     }
 
     public enum TiStatoReplic {
 
-        DA_REPLICARE, REPLICA_OK, REPLICA_NON_POSSIBILE, REPLICA_IN_ERRORE, REPLICA_IN_TIMEOUT
+	DA_REPLICARE, REPLICA_OK, REPLICA_NON_POSSIBILE, REPLICA_IN_ERRORE, REPLICA_IN_TIMEOUT
     }
 
     /*
-     * NOTA PAOLO: Probabilmente da "fondere" in un unicop enum con gli altri presenti altrove ma non legati alla parte
-     * web
+     * NOTA PAOLO: Probabilmente da "fondere" in un unicop enum con gli altri presenti altrove ma
+     * non legati alla parte web
      */
     public enum TiDoc {
 
-        PRINCIPALE, ALLEGATO, ANNESSO, ANNOTAZIONE
+	PRINCIPALE, ALLEGATO, ANNESSO, ANNOTAZIONE
     }
 
     // Enum per tipo entità sacer su object storage
     public enum TiEntitaSacerObjectStorage {
 
-        COMP_DOC, REPORTVF, XML_VERS, INDICE_AIP, INDICE_AIP_FASC, ELENCO_INDICI_AIP, ELENCO_INDICI_AIP_FASC,
-        INDICE_AIP_SERIE
+	COMP_DOC, REPORTVF, XML_VERS, INDICE_AIP, INDICE_AIP_FASC, ELENCO_INDICI_AIP,
+	ELENCO_INDICI_AIP_FASC, INDICE_AIP_SERIE
     }
 
     // MEV26587
     public enum ComboValueParamentersType {
-        STRINGA, PASSWORD;
+	STRINGA, PASSWORD;
     }
 
     public static final String OBFUSCATED_STRING = "********";
@@ -155,19 +151,19 @@ public class Constants {
     // MEV#27891
     // Enum per tipo sessione jms
     public enum TipoSessioneJMS {
-        XA_TRANSACTED, SESSION_TRANSACTED, UNTRANSACTED, DISABLED
+	XA_TRANSACTED, SESSION_TRANSACTED, UNTRANSACTED, DISABLED
     }
 
     // Enum per modalità di delivery messaggio jms
     public enum DeliveryModeJMS {
-        PERSISTENT, NON_PERSISTENT
+	PERSISTENT, NON_PERSISTENT
     }
     // end MEV#27891
 
     // MAC#28020
     // Enum per modalità di validazione criteri
     public enum ValidationMode {
-        JOB, MDB
+	JOB, MDB
     }
     // end MAC#28020
 }

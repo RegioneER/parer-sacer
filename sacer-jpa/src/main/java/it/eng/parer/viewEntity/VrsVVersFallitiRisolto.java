@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -53,85 +49,85 @@ public class VrsVVersFallitiRisolto implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-        return this.aaKeyUnitaDoc;
+	return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-        return this.cdKeyUnitaDoc;
+	return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-        return this.cdRegistroKeyUnitaDoc;
+	return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_APERTURA")
     public Date getDtApertura() {
-        return this.dtApertura;
+	return this.dtApertura;
     }
 
     public void setDtApertura(Date dtApertura) {
-        this.dtApertura = dtApertura;
+	this.dtApertura = dtApertura;
     }
 
     @Column(name = "FL_RISOLTO", columnDefinition = "char(1)")
     public String getFlRisolto() {
-        return this.flRisolto;
+	return this.flRisolto;
     }
 
     public void setFlRisolto(String flRisolto) {
-        this.flRisolto = flRisolto;
+	this.flRisolto = flRisolto;
     }
 
     @Column(name = "FL_SESSIONE_ERR_NON_RISOLUB", columnDefinition = "char(1)")
     public String getFlSessioneErrNonRisolub() {
-        return this.flSessioneErrNonRisolub;
+	return this.flSessioneErrNonRisolub;
     }
 
     public void setFlSessioneErrNonRisolub(String flSessioneErrNonRisolub) {
-        this.flSessioneErrNonRisolub = flSessioneErrNonRisolub;
+	this.flSessioneErrNonRisolub = flSessioneErrNonRisolub;
     }
 
     @Column(name = "FL_SESSIONE_ERR_VERIF", columnDefinition = "char(1)")
     public String getFlSessioneErrVerif() {
-        return this.flSessioneErrVerif;
+	return this.flSessioneErrVerif;
     }
 
     public void setFlSessioneErrVerif(String flSessioneErrVerif) {
-        this.flSessioneErrVerif = flSessioneErrVerif;
+	this.flSessioneErrVerif = flSessioneErrVerif;
     }
 
     @Id
     @Column(name = "ID_SESSIONE_VERS")
     public BigDecimal getIdSessioneVers() {
-        return this.idSessioneVers;
+	return this.idSessioneVers;
     }
 
     public void setIdSessioneVers(BigDecimal idSessioneVers) {
-        this.idSessioneVers = idSessioneVers;
+	this.idSessioneVers = idSessioneVers;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
 }

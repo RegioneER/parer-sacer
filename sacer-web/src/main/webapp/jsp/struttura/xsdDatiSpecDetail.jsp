@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ page import="it.eng.parer.slite.gen.form.StrutDatiSpecForm" pageEncoding="UTF-8"%>
 <%@ include file="../../include.jsp"%>
 
@@ -58,7 +75,7 @@
 
                     <slf:fieldSet>
                         <%@ include file="xsdDatiSpec.jspf"%>
-                        <h2><font color="#d3101c">Dettaglio XSD</font></h2>
+                        <h2 style="color: #d3101c;">Dettaglio XSD</h2>
                             <sl:newLine skipLine="true"/>
                             <slf:lblField name="<%=StrutDatiSpecForm.XsdDatiSpec.ID_XSD_DATI_SPEC%>" colSpan="4" controlWidth="w40"/><sl:newLine />
                             <slf:lblField name="<%=StrutDatiSpecForm.XsdDatiSpec.CD_VERSIONE_XSD%>" colSpan="4" controlWidth="w40"/><sl:newLine />
@@ -73,7 +90,7 @@
                             <slf:lblField name="<%=StrutDatiSpecForm.XsdDatiSpec.SCARICA_XSD_BUTTON%>" width="w50" />
                         </sl:pulsantiera>
                         <sl:newLine skipLine="true"/>
-                    <div class="livello1"><b><font color="#d3101c">Elenco metadati</font></b></div>
+                    <div class="livello1"><b style="color: #d3101c;">Elenco metadati</b></div>
                             <slf:listNavBar name="<%= StrutDatiSpecForm.AttribDatiSpecList.NAME%>" pageSizeRelated="true"/>
                             <slf:list name="<%= StrutDatiSpecForm.AttribDatiSpecList.NAME%>"  />
                             <slf:listNavBar  name="<%= StrutDatiSpecForm.AttribDatiSpecList.NAME%>" />

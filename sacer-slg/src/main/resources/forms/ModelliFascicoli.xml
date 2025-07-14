@@ -36,7 +36,7 @@
         <ComboBox Name="ti_modello_xsd" Description="Tipo modello" Type="STRING" Required="true"/>
         <ComboBox Name="fl_default" Description="Standard" Type="STRING" Required="true" />
         <Input Name="cd_xsd" Description="Codice xsd" Type="STRING" Required="true"/>
-        <Input Name="ds_xsd" Description="Descrizione xsd" Type="STRING" Required="true"/>
+        <Input Name="ds_xsd" Description="Descrizione xsd" Type="STRING" Required="true" MaxLength="254" />
         <Input Name="dt_istituz" Description="Data attivazione" Type="DATE" Required="true"/>
         <Input Name="dt_soppres" Description="Data fine validità" Type="DATE" Required="true"/>
         <TextArea Name="bl_xsd" Description="Dettaglio XSD" Type="STRING" Rows="1000" Cols="1000" MaxLength="1000000000" />

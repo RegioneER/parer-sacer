@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.fascicoli.ejb;
@@ -42,7 +38,8 @@ import it.eng.parer.web.util.Transform;
  */
 @Stateless
 @LocalBean
-@Interceptors({ TransactionInterceptor.class })
+@Interceptors({
+	TransactionInterceptor.class })
 public class CriteriRaggrFascicoliEjb {
 
     @EJB
@@ -50,21 +47,23 @@ public class CriteriRaggrFascicoliEjb {
 
     private static final Logger logger = LoggerFactory.getLogger(CriteriRaggrFascicoliEjb.class);
 
-    public DecCriterioRaggrFascTableBean getDecCriterioRaggrFascTableBean(BigDecimal idAmbiente, BigDecimal idEnte,
-            BigDecimal idStrut, String nmCriterioRaggr) {
-        DecCriterioRaggrFascTableBean table = new DecCriterioRaggrFascTableBean();
-        List<DecCriterioRaggrFasc> list = crHelper.retrieveDecCriterioRaggrFascList(idAmbiente, idEnte, idStrut,
-                nmCriterioRaggr);
-        if (list != null && !list.isEmpty()) {
-            try {
-                table = (DecCriterioRaggrFascTableBean) Transform.entities2TableBean(list);
-            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException
-                    | IllegalArgumentException | InvocationTargetException ex) {
-                logger.error("Errore durante il recupero dei criteri di raggruppamento fascicoli "
-                        + ExceptionUtils.getRootCauseMessage(ex), ex);
-                throw new IllegalStateException("Errore durante il recupero dei criteri di raggruppamento fascicoli");
-            }
-        }
-        return table;
+    public DecCriterioRaggrFascTableBean getDecCriterioRaggrFascTableBean(BigDecimal idAmbiente,
+	    BigDecimal idEnte, BigDecimal idStrut, String nmCriterioRaggr) {
+	DecCriterioRaggrFascTableBean table = new DecCriterioRaggrFascTableBean();
+	List<DecCriterioRaggrFasc> list = crHelper.retrieveDecCriterioRaggrFascList(idAmbiente,
+		idEnte, idStrut, nmCriterioRaggr);
+	if (list != null && !list.isEmpty()) {
+	    try {
+		table = (DecCriterioRaggrFascTableBean) Transform.entities2TableBean(list);
+	    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+		    | IllegalAccessException | IllegalArgumentException
+		    | InvocationTargetException ex) {
+		logger.error("Errore durante il recupero dei criteri di raggruppamento fascicoli "
+			+ ExceptionUtils.getRootCauseMessage(ex), ex);
+		throw new IllegalStateException(
+			"Errore durante il recupero dei criteri di raggruppamento fascicoli");
+	    }
+	}
+	return table;
     }
 }

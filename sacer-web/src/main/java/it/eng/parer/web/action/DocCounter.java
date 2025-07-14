@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.web.action;
@@ -47,20 +43,21 @@ public class DocCounter {
 
     @PostConstruct
     public void init() {
-        try {
-            monitoraggioHelper = (MonitoraggioHelper) new InitialContext()
-                    .lookup("java:app/Parer-ejb/MonitoraggioHelper");
-        } catch (NamingException ex) {
-            logger.error("Errore nel recupero dell'EJB ConfigurationHelper ", ex);
-            throw new IllegalStateException(ex);
-        }
+	try {
+	    monitoraggioHelper = (MonitoraggioHelper) new InitialContext()
+		    .lookup("java:app/Parer-ejb/MonitoraggioHelper");
+	} catch (NamingException ex) {
+	    logger.error("Errore nel recupero dell'EJB ConfigurationHelper ", ex);
+	    throw new IllegalStateException(ex);
+	}
     }
 
     @RequestMapping(value = "/docounter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CounterResultBean> countDocs() throws EMFError {
-        CounterResultBean result = monitoraggioHelper.getTotalMonTotSacer();
-        ResponseEntity<CounterResultBean> response = new ResponseEntity<CounterResultBean>(result, HttpStatus.OK);
-        return response;
+	CounterResultBean result = monitoraggioHelper.getTotalMonTotSacer();
+	ResponseEntity<CounterResultBean> response = new ResponseEntity<CounterResultBean>(result,
+		HttpStatus.OK);
+	return response;
     }
 
 }

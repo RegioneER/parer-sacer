@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -53,76 +49,76 @@ public class VrsVDocNonVer implements Serializable {
 
     @EmbeddedId()
     public VrsVDocNonVerId getVrsVDocNonVerId() {
-        return vrsVDocNonVerId;
+	return vrsVDocNonVerId;
     }
 
     public void setVrsVDocNonVerId(VrsVDocNonVerId vrsVDocNonVerId) {
-        this.vrsVDocNonVerId = vrsVDocNonVerId;
+	this.vrsVDocNonVerId = vrsVDocNonVerId;
     }
 
     @Column(name = "CD_ERR_LAST")
     public String getCdErrLast() {
-        return this.cdErrLast;
+	return this.cdErrLast;
     }
 
     public void setCdErrLast(String cdErrLast) {
-        this.cdErrLast = cdErrLast;
+	this.cdErrLast = cdErrLast;
     }
 
     @Column(name = "CL_ERR_LAST")
     public String getClErrLast() {
-        return this.clErrLast;
+	return this.clErrLast;
     }
 
     public void setClErrLast(String clErrLast) {
-        this.clErrLast = clErrLast;
+	this.clErrLast = clErrLast;
     }
 
     @Column(name = "DS_ERR_LAST")
     public String getDsErrLast() {
-        return this.dsErrLast;
+	return this.dsErrLast;
     }
 
     public void setDsErrLast(String dsErrLast) {
-        this.dsErrLast = dsErrLast;
+	this.dsErrLast = dsErrLast;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_FIRST_SES_ERR")
     public Date getDtFirstSesErr() {
-        return this.dtFirstSesErr;
+	return this.dtFirstSesErr;
     }
 
     public void setDtFirstSesErr(Date dtFirstSesErr) {
-        this.dtFirstSesErr = dtFirstSesErr;
+	this.dtFirstSesErr = dtFirstSesErr;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_LAST_SES_ERR")
     public Date getDtLastSesErr() {
-        return this.dtLastSesErr;
+	return this.dtLastSesErr;
     }
 
     public void setDtLastSesErr(Date dtLastSesErr) {
-        this.dtLastSesErr = dtLastSesErr;
+	this.dtLastSesErr = dtLastSesErr;
     }
 
     @Column(name = "FL_DIVERSI_ERR", columnDefinition = "CHAR")
     public String getFlDiversiErr() {
-        return this.flDiversiErr;
+	return this.flDiversiErr;
     }
 
     public void setFlDiversiErr(String flDiversiErr) {
-        this.flDiversiErr = flDiversiErr;
+	this.flDiversiErr = flDiversiErr;
     }
 
     @Column(name = "ID_DOC_NON_VERS")
     public BigDecimal getIdDocNonVers() {
-        return this.idDocNonVers;
+	return this.idDocNonVers;
     }
 
     public void setIdDocNonVers(BigDecimal idDocNonVers) {
-        this.idDocNonVers = idDocNonVers;
+	this.idDocNonVers = idDocNonVers;
     }
 
 }

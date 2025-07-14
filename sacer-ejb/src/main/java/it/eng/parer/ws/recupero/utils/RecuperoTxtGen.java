@@ -1,24 +1,19 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.ws.recupero.utils;
 
@@ -59,87 +54,93 @@ public class RecuperoTxtGen {
     ProduzioneDipEsibizione dipEsibizione = null;
 
     public RispostaWSRecupero getRispostaWs() {
-        return rispostaWs;
+	return rispostaWs;
     }
 
     public RecuperoTxtGen(RispostaWSRecupero risp) {
-        rispostaWs = risp;
-        rispostaControlli = new RispostaControlli();
+	rispostaWs = risp;
+	rispostaControlli = new RispostaControlli();
 
-        try {
-            // recupera l'ejb per la lettura di informazioni, se possibile
-            dipEsibizione = (ProduzioneDipEsibizione) new InitialContext()
-                    .lookup("java:module/ProduzioneDipEsibizione");
-        } catch (NamingException ex) {
-            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-            rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                    "GestSessRecDip Errore nel recupero dell'EJB dei controlli recupero DIP  " + ex.getMessage());
-            log.error("Errore nel recupero dell'EJB dei controlli  recupero DIP ", ex);
-        }
+	try {
+	    // recupera l'ejb per la lettura di informazioni, se possibile
+	    dipEsibizione = (ProduzioneDipEsibizione) new InitialContext()
+		    .lookup("java:module/ProduzioneDipEsibizione");
+	} catch (NamingException ex) {
+	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+	    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+		    "GestSessRecDip Errore nel recupero dell'EJB dei controlli recupero DIP  "
+			    + ex.getMessage());
+	    log.error("Errore nel recupero dell'EJB dei controlli  recupero DIP ", ex);
+	}
     }
 
     public void generaDipEsibizione(ZipArchiveOutputStream tmpZipOutputStream, RecuperoExt recupero)
-            throws IOException {
-        RispostaControlli rispostaControlli;
+	    throws IOException {
+	RispostaControlli rispostaControlli;
 
-        // individua il modello di comunicazione
-        ProduzioneDipEsibizione.TipiOggQryModello toqm = null;
-        Long tmpId = null;
-        switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
-        case UNI_DOC_DIP_ESIBIZIONE:
-            toqm = ProduzioneDipEsibizione.TipiOggQryModello.UNITA_DOC;
-            tmpId = recupero.getParametriRecupero().getIdUnitaDoc();
-            break;
-        case DOC_DIP_ESIBIZIONE:
-            toqm = ProduzioneDipEsibizione.TipiOggQryModello.DOC;
-            tmpId = recupero.getParametriRecupero().getIdDocumento();
-            break;
-        case COMP_DIP_ESIBIZIONE:
-            toqm = ProduzioneDipEsibizione.TipiOggQryModello.COMP;
-            tmpId = recupero.getParametriRecupero().getIdComponente();
-            break;
-        }
+	// individua il modello di comunicazione
+	ProduzioneDipEsibizione.TipiOggQryModello toqm = null;
+	Long tmpId = null;
+	switch (recupero.getParametriRecupero().getTipoEntitaSacer()) {
+	case UNI_DOC_DIP_ESIBIZIONE:
+	    toqm = ProduzioneDipEsibizione.TipiOggQryModello.UNITA_DOC;
+	    tmpId = recupero.getParametriRecupero().getIdUnitaDoc();
+	    break;
+	case DOC_DIP_ESIBIZIONE:
+	    toqm = ProduzioneDipEsibizione.TipiOggQryModello.DOC;
+	    tmpId = recupero.getParametriRecupero().getIdDocumento();
+	    break;
+	case COMP_DIP_ESIBIZIONE:
+	    toqm = ProduzioneDipEsibizione.TipiOggQryModello.COMP;
+	    tmpId = recupero.getParametriRecupero().getIdComponente();
+	    break;
+	}
 
-        rispostaControlli = dipEsibizione.caricaModello(recupero.getParametriRecupero().getIdUnitaDoc(),
-                ProduzioneDipEsibizione.TipiUsoModello.ESIBIZIONE, toqm);
-        if (rispostaControlli.isrBoolean() == false) {
-            setRispostaWsError();
-            if (rispostaControlli.getCodErr() == null || rispostaControlli.getCodErr().isEmpty()) {
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.RECDIP_003_001, rispostaControlli.getDsErr());
-            } else {
-                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
-            }
-            return;
-        }
-        String testoModello = rispostaControlli.getrString();
+	rispostaControlli = dipEsibizione.caricaModello(
+		recupero.getParametriRecupero().getIdUnitaDoc(),
+		ProduzioneDipEsibizione.TipiUsoModello.ESIBIZIONE, toqm);
+	if (rispostaControlli.isrBoolean() == false) {
+	    setRispostaWsError();
+	    if (rispostaControlli.getCodErr() == null || rispostaControlli.getCodErr().isEmpty()) {
+		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.RECDIP_003_001,
+			rispostaControlli.getDsErr());
+	    } else {
+		rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(),
+			rispostaControlli.getDsErr());
+	    }
+	    return;
+	}
+	String testoModello = rispostaControlli.getrString();
 
-        // leggi i dati con cui popolare il modello
-        rispostaControlli = dipEsibizione.caricaDatiDaQuery(rispostaControlli.getrLong(),
-                ProduzioneDipEsibizione.TipiUsoQuery.TESTO, tmpId);
-        if (rispostaControlli.isrBoolean() == false) {
-            setRispostaWsError();
-            if (rispostaControlli.getCodErr() == null || rispostaControlli.getCodErr().isEmpty()) {
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.RECDIP_003_001, rispostaControlli.getDsErr());
-            } else {
-                rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(), rispostaControlli.getDsErr());
-            }
-            return;
-        }
-        Map<String, String> mappaValori = (HashMap<String, String>) rispostaControlli.getrObject();
+	// leggi i dati con cui popolare il modello
+	rispostaControlli = dipEsibizione.caricaDatiDaQuery(rispostaControlli.getrLong(),
+		ProduzioneDipEsibizione.TipiUsoQuery.TESTO, tmpId);
+	if (rispostaControlli.isrBoolean() == false) {
+	    setRispostaWsError();
+	    if (rispostaControlli.getCodErr() == null || rispostaControlli.getCodErr().isEmpty()) {
+		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.RECDIP_003_001,
+			rispostaControlli.getDsErr());
+	    } else {
+		rispostaWs.setEsitoWsError(rispostaControlli.getCodErr(),
+			rispostaControlli.getDsErr());
+	    }
+	    return;
+	}
+	Map<String, String> mappaValori = (HashMap<String, String>) rispostaControlli.getrObject();
 
-        // preparo il DIP per esibizione
-        StrSubstitutor sub = new StrSubstitutor(mappaValori);
-        String resolvedString = sub.replace(testoModello);
+	// preparo il DIP per esibizione
+	StrSubstitutor sub = new StrSubstitutor(mappaValori);
+	String resolvedString = sub.replace(testoModello);
 
-        // includo il DIP generato nell'archivio
-        tmpZipOutputStream.putArchiveEntry(new ZipArchiveEntry("dichiarazione_DIP_esibizione.txt"));
-        tmpZipOutputStream.write((byte[]) resolvedString.getBytes("UTF-8"));
-        tmpZipOutputStream.closeArchiveEntry();
+	// includo il DIP generato nell'archivio
+	tmpZipOutputStream.putArchiveEntry(new ZipArchiveEntry("dichiarazione_DIP_esibizione.txt"));
+	tmpZipOutputStream.write((byte[]) resolvedString.getBytes("UTF-8"));
+	tmpZipOutputStream.closeArchiveEntry();
     }
 
     private void setRispostaWsError() {
-        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-        rispostaWs.setErrorCode(rispostaControlli.getCodErr());
-        rispostaWs.setErrorMessage(rispostaControlli.getDsErr());
+	rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+	rispostaWs.setErrorCode(rispostaControlli.getCodErr());
+	rispostaWs.setErrorMessage(rispostaControlli.getDsErr());
     }
 }
