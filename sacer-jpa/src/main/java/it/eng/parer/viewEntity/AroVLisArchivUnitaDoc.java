@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -46,66 +42,66 @@ public class AroVLisArchivUnitaDoc implements Serializable {
 
     @Column(name = "CD_FASCIC")
     public String getCdFascic() {
-        return this.cdFascic;
+	return this.cdFascic;
     }
 
     public void setCdFascic(String cdFascic) {
-        this.cdFascic = cdFascic;
+	this.cdFascic = cdFascic;
     }
 
     @Column(name = "CD_SOTTOFASCIC")
     public String getCdSottofascic() {
-        return this.cdSottofascic;
+	return this.cdSottofascic;
     }
 
     public void setCdSottofascic(String cdSottofascic) {
-        this.cdSottofascic = cdSottofascic;
+	this.cdSottofascic = cdSottofascic;
     }
 
     @Column(name = "DS_CLASSIF")
     public String getDsClassif() {
-        return this.dsClassif;
+	return this.dsClassif;
     }
 
     public void setDsClassif(String dsClassif) {
-        this.dsClassif = dsClassif;
+	this.dsClassif = dsClassif;
     }
 
     @Column(name = "DS_OGGETTO_FASCIC")
     public String getDsOggettoFascic() {
-        return this.dsOggettoFascic;
+	return this.dsOggettoFascic;
     }
 
     public void setDsOggettoFascic(String dsOggettoFascic) {
-        this.dsOggettoFascic = dsOggettoFascic;
+	this.dsOggettoFascic = dsOggettoFascic;
     }
 
     @Column(name = "DS_OGGETTO_SOTTOFASCIC")
     public String getDsOggettoSottofascic() {
-        return this.dsOggettoSottofascic;
+	return this.dsOggettoSottofascic;
     }
 
     public void setDsOggettoSottofascic(String dsOggettoSottofascic) {
-        this.dsOggettoSottofascic = dsOggettoSottofascic;
+	this.dsOggettoSottofascic = dsOggettoSottofascic;
     }
 
     @Id
     @Column(name = "ID_ARCHIV_SEC")
     public BigDecimal getIdArchivSec() {
-        return this.idArchivSec;
+	return this.idArchivSec;
     }
 
     public void setIdArchivSec(BigDecimal idArchivSec) {
-        this.idArchivSec = idArchivSec;
+	this.idArchivSec = idArchivSec;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-        return this.idUnitaDoc;
+	return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-        this.idUnitaDoc = idUnitaDoc;
+	this.idUnitaDoc = idUnitaDoc;
     }
 
 }

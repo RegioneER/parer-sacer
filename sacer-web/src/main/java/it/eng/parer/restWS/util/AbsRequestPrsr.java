@@ -1,24 +1,19 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.restWS.util;
 
@@ -36,48 +31,48 @@ public abstract class AbsRequestPrsr {
     public static final String NOME_HEADER_CERTIFICATO = "RERCommonNameCert";
 
     /**
-     * lettura dell'indirizzo IP del chiamante. Si presuppone che il load balancer o il reverse proxy impostino la
-     * variabile RERFwFor tra gli header HTTP della request. Questo è l'unico sistema per recepire l'IP nel caso in cui
-     * l'application server non sia esposto direttamente. NOTA: è ovvio che l'application server è esposto direttamente
-     * solo sui PC di sviluppo.
+     * lettura dell'indirizzo IP del chiamante. Si presuppone che il load balancer o il reverse
+     * proxy impostino la variabile RERFwFor tra gli header HTTP della request. Questo è l'unico
+     * sistema per recepire l'IP nel caso in cui l'application server non sia esposto direttamente.
+     * NOTA: è ovvio che l'application server è esposto direttamente solo sui PC di sviluppo.
      *
-     * @param request
-     *            HttpServletRequest standard
+     * @param request HttpServletRequest standard
      *
      * @return paramentro letto da request
      */
     public String leggiIpVersante(HttpServletRequest request) {
-        String ipVers = request.getHeader("RERFwFor");
-        // cerco l'header custom della RER
-        if (ipVers == null || ipVers.isEmpty()) {
-            ipVers = request.getHeader("X-FORWARDED-FOR");
-            // se non c'e`, uso l'header standard
-        }
-        if (ipVers == null || ipVers.isEmpty()) {
-            ipVers = request.getRemoteAddr();
-            // se non c'e` perche' la macchina e' esposta direttamente,
-            // leggo l'IP fisico del chiamante
-        }
-        log.info("Request, indirizzo di provenienza - IP:  " + ipVers);
-        return ipVers;
+	String ipVers = request.getHeader("RERFwFor");
+	// cerco l'header custom della RER
+	if (ipVers == null || ipVers.isEmpty()) {
+	    ipVers = request.getHeader("X-FORWARDED-FOR");
+	    // se non c'e`, uso l'header standard
+	}
+	if (ipVers == null || ipVers.isEmpty()) {
+	    ipVers = request.getRemoteAddr();
+	    // se non c'e` perche' la macchina e' esposta direttamente,
+	    // leggo l'IP fisico del chiamante
+	}
+	log.info("Request, indirizzo di provenienza - IP:  " + ipVers);
+	return ipVers;
     }
 
     /*
-     * Legge dalla request HTTP l'eventuale parametro RERCommonNameCer presente nell'header HTTP. QUesto parametro viene
-     * valorizzato dal LBL che per i servizi sicurizzati con mutua autenticazione con certificato estrae dal certificato
-     * il Common Name e lo mette nell'header.
+     * Legge dalla request HTTP l'eventuale parametro RERCommonNameCer presente nell'header HTTP.
+     * QUesto parametro viene valorizzato dal LBL che per i servizi sicurizzati con mutua
+     * autenticazione con certificato estrae dal certificato il Common Name e lo mette nell'header.
      */
     public String leggiCertCommonName(HttpServletRequest request) {
-        // cerco l'header custom della RERCommonNameCer
-        String valoreHeaderCertificato = request.getHeader(NOME_HEADER_CERTIFICATO);
-        // MAC#34747 - Introduzione log su parametro header per servizi di recupero con certificato
-        if (valoreHeaderCertificato == null) {
-            log.info("Il parametro [{}] NON è presente nell'header della richiesta.", NOME_HEADER_CERTIFICATO);
-        } else {
-            log.info("Il parametro [{}] è presente nell'header della richiesta con valore [{}].",
-                    NOME_HEADER_CERTIFICATO, valoreHeaderCertificato);
-        }
-        return valoreHeaderCertificato;
+	// cerco l'header custom della RERCommonNameCer
+	String valoreHeaderCertificato = request.getHeader(NOME_HEADER_CERTIFICATO);
+	// MAC#34747 - Introduzione log su parametro header per servizi di recupero con certificato
+	if (valoreHeaderCertificato == null) {
+	    log.info("Il parametro [{}] NON è presente nell'header della richiesta.",
+		    NOME_HEADER_CERTIFICATO);
+	} else {
+	    log.info("Il parametro [{}] è presente nell'header della richiesta con valore [{}].",
+		    NOME_HEADER_CERTIFICATO, valoreHeaderCertificato);
+	}
+	return valoreHeaderCertificato;
     }
 
 }

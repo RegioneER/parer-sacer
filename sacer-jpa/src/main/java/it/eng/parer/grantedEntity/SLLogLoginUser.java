@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.grantedEntity;
@@ -70,89 +66,89 @@ public class SLLogLoginUser implements Serializable {
     @Id
     @Column(name = "ID_LOGIN_USER")
     @GenericGenerator(name = "SLOG_LOGIN_USER_ID_LOGIN_USER_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = PersistentIdentifierGenerator.SCHEMA, value = "SACER_LOG"),
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SLOG_LOGIN_USER"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = PersistentIdentifierGenerator.SCHEMA, value = "SACER_LOG"),
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SLOG_LOGIN_USER"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SLOG_LOGIN_USER_ID_LOGIN_USER_GENERATOR")
     public Long getIdLoginUser() {
-        return idLoginUser;
+	return idLoginUser;
     }
 
     public void setIdLoginUser(Long idLoginUser) {
-        this.idLoginUser = idLoginUser;
+	this.idLoginUser = idLoginUser;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-        return nmUserid;
+	return nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-        this.nmUserid = nmUserid;
+	this.nmUserid = nmUserid;
     }
 
     @Column(name = "CD_IND_IP_CLIENT")
     public String getCdIndIpClient() {
-        return cdIndIpClient;
+	return cdIndIpClient;
     }
 
     public void setCdIndIpClient(String cdIndIpClient) {
-        this.cdIndIpClient = cdIndIpClient;
+	this.cdIndIpClient = cdIndIpClient;
     }
 
     @Column(name = "CD_IND_SERVER")
     public String getCdIndServer() {
-        return cdIndServer;
+	return cdIndServer;
     }
 
     public void setCdIndServer(String cdIndServer) {
-        this.cdIndServer = cdIndServer;
+	this.cdIndServer = cdIndServer;
     }
 
     @Column(name = "TIPO_EVENTO")
     public String getTipoEvento() {
-        return tipoEvento;
+	return tipoEvento;
     }
 
     public void setTipoEvento(String tipoEvento) {
-        this.tipoEvento = tipoEvento;
+	this.tipoEvento = tipoEvento;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_EVENTO")
     public Date getDtEvento() {
-        return dtEvento;
+	return dtEvento;
     }
 
     public void setDtEvento(Date dtEvento) {
-        this.dtEvento = dtEvento;
+	this.dtEvento = dtEvento;
     }
 
     @Column(name = "CD_ID_ESTERNO")
     public String getCdIdEsterno() {
-        return cdIdEsterno;
+	return cdIdEsterno;
     }
 
     public void setCdIdEsterno(String cdIdEsterno) {
-        this.cdIdEsterno = cdIdEsterno;
+	this.cdIdEsterno = cdIdEsterno;
     }
 
     @Column(name = "TIPO_UTENTE_AUTH")
     public String getTipoUtenteAuth() {
-        return tipoUtenteAuth;
+	return tipoUtenteAuth;
     }
 
     public void setTipoUtenteAuth(String tipoUtenteAuth) {
-        this.tipoUtenteAuth = tipoUtenteAuth;
+	this.tipoUtenteAuth = tipoUtenteAuth;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_APPLIC")
     public SIAplApplic getsIAplApplic() {
-        return sIAplApplic;
+	return sIAplApplic;
     }
 
     public void setsIAplApplic(SIAplApplic sIAplApplic) {
-        this.sIAplApplic = sIAplApplic;
+	this.sIAplApplic = sIAplApplic;
     }
 }

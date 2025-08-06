@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.soapWS.client;
@@ -45,7 +41,8 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getStatoOggettoTipo", propOrder = { "nmAmbiente", "nmVersatore", "cdKeyObject" })
+@XmlType(name = "getStatoOggettoTipo", propOrder = {
+	"nmAmbiente", "nmVersatore", "cdKeyObject" })
 public class GetStatoOggetto {
 
     protected String nmAmbiente;
@@ -59,18 +56,17 @@ public class GetStatoOggetto {
      *
      */
     public String getNmAmbiente() {
-        return nmAmbiente;
+	return nmAmbiente;
     }
 
     /**
      * Imposta il valore della proprietà nmAmbiente.
      *
-     * @param value
-     *            allowed object is {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setNmAmbiente(String value) {
-        this.nmAmbiente = value;
+	this.nmAmbiente = value;
     }
 
     /**
@@ -80,18 +76,17 @@ public class GetStatoOggetto {
      *
      */
     public String getNmVersatore() {
-        return nmVersatore;
+	return nmVersatore;
     }
 
     /**
      * Imposta il valore della proprietà nmVersatore.
      *
-     * @param value
-     *            allowed object is {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setNmVersatore(String value) {
-        this.nmVersatore = value;
+	this.nmVersatore = value;
     }
 
     /**
@@ -101,18 +96,17 @@ public class GetStatoOggetto {
      *
      */
     public String getCdKeyObject() {
-        return cdKeyObject;
+	return cdKeyObject;
     }
 
     /**
      * Imposta il valore della proprietà cdKeyObject.
      *
-     * @param value
-     *            allowed object is {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setCdKeyObject(String value) {
-        this.cdKeyObject = value;
+	this.cdKeyObject = value;
     }
 
 }

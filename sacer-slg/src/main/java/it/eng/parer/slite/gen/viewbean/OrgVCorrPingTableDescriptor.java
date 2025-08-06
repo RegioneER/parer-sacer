@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.slite.gen.viewbean;
@@ -45,26 +41,30 @@ public class OrgVCorrPingTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-        map.put(COL_ID_DICH_VERS_SACER, new ColumnDescriptor(COL_ID_DICH_VERS_SACER, Types.DECIMAL, 22, true));
-        map.put(COL_ID_VERS, new ColumnDescriptor(COL_ID_VERS, Types.DECIMAL, 22, false));
-        map.put(COL_NM_VERS, new ColumnDescriptor(COL_NM_VERS, Types.VARCHAR, 100, false));
-        map.put(COL_TI_DICH_VERS, new ColumnDescriptor(COL_TI_DICH_VERS, Types.VARCHAR, 20, false));
-        map.put(COL_ID_ORGANIZ_IAM, new ColumnDescriptor(COL_ID_ORGANIZ_IAM, Types.DECIMAL, 22, false));
-        map.put(COL_ID_ORGANIZ_APPLIC, new ColumnDescriptor(COL_ID_ORGANIZ_APPLIC, Types.DECIMAL, 22, false));
-        map.put(COL_NM_ENTITA, new ColumnDescriptor(COL_NM_ENTITA, Types.VARCHAR, 20, false));
-        map.put(COL_NM_AMBIENTE_VERS, new ColumnDescriptor(COL_NM_AMBIENTE_VERS, Types.VARCHAR, 100, false));
+	map.put(COL_ID_DICH_VERS_SACER,
+		new ColumnDescriptor(COL_ID_DICH_VERS_SACER, Types.DECIMAL, 22, true));
+	map.put(COL_ID_VERS, new ColumnDescriptor(COL_ID_VERS, Types.DECIMAL, 22, false));
+	map.put(COL_NM_VERS, new ColumnDescriptor(COL_NM_VERS, Types.VARCHAR, 100, false));
+	map.put(COL_TI_DICH_VERS, new ColumnDescriptor(COL_TI_DICH_VERS, Types.VARCHAR, 20, false));
+	map.put(COL_ID_ORGANIZ_IAM,
+		new ColumnDescriptor(COL_ID_ORGANIZ_IAM, Types.DECIMAL, 22, false));
+	map.put(COL_ID_ORGANIZ_APPLIC,
+		new ColumnDescriptor(COL_ID_ORGANIZ_APPLIC, Types.DECIMAL, 22, false));
+	map.put(COL_NM_ENTITA, new ColumnDescriptor(COL_NM_ENTITA, Types.VARCHAR, 20, false));
+	map.put(COL_NM_AMBIENTE_VERS,
+		new ColumnDescriptor(COL_NM_AMBIENTE_VERS, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-        return map;
+	return map;
     }
 
     public String getTableName() {
-        return TABLE_NAME;
+	return TABLE_NAME;
     }
 
     public String getStatement() {
-        return SELECT;
+	return SELECT;
     }
 
 }

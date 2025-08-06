@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ page import="it.eng.parer.slite.gen.form.StrutSerieForm" pageEncoding="UTF-8"%>
 <%@ include file="../../include.jsp"%>
 
@@ -130,21 +147,21 @@
 
             <sl:newLine skipLine="true"/>
             <c:if test="${(sessionScope['###_FORM_CONTAINER']['tipologieSerieList'].status eq 'view') }">
-                <div class="livello1"><b><font color="#d3101c">Elementi di descrizione</font></b></div>
+                <div class="livello1"><b style="color: #d3101c;">Elementi di descrizione</b></div>
                         <sl:newLine skipLine="true"/>
                         <slf:listNavBar name="<%= StrutSerieForm.NoteTipoSerieList.NAME%>" pageSizeRelated="true"/>
                         <slf:list name="<%= StrutSerieForm.NoteTipoSerieList.NAME%>"  />
                         <slf:listNavBar  name="<%= StrutSerieForm.NoteTipoSerieList.NAME%>" />
                         <sl:newLine skipLine="true"/>
                         <sl:newLine skipLine="true"/>
-                <div class="livello1"><b><font color="#d3101c">Registri - Tipologie di unit&agrave; documentarie</font></b></div>
+                <div class="livello1"><b style="color: #d3101c;">Registri - Tipologie di unit&agrave; documentarie</b></div>
                         <sl:newLine skipLine="true"/>
                         <slf:listNavBar name="<%= StrutSerieForm.TipoSerieRegistriList.NAME%>" pageSizeRelated="true"/>
                         <slf:list name="<%= StrutSerieForm.TipoSerieRegistriList.NAME%>"  />
                         <slf:listNavBar  name="<%= StrutSerieForm.TipoSerieRegistriList.NAME%>" />
                         <sl:newLine skipLine="true"/>
                         <sl:newLine skipLine="true"/>
-                <div class="livello1"><b><font color="#d3101c">Regole di acquisizione</font></b></div>
+                <div class="livello1"><b style="color: #d3101c;">Regole di acquisizione</b></div>
                         <sl:newLine skipLine="true"/>
                         <slf:listNavBar name="<%= StrutSerieForm.RegoleAcquisizioneList.NAME%>" pageSizeRelated="true"/>
                         <slf:list name="<%= StrutSerieForm.RegoleAcquisizioneList.NAME%>"  />

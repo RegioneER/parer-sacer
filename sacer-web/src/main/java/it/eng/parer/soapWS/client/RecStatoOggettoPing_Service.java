@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.soapWS.client;
@@ -37,44 +33,46 @@ public class RecStatoOggettoPing_Service extends Service {
     private final static URL RECSTATOOGGETTOPING_WSDL_LOCATION;
     private final static WebServiceException RECSTATOOGGETTOPING_EXCEPTION;
     private final static QName RECSTATOOGGETTOPING_QNAME = new QName("http://ws.sacerasi.eng.it/",
-            "RecStatoOggettoPing");
+	    "RecStatoOggettoPing");
     public final static QName RecStatoOggettoPingPort = new QName("http://ws.sacerasi.eng.it/",
-            "RecStatoOggettoPingPort");
+	    "RecStatoOggettoPingPort");
 
     static {
-        URL url = null;
-        WebServiceException e = null;
-        try {
-            url = new URL("https://parer-snap.ente.regione.emr.it/sacerping/RecStatoOggettoPing?WSDL");
-        } catch (MalformedURLException ex) {
-            e = new WebServiceException(ex);
-        }
-        RECSTATOOGGETTOPING_WSDL_LOCATION = url;
-        RECSTATOOGGETTOPING_EXCEPTION = e;
+	URL url = null;
+	WebServiceException e = null;
+	try {
+	    url = new URL(
+		    "https://parer-snap.ente.regione.emr.it/sacerping/RecStatoOggettoPing?WSDL");
+	} catch (MalformedURLException ex) {
+	    e = new WebServiceException(ex);
+	}
+	RECSTATOOGGETTOPING_WSDL_LOCATION = url;
+	RECSTATOOGGETTOPING_EXCEPTION = e;
     }
 
     public RecStatoOggettoPing_Service() {
-        super(__getWsdlLocation(), RECSTATOOGGETTOPING_QNAME);
+	super(__getWsdlLocation(), RECSTATOOGGETTOPING_QNAME);
     }
 
     public RecStatoOggettoPing_Service(WebServiceFeature... features) {
-        super(__getWsdlLocation(), RECSTATOOGGETTOPING_QNAME, features);
+	super(__getWsdlLocation(), RECSTATOOGGETTOPING_QNAME, features);
     }
 
     public RecStatoOggettoPing_Service(URL wsdlLocation) {
-        super(wsdlLocation, RECSTATOOGGETTOPING_QNAME);
+	super(wsdlLocation, RECSTATOOGGETTOPING_QNAME);
     }
 
     public RecStatoOggettoPing_Service(URL wsdlLocation, WebServiceFeature... features) {
-        super(wsdlLocation, RECSTATOOGGETTOPING_QNAME, features);
+	super(wsdlLocation, RECSTATOOGGETTOPING_QNAME, features);
     }
 
     public RecStatoOggettoPing_Service(URL wsdlLocation, QName serviceName) {
-        super(wsdlLocation, serviceName);
+	super(wsdlLocation, serviceName);
     }
 
-    public RecStatoOggettoPing_Service(URL wsdlLocation, QName serviceName, WebServiceFeature... features) {
-        super(wsdlLocation, serviceName, features);
+    public RecStatoOggettoPing_Service(URL wsdlLocation, QName serviceName,
+	    WebServiceFeature... features) {
+	super(wsdlLocation, serviceName, features);
     }
 
     /**
@@ -83,27 +81,27 @@ public class RecStatoOggettoPing_Service extends Service {
      */
     @WebEndpoint(name = "RecStatoOggettoPingPort")
     public RecStatoOggettoPing getRecStatoOggettoPingPort() {
-        return super.getPort(RecStatoOggettoPingPort, RecStatoOggettoPing.class);
+	return super.getPort(RecStatoOggettoPingPort, RecStatoOggettoPing.class);
     }
 
     /**
      *
-     * @param features
-     *            A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy. Supported features not in
-     *            the <code>features</code> parameter will have their default values.
+     * @param features A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.
+     *                 Supported features not in the <code>features</code> parameter will have their
+     *                 default values.
      *
      * @return returns RecStatoOggettoPing
      */
     @WebEndpoint(name = "RecStatoOggettoPingPort")
     public RecStatoOggettoPing getRecStatoOggettoPingPort(WebServiceFeature... features) {
-        return super.getPort(RecStatoOggettoPingPort, RecStatoOggettoPing.class, features);
+	return super.getPort(RecStatoOggettoPingPort, RecStatoOggettoPing.class, features);
     }
 
     private static URL __getWsdlLocation() {
-        if (RECSTATOOGGETTOPING_EXCEPTION != null) {
-            throw RECSTATOOGGETTOPING_EXCEPTION;
-        }
-        return RECSTATOOGGETTOPING_WSDL_LOCATION;
+	if (RECSTATOOGGETTOPING_EXCEPTION != null) {
+	    throw RECSTATOOGGETTOPING_EXCEPTION;
+	}
+	return RECSTATOOGGETTOPING_WSDL_LOCATION;
     }
 
 }

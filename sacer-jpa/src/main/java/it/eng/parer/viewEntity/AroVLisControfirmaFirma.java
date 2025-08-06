@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -55,43 +51,43 @@ public class AroVLisControfirmaFirma implements Serializable {
     }
 
     public String getCdFirmatario() {
-        return this.cdFirmatario;
+	return this.cdFirmatario;
     }
 
     public void setCdFirmatario(String cdFirmatario) {
-        this.cdFirmatario = cdFirmatario;
+	this.cdFirmatario = cdFirmatario;
     }
 
     public BigDecimal getIdControfirmaFirma() {
-        return this.idControfirmaFirma;
+	return this.idControfirmaFirma;
     }
 
     public void setIdControfirmaFirma(BigDecimal idControfirmaFirma) {
-        this.idControfirmaFirma = idControfirmaFirma;
+	this.idControfirmaFirma = idControfirmaFirma;
     }
 
     public BigDecimal getIdFirmaComp() {
-        return this.idFirmaComp;
+	return this.idFirmaComp;
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-        this.idFirmaComp = idFirmaComp;
+	this.idFirmaComp = idFirmaComp;
     }
 
     public String getNmCognomeFirmatario() {
-        return this.nmCognomeFirmatario;
+	return this.nmCognomeFirmatario;
     }
 
     public void setNmCognomeFirmatario(String nmCognomeFirmatario) {
-        this.nmCognomeFirmatario = nmCognomeFirmatario;
+	this.nmCognomeFirmatario = nmCognomeFirmatario;
     }
 
     public String getNmFirmatario() {
-        return this.nmFirmatario;
+	return this.nmFirmatario;
     }
 
     public void setNmFirmatario(String nmFirmatario) {
-        this.nmFirmatario = nmFirmatario;
+	this.nmFirmatario = nmFirmatario;
     }
 
 }

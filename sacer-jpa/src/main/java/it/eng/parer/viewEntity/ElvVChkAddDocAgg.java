@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -44,38 +40,38 @@ public class ElvVChkAddDocAgg implements Serializable {
     @Id
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-        return this.idDoc;
+	return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-        this.idDoc = idDoc;
+	this.idDoc = idDoc;
     }
 
     @Column(name = "ID_ELENCO_VERS_COR")
     public BigDecimal getIdElencoVersCor() {
-        return this.idElencoVersCor;
+	return this.idElencoVersCor;
     }
 
     public void setIdElencoVersCor(BigDecimal idElencoVersCor) {
-        this.idElencoVersCor = idElencoVersCor;
+	this.idElencoVersCor = idElencoVersCor;
     }
 
     @Column(name = "FL_ADD_DOC_UD_OK", columnDefinition = "char(1)")
     public String getFlAddDocUdOk() {
-        return this.flAddDocUdOk;
+	return this.flAddDocUdOk;
     }
 
     public void setFlAddDocUdOk(String flAddDocUdOk) {
-        this.flAddDocUdOk = flAddDocUdOk;
+	this.flAddDocUdOk = flAddDocUdOk;
     }
 
     @Column(name = "FL_ALL_ADD_DOC_PREC_OK", columnDefinition = "char(1)")
     public String getFlAllAddDocPrecOk() {
-        return this.flAllAddDocPrecOk;
+	return this.flAllAddDocPrecOk;
     }
 
     public void setFlAllAddDocPrecOk(String flAllAddDocPrecOk) {
-        this.flAllAddDocPrecOk = flAllAddDocPrecOk;
+	this.flAllAddDocPrecOk = flAllAddDocPrecOk;
     }
 
 }

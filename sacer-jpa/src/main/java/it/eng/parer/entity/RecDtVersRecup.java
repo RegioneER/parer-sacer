@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -52,7 +48,8 @@ public class RecDtVersRecup implements Serializable {
 
     // MAC#27666
     /*
-     * NB. Data mantenuta intenzionalmente con LocalDate per mantenerla compatibile con il TPI NON TOCCARE
+     * NB. Data mantenuta intenzionalmente con LocalDate per mantenerla compatibile con il TPI NON
+     * TOCCARE
      */
     private LocalDate dtVers;
     // end MAC#27666
@@ -70,67 +67,68 @@ public class RecDtVersRecup implements Serializable {
 
     @Column(name = "ID_DT_VERS_RECUP")
     @GenericGenerator(name = "SREC_DT_VERS_RECUP_ID_DT_VERS_RECUP_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SREC_DT_VERS_RECUP"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SREC_DT_VERS_RECUP"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SREC_DT_VERS_RECUP_ID_DT_VERS_RECUP_GENERATOR")
     public Long getIdDtVersRecup() {
-        return this.idDtVersRecup;
+	return this.idDtVersRecup;
     }
 
     public void setIdDtVersRecup(Long idDtVersRecup) {
-        this.idDtVersRecup = idDtVersRecup;
+	this.idDtVersRecup = idDtVersRecup;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_STATO_DT_VERS_RECUP")
     public Date getDtStatoDtVersRecup() {
-        return this.dtStatoDtVersRecup;
+	return this.dtStatoDtVersRecup;
     }
 
     public void setDtStatoDtVersRecup(Date dtStatoDtVersRecup) {
-        this.dtStatoDtVersRecup = dtStatoDtVersRecup;
+	this.dtStatoDtVersRecup = dtStatoDtVersRecup;
     }
 
     // MAC#27666
     /*
-     * NB. Data mantenuta intenzionalmente con LocalDate per mantenerla compatibile con il TPI NON TOCCARE
+     * NB. Data mantenuta intenzionalmente con LocalDate per mantenerla compatibile con il TPI NON
+     * TOCCARE
      */
     @Column(name = "DT_VERS")
     public LocalDate getDtVers() {
-        return this.dtVers;
+	return this.dtVers;
     }
 
     public void setDtVers(LocalDate dtVers) {
-        this.dtVers = dtVers;
+	this.dtVers = dtVers;
     }
     // end MAC#27666
 
     @Column(name = "FL_MIGRAZ", columnDefinition = "char(1)")
     public String getFlMigraz() {
-        return this.flMigraz;
+	return this.flMigraz;
     }
 
     public void setFlMigraz(String flMigraz) {
-        this.flMigraz = flMigraz;
+	this.flMigraz = flMigraz;
     }
 
     @Column(name = "TI_STATO_DT_VERS_RECUP")
     public String getTiStatoDtVersRecup() {
-        return this.tiStatoDtVersRecup;
+	return this.tiStatoDtVersRecup;
     }
 
     public void setTiStatoDtVersRecup(String tiStatoDtVersRecup) {
-        this.tiStatoDtVersRecup = tiStatoDtVersRecup;
+	this.tiStatoDtVersRecup = tiStatoDtVersRecup;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SESSIONE_RECUP")
     public RecSessioneRecup getRecSessioneRecup() {
-        return this.recSessioneRecup;
+	return this.recSessioneRecup;
     }
 
     public void setRecSessioneRecup(RecSessioneRecup recSessioneRecup) {
-        this.recSessioneRecup = recSessioneRecup;
+	this.recSessioneRecup = recSessioneRecup;
     }
 
 }

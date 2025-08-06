@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -87,395 +83,395 @@ public class SerVVisContenutoSerieUd implements Serializable {
 
     @Column(name = "AA_SERIE")
     public BigDecimal getAaSerie() {
-        return this.aaSerie;
+	return this.aaSerie;
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-        this.aaSerie = aaSerie;
+	this.aaSerie = aaSerie;
     }
 
     @Column(name = "CD_COMPOSITO_SERIE")
     public String getCdCompositoSerie() {
-        return this.cdCompositoSerie;
+	return this.cdCompositoSerie;
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-        this.cdCompositoSerie = cdCompositoSerie;
+	this.cdCompositoSerie = cdCompositoSerie;
     }
 
     @Column(name = "CD_DOC_CONSIST_VER_SERIE")
     public String getCdDocConsistVerSerie() {
-        return this.cdDocConsistVerSerie;
+	return this.cdDocConsistVerSerie;
     }
 
     public void setCdDocConsistVerSerie(String cdDocConsistVerSerie) {
-        this.cdDocConsistVerSerie = cdDocConsistVerSerie;
+	this.cdDocConsistVerSerie = cdDocConsistVerSerie;
     }
 
     @Column(name = "CD_FIRST_UNITA_DOC")
     public String getCdFirstUnitaDoc() {
-        return this.cdFirstUnitaDoc;
+	return this.cdFirstUnitaDoc;
     }
 
     public void setCdFirstUnitaDoc(String cdFirstUnitaDoc) {
-        this.cdFirstUnitaDoc = cdFirstUnitaDoc;
+	this.cdFirstUnitaDoc = cdFirstUnitaDoc;
     }
 
     @Column(name = "CD_FIRST_UNITA_DOC_ATTESA")
     public String getCdFirstUnitaDocAttesa() {
-        return this.cdFirstUnitaDocAttesa;
+	return this.cdFirstUnitaDocAttesa;
     }
 
     public void setCdFirstUnitaDocAttesa(String cdFirstUnitaDocAttesa) {
-        this.cdFirstUnitaDocAttesa = cdFirstUnitaDocAttesa;
+	this.cdFirstUnitaDocAttesa = cdFirstUnitaDocAttesa;
     }
 
     @Column(name = "CD_LAST_UNITA_DOC")
     public String getCdLastUnitaDoc() {
-        return this.cdLastUnitaDoc;
+	return this.cdLastUnitaDoc;
     }
 
     public void setCdLastUnitaDoc(String cdLastUnitaDoc) {
-        this.cdLastUnitaDoc = cdLastUnitaDoc;
+	this.cdLastUnitaDoc = cdLastUnitaDoc;
     }
 
     @Column(name = "CD_LAST_UNITA_DOC_ATTESA")
     public String getCdLastUnitaDocAttesa() {
-        return this.cdLastUnitaDocAttesa;
+	return this.cdLastUnitaDocAttesa;
     }
 
     public void setCdLastUnitaDocAttesa(String cdLastUnitaDocAttesa) {
-        this.cdLastUnitaDocAttesa = cdLastUnitaDocAttesa;
+	this.cdLastUnitaDocAttesa = cdLastUnitaDocAttesa;
     }
 
     @Column(name = "CD_VER_SERIE")
     public String getCdVerSerie() {
-        return this.cdVerSerie;
+	return this.cdVerSerie;
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-        this.cdVerSerie = cdVerSerie;
+	this.cdVerSerie = cdVerSerie;
     }
 
     @Column(name = "DS_DOC_CONSIST_VER_SERIE")
     public String getDsDocConsistVerSerie() {
-        return this.dsDocConsistVerSerie;
+	return this.dsDocConsistVerSerie;
     }
 
     public void setDsDocConsistVerSerie(String dsDocConsistVerSerie) {
-        this.dsDocConsistVerSerie = dsDocConsistVerSerie;
+	this.dsDocConsistVerSerie = dsDocConsistVerSerie;
     }
 
     @Column(name = "DS_MSG_SERIE_DA_RIGENERA")
     public String getDsMsgSerieDaRigenera() {
-        return this.dsMsgSerieDaRigenera;
+	return this.dsMsgSerieDaRigenera;
     }
 
     public void setDsMsgSerieDaRigenera(String dsMsgSerieDaRigenera) {
-        this.dsMsgSerieDaRigenera = dsMsgSerieDaRigenera;
+	this.dsMsgSerieDaRigenera = dsMsgSerieDaRigenera;
     }
 
     @Column(name = "DS_SERIE")
     public String getDsSerie() {
-        return this.dsSerie;
+	return this.dsSerie;
     }
 
     public void setDsSerie(String dsSerie) {
-        this.dsSerie = dsSerie;
+	this.dsSerie = dsSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FINE_SEL_SERIE")
     public Date getDtFineSelSerie() {
-        return this.dtFineSelSerie;
+	return this.dtFineSelSerie;
     }
 
     public void setDtFineSelSerie(Date dtFineSelSerie) {
-        this.dtFineSelSerie = dtFineSelSerie;
+	this.dtFineSelSerie = dtFineSelSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIRST_UNITA_DOC")
     public Date getDtFirstUnitaDoc() {
-        return this.dtFirstUnitaDoc;
+	return this.dtFirstUnitaDoc;
     }
 
     public void setDtFirstUnitaDoc(Date dtFirstUnitaDoc) {
-        this.dtFirstUnitaDoc = dtFirstUnitaDoc;
+	this.dtFirstUnitaDoc = dtFirstUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INIZIO_SEL_SERIE")
     public Date getDtInizioSelSerie() {
-        return this.dtInizioSelSerie;
+	return this.dtInizioSelSerie;
     }
 
     public void setDtInizioSelSerie(Date dtInizioSelSerie) {
-        this.dtInizioSelSerie = dtInizioSelSerie;
+	this.dtInizioSelSerie = dtInizioSelSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_LAST_UNITA_DOC")
     public Date getDtLastUnitaDoc() {
-        return this.dtLastUnitaDoc;
+	return this.dtLastUnitaDoc;
     }
 
     public void setDtLastUnitaDoc(Date dtLastUnitaDoc) {
-        this.dtLastUnitaDoc = dtLastUnitaDoc;
+	this.dtLastUnitaDoc = dtLastUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_STATO_CONTENUTO_VER_SERIE")
     public Date getDtStatoContenutoVerSerie() {
-        return this.dtStatoContenutoVerSerie;
+	return this.dtStatoContenutoVerSerie;
     }
 
     public void setDtStatoContenutoVerSerie(Date dtStatoContenutoVerSerie) {
-        this.dtStatoContenutoVerSerie = dtStatoContenutoVerSerie;
+	this.dtStatoContenutoVerSerie = dtStatoContenutoVerSerie;
     }
 
     @Column(name = "FL_ERR_CONTENUTO", columnDefinition = "char(1)")
     public String getFlErrContenuto() {
-        return this.flErrContenuto;
+	return this.flErrContenuto;
     }
 
     public void setFlErrContenuto(String flErrContenuto) {
-        this.flErrContenuto = flErrContenuto;
+	this.flErrContenuto = flErrContenuto;
     }
 
     @Column(name = "FL_ERR_CONTENUTO_FILE", columnDefinition = "char(1)")
     public String getFlErrContenutoFile() {
-        return this.flErrContenutoFile;
+	return this.flErrContenutoFile;
     }
 
     public void setFlErrContenutoFile(String flErrContenutoFile) {
-        this.flErrContenutoFile = flErrContenutoFile;
+	this.flErrContenutoFile = flErrContenutoFile;
     }
 
     @Column(name = "FL_PRESENZA_LACUNE", columnDefinition = "char(1)")
     public String getFlPresenzaLacune() {
-        return this.flPresenzaLacune;
+	return this.flPresenzaLacune;
     }
 
     public void setFlPresenzaLacune(String flPresenzaLacune) {
-        this.flPresenzaLacune = flPresenzaLacune;
+	this.flPresenzaLacune = flPresenzaLacune;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-        return this.idAmbiente;
+	return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-        this.idAmbiente = idAmbiente;
+	this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_CONSIST_VER_SERIE")
     public BigDecimal getIdConsistVerSerie() {
-        return this.idConsistVerSerie;
+	return this.idConsistVerSerie;
     }
 
     public void setIdConsistVerSerie(BigDecimal idConsistVerSerie) {
-        this.idConsistVerSerie = idConsistVerSerie;
+	this.idConsistVerSerie = idConsistVerSerie;
     }
 
     @Id
     @Column(name = "ID_CONTENUTO_VER_SERIE")
     public BigDecimal getIdContenutoVerSerie() {
-        return this.idContenutoVerSerie;
+	return this.idContenutoVerSerie;
     }
 
     public void setIdContenutoVerSerie(BigDecimal idContenutoVerSerie) {
-        this.idContenutoVerSerie = idContenutoVerSerie;
+	this.idContenutoVerSerie = idContenutoVerSerie;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-        return this.idEnte;
+	return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-        this.idEnte = idEnte;
+	this.idEnte = idEnte;
     }
 
     @Column(name = "ID_SERIE")
     public BigDecimal getIdSerie() {
-        return this.idSerie;
+	return this.idSerie;
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-        this.idSerie = idSerie;
+	this.idSerie = idSerie;
     }
 
     @Column(name = "ID_STATO_SERIE_COR")
     public BigDecimal getIdStatoSerieCor() {
-        return this.idStatoSerieCor;
+	return this.idStatoSerieCor;
     }
 
     public void setIdStatoSerieCor(BigDecimal idStatoSerieCor) {
-        this.idStatoSerieCor = idStatoSerieCor;
+	this.idStatoSerieCor = idStatoSerieCor;
     }
 
     @Column(name = "ID_STATO_VER_SERIE_COR")
     public BigDecimal getIdStatoVerSerieCor() {
-        return this.idStatoVerSerieCor;
+	return this.idStatoVerSerieCor;
     }
 
     public void setIdStatoVerSerieCor(BigDecimal idStatoVerSerieCor) {
-        this.idStatoVerSerieCor = idStatoVerSerieCor;
+	this.idStatoVerSerieCor = idStatoVerSerieCor;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @Column(name = "ID_TIPO_SERIE")
     public BigDecimal getIdTipoSerie() {
-        return this.idTipoSerie;
+	return this.idTipoSerie;
     }
 
     public void setIdTipoSerie(BigDecimal idTipoSerie) {
-        this.idTipoSerie = idTipoSerie;
+	this.idTipoSerie = idTipoSerie;
     }
 
     @Column(name = "ID_USER_IAM_CONSIST")
     public BigDecimal getIdUserIamConsist() {
-        return this.idUserIamConsist;
+	return this.idUserIamConsist;
     }
 
     public void setIdUserIamConsist(BigDecimal idUserIamConsist) {
-        this.idUserIamConsist = idUserIamConsist;
+	this.idUserIamConsist = idUserIamConsist;
     }
 
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-        return this.idVerSerie;
+	return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-        this.idVerSerie = idVerSerie;
+	this.idVerSerie = idVerSerie;
     }
 
     @Column(name = "NI_UNITA_DOC")
     public BigDecimal getNiUnitaDoc() {
-        return this.niUnitaDoc;
+	return this.niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-        this.niUnitaDoc = niUnitaDoc;
+	this.niUnitaDoc = niUnitaDoc;
     }
 
     @Column(name = "NI_UNITA_DOC_ATTESE")
     public BigDecimal getNiUnitaDocAttese() {
-        return this.niUnitaDocAttese;
+	return this.niUnitaDocAttese;
     }
 
     public void setNiUnitaDocAttese(BigDecimal niUnitaDocAttese) {
-        this.niUnitaDocAttese = niUnitaDocAttese;
+	this.niUnitaDocAttese = niUnitaDocAttese;
     }
 
     @Column(name = "NI_VOL_VER_SERIE")
     public BigDecimal getNiVolVerSerie() {
-        return this.niVolVerSerie;
+	return this.niVolVerSerie;
     }
 
     public void setNiVolVerSerie(BigDecimal niVolVerSerie) {
-        this.niVolVerSerie = niVolVerSerie;
+	this.niVolVerSerie = niVolVerSerie;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-        return this.nmAmbiente;
+	return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-        this.nmAmbiente = nmAmbiente;
+	this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-        return this.nmEnte;
+	return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-        this.nmEnte = nmEnte;
+	this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-        return this.nmStrut;
+	return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-        this.nmStrut = nmStrut;
+	this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_TIPO_SERIE")
     public String getNmTipoSerie() {
-        return this.nmTipoSerie;
+	return this.nmTipoSerie;
     }
 
     public void setNmTipoSerie(String nmTipoSerie) {
-        this.nmTipoSerie = nmTipoSerie;
+	this.nmTipoSerie = nmTipoSerie;
     }
 
     @Column(name = "NM_USERID_CONSIST")
     public String getNmUseridConsist() {
-        return this.nmUseridConsist;
+	return this.nmUseridConsist;
     }
 
     public void setNmUseridConsist(String nmUseridConsist) {
-        this.nmUseridConsist = nmUseridConsist;
+	this.nmUseridConsist = nmUseridConsist;
     }
 
     @Column(name = "TI_CONTENUTO_VER_SERIE")
     public String getTiContenutoVerSerie() {
-        return this.tiContenutoVerSerie;
+	return this.tiContenutoVerSerie;
     }
 
     public void setTiContenutoVerSerie(String tiContenutoVerSerie) {
-        this.tiContenutoVerSerie = tiContenutoVerSerie;
+	this.tiContenutoVerSerie = tiContenutoVerSerie;
     }
 
     @Column(name = "TI_MOD_CONSIST_FIRST_LAST")
     public String getTiModConsistFirstLast() {
-        return this.tiModConsistFirstLast;
+	return this.tiModConsistFirstLast;
     }
 
     public void setTiModConsistFirstLast(String tiModConsistFirstLast) {
-        this.tiModConsistFirstLast = tiModConsistFirstLast;
+	this.tiModConsistFirstLast = tiModConsistFirstLast;
     }
 
     @Column(name = "TI_STATO_CONTENUTO_VER_SERIE")
     public String getTiStatoContenutoVerSerie() {
-        return this.tiStatoContenutoVerSerie;
+	return this.tiStatoContenutoVerSerie;
     }
 
     public void setTiStatoContenutoVerSerie(String tiStatoContenutoVerSerie) {
-        this.tiStatoContenutoVerSerie = tiStatoContenutoVerSerie;
+	this.tiStatoContenutoVerSerie = tiStatoContenutoVerSerie;
     }
 
     @Column(name = "TI_STATO_SERIE")
     public String getTiStatoSerie() {
-        return this.tiStatoSerie;
+	return this.tiStatoSerie;
     }
 
     public void setTiStatoSerie(String tiStatoSerie) {
-        this.tiStatoSerie = tiStatoSerie;
+	this.tiStatoSerie = tiStatoSerie;
     }
 
     @Column(name = "TI_STATO_VER_SERIE")
     public String getTiStatoVerSerie() {
-        return this.tiStatoVerSerie;
+	return this.tiStatoVerSerie;
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-        this.tiStatoVerSerie = tiStatoVerSerie;
+	this.tiStatoVerSerie = tiStatoVerSerie;
     }
 
 }

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.amministrazioneStrutture.gestioneTitolario.utils;
@@ -51,93 +47,95 @@ public class AttributesTitolario {
     DecVTreeTitolTableBean vociTableBean;
 
     public AttributesTitolario() {
-        this.livelli = new HashSet<>();
-        this.nomeLivelli = new HashSet<>();
-        this.livelliParsing = new ArrayList<>();
-        this.numeroOrdinePrimoLivelloSet = new HashSet<>();
-        this.vociMap = new HashMap<>();
-        this.livelliVociMap = new HashMap<>();
+	this.livelli = new HashSet<>();
+	this.nomeLivelli = new HashSet<>();
+	this.livelliParsing = new ArrayList<>();
+	this.numeroOrdinePrimoLivelloSet = new HashSet<>();
+	this.vociMap = new HashMap<>();
+	this.livelliVociMap = new HashMap<>();
     }
 
     public Set<Integer> getLivelli() {
-        return livelli;
+	return livelli;
     }
 
     public void setLivelli(Set<Integer> livelli) {
-        this.livelli = livelli;
+	this.livelli = livelli;
     }
 
     public Set<String> getNomeLivelli() {
-        return nomeLivelli;
+	return nomeLivelli;
     }
 
     public void setNomeLivelli(Set<String> nomeLivelli) {
-        this.nomeLivelli = nomeLivelli;
+	this.nomeLivelli = nomeLivelli;
     }
 
     public List<LivelloType> getLivelliParsing() {
-        return livelliParsing;
+	return livelliParsing;
     }
 
     public void setLivelliParsing(List<LivelloType> livelliParsing) {
-        this.livelliParsing = livelliParsing;
+	this.livelliParsing = livelliParsing;
     }
 
     public Set<Integer> getNumeroOrdinePrimoLivelloSet() {
-        return numeroOrdinePrimoLivelloSet;
+	return numeroOrdinePrimoLivelloSet;
     }
 
     public void setNumeroOrdinePrimoLivelloSet(Set<Integer> numeroOrdinePrimoLivelloSet) {
-        this.numeroOrdinePrimoLivelloSet = numeroOrdinePrimoLivelloSet;
+	this.numeroOrdinePrimoLivelloSet = numeroOrdinePrimoLivelloSet;
     }
 
     public Map<String, Voce> getVociMap() {
-        return vociMap;
+	return vociMap;
     }
 
     public void setVociMap(Map<String, Voce> vociMap) {
-        this.vociMap = vociMap;
-        for (String key : vociMap.keySet()) {
-            Voce voce = vociMap.get(key);
-            getNumeroOrdinePrimoLivelloSet().add(voce.getNumeroOrdine());
-        }
+	this.vociMap = vociMap;
+	for (String key : vociMap.keySet()) {
+	    Voce voce = vociMap.get(key);
+	    getNumeroOrdinePrimoLivelloSet().add(voce.getNumeroOrdine());
+	}
     }
 
     public Map<BigDecimal, BaseTableInterface<?>> getLivelliVociMap() {
-        return livelliVociMap;
+	return livelliVociMap;
     }
 
     public void setLivelliVociMap(Map<BigDecimal, BaseTableInterface<?>> livelliVociMap) {
-        this.livelliVociMap = livelliVociMap;
+	this.livelliVociMap = livelliVociMap;
     }
 
     public DecLivelloTitolTableBean getLivelliTableBean() {
-        return livelliTableBean;
+	return livelliTableBean;
     }
 
     public void setLivelliTableBean(DecLivelloTitolTableBean livelliTableBean) {
-        this.livelliTableBean = livelliTableBean;
-        for (DecLivelloTitolRowBean livello : livelliTableBean) {
-            getLivelli().add(livello.getNiLivello().intValue());
-            getNomeLivelli().add(livello.getNmLivelloTitol());
+	this.livelliTableBean = livelliTableBean;
+	for (DecLivelloTitolRowBean livello : livelliTableBean) {
+	    getLivelli().add(livello.getNiLivello().intValue());
+	    getNomeLivelli().add(livello.getNmLivelloTitol());
 
-            LivelloType tmpLiv = new LivelloType();
-            tmpLiv.setCarattereSeparatoreLivello(livello.getCdSepLivello() != null ? livello.getCdSepLivello() : "");
-            tmpLiv.setNomeLivello(livello.getNmLivelloTitol());
-            tmpLiv.setNumeroLivello(new BigInteger(livello.getNiLivello().toString()));
-            tmpLiv.setTipoFormatoLivello(TipoFormatoLivelloType.fromValue(livello.getTiFmtVoceTitol()));
+	    LivelloType tmpLiv = new LivelloType();
+	    tmpLiv.setCarattereSeparatoreLivello(
+		    livello.getCdSepLivello() != null ? livello.getCdSepLivello() : "");
+	    tmpLiv.setNomeLivello(livello.getNmLivelloTitol());
+	    tmpLiv.setNumeroLivello(new BigInteger(livello.getNiLivello().toString()));
+	    tmpLiv.setTipoFormatoLivello(
+		    TipoFormatoLivelloType.fromValue(livello.getTiFmtVoceTitol()));
 
-            getLivelliParsing().add(tmpLiv);
+	    getLivelliParsing().add(tmpLiv);
 
-            getLivelliVociMap().put(livello.getNiLivello(), new BaseTable());
-        }
+	    getLivelliVociMap().put(livello.getNiLivello(), new BaseTable());
+	}
     }
 
     public DecVTreeTitolTableBean getVociTableBean() {
-        return vociTableBean;
+	return vociTableBean;
     }
 
     public void setVociTableBean(DecVTreeTitolTableBean vociTableBean) {
-        this.vociTableBean = vociTableBean;
+	this.vociTableBean = vociTableBean;
     }
 }

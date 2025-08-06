@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -45,30 +41,30 @@ public class DecVCalcCriterioFisc implements Serializable {
 
     @Column(name = "DS_MESSAGGIO")
     public String getDsMessaggio() {
-        return this.dsMessaggio;
+	return this.dsMessaggio;
     }
 
     public void setDsMessaggio(String dsMessaggio) {
-        this.dsMessaggio = dsMessaggio;
+	this.dsMessaggio = dsMessaggio;
     }
 
     @Id
     @Column(name = "ID_CRITERIO_RAGGR")
     public BigDecimal getIdCriterioRaggr() {
-        return this.idCriterioRaggr;
+	return this.idCriterioRaggr;
     }
 
     public void setIdCriterioRaggr(BigDecimal idCriterioRaggr) {
-        this.idCriterioRaggr = idCriterioRaggr;
+	this.idCriterioRaggr = idCriterioRaggr;
     }
 
     @Column(name = "NM_CRITERIO_RAGGR")
     public String getNmCriterioRaggr() {
-        return this.nmCriterioRaggr;
+	return this.nmCriterioRaggr;
     }
 
     public void setNmCriterioRaggr(String nmCriterioRaggr) {
-        this.nmCriterioRaggr = nmCriterioRaggr;
+	this.nmCriterioRaggr = nmCriterioRaggr;
     }
 
 }

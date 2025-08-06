@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -79,135 +75,141 @@ public class DecAaRegistroUnitaDoc implements Serializable {
     @Column(name = "ID_AA_REGISTRO_UNITA_DOC")
     @XmlID
     @GenericGenerator(name = "SDEC_AA_REGISTRO_UNITA_DOC_ID_AA_REGISTRO_UNITA_DOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_AA_REGISTRO_UNITA_DOC"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_AA_REGISTRO_UNITA_DOC"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_AA_REGISTRO_UNITA_DOC_ID_AA_REGISTRO_UNITA_DOC_GENERATOR")
     public Long getIdAaRegistroUnitaDoc() {
-        return this.idAaRegistroUnitaDoc;
+	return this.idAaRegistroUnitaDoc;
     }
 
     public void setIdAaRegistroUnitaDoc(Long idAaRegistroUnitaDoc) {
-        this.idAaRegistroUnitaDoc = idAaRegistroUnitaDoc;
+	this.idAaRegistroUnitaDoc = idAaRegistroUnitaDoc;
     }
 
     @Column(name = "AA_MAX_REGISTRO_UNITA_DOC")
     public BigDecimal getAaMaxRegistroUnitaDoc() {
-        return this.aaMaxRegistroUnitaDoc;
+	return this.aaMaxRegistroUnitaDoc;
     }
 
     public void setAaMaxRegistroUnitaDoc(BigDecimal aaMaxRegistroUnitaDoc) {
-        this.aaMaxRegistroUnitaDoc = aaMaxRegistroUnitaDoc;
+	this.aaMaxRegistroUnitaDoc = aaMaxRegistroUnitaDoc;
     }
 
     @Column(name = "AA_MIN_REGISTRO_UNITA_DOC")
     public BigDecimal getAaMinRegistroUnitaDoc() {
-        return this.aaMinRegistroUnitaDoc;
+	return this.aaMinRegistroUnitaDoc;
     }
 
     public void setAaMinRegistroUnitaDoc(BigDecimal aaMinRegistroUnitaDoc) {
-        this.aaMinRegistroUnitaDoc = aaMinRegistroUnitaDoc;
+	this.aaMinRegistroUnitaDoc = aaMinRegistroUnitaDoc;
     }
 
     @Column(name = "CD_FORMATO_NUMERO")
     public String getCdFormatoNumero() {
-        return this.cdFormatoNumero;
+	return this.cdFormatoNumero;
     }
 
     public void setCdFormatoNumero(String cdFormatoNumero) {
-        this.cdFormatoNumero = cdFormatoNumero;
+	this.cdFormatoNumero = cdFormatoNumero;
     }
 
     @Column(name = "DS_FORMATO_NUMERO")
     public String getDsFormatoNumero() {
-        return this.dsFormatoNumero;
+	return this.dsFormatoNumero;
     }
 
     public void setDsFormatoNumero(String dsFormatoNumero) {
-        this.dsFormatoNumero = dsFormatoNumero;
+	this.dsFormatoNumero = dsFormatoNumero;
     }
 
     @Column(name = "FL_UPD_FMT_NUMERO", columnDefinition = "char(1)")
     public String getFlUpdFmtNumero() {
-        return this.flUpdFmtNumero;
+	return this.flUpdFmtNumero;
     }
 
     public void setFlUpdFmtNumero(String flUpdFmtNumero) {
-        this.flUpdFmtNumero = flUpdFmtNumero;
+	this.flUpdFmtNumero = flUpdFmtNumero;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_REGISTRO_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decAaRegistroUnitaDocs")
     public DecRegistroUnitaDoc getDecRegistroUnitaDoc() {
-        return this.decRegistroUnitaDoc;
+	return this.decRegistroUnitaDoc;
     }
 
     public void setDecRegistroUnitaDoc(DecRegistroUnitaDoc decRegistroUnitaDoc) {
-        this.decRegistroUnitaDoc = decRegistroUnitaDoc;
+	this.decRegistroUnitaDoc = decRegistroUnitaDoc;
     }
 
     @OneToMany(mappedBy = "decAaRegistroUnitaDoc", cascade = CascadeType.REMOVE)
     @XmlTransient
     public List<DecErrAaRegistroUnitaDoc> getDecErrAaRegistroUnitaDocs() {
-        return this.decErrAaRegistroUnitaDocs;
+	return this.decErrAaRegistroUnitaDocs;
     }
 
-    public void setDecErrAaRegistroUnitaDocs(List<DecErrAaRegistroUnitaDoc> decErrAaRegistroUnitaDocs) {
-        this.decErrAaRegistroUnitaDocs = decErrAaRegistroUnitaDocs;
+    public void setDecErrAaRegistroUnitaDocs(
+	    List<DecErrAaRegistroUnitaDoc> decErrAaRegistroUnitaDocs) {
+	this.decErrAaRegistroUnitaDocs = decErrAaRegistroUnitaDocs;
     }
 
-    public DecErrAaRegistroUnitaDoc addDecErrAaRegistroUnitaDoc(DecErrAaRegistroUnitaDoc decErrAaRegistroUnitaDoc) {
-        getDecErrAaRegistroUnitaDocs().add(decErrAaRegistroUnitaDoc);
-        decErrAaRegistroUnitaDoc.setDecAaRegistroUnitaDoc(this);
-        return decErrAaRegistroUnitaDoc;
+    public DecErrAaRegistroUnitaDoc addDecErrAaRegistroUnitaDoc(
+	    DecErrAaRegistroUnitaDoc decErrAaRegistroUnitaDoc) {
+	getDecErrAaRegistroUnitaDocs().add(decErrAaRegistroUnitaDoc);
+	decErrAaRegistroUnitaDoc.setDecAaRegistroUnitaDoc(this);
+	return decErrAaRegistroUnitaDoc;
     }
 
-    public DecErrAaRegistroUnitaDoc removeDecErrAaRegistroUnitaDoc(DecErrAaRegistroUnitaDoc decErrAaRegistroUnitaDoc) {
-        getDecErrAaRegistroUnitaDocs().remove(decErrAaRegistroUnitaDoc);
-        decErrAaRegistroUnitaDoc.setDecAaRegistroUnitaDoc(null);
-        return decErrAaRegistroUnitaDoc;
+    public DecErrAaRegistroUnitaDoc removeDecErrAaRegistroUnitaDoc(
+	    DecErrAaRegistroUnitaDoc decErrAaRegistroUnitaDoc) {
+	getDecErrAaRegistroUnitaDocs().remove(decErrAaRegistroUnitaDoc);
+	decErrAaRegistroUnitaDoc.setDecAaRegistroUnitaDoc(null);
+	return decErrAaRegistroUnitaDoc;
     }
 
     @OneToMany(mappedBy = "decAaRegistroUnitaDoc", cascade = CascadeType.REMOVE)
     @XmlTransient
     public List<DecWarnAaRegistroUd> getDecWarnAaRegistroUds() {
-        return this.decWarnAaRegistroUds;
+	return this.decWarnAaRegistroUds;
     }
 
     public void setDecWarnAaRegistroUds(List<DecWarnAaRegistroUd> decWarnAaRegistroUds) {
-        this.decWarnAaRegistroUds = decWarnAaRegistroUds;
+	this.decWarnAaRegistroUds = decWarnAaRegistroUds;
     }
 
     public DecWarnAaRegistroUd addDecWarnAaRegistroUd(DecWarnAaRegistroUd decWarnAaRegistroUd) {
-        getDecWarnAaRegistroUds().add(decWarnAaRegistroUd);
-        decWarnAaRegistroUd.setDecAaRegistroUnitaDoc(this);
-        return decWarnAaRegistroUd;
+	getDecWarnAaRegistroUds().add(decWarnAaRegistroUd);
+	decWarnAaRegistroUd.setDecAaRegistroUnitaDoc(this);
+	return decWarnAaRegistroUd;
     }
 
     public DecWarnAaRegistroUd removeDecWarnAaRegistroUd(DecWarnAaRegistroUd decWarnAaRegistroUd) {
-        getDecWarnAaRegistroUds().remove(decWarnAaRegistroUd);
-        decWarnAaRegistroUd.setDecAaRegistroUnitaDoc(null);
-        return decWarnAaRegistroUd;
+	getDecWarnAaRegistroUds().remove(decWarnAaRegistroUd);
+	decWarnAaRegistroUd.setDecAaRegistroUnitaDoc(null);
+	return decWarnAaRegistroUd;
     }
 
-    @OneToMany(mappedBy = "decAaRegistroUnitaDoc", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @OneToMany(mappedBy = "decAaRegistroUnitaDoc", cascade = {
+	    CascadeType.PERSIST, CascadeType.REMOVE })
     public List<DecParteNumeroRegistro> getDecParteNumeroRegistros() {
-        return this.decParteNumeroRegistros;
+	return this.decParteNumeroRegistros;
     }
 
     public void setDecParteNumeroRegistros(List<DecParteNumeroRegistro> decParteNumeroRegistros) {
-        this.decParteNumeroRegistros = decParteNumeroRegistros;
+	this.decParteNumeroRegistros = decParteNumeroRegistros;
     }
 
-    public DecParteNumeroRegistro addDecParteNumeroRegistro(DecParteNumeroRegistro decParteNumeroRegistro) {
-        getDecParteNumeroRegistros().add(decParteNumeroRegistro);
-        decParteNumeroRegistro.setDecAaRegistroUnitaDoc(this);
-        return decParteNumeroRegistro;
+    public DecParteNumeroRegistro addDecParteNumeroRegistro(
+	    DecParteNumeroRegistro decParteNumeroRegistro) {
+	getDecParteNumeroRegistros().add(decParteNumeroRegistro);
+	decParteNumeroRegistro.setDecAaRegistroUnitaDoc(this);
+	return decParteNumeroRegistro;
     }
 
-    public DecParteNumeroRegistro removeDecParteNumeroRegistro(DecParteNumeroRegistro decParteNumeroRegistro) {
-        getDecParteNumeroRegistros().remove(decParteNumeroRegistro);
-        decParteNumeroRegistro.setDecAaRegistroUnitaDoc(null);
-        return decParteNumeroRegistro;
+    public DecParteNumeroRegistro removeDecParteNumeroRegistro(
+	    DecParteNumeroRegistro decParteNumeroRegistro) {
+	getDecParteNumeroRegistros().remove(decParteNumeroRegistro);
+	decParteNumeroRegistro.setDecAaRegistroUnitaDoc(null);
+	return decParteNumeroRegistro;
     }
 }

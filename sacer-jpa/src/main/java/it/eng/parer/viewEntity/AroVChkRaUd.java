@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -39,40 +35,40 @@ public class AroVChkRaUd implements Serializable {
 
     @Column(name = "FL_UD_NON_IN_ELENCO", columnDefinition = "number")
     public String getFlUdNonInElenco() {
-        return this.flUdNonInElenco;
+	return this.flUdNonInElenco;
     }
 
     public void setFlUdNonInElenco(String flUdNonInElenco) {
-        this.flUdNonInElenco = flUdNonInElenco;
+	this.flUdNonInElenco = flUdNonInElenco;
     }
 
     @Column(name = "FL_ELENCO_NON_COMPLETATO", columnDefinition = "number")
     public String getFlElencoNonCompletato() {
-        return this.flElencoNonCompletato;
+	return this.flElencoNonCompletato;
     }
 
     public void setFlElencoNonCompletato(String flElencoNonCompletato) {
-        this.flElencoNonCompletato = flElencoNonCompletato;
+	this.flElencoNonCompletato = flElencoNonCompletato;
     }
 
     @Column(name = "FL_UD_AIP_NON_FIRMATO", columnDefinition = "number")
     public String getFlUdAipNonFirmato() {
-        return flUdAipNonFirmato;
+	return flUdAipNonFirmato;
     }
 
     public void setFlUdAipNonFirmato(String flUdAipNonFirmato) {
-        this.flUdAipNonFirmato = flUdAipNonFirmato;
+	this.flUdAipNonFirmato = flUdAipNonFirmato;
     }
 
     private AroVChkRaUdId aroVChkRaUdId;
 
     @EmbeddedId()
     public AroVChkRaUdId getAroVChkRaUdId() {
-        return aroVChkRaUdId;
+	return aroVChkRaUdId;
     }
 
     public void setAroVChkRaUdId(AroVChkRaUdId aroVChkRaUdId) {
-        this.aroVChkRaUdId = aroVChkRaUdId;
+	this.aroVChkRaUdId = aroVChkRaUdId;
     }
 
 }

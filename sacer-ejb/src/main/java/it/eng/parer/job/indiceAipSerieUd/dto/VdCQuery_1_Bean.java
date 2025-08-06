@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.job.indiceAipSerieUd.dto;
@@ -55,219 +51,219 @@ public class VdCQuery_1_Bean {
     private String tiSelezioneUd;
 
     public BigDecimal getIdVerSerie() {
-        return idVerSerie;
+	return idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-        this.idVerSerie = idVerSerie;
+	this.idVerSerie = idVerSerie;
     }
 
     public BigDecimal getNiUnitaDoc() {
-        return niUnitaDoc;
+	return niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-        this.niUnitaDoc = niUnitaDoc;
+	this.niUnitaDoc = niUnitaDoc;
     }
 
     public String getCdFirstUnitaDoc() {
-        return cdFirstUnitaDoc;
+	return cdFirstUnitaDoc;
     }
 
     public void setCdFirstUnitaDoc(String cdFirstUnitaDoc) {
-        this.cdFirstUnitaDoc = cdFirstUnitaDoc;
+	this.cdFirstUnitaDoc = cdFirstUnitaDoc;
     }
 
     public Date getDtFirstUnitaDoc() {
-        return dtFirstUnitaDoc;
+	return dtFirstUnitaDoc;
     }
 
     public void setDtFirstUnitaDoc(Date dtFirstUnitaDoc) {
-        this.dtFirstUnitaDoc = dtFirstUnitaDoc;
+	this.dtFirstUnitaDoc = dtFirstUnitaDoc;
     }
 
     public String getCdLastUnitaDoc() {
-        return cdLastUnitaDoc;
+	return cdLastUnitaDoc;
     }
 
     public void setCdLastUnitaDoc(String cdLastUnitaDoc) {
-        this.cdLastUnitaDoc = cdLastUnitaDoc;
+	this.cdLastUnitaDoc = cdLastUnitaDoc;
     }
 
     public Date getDtLastUnitaDoc() {
-        return dtLastUnitaDoc;
+	return dtLastUnitaDoc;
     }
 
     public void setDtLastUnitaDoc(Date dtLastUnitaDoc) {
-        this.dtLastUnitaDoc = dtLastUnitaDoc;
+	this.dtLastUnitaDoc = dtLastUnitaDoc;
     }
 
     public String getDsNotaAcqInfo() {
-        return dsNotaAcqInfo;
+	return dsNotaAcqInfo;
     }
 
     public void setDsNotaAcqInfo(String dsNotaAcqInfo) {
-        this.dsNotaAcqInfo = dsNotaAcqInfo;
+	this.dsNotaAcqInfo = dsNotaAcqInfo;
     }
 
     public Date getDtNotaAcqInfo() {
-        return dtNotaAcqInfo;
+	return dtNotaAcqInfo;
     }
 
     public void setDtNotaAcqInfo(Date dtNotaAcqInfo) {
-        this.dtNotaAcqInfo = dtNotaAcqInfo;
+	this.dtNotaAcqInfo = dtNotaAcqInfo;
     }
 
     public String getDsAutoreAcqInfo() {
-        return dsAutoreAcqInfo;
+	return dsAutoreAcqInfo;
     }
 
     public void setDsAutoreAcqInfo(String dsAutoreAcqInfo) {
-        this.dsAutoreAcqInfo = dsAutoreAcqInfo;
+	this.dsAutoreAcqInfo = dsAutoreAcqInfo;
     }
 
     public String getDsNotaAmbConten() {
-        return dsNotaAmbConten;
+	return dsNotaAmbConten;
     }
 
     public void setDsNotaAmbConten(String dsNotaAmbConten) {
-        this.dsNotaAmbConten = dsNotaAmbConten;
+	this.dsNotaAmbConten = dsNotaAmbConten;
     }
 
     public Date getDtNotaAmbConten() {
-        return dtNotaAmbConten;
+	return dtNotaAmbConten;
     }
 
     public void setDtNotaAmbConten(Date dtNotaAmbConten) {
-        this.dtNotaAmbConten = dtNotaAmbConten;
+	this.dtNotaAmbConten = dtNotaAmbConten;
     }
 
     public String getDsAutoreAmbConten() {
-        return dsAutoreAmbConten;
+	return dsAutoreAmbConten;
     }
 
     public void setDsAutoreAmbConten(String dsAutoreAmbConten) {
-        this.dsAutoreAmbConten = dsAutoreAmbConten;
+	this.dsAutoreAmbConten = dsAutoreAmbConten;
     }
 
     public String getDsNotaCritOrd() {
-        return dsNotaCritOrd;
+	return dsNotaCritOrd;
     }
 
     public void setDsNotaCritOrd(String dsNotaCritOrd) {
-        this.dsNotaCritOrd = dsNotaCritOrd;
+	this.dsNotaCritOrd = dsNotaCritOrd;
     }
 
     public Date getDtNotaCritOrd() {
-        return dtNotaCritOrd;
+	return dtNotaCritOrd;
     }
 
     public void setDtNotaCritOrd(Date dtNotaCritOrd) {
-        this.dtNotaCritOrd = dtNotaCritOrd;
+	this.dtNotaCritOrd = dtNotaCritOrd;
     }
 
     public String getDsAutoreCritOrd() {
-        return dsAutoreCritOrd;
+	return dsAutoreCritOrd;
     }
 
     public void setDsAutoreCritOrd(String dsAutoreCritOrd) {
-        this.dsAutoreCritOrd = dsAutoreCritOrd;
+	this.dsAutoreCritOrd = dsAutoreCritOrd;
     }
 
     public String getDsNotaConserv() {
-        return dsNotaConserv;
+	return dsNotaConserv;
     }
 
     public void setDsNotaConserv(String dsNotaConserv) {
-        this.dsNotaConserv = dsNotaConserv;
+	this.dsNotaConserv = dsNotaConserv;
     }
 
     public Date getDtNotaConserv() {
-        return dtNotaConserv;
+	return dtNotaConserv;
     }
 
     public void setDtNotaConserv(Date dtNotaConserv) {
-        this.dtNotaConserv = dtNotaConserv;
+	this.dtNotaConserv = dtNotaConserv;
     }
 
     public String getDsAutoreConserv() {
-        return dsAutoreConserv;
+	return dsAutoreConserv;
     }
 
     public void setDsAutoreConserv(String dsAutoreConserv) {
-        this.dsAutoreConserv = dsAutoreConserv;
+	this.dsAutoreConserv = dsAutoreConserv;
     }
 
     public String getTiSelezioneUd() {
-        return tiSelezioneUd;
+	return tiSelezioneUd;
     }
 
     public void setTiSelezioneUd(String tiSelezioneUd) {
-        this.tiSelezioneUd = tiSelezioneUd;
+	this.tiSelezioneUd = tiSelezioneUd;
     }
 
     public BigDecimal getAaSelezioneUd() {
-        return aaSelezioneUd;
+	return aaSelezioneUd;
     }
 
     public void setAaSelezioneUd(BigDecimal aaSelezioneUd) {
-        this.aaSelezioneUd = aaSelezioneUd;
+	this.aaSelezioneUd = aaSelezioneUd;
     }
 
     public Date getDtInizioSelSerie() {
-        return dtInizioSelSerie;
+	return dtInizioSelSerie;
     }
 
     public void setDtInizioSelSerie(Date dtInizioSelSerie) {
-        this.dtInizioSelSerie = dtInizioSelSerie;
+	this.dtInizioSelSerie = dtInizioSelSerie;
     }
 
     public Date getDtFineSelSerie() {
-        return dtFineSelSerie;
+	return dtFineSelSerie;
     }
 
     public void setDtFineSelSerie(Date dtFineSelSerie) {
-        this.dtFineSelSerie = dtFineSelSerie;
+	this.dtFineSelSerie = dtFineSelSerie;
     }
 
     public BigDecimal getNiPeriodoSelSerie() {
-        return niPeriodoSelSerie;
+	return niPeriodoSelSerie;
     }
 
     public void setNiPeriodoSelSerie(BigDecimal niPeriodoSelSerie) {
-        this.niPeriodoSelSerie = niPeriodoSelSerie;
+	this.niPeriodoSelSerie = niPeriodoSelSerie;
     }
 
     public String getTiPeriodoSelSerie() {
-        return tiPeriodoSelSerie;
+	return tiPeriodoSelSerie;
     }
 
     public void setTiPeriodoSelSerie(String tiPeriodoSelSerie) {
-        this.tiPeriodoSelSerie = tiPeriodoSelSerie;
+	this.tiPeriodoSelSerie = tiPeriodoSelSerie;
     }
 
     public String getTiConserv() {
-        return tiConserv;
+	return tiConserv;
     }
 
     public void setTiConserv(String tiConserv) {
-        this.tiConserv = tiConserv;
+	this.tiConserv = tiConserv;
     }
 
     public BigDecimal getNiAnniConserv() {
-        return niAnniConserv;
+	return niAnniConserv;
     }
 
     public void setNiAnniConserv(BigDecimal niAnniConserv) {
-        this.niAnniConserv = niAnniConserv;
+	this.niAnniConserv = niAnniConserv;
     }
 
     public Date getDtScarto() {
-        return dtScarto;
+	return dtScarto;
     }
 
     public void setDtScarto(Date dtScarto) {
-        this.dtScarto = dtScarto;
+	this.dtScarto = dtScarto;
     }
 
 }

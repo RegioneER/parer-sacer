@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.web.dto;
@@ -21,7 +17,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * Copia modificata della entity JPA DecCriterioAttrib per la gestione dei dati specifici in fase di costruzione query
+ * Copia modificata della entity JPA DecCriterioAttrib per la gestione dei dati specifici in fase di
+ * costruzione query
  *
  * @author Gilioli_P
  */
@@ -42,92 +39,92 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
     }
 
     public long getIdCriterioAttrib() {
-        return this.idCriterioAttrib;
+	return this.idCriterioAttrib;
     }
 
     public void setIdCriterioAttrib(long idCriterioAttrib) {
-        this.idCriterioAttrib = idCriterioAttrib;
+	this.idCriterioAttrib = idCriterioAttrib;
     }
 
     public String getDsListaVersioniXsd() {
-        return this.dsListaVersioniXsd;
+	return this.dsListaVersioniXsd;
     }
 
     public void setDsListaVersioniXsd(String dsListaVersioniXsd) {
-        this.dsListaVersioniXsd = dsListaVersioniXsd;
+	this.dsListaVersioniXsd = dsListaVersioniXsd;
     }
 
     public String getNmSistemaMigraz() {
-        return this.nmSistemaMigraz;
+	return this.nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(String nmSistemaMigraz) {
-        this.nmSistemaMigraz = nmSistemaMigraz;
+	this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     public String getNmTipoDoc() {
-        return this.nmTipoDoc;
+	return this.nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-        this.nmTipoDoc = nmTipoDoc;
+	this.nmTipoDoc = nmTipoDoc;
     }
 
     public String getNmTipoUnitaDoc() {
-        return this.nmTipoUnitaDoc;
+	return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     public String getTiEntitaSacer() {
-        return this.tiEntitaSacer;
+	return this.tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-        this.tiEntitaSacer = tiEntitaSacer;
+	this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public DecCriterioDatiSpecBean getDecCriterioDatiSpec() {
-        return this.decCriterioDatiSpec;
+	return this.decCriterioDatiSpec;
     }
 
     public void setDecCriterioDatiSpec(DecCriterioDatiSpecBean decCriterioDatiSpec) {
-        this.decCriterioDatiSpec = decCriterioDatiSpec;
+	this.decCriterioDatiSpec = decCriterioDatiSpec;
     }
 
     public BigDecimal getIdAttribDatiSpec() {
-        return idAttribDatiSpec;
+	return idAttribDatiSpec;
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-        this.idAttribDatiSpec = idAttribDatiSpec;
+	this.idAttribDatiSpec = idAttribDatiSpec;
     }
 
     public BigDecimal getOrdine() {
-        return ordine;
+	return ordine;
     }
 
     public void setOrdine(BigDecimal ordine) {
-        this.ordine = ordine;
+	this.ordine = ordine;
     }
 
     @Override
     public int compareTo(DecCriterioAttribBean o) {
-        // Se sono dello stesso tipo
-        if (this.ordine.compareTo(o.ordine) == 0) {
-            // Se sono tipi unità documentaria
-            if (this.nmTipoUnitaDoc != null) {
-                return this.nmTipoUnitaDoc.compareTo(o.nmTipoUnitaDoc);
-            } else if (this.nmTipoDoc != null) {
-                return this.nmTipoDoc.compareTo(o.nmTipoDoc);
-            } else {
-                return this.nmSistemaMigraz.compareTo(o.nmSistemaMigraz);
-            }
-        } else {
-            return this.ordine.compareTo(o.ordine);
-        }
+	// Se sono dello stesso tipo
+	if (this.ordine.compareTo(o.ordine) == 0) {
+	    // Se sono tipi unità documentaria
+	    if (this.nmTipoUnitaDoc != null) {
+		return this.nmTipoUnitaDoc.compareTo(o.nmTipoUnitaDoc);
+	    } else if (this.nmTipoDoc != null) {
+		return this.nmTipoDoc.compareTo(o.nmTipoDoc);
+	    } else {
+		return this.nmSistemaMigraz.compareTo(o.nmSistemaMigraz);
+	    }
+	} else {
+	    return this.ordine.compareTo(o.ordine);
+	}
     }
 
     /*
@@ -137,13 +134,13 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((ordine == null) ? 0 : ordine.hashCode());
-        result = prime * result + ((nmSistemaMigraz == null) ? 0 : nmSistemaMigraz.hashCode());
-        result = prime * result + ((nmTipoDoc == null) ? 0 : nmTipoDoc.hashCode());
-        result = prime * result + ((nmTipoUnitaDoc == null) ? 0 : nmTipoUnitaDoc.hashCode());
-        return result;
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((ordine == null) ? 0 : ordine.hashCode());
+	result = prime * result + ((nmSistemaMigraz == null) ? 0 : nmSistemaMigraz.hashCode());
+	result = prime * result + ((nmTipoDoc == null) ? 0 : nmTipoDoc.hashCode());
+	result = prime * result + ((nmTipoUnitaDoc == null) ? 0 : nmTipoUnitaDoc.hashCode());
+	return result;
     }
 
     /*
@@ -153,19 +150,19 @@ public class DecCriterioAttribBean implements Serializable, Comparable<DecCriter
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj.getClass().equals(DecCriterioAttribBean.class)) {
-            DecCriterioAttribBean o = (DecCriterioAttribBean) obj;
-            if (!this.ordine.equals(o.ordine)) {
-                if (this.nmTipoUnitaDoc != null) {
-                    return this.nmTipoUnitaDoc.equals(o.nmTipoUnitaDoc);
-                } else if (this.nmTipoDoc != null) {
-                    return this.nmTipoDoc.equals(o.nmTipoDoc);
-                } else {
-                    return this.nmSistemaMigraz.equals(o.nmSistemaMigraz);
-                }
-            }
-        }
-        return false;
+	if (obj != null && obj.getClass().equals(DecCriterioAttribBean.class)) {
+	    DecCriterioAttribBean o = (DecCriterioAttribBean) obj;
+	    if (!this.ordine.equals(o.ordine)) {
+		if (this.nmTipoUnitaDoc != null) {
+		    return this.nmTipoUnitaDoc.equals(o.nmTipoUnitaDoc);
+		} else if (this.nmTipoDoc != null) {
+		    return this.nmTipoDoc.equals(o.nmTipoDoc);
+		} else {
+		    return this.nmSistemaMigraz.equals(o.nmSistemaMigraz);
+		}
+	    }
+	}
+	return false;
     }
 
 }

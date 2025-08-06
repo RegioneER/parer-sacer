@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.amministrazioneStrutture.gestioneTitolario.dto;
@@ -90,319 +86,313 @@ public class Voce {
      */
     public enum Operation {
 
-        CREA(0), MODIFICA(1), CHIUDI(2);
+	CREA(0), MODIFICA(1), CHIUDI(2);
 
-        int comparatorValue;
+	int comparatorValue;
 
-        Operation(int comparatorValue) {
-            this.comparatorValue = comparatorValue;
-        }
+	Operation(int comparatorValue) {
+	    this.comparatorValue = comparatorValue;
+	}
 
-        public int getComparatorValue() {
-            return comparatorValue;
-        }
+	public int getComparatorValue() {
+	    return comparatorValue;
+	}
     }
 
     public enum AttivoClass {
 
-        SI("1"), NO("0");
+	SI("1"), NO("0");
 
-        String val;
+	String val;
 
-        private AttivoClass(String val) {
-            this.val = val;
-        }
+	private AttivoClass(String val) {
+	    this.val = val;
+	}
 
-        public static AttivoClass fromValue(String val) {
-            if (val != null) {
-                for (AttivoClass b : AttivoClass.values()) {
-                    if (val.equalsIgnoreCase(b.val)) {
-                        return b;
-                    }
-                }
-            }
-            return null;
-        }
+	public static AttivoClass fromValue(String val) {
+	    if (val != null) {
+		for (AttivoClass b : AttivoClass.values()) {
+		    if (val.equalsIgnoreCase(b.val)) {
+			return b;
+		    }
+		}
+	    }
+	    return null;
+	}
 
-        public String getVal() {
-            return this.val;
-        }
+	public String getVal() {
+	    return this.val;
+	}
 
     }
 
     public enum Fields {
 
-        CODICE_VOCE_COMPOSITO(Voce.CODICE_VOCE_COMPOSITO), NUMERO_ORDINE(Voce.NUMERO_ORDINE),
-        DESCRIZIONE_VOCE(Voce.DESCRIZIONE_VOCE), DATA_INIZIO_VALIDITA(Voce.DATA_INIZIO_VALIDITA),
-        DATA_FINE_VALIDITA(Voce.DATA_FINE_VALIDITA), ATTIVO_PER_CLASSIFICAZIONE(Voce.ATTIVO_PER_CLASSIFICAZIONE),
-        TEMPO_CONSERVAZIONE(Voce.TEMPO_CONSERVAZIONE), NOTE_VOCE_TITOLARIO(Voce.NOTE_VOCE_TITOLARIO);
+	CODICE_VOCE_COMPOSITO(Voce.CODICE_VOCE_COMPOSITO), NUMERO_ORDINE(Voce.NUMERO_ORDINE),
+	DESCRIZIONE_VOCE(Voce.DESCRIZIONE_VOCE), DATA_INIZIO_VALIDITA(Voce.DATA_INIZIO_VALIDITA),
+	DATA_FINE_VALIDITA(Voce.DATA_FINE_VALIDITA),
+	ATTIVO_PER_CLASSIFICAZIONE(Voce.ATTIVO_PER_CLASSIFICAZIONE),
+	TEMPO_CONSERVAZIONE(Voce.TEMPO_CONSERVAZIONE),
+	NOTE_VOCE_TITOLARIO(Voce.NOTE_VOCE_TITOLARIO);
 
-        private final String nomeCampo;
+	private final String nomeCampo;
 
-        Fields(String nomeCampo) {
-            this.nomeCampo = nomeCampo;
-        }
+	Fields(String nomeCampo) {
+	    this.nomeCampo = nomeCampo;
+	}
 
-        public String getNomeCampo() {
-            return nomeCampo;
-        }
+	public String getNomeCampo() {
+	    return nomeCampo;
+	}
     }
 
     public Voce(Operation operation) {
-        this.operation = operation;
-        figli = new HashMap<>();
-        numeroOrdineFigli = new HashSet<>();
+	this.operation = operation;
+	figli = new HashMap<>();
+	numeroOrdineFigli = new HashSet<>();
     }
 
     /**
      * Costruttore voce con operazione null. Utilizzato per le voci già esistenti su db
      *
-     * @param codiceVoceComposito
-     *            codice composito
-     * @param descrizioneVoce
-     *            descrizione
-     * @param numeroOrdine
-     *            ordine
-     * @param dataInizioValidita
-     *            data inizio validita
-     * @param dataFineValidita
-     *            data fine validita
-     * @param attivoPerClassificazione
-     *            classificazione
-     * @param tempoConservazione
-     *            tempo conservazione
-     * @param noteVoceTitolario
-     *            note titolario
+     * @param codiceVoceComposito      codice composito
+     * @param descrizioneVoce          descrizione
+     * @param numeroOrdine             ordine
+     * @param dataInizioValidita       data inizio validita
+     * @param dataFineValidita         data fine validita
+     * @param attivoPerClassificazione classificazione
+     * @param tempoConservazione       tempo conservazione
+     * @param noteVoceTitolario        note titolario
      */
-    public Voce(String codiceVoceComposito, String descrizioneVoce, int numeroOrdine, Date dataInizioValidita,
-            Date dataFineValidita, AttivoClass attivoPerClassificazione, Integer tempoConservazione,
-            String noteVoceTitolario) {
-        this.codiceVoceComposito = codiceVoceComposito;
-        this.descrizioneVoce = descrizioneVoce;
-        this.numeroOrdine = numeroOrdine;
-        this.dataInizioValidita = dataInizioValidita;
-        this.dataFineValidita = dataFineValidita;
-        this.attivoPerClassificazione = attivoPerClassificazione;
-        this.tempoConservazione = tempoConservazione;
-        this.noteVoceTitolario = noteVoceTitolario;
-        figli = new HashMap<>();
-        numeroOrdineFigli = new HashSet<>();
+    public Voce(String codiceVoceComposito, String descrizioneVoce, int numeroOrdine,
+	    Date dataInizioValidita, Date dataFineValidita, AttivoClass attivoPerClassificazione,
+	    Integer tempoConservazione, String noteVoceTitolario) {
+	this.codiceVoceComposito = codiceVoceComposito;
+	this.descrizioneVoce = descrizioneVoce;
+	this.numeroOrdine = numeroOrdine;
+	this.dataInizioValidita = dataInizioValidita;
+	this.dataFineValidita = dataFineValidita;
+	this.attivoPerClassificazione = attivoPerClassificazione;
+	this.tempoConservazione = tempoConservazione;
+	this.noteVoceTitolario = noteVoceTitolario;
+	figli = new HashMap<>();
+	numeroOrdineFigli = new HashSet<>();
     }
 
     /**
      * Costruttore voce per oggetti xml di creazione
      *
-     * @param voce
-     *            oggetto xml contenente i dati per la creazione della voce
+     * @param voce oggetto xml contenente i dati per la creazione della voce
      */
     public Voce(CreaVoceType voce) {
-        this(Operation.CREA, voce.getCodiceVoceComposito(),
-                voce.getNumeroOrdine() != null ? voce.getNumeroOrdine().intValue() : 1, voce.getDescrizioneVoce(),
-                voce.getDataInizioValidita() != null ? voce.getDataInizioValidita().toGregorianCalendar().getTime()
-                        : null,
-                voce.getDataFineValidita() != null ? voce.getDataFineValidita().toGregorianCalendar().getTime() : null,
-                AttivoClass.valueOf(voce.getAttivoPerClassificazione().name()), voce.getTempoConservazione().intValue(),
-                voce.getNoteVoceTitolario());
+	this(Operation.CREA, voce.getCodiceVoceComposito(),
+		voce.getNumeroOrdine() != null ? voce.getNumeroOrdine().intValue() : 1,
+		voce.getDescrizioneVoce(),
+		voce.getDataInizioValidita() != null
+			? voce.getDataInizioValidita().toGregorianCalendar().getTime()
+			: null,
+		voce.getDataFineValidita() != null
+			? voce.getDataFineValidita().toGregorianCalendar().getTime()
+			: null,
+		AttivoClass.valueOf(voce.getAttivoPerClassificazione().name()),
+		voce.getTempoConservazione().intValue(), voce.getNoteVoceTitolario());
     }
 
     /**
      * Costruttore voce per oggetti xml di modifica
      *
-     * @param voce
-     *            oggetto xml contenente i dati per la modifica della voce
+     * @param voce oggetto xml contenente i dati per la modifica della voce
      */
     public Voce(ModificaVoceType voce) {
-        this(Operation.MODIFICA, voce.getCodiceVoceComposito(), null, voce.getDescrizioneVoce(), null,
-                voce.getDataFineValidita() != null ? voce.getDataFineValidita().toGregorianCalendar().getTime() : null,
-                AttivoClass.valueOf(voce.getAttivoPerClassificazione().name()), voce.getTempoConservazione().intValue(),
-                voce.getNoteVoceTitolario());
+	this(Operation.MODIFICA, voce.getCodiceVoceComposito(), null, voce.getDescrizioneVoce(),
+		null,
+		voce.getDataFineValidita() != null
+			? voce.getDataFineValidita().toGregorianCalendar().getTime()
+			: null,
+		AttivoClass.valueOf(voce.getAttivoPerClassificazione().name()),
+		voce.getTempoConservazione().intValue(), voce.getNoteVoceTitolario());
     }
 
     /**
      * Costruttore voce per oggetti xml di chiusura
      *
-     * @param voce
-     *            oggetto xml contenente i dati per la chiusura della voce
+     * @param voce oggetto xml contenente i dati per la chiusura della voce
      */
     public Voce(ChiudiVoceType voce) {
-        this(Operation.CHIUDI, voce.getCodiceVoceComposito(), null, null, null,
-                voce.getDataFineValidita() != null ? voce.getDataFineValidita().toGregorianCalendar().getTime() : null,
-                null, null, voce.getNoteVoceTitolario());
+	this(Operation.CHIUDI, voce.getCodiceVoceComposito(), null, null, null,
+		voce.getDataFineValidita() != null
+			? voce.getDataFineValidita().toGregorianCalendar().getTime()
+			: null,
+		null, null, voce.getNoteVoceTitolario());
     }
 
     /**
      * Costruttore voce generico
      *
-     * @param operation
-     *            Tipo di operazione
-     * @param codiceVoceComposito
-     *            codice voce
-     * @param numeroOrdine
-     *            numero d'ordine all'interno dell'albero
-     * @param descrizioneVoce
-     *            descrizione
-     * @param dataInizioValidita
-     *            data inizio validita
-     * @param dataFineValidita
-     *            data fine validita
-     * @param attivoPerClassificazione
-     *            classificazione
-     * @param tempoConservazione
-     *            tempo conservazione
-     * @param noteVoceTitolario
-     *            note titolario
+     * @param operation                Tipo di operazione
+     * @param codiceVoceComposito      codice voce
+     * @param numeroOrdine             numero d'ordine all'interno dell'albero
+     * @param descrizioneVoce          descrizione
+     * @param dataInizioValidita       data inizio validita
+     * @param dataFineValidita         data fine validita
+     * @param attivoPerClassificazione classificazione
+     * @param tempoConservazione       tempo conservazione
+     * @param noteVoceTitolario        note titolario
      */
-    public Voce(Operation operation, String codiceVoceComposito, Integer numeroOrdine, String descrizioneVoce,
-            Date dataInizioValidita, Date dataFineValidita, AttivoClass attivoPerClassificazione,
-            Integer tempoConservazione, String noteVoceTitolario) {
-        figli = new HashMap<>();
-        numeroOrdineFigli = new HashSet<>();
-        this.operation = operation;
-        this.codiceVoceComposito = codiceVoceComposito;
-        this.numeroOrdine = numeroOrdine;
-        this.descrizioneVoce = descrizioneVoce;
-        this.dataInizioValidita = dataInizioValidita;
-        this.dataFineValidita = dataFineValidita;
-        this.attivoPerClassificazione = attivoPerClassificazione;
-        this.tempoConservazione = tempoConservazione;
-        this.noteVoceTitolario = noteVoceTitolario;
+    public Voce(Operation operation, String codiceVoceComposito, Integer numeroOrdine,
+	    String descrizioneVoce, Date dataInizioValidita, Date dataFineValidita,
+	    AttivoClass attivoPerClassificazione, Integer tempoConservazione,
+	    String noteVoceTitolario) {
+	figli = new HashMap<>();
+	numeroOrdineFigli = new HashSet<>();
+	this.operation = operation;
+	this.codiceVoceComposito = codiceVoceComposito;
+	this.numeroOrdine = numeroOrdine;
+	this.descrizioneVoce = descrizioneVoce;
+	this.dataInizioValidita = dataInizioValidita;
+	this.dataFineValidita = dataFineValidita;
+	this.attivoPerClassificazione = attivoPerClassificazione;
+	this.tempoConservazione = tempoConservazione;
+	this.noteVoceTitolario = noteVoceTitolario;
     }
 
-    public Voce(String codiceVoceComposito, Integer numeroOrdine, String descrizioneVoce, Date dataInizioValidita,
-            Date dataFineValidita, AttivoClass attivoPerClassificazione, Integer tempoConservazione,
-            String noteVoceTitolario) {
-        this(Operation.CREA, codiceVoceComposito, numeroOrdine, descrizioneVoce, dataInizioValidita, dataFineValidita,
-                attivoPerClassificazione, tempoConservazione, noteVoceTitolario);
+    public Voce(String codiceVoceComposito, Integer numeroOrdine, String descrizioneVoce,
+	    Date dataInizioValidita, Date dataFineValidita, AttivoClass attivoPerClassificazione,
+	    Integer tempoConservazione, String noteVoceTitolario) {
+	this(Operation.CREA, codiceVoceComposito, numeroOrdine, descrizioneVoce, dataInizioValidita,
+		dataFineValidita, attivoPerClassificazione, tempoConservazione, noteVoceTitolario);
     }
 
     public Voce(String codiceVoceComposito, Date dataFineValidita, String noteVoceTitolario) {
-        this(Operation.CHIUDI, codiceVoceComposito, null, null, null, dataFineValidita, null, null, noteVoceTitolario);
+	this(Operation.CHIUDI, codiceVoceComposito, null, null, null, dataFineValidita, null, null,
+		noteVoceTitolario);
     }
 
     public String getCodiceVoceComposito() {
-        return StringEscapeUtils.unescapeJava(codiceVoceComposito);
+	return StringEscapeUtils.unescapeJava(codiceVoceComposito);
     }
 
     public void setCodiceVoceComposito(String codiceVoceComposito) {
-        this.codiceVoceComposito = codiceVoceComposito;
+	this.codiceVoceComposito = codiceVoceComposito;
     }
 
     public Integer getNumeroOrdine() {
-        return numeroOrdine;
+	return numeroOrdine;
     }
 
     public void setNumeroOrdine(Integer numeroOrdine) {
-        this.numeroOrdine = numeroOrdine;
+	this.numeroOrdine = numeroOrdine;
     }
 
     public String getDescrizioneVoce() {
-        return descrizioneVoce;
+	return descrizioneVoce;
     }
 
     public void setDescrizioneVoce(String descrizioneVoce) {
-        this.descrizioneVoce = descrizioneVoce;
+	this.descrizioneVoce = descrizioneVoce;
     }
 
     public Date getDataInizioValidita() {
-        return dataInizioValidita;
+	return dataInizioValidita;
     }
 
     public void setDataInizioValidita(Date dataInizioValidita) {
-        this.dataInizioValidita = dataInizioValidita;
+	this.dataInizioValidita = dataInizioValidita;
     }
 
     public Date getDataFineValidita() {
-        return dataFineValidita;
+	return dataFineValidita;
     }
 
     public void setDataFineValidita(Date dataFineValidita) {
-        this.dataFineValidita = dataFineValidita;
+	this.dataFineValidita = dataFineValidita;
     }
 
     public AttivoClass getAttivoPerClassificazione() {
-        return attivoPerClassificazione;
+	return attivoPerClassificazione;
     }
 
     public void setAttivoPerClassificazione(AttivoClass attivoPerClassificazione) {
-        this.attivoPerClassificazione = attivoPerClassificazione;
+	this.attivoPerClassificazione = attivoPerClassificazione;
     }
 
     public Integer getTempoConservazione() {
-        return tempoConservazione;
+	return tempoConservazione;
     }
 
     public void setTempoConservazione(Integer tempoConservazione) {
-        this.tempoConservazione = tempoConservazione;
+	this.tempoConservazione = tempoConservazione;
     }
 
     public String getNoteVoceTitolario() {
-        return noteVoceTitolario;
+	return noteVoceTitolario;
     }
 
     public void setNoteVoceTitolario(String noteVoceTitolario) {
-        this.noteVoceTitolario = noteVoceTitolario;
+	this.noteVoceTitolario = noteVoceTitolario;
     }
 
     public Operation getOperation() {
-        return operation;
+	return operation;
     }
 
     public void setOperation(Operation operation) {
-        this.operation = operation;
+	this.operation = operation;
     }
 
     public void putFiglio(String codiceVoceComposito, Voce figlio) {
-        figli.put(codiceVoceComposito, figlio);
+	figli.put(codiceVoceComposito, figlio);
     }
 
     public Voce getFiglio(String codiceVoceSingolo) {
-        if (figli.containsKey(codiceVoceSingolo)) {
-            return figli.get(codiceVoceSingolo);
-        }
-        return null;
+	if (figli.containsKey(codiceVoceSingolo)) {
+	    return figli.get(codiceVoceSingolo);
+	}
+	return null;
     }
 
     public Voce removeFiglio(String codiceVoceSingolo) {
-        if (figli.containsKey(codiceVoceSingolo)) {
-            Voce son = figli.remove(codiceVoceSingolo);
-            numeroOrdineFigli.remove(son.getNumeroOrdine());
-            return son;
-        }
-        return null;
+	if (figli.containsKey(codiceVoceSingolo)) {
+	    Voce son = figli.remove(codiceVoceSingolo);
+	    numeroOrdineFigli.remove(son.getNumeroOrdine());
+	    return son;
+	}
+	return null;
     }
 
     public Map<String, Voce> getFigli() {
-        return figli;
+	return figli;
     }
 
     public boolean putNumeroOrdineFiglio(Integer numeroOrdine) {
-        return numeroOrdineFigli.add(numeroOrdine);
+	return numeroOrdineFigli.add(numeroOrdine);
     }
 
     public int getNumeroFigli() {
-        return figli.size();
+	return figli.size();
     }
 
     public LivelloType getLivello() {
-        return livello;
+	return livello;
     }
 
     public void setLivello(LivelloType livello) {
-        this.livello = livello;
+	this.livello = livello;
 
-        if (livello.getNumeroLivello().equals(BigInteger.ONE)) {
-            this.codiceVoce = this.codiceVoceComposito;
-        } else {
-            int index = this.codiceVoceComposito.lastIndexOf(livello.getCarattereSeparatoreLivello());
-            this.codiceVoce = this.codiceVoceComposito.substring(index + 1);
-        }
+	if (livello.getNumeroLivello().equals(BigInteger.ONE)) {
+	    this.codiceVoce = this.codiceVoceComposito;
+	} else {
+	    int index = this.codiceVoceComposito
+		    .lastIndexOf(livello.getCarattereSeparatoreLivello());
+	    this.codiceVoce = this.codiceVoceComposito.substring(index + 1);
+	}
     }
 
     public String getCodiceVoce() {
-        return codiceVoce;
+	return codiceVoce;
     }
 
     public void setCodiceVoce(String codiceVoce) {
-        this.codiceVoce = codiceVoce;
+	this.codiceVoce = codiceVoce;
     }
 }

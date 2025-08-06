@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -52,49 +48,49 @@ public class ElvVSelUdDocUpdByCrit implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-        return this.aaKeyUnitaDoc;
+	return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-        return this.dtCreazione;
+	return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-        this.dtCreazione = dtCreazione;
+	this.dtCreazione = dtCreazione;
     }
 
     @Column(name = "TI_ELE")
     public String getTiEle() {
-        return this.tiEle;
+	return this.tiEle;
     }
 
     public void setTiEle(String tiEle) {
-        this.tiEle = tiEle;
+	this.tiEle = tiEle;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     private ElvVSelUdDocUpdByCritId elvVSelUdDocUpdByCritId;
 
     @EmbeddedId()
     public ElvVSelUdDocUpdByCritId getElvVSelUdDocUpdByCritId() {
-        return elvVSelUdDocUpdByCritId;
+	return elvVSelUdDocUpdByCritId;
     }
 
     public void setElvVSelUdDocUpdByCritId(ElvVSelUdDocUpdByCritId elvVSelUdDocUpdByCritId) {
-        this.elvVSelUdDocUpdByCritId = elvVSelUdDocUpdByCritId;
+	this.elvVSelUdDocUpdByCritId = elvVSelUdDocUpdByCritId;
     }
 }

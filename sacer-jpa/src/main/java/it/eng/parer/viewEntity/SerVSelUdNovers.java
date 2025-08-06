@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -41,11 +37,11 @@ public class SerVSelUdNovers implements Serializable {
 
     @EmbeddedId
     public SerVSelUdNoversId getSerVSelUdNoversId() {
-        return serVSelUdNovers;
+	return serVSelUdNovers;
     }
 
     public void setSerVSelUdNoversId(SerVSelUdNoversId serVSelUdNovers) {
-        this.serVSelUdNovers = serVSelUdNovers;
+	this.serVSelUdNovers = serVSelUdNovers;
     }
 
     public SerVSelUdNovers() {/* Hibernate */
@@ -53,20 +49,20 @@ public class SerVSelUdNovers implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-        return this.aaKeyUnitaDoc;
+	return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "ID_SERIE")
     public BigDecimal getIdSerie() {
-        return this.idSerie;
+	return this.idSerie;
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-        this.idSerie = idSerie;
+	this.idSerie = idSerie;
     }
 
 }

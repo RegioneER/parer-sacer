@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ page import="it.eng.parer.slite.gen.form.ComponentiForm" pageEncoding="UTF-8"%>
 <%@ include file="../include.jsp"%>
 
@@ -18,13 +35,13 @@
             <slf:listNavBarDetail name="<%= ComponentiForm.MarcheList.NAME%>" />
             
             <slf:section name="<%=ComponentiForm.VersamentoAnnullatoDocSection.NAME%>" styleClass="importantContainer">
-                <h2><b><font color="#d3101c">Il versamento del presente documento è stato annullato</font></b></h2>
+                <h2><b style="color: #d3101c;">Il versamento del presente documento è stato annullato</b></h2>
                         <slf:lblField name="<%=ComponentiForm.ComponentiDetail.DT_ANNUL_DOC%>" width="w100" controlWidth="w80" labelWidth="w20"/>
                         <sl:newLine />
                         <slf:lblField name="<%=ComponentiForm.ComponentiDetail.NT_ANNUL_DOC%>" width="w100" controlWidth="w80" labelWidth="w20"/>
                     </slf:section>
                     <slf:section name="<%=ComponentiForm.VersamentoAnnullatoUDSection.NAME%>" styleClass="importantContainer">
-                <h2><b><font color="#d3101c">Il versamento della presente unità documentaria è stato annullato</font></b></h2>
+                <h2><b style="color: #d3101c;">Il versamento della presente unità documentaria è stato annullato</b></h2>
                         <slf:lblField name="<%=ComponentiForm.ComponentiDetail.DT_ANNUL_UNITA_DOC%>" width="w100" controlWidth="w70" labelWidth="w30"/>
                         <sl:newLine />
                         <slf:lblField name="<%=ComponentiForm.ComponentiDetail.NT_ANNUL_UNITA_DOC%>" width="w100" controlWidth="w70" labelWidth="w30"/>
@@ -76,8 +93,8 @@
                         <%--<slf:lblField name="<%=ComponentiForm.ComponentiDetail.DETTAGLIO_DOC%>"  width="w20"/>--%>
                     </slf:section>
                     <slf:section name="<%=ComponentiForm.ProfiloComponente.NAME%>" styleClass="importantContainer">
-                        <div class="slLabel w50" style="text-align:center;"><b><font color="#d3101c">Profilo componente</font></b></div>
-                        <div class="slLabel w50" style="text-align:center;"><b><font color="#d3101c">Informazioni sulle firme</font></b></div>
+                        <div class="slLabel w50" style="text-align:center;"><b style="color: #d3101c;">Profilo componente</b></div>
+                        <div class="slLabel w50" style="text-align:center;"><b style="color: #d3101c;">Informazioni sulle firme</b></div>
                     <sl:newLine skipLine="true"/>
                                 <slf:lblField name="<%=ComponentiForm.ComponentiDetail.DS_URN_COMP_CALC%>" width="w100" controlWidth="w70" />
                         <sl:newLine />
@@ -95,8 +112,8 @@
                                 <sl:newLine />
                                 <slf:lblField name="<%=ComponentiForm.ComponentiDetail.NM_TIPO_RAPPR_COMP%>" colSpan="2" />
                     <sl:newLine skipLine="true"/>
-                        <div class="slLabel w50" style="text-align:center;"><b><font color="#d3101c">Informazioni sul file</font></b></div>
-                        <div class="slLabel w50" style="text-align:center;"><b><font color="#d3101c">Controlli eseguiti</font></b></div>
+                        <div class="slLabel w50" style="text-align:center;"><b style="color: #d3101c;">Informazioni sul file</b></div>
+                        <div class="slLabel w50" style="text-align:center;"><b style="color: #d3101c;">Controlli eseguiti</b></div>
                                 <sl:newLine skipLine="true"/>
                                 <slf:lblField name="<%=ComponentiForm.ComponentiDetail.NI_SIZE_FILE_CALC%>" colSpan="2" controlWidth="w70"/>
                                 <slf:lblField name="<%=ComponentiForm.ComponentiDetail.FL_NO_CALC_HASH_FILE%>"  width="w50" labelWidth="w60" controlWidth="w20"/>
@@ -108,7 +125,7 @@
                     <sl:newLine />
                                 <slf:lblField name="<%=ComponentiForm.ComponentiDetail.CD_ENCODING_HASH_FILE_CALC%>" colSpan="2" controlWidth="w70"/>
                                 <sl:newLine skipLine="true"/>
-                        <div class="slLabel w50" style="text-align:center;"><b><font color="#d3101c">Informazioni sul formato</font></b></div>
+                        <div class="slLabel w50" style="text-align:center;"><b style="color: #d3101c;">Informazioni sul formato</b></div>
                                 <sl:newLine skipLine="true"/>
                                 <sl:newLine skipLine="true"/>
                                 <slf:lblField name="<%=ComponentiForm.ComponentiDetail.DS_FORMATO_RAPPR_CALC%>"  width="w50" labelWidth="w50" controlWidth="w50" />

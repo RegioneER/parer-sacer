@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -65,62 +61,64 @@ public class VolVerifFirmaVolume implements Serializable {
 
     @Column(name = "ID_VERIF_FIRMA_VOLUME")
     @GenericGenerator(name = "SVOL_VERIF_FIRMA_VOLUME_ID_VERIF_FIRMA_VOLUME_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_VERIF_FIRMA_VOLUME"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_VERIF_FIRMA_VOLUME"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVOL_VERIF_FIRMA_VOLUME_ID_VERIF_FIRMA_VOLUME_GENERATOR")
     public Long getIdVerifFirmaVolume() {
-        return this.idVerifFirmaVolume;
+	return this.idVerifFirmaVolume;
     }
 
     public void setIdVerifFirmaVolume(Long idVerifFirmaVolume) {
-        this.idVerifFirmaVolume = idVerifFirmaVolume;
+	this.idVerifFirmaVolume = idVerifFirmaVolume;
     }
 
     @Column(name = "DS_MSG_ESITO_VERIF_FIRMA")
     public String getDsMsgEsitoVerifFirma() {
-        return this.dsMsgEsitoVerifFirma;
+	return this.dsMsgEsitoVerifFirma;
     }
 
     public void setDsMsgEsitoVerifFirma(String dsMsgEsitoVerifFirma) {
-        this.dsMsgEsitoVerifFirma = dsMsgEsitoVerifFirma;
+	this.dsMsgEsitoVerifFirma = dsMsgEsitoVerifFirma;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRMA")
     public String getTiEsitoVerifFirma() {
-        return this.tiEsitoVerifFirma;
+	return this.tiEsitoVerifFirma;
     }
 
     public void setTiEsitoVerifFirma(String tiEsitoVerifFirma) {
-        this.tiEsitoVerifFirma = tiEsitoVerifFirma;
+	this.tiEsitoVerifFirma = tiEsitoVerifFirma;
     }
 
     @Column(name = "TI_VERIF")
     public String getTiVerif() {
-        return this.tiVerif;
+	return this.tiVerif;
     }
 
     public void setTiVerif(String tiVerif) {
-        this.tiVerif = tiVerif;
+	this.tiVerif = tiVerif;
     }
 
-    @OneToMany(mappedBy = "volVerifFirmaVolume", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
-            CascadeType.REFRESH })
+    @OneToMany(mappedBy = "volVerifFirmaVolume", cascade = {
+	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     public List<VolContrVerifFirmaVolume> getVolContrVerifFirmaVolumes() {
-        return this.volContrVerifFirmaVolumes;
+	return this.volContrVerifFirmaVolumes;
     }
 
-    public void setVolContrVerifFirmaVolumes(List<VolContrVerifFirmaVolume> volContrVerifFirmaVolumes) {
-        this.volContrVerifFirmaVolumes = volContrVerifFirmaVolumes;
+    public void setVolContrVerifFirmaVolumes(
+	    List<VolContrVerifFirmaVolume> volContrVerifFirmaVolumes) {
+	this.volContrVerifFirmaVolumes = volContrVerifFirmaVolumes;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.DETACH })
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {
+	    CascadeType.DETACH })
     @JoinColumn(name = "ID_APPART_FIRMA_VOLUME")
     public VolAppartFirmaVolume getVolAppartFirmaVolume() {
-        return this.volAppartFirmaVolume;
+	return this.volAppartFirmaVolume;
     }
 
     public void setVolAppartFirmaVolume(VolAppartFirmaVolume volAppartFirmaVolume) {
-        this.volAppartFirmaVolume = volAppartFirmaVolume;
+	this.volAppartFirmaVolume = volAppartFirmaVolume;
     }
 
 }

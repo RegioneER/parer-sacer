@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.tpi.bean;
@@ -26,7 +22,8 @@ import javax.xml.bind.annotation.XmlType;
 import it.eng.tpi.bean.Esito.EsitoServizio;
 
 @XmlRootElement(name = "RetrieveFileUnitaDoc")
-@XmlType(propOrder = { "esito", "flCartellaMigraz", "dtVers", "tiRiArk" })
+@XmlType(propOrder = {
+	"esito", "flCartellaMigraz", "dtVers", "tiRiArk" })
 public class RegistraCartellaRiArkRisposta {
 
     protected Esito esito;
@@ -35,51 +32,51 @@ public class RegistraCartellaRiArkRisposta {
     protected Boolean flCartellaMigraz;
 
     public RegistraCartellaRiArkRisposta() {
-        setEsito(new Esito());
+	setEsito(new Esito());
     }
 
     public RegistraCartellaRiArkRisposta(Date dtVers, String tiRiArk, Boolean flCartellaMigraz) {
-        this();
-        getEsito().setCdEsito(EsitoServizio.KO);
-        this.dtVers = dtVers;
-        this.tiRiArk = tiRiArk;
-        this.flCartellaMigraz = flCartellaMigraz;
+	this();
+	getEsito().setCdEsito(EsitoServizio.KO);
+	this.dtVers = dtVers;
+	this.tiRiArk = tiRiArk;
+	this.flCartellaMigraz = flCartellaMigraz;
     }
 
     @XmlElement(name = "Esito")
     public Esito getEsito() {
-        return esito;
+	return esito;
     }
 
     public void setEsito(Esito esito) {
-        this.esito = esito;
+	this.esito = esito;
     }
 
     @XmlElement(name = "DtVersFile")
     public Date getDtVers() {
-        return dtVers;
+	return dtVers;
     }
 
     public void setDtVers(Date dtVers) {
-        this.dtVers = dtVers;
+	this.dtVers = dtVers;
     }
 
     @XmlElement(name = "TiRi_Ark")
     public String getTiRiArk() {
-        return tiRiArk;
+	return tiRiArk;
     }
 
     public void setTiRiArk(String tiRiArk) {
-        this.tiRiArk = tiRiArk;
+	this.tiRiArk = tiRiArk;
     }
 
     @XmlElement(name = "FlCartellaMigraz")
     public Boolean getFlCartellaMigraz() {
-        return flCartellaMigraz;
+	return flCartellaMigraz;
     }
 
     public void setFlCartellaMigraz(Boolean flCartellaMigraz) {
-        this.flCartellaMigraz = flCartellaMigraz;
+	this.flCartellaMigraz = flCartellaMigraz;
     }
 
 }

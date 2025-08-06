@@ -70,6 +70,8 @@
         <ComboBox Description="Esito versamento" Name="ti_esito" Type="STRING"/>
         <ComboBox Description="Stato conservazione" Name="ti_stato_conservazione" Type="STRING"/>
         <ComboBox Description="Stato generazione indice AIP" Name="ti_stato_fasc_elenco_vers" Type="STRING"/>
+        <ComboBox Name="fl_upd_annul_unita_doc" Description="Presenza UD annullate" Type="STRING" />
+        <ComboBox Name="fl_upd_modif_unita_doc" Description="Presenza UD aggiornate" Type="STRING" />
         <Button Name="ricercaFascicoli" Description="Ricerca fascicoli" Type="STRING"/>
         <Button Name="pulisciFascicoli" Description="Pulisci ricerca" Type="STRING"/>
     </Fields>
@@ -84,7 +86,9 @@
         <Input Description="Data apertura" Name="dt_ape_fascicolo" Type="DATE"/>
         <Input Description="Data chiusura" Name="dt_chiu_fascicolo" Type="DATE"/>
         <Input Description="Data versamento" Name="ts_vers_fascicolo" Type="DATETIME"/>
-        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"/>        
+        <Input Name="ni_unita_doc" Description="Numero unità documentarie" Type="INTEGER"/>
+        <CheckBox Name="fl_upd_annul_unita_doc" Description="UD annullate" Type="STRING" Readonly="true" />
+        <CheckBox Name="fl_upd_modif_unita_doc" Description="UD aggiornate" Type="STRING" Readonly="true"/>
         <Input Description="Tempo di conservazione" Name="ni_aa_conservazione" Type="INTEGER"/>
         <Input Description="Livello di riservatezza" Name="cd_livello_riserv" Type="STRING"/>
         <CheckBox Name="fl_forza_contr_classif" Description="Forzatura classificazione" Type="STRING" Readonly="true"/>

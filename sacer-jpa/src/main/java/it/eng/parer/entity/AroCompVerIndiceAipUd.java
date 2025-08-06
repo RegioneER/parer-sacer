@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -54,34 +50,34 @@ public class AroCompVerIndiceAipUd implements Serializable {
     @Id
     @Column(name = "ID_COMP_VER_INDICE_AIP_UD")
     @GenericGenerator(name = "SARO_COMP_VER_INDICE_AIP_UD_ID_COMP_VER_INDICE_AIP_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_COMP_VER_INDICE_AIP_UD"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_COMP_VER_INDICE_AIP_UD"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_COMP_VER_INDICE_AIP_UD_ID_COMP_VER_INDICE_AIP_UD_GENERATOR")
     public Long getIdCompVerIndiceAipUd() {
-        return this.idCompVerIndiceAipUd;
+	return this.idCompVerIndiceAipUd;
     }
 
     public void setIdCompVerIndiceAipUd(Long idCompVerIndiceAipUd) {
-        this.idCompVerIndiceAipUd = idCompVerIndiceAipUd;
+	this.idCompVerIndiceAipUd = idCompVerIndiceAipUd;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_COMP_DOC")
     public AroCompDoc getAroCompDoc() {
-        return this.aroCompDoc;
+	return this.aroCompDoc;
     }
 
     public void setAroCompDoc(AroCompDoc aroCompDoc) {
-        this.aroCompDoc = aroCompDoc;
+	this.aroCompDoc = aroCompDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_INDICE_AIP")
     public AroVerIndiceAipUd getAroVerIndiceAipUd() {
-        return this.aroVerIndiceAipUd;
+	return this.aroVerIndiceAipUd;
     }
 
     public void setAroVerIndiceAipUd(AroVerIndiceAipUd aroVerIndiceAipUd) {
-        this.aroVerIndiceAipUd = aroVerIndiceAipUd;
+	this.aroVerIndiceAipUd = aroVerIndiceAipUd;
     }
 }

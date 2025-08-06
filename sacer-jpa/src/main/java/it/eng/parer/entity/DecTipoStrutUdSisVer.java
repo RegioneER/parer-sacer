@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -60,36 +56,36 @@ public class DecTipoStrutUdSisVer implements Serializable {
     @Column(name = "ID_TIPO_STRUT_UD_SIS_VERS")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_STRUT_UD_SIS_VERS_ID_TIPO_STRUT_UD_SIS_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_UD_SIS_VERS"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_UD_SIS_VERS"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_STRUT_UD_SIS_VERS_ID_TIPO_STRUT_UD_SIS_VERS_GENERATOR")
     public Long getIdTipoStrutUdSisVers() {
-        return this.idTipoStrutUdSisVers;
+	return this.idTipoStrutUdSisVers;
     }
 
     public void setIdTipoStrutUdSisVers(Long idTipoStrutUdSisVers) {
-        this.idTipoStrutUdSisVers = idTipoStrutUdSisVers;
+	this.idTipoStrutUdSisVers = idTipoStrutUdSisVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_STRUT_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decTipoStrutUdSisVers")
     public DecTipoStrutUnitaDoc getDecTipoStrutUnitaDoc() {
-        return this.decTipoStrutUnitaDoc;
+	return this.decTipoStrutUnitaDoc;
     }
 
     public void setDecTipoStrutUnitaDoc(DecTipoStrutUnitaDoc decTipoStrutUnitaDoc) {
-        this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
+	this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SISTEMA_VERSANTE")
     public // @XmlInverseReference(mappedBy = "decTipoStrutUdSisVers")
     AplSistemaVersante getAplSistemaVersante() {
-        return this.aplSistemaVersante;
+	return this.aplSistemaVersante;
     }
 
     public void setAplSistemaVersante(AplSistemaVersante aplSistemaVersante) {
-        this.aplSistemaVersante = aplSistemaVersante;
+	this.aplSistemaVersante = aplSistemaVersante;
     }
 }

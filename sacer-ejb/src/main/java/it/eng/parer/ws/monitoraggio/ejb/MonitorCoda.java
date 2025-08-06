@@ -1,24 +1,19 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.ws.monitoraggio.ejb;
 
@@ -62,82 +57,78 @@ public class MonitorCoda {
     /**
      * Recupera i messaggi dalla coda
      *
-     * @param queue
-     *            nome coda
-     * @param messageSelector
-     *            selettore
+     * @param queue           nome coda
+     * @param messageSelector selettore
      *
      * @return lista di messaggi
      *
-     * @throws JMSException
-     *             errore generico
+     * @throws JMSException errore generico
      */
-    public List<DLQMsgInfo> retrieveMsgInQueue(String queue, String messageSelector) throws JMSException {
-        List<DLQMsgInfo> msgList = new ArrayList<>();
-        QueueConnection queueConn = null;
-        QueueBrowser queueBrowser = null;
-        QueueSession queueSession = null;
-        try {
-            queueConn = connFactory.createQueueConnection();
-            queueSession = queueConn.createQueueSession(true, Session.AUTO_ACKNOWLEDGE);
-            if (queue.equals(NomeCoda.dmqQueue.name())) {
-                queueBrowser = queueSession.createBrowser(dmqQueue, messageSelector);
-            } else {
-                // coda non presente
-            }
+    public List<DLQMsgInfo> retrieveMsgInQueue(String queue, String messageSelector)
+	    throws JMSException {
+	List<DLQMsgInfo> msgList = new ArrayList<>();
+	QueueBrowser queueBrowser = null;
+	try (QueueConnection queueConn = connFactory.createQueueConnection();
+		QueueSession queueSession = queueConn.createQueueSession(true,
+			Session.AUTO_ACKNOWLEDGE);) {
+	    if (queue.equals(NomeCoda.dmqQueue.name())) {
+		queueBrowser = queueSession.createBrowser(dmqQueue, messageSelector);
+	    } else {
+		// coda non presente
+	    }
 
-            Enumeration<?> e = queueBrowser.getEnumeration();
-            while (e.hasMoreElements()) {
+	    Enumeration<?> e = queueBrowser.getEnumeration();
+	    while (e.hasMoreElements()) {
 
-                DLQMsgInfo infoCoda = new DLQMsgInfo();
-                Message objMessage = (Message) e.nextElement();
+		DLQMsgInfo infoCoda = new DLQMsgInfo();
+		Message objMessage = (Message) e.nextElement();
 
-                /**
-                 * JMS Message Metadata custom info (PARER) a) tipoPayload b) statoElenco
-                 */
-                if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE) != null) {
-                    infoCoda.setPayloadType(objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE));
-                } else {
-                    // continue; // passa al messaggio successivo (Nota: avendo inserito un selettore, caso che non
-                    // // dovrebbe mai verificarsi)
-                    infoCoda.setPayloadType(PAYLOAD_NOTYPE);
-                }
-                if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP) != null) {
-                    infoCoda.setFromApplication(objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP));
-                }
-                if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS) != null) {
-                    infoCoda.setState(objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS));
-                } else /* no state */ {
-                    infoCoda.setState(PAYLOAD_NOSTATE);
-                }
-                infoCoda.setSentTimestamp(new Date(objMessage.getJMSTimestamp()));
+		/**
+		 * JMS Message Metadata custom info (PARER) a) tipoPayload b) statoElenco
+		 */
+		if (objMessage
+			.getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE) != null) {
+		    infoCoda.setPayloadType(objMessage
+			    .getStringProperty(Costanti.JMSMsgProperties.MSG_K_PAYLOADTYPE));
+		} else {
+		    // continue; // passa al messaggio successivo (Nota: avendo inserito un
+		    // selettore, caso che non
+		    // // dovrebbe mai verificarsi)
+		    infoCoda.setPayloadType(PAYLOAD_NOTYPE);
+		}
+		if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP) != null) {
+		    infoCoda.setFromApplication(
+			    objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_APP));
+		}
+		if (objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS) != null) {
+		    infoCoda.setState(
+			    objMessage.getStringProperty(Costanti.JMSMsgProperties.MSG_K_STATUS));
+		} else /* no state */ {
+		    infoCoda.setState(PAYLOAD_NOSTATE);
+		}
+		infoCoda.setSentTimestamp(new Date(objMessage.getJMSTimestamp()));
 
-                infoCoda.setMessageID(objMessage.getJMSMessageID());
+		infoCoda.setMessageID(objMessage.getJMSMessageID());
 
-                if (objMessage.getStringProperty("JMSXDeliveryCount") != null) {
-                    infoCoda.setDeliveryCount(Integer.parseInt(objMessage.getStringProperty("JMSXDeliveryCount")));
-                }
+		if (objMessage.getStringProperty("JMSXDeliveryCount") != null) {
+		    infoCoda.setDeliveryCount(
+			    Integer.parseInt(objMessage.getStringProperty("JMSXDeliveryCount")));
+		}
 
-                msgList.add(infoCoda);
-            }
-        } catch (Exception ex) {
-            throw new JMSException("Errore nella lettura dalla coda '" + queue);
-        } finally {
-            if (queueBrowser != null) {
-                queueBrowser.close();
-            }
-            if (queueSession != null) {
-                queueSession.close();
-            }
-            if (queueConn != null) {
-                queueConn.close();
-            }
-        }
-        return msgList;
+		msgList.add(infoCoda);
+	    }
+	} catch (Exception ex) {
+	    throw new JMSException("Errore nella lettura dalla coda '" + queue);
+	} finally {
+	    if (queueBrowser != null) {
+		queueBrowser.close();
+	    }
+	}
+	return msgList;
     }
 
     public enum NomeCoda {
-        dmqQueue;
+	dmqQueue;
     }
 
 }

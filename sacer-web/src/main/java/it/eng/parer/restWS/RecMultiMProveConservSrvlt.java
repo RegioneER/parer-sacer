@@ -1,23 +1,18 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.restWS;
 
@@ -74,7 +69,8 @@ import it.eng.spagoCore.ConfigSingleton;
  *
  * @author Fioravanti_F
  */
-@WebServlet(urlPatterns = { "/RecPCUniDocMultiMedia" }, asyncSupported = true)
+@WebServlet(urlPatterns = {
+	"/RecPCUniDocMultiMedia" }, asyncSupported = true)
 public class RecMultiMProveConservSrvlt extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -90,213 +86,227 @@ public class RecMultiMProveConservSrvlt extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        // custom
-        uploadDir = ConfigSingleton.getInstance().getStringValue(WS_STAGING_UPLOAD_DIR.name());
-        instanceName = ConfigSingleton.getInstance().getStringValue(WS_INSTANCE_NAME.name());
+	super.init(config);
+	// custom
+	uploadDir = ConfigSingleton.getInstance().getStringValue(WS_STAGING_UPLOAD_DIR.name());
+	instanceName = ConfigSingleton.getInstance().getStringValue(WS_INSTANCE_NAME.name());
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Response405.fancy405(resp, Response405.NomeWebServiceRest.REC_PROVE_CONSERV_MM);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+	    throws ServletException, IOException {
+	Response405.fancy405(resp, Response405.NomeWebServiceRest.REC_PROVE_CONSERV_MM);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request
-     *            servlet request
-     * @param response
-     *            servlet response
+     * @param request  servlet request
+     * @param response servlet response
      *
-     * @throws ServletException
-     *             if a servlet-specific error occurs
-     * @throws IOException
-     *             if an I/O error occurs
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        RispostaWSRecupero rispostaWs;
-        RecuperoMMExt myRecuperoExt;
-        StatoConservazione myEsito;
-        SyncFakeSessn sessioneFinta = new SyncFakeSessn();
-        Iterator<FileItem> tmpIterator = null;
-        DiskFileItem tmpFileItem = null;
-        List<FileItem> fileItems = null;
-        AvanzamentoWs tmpAvanzamento;
-        RequestPrsr myRequestPrsr = new RequestPrsr();
-        RequestPrsr.ReqPrsrConfig tmpPrsrConfig = new RequestPrsr().new ReqPrsrConfig();
+	    throws ServletException, IOException {
+	RispostaWSRecupero rispostaWs;
+	RecuperoMMExt myRecuperoExt;
+	StatoConservazione myEsito;
+	SyncFakeSessn sessioneFinta = new SyncFakeSessn();
+	Iterator<FileItem> tmpIterator = null;
+	DiskFileItem tmpFileItem = null;
+	List<FileItem> fileItems = null;
+	AvanzamentoWs tmpAvanzamento;
+	RequestPrsr myRequestPrsr = new RequestPrsr();
+	RequestPrsr.ReqPrsrConfig tmpPrsrConfig = new RequestPrsr().new ReqPrsrConfig();
 
-        rispostaWs = new RispostaWSRecupero();
-        myRecuperoExt = new RecuperoMMExt();
-        myRecuperoExt.setDescrizione(new WSDescRecProveConsMM());
+	rispostaWs = new RispostaWSRecupero();
+	myRecuperoExt = new RecuperoMMExt();
+	myRecuperoExt.setDescrizione(new WSDescRecProveConsMM());
 
-        tmpAvanzamento = AvanzamentoWs.nuovoAvanzamentoWS(instanceName, AvanzamentoWs.Funzioni.Recupero);
-        tmpAvanzamento.logAvanzamento();
+	tmpAvanzamento = AvanzamentoWs.nuovoAvanzamentoWS(instanceName,
+		AvanzamentoWs.Funzioni.Recupero);
+	tmpAvanzamento.logAvanzamento();
 
-        recuperoSync.initRispostaWs(rispostaWs, tmpAvanzamento, myRecuperoExt);
-        myEsito = rispostaWs.getIstanzaEsito();
+	recuperoSync.initRispostaWs(rispostaWs, tmpAvanzamento, myRecuperoExt);
+	myEsito = rispostaWs.getIstanzaEsito();
 
-        sessioneFinta.setTmApertura(new Date());
-        //
-        sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(request));
-        // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con certificato
-        sessioneFinta.setCertCommonName(myRequestPrsr.leggiCertCommonName(request));
+	sessioneFinta.setTmApertura(new Date());
+	//
+	sessioneFinta.setIpChiamante(myRequestPrsr.leggiIpVersante(request));
+	// MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di
+	// recupero con certificato
+	sessioneFinta.setCertCommonName(myRequestPrsr.leggiCertCommonName(request));
 
-        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-            // Check that we have a file upload request
-            boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-            if (isMultipart) {
-                // Create a factory for disk-based file items
-                DiskFileItemFactory factory = new DiskFileItemFactory();
+	if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+	    // Check that we have a file upload request
+	    boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+	    if (isMultipart) {
+		// Create a factory for disk-based file items
+		DiskFileItemFactory factory = new DiskFileItemFactory();
 
-                // maximum size that will be stored in memory
-                factory.setSizeThreshold(1);
+		// maximum size that will be stored in memory
+		factory.setSizeThreshold(1);
 
-                factory.setRepository(new File(uploadDir));
+		factory.setRepository(new File(uploadDir));
 
-                // Create a new file upload handler
-                ServletFileUpload upload = new ServletFileUpload(factory);
+		// Create a new file upload handler
+		ServletFileUpload upload = new ServletFileUpload(factory);
 
-                tmpAvanzamento.setFase("Servlet pronta a ricevere i file").logAvanzamento();
-                try {
-                    tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.TrasferimentoPayloadIn)
-                            .setFase("pronto a ricevere").logAvanzamento();
+		tmpAvanzamento.setFase("Servlet pronta a ricevere i file").logAvanzamento();
+		try {
+		    tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.TrasferimentoPayloadIn)
+			    .setFase("pronto a ricevere").logAvanzamento();
 
-                    //
-                    tmpPrsrConfig.setLeggiFile(false);
-                    tmpPrsrConfig.setLeggindiceMM(true);
-                    tmpPrsrConfig.setAvanzamentoWs(tmpAvanzamento);
-                    tmpPrsrConfig.setSessioneFinta(sessioneFinta);
-                    tmpPrsrConfig.setRequest(request);
-                    tmpPrsrConfig.setUploadHandler(upload);
-                    //
-                    // fileItems = myRequestPrsr.parseWithCommonName(rispostaWs, tmpPrsrConfig);
-                    // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai servizi di recupero con
-                    // certificato
-                    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, null,
-                            sessioneFinta.getCertCommonName() == null ? false : true);
-                    //
-                    if (rispostaWs.getSeverity() != SeverityEnum.OK) {
-                        rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(), rispostaWs.getErrorMessage());
-                    }
+		    //
+		    tmpPrsrConfig.setLeggiFile(false);
+		    tmpPrsrConfig.setLeggindiceMM(true);
+		    tmpPrsrConfig.setAvanzamentoWs(tmpAvanzamento);
+		    tmpPrsrConfig.setSessioneFinta(sessioneFinta);
+		    tmpPrsrConfig.setRequest(request);
+		    tmpPrsrConfig.setUploadHandler(upload);
+		    //
+		    // fileItems = myRequestPrsr.parseWithCommonName(rispostaWs, tmpPrsrConfig);
+		    // MEV#33897 - Eliminazione controllo LOGINNAME/PASSWORD nella chiamata ai
+		    // servizi di recupero con
+		    // certificato
+		    fileItems = myRequestPrsr.parse(rispostaWs, tmpPrsrConfig, null,
+			    sessioneFinta.getCertCommonName() == null ? false : true);
+		    //
+		    if (rispostaWs.getSeverity() != SeverityEnum.OK) {
+			rispostaWs.setEsitoWsError(rispostaWs.getErrorCode(),
+				rispostaWs.getErrorMessage());
+		    }
 
-                    tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.VerificaStrutturaChiamataWs)
-                            .setFase("completata").logAvanzamento();
+		    tmpAvanzamento
+			    .setCheckPoint(AvanzamentoWs.CheckPoints.VerificaStrutturaChiamataWs)
+			    .setFase("completata").logAvanzamento();
 
-                    /*
-                     * ***************************************************************************** *** fine della
-                     * verifica della struttura/signature del web service. Verifica dei dati effettivamente versati
-                     * ***************************************************************************** ***
-                     */
-                    // testa se la versione è corretta
-                    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-                        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.VerificaSemantica)
-                                .setFase("verifica versione").logAvanzamento();
-                        recuperoSync.verificaVersione(sessioneFinta.getVersioneWS(), rispostaWs, myRecuperoExt);
-                    }
+		    /*
+		     * *****************************************************************************
+		     * *** fine della verifica della struttura/signature del web service. Verifica
+		     * dei dati effettivamente versati
+		     * *****************************************************************************
+		     * ***
+		     */
+		    // testa se la versione è corretta
+		    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+			tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.VerificaSemantica)
+				.setFase("verifica versione").logAvanzamento();
+			recuperoSync.verificaVersione(sessioneFinta.getVersioneWS(), rispostaWs,
+				myRecuperoExt);
+		    }
 
-                    // testa le credenziali utente, tramite ejb
-                    myEsito = rispostaWs.getIstanzaEsito();
-                    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-                        tmpAvanzamento.setFase("verifica credenziali").logAvanzamento();
-                        recuperoSync.verificaCredenziali(sessioneFinta.getLoginName(), sessioneFinta.getPassword(),
-                                sessioneFinta.getIpChiamante(), rispostaWs, myRecuperoExt,
-                                sessioneFinta.getCertCommonName());
-                    }
+		    // testa le credenziali utente, tramite ejb
+		    myEsito = rispostaWs.getIstanzaEsito();
+		    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+			tmpAvanzamento.setFase("verifica credenziali").logAvanzamento();
+			recuperoSync.verificaCredenziali(sessioneFinta.getLoginName(),
+				sessioneFinta.getPassword(), sessioneFinta.getIpChiamante(),
+				rispostaWs, myRecuperoExt, sessioneFinta.getCertCommonName());
+		    }
 
-                    // verifica formale e semantica dell'indice MM
-                    myEsito = rispostaWs.getIstanzaEsito();
-                    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-                        tmpAvanzamento.setFase("verifica xml indice").logAvanzamento();
-                        recuperoSync.parseXMLIndiceMM(sessioneFinta.getDatiPackInfoSipXml(), rispostaWs, myRecuperoExt);
-                    }
+		    // verifica formale e semantica dell'indice MM
+		    myEsito = rispostaWs.getIstanzaEsito();
+		    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+			tmpAvanzamento.setFase("verifica xml indice").logAvanzamento();
+			recuperoSync.parseXMLIndiceMM(sessioneFinta.getDatiPackInfoSipXml(),
+				rispostaWs, myRecuperoExt);
+		    }
 
-                    // verifica formale e semantica dell'XML di versamento
-                    myEsito = rispostaWs.getIstanzaEsito();
-                    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-                        tmpAvanzamento.setFase("verifica xml").logAvanzamento();
+		    // verifica formale e semantica dell'XML di versamento
+		    myEsito = rispostaWs.getIstanzaEsito();
+		    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+			tmpAvanzamento.setFase("verifica xml").logAvanzamento();
 
-                        recuperoSync.parseXML(sessioneFinta.getDatiIndiceSipXml(), rispostaWs, myRecuperoExt);
-                    }
+			recuperoSync.parseXML(sessioneFinta.getDatiIndiceSipXml(), rispostaWs,
+				myRecuperoExt);
+		    }
 
-                    // prepara risposta
-                    myEsito = rispostaWs.getIstanzaEsito();
-                    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-                        // tmpAvanzamento.setFase("generazione xml").
-                        // logAvanzamento();
-                        //
-                        recuperoSync.recuperaProveConserv(rispostaWs, myRecuperoExt, uploadDir);
-                    }
+		    // prepara risposta
+		    myEsito = rispostaWs.getIstanzaEsito();
+		    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+			// tmpAvanzamento.setFase("generazione xml").
+			// logAvanzamento();
+			//
+			recuperoSync.recuperaProveConserv(rispostaWs, myRecuperoExt, uploadDir);
+		    }
 
-                    myEsito = rispostaWs.getIstanzaEsito();
-                } catch (FileUploadException e1) {
-                    rispostaWs.setSeverity(SeverityEnum.ERROR);
-                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                            "Eccezione generica nella servlet recupero MM " + e1.getMessage());
-                    log.error("Eccezione nella servlet recupero MM", e1);
-                } catch (Exception e1) {
-                    rispostaWs.setSeverity(SeverityEnum.ERROR);
-                    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                            "Eccezione generica nella servlet recupero MM " + e1.getMessage());
-                    log.error("Eccezione generica nella servlet recupero MM", e1);
-                } finally {
-                    if (fileItems != null) {
-                        // elimina i file temporanei
-                        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Pulizia).setFase("").logAvanzamento();
-                        tmpIterator = fileItems.iterator();
-                        while (tmpIterator.hasNext()) {
-                            tmpFileItem = (DiskFileItem) tmpIterator.next();
-                            tmpFileItem.delete();
-                        }
-                    }
-                }
-            } else {
-                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.WS_CHECK, "La chiamata non è multipart/formdata ");
-                log.error("Errore nella servlet recupero MM: la chiamata non è multipart/formdata ");
-            }
-        }
+		    myEsito = rispostaWs.getIstanzaEsito();
+		} catch (FileUploadException e1) {
+		    rispostaWs.setSeverity(SeverityEnum.ERROR);
+		    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+			    "Eccezione generica nella servlet recupero MM " + e1.getMessage());
+		    log.error("Eccezione nella servlet recupero MM", e1);
+		} catch (Exception e1) {
+		    rispostaWs.setSeverity(SeverityEnum.ERROR);
+		    rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+			    "Eccezione generica nella servlet recupero MM " + e1.getMessage());
+		    log.error("Eccezione generica nella servlet recupero MM", e1);
+		} finally {
+		    if (fileItems != null) {
+			// elimina i file temporanei
+			tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Pulizia).setFase("")
+				.logAvanzamento();
+			tmpIterator = fileItems.iterator();
+			while (tmpIterator.hasNext()) {
+			    tmpFileItem = (DiskFileItem) tmpIterator.next();
+			    tmpFileItem.delete();
+			}
+		    }
+		}
+	    } else {
+		rispostaWs.setSeverity(SeverityEnum.ERROR);
+		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.WS_CHECK,
+			"La chiamata non è multipart/formdata ");
+		log.error(
+			"Errore nella servlet recupero MM: la chiamata non è multipart/formdata ");
+	    }
+	}
 
-        // copia il file ZIP generato nella directory di OUTPUT FTP
-        if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
-            String filename = rispostaWs.getNomeFile();
-            String outputNome = myRecuperoExt.getPathContainerZip() + File.separator + filename;
-            try {
-                Path outPath = new File(outputNome).toPath();
-                Path inPath = rispostaWs.getRifFileBinario().getFileSuDisco().toPath();
-                Files.copy(inPath, outPath, StandardCopyOption.REPLACE_EXISTING);
-            } catch (Exception e) {
-                rispostaWs.setSeverity(SeverityEnum.ERROR);
-                rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
-                        "errore nel trasferimento del file nell'area FTP " + e.getMessage());
-                log.error("errore nel trasferimento del file nell'area FTP ", e);
-            }
-        }
+	// copia il file ZIP generato nella directory di OUTPUT FTP
+	if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
+	    String filename = rispostaWs.getNomeFile();
+	    String outputNome = myRecuperoExt.getPathContainerZip() + File.separator + filename;
+	    try {
+		Path outPath = new File(outputNome).toPath();
+		Path inPath = rispostaWs.getRifFileBinario().getFileSuDisco().toPath();
+		Files.copy(inPath, outPath, StandardCopyOption.REPLACE_EXISTING);
+	    } catch (Exception e) {
+		rispostaWs.setSeverity(SeverityEnum.ERROR);
+		rispostaWs.setEsitoWsErrBundle(MessaggiWSBundle.ERR_666,
+			"errore nel trasferimento del file nell'area FTP " + e.getMessage());
+		log.error("errore nel trasferimento del file nell'area FTP ", e);
+	    }
+	}
 
-        // rispondi
-        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.InvioRisposta).setFase("").logAvanzamento();
-        response.reset();
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/xml; charset=\"utf-8\"");
+	// rispondi
+	tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.InvioRisposta).setFase("")
+		.logAvanzamento();
+	response.reset();
+	response.setStatus(HttpServletResponse.SC_OK);
+	response.setContentType("application/xml; charset=\"utf-8\"");
 
-        try (ServletOutputStream out = response.getOutputStream();
-                OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);) {
+	try (ServletOutputStream out = response.getOutputStream();
+		OutputStreamWriter tmpStreamWriter = new OutputStreamWriter(out,
+			StandardCharsets.UTF_8);) {
 
-            Marshaller marshaller = xmlContextCache.getVersRespStatoCtx_StatoConservazione().createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(myEsito, tmpStreamWriter);
-        } catch (JAXBException | IOException e) {
-            log.error("Eccezione nella servlet recupero sync", e);
-        }
+	    Marshaller marshaller = xmlContextCache.getVersRespStatoCtx_StatoConservazione()
+		    .createMarshaller();
+	    marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+	    marshaller.marshal(myEsito, tmpStreamWriter);
+	} catch (JAXBException | IOException e) {
+	    log.error("Eccezione nella servlet recupero sync", e);
+	}
 
-        // elimina il file zip, in ogni caso
-        if (rispostaWs.getRifFileBinario() != null && rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
-            FileUtils.deleteQuietly(rispostaWs.getRifFileBinario().getFileSuDisco());
-        }
+	// elimina il file zip, in ogni caso
+	if (rispostaWs.getRifFileBinario() != null
+		&& rispostaWs.getRifFileBinario().getFileSuDisco() != null) {
+	    FileUtils.deleteQuietly(rispostaWs.getRifFileBinario().getFileSuDisco());
+	}
 
-        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("").logAvanzamento();
+	tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.Fine).setFase("").logAvanzamento();
     }
 
     /**
@@ -306,6 +316,6 @@ public class RecMultiMProveConservSrvlt extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+	return "Short description";
     }// </editor-fold>
 }

@@ -1,23 +1,19 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this
+ * license Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package it.eng.parer.entity;
 
@@ -64,65 +60,65 @@ public class VrsSessioneVersKoEliminate {
     @Column(name = "ID_SESSIONE_VERS_KO_ELIMINATE")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getIdSessioneVersKoEliminata() {
-        return this.idSessioneVersKoEliminata;
+	return this.idSessioneVersKoEliminata;
     }
 
     public void setIdSessioneVersKoEliminata(Long idSessioneVersKoEliminata) {
-        this.idSessioneVersKoEliminata = idSessioneVersKoEliminata;
+	this.idSessioneVersKoEliminata = idSessioneVersKoEliminata;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     public OrgStrut getOrgStrut() {
-        return this.orgStrut;
+	return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-        this.orgStrut = orgStrut;
+	this.orgStrut = orgStrut;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-        return this.nmStrut;
+	return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-        this.nmStrut = nmStrut;
+	this.nmStrut = nmStrut;
     }
 
     @Column(name = "DS_STRUT")
     public String getDsStrut() {
-        return this.dsStrut;
+	return this.dsStrut;
     }
 
     public void setDsStrut(String dsStrut) {
-        this.dsStrut = dsStrut;
+	this.dsStrut = dsStrut;
     }
 
     @Column(name = "NI_SES_ELIMINATE")
     public BigDecimal getNiSesEliminate() {
-        return this.niSesEliminate;
+	return this.niSesEliminate;
     }
 
     public void setNiSesEliminate(BigDecimal niSesEliminate) {
-        this.niSesEliminate = niSesEliminate;
+	this.niSesEliminate = niSesEliminate;
     }
 
     @Column(name = "DT_ELAB")
     public Date getDtElab() {
-        return this.dtElab;
+	return this.dtElab;
     }
 
     public void setDtElab(Date dtElab) {
-        this.dtElab = dtElab;
+	this.dtElab = dtElab;
     }
 
     @Column(name = "DT_RIF")
     public Date getDtRif() {
-        return this.dtRif;
+	return this.dtRif;
     }
 
     public void setDtRif(Date dtRif) {
-        this.dtRif = dtRif;
+	this.dtRif = dtRif;
     }
 }

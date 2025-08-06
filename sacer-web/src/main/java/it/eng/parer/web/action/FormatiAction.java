@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.web.action;
@@ -61,968 +57,1031 @@ import org.slf4j.LoggerFactory;
 
 public class FormatiAction extends FormatiAbstractAction {
 
-    private static Logger logger = LoggerFactory.getLogger(FormatiAction.class.getName());
+    private static Logger log = LoggerFactory.getLogger(FormatiAction.class.getName());
 
     @EJB(mappedName = "java:app/Parer-ejb/FormatoFileStandardEjb")
     private FormatoFileStandardEjb formatiEjb;
 
     @Override
     public void initOnClick() throws EMFError {
-        throw new UnsupportedOperationException("Not supported yet.");
+	throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void inserisciFormatoFileStandard() {
-        getForm().getFormatoFileStandard().clear();
+	getForm().getFormatoFileStandard().clear();
 
-        initFormatoComboBox();
+	initFormatoComboBox();
 
-        getForm().getFormatoFileStandard().setEditMode();
-        getForm().getFormatoFileStandard().setStatus(Status.insert);
-        getForm().getEstensioneFileList().clear();
-        getForm().getFormatoFileStandardList().clear();
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
+	getForm().getFormatoFileStandard().setEditMode();
+	getForm().getFormatoFileStandard().setStatus(Status.insert);
+	getForm().getEstensioneFileList().clear();
+	getForm().getFormatoFileStandardList().clear();
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
     }
 
     public void initFormatoComboBox() {
-        getForm().getFormatoFileStandard().getTi_esito_contr_formato().setDecodeMap(
-                ComboGetter.getMappaSortedGenericEnum("ti_stato", VerFormatiEnums.IdoneitaFormato.values()));
-        getForm().getFormatoFileStandard().getTi_esito_contr_formato()
-                .setValue(VerFormatiEnums.IdoneitaFormato.IDONEO.name());
+	getForm().getFormatoFileStandard().getTi_esito_contr_formato().setDecodeMap(ComboGetter
+		.getMappaSortedGenericEnum("ti_stato", VerFormatiEnums.IdoneitaFormato.values()));
+	getForm().getFormatoFileStandard().getTi_esito_contr_formato()
+		.setValue(VerFormatiEnums.IdoneitaFormato.IDONEO.name());
     }
 
     @Secure(action = "Menu.Amministrazione.GestioneFormatiFileStandard")
     public void ricercaFormatoFileStandard() {
-        getUser().getMenu().reset();
-        getUser().getMenu().select("Menu.Amministrazione.GestioneFormatiFileStandard");
+	getUser().getMenu().reset();
+	getUser().getMenu().select("Menu.Amministrazione.GestioneFormatiFileStandard");
 
-        getForm().getVisFormatoFileStandard().clear();
+	getForm().getVisFormatoFileStandard().clear();
 
-        getForm().getVisFormatoFileStandard().getNm_mimetype_file().setDecodeMap(DecodeMap.Factory
-                .newInstance(formatiEjb.getMimetypeTableBean(), "nm_mimetype_file", "nm_mimetype_file"));
+	getForm().getVisFormatoFileStandard().getNm_mimetype_file()
+		.setDecodeMap(DecodeMap.Factory.newInstance(formatiEjb.getMimetypeTableBean(),
+			"nm_mimetype_file", "nm_mimetype_file"));
 
-        getForm().getFormatoFileStandardList().setTable(formatiEjb.getDecFormatoFileStandardTableBean(null));
-        getForm().getFormatoFileStandardList().getTable().first();
-        getForm().getFormatoFileStandardList().getTable()
-                .setPageSize(getForm().getFormatoFileStandardList().getTable().getPageSize() != 0
-                        ? getForm().getFormatoFileStandardList().getTable().getPageSize()
-                        : WebConstants.DEFAULT_PAGE_SIZE);
-        getForm().getFormatoFileStandardList().getTable().addSortingRule("nm_formato_file_standard", SortingRule.ASC);
-        getForm().getFormatoFileStandardList().getTable().sort();
+	getForm().getFormatoFileStandardList()
+		.setTable(formatiEjb.getDecFormatoFileStandardTableBean(null));
+	getForm().getFormatoFileStandardList().getTable().first();
+	getForm().getFormatoFileStandardList().getTable()
+		.setPageSize(getForm().getFormatoFileStandardList().getTable().getPageSize() != 0
+			? getForm().getFormatoFileStandardList().getTable().getPageSize()
+			: WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getFormatoFileStandardList().getTable().addSortingRule("nm_formato_file_standard",
+		SortingRule.ASC);
+	getForm().getFormatoFileStandardList().getTable().sort();
 
-        getForm().getFormatoFileStandardList().setHideInsertButton(false);
-        getForm().getFormatoFileStandardList().setHideUpdateButton(false);
-        getForm().getFormatoFileStandardList().setHideDeleteButton(false);
+	getForm().getFormatoFileStandardList().setHideInsertButton(false);
+	getForm().getFormatoFileStandardList().setHideUpdateButton(false);
+	getForm().getFormatoFileStandardList().setHideDeleteButton(false);
 
-        getForm().getVisFormatoFileStandard().setEditMode();
-        getForm().getVisFormatoFileStandard().getVisFormatoButton().setEditMode();
-        getForm().getVisFormatoFileStandard().getExtractCsvButton().setDisableHourGlass(true);
+	getForm().getVisFormatoFileStandard().setEditMode();
+	getForm().getVisFormatoFileStandard().getVisFormatoButton().setEditMode();
+	getForm().getVisFormatoFileStandard().getExtractCsvButton().setDisableHourGlass(true);
 
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
     }
 
     @Secure(action = "Menu.AmministrazioneStrutture.GestioneRegistroFormati")
     public void visualizzaRegistroFormati() {
-        getUser().getMenu().reset();
-        getUser().getMenu().select("Menu.AmministrazioneStrutture.GestioneRegistroFormati");
+	getUser().getMenu().reset();
+	getUser().getMenu().select("Menu.AmministrazioneStrutture.GestioneRegistroFormati");
 
-        getForm().getVisFormatoFileStandard().clear();
+	getForm().getVisFormatoFileStandard().clear();
 
-        getForm().getFormatoFileStandardList().setTable(formatiEjb.getDecFormatoFileStandardTableBean(null));
-        getForm().getFormatoFileStandardList().getTable().first();
-        getForm().getFormatoFileStandardList().getTable()
-                .setPageSize(getForm().getFormatoFileStandardList().getTable().getPageSize() != 0
-                        ? getForm().getFormatoFileStandardList().getTable().getPageSize()
-                        : WebConstants.DEFAULT_PAGE_SIZE);
-        getForm().getFormatoFileStandardList().getTable().addSortingRule("nm_formato_file_standard", SortingRule.ASC);
-        getForm().getFormatoFileStandardList().getTable().sort();
+	getForm().getFormatoFileStandardList()
+		.setTable(formatiEjb.getDecFormatoFileStandardTableBean(null));
+	getForm().getFormatoFileStandardList().getTable().first();
+	getForm().getFormatoFileStandardList().getTable()
+		.setPageSize(getForm().getFormatoFileStandardList().getTable().getPageSize() != 0
+			? getForm().getFormatoFileStandardList().getTable().getPageSize()
+			: WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getFormatoFileStandardList().getTable().addSortingRule("nm_formato_file_standard",
+		SortingRule.ASC);
+	getForm().getFormatoFileStandardList().getTable().sort();
 
-        getForm().getFormatoFileStandardList().setHideInsertButton(true);
-        getForm().getFormatoFileStandardList().setHideUpdateButton(true);
-        getForm().getFormatoFileStandardList().setHideDeleteButton(true);
+	getForm().getFormatoFileStandardList().setHideInsertButton(true);
+	getForm().getFormatoFileStandardList().setHideUpdateButton(true);
+	getForm().getFormatoFileStandardList().setHideDeleteButton(true);
 
-        getForm().getVisFormatoFileStandard().setEditMode();
-        getForm().getVisFormatoFileStandard().getVisFormatoButton().setEditMode();
+	getForm().getVisFormatoFileStandard().setEditMode();
+	getForm().getVisFormatoFileStandard().getVisFormatoButton().setEditMode();
 
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
     }
 
     @Override
     public void visFormatoButton() throws EMFError {
 
-        VisFormatoFileStandard formatoFile;
-        DecFormatoFileStandardRowBean fRowBean = new DecFormatoFileStandardRowBean();
-        DecFormatoFileStandardTableBean formatoTableBean;
+	VisFormatoFileStandard formatoFile;
+	DecFormatoFileStandardRowBean fRowBean = new DecFormatoFileStandardRowBean();
+	DecFormatoFileStandardTableBean formatoTableBean;
 
-        formatoFile = getForm().getVisFormatoFileStandard();
+	formatoFile = getForm().getVisFormatoFileStandard();
 
-        formatoFile.post(getRequest());
-        formatoFile.copyToBean(fRowBean);
+	formatoFile.post(getRequest());
+	formatoFile.copyToBean(fRowBean);
 
-        formatoTableBean = formatiEjb.getDecFormatoFileStandardTableBean(fRowBean);
+	formatoTableBean = formatiEjb.getDecFormatoFileStandardTableBean(fRowBean);
 
-        getForm().getFormatoFileStandardList().setTable(formatoTableBean);
-        getForm().getFormatoFileStandardList().getTable().first();
-        getForm().getFormatoFileStandardList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-        getForm().getFormatoFileStandardList().getTable().addSortingRule("nm_formato_file_standard", SortingRule.ASC);
-        getForm().getFormatoFileStandardList().getTable().sort();
+	getForm().getFormatoFileStandardList().setTable(formatoTableBean);
+	getForm().getFormatoFileStandardList().getTable().first();
+	getForm().getFormatoFileStandardList().getTable()
+		.setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getFormatoFileStandardList().getTable().addSortingRule("nm_formato_file_standard",
+		SortingRule.ASC);
+	getForm().getFormatoFileStandardList().getTable().sort();
 
-        getForm().getVisFormatoFileStandard().getExtractCsvButton().setDisableHourGlass(true);
+	getForm().getVisFormatoFileStandard().getExtractCsvButton().setDisableHourGlass(true);
 
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
 
     }
 
     @Override
     public void extractCsvButton() throws EMFError {
-        try {
-            forwardToPublisher(getLastPublisher());
-            ServletOutputStream outStream = getServletOutputStream();
-            try {
-                createExcelFile(outStream);
-            } catch (IllegalStateException e) {
-                logger.info(e.getMessage());
-            } finally {
-                if (null != outStream)
-                    outStream.close();
-            }
-        } catch (IOException ex) {
-            logger.error("Errore nella creazione del file excel: ", ex);
-        }
+	try {
+	    forwardToPublisher(getLastPublisher());
+	    ServletOutputStream outStream = getServletOutputStream();
+	    try {
+		createExcelFile(outStream);
+	    } catch (IllegalStateException e) {
+		log.info(e.getMessage());
+	    } finally {
+		if (null != outStream)
+		    outStream.close();
+	    }
+	} catch (IOException ex) {
+	    log.error("Errore nella creazione del file excel: ", ex);
+	}
     }
 
     public void createExcelFile(ServletOutputStream outStream) throws EMFError, IOException {
-        List<?> list = (List<?>) getForm().getComponent(getForm().getFormatoFileStandardList().getName());
-        final DecFormatoFileStandardTableBean tableBean = formatiEjb.getDecFormatoFileStandardExcel();
+	List<?> list = (List<?>) getForm()
+		.getComponent(getForm().getFormatoFileStandardList().getName());
+	final DecFormatoFileStandardTableBean tableBean = formatiEjb
+		.getDecFormatoFileStandardExcel();
 
-        getForm().getFormatoFileStandardListExcel().setTable(tableBean);
+	getForm().getFormatoFileStandardListExcel().setTable(tableBean);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
-        String fileName = StringUtils.isNotBlank(list.getExcelFileName())
-                ? StringEscapeUtils.escapeJava(list.getExcelFileName())
-                : list.getName() + "_" + formatter.format(Calendar.getInstance().getTime());
-        getResponse().setContentType("application/xls");
-        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + fileName + ".xls");
-        getForm().getFormatoFileStandardListExcel().writeExcel(outStream);
-        freeze();
-        postLoad();
-        getResponse().getOutputStream().flush();
-        getResponse().getOutputStream().close();
+	SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+	String fileName = StringUtils.isNotBlank(list.getExcelFileName())
+		? StringEscapeUtils.escapeJava(list.getExcelFileName())
+		: list.getName() + "_" + formatter.format(Calendar.getInstance().getTime());
+	getResponse().setContentType("application/xls");
+	getResponse().setHeader("Content-Disposition",
+		"attachment; filename=\"" + fileName + ".xls");
+	getForm().getFormatoFileStandardListExcel().writeExcel(outStream);
+	freeze();
+	postLoad();
+	getResponse().getOutputStream().flush();
+	getResponse().getOutputStream().close();
     }
 
     @Override
     public void tabDecEstensioneFileOnClick() throws EMFError {
 
-        getForm().getDecFormatoFileStandardTab()
-                .setCurrentTab(getForm().getDecFormatoFileStandardTab().getDecEstensioneFile());
+	getForm().getDecFormatoFileStandardTab()
+		.setCurrentTab(getForm().getDecFormatoFileStandardTab().getDecEstensioneFile());
 
-        DecEstensioneFileTableBean estensioneFileTable;
-        DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
+	DecEstensioneFileTableBean estensioneFileTable;
+	DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
 
-        estensioneFileRowBean.setIdFormatoFileStandard(
-                ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList().getTable().getCurrentRow())
-                        .getIdFormatoFileStandard());
+	estensioneFileRowBean.setIdFormatoFileStandard(
+		((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList().getTable()
+			.getCurrentRow()).getIdFormatoFileStandard());
 
-        estensioneFileTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
+	estensioneFileTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
 
-        getForm().getEstensioneFileList().setTable(estensioneFileTable);
-        getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-        getForm().getEstensioneFileList().getTable().first();
+	getForm().getEstensioneFileList().setTable(estensioneFileTable);
+	getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getEstensioneFileList().getTable().first();
 
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
     }
 
     @Override
     public void tabDecFormatoFileValutazioneOnClick() throws EMFError {
 
-        getForm().getDecFormatoFileStandardTab()
-                .setCurrentTab(getForm().getDecFormatoFileStandardTab().getDecFormatoFileValutazione());
+	getForm().getDecFormatoFileStandardTab().setCurrentTab(
+		getForm().getDecFormatoFileStandardTab().getDecFormatoFileValutazione());
 
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
     }
 
     @Override
     public void tabDecFormatoFileBustaOnClick() throws EMFError {
 
-        getForm().getDecFormatoFileStandardTab()
-                .setCurrentTab(getForm().getDecFormatoFileStandardTab().getDecFormatoFileBusta());
+	getForm().getDecFormatoFileStandardTab()
+		.setCurrentTab(getForm().getDecFormatoFileStandardTab().getDecFormatoFileBusta());
 
-        DecFormatoFileBustaTableBean formatoFileBustaTableBean;
-        DecFormatoFileBustaRowBean formatoFileBustaRowBean = new DecFormatoFileBustaRowBean();
+	DecFormatoFileBustaTableBean formatoFileBustaTableBean;
+	DecFormatoFileBustaRowBean formatoFileBustaRowBean = new DecFormatoFileBustaRowBean();
 
-        BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                .getTable().getCurrentRow()).getIdFormatoFileStandard();
+	BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm()
+		.getFormatoFileStandardList().getTable().getCurrentRow())
+		.getIdFormatoFileStandard();
 
-        formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+	formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
 
-        formatoFileBustaTableBean = formatiEjb.getDecFormatoFileBustaTableBean(idFormatoFileStandard);
+	formatoFileBustaTableBean = formatiEjb
+		.getDecFormatoFileBustaTableBean(idFormatoFileStandard);
 
-        getForm().getFormatoFileBustaList().setTable(formatoFileBustaTableBean);
-        getForm().getFormatoFileBustaList().getTable().first();
-        getForm().getFormatoFileBustaList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getFormatoFileBustaList().setTable(formatoFileBustaTableBean);
+	getForm().getFormatoFileBustaList().getTable().first();
+	getForm().getFormatoFileBustaList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
 
-        getForm().getFormatoFileBustaList()
-                .setHideInsertButton(getForm().getFormatoFileStandardList().isHideInsertButton());
-        getForm().getFormatoFileBustaList()
-                .setHideUpdateButton(getForm().getFormatoFileStandardList().isHideUpdateButton());
-        getForm().getFormatoFileBustaList()
-                .setHideDeleteButton(getForm().getFormatoFileStandardList().isHideDeleteButton());
+	getForm().getFormatoFileBustaList()
+		.setHideInsertButton(getForm().getFormatoFileStandardList().isHideInsertButton());
+	getForm().getFormatoFileBustaList()
+		.setHideUpdateButton(getForm().getFormatoFileStandardList().isHideUpdateButton());
+	getForm().getFormatoFileBustaList()
+		.setHideDeleteButton(getForm().getFormatoFileStandardList().isHideDeleteButton());
 
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
     }
 
     @Override
     public void loadDettaglio() throws EMFError {
 
-        String lista = getTableName();
+	String lista = getTableName();
 
-        if (!getNavigationEvent().equals(NE_DETTAGLIO_INSERT)) {
-            if (lista.equals(getForm().getFormatoFileStandardList().getName())
-                    && (getForm().getFormatoFileStandardList().getTable() != null)) {
+	if (!getNavigationEvent().equals(NE_DETTAGLIO_INSERT)) {
+	    if (lista.equals(getForm().getFormatoFileStandardList().getName())
+		    && (getForm().getFormatoFileStandardList().getTable() != null)) {
 
-                getForm().getFormatoFileStandard().setViewMode();
+		getForm().getFormatoFileStandard().setViewMode();
 
-                getForm().getFormatoFileStandard().setStatus(Status.view);
-                getForm().getFormatoFileStandardList().setStatus(Status.view);
+		getForm().getFormatoFileStandard().setStatus(Status.view);
+		getForm().getFormatoFileStandardList().setStatus(Status.view);
 
-                getForm().getDecFormatoFileStandardTab()
-                        .setCurrentTab(getForm().getDecFormatoFileStandardTab().getDecFormatoFileValutazione());
+		getForm().getDecFormatoFileStandardTab().setCurrentTab(
+			getForm().getDecFormatoFileStandardTab().getDecFormatoFileValutazione());
 
-                BigDecimal idFormato = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                        .getTable().getCurrentRow()).getIdFormatoFileStandard();
+		BigDecimal idFormato = ((DecFormatoFileStandardRowBean) getForm()
+			.getFormatoFileStandardList().getTable().getCurrentRow())
+			.getIdFormatoFileStandard();
 
-                initFormatoComboBox();
-                DecFormatoFileStandardRowBean formatoRowBean = formatiEjb.getDecFormatoFileStandardRowBean(idFormato);
-                getForm().getFormatoFileStandard().copyFromBean(formatoRowBean);
+		initFormatoComboBox();
+		DecFormatoFileStandardRowBean formatoRowBean = formatiEjb
+			.getDecFormatoFileStandardRowBean(idFormato);
+		getForm().getFormatoFileStandard().copyFromBean(formatoRowBean);
 
-                DecEstensioneFileTableBean estensioneFileTable;
-                DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
-                estensioneFileRowBean.setIdFormatoFileStandard(idFormato);
+		DecEstensioneFileTableBean estensioneFileTable;
+		DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
+		estensioneFileRowBean.setIdFormatoFileStandard(idFormato);
 
-                estensioneFileTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
-                getForm().getEstensioneFileList().setTable(estensioneFileTable);
-                getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-                getForm().getEstensioneFileList().getTable().first();
+		estensioneFileTable = formatiEjb
+			.getDecEstensioneFileTableBean(estensioneFileRowBean);
+		getForm().getEstensioneFileList().setTable(estensioneFileTable);
+		getForm().getEstensioneFileList().getTable()
+			.setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+		getForm().getEstensioneFileList().getTable().first();
 
-                getForm().getEstensioneFileList()
-                        .setHideInsertButton(getForm().getFormatoFileStandardList().isHideInsertButton());
-                getForm().getEstensioneFileList()
-                        .setHideUpdateButton(getForm().getFormatoFileStandardList().isHideUpdateButton());
-                getForm().getEstensioneFileList()
-                        .setHideDeleteButton(getForm().getFormatoFileStandardList().isHideDeleteButton());
-                getForm().getFormatoFileParametriValutazioneList()
-                        .setTable(formatiEjb.getValutazioneFormatiTableBean(idFormato));
-                getForm().getFormatoFileParametriValutazioneList()
-                        .setHideUpdateButton(getForm().getFormatoFileStandardList().isHideUpdateButton());
+		getForm().getEstensioneFileList().setHideInsertButton(
+			getForm().getFormatoFileStandardList().isHideInsertButton());
+		getForm().getEstensioneFileList().setHideUpdateButton(
+			getForm().getFormatoFileStandardList().isHideUpdateButton());
+		getForm().getEstensioneFileList().setHideDeleteButton(
+			getForm().getFormatoFileStandardList().isHideDeleteButton());
+		getForm().getFormatoFileParametriValutazioneList()
+			.setTable(formatiEjb.getValutazioneFormatiTableBean(idFormato));
+		getForm().getFormatoFileParametriValutazioneList().setHideUpdateButton(
+			getForm().getFormatoFileStandardList().isHideUpdateButton());
 
-            } else if (lista.equals(getForm().getEstensioneFileList().getName())
-                    && (getForm().getEstensioneFileList().getTable() != null)
-                    && (getForm().getEstensioneFileList().getTable().size() > 0)) {
+	    } else if (lista.equals(getForm().getEstensioneFileList().getName())
+		    && (getForm().getEstensioneFileList().getTable() != null)
+		    && (getForm().getEstensioneFileList().getTable().size() > 0)) {
 
-                getForm().getEstensioneFile().setStatus(Status.view);
-                getForm().getEstensioneFileList().setStatus(Status.view);
+		getForm().getEstensioneFile().setStatus(Status.view);
+		getForm().getEstensioneFileList().setStatus(Status.view);
 
-                BigDecimal idEstensioneFile = ((DecEstensioneFileRowBean) getForm().getEstensioneFileList().getTable()
-                        .getCurrentRow()).getIdEstensioneFile();
-                BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm()
-                        .getFormatoFileStandardList().getTable().getCurrentRow()).getIdFormatoFileStandard();
+		BigDecimal idEstensioneFile = ((DecEstensioneFileRowBean) getForm()
+			.getEstensioneFileList().getTable().getCurrentRow()).getIdEstensioneFile();
+		BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm()
+			.getFormatoFileStandardList().getTable().getCurrentRow())
+			.getIdFormatoFileStandard();
 
-                DecEstensioneFileRowBean estensioneFileRowBean = formatiEjb
-                        .getDecEstensioneFileRowBean(idEstensioneFile, idFormatoFileStandard);
-                getForm().getEstensioneFile().copyFromBean(estensioneFileRowBean);
+		DecEstensioneFileRowBean estensioneFileRowBean = formatiEjb
+			.getDecEstensioneFileRowBean(idEstensioneFile, idFormatoFileStandard);
+		getForm().getEstensioneFile().copyFromBean(estensioneFileRowBean);
 
-            } else if (lista.equals(getForm().getFormatoFileBustaList().getName())
-                    && (getForm().getFormatoFileBustaList().getTable() != null)
-                    && (getForm().getFormatoFileBustaList().getTable().size() > 0)) {
+	    } else if (lista.equals(getForm().getFormatoFileBustaList().getName())
+		    && (getForm().getFormatoFileBustaList().getTable() != null)
+		    && (getForm().getFormatoFileBustaList().getTable().size() > 0)) {
 
-                getForm().getFormatoFileBusta().setStatus(Status.view);
-                getForm().getFormatoFileBustaList().setStatus(Status.view);
+		getForm().getFormatoFileBusta().setStatus(Status.view);
+		getForm().getFormatoFileBustaList().setStatus(Status.view);
 
-                setFormatoFileBustaComboBox();
+		setFormatoFileBustaComboBox();
 
-                BigDecimal idFormatoFileBusta = ((DecFormatoFileBustaRowBean) getForm().getFormatoFileBustaList()
-                        .getTable().getCurrentRow()).getIdFormatoFileBusta();
+		BigDecimal idFormatoFileBusta = ((DecFormatoFileBustaRowBean) getForm()
+			.getFormatoFileBustaList().getTable().getCurrentRow())
+			.getIdFormatoFileBusta();
 
-                DecFormatoFileBustaRowBean formatoFileBustaRowBean = formatiEjb
-                        .getDecFormatoFileBustaRowBean(idFormatoFileBusta);
-                getForm().getFormatoFileBusta().copyFromBean(formatoFileBustaRowBean);
+		DecFormatoFileBustaRowBean formatoFileBustaRowBean = formatiEjb
+			.getDecFormatoFileBustaRowBean(idFormatoFileBusta);
+		getForm().getFormatoFileBusta().copyFromBean(formatoFileBustaRowBean);
 
-            } else if (lista.equals(getForm().getFormatoFileParametriValutazioneList().getName())
-                    && (getForm().getFormatoFileParametriValutazioneList().getTable() != null)
-                    && (getForm().getFormatoFileParametriValutazioneList().getTable().size() > 0)) {
+	    } else if (lista.equals(getForm().getFormatoFileParametriValutazioneList().getName())
+		    && (getForm().getFormatoFileParametriValutazioneList().getTable() != null)
+		    && (getForm().getFormatoFileParametriValutazioneList().getTable().size() > 0)) {
 
-                getForm().getParametroValutazione().setStatus(Status.view);
-                getForm().getFormatoFileParametriValutazioneList().setStatus(Status.view);
+		getForm().getParametroValutazione().setStatus(Status.view);
+		getForm().getFormatoFileParametriValutazioneList().setStatus(Status.view);
 
-                final BaseRow currentRow = (BaseRow) getForm().getFormatoFileParametriValutazioneList().getTable()
-                        .getCurrentRow();
-                initParametroValutazioneComboBox(
-                        Long.class.cast(currentRow.getObject(formatiEjb.VALUTAZIONE_ID_GRP_PROP)));
+		final BaseRow currentRow = (BaseRow) getForm()
+			.getFormatoFileParametriValutazioneList().getTable().getCurrentRow();
+		initParametroValutazioneComboBox(
+			Long.class.cast(currentRow.getObject(formatiEjb.VALUTAZIONE_ID_GRP_PROP)));
 
-                BaseRow parametroValutazioneRowBean = formatiEjb.getParametroValutazioneRowBean(currentRow);
+		BaseRow parametroValutazioneRowBean = formatiEjb
+			.getParametroValutazioneRowBean(currentRow);
 
-                getForm().getParametroValutazione().copyFromBean(parametroValutazioneRowBean);
-                getForm().getParametroValutazione().getId_proprieta()
-                        .setValue("" + (Long) currentRow.getObject(FormatiForm.ParametroValutazione.id_proprieta));
-                getForm().getParametroValutazione().getNt_punteggio_valutazione().setEditMode();
-            }
-        }
+		getForm().getParametroValutazione().copyFromBean(parametroValutazioneRowBean);
+		getForm().getParametroValutazione().getId_proprieta()
+			.setValue("" + (Long) currentRow
+				.getObject(FormatiForm.ParametroValutazione.id_proprieta));
+		getForm().getParametroValutazione().getNt_punteggio_valutazione().setEditMode();
+	    }
+	}
     }
 
     @Override
     public void undoDettaglio() throws EMFError {
-        getForm().getFormatoFileStandard().setViewMode();
-        getForm().getFormatoFileStandardList().setStatus(Status.view);
-        goBack();
+	getForm().getFormatoFileStandard().setViewMode();
+	getForm().getFormatoFileStandardList().setStatus(Status.view);
+	goBack();
     }
 
     @Override
     public void insertDettaglio() throws EMFError {
-        String lista = getRequest().getParameter("table");
+	String lista = getRequest().getParameter("table");
 
-        if (lista.equals(getForm().getFormatoFileStandardList().getName())) {
-            getForm().getEstensioneFileList().setTable(new DecEstensioneFileTableBean());
-            getForm().getFormatoFileBustaList().setTable(new DecFormatoFileBustaTableBean());
-            initFormatoComboBox();
+	if (lista.equals(getForm().getFormatoFileStandardList().getName())) {
+	    getForm().getEstensioneFileList().setTable(new DecEstensioneFileTableBean());
+	    getForm().getFormatoFileBustaList().setTable(new DecFormatoFileBustaTableBean());
+	    initFormatoComboBox();
 
-            getForm().getFormatoFileStandard().clear();
-            getForm().getFormatoFileStandard().setEditMode();
-            getForm().getFormatoFileStandard().setStatus(Status.insert);
-            getForm().getFormatoFileStandardList().setStatus(Status.insert);
+	    getForm().getFormatoFileStandard().clear();
+	    getForm().getFormatoFileStandard().setEditMode();
+	    getForm().getFormatoFileStandard().setStatus(Status.insert);
+	    getForm().getFormatoFileStandardList().setStatus(Status.insert);
 
-        } else if (lista.equals(getForm().getFormatoFileBustaList().getName())) {
-            //
-            setFormatoFileBustaComboBox();
-            getForm().getFormatoFileBusta().getTi_formato_firma_marca().setEditMode();
-            getForm().getFormatoFileBusta().getTi_formato_firma_marca().clear();
-            getForm().getFormatoFileBusta().setStatus(Status.insert);
-            getForm().getFormatoFileBustaList().setStatus(Status.insert);
+	} else if (lista.equals(getForm().getFormatoFileBustaList().getName())) {
+	    //
+	    setFormatoFileBustaComboBox();
+	    getForm().getFormatoFileBusta().getTi_formato_firma_marca().setEditMode();
+	    getForm().getFormatoFileBusta().getTi_formato_firma_marca().clear();
+	    getForm().getFormatoFileBusta().setStatus(Status.insert);
+	    getForm().getFormatoFileBustaList().setStatus(Status.insert);
 
-        } else if (lista.equals(getForm().getEstensioneFileList().getName())) {
+	} else if (lista.equals(getForm().getEstensioneFileList().getName())) {
 
-            getForm().getEstensioneFile().getCd_estensione_file().setEditMode();
-            getForm().getEstensioneFile().getCd_estensione_file().clear();
-            getForm().getEstensioneFile().getId_estensione_file().clear();
-            getForm().getEstensioneFile().setStatus(Status.insert);
-            getForm().getEstensioneFileList().setStatus(Status.insert);
+	    getForm().getEstensioneFile().getCd_estensione_file().setEditMode();
+	    getForm().getEstensioneFile().getCd_estensione_file().clear();
+	    getForm().getEstensioneFile().getId_estensione_file().clear();
+	    getForm().getEstensioneFile().setStatus(Status.insert);
+	    getForm().getEstensioneFileList().setStatus(Status.insert);
 
-        }
+	}
     }
 
     @Override
     public void saveDettaglio() throws EMFError {
 
-        String publisher = getLastPublisher();
+	String publisher = getLastPublisher();
 
-        if (publisher.equals(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL)) {
-            salvaFormatoFileStandard();
-        } else if (publisher.equals(Application.Publisher.ESTENSIONE_FILE_DETAIL)) {
-            salvaEstensioneFile();
-        } else if (publisher.equals(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL)) {
-            salvaFormatoFileBusta();
-        } else if (publisher.equals(Application.Publisher.VALUTAZIONE_FILE_DETAIL)) {
-            salvaParametroValutazione();
-        }
+	if (publisher.equals(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL)) {
+	    salvaFormatoFileStandard();
+	} else if (publisher.equals(Application.Publisher.ESTENSIONE_FILE_DETAIL)) {
+	    salvaEstensioneFile();
+	} else if (publisher.equals(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL)) {
+	    salvaFormatoFileBusta();
+	} else if (publisher.equals(Application.Publisher.VALUTAZIONE_FILE_DETAIL)) {
+	    salvaParametroValutazione();
+	}
     }
 
     @Override
     public void dettaglioOnClick() throws EMFError {
 
-        String lista = getRequest().getParameter("table");
-        String action = getRequest().getParameter("navigationEvent");
+	String lista = getRequest().getParameter("table");
+	String action = getRequest().getParameter("navigationEvent");
 
-        if (action != null && !action.equals(NE_DETTAGLIO_DELETE)) {
+	if (action != null && !action.equals(NE_DETTAGLIO_DELETE)) {
 
-            if (lista.equals(getForm().getEstensioneFileList().getName())) {
-                forwardToPublisher(Application.Publisher.ESTENSIONE_FILE_DETAIL);
-            } else if (lista.equals(getForm().getFormatoFileBustaList().getName())) {
-                forwardToPublisher(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL);
-            } else if (getForm().getFormatoFileStandardList().getName().equals(lista)) {
-                forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
-            } else if (getForm().getFormatoFileParametriValutazioneList().getName().equals(lista)) {
-                forwardToPublisher(Application.Publisher.VALUTAZIONE_FILE_DETAIL);
-            }
-        }
+	    if (lista.equals(getForm().getEstensioneFileList().getName())) {
+		forwardToPublisher(Application.Publisher.ESTENSIONE_FILE_DETAIL);
+	    } else if (lista.equals(getForm().getFormatoFileBustaList().getName())) {
+		forwardToPublisher(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL);
+	    } else if (getForm().getFormatoFileStandardList().getName().equals(lista)) {
+		forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
+	    } else if (getForm().getFormatoFileParametriValutazioneList().getName().equals(lista)) {
+		forwardToPublisher(Application.Publisher.VALUTAZIONE_FILE_DETAIL);
+	    }
+	}
 
     }
 
     @Override
     public void elencoOnClick() throws EMFError {
-        goBack();
+	goBack();
     }
 
     @Override
     protected String getDefaultPublsherName() {
-        return Application.Publisher.FORMATO_FILE_STANDARD_RICERCA;
+	return Application.Publisher.FORMATO_FILE_STANDARD_RICERCA;
     }
 
     @Override
     public void reloadAfterGoBack(String publisherName) {
 
-        if (getLastPublisher().equals(Application.Publisher.ESTENSIONE_FILE_DETAIL)) {
+	if (getLastPublisher().equals(Application.Publisher.ESTENSIONE_FILE_DETAIL)) {
 
-            DecEstensioneFileTableBean estensioneFileTableBean = new DecEstensioneFileTableBean();
-            DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
+	    DecEstensioneFileTableBean estensioneFileTableBean = new DecEstensioneFileTableBean();
+	    DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
 
-            estensioneFileRowBean.setIdFormatoFileStandard(
-                    ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList().getTable().getCurrentRow())
-                            .getIdFormatoFileStandard());
+	    estensioneFileRowBean.setIdFormatoFileStandard(
+		    ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
+			    .getTable().getCurrentRow()).getIdFormatoFileStandard());
 
-            try {
-                estensioneFileTableBean = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
-            } catch (Exception ex) {
-                logger.error("Eccezione", ex);
-                getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
-            }
+	    try {
+		estensioneFileTableBean = formatiEjb
+			.getDecEstensioneFileTableBean(estensioneFileRowBean);
+	    } catch (Exception ex) {
+		log.error("Eccezione", ex);
+		getMessageBox().addFatal(
+			"Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
+	    }
 
-            getForm().getEstensioneFileList().setTable(estensioneFileTableBean);
-            getForm().getEstensioneFileList().getTable()
-                    .setPageSize(getForm().getEstensioneFileList().getTable().getPageSize() != 0
-                            ? getForm().getEstensioneFileList().getTable().getPageSize()
-                            : WebConstants.DEFAULT_PAGE_SIZE);
-            getForm().getEstensioneFileList().setStatus(Status.view);
+	    getForm().getEstensioneFileList().setTable(estensioneFileTableBean);
+	    getForm().getEstensioneFileList().getTable()
+		    .setPageSize(getForm().getEstensioneFileList().getTable().getPageSize() != 0
+			    ? getForm().getEstensioneFileList().getTable().getPageSize()
+			    : WebConstants.DEFAULT_PAGE_SIZE);
+	    getForm().getEstensioneFileList().setStatus(Status.view);
 
-        } else if (getLastPublisher().equals(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL)) {
+	} else if (getLastPublisher().equals(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL)) {
 
-            DecFormatoFileBustaTableBean formatoFileBustaTableBean = new DecFormatoFileBustaTableBean();
-            DecFormatoFileBustaRowBean formatoFileBustaRowBean = new DecFormatoFileBustaRowBean();
+	    DecFormatoFileBustaTableBean formatoFileBustaTableBean = new DecFormatoFileBustaTableBean();
+	    DecFormatoFileBustaRowBean formatoFileBustaRowBean = new DecFormatoFileBustaRowBean();
 
-            BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                    .getTable().getCurrentRow()).getIdFormatoFileStandard();
+	    BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm()
+		    .getFormatoFileStandardList().getTable().getCurrentRow())
+		    .getIdFormatoFileStandard();
 
-            formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+	    formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
 
-            try {
-                formatoFileBustaTableBean = formatiEjb.getDecFormatoFileBustaTableBean(idFormatoFileStandard);
-            } catch (Exception ex) {
-                logger.error("Eccezione", ex);
-                getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
-            }
+	    try {
+		formatoFileBustaTableBean = formatiEjb
+			.getDecFormatoFileBustaTableBean(idFormatoFileStandard);
+	    } catch (Exception ex) {
+		log.error("Eccezione", ex);
+		getMessageBox().addFatal(
+			"Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
+	    }
 
-            getForm().getFormatoFileBustaList().setTable(formatoFileBustaTableBean);
-            getForm().getFormatoFileBustaList().getTable()
-                    .setPageSize(getForm().getFormatoFileBustaList().getTable().getPageSize() != 0
-                            ? getForm().getFormatoFileBustaList().getTable().getPageSize()
-                            : WebConstants.DEFAULT_PAGE_SIZE);
-            getForm().getFormatoFileBustaList().setStatus(Status.view);
+	    getForm().getFormatoFileBustaList().setTable(formatoFileBustaTableBean);
+	    getForm().getFormatoFileBustaList().getTable()
+		    .setPageSize(getForm().getFormatoFileBustaList().getTable().getPageSize() != 0
+			    ? getForm().getFormatoFileBustaList().getTable().getPageSize()
+			    : WebConstants.DEFAULT_PAGE_SIZE);
+	    getForm().getFormatoFileBustaList().setStatus(Status.view);
 
-        } else if (getLastPublisher().equals(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL)) {
-            int paginaCorrente = getForm().getFormatoFileStandardList().getTable().getCurrentPageIndex();
-            int inizio = getForm().getFormatoFileStandardList().getTable().getFirstRowPageIndex();
-            int pageSize = getForm().getFormatoFileStandardList().getTable().getPageSize();
-            getForm().getFormatoFileStandardList().setTable(formatiEjb.getDecFormatoFileStandardTableBean(null));
-            getForm().getFormatoFileStandardList().getTable().addSortingRule("nm_formato_file_standard",
-                    SortingRule.ASC);
-            getForm().getFormatoFileStandardList().getTable().sort();
-            getForm().getFormatoFileStandardList().getTable().setPageSize(pageSize);
-            getForm().getFormatoFileStandardList().getTable().first();
-            try {
-                // Rieseguo la query se necessario
-                this.lazyLoadGoPage(getForm().getFormatoFileStandardList(), paginaCorrente);
-            } catch (EMFError ex) {
-                logger.error("Eccezione", ex);
-                getMessageBox().addFatal("Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
-            }
-            // Ritorno alla pagina
-            getForm().getFormatoFileStandardList().getTable().setCurrentRowIndex(inizio);
-        }
+	} else if (getLastPublisher().equals(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL)) {
+	    int paginaCorrente = getForm().getFormatoFileStandardList().getTable()
+		    .getCurrentPageIndex();
+	    int inizio = getForm().getFormatoFileStandardList().getTable().getFirstRowPageIndex();
+	    int pageSize = getForm().getFormatoFileStandardList().getTable().getPageSize();
+	    getForm().getFormatoFileStandardList()
+		    .setTable(formatiEjb.getDecFormatoFileStandardTableBean(null));
+	    getForm().getFormatoFileStandardList().getTable()
+		    .addSortingRule("nm_formato_file_standard", SortingRule.ASC);
+	    getForm().getFormatoFileStandardList().getTable().sort();
+	    getForm().getFormatoFileStandardList().getTable().setPageSize(pageSize);
+	    getForm().getFormatoFileStandardList().getTable().first();
+	    try {
+		// Rieseguo la query se necessario
+		this.lazyLoadGoPage(getForm().getFormatoFileStandardList(), paginaCorrente);
+	    } catch (EMFError ex) {
+		log.error("Eccezione", ex);
+		getMessageBox().addFatal(
+			"Impossibile completare l'operazione, contattare l'assistenza tecnica", ex);
+	    }
+	    // Ritorno alla pagina
+	    getForm().getFormatoFileStandardList().getTable().setCurrentRowIndex(inizio);
+	}
     }
 
     @Override
     public String getControllerName() {
-        return Application.Actions.FORMATI;
+	return Application.Actions.FORMATI;
     }
 
     private void setFormatoFileBustaComboBox() {
-        BaseTable formatoFileBustaTB = formatiEjb.getFormatoFileBustaTableBean();
-        getForm().getFormatoFileBusta().getTi_formato_firma_marca().setDecodeMap(
-                DecodeMap.Factory.newInstance(formatoFileBustaTB, "ti_formato_firma_marca", "ti_formato_firma_marca"));
-        getForm().getFormatoFileBusta().getDs_formato_firma_marca().clear();
+	BaseTable formatoFileBustaTB = formatiEjb.getFormatoFileBustaTableBean();
+	getForm().getFormatoFileBusta().getTi_formato_firma_marca()
+		.setDecodeMap(DecodeMap.Factory.newInstance(formatoFileBustaTB,
+			"ti_formato_firma_marca", "ti_formato_firma_marca"));
+	getForm().getFormatoFileBusta().getDs_formato_firma_marca().clear();
     }
 
     private void initParametroValutazioneComboBox(Long idGruppoProprieta) {
-        BaseTable proprietaTable = formatiEjb.getProprietaPerGruppo(idGruppoProprieta);
-        DecodeMap map = new DecodeMap();
-        map.populatedMap(proprietaTable, FormatiForm.ParametroValutazione.id_proprieta,
-                FormatoFileStandardEjb.VALUTAZIONE_NM_PROPRIETA);
-        getForm().getParametroValutazione().getId_proprieta().setDecodeMap(map);
+	BaseTable proprietaTable = formatiEjb.getProprietaPerGruppo(idGruppoProprieta);
+	DecodeMap map = new DecodeMap();
+	map.populatedMap(proprietaTable, FormatiForm.ParametroValutazione.id_proprieta,
+		FormatoFileStandardEjb.VALUTAZIONE_NM_PROPRIETA);
+	getForm().getParametroValutazione().getId_proprieta().setDecodeMap(map);
     }
 
     private void salvaFormatoFileStandard() throws EMFError {
-        getMessageBox().clear();
+	getMessageBox().clear();
 
-        FormatoFileStandard fileStandard = getForm().getFormatoFileStandard();
-        fileStandard.post(getRequest());
+	FormatoFileStandard fileStandard = getForm().getFormatoFileStandard();
+	fileStandard.post(getRequest());
 
-        String[] fileConcatenabile = getRequest().getParameterValues("Fl_formato_concat");
-        String flaggozzo = "0";
-        // Se != da null, significa che ho spuntato il flag
-        if (fileConcatenabile != null) {
-            flaggozzo = "1";
-        }
+	String[] fileConcatenabile = getRequest().getParameterValues("Fl_formato_concat");
+	String flaggozzo = "0";
+	// Se != da null, significa che ho spuntato il flag
+	if (fileConcatenabile != null) {
+	    flaggozzo = "1";
+	}
 
-        // Imposto il flaggozzo nel front-end (in pratica ne faccio il post)
-        getForm().getFormatoFileStandard().getFl_formato_concat().setChecked(flaggozzo.equals("1"));
+	// Imposto il flaggozzo nel front-end (in pratica ne faccio il post)
+	getForm().getFormatoFileStandard().getFl_formato_concat().setChecked(flaggozzo.equals("1"));
 
-        DecFormatoFileStandardRowBean fRowBean = new DecFormatoFileStandardRowBean();
+	DecFormatoFileStandardRowBean fRowBean = new DecFormatoFileStandardRowBean();
 
-        if (fileStandard.getNm_formato_file_standard().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: nome formato non inserito");
+	if (fileStandard.getNm_formato_file_standard().parse() == null) {
+	    getMessageBox().addError("Errore compilazione form: nome formato non inserito");
 
-        } else {
-            if (formatiEjb.getDecFormatoFileStandardRowBean(fileStandard.getNm_formato_file_standard().parse()) != null
-                    && !(getForm().getFormatoFileStandard().getStatus().equals(Status.update))) {
-                getMessageBox().addError("Errore compilazione form: nome formato già esistente");
-            }
-        }
-        if (fileStandard.getDs_formato_file_standard().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: descrizione formato non inserito");
-        }
+	} else {
+	    if (formatiEjb.getDecFormatoFileStandardRowBean(
+		    fileStandard.getNm_formato_file_standard().parse()) != null
+		    && !(getForm().getFormatoFileStandard().getStatus().equals(Status.update))) {
+		getMessageBox().addError("Errore compilazione form: nome formato già esistente");
+	    }
+	}
+	if (fileStandard.getDs_formato_file_standard().parse() == null) {
+	    getMessageBox().addError("Errore compilazione form: descrizione formato non inserito");
+	}
 
-        if (fileStandard.getCd_versione().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: codice versione formato non inserito");
-        }
+	if (fileStandard.getCd_versione().parse() == null) {
+	    getMessageBox()
+		    .addError("Errore compilazione form: codice versione formato non inserito");
+	}
 
-        if (fileStandard.getDs_copyright().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: descrizione copyright non inserita");
-        }
-        if (fileStandard.getNm_mimetype_file().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: nome mimetype non inserito");
-        }
-        if (fileStandard.getTi_esito_contr_formato().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: Tipo esito controllo formato non inserito");
-        }
-        try {
-            fileStandard.getNi_punteggio_totale().parse();
-        } catch (EMFError e) {
-            getMessageBox().addError("Errore compilazione form: formato 'punteggio interoperabilità' non corretto");
-        }
+	if (fileStandard.getDs_copyright().parse() == null) {
+	    getMessageBox()
+		    .addError("Errore compilazione form: descrizione copyright non inserita");
+	}
+	if (fileStandard.getNm_mimetype_file().parse() == null) {
+	    getMessageBox().addError("Errore compilazione form: nome mimetype non inserito");
+	}
+	if (fileStandard.getTi_esito_contr_formato().parse() == null) {
+	    getMessageBox().addError(
+		    "Errore compilazione form: Tipo esito controllo formato non inserito");
+	}
+	try {
+	    fileStandard.getNi_punteggio_totale().parse();
+	} catch (EMFError e) {
+	    getMessageBox().addError(
+		    "Errore compilazione form: formato 'punteggio interoperabilità' non corretto");
+	}
 
-        /*
-         * Codice aggiuntivo per il logging...
-         */
-        // LogParam param = SpagoliteLogUtil.getLogParam(
-        // configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
-        // getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
-        // param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-        if (getMessageBox().isEmpty()) {
-            if (getForm().getFormatoFileStandard().getStatus().equals(Status.insert)) {
-                // param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
-                fileStandard.copyToBean(fRowBean);
-                String nmFormatoFileStandard = fRowBean.getNmFormatoFileStandard().toUpperCase();
-                fRowBean.setNmFormatoFileStandard(nmFormatoFileStandard);
-                formatiEjb.insertDecFormatoFileStandard(fRowBean);
-                getMessageBox()
-                        .addMessage(new Message(MessageLevel.INF, "Nuovo formato file standard salvato con successo"));
-                getMessageBox().setViewMode(ViewMode.plain);
+	/*
+	 * Codice aggiuntivo per il logging...
+	 */
+	// LogParam param = SpagoliteLogUtil.getLogParam(
+	// configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+	// getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+	// param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+	if (getMessageBox().isEmpty()) {
+	    if (getForm().getFormatoFileStandard().getStatus().equals(Status.insert)) {
+		// param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
+		fileStandard.copyToBean(fRowBean);
+		String nmFormatoFileStandard = fRowBean.getNmFormatoFileStandard().toUpperCase();
+		fRowBean.setNmFormatoFileStandard(nmFormatoFileStandard);
+		formatiEjb.insertDecFormatoFileStandard(fRowBean);
+		getMessageBox().addMessage(new Message(MessageLevel.INF,
+			"Nuovo formato file standard salvato con successo"));
+		getMessageBox().setViewMode(ViewMode.plain);
 
-                getForm().getFormatoFileStandardList().getTable().first();
-                getForm().getFormatoFileStandardList().getTable().add(fRowBean);
-                getForm().getFormatoFileParametriValutazioneList()
-                        .setTable(formatiEjb.getValutazioneFormatiTableBean(fRowBean.getIdFormatoFileStandard()));
-                getForm().getFormatoFileParametriValutazioneList()
-                        .setHideUpdateButton(getForm().getFormatoFileStandardList().isHideUpdateButton());
-            } else if (getForm().getFormatoFileStandard().getStatus().equals(Status.update)) {
-                BigDecimal idFormato = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                        .getTable().getCurrentRow()).getIdFormatoFileStandard();
-                // param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
-                fileStandard.copyToBean(fRowBean);
-                formatiEjb.updateDecFormatoFileStandard(idFormato, fRowBean);
-                getMessageBox()
-                        .addMessage(new Message(MessageLevel.INF, "Formato file standard modificato con successo"));
-                getMessageBox().setViewMode(ViewMode.plain);
-            }
-            getForm().getFormatoFileStandard().setViewMode();
-            getForm().getFormatoFileStandard().setStatus(Status.view);
-            getForm().getFormatoFileStandardList().setStatus(Status.view);
-        }
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
+		getForm().getFormatoFileStandardList().getTable().first();
+		getForm().getFormatoFileStandardList().getTable().add(fRowBean);
+		getForm().getFormatoFileParametriValutazioneList().setTable(formatiEjb
+			.getValutazioneFormatiTableBean(fRowBean.getIdFormatoFileStandard()));
+		getForm().getFormatoFileParametriValutazioneList().setHideUpdateButton(
+			getForm().getFormatoFileStandardList().isHideUpdateButton());
+	    } else if (getForm().getFormatoFileStandard().getStatus().equals(Status.update)) {
+		BigDecimal idFormato = ((DecFormatoFileStandardRowBean) getForm()
+			.getFormatoFileStandardList().getTable().getCurrentRow())
+			.getIdFormatoFileStandard();
+		// param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
+		fileStandard.copyToBean(fRowBean);
+		formatiEjb.updateDecFormatoFileStandard(idFormato, fRowBean);
+		getMessageBox().addMessage(new Message(MessageLevel.INF,
+			"Formato file standard modificato con successo"));
+		getMessageBox().setViewMode(ViewMode.plain);
+	    }
+	    getForm().getFormatoFileStandard().setViewMode();
+	    getForm().getFormatoFileStandard().setStatus(Status.view);
+	    getForm().getFormatoFileStandardList().setStatus(Status.view);
+	}
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
     }
 
     private void salvaEstensioneFile() throws EMFError {
 
-        getMessageBox().clear();
+	getMessageBox().clear();
 
-        EstensioneFile estensioneFile = getForm().getEstensioneFile();
-        String cdEstensioneFileOld = estensioneFile.getCd_estensione_file().parse();
-        estensioneFile.post(getRequest());
-        DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
-        estensioneFile.copyToBean(estensioneFileRowBean);
+	EstensioneFile estensioneFile = getForm().getEstensioneFile();
+	String cdEstensioneFileOld = estensioneFile.getCd_estensione_file().parse();
+	estensioneFile.post(getRequest());
+	DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
+	estensioneFile.copyToBean(estensioneFileRowBean);
 
-        if (estensioneFile.getCd_estensione_file().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: codice estensione non inserito");
-        }
+	if (estensioneFile.getCd_estensione_file().parse() == null) {
+	    getMessageBox().addError("Errore compilazione form: codice estensione non inserito");
+	}
 
-        if (getMessageBox().isEmpty()) {
-            try {
-                BigDecimal idFormatoFileStandard = null;
-                idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                        .getTable().getCurrentRow()).getIdFormatoFileStandard();
-                if (getForm().getEstensioneFile().getStatus().equals(Status.insert)) {
+	if (getMessageBox().isEmpty()) {
+	    try {
+		BigDecimal idFormatoFileStandard = null;
+		idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm()
+			.getFormatoFileStandardList().getTable().getCurrentRow())
+			.getIdFormatoFileStandard();
+		if (getForm().getEstensioneFile().getStatus().equals(Status.insert)) {
 
-                    estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
-                    long idEstensioneFile = formatiEjb.insertDecEstensioneFile(estensioneFileRowBean);
-                    estensioneFileRowBean.setIdEstensioneFile(BigDecimal.valueOf(idEstensioneFile));
+		    estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+		    long idEstensioneFile = formatiEjb
+			    .insertDecEstensioneFile(estensioneFileRowBean);
+		    estensioneFileRowBean.setIdEstensioneFile(BigDecimal.valueOf(idEstensioneFile));
 
-                    getForm().getEstensioneFileList().getTable().last();
-                    getForm().getEstensioneFileList().getTable().add(estensioneFileRowBean);
+		    getForm().getEstensioneFileList().getTable().last();
+		    getForm().getEstensioneFileList().getTable().add(estensioneFileRowBean);
 
-                    getMessageBox().addMessage(new Message(MessageLevel.INF, "Estensione file salvato con successo"));
+		    getMessageBox().addMessage(
+			    new Message(MessageLevel.INF, "Estensione file salvato con successo"));
 
-                } else if (getForm().getEstensioneFile().getStatus().equals(Status.update)) {
+		} else if (getForm().getEstensioneFile().getStatus().equals(Status.update)) {
 
-                    estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+		    estensioneFileRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
 
-                    BigDecimal idEstensioneFile = getForm().getEstensioneFile().getId_estensione_file().parse();
+		    BigDecimal idEstensioneFile = getForm().getEstensioneFile()
+			    .getId_estensione_file().parse();
 
-                    formatiEjb.updateDecEstensioneFile(idFormatoFileStandard, idEstensioneFile, cdEstensioneFileOld,
-                            estensioneFile.getCd_estensione_file().parse());
+		    formatiEjb.updateDecEstensioneFile(idFormatoFileStandard, idEstensioneFile,
+			    cdEstensioneFileOld, estensioneFile.getCd_estensione_file().parse());
 
-                    getMessageBox()
-                            .addMessage(new Message(MessageLevel.INF, "Estensione file modificata con successo"));
-                }
+		    getMessageBox().addMessage(new Message(MessageLevel.INF,
+			    "Estensione file modificata con successo"));
+		}
 
-                if (!getMessageBox().hasError()) {
-                    getForm().getEstensioneFile().setStatus(Status.view);
-                    getForm().getEstensioneFile().setViewMode();
-                    getForm().getEstensioneFileList().setStatus(Status.view);
-                    loadDettaglio();
-                }
-            } catch (ParerUserError e) {
-                getMessageBox().addError(e.getDescription());
-            }
-        }
-        forwardToPublisher(Application.Publisher.ESTENSIONE_FILE_DETAIL);
+		if (!getMessageBox().hasError()) {
+		    getForm().getEstensioneFile().setStatus(Status.view);
+		    getForm().getEstensioneFile().setViewMode();
+		    getForm().getEstensioneFileList().setStatus(Status.view);
+		    loadDettaglio();
+		}
+	    } catch (ParerUserError e) {
+		getMessageBox().addError(e.getDescription());
+	    }
+	}
+	forwardToPublisher(Application.Publisher.ESTENSIONE_FILE_DETAIL);
     }
     //////
 
     private void salvaFormatoFileBusta() throws EMFError {//
-        getMessageBox().clear();
-        getForm().getFormatoFileBusta().post(getRequest());
-        BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                .getTable().getCurrentRow()).getIdFormatoFileStandard();
-        //
-        DecFormatoFileBustaRowBean formatoFileBustaRowBean = new DecFormatoFileBustaRowBean();
-        getForm().getFormatoFileBusta().copyToBean(formatoFileBustaRowBean);
+	getMessageBox().clear();
+	getForm().getFormatoFileBusta().post(getRequest());
+	BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm()
+		.getFormatoFileStandardList().getTable().getCurrentRow())
+		.getIdFormatoFileStandard();
+	//
+	DecFormatoFileBustaRowBean formatoFileBustaRowBean = new DecFormatoFileBustaRowBean();
+	getForm().getFormatoFileBusta().copyToBean(formatoFileBustaRowBean);
 
-        if (getForm().getFormatoFileBusta().getTi_formato_firma_marca().parse() == null) {
-            getMessageBox().addError("Errore compilazione form: tipo firma marca non inserito");
-        }
+	if (getForm().getFormatoFileBusta().getTi_formato_firma_marca().parse() == null) {
+	    getMessageBox().addError("Errore compilazione form: tipo firma marca non inserito");
+	}
 
-        if (getMessageBox().isEmpty()) {
-            try {
-                if (getForm().getFormatoFileBusta().getStatus().equals(Status.insert)) {
-                    formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
-                    BigDecimal idFormatoFileBusta = formatiEjb.insertDecFormatoFileBusta(formatoFileBustaRowBean);
-                    getForm().getFormatoFileBusta().getId_formato_file_busta()
-                            .setValue(idFormatoFileBusta.toPlainString());
-                    formatoFileBustaRowBean.setIdFormatoFileBusta(idFormatoFileBusta);
-                    getForm().getFormatoFileBustaList().getTable().last();
-                    getForm().getFormatoFileBustaList().getTable().add(formatoFileBustaRowBean);
-                } else if (getForm().getFormatoFileBusta().getStatus().equals(Status.update)) {
-                    String tiFormatoOld = ((DecFormatoFileBustaTableBean) getForm().getFormatoFileBustaList()
-                            .getTable()).getCurrentRow().getTiFormatoFirmaMarca();
-                    BigDecimal idFormatoFileBusta = getForm().getFormatoFileBusta().getId_formato_file_busta().parse();
-                    String tiFormato = getForm().getFormatoFileBusta().getTi_formato_firma_marca().parse();
-                    formatiEjb.updateDecFormatoFileBusta(idFormatoFileStandard, idFormatoFileBusta, tiFormatoOld,
-                            tiFormato);
-                }
-                getMessageBox().addMessage(new Message(MessageLevel.INF, "Formato file busta salvato con successo"));
+	if (getMessageBox().isEmpty()) {
+	    try {
+		if (getForm().getFormatoFileBusta().getStatus().equals(Status.insert)) {
+		    formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+		    BigDecimal idFormatoFileBusta = formatiEjb
+			    .insertDecFormatoFileBusta(formatoFileBustaRowBean);
+		    getForm().getFormatoFileBusta().getId_formato_file_busta()
+			    .setValue(idFormatoFileBusta.toPlainString());
+		    formatoFileBustaRowBean.setIdFormatoFileBusta(idFormatoFileBusta);
+		    getForm().getFormatoFileBustaList().getTable().last();
+		    getForm().getFormatoFileBustaList().getTable().add(formatoFileBustaRowBean);
+		} else if (getForm().getFormatoFileBusta().getStatus().equals(Status.update)) {
+		    String tiFormatoOld = ((DecFormatoFileBustaTableBean) getForm()
+			    .getFormatoFileBustaList().getTable()).getCurrentRow()
+			    .getTiFormatoFirmaMarca();
+		    BigDecimal idFormatoFileBusta = getForm().getFormatoFileBusta()
+			    .getId_formato_file_busta().parse();
+		    String tiFormato = getForm().getFormatoFileBusta().getTi_formato_firma_marca()
+			    .parse();
+		    formatiEjb.updateDecFormatoFileBusta(idFormatoFileStandard, idFormatoFileBusta,
+			    tiFormatoOld, tiFormato);
+		}
+		getMessageBox().addMessage(
+			new Message(MessageLevel.INF, "Formato file busta salvato con successo"));
 
-                getForm().getFormatoFileBusta().setStatus(Status.view);
-                getForm().getFormatoFileBusta().setViewMode();
-                getForm().getFormatoFileBustaList().setStatus(Status.view);
+		getForm().getFormatoFileBusta().setStatus(Status.view);
+		getForm().getFormatoFileBusta().setViewMode();
+		getForm().getFormatoFileBustaList().setStatus(Status.view);
 
-                getMessageBox().setViewMode(ViewMode.plain);
-            } catch (ParerUserError e) {
-                getMessageBox().addError(e.getDescription());
-            }
-        }
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL);
+		getMessageBox().setViewMode(ViewMode.plain);
+	    } catch (ParerUserError e) {
+		getMessageBox().addError(e.getDescription());
+	    }
+	}
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_BUSTA_DETAIL);
     }
 
     @Override
     public void deleteEstensioneFileList() throws EMFError {
 
-        getMessageBox().clear();
+	getMessageBox().clear();
 
-        DecEstensioneFileRowBean estensioneFileRowBean;
+	DecEstensioneFileRowBean estensioneFileRowBean;
 
-        estensioneFileRowBean = ((DecEstensioneFileRowBean) getForm().getEstensioneFileList().getTable()
-                .getCurrentRow());
+	estensioneFileRowBean = ((DecEstensioneFileRowBean) getForm().getEstensioneFileList()
+		.getTable().getCurrentRow());
 
-        if (getMessageBox().isEmpty()) {
-            formatiEjb.deleteDecEstensioneFile(estensioneFileRowBean);
-        }
+	if (getMessageBox().isEmpty()) {
+	    formatiEjb.deleteDecEstensioneFile(estensioneFileRowBean);
+	}
 
-        forwardToPublisher(getLastPublisher());
+	forwardToPublisher(getLastPublisher());
 
-        DecEstensioneFileTableBean estensioneFileTable;
+	DecEstensioneFileTableBean estensioneFileTable;
 
-        estensioneFileRowBean.setIdFormatoFileStandard(
-                ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList().getTable().getCurrentRow())
-                        .getIdFormatoFileStandard());
+	estensioneFileRowBean.setIdFormatoFileStandard(
+		((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList().getTable()
+			.getCurrentRow()).getIdFormatoFileStandard());
 
-        estensioneFileTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
+	estensioneFileTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
 
-        getForm().getEstensioneFileList().setTable(estensioneFileTable);
-        getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-        getForm().getEstensioneFileList().getTable().first();
+	getForm().getEstensioneFileList().setTable(estensioneFileTable);
+	getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getEstensioneFileList().getTable().first();
 
     }
 
     @Override
     public void deleteFormatoFileBustaList() throws EMFError {
 
-        getMessageBox().clear();
+	getMessageBox().clear();
 
-        DecFormatoFileBustaRowBean formatoFileBustaRowBean;
+	DecFormatoFileBustaRowBean formatoFileBustaRowBean;
 
-        formatoFileBustaRowBean = ((DecFormatoFileBustaRowBean) getForm().getFormatoFileBustaList().getTable()
-                .getCurrentRow());
+	formatoFileBustaRowBean = ((DecFormatoFileBustaRowBean) getForm().getFormatoFileBustaList()
+		.getTable().getCurrentRow());
 
-        BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                .getTable().getCurrentRow()).getIdFormatoFileStandard();
+	BigDecimal idFormatoFileStandard = ((DecFormatoFileStandardRowBean) getForm()
+		.getFormatoFileStandardList().getTable().getCurrentRow())
+		.getIdFormatoFileStandard();
 
-        if (getMessageBox().isEmpty()) {
-            formatiEjb.deleteDecFormatoFileBusta(formatoFileBustaRowBean);
-        }
+	if (getMessageBox().isEmpty()) {
+	    formatiEjb.deleteDecFormatoFileBusta(formatoFileBustaRowBean);
+	}
 
-        forwardToPublisher(getLastPublisher());
+	forwardToPublisher(getLastPublisher());
 
-        DecFormatoFileBustaTableBean formatoFileBustaTableBean;
+	DecFormatoFileBustaTableBean formatoFileBustaTableBean;
 
-        formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
+	formatoFileBustaRowBean.setIdFormatoFileStandard(idFormatoFileStandard);
 
-        formatoFileBustaTableBean = formatiEjb.getDecFormatoFileBustaTableBean(idFormatoFileStandard);
+	formatoFileBustaTableBean = formatiEjb
+		.getDecFormatoFileBustaTableBean(idFormatoFileStandard);
 
-        getForm().getFormatoFileBustaList().setTable(formatoFileBustaTableBean);
-        getForm().getFormatoFileBustaList().getTable().first();
-        getForm().getFormatoFileBustaList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getFormatoFileBustaList().setTable(formatoFileBustaTableBean);
+	getForm().getFormatoFileBustaList().getTable().first();
+	getForm().getFormatoFileBustaList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
     }
 
     @Override
     public void updateEstensioneFileList() throws EMFError {
-        getForm().getEstensioneFile().getCd_estensione_file().setEditMode();
-        getForm().getEstensioneFile().setStatus(Status.update);
-        getForm().getEstensioneFileList().setStatus(Status.update);
+	getForm().getEstensioneFile().getCd_estensione_file().setEditMode();
+	getForm().getEstensioneFile().setStatus(Status.update);
+	getForm().getEstensioneFileList().setStatus(Status.update);
     }
 
     @Override
     public void updateFormatoFileBustaList() throws EMFError {
 
-        getForm().getFormatoFileBusta().getTi_formato_firma_marca().setEditMode();
-        getForm().getFormatoFileBusta().setStatus(Status.update);
-        getForm().getFormatoFileBustaList().setStatus(Status.update);
+	getForm().getFormatoFileBusta().getTi_formato_firma_marca().setEditMode();
+	getForm().getFormatoFileBusta().setStatus(Status.update);
+	getForm().getFormatoFileBustaList().setStatus(Status.update);
     }
 
     @Override
     public void updateFormatoFileParametriValutazioneList() throws EMFError {
 
-        getForm().getParametroValutazione().getNm_formato_gruppo_proprieta().setEditMode();
-        getForm().getParametroValutazione().getNm_formato_gruppo_proprieta().setReadonly(true);
+	getForm().getParametroValutazione().getNm_formato_gruppo_proprieta().setEditMode();
+	getForm().getParametroValutazione().getNm_formato_gruppo_proprieta().setReadonly(true);
 
-        getForm().getParametroValutazione().getId_proprieta().setEditMode();
-        getForm().getParametroValutazione().getNi_punteggio().setEditMode();
-        getForm().getFormatoFileParametriValutazioneList().setStatus(Status.update);
+	getForm().getParametroValutazione().getId_proprieta().setEditMode();
+	getForm().getParametroValutazione().getNi_punteggio().setEditMode();
+	getForm().getFormatoFileParametriValutazioneList().setStatus(Status.update);
     }
 
     @Override
     public void updateFormatoFileStandardList() throws EMFError {
 
-        getForm().getFormatoFileStandard().setEditMode();
-        getForm().getFormatoFileStandard().getNm_formato_file_standard().setViewMode();
-        getForm().getFormatoFileStandard().getNi_punteggio_totale().setViewMode();
-        getForm().getFormatoFileStandard().setStatus(Status.update);
-        getForm().getFormatoFileStandardList().setStatus(Status.update);
+	getForm().getFormatoFileStandard().setEditMode();
+	getForm().getFormatoFileStandard().getNm_formato_file_standard().setViewMode();
+	getForm().getFormatoFileStandard().getNi_punteggio_totale().setViewMode();
+	getForm().getFormatoFileStandard().setStatus(Status.update);
+	getForm().getFormatoFileStandardList().setStatus(Status.update);
 
     }
 
     // controllare se serve
     public void reloadEstensioniList() {
 
-        DecEstensioneFileTableBean estensioneTable;
-        DecFormatoFileStandardRowBean formatoRowBean;
-        formatoRowBean = (DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList().getTable()
-                .getCurrentRow();
+	DecEstensioneFileTableBean estensioneTable;
+	DecFormatoFileStandardRowBean formatoRowBean;
+	formatoRowBean = (DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
+		.getTable().getCurrentRow();
 
-        DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
-        estensioneFileRowBean.setIdFormatoFileStandard(formatoRowBean.getIdFormatoFileStandard());
+	DecEstensioneFileRowBean estensioneFileRowBean = new DecEstensioneFileRowBean();
+	estensioneFileRowBean.setIdFormatoFileStandard(formatoRowBean.getIdFormatoFileStandard());
 
-        estensioneTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
+	estensioneTable = formatiEjb.getDecEstensioneFileTableBean(estensioneFileRowBean);
 
-        getForm().getEstensioneFileList().setTable(estensioneTable);
-        getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-        getForm().getEstensioneFileList().getTable().first();
+	getForm().getEstensioneFileList().setTable(estensioneTable);
+	getForm().getEstensioneFileList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getEstensioneFileList().getTable().first();
     }
 
     @Override
     public void deleteFormatoFileStandardList() throws EMFError {
-        getMessageBox().clear();
-        DecFormatoFileStandardRowBean formatoFileStandardRowBean = (DecFormatoFileStandardRowBean) getForm()
-                .getFormatoFileStandardList().getTable().getCurrentRow();
-        if (getMessageBox().isEmpty()) {
-            try {
-                formatiEjb.deleteDecFormatoFileStandard(formatoFileStandardRowBean);
-                int rowIndex = getForm().getFormatoFileStandardList().getTable().getCurrentRowIndex();
-                getForm().getFormatoFileStandardList().getTable().remove(rowIndex);
-                getMessageBox().addInfo("Formato file standard eliminato con successo");
-                getMessageBox().setViewMode(ViewMode.plain);
-            } catch (ParerUserError ex) {
-                getMessageBox().addError(ex.getDescription());
-            }
-        }
-        forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
+	getMessageBox().clear();
+	DecFormatoFileStandardRowBean formatoFileStandardRowBean = (DecFormatoFileStandardRowBean) getForm()
+		.getFormatoFileStandardList().getTable().getCurrentRow();
+	if (getMessageBox().isEmpty()) {
+	    try {
+		formatiEjb.deleteDecFormatoFileStandard(formatoFileStandardRowBean);
+		int rowIndex = getForm().getFormatoFileStandardList().getTable()
+			.getCurrentRowIndex();
+		getForm().getFormatoFileStandardList().getTable().remove(rowIndex);
+		getMessageBox().addInfo("Formato file standard eliminato con successo");
+		getMessageBox().setViewMode(ViewMode.plain);
+	    } catch (ParerUserError ex) {
+		getMessageBox().addError(ex.getDescription());
+	    }
+	}
+	forwardToPublisher(Application.Publisher.FORMATO_FILE_STANDARD_RICERCA);
     }
 
     private void salvaParametroValutazione() throws EMFError {
-        getMessageBox().clear();
-        FormatiForm.ParametroValutazione parametroValutazione = getForm().getParametroValutazione();
-        parametroValutazione.post(getRequest());
-        if (!parametroValutazione.getNi_punteggio().check()) {
-            getMessageBox().addError("Il punteggio dev'essere un numero  maggiore o uguale a 0");
-        } else {
-            // recuper l'id della valutazione dalla tabel, potrebbe essere nul se si tratta di un nuovo inserimento
-            Long idValutazione = (Long) ((BaseRow) getForm().getFormatoFileParametriValutazioneList().getTable()
-                    .getCurrentRow()).getObject(VALUTAZIONE_ID);
+	getMessageBox().clear();
+	FormatiForm.ParametroValutazione parametroValutazione = getForm().getParametroValutazione();
+	parametroValutazione.post(getRequest());
+	if (!parametroValutazione.getNi_punteggio().check()) {
+	    getMessageBox().addError("Il punteggio dev'essere un numero  maggiore o uguale a 0");
+	} else {
+	    // recuper l'id della valutazione dalla tabel, potrebbe essere nul se si tratta di un
+	    // nuovo inserimento
+	    Long idValutazione = (Long) ((BaseRow) getForm()
+		    .getFormatoFileParametriValutazioneList().getTable().getCurrentRow())
+		    .getObject(VALUTAZIONE_ID);
 
-            BaseRow parametroValutazioneRow = new BaseRow();
-            parametroValutazione.copyToBean(parametroValutazioneRow);
-            /* CHECK PUNTEGGIO VALORIZZATO */
-            BigDecimal punteggio = parametroValutazioneRow
-                    .getBigDecimal(FormatiForm.FormatoFileParametriValutazioneList.ni_punteggio);
-            BigDecimal idProprieta = parametroValutazioneRow
-                    .getBigDecimal(FormatiForm.ParametroValutazione.id_proprieta);
-            String ntPunteggioValutazione = parametroValutazioneRow
-                    .getString(FormatiForm.ParametroValutazione.nt_punteggio_valutazione);
+	    BaseRow parametroValutazioneRow = new BaseRow();
+	    parametroValutazione.copyToBean(parametroValutazioneRow);
+	    /* CHECK PUNTEGGIO VALORIZZATO */
+	    BigDecimal punteggio = parametroValutazioneRow
+		    .getBigDecimal(FormatiForm.FormatoFileParametriValutazioneList.ni_punteggio);
+	    BigDecimal idProprieta = parametroValutazioneRow
+		    .getBigDecimal(FormatiForm.ParametroValutazione.id_proprieta);
+	    String ntPunteggioValutazione = parametroValutazioneRow
+		    .getString(FormatiForm.ParametroValutazione.nt_punteggio_valutazione);
 
-            if (idProprieta != null) {
-                if (punteggio == null) {
-                    getMessageBox().addError("Il punteggio è obbligatorio");
-                } else if (punteggio.longValue() < 0) {
-                    getMessageBox().addError("Il punteggio dev'essere un numero  maggiore o uguale a 0");
-                } else {
-                    // il punteggio è valido, controllo che la somma con tutte le altre valutazioni sia <= 20
+	    if (idProprieta != null) {
+		if (punteggio == null) {
+		    getMessageBox().addError("Il punteggio è obbligatorio");
+		} else if (punteggio.longValue() < 0) {
+		    getMessageBox()
+			    .addError("Il punteggio dev'essere un numero  maggiore o uguale a 0");
+		} else {
+		    // il punteggio è valido, controllo che la somma con tutte le altre valutazioni
+		    // sia <= 20
 
-                    Iterator<BaseRow> iterator = (Iterator<BaseRow>) getForm().getFormatoFileParametriValutazioneList()
-                            .getTable().iterator();
+		    Iterator<BaseRow> iterator = (Iterator<BaseRow>) getForm()
+			    .getFormatoFileParametriValutazioneList().getTable().iterator();
 
-                    BigDecimal somma = BigDecimal.ZERO;
-                    while (iterator.hasNext()) {
-                        BaseRow rigaValutazione = iterator.next();
-                        BigDecimal p = rigaValutazione
-                                .getBigDecimal(FormatiForm.FormatoFileParametriValutazioneList.ni_punteggio);
-                        if (p != null) {
-                            BigDecimal flgInteroperabilita = rigaValutazione.getBigDecimal(
-                                    FormatiForm.FormatoFileParametriValutazioneList.flg_interoperabilita);
-                            if (flgInteroperabilita != null && flgInteroperabilita.equals(BigDecimal.ONE)) {
-                                Object idValutazioneCorrente = rigaValutazione.getObject(VALUTAZIONE_ID);
-                                // se è il punteggio della valutazione che stiamo modificando non lo metto nella somma,
-                                // lo
-                                // considererò fuori dal ciclo
-                                if (idValutazioneCorrente == null || idValutazione == null
-                                        || !idValutazione.equals(idValutazioneCorrente)) {
-                                    somma = somma.add(p);
-                                }
-                            }
-                        }
-                    }
-                    // MEV#26039 - Miglioramenti della Valutazione idoneità formati alla conservazione
-                    Object oggetto = getForm().getFormatoFileParametriValutazioneList().getTable().getCurrentRow()
-                            .getObject("flg_interoperabilita");
-                    if (oggetto != null && oggetto.equals(BigDecimal.ONE)) {
-                        // il punteggio che stiamo per inserire non è nella somma
-                        somma = somma.add(punteggio);
-                    }
+		    BigDecimal somma = BigDecimal.ZERO;
+		    while (iterator.hasNext()) {
+			BaseRow rigaValutazione = iterator.next();
+			BigDecimal p = rigaValutazione.getBigDecimal(
+				FormatiForm.FormatoFileParametriValutazioneList.ni_punteggio);
+			if (p != null) {
+			    BigDecimal flgInteroperabilita = rigaValutazione.getBigDecimal(
+				    FormatiForm.FormatoFileParametriValutazioneList.flg_interoperabilita);
+			    if (flgInteroperabilita != null
+				    && flgInteroperabilita.equals(BigDecimal.ONE)) {
+				Object idValutazioneCorrente = rigaValutazione
+					.getObject(VALUTAZIONE_ID);
+				// se è il punteggio della valutazione che stiamo modificando non lo
+				// metto nella somma,
+				// lo
+				// considererò fuori dal ciclo
+				if (idValutazioneCorrente == null || idValutazione == null
+					|| !idValutazione.equals(idValutazioneCorrente)) {
+				    somma = somma.add(p);
+				}
+			    }
+			}
+		    }
+		    // MEV#26039 - Miglioramenti della Valutazione idoneità formati alla
+		    // conservazione
+		    Object oggetto = getForm().getFormatoFileParametriValutazioneList().getTable()
+			    .getCurrentRow().getObject("flg_interoperabilita");
+		    if (oggetto != null && oggetto.equals(BigDecimal.ONE)) {
+			// il punteggio che stiamo per inserire non è nella somma
+			somma = somma.add(punteggio);
+		    }
 
-                    if (somma.compareTo(BigDecimal.valueOf(20)) > 0) {
-                        getMessageBox().addError("Con questa valutazione il punteggio totale sarebbe "
-                                + somma.intValue() + " mentre il massimo consentito è 20 ");
-                    }
-                }
-            } else {
-                if (punteggio != null) {
-                    getMessageBox().addError("Il punteggio può essere inserito solo si seleziona anche la valutazione");
-                }
-                // MEV#26039 - Miglioramenti della Valutazione idoneità formati alla conservazione
-                if (ntPunteggioValutazione != null) {
-                    getMessageBox().addError("Le note possono essere inserite solo si seleziona anche la valutazione");
-                }
-            }
+		    if (somma.compareTo(BigDecimal.valueOf(20)) > 0) {
+			getMessageBox()
+				.addError("Con questa valutazione il punteggio totale sarebbe "
+					+ somma.intValue() + " mentre il massimo consentito è 20 ");
+		    }
+		}
+	    } else {
+		if (punteggio != null) {
+		    getMessageBox().addError(
+			    "Il punteggio può essere inserito solo si seleziona anche la valutazione");
+		}
+		// MEV#26039 - Miglioramenti della Valutazione idoneità formati alla conservazione
+		if (ntPunteggioValutazione != null) {
+		    getMessageBox().addError(
+			    "Le note possono essere inserite solo si seleziona anche la valutazione");
+		}
+	    }
 
-            if (getMessageBox().isEmpty()) {
+	    if (getMessageBox().isEmpty()) {
 
-                BigDecimal idFormatoFile = ((DecFormatoFileStandardRowBean) getForm().getFormatoFileStandardList()
-                        .getTable().getCurrentRow()).getIdFormatoFileStandard();
+		BigDecimal idFormatoFile = ((DecFormatoFileStandardRowBean) getForm()
+			.getFormatoFileStandardList().getTable().getCurrentRow())
+			.getIdFormatoFileStandard();
 
-                if (idValutazione != null) {
+		if (idValutazione != null) {
 
-                    if (idProprieta == null) {
-                        // DELETE
-                        formatiEjb.deleteDecFormatoValutazione(idValutazione);
-                    } else {
-                        // UPDATE
-                        formatiEjb.updateDecFormatoValutazione(idValutazione, idProprieta.longValue(), punteggio,
-                                ntPunteggioValutazione);
-                    }
-                } else {
-                    if (idProprieta != null) {
-                        // INSERT
-                        formatiEjb.insertDecFormatoValutazione(idFormatoFile, idProprieta.longValue(), punteggio,
-                                ntPunteggioValutazione);
-                    }
-                }
-                DecFormatoFileStandardRowBean formatoFileAggiornato = new DecFormatoFileStandardRowBean();
-                getForm().getFormatoFileStandard().copyToBean(formatoFileAggiornato);
-                formatoFileAggiornato.setObject(FormatiForm.FormatoFileStandard.ni_punteggio_totale,
-                        formatiEjb.calcolaPunteggioInteroperabilita(((DecFormatoFileStandardRowBean) getForm()
-                                .getFormatoFileStandardList().getTable().getCurrentRow()).getIdFormatoFileStandard()));
-                getForm().getFormatoFileStandard().copyFromBean(formatoFileAggiornato);
-                getMessageBox().addInfo("Valutazione salvata con successo");
-                BaseTable table = formatiEjb.getValutazioneFormatiTableBean(idFormatoFile);
-                getForm().getFormatoFileParametriValutazioneList().setTable(table);
-                getForm().getFormatoFileParametriValutazioneList().getTable().first();
-                getForm().getFormatoFileParametriValutazioneList().getTable()
-                        .setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+		    if (idProprieta == null) {
+			// DELETE
+			formatiEjb.deleteDecFormatoValutazione(idValutazione);
+		    } else {
+			// UPDATE
+			formatiEjb.updateDecFormatoValutazione(idValutazione,
+				idProprieta.longValue(), punteggio, ntPunteggioValutazione);
+		    }
+		} else {
+		    if (idProprieta != null) {
+			// INSERT
+			formatiEjb.insertDecFormatoValutazione(idFormatoFile,
+				idProprieta.longValue(), punteggio, ntPunteggioValutazione);
+		    }
+		}
+		DecFormatoFileStandardRowBean formatoFileAggiornato = new DecFormatoFileStandardRowBean();
+		getForm().getFormatoFileStandard().copyToBean(formatoFileAggiornato);
+		formatoFileAggiornato.setObject(FormatiForm.FormatoFileStandard.ni_punteggio_totale,
+			formatiEjb.calcolaPunteggioInteroperabilita(
+				((DecFormatoFileStandardRowBean) getForm()
+					.getFormatoFileStandardList().getTable().getCurrentRow())
+					.getIdFormatoFileStandard()));
+		getForm().getFormatoFileStandard().copyFromBean(formatoFileAggiornato);
+		getMessageBox().addInfo("Valutazione salvata con successo");
+		BaseTable table = formatiEjb.getValutazioneFormatiTableBean(idFormatoFile);
+		getForm().getFormatoFileParametriValutazioneList().setTable(table);
+		getForm().getFormatoFileParametriValutazioneList().getTable().first();
+		getForm().getFormatoFileParametriValutazioneList().getTable()
+			.setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
 
-                getForm().getParametroValutazione().setStatus(Status.view);
-                getForm().getParametroValutazione().setViewMode();
-                getForm().getFormatoFileParametriValutazioneList().setStatus(Status.view);
+		getForm().getParametroValutazione().setStatus(Status.view);
+		getForm().getParametroValutazione().setViewMode();
+		getForm().getFormatoFileParametriValutazioneList().setStatus(Status.view);
 
-                getMessageBox().setViewMode(ViewMode.plain);
-                goBackTo(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
-            }
-        }
-        if (getMessageBox().hasError()) {
-            forwardToPublisher(Application.Publisher.VALUTAZIONE_FILE_DETAIL);
-        }
+		getMessageBox().setViewMode(ViewMode.plain);
+		goBackTo(Application.Publisher.FORMATO_FILE_STANDARD_DETAIL);
+	    }
+	}
+	if (getMessageBox().hasError()) {
+	    forwardToPublisher(Application.Publisher.VALUTAZIONE_FILE_DETAIL);
+	}
     }
 
     @Override
     public JSONObject triggerParametroValutazioneId_proprietaOnTrigger() throws EMFError {
-        getForm().getParametroValutazione().post(getRequest());
-        final BigDecimal idProprieta = getForm().getParametroValutazione().getId_proprieta().parse();
-        String punteggioDefault = "";
-        if (idProprieta != null) {
-            BigDecimal punteggio = formatiEjb.getPunteggioDefault(idProprieta.longValue());
-            if (punteggio != null) {
-                punteggioDefault = punteggio.toString();
-            }
-        }
-        getForm().getParametroValutazione().getNi_punteggio().setValue(punteggioDefault);
+	getForm().getParametroValutazione().post(getRequest());
+	final BigDecimal idProprieta = getForm().getParametroValutazione().getId_proprieta()
+		.parse();
+	String punteggioDefault = "";
+	if (idProprieta != null) {
+	    BigDecimal punteggio = formatiEjb.getPunteggioDefault(idProprieta.longValue());
+	    if (punteggio != null) {
+		punteggioDefault = punteggio.toString();
+	    }
+	}
+	getForm().getParametroValutazione().getNi_punteggio().setValue(punteggioDefault);
 
-        return getForm().getParametroValutazione().asJSON();
+	return getForm().getParametroValutazione().asJSON();
     }
 
     @Override
     public JSONObject triggerFormatoFileBustaTi_formato_firma_marcaOnTrigger() throws EMFError {
-        getForm().getFormatoFileBusta().post(getRequest());
-        String tiFormato = getForm().getFormatoFileBusta().getTi_formato_firma_marca().parse();
-        if (tiFormato != null) {
-            String dsFormato = formatiEjb.getDsFormatoFileBusta(tiFormato);
-            if (dsFormato != null) {
-                getForm().getFormatoFileBusta().getDs_formato_firma_marca().setValue(dsFormato);
-            }
-        }
-        return getForm().getFormatoFileBusta().asJSON();
+	getForm().getFormatoFileBusta().post(getRequest());
+	String tiFormato = getForm().getFormatoFileBusta().getTi_formato_firma_marca().parse();
+	if (tiFormato != null) {
+	    String dsFormato = formatiEjb.getDsFormatoFileBusta(tiFormato);
+	    if (dsFormato != null) {
+		getForm().getFormatoFileBusta().getDs_formato_firma_marca().setValue(dsFormato);
+	    }
+	}
+	return getForm().getFormatoFileBusta().asJSON();
     }
 }

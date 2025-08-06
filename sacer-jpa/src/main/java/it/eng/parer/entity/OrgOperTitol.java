@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -77,111 +73,112 @@ public class OrgOperTitol implements Serializable {
 
     @Column(name = "ID_OPER_TITOL")
     @GenericGenerator(name = "SORG_OPER_TITOL_ID_OPER_TITOL_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_OPER_TITOL"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SORG_OPER_TITOL"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SORG_OPER_TITOL_ID_OPER_TITOL_GENERATOR")
     public Long getIdOperTitol() {
-        return this.idOperTitol;
+	return this.idOperTitol;
     }
 
     public void setIdOperTitol(Long idOperTitol) {
-        this.idOperTitol = idOperTitol;
+	this.idOperTitol = idOperTitol;
     }
 
     @Column(name = "AA_DOC_INVIO")
     public BigDecimal getAaDocInvio() {
-        return this.aaDocInvio;
+	return this.aaDocInvio;
     }
 
     public void setAaDocInvio(BigDecimal aaDocInvio) {
-        this.aaDocInvio = aaDocInvio;
+	this.aaDocInvio = aaDocInvio;
     }
 
     @Column(name = "CD_DOC_INVIO")
     public String getCdDocInvio() {
-        return this.cdDocInvio;
+	return this.cdDocInvio;
     }
 
     public void setCdDocInvio(String cdDocInvio) {
-        this.cdDocInvio = cdDocInvio;
+	this.cdDocInvio = cdDocInvio;
     }
 
     @Column(name = "CD_REGISTRO_DOC_INVIO")
     public String getCdRegistroDocInvio() {
-        return this.cdRegistroDocInvio;
+	return this.cdRegistroDocInvio;
     }
 
     public void setCdRegistroDocInvio(String cdRegistroDocInvio) {
-        this.cdRegistroDocInvio = cdRegistroDocInvio;
+	this.cdRegistroDocInvio = cdRegistroDocInvio;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_DOC_INVIO")
     public Date getDtDocInvio() {
-        return this.dtDocInvio;
+	return this.dtDocInvio;
     }
 
     public void setDtDocInvio(Date dtDocInvio) {
-        this.dtDocInvio = dtDocInvio;
+	this.dtDocInvio = dtDocInvio;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VAL_OPER_TITOL")
     public Date getDtValOperTitol() {
-        return this.dtValOperTitol;
+	return this.dtValOperTitol;
     }
 
     public void setDtValOperTitol(Date dtValOperTitol) {
-        this.dtValOperTitol = dtValOperTitol;
+	this.dtValOperTitol = dtValOperTitol;
     }
 
     @Column(name = "TI_OPER_TITOL")
     public String getTiOperTitol() {
-        return this.tiOperTitol;
+	return this.tiOperTitol;
     }
 
     public void setTiOperTitol(String tiOperTitol) {
-        this.tiOperTitol = tiOperTitol;
+	this.tiOperTitol = tiOperTitol;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TITOL")
     public DecTitol getDecTitol() {
-        return this.decTitol;
+	return this.decTitol;
     }
 
     public void setDecTitol(DecTitol decTitol) {
-        this.decTitol = decTitol;
+	this.decTitol = decTitol;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     public OrgStrut getOrgStrut() {
-        return this.orgStrut;
+	return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-        this.orgStrut = orgStrut;
+	this.orgStrut = orgStrut;
     }
 
-    @OneToMany(mappedBy = "orgOperTitol", cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @OneToMany(mappedBy = "orgOperTitol", cascade = {
+	    CascadeType.PERSIST, CascadeType.REMOVE })
     public List<OrgOperVoceTitol> getOrgOperVoceTitols() {
-        return this.orgOperVoceTitols;
+	return this.orgOperVoceTitols;
     }
 
     public void setOrgOperVoceTitols(List<OrgOperVoceTitol> orgOperVoceTitols) {
-        this.orgOperVoceTitols = orgOperVoceTitols;
+	this.orgOperVoceTitols = orgOperVoceTitols;
     }
 
     public OrgOperVoceTitol addOrgOperVoceTitol(OrgOperVoceTitol orgOperVoceTitol) {
-        getOrgOperVoceTitols().add(orgOperVoceTitol);
-        orgOperVoceTitol.setOrgOperTitol(this);
-        return orgOperVoceTitol;
+	getOrgOperVoceTitols().add(orgOperVoceTitol);
+	orgOperVoceTitol.setOrgOperTitol(this);
+	return orgOperVoceTitol;
     }
 
     public OrgOperVoceTitol removeOrgOperVoceTitol(OrgOperVoceTitol orgOperVoceTitol) {
-        getOrgOperVoceTitols().remove(orgOperVoceTitol);
-        orgOperVoceTitol.setOrgOperTitol(null);
-        return orgOperVoceTitol;
+	getOrgOperVoceTitols().remove(orgOperVoceTitol);
+	orgOperVoceTitol.setOrgOperTitol(null);
+	return orgOperVoceTitol;
     }
 }

@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.tpi.bean;
@@ -26,7 +22,8 @@ import javax.xml.bind.annotation.XmlType;
 import it.eng.tpi.bean.Esito.EsitoServizio;
 
 @XmlRootElement(name = "RetrieveFileUnitaDoc")
-@XmlType(propOrder = { "esito", "dtVers", "rootDtVers", "dirStruttura", "dirUnitaDoc" })
+@XmlType(propOrder = {
+	"esito", "dtVers", "rootDtVers", "dirStruttura", "dirUnitaDoc" })
 public class RetrieveFileUnitaDocRisposta {
 
     protected Esito esito;
@@ -36,60 +33,61 @@ public class RetrieveFileUnitaDocRisposta {
     protected String dirUnitaDoc;
 
     public RetrieveFileUnitaDocRisposta() {
-        setEsito(new Esito());
+	setEsito(new Esito());
     }
 
-    public RetrieveFileUnitaDocRisposta(Date dtVers, String rootDtVers, String dirStruttura, String dirUnitaDoc) {
-        this();
-        getEsito().setCdEsito(EsitoServizio.KO);
-        this.dtVers = dtVers;
-        this.rootDtVers = rootDtVers;
-        this.dirStruttura = dirStruttura;
-        this.dirUnitaDoc = dirUnitaDoc;
+    public RetrieveFileUnitaDocRisposta(Date dtVers, String rootDtVers, String dirStruttura,
+	    String dirUnitaDoc) {
+	this();
+	getEsito().setCdEsito(EsitoServizio.KO);
+	this.dtVers = dtVers;
+	this.rootDtVers = rootDtVers;
+	this.dirStruttura = dirStruttura;
+	this.dirUnitaDoc = dirUnitaDoc;
     }
 
     @XmlElement(name = "Esito")
     public Esito getEsito() {
-        return esito;
+	return esito;
     }
 
     public void setEsito(Esito esito) {
-        this.esito = esito;
+	this.esito = esito;
     }
 
     @XmlElement(name = "DtVers")
     public Date getDtVers() {
-        return dtVers;
+	return dtVers;
     }
 
     public void setDtVers(Date dtVers) {
-        this.dtVers = dtVers;
+	this.dtVers = dtVers;
     }
 
     @XmlElement(name = "RootDtVers")
     public String getRootDtVers() {
-        return rootDtVers;
+	return rootDtVers;
     }
 
     public void setRootDtVers(String rootDtVers) {
-        this.rootDtVers = rootDtVers;
+	this.rootDtVers = rootDtVers;
     }
 
     @XmlElement(name = "DirStruttura")
     public String getDirStruttura() {
-        return dirStruttura;
+	return dirStruttura;
     }
 
     public void setDirStruttura(String dirStruttura) {
-        this.dirStruttura = dirStruttura;
+	this.dirStruttura = dirStruttura;
     }
 
     @XmlElement(name = "DirUnitaDoc")
     public String getDirUnitaDoc() {
-        return dirUnitaDoc;
+	return dirUnitaDoc;
     }
 
     public void setDirUnitaDoc(String dirUnitaDoc) {
-        this.dirUnitaDoc = dirUnitaDoc;
+	this.dirUnitaDoc = dirUnitaDoc;
     }
 }

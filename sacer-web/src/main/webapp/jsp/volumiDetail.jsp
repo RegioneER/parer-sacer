@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ page import="it.eng.parer.slite.gen.form.VolumiForm" pageEncoding="UTF-8"%>
 <%@ include file="../include.jsp"%>
 <c:set scope="request" var="navTable" value="${(empty param.mainNavTable) ? (fn:escapeXml(param.table)) : (fn:escapeXml(param.mainNavTable))  }" />
@@ -20,8 +37,8 @@
             <slf:tab  name="<%= VolumiForm.VolumiTabs.NAME%>" tabElement="DettaglioVol">
                 <!--  piazzo i campi da visualizzare nel dettaglio -->
                 <slf:fieldSet borderHidden="false">
-                    <label class="slLabel w50" for="Ds_volume_label" style="text-align:center;"><font color="#d3101c">Informazioni sul volume</font></label>
-                    <label class="slLabel w50" for="Ds_criterio_label" style="text-align:center;"><font color="#d3101c">Informazioni sul criterio di raggruppamento</font></label>
+                    <label class="slLabel w50" for="Ds_volume_label" style="text-align:center; color: #d3101c;">Informazioni sul volume</label>
+                    <label class="slLabel w50" for="Ds_criterio_label" style="text-align:center; color: #d3101c;">Informazioni sul criterio di raggruppamento</label>
                         <sl:newLine skipLine="true"/>
                         <slf:lblField name="<%= VolumiForm.VolumiDetail.ID_VOLUME_CONSERV%>" colSpan="2" />
                         <slf:lblField name="<%= VolumiForm.VolumiDetail.NM_CRITERIO_RAGGR%>" colSpan="2" />

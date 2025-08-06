@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -62,43 +58,43 @@ public class OstStatoMigrazSubPart implements Serializable {
 
     @Column(name = "ID_STATO_MIGRAZ_SUB_PART")
     @GenericGenerator(name = "SOST_STATO_MIGRAZ_SUB_PART_ID_STATO_MIGRAZ_SUB_PART_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_STATO_MIGRAZ_SUB_PART"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SOST_STATO_MIGRAZ_SUB_PART"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SOST_STATO_MIGRAZ_SUB_PART_ID_STATO_MIGRAZ_SUB_PART_GENERATOR")
     public Long getIdStatoMigrazSubPart() {
-        return this.idStatoMigrazSubPart;
+	return this.idStatoMigrazSubPart;
     }
 
     public void setIdStatoMigrazSubPart(Long idStatoMigrazSubPart) {
-        this.idStatoMigrazSubPart = idStatoMigrazSubPart;
+	this.idStatoMigrazSubPart = idStatoMigrazSubPart;
     }
 
     @Column(name = "TI_STATO")
     public String getTiStato() {
-        return this.tiStato;
+	return this.tiStato;
     }
 
     public void setTiStato(String tiStato) {
-        this.tiStato = tiStato;
+	this.tiStato = tiStato;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_REG_STATO")
     public Date getTsRegStato() {
-        return this.tsRegStato;
+	return this.tsRegStato;
     }
 
     public void setTsRegStato(Date tsRegStato) {
-        this.tsRegStato = tsRegStato;
+	this.tsRegStato = tsRegStato;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MIGRAZ_SUB_PART")
     public OstMigrazSubPart getOstMigrazSubPart() {
-        return this.ostMigrazSubPart;
+	return this.ostMigrazSubPart;
     }
 
     public void setOstMigrazSubPart(OstMigrazSubPart ostMigrazSubPart) {
-        this.ostMigrazSubPart = ostMigrazSubPart;
+	this.ostMigrazSubPart = ostMigrazSubPart;
     }
 }

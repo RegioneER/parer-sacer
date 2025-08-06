@@ -3,7 +3,7 @@
     <parent>
         <artifactId>sacer-jboss</artifactId>
         <groupId>it.eng.parer</groupId>
-        <version>10.9.2-SNAPSHOT</version>
+        <version>10.10.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>sacer-jboss-ejb</artifactId>
@@ -19,10 +19,10 @@
             <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.6.0.Final</version>
+                <version>${arquillian-bom.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
+            </dependency>   
         </dependencies>
     </dependencyManagement>
 
@@ -204,17 +204,17 @@
             <groupId>net.sourceforge.javacsv</groupId>
             <artifactId>javacsv</artifactId>
         </dependency>
-		<!-- Utilizzati per i test automatici -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.arquillian.junit</groupId>
-            <artifactId>arquillian-junit-container</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<!-- Unit Test -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.junit5</groupId>
+			<artifactId>arquillian-junit5-container</artifactId>
+			<scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>org.jboss.arquillian.protocol</groupId>
             <artifactId>arquillian-protocol-servlet</artifactId>
@@ -240,6 +240,7 @@
         <dependency>
             <groupId>org.jboss.shrinkwrap.resolver</groupId>
             <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+            <version>3.3.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>

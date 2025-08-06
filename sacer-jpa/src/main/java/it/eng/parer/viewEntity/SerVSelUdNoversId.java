@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -36,49 +32,49 @@ public class SerVSelUdNoversId implements Serializable {
 
     @Column(name = "ID_UNITA_DOC_NON_VERS")
     public BigDecimal getIdUnitaDocNonVers() {
-        return this.idUnitaDocNonVers;
+	return this.idUnitaDocNonVers;
     }
 
     public void setIdUnitaDocNonVers(BigDecimal idUnitaDocNonVers) {
-        this.idUnitaDocNonVers = idUnitaDocNonVers;
+	this.idUnitaDocNonVers = idUnitaDocNonVers;
     }
 
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-        return this.idVerSerie;
+	return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-        this.idVerSerie = idVerSerie;
+	this.idVerSerie = idVerSerie;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.idUnitaDocNonVers);
-        hash = 89 * hash + Objects.hashCode(this.idVerSerie);
-        return hash;
+	int hash = 7;
+	hash = 89 * hash + Objects.hashCode(this.idUnitaDocNonVers);
+	hash = 89 * hash + Objects.hashCode(this.idVerSerie);
+	return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final SerVSelUdNoversId other = (SerVSelUdNoversId) obj;
-        if (!Objects.equals(this.idUnitaDocNonVers, other.idUnitaDocNonVers)) {
-            return false;
-        }
-        if (!Objects.equals(this.idVerSerie, other.idVerSerie)) {
-            return false;
-        }
-        return true;
+	if (this == obj) {
+	    return true;
+	}
+	if (obj == null) {
+	    return false;
+	}
+	if (getClass() != obj.getClass()) {
+	    return false;
+	}
+	final SerVSelUdNoversId other = (SerVSelUdNoversId) obj;
+	if (!Objects.equals(this.idUnitaDocNonVers, other.idUnitaDocNonVers)) {
+	    return false;
+	}
+	if (!Objects.equals(this.idVerSerie, other.idVerSerie)) {
+	    return false;
+	}
+	return true;
     }
 
 }

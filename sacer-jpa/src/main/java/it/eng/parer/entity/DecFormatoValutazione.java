@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -57,58 +53,58 @@ public class DecFormatoValutazione implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_FORMATO_VALUTAZIONE_GENERATOR")
     @Column(name = "ID_FORMATO_VALUTAZIONE")
     public Long getIdFormatoValutazione() {
-        return idFormatoValutazione;
+	return idFormatoValutazione;
     }
 
     public void setIdFormatoValutazione(Long idFormatoValutazione) {
-        this.idFormatoValutazione = idFormatoValutazione;
+	this.idFormatoValutazione = idFormatoValutazione;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_PROPRIETA")
     public DecFormatoProprieta getDecFormatoProprieta() {
-        return decFormatoProprieta;
+	return decFormatoProprieta;
     }
 
     public void setDecFormatoProprieta(DecFormatoProprieta decFormatoProprieta) {
-        this.decFormatoProprieta = decFormatoProprieta;
+	this.decFormatoProprieta = decFormatoProprieta;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_FILE_STANDARD")
     public DecFormatoFileStandard getDecFormatoFileStandard() {
-        return decFormatoFileStandard;
+	return decFormatoFileStandard;
     }
 
     public void setDecFormatoFileStandard(DecFormatoFileStandard decFormatoFileStandard) {
-        this.decFormatoFileStandard = decFormatoFileStandard;
+	this.decFormatoFileStandard = decFormatoFileStandard;
     }
 
     @Column(name = "NI_PUNTEGGIO")
     public BigDecimal getNiPunteggio() {
-        return niPunteggio;
+	return niPunteggio;
     }
 
     public void setNiPunteggio(BigDecimal niPunteggio) {
-        this.niPunteggio = niPunteggio;
+	this.niPunteggio = niPunteggio;
     }
 
     @Column(name = "FLG_INTEROPERABILITA")
     public Integer getFlgInteroperabilita() {
-        return flgInteroperabilita;
+	return flgInteroperabilita;
     }
 
     public void setFlgInteroperabilita(Integer flgInteroperabilita) {
-        this.flgInteroperabilita = flgInteroperabilita;
+	this.flgInteroperabilita = flgInteroperabilita;
     }
 
     @Column(name = "NT_PUNTEGGIO_VALUTAZIONE")
     public String getNtPunteggioValutazione() {
-        return ntPunteggioValutazione;
+	return ntPunteggioValutazione;
     }
 
     public void setNtPunteggioValutazione(String ntPunteggioValutazione) {
-        this.ntPunteggioValutazione = ntPunteggioValutazione;
+	this.ntPunteggioValutazione = ntPunteggioValutazione;
     }
 
 }

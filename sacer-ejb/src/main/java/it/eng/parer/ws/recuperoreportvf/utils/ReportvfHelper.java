@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.ws.recuperoreportvf.utils;
@@ -63,14 +59,15 @@ import org.apache.fop.configuration.ConfigurationException;
 public class ReportvfHelper {
 
     /*
-     * La stessa directory viene utilizzata nel report zip "confezinato" al versamento e anche alla generazione stesssa
+     * La stessa directory viene utilizzata nel report zip "confezinato" al versamento e anche alla
+     * generazione stesssa
      *
      * Report v0 e v1
      */
     public static final String DIRECTORY_REPORT = "FileTrasformati";
 
     private ReportvfHelper() {
-        throw new IllegalStateException("Utility class");
+	throw new IllegalStateException("Utility class");
     }
 
     // The ZipArchiveEntry.setXxxTime() methods write the time taking into account
@@ -81,162 +78,147 @@ public class ReportvfHelper {
     // in a
     // different time zone.
     private static final long DEFAULT_ZIP_TIMESTAMP = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0)
-            .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+	    .atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
     /**
      * Effettua trasformazione report (xml) in PDF
      *
-     * @param report
-     *            file del singolo report
-     * @param xslt
-     *            foglio di stile
-     * @param outputPath
-     *            path di generazione
+     * @param report     file del singolo report
+     * @param xslt       foglio di stile
+     * @param outputPath path di generazione
      *
      * @return trasformazione (se riuscita) del report in formato PDF
      *
-     * @throws SacerException
-     *             eccezione generica
-     * @throws IOException
-     *             eccezione generica
+     * @throws SacerException eccezione generica
+     * @throws IOException    eccezione generica
      */
     public static File generatePdfReport(File report, String xslt, String outputPath)
-            throws SacerException, IOException {
-        File tmpPdf = File.createTempFile("output_", ".pdf", new File(outputPath));
-        try (FileOutputStream out = new FileOutputStream(tmpPdf)) {
-            DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-            Configuration cfg = cfgBuilder
-                    .build(ReportvfHelper.class.getClass().getClassLoader().getResourceAsStream("META-INF/fop.xconf"));
-            FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI()).setConfiguration(cfg);
+	    throws SacerException, IOException {
+	File tmpPdf = File.createTempFile("output_", ".pdf", new File(outputPath));
+	try (FileOutputStream out = new FileOutputStream(tmpPdf)) {
+	    DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
+	    Configuration cfg = cfgBuilder.build(ReportvfHelper.class.getClass().getClassLoader()
+		    .getResourceAsStream("META-INF/fop.xconf"));
+	    FopFactoryBuilder fopFactoryBuilder = new FopFactoryBuilder(new File(".").toURI())
+		    .setConfiguration(cfg);
 
-            FopFactory fopFactory = fopFactoryBuilder.build();
-            Fop fop = fopFactory.newFop(MIME_PDF, out);
-            TransformerFactory factory = TransformerFactory.newInstance();
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-            Templates templates = factory.newTemplates(new StreamSource(new StringReader(xslt)));
-            Source src = new StreamSource(new FileInputStream(report));
-            Result res = new SAXResult(fop.getDefaultHandler());
-            Transformer transformer = templates.newTransformer();
-            transformer.transform(src, res);
-        } catch (TransformerException | SAXException ex) {
-            Files.delete(tmpPdf.toPath()); // delete file
-            tmpPdf = null;
-            throw new SacerException(ex, SacerErrorCategory.INTERNAL_ERROR);
-        } catch (ConfigurationException ex) {
-            Files.delete(tmpPdf.toPath()); // delete file
-            tmpPdf = null;
-            Logger.getLogger(ReportvfHelper.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return tmpPdf;
+	    FopFactory fopFactory = fopFactoryBuilder.build();
+	    Fop fop = fopFactory.newFop(MIME_PDF, out);
+	    TransformerFactory factory = TransformerFactory.newInstance();
+	    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+	    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+	    Templates templates = factory.newTemplates(new StreamSource(new StringReader(xslt)));
+	    Source src = new StreamSource(new FileInputStream(report));
+	    Result res = new SAXResult(fop.getDefaultHandler());
+	    Transformer transformer = templates.newTransformer();
+	    transformer.transform(src, res);
+	} catch (TransformerException | SAXException ex) {
+	    Files.delete(tmpPdf.toPath()); // delete file
+	    tmpPdf = null;
+	    throw new SacerException(ex, SacerErrorCategory.INTERNAL_ERROR);
+	} catch (ConfigurationException ex) {
+	    Files.delete(tmpPdf.toPath()); // delete file
+	    tmpPdf = null;
+	    Logger.getLogger(ReportvfHelper.class.getName()).log(Level.SEVERE, null, ex);
+	}
+	return tmpPdf;
     }
 
     /**
      * "Generica" trasformazione del file report applicando un determinato foglio di stile
      *
-     * @param report
-     *            file del singolo report
-     * @param xslt
-     *            foglio di stile
-     * @param outputPath
-     *            path di generazione
+     * @param report     file del singolo report
+     * @param xslt       foglio di stile
+     * @param outputPath path di generazione
      *
      * @return trasformazione (se riuscita) del report
      *
-     * @throws SacerException
-     *             eccezione generica
-     * @throws IOException
-     *             eccezione generica
+     * @throws SacerException eccezione generica
+     * @throws IOException    eccezione generica
      */
     public static File generateGenericFromXslt(File report, String xslt, String outputPath)
-            throws SacerException, IOException {
-        File tmpResult = File.createTempFile("output_", ".tmp", new File(outputPath));
-        try (FileOutputStream out = new FileOutputStream(tmpResult)) {
-            TransformerFactory factory = TransformerFactory.newInstance();
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-            Templates templates = factory.newTemplates(new StreamSource(new StringReader(xslt)));
-            Source src = new StreamSource(new FileInputStream(report));
-            Transformer transformer = templates.newTransformer();
-            transformer.transform(src, new StreamResult(out));
-        } catch (TransformerException ex) {
-            Files.delete(tmpResult.toPath()); // delete file
-            tmpResult = null;
-            throw new SacerException(ex, SacerErrorCategory.INTERNAL_ERROR);
-        }
-        return tmpResult;
+	    throws SacerException, IOException {
+	File tmpResult = File.createTempFile("output_", ".tmp", new File(outputPath));
+	try (FileOutputStream out = new FileOutputStream(tmpResult)) {
+	    TransformerFactory factory = TransformerFactory.newInstance();
+	    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+	    factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+	    Templates templates = factory.newTemplates(new StreamSource(new StringReader(xslt)));
+	    Source src = new StreamSource(new FileInputStream(report));
+	    Transformer transformer = templates.newTransformer();
+	    transformer.transform(src, new StreamResult(out));
+	} catch (TransformerException ex) {
+	    Files.delete(tmpResult.toPath()); // delete file
+	    tmpResult = null;
+	    throw new SacerException(ex, SacerErrorCategory.INTERNAL_ERROR);
+	}
+	return tmpResult;
     }
 
     /**
      * Aggiunta entry su file ZIP del report generato (file trasformato)
      *
-     * @param tmpZipOutputStream
-     *            zip outputstream
-     * @param reportvfTransformed
-     *            file report da aggiungere
-     * @param reportvfFilename
-     *            nome file report
-     * @param reportvfExtension
-     *            estensione
+     * @param tmpZipOutputStream  zip outputstream
+     * @param reportvfTransformed file report da aggiungere
+     * @param reportvfFilename    nome file report
+     * @param reportvfExtension   estensione
      *
-     * @throws IOException
-     *             eccezione generica
+     * @throws IOException eccezione generica
      */
-    public static void addReportAsZipEntry(ZipArchiveOutputStream tmpZipOutputStream, File reportvfTransformed,
-            String reportvfFilename, String reportvfExtension) throws IOException {
-        //
-        addReportAsZipEntry(tmpZipOutputStream, reportvfTransformed, Optional.of(DIRECTORY_REPORT), reportvfFilename,
-                Optional.of(reportvfExtension));
+    public static void addReportAsZipEntry(ZipArchiveOutputStream tmpZipOutputStream,
+	    File reportvfTransformed, String reportvfFilename, String reportvfExtension)
+	    throws IOException {
+	//
+	addReportAsZipEntry(tmpZipOutputStream, reportvfTransformed, Optional.of(DIRECTORY_REPORT),
+		reportvfFilename, Optional.of(reportvfExtension));
     }
 
     /**
      * Aggiunta entry su file ZIP del report generato (file originale)
      *
-     * @param tmpZipOutputStream
-     *            zip outputstream
-     * @param xmlFile
-     *            file report da aggiungere
-     * @param fileName
-     *            nome file report
+     * @param tmpZipOutputStream zip outputstream
+     * @param xmlFile            file report da aggiungere
+     * @param fileName           nome file report
      *
-     * @throws IOException
-     *             eccezione generica
+     * @throws IOException eccezione generica
      */
-    public static void addOriginalReportAsZipEntry(ZipArchiveOutputStream tmpZipOutputStream, File xmlFile,
-            String fileName) throws IOException {
-        //
-        addReportAsZipEntry(tmpZipOutputStream, xmlFile, Optional.empty(), fileName, Optional.empty());
+    public static void addOriginalReportAsZipEntry(ZipArchiveOutputStream tmpZipOutputStream,
+	    File xmlFile, String fileName) throws IOException {
+	//
+	addReportAsZipEntry(tmpZipOutputStream, xmlFile, Optional.empty(), fileName,
+		Optional.empty());
     }
 
-    private static void addReportAsZipEntry(ZipArchiveOutputStream tmpZipOutputStream, File reportvfTransformed,
-            Optional<String> dirName, String fileName, Optional<String> ext) throws IOException {
-        final String entryName = (dirName.isPresent() ? dirName.get() + "/" : "").concat(fileName)
-                .concat(ext.isPresent() ? "." + ext.get() : "");
-        ZipArchiveEntry zae = new ZipArchiveEntry(entryName);
-        filterZipEntry(zae);
-        tmpZipOutputStream.putArchiveEntry(zae);
+    private static void addReportAsZipEntry(ZipArchiveOutputStream tmpZipOutputStream,
+	    File reportvfTransformed, Optional<String> dirName, String fileName,
+	    Optional<String> ext) throws IOException {
+	final String entryName = (dirName.isPresent() ? dirName.get() + "/" : "").concat(fileName)
+		.concat(ext.isPresent() ? "." + ext.get() : "");
+	ZipArchiveEntry zae = new ZipArchiveEntry(entryName);
+	filterZipEntry(zae);
+	tmpZipOutputStream.putArchiveEntry(zae);
 
-        try (FileInputStream fis = new FileInputStream(reportvfTransformed)) {
-            IOUtils.copy(fis, tmpZipOutputStream);
-            tmpZipOutputStream.closeArchiveEntry();
-        } finally {
-            Files.delete(reportvfTransformed.toPath());
-        }
+	try (FileInputStream fis = new FileInputStream(reportvfTransformed)) {
+	    IOUtils.copy(fis, tmpZipOutputStream);
+	    tmpZipOutputStream.closeArchiveEntry();
+	} finally {
+	    Files.delete(reportvfTransformed.toPath());
+	}
     }
 
     private static ZipArchiveEntry filterZipEntry(ZipArchiveEntry entry) {
-        // Set times
-        entry.setCreationTime(FileTime.fromMillis(DEFAULT_ZIP_TIMESTAMP));
-        entry.setLastAccessTime(FileTime.fromMillis(DEFAULT_ZIP_TIMESTAMP));
-        entry.setLastModifiedTime(FileTime.fromMillis(DEFAULT_ZIP_TIMESTAMP));
-        entry.setTime(DEFAULT_ZIP_TIMESTAMP);
-        // Remove extended timestamps
-        for (ZipExtraField field : entry.getExtraFields()) {
-            if (field instanceof X5455_ExtendedTimestamp) {
-                entry.removeExtraField(field.getHeaderId());
-            }
-        }
-        return entry;
+	// Set times
+	entry.setCreationTime(FileTime.fromMillis(DEFAULT_ZIP_TIMESTAMP));
+	entry.setLastAccessTime(FileTime.fromMillis(DEFAULT_ZIP_TIMESTAMP));
+	entry.setLastModifiedTime(FileTime.fromMillis(DEFAULT_ZIP_TIMESTAMP));
+	entry.setTime(DEFAULT_ZIP_TIMESTAMP);
+	// Remove extended timestamps
+	for (ZipExtraField field : entry.getExtraFields()) {
+	    if (field instanceof X5455_ExtendedTimestamp) {
+		entry.removeExtraField(field.getHeaderId());
+	    }
+	}
+	return entry;
     }
 
 }

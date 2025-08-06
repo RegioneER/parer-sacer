@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -60,37 +56,37 @@ public class DecTipoStrutDocAmmesso implements Serializable {
     @Column(name = "ID_TIPO_STRUT_DOC_AMMESSO")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_STRUT_DOC_AMMESSO_ID_TIPO_STRUT_DOC_AMMESSO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_DOC_AMMESSO"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_DOC_AMMESSO"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_STRUT_DOC_AMMESSO_ID_TIPO_STRUT_DOC_AMMESSO_GENERATOR")
     public Long getIdTipoStrutDocAmmesso() {
-        return this.idTipoStrutDocAmmesso;
+	return this.idTipoStrutDocAmmesso;
     }
 
     public void setIdTipoStrutDocAmmesso(Long idTipoStrutDocAmmesso) {
-        this.idTipoStrutDocAmmesso = idTipoStrutDocAmmesso;
+	this.idTipoStrutDocAmmesso = idTipoStrutDocAmmesso;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_DOC")
     @XmlInverseReference(mappedBy = "decTipoStrutDocAmmessos")
     public DecTipoDoc getDecTipoDoc() {
-        return this.decTipoDoc;
+	return this.decTipoDoc;
     }
 
     public void setDecTipoDoc(DecTipoDoc decTipoDoc) {
-        this.decTipoDoc = decTipoDoc;
+	this.decTipoDoc = decTipoDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_STRUT_DOC")
     @XmlInverseReference(mappedBy = "decTipoStrutDocAmmessos")
     public DecTipoStrutDoc getDecTipoStrutDoc() {
-        return this.decTipoStrutDoc;
+	return this.decTipoStrutDoc;
     }
 
     public void setDecTipoStrutDoc(DecTipoStrutDoc decTipoStrutDoc) {
-        this.decTipoStrutDoc = decTipoStrutDoc;
+	this.decTipoStrutDoc = decTipoStrutDoc;
     }
 
 }

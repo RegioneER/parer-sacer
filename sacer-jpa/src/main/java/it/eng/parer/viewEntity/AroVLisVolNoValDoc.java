@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.viewEntity;
@@ -49,49 +45,49 @@ public class AroVLisVolNoValDoc implements Serializable {
 
     @Column(name = "DS_VOLUME_CONSERV")
     public String getDsVolumeConserv() {
-        return this.dsVolumeConserv;
+	return this.dsVolumeConserv;
     }
 
     public void setDsVolumeConserv(String dsVolumeConserv) {
-        this.dsVolumeConserv = dsVolumeConserv;
+	this.dsVolumeConserv = dsVolumeConserv;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-        return this.dtCreazione;
+	return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-        this.dtCreazione = dtCreazione;
+	this.dtCreazione = dtCreazione;
     }
 
     @Column(name = "NM_VOLUME_CONSERV")
     public String getNmVolumeConserv() {
-        return this.nmVolumeConserv;
+	return this.nmVolumeConserv;
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-        this.nmVolumeConserv = nmVolumeConserv;
+	this.nmVolumeConserv = nmVolumeConserv;
     }
 
     @Column(name = "TI_STATO_VOLUME_CONSERV")
     public String getTiStatoVolumeConserv() {
-        return this.tiStatoVolumeConserv;
+	return this.tiStatoVolumeConserv;
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-        this.tiStatoVolumeConserv = tiStatoVolumeConserv;
+	this.tiStatoVolumeConserv = tiStatoVolumeConserv;
     }
 
     private AroVLisVolNoValDocId aroVLisVolNoValDocId;
 
     @EmbeddedId()
     public AroVLisVolNoValDocId getAroVLisVolNoValDocId() {
-        return aroVLisVolNoValDocId;
+	return aroVLisVolNoValDocId;
     }
 
     public void setAroVLisVolNoValDocId(AroVLisVolNoValDocId aroVLisVolNoValDocId) {
-        this.aroVLisVolNoValDocId = aroVLisVolNoValDocId;
+	this.aroVLisVolNoValDocId = aroVLisVolNoValDocId;
     }
 }

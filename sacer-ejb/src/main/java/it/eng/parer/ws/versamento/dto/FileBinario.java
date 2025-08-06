@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.ws.versamento.dto;
@@ -36,63 +32,60 @@ public class FileBinario implements java.io.Serializable {
     private long dimensione;
 
     public String getId() {
-        return id;
+	return id;
     }
 
     public void setId(String id) {
-        this.id = id;
+	this.id = id;
     }
 
     public byte[] getDati() {
-        return dati;
+	return dati;
     }
 
     public void setDati(byte[] dati) {
-        this.dati = dati;
+	this.dati = dati;
     }
 
     /**
      * @return the inMemoria
      */
     public boolean isInMemoria() {
-        return inMemoria;
+	return inMemoria;
     }
 
     /**
-     * @param inMemoria
-     *            the inMemoria to set
+     * @param inMemoria the inMemoria to set
      */
     public void setInMemoria(boolean inMemoria) {
-        this.inMemoria = inMemoria;
+	this.inMemoria = inMemoria;
     }
 
     /**
      * @return the fileSuDisco
      */
     public File getFileSuDisco() {
-        return fileSuDisco;
+	return fileSuDisco;
     }
 
     /**
-     * @param fileSuDisco
-     *            the fileSuDisco to set
+     * @param fileSuDisco the fileSuDisco to set
      */
     public void setFileSuDisco(File fileSuDisco) {
-        this.fileSuDisco = fileSuDisco;
+	this.fileSuDisco = fileSuDisco;
     }
 
     /**
      * @return the dimensione
      */
     public long getDimensione() {
-        return dimensione;
+	return dimensione;
     }
 
     /**
-     * @param dimensione
-     *            the dimensione to set
+     * @param dimensione the dimensione to set
      */
     public void setDimensione(long dimensione) {
-        this.dimensione = dimensione;
+	this.dimensione = dimensione;
     }
 }

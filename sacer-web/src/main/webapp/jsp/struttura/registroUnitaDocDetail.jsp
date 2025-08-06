@@ -1,3 +1,20 @@
+<!--
+ Engineering Ingegneria Informatica S.p.A.
+
+ Copyright (C) 2023 Regione Emilia-Romagna
+ <p/>
+ This program is free software: you can redistribute it and/or modify it under the terms of
+ the GNU Affero General Public License as published by the Free Software Foundation,
+ either version 3 of the License, or (at your option) any later version.
+ <p/>
+ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ See the GNU Affero General Public License for more details.
+ <p/>
+ You should have received a copy of the GNU Affero General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+-->
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="it.eng.parer.slite.gen.form.StrutTipiForm "%>
 <%@ include file="../../include.jsp"%>
@@ -221,17 +238,17 @@
                     <slf:lblField name="<%=StrutTipiForm.RegistroUnitaDoc.LOG_EVENTI%>" />
                 </sl:pulsantiera>
                 <sl:newLine skipLine="true"/>
-                <div class="livello1"><b><font color="#d3101c">Tipologie unit&agrave; documentarie ammesse</font></b></div>
+                <div class="livello1"><b style="color: #d3101c;">Tipologie unit&agrave; documentarie ammesse</b></div>
                         <slf:listNavBar name="<%= StrutTipiForm.RegistroTipoUnitaDocAmmessoList.NAME%>" pageSizeRelated="true"/>
                         <slf:list name="<%= StrutTipiForm.RegistroTipoUnitaDocAmmessoList.NAME%>"  />
                         <slf:listNavBar  name="<%= StrutTipiForm.RegistroTipoUnitaDocAmmessoList.NAME%>" />
                         <sl:newLine skipLine="true"/>
-                <div class="livello1"><b><font color="#d3101c">Periodi di validit&agrave; registro</font></b></div>
+                <div class="livello1"><b style="color: #d3101c;">Periodi di validit&agrave; registro</b></div>
                         <slf:listNavBar name="<%= StrutTipiForm.AaRegistroUnitaDocList.NAME%>" pageSizeRelated="true"/>
                         <slf:list name="<%= StrutTipiForm.AaRegistroUnitaDocList.NAME%>"  />
                         <slf:listNavBar  name="<%= StrutTipiForm.AaRegistroUnitaDocList.NAME%>" />
                         <sl:newLine skipLine="true"/>
-                <div class="livello1"><b><font color="#d3101c">Criteri di raggruppamento</font></b></div>
+                <div class="livello1"><b style="color: #d3101c;">Criteri di raggruppamento</b></div>
                 <slf:listNavBar name="<%= StrutTipiForm.CriteriRaggruppamentoList.NAME%>" pageSizeRelated="true"/>
                 <slf:list name="<%= StrutTipiForm.CriteriRaggruppamentoList.NAME%>"  />
                 <slf:listNavBar  name="<%= StrutTipiForm.CriteriRaggruppamentoList.NAME%>" />

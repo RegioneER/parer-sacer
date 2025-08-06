@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.entity;
@@ -74,105 +70,106 @@ public class SerIxVolVerSerie implements Serializable {
     private List<SerUrnIxVolVerSerie> serUrnIxVolVerSeries = new ArrayList<>();
 
     public SerIxVolVerSerie() {
-        // hibernate
+	// hibernate
     }
 
     @Id
 
     @Column(name = "ID_IX_VOL_VER_SERIE")
     @GenericGenerator(name = "SSER_IX_VOL_VER_SERIE_ID_IX_VOL_VER_SERIE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_IX_VOL_VER_SERIE"),
-            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_IX_VOL_VER_SERIE"),
+	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SSER_IX_VOL_VER_SERIE_ID_IX_VOL_VER_SERIE_GENERATOR")
     public Long getIdIxVolVerSerie() {
-        return this.idIxVolVerSerie;
+	return this.idIxVolVerSerie;
     }
 
     public void setIdIxVolVerSerie(Long idIxVolVerSerie) {
-        this.idIxVolVerSerie = idIxVolVerSerie;
+	this.idIxVolVerSerie = idIxVolVerSerie;
     }
 
     @Lob
     @Column(name = "BL_IX_VOL")
     public String getBlIxVol() {
-        return this.blIxVol;
+	return this.blIxVol;
     }
 
     public void setBlIxVol(String blIxVol) {
-        this.blIxVol = blIxVol;
+	this.blIxVol = blIxVol;
     }
 
     @Column(name = "CD_ENCODING_HASH_IX_VOL")
     public String getCdEncodingHashIxVol() {
-        return this.cdEncodingHashIxVol;
+	return this.cdEncodingHashIxVol;
     }
 
     public void setCdEncodingHashIxVol(String cdEncodingHashIxVol) {
-        this.cdEncodingHashIxVol = cdEncodingHashIxVol;
+	this.cdEncodingHashIxVol = cdEncodingHashIxVol;
     }
 
     @Column(name = "CD_VER_XSD_IX_VOL")
     public String getCdVerXsdIxVol() {
-        return this.cdVerXsdIxVol;
+	return this.cdVerXsdIxVol;
     }
 
     public void setCdVerXsdIxVol(String cdVerXsdIxVol) {
-        this.cdVerXsdIxVol = cdVerXsdIxVol;
+	this.cdVerXsdIxVol = cdVerXsdIxVol;
     }
 
     @Column(name = "DS_ALGO_HASH_IX_VOL")
     public String getDsAlgoHashIxVol() {
-        return this.dsAlgoHashIxVol;
+	return this.dsAlgoHashIxVol;
     }
 
     public void setDsAlgoHashIxVol(String dsAlgoHashIxVol) {
-        this.dsAlgoHashIxVol = dsAlgoHashIxVol;
+	this.dsAlgoHashIxVol = dsAlgoHashIxVol;
     }
 
     @Column(name = "DS_HASH_IX_VOL")
     public String getDsHashIxVol() {
-        return this.dsHashIxVol;
+	return this.dsHashIxVol;
     }
 
     public void setDsHashIxVol(String dsHashIxVol) {
-        this.dsHashIxVol = dsHashIxVol;
+	this.dsHashIxVol = dsHashIxVol;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-        return this.dtCreazione;
+	return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-        this.dtCreazione = dtCreazione;
+	this.dtCreazione = dtCreazione;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-        return this.idStrut;
+	return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VOL_VER_SERIE")
     public SerVolVerSerie getSerVolVerSerie() {
-        return this.serVolVerSerie;
+	return this.serVolVerSerie;
     }
 
     public void setSerVolVerSerie(SerVolVerSerie serVolVerSerie) {
-        this.serVolVerSerie = serVolVerSerie;
+	this.serVolVerSerie = serVolVerSerie;
     }
 
-    @OneToMany(mappedBy = "serIxVolVerSerie", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+    @OneToMany(mappedBy = "serIxVolVerSerie", cascade = {
+	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<SerUrnIxVolVerSerie> getSerUrnIxVolVerSeries() {
-        return this.serUrnIxVolVerSeries;
+	return this.serUrnIxVolVerSeries;
     }
 
     public void setSerUrnIxVolVerSeries(List<SerUrnIxVolVerSerie> serUrnIxVolVerSeries) {
-        this.serUrnIxVolVerSeries = serUrnIxVolVerSeries;
+	this.serUrnIxVolVerSeries = serUrnIxVolVerSeries;
     }
 }

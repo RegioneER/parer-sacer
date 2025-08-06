@@ -1,24 +1,19 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this license header, choose License Headers in Project Properties. To change this
+ * template file, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.soapWS.client;
 
@@ -46,7 +41,8 @@ import javax.xml.ws.soap.SOAPFaultException;
  *
  * @author paogilio
  */
-@WebServlet(name = "RecStatoOggettoSrvlt", urlPatterns = { "/RecStatoOggettoPing" })
+@WebServlet(name = "RecStatoOggettoSrvlt", urlPatterns = {
+	"/RecStatoOggettoPing" })
 public class RecStatoOggettoSrvlt extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
@@ -57,145 +53,141 @@ public class RecStatoOggettoSrvlt extends HttpServlet {
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
-     * @param request
-     *            servlet request
-     * @param response
-     *            servlet response
+     * @param request  servlet request
+     * @param response servlet response
      *
-     * @throws ServletException
-     *             if a servlet-specific error occurs
-     * @throws IOException
-     *             if an I/O error occurs
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	    throws ServletException, IOException {
 
-        String className = this.getClass().getSimpleName();
-        String methodName = new Object() {
-        }.getClass().getEnclosingMethod().getName();
+	String className = this.getClass().getSimpleName();
+	String methodName = new Object() {
+	}.getClass().getEnclosingMethod().getName();
 
-        log.debug(className + "." + methodName + ": invocata la servlet per il recupero stato oggetto di PING");
+	log.debug(className + "." + methodName
+		+ ": invocata la servlet per il recupero stato oggetto di PING");
 
-        RecStatoOggettoPing_Service service = new RecStatoOggettoPing_Service();
-        service.setHandlerResolver(new SOAPClientLoginHandlerResolver());
+	RecStatoOggettoPing_Service service = new RecStatoOggettoPing_Service();
+	service.setHandlerResolver(new SOAPClientLoginHandlerResolver());
 
-        log.debug(className + "." + methodName
-                + ": recupero i parametri per accedere al Web Service Recupero Stato Oggetto di PING");
-        String url = configurationHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_OGGETTO_PING);
-        String username = configurationHelper
-                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_OGGETTO_PING);
-        String password = configurationHelper
-                .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_OGGETTO_PING);
+	log.debug(className + "." + methodName
+		+ ": recupero i parametri per accedere al Web Service Recupero Stato Oggetto di PING");
+	String url = configurationHelper
+		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.URL_RECUP_OGGETTO_PING);
+	String username = configurationHelper
+		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.USERID_RECUP_OGGETTO_PING);
+	String password = configurationHelper
+		.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.PSW_RECUP_OGGETTO_PING);
 
-        String ambiente = request.getParameter("AMBIENTE");
-        String versatore = request.getParameter("VERSATORE");
-        String cdKeyOggetto = request.getParameter("CD_KEY_OGGETTO");
+	String ambiente = request.getParameter("AMBIENTE");
+	String versatore = request.getParameter("VERSATORE");
+	String cdKeyOggetto = request.getParameter("CD_KEY_OGGETTO");
 
-        try { // Call Web Service Operation
-            log.debug(
-                    className + "." + methodName + ": genero il client del Web Service Recupero Stato Oggetto di PING");
-            RecStatoOggettoPing client = service.getRecStatoOggettoPingPort();
-            Map<String, Object> requestContext = ((BindingProvider) client).getRequestContext();
-            requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
-            requestContext.put("user", username);
-            requestContext.put("pass", password);
+	try { // Call Web Service Operation
+	    log.debug(className + "." + methodName
+		    + ": genero il client del Web Service Recupero Stato Oggetto di PING");
+	    RecStatoOggettoPing client = service.getRecStatoOggettoPingPort();
+	    Map<String, Object> requestContext = ((BindingProvider) client).getRequestContext();
+	    requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, url);
+	    requestContext.put("user", username);
+	    requestContext.put("pass", password);
 
-            log.debug(className + "." + methodName
-                    + ": ottengo la risposta del Web Service Recupero Stato Oggetto di PING");
+	    log.debug(className + "." + methodName
+		    + ": ottengo la risposta del Web Service Recupero Stato Oggetto di PING");
 
-            // RISPOSTA
-            RecuperoStatoOggettoRisposta risp = client.getStatoOggetto(ambiente, versatore, cdKeyOggetto);
-            String err = risp.getCdErr() != null ? risp.getCdErr() : " ";
-            String dlErr = risp.getDlErr() != null ? risp.getDlErr() : " ";
-            String statoOggetto = risp.getStatoOggetto() != null ? risp.getStatoOggetto()
-                    : "Impossibile recuperare l'informazione";
-            String descrizioneStatoOggetto = risp.getDescrizioneStatoOggetto() != null
-                    ? risp.getDescrizioneStatoOggetto() : "Impossibile recuperare l'informazione";
+	    // RISPOSTA
+	    RecuperoStatoOggettoRisposta risp = client.getStatoOggetto(ambiente, versatore,
+		    cdKeyOggetto);
+	    String err = risp.getCdErr() != null ? risp.getCdErr() : " ";
+	    String dlErr = risp.getDlErr() != null ? risp.getDlErr() : " ";
+	    String statoOggetto = risp.getStatoOggetto() != null ? risp.getStatoOggetto()
+		    : "Impossibile recuperare l'informazione";
+	    String descrizioneStatoOggetto = risp.getDescrizioneStatoOggetto() != null
+		    ? risp.getDescrizioneStatoOggetto()
+		    : "Impossibile recuperare l'informazione";
 
-            log.debug(className + "." + methodName
-                    + ": preparo la risposta del Web Service Recupero Stato Oggetto di PING nella pagina JSP");
-            response.setContentType("text/html;charset=UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet RecStatoOggettoSrvlt</title>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h1>Servlet RecStatoOggettoSrvlt at " + request.getContextPath() + "</h1>");
-                out.println("<h4>Esito: " + risp.getCdEsito() + "</h4>");
-                out.println("<h4>Codice errore: " + err + "</h4>");
-                out.println("<h4>Descrizione errore: " + dlErr + "</h4 >");
-                out.println("<h4>Ambiente: " + ambiente + "</h4>");
-                out.println("<h4>Versatore: " + versatore + "</h4>");
-                out.println("<h4>Codice oggetto: " + cdKeyOggetto + "</h4>");
-                out.println("<h4>Stato oggetto: " + statoOggetto + "</h4>");
-                out.println("<h4>Descrizione stato oggetto: " + descrizioneStatoOggetto + "</h4><br>");
-                out.println("</body>");
-                out.println("</html>");
-            }
-        } catch (SOAPFaultException e) {
-            response.setContentType("text/html;charset=UTF-8");
-            try (PrintWriter out = response.getWriter()) {
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet RecStatoOggettoSrvlt</title>");
-                out.println("</head>");
-                out.println("<body>");
-                out.println("<h1>Servlet RecStatoOggettoSrvlt at " + request.getContextPath() + "</h1>");
-                out.println("<h4>Esito: NEGATIVO </h4>");
-                out.println("<h4>Codice errore: </h4>");
-                out.println("<h4>Descrizione errore: " + e.getMessage() + "</h4 >");
-                out.println("<h4>Ambiente: " + ambiente + "</h4>");
-                out.println("<h4>Versatore: " + versatore + "</h4>");
-                out.println("<h4>Codice oggetto: " + cdKeyOggetto + "</h4>");
-                out.println("<h4>Stato oggetto: </h4>");
-                out.println("<h4>Descrizione stato oggetto: </h4><br>");
-                out.println("</body>");
-                out.println("</html>");
-            }
-        }
+	    log.debug(className + "." + methodName
+		    + ": preparo la risposta del Web Service Recupero Stato Oggetto di PING nella pagina JSP");
+	    response.setContentType("text/html;charset=UTF-8");
+	    try (PrintWriter out = response.getWriter()) {
+		out.println("<!DOCTYPE html>");
+		out.println("<html>");
+		out.println("<head>");
+		out.println("<title>Servlet RecStatoOggettoSrvlt</title>");
+		out.println("</head>");
+		out.println("<body>");
+		out.println("<h1>Servlet RecStatoOggettoSrvlt at " + request.getContextPath()
+			+ "</h1>");
+		out.println("<h4>Esito: " + risp.getCdEsito() + "</h4>");
+		out.println("<h4>Codice errore: " + err + "</h4>");
+		out.println("<h4>Descrizione errore: " + dlErr + "</h4 >");
+		out.println("<h4>Ambiente: " + ambiente + "</h4>");
+		out.println("<h4>Versatore: " + versatore + "</h4>");
+		out.println("<h4>Codice oggetto: " + cdKeyOggetto + "</h4>");
+		out.println("<h4>Stato oggetto: " + statoOggetto + "</h4>");
+		out.println(
+			"<h4>Descrizione stato oggetto: " + descrizioneStatoOggetto + "</h4><br>");
+		out.println("</body>");
+		out.println("</html>");
+	    }
+	} catch (SOAPFaultException e) {
+	    response.setContentType("text/html;charset=UTF-8");
+	    try (PrintWriter out = response.getWriter()) {
+		out.println("<!DOCTYPE html>");
+		out.println("<html>");
+		out.println("<head>");
+		out.println("<title>Servlet RecStatoOggettoSrvlt</title>");
+		out.println("</head>");
+		out.println("<body>");
+		out.println("<h1>Servlet RecStatoOggettoSrvlt at " + request.getContextPath()
+			+ "</h1>");
+		out.println("<h4>Esito: NEGATIVO </h4>");
+		out.println("<h4>Codice errore: </h4>");
+		out.println("<h4>Descrizione errore: " + e.getMessage() + "</h4 >");
+		out.println("<h4>Ambiente: " + ambiente + "</h4>");
+		out.println("<h4>Versatore: " + versatore + "</h4>");
+		out.println("<h4>Codice oggetto: " + cdKeyOggetto + "</h4>");
+		out.println("<h4>Stato oggetto: </h4>");
+		out.println("<h4>Descrizione stato oggetto: </h4><br>");
+		out.println("</body>");
+		out.println("</html>");
+	    }
+	}
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the
+    // left to edit the
     // code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request
-     *            servlet request
-     * @param response
-     *            servlet response
+     * @param request  servlet request
+     * @param response servlet response
      *
-     * @throws ServletException
-     *             if a servlet-specific error occurs
-     * @throws IOException
-     *             if an I/O error occurs
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+	    throws ServletException, IOException {
+	processRequest(request, response);
     }
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request
-     *            servlet request
-     * @param response
-     *            servlet response
+     * @param request  servlet request
+     * @param response servlet response
      *
-     * @throws ServletException
-     *             if a servlet-specific error occurs
-     * @throws IOException
-     *             if an I/O error occurs
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+	    throws ServletException, IOException {
+	processRequest(request, response);
     }
 
     /**
@@ -205,7 +197,7 @@ public class RecStatoOggettoSrvlt extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Servlet di prova per testare il WS di Recupero Stato Oggetto di PING";
+	return "Servlet di prova per testare il WS di Recupero Stato Oggetto di PING";
     }// </editor-fold>
 
 }

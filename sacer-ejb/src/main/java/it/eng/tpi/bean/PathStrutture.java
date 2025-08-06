@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.tpi.bean;
@@ -27,8 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "PathStrutture")
-@XmlType(propOrder = { "dsPath", "listaFileNoArk", "listaFileNoArkSecondario", "niFilePathArk",
-        "niFilePathArkSecondario" })
+@XmlType(propOrder = {
+	"dsPath", "listaFileNoArk", "listaFileNoArkSecondario", "niFilePathArk",
+	"niFilePathArkSecondario" })
 public class PathStrutture {
 
     protected String dsPath;
@@ -39,52 +36,50 @@ public class PathStrutture {
     protected BigDecimal niFilePathArkSecondario;
 
     public String getDsPath() {
-        return dsPath;
+	return dsPath;
     }
 
     public void setDsPath(String dsPath) {
-        this.dsPath = dsPath;
+	this.dsPath = dsPath;
     }
 
     @XmlElement(name = "FileNoArk")
     @XmlElementWrapper(name = "ListaFileNoArk")
     public List<FilePathNoArk> getListaFileNoArk() {
-        return listaFileNoArk;
+	return listaFileNoArk;
     }
 
     @XmlElement(name = "FileNoArkSecondario")
     @XmlElementWrapper(name = "ListaFileNoArkSecondario")
     public List<FilePathNoArk> getListaFileNoArkSecondario() {
-        return listaFileNoArkSecondario;
+	return listaFileNoArkSecondario;
     }
 
     /**
      * @return the niFilePathArk
      */
     public BigDecimal getNiFilePathArk() {
-        return niFilePathArk;
+	return niFilePathArk;
     }
 
     /**
-     * @param niFilePathArk
-     *            the niFilePathArk to set
+     * @param niFilePathArk the niFilePathArk to set
      */
     public void setNiFilePathArk(BigDecimal niFilePathArk) {
-        this.niFilePathArk = niFilePathArk;
+	this.niFilePathArk = niFilePathArk;
     }
 
     /**
      * @return the niFilePathArkSecondario
      */
     public BigDecimal getNiFilePathArkSecondario() {
-        return niFilePathArkSecondario;
+	return niFilePathArkSecondario;
     }
 
     /**
-     * @param niFilePathArkSecondario
-     *            the niFilePathArkSecondario to set
+     * @param niFilePathArkSecondario the niFilePathArkSecondario to set
      */
     public void setNiFilePathArkSecondario(BigDecimal niFilePathArkSecondario) {
-        this.niFilePathArkSecondario = niFilePathArkSecondario;
+	this.niFilePathArkSecondario = niFilePathArkSecondario;
     }
 }

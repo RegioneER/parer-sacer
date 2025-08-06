@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 package it.eng.parer.grantedEntity;
@@ -56,48 +52,48 @@ public class OrgAmbitoTerrit implements Serializable {
     @Id
     @Column(name = "ID_AMBITO_TERRIT")
     public Long getIdAmbitoTerrit() {
-        return this.idAmbitoTerrit;
+	return this.idAmbitoTerrit;
     }
 
     public void setIdAmbitoTerrit(Long idAmbitoTerrit) {
-        this.idAmbitoTerrit = idAmbitoTerrit;
+	this.idAmbitoTerrit = idAmbitoTerrit;
     }
 
     @Column(name = "CD_AMBITO_TERRIT")
     public String getCdAmbitoTerrit() {
-        return this.cdAmbitoTerrit;
+	return this.cdAmbitoTerrit;
     }
 
     public void setCdAmbitoTerrit(String cdAmbitoTerrit) {
-        this.cdAmbitoTerrit = cdAmbitoTerrit;
+	this.cdAmbitoTerrit = cdAmbitoTerrit;
     }
 
     @Column(name = "TI_AMBITO_TERRIT")
     public String getTiAmbitoTerrit() {
-        return this.tiAmbitoTerrit;
+	return this.tiAmbitoTerrit;
     }
 
     public void setTiAmbitoTerrit(String tiAmbitoTerrit) {
-        this.tiAmbitoTerrit = tiAmbitoTerrit;
+	this.tiAmbitoTerrit = tiAmbitoTerrit;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AMBITO_TERRIT_PADRE")
     public OrgAmbitoTerrit getOrgAmbitoTerrit() {
-        return this.orgAmbitoTerrit;
+	return this.orgAmbitoTerrit;
     }
 
     public void setOrgAmbitoTerrit(OrgAmbitoTerrit orgAmbitoTerrit) {
-        this.orgAmbitoTerrit = orgAmbitoTerrit;
+	this.orgAmbitoTerrit = orgAmbitoTerrit;
     }
 
     @OneToMany(mappedBy = "orgAmbitoTerrit")
     @XmlTransient
     public List<OrgAmbitoTerrit> getOrgAmbitoTerrits() {
-        return this.orgAmbitoTerrits;
+	return this.orgAmbitoTerrits;
     }
 
     public void setOrgAmbitoTerrits(List<OrgAmbitoTerrit> orgAmbitoTerrits) {
-        this.orgAmbitoTerrits = orgAmbitoTerrits;
+	this.orgAmbitoTerrits = orgAmbitoTerrits;
     }
 }

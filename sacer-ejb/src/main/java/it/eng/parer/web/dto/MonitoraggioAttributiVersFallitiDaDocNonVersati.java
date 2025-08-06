@@ -1,23 +1,18 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.web.dto;
 
@@ -40,90 +35,84 @@ public class MonitoraggioAttributiVersFallitiDaDocNonVersati {
      * @return the cdRegistroKeyUnitaDoc
      */
     public String getCdRegistroKeyUnitaDoc() {
-        return cdRegistroKeyUnitaDoc;
+	return cdRegistroKeyUnitaDoc;
     }
 
     /**
-     * @param cdRegistroKeyUnitaDoc
-     *            the cdRegistroKeyUnitaDoc to set
+     * @param cdRegistroKeyUnitaDoc the cdRegistroKeyUnitaDoc to set
      */
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     /**
      * @return the aaKeyUnitaDoc
      */
     public BigDecimal getAaKeyUnitaDoc() {
-        return aaKeyUnitaDoc;
+	return aaKeyUnitaDoc;
     }
 
     /**
-     * @param aaKeyUnitaDoc
-     *            the aaKeyUnitaDoc to set
+     * @param aaKeyUnitaDoc the aaKeyUnitaDoc to set
      */
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     /**
      * @return the cdKeyUnitaDoc
      */
     public String getCdKeyUnitaDoc() {
-        return cdKeyUnitaDoc;
+	return cdKeyUnitaDoc;
     }
 
     /**
-     * @param cdKeyUnitaDoc
-     *            the cdKeyUnitaDoc to set
+     * @param cdKeyUnitaDoc the cdKeyUnitaDoc to set
      */
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     /**
      * @return the cdKeyDocVers
      */
     public String getCdKeyDocVers() {
-        return cdKeyDocVers;
+	return cdKeyDocVers;
     }
 
     /**
-     * @param cdKeyDocVers
-     *            the cdKeyDocVers to set
+     * @param cdKeyDocVers the cdKeyDocVers to set
      */
     public void setCdKeyDocVers(String cdKeyDocVers) {
-        this.cdKeyDocVers = cdKeyDocVers;
+	this.cdKeyDocVers = cdKeyDocVers;
     }
 
     /**
      * @return the idStrut
      */
     public BigDecimal getIdStrut() {
-        return idStrut;
+	return idStrut;
     }
 
     /**
-     * @param idStrut
-     *            the idStrut to set
+     * @param idStrut the idStrut to set
      */
     public void setIdStrut(BigDecimal idStrut) {
-        this.idStrut = idStrut;
+	this.idStrut = idStrut;
     }
 
     /**
      * @return the tipoVers
      */
     public String getTipoVers() {
-        return tipoVers;
+	return tipoVers;
     }
 
     /**
-     * @param tipoVers
-     *            the tipoVers to set
+     * @param tipoVers the tipoVers to set
      */
     public void setTipoVers(String tipoVers) {
-        this.tipoVers = tipoVers;
+	this.tipoVers = tipoVers;
     }
 
 }

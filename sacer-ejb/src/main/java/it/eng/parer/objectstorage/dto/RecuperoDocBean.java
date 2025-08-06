@@ -1,23 +1,18 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in the editor.
  */
 package it.eng.parer.objectstorage.dto;
 
@@ -51,106 +46,101 @@ public class RecuperoDocBean implements java.io.Serializable {
     // end MEV#30400
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
-            TabellaBlob tabellaBlobDaLeggere) {
-        super();
-        this.tipo = tipo;
-        this.id = id;
-        this.os = os;
-        this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+	    TabellaBlob tabellaBlobDaLeggere) {
+	super();
+	this.tipo = tipo;
+	this.id = id;
+	this.os = os;
+	this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
     }
 
     public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
-            TabellaClob tabellaClobDaLeggere) {
-        super();
-        this.tipo = tipo;
-        this.id = id;
-        this.os = os;
-        this.tabellaClobDaLeggere = tabellaClobDaLeggere;
+	    TabellaClob tabellaClobDaLeggere) {
+	super();
+	this.tipo = tipo;
+	this.id = id;
+	this.os = os;
+	this.tabellaClobDaLeggere = tabellaClobDaLeggere;
     }
 
-    public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os, TabellaBlob tabellaBlobDaLeggere,
-            String tiFile) {
-        super();
-        this.tipo = tipo;
-        this.id = id;
-        this.os = os;
-        this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
-        this.tiFile = tiFile;
+    public RecuperoDocBean(TiEntitaSacerObjectStorage tipo, long id, OutputStream os,
+	    TabellaBlob tabellaBlobDaLeggere, String tiFile) {
+	super();
+	this.tipo = tipo;
+	this.id = id;
+	this.os = os;
+	this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+	this.tiFile = tiFile;
     }
 
     /**
      * @return the id
      */
     public long getId() {
-        return id;
+	return id;
     }
 
     /**
-     * @param id
-     *            the id to set
+     * @param id the id to set
      */
     public void setId(long id) {
-        this.id = id;
+	this.id = id;
     }
 
     /**
      * @return the tipo
      */
     public TiEntitaSacerObjectStorage getTipo() {
-        return tipo;
+	return tipo;
     }
 
     /**
-     * @param tipo
-     *            the tipo to set
+     * @param tipo the tipo to set
      */
     public void setTipo(TiEntitaSacerObjectStorage tipo) {
-        this.tipo = tipo;
+	this.tipo = tipo;
     }
 
     /**
      * @return the os
      */
     public OutputStream getOs() {
-        return os;
+	return os;
     }
 
     /**
-     * @param os
-     *            the os to set
+     * @param os the os to set
      */
     public void setOs(OutputStream os) {
-        this.os = os;
+	this.os = os;
     }
 
     /**
      * @return the tabellaBlobDaLeggere
      */
     public TabellaBlob getTabellaBlobDaLeggere() {
-        return tabellaBlobDaLeggere;
+	return tabellaBlobDaLeggere;
     }
 
     /**
-     * @param tabellaBlobDaLeggere
-     *            the tabellaBlobDaLeggere to set
+     * @param tabellaBlobDaLeggere the tabellaBlobDaLeggere to set
      */
     public void setTabellaBlobDaLeggere(TabellaBlob tabellaBlobDaLeggere) {
-        this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
+	this.tabellaBlobDaLeggere = tabellaBlobDaLeggere;
     }
 
     /**
      * @return the tabellaClobDaLeggere
      */
     public TabellaClob getTabellaClobDaLeggere() {
-        return tabellaClobDaLeggere;
+	return tabellaClobDaLeggere;
     }
 
     /**
-     * @param tabellaClobDaLeggere
-     *            the tabellaClobDaLeggere to set
+     * @param tabellaClobDaLeggere the tabellaClobDaLeggere to set
      */
     public void setTabellaClobDaLeggere(TabellaClob tabellaClobDaLeggere) {
-        this.tabellaClobDaLeggere = tabellaClobDaLeggere;
+	this.tabellaClobDaLeggere = tabellaClobDaLeggere;
     }
 
     /*
@@ -160,22 +150,21 @@ public class RecuperoDocBean implements java.io.Serializable {
      */
     @Override
     public String toString() {
-        return "id=" + id + ", tipo=" + tipo + ", tabellaBlobDaLeggere=" + tabellaBlobDaLeggere;
+	return "id=" + id + ", tipo=" + tipo + ", tabellaBlobDaLeggere=" + tabellaBlobDaLeggere;
     }
 
     /**
      * @return tiFile
      */
     public String getTiFile() {
-        return tiFile;
+	return tiFile;
     }
 
     /**
-     * @param tiFile
-     *            tipo file
+     * @param tiFile tipo file
      */
     public void setTiFile(String tiFile) {
-        this.tiFile = tiFile;
+	this.tiFile = tiFile;
     }
 
 }

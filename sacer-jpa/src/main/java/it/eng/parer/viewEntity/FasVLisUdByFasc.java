@@ -1,18 +1,14 @@
 /*
  * Engineering Ingegneria Informatica S.p.A.
  *
- * Copyright (C) 2023 Regione Emilia-Romagna
- * <p/>
- * This program is free software: you can redistribute it and/or modify it under the terms of
- * the GNU Affero General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version.
- * <p/>
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Affero General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Affero General Public License along with this program.
- * If not, see <https://www.gnu.org/licenses/>.
+ * Copyright (C) 2023 Regione Emilia-Romagna <p/> This program is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the License, or (at your option)
+ * any later version. <p/> This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU Affero General Public License for more details. <p/> You should
+ * have received a copy of the GNU Affero General Public License along with this program. If not,
+ * see <https://www.gnu.org/licenses/>.
  */
 package it.eng.parer.viewEntity;
 
@@ -39,36 +35,36 @@ public class FasVLisUdByFasc implements Serializable {
     private Date dtVersMax;
 
     public FasVLisUdByFasc() {
-        /* Hibernate */
+	/* Hibernate */
     }
 
     @Column(name = "CD_KEY_UNITA_DOC_NORMALIZ")
     public String getCdKeyUnitaDocNormaliz() {
-        return this.cdKeyUnitaDocNormaliz;
+	return this.cdKeyUnitaDocNormaliz;
     }
 
     public void setCdKeyUnitaDocNormaliz(String cdKeyUnitaDocNormaliz) {
-        this.cdKeyUnitaDocNormaliz = cdKeyUnitaDocNormaliz;
+	this.cdKeyUnitaDocNormaliz = cdKeyUnitaDocNormaliz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VERS_MAX")
     public Date getDtVersMax() {
-        return this.dtVersMax;
+	return this.dtVersMax;
     }
 
     public void setDtVersMax(Date dtVersMax) {
-        this.dtVersMax = dtVersMax;
+	this.dtVersMax = dtVersMax;
     }
 
     private FasVLisUdByFascId id;
 
     @EmbeddedId()
     public FasVLisUdByFascId getId() {
-        return id;
+	return id;
     }
 
     public void setId(FasVLisUdByFascId id) {
-        this.id = id;
+	this.id = id;
     }
 }
