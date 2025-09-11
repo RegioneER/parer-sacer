@@ -1163,7 +1163,7 @@ public class ElencoVersFascicoliHelper extends GenericHelper {
 
     public List<ElvFileElencoVersFasc> retrieveFileIndiceElenco(long idElencoVersFasc,
 	    String... tiFileElencoVers) {
-	String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.idFileElencoVersFasc, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers, u.tiFirma) FROM ElvFileElencoVersFasc u "
+	String queryStr = "SELECT new it.eng.parer.entity.ElvFileElencoVersFasc(u.idFileElencoVersFasc, u.blFileElencoVers, u.cdVerXsdFile, u.tiFileElencoVers, u.tiFirma, u.dtCreazioneFile) FROM ElvFileElencoVersFasc u "
 		+ "WHERE u.elvElencoVersFasc.idElencoVersFasc = :idElencoVersFasc AND u.tiFileElencoVers IN (:tiFileElencoVers)";
 	Query query = em.createQuery(queryStr);
 	query.setParameter("idElencoVersFasc", idElencoVersFasc);

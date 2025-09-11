@@ -76,8 +76,8 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	Query query = createElvVRicElencoFascQuery(
 		"SELECT DISTINCT new it.eng.parer.viewEntity.ElvVRicElencoFasc "
 			+ "(u.id.idElencoVersFasc, u.tiStato, u.aaFascicolo, u.niFascVersElenco, u.dlMotivoChius, "
-			+ "u.tsCreazioneElenco, u.dtChiusura, u.dtFirma, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
-			+ "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo) "
+			+ "u.tsCreazioneElenco, u.dtChiusura, u.dtValidazione, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
+			+ "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo, u.dtFirma) "
 			+ "FROM ElvVRicElencoFasc u WHERE u.idUserIam = :idUserIam ",
 		filtri);
 	setElvVRicElencoCommonParameters(query, idUserIam, filtri);
@@ -96,8 +96,8 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	Query query = createElvVRicElencoFascQuery(
 		"SELECT DISTINCT new it.eng.parer.viewEntity.ElvVRicElencoFascByStato "
 			+ "(u.id.idElencoVersFasc, u.tiStato, u.aaFascicolo, u.niFascVersElenco, u.dlMotivoChius, "
-			+ "u.tsCreazioneElenco, u.dtChiusura, u.dtFirma, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
-			+ "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo, u.flAnnull) "
+			+ "u.tsCreazioneElenco, u.dtChiusura, u.dtValidazione, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
+			+ "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo, u.flAnnull, u.dtFirma) "
 			+ "FROM ElvVRicElencoFascByStato u WHERE u.idUserIam = :idUserIam ",
 		filtri);
 	setElvVRicElencoCommonParameters(query, idUserIam, filtri);
@@ -115,8 +115,8 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	Query query = createElvVRicElencoFascQuery(
 		"SELECT DISTINCT new it.eng.parer.viewEntity.ElvVRicElencoFascByFas "
 			+ "(u.id.idElencoVersFasc, u.tiStato, u.aaFascicoloElenco, u.niFascVersElenco, u.dlMotivoChius, "
-			+ "u.tsCreazioneElenco, u.dtChiusura, u.dtFirma, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
-			+ "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo) "
+			+ "u.tsCreazioneElenco, u.dtChiusura, u.dtValidazione, u.idCriterioRaggrFasc, u.nmCriterioRaggr, "
+			+ "u.ntElencoChiuso, u.ntIndiceElenco, u.nmAmbiente, u.nmEnte, u.nmStrut, u.flElencoStandard, u.cdVoceTitol, u.nmTipoFascicolo, u.dtFirma) "
 			+ "FROM ElvVRicElencoFascByFas u WHERE u.idUserIam = :idUserIam ",
 		filtri);
 
@@ -163,6 +163,8 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	/* Recupero i campi da assegnare come parametri alla query */
 	Date tsCreazioneElencoDa = null;
 	Date tsCreazioneElencoA = null;
+	Date tsFirmaElencoAipDa = null;
+	Date tsFirmaElencoAipA = null;
 	if (filtri.getCreazioneElencoDa() != null) {
 	    tsCreazioneElencoDa = new Date(filtri.getCreazioneElencoDa().getTime());
 	    if (filtri.getCreazioneElencoA() != null) {
@@ -178,6 +180,22 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 		calendar.add(Calendar.DATE, 1);
 		tsCreazioneElencoA = calendar.getTime();
 	    }
+	}
+	if (filtri.getDataFirmaElencoAipDa() != null) {
+	    tsFirmaElencoAipDa = new Date(filtri.getDataFirmaElencoAipDa().getTime());
+	}
+	if (filtri.getDataFirmaElencoAipA() != null) {
+	    tsFirmaElencoAipA = new Date(filtri.getDataFirmaElencoAipA().getTime());
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(tsFirmaElencoAipA);
+	    calendar.add(Calendar.DATE, 1);
+	    tsFirmaElencoAipA = calendar.getTime();
+	} else {
+	    tsFirmaElencoAipA = new Date();
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(tsFirmaElencoAipA);
+	    calendar.add(Calendar.DATE, 1);
+	    tsFirmaElencoAipA = calendar.getTime();
 	}
 
 	/* Passaggio dei valori dei parametri di ricerca */
@@ -229,6 +247,12 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 
 	if (StringUtils.isNotBlank(filtri.getFlElencoStandard())) {
 	    query.setParameter("flElencoStandard", filtri.getFlElencoStandard());
+	}
+	if (tsFirmaElencoAipDa != null) {
+	    query.setParameter("tsFirmaElencoAipDa", tsFirmaElencoAipDa, TemporalType.TIMESTAMP);
+	}
+	if (tsFirmaElencoAipA != null) {
+	    query.setParameter("tsFirmaElencoAipA", tsFirmaElencoAipA, TemporalType.TIMESTAMP);
 	}
     }
 
@@ -302,9 +326,10 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	    queryStr.append(whereWord).append("u.tiStato = :tiStato ");
 	}
 
-	/* Inserimento nella query del filtro DATA CREAZIONE DA - A */
 	Date tsCreazioneElencoDa = null;
 	Date tsCreazioneElencoA = null;
+	Date tsFirmaElencoAipDa = null;
+	Date tsFirmaElencoAipA = null;
 	if (filtri.getCreazioneElencoDa() != null) {
 	    tsCreazioneElencoDa = new Date(filtri.getCreazioneElencoDa().getTime());
 	    if (filtri.getCreazioneElencoA() != null) {
@@ -320,6 +345,22 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 		calendar.add(Calendar.DATE, 1);
 		tsCreazioneElencoA = calendar.getTime();
 	    }
+	}
+	if (filtri.getDataFirmaElencoAipDa() != null) {
+	    tsFirmaElencoAipDa = new Date(filtri.getDataFirmaElencoAipDa().getTime());
+	}
+	if (filtri.getDataFirmaElencoAipA() != null) {
+	    tsFirmaElencoAipA = new Date(filtri.getDataFirmaElencoAipA().getTime());
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(tsFirmaElencoAipA);
+	    calendar.add(Calendar.DATE, 1);
+	    tsFirmaElencoAipA = calendar.getTime();
+	} else {
+	    tsFirmaElencoAipA = new Date();
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(tsFirmaElencoAipA);
+	    calendar.add(Calendar.DATE, 1);
+	    tsFirmaElencoAipA = calendar.getTime();
 	}
 
 	if ((tsCreazioneElencoDa != null) && (tsCreazioneElencoA != null)) {
@@ -373,6 +414,13 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 
 	if (StringUtils.isNotBlank(filtri.getFlElencoStandard())) {
 	    queryStr.append(whereWord).append("u.flElencoStandard = :flElencoStandard ");
+	}
+
+	if (tsFirmaElencoAipDa != null) {
+	    queryStr.append(whereWord).append("(u.dtFirma >= :tsFirmaElencoAipDa) ");
+	}
+	if (tsFirmaElencoAipA != null) {
+	    queryStr.append(whereWord).append("(u.dtFirma <= :tsFirmaElencoAipA) ");
 	}
 
 	/* Ordina per idElencoVersFasc decrescente */
@@ -706,6 +754,8 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	private BigDecimal idAmbiente;
 	private BigDecimal idEnte;
 	private BigDecimal idStrut;
+	Timestamp dataFirmaElencoAipDa;
+	Timestamp dataFirmaElencoAipA;
 
 	Filtri(FiltriElenchiVersFascicoli filtriElenchiVersFascicoli) throws EMFError {
 	    idElencoVersFasc = filtriElenchiVersFascicoli.getId_elenco_vers_fasc().parse();
@@ -727,6 +777,9 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	    idAmbiente = filtriElenchiVersFascicoli.getId_ambiente().parse();
 	    idEnte = filtriElenchiVersFascicoli.getId_ente().parse();
 	    idStrut = filtriElenchiVersFascicoli.getId_strut().parse();
+	    dataFirmaElencoAipDa = filtriElenchiVersFascicoli.getDt_firma_elenco_ix_aip_da()
+		    .parse();
+	    dataFirmaElencoAipA = filtriElenchiVersFascicoli.getDt_firma_elenco_ix_aip_a().parse();
 	}
 
 	public BigDecimal getIdElencoVersFasc() {
@@ -883,5 +936,22 @@ public class ElenchiVersFascicoliHelper extends GenericHelper {
 	void setIdStrut(BigDecimal idStrut) {
 	    this.idStrut = idStrut;
 	}
+
+	public Timestamp getDataFirmaElencoAipDa() {
+	    return dataFirmaElencoAipDa;
+	}
+
+	public Timestamp getDataFirmaElencoAipA() {
+	    return dataFirmaElencoAipA;
+	}
+
+	void setDataFirmaElencoAipDa(Timestamp dataFirmaElencoAipDa) {
+	    this.dataFirmaElencoAipDa = dataFirmaElencoAipDa;
+	}
+
+	void setDataFirmaElencoAipA(Timestamp dataFirmaElencoAipA) {
+	    this.dataFirmaElencoAipA = dataFirmaElencoAipA;
+	}
     }
+
 }

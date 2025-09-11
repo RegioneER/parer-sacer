@@ -147,6 +147,14 @@ public class ElvVRicElencoFascRowBean extends BaseRow implements JEEBaseRowInter
 	setObject("dl_motivo_chius", dlMotivoChius);
     }
 
+    public Timestamp getDtValidazione() {
+	return getTimestamp("dt_validazione");
+    }
+
+    public void setDtValidazione(Timestamp dtValidazione) {
+	setObject("dt_validazione", dtValidazione);
+    }
+
     public Timestamp getDtFirma() {
 	return getTimestamp("dt_firma");
     }
@@ -250,6 +258,7 @@ public class ElvVRicElencoFascRowBean extends BaseRow implements JEEBaseRowInter
 	this.setFlElencoStandard(entity.getFlElencoStandard());
 	this.setCdVoceTitol(entity.getCdVoceTitol());
 	this.setNmTipoFascicolo(entity.getNmTipoFascicolo());
+	this.setDtValidazione(new Timestamp(entity.getDtValidazione().getTime()));
     }
 
     @Override
@@ -277,6 +286,7 @@ public class ElvVRicElencoFascRowBean extends BaseRow implements JEEBaseRowInter
 	entity.setFlElencoStandard(this.getFlElencoStandard());
 	entity.setCdVoceTitol(this.getCdVoceTitol());
 	entity.setNmTipoFascicolo(this.getNmTipoFascicolo());
+	entity.setDtValidazione(this.getDtValidazione());
 	return entity;
     }
 

@@ -1523,6 +1523,31 @@ public class SalvataggioBackendHelper {
     }
 
     /**
+     * Restitusce un boolean per la verifica del "link" verso object storage
+     *
+     * @param idFileElencoVers id versione indice aip
+     *
+     * @return boolean true se effettivamente presente su object storage / false altrimenti
+     *
+     * @throws ObjectStorageException eccezione generica
+     */
+    public boolean existIndiceElencoObjectStorage(long idFileElencoVers)
+	    throws ObjectStorageException {
+	try {
+	    TypedQuery<Long> query = entityManager.createQuery(
+		    "Select count(elvFileOS) from ElvFileElencoVersObjectStorage elvFileOS where elvFileOS.elvFileElencoVer.idFileElencoVers = :idFileElencoVers",
+		    Long.class);
+	    query.setParameter("idFileElencoVers", idFileElencoVers);
+	    Long result = query.getSingleResult();
+	    return result > 0;
+	} catch (NonUniqueResultException e) {
+	    throw ObjectStorageException.builder().message(
+		    "Errore verifica presenza ElvFileElencoVersObjectStorage per id_file_elenco_vers {0} ",
+		    idFileElencoVers).cause(e).build();
+	}
+    }
+
+    /**
      * Ottieni gli attributi dell'oggetto dall'object storage selezionato.
      *
      * @param configuration configurazione per accedere all'object storage

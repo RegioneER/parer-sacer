@@ -154,6 +154,8 @@ public class ElenchiVersFascicoliEjb {
 			    ElencoEnums.FileTypeEnum.FIRMA_ELENCO_INDICI_AIP.name() });
 	    if (elencoIndiceAipFirmato != null && !elencoIndiceAipFirmato.isEmpty()) {
 		elencoRowBean.setString("ti_firma", elencoIndiceAipFirmato.get(0).getTiFirma());
+		elencoRowBean.setTimestamp("ts_stato_firmato", new Timestamp(
+			elencoIndiceAipFirmato.get(0).getDtCreazioneFile().getTime()));
 	    }
 	    //
 
@@ -166,8 +168,9 @@ public class ElenchiVersFascicoliEjb {
 		Timestamp tsStato = new Timestamp(stato.getTsStato().getTime());
 		if (stato.getTiStato().equals(TiStatoElencoFasc.CHIUSO)) {
 		    elencoRowBean.setTimestamp("ts_stato_chiuso", tsStato);
-		} else if (stato.getTiStato().equals(TiStatoElencoFasc.FIRMATO)) {
-		    elencoRowBean.setTimestamp("ts_stato_firmato", tsStato);
+		} else if (stato.getTiStato().equals(TiStatoElencoFasc.FIRMATO)
+			|| stato.getTiStato().equals(TiStatoElencoFasc.VALIDATO)) {
+		    elencoRowBean.setTimestamp("ts_stato_validato", tsStato);
 		}
 	    }
 	    elencoRowBean.setBigDecimal("num_fasc",
