@@ -26,6 +26,8 @@
         <Input Type="STRING" Description="Note su elenco chiuso" Name="nt_elenco_chiuso"/>
         <Input Type="STRING" Description="Note su indice elenco" Name="nt_indice_elenco"/>
         <ComboBox Type="INTEGER" Description="Criterio di raggruppamento" Name="id_criterio_raggr_fasc"/>
+        <Input Type="DATE" Description="Data firma elenco indici AIP da" Name="dt_firma_elenco_ix_aip_da" />
+        <Input Type="DATE" Description="Data firma elenco indici AIP a" Name="dt_firma_elenco_ix_aip_a" />
         <!--Filtri per fascicoli--> 
         <ComboBox Type="INTEGER" Description="Tipo fascicolo" Name="id_tipo_fascicolo"/>
         <Input Type="INTEGER" Description="Anno" Name="aa_fascicolo" MaxLength="4"/>
@@ -56,6 +58,7 @@
         <Input Type="DATETIME" Description="Creato il" Name="ts_creazione_elenco" />
         <Input Type="DATETIME" Description="Chiuso il" Name="dt_chiusura" />
         <Input Type="STRING" Description="Motivo chiusura" Name="dl_motivo_chius" />
+        <Input Type="DATETIME" Description="Validato il" Name="dt_validazione" />
         <Input Type="DATETIME" Description="Firmato il" Name="dt_firma" />
     </List>
     
@@ -143,6 +146,7 @@
         <Input Type="INTEGER" Description="Numero fascicoli versati" Name="ni_fasc_vers_elenco" Required="true" GroupingDecimal="true" />
         <Input Type="DATETIME" Description="Scadenza chiusura" Name="dt_scad_chius" />
         <Input Type="DATETIME" Description="Chiuso il" Name="ts_stato_chiuso" />
+        <Input Type="DATETIME" Description="Validato il" Name="ts_stato_validato" />
         <Input Type="DATETIME" Description="Firmato il" Name="ts_stato_firmato" />
         <Input Type="STRING" Description="Motivo chiusura" Name="dl_motivo_chius"/>
         <Input Type="STRING" Description="Versione indice elenco" Name="cd_ver_xsd_file"/>

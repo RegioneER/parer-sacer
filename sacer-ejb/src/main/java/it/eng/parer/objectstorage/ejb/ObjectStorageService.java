@@ -1030,6 +1030,23 @@ public class ObjectStorageService {
     }
     // end MEV#30397
 
+    /**
+     * Controlla se l'elenco indici aip sia o meno stato registrato sull'object storage
+     * indipendentemente dal valore del parametro (il pregresso potrebbe ancora essere su DB).
+     *
+     * @param idFileElencoVers id file elenco indice aip
+     *
+     * @return true se su O.s false altrimenti
+     */
+    public boolean isIndiceElencoOnOs(long idFileElencoVers) {
+	try {
+	    return salvataggioBackendHelper.existIndiceElencoObjectStorage(idFileElencoVers);
+	} catch (ObjectStorageException e) {
+	    // EJB spec (14.2.2 in the EJB 3)
+	    throw new EJBException(e);
+	}
+    }
+
     // MEV#30395
     /**
      * Salva il contenuto nel bucket degli Indici AIP per l'unita documentaria

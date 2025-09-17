@@ -1282,9 +1282,6 @@ public class ComponentiHelper extends GenericHelper {
 		    componenteObj[12] != null ? (BigDecimal) componenteObj[12] : null);
 	    componentiRowBean
 		    .setIdDoc(componenteObj[13] != null ? (BigDecimal) componenteObj[13] : null);
-	    // componentiRowBean.setCdRegistroKeyUnitaDoc(componenteObj[14] != null ? (String)
-	    // componenteObj[14] :
-	    // null);
 	    componentiRowBean.setIdTipoUnitaDoc(
 		    componenteObj[14] != null ? (BigDecimal) componenteObj[14] : null);
 	    componentiRowBean.setIdTipoDoc(
@@ -1295,6 +1292,8 @@ public class ComponentiHelper extends GenericHelper {
 		    componenteObj[17] != null ? (String) componenteObj[17] : null);
 	    componentiRowBean.setTiStatoConservazione(
 		    componenteObj[18] != null ? (String) componenteObj[18] : null);
+	    componentiRowBean.setCdRegistroKeyUnitaDoc(
+		    componenteObj[19] != null ? (String) componenteObj[19] : null);
 
 	    // setta il campo relativo alla checkbox select_comp non ceccato
 	    // Questo campo è impostato manualmente, non proviene dalla query, quindi rimane

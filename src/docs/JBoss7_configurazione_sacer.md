@@ -385,8 +385,13 @@ https://parer.regione.emilia-romagna.it/sacer/VersamentoFascicoloSync | https://
 
 ## Object storage: configurazione AWS Access Key ID e  Secret Access Key  
 
-Sono attivabili da applicazione, meccanismi di accesso a file depositati su object storage, nello specifico è possibile configuare alcune system properties che permettono all'applicazione di recuperare in modalità chiave/valore le credenziali di accesso necessarie per l'interazione con l'object storage secondo lo standard AWS S3 (https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
-La chiave da impostare dipende dalla configurazione presente su database, vedere nello specifico la tabella **DEC_CONFIG_OBJECT_STORAGE**, nella quale potranno essere configurate le chiavi presenti tra le system properties, se ne riporta di seguito un esempio:
+Attraverso opportune configurazioni, è possibile attivare l'integrazione con uno o più cloud storage (o object storage), secondo determinati processi (e.g. versamento unità documentaria sincrona), Questo è possibile attraerso system property che permettono all'applicazione di recuperare in modalità chiave/valore le credenziali di accesso necessarie per l'interazione con l'object storage secondo lo standard AWS S3 (https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html).
+
+La property configurata viene mappata su base dati (e.g. vedere table **DEC_CONFIG_OBJECT_STORAGE**), il client quindi non farà altro che recuparare, sulla base del flusso applicativo / funzionalità abilitata all'integrazione, la coppia accessKeyId / secretKey, attraverso le quali sarà possibile effettuare l'invocazione dell'API S3.
+
+L'applicazione supporta tutti gli object storage che aderiscono (anche solo parzialmente) allo standard AWS S3.
+
+### Esempio 
 
 ```bash
 batch
@@ -395,12 +400,11 @@ batch
 /system-property=sip-r.aws.secretKey:add(value="$secretKey")
 
 run-batch
-
 ```
 
-nel caso specifico dello script sopra riportato, le chiavi interessate sono : **sip-r.aws.accessKeyId** e **sip-r.aws.secretKey**; rispettivamente configurate sulla tabella citata in precedenza.
+nel caso specifico dello script sopra riportato, le chiavi interessate sono : **sip-r.aws.accessKeyId** e **sip-r.aws.secretKey**; rispettivamente configurate nella tabella citata in precedenza.
 
-Esempio di configuazione su database 
+### Esempio di configuazione su database 
 
 
 |  ID_DEC_CONFIG_OBJECT_STORAGE | ID_DEC_BACKEND   |  DS_VALORE_CONFIG_OBJECT_STORAGE | TI_USO_CONFIG_OBJECT_STORAGE  | NM_CONFIG_OBJECT_STORAGE  |  DS_DESCRIZIONE_CONFIG_OBJECT_STORAGE |

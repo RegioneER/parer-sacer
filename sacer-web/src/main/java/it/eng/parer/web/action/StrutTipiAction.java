@@ -1183,7 +1183,7 @@ public class StrutTipiAction extends StrutTipiAbstractAction {
 		getForm().getXsdModelliUdDetail().getId_ambiente().setValue(idAmbiente.toString());
 	    }
 	    if (getForm().getIdList().getId_tipo_doc().parse() != null) {
-		getForm().getXsdModelliUdDetail().getId_tipo_uni_doc()
+		getForm().getXsdModelliUdDetail().getId_tipo_doc()
 			.setValue(getForm().getIdList().getId_tipo_doc().parse().toString());
 	    }
 	    if (getForm().getIdList().getId_tipo_unita_doc().parse() != null) {

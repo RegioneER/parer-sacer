@@ -155,6 +155,14 @@ public class ElvVRicElencoFascByStatoRowBean extends BaseRow implements JEEBaseR
 	setObject("dl_motivo_chius", dlMotivoChius);
     }
 
+    public Timestamp getDtValidazione() {
+	return getTimestamp("dt_validazione");
+    }
+
+    public void setDtValidazione(Timestamp dtValidazione) {
+	setObject("dt_validazione", dtValidazione);
+    }
+
     public Timestamp getDtFirma() {
 	return getTimestamp("dt_firma");
     }
@@ -291,6 +299,7 @@ public class ElvVRicElencoFascByStatoRowBean extends BaseRow implements JEEBaseR
 		    new Timestamp(entity.getDtCreazioneElencoIxAip().getTime()));
 	}
 	this.setFlAnnull(entity.getFlAnnull());
+	this.setDtValidazione(new Timestamp(entity.getDtValidazione().getTime()));
     }
 
     @Override
@@ -322,6 +331,7 @@ public class ElvVRicElencoFascByStatoRowBean extends BaseRow implements JEEBaseR
 	entity.setNiIndiciAip(this.getNiIndiciAip());
 	entity.setDtCreazioneElencoIxAip(this.getDtCreazioneElencoIxAip());
 	entity.setFlAnnull(this.getFlAnnull());
+	entity.setDtValidazione(this.getDtValidazione());
 	return entity;
     }
 

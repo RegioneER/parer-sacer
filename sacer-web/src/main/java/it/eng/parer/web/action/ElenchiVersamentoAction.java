@@ -312,7 +312,8 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 
     private boolean esisteIndiceVersamento(BigDecimal idElencoVers) {
 	return evEjb.retrieveFileIndiceElenco(idElencoVers.longValue(),
-		ElencoEnums.FileTypeEnum.INDICE.name()) != null;
+		ElencoEnums.FileTypeEnum.INDICE.name()) != null
+		|| evEjb.isIndiceElencoVersOnOs(idElencoVers.longValue());
     }
 
     ////////////

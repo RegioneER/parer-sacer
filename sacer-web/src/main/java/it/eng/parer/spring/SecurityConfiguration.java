@@ -78,9 +78,9 @@ public class SecurityConfiguration extends ParerSecurityConfiguration {
 		.requestMatchers("/saml/SingleLogout/alias/" + nomeApplicazione).permitAll()
 		.requestMatchers("/rest/**").permitAll().requestMatchers("/saml/**").permitAll()
 		.requestMatchers("/saml2/**").permitAll().requestMatchers("/*.html").authenticated()
-		.requestMatchers("/*.json").authenticated().requestMatchers("/VerificaFirme")
-		.authenticated().requestMatchers("/rest/docounter").authenticated()
-		.requestMatchers("/detail/*").authenticated().anyRequest().permitAll())
+		.requestMatchers("/detail/**").authenticated().requestMatchers("/*.json")
+		.authenticated().requestMatchers("/VerificaFirme").authenticated()
+		.requestMatchers("/rest/docounter").authenticated().anyRequest().permitAll())
 		.addFilterBefore(filter, HeaderWriterFilter.class)
 		// Il CSRF è abilitato di default !!
 		.csrf(c -> c.requireCsrfProtectionMatcher((HttpServletRequest request) -> {

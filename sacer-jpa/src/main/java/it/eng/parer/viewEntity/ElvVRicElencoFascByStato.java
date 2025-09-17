@@ -38,7 +38,7 @@ public class ElvVRicElencoFascByStato implements Serializable {
     private BigDecimal aaFascicolo;
     private Date dtChiusura;
     private Date tsCreazioneElenco;
-    private Date dtFirma;
+    private Date dtValidazione;
     private String dlMotivoChius;
     private String flElencoStandard;
     private BigDecimal idAmbiente;
@@ -62,16 +62,18 @@ public class ElvVRicElencoFascByStato implements Serializable {
     private BigDecimal niIndiciAip;
     private Date dtCreazioneElencoIxAip;
     private String flAnnull;
+    private Date dtFirma;
 
     public ElvVRicElencoFascByStato() {/* Hibernate */
     }
 
     public ElvVRicElencoFascByStato(BigDecimal idElencoVersFasc, String tiStato,
 	    BigDecimal aaFascicolo, BigDecimal niFascVersElenco, String dlMotivoChius,
-	    Date tsCreazioneElenco, Date dtChiusura, Date dtFirma, BigDecimal idCriterioRaggrFasc,
-	    String nmCriterioRaggr, String ntElencoChiuso, String ntIndiceElenco, String nmAmbiente,
-	    String nmEnte, String nmStrut, String flElencoStandard, String cdVoceTitol,
-	    String nmTipoFascicolo, String flAnnull) {
+	    Date tsCreazioneElenco, Date dtChiusura, Date dtValidazione,
+	    BigDecimal idCriterioRaggrFasc, String nmCriterioRaggr, String ntElencoChiuso,
+	    String ntIndiceElenco, String nmAmbiente, String nmEnte, String nmStrut,
+	    String flElencoStandard, String cdVoceTitol, String nmTipoFascicolo, String flAnnull,
+	    Date dtFirma) {
 	this.idElencoVersFasc = idElencoVersFasc;
 	this.tiStato = tiStato;
 	this.aaFascicolo = aaFascicolo;
@@ -79,7 +81,7 @@ public class ElvVRicElencoFascByStato implements Serializable {
 	this.dlMotivoChius = dlMotivoChius;
 	this.tsCreazioneElenco = tsCreazioneElenco;
 	this.dtChiusura = dtChiusura;
-	this.dtFirma = dtFirma;
+	this.dtValidazione = dtValidazione;
 	this.idCriterioRaggrFasc = idCriterioRaggrFasc;
 	this.nmCriterioRaggr = nmCriterioRaggr;
 	this.ntElencoChiuso = ntElencoChiuso;
@@ -91,6 +93,7 @@ public class ElvVRicElencoFascByStato implements Serializable {
 	this.cdVoceTitol = cdVoceTitol;
 	this.nmTipoFascicolo = nmTipoFascicolo;
 	this.flAnnull = flAnnull;
+	this.dtFirma = dtFirma;
     }
 
     @Column(name = "AA_FASCICOLO")
@@ -123,13 +126,13 @@ public class ElvVRicElencoFascByStato implements Serializable {
     }
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DT_FIRMA")
-    public Date getDtFirma() {
-	return this.dtFirma;
+    @Column(name = "DT_VALIDAZIONE")
+    public Date getDtValidazione() {
+	return this.dtValidazione;
     }
 
-    public void setDtFirma(Date dtFirma) {
-	this.dtFirma = dtFirma;
+    public void setDtValidazione(Date dtValidazione) {
+	this.dtValidazione = dtValidazione;
     }
 
     @Column(name = "DL_MOTIVO_CHIUS")
@@ -340,5 +343,15 @@ public class ElvVRicElencoFascByStato implements Serializable {
 
     public void setFlAnnull(String flAnnull) {
 	this.flAnnull = flAnnull;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "DT_FIRMA")
+    public Date getDtFirma() {
+	return this.dtFirma;
+    }
+
+    public void setDtFirma(Date dtFirma) {
+	this.dtFirma = dtFirma;
     }
 }

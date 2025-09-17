@@ -85,7 +85,9 @@ public class DetailController {
 	}
     }
 
-    @GetMapping(value = "/strut/{id}")
+    // MAC#38921 - Risoluzione dell'Errore 404 che si presenta nel tentativo di
+    // accedere al dettaglio dell'organizzazione dal dettaglio dell'ente convenzionato di SIAM
+    @GetMapping(value = "/detail/strut/{id}")
     public @ResponseBody void detailStrut(final HttpServletRequest request,
 	    final HttpServletResponse res, @PathVariable BigDecimal id, Model model) {
 	model.addAttribute("id", id);

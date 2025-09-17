@@ -395,16 +395,15 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 		DecXsdDatiSpecRowBean xsdDatiSpecRowBean = new DecXsdDatiSpecRowBean();
 
 		if (getForm().getIdList().getId_tipo_doc().parse() != null) {
-		    xsdDatiSpecRowBean.setIdTipoDoc(new BigDecimal(
-			    getForm().getIdList().getId_tipo_doc().parse().intValue()));
+		    xsdDatiSpecRowBean.setIdTipoDoc(getForm().getIdList().getId_tipo_doc().parse());
 		    xsdDatiSpecRowBean.setTiEntitaSacer(CostantiDB.TipiEntitaSacer.DOC.name());
 		} else if (getForm().getIdList().getId_tipo_unita_doc().parse() != null) {
-		    xsdDatiSpecRowBean.setIdTipoUnitaDoc(new BigDecimal(
-			    getForm().getIdList().getId_tipo_unita_doc().parse().intValue()));
+		    xsdDatiSpecRowBean.setIdTipoUnitaDoc(
+			    getForm().getIdList().getId_tipo_unita_doc().parse());
 		    xsdDatiSpecRowBean.setTiEntitaSacer(CostantiDB.TipiEntitaSacer.UNI_DOC.name());
 		} else if (getForm().getIdList().getId_tipo_comp_doc().parse() != null) {
-		    xsdDatiSpecRowBean.setIdTipoCompDoc(new BigDecimal(
-			    getForm().getIdList().getId_tipo_comp_doc().parse().intValue()));
+		    xsdDatiSpecRowBean
+			    .setIdTipoCompDoc(getForm().getIdList().getId_tipo_comp_doc().parse());
 		    xsdDatiSpecRowBean.setTiEntitaSacer(CostantiDB.TipiEntitaSacer.COMP.name());
 		}
 		xsdDatiSpecRowBean.setIdStrut(getForm().getIdList().getId_strut().parse());
@@ -636,8 +635,7 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
 	    if (getMessageBox().isEmpty()) {
 		// inizializzo il rowbean
-		BigDecimal idStrut = new BigDecimal(
-			getForm().getIdList().getId_strut().parse().intValue());
+		BigDecimal idStrut = getForm().getIdList().getId_strut().parse();
 
 		xsdDatiSpecRowBean.setCdVersioneXsd(cdVersione);
 		if (StringUtils.isNotBlank(file)) {
@@ -663,17 +661,17 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 		    xsdDatiSpecRowBean.setTiUsoXsd(CostantiDB.TipiUsoDatiSpec.VERS.name());
 
 		    if (getForm().getIdList().getId_tipo_doc().parse() != null) {
-			xsdDatiSpecRowBean.setIdTipoDoc(new BigDecimal(
-				getForm().getIdList().getId_tipo_doc().parse().intValue()));
+			xsdDatiSpecRowBean
+				.setIdTipoDoc(getForm().getIdList().getId_tipo_doc().parse());
 			xsdDatiSpecRowBean.setTiEntitaSacer(CostantiDB.TipiEntitaSacer.DOC.name());
 		    } else if (getForm().getIdList().getId_tipo_unita_doc().parse() != null) {
-			xsdDatiSpecRowBean.setIdTipoUnitaDoc(new BigDecimal(
-				getForm().getIdList().getId_tipo_unita_doc().parse().intValue()));
+			xsdDatiSpecRowBean.setIdTipoUnitaDoc(
+				getForm().getIdList().getId_tipo_unita_doc().parse());
 			xsdDatiSpecRowBean
 				.setTiEntitaSacer(CostantiDB.TipiEntitaSacer.UNI_DOC.name());
 		    } else if (getForm().getIdList().getId_tipo_comp_doc().parse() != null) {
-			xsdDatiSpecRowBean.setIdTipoCompDoc(new BigDecimal(
-				getForm().getIdList().getId_tipo_comp_doc().parse().intValue()));
+			xsdDatiSpecRowBean.setIdTipoCompDoc(
+				getForm().getIdList().getId_tipo_comp_doc().parse());
 
 			DecTipoCompDocRowBean tipoCompDocRowBean = tipoStrutDocEjb
 				.getDecTipoCompDocRowBean(

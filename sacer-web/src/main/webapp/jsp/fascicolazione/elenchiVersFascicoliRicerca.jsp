@@ -50,6 +50,9 @@
                 <sl:newLine />
                 <slf:lblField name="<%=ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli.ID_CRITERIO_RAGGR_FASC%>" colSpan="2"/>
                 <sl:newLine />
+            <slf:lblField name="<%=ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli.DT_FIRMA_ELENCO_IX_AIP_DA%>" colSpan="2" controlWidth="w20" />
+            <slf:lblField name="<%=ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli.DT_FIRMA_ELENCO_IX_AIP_A%>" colSpan="2" controlWidth="w20" />
+                <sl:newLine />
                 <slf:section name="<%=ElenchiVersFascicoliForm.FascicoloSection.NAME%>" styleClass="importantContainer">
                     <slf:lblField name="<%=ElenchiVersFascicoliForm.FiltriElenchiVersFascicoli.ID_TIPO_FASCICOLO%>" colSpan="2" />
                     <sl:newLine />

@@ -1,18 +1,9 @@
-## 10.10.0 (14-07-2025)
+## 10.10.1 (11-09-2025)
 
-### Bugfix: 4
-- [#38167](https://parermine.regione.emilia-romagna.it/issues/38167) Correzione dell'eccezione per campo troppo lungo nel salvataggio del modello di fascicolo
-- [#38135](https://parermine.regione.emilia-romagna.it/issues/38135) Risoluzione problema dello ZIP malformato in fase di download
-- [#38134](https://parermine.regione.emilia-romagna.it/issues/38134) Correzione dell'estensione del file degli elenchi indici aip con firma Xades
-- [#38013](https://parermine.regione.emilia-romagna.it/issues/38013) Correzioni al log del processo di conservazione delle unità documentarie
-
-### Novità: 9
-- [#38420](https://parermine.regione.emilia-romagna.it/issues/38420) Adattamento applicazione per inclusione nuovo framework modificato per DPI
-- [#38223](https://parermine.regione.emilia-romagna.it/issues/38223)  Ottimizzazioni e refactor codice per recupero debito tecnico (SonarQube)
-- [#38222](https://parermine.regione.emilia-romagna.it/issues/38222)  Ottimizzazioni e refactor codice per recupero debito tecnico (SonarQube)
-- [#38188](https://parermine.regione.emilia-romagna.it/issues/38188) Introduzione di nuovi filtri nella ricerca fascicoli
-- [#38186](https://parermine.regione.emilia-romagna.it/issues/38186)  Ottimizzazioni e refactor codice per recupero debito tecnico (SonarQube)
-- [#38133](https://parermine.regione.emilia-romagna.it/issues/38133) Ulteriori ottimizzazioni apertura dettaglio elenchi di versamento UD
-- [#38036](https://parermine.regione.emilia-romagna.it/issues/38036) Indice AIP UD: ricalcolo degli URN pregressi solo per le UD collegate come target
-- [#37693](https://parermine.regione.emilia-romagna.it/issues/37693) Aggiornamento librerie obsolete primo quadrimestre 2025
-- [#32867](https://parermine.regione.emilia-romagna.it/issues/32867) Restituzione archivio: effettuare le chiamate con utente di sistema
+### Bugfix: 6
+- [#39015](https://parermine.regione.emilia-romagna.it/issues/39015) Correzione casting valore ID_TIPO_DOC durante il caricamento di un XSD dati specifici
+- [#38994](https://parermine.regione.emilia-romagna.it/issues/38994) Correzione download/generazione indice elenco di versamento UD
+- [#38970](https://parermine.regione.emilia-romagna.it/issues/38970) Ripristino dell'accesso al dettaglio componente dal dettaglio elenco di versamento
+- [#38921](https://parermine.regione.emilia-romagna.it/issues/38921) Risoluzione dell'Errore 404 che si presenta nel tentativo di accedere al dettaglio dell'organizzazione dal dettaglio dell'ente convenzionato di SIAM
+- [#38888](https://parermine.regione.emilia-romagna.it/issues/38888) Apportare modifiche per far funzionare correttamente la gestione Log Eventi 
+- [#38435](https://parermine.regione.emilia-romagna.it/issues/38435) Correzione errata registrazione della data di firma di un elenco indici aip fascicoli

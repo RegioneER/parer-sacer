@@ -1236,6 +1236,19 @@ public class ElenchiVersamentoEjb {
 	return evHelper.retrieveFileIndiceElenco(idElencoVers, tiFileElencoVers);
     }
 
+    public boolean isIndiceElencoVersOnOs(long idElencoVers) {
+	List<ElvFileElencoVer> elvFileList = evHelper.retrieveFileIndiceElenco2(idElencoVers,
+		new String[] {
+			"INDICE" });
+	if (!elvFileList.isEmpty()) {
+	    return objectStorageService
+		    .isIndiceElencoOnOs(elvFileList.get(0).getIdFileElencoVers());
+	} else {
+	    return false;
+	}
+
+    }
+
     public void streamOutFileIndiceElenco(ZipOutputStream out, String fileNamePrefix,
 	    String fileNameSuffix, long idElencoVers, FileTypeEnum... fileTypes)
 	    throws IOException {

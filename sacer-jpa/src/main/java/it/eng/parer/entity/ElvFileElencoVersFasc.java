@@ -77,6 +77,16 @@ public class ElvFileElencoVersFasc implements Serializable {
 	this.tiFirma = tiFirma;
     }
 
+    public ElvFileElencoVersFasc(long idFileElencoVersFasc, byte[] blFileElencoVers,
+	    String cdVerXsdFile, String tiFileElencoVers, String tiFirma, Date dtCreazioneFile) {
+	this.idFileElencoVersFasc = idFileElencoVersFasc;
+	this.blFileElencoVers = blFileElencoVers;
+	this.cdVerXsdFile = cdVerXsdFile;
+	this.tiFileElencoVers = tiFileElencoVers;
+	this.tiFirma = tiFirma;
+	this.dtCreazioneFile = dtCreazioneFile;
+    }
+
     @Id
     @Column(name = "ID_FILE_ELENCO_VERS_FASC")
     @GenericGenerator(name = "SELV_FILE_ELENCO_VERS_FASC_ID_FILE_ELENCO_VERS_FASC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
