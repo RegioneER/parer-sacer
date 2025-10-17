@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -35,6 +34,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -43,12 +43,11 @@ import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopConfParser;
-import org.apache.fop.apps.FopFactoryBuilder;
-import org.apache.fop.apps.FopFactory;
 import org.apache.xmlgraphics.util.MimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,9 +56,6 @@ import it.eng.parer.exception.ConnectionException;
 import it.eng.parer.grantedEntity.AplParamApplicReport;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.spagoCore.util.JpaUtils;
-import java.net.URI;
-import javax.xml.XMLConstants;
-import org.apache.fop.servlet.ServletContextURIResolver;
 
 /**
  * @author Iacolucci_M

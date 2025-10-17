@@ -105,6 +105,7 @@ import it.eng.spagoLite.security.Secure;
  *
  * @author Bonora_L
  */
+@SuppressWarnings("unchecked")
 public class StrutTitolariAction extends StrutTitolariAbstractAction {
 
     private static final Logger log = LoggerFactory.getLogger(StrutTitolariAction.class.getName());

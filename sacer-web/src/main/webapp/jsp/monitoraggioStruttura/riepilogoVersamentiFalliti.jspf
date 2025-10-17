@@ -1,0 +1,53 @@
+<%@ page import="it.eng.parer.slite.gen.form.MonitoraggioForm" pageEncoding="UTF-8"%>
+
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO VERSAMENTI NON ANDATI A BUON FINE</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w70"></th>
+            <th class="w30">Totale</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w70"><b>Unità documentarie derivanti da versamenti falliti e non verificati</b></td>
+            <td class="w30">
+                <a href="Monitoraggio.html?operation=listaDocDaVersFalliti&amp;ti_stato=NO_VERIF&amp;tipo=UNITA_DOC" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiFallitiMonitoraggioStruttura.NI_UD_NONVERS%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w70"><b>Documenti derivanti da aggiunte fallite e non verificate</b></td>
+            <td class="w30">
+                <a href="Monitoraggio.html?operation=listaDocDaVersFalliti&amp;ti_stato=NO_VERIF&amp;tipo=AGGIUNGI_DOCUMENTO" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiFallitiMonitoraggioStruttura.NI_DOC_NONVERS%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w70"><b>Unità documentarie derivanti da aggiornamenti metadati falliti e non verificati</b></td>
+            <td class="w30">
+                <a href="Monitoraggio.html?operation=listaUnitaDocAggMetaFalliti&amp;ti_stato=NON_VERIFICATO" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiFallitiMonitoraggioStruttura.NI_UPD_NONVERS%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w70"><b>Fascicoli derivanti da versamenti falliti e non verificati</b></td>
+            <td class="w30">
+                <a href="Monitoraggio.html?operation=listaFascicoliVersamentiFalliti&amp;ti_stato=NON_VERIFICATO" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiFallitiMonitoraggioStruttura.NI_FASC_NONVERS%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

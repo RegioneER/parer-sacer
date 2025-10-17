@@ -23,40 +23,15 @@ import javax.persistence.Embeddable;
 @Embeddable()
 public class MonVCntUdAnnulAmbId implements Serializable {
 
-    @Override
-    public int hashCode() {
-	int hash = 5;
-	hash = 79 * hash + Objects.hashCode(this.idAmbiente);
-	hash = 79 * hash + Objects.hashCode(this.idUserIam);
-	hash = 79 * hash + Objects.hashCode(this.tiStatoAnnul);
-	return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntUdAnnulAmbId other = (MonVCntUdAnnulAmbId) obj;
-	if (!Objects.equals(this.tiStatoAnnul, other.tiStatoAnnul)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idAmbiente, other.idAmbiente)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idUserIam, other.idUserIam)) {
-	    return false;
-	}
-	return true;
-    }
+    private static final long serialVersionUID = 1L;
 
     private BigDecimal idAmbiente;
+
+    private BigDecimal idUserIam;
+
+    private String tiStatoAnnul;
+
+    private String tiDtCreazione;
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
@@ -67,8 +42,6 @@ public class MonVCntUdAnnulAmbId implements Serializable {
 	this.idAmbiente = idAmbiente;
     }
 
-    private BigDecimal idUserIam;
-
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
 	return idUserIam;
@@ -78,8 +51,6 @@ public class MonVCntUdAnnulAmbId implements Serializable {
 	this.idUserIam = idUserIam;
     }
 
-    private String tiStatoAnnul;
-
     @Column(name = "TI_STATO_ANNUL")
     public String getTiStatoAnnul() {
 	return tiStatoAnnul;
@@ -87,5 +58,50 @@ public class MonVCntUdAnnulAmbId implements Serializable {
 
     public void setTiStatoAnnul(String tiStatoAnnul) {
 	this.tiStatoAnnul = tiStatoAnnul;
+    }
+
+    @Column(name = "TI_DT_CREAZIONE")
+    public String getTiDtCreazione() {
+	return tiDtCreazione;
+    }
+
+    public void setTiDtCreazione(String tiDtCreazione) {
+	this.tiDtCreazione = tiDtCreazione;
+    }
+
+    @Override
+    public int hashCode() {
+	int hash = 0;
+	hash += (idAmbiente != null ? idAmbiente.hashCode() : 0);
+	hash += (idUserIam != null ? idUserIam.hashCode() : 0);
+	hash += (tiStatoAnnul != null ? tiStatoAnnul.hashCode() : 0);
+	hash += (tiDtCreazione != null ? tiDtCreazione.hashCode() : 0);
+	return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+	if (!(object instanceof MonVCntUdAnnulAmbId)) {
+	    return false;
+	}
+	MonVCntUdAnnulAmbId other = (MonVCntUdAnnulAmbId) object;
+	if ((this.idAmbiente == null && other.idAmbiente != null)
+		|| (this.idAmbiente != null && !this.idAmbiente.equals(other.idAmbiente))) {
+	    return false;
+	}
+	if ((this.idUserIam == null && other.idUserIam != null)
+		|| (this.idUserIam != null && !this.idUserIam.equals(other.idUserIam))) {
+	    return false;
+	}
+	if ((this.tiStatoAnnul == null && other.tiStatoAnnul != null)
+		|| (this.tiStatoAnnul != null && !this.tiStatoAnnul.equals(other.tiStatoAnnul))) {
+	    return false;
+	}
+	if ((this.tiDtCreazione == null && other.tiDtCreazione != null)
+		|| (this.tiDtCreazione != null
+			&& !this.tiDtCreazione.equals(other.tiDtCreazione))) {
+	    return false;
+	}
+	return true;
     }
 }

@@ -1,0 +1,103 @@
+<%@ page import="it.eng.parer.slite.gen.form.MonitoraggioForm" pageEncoding="UTF-8"%>
+
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO VERSAMENTI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th>&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th>&nbsp;30gg antecedenti&nbsp;</th>
+            <th>&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>Unità documentarie</b></td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI&amp;tipo=UNITA_DOC" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_UD_CORR%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI&amp;tipo=UNITA_DOC" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_UD_30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocumenti&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI&amp;tipo=UNITA_DOC" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_UD_B30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Documenti aggiunti</b></td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocumenti&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_DOC_CORR%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocumenti&amp;ti_creazione=30gg&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_DOC_30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocumenti&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI&amp;tipo=DOCUMENTI" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_DOC_B30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+        <tr class="rigaDispari">
+            <td class="w50"><b>Aggiornamenti metadati</b></td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaAggMeta&amp;ti_creazione=OGGI&amp;ti_stato=TOTALE" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_UPD_CORR%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaAggMeta&amp;ti_creazione=30gg&amp;ti_stato=TOTALE" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_UPD_30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaAggMeta&amp;ti_creazione=B30gg&amp;ti_stato=TOTALE" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_UPD_B30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+        <tr class="rigaPariDark">
+            <td class="w50"><b>Fascicoli</b></td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaFascicoliVersati&amp;ti_creazione=OGGI&amp;ti_stato=TUTTI" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_FASC_CORR%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaFascicoliVersati&amp;ti_creazione=30gg&amp;ti_stato=TUTTI" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_FASC_30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaFascicoliVersati&amp;ti_creazione=B30gg&amp;ti_stato=TUTTI" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoVersamentiMonitoraggioStruttura.NI_FASC_B30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

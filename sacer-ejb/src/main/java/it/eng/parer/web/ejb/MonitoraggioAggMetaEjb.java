@@ -42,7 +42,9 @@ import it.eng.parer.entity.VrsErrSesUpdUnitaDocErr;
 import it.eng.parer.entity.VrsErrSesUpdUnitaDocKo;
 import it.eng.parer.entity.VrsSesUpdUnitaDocKo;
 import it.eng.parer.entity.VrsUpdUnitaDocKo;
+import it.eng.parer.exception.ParerErrorCategory.SacerErrorCategory;
 import it.eng.parer.exception.ParerInternalError;
+import it.eng.parer.exception.SacerRuntimeException;
 import it.eng.parer.slite.gen.tablebean.AroWarnUpdUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.VrsErrSesUpdUnitaDocErrRowBean;
 import it.eng.parer.slite.gen.tablebean.VrsErrSesUpdUnitaDocErrTableBean;
@@ -164,8 +166,9 @@ public class MonitoraggioAggMetaEjb {
 	    risultati = monitoraggioAggMetaHelper.getTotaliDataCorrente("AMBIENTE", idUser,
 		    idAmbiente, null, null, null, null, null, null, null, null);
 	} else {
-	    throw new RuntimeException(
-		    "Errore parametri nella chiamata al metodo calcolaRiepilogoAggMetaDataCorrente() dell'ejb!");
+	    throw new SacerRuntimeException(
+		    "Errore parametri nella chiamata al metodo calcolaRiepilogoAggMetaDataCorrente() dell'ejb!",
+		    SacerErrorCategory.INTERNAL_ERROR);
 	}
 
 	resetCountersAggiornamentiMetadatiDataCorrente(campi);
@@ -192,8 +195,9 @@ public class MonitoraggioAggMetaEjb {
 	    risultati = monitoraggioAggMetaHelper.getTotaliFalliti("AMBIENTE", idUser, idAmbiente,
 		    null, null, null, null, null, null, null, null);
 	} else {
-	    throw new RuntimeException(
-		    "Errore parametri nella chiamata al metodo calcolaRiepilogoAggMetaFalliti() dell'ejb!");
+	    throw new SacerRuntimeException(
+		    "Errore parametri nella chiamata al metodo calcolaRiepilogoAggMetaFalliti() dell'ejb!",
+		    SacerErrorCategory.INTERNAL_ERROR);
 	}
 
 	resetCountersAggiornamentiMetadatiFallitiCorrente(campi);
@@ -223,8 +227,9 @@ public class MonitoraggioAggMetaEjb {
 	    risultati = monitoraggioAggMetaHelper.getTotaliUdUpdFalliti("AMBIENTE", idUser,
 		    idAmbiente, null, null, null, null, null, null, null, null);
 	} else {
-	    throw new RuntimeException(
-		    "Errore parametri nella chiamata al metodo calcolaRiepilogoUnitaDocAggMetaFalliti() dell'ejb!");
+	    throw new SacerRuntimeException(
+		    "Errore parametri nella chiamata al metodo calcolaRiepilogoUnitaDocAggMetaFalliti() dell'ejb!",
+		    SacerErrorCategory.INTERNAL_ERROR);
 	}
 
 	resetCountersUnitaDocAggiornamentiMetadatiFalliti(campi);
@@ -1047,7 +1052,9 @@ public class MonitoraggioAggMetaEjb {
 		contaSesNuovo.setTiStatoUdpUdKo(
 			it.eng.parer.entity.constraint.MonContaSesUpdUdKo.TiStatoUdpUdKoMonContaSesUpdUdKo
 				.valueOf(statoArrivo));
-		contaSesNuovo.setMonKeyTotalUdKo(contaSes.getMonKeyTotalUdKo());
+		if (contaSes != null) {
+		    contaSesNuovo.setMonKeyTotalUdKo(contaSes.getMonKeyTotalUdKo());
+		}
 		contaSesNuovo.setNiSesUpdUdKo(BigDecimal.ONE);
 		monitoraggioAggMetaHelper.insertEntity(contaSesNuovo, true);
 	    }

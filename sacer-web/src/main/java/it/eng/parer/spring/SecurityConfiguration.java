@@ -15,16 +15,10 @@ package it.eng.parer.spring;
 
 import it.eng.spagoLite.spring.CustomSaml2AuthenticationSuccessHandler;
 import it.eng.spagoLite.spring.ParerSecurityConfiguration;
-import static it.eng.spagoLite.spring.ParerSecurityConfiguration.nomeApplicazione;
 import it.eng.spagoLite.spring.RefreshableRelyingPartyRegistrationRepository;
-import java.util.List;
-import javax.servlet.Filter;
-
-import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -36,6 +30,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.HeaderWriterFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.servlet.Filter;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 /**
  *
  * @author Marco Iacolucci
@@ -43,8 +41,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfiguration extends ParerSecurityConfiguration {
 
-    // @Autowired
-    // public RefreshableRelyingPartyRegistrationRepository relyingPartyRegistrationRepository;
     @Autowired
     private CustomSaml2AuthenticationSuccessHandler successHandler;
 

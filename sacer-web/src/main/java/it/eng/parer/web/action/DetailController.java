@@ -195,7 +195,7 @@ public class DetailController {
 	    try {
 		user = authenticator.doLogin(session);
 	    } catch (SOAPFaultException ex) {
-		user = null;
+		throw new IllegalStateException("Errore SOAP durante il login dell'utente", ex);
 	    }
 	}
 	return user;

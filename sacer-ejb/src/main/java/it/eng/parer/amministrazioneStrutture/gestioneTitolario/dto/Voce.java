@@ -23,13 +23,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.lang3.StringEscapeUtils;
+
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  *
  * @author Bonora_L
  */
-public class Voce {
+public class Voce implements java.io.Serializable {
+
+    private static final long serialVersionUID = 4210062446863751363L;
 
     private String codiceVoceComposito;
     private Integer numeroOrdine;

@@ -33,6 +33,12 @@
                 leadingZeros($("#Ore_ts_creazione_elenco_idx_aip_a"));
                 leadingZeros($("#Minuti_ts_creazione_elenco_idx_aip_a"));
 
+                // MAC#38913 - Firma elenchi – pop-up credenziali non sempre visibile
+                $('input[name="operation__firmaElenchiIndiciAipFascHsm"]').on('click', function() {
+                    clearTimeout(timeoutPollingIdIndiciAipFascicoli);
+                });
+                console.log('id del timer dell indice AIP:'+timeoutPollingIdIndiciAipFascicoli);
+
                 // Imposto i campi relativi all'ora e minuti precompilati con 00:00 (da)
                 $("#Ts_creazione_elenco_idx_aip_da").on("change", function(){
                     if ($("#Ts_creazione_elenco_idx_aip_da").val()) {
@@ -111,6 +117,10 @@
                                 },
                                 dialogClass: "noclose"
                             });
+
+                            // MAC#38913 - Firma elenchi – pop-up credenziali non sempre visibile
+                            // Disabilito momentaneamente il polling sennò la post non torna piu'!
+                            clearTimeout(timeoutPollingIdIndiciAipFascicoli);
 
                             $.post("ElenchiVersFascicoli.html", {
                                 operation: "firmaElenchiIndiciAipFascHsmJs",

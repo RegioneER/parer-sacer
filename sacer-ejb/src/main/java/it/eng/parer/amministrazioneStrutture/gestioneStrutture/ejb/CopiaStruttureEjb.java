@@ -2428,9 +2428,13 @@ public class CopiaStruttureEjb {
 		if (entita.isValida()) {
 		    DecTipoUnitaDoc udNew = cercaDecTipoUnitaDocPerNome(udOld.getNmTipoUnitaDoc(),
 			    newStrut.getDecTipoUnitaDocs());
-		    udNew.setDecTipoStrutUnitaDocs(
-			    determinaDecTipoStrutUnitaDocs(udOld, udNew, dataAttuale,
-				    includiElementiDisattivi, mantieniDateFineValidita, result));
+		    if (udNew != null) {
+			udNew.setDecTipoStrutUnitaDocs(determinaDecTipoStrutUnitaDocs(udOld, udNew,
+				dataAttuale, includiElementiDisattivi, mantieniDateFineValidita,
+				result));
+		    } else {
+			logger.warn("TipoUnitaDoc non trovato: " + udOld.getNmTipoUnitaDoc());
+		    }
 		}
 	    }
 	}

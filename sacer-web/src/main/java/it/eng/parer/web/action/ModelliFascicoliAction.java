@@ -13,49 +13,6 @@
 
 package it.eng.parer.web.action;
 
-import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
-import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
-import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.ejb.EJB;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.fascicoli.ejb.ModelliFascicoliEjb;
@@ -93,6 +50,37 @@ import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.ejb.EJB;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import java.io.*;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.*;
 
 /**
  *
@@ -210,101 +198,108 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 		}
 	    }
 
-	    if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_CANCEL)) {
-		goBack();
-	    } else if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_SAVE)) {
-		if (getForm().getModelliXsdTipiFascicoloDetail().getStatus()
-			.equals(Status.insert)) {
-		    // controllo esistenza del file
-		    if (tmpFileItem != null && (StringUtils.isBlank(tmpFileItem.getName())
-			    || tmpFileItem.getSize() == 0)) {
-			getMessageBox().addError("Nessun file selezionato");
-		    }
-		}
-		// controllo ambiente
-		BigDecimal idAmbiente = getForm().getModelliXsdTipiFascicoloDetail()
-			.getId_ambiente().parse();
-		if (idAmbiente == null) {
-		    getMessageBox().addError("Ambiente non inserito");
-		}
-
-		// controllo esistenza tipo modello xsd
-		String tiModelloXsd = getForm().getModelliXsdTipiFascicoloDetail()
-			.getTi_modello_xsd().parse();
-		if (StringUtils.isBlank(tiModelloXsd)) {
-		    getMessageBox().addError("Tipologia non inserita");
-		}
-
-		// controllo flag standard
-		String flDefault = getForm().getModelliXsdTipiFascicoloDetail().getFl_default()
-			.parse();
-		if (StringUtils.isBlank(flDefault)) {
-		    getMessageBox().addError("Flag standard non inserito");
-		}
-
-		// controllo esistenza codice versione
-		String cdVersione = getForm().getModelliXsdTipiFascicoloDetail().getCd_xsd()
-			.parse();
-		if (StringUtils.isBlank(cdVersione)) {
-		    getMessageBox().addError("Codice versione non inserito");
-		}
-
-		String dsVersione = getForm().getModelliXsdTipiFascicoloDetail().getDs_xsd()
-			.parse();
-		if (StringUtils.isBlank(dsVersione)) {
-		    getMessageBox().addError("Descrizione non inserita");
-		}
-
-		SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
-		Date dtIstituz = getForm().getModelliXsdTipiFascicoloDetail().getDt_istituz()
-			.parse();
-		if (dtIstituz == null) {
-		    dtIstituz = Calendar.getInstance().getTime();
-		    getForm().getModelliXsdTipiFascicoloDetail().getDt_istituz()
-			    .setValue(df.format(dtIstituz));
-		}
-
-		Date dtSoppres = getForm().getModelliXsdTipiFascicoloDetail().getDt_soppres()
-			.parse();
-		if (dtSoppres == null) {
-		    Calendar calendar = Calendar.getInstance();
-		    calendar.set(2444, 11, 31, 0, 0, 0);
-		    calendar.set(Calendar.MILLISECOND, 0);
-
-		    getForm().getModelliXsdTipiFascicoloDetail().getDt_soppres()
-			    .setValue(df.format(calendar.getTime()));
-		}
-
-		if (getMessageBox().isEmpty()) {
-		    String clob = null;
-		    if (StringUtils.isNotBlank(tmpFileItem.getName())) {
-			FileBinario fileBin = getFileBinario(tmpFileItem);
-			// conversione in stringa
-			clob = new String(fileBin.getDati());
-		    }
-
-		    if (StringUtils.isNotBlank(clob)) {
-			// compilazione schema
-			// 1. Lookup a factory for the W3C XML Schema language
-			SchemaFactory schemaFactory = SchemaFactory
-				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-			schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-			// anche in questo caso l'eccezione non deve mai verificarsi, a meno di non
-			// aver caricato
-			// nel database un xsd danneggiato...
-			try {
-			    // 2. Compile the schema.
-			    schemaFactory.newSchema(new StreamSource(new StringReader(clob)));
-			} catch (SAXException e) {
-			    log.error("Eccezione nel parsing dello schema del file xsd", e);
-			    throw new FileUploadException(
-				    "eccezione nel parsing dello schema del file xsd", e);
+	    if (tmpOperation != null) {
+		if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_CANCEL)) {
+		    goBack();
+		} else if (tmpOperation.getFieldName().contains(NE_DETTAGLIO_SAVE)) {
+		    if (getForm().getModelliXsdTipiFascicoloDetail().getStatus()
+			    .equals(Status.insert)) {
+			// controllo esistenza del file
+			if (tmpFileItem != null && (StringUtils.isBlank(tmpFileItem.getName())
+				|| tmpFileItem.getSize() == 0)) {
+			    getMessageBox().addError("Nessun file selezionato");
 			}
 		    }
-		    saveModelloXsdTipiFasc(tiModelloXsd, flDefault, cdVersione, dsVersione,
-			    dtIstituz, dtSoppres, clob);
+		    // controllo ambiente
+		    BigDecimal idAmbiente = getForm().getModelliXsdTipiFascicoloDetail()
+			    .getId_ambiente().parse();
+		    if (idAmbiente == null) {
+			getMessageBox().addError("Ambiente non inserito");
+		    }
+
+		    // controllo esistenza tipo modello xsd
+		    String tiModelloXsd = getForm().getModelliXsdTipiFascicoloDetail()
+			    .getTi_modello_xsd().parse();
+		    if (StringUtils.isBlank(tiModelloXsd)) {
+			getMessageBox().addError("Tipologia non inserita");
+		    }
+
+		    // controllo flag standard
+		    String flDefault = getForm().getModelliXsdTipiFascicoloDetail().getFl_default()
+			    .parse();
+		    if (StringUtils.isBlank(flDefault)) {
+			getMessageBox().addError("Flag standard non inserito");
+		    }
+
+		    // controllo esistenza codice versione
+		    String cdVersione = getForm().getModelliXsdTipiFascicoloDetail().getCd_xsd()
+			    .parse();
+		    if (StringUtils.isBlank(cdVersione)) {
+			getMessageBox().addError("Codice versione non inserito");
+		    }
+
+		    String dsVersione = getForm().getModelliXsdTipiFascicoloDetail().getDs_xsd()
+			    .parse();
+		    if (StringUtils.isBlank(dsVersione)) {
+			getMessageBox().addError("Descrizione non inserita");
+		    }
+
+		    SimpleDateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATE_TYPE);
+		    Date dtIstituz = getForm().getModelliXsdTipiFascicoloDetail().getDt_istituz()
+			    .parse();
+		    if (dtIstituz == null) {
+			dtIstituz = Calendar.getInstance().getTime();
+			getForm().getModelliXsdTipiFascicoloDetail().getDt_istituz()
+				.setValue(df.format(dtIstituz));
+		    }
+
+		    Date dtSoppres = getForm().getModelliXsdTipiFascicoloDetail().getDt_soppres()
+			    .parse();
+		    if (dtSoppres == null) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(2444, 11, 31, 0, 0, 0);
+			calendar.set(Calendar.MILLISECOND, 0);
+
+			getForm().getModelliXsdTipiFascicoloDetail().getDt_soppres()
+				.setValue(df.format(calendar.getTime()));
+		    }
+
+		    if (getMessageBox().isEmpty()) {
+			String clob = null;
+			if (StringUtils.isNotBlank(tmpFileItem.getName())) {
+			    FileBinario fileBin = getFileBinario(tmpFileItem);
+			    // conversione in stringa
+			    clob = new String(fileBin.getDati());
+			}
+
+			if (StringUtils.isNotBlank(clob)) {
+			    // compilazione schema
+			    // 1. Lookup a factory for the W3C XML Schema language
+			    SchemaFactory schemaFactory = SchemaFactory
+				    .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			    schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+			    schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+			    // anche in questo caso l'eccezione non deve mai verificarsi, a meno di
+			    // non
+			    // aver caricato
+			    // nel database un xsd danneggiato...
+			    try {
+				// 2. Compile the schema.
+				schemaFactory.newSchema(new StreamSource(new StringReader(clob)));
+			    } catch (SAXException e) {
+				log.error("Eccezione nel parsing dello schema del file xsd", e);
+				throw new FileUploadException(
+					"eccezione nel parsing dello schema del file xsd", e);
+			    }
+			}
+			saveModelloXsdTipiFasc(tiModelloXsd, flDefault, cdVersione, dsVersione,
+				dtIstituz, dtSoppres, clob);
+		    }
 		}
+	    } else {
+		getMessageBox().addError("Operazione non riconosciuta");
+		log.error("Operazione non riconosciuta");
+		forwardToPublisher(Application.Publisher.MODELLI_XSD_TIPI_FASCICOLO_DETAIL);
 	    }
 	} catch (FileUploadException ex) {
 	    log.error("Eccezione nell'upload dei file", ex);
@@ -1146,21 +1141,20 @@ public class ModelliFascicoliAction extends ModelliFascicoliAbstractAction {
 
 	// definiamo il buffer per lo stream di bytes
 	byte[] data = new byte[1000];
-	InputStream is = null;
 	if (xsdRowBean != null) {
 
 	    byte[] blob = xsdRowBean.getBlXsd().getBytes();
 	    if (blob != null) {
-		is = new ByteArrayInputStream(blob);
-		int count;
-		out.putNextEntry(new ZipEntry(filename + ".xsd"));
-		while ((count = is.read(data, 0, 1000)) != -1) {
-		    out.write(data, 0, count);
+		try (InputStream is = new ByteArrayInputStream(blob)) {
+		    int count;
+		    out.putNextEntry(new ZipEntry(filename + ".xsd"));
+		    while ((count = is.read(data, 0, 1000)) != -1) {
+			out.write(data, 0, count);
+		    }
+		    out.closeEntry();
 		}
-		out.closeEntry();
 	    }
 	}
-	is.close();
     }
 
     public void triggerModelliXsdTipiFascicoloDetailId_ambienteOnTriggerJs() throws EMFError {

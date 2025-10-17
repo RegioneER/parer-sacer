@@ -62,22 +62,31 @@ public class MonitoraggioSinteticoHelperTest {
     @Test
     void getMonVCnt_queryIsOk() {
 	String parameters = MonitoraggioSinteticoEjb.VIEW_ID_TIPO_UNITA_DOC + " = :param1";
+
 	String view = MonVCntUdAnnulTipoUd.class.getSimpleName();
-	assertNotNull(helper.getMonVCnt(view, parameters, aBigDecimal(), null));
+	assertNotNull(helper.getMonVCnt(view, parameters, aBigDecimal(), null, null, null));
 
 	view = MonVCntUdAnnulStrut.class.getSimpleName();
 	parameters = MonitoraggioSinteticoEjb.VIEW_ID_STRUT + " = :param1";
-	assertNotNull(helper.getMonVCnt(view, parameters, aBigDecimal(), null));
+	String select = "view.monVCntUdAnnulStrutId.idStrut, view.monVCntUdAnnulStrutId.tiStatoAnnul, sum(view.niAnnul) as niAnnul";
+	String group_by = "view.monVCntUdAnnulStrutId.idStrut, view.monVCntUdAnnulStrutId.tiStatoAnnul";
+	assertNotNull(helper.getMonVCnt(view, parameters, aBigDecimal(), null, select, group_by));
 
 	view = MonVCntUdAnnulEnte.class.getSimpleName();
 	parameters = MonitoraggioSinteticoEjb.VIEW_ID_ENTE + " = :param1 AND "
 		+ MonitoraggioSinteticoEjb.VIEW_ID_USER_IAM + " = :param2";
-	assertNotNull(helper.getMonVCnt(view, parameters, aBigDecimal(), aLong()));
+	select = "view.monVCntUdAnnulEnteId.idEnte, view.monVCntUdAnnulEnteId.idUserIam, view.monVCntUdAnnulEnteId.tiStatoAnnul, sum(view.niAnnul) as niAnnul";
+	group_by = "view.monVCntUdAnnulEnteId.idEnte, view.monVCntUdAnnulEnteId.idUserIam, view.monVCntUdAnnulEnteId.tiStatoAnnul";
+	assertNotNull(
+		helper.getMonVCnt(view, parameters, aBigDecimal(), aLong(), select, group_by));
 
 	view = MonVCntUdAnnulAmb.class.getSimpleName();
 	parameters = MonitoraggioSinteticoEjb.VIEW_ID_AMBIENTE + " = :param1 AND "
 		+ MonitoraggioSinteticoEjb.VIEW_ID_USER_IAM + " = :param2";
-	assertNotNull(helper.getMonVCnt(view, parameters, aBigDecimal(), aLong()));
+	select = "view.monVCntUdAnnulAmbId.idAmbiente, view.monVCntUdAnnulAmbId.idUserIam, view.monVCntUdAnnulAmbId.tiStatoAnnul, sum(view.niAnnul) as niAnnul";
+	group_by = "view.monVCntUdAnnulAmbId.idAmbiente, view.monVCntUdAnnulAmbId.idUserIam, view.monVCntUdAnnulAmbId.tiStatoAnnul";
+	assertNotNull(
+		helper.getMonVCnt(view, parameters, aBigDecimal(), aLong(), select, group_by));
     }
 
     @Test

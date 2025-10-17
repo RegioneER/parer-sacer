@@ -21,7 +21,9 @@ import java.util.Set;
  *
  * @author Gilioli_P
  */
-public class MonitoraggioFiltriListaVersFallitiDistintiDocBean {
+public class MonitoraggioFiltriListaVersFallitiDistintiDocBean implements java.io.Serializable {
+
+    private static final long serialVersionUID = -3565696620448136827L;
 
     private BigDecimal idAmbiente;
     private BigDecimal idEnte;

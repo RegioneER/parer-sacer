@@ -33,6 +33,12 @@
                 leadingZeros($("#Ore_dt_creazione_elenco_idx_aip_a"));
                 leadingZeros($("#Minuti_dt_creazione_elenco_idx_aip_a"));
 
+                // MAC#38913 - Firma elenchi – pop-up credenziali non sempre visibile
+                $('input[name="operation__firmaElenchiIndiciAipHsm"]').on('click', function() {
+                    clearTimeout(timeoutPollingIdIndiciAip);
+                });
+                console.log('id del timer dell indice AIP:'+timeoutPollingIdIndiciAip);
+
                 // Imposto i campi relativi all'ora e minuti precompilati con 00:00 (da)
                 $("#Dt_creazione_elenco_idx_aip_da").on("change", function(){
                     if ($("#Dt_creazione_elenco_idx_aip_da").val()) {
@@ -112,7 +118,10 @@
                                 },
                                 dialogClass: "noclose"
                             });
-
+                            
+                            // Disabilito momentaneamente il polling sennò la post non torna piu'!
+                            clearTimeout(timeoutPollingIdIndiciAip);
+                            
                             $.post("ElenchiVersamento.html", {
                                 operation: "firmaElenchiIndiciAipHsmJs",
                                 Id_ambiente: idAmbiente,
@@ -135,7 +144,7 @@
                                         $.each(object.error, function () {
                                             textDialog += "<li class=\"message error \">" + this + "</li>";
                                         });
-                                        textDialog += "</ul></div>"
+                                        textDialog += "</ul></div>";
                                         $(textDialog).appendTo($("div#content"));
                                         $("div.messages").dialog({
                                             autoOpen: true,
@@ -189,6 +198,7 @@
                                          (Ovviamente chiamando un metodo apposito)*/
                                         window.location = "ElenchiVersamento.html?operation=loadListaElenchiIndiciAipDaFirmare&cleanFilter=false";
                                     }
+                                    pollIndiciAip();
                                 });
                             },
                         "Annulla": function () {

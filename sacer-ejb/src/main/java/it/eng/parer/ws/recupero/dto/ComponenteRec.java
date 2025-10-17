@@ -34,6 +34,8 @@ public class ComponenteRec {
     protected String mimeType;
     protected String urnOriginaleVersata;
     protected String nomeFileOriginaleVersato;
+    // MEV#39147 - Modifica delle modalità di calcolo dell'estensione nel recupero di file sbustati
+    protected String nomeFormatoComponenteSbustato;
 
     public ComponenteRec() {
 	super();
@@ -158,6 +160,14 @@ public class ComponenteRec {
 
     public void setNomeFileBreveTivoli(String nomeFileBreveTivoli) {
 	this.nomeFileBreveTivoli = nomeFileBreveTivoli;
+    }
+
+    public String getNomeFormatoComponenteSbustato() {
+	return nomeFormatoComponenteSbustato;
+    }
+
+    public void setNomeFormatoComponenteSbustato(String nomeFormatoComponenteSbustato) {
+	this.nomeFormatoComponenteSbustato = nomeFormatoComponenteSbustato;
     }
 
 }

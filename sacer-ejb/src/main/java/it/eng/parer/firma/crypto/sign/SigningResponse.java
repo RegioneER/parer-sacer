@@ -26,8 +26,12 @@ public enum SigningResponse {
     HSM_ERROR(
 	    "Errore con l'applicativo HSM - L'applicativo non risponde o non permette la creazione di una sessione di firma"),
     UNKNOWN_ERROR("Errore sconosciuto nella procedura di firma"),
+    ERROR_COMPLETAMENTO_FIRMA("Errore nel completamento nella procedura di firma"),
     WARNING("Sessione di firma terminata con warning - Non \u00E8 stato possibile firmare alcuni file"),
-    OK("Sessione di firma terminata con successo");
+    OK("Sessione di firma terminata con successo"),
+    // WARNING_SECONDA_FASE("Sessione di firma terminata con warning - Non \u00E8 stato possibile
+    // firmare alcuni file"),
+    OK_SECONDA_FASE("Sessione di firma terminata con successo");
 
     private final String description;
 

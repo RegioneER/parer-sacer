@@ -13,7 +13,29 @@
 
 package it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.ejb;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.SessionContext;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.interceptor.Interceptors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.helper.SottoStruttureHelper;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.aop.TransactionInterceptor;
 import it.eng.parer.entity.DecAttribDatiSpec;
 import it.eng.parer.entity.DecTipoDoc;
@@ -31,30 +53,10 @@ import it.eng.parer.slite.gen.tablebean.OrgCampoValSubStrutTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgRegolaValSubStrutRowBean;
 import it.eng.parer.slite.gen.tablebean.OrgRegolaValSubStrutTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgSubStrutTableBean;
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.StruttureHelper;
 import it.eng.parer.web.util.ApplEnum;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
 import it.eng.parer.ws.utils.CostantiDB;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-import javax.interceptor.Interceptors;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * EJB di gestione dei dati delle sottostrutture
@@ -297,7 +299,7 @@ public class SottoStruttureEjb {
 	    tipoDoc.setOrgRegolaValSubStruts(new ArrayList<OrgRegolaValSubStrut>());
 	}
 	if (tipoUnitaDoc.getOrgRegolaValSubStruts() == null) {
-	    tipoUnitaDoc.setOrgRegolaValSubStruts(new ArrayList<OrgRegolaValSubStrut>());
+	    tipoUnitaDoc.setOrgRegolaValSubStruts(new ArrayList<>());
 	}
 	tipoDoc.getOrgRegolaValSubStruts().add(regola);
 	tipoUnitaDoc.getOrgRegolaValSubStruts().add(regola);
@@ -440,7 +442,7 @@ public class SottoStruttureEjb {
 	}
 
 	if (regola.getOrgCampoValSubStruts() == null) {
-	    regola.setOrgCampoValSubStruts(new ArrayList<OrgCampoValSubStrut>());
+	    regola.setOrgCampoValSubStruts(new ArrayList<>());
 	}
 	regola.getOrgCampoValSubStruts().add(campo);
 
@@ -538,15 +540,16 @@ public class SottoStruttureEjb {
 	if (tipoOper.name().equals((StruttureEjb.TipoOper.MOD.name()))) {
 	    OrgSubStrut subStrut = helper.findById(OrgSubStrut.class, id);
 
+	    if (subStrut == null) {
+		throw new ParerUserError(
+			"Errore inaspettato - impossibile recuperare la sottostruttura indicata per la modifica");
+	    }
+
 	    /* Controllo se sono stati modificati nome e/o descrizione */
 	    if (!subStrut.getNmSubStrut().equals(name) || !subStrut.getDsSubStrut().equals(desc)) {
 		modificatiNomeDescrizione = true;
 	    }
 
-	    if (subStrut == null) {
-		throw new ParerUserError(
-			"Errore inaspettato - impossibile recuperare la sottostruttura indicata per la modifica");
-	    }
 	    if (name != null) {
 		subStrut.setNmSubStrut(name);
 	    }
@@ -589,12 +592,12 @@ public class SottoStruttureEjb {
     public IamOrganizDaReplic deleteSubStruttura(LogParam param, long idSubStrut,
 	    boolean isFromDeleteStruttura) throws ParerUserError {
 	OrgSubStrut subStrut = helper.findById(OrgSubStrut.class, idSubStrut);
-	String nmSubStrut = subStrut.getNmSubStrut();
-	long idStrut = subStrut.getOrgStrut().getIdStrut();
 	if (subStrut == null) {
 	    throw new ParerUserError(
 		    "Errore inaspettato - impossibile recuperare la sottostruttura indicata per la rimozione");
 	}
+	String nmSubStrut = subStrut.getNmSubStrut();
+	long idStrut = subStrut.getOrgStrut().getIdStrut();
 	BigDecimal idStrutDaLoggare = new BigDecimal(subStrut.getOrgStrut().getIdStrut());
 	helper.removeEntity(subStrut, true);
 	// Log applicativo della struttura solo se non si proviene dalla cancellazione struttura

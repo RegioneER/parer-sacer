@@ -74,8 +74,11 @@ import it.eng.parer.viewEntity.MonVCntDocTipoUdB30;
 import it.eng.parer.viewEntity.MonVCntUdAmb;
 import it.eng.parer.viewEntity.MonVCntUdAmbB30;
 import it.eng.parer.viewEntity.MonVCntUdAnnulAmb;
+import it.eng.parer.viewEntity.MonVCntUdAnnulAmbId;
 import it.eng.parer.viewEntity.MonVCntUdAnnulEnte;
+import it.eng.parer.viewEntity.MonVCntUdAnnulEnteId;
 import it.eng.parer.viewEntity.MonVCntUdAnnulStrut;
+import it.eng.parer.viewEntity.MonVCntUdAnnulStrutId;
 import it.eng.parer.viewEntity.MonVCntUdAnnulTipoUd;
 import it.eng.parer.viewEntity.MonVCntUdEnte;
 import it.eng.parer.viewEntity.MonVCntUdEnteB30;
@@ -629,6 +632,8 @@ public class MonitoraggioSinteticoEjb {
 	Object obj = buildQueryChk(idUtente, idAmbiente, idEnte, idStrut, idTipoUnitaDoc, type);
 	BaseRowInterface rowBean = null;
 	String view = null;
+	String select = null;
+	String group_by = null;
 	switch (type) {
 	case UNITA_DOC_VERSATE:
 	    rowBean = new MonVChkCntUdRowBean();
@@ -784,10 +789,16 @@ public class MonitoraggioSinteticoEjb {
 		view = MonVCntUdAnnulTipoUd.class.getSimpleName();
 	    } else if (idStrut != null) {
 		view = MonVCntUdAnnulStrut.class.getSimpleName();
+		select = "view.monVCntUdAnnulStrutId.idStrut, view.monVCntUdAnnulStrutId.tiStatoAnnul, sum(view.niAnnul) as niAnnul";
+		group_by = "view.monVCntUdAnnulStrutId.idStrut, view.monVCntUdAnnulStrutId.tiStatoAnnul";
 	    } else if (idEnte != null) {
 		view = MonVCntUdAnnulEnte.class.getSimpleName();
+		select = "view.monVCntUdAnnulEnteId.idEnte, view.monVCntUdAnnulEnteId.tiStatoAnnul, sum(view.niAnnul) as niAnnul";
+		group_by = "view.monVCntUdAnnulEnteId.idEnte, view.monVCntUdAnnulEnteId.tiStatoAnnul";
 	    } else if (idAmbiente != null) {
 		view = MonVCntUdAnnulAmb.class.getSimpleName();
+		select = "view.monVCntUdAnnulAmbId.idAmbiente, view.monVCntUdAnnulAmbId.tiStatoAnnul, sum(view.niAnnul) as niAnnul";
+		group_by = "view.monVCntUdAnnulAmbId.idAmbiente, view.monVCntUdAnnulAmbId.tiStatoAnnul";
 	    } else {
 		throw new IllegalArgumentException(
 			"Errore inaspettato nei parametri di calcolo totali unità documentarie annullate");
@@ -826,7 +837,17 @@ public class MonitoraggioSinteticoEjb {
 	    param2 = idUtente;
 	}
 
-	List<?> resultList = monitSintHelper.getMonVCnt(view, paramString, param1, param2);
+	List<?> resultList = null;
+
+	// Modifica anche la chiamata per utilizzare i parametri select e group_by
+	if (select != null && group_by != null) {
+	    // Per UNITA_DOC_ANNUL con aggregazione
+	    resultList = monitSintHelper.getMonVCnt(view, paramString, param1, param2, select,
+		    group_by);
+	} else {
+	    // Per tutti gli altri casi o UNITA_DOC_ANNUL senza aggregazione
+	    resultList = monitSintHelper.getMonVCnt(view, paramString, param1, param2, null, null);
+	}
 	/*
 	 * Per ogni record della lista calcolo i totali necessari a completare il rowBean
 	 */
@@ -854,7 +875,36 @@ public class MonitoraggioSinteticoEjb {
 		rowBean = handleDocNonVersRowBean(row, totOggi, rowBean);
 		break;
 	    case UNITA_DOC_ANNUL:
-		rowBean = handleUdAnnulRowBean(row, totOggi, rowBean);
+		Object[] item = (Object[]) row;
+		switch (view) {
+		case "MonVCntUdAnnulStrut":
+		    MonVCntUdAnnulStrut entityUdAnnulStrut = new MonVCntUdAnnulStrut();
+		    MonVCntUdAnnulStrutId idEntityUdAnnulStrut = new MonVCntUdAnnulStrutId();
+		    idEntityUdAnnulStrut.setIdStrut((BigDecimal) item[0]);
+		    idEntityUdAnnulStrut.setTiStatoAnnul((String) item[1]);
+		    entityUdAnnulStrut.setMonVCntUdAnnulStrutId(idEntityUdAnnulStrut);
+		    entityUdAnnulStrut.setNiAnnul((BigDecimal) item[2]);
+		    rowBean = handleUdAnnulRowBean(entityUdAnnulStrut, totOggi, rowBean);
+		    break;
+		case "MonVCntUdAnnulEnte":
+		    MonVCntUdAnnulEnte entityUdAnnulEnte = new MonVCntUdAnnulEnte();
+		    MonVCntUdAnnulEnteId idEntityUdAnnulEnte = new MonVCntUdAnnulEnteId();
+		    idEntityUdAnnulEnte.setIdEnte((BigDecimal) item[0]);
+		    idEntityUdAnnulEnte.setTiStatoAnnul((String) item[1]);
+		    entityUdAnnulEnte.setMonVCntUdAnnulEnteId(idEntityUdAnnulEnte);
+		    entityUdAnnulEnte.setNiAnnul((BigDecimal) item[2]);
+		    rowBean = handleUdAnnulRowBean(entityUdAnnulEnte, totOggi, rowBean);
+		    break;
+		case "MonVCntUdAnnulAmb":
+		    MonVCntUdAnnulAmb entityUdAnnulAmb = new MonVCntUdAnnulAmb();
+		    MonVCntUdAnnulAmbId idEntityUdAnnulAmb = new MonVCntUdAnnulAmbId();
+		    idEntityUdAnnulAmb.setIdAmbiente((BigDecimal) item[0]);
+		    idEntityUdAnnulAmb.setTiStatoAnnul((String) item[1]);
+		    entityUdAnnulAmb.setMonVCntUdAnnulAmbId(idEntityUdAnnulAmb);
+		    entityUdAnnulAmb.setNiAnnul((BigDecimal) item[2]);
+		    rowBean = handleUdAnnulRowBean(entityUdAnnulAmb, totOggi, rowBean);
+		    break;
+		}
 		break;
 	    default:
 		throw new IllegalArgumentException(

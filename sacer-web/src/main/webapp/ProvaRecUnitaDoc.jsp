@@ -185,7 +185,7 @@
         </style>
     </head>
     <body>
-        <h1>Recupero Sincrono unitï¿½ documentaria</h1>
+        <h1>Recupero Sincrono unità documentaria</h1>
         <h2>Viene chiamata la servlet/ws <b>RecDIPUnitaDocumentariaSync</b></h2>
         <form action="RecDIPUnitaDocumentariaSync" method="post"  enctype="multipart/form-data" >
             <div class="box">

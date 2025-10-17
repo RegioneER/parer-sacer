@@ -166,11 +166,16 @@ public class DatiSpecificiEjb {
 		DecTipoCompDoc tipoCompDoc = (xsdDatiSpecRowBean.getIdTipoCompDoc() != null ? helper
 			.findById(DecTipoCompDoc.class, xsdDatiSpecRowBean.getIdTipoCompDoc())
 			: null);
-		sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(),
-			param.getNomeUtente(), param.getNomeAzione(),
-			SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO,
-			new BigDecimal(tipoCompDoc.getDecTipoStrutDoc().getIdTipoStrutDoc()),
-			param.getNomePagina());
+		if (tipoCompDoc != null && tipoCompDoc.getDecTipoStrutDoc() != null) {
+		    sacerLogEjb.log(param.getTransactionLogContext(), param.getNomeApplicazione(),
+			    param.getNomeUtente(), param.getNomeAzione(),
+			    SacerLogConstants.TIPO_OGGETTO_TIPO_STRUTTURA_DOCUMENTO,
+			    new BigDecimal(tipoCompDoc.getDecTipoStrutDoc().getIdTipoStrutDoc()),
+			    param.getNomePagina());
+		} else {
+		    logger.warn(
+			    "tipoCompDoc o DecTipoStrutDoc è null, impossibile procedere con il log.");
+		}
 	    }
 	}
     }
@@ -242,7 +247,7 @@ public class DatiSpecificiEjb {
 	if (tipoUnitaDoc != null && tipoUnitaDoc.getDecAttribDatiSpecs() == null) {
 	    tipoUnitaDoc.getDecXsdDatiSpecs().add(xsdDatiSpec);
 	}
-	if (tipoDoc != null && tipoDoc.getDecAttribDatiSpecs() == null) {
+	if (tipoCompDoc != null && tipoCompDoc.getDecAttribDatiSpecs() == null) {
 	    tipoCompDoc.getDecXsdDatiSpecs().add(xsdDatiSpec);
 	}
 

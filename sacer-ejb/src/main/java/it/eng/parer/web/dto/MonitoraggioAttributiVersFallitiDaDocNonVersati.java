@@ -16,13 +16,16 @@
  */
 package it.eng.parer.web.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  *
  * @author Gilioli_P
  */
-public class MonitoraggioAttributiVersFallitiDaDocNonVersati {
+public class MonitoraggioAttributiVersFallitiDaDocNonVersati implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String cdRegistroKeyUnitaDoc;
     private BigDecimal aaKeyUnitaDoc;

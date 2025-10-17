@@ -189,7 +189,7 @@
         <Input  Type="STRING" Description="Struttura" Name="nm_strut"/>
         <Input  Type="STRING" Description="Registro" Name="cd_registro_key_unita_doc"/>
         <Input  Type="INTEGER" Description="Anno" Name="aa_key_unita_doc"/>
-        <Input  Type="STRING" Description="Numero" Name="cd_key_unita_doc"/>
+        <Input  Type="STRING" Name="cd_key_unita_doc" Description="Numero"/>
         <Input  Type="STRING" Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc"/>
         <Input  Type="STRING" Description="Elemento" Name="ti_doc"/>
         <Input  Type="STRING" Description="Tipo documento" Name="nm_tipo_doc"/>
@@ -775,7 +775,7 @@
         <Input Type="STRING" Description="UserID" Name="nm_userid"/>
         
         <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
-        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" />
         <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
 
         <MultiSelect Type="INTEGER" Description="Registro" Name="cd_registro_key_unita_doc"/>
@@ -828,6 +828,14 @@
         <Input  Type="INTEGER" Description="Ora" Name="minuti_vers_a" MaxLength="2"/>
         <Input  Type="DATE" Description="Data di versamento da validato" Name="giorno_vers_da_validato"/>
         <Input  Type="DATE" Description="Data di versamento a validato" Name="giorno_vers_a_validato"/>
+        <Input  Type="DATE" Description="Data di annullamento da" Name="giorno_annul_da"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_annul_da" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_annul_da" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di annullamento a" Name="giorno_annul_a"/>
+        <Input  Type="INTEGER" Description="Ora" Name="ore_annul_a" MaxLength="2"/>
+        <Input  Type="INTEGER" Description="Ora" Name="minuti_annul_a" MaxLength="2"/>
+        <Input  Type="DATE" Description="Data di annullamento da validato" Name="giorno_annul_da_validato"/>
+        <Input  Type="DATE" Description="Data di annullamento a validato" Name="giorno_annul_a_validato"/>
         <ComboBox  Type="INTEGER" Description="Tipo documento" Name="id_tipo_doc" />
         <ComboBox  Type="STRING" Description="Stato annullamento versamenti" Name="ti_stato_annul" />
         <Button Name="ricercaDocAnnul" Description="Ricerca" Type="STRING" />
@@ -923,12 +931,62 @@
     <Fields Name="FiltriSessioniErrateFalliteEliminate" Description="Filtri Sessioni errate e/o fallite eliminate" >
         <ComboBox  Type="STRING" Description="Sessioni errate e/o fallite" Trigger="true" Name="sess_errate_fallite" />
         <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" />
-        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true" />
         <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" />
         <Input Type="DATE" Description="Data di elaborazione da" Name="data_elab_da"/>
         <Input Type="DATE" Description="Data di elaborazione a" Name="data_elab_a"/>
         <Input Type="DATE" Description="Data di riferimento da" Name="data_rif_da"/>
         <Input Type="DATE" Description="Data di riferimento a" Name="data_rif_a"/>
         <Button Name="cercaSessioniErrateFalliteEliminate" Description="Cerca sessioni fallite" Type="STRING" />
+    </Fields>
+
+    <Fields Name="MonitoraggioStruttura" Description="Monitoraggio struttura" >
+        <ComboBox Type="INTEGER" Description="Ambiente" Name="id_ambiente" Trigger="true" Required="true"/>
+        <ComboBox Type="INTEGER" Description="Ente" Name="id_ente" Trigger="true"/>
+        <ComboBox Type="INTEGER" Description="Struttura" Name="id_strut" Trigger="true" />
+        <Button Name="ricercaMonitoraggioStrutturaButton" Description="Genera monitoraggio struttura" Type="STRING" />
+    </Fields>
+
+    <Fields Name="RiepilogoVersamentiMonitoraggioStruttura" Description="Riepilogo versamenti" >
+        <!-- Unità documentarie -->
+        <Input Name="ni_ud_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <!-- Documenti aggiunti -->
+        <Input Name="ni_doc_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_doc_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_doc_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <!-- Aggiornamenti metadati -->
+        <Input Name="ni_upd_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_upd_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <!-- Fascicoli -->
+        <Input Name="ni_fasc_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_fasc_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_fasc_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+
+    <Fields Name="RiepilogoVersamentiFallitiMonitoraggioStruttura" Description="Riepilogo versamenti non andati a buon fine" >
+        <!-- Unità documentarie fallite -->
+        <Input Name="ni_ud_nonvers" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <!-- Documenti falliti -->
+        <Input Name="ni_doc_nonvers" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <!-- Aggiornamenti metadati falliti -->
+        <Input Name="ni_upd_nonvers" Description="" Type="INTEGER" GroupingDecimal="true" />
+        
+        <!-- Fascicoli falliti -->
+        <Input Name="ni_fasc_nonvers" Description="" Type="INTEGER" GroupingDecimal="true" />
+    </Fields>
+
+    <Fields Name="RiepilogoAnnullamentiMonitoraggioStruttura" Description="Riepilogo annullamenti" >
+        <!-- UD annullate -->
+        <Input Name="ni_ud_annul_corr" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_annul_30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
+        <Input Name="ni_ud_annul_b30gg" Description="" Type="INTEGER" GroupingDecimal="true" />
     </Fields>
 </Form>

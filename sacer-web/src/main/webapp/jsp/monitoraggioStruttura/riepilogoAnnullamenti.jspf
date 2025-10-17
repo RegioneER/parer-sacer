@@ -1,0 +1,40 @@
+<%@ page import="it.eng.parer.slite.gen.form.MonitoraggioForm" pageEncoding="UTF-8"%>
+
+<table class="grid w70" >
+    <caption>
+        <div class="livello1">
+            <b>RIEPILOGO ANNULLAMENTI</b>
+        </div>
+    </caption>
+    <thead>
+        <tr>
+            <th class="w50"></th>
+            <th>&nbsp;&nbsp;Oggi&nbsp;&nbsp;</th>
+            <th>&nbsp;30gg antecedenti&nbsp;</th>
+            <th>&nbsp;&nbsp;Prima di 30gg&nbsp;&nbsp;</th>
+        </tr>
+    </thead>
+    <tbody class="livello2">
+        <tr class="rigaDispari">
+            <td class="w50"><b>UD annullate o in corso di annullamento</b></td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocAnnullati&amp;ti_stato=TUTTI&amp;tipo=VERS_UNITA_DOC&amp;ti_creazione=OGGI" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoAnnullamentiMonitoraggioStruttura.NI_UD_ANNUL_CORR%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocAnnullati&amp;ti_stato=TUTTI&amp;tipo=VERS_UNITA_DOC&amp;ti_creazione=30gg" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoAnnullamentiMonitoraggioStruttura.NI_UD_ANNUL_30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+            <td class="w10">
+                <a href="Monitoraggio.html?operation=listaDocAnnullati&amp;ti_stato=TUTTI&amp;tipo=VERS_UNITA_DOC&amp;ti_creazione=B30gg" 
+                   style="text-decoration: none;">
+                    <slf:field name="<%= MonitoraggioForm.RiepilogoAnnullamentiMonitoraggioStruttura.NI_UD_ANNUL_B30GG%>" controlWidth="w100"/>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>

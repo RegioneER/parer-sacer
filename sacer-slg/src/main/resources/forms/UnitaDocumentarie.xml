@@ -945,4 +945,70 @@
         <!--<Input Description="Unità documentarie annullate" Name="fl_unita_doc_annul" Type="STRING" Hidden="true" />
         <Input Description="Con documenti annullati" Name="fl_doc_annul" Type="STRING" />-->
     </Fields>
+    
+    
+    <!-- DATA MART -->
+    <!-- Sezioni data mart -->
+    <Section Description="" Legend="Chiave Unità documentaria" LoadOpened="true" Name="ChiaveUdDataMartSection" ShowButton="false"/>
+    <Section Description="" Legend="Richieste di cancellazione" LoadOpened="true" Name="RichiesteDataMartSection" ShowButton="false"/>
+    <Section Description="" Legend="Numero ud" LoadOpened="true" Name="NumUdDataMartSection" ShowButton="false"/>
+    <Section Description="" Legend="Unità documentarie data mart" LoadOpened="true" Name="UdDataMartSection" ShowButton="false"/>    
+    <!-- Filtri di ricerca Unità Documentarie Data Mart -->
+    <Fields Description="Filtri ricerca cancellazione" Name="FiltriRicercaDataMart">        
+        <ComboBox Description="Tipo richiesta cancellazione ud" Name="ti_mot_cancellazione" Type="STRING"/>
+        <ComboBox Description="Stato richiesta" Name="ti_stato_richiesta" Type="STRING"/>
+        <ComboBox Description="Ente" Name="id_ente" Type="INTEGER" Trigger="true" />
+        <ComboBox Description="Struttura" Name="id_strut" Type="INTEGER" Trigger="true"/>
+        <Input Description="Data creazione richiesta da" Name="dt_creazione_da" Type="DATE"/>
+        <Input Description="Data creazione richiesta a" Name="dt_creazione_a" Type="DATE"/>
+        <ComboBox Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" MaxLength="4" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Button Description="Ricerca" Name="ricercaDataMart" Type="STRING"/>                        
+    </Fields>
+    
+    <Fields Description="Campi invocazione microservizio" Name="MicroservizioDataMartFields">        
+        <Input Name="ds_datamart" Description="Descrizione" Type="STRING" MaxLength="254"/>
+        <Input Name="mot_datamart" Description="Motivazione" Type="STRING" MaxLength="254"/>
+        <ComboBox Name="ti_cancellazione" Description="Tipo cancellazione" Type="STRING"/>
+        <Button Description="Cancellazione logica" Name="callMicroservizioDataMart" Type="STRING"/>
+        <Button Description="Riprendi cancellazione logica" Name="recupCancellazioneLogicaDataMart" Type="STRING"/>
+        <Button Description="Cancellazione fisica" Name="eseguiCancellazioneDataMart" Type="STRING"/>
+    </Fields>
+    
+    <!-- Lista delle richieste data mart trovate in base ai parametri di ricerca -->
+    <List Description="Lista data-mart" Name="RichiesteDataMartList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <Input Description="Id ud del richiesta" Name="id_ud_del_richiesta" Type="INTEGER" Hidden="true" />
+        <Input Description="Id richiesta" Name="id_richiesta" Type="INTEGER"/>
+        <Input Description="Codice richiesta" Name="cd_richiesta" Type="STRING"/>
+        <Input Description="Tipo motivo cancellazione" Name="ti_mot_cancellazione" Type="STRING" Hidden="true" />
+        <Input Description="Tipo richiesta cancellazione ud" Name="ds_mot_cancellazione" Type="STRING"/>
+        <Input Description="Data creazione" Name="dt_creazione" Type="DATE" />
+        <Input Description="Stato richiesta" Name="ti_stato_richiesta" Type="STRING"/>
+        <Input Description="Numero ud" Name="ni_ud" Type="INTEGER" GroupingDecimal="true" />
+        <Input Description="Id strut" Name="id_strut" Type="INTEGER" Hidden="true"/>        
+    </List>
+    
+    <!-- Lista del numero delle ud data mart raggruppate per stato trovate in base ai parametri di ricerca -->
+    <List Description="Lista numero ud data-mart" Name="NumUdDataMartList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <Input Description="Id ud del richiesta" Name="id_ud_del_richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Description="Id richiesta" Name="id_richiesta" Type="INTEGER" Hidden="true"/>
+        <Input Description="Ente / struttura" Name="nm_ente_strut" Type="STRING" />
+        <Input Description="Raggruppamento stato" Name="ti_stato_ud_cancellate" Type="STRING"/>
+        <Input Description="Numero ud per stato" Name="ni_ud_stato" Type="INTEGER" GroupingDecimal="true" />        
+        <Input Description="Id strut" Name="id_strut" Type="INTEGER" Hidden="true"/>
+        <Input Description="Tipo motivo cancellazione" Name="ti_mot_cancellazione" Type="STRING" Hidden="true" />
+    </List>
+    
+    <!-- Lista delle ud data mart trovate in base ai parametri di ricerca -->
+    <List Description="Lista ud data-mart" Name="UdDataMartList" hideDeleteButton="true" hideInsertButton="true" hideUpdateButton="true" >
+        <Input Description="Id unita doc" Name="id_unita_doc" Type="INTEGER" Hidden="true"/>
+        <Input Description="Ente / struttura" Name="nm_strut" Type="STRING" />
+        <Input Description="Registro" Name="cd_registro_key_unita_doc" Type="STRING"/>
+        <Input Description="Anno" Name="aa_key_unita_doc" Type="INTEGER"/>
+        <Input Description="Numero" Name="cd_key_unita_doc" Type="STRING"/>
+        <Input Description="Data versamento" Name="dt_versamento" Type="DATETIME"/>
+        <Input Description="Stato ud" Name="ti_stato_ud_cancellate" Type="STRING"/>
+    </List>
+    
 </Form>

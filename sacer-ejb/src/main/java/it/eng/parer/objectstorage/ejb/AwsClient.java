@@ -67,8 +67,8 @@ public class AwsClient {
 
     /*
      * Nota: con l'introduzione di
-     * https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html ï¿½ necessario
-     * abilitare "forzatamente" la modalitï¿½ path style (attenzione: in futuro sarï¿½ deprecata!)
+     * https://docs.aws.amazon.com/AmazonS3/latest/userguide/VirtualHosting.html è necessario
+     * abilitare "forzatamente" la modalità path style (attenzione: in futuro sarà deprecata!)
      */
     private S3Client createS3Client(URI storageAddress, String accessKeyId, String secretKey) {
 

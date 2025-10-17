@@ -16,12 +16,18 @@
  */
 package it.eng.parer.ws.recuperoFasc.ejb;
 
+import java.io.StringReader;
 import java.util.Date;
 import java.util.HashMap;
 
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.ValidationEvent;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.slf4j.Logger;
@@ -54,13 +60,6 @@ import it.eng.parer.ws.xml.versRespStatoFasc.EsitoChiamataWSType;
 import it.eng.parer.ws.xml.versRespStatoFasc.EsitoGenericoType;
 import it.eng.parer.ws.xml.versRespStatoFasc.StatoConservazioneFasc;
 import it.eng.spagoLite.security.User;
-import java.io.StringReader;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.ValidationEvent;
 
 /**
  *
@@ -266,6 +265,7 @@ public class RecuperoFascSync {
 				"Errore nel recupero dell'EJB singleton XMLContext "
 					+ ex.getMessage());
 			log.error("Errore nel recupero dell'EJB singleton XMLContext ", ex);
+			return;
 		    }
 		    XmlValidationEventHandler validationHandler = new XmlValidationEventHandler();
 		    RecuperoFascicolo parsedFasc = null;

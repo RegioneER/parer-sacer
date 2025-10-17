@@ -23,36 +23,13 @@ import javax.persistence.Embeddable;
 @Embeddable()
 public class MonVCntUdAnnulStrutId implements Serializable {
 
-    @Override
-    public int hashCode() {
-	int hash = 7;
-	hash = 29 * hash + Objects.hashCode(this.idStrut);
-	hash = 29 * hash + Objects.hashCode(this.tiStatoAnnul);
-	return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntUdAnnulStrutId other = (MonVCntUdAnnulStrutId) obj;
-	if (!Objects.equals(this.tiStatoAnnul, other.tiStatoAnnul)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idStrut, other.idStrut)) {
-	    return false;
-	}
-	return true;
-    }
+    private static final long serialVersionUID = 1L;
 
     private BigDecimal idStrut;
+
+    private String tiStatoAnnul;
+
+    private String tiDtCreazione;
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
@@ -63,8 +40,6 @@ public class MonVCntUdAnnulStrutId implements Serializable {
 	this.idStrut = idStrut;
     }
 
-    private String tiStatoAnnul;
-
     @Column(name = "TI_STATO_ANNUL")
     public String getTiStatoAnnul() {
 	return tiStatoAnnul;
@@ -72,5 +47,45 @@ public class MonVCntUdAnnulStrutId implements Serializable {
 
     public void setTiStatoAnnul(String tiStatoAnnul) {
 	this.tiStatoAnnul = tiStatoAnnul;
+    }
+
+    @Column(name = "TI_DT_CREAZIONE")
+    public String getTiDtCreazione() {
+	return tiDtCreazione;
+    }
+
+    public void setTiDtCreazione(String tiDtCreazione) {
+	this.tiDtCreazione = tiDtCreazione;
+    }
+
+    @Override
+    public int hashCode() {
+	int hash = 0;
+	hash += (idStrut != null ? idStrut.hashCode() : 0);
+	hash += (tiStatoAnnul != null ? tiStatoAnnul.hashCode() : 0);
+	hash += (tiDtCreazione != null ? tiDtCreazione.hashCode() : 0);
+	return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+	if (!(object instanceof MonVCntUdAnnulStrutId)) {
+	    return false;
+	}
+	MonVCntUdAnnulStrutId other = (MonVCntUdAnnulStrutId) object;
+	if ((this.idStrut == null && other.idStrut != null)
+		|| (this.idStrut != null && !this.idStrut.equals(other.idStrut))) {
+	    return false;
+	}
+	if ((this.tiStatoAnnul == null && other.tiStatoAnnul != null)
+		|| (this.tiStatoAnnul != null && !this.tiStatoAnnul.equals(other.tiStatoAnnul))) {
+	    return false;
+	}
+	if ((this.tiDtCreazione == null && other.tiDtCreazione != null)
+		|| (this.tiDtCreazione != null
+			&& !this.tiDtCreazione.equals(other.tiDtCreazione))) {
+	    return false;
+	}
+	return true;
     }
 }

@@ -33,11 +33,12 @@ import it.eng.parer.exception.ParerNoResultException;
 import it.eng.parer.exception.ParerUserError;
 import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipSignatureSessionEjb;
 import it.eng.parer.firma.crypto.ejb.ElencoSignatureSessionEjb;
-import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
 import it.eng.parer.firma.crypto.sign.SigningResponse;
-import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
+import static it.eng.parer.firma.crypto.sign.SigningResponse.ERROR_COMPLETAMENTO_FIRMA;
+import static it.eng.parer.firma.crypto.sign.SigningResponse.OK;
+import static it.eng.parer.firma.crypto.sign.SigningResponse.OK_SECONDA_FASE;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.ElenchiVersamentoAbstractAction;
 import it.eng.parer.slite.gen.form.ComponentiForm;
@@ -82,7 +83,6 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.AsyncResult;
 import javax.ejb.EJB;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
@@ -2741,6 +2741,7 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 		    case HSM_ERROR:
 		    case UNKNOWN_ERROR:
 			result.put("error", resp.getDescription());
+			getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
 			break;
 		    case WARNING:
 		    case OK:
@@ -2757,25 +2758,44 @@ public class ElenchiVersamentoAction extends ElenchiVersamentoAbstractAction {
 				.getId_ente().parse();
 			BigDecimal idStrut = getForm().getFiltriElenchiIndiciAipDaFirmare()
 				.getId_strut().parse();
+			Future<SigningResponse> futureSecondaFase = null;
 			try {
-			    evEjb.completaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut,
-				    getUser().getIdUtente(), false);
-			    result.put("status", "OK");
-			    result.put("info",
-				    "Il processo di firma (inclusa eventuale marcatura temporale) degli Elenchi Indici AIP è terminata correttamente");
-			} catch (ParerUserError ex) {
+			    futureSecondaFase = evEjb.completaFirmaElenchiIndiciAipAsync(idAmbiente,
+				    idEnte, idStrut, getUser().getIdUtente(), false);
+			    getSession().setAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP,
+				    futureSecondaFase);
+			    result.put("status", "WORKING");
+			} catch (NullPointerException ex) {
 			    result.put("status", "ERROR");
 			    result.put("error",
-				    "Attenzione! Il processo di firma è terminato in errore a causa di un problema");
+				    "Attenzione! Il completamento del processo di firma è terminato in errore a causa di un problema");
+			    log.error("Errore imprevisto durante sessione di firma: ", ex);
+			    getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
 			}
 			// FINE MAC ---
-			getForm().getElenchiIndiciAipSelezionatiList().getTable().clear();
+			// getForm().getElenchiIndiciAipSelezionatiList().getTable().clear();
 			break;
+
+		    case OK_SECONDA_FASE:
+			result.put("status", "OK");
+			result.put("info",
+				"Il processo di firma (inclusa eventuale marcatura temporale) degli Elenchi Indici AIP è terminata correttamente");
+			getForm().getElenchiIndiciAipSelezionatiList().getTable().clear();
+			getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
+			break;
+
+		    case ERROR_COMPLETAMENTO_FIRMA:
+			result.put("status", "ERROR");
+			result.put("error", ERROR_COMPLETAMENTO_FIRMA.getDescription());
+			getForm().getElenchiIndiciAipSelezionatiList().getTable().clear();
+			getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
+			break;
+
 		    default:
 			getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
 			throw new AssertionError(resp.name());
 		    }
-		    getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
+		    // getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP);
 		} else {
 		    result.put("status", "WORKING");
 		}

@@ -13,57 +13,10 @@
 
 package it.eng.parer.ws.recupero.ejb;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.xml.bind.Marshaller;
-
-import org.apache.commons.collections4.IterableUtils;
-import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipExtraField;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.helper.AmbientiHelper;
 import it.eng.parer.elencoVersFascicoli.helper.ElencoVersFascicoliHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.AroUdAppartVerSerie;
-import it.eng.parer.entity.AroUpdUnitaDoc;
-import it.eng.parer.entity.AroUrnVerIndiceAipUd;
-import it.eng.parer.entity.AroVerIndiceAipUd;
-import it.eng.parer.entity.AroXmlUpdUnitaDoc;
-import it.eng.parer.entity.ElvFileElencoVer;
-import it.eng.parer.entity.ElvFileElencoVersFasc;
-import it.eng.parer.entity.FasFileMetaVerAipFasc;
-import it.eng.parer.entity.FasUnitaDocFascicolo;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.VolFileVolumeConserv;
-import it.eng.parer.entity.VolVolumeConserv;
-import it.eng.parer.entity.VrsSessioneVers;
-import it.eng.parer.entity.VrsUrnXmlSessioneVers;
-import it.eng.parer.entity.VrsXmlDatiSessioneVers;
+import it.eng.parer.entity.*;
 import it.eng.parer.entity.constraint.AroUrnVerIndiceAipUd.TiUrnVerIxAipUd;
 import it.eng.parer.entity.constraint.FasMetaVerAipFascicolo;
 import it.eng.parer.entity.constraint.VrsUrnXmlSessioneVers.TiUrnXmlSessioneVers;
@@ -106,6 +59,33 @@ import it.eng.parer.ws.xml.versReqStato.Recupero;
 import it.eng.parer.ws.xml.versReqStato.TokenFileNameType;
 import it.eng.parerxml.xsd.FileXSD;
 import it.eng.parerxml.xsd.FileXSDUtil;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.compress.archivers.zip.X5455_ExtendedTimestamp;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipExtraField;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.xml.bind.Marshaller;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 /**
  * @author Fioravanti_F
@@ -996,7 +976,6 @@ public class RecuperoZipGen {
 		    }
 		}
 		pathCompleto = eliminaEventualiDoppiSlash(pathCompleto);
-		// elab file name
 		archiveEntryFinalName = DIRECTORY_REC
 			+ MessaggiWSFormat.normalizingFileName(pathCompleto);
 	    }
@@ -1006,27 +985,11 @@ public class RecuperoZipGen {
 		    .isFileSbustato() != null
 		    && recupero.getStrutturaRecupero().getChiave().isFileSbustato();
 	    if (invokeUnsignedDocService) {
-		// 1. remove (more) external extension
-		archiveEntryFinalName = FilenameUtils.removeExtension(archiveEntryFinalName); // remove
-											      // original
-											      // extension
-											      // from
-											      // file
-											      // (in
-											      // case
-											      // of
-											      // unsigned)
-		// 2. check if extension is present
-		if (StringUtils.isBlank(FilenameUtils.getExtension(archiveEntryFinalName))) {
-		    final String archiveEntryFinalNameExt = StringUtils
-			    .isNotBlank(tmpCmp.getEstensioneFile()) ? tmpCmp.getEstensioneFile()
-				    : Costanti.UKNOWN_EXT;
-		    // 2.1 check for multiple extensions -> if true select the first one
-		    archiveEntryFinalName = archiveEntryFinalName
-			    .concat(FilenameUtils.EXTENSION_SEPARATOR_STR)
-			    .concat(StringUtils.substringBefore(archiveEntryFinalNameExt,
-				    FilenameUtils.EXTENSION_SEPARATOR_STR));
-		}
+		// MEV#39147 - Modifica delle modalità di calcolo dell'estensione nel recupero di
+		// file sbustati
+		archiveEntryFinalName = archiveEntryFinalName
+			+ FilenameUtils.EXTENSION_SEPARATOR_STR
+			+ tmpCmp.getNomeFormatoComponenteSbustato();
 	    }
 	    // create zip entry
 	    createAndCheckZipArchiveEntry(zipOutputStream, archiveEntryFinalName, entryGiaInserite,
@@ -1048,8 +1011,7 @@ public class RecuperoZipGen {
 		/* MEV#34239 - Estensione servizio per recupero file sbustati */
 		// Se richiesto viene aggiunto allo zip finale la componente "unsigned" (originale)
 		// a partire dal documento firmato, se l'esisto del recupero è negativo viene
-		// gestito il
-		// recupero della componente "standard"
+		// gestito il recupero della componente "standard"
 		// Nota : gestitione esclusiva dei soli p7m
 		if (invokeUnsignedDocService) {
 		    // get unsigned p7m
@@ -1863,9 +1825,15 @@ public class RecuperoZipGen {
 				}
 			    }
 			    // end MEV 30398
-
-			    zipOutputStream.write(blFile.getBytes());
-			    closeEntry = true;
+			    if (blFile != null) {
+				zipOutputStream.write(blFile.getBytes());
+				closeEntry = true;
+			    } else {
+				log.warn(
+					"blFile è null, impossibile scrivere nel file ZIP per il fascicolo con ID: {}",
+					meta.getFasMetaVerAipFascicolo().getFasVerAipFascicolo()
+						.getIdVerAipFascicolo());
+			    }
 			}
 
 			// Controllo se il fascicolo è inserito in un elenco di versamento fascicoli

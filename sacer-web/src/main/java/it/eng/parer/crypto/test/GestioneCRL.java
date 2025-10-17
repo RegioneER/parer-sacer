@@ -13,11 +13,15 @@
 
 package it.eng.parer.crypto.test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import it.eng.parer.crypto.model.ParerCRL;
+import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -29,18 +33,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-import javax.servlet.annotation.WebServlet;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.eng.parer.crypto.model.ParerCRL;
-import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Test per le funzionalità delle CRL su crypto. Sarebbe bene spostare queste classi su uno scope di
@@ -55,7 +52,7 @@ public class GestioneCRL extends HttpServlet {
     private static final long serialVersionUID = 1L;
     public static final int MAX_DIM_FILE_UPLOAD = 1024;
 
-    Logger log = LoggerFactory.getLogger(GestioneCRL.class);
+    private final Logger log = LoggerFactory.getLogger(GestioneCRL.class);
     @EJB
     private CryptoInvoker cryInv;
 

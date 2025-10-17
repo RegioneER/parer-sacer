@@ -96,6 +96,7 @@ public class WebConstants extends Constants {
     public static final String PARAMETER_SESSION_GET_CNT = "SINTETICO_CALCOLA_CONTATORI";
     public static final String PARAMETER_SESSION_GET_CNT_FASCICOLI = "FASCICOLI_CALCOLA_CONTATORI";
     public static final String PARAMETER_SESSION_GET_CNT_AGG_META = "AGG_META_CALCOLA_CONTATORI";
+    public static final String PARAMETER_SESSION_GET_CNT_MON_STRUT = "MON_STRUT_CALCOLA_CONTATORI";
 
     // Nome parametri sotto strutture
     public static final String PARAMETER_EVENT = "event";

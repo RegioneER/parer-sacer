@@ -13,6 +13,7 @@
 
 package it.eng.parer.web.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
@@ -21,7 +22,9 @@ import java.util.Set;
  *
  * @author Gilioli_P
  */
-public class MonitoraggioFiltriListaVersFallitiBean {
+public class MonitoraggioFiltriListaVersFallitiBean implements java.io.Serializable {
+
+    private static final long serialVersionUID = -8209594152276959571L;
 
     private BigDecimal idAmbiente;
     private BigDecimal idEnte;

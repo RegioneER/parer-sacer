@@ -501,7 +501,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 
 	if (nmTipoUnitaDoc != null) {
 	    queryStr.append(whereWord)
-		    .append("u.decTipoUnitaDoc.nmTipoUnitaDoc = :nmTipoUnitaDoc ");
+		    .append("UPPER(u.decTipoUnitaDoc.nmTipoUnitaDoc) = :nmTipoUnitaDoc ");
 	    whereWord = "AND ";
 	}
 
@@ -517,7 +517,7 @@ public class ModelliXsdUdHelper extends GenericHelper {
 	}
 
 	if (nmTipoUnitaDoc != null) {
-	    query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc);
+	    query.setParameter("nmTipoUnitaDoc", nmTipoUnitaDoc.toUpperCase());
 
 	}
 

@@ -1677,21 +1677,20 @@ public class FascicoliAction extends FascicoliAbstractAction {
 
 	// definiamo il buffer per lo stream di bytes
 	byte[] data = new byte[1000];
-	InputStream is = null;
 	if (blobbo != null) {
-
 	    byte[] blob = blobbo.getBytes();
 	    if (blob != null) {
-		is = new ByteArrayInputStream(blob);
-		int count;
-		out.putNextEntry(new ZipEntry(filename + "." + estensione));
-		while ((count = is.read(data, 0, 1000)) != -1) {
-		    out.write(data, 0, count);
+		try (InputStream is = new ByteArrayInputStream(blob);) {
+		    int count;
+		    out.putNextEntry(new ZipEntry(filename + "." + estensione));
+		    while ((count = is.read(data, 0, 1000)) != -1) {
+			out.write(data, 0, count);
+		    }
+		    out.closeEntry();
 		}
-		out.closeEntry();
 	    }
 	}
-	is.close();
+
     }
 
     @Override

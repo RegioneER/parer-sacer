@@ -32,8 +32,10 @@ import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.serie.helper.SerieHelper;
 import it.eng.parer.slite.gen.viewbean.*;
 import it.eng.parer.viewEntity.*;
+import it.eng.parer.web.ejb.DataMartEjb;
 import it.eng.parer.web.ejb.UnitaDocumentarieEjb;
 import it.eng.parer.web.helper.ComponentiHelper;
+import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.Constants;
 import it.eng.parer.web.util.Transform;
@@ -48,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import it.eng.parer.entity.constraint.AplValoreParamApplic;
 
 import javax.annotation.Resource;
 import javax.ejb.*;
@@ -104,6 +107,12 @@ public class AnnulVersEjb {
     @EJB
     private UnitaDocumentarieEjb udEjb;
     // end MEV #31162
+    // MEV #30725
+    @EJB
+    private DataMartEjb dataMartEjb;
+    // end MEV #30725
+    @EJB
+    private ConfigurationHelper configurationHelper;
 
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
@@ -1569,6 +1578,19 @@ public class AnnulVersEjb {
 	// Modifico gli item assegnando stato ANNULLATA
 	helper.updateStatoItemList(idRichAnnulVers,
 		CostantiDB.StatoItemRichAnnulVers.ANNULLATO.name());
+
+	// MEV #30725: registro nel centro stella del DataMart
+	if (richiestaAnnullamento.getTiAnnullamento().equals("CANCELLAZIONE")) {
+	    String tipoCancellazione = configurationHelper.getAplValoreParamApplic(
+		    CostantiDB.ParametroAppl.TI_CANCELLAZIONE_MS_UD_DEL,
+		    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+	    int totaliDataMart = dataMartEjb.insertUdDataMartAnnulVersCentroStella(idRichAnnulVers,
+		    richiestaAnnullamento.getCdRichAnnulVers(),
+		    CostantiDB.TiMotCancellazione.A.name(), tipoCancellazione);
+	    logger.info("Gestione DataMart Annullamento Versamenti: inserite {} ud in DM_UD_DEL",
+		    totaliDataMart);
+	}
+	// fine MEV #30725: registro nel DataMart
 
 	logger.debug("{} - richiesta avente id: {} elaborata con successo!", LOG_MESSAGE_ANNULLA_UD,
 		idRichAnnulVers);

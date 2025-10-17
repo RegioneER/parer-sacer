@@ -222,7 +222,7 @@ public class FormatoFileStandardEjb {
 		DecFormatoFileStandardRowBean formatoRB;
 		Map<DecFormatoFileStandard, SortedSet<String>> formatiMap = new HashMap<>();
 		for (Object[] formato : formati) {
-		    if (formatiMap.containsKey((DecFormatoFileStandard) formato[0])) {
+		    if (formatiMap.containsKey(formato[0])) {
 			SortedSet<String> estensioni = formatiMap
 				.get((DecFormatoFileStandard) formato[0]);
 			estensioni.add((String) formato[1]);
@@ -239,15 +239,14 @@ public class FormatoFileStandardEjb {
 		    formatoRB = (DecFormatoFileStandardRowBean) Transform
 			    .entity2RowBean(entry.getKey());
 		    SortedSet<String> estensioni = entry.getValue();
-		    String estensioniString = "";
+		    StringBuilder sb = new StringBuilder();
 		    for (String estensione : estensioni) {
-			if (estensioniString.equals("")) {
-			    estensioniString = estensione;
-			} else {
-			    estensioniString = estensioniString + "; " + estensione;
+			if (sb.length() > 0) {
+			    sb.append("; ");
 			}
+			sb.append(estensione);
 		    }
-		    formatoRB.setString("cd_estensione_file", estensioniString);
+		    formatoRB.setString("cd_estensione_file", sb.toString());
 		    formatoTableBean.add(formatoRB);
 		}
 
@@ -665,11 +664,13 @@ public class FormatoFileStandardEjb {
 		null);
 
 	if (estensioneFileDB != null && estensioneFileNewDB != null && estensioneFileDB
-		.getIdEstensioneFile() != estensioneFileNewDB.getIdEstensioneFile()) {
+		.getIdEstensioneFile().compareTo(estensioneFileNewDB.getIdEstensioneFile()) != 0) {
 	    throw new ParerUserError("Estensione gi\u00E0 associata ad un formato");
 	}
 
-	estensioneFileDB.setCdEstensioneFile(cdEstensioneFile);
+	if (estensioneFileDB != null) {
+	    estensioneFileDB.setCdEstensioneFile(cdEstensioneFile);
+	}
 
 	formatoFileStandard.getDecEstensioneFiles().add(estensioneFileDB);
     }

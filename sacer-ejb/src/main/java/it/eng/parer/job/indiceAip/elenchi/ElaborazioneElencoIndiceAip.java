@@ -91,6 +91,8 @@ import it.eng.parer.ws.utils.MessaggiWSFormat;
 import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.FIRMA;
 import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.MARCA_FIRMA;
 import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum.SIGILLO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -99,6 +101,8 @@ import static it.eng.parer.elencoVersamento.utils.ElencoEnums.GestioneElencoEnum
 @Stateless
 @LocalBean
 public class ElaborazioneElencoIndiceAip {
+
+    private static final Logger log = LoggerFactory.getLogger(ElaborazioneElencoIndiceAip.class);
 
     @Resource
     private SessionContext context;
@@ -441,6 +445,7 @@ public class ElaborazioneElencoIndiceAip {
 			modalitaLog);
 		// end MEV #31162
 	    }
+	    log.debug("setCompletato() UD: {}", idUnitaDoc);
 	}
     }
 

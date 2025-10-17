@@ -40,17 +40,16 @@ import it.eng.spagoLite.db.decodemap.DecodeMapIF;
 import it.eng.spagoLite.db.oracle.decode.DecodeMap;
 import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.security.Secure;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import javax.ejb.EJB;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.codehaus.jettison.json.JSONObject;
 
 /**
  *
@@ -92,7 +91,7 @@ public class MonitoraggioIndiceAIPAction extends MonitoraggioIndiceAIPAbstractAc
 	DecodeMap mappaAmbiente = new DecodeMap();
 	mappaAmbiente.populatedMap(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente");
 	getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente().setDecodeMap(mappaAmbiente);
-	if (tmpTableBeanAmbiente.size() == 1) {
+	if (tmpTableBeanAmbiente != null && tmpTableBeanAmbiente.size() == 1) {
 	    getForm().getFiltriMonitoraggioIndiceAIP().getId_ambiente()
 		    .setValue("" + tmpTableBeanAmbiente.getRow(0).getIdAmbiente());
 	}
