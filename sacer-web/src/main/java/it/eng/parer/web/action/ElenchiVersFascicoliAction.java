@@ -51,6 +51,8 @@ import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipFascSignatureSessionEjb;
 import it.eng.parer.firma.crypto.sign.SignerHsmEjb;
 import it.eng.parer.firma.crypto.sign.SigningRequest;
 import it.eng.parer.firma.crypto.sign.SigningResponse;
+import static it.eng.parer.firma.crypto.sign.SigningResponse.ERROR_COMPLETAMENTO_FIRMA;
+import static it.eng.parer.firma.crypto.sign.SigningResponse.OK_SECONDA_FASE;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.ElenchiVersFascicoliAbstractAction;
 import it.eng.parer.slite.gen.form.CriteriRaggrFascicoliForm;
@@ -1768,21 +1770,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 
 	if (!getMessageBox().hasError() && elenchiDaFirmare != null
 		&& elenchiDaFirmare.size() > 0) {
-	    // Ricavo l'id ambiente da un qualsiasi record degli elenchi da firmare
-	    // PS: non lo prendo dal filtro di ricerca perchè l'utente potrebbe cambiarlo dalla
-	    // combo senza fare la
-	    // ricerca
-	    // e così verrebbe preso un ambiente errato
-	    // BigDecimal idStrut = elenchiDaFirmare.getRow(0).getIdStrut();
-	    // OrgAmbienteRowBean ambienteRowBean =
-	    // struttureEjb.getOrgAmbienteRowBeanByIdStrut(idStrut);
-	    // BigDecimal idAmbiente = ambienteRowBean.getIdAmbiente();
-	    // if (idAmbiente != null) {
-	    // Ricavo il parametro HSM_USERNAME (parametro multiplo dell'ambiente) associato
-	    // all'utente corrente
-	    // String hsmUserName = amministrazioneEjb.getHsmUsername(getUser().getIdUtente(),
-	    // idAmbiente);
-	    // if (hsmUserName != null) {
+	    // Controllo se l'utente è tra i firmatari definiti sull'ambiente
 	    int elenchiValidati = 0;
 	    List<BigDecimal> idElencoVersFascRigheTotali = new ArrayList<>();
 	    List<BigDecimal> idElencoVersFascRigheCancellate = new ArrayList<>();
@@ -2128,6 +2116,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 			result.put("info", resp.getDescription() + "!");
 			getForm().getElenchiIndiciAipFascSelezionatiList().getTable().clear();
 			break;
+
 		    default:
 			getSession().removeAttribute(Signature.FUTURE_ATTR_ELENCHI_INDICI_AIP_FASC);
 			throw new AssertionError(resp.name());
@@ -2477,7 +2466,7 @@ public class ElenchiVersFascicoliAction extends ElenchiVersFascicoliAbstractActi
 	ElvElencoVersFascTableBean elenchiDaFirmare = checkElenchiIndiciAipFascToSign();
 	int elenchiHsmEliminati = 0;
 
-	if (!getMessageBox().hasError()) {
+	if (!getMessageBox().hasError() && elenchiDaFirmare != null) {
 	    // Ricavo l'id ambiente da un qualsiasi record degli elenchi da firmare
 	    // PS: non lo prendo dal filtro di ricerca perchè l'utente potrebbe cambiarlo dalla
 	    // combo senza fare la

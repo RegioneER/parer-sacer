@@ -654,6 +654,34 @@ public class ComboGetter {
 	return mappaStatoAgg;
     }
 
+    public static DecodeMap getMappaTiMotCancellazione() {
+	BaseTable bt = new BaseTable();
+	String key = "ti_mot_cancellazione";
+	String valore = "ds_mot_cancellazione";
+	DecodeMap mappaTiMotCancellazione = new DecodeMap();
+	for (CostantiDB.TiMotCancellazione tiMotCancellazione : sortEnum(
+		CostantiDB.TiMotCancellazione.values())) {
+	    BaseRow row = createKeyValueBaseRow(key, tiMotCancellazione.name());
+	    row.setString(valore, tiMotCancellazione.getDescrizione());
+	    bt.add(row);
+	}
+	mappaTiMotCancellazione.populatedMap(bt, key, valore);
+	return mappaTiMotCancellazione;
+    }
+
+    public static DecodeMap getMappaTiStatoRichiesta() {
+	BaseTable bt = new BaseTable();
+	String key = "ti_stato_richiesta";
+	DecodeMap mappaTiStatoRichiesta = new DecodeMap();
+	for (CostantiDB.TiStatoRichiesta tiStatoRichiesta : sortEnum(
+		CostantiDB.TiStatoRichiesta.values())) {
+	    BaseRow row = createKeyValueBaseRow(key, tiStatoRichiesta.name());
+	    bt.add(row);
+	}
+	mappaTiStatoRichiesta.populatedMap(bt, key, key);
+	return mappaTiStatoRichiesta;
+    }
+
     /**
      * Metodo statico per ordinare un enum tramite il valore
      *

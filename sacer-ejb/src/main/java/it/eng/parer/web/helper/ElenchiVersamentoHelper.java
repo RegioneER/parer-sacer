@@ -13,26 +13,6 @@
 
 package it.eng.parer.web.helper;
 
-import static it.eng.parer.util.Utils.bigDecimalFromLong;
-import static it.eng.parer.util.Utils.longFromBigDecimal;
-import static it.eng.parer.util.Utils.longListFrom;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-
-import org.apache.commons.lang3.StringUtils;
-
 import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums.DocStatusEnum;
@@ -47,13 +27,21 @@ import it.eng.parer.entity.constraint.ElvElencoVer.TiModValidElenco;
 import it.eng.parer.entity.constraint.ElvElencoVer.TiValidElenco;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.slite.gen.form.ElenchiVersamentoForm.FiltriElenchiVersamento;
-import it.eng.parer.viewEntity.ElvVLisElencoVersStato;
-import it.eng.parer.viewEntity.ElvVRicElencoVers;
-import it.eng.parer.viewEntity.ElvVRicElencoVersByStato;
-import it.eng.parer.viewEntity.ElvVRicElencoVersByUd;
-import it.eng.parer.viewEntity.ElvVRicElencoVersByUdId;
+import it.eng.parer.viewEntity.*;
 import it.eng.parer.web.util.StringPadding;
 import it.eng.spagoCore.error.EMFError;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.*;
+
+import static it.eng.parer.util.Utils.*;
 
 /**
  *
@@ -271,8 +259,7 @@ public class ElenchiVersamentoHelper extends GenericHelper {
 	    query.setParameter("cdKeyUnitaDocA", cdKeyUnitaDocA);
 	}
 
-	List<ElvVRicElencoVersByUd> sourceList = query.getResultList();
-	return sourceList;
+	return query.getResultList();
     }
 
     private List<ElvVRicElencoVersByUd> convertToElvVRicElencoVersByUd(List<Object[]> sourceList) {

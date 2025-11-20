@@ -90,8 +90,11 @@ function poll() {
     }, 2500);
 }
 
+// MAC#38913 - Firma elenchi – pop-up credenziali non sempre visibile
+var timeoutPollingIdIndiciAip=null;
+ 
 function pollIndiciAip() {
-    setTimeout(function () {
+    timeoutPollingIdIndiciAip=setTimeout(function () {
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -112,6 +115,7 @@ function pollIndiciAip() {
                     var description;
                     var object = data.map[0];
                     $('.firmaBox').data('TO_MARK', false);
+                    console.log('checkSignatureIndiciAipFuture SUCCESS: Status di ritorno: '+object.status);
                     switch (object.status) {
                         case "OK":
                             box = "infobox";
@@ -150,6 +154,7 @@ function pollIndiciAip() {
                         }
                     },
             complete: function () {
+                console.log('checkSignatureIndiciAipFuture COMPLETE.');
                 if ($('.firmaBox').html().trim() && !$('.firmaBox').data('POPUP')) {
                     $('.firmaBox').data('POPUP', true);
                     $('.firmaBox').dialog({
@@ -163,7 +168,7 @@ function pollIndiciAip() {
                             }
                         },
                         resizable: false,
-                        dialogClass: "aler  tBox",
+                        dialogClass: "alertBox",
                         buttons: {
                             // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip UD
                             // Eliminato il pulsante completamento della vecchia marcatura perché il secondo step è stato
@@ -179,20 +184,19 @@ function pollIndiciAip() {
                     if( $('.firmaBox').data('TO_MARK') ) {
                         // MAC#35254 - Correzione delle anomalie nella fase di marcatura temporale embedded negli elenchi indici aip UD
                         $(".ui-dialog-buttonpane button:contains('Chiudi')").prop("disabled", false).addClass("ui-state-enabled");
-                        $(".ui-dialog-buttonpane button:contains('Completa processo')").attr("disabled", true).removeClass("ui-state-disabled").addClass("ui-state-enabled");
-                        $(".ui-dialog-buttonpane button:contains('Completa processo')").hide();
-                    } else {
-                        $(".ui-dialog-buttonpane button:contains('Completa processo')").attr("disabled", true).addClass("ui-state-disabled");
                     }
                 }
                 pollIndiciAip();
             }
         });
-    }, 2500);
+    }, 5000); // aumentato a 5 sec.
 }
 
+// MAC#38913 - Firma elenchi – pop-up credenziali non sempre visibile
+var timeoutPollingIdSerie=null;
+
 function pollSerie() {
-    setTimeout(function () {
+    timeoutPollingIdSerie=setTimeout(function () {
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -210,6 +214,7 @@ function pollSerie() {
                         var message;
                         var description;
                         var object = data.map[0];
+                        console.log('checkSignatureFuture SUCCESS: Status di ritorno: '+object.status);
                         switch (object.status) {
                             case "OK":
                                 box = "infobox";
@@ -247,6 +252,7 @@ function pollSerie() {
                         }
                     },
             complete: function () {
+                console.log('checkSignatureFuture COMPLETE.');
                 if ($('.firmaBox').html().trim() && !$('.firmaBox').data('POPUP')) {
                     $('.firmaBox').data('POPUP', true);
                     $('.firmaBox').dialog({
@@ -264,16 +270,11 @@ function pollSerie() {
 //                                var verSerieCreata = $(".firmaWarningBox #VerSerie").serialize();
 //                                window.location = "SerieUD.html?operation=reloadSerie&" + verSerieCreata;
                             }
-//                            ,
-//                            "Annulla": function () {
-//                                $('.firmaBox').removeData('POPUP');
-//                                $(this).dialog("close");
-//                            }
                         }
                     });
                 }
                 pollSerie();
             }
         });
-    }, 2500);
+    }, 5000); // portato a 5 secondi
 }

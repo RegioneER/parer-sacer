@@ -323,6 +323,14 @@ public class CostantiDB {
 	public static final String PSW_REST_ARCH_REC_AIP = "PSW_REST_ARCH_REC_AIP";
 	public static final String USERID_REST_ARCH_REC_AIP = "USERID_REST_ARCH_REC_AIP";
 
+	// Cancellazione logica ud DataMart
+	public static final String VERSIONE_XML_MS_UD_DEL = "VERSIONE_XML_MS_UD_DEL";
+	public static final String USERID_MS_UD_DEL = "USERID_MS_UD_DEL";
+	public static final String PSW_MS_UD_DEL = "PSW_MS_UD_DEL";
+	public static final String TIMEOUT_MS_UD_DEL = "TIMEOUT_MS_UD_DEL";
+	public static final String URL_MS_UD_DEL = "URL_MS_UD_DEL";
+	public static final String TI_CANCELLAZIONE_MS_UD_DEL = "TI_CANCELLAZIONE_MS_UD_DEL";
+
     }
 
     //
@@ -1333,5 +1341,66 @@ public class CostantiDB {
     }
 
     // end MEV #30398
+
+    // CANCELLAZIONE UD
+
+    public enum TiMotCancellazione {
+
+	A("Annullamento ud"), S("Scarto"), R("Restituzione archivio");
+
+	private String descrizione;
+
+	private TiMotCancellazione(String val) {
+	    this.descrizione = val;
+	}
+
+	public String getDescrizione() {
+	    return descrizione;
+	}
+    }
+
+    public enum TiStatoRichiesta {
+
+	DA_EVADERE, EVASA;
+
+    }
+
+    public enum TiStatoUdCancellate {
+
+	DA_CANCELLARE, CANCELLABILE, CANCELLATA_DB_SACER
+
+    }
+
+    public enum TiStatoInternoRich {
+
+	INIZIALE, INVIATA_A_MS, IN_ELABORAZIONE_LOGICA, ERRORE_INVIO_MS,
+	ERRORE_LOGICO_RIPRISTINABILE, ERRORE_LOGICO, PRONTA_PER_FISICA, IN_PREPARAZIONE_FISICA,
+	ERRORE_PREPARAZIONE, IN_CODA_CANCELLAZIONE, ERRORE_AVVIO_JOB, IN_CANCELLAZIONE_FISICA,
+	ERRORE_FISICO_CRITICO, ERRORE_FISICO_PARZIALE, COMPLETATA
+
+    }
+
+    public enum TipoCancellazione {
+	COMPLETA, CAMPIONE
+    }
+
+    public enum TiItemRichSoftDelete {
+	UNI_DOC, ANNUL_VERS, REST_ARCH, SCARTO_ARCH
+    }
+
+    public enum TipoRichiesta {
+
+	A("ANNULLAMENTO VERSAMENTO"), S("SCARTO ARCHIVISTICO"), R("RESTITUZIONE ARCHIVIO");
+
+	private String descrizione;
+
+	private TipoRichiesta(String val) {
+	    this.descrizione = val;
+	}
+
+	public String getDescrizione() {
+	    return descrizione;
+	}
+    }
 
 }

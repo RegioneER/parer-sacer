@@ -78,11 +78,16 @@
                     <slf:list name="<%= AnnulVersForm.ItemList.NAME%>" />
                     <slf:listNavBar  name="<%= AnnulVersForm.ItemList.NAME%>" />
                 </slf:tab>
+                <slf:tab  name="<%= AnnulVersForm.RichAnnulVersDetailSubTabs.NAME%>" tabElement="<%= AnnulVersForm.RichAnnulVersDetailSubTabs.lista_item_cancellati%>">
+                    <slf:listNavBar name="<%= AnnulVersForm.ItemCancellatiList.NAME%>" pageSizeRelated="true"/>
+                    <slf:list name="<%= AnnulVersForm.ItemCancellatiList.NAME%>" />
+                    <slf:listNavBar  name="<%= AnnulVersForm.ItemCancellatiList.NAME%>" />
+                </slf:tab>
                 <slf:tab  name="<%= AnnulVersForm.RichAnnulVersDetailSubTabs.NAME%>" tabElement="<%= AnnulVersForm.RichAnnulVersDetailSubTabs.lista_stati%>">
                     <slf:listNavBar name="<%= AnnulVersForm.StatiList.NAME%>" pageSizeRelated="true"/>
                     <slf:list name="<%= AnnulVersForm.StatiList.NAME%>" />
                     <slf:listNavBar  name="<%= AnnulVersForm.StatiList.NAME%>" />
-                </slf:tab>
+                </slf:tab>                
             </c:if>
         </sl:content>
         <sl:footer />

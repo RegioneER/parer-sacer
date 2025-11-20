@@ -10,7 +10,6 @@
  * have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.web.action;
 
 import java.io.ByteArrayInputStream;
@@ -45,7 +44,6 @@ import java.util.zip.ZipOutputStream;
 import javax.ejb.EJB;
 import javax.naming.NamingException;
 
-import it.eng.parer.slite.gen.viewbean.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -61,6 +59,7 @@ import it.eng.parer.amministrazioneStrutture.gestioneFormatiFileDoc.ejb.FormatoF
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSistemaMigrazione.ejb.SistemaMigrazioneEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.ejb.SottoStruttureEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.ejb.TipoFascicoloEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneTipoRappresentazione.ejb.TipoRappresentazioneEjb;
@@ -118,13 +117,44 @@ import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecVersioneWsTableBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerRowBean;
 import it.eng.parer.slite.gen.tablebean.ElvElencoVerTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgSubStrutTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisArchivUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisCompDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisDatiSpecTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisDocRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisElvVerTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisFascRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisFascTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisLinkUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisNotaUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisUpdCompUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisUpdDocUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisUpdKoRisoltiTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisVolCorTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVLisVolNoValDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVRicUnitaDocTableDescriptor;
+import it.eng.parer.slite.gen.viewbean.AroVVisDocIamRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVVisDocIamTableBean;
+import it.eng.parer.slite.gen.viewbean.AroVVisNotaUnitaDocRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVVisUnitaDocIamRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocRowBean;
+import it.eng.parer.slite.gen.viewbean.AroVVisUpdUnitaDocTableBean;
+import it.eng.parer.slite.gen.viewbean.ElvVRicElencoVersTableBean;
+import it.eng.parer.slite.gen.viewbean.FasVVisFascicoloTableBean;
+import it.eng.parer.slite.gen.viewbean.SerVRicSerieUdTableBean;
 import it.eng.parer.util.helper.UniformResourceNameUtilHelper;
 import it.eng.parer.viewEntity.AroVDtVersMaxByUnitaDoc;
 import it.eng.parer.volume.utils.VolumeEnums;
 import it.eng.parer.web.dto.DecCriterioAttribBean;
 import it.eng.parer.web.dto.DecCriterioDatiSpecBean;
 import it.eng.parer.web.dto.DefinitoDaBean;
+import it.eng.parer.web.ejb.DataMartEjb;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
@@ -178,15 +208,34 @@ import it.eng.spagoLite.form.fields.impl.ComboBox;
 import it.eng.spagoLite.form.fields.impl.MultiSelect;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.security.Secure;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import it.eng.parer.entity.constraint.AplValoreParamApplic;
+import it.eng.parer.exception.PreparazioneFisicaException;
+import it.eng.parer.slite.gen.tablebean.DmUdDelRichiesteRowBean;
+import it.eng.parer.slite.gen.tablebean.DmUdDelRichiesteTableBean;
+import it.eng.parer.slite.gen.tablebean.DmUdDelTableBean;
+import it.eng.parer.web.helper.DataMartHelper;
+import it.eng.parer.ws.utils.CostantiDB.TipoRichiesta;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 /**
  *
  * @author Gilioli_P
  */
+@SuppressWarnings({
+	"rawtypes", "unchecked" })
 public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
     private static final String ECCEZIONE_RECUPERO_RAPPORTO_VERSAMENTO = "Eccezione nel recupero del Rapporto di versamento: ";
     private static final String ECCEZIONE_RECUPERO_INDICE_AIP = "Errore non gestito nel recupero del file";
+
     private static Logger log = LoggerFactory.getLogger(UnitaDocumentarieAction.class.getName());
     @EJB(mappedName = "java:app/Parer-ejb/ConfigurationHelper")
     private ConfigurationHelper configurationHelper;
@@ -226,6 +275,12 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
     private RecuperoDocumento recuperoDocumento;
     @EJB(mappedName = "java:app/Parer-ejb/ObjectStorageService")
     private ObjectStorageService objectStorageService;
+    @EJB(mappedName = "java:app/Parer-ejb/DataMartEjb")
+    private DataMartEjb dataMartEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/DataMartHelper")
+    private DataMartHelper dataMartHelper;
+    @EJB(mappedName = "java:app/Parer-ejb/StruttureEjb")
+    private StruttureEjb struttureEjb;
 
     private DecodeMap mappaTipoUD;
     private DecodeMap mappaRegistro;
@@ -840,7 +895,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 		    }
 
 		    // Elimino il record dei filtri dati specifici dalla tabella USR_FILTRO_ATTRIB
-
 		    // Effettuo la ricerca per la visualizzazione oppure per il download dei
 		    // contenuti
 		    if (effettuaDownload) {
@@ -964,9 +1018,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 
 	    String pageToRedirect = Application.Publisher.UNITA_DOCUMENTARIE_RICERCA_DATI_SPEC;
 	    // Valida i filtri per verificare quelli obbligatori e che siano del tipo corretto
-	    if (filtri.validate(getMessageBox())
-
-	    ) {
+	    if (filtri.validate(getMessageBox())) {
 		// Valida i campi di ricerca
 		UnitaDocumentarieValidator validator = new UnitaDocumentarieValidator(
 			getMessageBox());
@@ -977,7 +1029,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 		// validator.controllaPresenzaAnno(filtri.getAa_key_unita_doc().parse(),
 		// filtri.getAa_key_unita_doc_da().parse(), filtri.getAa_key_unita_doc_a().parse());
 		// }
-
 		Set<String> cdRegistroKeyUnitaDocSetPerRicerca = getValoriForQueryFromFiltroCdRegistroMultiselect(
 			filtri.getCd_registro_key_unita_doc());
 		List<BigDecimal> idTipoUnitaDocListPerRicerca = getValoriForQueryFromFiltroIdTipoUdMultiselect(
@@ -1118,8 +1169,7 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 	    // Carico la pagina di ricerca
 	    forwardToPublisher(pageToRedirect);
 
-	}
-	// RICERCA UNITA' DOCUMENTARIE AVANZATA
+	} // RICERCA UNITA' DOCUMENTARIE AVANZATA
 	else {
 	    /*
 	     * Resetto la lista per evitare conflitti tra la ricerca avanzata (con selectedList) e
@@ -1324,7 +1374,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 		    }
 
 		    // Elimino il record dei filtri dati specifici dalla tabella USR_FILTRO_ATTRIB
-
 		    // Ricavo la Lista Dati Specifici compilati a video
 		    List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = (ArrayList) getSession()
 			    .getAttribute("listaDatiSpecOnLine") != null
@@ -6778,7 +6827,6 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 	// collegate verranno
 	// comunque generati
 	// proprio nel processo di scarica UD dell'ud collegata.
-
     }
 
     public void sistemaUrnUnitaDoc(AroUnitaDoc aroUnitaDoc, Date dataInizio, CSVersatore versatore,
@@ -7041,81 +7089,690 @@ public class UnitaDocumentarieAction extends UnitaDocumentarieAbstractAction {
 	return getForm().getFiltriUnitaDocumentarieDatiSpec().asJSON();
     }
 
-    // @Override
-    // public JSONObject triggerFiltriUnitaDocumentarieDatiSpecNm_sistema_migrazOnTrigger() throws
-    // EMFError {
-    // FiltriUnitaDocumentarieDatiSpec udfa = getForm().getFiltriUnitaDocumentarieDatiSpec();
-    // // Ricavo l'elenco dei sitemi di migrazione PRIMA di modificare (aggiunta/rimozione) il
-    // relativo filtro
-    // List<String> tipoSisMigrPre = udfa.getNm_sistema_migraz().parse();
-    // // Eseguo la post del filtri
-    // udfa.post(getRequest());
-    // // Ricavo l'elenco dei sistemi di migrazione DOPO aver modificato (aggiunta/rimozione) il
-    // relativo filtro
-    // List<String> tipoSisMigrPost = udfa.getNm_sistema_migraz().parse();
-    // // Confronto i due elenchi: se la lunghezza di tipoSisMigrPre Ã¨ inferiore
-    // // a quella di tipoSisMigrPost significa che ho fatto un'aggiunta
-    // boolean aggiunta = false;
-    // List<String> elementoDiverso = (List<String>) CollectionUtils.disjunction(tipoSisMigrPre,
-    // tipoSisMigrPost);
-    // if (tipoSisMigrPre.size() < tipoSisMigrPost.size()) {
-    // aggiunta = true;
-    // }
-    //
-    // // Ricavo la Lista Dati Specifici compilati a video
-    // List<DecCriterioDatiSpecBean> listaDatiSpecOnLine = (ArrayList) getSession()
-    // .getAttribute("listaDatiSpecOnLine") != null
-    // ? (ArrayList) getSession().getAttribute("listaDatiSpecOnLine") : new ArrayList();
-    //
-    // // HO FATTO UN'AGGIUNTA
-    // if (aggiunta) {
-    // DecAttribDatiSpecTableBean datiSpecTB = udHelper.getDecAttribDatiSpecSisMigrTableBean(
-    // elementoDiverso.get(0), getUser().getIdOrganizzazioneFoglia());
-    // aggiungiDatiSpecPerSisMigr(datiSpecTB, listaDatiSpecOnLine);
-    // } // HO FATTO UNA RIMOZIONE
-    // else {
-    // // Ricavo il nome del sistema di migrazione
-    // String nmSistemaMigraz = elementoDiverso.get(0);
-    //
-    // // Per ogni DATO SPECIFICO di questo SISTEMA MIGRAZIONE
-    // // rimuovo il riferimento al sistema migrazione
-    // for (DecCriterioDatiSpecBean datoSpec : listaDatiSpecOnLine) {
-    // List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
-    // Iterator<DecCriterioAttribBean> iterator = tabellaDefinitoDa.iterator();
-    // while (iterator.hasNext()) {
-    // DecCriterioAttribBean attribBean = iterator.next();
-    // if (attribBean.getNmSistemaMigraz() != null
-    // && attribBean.getNmSistemaMigraz().equals(nmSistemaMigraz)) {
-    // iterator.remove();
-    // }
-    // }
-    // }
-    //
-    // // Controllo se ho ancora dati specifici per tutti i sistemi migrazione
-    // boolean hasDSsuSisMigr = false;
-    // Iterator it = listaDatiSpecOnLine.iterator();
-    // while (it.hasNext()) {
-    // DecCriterioDatiSpecBean datoSpec = (DecCriterioDatiSpecBean) it.next();
-    // List<DecCriterioAttribBean> tabellaDefinitoDa = datoSpec.getDecCriterioAttribs();
-    // if (tabellaDefinitoDa.isEmpty()) {
-    // it.remove();
-    // } else {
-    // for (DecCriterioAttribBean rigaDefinitoDa : tabellaDefinitoDa) {
-    // if (rigaDefinitoDa.getNmSistemaMigraz() != null) {
-    // hasDSsuSisMigr = true;
-    // }
-    // }
-    // }
-    // }
-    //
-    // if (!hasDSsuSisMigr) {
-    // getForm().getFiltriUnitaDocumentarieDatiSpec().getFlag_dati_spec_presenti_sm().setChecked(false);
-    // }
-    //
-    // // Aggiorno l'interfaccia online
-    // updateInterfacciaOnLineDatiSpec(listaDatiSpecOnLine, false);
-    // } // end ELSE
-    // return getForm().getFiltriUnitaDocumentarieDatiSpec().asJSON();
-    // }
+    // <editor-fold defaultstate="collapsed" desc="GESTIONE CANCELLAZIONI">
+    /**
+     * Metodo di inizializzazione pagina di ricerca data mart
+     *
+     * @throws EMFError errore generico
+     */
+    @Secure(action = "Menu.Amministrazione.RicercaCancellazioni")
+    public void ricercaDataMartPage() throws EMFError {
+	getUser().getMenu().reset();
+	getUser().getMenu().select("Menu.Amministrazione.RicercaCancellazioni");
+	getSession().setAttribute(UnitaDocAttributes.TIPORICERCA.name(),
+		TipoRicercaAttribute.DATA_MART.name());
 
+	// Pulisco i filtri di ricerca data mart
+	getForm().getFiltriRicercaDataMart().reset();
+
+	// Imposto i filtri in edit mode
+	getForm().getFiltriRicercaDataMart().setEditMode();
+	getForm().getMicroservizioDataMartFields().setEditMode();
+
+	// Setto le varie combo dei filtri di ricerca
+	getForm().getFiltriRicercaDataMart().getTi_mot_cancellazione()
+		.setDecodeMap(ComboGetter.getMappaTiMotCancellazione());
+	getForm().getFiltriRicercaDataMart().getTi_stato_richiesta()
+		.setDecodeMap(ComboGetter.getMappaTiStatoRichiesta());
+	getForm().getFiltriRicercaDataMart().getId_ente().setDecodeMap(
+		DecodeMap.Factory.newInstance(dataMartEjb.getEntiDataMart(), "id_ente", "nm_ente"));
+	getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(new DecodeMap());
+
+	// Inizializzo la liste data mart vuote e le section nascoste
+	getForm().getRichiesteDataMartSection().setHidden(true);
+	getForm().getNumUdDataMartSection().setHidden(true);
+	getForm().getUdDataMartSection().setHidden(true);
+	getForm().getRichiesteDataMartList().setTable(null);
+	getForm().getNumUdDataMartList().setTable(null);
+	getForm().getUdDataMartList().setTable(null);
+
+	// Nascondo i pulsanti per la cancellazione logica e fisica
+	getForm().getMicroservizioDataMartFields().getCallMicroservizioDataMart().setViewMode();
+	getForm().getMicroservizioDataMartFields().getRecupCancellazioneLogicaDataMart()
+		.setViewMode();
+	getForm().getMicroservizioDataMartFields().getEseguiCancellazioneDataMart().setViewMode();
+
+	// Carico la pagina di ricerca
+	forwardToPublisher(Application.Publisher.RICERCA_DATA_MART);
+    }
+
+    @Override
+    public void ricercaDataMart() throws EMFError {
+	getForm().getMicroservizioDataMartFields().getCallMicroservizioDataMart().setViewMode();
+	getForm().getMicroservizioDataMartFields().getRecupCancellazioneLogicaDataMart()
+		.setViewMode();
+	getForm().getMicroservizioDataMartFields().getEseguiCancellazioneDataMart().setViewMode();
+
+	UnitaDocumentarieForm.FiltriRicercaDataMart filtriDataMart = getForm()
+		.getFiltriRicercaDataMart();
+	filtriDataMart.post(getRequest());
+
+	if (filtriDataMart.validate(getMessageBox())) {
+	    if (!isValidaLogicaChiaveUnitaDoc(filtriDataMart.getCd_registro_key_unita_doc().parse(),
+		    filtriDataMart.getAa_key_unita_doc().parse(),
+		    filtriDataMart.getCd_key_unita_doc().parse())) {
+		getMessageBox().setViewMode(MessageBox.ViewMode.alert);
+		getMessageBox().addError(
+			"Errore di validazione: se si valorizza uno dei filtri della chiave ud (registro, anno e numero) devono essere valorizzati tutti");
+	    }
+
+	    if (!getMessageBox().hasError()) {
+		getForm().getRichiesteDataMartSection().setHidden(false);
+		DmUdDelRichiesteTableBean richiesteDataMart = dataMartEjb
+			.getDmUdDelRichiesteTableBean(filtriDataMart);
+
+		getForm().getRichiesteDataMartList().setTable(richiesteDataMart);
+		getForm().getRichiesteDataMartList().getTable().setPageSize(10);
+		getForm().getRichiesteDataMartList().getTable().first();
+
+		getForm().getNumUdDataMartSection().setHidden(true);
+		getForm().getUdDataMartSection().setHidden(true);
+
+		if (richiesteDataMart.size() == 1) {
+		    BigDecimal idUdDelRichiesta = richiesteDataMart.getRow(0).getIdUdDelRichiesta();
+		    String tiMotCancellazione = richiesteDataMart.getRow(0).getTiMotCancellazione();
+		    // Unica chiamata al metodo "regista"
+		    preparaAttributiPerJSP(idUdDelRichiesta, tiMotCancellazione);
+		}
+	    }
+	}
+	forwardToPublisher(Application.Publisher.RICERCA_DATA_MART);
+    }
+
+    /**
+     * Carica le liste del 2° e 3° riquadro sulla base della selezione di una riga nella lista
+     * principale
+     *
+     * @throws EMFError errore generico
+     */
+    public void caricaNumUdDataMartList() throws EMFError {
+	try {
+	    String idUdDelRichiestaStr = getRequest().getParameter("idUdDelRichiesta");
+	    String clickedMotivoR = getRequest().getParameter("selectedRigaMotivoR");
+	    String rigaCliccataR = getRequest().getParameter("indiceRigaCliccata");
+	    BigDecimal idUdDelRichiesta = new BigDecimal(idUdDelRichiestaStr);
+	    Integer rigaCliccata = Integer.valueOf(rigaCliccataR);
+
+	    // Recupero dal DB il record di RichiesteDataMartList sul quale ho cliccato per
+	    // "aggiornarlo", nel caso in cui nel frattempo sia cambiato lo stato della richiesta
+	    // (da DA_EVADERE ad EVASA)
+	    DmUdDelRichiesteRowBean richiesta = dataMartEjb
+		    .getDmUdDelRichiesteRowBean(idUdDelRichiesta);
+	    getForm().getRichiesteDataMartList().getTable().getRow(rigaCliccata)
+		    .copyFromBaseRow(richiesta);
+
+	    // Unica chiamata al metodo "regista" che fa tutto il lavoro.
+	    preparaAttributiPerJSP(idUdDelRichiesta, clickedMotivoR);
+
+	    getRequest().setAttribute("selectedRigaStatoN", null);
+	    getRequest().setAttribute("selectedRigaIdForN", null);
+
+	} catch (Exception ex) {
+	    getMessageBox().addError(
+		    "Errore durante il caricamento delle liste unità documentarie data mart");
+	    forwardToPublisher(getLastPublisher());
+	}
+	forwardToPublisher(Application.Publisher.RICERCA_DATA_MART);
+    }
+
+    /**
+     * Carica la lista del 3° riquadro sulla base della selezione di una riga nella lista del 2°
+     * riquadro, mantenendo lo stato del monitoraggio.
+     *
+     * @throws EMFError errore generico
+     */
+    public void caricaUdDataMartList() throws EMFError {
+	// Recupero i parametri dalla richiesta
+	String idUdDelRichiesta = getRequest().getParameter("idUdDelRichiesta");
+	String idRichiesta = getRequest().getParameter("idRichiesta");
+	String tiStatoUdCancellate = getRequest().getParameter("tiStatoUdCancellate");
+
+	// Dobbiamo recuperare anche il motivo per passarlo al nostro helper
+	String tiMotCancellazione = getRequest().getParameter("tiMotCancellazione");
+
+	// Identificatori per mantenere la selezione della riga padre
+	String parentSelectedIdR = getRequest().getParameter("selectedRigaIdR");
+	String parentSelectedMotivoR = getRequest().getParameter("selectedRigaMotivoR");
+
+	// Identificatori della riga figlia cliccata
+	String clickedStatoN = getRequest().getParameter("selectedRigaStatoN");
+	String clickedIdForN = getRequest().getParameter("selectedRigaIdForN");
+
+	// Esegue la logica di business per filtrare la tabella UdDataMartList
+	getForm().getUdDataMartSection()
+		.setLegend("Lista unità documentarie in stato " + tiStatoUdCancellate
+			+ " per richiesta " + idRichiesta + " di "
+			+ dataMartEjb.getDsMotCancellazione(tiMotCancellazione));
+	DmUdDelTableBean udDataMart = dataMartEjb
+		.getDmUdDelTableBeanByStato(new BigDecimal(idUdDelRichiesta), tiStatoUdCancellate);
+	getForm().getUdDataMartList().setTable(udDataMart);
+	getForm().getUdDataMartList().getTable().setPageSize(10);
+	getForm().getUdDataMartList().getTable().first();
+
+	// Unica chiamata al metodo "regista" che fa tutto il lavoro.
+	preparaAttributiPerJSP(new BigDecimal(parentSelectedIdR), parentSelectedMotivoR);
+
+	// Reimposta gli attributi per l'evidenziazione della riga figlia, ora che
+	// quelli della padre sono stati ripristinati.
+	if (clickedStatoN != null) {
+	    getRequest().setAttribute("selectedRigaStatoN", clickedStatoN);
+	}
+	if (clickedIdForN != null) {
+	    getRequest().setAttribute("selectedRigaIdForN", clickedIdForN);
+	}
+
+	forwardToPublisher(Application.Publisher.RICERCA_DATA_MART);
+    }
+
+    /**
+     * Classe POJO (Plain Old Java Object) per mantenere lo stato di visibilità dei pulsanti. L'uso
+     * di questa classe rende il codice più leggibile rispetto a un array di booleani.
+     */
+    public static class ButtonVisibilityState {
+	private final boolean microserviceButtonVisible;
+	private final boolean resumeButtonVisible;
+	private final boolean deletionButtonVisible;
+
+	public ButtonVisibilityState(boolean microserviceButtonVisible,
+		boolean deletionButtonVisible, boolean resumeButtonVisible) {
+	    this.microserviceButtonVisible = microserviceButtonVisible;
+	    this.resumeButtonVisible = resumeButtonVisible;
+	    this.deletionButtonVisible = deletionButtonVisible;
+	}
+
+	public boolean isMicroserviceButtonVisible() {
+	    return microserviceButtonVisible;
+	}
+
+	public boolean isResumeButtonVisible() {
+	    return resumeButtonVisible;
+	}
+
+	public boolean isDeletionButtonVisible() {
+	    return deletionButtonVisible;
+	}
+
+	/**
+	 * Metodo opzionale per la retrocompatibilità, se altre parti del codice si aspettano ancora
+	 * di ricevere un array di booleani.
+	 *
+	 * @return Un array booleano con lo stato dei pulsanti.
+	 */
+	public boolean[] toArray() {
+	    return new boolean[] {
+		    this.microserviceButtonVisible, this.deletionButtonVisible,
+		    this.resumeButtonVisible };
+	}
+    }
+
+    private ButtonVisibilityState checkDataMartButtonVisibility(BigDecimal idUdDelRichiesta) {
+
+	// 1. Recupera tutti i dati necessari in una sola volta.
+	String statoRichiesta = dataMartEjb.getStatoRichiesta(idUdDelRichiesta);
+
+	// GUARD CLAUSE: Gestisci subito il caso terminale e esci.
+	// Se la richiesta è evasa, nessun pulsante è visibile.
+	if (CostantiDB.TiStatoRichiesta.EVASA.name().equals(statoRichiesta)) {
+	    updateButtonUI(false, false, false);
+	    return new ButtonVisibilityState(false, false, false);
+	}
+
+	// 2. Se non siamo in uno stato terminale, procedi con la logica dello stato interno.
+	String statoInterno = dataMartEjb.getStatoInternoRichiesta(idUdDelRichiesta);
+	CostantiDB.TiStatoInternoRich statoInternoEnum = CostantiDB.TiStatoInternoRich
+		.valueOf(statoInterno);
+
+	boolean isMicroserviceButtonVisible = false;
+	boolean isDeletionButtonVisible = false;
+	boolean isRiprendiLogicaButtonVisible = false;
+
+	// 3. Lo switch ora gestisce solo i casi "positivi" (quando mostrare un pulsante).
+	// I flag sono già false di default.
+	switch (statoInternoEnum) {
+	case INIZIALE:
+	case ERRORE_INVIO_MS:
+	case ERRORE_LOGICO:
+	    isMicroserviceButtonVisible = true;
+	    break;
+
+	case ERRORE_LOGICO_RIPRISTINABILE:
+	    isRiprendiLogicaButtonVisible = true;
+	    break;
+
+	case PRONTA_PER_FISICA:
+	case ERRORE_PREPARAZIONE:
+	case ERRORE_FISICO_CRITICO:
+	case ERRORE_FISICO_PARZIALE:
+	    isDeletionButtonVisible = true;
+	    break;
+
+	// Non serve più un default per impostare i flag a false,
+	// perché quella è la loro condizione iniziale.
+	// I casi "in corso" (es. IN_ELABORAZIONE_LOGICA) non faranno nulla,
+	// lasciando correttamente i flag a false.
+	}
+
+	// 4. Aggiorna la UI e ritorna lo stato calcolato.
+	updateButtonUI(isMicroserviceButtonVisible, isDeletionButtonVisible,
+		isRiprendiLogicaButtonVisible);
+	return new ButtonVisibilityState(isMicroserviceButtonVisible, isDeletionButtonVisible,
+		isRiprendiLogicaButtonVisible);
+    }
+
+    /**
+     * Aggiorna la modalità (Edit/View) dei pulsanti nell'interfaccia utente.
+     *
+     * @param isMicroserviceVisible Se il pulsante del microservizio deve essere in modalità edit.
+     * @param isDeletionVisible     Se il pulsante di cancellazione deve essere in modalità edit.
+     */
+    private void updateButtonUI(boolean isMicroserviceVisible, boolean isDeletionVisible,
+	    boolean isRiprendiLogicaVisible) {
+	var microservizioFields = getForm().getMicroservizioDataMartFields();
+
+	if (isMicroserviceVisible) {
+	    microservizioFields.getCallMicroservizioDataMart().setEditMode();
+	} else {
+	    microservizioFields.getCallMicroservizioDataMart().setViewMode();
+	}
+
+	if (isDeletionVisible) {
+	    microservizioFields.getEseguiCancellazioneDataMart().setEditMode();
+	} else {
+	    microservizioFields.getEseguiCancellazioneDataMart().setViewMode();
+	}
+
+	if (isRiprendiLogicaVisible) {
+	    getForm().getMicroservizioDataMartFields().getRecupCancellazioneLogicaDataMart()
+		    .setEditMode();
+	} else {
+	    getForm().getMicroservizioDataMartFields().getRecupCancellazioneLogicaDataMart()
+		    .setViewMode();
+	}
+    }
+
+    @Override
+    public JSONObject triggerFiltriRicercaDataMartId_enteOnTrigger() throws EMFError {
+	getForm().getFiltriRicercaDataMart().post(getRequest());
+	if (getForm().getFiltriRicercaDataMart().getId_ente().parse() != null) {
+	    // Ricavo il TableBean relativo alle strutture dipendenti dall'ente scelto
+	    OrgStrutTableBean tmpTableBeanStrut = struttureEjb.getOrgStrutTableBean(
+		    getUser().getIdUtente(),
+		    getForm().getFiltriRicercaDataMart().getId_ente().parse(), Boolean.TRUE);
+	    DecodeMap mappaStrut = new DecodeMap();
+	    mappaStrut.populatedMap(tmpTableBeanStrut, "id_strut", "nm_strut");
+	    getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(mappaStrut);
+	    // Se ho una sola struttura la setto già impostata nella combo
+	    if (tmpTableBeanStrut.size() == 1) {
+		getForm().getFiltriRicercaDataMart().getId_strut()
+			.setValue(tmpTableBeanStrut.getRow(0).getIdStrut().toString());
+	    }
+	} else {
+	    getForm().getFiltriRicercaDataMart().getId_strut().setDecodeMap(new DecodeMap());
+	    getForm().getFiltriRicercaDataMart().getCd_registro_key_unita_doc()
+		    .setDecodeMap(new DecodeMap());
+	}
+	return getForm().getFiltriRicercaDataMart().asJSON();
+    }
+
+    @Override
+    public JSONObject triggerFiltriRicercaDataMartId_strutOnTrigger() throws EMFError {
+	getForm().getFiltriRicercaDataMart().post(getRequest());
+	if (getForm().getFiltriRicercaDataMart().getId_strut().parse() != null) {
+	    // Setto i valori della mappa TIPO REGISTRO ricavati dalla tabella
+	    // DEC_REGISTRO_UNITA_DOC
+	    DecRegistroUnitaDocTableBean tmpTableBeanReg = registroEjb.getRegistriUnitaDocAbilitati(
+		    getUser().getIdUtente(),
+		    getForm().getFiltriRicercaDataMart().getId_strut().parse());
+	    DecodeMap mappaRegistro = new DecodeMap();
+	    mappaRegistro.populatedMap(tmpTableBeanReg, "cd_registro_unita_doc",
+		    "cd_registro_unita_doc");
+	    getForm().getFiltriRicercaDataMart().getCd_registro_key_unita_doc()
+		    .setDecodeMap(mappaRegistro);
+	} else {
+	    getForm().getFiltriRicercaDataMart().getCd_registro_key_unita_doc()
+		    .setDecodeMap(new DecodeMap());
+	}
+	return getForm().getFiltriRicercaDataMart().asJSON();
+    }
+
+    /**
+     * Controlla se i tre campi chiave dell'unità documentale sono tutti valorizzati o tutti non
+     * valorizzati. Restituisce true se la condizione è rispettata, false altrimenti.
+     *
+     * Per "valorizzato" si intende non nullo e non una stringa vuota (dopo il trim).
+     *
+     * @param cdRegistroKeyUnitaDoc Il codice del registro.
+     * @param aaKeyUnitaDoc         L'anno chiave.
+     * @param cdKeyUnitaDoc         Il codice chiave.
+     *
+     * @return true se la validazione passa, false altrimenti.
+     */
+    public static boolean isValidaLogicaChiaveUnitaDoc(String cdRegistroKeyUnitaDoc,
+	    BigDecimal aaKeyUnitaDoc, String cdKeyUnitaDoc) {
+	// Normalizziamo "valorizzato" come non nullo e non vuoto dopo il trim
+	boolean cdRegistroValorizzato = cdRegistroKeyUnitaDoc != null
+		&& !cdRegistroKeyUnitaDoc.trim().isEmpty();
+	boolean aaKeyValorizzato = aaKeyUnitaDoc != null;
+	boolean cdKeyValorizzato = cdKeyUnitaDoc != null && !cdKeyUnitaDoc.trim().isEmpty();
+
+	// Contiamo quanti sono valorizzati
+	int countValorizzati = 0;
+	if (cdRegistroValorizzato) {
+	    countValorizzati++;
+	}
+	if (aaKeyValorizzato) {
+	    countValorizzati++;
+	}
+	if (cdKeyValorizzato) {
+	    countValorizzati++;
+	}
+
+	// La logica è: o tutti e tre sono valorizzati (count = 3)
+	// o nessuno dei tre è valorizzato (count = 0).
+	// Qualsiasi altra combinazione (1 o 2 valorizzati) non è valida.
+	return countValorizzati == 0 || countValorizzati == 3;
+    }
+
+    @Override
+    public void callMicroservizioDataMart() throws EMFError {
+	eseguiMicroservizioDataMart();
+    }
+
+    public void eseguiMicroservizioDataMart() throws EMFError {
+	BigDecimal idUdDelRichiestaSacer = ((DmUdDelTableBean) getForm().getNumUdDataMartList()
+		.getTable()).getRow(0).getIdUdDelRichiesta();
+	BigDecimal idRichiestaSacer = getForm().getNumUdDataMartList().getTable().getRow(0)
+		.getBigDecimal("id_richiesta");
+	BigDecimal idStrut = ((DmUdDelTableBean) getForm().getNumUdDataMartList().getTable())
+		.getRow(0).getIdStrut();
+	String tiMotCancellazione = getForm().getNumUdDataMartList().getTable().getRow(0)
+		.getString("ti_mot_cancellazione");
+
+	try {
+	    // Logica di business per chiamare il microservizio
+	    String tipoRichiesta = TipoRichiesta.valueOf(tiMotCancellazione).getDescrizione();
+	    String[] organizzazione = dataMartEjb.getAmbienteEnteStruttura(idStrut);
+	    String ambiente = organizzazione[0];
+	    String ente = organizzazione[1];
+	    String struttura = organizzazione[2];
+	    String motivazione = CostantiDB.TiMotCancellazione.valueOf(tiMotCancellazione)
+		    .getDescrizione();
+	    String descrizione = "Cancellazione UD a seguito di " + motivazione;
+
+	    String versione = configurationHelper.getAplValoreParamApplic(
+		    CostantiDB.ParametroAppl.VERSIONE_XML_MS_UD_DEL,
+		    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+	    String loginname = configurationHelper.getAplValoreParamApplic(
+		    CostantiDB.ParametroAppl.USERID_MS_UD_DEL,
+		    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+	    String password = configurationHelper.getAplValoreParamApplic(
+		    CostantiDB.ParametroAppl.PSW_MS_UD_DEL,
+		    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+	    Integer timeout = Integer.valueOf(configurationHelper.getAplValoreParamApplic(
+		    CostantiDB.ParametroAppl.TIMEOUT_MS_UD_DEL,
+		    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null));
+	    String url = configurationHelper.getAplValoreParamApplic(
+		    CostantiDB.ParametroAppl.URL_MS_UD_DEL,
+		    AplValoreParamApplic.TiAppart.APPLIC.name(), null, null, null, null);
+	    String tiModDel = dataMartHelper.getTiModDelRichiesta(idUdDelRichiestaSacer);
+
+	    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+	    clientHttpRequestFactory.setConnectTimeout(timeout);
+	    RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
+
+	    dataMartEjb.deleteAroRichSoftDelete(idRichiestaSacer,
+		    dataMartEjb.getTiItemRichSoftDelete(tiMotCancellazione));
+
+	    HttpHeaders header = new HttpHeaders();
+	    header.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+	    MultiValueMap<String, Object> multipartRequest = new LinkedMultiValueMap<>();
+	    multipartRequest.add("VERSIONE", versione);
+	    multipartRequest.add("LOGINNAME", loginname);
+	    multipartRequest.add("PASSWORD", password);
+	    multipartRequest.add("XMLREQ",
+		    getXmlMsDmUdDel(versione, loginname, ambiente, ente, struttura, descrizione,
+			    motivazione, tiModDel, tipoRichiesta, idRichiestaSacer));
+
+	    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(
+		    multipartRequest, header);
+
+	    restTemplate.exchange(url, HttpMethod.POST, requestEntity, Resource.class);
+
+	    // Aggiorniamo lo stato a INVIATA_A_MS
+	    dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiestaSacer,
+		    CostantiDB.TiStatoInternoRich.INVIATA_A_MS.name());
+	    getMessageBox().addInfo("Microservizio invocato con successo.");
+
+	} catch (Exception e) {
+	    // Aggiorniamo lo stato a ERRORE_INVIO_MS
+	    dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiestaSacer,
+		    CostantiDB.TiStatoInternoRich.ERRORE_INVIO_MS.name());
+	    log.error(
+		    "Errore grave durante l'invocazione del microservizio di cancellazione logica",
+		    e);
+	    getMessageBox().addError(
+		    "Si è verificato un errore durante la chiamata al microservizio. Controllare i log.");
+	}
+
+	ricaricaPaginaDataMart(idUdDelRichiestaSacer, tiMotCancellazione);
+    }
+
+    @Override
+    public void recupCancellazioneLogicaDataMart() throws EMFError {
+	BigDecimal idUdDelRichiesta = ((DmUdDelTableBean) getForm().getNumUdDataMartList()
+		.getTable()).getRow(0).getIdUdDelRichiesta();
+	BigDecimal idRichiesta = ((DmUdDelTableBean) getForm().getNumUdDataMartList().getTable())
+		.getRow(0).getBigDecimal("id_richiesta");
+	String tiMotCancellazione = getForm().getNumUdDataMartList().getTable().getRow(0)
+		.getString("ti_mot_cancellazione");
+
+	try {
+	    log.info("Ripresa della cancellazione logica per la richiesta {}", idUdDelRichiesta);
+
+	    // PASSO 1: ESEGUI LE OPERAZIONI DI CORREZIONE SUL DB
+	    dataMartEjb.eseguiCorrezionePerRipresaLogica(idRichiesta,
+		    dataMartEjb.getTiItemRichSoftDelete(tiMotCancellazione),
+		    getUser().getIdUtente());
+
+	    // PASSO 2: "RIARMA" LO STATO
+	    // Dopo la correzione, va riportato lo stato a uno stato "attivo"
+	    // in modo che il polling possa ripartire. "INVIATA_A_MS" è adeguato.
+	    dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiesta,
+		    CostantiDB.TiStatoInternoRich.INVIATA_A_MS.name());
+
+	    getMessageBox().addInfo(
+		    "Operazioni di correzione completate. Il monitoraggio riprenderà a breve.");
+
+	} catch (Exception e) {
+	    log.error("Errore durante la ripresa della cancellazione logica", e);
+	    // Se la correzione fallisce, rimaniamo nello stato di errore ripristinabile
+	    // e mostriamo un messaggio all'utente.
+	    dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiesta,
+		    CostantiDB.TiStatoInternoRich.ERRORE_LOGICO_RIPRISTINABILE.name(),
+		    e.getMessage());
+	    getMessageBox().addError("Impossibile eseguire le operazioni di correzione.");
+	}
+
+	// Ricarica la pagina per far ripartire il polling.
+	ricaricaPaginaDataMart(idUdDelRichiesta, tiMotCancellazione);
+    }
+
+    private String getXmlMsDmUdDel(String versione, String nmUserid, String ambiente, String ente,
+	    String struttura, String descrizione, String motivazione, String tipoCancellazione,
+	    String tipoRichiesta, BigDecimal idRichiestaSacer) {
+
+	StringBuilder xmlMicroservizio = new StringBuilder();
+	// Tag di apertura
+	xmlMicroservizio.append("<RichiestaCancellazioneLogica>");
+	// Inserisco i tag che identificano la richiesta
+	xmlMicroservizio.append("<VersioneXmlRichiesta>").append(versione)
+		.append("</VersioneXmlRichiesta><Versatore><Ambiente>").append(ambiente)
+		.append("</Ambiente><Ente>").append(ente).append("</Ente><Struttura>")
+		.append(struttura).append("</Struttura><UserID>").append(nmUserid)
+		.append("</UserID></Versatore><Richiesta><Descrizione>").append(descrizione)
+		.append("</Descrizione><Motivazione>").append(motivazione)
+		.append("</Motivazione><TipoCancellazione>").append(tipoCancellazione)
+		.append("</TipoCancellazione></Richiesta>");
+	// Richiesta di cancellazione
+	xmlMicroservizio
+		.append("<RichiesteDiCancellazione><RichiestaDiCancellazione><TipoRichiesta>");
+	xmlMicroservizio.append(tipoRichiesta).append("</TipoRichiesta><IDRichiestaSacer>");
+	xmlMicroservizio.append(idRichiestaSacer);
+	xmlMicroservizio.append(
+		"</IDRichiestaSacer></RichiestaDiCancellazione></RichiesteDiCancellazione>");
+	// Tag chiusura
+	xmlMicroservizio.append("</RichiestaCancellazioneLogica>");
+
+	return xmlMicroservizio.toString();
+    }
+
+    @Override
+    public void eseguiCancellazioneDataMart() throws EMFError {
+	BigDecimal idUdDelRichiesta = ((DmUdDelTableBean) getForm().getNumUdDataMartList()
+		.getTable()).getRow(0).getIdUdDelRichiesta();
+	String tiMotCancellazione = getForm().getNumUdDataMartList().getTable().getRow(0)
+		.getString("ti_mot_cancellazione");
+
+	try {
+	    String statoInterno = dataMartEjb.getStatoInternoRichiesta(idUdDelRichiesta);
+
+	    // Definisce gli stati in cui è necessario eseguire la PREPARAZIONE da capo
+	    List<String> statiPerPreparazioneCompleta = List.of(
+		    CostantiDB.TiStatoInternoRich.PRONTA_PER_FISICA.name(),
+		    CostantiDB.TiStatoInternoRich.ERRORE_PREPARAZIONE.name());
+
+	    // Definisce gli stati in cui la preparazione è GIA' STATA FATTA e serve solo riavviare
+	    // il job
+	    List<String> statiPerRiavvioJob = List.of(
+		    CostantiDB.TiStatoInternoRich.ERRORE_AVVIO_JOB.name(),
+		    CostantiDB.TiStatoInternoRich.ERRORE_FISICO_CRITICO.name(),
+		    CostantiDB.TiStatoInternoRich.ERRORE_FISICO_PARZIALE.name());
+
+	    if (statiPerPreparazioneCompleta.contains(statoInterno)) {
+		log.info("Avvio preparazione completa per la richiesta {} (stato attuale: {})",
+			idUdDelRichiesta, statoInterno);
+		dataMartEjb.preparaEAvviaCancellazioneFisica(idUdDelRichiesta);
+		getMessageBox()
+			.addInfo("Preparazione e avvio del processo completati con successo.");
+
+	    } else if (statiPerRiavvioJob.contains(statoInterno)) {
+		log.info("Avvio 'retry' del solo job per la richiesta {} (stato attuale: {})",
+			idUdDelRichiesta, statoInterno);
+		dataMartEjb.riavviaJobCancellazioneFisica(idUdDelRichiesta);
+		getMessageBox()
+			.addInfo("Riavvio del processo di cancellazione richiesto con successo.");
+
+	    } else {
+		getMessageBox()
+			.addWarning("Azione non permessa per lo stato attuale: " + statoInterno);
+	    }
+
+	} catch (Exception e) {
+	    // Determina se il fallimento è avvenuto durante la preparazione o l'avvio del job
+	    int index = org.apache.commons.lang3.exception.ExceptionUtils.indexOfThrowable(e,
+		    PreparazioneFisicaException.class);
+
+	    if (index != -1) {
+		// È un nostro errore gestito
+		Throwable causaSpecifica = org.apache.commons.lang3.exception.ExceptionUtils
+			.getThrowableList(e).get(index);
+		Throwable causaOriginale = causaSpecifica.getCause();
+		String messaggioErrore = (causaOriginale != null) ? causaOriginale.getMessage()
+			: causaSpecifica.getMessage();
+
+		// Distinguiamo se l'errore è avvenuto durante la preparazione o il riavvio
+		if (causaSpecifica.getMessage().contains("preparazione")) {
+		    log.error("Fallimento durante la preparazione per la richiesta {}",
+			    idUdDelRichiesta, e);
+		    dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiesta,
+			    CostantiDB.TiStatoInternoRich.ERRORE_PREPARAZIONE.name(),
+			    messaggioErrore);
+		    getMessageBox().addError(
+			    "Errore durante la preparazione. Operazione annullata. Riprovare.");
+		} else { // Errore durante il riavvio
+		    log.error("Fallimento durante il riavvio del job per la richiesta {}",
+			    idUdDelRichiesta, e);
+		    dataMartEjb.impostaStatoInternoRichiesta(idUdDelRichiesta,
+			    CostantiDB.TiStatoInternoRich.ERRORE_AVVIO_JOB.name(), messaggioErrore);
+		    getMessageBox().addError(
+			    "Errore durante l'avvio del job di cancellazione. Riprovare.");
+		}
+	    } else {
+		// Errore non previsto
+		log.error("Errore imprevisto durante la fase fisica per la richiesta {}",
+			idUdDelRichiesta, e);
+		getMessageBox()
+			.addError("Si è verificato un errore imprevisto. Controllare i log.");
+	    }
+	}
+
+	ricaricaPaginaDataMart(idUdDelRichiesta, tiMotCancellazione);
+    }
+
+    private void ricaricaPaginaDataMart(BigDecimal idUdDelRichiesta, String tiMotCancellazione)
+	    throws EMFError {
+	preparaAttributiPerJSP(idUdDelRichiesta, tiMotCancellazione);
+	forwardToPublisher(getLastPublisher());
+    }
+
+    /**
+     * Centralizza tutta la preparazione della vista di dettaglio.
+     */
+    private void preparaAttributiPerJSP(BigDecimal idUdDelRichiesta, String tiMotCancellazione)
+	    throws EMFError {
+	CostantiDB.TiMotCancellazione tiMotCancellazioneEnum = CostantiDB.TiMotCancellazione
+		.valueOf(tiMotCancellazione);
+
+	// --- 1. SINCRONIZZAZIONE DELLO STATO (Auto-riparazione) ---
+	// Determina il tipo di item per la query sulla vista
+	String tiItemRichSoftDelete = dataMartEjb.getTiItemRichSoftDelete(tiMotCancellazione);
+
+	// Ora che lo stato è sicuramente aggiornato, lo leggiamo per passarlo alla JSP
+	DmUdDelRichiesteRowBean richiesta = dataMartEjb
+		.getDmUdDelRichiesteForPollingRowBean(idUdDelRichiesta);
+
+	// Chiama il metodo unificato EJB. Ignoriamo il DTO restituito,
+	// ci interessa solo l'effetto collaterale della sincronizzazione.
+	dataMartEjb.sincronizzaEcalcolaStatoLogico(idUdDelRichiesta, richiesta.getIdRichiesta(),
+		tiItemRichSoftDelete);
+
+	// --- 2. PASSAGGIO DATI ALLA JSP (per polling e selezione riga) ---
+	getRequest().setAttribute("statoRichiestaSelezionata", richiesta.getTiStatoRichiesta());
+	getRequest().setAttribute("statoInternoRichiesta", richiesta.getTiStatoInternoRich());
+	getRequest().setAttribute("idUdDelRichiestaPerPolling", idUdDelRichiesta.toPlainString());
+	getRequest().setAttribute("idRichiestaPerPolling", richiesta.getIdRichiesta());
+	getRequest().setAttribute("selectedRigaIdR", idUdDelRichiesta.toPlainString());
+	getRequest().setAttribute("selectedRigaMotivoR", tiMotCancellazione);
+
+	// --- 3. LOGICA DI VISIBILITÀ DEI PULSANTI ---
+	// Questa chiamata ora si basa sullo stato appena sincronizzato.
+	checkDataMartButtonVisibility(idUdDelRichiesta);
+
+	// --- 4. POPOLAMENTO DELLE TABELLE DI DETTAGLIO ---
+	String dsMotCancellazione = tiMotCancellazioneEnum.getDescrizione();
+
+	// Popola la tabella dei conteggi per stato (NumUdDataMartList)
+	getForm().getNumUdDataMartSection().setHidden(false);
+	getForm().getNumUdDataMartSection()
+		.setLegend("Numero unità documentarie per la richiesta di " + dsMotCancellazione
+			+ ": " + richiesta.getCdRichiesta());
+	DmUdDelTableBean numUdDataMart = dataMartEjb.getDmUdDelGroupedByStato(idUdDelRichiesta);
+	getForm().getNumUdDataMartList().setTable(numUdDataMart);
+	getForm().getNumUdDataMartList().getTable().setPageSize(10);
+	getForm().getNumUdDataMartList().getTable().first();
+
+	String tiStatoUdCancellate = getRequest().getParameter("tiStatoUdCancellate");
+	// Popola la tabella di dettaglio delle UD (UdDataMartList)
+	getForm().getUdDataMartSection().setHidden(false);
+	getForm().getUdDataMartSection().setLegend("Lista unità documentarie per richiesta di "
+		+ dsMotCancellazione + ": " + richiesta.getCdRichiesta());
+	DmUdDelTableBean udDataMart = dataMartEjb.getDmUdDelTableBeanByStato(idUdDelRichiesta,
+		tiStatoUdCancellate);
+	getForm().getUdDataMartList().setTable(udDataMart);
+	getForm().getUdDataMartList().getTable().setPageSize(10);
+	getForm().getUdDataMartList().getTable().first();
+    }
+
+    // </editor-fold>
 }

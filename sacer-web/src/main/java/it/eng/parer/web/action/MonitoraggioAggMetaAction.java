@@ -348,7 +348,7 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
 	getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ambiente().setDecodeMap(
 		DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente"));
 
-	if (tmpTableBeanAmbiente.size() == 1) {
+	if (tmpTableBeanAmbiente != null && tmpTableBeanAmbiente.size() == 1) {
 	    getForm().getFiltriRicercaMonitoraggioAggMeta().getId_ambiente()
 		    .setValue("" + tmpTableBeanAmbiente.getRow(0).getIdAmbiente());
 	}
@@ -1967,9 +1967,6 @@ public class MonitoraggioAggMetaAction extends MonitoraggioAggMetaAbstractAction
 	// analisi dello stato selezionato
 	String tiStato = getRequest().getParameter(PAR_TI_STATO);
 	switch (tiStato) {
-	case TI_STATO_TOTALE:
-	    getForm().getFiltriAggMeta().getTi_stato_ses_upd_ko().clear();
-	    break;
 	case TI_STATO_NON_RISOLUBILE:
 	    getForm().getFiltriAggMeta().getTi_stato_ses_upd_ko().setValues(new String[] {
 		    TI_STATO_NON_RISOLUBILE });

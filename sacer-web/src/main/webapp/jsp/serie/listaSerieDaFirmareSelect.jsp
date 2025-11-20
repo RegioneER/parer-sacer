@@ -23,6 +23,13 @@
         <script type="text/javascript" src="<c:url value='/js/custom/customPollFirma.js' />" ></script>
         <script type='text/javascript'>
             $(document).ready(function () {
+
+                // MAC#38913 - Firma elenchi – pop-up credenziali non sempre visibile
+                $('input[name="operation__firmaIndiciAIPSerieHsmButton"]').on('click', function() {
+                    clearTimeout(timeoutPollingIdSerie);
+                });
+                console.log('id del timer dell indice AIP:'+timeoutPollingIdSerie);
+                
                 pollSerie();
                 $('.credenzialiFirmaBox').dialog({
                     autoOpen: true,
@@ -56,7 +63,9 @@
                                 dialogClass: "noclose"
                             });
 
-
+                            // Disabilito momentaneamente il polling sennò la post non torna piu'!
+                            clearTimeout(timeoutPollingIdSerie);
+                            
                             $.post("SerieUD.html", {
                                 operation: "firmaSerieHsmJs",
                                 Id_ambiente: idAmbiente,

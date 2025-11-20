@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -53,11 +54,7 @@ import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.TrasformatoriAbstractAction;
 import it.eng.parer.slite.gen.form.TrasformatoriForm;
-import it.eng.parer.slite.gen.tablebean.DecFormatoFileDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecImageTrasformRowBean;
-import it.eng.parer.slite.gen.tablebean.DecImageTrasformTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoRapprCompRowBean;
-import it.eng.parer.slite.gen.tablebean.DecTrasformTipoRapprRowBean;
+import it.eng.parer.slite.gen.tablebean.*;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.ws.dto.IRispostaWS;
@@ -69,17 +66,36 @@ import it.eng.parer.ws.recuperoDip.ejb.RecuperoDip;
 import it.eng.parer.ws.utils.AvanzamentoWs;
 import it.eng.parer.ws.utils.CostantiDB;
 import it.eng.parer.ws.versamento.dto.FileBinario;
-import it.eng.parer.ws.xml.versRespStato.ECEsitoExtType;
-import it.eng.parer.ws.xml.versRespStato.ECEsitoPosNegType;
-import it.eng.parer.ws.xml.versRespStato.EsitoChiamataWSType;
-import it.eng.parer.ws.xml.versRespStato.EsitoGenericoType;
-import it.eng.parer.ws.xml.versRespStato.StatoConservazione;
+import it.eng.parer.ws.xml.versRespStato.*;
 import it.eng.spagoCore.ConfigSingleton;
 import it.eng.spagoCore.error.EMFError;
 import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.servlet.ServletOutputStream;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.io.*;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.*;
 
 /**
  *
@@ -216,7 +232,7 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
 		? getForm().getTrasformTipoRappr().getStatus().toString()
 		: null;
 	if (Application.Publisher.TRASFORM_TIPO_RAPPR_DETAIL.equals(publisher)
-		&& stato.equals("insert")) {
+		&& (stato != null && stato.equals("insert"))) {
 	    goBack();
 	} else {
 	    loadDettaglio();
@@ -808,14 +824,15 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
 	} else if (fileDelTrasformatore != null && !fileDelTrasformatore.isInMemoria()) {
 	    File fileDaInserire = fileDelTrasformatore.getFileSuDisco();
 	    blob = new byte[(int) fileDelTrasformatore.getDimensione()];
-	    try {
+	    try (FileInputStream fileInputStream = new FileInputStream(fileDaInserire)) {
 		// convert file into array of bytes
-		FileInputStream fileInputStream = new FileInputStream(fileDaInserire);
 		fileInputStream.read(blob);
-		fileInputStream.close();
 
 	    } catch (Exception e) {
 		log.error("Errore nel caricamento del file del trasformatore", e);
+		getMessageBox().addError(
+			"Errore nel caricamento del file del trasformatore, il file non \u00e8 stato caricato correttamente");
+		forwardToPublisher(Application.Publisher.IMPORTA_FILE_TRASFORMATORE);
 	    }
 
 	}
@@ -1175,14 +1192,15 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
 	} else if (fileBin != null && !fileBin.isInMemoria()) {
 	    File fileDaInserire = fileBin.getFileSuDisco();
 	    blob = new byte[(int) fileBin.getDimensione()];
-	    try {
+	    try (FileInputStream fileInputStream = new FileInputStream(fileDaInserire)) {
 		// convert file into array of bytes
-		FileInputStream fileInputStream = new FileInputStream(fileDaInserire);
 		fileInputStream.read(blob);
-		fileInputStream.close();
 
 	    } catch (Exception e) {
 		log.error("Errore nel recupero del file dell'immagine del trasformatore", e);
+		getMessageBox().addError(
+			"Errore nel recupero del file dell'immagine del trasformatore, il file non \u00e8 stato caricato correttamente");
+		forwardToPublisher(Application.Publisher.IMPORTA_FILE_IMMAGINE);
 	    }
 
 	}
@@ -1275,10 +1293,14 @@ public class TrasformatoriAction extends TrasformatoriAbstractAction {
 	    } else if (fileBin != null && !fileBin.isInMemoria()) {
 		File fileDaInserire = fileBin.getFileSuDisco();
 		blob = new byte[(int) fileBin.getDimensione()];
-		// convert file into array of bytes
-		FileInputStream fileInputStream = new FileInputStream(fileDaInserire);
-		fileInputStream.read(blob);
-		fileInputStream.close();
+		try (FileInputStream fileInputStream = new FileInputStream(fileDaInserire)) {
+		    // convert file into array of bytes
+		    fileInputStream.read(blob);
+
+		} catch (Exception e) {
+		    log.error("Errore nell'inserimento del file dell'immagine del trasformatore",
+			    e);
+		}
 
 	    }
 	    if (blob != null) {

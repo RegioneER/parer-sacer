@@ -40,7 +40,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import it.eng.parer.objectstorage.dto.BackendStorage;
-import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
@@ -50,8 +49,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.crypto.model.ParerTST;
-import it.eng.parer.crypto.model.exceptions.CryptoParerException;
 import it.eng.parer.elencoVersamento.ejb.IndiceElencoVersXsdEjb;
 import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
@@ -86,10 +83,10 @@ import it.eng.parer.entity.constraint.ElvUpdUdDaElabElenco.ElvUpdUdDaElabTiStato
 import it.eng.parer.entity.constraint.ElvUrnElencoVers.TiUrnElenco;
 import it.eng.parer.entity.constraint.ElvUrnFileElencoVers;
 import it.eng.parer.entity.constraint.HsmElencoSessioneFirma.TiEsitoFirmaElenco;
-import it.eng.parer.exception.ParerErrorSeverity;
 import it.eng.parer.exception.ParerInternalError;
 import it.eng.parer.exception.ParerNoResultException;
 import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.firma.crypto.sign.SigningResponse;
 import it.eng.parer.firma.crypto.verifica.CryptoInvoker;
 import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.job.indiceAip.elenchi.ElaborazioneElencoIndiceAip;
@@ -130,7 +127,9 @@ import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import it.eng.parer.ws.utils.HashCalculator;
 import it.eng.parer.ws.utils.MessaggiWSFormat;
 import it.eng.spagoCore.error.EMFError;
-import java.util.logging.Level;
+import java.util.concurrent.Future;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 
 /**
  *
@@ -1533,6 +1532,19 @@ public class ElenchiVersamentoEjb {
 		ElencoEnums.OpTypeEnum.FIRMA_ELENCO_INDICI_AIP.name());
 
 	return fileElencoVers;
+    }
+
+    @Asynchronous
+    public Future<SigningResponse> completaFirmaElenchiIndiciAipAsync(BigDecimal idAmbiente,
+	    BigDecimal idEnte, BigDecimal idStrut, long idUtente, boolean isSoloSigillo) {
+
+	SigningResponse result = SigningResponse.OK_SECONDA_FASE;
+	try {
+	    completaFirmaElenchiIndiciAip(idAmbiente, idEnte, idStrut, idUtente, isSoloSigillo);
+	} catch (ParerUserError ex) {
+	    result = SigningResponse.ERROR_COMPLETAMENTO_FIRMA;
+	}
+	return new AsyncResult<>(result);
     }
 
     /**

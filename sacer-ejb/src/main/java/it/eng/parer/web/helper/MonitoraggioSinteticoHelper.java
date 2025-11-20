@@ -386,9 +386,21 @@ public class MonitoraggioSinteticoHelper extends GenericHelper {
     }
 
     @SuppressWarnings("rawtypes")
-    public List getMonVCnt(String viewUd, String parameters, BigDecimal param1, Long param2) {
-	String queryUd = "SELECT view FROM " + viewUd + " view WHERE " + parameters;
-	Query query = getEntityManager().createQuery(queryUd);
+    public List<?> getMonVCnt(String view, String paramString, BigDecimal param1, Long param2,
+	    String select, String group_by) {
+	String jpql;
+
+	if (select != null && group_by != null) {
+	    // Query con aggregazione
+	    jpql = "SELECT " + select + " FROM " + view + " view WHERE " + paramString
+		    + " GROUP BY " + group_by;
+	} else {
+	    // Query semplice
+	    jpql = "SELECT view FROM " + view + " view WHERE " + paramString;
+	}
+
+	// Esegui la query con i parametri
+	Query query = getEntityManager().createQuery(jpql);
 	query.setParameter("param1", param1);
 	if (param2 != null) {
 	    query.setParameter("param2", bigDecimalFromLong(param2));

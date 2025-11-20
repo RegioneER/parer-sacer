@@ -23,7 +23,9 @@ import java.util.List;
  *
  * @author Parucci_M
  */
-public class DecFiltroSelUdAttbBean {
+public class DecFiltroSelUdAttbBean implements java.io.Serializable {
+
+    private static final long serialVersionUID = -6386278941536116789L;
 
     private long idFiltroSelUdAttb;
     private String dlValore;

@@ -13,22 +13,22 @@
 
 package it.eng.parer.firma.crypto.ejb;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
-
+import it.eng.parer.common.signature.SignatureSession;
+import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums;
+import it.eng.parer.elencoVersamento.utils.ElencoEnums.ElencoStatusEnum;
 import it.eng.parer.entity.*;
-import it.eng.parer.entity.constraint.ElvUrnFileElencoVers;
+import it.eng.parer.entity.constraint.HsmElencoSessioneFirma.TiEsitoFirmaElenco;
+import it.eng.parer.entity.constraint.HsmSessioneFirma.TiEsitoSessioneFirma;
+import it.eng.parer.firma.crypto.helper.ElenchiIndiciAipSignatureHelper;
+import it.eng.parer.firma.crypto.sign.SigningRequest;
+import it.eng.parer.helper.GenericHelper;
 import it.eng.parer.objectstorage.dto.BackendStorage;
 import it.eng.parer.objectstorage.dto.ObjectStorageResource;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
+import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
+import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
+import it.eng.parer.ws.utils.CostantiDB.TipiHash;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,18 +36,12 @@ import org.apache.commons.net.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.parer.common.signature.SignatureSession;
-import it.eng.parer.elencoVersamento.helper.ElencoVersamentoHelper;
-import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.elencoVersamento.utils.ElencoEnums.ElencoStatusEnum;
-import it.eng.parer.entity.constraint.HsmElencoSessioneFirma.TiEsitoFirmaElenco;
-import it.eng.parer.entity.constraint.HsmSessioneFirma.TiEsitoSessioneFirma;
-import it.eng.parer.firma.crypto.helper.ElenchiIndiciAipSignatureHelper;
-import it.eng.parer.firma.crypto.sign.SigningRequest;
-import it.eng.parer.helper.GenericHelper;
-import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
-import it.eng.parer.ws.utils.CostantiDB.TipiEncBinari;
-import it.eng.parer.ws.utils.CostantiDB.TipiHash;
+import javax.ejb.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Manages the signature session of <code>Elenco Indici AIP</code>
@@ -199,17 +193,26 @@ public class ElencoIndiciAipSignatureSessionEjb implements SignatureSessionEjb {
 	 */
 	if (backendIndiciAip.isObjectStorage()) {
 	    // retrieve normalized URN
-	    final String urn = fileElencoVers.getElvUrnFileElencoVerss().stream()
-		    .filter(tmpUrnNorm -> ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO
+	    Optional<ElvUrnFileElencoVers> urnOpt = fileElencoVers.getElvUrnFileElencoVerss()
+		    .stream()
+		    .filter(tmpUrnNorm -> it.eng.parer.entity.constraint.ElvUrnFileElencoVers.TiUrnFileElenco.NORMALIZZATO
 			    .equals(tmpUrnNorm.getTiUrn()))
-		    .findAny().get().getDsUrn().substring(4);
+		    .findAny();
 
-	    ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(urn,
-		    backendIndiciAip.getBackendName(), signedFile,
-		    fileElencoVers.getIdFileElencoVers(), fileElencoVers.getIdStrut(), tipoFirma);
-	    logger.debug(
-		    "Salvato il file dell'elenco indici aip firmato nel bucket {} con chiave {} ",
-		    res.getBucket(), res.getKey());
+	    if (urnOpt.isPresent()) {
+		final String urn = urnOpt.get().getDsUrn().substring(4);
+		ObjectStorageResource res = objectStorageService.createResourcesInElenchiIndiciAip(
+			urn, backendIndiciAip.getBackendName(), signedFile,
+			fileElencoVers.getIdFileElencoVers(), fileElencoVers.getIdStrut(),
+			tipoFirma);
+		logger.debug(
+			"Salvato il file dell'elenco indici aip firmato nel bucket {} con chiave {} ",
+			res.getBucket(), res.getKey());
+	    } else {
+		logger.warn("URN normalizzato non trovato per fileElencoVers con ID: {}",
+			fileElencoVers.getIdFileElencoVers());
+	    }
+
 	}
 	// end MEV#30397
 

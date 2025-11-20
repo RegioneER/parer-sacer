@@ -83,9 +83,12 @@ function poll() {
         });
     }, 2500);
 }
-    
+
+// MAC#38913 - Firma elenchi – pop-up credenziali non sempre visibile
+var timeoutPollingIdIndiciAipFascicoli=null;
+ 
 function pollIndiciAipFasc() {
-    setTimeout(function () {
+    timeoutPollingIdIndiciAipFascicoli=setTimeout(function () {
         $.ajax({
             type: 'POST',
             dataType: 'json',
@@ -104,6 +107,7 @@ function pollIndiciAipFasc() {
                     var message;
                     var description;
                     var object = data.map[0];
+                    console.log('checkSignatureIndiciAipFascFuture SUCCESS: Status di ritorno: '+object.status);
                     switch (object.status) {
                         case "OK":
                             box = "infobox";
@@ -141,6 +145,7 @@ function pollIndiciAipFasc() {
                         }
                     },
             complete: function () {
+                console.log('checkSignatureIndiciAipFascFuture COMPLETE.');
                 if ($('.firmaBox').html().trim() && !$('.firmaBox').data('POPUP')) {
                     $('.firmaBox').data('POPUP', true);
                     $('.firmaBox').dialog({
@@ -162,6 +167,6 @@ function pollIndiciAipFasc() {
                     pollIndiciAipFasc();
                 }
             });
-        }, 2500);
+        }, 5000); // Aumentato a 5 secondi
     }
 

@@ -13,131 +13,16 @@
 
 package it.eng.parer.web.helper;
 
-import static it.eng.parer.util.Utils.bigDecimalFromInteger;
-import static it.eng.parer.util.Utils.bigDecimalFromLong;
-import static it.eng.parer.util.Utils.longFromBigDecimal;
-import static it.eng.parer.util.Utils.longListFrom;
-
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TemporalType;
-import javax.persistence.TypedQuery;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import it.eng.paginator.helper.LazyListHelper;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
-import it.eng.parer.entity.DecRegistroUnitaDoc;
-import it.eng.parer.entity.DecTipoDoc;
-import it.eng.parer.entity.DecTipoUnitaDoc;
-import it.eng.parer.entity.OrgAmbiente;
-import it.eng.parer.entity.OrgEnte;
-import it.eng.parer.entity.OrgStrut;
-import it.eng.parer.entity.OrgSubStrut;
-import it.eng.parer.entity.RecDtVersRecup;
-import it.eng.parer.entity.RecSessioneRecup;
-import it.eng.parer.entity.VrsDatiSessioneVersKo;
-import it.eng.parer.entity.VrsFileSessioneKo;
-import it.eng.parer.entity.VrsSessioneVersKo;
-import it.eng.parer.entity.VrsSessioneVersKoEliminate;
+import it.eng.parer.entity.*;
 import it.eng.parer.job.utils.JobConstants;
 import it.eng.parer.objectstorage.ejb.ObjectStorageService;
 import it.eng.parer.slite.gen.form.MonitoraggioForm;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriConsistenzaSacer;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriContenutoSacer;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriJobSchedulati;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriOperazioniVolumi;
-import it.eng.parer.slite.gen.form.MonitoraggioForm.FiltriReplicaOrg;
-import it.eng.parer.slite.gen.tablebean.VrsFileSessioneKoRowBean;
-import it.eng.parer.slite.gen.tablebean.VrsFileSessioneKoTableBean;
-import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoEliminateRowBean;
-import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoEliminateTableBean;
-import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoRowBean;
-import it.eng.parer.slite.gen.tablebean.VrsSessioneVersKoTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocTiUdRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocTiUdRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolTiUdRangeDtRowBean;
-import it.eng.parer.slite.gen.viewbean.AroVDocVolTiUdRangeDtTableBean;
-import it.eng.parer.slite.gen.viewbean.ElvVLisLogOperRowBean;
-import it.eng.parer.slite.gen.viewbean.ElvVLisLogOperTableBean;
-import it.eng.parer.slite.gen.viewbean.IamVLisOrganizDaReplicRowBean;
-import it.eng.parer.slite.gen.viewbean.IamVLisOrganizDaReplicTableBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedHistRowBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedHistTableBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedRowBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedStrutHistRowBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedStrutHistTableBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedStrutRowBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedStrutTableBean;
-import it.eng.parer.slite.gen.viewbean.LogVLisSchedTableBean;
-import it.eng.parer.slite.gen.viewbean.LogVVisLastSchedRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisDocNonVersIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisDocNonVersIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisOperVolIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisOperVolIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisSesRecupRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisSesRecupTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisUdNonVersIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisUdNonVersIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisUdVersTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisUniDocDaAnnulTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersDocNonVersTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersErrIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersErrIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVLisVersUdNonVersTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVRiepStrutIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVRiepStrutIamTableBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisDocNonVersRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisSesErrIamRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisUdNonVersRowBean;
-import it.eng.parer.slite.gen.viewbean.MonVVisVersErrIamRowBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneAggRisoltaRowBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneAggRisoltaTableBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneVersRisoltaRowBean;
-import it.eng.parer.slite.gen.viewbean.VrsVSessioneVersRisoltaTableBean;
-import it.eng.parer.viewEntity.IamVLisOrganizDaReplic;
-import it.eng.parer.viewEntity.LogVLisSched;
-import it.eng.parer.viewEntity.LogVLisSchedHist;
-import it.eng.parer.viewEntity.LogVLisSchedStrut;
-import it.eng.parer.viewEntity.LogVLisSchedStrutHist;
-import it.eng.parer.viewEntity.LogVVisLastSched;
-import it.eng.parer.viewEntity.MonVLisDocNonVersIam;
-import it.eng.parer.viewEntity.MonVLisOperVolIam;
-import it.eng.parer.viewEntity.MonVLisSesRecup;
-import it.eng.parer.viewEntity.MonVLisUdNonVersIam;
-import it.eng.parer.viewEntity.MonVLisVersDocNonVers;
-import it.eng.parer.viewEntity.MonVLisVersErrIam;
-import it.eng.parer.viewEntity.MonVLisVersUdNonVers;
-import it.eng.parer.viewEntity.MonVRiepStrutIam;
-import it.eng.parer.viewEntity.MonVVisDocNonVers;
-import it.eng.parer.viewEntity.MonVVisSesErrIam;
-import it.eng.parer.viewEntity.MonVVisUdNonVers;
-import it.eng.parer.viewEntity.MonVVisVersErrIam;
+import it.eng.parer.slite.gen.form.MonitoraggioForm.*;
+import it.eng.parer.slite.gen.tablebean.*;
+import it.eng.parer.slite.gen.viewbean.*;
+import it.eng.parer.viewEntity.*;
 import it.eng.parer.web.dto.CounterResultBean;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaDocBean;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
@@ -152,6 +37,24 @@ import it.eng.spagoLite.db.base.BaseRowInterface;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.AbstractBaseTable;
 import it.eng.spagoLite.db.base.table.BaseTable;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.function.Function;
+
+import static it.eng.parer.util.Utils.*;
 
 /**
  *
@@ -3475,12 +3378,15 @@ public class MonitoraggioHelper implements Serializable {
 		    + e.getMessage(), e);
 	}
 
-	// concateno alcuni campi per il front-end
-	nonVers.setString("struttura",
-		nonVers.getNmAmbiente() + ", " + nonVers.getNmEnte() + ", " + nonVers.getNmStrut());
-	nonVers.setString("chiave_ud", nonVers.getCdRegistroKeyUnitaDoc() + " - "
-		+ nonVers.getAaKeyUnitaDoc() + " - " + nonVers.getCdKeyUnitaDoc());
-
+	if (nonVers != null) {
+	    // concateno alcuni campi per il front-end
+	    nonVers.setString("struttura", nonVers.getNmAmbiente() + ", " + nonVers.getNmEnte()
+		    + ", " + nonVers.getNmStrut());
+	    nonVers.setString("chiave_ud", nonVers.getCdRegistroKeyUnitaDoc() + " - "
+		    + nonVers.getAaKeyUnitaDoc() + " - " + nonVers.getCdKeyUnitaDoc());
+	} else {
+	    log.warn("L'oggetto nonVers è nullo. Impossibile impostare la struttura.");
+	}
 	return nonVers;
     }
 
@@ -3514,12 +3420,15 @@ public class MonitoraggioHelper implements Serializable {
 		    + e.getMessage(), e);
 	}
 
-	// concateno alcuni campi per il front-end
-	nonVers.setString("struttura",
-		nonVers.getNmAmbiente() + ", " + nonVers.getNmEnte() + ", " + nonVers.getNmStrut());
-	nonVers.setString("chiave_ud", nonVers.getCdRegistroKeyUnitaDoc() + " - "
-		+ nonVers.getAaKeyUnitaDoc() + " - " + nonVers.getCdKeyUnitaDoc());
-
+	if (nonVers != null) {
+	    // concateno alcuni campi per il front-end
+	    nonVers.setString("struttura", nonVers.getNmAmbiente() + ", " + nonVers.getNmEnte()
+		    + ", " + nonVers.getNmStrut());
+	    nonVers.setString("chiave_ud", nonVers.getCdRegistroKeyUnitaDoc() + " - "
+		    + nonVers.getAaKeyUnitaDoc() + " - " + nonVers.getCdKeyUnitaDoc());
+	} else {
+	    log.warn("L'oggetto nonVers è nullo. Impossibile impostare la struttura.");
+	}
 	return nonVers;
     }
 
@@ -4155,18 +4064,19 @@ public class MonitoraggioHelper implements Serializable {
 	    whereWord = "AND ";
 	}
 
-	// Ricavo le date per eventuale inserimento nella query del filtro giorno
-	// versamento
-	Date dataOrarioDa = (filtri.getGiornoVersDaValidato() != null
-		? filtri.getGiornoVersDaValidato()
-		: null);
-	Date dataOrarioA = (filtri.getGiornoVersAValidato() != null
-		? filtri.getGiornoVersAValidato()
-		: null);
+	// Ricavo le date per eventuale inserimento nella query del filtro giorno annullamento
+	Date dataAnnulDa = filtri.getGiornoAnnulDaValidato();
+	Date dataAnnulA = filtri.getGiornoAnnulAValidato();
 
-	// Inserimento nella query del filtro data già impostato con data e ora
-	if ((dataOrarioDa != null) && (dataOrarioA != null)) {
-	    queryStr.append(whereWord).append("u.dtCreazione between :datada AND :dataa ");
+	// Inserimento nella query del filtro data annullamento già impostato con data e ora
+	if ((dataAnnulDa != null) && (dataAnnulA != null)) {
+	    queryStr.append(whereWord).append("u.dtAnnul BETWEEN :dataAnnulDa AND :dataAnnulA ");
+	    whereWord = "AND ";
+	} else if (dataAnnulDa != null) {
+	    queryStr.append(whereWord).append("u.dtAnnul >= :dataAnnulDa ");
+	    whereWord = "AND ";
+	} else if (dataAnnulA != null) {
+	    queryStr.append(whereWord).append("u.dtAnnul <= :dataAnnulA ");
 	    whereWord = "AND ";
 	}
 
@@ -4229,9 +4139,9 @@ public class MonitoraggioHelper implements Serializable {
 	    query.setParameter("codicein_a", codiceRangeA);
 	}
 
-	if (dataOrarioDa != null && dataOrarioA != null) {
-	    query.setParameter("datada", dataOrarioDa, TemporalType.TIMESTAMP);
-	    query.setParameter("dataa", dataOrarioA, TemporalType.TIMESTAMP);
+	if (dataAnnulDa != null && dataAnnulA != null) {
+	    query.setParameter("dataAnnulDa", dataAnnulDa);
+	    query.setParameter("dataAnnulA", dataAnnulA);
 	}
 
 	if (statoAnnul != null) {
@@ -6055,6 +5965,23 @@ public class MonitoraggioHelper implements Serializable {
 	}
 
 	return sessTableBean;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public List getMonVCnt(String viewUd, String parameters, BigDecimal param1, Long param2,
+	    String select, String group_by) {
+	String view = "view";
+	if (select != null) {
+	    view = select;
+	}
+	String queryUd = "SELECT " + view + " FROM " + viewUd + " view WHERE " + parameters
+		+ (group_by == null ? "" : " group by " + group_by);
+	Query query = entityManager.createQuery(queryUd);
+	query.setParameter("param1", param1);
+	if (param2 != null) {
+	    query.setParameter("param2", bigDecimalFromLong(param2));
+	}
+	return query.getResultList();
     }
 
     static class FiltriOperazioniVolumiPlain {

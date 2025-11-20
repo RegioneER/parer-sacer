@@ -21,7 +21,9 @@ import java.util.List;
  *
  * @author Gilioli_P
  */
-public class DecCriterioDatiSpecBean {
+public class DecCriterioDatiSpecBean implements java.io.Serializable {
+
+    private static final long serialVersionUID = 2749492626782991572L;
 
     private long idCriterioDatiSpec;
     private String dlValore;

@@ -26,6 +26,7 @@ import it.eng.parer.slite.gen.action.AnnulVersAbstractAction;
 import it.eng.parer.slite.gen.form.FascicoliForm;
 import it.eng.parer.slite.gen.form.UnitaDocumentarieForm;
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
+import it.eng.parer.slite.gen.tablebean.DmUdDelTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgAmbienteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgEnteTableBean;
 import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
@@ -38,6 +39,7 @@ import it.eng.parer.slite.gen.viewbean.AroVRicRichAnnvrsRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVRicRichAnnvrsTableBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisRichAnnvrsRowBean;
 import it.eng.parer.slite.gen.viewbean.AroVVisStatoRichAnnvrsRowBean;
+import it.eng.parer.web.ejb.DataMartEjb;
 import it.eng.parer.web.ejb.ElenchiVersamentoEjb;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
@@ -89,6 +91,8 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
     private AmbienteEjb ambienteEjb;
     @EJB(mappedName = "java:app/Parer-ejb/StruttureEjb")
     private StruttureEjb struttureEjb;
+    @EJB(mappedName = "java:app/Parer-ejb/DataMartEjb")
+    private DataMartEjb dataMartEjb;
 
     @Override
     public void initOnClick() throws EMFError {
@@ -199,6 +203,13 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
 	getForm().getItemList().setTable(listaItem);
 	getForm().getItemList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
 	getForm().getItemList().getTable().first();
+
+	// 39187: recupero gli eventuali item cancellati
+	DmUdDelTableBean listaItemCancellati = dataMartEjb.getDmUdDelAnnulVersTableBean(
+		idRichAnnulVers, CostantiDB.TiStatoUdCancellate.CANCELLATA_DB_SACER.name());
+	getForm().getItemCancellatiList().setTable(listaItemCancellati);
+	getForm().getItemCancellatiList().getTable().setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+	getForm().getItemCancellatiList().getTable().first();
 
 	getForm().getItemList().setHideInsertButton(true);
 	getForm().getItemList().setHideDeleteButton(true);
@@ -588,10 +599,6 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
 		    .getDs_rich_annul_vers().parse();
 	    final String ntRichAnnulVers = getForm().getCreazioneRichAnnulVers()
 		    .getNt_rich_annul_vers().parse();
-	    // // NOTA: essendo il bottone attualmente associato solo alla richieste di annullamento
-	    // ud, per ora il
-	    // parametro è sempre UNITA_DOC
-	    // final String tiRichAnnulVers = CostantiDB.TiRichAnnulVers.UNITA_DOC.name();
 	    final String tiRichAnnulVers = getForm().getCreazioneRichAnnulVers()
 		    .getTi_rich_annul_vers().parse();
 
@@ -1034,6 +1041,13 @@ public class AnnulVersAction extends AnnulVersAbstractAction {
     public void tabListaStatiOnClick() throws EMFError {
 	getForm().getRichAnnulVersDetailSubTabs()
 		.setCurrentTab(getForm().getRichAnnulVersDetailSubTabs().getListaStati());
+	forwardToPublisher(Application.Publisher.RICH_ANNUL_VERS_DETAIL);
+    }
+
+    @Override
+    public void tabListaItemCancellatiOnClick() throws EMFError {
+	getForm().getRichAnnulVersDetailSubTabs()
+		.setCurrentTab(getForm().getRichAnnulVersDetailSubTabs().getListaItemCancellati());
 	forwardToPublisher(Application.Publisher.RICH_ANNUL_VERS_DETAIL);
     }
 

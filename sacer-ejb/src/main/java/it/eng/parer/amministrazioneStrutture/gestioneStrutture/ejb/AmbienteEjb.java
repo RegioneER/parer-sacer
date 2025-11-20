@@ -486,10 +486,10 @@ public class AmbienteEjb {
 	    if (idAmbienteDB != orgAmbiente.getIdAmbiente()) {
 		modificatoAmbiente = true;
 		// Eseguo la storicizzazione solo se ho modificato le date
-		if (dbOrgEnte.getDtIniValAppartAmbiente()
+		if (dbOrgEnte != null && (dbOrgEnte.getDtIniValAppartAmbiente()
 			.compareTo(enteRowBean.getDtIniValAppartAmbiente()) != 0
 			|| dbOrgEnte.getDtFinValAppartAmbiente()
-				.compareTo(enteRowBean.getDtFinValAppartAmbiente()) != 0) {
+				.compareTo(enteRowBean.getDtFinValAppartAmbiente()) != 0)) {
 		    OrgStoricoEnteAmbiente storicoEnteAmbiente = new OrgStoricoEnteAmbiente();
 		    storicoEnteAmbiente.setOrgAmbiente(orgEnte.getOrgAmbiente());
 		    storicoEnteAmbiente.setDtIniVal(orgEnte.getDtIniValAppartAmbiente());

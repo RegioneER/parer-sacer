@@ -13,6 +13,13 @@
 
 package it.eng.parer.web.action;
 
+import it.eng.parer.amministrazioneStrutture.gestioneTipoFascicolo.ejb.TipoFascicoloEjb;
+import it.eng.parer.slite.gen.form.MonitoraggioFascicoliForm;
+import it.eng.parer.web.ejb.MonitoraggioAggMetaEjb;
+import org.joda.time.DateTime;
+import it.eng.parer.slite.gen.form.MonitoraggioAggMetaForm;
+import it.eng.parer.web.validator.TypeValidator.ChiaveBean;
+import it.eng.parer.web.validator.MonitoraggioAggMetaValidator;
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneSottoStrutture.ejb.SottoStruttureEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.AmbienteEjb;
@@ -31,6 +38,11 @@ import it.eng.parer.slite.gen.form.MonitoraggioForm.*;
 import it.eng.parer.slite.gen.tablebean.*;
 import it.eng.parer.slite.gen.viewbean.*;
 import it.eng.parer.volume.utils.VolumeEnums;
+import static it.eng.parer.web.action.MonitoraggioFascicoliAction.PAR_TI_CREAZIONE;
+import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_CREAZIONE_30GG;
+import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_CREAZIONE_B30GG;
+import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_CREAZIONE_OGGI;
+import static it.eng.parer.web.action.MonitoraggioFascicoliAction.TI_TOTALE;
 import it.eng.parer.web.dto.MonitoraggioAttributiVersFallitiDaDocNonVersati;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaDocBean;
 import it.eng.parer.web.dto.MonitoraggioFiltriListaVersFallitiBean;
@@ -89,6 +101,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -121,6 +134,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STPageOrientation;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
+import it.eng.parer.web.ejb.MonitoraggioAggMetaEjb.StatoGenerazioneIndiceAip;
 
 /**
  *
@@ -169,6 +183,20 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
     @EJB(mappedName = "java:app/Parer-ejb/GestioneJobEjb")
     private GestioneJobEjb gestioneJobEjb;
+
+    @EJB(mappedName = "java:app/Parer-ejb/MonitoraggioAggMetaEjb")
+    private MonitoraggioAggMetaEjb monitAggMetaEjb;
+
+    @EJB(mappedName = "java:app/Parer-ejb/TipoFascicoloEjb")
+    private TipoFascicoloEjb tipoFascicoloEjb;
+
+    public static final String PAR_TI_CREAZIONE = "ti_creazione";
+    public static final String TI_CREAZIONE_OGGI = "OGGI";
+    public static final String TI_CREAZIONE_30GG = "30gg";
+    public static final String TI_CREAZIONE_B30GG = "B30gg";
+
+    public static final String PAR_TI_STATO = "ti_stato";
+    public static final String TI_STATO_TOTALE = "TOTALE";
 
     @Override
     public void initOnClick() throws EMFError {
@@ -242,7 +270,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	 * in particolare e imposto vuote le altre combo
 	 */
 
-	// Setto editabile il bottone di ricerca, da utilizzare in caso di javascript disattivato
+	// Setto editabile il bottone di ricerca, da utilizzare in caso di javascript
+	// disattivato
 	getForm().getRiepilogoStruttura().getRicercaRiepilogoStrutturaButton().setEditMode();
 	// Imposto le combo in editMode
 	getForm().getRiepilogoStruttura().setEditMode();
@@ -256,7 +285,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	filtri.post(getRequest());
 	// Valida i filtri per verificare quelli obbligatori
 	if (filtri.validate(getMessageBox())) {
-	    // Setto il filtro in sessione perch\u00e0¨ se torno indietro in "Riepilogo Struttura"
+	    // Setto il filtro in sessione perch\u00e0¨ se torno indietro in "Riepilogo
+	    // Struttura"
 	    // devo avere impostata
 	    // la ricerca con quest'ultimo
 	    getSession().setAttribute("filtriRiepilogoStruttura",
@@ -290,7 +320,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		.setDecodeMap(ComboGetter.getMappaGenericFlagSiNo());
 	getForm().getFiltriSessione().getSessione_ses_err_verif().setEditMode();
 
-	// Setto editabile il bottone di ricerca, da utilizzare in caso di javascript disattivato
+	// Setto editabile il bottone di ricerca, da utilizzare in caso di javascript
+	// disattivato
 	getForm().getFiltriSessione().getCercaSessioniErrate().setEditMode();
 
 	// Ricavo la lista delle sessioni errate senza filtraggio per flag verificato
@@ -328,7 +359,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	getUser().getMenu().reset();
 	getUser().getMenu().select("Menu.Monitoraggio.EsameOperazioniVolumi");
 
-	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0  documentaria o
+	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0 
+	// documentaria o
 	// volume
 	getForm().getUnitaDocumentariaOutputList().setTable(new AroVRicUnitaDocTableBean());
 	getForm().getVolumeOutputList().setTable(new VolVRicVolumeTableBean());
@@ -416,7 +448,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	getUser().getMenu().reset();
 	getUser().getMenu().select("Menu.Monitoraggio.EsameOperazioniElenchiVersamento");
 
-	/* Inizializzo le liste fittizie nel caso si voglia visualizzare l'elenco di versamento */
+	/*
+	 * Inizializzo le liste fittizie nel caso si voglia visualizzare l'elenco di versamento
+	 */
 	getForm().getElencoVersamentoOutputList().setTable(new ElvVRicElencoVersTableBean());
 
 	/* Setto vuote le liste risultato */
@@ -614,7 +648,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			"?operation=loadRiepilogoVersamentiSinteticoByStrut&idStrut=" + idStruttura,
 			form);
 
-	    } // Se ho cliccato sull'icona del "Visualizza unità  documentaria" di Lista Documenti
+	    } // Se ho cliccato sull'icona del "Visualizza unità  documentaria" di Lista
+	      // Documenti
 	    else if ((getRequest().getParameter("table")
 		    .equals(getForm().getUnitaDocumentariaList().getName()))) {
 		// VISUALIZZA UNITA' DOCUMENTARIA DA LISTA DOCUMENTI / LISTA DOCUMENTI ANNULLATI
@@ -720,7 +755,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    else if ((getRequest().getParameter("table")
 		    .equals(getForm().getVolumeList().getName()))) {
 		// VISUALIZZA VOLUME DA LISTA DOCUMENTI
-		// Se lo stato_doc \u00e0¨ NON_SELEZ_SCHED o IN_ATTESA_SCHED non devo visualizzare
+		// Se lo stato_doc \u00e0¨ NON_SELEZ_SCHED o IN_ATTESA_SCHED non devo
+		// visualizzare
 		// il dettaglio volume
 		Integer riga = Integer.parseInt(getRequest().getParameter("riga"));
 		BaseRowInterface documentoRow = getForm().getDocumentiList().getTable()
@@ -757,7 +793,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 				    + VolumiForm.VolumiList.NAME + "&riga=0",
 			    form);
 		}
-	    } // Se ho cliccato sull'icona del "Visualizza unità  documentaria" di Operazioni Volumi
+	    } // Se ho cliccato sull'icona del "Visualizza unità  documentaria" di Operazioni
+	      // Volumi
 	    else if ((getRequest().getParameter("table")
 		    .equals(getForm().getUnitaDocumentariaOutputList().getName()))) {
 		// VISUALIZZA UNITA' DOCUMENTARIA DA OPERAZIONI VOLUMI
@@ -906,7 +943,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    } // Se ho cliccato sul dettaglio di un Versamento Fallito
 	    else if ((getRequest().getParameter("table")
 		    .equals(getForm().getVersamentiFallitiList().getName()))) {
-		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e status
+		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e
+		// status
 		getForm().getScaricaFileXMLButtonList().getScaricaFileXMLVersamento()
 			.setDisableHourGlass(true);
 		if (getForm().getVersamentiFallitiList().getFl_sessione_err_verif().isReadonly()) {
@@ -923,7 +961,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    } // Se ho cliccato sul dettaglio di una Sessione Errata
 	    else if ((getRequest().getParameter("table")
 		    .equals(getForm().getSessioniErrateList().getName()))) {
-		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e status
+		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e
+		// status
 		getForm().getScaricaFileXMLButtonList().getScaricaFileXMLSessione()
 			.setDisableHourGlass(true);
 		getForm().getSessioniErrateList().setUserOperations(true, true, true, false);
@@ -935,7 +974,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    } // Se ho cliccato sul dettaglio di un'Unit\u00e0  doc. / Documento Non Versato
 	    else if ((getRequest().getParameter("table")
 		    .equals(getForm().getDocumentiDerivantiDaVersFallitiList().getName()))) {
-		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e status
+		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e
+		// status
 		getForm().getDocumentiDerivantiDaVersFallitiList().setUserOperations(true, true,
 			true, false);
 		getForm().getDocumentiDerivantiDaVersFallitiDetail().setViewMode();
@@ -944,13 +984,15 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			.getSalvaVerificaVersamentoDaDocDerVersFalliti().setEditMode();
 		forwardToPublisher(
 			Application.Publisher.MONITORAGGIO_DOCUMENTI_DERIVANTI_DA_VERS_FALLITI_DETAIL);
-	    } // Se ho cliccato su una Sessione della Lista Sessioni nel dettaglio di un'unit\u00e0 
+	    } // Se ho cliccato su una Sessione della Lista Sessioni nel dettaglio di
+	      // un'unit\u00e0 
 	      // doc. / documento
 	      // non versato
 	    else if ((getRequest().getParameter("table")
 		    .equals(getForm().getSessioniList().getName()))) {
 		// VISUALIZZA VERSAMENTO FALLITO DA LISTA SESSIONI (STESSA ACTION)
-		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e status
+		// Setto tutti i parametri relativi a visualizzazione bottoni, clessidra e
+		// status
 		getForm().getScaricaFileXMLButtonList().getScaricaFileXMLVersamento()
 			.setDisableHourGlass(true);
 		getForm().getSessioniList().setUserOperations(true, true, true, false);
@@ -1004,7 +1046,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			.getMonVVisVersErrIamRowBean(idSessioneVers);
 		// Copio nella form di dettaglio i dati del rowbean
 		getForm().getVersamentiFallitiDetail().copyFromBean(versErrRB);
-		// Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line in
+		// Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line
+		// in
 		// versione
 		// "pretty-print"
 
@@ -1048,7 +1091,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			.getMonVVisSesErrIamRowBean(idSessioneVers);
 		// Copio nella form di dettaglio i dati del rowbean
 		getForm().getSessioniErrateDetail().copyFromBean(sesErrRB);
-		// Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line in
+		// Formatto gli xml di richiesta e risposta in modo tale che compaiano on-line
+		// in
 		// versione
 		// "pretty-print"
 
@@ -1128,8 +1172,10 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		getForm().getSessioniList().getTable().setPageSize(10);
 		getForm().getSessioniList().getTable().first();
 
-		// Salvo in sessione questi valori relativi all'unit\u00e0  documentaria / documento
-		// Mi serviranno in fase di "ritorno" da Dettaglio Versamento Fallito a Dettaglio
+		// Salvo in sessione questi valori relativi all'unit\u00e0  documentaria /
+		// documento
+		// Mi serviranno in fase di "ritorno" da Dettaglio Versamento Fallito a
+		// Dettaglio
 		// Unit\u00e0  Doc. /
 		// Documento non versato
 		MonitoraggioAttributiVersFallitiDaDocNonVersati mon = new MonitoraggioAttributiVersFallitiDaDocNonVersati();
@@ -1509,7 +1555,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	Integer docVersatiSuccessoPrecUltimi6 = 0;
 	Integer docVersatiSuccessoTot = 0;
 
-	// Creo due array contenenti i valori possibili per stato documento e stato volume
+	// Creo due array contenenti i valori possibili per stato documento e stato
+	// volume
 	String[] statoDoc = {
 		"IN_ATTESA_SCHED", "NON_SELEZ_SCHED", "IN_VOLUME_APERTO", "IN_VOLUME_IN_ERRORE",
 		"IN_VOLUME_CHIUSO", "IN_VOLUME_DA_CHIUDERE", "IN_ATTESA_MEMORIZZAZIONE" };
@@ -2619,7 +2666,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      * @throws EMFError errore generico
      */
     public void monitoraggioListe() throws EMFError {
-	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0  documentaria o
+	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0 
+	// documentaria o
 	// volume
 	getForm().getUnitaDocumentariaList().setTable(new AroVRicUnitaDocTableBean());
 	getForm().getVolumeList().setTable(new VolVRicVolumeTableBean());
@@ -3329,6 +3377,76 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		    .setDecodeMap(ComboGetter.getMappaTiStatoAnnul());
 	    getForm().getFiltriDocumentiAnnullati().getTi_stato_annul().setValue(stato);
 
+	    String tiCreazione = getRequest().getParameter(PAR_TI_CREAZIONE);
+	    // Impostazione delle date in base al parametro ti_creazione
+	    if (StringUtils.isNotBlank(tiCreazione)) {
+		Calendar cal = Calendar.getInstance();
+		Date oggi = cal.getTime();
+		SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_DATE_TYPE);
+
+		switch (tiCreazione) {
+		case "OGGI":
+		    // Imposta data annullamento = oggi
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_da()
+			    .setValue(df.format(oggi));
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_a()
+			    .setValue(df.format(oggi));
+		    getForm().getFiltriDocumentiAnnullati().getOre_annul_da().setValue("0");
+		    getForm().getFiltriDocumentiAnnullati().getMinuti_annul_da().setValue("0");
+		    getForm().getFiltriDocumentiAnnullati().getOre_annul_a().setValue("23");
+		    getForm().getFiltriDocumentiAnnullati().getMinuti_annul_a().setValue("59");
+		    break;
+		case "30gg":
+		    // Imposta data annullamento ultimi 30 giorni (escludendo oggi)
+		    cal.add(Calendar.DAY_OF_MONTH, -30);
+		    Date trentaGiorniFa = cal.getTime();
+		    cal.setTime(oggi);
+		    cal.add(Calendar.DAY_OF_MONTH, -1);
+		    Date ieri = cal.getTime();
+
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_da()
+			    .setValue(df.format(trentaGiorniFa));
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_a()
+			    .setValue(df.format(ieri));
+		    getForm().getFiltriDocumentiAnnullati().getOre_annul_da().setValue("0");
+		    getForm().getFiltriDocumentiAnnullati().getMinuti_annul_da().setValue("0");
+		    getForm().getFiltriDocumentiAnnullati().getOre_annul_a().setValue("23");
+		    getForm().getFiltriDocumentiAnnullati().getMinuti_annul_a().setValue("59");
+		    break;
+		case "B30gg":
+		    // Imposta data annullamento prima di 30 giorni fa
+		    cal.add(Calendar.DAY_OF_MONTH, -30);
+		    Date prima30gg = cal.getTime();
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_a()
+			    .setValue(df.format(prima30gg));
+		    getForm().getFiltriDocumentiAnnullati().getOre_annul_a().setValue("23");
+		    getForm().getFiltriDocumentiAnnullati().getMinuti_annul_a().setValue("59");
+		    break;
+		}
+	    }
+
+	    // Le eventuali date riferite al giorno di versamento vengono salvate in
+	    // sessione
+	    UnitaDocumentarieValidator validator = new UnitaDocumentarieValidator(getMessageBox());
+	    Date[] dateValidate = validator.validaDate(
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_da().parse(),
+		    getForm().getFiltriDocumentiAnnullati().getOre_annul_da().parse(),
+		    getForm().getFiltriDocumentiAnnullati().getMinuti_annul_da().parse(),
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_a().parse(),
+		    getForm().getFiltriDocumentiAnnullati().getOre_annul_a().parse(),
+		    getForm().getFiltriDocumentiAnnullati().getMinuti_annul_a().parse(),
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_da()
+			    .getHtmlDescription(),
+		    getForm().getFiltriDocumentiAnnullati().getGiorno_annul_a()
+			    .getHtmlDescription());
+	    if (dateValidate != null) {
+		SimpleDateFormat df2 = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
+		getForm().getFiltriDocumentiAnnullati().getGiorno_annul_da_validato()
+			.setValue(df2.format(dateValidate[0]));
+		getForm().getFiltriDocumentiAnnullati().getGiorno_annul_a_validato()
+			.setValue(df2.format(dateValidate[1]));
+	    }
+
 	    // Setto la lista dei documenti
 	    String maxResultStandard = configurationHelper
 		    .getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
@@ -3343,6 +3461,7 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 	    forwardToPublisher(Application.Publisher.MONITORAGGIO_DOC_ANNULLATI_LIST);
 	}
+
     }
 
     /**
@@ -3398,7 +3517,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	     * essere valorizzato
 	     */
 	    MonitoraggioValidator validator = new MonitoraggioValidator(getMessageBox());
-	    // Prima validazione: controllo che siano stati compilati o l'uno (periodo versamento) o
+	    // Prima validazione: controllo che siano stati compilati o l'uno (periodo
+	    // versamento) o
 	    // gli altri (range
 	    // giorno versamento)
 	    validator.validaSceltaPeriodoGiornoVersamento(filtri.getPeriodo_vers().parse(),
@@ -3406,7 +3526,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		    filtri.getMinuti_vers_da().parse(), filtri.getGiorno_vers_a().parse(),
 		    filtri.getOre_vers_a().parse(), filtri.getMinuti_vers_a().parse());
 
-	    // Seconda validazione: controllo che il range di giorno versamento sia corretto e setto
+	    // Seconda validazione: controllo che il range di giorno versamento sia corretto
+	    // e setto
 	    // gli eventuali
 	    // valori di default
 	    Date[] dateValidate = validator.validaDate(filtri.getGiorno_vers_da().parse(),
@@ -3446,7 +3567,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			    .setCdKeyUnitaDocDa(chiavi[3] != null ? (String) chiavi[3] : null);
 		    filtriListaDoc.setCdKeyUnitaDocA(chiavi[4] != null ? (String) chiavi[4] : null);
 		}
-		// Le eventuali date riferite al giorno di versamento vengono salvate in sessione
+		// Le eventuali date riferite al giorno di versamento vengono salvate in
+		// sessione
 		filtriListaDoc.setGiornoVersDaValidato(null);
 		filtriListaDoc.setGiornoVersAValidato(null);
 		if (dateValidate != null) {
@@ -3457,7 +3579,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 		String maxResultStandard = configurationHelper
 			.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
-		// La validazione non ha riportato errori. Carico la tabella con i filtri impostati
+		// La validazione non ha riportato errori. Carico la tabella con i filtri
+		// impostati
 		BaseTableInterface<?> monVLisDocTableBean = monitoraggioHelper
 			.getMonVLisDocViewBean(
 				(MonitoraggioFiltriListaDocBean) getSession()
@@ -3516,7 +3639,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	     * essere valorizzato
 	     */
 	    MonitoraggioValidator validator = new MonitoraggioValidator(getMessageBox());
-	    // Prima validazione: controllo che siano stati compilati o l'uno (periodo versamento) o
+	    // Prima validazione: controllo che siano stati compilati o l'uno (periodo
+	    // versamento) o
 	    // gli altri (range
 	    // giorno versamento)
 	    validator.validaSceltaPeriodoGiornoVersamento(filtri.getPeriodo_vers().parse(),
@@ -3524,7 +3648,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		    filtri.getMinuti_vers_da().parse(), filtri.getGiorno_vers_a().parse(),
 		    filtri.getOre_vers_a().parse(), filtri.getMinuti_vers_a().parse());
 
-	    // Seconda validazione: controllo che il range di giorno versamento sia corretto e setto
+	    // Seconda validazione: controllo che il range di giorno versamento sia corretto
+	    // e setto
 	    // gli eventuali
 	    // valori di default
 	    Date[] dateValidate = validator.validaDate(filtri.getGiorno_vers_da().parse(),
@@ -3536,7 +3661,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 	    // Valida i filtri per verificare quelli obbligatori
 	    if (!getMessageBox().hasError()) {
-		// Le eventuali date riferite al giorno di versamento vengono salvate in sessione
+		// Le eventuali date riferite al giorno di versamento vengono salvate in
+		// sessione
 		if (dateValidate != null) {
 		    filtriSes.setGiornoVersDaValidato(dateValidate[0]);
 		    filtriSes.setGiornoVersAValidato(dateValidate[1]);
@@ -3664,7 +3790,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		filtri.getGiorno_last_vers_da().getHtmlDescription(),
 		filtri.getGiorno_last_vers_a().getHtmlDescription());
 
-	// Le eventuali date riferite al giorno di versamento vengono salvate in sessione
+	// Le eventuali date riferite al giorno di versamento vengono salvate in
+	// sessione
 	if (dateValidateFirst != null) {
 	    filtriListaVersFallitiDistintiDoc.setGiornoFirstVersDaValidato(dateValidateFirst[0]);
 	    filtriListaVersFallitiDistintiDoc.setGiornoFirstVersAValidato(dateValidateFirst[1]);
@@ -3676,7 +3803,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 	getSession().setAttribute("filtriListaVersFallitiDistintiDoc", filtri);
 
-	// Li risetto perch\u00e0¨ se torno indietro in "Riepilogo Versamenti" devo avere impostata
+	// Li risetto perch\u00e0¨ se torno indietro in "Riepilogo Versamenti" devo
+	// avere impostata
 	// la ricerca con
 	// questi ultimi
 	getSession().setAttribute("filtriListaVersFallitiDistintiDoc",
@@ -3829,7 +3957,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		.setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_output",
 			VolumeEnums.TipoOutputMonitoraggio.values()));
 	getForm().getFiltriOperazioniVolumi().setEditMode();
-	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0  documentaria o
+	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0 
+	// documentaria o
 	// volume
 	getForm().getUnitaDocumentariaOutputList().setTable(new AroVRicUnitaDocTableBean());
 	getForm().getVolumeOutputList().setTable(new VolVRicVolumeTableBean());
@@ -3961,7 +4090,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		.setDecodeMap(ComboGetter.getMappaSortedGenericEnum("ti_output",
 			VolumeEnums.TipoOutputMonitoraggio.values()));
 	getForm().getFiltriOperazioniElenchiVersamento().setEditMode();
-	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0  documentaria o
+	// Inizializzo le liste fittizie nel caso si voglia visualizzare unit\u00e0 
+	// documentaria o
 	// elenco di versamento
 	getForm().getUnitaDocumentariaOutputList().setTable(new AroVRicUnitaDocTableBean());
 	getForm().getElencoVersamentoOutputList().setTable(new ElvVRicElencoVersTableBean());
@@ -4404,10 +4534,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public void salvaVerificaVersamento() throws Throwable {
 	getForm().getFiltriVersamenti().post(getRequest());
 	String flaggozzo = getForm().getFiltriVersamenti().getVersamento_ses_err_verif().parse();
-	/* Ottengo i componenti selezionati del campo "Verificato" dalla lista risultato */
+	/*
+	 * Ottengo i componenti selezionati del campo "Verificato" dalla lista risultato
+	 */
 	String[] indiceAssolutoVerificatiSettati = getRequest()
 		.getParameterValues("Fl_sessione_err_verif");
-	/* Ottengo i componenti selezionati del campo "Non risolubile" dalla lista risultato */
+	/*
+	 * Ottengo i componenti selezionati del campo "Non risolubile" dalla lista risultato
+	 */
 	String[] indiceAssolutoNonRisolubiliSettati = getRequest()
 		.getParameterValues("Fl_sessione_err_non_risolub");
 
@@ -4598,10 +4732,14 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
     @Override
     public void salvaVerificaVersamentoDaDocDerVersFalliti() throws Throwable {
-	/* Ottengo i componenti selezionati del campo "Verificato" dalla lista risultato */
+	/*
+	 * Ottengo i componenti selezionati del campo "Verificato" dalla lista risultato
+	 */
 	String[] indiceAssolutoVerificatiSettati = getRequest()
 		.getParameterValues("Fl_sessione_err_verif");
-	/* Ottengo i componenti selezionati del campo "Non risolubile" dalla lista risultato */
+	/*
+	 * Ottengo i componenti selezionati del campo "Non risolubile" dalla lista risultato
+	 */
 	String[] indiceAssolutoNonRisolubiliSettati = getRequest()
 		.getParameterValues("Fl_sessione_err_non_risolub");
 	int totVerificati = indiceAssolutoVerificatiSettati != null
@@ -4621,7 +4759,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	int paginaCorrente = getForm().getSessioniList().getTable().getCurrentPageIndex();
 	int ultimaPagina = getForm().getSessioniList().getTable().getPages();
 
-	// Se mi trovo nell'ultima pagina, setto il valore di "fine" con le dimensioni della tabella
+	// Se mi trovo nell'ultima pagina, setto il valore di "fine" con le dimensioni
+	// della tabella
 	if (paginaCorrente == ultimaPagina) {
 	    fine = getForm().getSessioniList().getTable().size();
 	}
@@ -4877,7 +5016,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	int paginaCorrente = getForm().getSessioniErrateList().getTable().getCurrentPageIndex();
 	int ultimaPagina = getForm().getSessioniErrateList().getTable().getPages();
 
-	// Se mi trovo nell'ultima pagina, setto il valore di "fine" con le dimensioni della tabella
+	// Se mi trovo nell'ultima pagina, setto il valore di "fine" con le dimensioni
+	// della tabella
 	if (paginaCorrente == ultimaPagina) {
 	    fine = getForm().getSessioniErrateList().getTable().size();
 	}
@@ -4914,7 +5054,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 	// Se ci sono state modifiche, le salvo su DB
 	if (modificati) {
-	    // Ottengo gli id sessione dei record "verificati" con il flag spuntato (dopo eventuale
+	    // Ottengo gli id sessione dei record "verificati" con il flag spuntato (dopo
+	    // eventuale
 	    // modifica)
 	    if (verificati != null) {
 		for (String comp : verificati) {
@@ -4987,7 +5128,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public void updateSessioniErrateList() throws EMFError {
 	// Setto in edit mode il campo del flag sessione errata verificata
 	getForm().getSessioniErrateDetail().getFl_sessione_err_verif().setEditMode();
-	// Se la sessione errata \u00e0¨ di tipo VERSAMENTO posso inserire manualmente la chiave
+	// Se la sessione errata \u00e0¨ di tipo VERSAMENTO posso inserire manualmente
+	// la chiave
 	// unit\u00e0 
 	// documentaria
 	if (getForm().getSessioniErrateDetail().getTi_sessione_vers().getValue()
@@ -4995,7 +5137,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    getForm().getSessioniErrateDetail().getCd_registro_key_unita_doc().setEditMode();
 	    getForm().getSessioniErrateDetail().getAa_key_unita_doc().setEditMode();
 	    getForm().getSessioniErrateDetail().getCd_key_unita_doc().setEditMode();
-	} // Se la sessione errata \u00e0¨ di tipo AGGIUNGI_DOC posso inserire manualmente la chiave
+	} // Se la sessione errata \u00e0¨ di tipo AGGIUNGI_DOC posso inserire manualmente
+	  // la chiave
 	  // unit\u00e0 
 	  // documentaria e la chiave documento
 	else if (getForm().getSessioniErrateDetail().getTi_sessione_vers().getValue()
@@ -5054,7 +5197,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    getForm().getSessioniErrateDetail().getId_strut().setDecodeMap(new DecodeMap());
 	}
 	getForm().getSessioniErrateList().setStatus(Status.update);
-	// Imposto in sessione l'info sulla provenienza: mi servir\u00e0  in fase di conferma
+	// Imposto in sessione l'info sulla provenienza: mi servir\u00e0  in fase di
+	// conferma
 	// salvataggio o annullamento
 	getSession().setAttribute("provenienza", "SE");
 	forwardToPublisher(Application.Publisher.MONITORAGGIO_SESSIONI_ERRATE_DETAIL);
@@ -5067,11 +5211,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      */
     @Override
     public void updateVersamentiFallitiList() throws EMFError {
-	// Setto in edit mode i campi del flag versamento fallito verificato e non risolubile
+	// Setto in edit mode i campi del flag versamento fallito verificato e non
+	// risolubile
 	getForm().getVersamentiFallitiDetail().getFl_sessione_err_verif().setEditMode();
 	getForm().getVersamentiFallitiDetail().getFl_sessione_err_non_risolub().setEditMode();
 	getForm().getVersamentiFallitiList().setStatus(Status.update);
-	// Imposto in sessione l'info sula provenienza: mi servir\u00e0  in fase di conferma
+	// Imposto in sessione l'info sula provenienza: mi servir\u00e0  in fase di
+	// conferma
 	// salvataggio o annullamento
 	getSession().setAttribute("provenienza", "VFdaVFList");
 	forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_DETAIL);
@@ -5079,11 +5225,13 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
     @Override
     public void updateSessioniList() throws EMFError {
-	// Setto in edit mode i campi del flag versamento fallito verificato e non risolubile
+	// Setto in edit mode i campi del flag versamento fallito verificato e non
+	// risolubile
 	getForm().getVersamentiFallitiDetail().getFl_sessione_err_verif().setEditMode();
 	getForm().getVersamentiFallitiDetail().getFl_sessione_err_non_risolub().setEditMode();
 	getForm().getSessioniList().setStatus(Status.update);
-	// Imposto in sessione l'info sula provenienza: mi servir\u00e0  in fase di conferma
+	// Imposto in sessione l'info sula provenienza: mi servir\u00e0  in fase di
+	// conferma
 	// salvataggio o annullamento
 	getSession().setAttribute("provenienza", "VFdaSessioniList");
 	forwardToPublisher(Application.Publisher.MONITORAGGIO_VERS_FALLITI_DETAIL);
@@ -5285,7 +5433,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	List<BigDecimal> idAmbiente = getForm().getFiltriContenutoSacer().getId_ambiente().parse();
 	List<BigDecimal> idCategEnte = getForm().getFiltriContenutoSacer().getId_categ_ente()
 		.parse();
-	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI
+	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO,
+	// ALLORA MI
 	// PREOCCUPA TI TRATTARE
 	// IL FILTRO ENTE
 	if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
@@ -5295,7 +5444,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    DecodeMap mappaEnte = new DecodeMap();
 	    mappaEnte.populatedMap(enteTableBean, "id_ente", "nm_ente");
 	    getForm().getFiltriContenutoSacer().getId_ente().setDecodeMap(mappaEnte);
-	    // Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del
+	    // Setto i valori precedentemente settati, se ancora possibile dopo
+	    // l'applicazione del
 	    // nuovo filtro ambito
 	    // territoriale
 	    if (!enteTableBean.isEmpty()) {
@@ -5345,7 +5495,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		"cd_ambito_territ");
 	getForm().getFiltriContenutoSacer().getId_ambito_territ_livello_2()
 		.setDecodeMap(mappaAmbitoTerrit2Livello);
-	// Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del nuovo
+	// Setto i valori precedentemente settati, se ancora possibile dopo
+	// l'applicazione del nuovo
 	// filtro ambito
 	// territoriale
 	// GESTIONE 2° LIVELLO
@@ -5393,17 +5544,20 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	List<BigDecimal> idAmbitoTerrit = struttureEjb.getIdAmbitoTerritorialePerRicerca(
 		idAmbitoTerrit1Livello, idAmbitoTerrit2Livello, idAmbitoTerrit3Livello);
 
-	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI
+	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO,
+	// ALLORA MI
 	// PREOCCUPA TI TRATTARE
 	// IL FILTRO ENTE
 	if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
-	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
+	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale
+	    // scelto
 	    OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(
 		    getUser().getIdUtente(), idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
 	    DecodeMap mappaEnte = new DecodeMap();
 	    mappaEnte.populatedMap(enteTableBean, "id_ente", "nm_ente");
 	    getForm().getFiltriContenutoSacer().getId_ente().setDecodeMap(mappaEnte);
-	    // Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del
+	    // Setto i valori precedentemente settati, se ancora possibile dopo
+	    // l'applicazione del
 	    // nuovo filtro ambito
 	    // territoriale
 	    if (!enteTableBean.isEmpty()) {
@@ -5442,7 +5596,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     private void check3LivelloAmbitoTerritoriale(List<BigDecimal> idAmbitoTerrit2Livello,
 	    List<BigDecimal> idAmbitoTerrit3LivelloList) {
 
-	// Ricavo il TableBean relativo agli ambiti territoriali di terzo livello in base ai
+	// Ricavo il TableBean relativo agli ambiti territoriali di terzo livello in
+	// base ai
 	// selezionati di secondo
 	// livello
 	OrgAmbitoTerritTableBean ambito3LivelloTableBean = ambienteEjb
@@ -5452,7 +5607,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		"cd_ambito_territ");
 	getForm().getFiltriContenutoSacer().getId_ambito_territ_livello_3()
 		.setDecodeMap(mappaAmbitoTerrit3Livello);
-	// Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del nuovo
+	// Setto i valori precedentemente settati, se ancora possibile dopo
+	// l'applicazione del nuovo
 	// filtro ambito
 	// territoriale
 	if (!mappaAmbitoTerrit3Livello.isEmpty()) {
@@ -5498,17 +5654,20 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	List<BigDecimal> idAmbitoTerrit = struttureEjb.getIdAmbitoTerritorialePerRicerca(
 		idAmbitoTerrit1Livello, idAmbitoTerrit2Livello, idAmbitoTerrit3Livello);
 
-	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI
+	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO,
+	// ALLORA MI
 	// PREOCCUPA TI TRATTARE
 	// IL FILTRO ENTE
 	if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
-	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
+	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale
+	    // scelto
 	    OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(
 		    getUser().getIdUtente(), idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
 	    DecodeMap mappaEnte = new DecodeMap();
 	    mappaEnte.populatedMap(enteTableBean, "id_ente", "nm_ente");
 	    getForm().getFiltriContenutoSacer().getId_ente().setDecodeMap(mappaEnte);
-	    // Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del
+	    // Setto i valori precedentemente settati, se ancora possibile dopo
+	    // l'applicazione del
 	    // nuovo filtro ambito
 	    // territoriale
 	    if (!enteTableBean.isEmpty()) {
@@ -5555,17 +5714,20 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	List<BigDecimal> idAmbitoTerrit = struttureEjb.getIdAmbitoTerritorialePerRicerca(
 		idAmbitoTerrit1Livello, idAmbitoTerrit2Livello, idAmbitoTerrit3Livello);
 
-	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI
+	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO,
+	// ALLORA MI
 	// PREOCCUPA TI TRATTARE
 	// IL FILTRO ENTE
 	if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
-	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
+	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale
+	    // scelto
 	    OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(
 		    getUser().getIdUtente(), idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
 	    DecodeMap mappaEnte = new DecodeMap();
 	    mappaEnte.populatedMap(enteTableBean, "id_ente", "nm_ente");
 	    getForm().getFiltriContenutoSacer().getId_ente().setDecodeMap(mappaEnte);
-	    // Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del
+	    // Setto i valori precedentemente settati, se ancora possibile dopo
+	    // l'applicazione del
 	    // nuovo filtro ambito
 	    // territoriale
 	    if (!enteTableBean.isEmpty()) {
@@ -5611,17 +5773,20 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	List<BigDecimal> idCategEnte = getForm().getFiltriContenutoSacer().getId_categ_ente()
 		.parse();
 
-	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO, ALLORA MI
+	// SOLO SE ALMENO UNO DEI FILTRI CHE VINCOLANO IL FILTRO ENTE E' STATO POPOLATO,
+	// ALLORA MI
 	// PREOCCUPA TI TRATTARE
 	// IL FILTRO ENTE
 	if (!idAmbiente.isEmpty() || !idAmbitoTerrit.isEmpty() || !idCategEnte.isEmpty()) {
-	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale scelto
+	    // Ricavo il TableBean relativo agli enti dipendenti dall'ambito territoriale
+	    // scelto
 	    OrgEnteTableBean enteTableBean = ambienteEjb.getEntiAbilitatiAmbitoCateg(
 		    getUser().getIdUtente(), idAmbiente, idAmbitoTerrit, idCategEnte, Boolean.TRUE);
 	    DecodeMap mappaEnte = new DecodeMap();
 	    mappaEnte.populatedMap(enteTableBean, "id_ente", "nm_ente");
 	    getForm().getFiltriContenutoSacer().getId_ente().setDecodeMap(mappaEnte);
-	    // Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del
+	    // Setto i valori precedentemente settati, se ancora possibile dopo
+	    // l'applicazione del
 	    // nuovo filtro ambito
 	    // territoriale
 	    if (!enteTableBean.isEmpty()) {
@@ -5690,7 +5855,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	DecodeMap mappaStrut = new DecodeMap();
 	mappaStrut.populatedMap(strutTableBean, "id_strut", "nm_strut");
 	getForm().getFiltriContenutoSacer().getId_strut().setDecodeMap(mappaStrut);
-	// Setto i valori precedentemente settati, se ancora possibile dopo l'applicazione del nuovo
+	// Setto i valori precedentemente settati, se ancora possibile dopo
+	// l'applicazione del nuovo
 	// filtro ambito
 	// territoriale
 	if (!strutTableBean.isEmpty()) {
@@ -5713,7 +5879,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    throws EMFError {
 	campi.post(getRequest());
 
-	// Passaggio per riferimento del "campo"; le modifiche avranno effetto sui "Fields"
+	// Passaggio per riferimento del "campo"; le modifiche avranno effetto sui
+	// "Fields"
 	ComboBox<?> ambienteCombo = (ComboBox<?>) campi.getComponent("id_ambiente");
 	ComboBox<?> enteCombo = (ComboBox<?>) campi.getComponent("id_ente");
 	ComboBox<?> strutCombo = (ComboBox<?>) campi.getComponent("id_strut");
@@ -5764,7 +5931,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    throws EMFError {
 	campi.post(getRequest());
 
-	// Passaggio per riferimento del "campo"; le modifiche avranno effetto sui "Fields"
+	// Passaggio per riferimento del "campo"; le modifiche avranno effetto sui
+	// "Fields"
 	ComboBox<?> enteCombo = (ComboBox<?>) campi.getComponent("id_ente");
 	ComboBox<?> strutCombo = (ComboBox<?>) campi.getComponent("id_strut");
 	ComboBox<?> tipoUnitaDocCombo = (ComboBox<?>) campi.getComponent("id_tipo_unita_doc");
@@ -5803,7 +5971,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     public Fields<?> triggerStrutGenerico(Fields<?> campi) throws EMFError {
 	campi.post(getRequest());
 
-	// Passaggio per riferimento del "campo"; le modifiche avranno effetto sui "Fields"
+	// Passaggio per riferimento del "campo"; le modifiche avranno effetto sui
+	// "Fields"
 	ComboBox<?> strutCombo = (ComboBox<?>) campi.getComponent("id_strut");
 	ComboBox<?> tipoUnitaDocCombo = (ComboBox<?>) campi.getComponent("id_tipo_unita_doc");
 	ComboBox<?> tipoDocCombo = (ComboBox<?>) campi.getComponent("id_tipo_doc");
@@ -5828,14 +5997,12 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    tipoUnitaDocCombo.setDecodeMap(mappaUD);
 
 	    if (regUnitaDocCombo != null) {
-		regUnitaDocCombo.setDecodeMap(getMappaRegistro(
-			idStrut != null ? idStrut : getUser().getIdOrganizzazioneFoglia()));
+		regUnitaDocCombo.setDecodeMap(getMappaRegistro(idStrut));
 	    }
 	    if (tipoDocCombo != null) {
 		// Setto i valori della combo TIPO DOC ricavati dalla tabella DEC_TIPO_DOC
-		DecTipoDocTableBean tmpTableBeanTipoDoc = tipoDocumentoEjb.getDecTipoDocTableBean(
-			idStrut != null ? idStrut : getUser().getIdOrganizzazioneFoglia(), false,
-			false);
+		DecTipoDocTableBean tmpTableBeanTipoDoc = tipoDocumentoEjb
+			.getDecTipoDocTableBean(idStrut, false, false);
 		tipoDocCombo.setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanTipoDoc,
 			"id_tipo_doc", "nm_tipo_doc"));
 	    }
@@ -6323,7 +6490,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	// Valida i filtri per verificare quelli obbligatori
 	if (!getMessageBox().hasError()) {
 	    // La validazione non ha riportato errori.
-	    // Setto i filtri di chiavi unit\u00e0 documentaria impostando gli eventuali valori di
+	    // Setto i filtri di chiavi unit\u00e0 documentaria impostando gli eventuali
+	    // valori di
 	    // default
 	    if (chiavi != null && chiavi.length == 5) {
 		getForm().getFiltriVersamentiUlteriori().getAa_key_unita_doc_da()
@@ -6334,7 +6502,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			.setValue(chiavi[3] != null ? (String) chiavi[3] : null);
 		getForm().getFiltriVersamentiUlteriori().getCd_key_unita_doc_a()
 			.setValue(chiavi[4] != null ? (String) chiavi[4] : null);
-		// Se \u00e0¨ valorizzato qualche campo lascio aperta la section del Range di chiavi
+		// Se \u00e0¨ valorizzato qualche campo lascio aperta la section del Range di
+		// chiavi
 		// unit\u00e0
 		// documentaria
 		getForm().getFiltriVersamentiChiaveSection().setLoadOpened(true);
@@ -6385,7 +6554,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    // Valida i filtri per verificare quelli obbligatori
 	    if (!getMessageBox().hasError()) {
 		// La validazione non ha riportato errori.
-		// Setto i filtri di chiavi unit\u00e0 documentaria impostando gli eventuali valori
+		// Setto i filtri di chiavi unit\u00e0 documentaria impostando gli eventuali
+		// valori
 		// di default
 		if (chiavi != null && chiavi.length == 5) {
 		    getForm().getFiltriUdDocDerivantiDaVersFallitiUlteriori()
@@ -6757,7 +6927,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		getForm().getFiltriReplicaOrg().getId_ente().setDecodeMap(mappaEnte);
 	    }
 
-	    // Se la combo ente ha un solo valore presente, lo imposto e faccio controllo su di essa
+	    // Se la combo ente ha un solo valore presente, lo imposto e faccio controllo su
+	    // di essa
 	    if (tmpTableBeanEnte.size() == 1) {
 		if (sezione.equals(ActionEnums.SezioneMonitoraggio.RIEPILOGO_VERSAMENTI)) {
 		    getForm().getRiepilogoVersamenti().getId_ente()
@@ -6879,7 +7050,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 		getForm().getFiltriDocumentiAnnullati().getId_strut().setDecodeMap(mappaStrut);
 	    }
 
-	    // Se la combo struttura ha un solo valore presente, lo imposto e faccio controllo su di
+	    // Se la combo struttura ha un solo valore presente, lo imposto e faccio
+	    // controllo su di
 	    // essa
 	    if (tmpTableBeanStrut.size() == 1) {
 		if (sezione.equals(ActionEnums.SezioneMonitoraggio.RIEPILOGO_VERSAMENTI)) {
@@ -7219,7 +7391,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
      * @throws EMFError errore generico
      */
     public DecodeMap getMappaRegistro(BigDecimal idStrut) throws EMFError {
-	// Setto i valori della combo TIPO REGISTRO ricavati dalla tabella DEC_REGISTRO_UNITA_DOC
+	// Setto i valori della combo TIPO REGISTRO ricavati dalla tabella
+	// DEC_REGISTRO_UNITA_DOC
 	DecRegistroUnitaDocTableBean tmpTableBeanReg = registroEjb
 		.getRegistriUnitaDocAbilitati(getUser().getIdUtente(), idStrut);
 	DecodeMap mappaRegistro = new DecodeMap();
@@ -7375,7 +7548,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    String nmUserid = filtri.getNm_userid().parse();
 
 	    if (!getMessageBox().hasError()) {
-		// La validazione non ha riportato errori. Carico la tabella con i filtri impostati
+		// La validazione non ha riportato errori. Carico la tabella con i filtri
+		// impostati
 		getForm().getMonitSessioniRecupList()
 			.setTable(monitoraggioHelper.getSessioniRecupero(idAmbiente, idEnte,
 				idStrut, nmUserid, dateApertureValidate, chiavi,
@@ -7681,71 +7855,87 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     @Override
     public void ricercaDocAnnul() throws EMFError {
 	MonitoraggioForm.FiltriDocumentiAnnullati filtri = getForm().getFiltriDocumentiAnnullati();
-	// Valida i filtri per verificare quelli obbligatori
-	if (filtri.postAndValidate(getRequest(), getMessageBox())) {
-	    UnitaDocumentarieValidator validator = new UnitaDocumentarieValidator(getMessageBox());
+	// Esegue la post dei filtri compilati
+	filtri.post(getRequest());
 
-	    // Seconda validazione: controllo che il range di giorno versamento sia corretto e setto
-	    // gli eventuali
+	// Valida i filtri per verificare quelli obbligatori
+	if (filtri.validate(getMessageBox())) {
+	    // Validazione delle date di annullamento
+	    MonitoraggioValidator validator = new MonitoraggioValidator(getMessageBox());
+
+	    // Controllo che i range di giorno annullamento siano corretti e setto gli eventuali
 	    // valori di default
-	    Date[] dateValidate = validator.validaDate(filtri.getGiorno_vers_da().parse(),
+	    Date[] dateValidateAnnul = validator.validaDate(filtri.getGiorno_annul_da().parse(),
+		    filtri.getOre_annul_da().parse(), filtri.getMinuti_annul_da().parse(),
+		    filtri.getGiorno_annul_a().parse(), filtri.getOre_annul_a().parse(),
+		    filtri.getMinuti_annul_a().parse(),
+		    filtri.getGiorno_annul_da().getHtmlDescription(),
+		    filtri.getGiorno_annul_a().getHtmlDescription());
+	    SimpleDateFormat df = new SimpleDateFormat(Constants.DATE_FORMAT_TIMESTAMP_TYPE);
+	    // Le eventuali date riferite al giorno di annullamento vengono salvate nel filtro
+	    if (dateValidateAnnul != null) {
+		filtri.getGiorno_annul_da_validato().setValue(df.format(dateValidateAnnul[0]));
+		filtri.getGiorno_annul_a_validato().setValue(df.format(dateValidateAnnul[1]));
+	    }
+
+	    // Controllo che i range di giorno versamento siano corretti e setto gli eventuali
+	    // valori di default
+	    Date[] dateValidateVers = validator.validaDate(filtri.getGiorno_vers_da().parse(),
 		    filtri.getOre_vers_da().parse(), filtri.getMinuti_vers_da().parse(),
 		    filtri.getGiorno_vers_a().parse(), filtri.getOre_vers_a().parse(),
 		    filtri.getMinuti_vers_a().parse(),
 		    filtri.getGiorno_vers_da().getHtmlDescription(),
 		    filtri.getGiorno_vers_a().getHtmlDescription());
 
-	    if (!getMessageBox().hasError()) {
-		validator.controllaPresenzaAnno(filtri.getAa_key_unita_doc().parse(),
-			filtri.getAa_key_unita_doc_da().parse(),
-			filtri.getAa_key_unita_doc_a().parse());
+	    // Le eventuali date riferite al giorno di versamento vengono salvate nel filtro
+	    if (dateValidateVers != null) {
+		filtri.getGiorno_vers_da_validato().setValue(df.format(dateValidateVers[0]));
+		filtri.getGiorno_vers_a_validato().setValue(df.format(dateValidateVers[1]));
 	    }
 
-	    Object[] chiavi = null;
-	    if (!getMessageBox().hasError()) {
-		// Valida i campi di Range di chiavi unit\u00e0 documentaria
-		chiavi = validator.validaChiaviUnitaDoc(
-			filtri.getCd_registro_key_unita_doc().getValue(),
-			filtri.getAa_key_unita_doc().parse(), filtri.getCd_key_unita_doc().parse(),
-			filtri.getAa_key_unita_doc_da().parse(),
-			filtri.getAa_key_unita_doc_a().parse(),
-			filtri.getCd_key_unita_doc_da().parse(),
-			filtri.getCd_key_unita_doc_a().parse());
+	    // Controllo che almeno un criterio di ricerca sia stato inserito
+	    boolean almeno_un_criterio = false;
+
+	    if (filtri.getId_ambiente().parse() != null || filtri.getId_ente().parse() != null
+		    || filtri.getId_strut().parse() != null
+		    || filtri.getId_tipo_unita_doc().parse() != null
+		    || filtri.getCd_registro_key_unita_doc().parse() != null
+		    || filtri.getAa_key_unita_doc().parse() != null
+		    || filtri.getCd_key_unita_doc().parse() != null
+		    || filtri.getAa_key_unita_doc_da().parse() != null
+		    || filtri.getAa_key_unita_doc_a().parse() != null
+		    || filtri.getCd_key_unita_doc_da().parse() != null
+		    || filtri.getCd_key_unita_doc_a().parse() != null
+		    || filtri.getTi_vers_annul().parse() != null || dateValidateVers != null
+		    || dateValidateAnnul != null || filtri.getId_tipo_doc().parse() != null
+		    || filtri.getTi_stato_annul().parse() != null) {
+		almeno_un_criterio = true;
+	    }
+
+	    if (!almeno_un_criterio) {
+		getMessageBox().addError("Attenzione: inserire almeno un criterio di ricerca");
 	    }
 
 	    if (!getMessageBox().hasError()) {
-		// La validazione non ha riportato errori.
-		if (chiavi != null && chiavi.length == 5) {
-		    filtri.getAa_key_unita_doc_da().setValue(
-			    chiavi[1] != null ? ((BigDecimal) chiavi[1]).toString() : null);
-		    filtri.getAa_key_unita_doc_a().setValue(
-			    chiavi[2] != null ? ((BigDecimal) chiavi[2]).toString() : null);
-		    filtri.getCd_key_unita_doc_da()
-			    .setValue(chiavi[3] != null ? (String) chiavi[3] : null);
-		    filtri.getCd_key_unita_doc_a()
-			    .setValue(chiavi[4] != null ? (String) chiavi[4] : null);
-		}
-		// Le eventuali date riferite al giorno di versamento vengono salvate in sessione
-		if (dateValidate != null) {
-		    SimpleDateFormat df = new SimpleDateFormat(
-			    Constants.DATE_FORMAT_TIMESTAMP_TYPE);
-		    filtri.getGiorno_vers_da_validato().setValue(df.format(dateValidate[0]));
-		    filtri.getGiorno_vers_a_validato().setValue(df.format(dateValidate[1]));
-		}
-
-		// La validazione non ha riportato errori. Carico la tabella con i filtri impostati
 		String maxResultStandard = configurationHelper
 			.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.MAX_RESULT_STANDARD);
-		MonVLisUniDocDaAnnulTableBean monVLisDocTableBean = monitoraggioEjb
-			.getMonVLisUniDocDaAnnul(getUser().getIdUtente(), filtri,
-				Integer.parseInt(maxResultStandard));
-		getForm().getDocumentiAnnullatiList().setTable(monVLisDocTableBean);
-		getForm().getDocumentiAnnullatiList().getTable().setPageSize(10);
-		// Workaround in modo che la lista punti al primo record, non all'ultimo
-		getForm().getDocumentiAnnullatiList().getTable().first();
+
+		try {
+		    // Eseguo la ricerca vera e propria sulla lista documenti annullati
+		    MonVLisUniDocDaAnnulTableBean table = monitoraggioEjb.getMonVLisUniDocDaAnnul(
+			    getUser().getIdUtente(), filtri, Integer.parseInt(maxResultStandard));
+		    getForm().getDocumentiAnnullatiList().setTable(table);
+		    getForm().getDocumentiAnnullatiList().getTable().setPageSize(10);
+		    getForm().getDocumentiAnnullatiList().getTable().first();
+
+		} catch (Exception ex) {
+		    getMessageBox()
+			    .addError("Errore durante il recupero della lista documenti annullati");
+		    log.error("Errore durante il recupero della lista documenti annullati", ex);
+		}
 	    }
 	}
-	forwardToPublisher(getLastPublisher());
+	forwardToPublisher(Application.Publisher.MONITORAGGIO_DOC_ANNULLATI_LIST);
     }
 
     @Override
@@ -7908,7 +8098,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	List<BigDecimal> idCategTipoUnitaDoc = getForm().getFiltriContenutoSacer()
 		.getId_categ_tipo_unita_doc().parse();
 	if (!idCategTipoUnitaDoc.isEmpty()) {
-	    // Ricavo il TableBean relativo alle sottocategorie dipendenti dalla categoria scelta
+	    // Ricavo il TableBean relativo alle sottocategorie dipendenti dalla categoria
+	    // scelta
 	    DecCategTipoUnitaDocTableBean sottoCategTipoUnitaDocTableBean = tipoUnitaDocEjb
 		    .getDecCategTipoUnitaDocChildTableBean(idCategTipoUnitaDoc);
 	    DecodeMap mappaSottocagorie = new DecodeMap();
@@ -7957,7 +8148,9 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    filtri.getId_registro_unita_doc().setDecodeMap(mappaRegistro);
 	    filtri.getId_tipo_unita_doc().setDecodeMap(mappaTipoUD);
 	    filtri.getId_tipo_doc().setDecodeMap(mappaTipoDoc);
-	    /* Se ho una sola sottostruttura la setto gi\u00e0 impostata nella multiselect */
+	    /*
+	     * Se ho una sola sottostruttura la setto gi\u00e0 impostata nella multiselect
+	     */
 	    if (subStrutTableBean.size() == 1) {
 		filtri.getId_sub_strut().setValues(new String[] {
 			subStrutTableBean.getRow(0).getIdSubStrut().toString() });
@@ -8357,7 +8550,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     private static final String PROBLEMI_DELTA_FRASE1 = "Nell'intervallo considerato per la struttura ";
     private static final String PROBLEMI_DELTA_FRASE2 = " sono state trovate le seguenti differenze: ";
 
-    // @Secure(action = "detail/MonitoraggioForm#ConsistenzaSacerList/apriPopUpDelta")
+    // @Secure(action =
+    // "detail/MonitoraggioForm#ConsistenzaSacerList/apriPopUpDelta")
     public void apriListaDelta() throws EMFError {
 	getSession().setAttribute(APRI_DELTA, true);
 	Integer riga1 = Integer.parseInt(getRequest().getParameter("riga"));
@@ -8666,8 +8860,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 			CTTblWidth cellWidth = ctTcPr.addNewTcW();
 			cellWidth.setType(oldRow.getCell(i).getCTTc().getTcPr().getTcW().getType()); // sets
-												     // type
-												     // of
+			// type
+			// of
 			// width
 			// MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file
 			// MPP
@@ -8685,8 +8879,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			// copiarla uguale
 			if (oldRow.getCell(i).getCTTc().getTcPr().getGridSpan() != null) {
 			    ctTcPr.setGridSpan(oldRow.getCell(i).getCTTc().getTcPr().getGridSpan()); // sets
-												     // grid
-												     // span
+			    // grid
+			    // span
 			    // if any
 			}
 
@@ -9186,8 +9380,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 			CTTblWidth cellWidth = ctTcPr.addNewTcW();
 			cellWidth.setType(oldRow.getCell(i).getCTTc().getTcPr().getTcW().getType()); // sets
-												     // type
-												     // of
+			// type
+			// of
 			// width
 			// MAC#31701 - Risoluzione errore riscontrato nella verifica formato di file
 			// MPP
@@ -9205,8 +9399,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 			// copiarla uguale
 			if (oldRow.getCell(i).getCTTc().getTcPr().getGridSpan() != null) {
 			    ctTcPr.setGridSpan(oldRow.getCell(i).getCTTc().getTcPr().getGridSpan()); // sets
-												     // grid
-												     // span
+			    // grid
+			    // span
 			    // if any
 			}
 
@@ -9542,7 +9736,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
     }
 
     private void gestisciStatoJobNuovo(StatoJob statoJob) {
-	// se non è ancora passato un minuto da quando è stato premuto un pulsante non posso fare
+	// se non è ancora passato un minuto da quando è stato premuto un pulsante non
+	// posso fare
 	// nulla
 	boolean operazioneInCorso = jbossTimerEjb.isEsecuzioneInCorso(statoJob.getNomeJob());
 
@@ -9581,7 +9776,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	}
 
 	boolean flagHidden = nextActivation == null || dataAccurata;
-	// se la data c'è ma non è accurata non visualizzare la "data prossima attivazione"
+	// se la data c'è ma non è accurata non visualizzare la "data prossima
+	// attivazione"
 	statoJob.getDataProssimaAttivazione().setHidden(!flagHidden);
 
 	if (statoJob.getDataAttivazione() != null) {
@@ -9651,7 +9847,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	getMessageBox().setViewMode(ViewMode.plain);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Classe che mappa lo stato dei job">
+    // <editor-fold defaultstate="collapsed" desc="Classe che mappa lo stato dei
+    // job">
     /**
      * Astrazione dei componenti della pagina Schedulazioni Job
      *
@@ -9773,7 +9970,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 	    getMessageBox().addError(
 		    "Errore inatteso nella preparazione del download riguardante i filtri di ricerca");
 	}
-	// Li risetto perch\u00e0¨ se torno indietro in "Riepilogo Versamenti" devo avere impostata
+	// Li risetto perch\u00e0¨ se torno indietro in "Riepilogo Versamenti" devo
+	// avere impostata
 	// la ricerca con
 	// questi ultimi
 	getSession().setAttribute("filtriListaVersFallitiDistintiDoc",
@@ -9781,7 +9979,8 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 	if (filtri.validate(getMessageBox())) {
 
-	    // Effettuo la ricerca per la visualizzazione oppure per il download dei contenuti
+	    // Effettuo la ricerca per la visualizzazione oppure per il download dei
+	    // contenuti
 	    // Setto la lista dei documenti non versati
 	    if (filtriListaVersFallitiDistintiDoc.getTipoLista().equals("UNITA_DOC")) {
 		MonVLisUdNonVersIamTableBean tb = monitoraggioHelper
@@ -9963,6 +10162,552 @@ public class MonitoraggioAction extends MonitoraggioAbstractAction {
 
 	// redirectToAjax(getForm().getFiltriSessioniErrateFalliteEliminate().asJSON());
 	return filtri.asJSON();
+    }
+
+    /**
+     * Metodo di inizializzazione form di Monitoraggio Struttura
+     *
+     * @throws EMFError errore generico
+     */
+    @Secure(action = "Menu.Monitoraggio.MonitoraggioStruttura")
+    public void monitoraggioStruttura() throws EMFError {
+	getUser().getMenu().reset();
+	getUser().getMenu().select("Menu.Monitoraggio.MonitoraggioStruttura");
+
+	// Resetto tutti i campi di ricerca
+	getForm().getMonitoraggioStruttura().reset();
+	getSession().removeAttribute(WebConstants.PARAMETER_SESSION_GET_CNT_MON_STRUT);
+
+	/* Inizializzo il campo di ricerca ambiente, l'unico obbligatorio */
+	OrgAmbienteTableBean tmpTableBeanAmbiente = null;
+	try {
+	    tmpTableBeanAmbiente = ambienteEjb.getAmbientiAbilitati(getUser().getIdUtente());
+	} catch (Exception ex) {
+	    log.error("Errore nel recupero ambiente", ex);
+	    getMessageBox().addError(ERRORE_RECUPERO_AMBIENTE);
+	}
+
+	// Ricavo id struttura, ente ed ambiente attuali
+	BigDecimal idStruttura = getUser().getIdOrganizzazioneFoglia();
+	BigDecimal idEnte = monitSintEjb.getEnte(idStruttura);
+	BigDecimal idAmbiente = monitSintEjb.getAmbiente(idEnte);
+
+	// Ricavo i valori della combo ENTE
+	OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(
+		getUser().getIdUtente(), idAmbiente.longValue(), Boolean.TRUE);
+
+	// Ricavo i valori della combo STRUTTURA
+	OrgStrutTableBean tmpTableBeanStruttura = struttureEjb
+		.getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
+
+	getForm().getMonitoraggioStruttura().getId_ambiente().setDecodeMap(
+		DecodeMap.Factory.newInstance(tmpTableBeanAmbiente, "id_ambiente", "nm_ambiente"));
+
+	if (tmpTableBeanAmbiente.size() == 1) {
+	    getForm().getMonitoraggioStruttura().getId_ambiente()
+		    .setValue(tmpTableBeanAmbiente.getRow(0).getIdAmbiente().toString());
+	}
+
+	getForm().getMonitoraggioStruttura().getId_ente().setDecodeMap(
+		DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
+	getForm().getMonitoraggioStruttura().getId_strut().setDecodeMap(
+		DecodeMap.Factory.newInstance(tmpTableBeanStruttura, "id_strut", "nm_strut"));
+
+	getForm().getMonitoraggioStruttura().getId_ambiente().setValue(idAmbiente.toString());
+	getForm().getMonitoraggioStruttura().getId_ente().setValue(idEnte.toString());
+	getForm().getMonitoraggioStruttura().getId_strut().setValue(idStruttura.toString());
+
+	// Imposto le combo in editMode
+	getForm().getMonitoraggioStruttura().setEditMode();
+
+	// Azzero i campi delle tabelle
+	getForm().getRiepilogoVersamentiMonitoraggioStruttura().clear();
+	getForm().getRiepilogoVersamentiFallitiMonitoraggioStruttura().clear();
+	getForm().getRiepilogoAnnullamentiMonitoraggioStruttura().clear();
+
+	calcolaRiepilogoMonitoraggioStruttura(idAmbiente, idEnte, idStruttura);
+
+	// Eseguo forward alla stessa pagina
+	forwardToPublisher(Application.Publisher.MONITORAGGIO_STRUTTURA);
+    }
+
+    @Override
+    public void ricercaMonitoraggioStrutturaButton() throws EMFError {
+	if (getForm().getMonitoraggioStruttura().postAndValidate(getRequest(), getMessageBox())) {
+	    BigDecimal idAmbiente = getForm().getMonitoraggioStruttura().getId_ambiente().parse();
+	    BigDecimal idEnte = getForm().getMonitoraggioStruttura().getId_ente().parse();
+	    BigDecimal idStruttura = getForm().getMonitoraggioStruttura().getId_strut().parse();
+
+	    calcolaRiepilogoMonitoraggioStruttura(idAmbiente, idEnte, idStruttura);
+	}
+	forwardToPublisher(getLastPublisher());
+    }
+
+    private void calcolaRiepilogoMonitoraggioStruttura(BigDecimal idAmbiente, BigDecimal idEnte,
+	    BigDecimal idStruttura) throws EMFError {
+
+	// Azzero i campi delle tabelle
+	getForm().getRiepilogoVersamentiMonitoraggioStruttura().clear();
+	getForm().getRiepilogoVersamentiFallitiMonitoraggioStruttura().clear();
+	getForm().getRiepilogoAnnullamentiMonitoraggioStruttura().clear();
+
+	try {
+	    LinkedHashMap<String, BaseRowInterface> formMap = monitoraggioEjb
+		    .ricercaMonitoraggioStruttura(getUser().getIdUtente(), idAmbiente, idEnte,
+			    idStruttura);
+
+	    // Popolo le tabelle con i dati calcolati
+	    getForm().getRiepilogoVersamentiMonitoraggioStruttura()
+		    .copyFromBean(formMap.get("RiepilogoVersamentiMonitoraggioStruttura"));
+	    getForm().getRiepilogoVersamentiFallitiMonitoraggioStruttura()
+		    .copyFromBean(formMap.get("RiepilogoVersamentiFallitiMonitoraggioStruttura"));
+	    getForm().getRiepilogoAnnullamentiMonitoraggioStruttura()
+		    .copyFromBean(formMap.get("RiepilogoAnnullamentiMonitoraggioStruttura"));
+
+	} catch (Exception e) {
+	    log.error("Errore nel calcolo del riepilogo monitoraggio struttura", e);
+	    getMessageBox().addError("Errore nel calcolo del riepilogo monitoraggio struttura");
+	}
+    }
+
+    @Override
+    public JSONObject triggerMonitoraggioStrutturaId_ambienteOnTrigger() throws EMFError {
+	getForm().getMonitoraggioStruttura().post(getRequest());
+	BigDecimal idAmbiente = getForm().getMonitoraggioStruttura().getId_ambiente().parse();
+
+	if (idAmbiente != null) {
+	    OrgEnteTableBean tmpTableBeanEnte = ambienteEjb.getEntiAbilitatiNoTemplate(
+		    getUser().getIdUtente(), idAmbiente.longValue(), Boolean.TRUE);
+	    getForm().getMonitoraggioStruttura().getId_ente().setDecodeMap(
+		    DecodeMap.Factory.newInstance(tmpTableBeanEnte, "id_ente", "nm_ente"));
+
+	    if (tmpTableBeanEnte.size() == 1) {
+		getForm().getMonitoraggioStruttura().getId_ente()
+			.setValue(tmpTableBeanEnte.getRow(0).getIdEnte().toString());
+
+		// Trigger automatico per la struttura
+		OrgStrutTableBean tmpTableBeanStruttura = struttureEjb.getOrgStrutTableBean(
+			getUser().getIdUtente(), tmpTableBeanEnte.getRow(0).getIdEnte(),
+			Boolean.TRUE);
+		getForm().getMonitoraggioStruttura().getId_strut().setDecodeMap(DecodeMap.Factory
+			.newInstance(tmpTableBeanStruttura, "id_strut", "nm_strut"));
+
+		if (tmpTableBeanStruttura.size() == 1) {
+		    getForm().getMonitoraggioStruttura().getId_strut()
+			    .setValue(tmpTableBeanStruttura.getRow(0).getIdStrut().toString());
+		}
+	    } else {
+		getForm().getMonitoraggioStruttura().getId_strut().setDecodeMap(new DecodeMap());
+	    }
+	} else {
+	    getForm().getMonitoraggioStruttura().getId_ente().setDecodeMap(new DecodeMap());
+	    getForm().getMonitoraggioStruttura().getId_strut().setDecodeMap(new DecodeMap());
+	}
+
+	return getForm().getMonitoraggioStruttura().asJSON();
+    }
+
+    @Override
+    public JSONObject triggerMonitoraggioStrutturaId_enteOnTrigger() throws EMFError {
+	getForm().getMonitoraggioStruttura().post(getRequest());
+	BigDecimal idEnte = getForm().getMonitoraggioStruttura().getId_ente().parse();
+
+	if (idEnte != null) {
+	    OrgStrutTableBean tmpTableBeanStruttura = struttureEjb
+		    .getOrgStrutTableBean(getUser().getIdUtente(), idEnte, Boolean.TRUE);
+	    getForm().getMonitoraggioStruttura().getId_strut().setDecodeMap(
+		    DecodeMap.Factory.newInstance(tmpTableBeanStruttura, "id_strut", "nm_strut"));
+
+	    if (tmpTableBeanStruttura.size() == 1) {
+		getForm().getMonitoraggioStruttura().getId_strut()
+			.setValue(tmpTableBeanStruttura.getRow(0).getIdStrut().toString());
+	    }
+	} else {
+	    getForm().getMonitoraggioStruttura().getId_strut().setDecodeMap(new DecodeMap());
+	}
+
+	return getForm().getMonitoraggioStruttura().asJSON();
+    }
+
+    @Override
+    public JSONObject triggerMonitoraggioStrutturaId_strutOnTrigger() throws EMFError {
+	getForm().getMonitoraggioStruttura().post(getRequest());
+	return getForm().getMonitoraggioStruttura().asJSON();
+    }
+
+    /**
+     * Metodo che esegue una redirectToAction a Monitoraggio - lista documenti in base ai parametri
+     * selezionati
+     *
+     * @throws EMFError errore generico
+     */
+    public void listaDocumenti() throws EMFError {
+	MonitoraggioForm form = new MonitoraggioForm();
+	form.getRiepilogoVersamenti().getId_ambiente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ambiente().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_ambiente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ambiente().getValue());
+
+	form.getRiepilogoVersamenti().getId_ente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ente().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_ente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ente().getValue());
+
+	form.getRiepilogoVersamenti().getId_strut()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_strut().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_strut()
+		.setValue(getForm().getMonitoraggioStruttura().getId_strut().getValue());
+
+	if (getForm().getMonitoraggioStruttura().getId_strut().getValue().equals("") == false) {
+	    DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(
+		    getUser().getIdUtente(),
+		    new BigDecimal(getForm().getMonitoraggioStruttura().getId_strut().getValue()));
+	    form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(DecodeMap.Factory
+		    .newInstance(tmpTableBeanTUD, "id_tipo_unita_doc", "nm_tipo_unita_doc"));
+	} else {
+	    getForm().getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(new DecodeMap());
+	}
+
+	String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
+	String tiCreazione = getRequest().getParameter(WebConstants.PARAMETER_CREAZIONE);
+	String tipo = getRequest().getParameter(WebConstants.PARAMETER_TIPO);
+	StringBuilder additionalParams = new StringBuilder();
+
+	if (StringUtils.isNotBlank(stato) && StringUtils.isNotBlank(tiCreazione)
+		&& StringUtils.isNotBlank(tipo)) {
+	    if (StringUtils.isNotBlank(stato)) {
+		switch (stato) {
+		case WebConstants.PARAMETER_STATO_TUTTI:
+		    break;
+		default:
+		    // Verifico che lo stato sia definito nell'enum
+		    VolumeEnums.DocStatusEnum status = VolumeEnums.DocStatusEnum.valueOf(stato);
+		    additionalParams.append("&statoDoc=").append(status.name());
+		    break;
+		}
+	    }
+
+	    if (StringUtils.isNotBlank(tiCreazione)) {
+		additionalParams.append("&tiCreazione=").append(tiCreazione);
+	    }
+
+	    if (StringUtils.isNotBlank(tipo)) {
+		switch (tipo) {
+		case WebConstants.PARAMETER_TIPO_UD:
+		    additionalParams.append("&tipoDoc=").append("1");
+		    break;
+		case WebConstants.PARAMETER_TIPO_DOC:
+		    additionalParams.append("&tipoDoc=").append("0");
+		    break;
+		default:
+		    throw new IllegalArgumentException(
+			    "Parametro inaspettato nella sezione di monitoraggio riepilogo versamenti sintetico");
+		}
+	    }
+	    // Monitoraggio.html?operation=monitoraggioListe&tipoDoc=1&periodo=OGGI&pagina=1
+	    // Prepara la form per eseguire la redirectToAction a Monitoraggio
+	    redirectToAction(Application.Actions.MONITORAGGIO,
+		    "?operation=monitoraggioListe&pagina=1" + additionalParams.toString(), form);
+	}
+    }
+
+    public void listaAggMeta() throws EMFError {
+	MonitoraggioAggMetaForm form = new MonitoraggioAggMetaForm();
+	form.getFiltriRicercaMonitoraggioAggMeta().reset();
+	form.getFiltriRicercaMonitoraggioAggMeta().setEditMode();
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ambiente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ambiente().getDecodeMap());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ambiente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ambiente().getValue());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ente().getDecodeMap());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ente().getValue());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_strut()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_strut().getDecodeMap());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_strut()
+		.setValue(getForm().getMonitoraggioStruttura().getId_strut().getValue());
+
+	if (getForm().getMonitoraggioStruttura().getId_strut().getValue().equals("") == false) {
+	    // Preparo la combo "Tipo Unita' Documentaria"
+	    DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(
+		    getUser().getIdUtente(),
+		    new BigDecimal(getForm().getMonitoraggioStruttura().getId_strut().getValue()));
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_unita_doc()
+		    .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanTUD,
+			    "id_tipo_unita_doc", "nm_tipo_unita_doc"));
+	    // Preparo la combo "Registro"
+	    DecRegistroUnitaDocTableBean registroUnitaDocTableBean = registroEjb
+		    .getRegistriUnitaDocAbilitati(getUser().getIdUtente(), new BigDecimal(
+			    getForm().getMonitoraggioStruttura().getId_strut().getValue()));
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_registro_unita_doc()
+		    .setDecodeMap(DecodeMap.Factory.newInstance(registroUnitaDocTableBean,
+			    "id_registro_unita_doc", "cd_registro_unita_doc"));
+	    // Preparo la combo "Tipo Doc"
+	    DecTipoDocTableBean tipoDocTableBean = tipoDocumentoEjb.getDecTipoDocTableBean(
+		    new BigDecimal(getForm().getMonitoraggioStruttura().getId_strut().getValue()),
+		    true, false);
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_doc().setDecodeMap(
+		    DecodeMap.Factory.newInstance(tipoDocTableBean, "id_tipo_doc", "nm_tipo_doc"));
+	} else {
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_unita_doc()
+		    .setDecodeMap(new DecodeMap());
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_registro_unita_doc()
+		    .setDecodeMap(new DecodeMap());
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_doc()
+		    .setDecodeMap(new DecodeMap());
+	}
+
+	redirectToAction(Application.Actions.MONITORAGGIO_AGG_META,
+		"?operation=listaAggMeta&ti_creazione="
+			+ getRequest().getParameter(PAR_TI_CREAZIONE) + "&ti_stato=TOTALE",
+		form);
+    }
+
+    public void listaFascicoliVersati() throws EMFError {
+	MonitoraggioFascicoliForm form = new MonitoraggioFascicoliForm();
+	form.getRiepilogoVersamentiFascicoli().reset();
+	form.getRiepilogoVersamentiFascicoli().getId_ambiente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ambiente().getDecodeMap());
+	form.getRiepilogoVersamentiFascicoli().getId_ambiente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ambiente().getValue());
+	form.getRiepilogoVersamentiFascicoli().getId_ente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ente().getDecodeMap());
+	form.getRiepilogoVersamentiFascicoli().getId_ente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ente().getValue());
+	form.getRiepilogoVersamentiFascicoli().getId_strut()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_strut().getDecodeMap());
+	form.getRiepilogoVersamentiFascicoli().getId_strut()
+		.setValue(getForm().getMonitoraggioStruttura().getId_strut().getValue());
+
+	if (getForm().getMonitoraggioStruttura().getId_strut().getValue().equals("") == false) {
+	    DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb
+		    .getTipiFascicoloAbilitati(getUser().getIdUtente(),
+			    new BigDecimal(
+				    getForm().getMonitoraggioStruttura().getId_strut().getValue()),
+			    false);
+	    form.getRiepilogoVersamentiFascicoli().getId_tipo_fascicolo()
+		    .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanFascicolo,
+			    "id_tipo_fascicolo", "nm_tipo_fascicolo"));
+	} else {
+	    form.getRiepilogoVersamentiFascicoli().getId_tipo_fascicolo()
+		    .setDecodeMap(new DecodeMap());
+	}
+
+	redirectToAction(Application.Actions.MONITORAGGIO_FASCICOLI,
+		"?operation=listaFascicoliVersati&ti_creazione="
+			+ getRequest().getParameter(PAR_TI_CREAZIONE) + "&ti_stato=TOTALE",
+		form);
+    }
+
+    public void listaUnitaDocAggMetaFalliti() throws EMFError {
+	MonitoraggioAggMetaForm form = new MonitoraggioAggMetaForm();
+	form.getFiltriRicercaMonitoraggioAggMeta().reset();
+	form.getFiltriRicercaMonitoraggioAggMeta().setEditMode();
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ambiente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ambiente().getDecodeMap());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ambiente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ambiente().getValue());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ente().getDecodeMap());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_ente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ente().getValue());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_strut()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_strut().getDecodeMap());
+	form.getFiltriRicercaMonitoraggioAggMeta().getId_strut()
+		.setValue(getForm().getMonitoraggioStruttura().getId_strut().getValue());
+
+	if (getForm().getMonitoraggioStruttura().getId_strut().getValue().equals("") == false) {
+	    // Preparo la combo "Tipo Unita' Documentaria"
+	    DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(
+		    getUser().getIdUtente(),
+		    new BigDecimal(getForm().getMonitoraggioStruttura().getId_strut().getValue()));
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_unita_doc()
+		    .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanTUD,
+			    "id_tipo_unita_doc", "nm_tipo_unita_doc"));
+	    // Preparo la combo "Registro"
+	    DecRegistroUnitaDocTableBean registroUnitaDocTableBean = registroEjb
+		    .getRegistriUnitaDocAbilitati(getUser().getIdUtente(), new BigDecimal(
+			    getForm().getMonitoraggioStruttura().getId_strut().getValue()));
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_registro_unita_doc()
+		    .setDecodeMap(DecodeMap.Factory.newInstance(registroUnitaDocTableBean,
+			    "id_registro_unita_doc", "cd_registro_unita_doc"));
+	    // Preparo la combo "Tipo Doc"
+	    DecTipoDocTableBean tipoDocTableBean = tipoDocumentoEjb.getDecTipoDocTableBean(
+		    new BigDecimal(getForm().getMonitoraggioStruttura().getId_strut().getValue()),
+		    true, false);
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_doc().setDecodeMap(
+		    DecodeMap.Factory.newInstance(tipoDocTableBean, "id_tipo_doc", "nm_tipo_doc"));
+	} else {
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_unita_doc()
+		    .setDecodeMap(new DecodeMap());
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_registro_unita_doc()
+		    .setDecodeMap(new DecodeMap());
+	    form.getFiltriRicercaMonitoraggioAggMeta().getId_tipo_doc()
+		    .setDecodeMap(new DecodeMap());
+	}
+
+	String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
+
+	redirectToAction(Application.Actions.MONITORAGGIO_AGG_META,
+		"?operation=listaUnitaDocAggMetaFalliti&ti_stato=" + stato, form);
+    }
+
+    public void listaFascicoliVersamentiFalliti() throws EMFError {
+	MonitoraggioFascicoliForm form = new MonitoraggioFascicoliForm();
+	form.getRiepilogoVersamentiFascicoli().reset();
+	form.getRiepilogoVersamentiFascicoli().getId_ambiente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ambiente().getDecodeMap());
+	form.getRiepilogoVersamentiFascicoli().getId_ambiente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ambiente().getValue());
+	form.getRiepilogoVersamentiFascicoli().getId_ente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ente().getDecodeMap());
+	form.getRiepilogoVersamentiFascicoli().getId_ente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ente().getValue());
+	form.getRiepilogoVersamentiFascicoli().getId_strut()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_strut().getDecodeMap());
+	form.getRiepilogoVersamentiFascicoli().getId_strut()
+		.setValue(getForm().getMonitoraggioStruttura().getId_strut().getValue());
+
+	if (getForm().getMonitoraggioStruttura().getId_strut().getValue().equals("") == false) {
+	    DecTipoFascicoloTableBean tmpTableBeanFascicolo = tipoFascicoloEjb
+		    .getTipiFascicoloAbilitati(getUser().getIdUtente(),
+			    new BigDecimal(
+				    getForm().getMonitoraggioStruttura().getId_strut().getValue()),
+			    false);
+	    form.getRiepilogoVersamentiFascicoli().getId_tipo_fascicolo()
+		    .setDecodeMap(DecodeMap.Factory.newInstance(tmpTableBeanFascicolo,
+			    "id_tipo_fascicolo", "nm_tipo_fascicolo"));
+	} else {
+	    form.getRiepilogoVersamentiFascicoli().getId_tipo_fascicolo()
+		    .setDecodeMap(new DecodeMap());
+	}
+
+	String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
+
+	redirectToAction(Application.Actions.MONITORAGGIO_FASCICOLI,
+		"?operation=listaFascicoliVersamentiFalliti&ti_creazione=TOTALE&ti_stato=" + stato,
+		form);
+    }
+
+    public void listaDocAnnullati() throws EMFError {
+	MonitoraggioForm form = new MonitoraggioForm();
+	form.getRiepilogoVersamenti().getId_ambiente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ambiente().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_ambiente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ambiente().getValue());
+
+	form.getRiepilogoVersamenti().getId_ente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ente().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_ente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ente().getValue());
+
+	form.getRiepilogoVersamenti().getId_strut()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_strut().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_strut()
+		.setValue(getForm().getMonitoraggioStruttura().getId_strut().getValue());
+
+	if (getForm().getMonitoraggioStruttura().getId_strut().getValue().equals("") == false) {
+	    DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(
+		    getUser().getIdUtente(),
+		    new BigDecimal(getForm().getMonitoraggioStruttura().getId_strut().getValue()));
+	    form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(DecodeMap.Factory
+		    .newInstance(tmpTableBeanTUD, "id_tipo_unita_doc", "nm_tipo_unita_doc"));
+	} else {
+	    form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(new DecodeMap());
+	}
+
+	String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
+	String tipo = getRequest().getParameter(WebConstants.PARAMETER_TIPO);
+	String tiCreazione = getRequest().getParameter("ti_creazione");
+	StringBuilder additionalParams = new StringBuilder();
+
+	if (StringUtils.isNotBlank(stato) && StringUtils.isNotBlank(tipo)) {
+	    switch (stato) {
+	    case WebConstants.PARAMETER_STATO_TUTTI:
+		break;
+	    default:
+		// Verifico che lo stato sia definito nell'enum
+		VolumeEnums.MonitAnnulStatusEnum status = VolumeEnums.MonitAnnulStatusEnum
+			.valueOf(stato);
+		additionalParams.append("&tipoStato=" + status.name());
+		break;
+	    }
+
+	    VolumeEnums.TipoVersAnnul tipoVers = VolumeEnums.TipoVersAnnul.valueOf(tipo);
+	    additionalParams.append("&tipoVers=" + tipoVers.name())
+		    .append("&ti_creazione=" + tiCreazione);
+	    // Monitoraggio.html?operation=monitoraggioListe&pagina=4
+	    // Prepara la form per eseguire la redirectToAction a Monitoraggio
+	    redirectToAction(Application.Actions.MONITORAGGIO,
+		    "?operation=monitoraggioListe&pagina=4" + additionalParams.toString(), form);
+	}
+    }
+
+    public void listaDocDaVersFalliti() throws EMFError {
+	MonitoraggioForm form = new MonitoraggioForm();
+	form.getFiltriDocumenti().setEditMode();
+	form.getRiepilogoVersamenti().getId_ambiente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ambiente().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_ambiente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ambiente().getValue());
+	form.getRiepilogoVersamenti().getId_ente()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_ente().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_ente()
+		.setValue(getForm().getMonitoraggioStruttura().getId_ente().getValue());
+
+	form.getRiepilogoVersamenti().getId_strut()
+		.setDecodeMap(getForm().getMonitoraggioStruttura().getId_strut().getDecodeMap());
+	form.getRiepilogoVersamenti().getId_strut()
+		.setValue(getForm().getMonitoraggioStruttura().getId_strut().getValue());
+
+	if (getForm().getMonitoraggioStruttura().getId_strut().getValue().equals("") == false) {
+	    DecTipoUnitaDocTableBean tmpTableBeanTUD = tipoUnitaDocEjb.getTipiUnitaDocAbilitati(
+		    getUser().getIdUtente(),
+		    new BigDecimal(getForm().getMonitoraggioStruttura().getId_strut().getValue()));
+	    form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(DecodeMap.Factory
+		    .newInstance(tmpTableBeanTUD, "id_tipo_unita_doc", "nm_tipo_unita_doc"));
+	} else {
+	    form.getRiepilogoVersamenti().getId_tipo_unita_doc().setDecodeMap(new DecodeMap());
+	}
+
+	String stato = getRequest().getParameter(WebConstants.PARAMETER_STATO);
+	String tipo = getRequest().getParameter(WebConstants.PARAMETER_TIPO);
+	StringBuilder additionalParams = new StringBuilder();
+
+	if (StringUtils.isNotBlank(stato) && StringUtils.isNotBlank(tipo)) {
+	    switch (stato) {
+	    case WebConstants.PARAMETER_STATO_TUTTI:
+		break;
+	    default:
+		// Verifico che lo stato sia definito nell'enum
+		VolumeEnums.VersStatusEnum status = VolumeEnums.VersStatusEnum.valueOf(stato);
+		switch (status) {
+		case RISOLTO:
+		    throw new IllegalArgumentException(
+			    "Parametro inaspettato nella sezione di monitoraggio riepilogo versamenti sintetico");
+		case NO_VERIF:
+		    additionalParams.append("&flVerificato=0");
+		    break;
+		case VERIF:
+		    additionalParams.append("&flVerificato=1&flNonRisolub=0");
+		    break;
+		case NO_RISOLUB:
+		    additionalParams.append("&flVerificato=1&flNonRisolub=1");
+		    break;
+		default:
+		    throw new IllegalArgumentException(
+			    "Parametro inaspettato nella sezione di monitoraggio riepilogo versamenti sintetico");
+		}
+		break;
+	    }
+
+	    additionalParams.append("&tipoLista=" + tipo);
+	    // Monitoraggio.html?operation=monitoraggioListe&pagina=3
+	    // Prepara la form per eseguire la redirectToAction a Monitoraggio
+	    redirectToAction(Application.Actions.MONITORAGGIO,
+		    "?operation=monitoraggioListe&pagina=3" + additionalParams.toString(), form);
+	}
     }
 
 }

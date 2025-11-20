@@ -13,27 +13,8 @@
 
 package it.eng.parer.firma.crypto.sign;
 
-import java.util.Date;
-import java.util.concurrent.Future;
-
-import javax.annotation.Resource;
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
-import javax.ejb.LocalBean;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import it.eng.hsm.AuthenticationException;
-import it.eng.hsm.ClientHSM;
-import it.eng.hsm.HSM;
+import it.eng.hsm.*;
 import it.eng.hsm.HSM.AMBIENTE_HSM;
-import it.eng.hsm.HSMException;
-import it.eng.hsm.OTPException;
-import it.eng.hsm.UserBlockedException;
 import it.eng.hsm.beans.HSMSignatureSession;
 import it.eng.hsm.beans.HSMUser;
 import it.eng.parer.common.signature.Signature;
@@ -41,13 +22,15 @@ import it.eng.parer.common.signature.SignatureSession.CdErr;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.HsmSessioneFirma;
 import it.eng.parer.entity.constraint.HsmSessioneFirma.TiSessioneFirma;
-import it.eng.parer.firma.crypto.ejb.ElencoFascSignatureSessionEjb;
-import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipFascSignatureSessionEjb;
-import it.eng.parer.firma.crypto.ejb.ElencoIndiciAipSignatureSessionEjb;
-import it.eng.parer.firma.crypto.ejb.ElencoSignatureSessionEjb;
-import it.eng.parer.firma.crypto.ejb.SerieSignatureSessionEjb;
-import it.eng.parer.firma.crypto.ejb.SignatureSessionEjb;
+import it.eng.parer.firma.crypto.ejb.*;
 import it.eng.parer.web.helper.ConfigurationHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import javax.ejb.*;
+import java.util.Date;
+import java.util.concurrent.Future;
 
 /**
  *
@@ -346,17 +329,21 @@ public class SignerHsmEjb {
 
 	if (request != null) {
 	    SignatureSessionEjb ejb = getSignatureEjb(request.getType());
-
-	    try {
-		if (!ejb.hasUserActiveSessions(request.getIdUtente())) {
-		    HsmSessioneFirma sessione = ejb.startSessioneFirma(request);
-		    result = context.getBusinessObject(SignerHsmEjb.class).signXades(sessione,
-			    request.getUserHSM());
-		} else {
-		    result = new AsyncResult<>(SigningResponse.ACTIVE_SESSION_YET);
+	    if (ejb != null) {
+		try {
+		    if (!ejb.hasUserActiveSessions(request.getIdUtente())) {
+			HsmSessioneFirma sessione = ejb.startSessioneFirma(request);
+			result = context.getBusinessObject(SignerHsmEjb.class).signXades(sessione,
+				request.getUserHSM());
+		    } else {
+			result = new AsyncResult<>(SigningResponse.ACTIVE_SESSION_YET);
+		    }
+		} catch (NullPointerException e) {
+		    logger.error("Errore imprevisto durante sessione di firma: ", e);
 		}
-	    } catch (NullPointerException e) {
-		logger.error("Errore imprevisto durante sessione di firma: ", e);
+	    } else {
+		logger.warn("SignatureSessionEjb non trovato per tipo: {}", request.getType());
+		result = new AsyncResult<>(SigningResponse.UNKNOWN_ERROR);
 	    }
 	} else {
 	    result = new AsyncResult<>(SigningResponse.UNKNOWN_ERROR);

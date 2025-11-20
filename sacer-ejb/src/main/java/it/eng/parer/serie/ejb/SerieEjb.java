@@ -14,11 +14,13 @@
 package it.eng.parer.serie.ejb;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,7 +65,6 @@ import org.slf4j.LoggerFactory;
 import com.csvreader.CsvReader;
 
 import it.eng.parer.common.signature.Digest;
-import it.eng.parer.crypto.model.ParerTST;
 import it.eng.parer.elencoVersamento.utils.ElencoEnums;
 import it.eng.parer.entity.AroUdAppartVerSerie;
 import it.eng.parer.entity.AroUnitaDoc;
@@ -198,8 +199,6 @@ import it.eng.parer.ws.utils.CostantiDB.TipoFileVerSerie;
 import it.eng.spagoLite.db.base.row.BaseRow;
 import it.eng.spagoLite.db.base.table.BaseTable;
 import it.eng.spagoLite.message.MessageBox;
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -1464,10 +1463,10 @@ public class SerieEjb {
 		    .valueOf(tiOperString);
 	    String descValore = filtroUd.getDecFiltroSelUdAttb().getDlValore() != null
 		    ? filtroUd.getDecFiltroSelUdAttb().getDlValore().toUpperCase()
-		    : null;
+		    : StringUtils.EMPTY;
 	    Long idAttrib = filtroUd.getDecAttribDatiSpec() != null
 		    ? filtroUd.getDecAttribDatiSpec().getIdAttribDatiSpec()
-		    : null;
+		    : Long.MIN_VALUE;
 	    this.buildDatoSpecSubQuery(tiOper, descValore, idAttrib, counterRicDatiSpec,
 		    tiEntitaSacer, datiSpec);
 	    counterRicDatiSpec = counterRicDatiSpec.add(BigDecimal.ONE);

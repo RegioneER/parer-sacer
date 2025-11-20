@@ -13,6 +13,39 @@
 
 package it.eng.parer.web.action;
 
+import static it.eng.parer.serie.ejb.SerieEjb.CD_SERIE_PATTERN;
+
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+
 import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneRegistro.ejb.RegistroEjb;
 import it.eng.parer.amministrazioneStrutture.gestioneStrutture.ejb.StruttureEjb;
@@ -29,10 +62,11 @@ import it.eng.parer.sacerlog.util.LogParam;
 import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
 import it.eng.parer.serie.ejb.ModelliSerieEjb;
 import it.eng.parer.serie.ejb.SerieEjb;
-import static it.eng.parer.serie.ejb.SerieEjb.CD_SERIE_PATTERN;
+import it.eng.parer.serie.ejb.TipoSerieEjb;
 import it.eng.parer.slite.gen.Application;
 import it.eng.parer.slite.gen.action.StrutSerieAbstractAction;
 import it.eng.parer.slite.gen.form.StrutSerieForm;
+import it.eng.parer.slite.gen.form.StruttureForm;
 import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecRowBean;
 import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecTableBean;
 import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecTableDescriptor;
@@ -48,6 +82,7 @@ import it.eng.parer.slite.gen.tablebean.DecNotaTipoSerieRowBean;
 import it.eng.parer.slite.gen.tablebean.DecNotaTipoSerieTableBean;
 import it.eng.parer.slite.gen.tablebean.DecOutSelUdRowBean;
 import it.eng.parer.slite.gen.tablebean.DecOutSelUdTableBean;
+import it.eng.parer.slite.gen.tablebean.DecOutSelUdTableDescriptor;
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecRegistroUnitaDocTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoDocRowBean;
@@ -59,20 +94,18 @@ import it.eng.parer.slite.gen.tablebean.DecTipoSerieUdRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoSerieUdTableBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocRowBean;
 import it.eng.parer.slite.gen.tablebean.DecTipoUnitaDocTableBean;
+import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsRowBean;
 import it.eng.parer.slite.gen.viewbean.DecVLisTiUniDocAmsTableBean;
 import it.eng.parer.web.dto.DecFiltroSelUdAttbBean;
 import it.eng.parer.web.dto.DecFiltroSelUdDatoBean;
 import it.eng.parer.web.dto.DefinitoDaBean;
-import it.eng.parer.serie.ejb.TipoSerieEjb;
-import it.eng.parer.slite.gen.form.StruttureForm;
-import it.eng.parer.slite.gen.tablebean.DecOutSelUdTableDescriptor;
-import it.eng.parer.slite.gen.tablebean.OrgStrutRowBean;
 import it.eng.parer.web.helper.ConfigurationHelper;
 import it.eng.parer.web.helper.UnitaDocumentarieHelper;
 import it.eng.parer.web.util.ActionUtils;
 import it.eng.parer.web.util.ComboGetter;
 import it.eng.parer.web.util.Constants;
+import it.eng.parer.web.util.Constants.TipoEntitaSacer;
 import it.eng.parer.web.util.WebConstants;
 import it.eng.parer.web.validator.UnitaDocumentarieValidator;
 import it.eng.parer.ws.utils.CostantiDB;
@@ -92,45 +125,18 @@ import it.eng.spagoLite.form.base.BaseElements.Status;
 import it.eng.spagoLite.form.fields.Fields;
 import it.eng.spagoLite.form.fields.SingleValueField;
 import it.eng.spagoLite.form.fields.impl.Input;
-import java.util.List;
 import it.eng.spagoLite.message.Message;
 import it.eng.spagoLite.message.Message.MessageLevel;
 import it.eng.spagoLite.message.MessageBox;
 import it.eng.spagoLite.message.MessageBox.ViewMode;
 import it.eng.spagoLite.security.Secure;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.ejb.EJB;
-import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.codehaus.jettison.json.JSONObject;
-import org.springframework.util.CollectionUtils;
 
 /**
  *
  * @author Parucci_M feat. Gilioli_P
  */
+@SuppressWarnings({
+	"rawtypes", "unchecked" })
 public class StrutSerieAction extends StrutSerieAbstractAction {
 
     private static Logger log = LoggerFactory.getLogger(StrutSerieAction.class.getName());
@@ -2448,72 +2454,6 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
 	forwardToPublisher(Application.Publisher.REGOLA_DI_FILTRAGGIO_TIPO_SERIE);
     }
 
-    // VECCHIA VERSIONE DEL TRIGGER QUANDO IL CAMPO ERA COMBOBOX E NON MULTISELECT.
-    // Non più utilizzato dal 22 gennaio 2016 e dunque consiglio cancellazione dopo ragionevole
-    // periodo di tempo
-    // @Override
-    // public JSONObject triggerRegolaDiFiltraggioDetailId_tipo_doc_princOnTrigger() throws EMFError
-    // {
-    // StrutSerieForm.RegolaDiFiltraggioDetail regolaDiFiltraggioDetail =
-    // getForm().getRegolaDiFiltraggioDetail();
-    // BigDecimal idTipoDocPre = regolaDiFiltraggioDetail.getId_tipo_doc_princ().parse();
-    // String nmTipoDocPre = regolaDiFiltraggioDetail.getId_tipo_doc_princ().getDecodedValue();
-    // if (idTipoDocPre != null) {
-    // DecTipoDocRowBean decTipoDocRowBean = struttureEjb.getDecTipoDocRowBean(idTipoDocPre, null);
-    // nmTipoDocPre = decTipoDocRowBean.getNmTipoDoc();
-    //
-    // }
-    // regolaDiFiltraggioDetail.post(getRequest());
-    // BigDecimal idTipoDocSelected = regolaDiFiltraggioDetail.getId_tipo_doc_princ().parse();
-    // // Ricavo la Lista Dati Specifici compilati a video
-    // List<DecFiltroSelUdAttbBean> listaDatiSpecOnLine = (ArrayList)
-    // getSession().getAttribute("listaDatiSpecOnLine")
-    // != null ? (ArrayList) getSession().getAttribute("listaDatiSpecOnLine") : new ArrayList<>();
-    //
-    // // Per ogni DATO SPECIFICO di questo TIPO DOCUMENTO
-    // // rimuovo il riferimento al tipo documento
-    // for (DecFiltroSelUdAttbBean datoSpec : listaDatiSpecOnLine) {
-    // List<DecFiltroSelUdDatoBean> tabellaDefinitoDa = datoSpec.getDecFiltroSelUdDatos();
-    // for (int i = 0; i < tabellaDefinitoDa.size(); i++) {
-    // String nmTipoDoc = tabellaDefinitoDa.get(i).getNmTipoDoc();
-    // if (nmTipoDoc != null
-    // && nmTipoDoc.equals(nmTipoDocPre)) {
-    // tabellaDefinitoDa.remove(i);
-    // }
-    // }
-    // }
-    //
-    // DecAttribDatiSpecTableBean datiSpecTB =
-    // udHelper.getDecAttribDatiSpecTableBean(idTipoDocSelected,
-    // Constants.TipoEntitaSacer.DOC);
-    // aggiungiDatiSpecPerTipoDoc(datiSpecTB, listaDatiSpecOnLine);
-    //
-    //// // Controllo se ho ancora dati specifici per tutti i tipi documento
-    //// boolean hasDSsuTipiDoc = false;
-    //// Iterator it = listaDatiSpecOnLine.iterator();
-    //// while (it.hasNext()) {
-    //// DecFiltroSelUdAttbBean datoSpec = (DecFiltroSelUdAttbBean) it.next();
-    //// List<DecFiltroSelUdDatoBean> tabellaDefinitoDa = datoSpec.getDecFiltroSelUdDatos();
-    //// if (tabellaDefinitoDa.isEmpty()) {
-    //// it.remove();
-    //// } else {
-    //// for (DecFiltroSelUdDatoBean rigaDefinitoDa : tabellaDefinitoDa) {
-    //// if (rigaDefinitoDa.getNmTipoDoc() != null) {
-    //// hasDSsuTipiDoc = true;
-    //// }
-    //// }
-    //// }
-    //// }
-    //// hasDSsuTipiDoc = tipoSerieEjb.getVersioniXsdPerTipoEntita(idTipoDocSelected,
-    // Constants.TipoEntitaSacer.DOC);
-    ////
-    //// regolaDiFiltraggioDetail.getFlag_dati_spec_presenti_doc().setChecked(hasDSsuTipiDoc);
-    // // Aggiorno l'interfaccia online
-    // updateInterfacciaOnLineDatiSpec(listaDatiSpecOnLine, false);
-    //
-    // return regolaDiFiltraggioDetail.asJSON();
-    //
-    // }
     /**
      * "Nuova" versione del trigger sulla multiselect relativa ai tipi doc principale delle regole
      * di filtraggio.
@@ -2522,6 +2462,7 @@ public class StrutSerieAction extends StrutSerieAbstractAction {
      *
      * @throws EMFError errore generico
      */
+    @SuppressWarnings("unchecked")
     @Override
     public JSONObject triggerRegolaDiFiltraggioDetailId_tipo_doc_princOnTrigger() throws EMFError {
 	// Ricavo la mappa con le regole già settate

@@ -10,7 +10,6 @@
  * have received a copy of the GNU Affero General Public License along with this program. If not,
  * see <https://www.gnu.org/licenses/>.
  */
-
 package it.eng.parer.ws.recupero.ejb;
 
 import static it.eng.paginator.util.HibernateUtils.bigDecimalFrom;
@@ -61,6 +60,8 @@ import it.eng.parer.entity.AroUpdUnitaDoc;
 import it.eng.parer.entity.AroUrnVerIndiceAipUd;
 import it.eng.parer.entity.AroVerIndiceAipUd;
 import it.eng.parer.entity.AroXmlUpdUnitaDoc;
+import it.eng.parer.entity.DecFormatoFileDoc;
+import it.eng.parer.entity.DecFormatoFileStandard;
 import it.eng.parer.entity.DecTipoDoc;
 import it.eng.parer.entity.ElvElencoVer;
 import it.eng.parer.entity.ElvFileElencoVer;
@@ -299,6 +300,49 @@ public class ControlliRecupero {
 			tmpCRec.setEstensioneFile(UKNOWN_EXT);
 		    }
 		}
+		// MEV#39147 - Modifica delle modalità di calcolo dell'estensione nel recupero di
+		// file sbustati
+		// Ai nomi originali viene attaccata l'estensione del file sbustato.
+		// Se però l'estensione del file sbustato differisce da quella versata
+		// allora prevale l'estensione versata nel caso di componenti non firmati.
+		// Altrimenti si usa l'estensione del file sbustato
+
+		// Determina de il componente è un file firmato oppure no
+		boolean componenteFirmato = tmpCmp.getFlCompFirmato() != null
+			&& tmpCmp.getFlCompFirmato().equals("1") ? true : false;
+
+		DecFormatoFileStandard formatoCalcolato = tmpCmp.getDecFormatoFileStandard();
+		DecFormatoFileDoc formatoVersato = tmpCmp.getDecFormatoFileDoc();
+		String nmFormatoCalcolato = formatoCalcolato != null
+			? formatoCalcolato.getNmFormatoFileStandard()
+			: null;
+		String nmFormatoVersato = formatoVersato != null
+			? formatoVersato.getNmFormatoFileDoc()
+			: null;
+		log.debug("componente {} calc {} vers {} firmato {}", tmpCmp.getIdCompDoc(),
+			nmFormatoCalcolato, nmFormatoVersato, componenteFirmato);
+		if (nmFormatoCalcolato != null && nmFormatoVersato != null) {
+		    if (nmFormatoCalcolato.equalsIgnoreCase(nmFormatoVersato)) {
+			log.debug("IMPOSTATO CALCOLATO!");
+			tmpCRec.setNomeFormatoComponenteSbustato(nmFormatoCalcolato);
+		    } else {
+			if (componenteFirmato) {
+			    log.debug("IMPOSTATO CALCOLATO!");
+			    tmpCRec.setNomeFormatoComponenteSbustato(nmFormatoCalcolato);
+			} else {
+			    log.debug("IMPOSTATO VERSATO!");
+			    tmpCRec.setNomeFormatoComponenteSbustato(nmFormatoVersato);
+			}
+		    }
+		} else if (formatoCalcolato != null) {
+		    tmpCRec.setNomeFormatoComponenteSbustato(nmFormatoCalcolato);
+		    log.debug("IMPOSTATO CALCOLATO!");
+		} else if (nmFormatoVersato != null) {
+		    tmpCRec.setNomeFormatoComponenteSbustato(nmFormatoVersato);
+		    log.debug("IMPOSTATO VERSATO!");
+		}
+		// Fine MEV#39147 - Modifica delle modalità di calcolo dell'estensione nel recupero
+		// di
 		lstComp.add(tmpCRec);
 	    }
 	    if (!lstComp.isEmpty()) {

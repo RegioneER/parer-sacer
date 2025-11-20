@@ -12,10 +12,14 @@
         <ComboBox Name="fl_forza_annul" Description="Forza annullamento" Type="STRING" Required="true"/>
         <Input Name="bl_file" Description="File con cui creare la richiesta" Type="FILE" Required="true"/>
         <ComboBox Name="ti_annullamento" Description="Tipo annullamento" Type="STRING"/>
+        <!--<Input Name="ds_datamart" Description="Descrizione" Type="STRING" MaxLength="254"/>
+        <Input Name="mot_datamart" Description="Motivazione" Type="STRING" MaxLength="254"/>
+        <ComboBox Name="ti_cancellazione" Description="Tipo cancellazione" Type="STRING"/>-->
         
         <Button Name="creaRichAnnulVers" Description="Crea richiesta annullamento versamenti" Type="STRING"/>
     </Fields>
     
+    <!--<Section Description="" Legend="Informazioni cancellazione data mart" LoadOpened="true" Name="InfoCancDataMartSection" ShowButton="false"/>-->
     
     <!-- RICERCA RICHIESTE -->
     <Section Name="udSection" Description="" Legend="Sezione unità documentaria" ShowButton="false" LoadOpened="true"/>
@@ -70,8 +74,9 @@
     <Section Name="statoSection" Description="" Legend="Stato" ShowButton="false" LoadOpened="true"/>
     
     <Tab Name="RichAnnulVersDetailSubTabs" Description="">
-        <TabElement Name="ListaItem" Description="Lista versamenti da annullare" />    
+        <TabElement Name="ListaItem" Description="Lista versamenti da annullare" />            
         <TabElement Name="ListaStati" Description="Lista stati" />    
+        <TabElement Name="ListaItemCancellati" Description="Lista versamenti cancellati" />    
     </Tab>
     
     <Fields Name="RichAnnulVersDetail" Description="Dettaglio richiesta di annullamento versamenti">
@@ -117,6 +122,12 @@
         <Input Name="dt_reg_stato_rich_annul_vers" Description="Data registrazione" Type="DATE" />
         <Input Name="ds_nota_rich_annul_vers" Description="Note" Type="STRING" />
         <Input Name="nm_userid" Description="Utente" Type="STRING" />
+    </List>
+    
+    <List Name="ItemCancellatiList" Description="" hideUpdateButton="true">
+        <Input Name="pg_item_rich_annul_vers_cancellati" Description="Progressivo" Type="INTEGER" />
+        <Input Name="ds_key_item_cancellato" Description="Chiave" Type="STRING" />
+        <Input Name="dt_versamento" Description="Data versamento" Type="DATE" />
     </List>
     
     <ButtonList Name="RichAnnulVersDetailButtonList" Description="">

@@ -13,34 +13,31 @@
 
 package it.eng.parer.web.action;
 
-import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_UPLOAD_DIR;
-import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_REQUEST_SIZE;
-import static it.eng.spagoCore.ConfigProperties.StandardProperty.LOAD_XSD_APP_MAX_FILE_SIZE;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.ejb.EJB;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.SchemaFactory;
-
+import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.ejb.TipoStrutturaDocEjb;
+import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
+import it.eng.parer.exception.ParerUserError;
+import it.eng.parer.sacerlog.ejb.SacerLogEjb;
+import it.eng.parer.sacerlog.util.LogParam;
+import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
+import it.eng.parer.slite.gen.Application;
+import it.eng.parer.slite.gen.action.StrutDatiSpecAbstractAction;
+import it.eng.parer.slite.gen.form.StrutDatiSpecForm.AttribDatiSpec;
+import it.eng.parer.slite.gen.form.StrutTipiForm;
+import it.eng.parer.slite.gen.form.StrutTipoStrutForm;
+import it.eng.parer.slite.gen.tablebean.*;
+import it.eng.parer.web.helper.ConfigurationHelper;
+import it.eng.parer.web.util.WebConstants;
+import it.eng.parer.ws.utils.CostantiDB;
+import it.eng.parer.ws.versamento.dto.FileBinario;
+import it.eng.spagoCore.ConfigSingleton;
+import it.eng.spagoCore.error.EMFError;
+import it.eng.spagoLite.db.base.sorting.SortingRule;
+import it.eng.spagoLite.form.base.BaseElements.Status;
+import it.eng.spagoLite.message.Message;
+import it.eng.spagoLite.message.Message.MessageLevel;
+import it.eng.spagoLite.message.MessageBox.ViewMode;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItem;
@@ -55,39 +52,25 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import it.eng.parer.amministrazioneStrutture.gestioneDatiSpecifici.ejb.DatiSpecificiEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoDoc.ejb.TipoDocumentoEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoStrutturaDoc.ejb.TipoStrutturaDocEjb;
-import it.eng.parer.amministrazioneStrutture.gestioneTipoUd.ejb.TipoUnitaDocEjb;
-import it.eng.parer.exception.ParerUserError;
-import it.eng.parer.sacerlog.ejb.SacerLogEjb;
-import it.eng.parer.sacerlog.util.LogParam;
-import it.eng.parer.sacerlog.util.web.SpagoliteLogUtil;
-import it.eng.parer.slite.gen.Application;
-import it.eng.parer.slite.gen.action.StrutDatiSpecAbstractAction;
-import it.eng.parer.slite.gen.form.StrutDatiSpecForm.AttribDatiSpec;
-import it.eng.parer.slite.gen.form.StrutTipiForm;
-import it.eng.parer.slite.gen.form.StrutTipoStrutForm;
-import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecRowBean;
-import it.eng.parer.slite.gen.tablebean.DecAttribDatiSpecTableBean;
-import it.eng.parer.slite.gen.tablebean.DecTipoCompDocRowBean;
-import it.eng.parer.slite.gen.tablebean.DecXsdAttribDatiSpecRowBean;
-import it.eng.parer.slite.gen.tablebean.DecXsdDatiSpecRowBean;
-import it.eng.parer.slite.gen.tablebean.DecXsdDatiSpecTableBean;
-import it.eng.parer.web.helper.ConfigurationHelper;
-import it.eng.parer.web.util.WebConstants;
-import it.eng.parer.ws.utils.CostantiDB;
-import it.eng.parer.ws.versamento.dto.FileBinario;
-import it.eng.spagoCore.ConfigSingleton;
-import it.eng.spagoCore.error.EMFError;
-import it.eng.spagoLite.db.base.sorting.SortingRule;
-import it.eng.spagoLite.form.base.BaseElements.Status;
-import it.eng.spagoLite.message.Message;
-import it.eng.spagoLite.message.Message.MessageLevel;
-import it.eng.spagoLite.message.MessageBox.ViewMode;
-import java.util.logging.Level;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
+import javax.ejb.EJB;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.SchemaFactory;
+import java.io.*;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static it.eng.spagoCore.ConfigProperties.StandardProperty.*;
 
 public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 
@@ -555,14 +538,14 @@ public class StrutDatiSpecAction extends StrutDatiSpecAbstractAction {
 		    Calendar calendar = Calendar.getInstance();
 		    calendar.set(2444, 11, 31, 0, 0, 0);
 		    calendar.set(Calendar.MILLISECOND, 0);
+		    dtSoppres = calendar.getTime();
 
-		    getForm().getXsdDatiSpec().getDt_soppres()
-			    .setValue(df.format(calendar.getTime()));
+		    getForm().getXsdDatiSpec().getDt_soppres().setValue(df.format(dtSoppres));
 		}
 
 		if (getMessageBox().isEmpty()) {
 		    String clob = null;
-		    if (StringUtils.isNotBlank(tmpFileItem.getName())) {
+		    if (tmpFileItem != null && StringUtils.isNotBlank(tmpFileItem.getName())) {
 			FileBinario fileBin = getFileBinario(tmpFileItem);
 			// conversione in stringa
 			clob = new String(fileBin.getDati());

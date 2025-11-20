@@ -603,7 +603,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
 
 	Fields<Field> filtri = null;
 	BigDecimal idStrut = null;
-	BigDecimal idTipoFascicolo = null;
 
 	// Setto ambiente/ente/struttura in base ai valori della pagina di ricerca criteri
 	idStrut = initComboAmbienteEnteStrutturaCreaCriteriRaggrFascFromRicercaCriteri();
@@ -619,14 +618,6 @@ public class CriteriRaggrFascicoliAction extends CriteriRaggrFascicoliAbstractAc
 	// corrente
 	// (NI_GG_SCAD_CRITERIO di ORG_STRUT_CONFIG_FASCICOLO)
 	settaNumeroGiorniScadChius(getForm().getCreaCriterioRaggrFascicoli().getId_strut().parse());
-
-	// Se tipo fascicolo è diverso da null, imposto i valori nella combo
-	if (idTipoFascicolo != null) {
-	    String[] idTipoFascicoloArray = {
-		    "" + idTipoFascicolo };
-	    getForm().getCreaCriterioRaggrFascicoli().getNm_tipo_fascicolo()
-		    .setValues(idTipoFascicoloArray);
-	}
 
 	forwardToPublisher(Application.Publisher.CRITERIO_RAGGR_FASC_DETAIL);
     }

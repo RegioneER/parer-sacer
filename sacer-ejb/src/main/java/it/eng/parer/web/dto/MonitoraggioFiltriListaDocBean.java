@@ -23,7 +23,9 @@ import java.util.Date;
  *
  * @author Gilioli_P
  */
-public class MonitoraggioFiltriListaDocBean {
+public class MonitoraggioFiltriListaDocBean implements java.io.Serializable {
+
+    private static final long serialVersionUID = 7235128043635341920L;
 
     private BigDecimal idAmbiente;
     private BigDecimal idEnte;
@@ -52,6 +54,8 @@ public class MonitoraggioFiltriListaDocBean {
     private String statoDoc;
     private String statoVol;
     private String tipoCreazione;
+    private Date giornoAnnulDaValidato;
+    private Date giornoAnnulAValidato;
 
     public String getCdRegistroKeyUnitaDoc() {
 	return cdRegistroKeyUnitaDoc;
@@ -368,5 +372,21 @@ public class MonitoraggioFiltriListaDocBean {
 
     public void setTipoCreazione(String tipoCreazione) {
 	this.tipoCreazione = tipoCreazione;
+    }
+
+    public Date getGiornoAnnulDaValidato() {
+	return giornoAnnulDaValidato;
+    }
+
+    public void setGiornoAnnulDaValidato(Date giornoAnnulDaValidato) {
+	this.giornoAnnulDaValidato = giornoAnnulDaValidato;
+    }
+
+    public Date getGiornoAnnulAValidato() {
+	return giornoAnnulAValidato;
+    }
+
+    public void setGiornoAnnulAValidato(Date giornoAnnulAValidato) {
+	this.giornoAnnulAValidato = giornoAnnulAValidato;
     }
 }

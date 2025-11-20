@@ -68,6 +68,12 @@
                 <slf:lblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.GIORNO_VERS_A%>" colSpan="1" />
                 <slf:doubleLblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.ORE_VERS_A%>" name2="<%=MonitoraggioForm.FiltriDocumentiAnnullati.MINUTI_VERS_A%>" controlWidth="w15" controlWidth2="w15" colSpan="1" />
                 <sl:newLine />
+                <slf:lblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.GIORNO_ANNUL_DA%>" colSpan="1" />
+                <slf:doubleLblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.ORE_ANNUL_DA%>" name2="<%=MonitoraggioForm.FiltriDocumentiAnnullati.MINUTI_ANNUL_DA%>" controlWidth="w15" controlWidth2="w15" colSpan="1" />
+                <slf:lblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.GIORNO_ANNUL_A%>" colSpan="1" />
+                <slf:doubleLblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.ORE_ANNUL_A%>" name2="<%=MonitoraggioForm.FiltriDocumentiAnnullati.MINUTI_ANNUL_A%>" controlWidth="w15" controlWidth2="w15" colSpan="1" />
+                <sl:newLine />
+
                 <slf:lblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.ID_TIPO_DOC%>" colSpan="2" />
                 <sl:newLine />
                 <slf:lblField name="<%=MonitoraggioForm.FiltriDocumentiAnnullati.TI_STATO_ANNUL%>" colSpan="2" />

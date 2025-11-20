@@ -17,26 +17,10 @@
  */
 package it.eng.parer.ws.recuperoDip.utils;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.util.logging.Level;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamSource;
-
+import it.eng.parer.ws.dto.RispostaControlli;
+import it.eng.parer.ws.utils.MessaggiWSBundle;
 import org.apache.commons.io.IOUtils;
-import org.apache.fop.apps.FOPException;
-import org.apache.fop.apps.FOUserAgent;
-import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopFactory;
-import org.apache.fop.apps.FopFactoryBuilder;
-import org.apache.fop.apps.MimeConstants;
+import org.apache.fop.apps.*;
 import org.apache.fop.configuration.Configuration;
 import org.apache.fop.configuration.ConfigurationException;
 import org.apache.fop.configuration.DefaultConfigurationBuilder;
@@ -46,10 +30,14 @@ import org.apache.fop.events.EventListener;
 import org.apache.fop.events.model.EventSeverity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
-import it.eng.parer.ws.dto.RispostaControlli;
-import it.eng.parer.ws.utils.MessaggiWSBundle;
+import javax.xml.XMLConstants;
+import javax.xml.transform.*;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.StringWriter;
+import java.util.logging.Level;
 
 /**
  *

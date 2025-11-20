@@ -109,6 +109,7 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
     public static final String TI_CREAZIONE_OGGI = "OGGI";
     public static final String TI_CREAZIONE_30GG = "30gg";
     public static final String TI_CREAZIONE_B30GG = "B30gg";
+    public static final String TI_TOTALE = "TOTALE";
 
     public static final String PAR_TI_STATO = "ti_stato";
     public static final String TI_STATO_TUTTI = "TUTTI";
@@ -538,7 +539,6 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
 	    getForm().getFiltriFascicoli().getGiorno_vers_da().setValue(df.format(before30Gg));
 	    getForm().getFiltriFascicoli().getGiorno_vers_a()
 		    .setValue(df.format(new DateTime(oggi).minusDays(31).toDate()));
-	    break;
 	}
 	getForm().getFiltriFascicoli().getOre_vers_da().setValue("00");
 	getForm().getFiltriFascicoli().getOre_vers_a().setValue("23");
@@ -612,6 +612,11 @@ public class MonitoraggioFascicoliAction extends MonitoraggioFascicoliAbstractAc
 	    getForm().getFiltriFascicoli().getGiorno_vers_da().setValue(df.format(before30Gg));
 	    getForm().getFiltriFascicoli().getGiorno_vers_a()
 		    .setValue(df.format(new DateTime(oggi).minusDays(31).toDate()));
+	    break;
+	case TI_TOTALE:
+	    Date dt = new DateTime(2000, 1, 1, 0, 0, 0, 0).toDate();
+	    getForm().getFiltriFascicoli().getGiorno_vers_da().setValue(df.format(dt));
+	    getForm().getFiltriFascicoli().getGiorno_vers_a().setValue(df.format(oggi));
 	    break;
 	}
 	getForm().getFiltriFascicoli().getOre_vers_da().setValue("00");
