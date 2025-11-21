@@ -45,75 +45,75 @@ public class OrgVRicEnte implements Serializable {
 
     @Column(name = "DS_AMBIENTE")
     public String getDsAmbiente() {
-	return this.dsAmbiente;
+        return this.dsAmbiente;
     }
 
     public void setDsAmbiente(String dsAmbiente) {
-	this.dsAmbiente = dsAmbiente;
+        this.dsAmbiente = dsAmbiente;
     }
 
     @Column(name = "DS_ENTE")
     public String getDsEnte() {
-	return this.dsEnte;
+        return this.dsEnte;
     }
 
     public void setDsEnte(String dsEnte) {
-	this.dsEnte = dsEnte;
+        this.dsEnte = dsEnte;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_CATEG_ENTE")
     public BigDecimal getIdCategEnte() {
-	return this.idCategEnte;
+        return this.idCategEnte;
     }
 
     public void setIdCategEnte(BigDecimal idCategEnte) {
-	this.idCategEnte = idCategEnte;
+        this.idCategEnte = idCategEnte;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "TIPO_DEF_TEMPLATE_ENTE")
     public String getTipoDefTemplateEnte() {
-	return tipoDefTemplateEnte;
+        return tipoDefTemplateEnte;
     }
 
     public void setTipoDefTemplateEnte(String tipoDefTemplateEnte) {
-	this.tipoDefTemplateEnte = tipoDefTemplateEnte;
+        this.tipoDefTemplateEnte = tipoDefTemplateEnte;
     }
 
     private OrgVRicEnteId orgVRicEnteId;
 
     @EmbeddedId()
     public OrgVRicEnteId getOrgVRicEnteId() {
-	return orgVRicEnteId;
+        return orgVRicEnteId;
     }
 
     public void setOrgVRicEnteId(OrgVRicEnteId orgVRicEnteId) {
-	this.orgVRicEnteId = orgVRicEnteId;
+        this.orgVRicEnteId = orgVRicEnteId;
     }
 }

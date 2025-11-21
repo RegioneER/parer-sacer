@@ -39,7 +39,7 @@ import it.eng.parer.web.util.Transform;
 @Stateless
 @LocalBean
 @Interceptors({
-	TransactionInterceptor.class })
+        TransactionInterceptor.class })
 public class CriteriRaggrFascicoliEjb {
 
     @EJB
@@ -48,22 +48,22 @@ public class CriteriRaggrFascicoliEjb {
     private static final Logger logger = LoggerFactory.getLogger(CriteriRaggrFascicoliEjb.class);
 
     public DecCriterioRaggrFascTableBean getDecCriterioRaggrFascTableBean(BigDecimal idAmbiente,
-	    BigDecimal idEnte, BigDecimal idStrut, String nmCriterioRaggr) {
-	DecCriterioRaggrFascTableBean table = new DecCriterioRaggrFascTableBean();
-	List<DecCriterioRaggrFasc> list = crHelper.retrieveDecCriterioRaggrFascList(idAmbiente,
-		idEnte, idStrut, nmCriterioRaggr);
-	if (list != null && !list.isEmpty()) {
-	    try {
-		table = (DecCriterioRaggrFascTableBean) Transform.entities2TableBean(list);
-	    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-		    | IllegalAccessException | IllegalArgumentException
-		    | InvocationTargetException ex) {
-		logger.error("Errore durante il recupero dei criteri di raggruppamento fascicoli "
-			+ ExceptionUtils.getRootCauseMessage(ex), ex);
-		throw new IllegalStateException(
-			"Errore durante il recupero dei criteri di raggruppamento fascicoli");
-	    }
-	}
-	return table;
+            BigDecimal idEnte, BigDecimal idStrut, String nmCriterioRaggr) {
+        DecCriterioRaggrFascTableBean table = new DecCriterioRaggrFascTableBean();
+        List<DecCriterioRaggrFasc> list = crHelper.retrieveDecCriterioRaggrFascList(idAmbiente,
+                idEnte, idStrut, nmCriterioRaggr);
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (DecCriterioRaggrFascTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero dei criteri di raggruppamento fascicoli "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalStateException(
+                        "Errore durante il recupero dei criteri di raggruppamento fascicoli");
+            }
+        }
+        return table;
     }
 }

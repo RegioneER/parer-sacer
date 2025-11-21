@@ -33,19 +33,19 @@ public class AroMarcaCompTableBean extends AbstractBaseTable<AroMarcaCompRowBean
     public static AroMarcaCompTableDescriptor TABLE_DESCRIPTOR = new AroMarcaCompTableDescriptor();
 
     public AroMarcaCompTableBean() {
-	super();
+        super();
     }
 
     protected AroMarcaCompRowBean createRow() {
-	return new AroMarcaCompRowBean();
+        return new AroMarcaCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroMarcaCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

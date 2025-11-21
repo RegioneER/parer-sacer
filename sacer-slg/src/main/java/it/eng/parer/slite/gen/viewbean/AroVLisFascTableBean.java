@@ -37,19 +37,19 @@ public class AroVLisFascTableBean extends AbstractBaseTable<AroVLisFascRowBean> 
     public static AroVLisFascTableDescriptor TABLE_DESCRIPTOR = new AroVLisFascTableDescriptor();
 
     public AroVLisFascTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisFascRowBean createRow() {
-	return new AroVLisFascRowBean();
+        return new AroVLisFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

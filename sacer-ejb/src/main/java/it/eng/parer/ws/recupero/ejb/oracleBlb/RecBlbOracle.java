@@ -69,26 +69,26 @@ public class RecBlbOracle {
     private EntityManager entityManager;
 
     private static final String QRY_CNT_VRS_CONTENUTO_FILE_KO = "SELECT count(*) FROM VRS_CONTENUTO_FILE_KO t "
-	    + "where t.ID_FILE_SESSIONE_KO = ?";
+            + "where t.ID_FILE_SESSIONE_KO = ?";
     //
     private static final String QRY_ARO_CONTENUTO_COMP = "SELECT BL_CONTEN_COMP FROM ARO_CONTENUTO_COMP t "
-	    + "where t.id_comp_strut_doc = ?";
+            + "where t.id_comp_strut_doc = ?";
     private static final String QRY_VRS_CONTENUTO_FILE_KO = "SELECT BL_CONTENUTO_FILE_SESSIONE FROM VRS_CONTENUTO_FILE_KO t "
-	    + "where t.ID_FILE_SESSIONE_KO = ?";
+            + "where t.ID_FILE_SESSIONE_KO = ?";
     private static final String QRY_ELV_FILE_ELENCO_VERS = "SELECT BL_FILE_ELENCO_VERS FROM ELV_FILE_ELENCO_VERS t "
-	    + "where t.id_file_elenco_vers = ?";
+            + "where t.id_file_elenco_vers = ?";
     private static final String QRY_ELV_FILE_ELENCO_VERS_FASC = "SELECT BL_FILE_ELENCO_VERS FROM ELV_FILE_ELENCO_VERS_FASC t "
-	    + "where t.id_file_elenco_vers_fasc = ?";
+            + "where t.id_file_elenco_vers_fasc = ?";
     private static final String QRY_SER_FILE_VER_SERIE_INDICE_AIP = "SELECT BL_FILE FROM SER_FILE_VER_SERIE t "
-	    + "where t.id_ver_serie = ? AND t.ti_file_ver_serie = ?";
+            + "where t.id_ver_serie = ? AND t.ti_file_ver_serie = ?";
     //
     private static final String QRY_FIR_REPORT_COMP = "SELECT BL_CONTENUTO_REPORT FROM FIR_REPORT t "
-	    + "where t.id_comp_doc = ?";
+            + "where t.id_comp_doc = ?";
     private static final int BUFFERSIZE = 10 * 1024 * 1024; // 10 megabyte
 
     public enum TabellaBlob {
-	BLOB, ERRORI_VERS, FIR_REPORT, ERRORI_VERS_TMP, ELV_FILE_ELENCO, ELV_FILE_ELENCO_FASC,
-	SER_FILE_VER_SERIE
+        BLOB, ERRORI_VERS, FIR_REPORT, ERRORI_VERS_TMP, ELV_FILE_ELENCO, ELV_FILE_ELENCO_FASC,
+        SER_FILE_VER_SERIE
     }
 
     /**
@@ -97,30 +97,30 @@ public class RecBlbOracle {
      * @return numero dei blob o EJBException
      */
     public long contaBlobErroriVers(long idPadre) {
-	long result = 0L;
-	BigDecimal tmpNum = new BigDecimal(0);
-	ResultSet rs = null;
-	try {
-	    java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
-	    try (PreparedStatement pstmt = conn.prepareStatement(QRY_CNT_VRS_CONTENUTO_FILE_KO)) {
-		log.debug(QRY_CNT_VRS_CONTENUTO_FILE_KO);
-		pstmt.setLong(1, idPadre);
-		rs = pstmt.executeQuery();
-		while (rs.next()) {
-		    tmpNum = rs.getBigDecimal(1);
-		}
-		result = tmpNum.intValueExact();
+        long result = 0L;
+        BigDecimal tmpNum = new BigDecimal(0);
+        ResultSet rs = null;
+        try {
+            java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
+            try (PreparedStatement pstmt = conn.prepareStatement(QRY_CNT_VRS_CONTENUTO_FILE_KO)) {
+                log.debug(QRY_CNT_VRS_CONTENUTO_FILE_KO);
+                pstmt.setLong(1, idPadre);
+                rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    tmpNum = rs.getBigDecimal(1);
+                }
+                result = tmpNum.intValueExact();
 
-	    } finally {
-		if (rs != null) {
-		    rs.close();
-		}
-		closeConnection(conn);
-	    }
-	} catch (SQLException ex) {
-	    throw new EJBException(ex);
-	}
-	return result;
+            } finally {
+                if (rs != null) {
+                    rs.close();
+                }
+                closeConnection(conn);
+            }
+        } catch (SQLException ex) {
+            throw new EJBException(ex);
+        }
+        return result;
     }
 
     /**
@@ -134,81 +134,81 @@ public class RecBlbOracle {
      * @return true se è andato tutto bene, false altrimenti
      */
     public boolean recuperaBlobCompSuStream(long idPadre, OutputStream outputStream,
-	    TabellaBlob tabellaBlobDaLeggere, RecuperoDocBean dto) {
-	boolean rispostaControlli = false;
-	Blob blob = null;
-	ResultSet rs = null;
-	String queryStr = null;
-	byte[] buffer = new byte[BUFFERSIZE];
+            TabellaBlob tabellaBlobDaLeggere, RecuperoDocBean dto) {
+        boolean rispostaControlli = false;
+        Blob blob = null;
+        ResultSet rs = null;
+        String queryStr = null;
+        byte[] buffer = new byte[BUFFERSIZE];
 
-	switch (tabellaBlobDaLeggere) {
-	case BLOB:
-	    queryStr = QRY_ARO_CONTENUTO_COMP;
-	    break;
-	case ERRORI_VERS:
-	    queryStr = QRY_VRS_CONTENUTO_FILE_KO;
-	    break;
-	case FIR_REPORT:
-	    queryStr = QRY_FIR_REPORT_COMP;
-	    break;
-	case ELV_FILE_ELENCO:
-	    queryStr = QRY_ELV_FILE_ELENCO_VERS;
-	    break;
-	case ELV_FILE_ELENCO_FASC:
-	    queryStr = QRY_ELV_FILE_ELENCO_VERS_FASC;
-	    break;
-	case SER_FILE_VER_SERIE:
-	    queryStr = QRY_SER_FILE_VER_SERIE_INDICE_AIP;
-	    break;
-	}
-	try {
-	    java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
-	    try (PreparedStatement pstmt = conn.prepareStatement(queryStr)) {
-		log.info(queryStr);
-		pstmt.setLong(1, idPadre);
-		if (dto != null && dto.getTiFile() != null) {
-		    pstmt.setString(2, dto.getTiFile());
-		}
-		rs = pstmt.executeQuery();
-		while (rs.next()) {
-		    blob = rs.getBlob(1);
-		}
-	    } finally {
-		if (rs != null) {
-		    rs.close();
-		}
-		closeConnection(conn);
-	    }
-	    if (blob != null) {
-		try (InputStream is = blob.getBinaryStream();) {
-		    int len;
-		    while ((len = is.read(buffer)) > 0) {
-			outputStream.write(buffer, 0, len);
-			log.debug("letto blob e scritto su stream...");
-		    }
-		}
-		rispostaControlli = true;
-	    } else {
-		log.error(
-			"Eccezione nella lettura della tabella dei dati componente: il blob è nullo");
-	    }
-	} catch (SQLException | IOException ex) {
+        switch (tabellaBlobDaLeggere) {
+        case BLOB:
+            queryStr = QRY_ARO_CONTENUTO_COMP;
+            break;
+        case ERRORI_VERS:
+            queryStr = QRY_VRS_CONTENUTO_FILE_KO;
+            break;
+        case FIR_REPORT:
+            queryStr = QRY_FIR_REPORT_COMP;
+            break;
+        case ELV_FILE_ELENCO:
+            queryStr = QRY_ELV_FILE_ELENCO_VERS;
+            break;
+        case ELV_FILE_ELENCO_FASC:
+            queryStr = QRY_ELV_FILE_ELENCO_VERS_FASC;
+            break;
+        case SER_FILE_VER_SERIE:
+            queryStr = QRY_SER_FILE_VER_SERIE_INDICE_AIP;
+            break;
+        }
+        try {
+            java.sql.Connection conn = JpaUtils.provideConnectionFrom(entityManager);
+            try (PreparedStatement pstmt = conn.prepareStatement(queryStr)) {
+                log.info(queryStr);
+                pstmt.setLong(1, idPadre);
+                if (dto != null && dto.getTiFile() != null) {
+                    pstmt.setString(2, dto.getTiFile());
+                }
+                rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    blob = rs.getBlob(1);
+                }
+            } finally {
+                if (rs != null) {
+                    rs.close();
+                }
+                closeConnection(conn);
+            }
+            if (blob != null) {
+                try (InputStream is = blob.getBinaryStream();) {
+                    int len;
+                    while ((len = is.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, len);
+                        log.debug("letto blob e scritto su stream...");
+                    }
+                }
+                rispostaControlli = true;
+            } else {
+                log.error(
+                        "Eccezione nella lettura della tabella dei dati componente: il blob è nullo");
+            }
+        } catch (SQLException | IOException ex) {
 
-	    log.error("Eccezione RecBlbOracle.recuperaBlobCompSuStream ", ex);
-	}
+            log.error("Eccezione RecBlbOracle.recuperaBlobCompSuStream ", ex);
+        }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 
     private void closeConnection(Connection conn) {
-	if (conn != null) {
-	    try {
-		conn.close();
-	    } catch (SQLException ex) {
-		throw new ConnectionException(
-			"RecBlbOracle: Errore nella chiusura della connessione: "
-				+ ex.getMessage());
-	    }
-	}
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                throw new ConnectionException(
+                        "RecBlbOracle: Errore nella chiusura della connessione: "
+                                + ex.getMessage());
+            }
+        }
     }
 }

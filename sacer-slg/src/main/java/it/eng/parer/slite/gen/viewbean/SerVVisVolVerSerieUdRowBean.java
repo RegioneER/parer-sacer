@@ -36,367 +36,367 @@ public class SerVVisVolVerSerieUdRowBean extends BaseRow implements JEEBaseRowIn
     public static SerVVisVolVerSerieUdTableDescriptor TABLE_DESCRIPTOR = new SerVVisVolVerSerieUdTableDescriptor();
 
     public SerVVisVolVerSerieUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdSerie() {
-	return getBigDecimal("id_serie");
+        return getBigDecimal("id_serie");
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-	setObject("id_serie", idSerie);
+        setObject("id_serie", idSerie);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getCdCompositoSerie() {
-	return getString("cd_composito_serie");
+        return getString("cd_composito_serie");
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-	setObject("cd_composito_serie", cdCompositoSerie);
+        setObject("cd_composito_serie", cdCompositoSerie);
     }
 
     public BigDecimal getAaSerie() {
-	return getBigDecimal("aa_serie");
+        return getBigDecimal("aa_serie");
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-	setObject("aa_serie", aaSerie);
+        setObject("aa_serie", aaSerie);
     }
 
     public String getDsSerie() {
-	return getString("ds_serie");
+        return getString("ds_serie");
     }
 
     public void setDsSerie(String dsSerie) {
-	setObject("ds_serie", dsSerie);
+        setObject("ds_serie", dsSerie);
     }
 
     public BigDecimal getIdTipoSerie() {
-	return getBigDecimal("id_tipo_serie");
+        return getBigDecimal("id_tipo_serie");
     }
 
     public void setIdTipoSerie(BigDecimal idTipoSerie) {
-	setObject("id_tipo_serie", idTipoSerie);
+        setObject("id_tipo_serie", idTipoSerie);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public String getNmTipoSerie() {
-	return getString("nm_tipo_serie");
+        return getString("nm_tipo_serie");
     }
 
     public void setNmTipoSerie(String nmTipoSerie) {
-	setObject("nm_tipo_serie", nmTipoSerie);
+        setObject("nm_tipo_serie", nmTipoSerie);
     }
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public String getCdVerSerie() {
-	return getString("cd_ver_serie");
+        return getString("cd_ver_serie");
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-	setObject("cd_ver_serie", cdVerSerie);
+        setObject("cd_ver_serie", cdVerSerie);
     }
 
     public Timestamp getDtInizioSelSerie() {
-	return getTimestamp("dt_inizio_sel_serie");
+        return getTimestamp("dt_inizio_sel_serie");
     }
 
     public void setDtInizioSelSerie(Timestamp dtInizioSelSerie) {
-	setObject("dt_inizio_sel_serie", dtInizioSelSerie);
+        setObject("dt_inizio_sel_serie", dtInizioSelSerie);
     }
 
     public Timestamp getDtFineSelSerie() {
-	return getTimestamp("dt_fine_sel_serie");
+        return getTimestamp("dt_fine_sel_serie");
     }
 
     public void setDtFineSelSerie(Timestamp dtFineSelSerie) {
-	setObject("dt_fine_sel_serie", dtFineSelSerie);
+        setObject("dt_fine_sel_serie", dtFineSelSerie);
     }
 
     public BigDecimal getIdStatoVerSerieCor() {
-	return getBigDecimal("id_stato_ver_serie_cor");
+        return getBigDecimal("id_stato_ver_serie_cor");
     }
 
     public void setIdStatoVerSerieCor(BigDecimal idStatoVerSerieCor) {
-	setObject("id_stato_ver_serie_cor", idStatoVerSerieCor);
+        setObject("id_stato_ver_serie_cor", idStatoVerSerieCor);
     }
 
     public String getTiStatoVerSerie() {
-	return getString("ti_stato_ver_serie");
+        return getString("ti_stato_ver_serie");
     }
 
     public void setTiStatoVerSerie(String tiStatoVerSerie) {
-	setObject("ti_stato_ver_serie", tiStatoVerSerie);
+        setObject("ti_stato_ver_serie", tiStatoVerSerie);
     }
 
     public BigDecimal getIdVolVerSerie() {
-	return getBigDecimal("id_vol_ver_serie");
+        return getBigDecimal("id_vol_ver_serie");
     }
 
     public void setIdVolVerSerie(BigDecimal idVolVerSerie) {
-	setObject("id_vol_ver_serie", idVolVerSerie);
+        setObject("id_vol_ver_serie", idVolVerSerie);
     }
 
     public BigDecimal getNiUnitaDocVol() {
-	return getBigDecimal("ni_unita_doc_vol");
+        return getBigDecimal("ni_unita_doc_vol");
     }
 
     public void setNiUnitaDocVol(BigDecimal niUnitaDocVol) {
-	setObject("ni_unita_doc_vol", niUnitaDocVol);
+        setObject("ni_unita_doc_vol", niUnitaDocVol);
     }
 
     public String getCdFirstUnitaDocVol() {
-	return getString("cd_first_unita_doc_vol");
+        return getString("cd_first_unita_doc_vol");
     }
 
     public void setCdFirstUnitaDocVol(String cdFirstUnitaDocVol) {
-	setObject("cd_first_unita_doc_vol", cdFirstUnitaDocVol);
+        setObject("cd_first_unita_doc_vol", cdFirstUnitaDocVol);
     }
 
     public Timestamp getDtFirstUnitaDocVol() {
-	return getTimestamp("dt_first_unita_doc_vol");
+        return getTimestamp("dt_first_unita_doc_vol");
     }
 
     public void setDtFirstUnitaDocVol(Timestamp dtFirstUnitaDocVol) {
-	setObject("dt_first_unita_doc_vol", dtFirstUnitaDocVol);
+        setObject("dt_first_unita_doc_vol", dtFirstUnitaDocVol);
     }
 
     public String getCdLastUnitaDocVol() {
-	return getString("cd_last_unita_doc_vol");
+        return getString("cd_last_unita_doc_vol");
     }
 
     public void setCdLastUnitaDocVol(String cdLastUnitaDocVol) {
-	setObject("cd_last_unita_doc_vol", cdLastUnitaDocVol);
+        setObject("cd_last_unita_doc_vol", cdLastUnitaDocVol);
     }
 
     public Timestamp getDtLastUnitaDocVol() {
-	return getTimestamp("dt_last_unita_doc_vol");
+        return getTimestamp("dt_last_unita_doc_vol");
     }
 
     public void setDtLastUnitaDocVol(Timestamp dtLastUnitaDocVol) {
-	setObject("dt_last_unita_doc_vol", dtLastUnitaDocVol);
+        setObject("dt_last_unita_doc_vol", dtLastUnitaDocVol);
     }
 
     public String getBlIxVol() {
-	return getString("bl_ix_vol");
+        return getString("bl_ix_vol");
     }
 
     public void setBlIxVol(String blIxVol) {
-	setObject("bl_ix_vol", blIxVol);
+        setObject("bl_ix_vol", blIxVol);
     }
 
     public String getCdVerXsdIxVol() {
-	return getString("cd_ver_xsd_ix_vol");
+        return getString("cd_ver_xsd_ix_vol");
     }
 
     public void setCdVerXsdIxVol(String cdVerXsdIxVol) {
-	setObject("cd_ver_xsd_ix_vol", cdVerXsdIxVol);
+        setObject("cd_ver_xsd_ix_vol", cdVerXsdIxVol);
     }
 
     public String getDsHashIxVol() {
-	return getString("ds_hash_ix_vol");
+        return getString("ds_hash_ix_vol");
     }
 
     public void setDsHashIxVol(String dsHashIxVol) {
-	setObject("ds_hash_ix_vol", dsHashIxVol);
+        setObject("ds_hash_ix_vol", dsHashIxVol);
     }
 
     public String getDsAlgoHashIxVol() {
-	return getString("ds_algo_hash_ix_vol");
+        return getString("ds_algo_hash_ix_vol");
     }
 
     public void setDsAlgoHashIxVol(String dsAlgoHashIxVol) {
-	setObject("ds_algo_hash_ix_vol", dsAlgoHashIxVol);
+        setObject("ds_algo_hash_ix_vol", dsAlgoHashIxVol);
     }
 
     public String getCdEncodingHashIxVol() {
-	return getString("cd_encoding_hash_ix_vol");
+        return getString("cd_encoding_hash_ix_vol");
     }
 
     public void setCdEncodingHashIxVol(String cdEncodingHashIxVol) {
-	setObject("cd_encoding_hash_ix_vol", cdEncodingHashIxVol);
+        setObject("cd_encoding_hash_ix_vol", cdEncodingHashIxVol);
     }
 
     public Timestamp getDtCreazione() {
-	return getTimestamp("dt_creazione");
+        return getTimestamp("dt_creazione");
     }
 
     public void setDtCreazione(Timestamp dtCreazione) {
-	setObject("dt_creazione", dtCreazione);
+        setObject("dt_creazione", dtCreazione);
     }
 
     public String getCriterioOrd() {
-	return getString("criterio_ord");
+        return getString("criterio_ord");
     }
 
     public void setCriterioOrd(String criterioOrd) {
-	setObject("criterio_ord", criterioOrd);
+        setObject("criterio_ord", criterioOrd);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVVisVolVerSerieUd entity = (SerVVisVolVerSerieUd) obj;
-	this.setIdSerie(entity.getIdSerie());
-	this.setIdStrut(entity.getIdStrut());
-	this.setCdCompositoSerie(entity.getCdCompositoSerie());
-	this.setAaSerie(entity.getAaSerie());
-	this.setDsSerie(entity.getDsSerie());
-	this.setIdTipoSerie(entity.getIdTipoSerie());
-	this.setNmStrut(entity.getNmStrut());
-	this.setIdEnte(entity.getIdEnte());
-	this.setNmEnte(entity.getNmEnte());
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setNmTipoSerie(entity.getNmTipoSerie());
-	this.setIdVerSerie(entity.getIdVerSerie());
-	this.setCdVerSerie(entity.getCdVerSerie());
-	if (entity.getDtInizioSelSerie() != null) {
-	    this.setDtInizioSelSerie(new Timestamp(entity.getDtInizioSelSerie().getTime()));
-	}
-	if (entity.getDtFineSelSerie() != null) {
-	    this.setDtFineSelSerie(new Timestamp(entity.getDtFineSelSerie().getTime()));
-	}
-	this.setIdStatoVerSerieCor(entity.getIdStatoVerSerieCor());
-	this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
-	this.setIdVolVerSerie(entity.getIdVolVerSerie());
-	this.setNiUnitaDocVol(entity.getNiUnitaDocVol());
-	this.setCdFirstUnitaDocVol(entity.getCdFirstUnitaDocVol());
-	if (entity.getDtFirstUnitaDocVol() != null) {
-	    this.setDtFirstUnitaDocVol(new Timestamp(entity.getDtFirstUnitaDocVol().getTime()));
-	}
-	this.setCdLastUnitaDocVol(entity.getCdLastUnitaDocVol());
-	if (entity.getDtLastUnitaDocVol() != null) {
-	    this.setDtLastUnitaDocVol(new Timestamp(entity.getDtLastUnitaDocVol().getTime()));
-	}
-	this.setBlIxVol(entity.getBlIxVol());
-	this.setCdVerXsdIxVol(entity.getCdVerXsdIxVol());
-	this.setDsHashIxVol(entity.getDsHashIxVol());
-	this.setDsAlgoHashIxVol(entity.getDsAlgoHashIxVol());
-	this.setCdEncodingHashIxVol(entity.getCdEncodingHashIxVol());
-	if (entity.getDtCreazione() != null) {
-	    this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
-	}
-	this.setCriterioOrd(entity.getCriterioOrd());
+        SerVVisVolVerSerieUd entity = (SerVVisVolVerSerieUd) obj;
+        this.setIdSerie(entity.getIdSerie());
+        this.setIdStrut(entity.getIdStrut());
+        this.setCdCompositoSerie(entity.getCdCompositoSerie());
+        this.setAaSerie(entity.getAaSerie());
+        this.setDsSerie(entity.getDsSerie());
+        this.setIdTipoSerie(entity.getIdTipoSerie());
+        this.setNmStrut(entity.getNmStrut());
+        this.setIdEnte(entity.getIdEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setNmTipoSerie(entity.getNmTipoSerie());
+        this.setIdVerSerie(entity.getIdVerSerie());
+        this.setCdVerSerie(entity.getCdVerSerie());
+        if (entity.getDtInizioSelSerie() != null) {
+            this.setDtInizioSelSerie(new Timestamp(entity.getDtInizioSelSerie().getTime()));
+        }
+        if (entity.getDtFineSelSerie() != null) {
+            this.setDtFineSelSerie(new Timestamp(entity.getDtFineSelSerie().getTime()));
+        }
+        this.setIdStatoVerSerieCor(entity.getIdStatoVerSerieCor());
+        this.setTiStatoVerSerie(entity.getTiStatoVerSerie());
+        this.setIdVolVerSerie(entity.getIdVolVerSerie());
+        this.setNiUnitaDocVol(entity.getNiUnitaDocVol());
+        this.setCdFirstUnitaDocVol(entity.getCdFirstUnitaDocVol());
+        if (entity.getDtFirstUnitaDocVol() != null) {
+            this.setDtFirstUnitaDocVol(new Timestamp(entity.getDtFirstUnitaDocVol().getTime()));
+        }
+        this.setCdLastUnitaDocVol(entity.getCdLastUnitaDocVol());
+        if (entity.getDtLastUnitaDocVol() != null) {
+            this.setDtLastUnitaDocVol(new Timestamp(entity.getDtLastUnitaDocVol().getTime()));
+        }
+        this.setBlIxVol(entity.getBlIxVol());
+        this.setCdVerXsdIxVol(entity.getCdVerXsdIxVol());
+        this.setDsHashIxVol(entity.getDsHashIxVol());
+        this.setDsAlgoHashIxVol(entity.getDsAlgoHashIxVol());
+        this.setCdEncodingHashIxVol(entity.getCdEncodingHashIxVol());
+        if (entity.getDtCreazione() != null) {
+            this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
+        }
+        this.setCriterioOrd(entity.getCriterioOrd());
     }
 
     @Override
     public SerVVisVolVerSerieUd rowBeanToEntity() {
-	SerVVisVolVerSerieUd entity = new SerVVisVolVerSerieUd();
-	entity.setIdSerie(this.getIdSerie());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setCdCompositoSerie(this.getCdCompositoSerie());
-	entity.setAaSerie(this.getAaSerie());
-	entity.setDsSerie(this.getDsSerie());
-	entity.setIdTipoSerie(this.getIdTipoSerie());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setNmTipoSerie(this.getNmTipoSerie());
-	entity.setIdVerSerie(this.getIdVerSerie());
-	entity.setCdVerSerie(this.getCdVerSerie());
-	entity.setDtInizioSelSerie(this.getDtInizioSelSerie());
-	entity.setDtFineSelSerie(this.getDtFineSelSerie());
-	entity.setIdStatoVerSerieCor(this.getIdStatoVerSerieCor());
-	entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
-	entity.setIdVolVerSerie(this.getIdVolVerSerie());
-	entity.setNiUnitaDocVol(this.getNiUnitaDocVol());
-	entity.setCdFirstUnitaDocVol(this.getCdFirstUnitaDocVol());
-	entity.setDtFirstUnitaDocVol(this.getDtFirstUnitaDocVol());
-	entity.setCdLastUnitaDocVol(this.getCdLastUnitaDocVol());
-	entity.setDtLastUnitaDocVol(this.getDtLastUnitaDocVol());
-	entity.setBlIxVol(this.getBlIxVol());
-	entity.setCdVerXsdIxVol(this.getCdVerXsdIxVol());
-	entity.setDsHashIxVol(this.getDsHashIxVol());
-	entity.setDsAlgoHashIxVol(this.getDsAlgoHashIxVol());
-	entity.setCdEncodingHashIxVol(this.getCdEncodingHashIxVol());
-	entity.setDtCreazione(this.getDtCreazione());
-	entity.setCriterioOrd(this.getCriterioOrd());
-	return entity;
+        SerVVisVolVerSerieUd entity = new SerVVisVolVerSerieUd();
+        entity.setIdSerie(this.getIdSerie());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setCdCompositoSerie(this.getCdCompositoSerie());
+        entity.setAaSerie(this.getAaSerie());
+        entity.setDsSerie(this.getDsSerie());
+        entity.setIdTipoSerie(this.getIdTipoSerie());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setNmTipoSerie(this.getNmTipoSerie());
+        entity.setIdVerSerie(this.getIdVerSerie());
+        entity.setCdVerSerie(this.getCdVerSerie());
+        entity.setDtInizioSelSerie(this.getDtInizioSelSerie());
+        entity.setDtFineSelSerie(this.getDtFineSelSerie());
+        entity.setIdStatoVerSerieCor(this.getIdStatoVerSerieCor());
+        entity.setTiStatoVerSerie(this.getTiStatoVerSerie());
+        entity.setIdVolVerSerie(this.getIdVolVerSerie());
+        entity.setNiUnitaDocVol(this.getNiUnitaDocVol());
+        entity.setCdFirstUnitaDocVol(this.getCdFirstUnitaDocVol());
+        entity.setDtFirstUnitaDocVol(this.getDtFirstUnitaDocVol());
+        entity.setCdLastUnitaDocVol(this.getCdLastUnitaDocVol());
+        entity.setDtLastUnitaDocVol(this.getDtLastUnitaDocVol());
+        entity.setBlIxVol(this.getBlIxVol());
+        entity.setCdVerXsdIxVol(this.getCdVerXsdIxVol());
+        entity.setDsHashIxVol(this.getDsHashIxVol());
+        entity.setDsAlgoHashIxVol(this.getDsAlgoHashIxVol());
+        entity.setCdEncodingHashIxVol(this.getCdEncodingHashIxVol());
+        entity.setDtCreazione(this.getDtCreazione());
+        entity.setCriterioOrd(this.getCriterioOrd());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

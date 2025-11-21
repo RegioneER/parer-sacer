@@ -37,19 +37,19 @@ public class DecVLisValVoceTitolTableBean extends AbstractBaseTable<DecVLisValVo
     public static DecVLisValVoceTitolTableDescriptor TABLE_DESCRIPTOR = new DecVLisValVoceTitolTableDescriptor();
 
     public DecVLisValVoceTitolTableBean() {
-	super();
+        super();
     }
 
     protected DecVLisValVoceTitolRowBean createRow() {
-	return new DecVLisValVoceTitolRowBean();
+        return new DecVLisValVoceTitolRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVLisValVoceTitolRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -36,136 +36,136 @@ public class OrgAmbienteRowBean extends BaseRow implements JEEBaseRowInterface {
     public static OrgAmbienteTableDescriptor TABLE_DESCRIPTOR = new OrgAmbienteTableDescriptor();
 
     public OrgAmbienteRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public String getDsAmbiente() {
-	return getString("ds_ambiente");
+        return getString("ds_ambiente");
     }
 
     public void setDsAmbiente(String dsAmbiente) {
-	setObject("ds_ambiente", dsAmbiente);
+        setObject("ds_ambiente", dsAmbiente);
     }
 
     public Timestamp getDtIniVal() {
-	return getTimestamp("dt_ini_val");
+        return getTimestamp("dt_ini_val");
     }
 
     public void setDtIniVal(Timestamp dtIniVal) {
-	setObject("dt_ini_val", dtIniVal);
+        setObject("dt_ini_val", dtIniVal);
     }
 
     public Timestamp getDtFinVal() {
-	return getTimestamp("dt_fin_val");
+        return getTimestamp("dt_fin_val");
     }
 
     public void setDtFinVal(Timestamp dtFinVal) {
-	setObject("dt_fin_val", dtFinVal);
+        setObject("dt_fin_val", dtFinVal);
     }
 
     public BigDecimal getIdEnteConserv() {
-	return getBigDecimal("id_ente_conserv");
+        return getBigDecimal("id_ente_conserv");
     }
 
     public void setIdEnteConserv(BigDecimal idEnteConserv) {
-	setObject("id_ente_conserv", idEnteConserv);
+        setObject("id_ente_conserv", idEnteConserv);
     }
 
     public BigDecimal getIdEnteGestore() {
-	return getBigDecimal("id_ente_gestore");
+        return getBigDecimal("id_ente_gestore");
     }
 
     public void setIdEnteGestore(BigDecimal idEnteGestore) {
-	setObject("id_ente_gestore", idEnteGestore);
+        setObject("id_ente_gestore", idEnteGestore);
     }
 
     public String getDsNote() {
-	return getString("ds_note");
+        return getString("ds_note");
     }
 
     public void setDsNote(String ds_note) {
-	setObject("ds_note", ds_note);
+        setObject("ds_note", ds_note);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgAmbiente entity = (OrgAmbiente) obj;
+        OrgAmbiente entity = (OrgAmbiente) obj;
 
-	this.setIdAmbiente(
-		entity.getIdAmbiente() == null ? null : BigDecimal.valueOf(entity.getIdAmbiente()));
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setDsAmbiente(entity.getDsAmbiente());
-	if (entity.getDtIniVal() != null) {
-	    this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
-	}
-	if (entity.getDtFinVal() != null) {
-	    this.setDtFinVal(new Timestamp(entity.getDtFinVal().getTime()));
-	}
-	this.setIdEnteConserv(entity.getIdEnteConserv());
-	this.setIdEnteGestore(entity.getIdEnteGestore());
-	this.setDsNote(entity.getDsNote());
+        this.setIdAmbiente(
+                entity.getIdAmbiente() == null ? null : BigDecimal.valueOf(entity.getIdAmbiente()));
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setDsAmbiente(entity.getDsAmbiente());
+        if (entity.getDtIniVal() != null) {
+            this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
+        }
+        if (entity.getDtFinVal() != null) {
+            this.setDtFinVal(new Timestamp(entity.getDtFinVal().getTime()));
+        }
+        this.setIdEnteConserv(entity.getIdEnteConserv());
+        this.setIdEnteGestore(entity.getIdEnteGestore());
+        this.setDsNote(entity.getDsNote());
     }
 
     @Override
     public OrgAmbiente rowBeanToEntity() {
-	OrgAmbiente entity = new OrgAmbiente();
-	if (this.getIdAmbiente() != null) {
-	    entity.setIdAmbiente(this.getIdAmbiente().longValue());
-	}
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setDsAmbiente(this.getDsAmbiente());
-	entity.setDtIniVal(this.getDtIniVal());
-	entity.setDtFinVal(this.getDtFinVal());
-	entity.setIdEnteConserv(this.getIdEnteConserv());
-	entity.setIdEnteGestore(this.getIdEnteGestore());
-	entity.setDsNote(this.getDsNote());
-	return entity;
+        OrgAmbiente entity = new OrgAmbiente();
+        if (this.getIdAmbiente() != null) {
+            entity.setIdAmbiente(this.getIdAmbiente().longValue());
+        }
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setDsAmbiente(this.getDsAmbiente());
+        entity.setDtIniVal(this.getDtIniVal());
+        entity.setDtFinVal(this.getDtFinVal());
+        entity.setIdEnteConserv(this.getIdEnteConserv());
+        entity.setIdEnteGestore(this.getIdEnteGestore());
+        entity.setDsNote(this.getDsNote());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

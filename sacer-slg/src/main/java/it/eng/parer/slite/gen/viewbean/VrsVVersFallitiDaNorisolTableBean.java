@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class VrsVVersFallitiDaNorisolTableBean
-	extends AbstractBaseTable<VrsVVersFallitiDaNorisolRowBean> {
+        extends AbstractBaseTable<VrsVVersFallitiDaNorisolRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class VrsVVersFallitiDaNorisolTableBean
     public static VrsVVersFallitiDaNorisolTableDescriptor TABLE_DESCRIPTOR = new VrsVVersFallitiDaNorisolTableDescriptor();
 
     public VrsVVersFallitiDaNorisolTableBean() {
-	super();
+        super();
     }
 
     protected VrsVVersFallitiDaNorisolRowBean createRow() {
-	return new VrsVVersFallitiDaNorisolRowBean();
+        return new VrsVVersFallitiDaNorisolRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsVVersFallitiDaNorisolRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

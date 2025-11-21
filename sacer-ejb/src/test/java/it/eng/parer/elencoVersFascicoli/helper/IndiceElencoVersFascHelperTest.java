@@ -47,103 +47,103 @@ public class IndiceElencoVersFascHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		IndiceElencoVersFascHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			IndiceElencoVersFascHelperTest.class, IndiceElencoVersFascHelper.class,
-			ElencoEnums.class));
+        return HelperTest.createEnterpriseArchive(
+                IndiceElencoVersFascHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        IndiceElencoVersFascHelperTest.class, IndiceElencoVersFascHelper.class,
+                        ElencoEnums.class));
     }
 
     @Test
     void retrieveFasFascicoliInVolume_queryIsOk() {
-	VolVolumeConserv volume = aVolVolumeConserv();
-	helper.retrieveFasFascicoliInVolume(volume);
-	assertTrue(true);
+        VolVolumeConserv volume = aVolVolumeConserv();
+        helper.retrieveFasFascicoliInVolume(volume);
+        assertTrue(true);
     }
 
     @Test
     void getContenutoSinteticoElenco_queryIsOk() {
-	VolVolumeConserv volume = aVolVolumeConserv();
-	helper.getContenutoSinteticoElenco(volume);
-	assertTrue(true);
+        VolVolumeConserv volume = aVolVolumeConserv();
+        helper.getContenutoSinteticoElenco(volume);
+        assertTrue(true);
     }
 
     @Test
     void getTipologieDocumentoPrincipaleElv_queryIsOk() {
-	ElvElencoVer elenco = aElvElencoVer();
-	helper.getTipologieDocumentoPrincipaleElv(elenco);
-	assertTrue(true);
+        ElvElencoVer elenco = aElvElencoVer();
+        helper.getTipologieDocumentoPrincipaleElv(elenco);
+        assertTrue(true);
     }
 
     @Test
     void getTipologieDocumentoPrincipaleUd_queryIsOk() {
-	AroUnitaDoc ud = anAroUnitaDoc();
-	helper.getTipologieDocumentoPrincipaleUd(ud);
-	assertTrue(true);
+        AroUnitaDoc ud = anAroUnitaDoc();
+        helper.getTipologieDocumentoPrincipaleUd(ud);
+        assertTrue(true);
     }
 
     @Test
     void getTipologieUnitaDocumentaria_queryIsOk() {
-	ElvElencoVer elenco = aElvElencoVer();
-	helper.getTipologieUnitaDocumentaria(elenco);
-	assertTrue(true);
+        ElvElencoVer elenco = aElvElencoVer();
+        helper.getTipologieUnitaDocumentaria(elenco);
+        assertTrue(true);
     }
 
     @Test
     void getTipologieRegistro_queryIsOk() {
-	ElvElencoVer elenco = aElvElencoVer();
-	helper.getTipologieRegistro(elenco);
-	assertTrue(true);
+        ElvElencoVer elenco = aElvElencoVer();
+        helper.getTipologieRegistro(elenco);
+        assertTrue(true);
     }
 
     @Test
     void retrieveElvVCreaIxElencoFasc_queryIsOk() {
-	ElvElencoVersFasc elenco = aElvElencoVersFasc();
-	try {
-	    helper.retrieveElvVCreaIxElencoFasc(elenco);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        ElvElencoVersFasc elenco = aElvElencoVersFasc();
+        try {
+            helper.retrieveElvVCreaIxElencoFasc(elenco);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void retrieveElvVCreaLisFascElenco_queryIsOk() {
-	FasFascicolo ff = aFasFascicolo();
-	try {
-	    helper.retrieveElvVCreaLisFascElenco(ff);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        FasFascicolo ff = aFasFascicolo();
+        try {
+            helper.retrieveElvVCreaLisFascElenco(ff);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void convertListToString_queryIsOk() {
-	List<String> listToConvert = aListOfString(2);
-	helper.convertListToString(listToConvert);
-	assertTrue(true);
+        List<String> listToConvert = aListOfString(2);
+        helper.convertListToString(listToConvert);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDateVersamento_queryIsOk() {
-	ElvElencoVer elenco = aElvElencoVer();
-	helper.retrieveDateVersamento(elenco);
-	assertTrue(true);
+        ElvElencoVer elenco = aElvElencoVer();
+        helper.retrieveDateVersamento(elenco);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDateVersamentoUdVersate_queryIsOk() {
-	ElvElencoVer elenco = aElvElencoVer();
-	helper.retrieveDateVersamentoUdVersate(elenco);
-	assertTrue(true);
+        ElvElencoVer elenco = aElvElencoVer();
+        helper.retrieveDateVersamentoUdVersate(elenco);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDateVersamentoDocAgg_queryIsOk() {
-	ElvElencoVer elenco = aElvElencoVer();
-	helper.retrieveDateVersamentoDocAgg(elenco);
-	assertTrue(true);
+        ElvElencoVer elenco = aElvElencoVer();
+        helper.retrieveDateVersamentoDocAgg(elenco);
+        assertTrue(true);
     }
 }

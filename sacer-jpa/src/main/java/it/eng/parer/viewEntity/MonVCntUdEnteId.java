@@ -34,75 +34,75 @@ public class MonVCntUdEnteId implements Serializable {
 
     @Column(name = "TI_DT_CREAZIONE", columnDefinition = "char")
     public String getTiDtCreazione() {
-	return this.tiDtCreazione;
+        return this.tiDtCreazione;
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	this.tiDtCreazione = tiDtCreazione;
+        this.tiDtCreazione = tiDtCreazione;
     }
 
     @Column(name = "TI_STATO_UD")
     public String getTiStatoUd() {
-	return this.tiStatoUd;
+        return this.tiStatoUd;
     }
 
     public void setTiStatoUd(String tiStatoUd) {
-	this.tiStatoUd = tiStatoUd;
+        this.tiStatoUd = tiStatoUd;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return this.idEnte;
+        return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 97 * hash + Objects.hashCode(this.idEnte);
-	hash = 97 * hash + Objects.hashCode(this.idUserIam);
-	hash = 97 * hash + Objects.hashCode(this.tiDtCreazione);
-	hash = 97 * hash + Objects.hashCode(this.tiStatoUd);
-	return hash;
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.idEnte);
+        hash = 97 * hash + Objects.hashCode(this.idUserIam);
+        hash = 97 * hash + Objects.hashCode(this.tiDtCreazione);
+        hash = 97 * hash + Objects.hashCode(this.tiStatoUd);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntUdEnteId other = (MonVCntUdEnteId) obj;
-	if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
-	    return false;
-	}
-	if (!Objects.equals(this.tiStatoUd, other.tiStatoUd)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idEnte, other.idEnte)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idUserIam, other.idUserIam)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVCntUdEnteId other = (MonVCntUdEnteId) obj;
+        if (!Objects.equals(this.tiDtCreazione, other.tiDtCreazione)) {
+            return false;
+        }
+        if (!Objects.equals(this.tiStatoUd, other.tiStatoUd)) {
+            return false;
+        }
+        if (!Objects.equals(this.idEnte, other.idEnte)) {
+            return false;
+        }
+        if (!Objects.equals(this.idUserIam, other.idUserIam)) {
+            return false;
+        }
+        return true;
     }
 
 }

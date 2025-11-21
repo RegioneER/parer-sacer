@@ -37,19 +37,19 @@ public class AroVRicDatiSpecTableBean extends AbstractBaseTable<AroVRicDatiSpecR
     public static AroVRicDatiSpecTableDescriptor TABLE_DESCRIPTOR = new AroVRicDatiSpecTableDescriptor();
 
     public AroVRicDatiSpecTableBean() {
-	super();
+        super();
     }
 
     protected AroVRicDatiSpecRowBean createRow() {
-	return new AroVRicDatiSpecRowBean();
+        return new AroVRicDatiSpecRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVRicDatiSpecRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

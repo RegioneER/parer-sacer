@@ -33,19 +33,19 @@ public class AroCompDocTableBean extends AbstractBaseTable<AroCompDocRowBean> {
     public static AroCompDocTableDescriptor TABLE_DESCRIPTOR = new AroCompDocTableDescriptor();
 
     public AroCompDocTableBean() {
-	super();
+        super();
     }
 
     protected AroCompDocRowBean createRow() {
-	return new AroCompDocRowBean();
+        return new AroCompDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroCompDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

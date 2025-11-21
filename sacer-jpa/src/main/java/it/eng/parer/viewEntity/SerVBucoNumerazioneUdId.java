@@ -32,49 +32,49 @@ public class SerVBucoNumerazioneUdId implements Serializable {
 
     @Column(name = "ID_CONTENUTO_VER_SERIE")
     public BigDecimal getIdContenutoVerSerie() {
-	return this.idContenutoVerSerie;
+        return this.idContenutoVerSerie;
     }
 
     public void setIdContenutoVerSerie(BigDecimal idContenutoVerSerie) {
-	this.idContenutoVerSerie = idContenutoVerSerie;
+        this.idContenutoVerSerie = idContenutoVerSerie;
     }
 
     @Column(name = "PG_UD_SER_INI_BUCO")
     public BigDecimal getPgUdSerIniBuco() {
-	return this.pgUdSerIniBuco;
+        return this.pgUdSerIniBuco;
     }
 
     public void setPgUdSerIniBuco(BigDecimal pgUdSerIniBuco) {
-	this.pgUdSerIniBuco = pgUdSerIniBuco;
+        this.pgUdSerIniBuco = pgUdSerIniBuco;
     }
 
     @Override
     public int hashCode() {
-	int hash = 3;
-	hash = 13 * hash + Objects.hashCode(this.pgUdSerIniBuco);
-	hash = 13 * hash + Objects.hashCode(this.idContenutoVerSerie);
-	return hash;
+        int hash = 3;
+        hash = 13 * hash + Objects.hashCode(this.pgUdSerIniBuco);
+        hash = 13 * hash + Objects.hashCode(this.idContenutoVerSerie);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final SerVBucoNumerazioneUdId other = (SerVBucoNumerazioneUdId) obj;
-	if (!Objects.equals(this.pgUdSerIniBuco, other.pgUdSerIniBuco)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idContenutoVerSerie, other.idContenutoVerSerie)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SerVBucoNumerazioneUdId other = (SerVBucoNumerazioneUdId) obj;
+        if (!Objects.equals(this.pgUdSerIniBuco, other.pgUdSerIniBuco)) {
+            return false;
+        }
+        if (!Objects.equals(this.idContenutoVerSerie, other.idContenutoVerSerie)) {
+            return false;
+        }
+        return true;
     }
 
 }

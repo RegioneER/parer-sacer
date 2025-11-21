@@ -33,19 +33,19 @@ public class DecUsoModelloXsdFascTableBean extends AbstractBaseTable<DecUsoModel
     public static DecUsoModelloXsdFascTableDescriptor TABLE_DESCRIPTOR = new DecUsoModelloXsdFascTableDescriptor();
 
     public DecUsoModelloXsdFascTableBean() {
-	super();
+        super();
     }
 
     protected DecUsoModelloXsdFascRowBean createRow() {
-	return new DecUsoModelloXsdFascRowBean();
+        return new DecUsoModelloXsdFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecUsoModelloXsdFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

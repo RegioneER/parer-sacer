@@ -47,39 +47,39 @@ public class SigningRequest {
     private List<BigDecimal> files;
 
     public SigningRequest(long idUtente) {
-	this.idUtente = idUtente;
-	this.files = new ArrayList<BigDecimal>();
+        this.idUtente = idUtente;
+        this.files = new ArrayList<BigDecimal>();
     }
 
     public long getIdUtente() {
-	return this.idUtente;
+        return this.idUtente;
     }
 
     public HSMUser getUserHSM() {
-	return this.userHSM;
+        return this.userHSM;
     }
 
     public void setUserHSM(HSMUser userHSM) {
-	this.userHSM = userHSM;
+        this.userHSM = userHSM;
     }
 
     public TiSessioneFirma getType() {
-	return this.type;
+        return this.type;
     }
 
     public void setType(TiSessioneFirma type) {
-	this.type = type;
+        this.type = type;
     }
 
     public List<BigDecimal> getFiles() {
-	return this.files;
+        return this.files;
     }
 
     public void addFile(BigDecimal fileId) {
-	this.files.add(fileId);
+        this.files.add(fileId);
     }
 
     protected void setFiles(List<BigDecimal> files) {
-	this.files = files;
+        this.files = files;
     }
 }

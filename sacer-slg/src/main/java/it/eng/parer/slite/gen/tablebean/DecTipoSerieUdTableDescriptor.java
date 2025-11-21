@@ -44,28 +44,28 @@ public class DecTipoSerieUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_TIPO_SERIE_UD,
-		new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TIPO_SERIE,
-		new ColumnDescriptor(COL_ID_TIPO_SERIE, Types.DECIMAL, 22, false));
-	map.put(COL_ID_REGISTRO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_FL_SEL_UNITA_DOC_ANNUL,
-		new ColumnDescriptor(COL_FL_SEL_UNITA_DOC_ANNUL, Types.VARCHAR, 1, false));
+        map.put(COL_ID_TIPO_SERIE_UD,
+                new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TIPO_SERIE,
+                new ColumnDescriptor(COL_ID_TIPO_SERIE, Types.DECIMAL, 22, false));
+        map.put(COL_ID_REGISTRO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_FL_SEL_UNITA_DOC_ANNUL,
+                new ColumnDescriptor(COL_FL_SEL_UNITA_DOC_ANNUL, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

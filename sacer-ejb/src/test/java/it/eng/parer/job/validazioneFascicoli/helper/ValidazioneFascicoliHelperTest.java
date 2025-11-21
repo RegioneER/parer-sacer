@@ -41,95 +41,95 @@ public class ValidazioneFascicoliHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		ValidazioneFascicoliHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			ValidazioneFascicoliHelperTest.class, it.eng.parer.ws.dto.CSChiave.class,
-			ValidazioneFascicoliHelper.class, CSVersatore.class, CSChiaveFasc.class));
+        return HelperTest.createEnterpriseArchive(
+                ValidazioneFascicoliHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        ValidazioneFascicoliHelperTest.class, it.eng.parer.ws.dto.CSChiave.class,
+                        ValidazioneFascicoliHelper.class, CSVersatore.class, CSChiaveFasc.class));
     }
 
     @Test
     public void getElvElencoVersFascDaElab_queryIsOk() {
-	long idStrut = aLong();
-	for (ElvElencoVersFascDaElab.TiStatoElencoFascDaElab tiStato : ElvElencoVersFascDaElab.TiStatoElencoFascDaElab
-		.values()) {
-	    helper.getElvElencoVersFascDaElab(idStrut, tiStato);
-	    assertTrue(true);
-	}
+        long idStrut = aLong();
+        for (ElvElencoVersFascDaElab.TiStatoElencoFascDaElab tiStato : ElvElencoVersFascDaElab.TiStatoElencoFascDaElab
+                .values()) {
+            helper.getElvElencoVersFascDaElab(idStrut, tiStato);
+            assertTrue(true);
+        }
     }
 
     @Test
     public void getFascicoliInElencoNonAnnullati_queryIsOk() {
-	long idElencoVersFasc = aLong();
-	helper.getFascicoliInElencoNonAnnullati(idElencoVersFasc);
-	assertTrue(true);
+        long idElencoVersFasc = aLong();
+        helper.getFascicoliInElencoNonAnnullati(idElencoVersFasc);
+        assertTrue(true);
     }
 
     @Test
     public void existsUdFascicoloByStatoCons_queryIsOk() {
-	long idFascicolo = aLong();
-	String tiStatoConservazione = aString();
-	helper.existsUdFascicoloByStatoCons(idFascicolo, tiStatoConservazione);
-	assertTrue(true);
+        long idFascicolo = aLong();
+        String tiStatoConservazione = aString();
+        helper.existsUdFascicoloByStatoCons(idFascicolo, tiStatoConservazione);
+        assertTrue(true);
     }
 
     @Test
     public void getUdFascicoloByStatoCons_queryIsOk() {
-	long idFascicolo = aLong();
-	String tiStatoConservazione = aString();
-	helper.getUdFascicoloByStatoCons(idFascicolo, tiStatoConservazione);
-	assertTrue(true);
+        long idFascicolo = aLong();
+        String tiStatoConservazione = aString();
+        helper.getUdFascicoloByStatoCons(idFascicolo, tiStatoConservazione);
+        assertTrue(true);
     }
 
     @Test
     public void getLastPgFascicoloCoda_queryIsOk() {
-	long idFascicolo = aLong();
-	helper.getLastPgFascicoloCoda(idFascicolo);
-	assertTrue(true);
+        long idFascicolo = aLong();
+        helper.getLastPgFascicoloCoda(idFascicolo);
+        assertTrue(true);
     }
 
     @Test
     public void allUdFascicoloStatiConservazione_queryIsOk() {
-	long idFascicolo = aLong();
-	List<String> statiConservazione = aListOfString(2);
-	helper.allUdFascicoloStatiConservazione(idFascicolo, statiConservazione);
-	assertTrue(true);
+        long idFascicolo = aLong();
+        List<String> statiConservazione = aListOfString(2);
+        helper.allUdFascicoloStatiConservazione(idFascicolo, statiConservazione);
+        assertTrue(true);
     }
 
     @Test
     public void getUltimaVersioneIndiceAip_queryIsOk() {
-	long idUnitaDoc = aLong();
-	helper.getUltimaVersioneIndiceAip(idUnitaDoc);
-	assertTrue(true);
+        long idUnitaDoc = aLong();
+        helper.getUltimaVersioneIndiceAip(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     public void allFascicoliAnnullati_queryIsOk() {
-	long idElencoVersFasc = aLong();
-	try {
-	    helper.allFascicoliAnnullati(idElencoVersFasc);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        long idElencoVersFasc = aLong();
+        try {
+            helper.allFascicoliAnnullati(idElencoVersFasc);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     public void allAipFascInCoda_queryIsOk() {
-	long idElencoVersFasc = aLong();
-	try {
-	    helper.allAipFascInCoda(idElencoVersFasc);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        long idElencoVersFasc = aLong();
+        try {
+            helper.allAipFascInCoda(idElencoVersFasc);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     public void getVolumeUnitaDocPerDataMarcatura_queryIsOk() {
-	long idUnitaDoc = aLong();
-	helper.getVolumeUnitaDocPerDataMarcatura(idUnitaDoc);
-	assertTrue(true);
+        long idUnitaDoc = aLong();
+        helper.getVolumeUnitaDocPerDataMarcatura(idUnitaDoc);
+        assertTrue(true);
     }
 }

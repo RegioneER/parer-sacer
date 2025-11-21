@@ -25,52 +25,52 @@ public class ElvVRicElencoFascByFasId implements Serializable {
 
     @Override
     public int hashCode() {
-	int hash = 3;
-	hash = 79 * hash + Objects.hashCode(this.idElencoVersFasc);
-	hash = 79 * hash + Objects.hashCode(this.idFascicolo);
-	return hash;
+        int hash = 3;
+        hash = 79 * hash + Objects.hashCode(this.idElencoVersFasc);
+        hash = 79 * hash + Objects.hashCode(this.idFascicolo);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final ElvVRicElencoFascByFasId other = (ElvVRicElencoFascByFasId) obj;
-	if (!Objects.equals(this.idElencoVersFasc, other.idElencoVersFasc)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idFascicolo, other.idFascicolo)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ElvVRicElencoFascByFasId other = (ElvVRicElencoFascByFasId) obj;
+        if (!Objects.equals(this.idElencoVersFasc, other.idElencoVersFasc)) {
+            return false;
+        }
+        if (!Objects.equals(this.idFascicolo, other.idFascicolo)) {
+            return false;
+        }
+        return true;
     }
 
     private BigDecimal idElencoVersFasc;
 
     @Column(name = "ID_ELENCO_VERS_FASC")
     public BigDecimal getIdElencoVersFasc() {
-	return idElencoVersFasc;
+        return idElencoVersFasc;
     }
 
     public void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
-	this.idElencoVersFasc = idElencoVersFasc;
+        this.idElencoVersFasc = idElencoVersFasc;
     }
 
     private BigDecimal idFascicolo;
 
     @Column(name = "ID_FASCICOLO")
     public BigDecimal getIdFascicolo() {
-	return idFascicolo;
+        return idFascicolo;
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	this.idFascicolo = idFascicolo;
+        this.idFascicolo = idFascicolo;
     }
 }

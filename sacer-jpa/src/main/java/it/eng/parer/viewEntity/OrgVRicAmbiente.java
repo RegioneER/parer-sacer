@@ -51,95 +51,95 @@ public class OrgVRicAmbiente implements Serializable {
 
     @Column(name = "DS_AMBIENTE")
     public String getDsAmbiente() {
-	return this.dsAmbiente;
+        return this.dsAmbiente;
     }
 
     public void setDsAmbiente(String dsAmbiente) {
-	this.dsAmbiente = dsAmbiente;
+        this.dsAmbiente = dsAmbiente;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIN_VAL")
     public Date getDtFinVal() {
-	return this.dtFinVal;
+        return this.dtFinVal;
     }
 
     public void setDtFinVal(Date dtFinVal) {
-	this.dtFinVal = dtFinVal;
+        this.dtFinVal = dtFinVal;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INI_VAL")
     public Date getDtIniVal() {
-	return this.dtIniVal;
+        return this.dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-	this.dtIniVal = dtIniVal;
+        this.dtIniVal = dtIniVal;
     }
 
     @Id
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_ENTE_CONVERV")
     public BigDecimal getIdEnteConverv() {
-	return this.idEnteConverv;
+        return this.idEnteConverv;
     }
 
     public void setIdEnteConverv(BigDecimal idEnteConverv) {
-	this.idEnteConverv = idEnteConverv;
+        this.idEnteConverv = idEnteConverv;
     }
 
     @Column(name = "ID_ENTE_GESTORE")
     public BigDecimal getIdEnteGestore() {
-	return this.idEnteGestore;
+        return this.idEnteGestore;
     }
 
     public void setIdEnteGestore(BigDecimal idEnteGestore) {
-	this.idEnteGestore = idEnteGestore;
+        this.idEnteGestore = idEnteGestore;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE_CONSERV")
     public String getNmEnteConserv() {
-	return this.nmEnteConserv;
+        return this.nmEnteConserv;
     }
 
     public void setNmEnteConserv(String nmEnteConserv) {
-	this.nmEnteConserv = nmEnteConserv;
+        this.nmEnteConserv = nmEnteConserv;
     }
 
     @Column(name = "NM_ENTE_GESTORE")
     public String getNmEnteGestore() {
-	return this.nmEnteGestore;
+        return this.nmEnteGestore;
     }
 
     public void setNmEnteGestore(String nmEnteGestore) {
-	this.nmEnteGestore = nmEnteGestore;
+        this.nmEnteGestore = nmEnteGestore;
     }
 
 }

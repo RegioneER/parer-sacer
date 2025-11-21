@@ -27,26 +27,26 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroVChkStatoCorRichSoftDeleteTableBean
-	extends AbstractBaseTable<AroVChkStatoCorRichSoftDeleteRowBean> {
+        extends AbstractBaseTable<AroVChkStatoCorRichSoftDeleteRowBean> {
 
     private static final long serialVersionUID = 1L;
 
     public static AroVChkStatoCorRichSoftDeleteTableDescriptor TABLE_DESCRIPTOR = new AroVChkStatoCorRichSoftDeleteTableDescriptor();
 
     public AroVChkStatoCorRichSoftDeleteTableBean() {
-	super();
+        super();
     }
 
     protected AroVChkStatoCorRichSoftDeleteRowBean createRow() {
-	return new AroVChkStatoCorRichSoftDeleteRowBean();
+        return new AroVChkStatoCorRichSoftDeleteRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVChkStatoCorRichSoftDeleteRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

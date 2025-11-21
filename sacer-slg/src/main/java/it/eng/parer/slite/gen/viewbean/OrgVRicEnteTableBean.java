@@ -38,19 +38,19 @@ public class OrgVRicEnteTableBean extends AbstractBaseTable<OrgVRicEnteRowBean> 
     public static OrgVRicEnteTableDescriptor TABLE_DESCRIPTOR = new OrgVRicEnteTableDescriptor();
 
     public OrgVRicEnteTableBean() {
-	super();
+        super();
     }
 
     protected OrgVRicEnteRowBean createRow() {
-	return new OrgVRicEnteRowBean();
+        return new OrgVRicEnteRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgVRicEnteRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

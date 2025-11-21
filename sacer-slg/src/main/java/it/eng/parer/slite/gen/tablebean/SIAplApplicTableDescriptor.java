@@ -46,29 +46,29 @@ public class SIAplApplicTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_APPLIC, new ColumnDescriptor(COL_ID_APPLIC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_APPLIC, new ColumnDescriptor(COL_NM_APPLIC, Types.VARCHAR, 100, false));
-	map.put(COL_DS_APPLIC, new ColumnDescriptor(COL_DS_APPLIC, Types.VARCHAR, 254, false));
-	map.put(COL_DS_URL_REPLICA_USER,
-		new ColumnDescriptor(COL_DS_URL_REPLICA_USER, Types.VARCHAR, 254, false));
-	map.put(COL_NM_USER_REPLICA_USER,
-		new ColumnDescriptor(COL_NM_USER_REPLICA_USER, Types.VARCHAR, 100, false));
-	map.put(COL_CD_PSW_REPLICA_USER,
-		new ColumnDescriptor(COL_CD_PSW_REPLICA_USER, Types.VARCHAR, 100, false));
-	map.put(COL_CD_VERSIONE_COMP,
-		new ColumnDescriptor(COL_CD_VERSIONE_COMP, Types.VARCHAR, 100, false));
+        map.put(COL_ID_APPLIC, new ColumnDescriptor(COL_ID_APPLIC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_APPLIC, new ColumnDescriptor(COL_NM_APPLIC, Types.VARCHAR, 100, false));
+        map.put(COL_DS_APPLIC, new ColumnDescriptor(COL_DS_APPLIC, Types.VARCHAR, 254, false));
+        map.put(COL_DS_URL_REPLICA_USER,
+                new ColumnDescriptor(COL_DS_URL_REPLICA_USER, Types.VARCHAR, 254, false));
+        map.put(COL_NM_USER_REPLICA_USER,
+                new ColumnDescriptor(COL_NM_USER_REPLICA_USER, Types.VARCHAR, 100, false));
+        map.put(COL_CD_PSW_REPLICA_USER,
+                new ColumnDescriptor(COL_CD_PSW_REPLICA_USER, Types.VARCHAR, 100, false));
+        map.put(COL_CD_VERSIONE_COMP,
+                new ColumnDescriptor(COL_CD_VERSIONE_COMP, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

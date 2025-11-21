@@ -37,40 +37,40 @@ public class CreazioneIndiceAipSerieUdHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		CreazioneIndiceAipSerieUdHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			CreazioneIndiceAipSerieUdHelperTest.class,
-			CreazioneIndiceAipSerieUdHelper.class));
+        return HelperTest.createEnterpriseArchive(
+                CreazioneIndiceAipSerieUdHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        CreazioneIndiceAipSerieUdHelperTest.class,
+                        CreazioneIndiceAipSerieUdHelper.class));
     }
 
     @Test
     public void getSerVerSerieDaElab_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	String tiStatoVerSerie = aString();
-	helper.getSerVerSerieDaElab(idStrut, tiStatoVerSerie);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        String tiStatoVerSerie = aString();
+        helper.getSerVerSerieDaElab(idStrut, tiStatoVerSerie);
+        assertTrue(true);
     }
 
     @Test
     public void getNumUdEffettiveSenzaVolume_queryIsOk() {
-	Long idVerSerie = aLong();
-	helper.getNumUdEffettiveSenzaVolume(idVerSerie);
-	assertTrue(true);
+        Long idVerSerie = aLong();
+        helper.getNumUdEffettiveSenzaVolume(idVerSerie);
+        assertTrue(true);
     }
 
     @Test
     public void getUltimoProgressivoSerStatoVerSerie_queryIsOk() {
-	Long idVerSerie = aLong();
-	helper.getUltimoProgressivoSerStatoVerSerie(idVerSerie);
-	assertTrue(true);
+        Long idVerSerie = aLong();
+        helper.getUltimoProgressivoSerStatoVerSerie(idVerSerie);
+        assertTrue(true);
     }
 
     @Test
     public void getUltimoProgressivoSerStatoSerie_queryIsOk() {
-	Long idSerie = aLong();
-	helper.getUltimoProgressivoSerStatoSerie(idSerie);
-	assertTrue(true);
+        Long idSerie = aLong();
+        helper.getUltimoProgressivoSerStatoSerie(idSerie);
+        assertTrue(true);
     }
 }

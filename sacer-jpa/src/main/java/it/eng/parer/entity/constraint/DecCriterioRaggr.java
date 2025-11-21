@@ -27,13 +27,13 @@ public final class DecCriterioRaggr {
      * ti_mod_valid_elenco IN ('AUTOMATICA', 'MANUALE')
      */
     public enum TiModValidElencoCriterio {
-	AUTOMATICA, MANUALE
+        AUTOMATICA, MANUALE
     }
 
     /**
      * ti_valid_elenco IN ('FIRMA', 'NO_FIRMA', 'NO_INDICE')
      */
     public enum TiValidElencoCriterio {
-	FIRMA, NO_FIRMA, NO_INDICE
+        FIRMA, NO_FIRMA, NO_INDICE
     }
 }

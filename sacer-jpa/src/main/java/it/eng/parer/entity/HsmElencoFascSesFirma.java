@@ -69,82 +69,82 @@ public class HsmElencoFascSesFirma implements Serializable {
 
     @Column(name = "ID_ELENCO_FASC_SES_FIRMA")
     @GenericGenerator(name = "SHSM_ELENCO_FASC_SES_FIRMA_ID_ELENCO_FASC_SES_FIRMA_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SHSM_ELENCO_FASC_SES_FIRMA"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SHSM_ELENCO_FASC_SES_FIRMA"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SHSM_ELENCO_FASC_SES_FIRMA_ID_ELENCO_FASC_SES_FIRMA_GENERATOR")
     public Long getIdElencoFascSesFirma() {
-	return this.idElencoFascSesFirma;
+        return this.idElencoFascSesFirma;
     }
 
     public void setIdElencoFascSesFirma(Long idElencoFascSesFirma) {
-	this.idElencoFascSesFirma = idElencoFascSesFirma;
+        this.idElencoFascSesFirma = idElencoFascSesFirma;
     }
 
     @Column(name = "CD_ERR")
     public String getCdErr() {
-	return this.cdErr;
+        return this.cdErr;
     }
 
     public void setCdErr(String cdErr) {
-	this.cdErr = cdErr;
+        this.cdErr = cdErr;
     }
 
     @Column(name = "DS_ERR")
     public String getDsErr() {
-	return this.dsErr;
+        return this.dsErr;
     }
 
     public void setDsErr(String dsErr) {
-	this.dsErr = dsErr;
+        this.dsErr = dsErr;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_ESITO")
     public TiEsitoFirmaElencoFasc getTiEsito() {
-	return this.tiEsito;
+        return this.tiEsito;
     }
 
     public void setTiEsito(TiEsitoFirmaElencoFasc tiEsito) {
-	this.tiEsito = tiEsito;
+        this.tiEsito = tiEsito;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_ESITO")
     public Date getTsEsito() {
-	return this.tsEsito;
+        return this.tsEsito;
     }
 
     public void setTsEsito(Date tsEsito) {
-	this.tsEsito = tsEsito;
+        this.tsEsito = tsEsito;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ELENCO_VERS_FASC")
     public ElvElencoVersFasc getElvElencoVersFasc() {
-	return this.elvElencoVersFasc;
+        return this.elvElencoVersFasc;
     }
 
     public void setElvElencoVersFasc(ElvElencoVersFasc elvElencoVersFasc) {
-	this.elvElencoVersFasc = elvElencoVersFasc;
+        this.elvElencoVersFasc = elvElencoVersFasc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SESSIONE_FIRMA")
     public HsmSessioneFirma getHsmSessioneFirma() {
-	return this.hsmSessioneFirma;
+        return this.hsmSessioneFirma;
     }
 
     public void setHsmSessioneFirma(HsmSessioneFirma hsmSessioneFirma) {
-	this.hsmSessioneFirma = hsmSessioneFirma;
+        this.hsmSessioneFirma = hsmSessioneFirma;
     }
 
     @Transient
     public boolean is2sign() {
-	return this.tiEsito.equals(TiEsitoFirmaElencoFasc.DA_FARE);
+        return this.tiEsito.equals(TiEsitoFirmaElencoFasc.DA_FARE);
     }
 
     @Transient
     public boolean isSigned() {
-	return this.tiEsito.equals(TiEsitoFirmaElencoFasc.OK);
+        return this.tiEsito.equals(TiEsitoFirmaElencoFasc.OK);
     }
 }

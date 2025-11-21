@@ -37,19 +37,19 @@ public class MonVChkCntAggTableBean extends AbstractBaseTable<MonVChkCntAggRowBe
     public static MonVChkCntAggTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntAggTableDescriptor();
 
     public MonVChkCntAggTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkCntAggRowBean createRow() {
-	return new MonVChkCntAggRowBean();
+        return new MonVChkCntAggRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkCntAggRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

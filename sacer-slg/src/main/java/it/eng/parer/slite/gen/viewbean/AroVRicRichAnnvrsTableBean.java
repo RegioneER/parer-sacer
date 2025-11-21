@@ -37,19 +37,19 @@ public class AroVRicRichAnnvrsTableBean extends AbstractBaseTable<AroVRicRichAnn
     public static AroVRicRichAnnvrsTableDescriptor TABLE_DESCRIPTOR = new AroVRicRichAnnvrsTableDescriptor();
 
     public AroVRicRichAnnvrsTableBean() {
-	super();
+        super();
     }
 
     protected AroVRicRichAnnvrsRowBean createRow() {
-	return new AroVRicRichAnnvrsRowBean();
+        return new AroVRicRichAnnvrsRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVRicRichAnnvrsRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

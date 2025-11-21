@@ -45,27 +45,27 @@ public class LogVLisIniSchedJobStrutTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_LOG_JOB, new ColumnDescriptor(COL_ID_LOG_JOB, Types.DECIMAL, 22, true));
-	map.put(COL_NM_JOB, new ColumnDescriptor(COL_NM_JOB, Types.VARCHAR, 100, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_DT_REG_LOG_JOB_INI,
-		new ColumnDescriptor(COL_DT_REG_LOG_JOB_INI, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_REG_LOG_JOB_FINE_SUC,
-		new ColumnDescriptor(COL_DT_REG_LOG_JOB_FINE_SUC, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_REG_LOG_JOB_INI_SUC,
-		new ColumnDescriptor(COL_DT_REG_LOG_JOB_INI_SUC, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_LOG_JOB, new ColumnDescriptor(COL_ID_LOG_JOB, Types.DECIMAL, 22, true));
+        map.put(COL_NM_JOB, new ColumnDescriptor(COL_NM_JOB, Types.VARCHAR, 100, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_DT_REG_LOG_JOB_INI,
+                new ColumnDescriptor(COL_DT_REG_LOG_JOB_INI, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_REG_LOG_JOB_FINE_SUC,
+                new ColumnDescriptor(COL_DT_REG_LOG_JOB_FINE_SUC, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_REG_LOG_JOB_INI_SUC,
+                new ColumnDescriptor(COL_DT_REG_LOG_JOB_INI_SUC, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

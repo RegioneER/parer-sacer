@@ -62,207 +62,207 @@ public class DecVLisValVoceTitol implements Serializable {
 
     @Column(name = "AA_DOC_INVIO_FIN")
     public BigDecimal getAaDocInvioFin() {
-	return this.aaDocInvioFin;
+        return this.aaDocInvioFin;
     }
 
     public void setAaDocInvioFin(BigDecimal aaDocInvioFin) {
-	this.aaDocInvioFin = aaDocInvioFin;
+        this.aaDocInvioFin = aaDocInvioFin;
     }
 
     @Column(name = "AA_DOC_INVIO_INI")
     public BigDecimal getAaDocInvioIni() {
-	return this.aaDocInvioIni;
+        return this.aaDocInvioIni;
     }
 
     public void setAaDocInvioIni(BigDecimal aaDocInvioIni) {
-	this.aaDocInvioIni = aaDocInvioIni;
+        this.aaDocInvioIni = aaDocInvioIni;
     }
 
     @Column(name = "CD_DOC_INVIO_FIN")
     public String getCdDocInvioFin() {
-	return this.cdDocInvioFin;
+        return this.cdDocInvioFin;
     }
 
     public void setCdDocInvioFin(String cdDocInvioFin) {
-	this.cdDocInvioFin = cdDocInvioFin;
+        this.cdDocInvioFin = cdDocInvioFin;
     }
 
     @Column(name = "CD_DOC_INVIO_INI")
     public String getCdDocInvioIni() {
-	return this.cdDocInvioIni;
+        return this.cdDocInvioIni;
     }
 
     public void setCdDocInvioIni(String cdDocInvioIni) {
-	this.cdDocInvioIni = cdDocInvioIni;
+        this.cdDocInvioIni = cdDocInvioIni;
     }
 
     @Column(name = "CD_REGISTRO_DOC_INVIO_FIN")
     public String getCdRegistroDocInvioFin() {
-	return this.cdRegistroDocInvioFin;
+        return this.cdRegistroDocInvioFin;
     }
 
     public void setCdRegistroDocInvioFin(String cdRegistroDocInvioFin) {
-	this.cdRegistroDocInvioFin = cdRegistroDocInvioFin;
+        this.cdRegistroDocInvioFin = cdRegistroDocInvioFin;
     }
 
     @Column(name = "CD_REGISTRO_DOC_INVIO_INI")
     public String getCdRegistroDocInvioIni() {
-	return this.cdRegistroDocInvioIni;
+        return this.cdRegistroDocInvioIni;
     }
 
     public void setCdRegistroDocInvioIni(String cdRegistroDocInvioIni) {
-	this.cdRegistroDocInvioIni = cdRegistroDocInvioIni;
+        this.cdRegistroDocInvioIni = cdRegistroDocInvioIni;
     }
 
     @Column(name = "DL_NOTE")
     public String getDlNote() {
-	return this.dlNote;
+        return this.dlNote;
     }
 
     public void setDlNote(String dlNote) {
-	this.dlNote = dlNote;
+        this.dlNote = dlNote;
     }
 
     @Column(name = "DS_VOCE_TITOL")
     public String getDsVoceTitol() {
-	return this.dsVoceTitol;
+        return this.dsVoceTitol;
     }
 
     public void setDsVoceTitol(String dsVoceTitol) {
-	this.dsVoceTitol = dsVoceTitol;
+        this.dsVoceTitol = dsVoceTitol;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_DOC_INVIO_FIN")
     public Date getDtDocInvioFin() {
-	return this.dtDocInvioFin;
+        return this.dtDocInvioFin;
     }
 
     public void setDtDocInvioFin(Date dtDocInvioFin) {
-	this.dtDocInvioFin = dtDocInvioFin;
+        this.dtDocInvioFin = dtDocInvioFin;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_DOC_INVIO_INI")
     public Date getDtDocInvioIni() {
-	return this.dtDocInvioIni;
+        return this.dtDocInvioIni;
     }
 
     public void setDtDocInvioIni(Date dtDocInvioIni) {
-	this.dtDocInvioIni = dtDocInvioIni;
+        this.dtDocInvioIni = dtDocInvioIni;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIN_VAL")
     public Date getDtFinVal() {
-	return this.dtFinVal;
+        return this.dtFinVal;
     }
 
     public void setDtFinVal(Date dtFinVal) {
-	this.dtFinVal = dtFinVal;
+        this.dtFinVal = dtFinVal;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INI_VAL")
     public Date getDtIniVal() {
-	return this.dtIniVal;
+        return this.dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-	this.dtIniVal = dtIniVal;
+        this.dtIniVal = dtIniVal;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VAL_OPER_VOCE_TITOL_FIN")
     public Date getDtValOperVoceTitolFin() {
-	return this.dtValOperVoceTitolFin;
+        return this.dtValOperVoceTitolFin;
     }
 
     public void setDtValOperVoceTitolFin(Date dtValOperVoceTitolFin) {
-	this.dtValOperVoceTitolFin = dtValOperVoceTitolFin;
+        this.dtValOperVoceTitolFin = dtValOperVoceTitolFin;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_VAL_OPER_VOCE_TITOL_INI")
     public Date getDtValOperVoceTitolIni() {
-	return this.dtValOperVoceTitolIni;
+        return this.dtValOperVoceTitolIni;
     }
 
     public void setDtValOperVoceTitolIni(Date dtValOperVoceTitolIni) {
-	this.dtValOperVoceTitolIni = dtValOperVoceTitolIni;
+        this.dtValOperVoceTitolIni = dtValOperVoceTitolIni;
     }
 
     @Column(name = "FL_USO_CLASSIF", columnDefinition = "char(1)")
     public String getFlUsoClassif() {
-	return this.flUsoClassif;
+        return this.flUsoClassif;
     }
 
     public void setFlUsoClassif(String flUsoClassif) {
-	this.flUsoClassif = flUsoClassif;
+        this.flUsoClassif = flUsoClassif;
     }
 
     @Id
     @Column(name = "ID_VAL_VOCE_TITOL")
     public BigDecimal getIdValVoceTitol() {
-	return this.idValVoceTitol;
+        return this.idValVoceTitol;
     }
 
     public void setIdValVoceTitol(BigDecimal idValVoceTitol) {
-	this.idValVoceTitol = idValVoceTitol;
+        this.idValVoceTitol = idValVoceTitol;
     }
 
     @Column(name = "ID_VOCE_TITOL")
     public BigDecimal getIdVoceTitol() {
-	return this.idVoceTitol;
+        return this.idVoceTitol;
     }
 
     public void setIdVoceTitol(BigDecimal idVoceTitol) {
-	this.idVoceTitol = idVoceTitol;
+        this.idVoceTitol = idVoceTitol;
     }
 
     @Column(name = "NI_ANNI_CONSERV")
     public BigDecimal getNiAnniConserv() {
-	return this.niAnniConserv;
+        return this.niAnniConserv;
     }
 
     public void setNiAnniConserv(BigDecimal niAnniConserv) {
-	this.niAnniConserv = niAnniConserv;
+        this.niAnniConserv = niAnniConserv;
     }
 
     @Column(name = "TI_OPER_TITOL_FIN")
     public String getTiOperTitolFin() {
-	return this.tiOperTitolFin;
+        return this.tiOperTitolFin;
     }
 
     public void setTiOperTitolFin(String tiOperTitolFin) {
-	this.tiOperTitolFin = tiOperTitolFin;
+        this.tiOperTitolFin = tiOperTitolFin;
     }
 
     @Column(name = "TI_OPER_TITOL_INI")
     public String getTiOperTitolIni() {
-	return this.tiOperTitolIni;
+        return this.tiOperTitolIni;
     }
 
     public void setTiOperTitolIni(String tiOperTitolIni) {
-	this.tiOperTitolIni = tiOperTitolIni;
+        this.tiOperTitolIni = tiOperTitolIni;
     }
 
     @Column(name = "TI_OPER_VOCE_TITOL_FIN")
     public String getTiOperVoceTitolFin() {
-	return this.tiOperVoceTitolFin;
+        return this.tiOperVoceTitolFin;
     }
 
     public void setTiOperVoceTitolFin(String tiOperVoceTitolFin) {
-	this.tiOperVoceTitolFin = tiOperVoceTitolFin;
+        this.tiOperVoceTitolFin = tiOperVoceTitolFin;
     }
 
     @Column(name = "TI_OPER_VOCE_TITOL_INI")
     public String getTiOperVoceTitolIni() {
-	return this.tiOperVoceTitolIni;
+        return this.tiOperVoceTitolIni;
     }
 
     public void setTiOperVoceTitolIni(String tiOperVoceTitolIni) {
-	this.tiOperVoceTitolIni = tiOperVoceTitolIni;
+        this.tiOperVoceTitolIni = tiOperVoceTitolIni;
     }
 
 }

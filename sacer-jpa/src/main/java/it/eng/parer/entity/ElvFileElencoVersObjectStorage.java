@@ -23,7 +23,7 @@ public class ElvFileElencoVersObjectStorage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public ElvFileElencoVersObjectStorage() {
-	super();
+        super();
     }
 
     private Long idFileElencoVersObjectStorage;
@@ -38,66 +38,66 @@ public class ElvFileElencoVersObjectStorage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_FILE_ELENCO_VERS_OBJECT_STORAGE")
     public Long getIdFileElencoVersObjectStorage() {
-	return idFileElencoVersObjectStorage;
+        return idFileElencoVersObjectStorage;
     }
 
     public void setIdFileElencoVersObjectStorage(Long idFileElencoVersObjectStorage) {
-	this.idFileElencoVersObjectStorage = idFileElencoVersObjectStorage;
+        this.idFileElencoVersObjectStorage = idFileElencoVersObjectStorage;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_DEC_BACKEND")
     public DecBackend getDecBackend() {
-	return decBackend;
+        return decBackend;
     }
 
     public void setDecBackend(DecBackend decBackend) {
-	this.decBackend = decBackend;
+        this.decBackend = decBackend;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FILE_ELENCO_VERS")
     public ElvFileElencoVer getElvFileElencoVer() {
-	return elvFileElencoVer;
+        return elvFileElencoVer;
     }
 
     public void setElvFileElencoVer(ElvFileElencoVer elvFileElencoVer) {
-	this.elvFileElencoVer = elvFileElencoVer;
+        this.elvFileElencoVer = elvFileElencoVer;
     }
 
     @Column(name = "NM_TENANT")
     public String getNmTenant() {
-	return nmTenant;
+        return nmTenant;
     }
 
     public void setNmTenant(String nmTenant) {
-	this.nmTenant = nmTenant;
+        this.nmTenant = nmTenant;
     }
 
     @Column(name = "NM_BUCKET")
     public String getNmBucket() {
-	return nmBucket;
+        return nmBucket;
     }
 
     public void setNmBucket(String nmBucket) {
-	this.nmBucket = nmBucket;
+        this.nmBucket = nmBucket;
     }
 
     @Column(name = "CD_KEY_FILE")
     public String getCdKeyFile() {
-	return cdKeyFile;
+        return cdKeyFile;
     }
 
     public void setCdKeyFile(String cdKeyFile) {
-	this.cdKeyFile = cdKeyFile;
+        this.cdKeyFile = cdKeyFile;
     }
 }

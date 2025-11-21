@@ -37,19 +37,19 @@ public class OrgVRicStrutTableBean extends AbstractBaseTable<OrgVRicStrutRowBean
     public static OrgVRicStrutTableDescriptor TABLE_DESCRIPTOR = new OrgVRicStrutTableDescriptor();
 
     public OrgVRicStrutTableBean() {
-	super();
+        super();
     }
 
     protected OrgVRicStrutRowBean createRow() {
-	return new OrgVRicStrutRowBean();
+        return new OrgVRicStrutRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgVRicStrutRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -43,181 +43,181 @@ public class CalcoloEstrazioneHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(CalcoloEstrazioneHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			CalcoloEstrazioneHelperTest.class, CalcoloEstrazioneHelper.class,
-			UdSerFascObj.class));
+        return HelperTest.createEnterpriseArchive(CalcoloEstrazioneHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        CalcoloEstrazioneHelperTest.class, CalcoloEstrazioneHelper.class,
+                        UdSerFascObj.class));
     }
 
     @Test
     void retrieveAroUnitaDocListQueryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	helper.retrieveAroUnitaDocList(idEnte);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        helper.retrieveAroUnitaDocList(idEnte);
+        assertTrue(true);
     }
 
     @Test
     void retrieveEntiQueryIsOk() {
-	helper.retrieveEnti();
-	assertTrue(true);
+        helper.retrieveEnti();
+        assertTrue(true);
     }
 
     @Test
     void retrieveStrutture_0argsQueryIsOk() {
-	helper.retrieveStrutture();
-	assertTrue(true);
+        helper.retrieveStrutture();
+        assertTrue(true);
     }
 
     @Test
     void retrieveStrutture_BigDecimalQueryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	helper.retrieveStrutture(idEnte);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        helper.retrieveStrutture(idEnte);
+        assertTrue(true);
     }
 
     @Test
     void retrieveIamUserByNameQueryIsOk() {
-	String nmUserid = aString();
-	helper.retrieveIamUserByName(nmUserid);
-	assertTrue(true);
+        String nmUserid = aString();
+        helper.retrieveIamUserByName(nmUserid);
+        assertTrue(true);
     }
 
     @Test
     void retrieveRichiesteQueryIsOk() {
-	helper.retrieveRichieste();
-	assertTrue(true);
+        helper.retrieveRichieste();
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteByIdQueryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	helper.retrieveOrgEnteById(idEnte);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        helper.retrieveOrgEnteById(idEnte);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteConvenzByIdQueryIsOk() {
-	BigDecimal idEnteConvenz = aBigDecimal();
-	helper.retrieveOrgEnteConvenzById(idEnteConvenz);
-	assertTrue(true);
+        BigDecimal idEnteConvenz = aBigDecimal();
+        helper.retrieveOrgEnteConvenzById(idEnteConvenz);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgStrutByIdQueryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.retrieveOrgStrutById(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.retrieveOrgStrutById(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void retrieveUnitaDocByIdQueryIsOk() {
-	long idUnitaDoc = aLong();
-	helper.retrieveUnitaDocById(idUnitaDoc);
-	assertTrue(true);
+        long idUnitaDoc = aLong();
+        helper.retrieveUnitaDocById(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void retrieveIndiceAipUdByIdQueryIsOk() {
-	long idIndiceAipUd = aLong();
-	helper.retrieveIndiceAipUdById(idIndiceAipUd);
-	assertTrue(true);
+        long idIndiceAipUd = aLong();
+        helper.retrieveIndiceAipUdById(idIndiceAipUd);
+        assertTrue(true);
     }
 
     @Test
     void retrieveRichiestaByIdQueryIsOk() {
-	Long idRichiestaRa = aLong();
-	helper.retrieveRichiestaById(idRichiestaRa);
-	assertTrue(true);
+        Long idRichiestaRa = aLong();
+        helper.retrieveRichiestaById(idRichiestaRa);
+        assertTrue(true);
     }
 
     @Test
     void getTipoSaveFileQueryIsOk() {
-	BigDecimal idTipoUnitaDoc = BigDecimal.valueOf(5);
-	helper.getTipoSaveFile(idTipoUnitaDoc);
-	assertTrue(true);
+        BigDecimal idTipoUnitaDoc = BigDecimal.valueOf(5);
+        helper.getTipoSaveFile(idTipoUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void retrieveAroAipRestituzioneArchivioByIdQueryIsOk() {
-	Long idAipRestArchivio = aLong();
-	helper.retrieveAroAipRestituzioneArchivioById(idAipRestArchivio);
-	assertTrue(true);
+        Long idAipRestArchivio = aLong();
+        helper.retrieveAroAipRestituzioneArchivioById(idAipRestArchivio);
+        assertTrue(true);
     }
 
     @Test
     void retrieveLogJobByIdQueryIsOk() {
-	long idLogJob = aLong();
-	helper.retrieveLogJobById(idLogJob);
-	assertTrue(true);
+        long idLogJob = aLong();
+        helper.retrieveLogJobById(idLogJob);
+        assertTrue(true);
     }
 
     @Test
     void retrieveRichiesteScaduteDaProcessareQueryIsOk() {
-	long idStrut = aLong();
-	helper.retrieveRichiesteScaduteDaProcessare(idStrut);
-	assertTrue(true);
+        long idStrut = aLong();
+        helper.retrieveRichiesteScaduteDaProcessare(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void retrieveRichiesteEstrazioniInCorsoQueryIsOk() {
-	long idStrut = aLong();
-	helper.retrieveRichiesteEstrazioniInCorso(idStrut);
-	assertTrue(true);
+        long idStrut = aLong();
+        helper.retrieveRichiesteEstrazioniInCorso(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void checkRichiestaInCodaQueryIsOk() {
-	BigDecimal idEnteConvenz = aBigDecimal();
-	helper.checkRichiestaInCoda(idEnteConvenz);
-	assertTrue(true);
+        BigDecimal idEnteConvenz = aBigDecimal();
+        helper.checkRichiestaInCoda(idEnteConvenz);
+        assertTrue(true);
     }
 
     @Test
     void retrieveUdSerFascToProcessQueryIsOk() {
-	OrgStrut struttura = new OrgStrut();
-	struttura.setIdStrut(aLong());
-	helper.retrieveUdSerFascToProcess(struttura);
-	assertTrue(true);
+        OrgStrut struttura = new OrgStrut();
+        struttura.setIdStrut(aLong());
+        helper.retrieveUdSerFascToProcess(struttura);
+        assertTrue(true);
     }
 
     @Test
     void retrieveAipUdSerFascByRichiestaQueryIsOk() {
-	AroRichiestaRa richiesta = new AroRichiestaRa();
-	richiesta.setIdRichiestaRa(aLong());
-	int maxUd2procRa = 10;
-	helper.retrieveAipUdSerFascByRichiesta(richiesta, maxUd2procRa);
-	assertTrue(true);
+        AroRichiestaRa richiesta = new AroRichiestaRa();
+        richiesta.setIdRichiestaRa(aLong());
+        int maxUd2procRa = 10;
+        helper.retrieveAipUdSerFascByRichiesta(richiesta, maxUd2procRa);
+        assertTrue(true);
     }
 
     @Test
     void retrieveIndiceAIPByIdUdQueryIsOk() throws ParerInternalError {
-	Long idUnitaDoc = aLong();
-	helper.retrieveIndiceAIPByIdUd(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = aLong();
+        helper.retrieveIndiceAIPByIdUd(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void retrieveRichiesteRaDaElabQueryIsOk() {
-	helper.retrieveRichiesteRaDaElab();
-	assertTrue(true);
+        helper.retrieveRichiesteRaDaElab();
+        assertTrue(true);
     }
 
     @Test
     void checkEstrazioneInCorsoQueryIsOk() {
-	BigDecimal idRichiestaRa = aBigDecimal();
-	helper.checkEstrazioneInCorso(idRichiestaRa);
-	assertTrue(true);
+        BigDecimal idRichiestaRa = aBigDecimal();
+        helper.checkEstrazioneInCorso(idRichiestaRa);
+        assertTrue(true);
     }
 
     @Test
     void retrieveLastVerIndiceAIPByIdUdQueryIsOk() throws ParerInternalError {
-	Long idUnitaDoc = 0L;
-	try {
-	    helper.retrieveLastVerIndiceAIPByIdUd(idUnitaDoc);
-	    fail("Non deve trovare nulla con id " + idUnitaDoc);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        Long idUnitaDoc = 0L;
+        try {
+            helper.retrieveLastVerIndiceAIPByIdUd(idUnitaDoc);
+            fail("Non deve trovare nulla con id " + idUnitaDoc);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 }

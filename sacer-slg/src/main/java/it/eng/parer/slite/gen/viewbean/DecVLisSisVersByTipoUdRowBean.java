@@ -37,104 +37,104 @@ public class DecVLisSisVersByTipoUdRowBean extends BaseRow implements JEEBaseRow
     public static DecVLisSisVersByTipoUdTableDescriptor TABLE_DESCRIPTOR = new DecVLisSisVersByTipoUdTableDescriptor();
 
     public DecVLisSisVersByTipoUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdTipoUnitaDoc() {
-	return getBigDecimal("id_tipo_unita_doc");
+        return getBigDecimal("id_tipo_unita_doc");
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	setObject("id_tipo_unita_doc", idTipoUnitaDoc);
+        setObject("id_tipo_unita_doc", idTipoUnitaDoc);
     }
 
     public BigDecimal getIdSistemaVersante() {
-	return getBigDecimal("id_sistema_versante");
+        return getBigDecimal("id_sistema_versante");
     }
 
     public void setIdSistemaVersante(BigDecimal idSistemaVersante) {
-	setObject("id_sistema_versante", idSistemaVersante);
+        setObject("id_sistema_versante", idSistemaVersante);
     }
 
     public String getNmSistemaVersante() {
-	return getString("nm_sistema_versante");
+        return getString("nm_sistema_versante");
     }
 
     public void setNmSistemaVersante(String nmSistemaVersante) {
-	setObject("nm_sistema_versante", nmSistemaVersante);
+        setObject("nm_sistema_versante", nmSistemaVersante);
     }
 
     public Timestamp getDtErog() {
-	return getTimestamp("dt_erog");
+        return getTimestamp("dt_erog");
     }
 
     public void setDtErog(Timestamp dtErog) {
-	setObject("dt_erog", dtErog);
+        setObject("dt_erog", dtErog);
     }
 
     public Timestamp getDtLastErog() {
-	return getTimestamp("dt_last_erog");
+        return getTimestamp("dt_last_erog");
     }
 
     public void setDtLastErog(Timestamp dtLastErog) {
-	setObject("dt_last_erog", dtLastErog);
+        setObject("dt_last_erog", dtLastErog);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVLisSisVersByTipoUd entity = (DecVLisSisVersByTipoUd) obj;
-	if (entity.getDecVLisSisVersByTipoUdId() != null) {
-	    this.setIdTipoUnitaDoc(entity.getDecVLisSisVersByTipoUdId().getIdTipoUnitaDoc());
-	    this.setIdSistemaVersante(entity.getDecVLisSisVersByTipoUdId().getIdSistemaVersante());
-	}
-	this.setNmSistemaVersante(entity.getNmSistemaVersante());
-	if (entity.getDtErog() != null) {
-	    this.setDtErog(new Timestamp(entity.getDtErog().getTime()));
-	}
-	if (entity.getDtLastErog() != null) {
-	    this.setDtLastErog(new Timestamp(entity.getDtLastErog().getTime()));
-	}
+        DecVLisSisVersByTipoUd entity = (DecVLisSisVersByTipoUd) obj;
+        if (entity.getDecVLisSisVersByTipoUdId() != null) {
+            this.setIdTipoUnitaDoc(entity.getDecVLisSisVersByTipoUdId().getIdTipoUnitaDoc());
+            this.setIdSistemaVersante(entity.getDecVLisSisVersByTipoUdId().getIdSistemaVersante());
+        }
+        this.setNmSistemaVersante(entity.getNmSistemaVersante());
+        if (entity.getDtErog() != null) {
+            this.setDtErog(new Timestamp(entity.getDtErog().getTime()));
+        }
+        if (entity.getDtLastErog() != null) {
+            this.setDtLastErog(new Timestamp(entity.getDtLastErog().getTime()));
+        }
     }
 
     @Override
     public DecVLisSisVersByTipoUd rowBeanToEntity() {
-	DecVLisSisVersByTipoUd entity = new DecVLisSisVersByTipoUd();
-	entity.setDecVLisSisVersByTipoUdId(new DecVLisSisVersByTipoUdId());
-	entity.getDecVLisSisVersByTipoUdId().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc());
-	entity.getDecVLisSisVersByTipoUdId().setIdSistemaVersante(this.getIdSistemaVersante());
-	entity.setNmSistemaVersante(this.getNmSistemaVersante());
-	entity.setDtErog(this.getDtErog());
-	entity.setDtLastErog(this.getDtLastErog());
-	return entity;
+        DecVLisSisVersByTipoUd entity = new DecVLisSisVersByTipoUd();
+        entity.setDecVLisSisVersByTipoUdId(new DecVLisSisVersByTipoUdId());
+        entity.getDecVLisSisVersByTipoUdId().setIdTipoUnitaDoc(this.getIdTipoUnitaDoc());
+        entity.getDecVLisSisVersByTipoUdId().setIdSistemaVersante(this.getIdSistemaVersante());
+        entity.setNmSistemaVersante(this.getNmSistemaVersante());
+        entity.setDtErog(this.getDtErog());
+        entity.setDtLastErog(this.getDtLastErog());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -47,8 +47,8 @@ import org.slf4j.LoggerFactory;
 @Stateless(mappedName = "CalcoloMonitoraggioAsync")
 @LocalBean
 @Interceptors({
-	it.eng.parer.async.aop.LockInterceptor.class,
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.async.aop.LockInterceptor.class,
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CalcoloMonitoraggioAsync {
 
     Logger log = LoggerFactory.getLogger(CalcoloMonitoraggioAsync.class);
@@ -66,127 +66,127 @@ public class CalcoloMonitoraggioAsync {
     private AsyncHelper asyncHelper;
 
     public boolean calcolaStruttura() {
-	/*
-	 * Verifica che non sia già attivo un calcolo struttura, nel qual caso rilancia all'action
-	 * un eccezione
-	 */
-	Long idLock;
-	try {
-	    idLock = asyncHelper.getLock(JobConstants.JobEnum.CALCOLA_STRUTTURA.name(), null);
-	    if (idLock != null) {
-		jobHelper.writeLogJob(JobConstants.JobEnum.CALCOLA_STRUTTURA.name(),
-			JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null, null);
-		context.getBusinessObject(CalcoloMonitoraggioAsync.class)
-			.eseguiCalcoloStruttura(idLock);
-		return true;
-	    }
-	} catch (Exception e) {
-	    // INUTILI in quanto intercettati
-	}
-	return false;
+        /*
+         * Verifica che non sia già attivo un calcolo struttura, nel qual caso rilancia all'action
+         * un eccezione
+         */
+        Long idLock;
+        try {
+            idLock = asyncHelper.getLock(JobConstants.JobEnum.CALCOLA_STRUTTURA.name(), null);
+            if (idLock != null) {
+                jobHelper.writeLogJob(JobConstants.JobEnum.CALCOLA_STRUTTURA.name(),
+                        JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null, null);
+                context.getBusinessObject(CalcoloMonitoraggioAsync.class)
+                        .eseguiCalcoloStruttura(idLock);
+                return true;
+            }
+        } catch (Exception e) {
+            // INUTILI in quanto intercettati
+        }
+        return false;
     }
 
     public boolean verificaVersamentiFallitiAsincrono(BigDecimal idStrut,
-	    Date ultimaRegistrazione) {
-	/*
-	 * Verifica che non sia già attivo un verifica versamenti falliti, nel qual caso rilancia
-	 * all'action un'eccezione
-	 */
-	Long idLock;
-	try {
-	    asyncHelper.initLockPerStrut(JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
-		    idStrut.longValue());
-	    idLock = asyncHelper.getLock(JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
-		    idStrut.longValue());
-	    if (idLock != null) {
-		jobHelper.writeAtomicLogJob(JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
-			JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null,
-			idStrut.longValue());
-		context.getBusinessObject(CalcoloMonitoraggioAsync.class)
-			.eseguiVerificaVersamentiFalliti(idStrut.longValue(), idLock,
-				ultimaRegistrazione);
-		return true;
-	    }
-	} catch (Exception e) {
-	    // INUTILI in quanto intercettati
-	}
-	return false;
+            Date ultimaRegistrazione) {
+        /*
+         * Verifica che non sia già attivo un verifica versamenti falliti, nel qual caso rilancia
+         * all'action un'eccezione
+         */
+        Long idLock;
+        try {
+            asyncHelper.initLockPerStrut(JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
+                    idStrut.longValue());
+            idLock = asyncHelper.getLock(JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
+                    idStrut.longValue());
+            if (idLock != null) {
+                jobHelper.writeAtomicLogJob(JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
+                        JobConstants.OpTypeEnum.INIZIO_SCHEDULAZIONE.name(), null,
+                        idStrut.longValue());
+                context.getBusinessObject(CalcoloMonitoraggioAsync.class)
+                        .eseguiVerificaVersamentiFalliti(idStrut.longValue(), idLock,
+                                ultimaRegistrazione);
+                return true;
+            }
+        } catch (Exception e) {
+            // INUTILI in quanto intercettati
+        }
+        return false;
     }
 
     @Asynchronous
     public void eseguiCalcoloStruttura(Long idLock) throws ParerInternalError {
-	try {
-	    log.info("{} --- Chiamata asincrona per calcolo struttura",
-		    CalcoloMonitoraggioAsync.class.getSimpleName());
-	    log.debug(
-		    "Ricerco le sessioni errate rimanenti (non recuperabili tramite User) NON VERIFICATE");
-	    List<Long> listaSessioniVers = calcoloHelper.getListaSessioniVersByUsr();
-	    /*
-	     * Se non ho trovato record dei quali calcolare la struttura versante, tento con la
-	     * seconda via ovvero cercando nel file XML di richiesta le informazioni mancanti
-	     */
-	    for (Long idSes : listaSessioniVers) {
-		calcoloHelper.calcolaStrutturaByXml(idSes);
-	    }
-	    asyncHelper.writeEndLogLock(idLock, JobConstants.JobEnum.CALCOLA_STRUTTURA.name(),
-		    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	    log.info("{} --- FINE chiamata asincrona per calcolo struttura",
-		    CalcoloMonitoraggioAsync.class.getSimpleName());
-	} catch (Exception e) {
-	    throw new ParerInternalError(ParerErrorSeverity.ERROR,
-		    new AsyncException("Eccezione imprevista durante la fase di calcolo struttura",
-			    JobConstants.JobEnum.CALCOLA_STRUTTURA.name(), idLock, null, e));
-	}
+        try {
+            log.info("{} --- Chiamata asincrona per calcolo struttura",
+                    CalcoloMonitoraggioAsync.class.getSimpleName());
+            log.debug(
+                    "Ricerco le sessioni errate rimanenti (non recuperabili tramite User) NON VERIFICATE");
+            List<Long> listaSessioniVers = calcoloHelper.getListaSessioniVersByUsr();
+            /*
+             * Se non ho trovato record dei quali calcolare la struttura versante, tento con la
+             * seconda via ovvero cercando nel file XML di richiesta le informazioni mancanti
+             */
+            for (Long idSes : listaSessioniVers) {
+                calcoloHelper.calcolaStrutturaByXml(idSes);
+            }
+            asyncHelper.writeEndLogLock(idLock, JobConstants.JobEnum.CALCOLA_STRUTTURA.name(),
+                    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+            log.info("{} --- FINE chiamata asincrona per calcolo struttura",
+                    CalcoloMonitoraggioAsync.class.getSimpleName());
+        } catch (Exception e) {
+            throw new ParerInternalError(ParerErrorSeverity.ERROR,
+                    new AsyncException("Eccezione imprevista durante la fase di calcolo struttura",
+                            JobConstants.JobEnum.CALCOLA_STRUTTURA.name(), idLock, null, e));
+        }
     }
 
     @Asynchronous
     public void eseguiVerificaVersamentiFalliti(Long idStrut, Long idLock, Date ultimaRegistrazione)
-	    throws ParerInternalError {
-	verificaVersamentiFalliti(idStrut, idLock, ultimaRegistrazione);
+            throws ParerInternalError {
+        verificaVersamentiFalliti(idStrut, idLock, ultimaRegistrazione);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void verificaVersamentiFalliti(Long idStrut, Long idLock, Date ultimaRegistrazione)
-	    throws ParerInternalError {
-	try {
-	    log.info(
-		    "{} --- Chiamata asincrona per verifica versamenti falliti per la struttura {}",
-		    CalcoloMonitoraggioAsync.class.getSimpleName(), idStrut);
-	    log.info(
-		    "Ricerco i versamenti falliti non risolti e non verificati per la struttura {} con data apertura successiva a {}",
-		    idStrut, ultimaRegistrazione);
-	    List<VrsVVersFallitiDaVerif> listaVersFallitiDaVerif = calcoloHelper
-		    .getListaVersFallitiDaVerif(idStrut, ultimaRegistrazione);
-	    log.info(
-		    "Trovati {} versamenti falliti non risolti e non verificati per la struttura {}",
-		    listaVersFallitiDaVerif.size(), idStrut);
-	    for (VrsVVersFallitiDaVerif versFallitoDaVerif : listaVersFallitiDaVerif) {
-		calcoloHelper.impostaVersamentoFallitoVerif(
-			versFallitoDaVerif.getIdSessioneVers().longValue());
-	    }
-	    log.info(
-		    "Ricerco i versamenti falliti non risolti, verificati e risolubili per la struttura {} con data apertura successiva a {}",
-		    idStrut, ultimaRegistrazione);
-	    List<VrsVVersFallitiDaNorisol> listaVersFallitiDaNorisol = calcoloHelper
-		    .getListaVersFallitiDaNorisol(idStrut, ultimaRegistrazione);
-	    for (VrsVVersFallitiDaNorisol versFallitoNorisol : listaVersFallitiDaNorisol) {
-		calcoloHelper.impostaVersamentoFallitoNorisol(
-			versFallitoNorisol.getIdSessioneVers().longValue());
-	    }
-	    asyncHelper.writeEndLogLock(idLock, JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
-		    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null, idStrut);
-	    log.info(
-		    "{} --- FINE chiamata asincrona per verifica versamenti falliti per la struttura {}",
-		    CalcoloMonitoraggioAsync.class.getSimpleName(), idStrut);
-	} catch (Exception e) {
-	    throw new ParerInternalError(ParerErrorSeverity.ERROR, new AsyncException(
-		    "Eccezione imprevista durante la fase di verifica versamenti falliti per la struttura "
-			    + idStrut,
-		    JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(), idLock, idStrut, e));
-	}
+            throws ParerInternalError {
+        try {
+            log.info(
+                    "{} --- Chiamata asincrona per verifica versamenti falliti per la struttura {}",
+                    CalcoloMonitoraggioAsync.class.getSimpleName(), idStrut);
+            log.info(
+                    "Ricerco i versamenti falliti non risolti e non verificati per la struttura {} con data apertura successiva a {}",
+                    idStrut, ultimaRegistrazione);
+            List<VrsVVersFallitiDaVerif> listaVersFallitiDaVerif = calcoloHelper
+                    .getListaVersFallitiDaVerif(idStrut, ultimaRegistrazione);
+            log.info(
+                    "Trovati {} versamenti falliti non risolti e non verificati per la struttura {}",
+                    listaVersFallitiDaVerif.size(), idStrut);
+            for (VrsVVersFallitiDaVerif versFallitoDaVerif : listaVersFallitiDaVerif) {
+                calcoloHelper.impostaVersamentoFallitoVerif(
+                        versFallitoDaVerif.getIdSessioneVers().longValue());
+            }
+            log.info(
+                    "Ricerco i versamenti falliti non risolti, verificati e risolubili per la struttura {} con data apertura successiva a {}",
+                    idStrut, ultimaRegistrazione);
+            List<VrsVVersFallitiDaNorisol> listaVersFallitiDaNorisol = calcoloHelper
+                    .getListaVersFallitiDaNorisol(idStrut, ultimaRegistrazione);
+            for (VrsVVersFallitiDaNorisol versFallitoNorisol : listaVersFallitiDaNorisol) {
+                calcoloHelper.impostaVersamentoFallitoNorisol(
+                        versFallitoNorisol.getIdSessioneVers().longValue());
+            }
+            asyncHelper.writeEndLogLock(idLock, JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(),
+                    JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null, idStrut);
+            log.info(
+                    "{} --- FINE chiamata asincrona per verifica versamenti falliti per la struttura {}",
+                    CalcoloMonitoraggioAsync.class.getSimpleName(), idStrut);
+        } catch (Exception e) {
+            throw new ParerInternalError(ParerErrorSeverity.ERROR, new AsyncException(
+                    "Eccezione imprevista durante la fase di verifica versamenti falliti per la struttura "
+                            + idStrut,
+                    JobConstants.JobEnum.VERIFICA_VERS_FALLITI.name(), idLock, idStrut, e));
+        }
     }
 
     public Date getUltimaRegistrazione(String nomeJob, Long idStrut) {
-	return calcoloHelper.getUltimaRegistrazione(nomeJob, idStrut);
+        return calcoloHelper.getUltimaRegistrazione(nomeJob, idStrut);
     }
 }

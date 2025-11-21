@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class FasUniOrgRespFascicoloTableBean
-	extends AbstractBaseTable<FasUniOrgRespFascicoloRowBean> {
+        extends AbstractBaseTable<FasUniOrgRespFascicoloRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class FasUniOrgRespFascicoloTableBean
     public static FasUniOrgRespFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasUniOrgRespFascicoloTableDescriptor();
 
     public FasUniOrgRespFascicoloTableBean() {
-	super();
+        super();
     }
 
     protected FasUniOrgRespFascicoloRowBean createRow() {
-	return new FasUniOrgRespFascicoloRowBean();
+        return new FasUniOrgRespFascicoloRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FasUniOrgRespFascicoloRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

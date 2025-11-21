@@ -37,19 +37,19 @@ public class DecVTreeTitolTableBean extends AbstractBaseTable<DecVTreeTitolRowBe
     public static DecVTreeTitolTableDescriptor TABLE_DESCRIPTOR = new DecVTreeTitolTableDescriptor();
 
     public DecVTreeTitolTableBean() {
-	super();
+        super();
     }
 
     protected DecVTreeTitolRowBean createRow() {
-	return new DecVTreeTitolRowBean();
+        return new DecVTreeTitolRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVTreeTitolRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

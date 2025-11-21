@@ -51,36 +51,36 @@ public class MonContaUdDocCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_CONTA_UD_DOC_COMP,
-		new ColumnDescriptor(COL_ID_CONTA_UD_DOC_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_DT_RIF_CONTA,
-		new ColumnDescriptor(COL_DT_RIF_CONTA, Types.TIMESTAMP, 7, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_ID_SUB_STRUT, new ColumnDescriptor(COL_ID_SUB_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_REGISTRO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_TIPO_DOC_PRINC,
-		new ColumnDescriptor(COL_ID_TIPO_DOC_PRINC, Types.DECIMAL, 22, false));
-	map.put(COL_NI_UNITA_DOC, new ColumnDescriptor(COL_NI_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_NI_DOC, new ColumnDescriptor(COL_NI_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_NI_COMP, new ColumnDescriptor(COL_NI_COMP, Types.DECIMAL, 22, false));
-	map.put(COL_NI_SIZE, new ColumnDescriptor(COL_NI_SIZE, Types.DECIMAL, 22, false));
+        map.put(COL_ID_CONTA_UD_DOC_COMP,
+                new ColumnDescriptor(COL_ID_CONTA_UD_DOC_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_DT_RIF_CONTA,
+                new ColumnDescriptor(COL_DT_RIF_CONTA, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_SUB_STRUT, new ColumnDescriptor(COL_ID_SUB_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_REGISTRO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TIPO_DOC_PRINC,
+                new ColumnDescriptor(COL_ID_TIPO_DOC_PRINC, Types.DECIMAL, 22, false));
+        map.put(COL_NI_UNITA_DOC, new ColumnDescriptor(COL_NI_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_NI_DOC, new ColumnDescriptor(COL_NI_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_NI_COMP, new ColumnDescriptor(COL_NI_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_NI_SIZE, new ColumnDescriptor(COL_NI_SIZE, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

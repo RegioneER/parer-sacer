@@ -71,283 +71,283 @@ public class SerVVisErrFileSerieUd implements Serializable {
 
     @Column(name = "AA_SERIE")
     public BigDecimal getAaSerie() {
-	return this.aaSerie;
+        return this.aaSerie;
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-	this.aaSerie = aaSerie;
+        this.aaSerie = aaSerie;
     }
 
     @Column(name = "CD_COMPOSITO_SERIE")
     public String getCdCompositoSerie() {
-	return this.cdCompositoSerie;
+        return this.cdCompositoSerie;
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-	this.cdCompositoSerie = cdCompositoSerie;
+        this.cdCompositoSerie = cdCompositoSerie;
     }
 
     @Column(name = "CD_FIRST_UNITA_DOC")
     public String getCdFirstUnitaDoc() {
-	return this.cdFirstUnitaDoc;
+        return this.cdFirstUnitaDoc;
     }
 
     public void setCdFirstUnitaDoc(String cdFirstUnitaDoc) {
-	this.cdFirstUnitaDoc = cdFirstUnitaDoc;
+        this.cdFirstUnitaDoc = cdFirstUnitaDoc;
     }
 
     @Column(name = "CD_LAST_UNITA_DOC")
     public String getCdLastUnitaDoc() {
-	return this.cdLastUnitaDoc;
+        return this.cdLastUnitaDoc;
     }
 
     public void setCdLastUnitaDoc(String cdLastUnitaDoc) {
-	this.cdLastUnitaDoc = cdLastUnitaDoc;
+        this.cdLastUnitaDoc = cdLastUnitaDoc;
     }
 
     @Column(name = "CD_VER_SERIE")
     public String getCdVerSerie() {
-	return this.cdVerSerie;
+        return this.cdVerSerie;
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-	this.cdVerSerie = cdVerSerie;
+        this.cdVerSerie = cdVerSerie;
     }
 
     @Column(name = "DS_REC_ERR")
     public String getDsRecErr() {
-	return this.dsRecErr;
+        return this.dsRecErr;
     }
 
     public void setDsRecErr(String dsRecErr) {
-	this.dsRecErr = dsRecErr;
+        this.dsRecErr = dsRecErr;
     }
 
     @Column(name = "DS_SERIE")
     public String getDsSerie() {
-	return this.dsSerie;
+        return this.dsSerie;
     }
 
     public void setDsSerie(String dsSerie) {
-	this.dsSerie = dsSerie;
+        this.dsSerie = dsSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_STATO_CONTENUTO_VER_SERIE")
     public Date getDtStatoContenutoVerSerie() {
-	return this.dtStatoContenutoVerSerie;
+        return this.dtStatoContenutoVerSerie;
     }
 
     public void setDtStatoContenutoVerSerie(Date dtStatoContenutoVerSerie) {
-	this.dtStatoContenutoVerSerie = dtStatoContenutoVerSerie;
+        this.dtStatoContenutoVerSerie = dtStatoContenutoVerSerie;
     }
 
     @Column(name = "FL_ERR_CONTENUTO", columnDefinition = "char(1)")
     public String getFlErrContenuto() {
-	return this.flErrContenuto;
+        return this.flErrContenuto;
     }
 
     public void setFlErrContenuto(String flErrContenuto) {
-	this.flErrContenuto = flErrContenuto;
+        this.flErrContenuto = flErrContenuto;
     }
 
     @Column(name = "ID_AMBIENTE")
     public BigDecimal getIdAmbiente() {
-	return this.idAmbiente;
+        return this.idAmbiente;
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	this.idAmbiente = idAmbiente;
+        this.idAmbiente = idAmbiente;
     }
 
     @Column(name = "ID_CONTENUTO_VER_SERIE")
     public BigDecimal getIdContenutoVerSerie() {
-	return this.idContenutoVerSerie;
+        return this.idContenutoVerSerie;
     }
 
     public void setIdContenutoVerSerie(BigDecimal idContenutoVerSerie) {
-	this.idContenutoVerSerie = idContenutoVerSerie;
+        this.idContenutoVerSerie = idContenutoVerSerie;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return this.idEnte;
+        return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     @Id
     @Column(name = "ID_ERR_FILE_INPUT")
     public BigDecimal getIdErrFileInput() {
-	return this.idErrFileInput;
+        return this.idErrFileInput;
     }
 
     public void setIdErrFileInput(BigDecimal idErrFileInput) {
-	this.idErrFileInput = idErrFileInput;
+        this.idErrFileInput = idErrFileInput;
     }
 
     @Column(name = "ID_FILE_INPUT_VER_SERIE")
     public BigDecimal getIdFileInputVerSerie() {
-	return this.idFileInputVerSerie;
+        return this.idFileInputVerSerie;
     }
 
     public void setIdFileInputVerSerie(BigDecimal idFileInputVerSerie) {
-	this.idFileInputVerSerie = idFileInputVerSerie;
+        this.idFileInputVerSerie = idFileInputVerSerie;
     }
 
     @Column(name = "ID_SERIE")
     public BigDecimal getIdSerie() {
-	return this.idSerie;
+        return this.idSerie;
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-	this.idSerie = idSerie;
+        this.idSerie = idSerie;
     }
 
     @Column(name = "ID_STATO_SERIE_COR")
     public BigDecimal getIdStatoSerieCor() {
-	return this.idStatoSerieCor;
+        return this.idStatoSerieCor;
     }
 
     public void setIdStatoSerieCor(BigDecimal idStatoSerieCor) {
-	this.idStatoSerieCor = idStatoSerieCor;
+        this.idStatoSerieCor = idStatoSerieCor;
     }
 
     @Column(name = "ID_STATO_VER_SERIE_COR")
     public BigDecimal getIdStatoVerSerieCor() {
-	return this.idStatoVerSerieCor;
+        return this.idStatoVerSerieCor;
     }
 
     public void setIdStatoVerSerieCor(BigDecimal idStatoVerSerieCor) {
-	this.idStatoVerSerieCor = idStatoVerSerieCor;
+        this.idStatoVerSerieCor = idStatoVerSerieCor;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "ID_TIPO_SERIE")
     public BigDecimal getIdTipoSerie() {
-	return this.idTipoSerie;
+        return this.idTipoSerie;
     }
 
     public void setIdTipoSerie(BigDecimal idTipoSerie) {
-	this.idTipoSerie = idTipoSerie;
+        this.idTipoSerie = idTipoSerie;
     }
 
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
     @Column(name = "NI_REC_ERR")
     public BigDecimal getNiRecErr() {
-	return this.niRecErr;
+        return this.niRecErr;
     }
 
     public void setNiRecErr(BigDecimal niRecErr) {
-	this.niRecErr = niRecErr;
+        this.niRecErr = niRecErr;
     }
 
     @Column(name = "NI_UNITA_DOC")
     public BigDecimal getNiUnitaDoc() {
-	return this.niUnitaDoc;
+        return this.niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-	this.niUnitaDoc = niUnitaDoc;
+        this.niUnitaDoc = niUnitaDoc;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_TIPO_SERIE")
     public String getNmTipoSerie() {
-	return this.nmTipoSerie;
+        return this.nmTipoSerie;
     }
 
     public void setNmTipoSerie(String nmTipoSerie) {
-	this.nmTipoSerie = nmTipoSerie;
+        this.nmTipoSerie = nmTipoSerie;
     }
 
     @Column(name = "TI_ERR_REC")
     public String getTiErrRec() {
-	return this.tiErrRec;
+        return this.tiErrRec;
     }
 
     public void setTiErrRec(String tiErrRec) {
-	this.tiErrRec = tiErrRec;
+        this.tiErrRec = tiErrRec;
     }
 
     @Column(name = "TI_SCOPO_FILE_INPUT_VER_SERIE")
     public String getTiScopoFileInputVerSerie() {
-	return this.tiScopoFileInputVerSerie;
+        return this.tiScopoFileInputVerSerie;
     }
 
     public void setTiScopoFileInputVerSerie(String tiScopoFileInputVerSerie) {
-	this.tiScopoFileInputVerSerie = tiScopoFileInputVerSerie;
+        this.tiScopoFileInputVerSerie = tiScopoFileInputVerSerie;
     }
 
     @Column(name = "TI_STATO_CONTENUTO_VER_SERIE")
     public String getTiStatoContenutoVerSerie() {
-	return this.tiStatoContenutoVerSerie;
+        return this.tiStatoContenutoVerSerie;
     }
 
     public void setTiStatoContenutoVerSerie(String tiStatoContenutoVerSerie) {
-	this.tiStatoContenutoVerSerie = tiStatoContenutoVerSerie;
+        this.tiStatoContenutoVerSerie = tiStatoContenutoVerSerie;
     }
 
     @Column(name = "TI_STATO_SERIE_COR")
     public String getTiStatoSerieCor() {
-	return this.tiStatoSerieCor;
+        return this.tiStatoSerieCor;
     }
 
     public void setTiStatoSerieCor(String tiStatoSerieCor) {
-	this.tiStatoSerieCor = tiStatoSerieCor;
+        this.tiStatoSerieCor = tiStatoSerieCor;
     }
 
     @Column(name = "TI_STATO_VER_SERIE_COR")
     public String getTiStatoVerSerieCor() {
-	return this.tiStatoVerSerieCor;
+        return this.tiStatoVerSerieCor;
     }
 
     public void setTiStatoVerSerieCor(String tiStatoVerSerieCor) {
-	this.tiStatoVerSerieCor = tiStatoVerSerieCor;
+        this.tiStatoVerSerieCor = tiStatoVerSerieCor;
     }
 
 }

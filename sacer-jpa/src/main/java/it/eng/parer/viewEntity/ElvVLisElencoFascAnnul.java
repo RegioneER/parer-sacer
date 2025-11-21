@@ -38,21 +38,21 @@ public class ElvVLisElencoFascAnnul implements Serializable {
 
     @Column(name = "NT_ELENCO_CHIUSO")
     public String getNtElencoChiuso() {
-	return this.ntElencoChiuso;
+        return this.ntElencoChiuso;
     }
 
     public void setNtElencoChiuso(String ntElencoChiuso) {
-	this.ntElencoChiuso = ntElencoChiuso;
+        this.ntElencoChiuso = ntElencoChiuso;
     }
 
     private ElvVLisElencoFascAnnulId elvVLisElencoFascAnnulId;
 
     @EmbeddedId()
     public ElvVLisElencoFascAnnulId getElvVLisElencoFascAnnulId() {
-	return elvVLisElencoFascAnnulId;
+        return elvVLisElencoFascAnnulId;
     }
 
     public void setElvVLisElencoFascAnnulId(ElvVLisElencoFascAnnulId elvVLisElencoFascAnnulId) {
-	this.elvVLisElencoFascAnnulId = elvVLisElencoFascAnnulId;
+        this.elvVLisElencoFascAnnulId = elvVLisElencoFascAnnulId;
     }
 }

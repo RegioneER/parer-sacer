@@ -96,223 +96,223 @@ public class AroVerIndiceAipUd implements Serializable {
     @Id
     @Column(name = "ID_VER_INDICE_AIP")
     @GenericGenerator(name = "SARO_VER_INDICE_AIP_UD_ID_VER_INDICE_AIP_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_VER_INDICE_AIP_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_VER_INDICE_AIP_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_VER_INDICE_AIP_UD_ID_VER_INDICE_AIP_GENERATOR")
     public Long getIdVerIndiceAip() {
-	return this.idVerIndiceAip;
+        return this.idVerIndiceAip;
     }
 
     public void setIdVerIndiceAip(Long idVerIndiceAip) {
-	this.idVerIndiceAip = idVerIndiceAip;
+        this.idVerIndiceAip = idVerIndiceAip;
     }
 
     @Column(name = "CD_ENCODING_HASH_AIP")
     public String getCdEncodingHashAip() {
-	return this.cdEncodingHashAip;
+        return this.cdEncodingHashAip;
     }
 
     public void setCdEncodingHashAip(String cdEncodingHashAip) {
-	this.cdEncodingHashAip = cdEncodingHashAip;
+        this.cdEncodingHashAip = cdEncodingHashAip;
     }
 
     @Column(name = "CD_ENCODING_HASH_INDICE_AIP")
     public String getCdEncodingHashIndiceAip() {
-	return this.cdEncodingHashIndiceAip;
+        return this.cdEncodingHashIndiceAip;
     }
 
     public void setCdEncodingHashIndiceAip(String cdEncodingHashIndiceAip) {
-	this.cdEncodingHashIndiceAip = cdEncodingHashIndiceAip;
+        this.cdEncodingHashIndiceAip = cdEncodingHashIndiceAip;
     }
 
     @Column(name = "CD_VER_INDICE_AIP")
     public String getCdVerIndiceAip() {
-	return this.cdVerIndiceAip;
+        return this.cdVerIndiceAip;
     }
 
     public void setCdVerIndiceAip(String cdVerIndiceAip) {
-	this.cdVerIndiceAip = cdVerIndiceAip;
+        this.cdVerIndiceAip = cdVerIndiceAip;
     }
 
     @Column(name = "CD_VER_XSD_INDICE_AIP")
     public String getCdVerXsdIndiceAip() {
-	return this.cdVerXsdIndiceAip;
+        return this.cdVerXsdIndiceAip;
     }
 
     public void setCdVerXsdIndiceAip(String cdVerXsdIndiceAip) {
-	this.cdVerXsdIndiceAip = cdVerXsdIndiceAip;
+        this.cdVerXsdIndiceAip = cdVerXsdIndiceAip;
     }
 
     @Column(name = "DS_ALGO_HASH_AIP")
     public String getDsAlgoHashAip() {
-	return this.dsAlgoHashAip;
+        return this.dsAlgoHashAip;
     }
 
     public void setDsAlgoHashAip(String dsAlgoHashAip) {
-	this.dsAlgoHashAip = dsAlgoHashAip;
+        this.dsAlgoHashAip = dsAlgoHashAip;
     }
 
     @Column(name = "DS_ALGO_HASH_INDICE_AIP")
     public String getDsAlgoHashIndiceAip() {
-	return this.dsAlgoHashIndiceAip;
+        return this.dsAlgoHashIndiceAip;
     }
 
     public void setDsAlgoHashIndiceAip(String dsAlgoHashIndiceAip) {
-	this.dsAlgoHashIndiceAip = dsAlgoHashIndiceAip;
+        this.dsAlgoHashIndiceAip = dsAlgoHashIndiceAip;
     }
 
     @Column(name = "DS_CAUSALE")
     public String getDsCausale() {
-	return this.dsCausale;
+        return this.dsCausale;
     }
 
     public void setDsCausale(String dsCausale) {
-	this.dsCausale = dsCausale;
+        this.dsCausale = dsCausale;
     }
 
     @Column(name = "DS_HASH_INDICE_AIP")
     public String getDsHashIndiceAip() {
-	return this.dsHashIndiceAip;
+        return this.dsHashIndiceAip;
     }
 
     public void setDsHashIndiceAip(String dsHashIndiceAip) {
-	this.dsHashIndiceAip = dsHashIndiceAip;
+        this.dsHashIndiceAip = dsHashIndiceAip;
     }
 
     @Column(name = "DS_HASH_AIP")
     public String getDsHashAip() {
-	return this.dsHashAip;
+        return this.dsHashAip;
     }
 
     public void setDsHashAip(String dsHashAip) {
-	this.dsHashAip = dsHashAip;
+        this.dsHashAip = dsHashAip;
     }
 
     @Column(name = "DS_URN")
     public String getDsUrn() {
-	return this.dsUrn;
+        return this.dsUrn;
     }
 
     public void setDsUrn(String dsUrn) {
-	this.dsUrn = dsUrn;
+        this.dsUrn = dsUrn;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-	return this.dtCreazione;
+        return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     @Column(name = "PG_VER_INDICE_AIP")
     public BigDecimal getPgVerIndiceAip() {
-	return this.pgVerIndiceAip;
+        return this.pgVerIndiceAip;
     }
 
     public void setPgVerIndiceAip(BigDecimal pgVerIndiceAip) {
-	this.pgVerIndiceAip = pgVerIndiceAip;
+        this.pgVerIndiceAip = pgVerIndiceAip;
     }
 
     @Column(name = "ID_ENTE_CONSERV")
     public BigDecimal getIdEnteConserv() {
-	return this.idEnteConserv;
+        return this.idEnteConserv;
     }
 
     public void setIdEnteConserv(BigDecimal idEnteConserv) {
-	this.idEnteConserv = idEnteConserv;
+        this.idEnteConserv = idEnteConserv;
     }
 
     @OneToMany(mappedBy = "aroVerIndiceAipUd", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<AroCompVerIndiceAipUd> getAroCompVerIndiceAipUds() {
-	return this.aroCompVerIndiceAipUds;
+        return this.aroCompVerIndiceAipUds;
     }
 
     public void setAroCompVerIndiceAipUds(List<AroCompVerIndiceAipUd> aroCompVerIndiceAipUds) {
-	this.aroCompVerIndiceAipUds = aroCompVerIndiceAipUds;
+        this.aroCompVerIndiceAipUds = aroCompVerIndiceAipUds;
     }
 
     @OneToMany(mappedBy = "aroVerIndiceAipUd", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<AroFileVerIndiceAipUd> getAroFileVerIndiceAipUds() {
-	return this.aroFileVerIndiceAipUds;
+        return this.aroFileVerIndiceAipUds;
     }
 
     public void setAroFileVerIndiceAipUds(List<AroFileVerIndiceAipUd> aroFileVerIndiceAipUds) {
-	this.aroFileVerIndiceAipUds = aroFileVerIndiceAipUds;
+        this.aroFileVerIndiceAipUds = aroFileVerIndiceAipUds;
     }
 
     @OneToMany(mappedBy = "aroVerIndiceAipUd", cascade = CascadeType.PERSIST)
     public List<AroNotaUnitaDoc> getAroNotaUnitaDocs() {
-	return this.aroNotaUnitaDocs;
+        return this.aroNotaUnitaDocs;
     }
 
     public void setAroNotaUnitaDocs(List<AroNotaUnitaDoc> aroNotaUnitaDocs) {
-	this.aroNotaUnitaDocs = aroNotaUnitaDocs;
+        this.aroNotaUnitaDocs = aroNotaUnitaDocs;
     }
 
     @OneToMany(mappedBy = "aroVerIndiceAipUd", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<FasContenVerAipFascicolo> getFasContenVerAipFascicolos() {
-	return this.fasContenVerAipFascicolos;
+        return this.fasContenVerAipFascicolos;
     }
 
     public void setFasContenVerAipFascicolos(
-	    List<FasContenVerAipFascicolo> fasContenVerAipFascicolos) {
-	this.fasContenVerAipFascicolos = fasContenVerAipFascicolos;
+            List<FasContenVerAipFascicolo> fasContenVerAipFascicolos) {
+        this.fasContenVerAipFascicolos = fasContenVerAipFascicolos;
     }
 
     @OneToMany(mappedBy = "aroVerIndiceAipUd", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<FasUdAipFascicoloDaElab> getFasUdAipFascicoloDaElabs() {
-	return this.fasUdAipFascicoloDaElabs;
+        return this.fasUdAipFascicoloDaElabs;
     }
 
     public void setFasUdAipFascicoloDaElabs(
-	    List<FasUdAipFascicoloDaElab> fasUdAipFascicoloDaElabs) {
-	this.fasUdAipFascicoloDaElabs = fasUdAipFascicoloDaElabs;
+            List<FasUdAipFascicoloDaElab> fasUdAipFascicoloDaElabs) {
+        this.fasUdAipFascicoloDaElabs = fasUdAipFascicoloDaElabs;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_INDICE_AIP")
     public AroIndiceAipUd getAroIndiceAipUd() {
-	return this.aroIndiceAipUd;
+        return this.aroIndiceAipUd;
     }
 
     public void setAroIndiceAipUd(AroIndiceAipUd aroIndiceAipUd) {
-	this.aroIndiceAipUd = aroIndiceAipUd;
+        this.aroIndiceAipUd = aroIndiceAipUd;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ELENCO_VERS")
     public ElvElencoVer getElvElencoVer() {
-	return this.elvElencoVer;
+        return this.elvElencoVer;
     }
 
     public void setElvElencoVer(ElvElencoVer elvElencoVer) {
-	this.elvElencoVer = elvElencoVer;
+        this.elvElencoVer = elvElencoVer;
     }
 
     @OneToMany(mappedBy = "aroVerIndiceAipUd", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<AroUpdUdVerIndiceAipUd> getAroUpdUdVerIndiceAipUdss() {
-	return this.aroUpdUdVerIndiceAipUds;
+        return this.aroUpdUdVerIndiceAipUds;
     }
 
     public void setAroUpdUdVerIndiceAipUdss(List<AroUpdUdVerIndiceAipUd> aroUpdUdVerIndiceAipUds) {
-	this.aroUpdUdVerIndiceAipUds = aroUpdUdVerIndiceAipUds;
+        this.aroUpdUdVerIndiceAipUds = aroUpdUdVerIndiceAipUds;
     }
 
     @OneToMany(mappedBy = "aroVerIndiceAipUd", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
     public List<AroUrnVerIndiceAipUd> getAroUrnVerIndiceAipUds() {
-	return this.aroUrnVerIndiceAipUds;
+        return this.aroUrnVerIndiceAipUds;
     }
 
     public void setAroUrnVerIndiceAipUds(List<AroUrnVerIndiceAipUd> aroUrnVerIndiceAipUds) {
-	this.aroUrnVerIndiceAipUds = aroUrnVerIndiceAipUds;
+        this.aroUrnVerIndiceAipUds = aroUrnVerIndiceAipUds;
     }
 }

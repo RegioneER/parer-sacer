@@ -51,43 +51,43 @@ public class DecAttribFascicoloTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_ATTRIB_FASCICOLO,
-		new ColumnDescriptor(COL_ID_ATTRIB_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AA_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_AA_TIPO_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_TI_USO_ATTRIB,
-		new ColumnDescriptor(COL_TI_USO_ATTRIB, Types.VARCHAR, 20, false));
-	map.put(COL_ID_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_NM_SISTEMA_MIGRAZ,
-		new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, false));
-	map.put(COL_NM_ATTRIB_FASCICOLO,
-		new ColumnDescriptor(COL_NM_ATTRIB_FASCICOLO, Types.VARCHAR, 100, false));
-	map.put(COL_DS_ATTRIB_FASCICOLO,
-		new ColumnDescriptor(COL_DS_ATTRIB_FASCICOLO, Types.VARCHAR, 254, false));
-	map.put(COL_DS_ATTRIB_FASCICOLO,
-		new ColumnDescriptor(COL_DS_ATTRIB_FASCICOLO, Types.VARCHAR, 254, false));
-	map.put(COL_TI_ATTRIB_FASCICOLO,
-		new ColumnDescriptor(COL_TI_ATTRIB_FASCICOLO, Types.VARCHAR, 254, false));
-	map.put(COL_TI_VETTOR_SCALARE,
-		new ColumnDescriptor(COL_TI_VETTOR_SCALARE, Types.VARCHAR, 254, false));
-	map.put(COL_TI_CHAR_SEP, new ColumnDescriptor(COL_TI_CHAR_SEP, Types.VARCHAR, 254, false));
-	map.put(COL_TI_CHAR_FINE_REC,
-		new ColumnDescriptor(COL_TI_CHAR_FINE_REC, Types.VARCHAR, 254, false));
-	map.put(COL_ID_GRUPPO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_GRUPPO_FASCICOLO, Types.VARCHAR, 254, false));
+        map.put(COL_ID_ATTRIB_FASCICOLO,
+                new ColumnDescriptor(COL_ID_ATTRIB_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AA_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_AA_TIPO_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_TI_USO_ATTRIB,
+                new ColumnDescriptor(COL_TI_USO_ATTRIB, Types.VARCHAR, 20, false));
+        map.put(COL_ID_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_NM_SISTEMA_MIGRAZ,
+                new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, false));
+        map.put(COL_NM_ATTRIB_FASCICOLO,
+                new ColumnDescriptor(COL_NM_ATTRIB_FASCICOLO, Types.VARCHAR, 100, false));
+        map.put(COL_DS_ATTRIB_FASCICOLO,
+                new ColumnDescriptor(COL_DS_ATTRIB_FASCICOLO, Types.VARCHAR, 254, false));
+        map.put(COL_DS_ATTRIB_FASCICOLO,
+                new ColumnDescriptor(COL_DS_ATTRIB_FASCICOLO, Types.VARCHAR, 254, false));
+        map.put(COL_TI_ATTRIB_FASCICOLO,
+                new ColumnDescriptor(COL_TI_ATTRIB_FASCICOLO, Types.VARCHAR, 254, false));
+        map.put(COL_TI_VETTOR_SCALARE,
+                new ColumnDescriptor(COL_TI_VETTOR_SCALARE, Types.VARCHAR, 254, false));
+        map.put(COL_TI_CHAR_SEP, new ColumnDescriptor(COL_TI_CHAR_SEP, Types.VARCHAR, 254, false));
+        map.put(COL_TI_CHAR_FINE_REC,
+                new ColumnDescriptor(COL_TI_CHAR_FINE_REC, Types.VARCHAR, 254, false));
+        map.put(COL_ID_GRUPPO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_GRUPPO_FASCICOLO, Types.VARCHAR, 254, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -127,853 +127,853 @@ public class FasVVisFascicolo implements Serializable {
 
     @Column(name = "AA_FASCICOLO")
     public BigDecimal getAaFascicolo() {
-	return this.aaFascicolo;
+        return this.aaFascicolo;
     }
 
     public void setAaFascicolo(BigDecimal aaFascicolo) {
-	this.aaFascicolo = aaFascicolo;
+        this.aaFascicolo = aaFascicolo;
     }
 
     @Column(name = "AA_FASCICOLO_PADRE")
     public BigDecimal getAaFascicoloPadre() {
-	return this.aaFascicoloPadre;
+        return this.aaFascicoloPadre;
     }
 
     public void setAaFascicoloPadre(BigDecimal aaFascicoloPadre) {
-	this.aaFascicoloPadre = aaFascicoloPadre;
+        this.aaFascicoloPadre = aaFascicoloPadre;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC_FIRST")
     public BigDecimal getAaKeyUnitaDocFirst() {
-	return this.aaKeyUnitaDocFirst;
+        return this.aaKeyUnitaDocFirst;
     }
 
     public void setAaKeyUnitaDocFirst(BigDecimal aaKeyUnitaDocFirst) {
-	this.aaKeyUnitaDocFirst = aaKeyUnitaDocFirst;
+        this.aaKeyUnitaDocFirst = aaKeyUnitaDocFirst;
     }
 
     @Column(name = "AA_KEY_UNITA_DOC_LAST")
     public BigDecimal getAaKeyUnitaDocLast() {
-	return this.aaKeyUnitaDocLast;
+        return this.aaKeyUnitaDocLast;
     }
 
     public void setAaKeyUnitaDocLast(BigDecimal aaKeyUnitaDocLast) {
-	this.aaKeyUnitaDocLast = aaKeyUnitaDocLast;
+        this.aaKeyUnitaDocLast = aaKeyUnitaDocLast;
     }
 
     @Lob
     @Column(name = "BL_XML_NORMATIVO")
     public String getBlXmlNormativo() {
-	return this.blXmlNormativo;
+        return this.blXmlNormativo;
     }
 
     public void setBlXmlNormativo(String blXmlNormativo) {
-	this.blXmlNormativo = blXmlNormativo;
+        this.blXmlNormativo = blXmlNormativo;
     }
 
     @Lob
     @Column(name = "BL_XML_SEGNATURA")
     public String getBlXmlSegnatura() {
-	return this.blXmlSegnatura;
+        return this.blXmlSegnatura;
     }
 
     public void setBlXmlSegnatura(String blXmlSegnatura) {
-	this.blXmlSegnatura = blXmlSegnatura;
+        this.blXmlSegnatura = blXmlSegnatura;
     }
 
     @Lob
     @Column(name = "BL_XML_SPECIFICO")
     public String getBlXmlSpecifico() {
-	return this.blXmlSpecifico;
+        return this.blXmlSpecifico;
     }
 
     public void setBlXmlSpecifico(String blXmlSpecifico) {
-	this.blXmlSpecifico = blXmlSpecifico;
+        this.blXmlSpecifico = blXmlSpecifico;
     }
 
     @Lob
     @Column(name = "BL_XML_VERS_PROFILO")
     public String getBlXmlVersProfilo() {
-	return this.blXmlVersProfilo;
+        return this.blXmlVersProfilo;
     }
 
     public void setBlXmlVersProfilo(String blXmlVersProfilo) {
-	this.blXmlVersProfilo = blXmlVersProfilo;
+        this.blXmlVersProfilo = blXmlVersProfilo;
     }
 
     @Lob
     @Column(name = "BL_XML_VERS_RAPP")
     public String getBlXmlVersRapp() {
-	return this.blXmlVersRapp;
+        return this.blXmlVersRapp;
     }
 
     public void setBlXmlVersRapp(String blXmlVersRapp) {
-	this.blXmlVersRapp = blXmlVersRapp;
+        this.blXmlVersRapp = blXmlVersRapp;
     }
 
     @Lob
     @Column(name = "BL_XML_VERS_SIP")
     public String getBlXmlVersSip() {
-	return this.blXmlVersSip;
+        return this.blXmlVersSip;
     }
 
     public void setBlXmlVersSip(String blXmlVersSip) {
-	this.blXmlVersSip = blXmlVersSip;
+        this.blXmlVersSip = blXmlVersSip;
     }
 
     @Lob
     @Column(name = "BL_XSD_NORMATIVO")
     public String getBlXsdNormativo() {
-	return this.blXsdNormativo;
+        return this.blXsdNormativo;
     }
 
     public void setBlXsdNormativo(String blXsdNormativo) {
-	this.blXsdNormativo = blXsdNormativo;
+        this.blXsdNormativo = blXsdNormativo;
     }
 
     @Lob
     @Column(name = "BL_XSD_SEGNATURA")
     public String getBlXsdSegnatura() {
-	return this.blXsdSegnatura;
+        return this.blXsdSegnatura;
     }
 
     public void setBlXsdSegnatura(String blXsdSegnatura) {
-	this.blXsdSegnatura = blXsdSegnatura;
+        this.blXsdSegnatura = blXsdSegnatura;
     }
 
     @Lob
     @Column(name = "BL_XSD_SPECIFICO")
     public String getBlXsdSpecifico() {
-	return this.blXsdSpecifico;
+        return this.blXsdSpecifico;
     }
 
     public void setBlXsdSpecifico(String blXsdSpecifico) {
-	this.blXsdSpecifico = blXsdSpecifico;
+        this.blXsdSpecifico = blXsdSpecifico;
     }
 
     @Lob
     @Column(name = "BL_XSD_VERS_PROFILO")
     public String getBlXsdVersProfilo() {
-	return this.blXsdVersProfilo;
+        return this.blXsdVersProfilo;
     }
 
     public void setBlXsdVersProfilo(String blXsdVersProfilo) {
-	this.blXsdVersProfilo = blXsdVersProfilo;
+        this.blXsdVersProfilo = blXsdVersProfilo;
     }
 
     @Column(name = "CD_COMPOSITO_VOCE_TITOL")
     public String getCdCompositoVoceTitol() {
-	return this.cdCompositoVoceTitol;
+        return this.cdCompositoVoceTitol;
     }
 
     public void setCdCompositoVoceTitol(String cdCompositoVoceTitol) {
-	this.cdCompositoVoceTitol = cdCompositoVoceTitol;
+        this.cdCompositoVoceTitol = cdCompositoVoceTitol;
     }
 
     @Column(name = "CD_ENCODING_HASH_XML_RAPP")
     public String getCdEncodingHashXmlRapp() {
-	return this.cdEncodingHashXmlRapp;
+        return this.cdEncodingHashXmlRapp;
     }
 
     public void setCdEncodingHashXmlRapp(String cdEncodingHashXmlRapp) {
-	this.cdEncodingHashXmlRapp = cdEncodingHashXmlRapp;
+        this.cdEncodingHashXmlRapp = cdEncodingHashXmlRapp;
     }
 
     @Column(name = "CD_ENCODING_HASH_XML_SIP")
     public String getCdEncodingHashXmlSip() {
-	return this.cdEncodingHashXmlSip;
+        return this.cdEncodingHashXmlSip;
     }
 
     public void setCdEncodingHashXmlSip(String cdEncodingHashXmlSip) {
-	this.cdEncodingHashXmlSip = cdEncodingHashXmlSip;
+        this.cdEncodingHashXmlSip = cdEncodingHashXmlSip;
     }
 
     @Column(name = "CD_ENTE_CONVENZ")
     public String getCdEnteConvenz() {
-	return this.cdEnteConvenz;
+        return this.cdEnteConvenz;
     }
 
     public void setCdEnteConvenz(String cdEnteConvenz) {
-	this.cdEnteConvenz = cdEnteConvenz;
+        this.cdEnteConvenz = cdEnteConvenz;
     }
 
     @Column(name = "CD_INDICE_CLASSIF")
     public String getCdIndiceClassif() {
-	return this.cdIndiceClassif;
+        return this.cdIndiceClassif;
     }
 
     public void setCdIndiceClassif(String cdIndiceClassif) {
-	this.cdIndiceClassif = cdIndiceClassif;
+        this.cdIndiceClassif = cdIndiceClassif;
     }
 
     @Column(name = "DS_INFO_CONSERVAZIONE")
     public String getDsInfoConservazione() {
-	return this.dsInfoConservazione;
+        return this.dsInfoConservazione;
     }
 
     public void setDsInfoConservazione(String dsInfoConservazione) {
-	this.dsInfoConservazione = dsInfoConservazione;
+        this.dsInfoConservazione = dsInfoConservazione;
     }
 
     @Column(name = "CD_IND_IP_CLIENT")
     public String getCdIndIpClient() {
-	return this.cdIndIpClient;
+        return this.cdIndIpClient;
     }
 
     public void setCdIndIpClient(String cdIndIpClient) {
-	this.cdIndIpClient = cdIndIpClient;
+        this.cdIndIpClient = cdIndIpClient;
     }
 
     @Column(name = "CD_IND_SERVER")
     public String getCdIndServer() {
-	return this.cdIndServer;
+        return this.cdIndServer;
     }
 
     public void setCdIndServer(String cdIndServer) {
-	this.cdIndServer = cdIndServer;
+        this.cdIndServer = cdIndServer;
     }
 
     @Column(name = "CD_IPA_AMMIN_TITOL")
     public String getCdIpaAmminTitol() {
-	return this.cdIpaAmminTitol;
+        return this.cdIpaAmminTitol;
     }
 
     public void setCdIpaAmminTitol(String cdIpaAmminTitol) {
-	this.cdIpaAmminTitol = cdIpaAmminTitol;
+        this.cdIpaAmminTitol = cdIpaAmminTitol;
     }
 
     @Column(name = "CD_KEY_FASCICOLO")
     public String getCdKeyFascicolo() {
-	return this.cdKeyFascicolo;
+        return this.cdKeyFascicolo;
     }
 
     public void setCdKeyFascicolo(String cdKeyFascicolo) {
-	this.cdKeyFascicolo = cdKeyFascicolo;
+        this.cdKeyFascicolo = cdKeyFascicolo;
     }
 
     @Column(name = "CD_KEY_NORMALIZ_FASCICOLO")
     public String getCdKeyNormalizFascicolo() {
-	return this.cdKeyNormalizFascicolo;
+        return this.cdKeyNormalizFascicolo;
     }
 
     public void setCdKeyNormalizFascicolo(String cdKeyNormalizFascicolo) {
-	this.cdKeyNormalizFascicolo = cdKeyNormalizFascicolo;
+        this.cdKeyNormalizFascicolo = cdKeyNormalizFascicolo;
     }
 
     @Column(name = "CD_KEY_FASCICOLO_PADRE")
     public String getCdKeyFascicoloPadre() {
-	return this.cdKeyFascicoloPadre;
+        return this.cdKeyFascicoloPadre;
     }
 
     public void setCdKeyFascicoloPadre(String cdKeyFascicoloPadre) {
-	this.cdKeyFascicoloPadre = cdKeyFascicoloPadre;
+        this.cdKeyFascicoloPadre = cdKeyFascicoloPadre;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC_FIRST")
     public String getCdKeyUnitaDocFirst() {
-	return this.cdKeyUnitaDocFirst;
+        return this.cdKeyUnitaDocFirst;
     }
 
     public void setCdKeyUnitaDocFirst(String cdKeyUnitaDocFirst) {
-	this.cdKeyUnitaDocFirst = cdKeyUnitaDocFirst;
+        this.cdKeyUnitaDocFirst = cdKeyUnitaDocFirst;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC_LAST")
     public String getCdKeyUnitaDocLast() {
-	return this.cdKeyUnitaDocLast;
+        return this.cdKeyUnitaDocLast;
     }
 
     public void setCdKeyUnitaDocLast(String cdKeyUnitaDocLast) {
-	this.cdKeyUnitaDocLast = cdKeyUnitaDocLast;
+        this.cdKeyUnitaDocLast = cdKeyUnitaDocLast;
     }
 
     @Column(name = "CD_LIVELLO_RISERV")
     public String getCdLivelloRiserv() {
-	return this.cdLivelloRiserv;
+        return this.cdLivelloRiserv;
     }
 
     public void setCdLivelloRiserv(String cdLivelloRiserv) {
-	this.cdLivelloRiserv = cdLivelloRiserv;
+        this.cdLivelloRiserv = cdLivelloRiserv;
     }
 
     @Column(name = "CD_PROC_AMMIN")
     public String getCdProcAmmin() {
-	return this.cdProcAmmin;
+        return this.cdProcAmmin;
     }
 
     public void setCdProcAmmin(String cdProcAmmin) {
-	this.cdProcAmmin = cdProcAmmin;
+        this.cdProcAmmin = cdProcAmmin;
     }
 
     @Column(name = "CD_REG_KEY_UNITA_DOC_FIRST")
     public String getCdRegKeyUnitaDocFirst() {
-	return this.cdRegKeyUnitaDocFirst;
+        return this.cdRegKeyUnitaDocFirst;
     }
 
     public void setCdRegKeyUnitaDocFirst(String cdRegKeyUnitaDocFirst) {
-	this.cdRegKeyUnitaDocFirst = cdRegKeyUnitaDocFirst;
+        this.cdRegKeyUnitaDocFirst = cdRegKeyUnitaDocFirst;
     }
 
     @Column(name = "CD_REG_KEY_UNITA_DOC_LAST")
     public String getCdRegKeyUnitaDocLast() {
-	return this.cdRegKeyUnitaDocLast;
+        return this.cdRegKeyUnitaDocLast;
     }
 
     public void setCdRegKeyUnitaDocLast(String cdRegKeyUnitaDocLast) {
-	this.cdRegKeyUnitaDocLast = cdRegKeyUnitaDocLast;
+        this.cdRegKeyUnitaDocLast = cdRegKeyUnitaDocLast;
     }
 
     @Column(name = "CD_VERSIONE_XML_RAPP")
     public String getCdVersioneXmlRapp() {
-	return this.cdVersioneXmlRapp;
+        return this.cdVersioneXmlRapp;
     }
 
     public void setCdVersioneXmlRapp(String cdVersioneXmlRapp) {
-	this.cdVersioneXmlRapp = cdVersioneXmlRapp;
+        this.cdVersioneXmlRapp = cdVersioneXmlRapp;
     }
 
     @Column(name = "CD_VERSIONE_XML_SIP")
     public String getCdVersioneXmlSip() {
-	return this.cdVersioneXmlSip;
+        return this.cdVersioneXmlSip;
     }
 
     public void setCdVersioneXmlSip(String cdVersioneXmlSip) {
-	this.cdVersioneXmlSip = cdVersioneXmlSip;
+        this.cdVersioneXmlSip = cdVersioneXmlSip;
     }
 
     @Column(name = "CD_XSD_NORMATIVO")
     public String getCdXsdNormativo() {
-	return this.cdXsdNormativo;
+        return this.cdXsdNormativo;
     }
 
     public void setCdXsdNormativo(String cdXsdNormativo) {
-	this.cdXsdNormativo = cdXsdNormativo;
+        this.cdXsdNormativo = cdXsdNormativo;
     }
 
     @Column(name = "CD_XSD_PROFILO")
     public String getCdXsdProfilo() {
-	return this.cdXsdProfilo;
+        return this.cdXsdProfilo;
     }
 
     public void setCdXsdProfilo(String cdXsdProfilo) {
-	this.cdXsdProfilo = cdXsdProfilo;
+        this.cdXsdProfilo = cdXsdProfilo;
     }
 
     @Column(name = "CD_XSD_SEGNATURA")
     public String getCdXsdSegnatura() {
-	return this.cdXsdSegnatura;
+        return this.cdXsdSegnatura;
     }
 
     public void setCdXsdSegnatura(String cdXsdSegnatura) {
-	this.cdXsdSegnatura = cdXsdSegnatura;
+        this.cdXsdSegnatura = cdXsdSegnatura;
     }
 
     @Column(name = "CD_XSD_SPECIFICO")
     public String getCdXsdSpecifico() {
-	return this.cdXsdSpecifico;
+        return this.cdXsdSpecifico;
     }
 
     public void setCdXsdSpecifico(String cdXsdSpecifico) {
-	this.cdXsdSpecifico = cdXsdSpecifico;
+        this.cdXsdSpecifico = cdXsdSpecifico;
     }
 
     @Column(name = "DS_ALGO_HASH_XML_RAPP")
     public String getDsAlgoHashXmlRapp() {
-	return this.dsAlgoHashXmlRapp;
+        return this.dsAlgoHashXmlRapp;
     }
 
     public void setDsAlgoHashXmlRapp(String dsAlgoHashXmlRapp) {
-	this.dsAlgoHashXmlRapp = dsAlgoHashXmlRapp;
+        this.dsAlgoHashXmlRapp = dsAlgoHashXmlRapp;
     }
 
     @Column(name = "DS_ALGO_HASH_XML_SIP")
     public String getDsAlgoHashXmlSip() {
-	return this.dsAlgoHashXmlSip;
+        return this.dsAlgoHashXmlSip;
     }
 
     public void setDsAlgoHashXmlSip(String dsAlgoHashXmlSip) {
-	this.dsAlgoHashXmlSip = dsAlgoHashXmlSip;
+        this.dsAlgoHashXmlSip = dsAlgoHashXmlSip;
     }
 
     @Column(name = "DS_AMMIN_TITOL")
     public String getDsAmminTitol() {
-	return this.dsAmminTitol;
+        return this.dsAmminTitol;
     }
 
     public void setDsAmminTitol(String dsAmminTitol) {
-	this.dsAmminTitol = dsAmminTitol;
+        this.dsAmminTitol = dsAmminTitol;
     }
 
     @Column(name = "DS_HASH_XML_RAPP")
     public String getDsHashXmlRapp() {
-	return this.dsHashXmlRapp;
+        return this.dsHashXmlRapp;
     }
 
     public void setDsHashXmlRapp(String dsHashXmlRapp) {
-	this.dsHashXmlRapp = dsHashXmlRapp;
+        this.dsHashXmlRapp = dsHashXmlRapp;
     }
 
     @Column(name = "DS_HASH_XML_SIP")
     public String getDsHashXmlSip() {
-	return this.dsHashXmlSip;
+        return this.dsHashXmlSip;
     }
 
     public void setDsHashXmlSip(String dsHashXmlSip) {
-	this.dsHashXmlSip = dsHashXmlSip;
+        this.dsHashXmlSip = dsHashXmlSip;
     }
 
     @Column(name = "DS_INDICE_CLASSIF")
     public String getDsIndiceClassif() {
-	return this.dsIndiceClassif;
+        return this.dsIndiceClassif;
     }
 
     public void setDsIndiceClassif(String dsIndiceClassif) {
-	this.dsIndiceClassif = dsIndiceClassif;
+        this.dsIndiceClassif = dsIndiceClassif;
     }
 
     @Column(name = "DS_NOTA")
     public String getDsNota() {
-	return this.dsNota;
+        return this.dsNota;
     }
 
     public void setDsNota(String dsNota) {
-	this.dsNota = dsNota;
+        this.dsNota = dsNota;
     }
 
     @Column(name = "DS_OGGETTO_FASCICOLO")
     public String getDsOggettoFascicolo() {
-	return this.dsOggettoFascicolo;
+        return this.dsOggettoFascicolo;
     }
 
     public void setDsOggettoFascicolo(String dsOggettoFascicolo) {
-	this.dsOggettoFascicolo = dsOggettoFascicolo;
+        this.dsOggettoFascicolo = dsOggettoFascicolo;
     }
 
     @Column(name = "DS_OGGETTO_FASCICOLO_PADRE")
     public String getDsOggettoFascicoloPadre() {
-	return this.dsOggettoFascicoloPadre;
+        return this.dsOggettoFascicoloPadre;
     }
 
     public void setDsOggettoFascicoloPadre(String dsOggettoFascicoloPadre) {
-	this.dsOggettoFascicoloPadre = dsOggettoFascicoloPadre;
+        this.dsOggettoFascicoloPadre = dsOggettoFascicoloPadre;
     }
 
     @Column(name = "DS_PROC_AMMIN")
     public String getDsProcAmmin() {
-	return this.dsProcAmmin;
+        return this.dsProcAmmin;
     }
 
     public void setDsProcAmmin(String dsProcAmmin) {
-	this.dsProcAmmin = dsProcAmmin;
+        this.dsProcAmmin = dsProcAmmin;
     }
 
     @Column(name = "DS_URN_XML_RAPP")
     public String getDsUrnXmlRapp() {
-	return this.dsUrnXmlRapp;
+        return this.dsUrnXmlRapp;
     }
 
     public void setDsUrnXmlRapp(String dsUrnXmlRapp) {
-	this.dsUrnXmlRapp = dsUrnXmlRapp;
+        this.dsUrnXmlRapp = dsUrnXmlRapp;
     }
 
     @Column(name = "DS_URN_XML_SIP")
     public String getDsUrnXmlSip() {
-	return this.dsUrnXmlSip;
+        return this.dsUrnXmlSip;
     }
 
     public void setDsUrnXmlSip(String dsUrnXmlSip) {
-	this.dsUrnXmlSip = dsUrnXmlSip;
+        this.dsUrnXmlSip = dsUrnXmlSip;
     }
 
     @Column(name = "DS_XSD_NORMATIVO")
     public String getDsXsdNormativo() {
-	return this.dsXsdNormativo;
+        return this.dsXsdNormativo;
     }
 
     public void setDsXsdNormativo(String dsXsdNormativo) {
-	this.dsXsdNormativo = dsXsdNormativo;
+        this.dsXsdNormativo = dsXsdNormativo;
     }
 
     @Column(name = "DS_XSD_PROFILO")
     public String getDsXsdProfilo() {
-	return this.dsXsdProfilo;
+        return this.dsXsdProfilo;
     }
 
     public void setDsXsdProfilo(String dsXsdProfilo) {
-	this.dsXsdProfilo = dsXsdProfilo;
+        this.dsXsdProfilo = dsXsdProfilo;
     }
 
     @Column(name = "DS_XSD_SEGNATURA")
     public String getDsXsdSegnatura() {
-	return this.dsXsdSegnatura;
+        return this.dsXsdSegnatura;
     }
 
     public void setDsXsdSegnatura(String dsXsdSegnatura) {
-	this.dsXsdSegnatura = dsXsdSegnatura;
+        this.dsXsdSegnatura = dsXsdSegnatura;
     }
 
     @Column(name = "DS_XSD_SPECIFICO")
     public String getDsXsdSpecifico() {
-	return this.dsXsdSpecifico;
+        return this.dsXsdSpecifico;
     }
 
     public void setDsXsdSpecifico(String dsXsdSpecifico) {
-	this.dsXsdSpecifico = dsXsdSpecifico;
+        this.dsXsdSpecifico = dsXsdSpecifico;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_APE_FASCICOLO")
     public Date getDtApeFascicolo() {
-	return this.dtApeFascicolo;
+        return this.dtApeFascicolo;
     }
 
     public void setDtApeFascicolo(Date dtApeFascicolo) {
-	this.dtApeFascicolo = dtApeFascicolo;
+        this.dtApeFascicolo = dtApeFascicolo;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_CHIU_FASCICOLO")
     public Date getDtChiuFascicolo() {
-	return this.dtChiuFascicolo;
+        return this.dtChiuFascicolo;
     }
 
     public void setDtChiuFascicolo(Date dtChiuFascicolo) {
-	this.dtChiuFascicolo = dtChiuFascicolo;
+        this.dtChiuFascicolo = dtChiuFascicolo;
     }
 
     @Column(name = "FL_DEFAULT_NORMATIVO", columnDefinition = "char(1)")
     public String getFlDefaultNormativo() {
-	return this.flDefaultNormativo;
+        return this.flDefaultNormativo;
     }
 
     public void setFlDefaultNormativo(String flDefaultNormativo) {
-	this.flDefaultNormativo = flDefaultNormativo;
+        this.flDefaultNormativo = flDefaultNormativo;
     }
 
     @Column(name = "FL_DEFAULT_PROFILO", columnDefinition = "char(1)")
     public String getFlDefaultProfilo() {
-	return this.flDefaultProfilo;
+        return this.flDefaultProfilo;
     }
 
     public void setFlDefaultProfilo(String flDefaultProfilo) {
-	this.flDefaultProfilo = flDefaultProfilo;
+        this.flDefaultProfilo = flDefaultProfilo;
     }
 
     @Column(name = "FL_DEFAULT_SEGNATURA", columnDefinition = "char(1)")
     public String getFlDefaultSegnatura() {
-	return this.flDefaultSegnatura;
+        return this.flDefaultSegnatura;
     }
 
     public void setFlDefaultSegnatura(String flDefaultSegnatura) {
-	this.flDefaultSegnatura = flDefaultSegnatura;
+        this.flDefaultSegnatura = flDefaultSegnatura;
     }
 
     @Column(name = "FL_DEFAULT_SPECIFICO", columnDefinition = "char(1)")
     public String getFlDefaultSpecifico() {
-	return this.flDefaultSpecifico;
+        return this.flDefaultSpecifico;
     }
 
     public void setFlDefaultSpecifico(String flDefaultSpecifico) {
-	this.flDefaultSpecifico = flDefaultSpecifico;
+        this.flDefaultSpecifico = flDefaultSpecifico;
     }
 
     @Column(name = "FL_FORZA_CONTR_CLASSIF", columnDefinition = "char(1)")
     public String getFlForzaContrClassif() {
-	return this.flForzaContrClassif;
+        return this.flForzaContrClassif;
     }
 
     public void setFlForzaContrClassif(String flForzaContrClassif) {
-	this.flForzaContrClassif = flForzaContrClassif;
+        this.flForzaContrClassif = flForzaContrClassif;
     }
 
     @Column(name = "FL_FORZA_CONTR_COLLEG", columnDefinition = "char(1)")
     public String getFlForzaContrColleg() {
-	return this.flForzaContrColleg;
+        return this.flForzaContrColleg;
     }
 
     public void setFlForzaContrColleg(String flForzaContrColleg) {
-	this.flForzaContrColleg = flForzaContrColleg;
+        this.flForzaContrColleg = flForzaContrColleg;
     }
 
     @Column(name = "FL_FORZA_CONTR_NUMERO", columnDefinition = "char(1)")
     public String getFlForzaContrNumero() {
-	return this.flForzaContrNumero;
+        return this.flForzaContrNumero;
     }
 
     public void setFlForzaContrNumero(String flForzaContrNumero) {
-	this.flForzaContrNumero = flForzaContrNumero;
+        this.flForzaContrNumero = flForzaContrNumero;
     }
 
     @Column(name = "FL_UPD_ANNUL_UNITA_DOC", columnDefinition = "char(1)")
     public String getFlUpdAnnulUnitaDoc() {
-	return this.flUpdAnnulUnitaDoc;
+        return this.flUpdAnnulUnitaDoc;
     }
 
     public void setFlUpdAnnulUnitaDoc(String flUpdAnnulUnitaDoc) {
-	this.flUpdAnnulUnitaDoc = flUpdAnnulUnitaDoc;
+        this.flUpdAnnulUnitaDoc = flUpdAnnulUnitaDoc;
     }
 
     @Column(name = "FL_UPD_MODIF_UNITA_DOC", columnDefinition = "char(1)")
     public String getFlUpdModifUnitaDoc() {
-	return this.flUpdModifUnitaDoc;
+        return this.flUpdModifUnitaDoc;
     }
 
     public void setFlUpdModifUnitaDoc(String flUpdModifUnitaDoc) {
-	this.flUpdModifUnitaDoc = flUpdModifUnitaDoc;
+        this.flUpdModifUnitaDoc = flUpdModifUnitaDoc;
     }
 
     @Id
     @Column(name = "ID_FASCICOLO")
     public BigDecimal getIdFascicolo() {
-	return this.idFascicolo;
+        return this.idFascicolo;
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	this.idFascicolo = idFascicolo;
+        this.idFascicolo = idFascicolo;
     }
 
     @Column(name = "ID_MODELLO_XSD_PROFILO")
     public BigDecimal getIdModelloXsdProfilo() {
-	return this.idModelloXsdProfilo;
+        return this.idModelloXsdProfilo;
     }
 
     public void setIdModelloXsdProfilo(BigDecimal idModelloXsdProfilo) {
-	this.idModelloXsdProfilo = idModelloXsdProfilo;
+        this.idModelloXsdProfilo = idModelloXsdProfilo;
     }
 
     @Column(name = "ID_MODELLO_XSD_SEGNATURA")
     public BigDecimal getIdModelloXsdSegnatura() {
-	return this.idModelloXsdSegnatura;
+        return this.idModelloXsdSegnatura;
     }
 
     public void setIdModelloXsdSegnatura(BigDecimal idModelloXsdSegnatura) {
-	this.idModelloXsdSegnatura = idModelloXsdSegnatura;
+        this.idModelloXsdSegnatura = idModelloXsdSegnatura;
     }
 
     @Column(name = "ID_MODELLO_XSD_NORMATIVO")
     public BigDecimal getIdModelloXsdNormativo() {
-	return this.idModelloXsdNormativo;
+        return this.idModelloXsdNormativo;
     }
 
     public void setIdModelloXsdNormativo(BigDecimal idModelloXsdNormativo) {
-	this.idModelloXsdNormativo = idModelloXsdNormativo;
+        this.idModelloXsdNormativo = idModelloXsdNormativo;
     }
 
     @Column(name = "ID_MODELLO_XSD_SPECIFICO")
     public BigDecimal getIdModelloXsdSpecifico() {
-	return this.idModelloXsdSpecifico;
+        return this.idModelloXsdSpecifico;
     }
 
     public void setIdModelloXsdSpecifico(BigDecimal idModelloXsdSpecifico) {
-	this.idModelloXsdSpecifico = idModelloXsdSpecifico;
+        this.idModelloXsdSpecifico = idModelloXsdSpecifico;
     }
 
     @Column(name = "ID_SISTEMA_VERSANTE")
     public BigDecimal getIdSistemaVersante() {
-	return this.idSistemaVersante;
+        return this.idSistemaVersante;
     }
 
     public void setIdSistemaVersante(BigDecimal idSistemaVersante) {
-	this.idSistemaVersante = idSistemaVersante;
+        this.idSistemaVersante = idSistemaVersante;
     }
 
     @Column(name = "ID_TIPO_FASCICOLO")
     public BigDecimal getIdTipoFascicolo() {
-	return this.idTipoFascicolo;
+        return this.idTipoFascicolo;
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	this.idTipoFascicolo = idTipoFascicolo;
+        this.idTipoFascicolo = idTipoFascicolo;
     }
 
     @Column(name = "ID_USER_IAM_VERS")
     public BigDecimal getIdUserIamVers() {
-	return this.idUserIamVers;
+        return this.idUserIamVers;
     }
 
     public void setIdUserIamVers(BigDecimal idUserIamVers) {
-	this.idUserIamVers = idUserIamVers;
+        this.idUserIamVers = idUserIamVers;
     }
 
     @Column(name = "ID_VOCE_TITOL")
     public BigDecimal getIdVoceTitol() {
-	return this.idVoceTitol;
+        return this.idVoceTitol;
     }
 
     public void setIdVoceTitol(BigDecimal idVoceTitol) {
-	this.idVoceTitol = idVoceTitol;
+        this.idVoceTitol = idVoceTitol;
     }
 
     @Column(name = "NI_AA_CONSERVAZIONE")
     public BigDecimal getNiAaConservazione() {
-	return this.niAaConservazione;
+        return this.niAaConservazione;
     }
 
     public void setNiAaConservazione(BigDecimal niAaConservazione) {
-	this.niAaConservazione = niAaConservazione;
+        this.niAaConservazione = niAaConservazione;
     }
 
     @Column(name = "NI_UNITA_DOC")
     public BigDecimal getNiUnitaDoc() {
-	return this.niUnitaDoc;
+        return this.niUnitaDoc;
     }
 
     public void setNiUnitaDoc(BigDecimal niUnitaDoc) {
-	this.niUnitaDoc = niUnitaDoc;
+        this.niUnitaDoc = niUnitaDoc;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_AMBIENTE_ENTE_CONVENZ")
     public String getNmAmbienteEnteConvenz() {
-	return this.nmAmbienteEnteConvenz;
+        return this.nmAmbienteEnteConvenz;
     }
 
     public void setNmAmbienteEnteConvenz(String nmAmbienteEnteConvenz) {
-	this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
+        this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_ENTE_CONVENZ")
     public String getNmEnteConvenz() {
-	return this.nmEnteConvenz;
+        return this.nmEnteConvenz;
     }
 
     public void setNmEnteConvenz(String nmEnteConvenz) {
-	this.nmEnteConvenz = nmEnteConvenz;
+        this.nmEnteConvenz = nmEnteConvenz;
     }
 
     @Column(name = "NM_SISTEMA_VERSANTE")
     public String getNmSistemaVersante() {
-	return this.nmSistemaVersante;
+        return this.nmSistemaVersante;
     }
 
     public void setNmSistemaVersante(String nmSistemaVersante) {
-	this.nmSistemaVersante = nmSistemaVersante;
+        this.nmSistemaVersante = nmSistemaVersante;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_TIPO_FASCICOLO")
     public String getNmTipoFascicolo() {
-	return this.nmTipoFascicolo;
+        return this.nmTipoFascicolo;
     }
 
     public void setNmTipoFascicolo(String nmTipoFascicolo) {
-	this.nmTipoFascicolo = nmTipoFascicolo;
+        this.nmTipoFascicolo = nmTipoFascicolo;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     @Column(name = "TI_CODICE_AMMIN_TITOL")
     public String getTiCodiceAmminTitol() {
-	return this.tiCodiceAmminTitol;
+        return this.tiCodiceAmminTitol;
     }
 
     public void setTiCodiceAmminTitol(String tiCodiceAmminTitol) {
-	this.tiCodiceAmminTitol = tiCodiceAmminTitol;
+        this.tiCodiceAmminTitol = tiCodiceAmminTitol;
     }
 
     @Column(name = "TI_CONSERVAZIONE")
     public String getTiConservazione() {
-	return this.tiConservazione;
+        return this.tiConservazione;
     }
 
     public void setTiConservazione(String tiConservazione) {
-	this.tiConservazione = tiConservazione;
+        this.tiConservazione = tiConservazione;
     }
 
     @Column(name = "TI_MODELLO_XSD_PROFILO")
     public String getTiModelloXsdProfilo() {
-	return this.tiModelloXsdProfilo;
+        return this.tiModelloXsdProfilo;
     }
 
     public void setTiModelloXsdProfilo(String tiModelloXsdProfilo) {
-	this.tiModelloXsdProfilo = tiModelloXsdProfilo;
+        this.tiModelloXsdProfilo = tiModelloXsdProfilo;
     }
 
     @Column(name = "TI_MODELLO_XSD_SEGNATURA")
     public String getTiModelloXsdSegnatura() {
-	return this.tiModelloXsdSegnatura;
+        return this.tiModelloXsdSegnatura;
     }
 
     public void setTiModelloXsdSegnatura(String tiModelloXsdSegnatura) {
-	this.tiModelloXsdSegnatura = tiModelloXsdSegnatura;
+        this.tiModelloXsdSegnatura = tiModelloXsdSegnatura;
     }
 
     @Column(name = "TI_MODELLO_XSD_NORMATIVO")
     public String getTiModelloXsdNormativo() {
-	return this.tiModelloXsdNormativo;
+        return this.tiModelloXsdNormativo;
     }
 
     public void setTiModelloXsdNormativo(String tiModelloXsdNormativo) {
-	this.tiModelloXsdNormativo = tiModelloXsdNormativo;
+        this.tiModelloXsdNormativo = tiModelloXsdNormativo;
     }
 
     @Column(name = "TI_MODELLO_XSD_SPECIFICO")
     public String getTiModelloXsdSpecifico() {
-	return this.tiModelloXsdSpecifico;
+        return this.tiModelloXsdSpecifico;
     }
 
     public void setTiModelloXsdSpecifico(String tiModelloXsdSpecifico) {
-	this.tiModelloXsdSpecifico = tiModelloXsdSpecifico;
+        this.tiModelloXsdSpecifico = tiModelloXsdSpecifico;
     }
 
     @Column(name = "TI_STATO_CONSERVAZIONE")
     public String getTiStatoConservazione() {
-	return this.tiStatoConservazione;
+        return this.tiStatoConservazione;
     }
 
     public void setTiStatoConservazione(String tiStatoConservazione) {
-	this.tiStatoConservazione = tiStatoConservazione;
+        this.tiStatoConservazione = tiStatoConservazione;
     }
 
     @Column(name = "TI_STATO_FASC_ELENCO_VERS")
     public String getTiStatoFascElencoVers() {
-	return this.tiStatoFascElencoVers;
+        return this.tiStatoFascElencoVers;
     }
 
     public void setTiStatoFascElencoVers(String tiStatoFascElencoVers) {
-	this.tiStatoFascElencoVers = tiStatoFascElencoVers;
+        this.tiStatoFascElencoVers = tiStatoFascElencoVers;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_INI_SES")
     public Date getTsIniSes() {
-	return this.tsIniSes;
+        return this.tsIniSes;
     }
 
     public void setTsIniSes(Date tsIniSes) {
-	this.tsIniSes = tsIniSes;
+        this.tsIniSes = tsIniSes;
     }
 
 }

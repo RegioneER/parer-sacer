@@ -22,6 +22,6 @@ public class ParerErrorCategory {
     // Enum
     public enum SacerErrorCategory {
 
-	INTERNAL_ERROR, USER_ERROR, VALIDATION_ERROR
+        INTERNAL_ERROR, USER_ERROR, VALIDATION_ERROR
     }
 }

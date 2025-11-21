@@ -37,21 +37,21 @@ public class VrsVSessioneVersRisolta implements Serializable {
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     private VrsVSessioneVersRisoltaId vrsVSessioneVersRisoltaId;
 
     @EmbeddedId()
     public VrsVSessioneVersRisoltaId getVrsVSessioneVersRisoltaId() {
-	return vrsVSessioneVersRisoltaId;
+        return vrsVSessioneVersRisoltaId;
     }
 
     public void setVrsVSessioneVersRisoltaId(VrsVSessioneVersRisoltaId vrsVSessioneVersRisoltaId) {
-	this.vrsVSessioneVersRisoltaId = vrsVSessioneVersRisoltaId;
+        this.vrsVSessioneVersRisoltaId = vrsVSessioneVersRisoltaId;
     }
 }

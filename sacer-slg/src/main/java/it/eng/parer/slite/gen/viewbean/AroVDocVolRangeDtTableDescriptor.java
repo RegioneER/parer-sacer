@@ -44,25 +44,25 @@ public class AroVDocVolRangeDtTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_TI_STATO_DOC, new ColumnDescriptor(COL_TI_STATO_DOC, Types.VARCHAR, 30, true));
-	map.put(COL_TI_STATO_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
-	map.put(COL_TI_DT_CREAZIONE,
-		new ColumnDescriptor(COL_TI_DT_CREAZIONE, Types.VARCHAR, 19, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_TI_STATO_DOC, new ColumnDescriptor(COL_TI_STATO_DOC, Types.VARCHAR, 30, true));
+        map.put(COL_TI_STATO_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
+        map.put(COL_TI_DT_CREAZIONE,
+                new ColumnDescriptor(COL_TI_DT_CREAZIONE, Types.VARCHAR, 19, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

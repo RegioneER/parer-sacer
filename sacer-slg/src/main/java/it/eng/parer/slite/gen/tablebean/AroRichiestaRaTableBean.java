@@ -33,19 +33,19 @@ public class AroRichiestaRaTableBean extends AbstractBaseTable<AroRichiestaRaRow
     public static AroRichiestaRaTableDescriptor TABLE_DESCRIPTOR = new AroRichiestaRaTableDescriptor();
 
     public AroRichiestaRaTableBean() {
-	super();
+        super();
     }
 
     protected AroRichiestaRaRowBean createRow() {
-	return new AroRichiestaRaRowBean();
+        return new AroRichiestaRaRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroRichiestaRaRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

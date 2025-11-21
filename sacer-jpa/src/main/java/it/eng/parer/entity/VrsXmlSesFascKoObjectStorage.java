@@ -23,7 +23,7 @@ public class VrsXmlSesFascKoObjectStorage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public VrsXmlSesFascKoObjectStorage() {
-	super();
+        super();
     }
 
     private Long idXmlSesFascKoObjectStorage;
@@ -38,66 +38,66 @@ public class VrsXmlSesFascKoObjectStorage implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_XML_SES_FASC_KO_OBJECT_STORAGE")
     public Long getIdXmlSesFascKoObjectStorage() {
-	return idXmlSesFascKoObjectStorage;
+        return idXmlSesFascKoObjectStorage;
     }
 
     public void setIdXmlSesFascKoObjectStorage(Long idXmlSesFascKoObjectStorage) {
-	this.idXmlSesFascKoObjectStorage = idXmlSesFascKoObjectStorage;
+        this.idXmlSesFascKoObjectStorage = idXmlSesFascKoObjectStorage;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_DEC_BACKEND")
     public DecBackend getDecBackend() {
-	return decBackend;
+        return decBackend;
     }
 
     public void setDecBackend(DecBackend decBackend) {
-	this.decBackend = decBackend;
+        this.decBackend = decBackend;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SES_FASCICOLO_KO")
     public VrsSesFascicoloKo getVrsSesFascicoloKo() {
-	return vrsSesFascicoloKo;
+        return vrsSesFascicoloKo;
     }
 
     public void setVrsSesFascicoloKo(VrsSesFascicoloKo vrsSesFascicoloKo) {
-	this.vrsSesFascicoloKo = vrsSesFascicoloKo;
+        this.vrsSesFascicoloKo = vrsSesFascicoloKo;
     }
 
     @Column(name = "NM_TENANT")
     public String getNmTenant() {
-	return nmTenant;
+        return nmTenant;
     }
 
     public void setNmTenant(String nmTenant) {
-	this.nmTenant = nmTenant;
+        this.nmTenant = nmTenant;
     }
 
     @Column(name = "NM_BUCKET")
     public String getNmBucket() {
-	return nmBucket;
+        return nmBucket;
     }
 
     public void setNmBucket(String nmBucket) {
-	this.nmBucket = nmBucket;
+        this.nmBucket = nmBucket;
     }
 
     @Column(name = "CD_KEY_FILE")
     public String getCdKeyFile() {
-	return cdKeyFile;
+        return cdKeyFile;
     }
 
     public void setCdKeyFile(String cdKeyFile) {
-	this.cdKeyFile = cdKeyFile;
+        this.cdKeyFile = cdKeyFile;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 }

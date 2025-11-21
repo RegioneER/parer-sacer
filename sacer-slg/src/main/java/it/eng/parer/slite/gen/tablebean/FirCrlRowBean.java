@@ -37,114 +37,114 @@ public class FirCrlRowBean extends BaseRow implements JEEBaseRowInterface {
     public static FirCrlTableDescriptor TABLE_DESCRIPTOR = new FirCrlTableDescriptor();
 
     public FirCrlRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdCrl() {
-	return getBigDecimal("id_crl");
+        return getBigDecimal("id_crl");
     }
 
     public void setIdCrl(BigDecimal idCrl) {
-	setObject("id_crl", idCrl);
+        setObject("id_crl", idCrl);
     }
 
     public BigDecimal getIdCertifCa() {
-	return getBigDecimal("id_certif_ca");
+        return getBigDecimal("id_certif_ca");
     }
 
     public void setIdCertifCa(BigDecimal idCertifCa) {
-	setObject("id_certif_ca", idCertifCa);
+        setObject("id_certif_ca", idCertifCa);
     }
 
     public BigDecimal getNiSerialCrl() {
-	return getBigDecimal("ni_serial_crl");
+        return getBigDecimal("ni_serial_crl");
     }
 
     public void setNiSerialCrl(BigDecimal niSerialCrl) {
-	setObject("ni_serial_crl", niSerialCrl);
+        setObject("ni_serial_crl", niSerialCrl);
     }
 
     public Timestamp getDtScadCrl() {
-	return getTimestamp("dt_scad_crl");
+        return getTimestamp("dt_scad_crl");
     }
 
     public void setDtScadCrl(Timestamp dtScadCrl) {
-	setObject("dt_scad_crl", dtScadCrl);
+        setObject("dt_scad_crl", dtScadCrl);
     }
 
     public Timestamp getDtIniCrl() {
-	return getTimestamp("dt_ini_crl");
+        return getTimestamp("dt_ini_crl");
     }
 
     public void setDtIniCrl(Timestamp dtIniCrl) {
-	setObject("dt_ini_crl", dtIniCrl);
+        setObject("dt_ini_crl", dtIniCrl);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FirCrl entity = (FirCrl) obj;
+        FirCrl entity = (FirCrl) obj;
 
-	this.setIdCrl(entity.getIdCrl() == null ? null : BigDecimal.valueOf(entity.getIdCrl()));
+        this.setIdCrl(entity.getIdCrl() == null ? null : BigDecimal.valueOf(entity.getIdCrl()));
 
-	if (entity.getFirCertifCa() != null) {
-	    this.setIdCertifCa(new BigDecimal(entity.getFirCertifCa().getIdCertifCa()));
-	}
+        if (entity.getFirCertifCa() != null) {
+            this.setIdCertifCa(new BigDecimal(entity.getFirCertifCa().getIdCertifCa()));
+        }
 
-	this.setNiSerialCrl(entity.getNiSerialCrl());
-	if (entity.getDtScadCrl() != null) {
-	    this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
-	}
-	if (entity.getDtIniCrl() != null) {
-	    this.setDtIniCrl(new Timestamp(entity.getDtIniCrl().getTime()));
-	}
+        this.setNiSerialCrl(entity.getNiSerialCrl());
+        if (entity.getDtScadCrl() != null) {
+            this.setDtScadCrl(new Timestamp(entity.getDtScadCrl().getTime()));
+        }
+        if (entity.getDtIniCrl() != null) {
+            this.setDtIniCrl(new Timestamp(entity.getDtIniCrl().getTime()));
+        }
     }
 
     @Override
     public FirCrl rowBeanToEntity() {
-	FirCrl entity = new FirCrl();
-	if (this.getIdCrl() != null) {
-	    entity.setIdCrl(this.getIdCrl().longValue());
-	}
-	if (this.getIdCertifCa() != null) {
-	    if (entity.getFirCertifCa() == null) {
-		entity.setFirCertifCa(new FirCertifCa());
-	    }
-	    entity.getFirCertifCa().setIdCertifCa(this.getIdCertifCa().longValue());
-	}
-	entity.setNiSerialCrl(this.getNiSerialCrl());
-	entity.setDtScadCrl(this.getDtScadCrl());
-	entity.setDtIniCrl(this.getDtIniCrl());
-	return entity;
+        FirCrl entity = new FirCrl();
+        if (this.getIdCrl() != null) {
+            entity.setIdCrl(this.getIdCrl().longValue());
+        }
+        if (this.getIdCertifCa() != null) {
+            if (entity.getFirCertifCa() == null) {
+                entity.setFirCertifCa(new FirCertifCa());
+            }
+            entity.getFirCertifCa().setIdCertifCa(this.getIdCertifCa().longValue());
+        }
+        entity.setNiSerialCrl(this.getNiSerialCrl());
+        entity.setDtScadCrl(this.getDtScadCrl());
+        entity.setDtIniCrl(this.getDtIniCrl());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

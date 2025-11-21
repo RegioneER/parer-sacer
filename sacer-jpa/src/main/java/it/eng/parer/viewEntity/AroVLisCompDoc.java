@@ -51,138 +51,138 @@ public class AroVLisCompDoc implements Serializable {
 
     @Column(name = "DS_FORMATO_RAPPR_CALC")
     public String getDsFormatoRapprCalc() {
-	return this.dsFormatoRapprCalc;
+        return this.dsFormatoRapprCalc;
     }
 
     public void setDsFormatoRapprCalc(String dsFormatoRapprCalc) {
-	this.dsFormatoRapprCalc = dsFormatoRapprCalc;
+        this.dsFormatoRapprCalc = dsFormatoRapprCalc;
     }
 
     @Column(name = "DS_MSG_ESITO_VERIF_FIRME")
     public String getDsMsgEsitoVerifFirme() {
-	return this.dsMsgEsitoVerifFirme;
+        return this.dsMsgEsitoVerifFirme;
     }
 
     public void setDsMsgEsitoVerifFirme(String dsMsgEsitoVerifFirme) {
-	this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
+        this.dsMsgEsitoVerifFirme = dsMsgEsitoVerifFirme;
     }
 
     @Column(name = "DS_NOME_COMP_VERS")
     public String getDsNomeCompVers() {
-	return this.dsNomeCompVers;
+        return this.dsNomeCompVers;
     }
 
     public void setDsNomeCompVers(String dsNomeCompVers) {
-	this.dsNomeCompVers = dsNomeCompVers;
+        this.dsNomeCompVers = dsNomeCompVers;
     }
 
     @Column(name = "DS_URN_COMP_CALC")
     public String getDsUrnCompCalc() {
-	return this.dsUrnCompCalc;
+        return this.dsUrnCompCalc;
     }
 
     public void setDsUrnCompCalc(String dsUrnCompCalc) {
-	this.dsUrnCompCalc = dsUrnCompCalc;
+        this.dsUrnCompCalc = dsUrnCompCalc;
     }
 
     @Column(name = "FL_COMP_FIRMATO", columnDefinition = "char(1)")
     public String getFlCompFirmato() {
-	return this.flCompFirmato;
+        return this.flCompFirmato;
     }
 
     public void setFlCompFirmato(String flCompFirmato) {
-	this.flCompFirmato = flCompFirmato;
+        this.flCompFirmato = flCompFirmato;
     }
 
     @Id
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-	return this.idCompDoc;
+        return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	this.idCompDoc = idCompDoc;
+        this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Column(name = "NI_ORD_COMP_DOC")
     public BigDecimal getNiOrdCompDoc() {
-	return this.niOrdCompDoc;
+        return this.niOrdCompDoc;
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	this.niOrdCompDoc = niOrdCompDoc;
+        this.niOrdCompDoc = niOrdCompDoc;
     }
 
     @Column(name = "NI_ORD_COMP_PADRE")
     public BigDecimal getNiOrdCompPadre() {
-	return this.niOrdCompPadre;
+        return this.niOrdCompPadre;
     }
 
     public void setNiOrdCompPadre(BigDecimal niOrdCompPadre) {
-	this.niOrdCompPadre = niOrdCompPadre;
+        this.niOrdCompPadre = niOrdCompPadre;
     }
 
     @Column(name = "NI_SIZE_FILE_CALC")
     public BigDecimal getNiSizeFileCalc() {
-	return this.niSizeFileCalc;
+        return this.niSizeFileCalc;
     }
 
     public void setNiSizeFileCalc(BigDecimal niSizeFileCalc) {
-	this.niSizeFileCalc = niSizeFileCalc;
+        this.niSizeFileCalc = niSizeFileCalc;
     }
 
     @Column(name = "NM_FORMATO_CALC")
     public String getNmFormatoCalc() {
-	return this.nmFormatoCalc;
+        return this.nmFormatoCalc;
     }
 
     public void setNmFormatoCalc(String nmFormatoCalc) {
-	this.nmFormatoCalc = nmFormatoCalc;
+        this.nmFormatoCalc = nmFormatoCalc;
     }
 
     @Column(name = "NM_FORMATO_VERS")
     public String getNmFormatoVers() {
-	return this.nmFormatoVers;
+        return this.nmFormatoVers;
     }
 
     public void setNmFormatoVers(String nmFormatoVers) {
-	this.nmFormatoVers = nmFormatoVers;
+        this.nmFormatoVers = nmFormatoVers;
     }
 
     @Column(name = "NM_TIPO_COMP_DOC")
     public String getNmTipoCompDoc() {
-	return this.nmTipoCompDoc;
+        return this.nmTipoCompDoc;
     }
 
     public void setNmTipoCompDoc(String nmTipoCompDoc) {
-	this.nmTipoCompDoc = nmTipoCompDoc;
+        this.nmTipoCompDoc = nmTipoCompDoc;
     }
 
     @Column(name = "TI_ESITO_VERIF_FIRME")
     public String getTiEsitoVerifFirme() {
-	return this.tiEsitoVerifFirme;
+        return this.tiEsitoVerifFirme;
     }
 
     public void setTiEsitoVerifFirme(String tiEsitoVerifFirme) {
-	this.tiEsitoVerifFirme = tiEsitoVerifFirme;
+        this.tiEsitoVerifFirme = tiEsitoVerifFirme;
     }
 
     @Column(name = "TI_SUPPORTO_COMP")
     public String getTiSupportoComp() {
-	return this.tiSupportoComp;
+        return this.tiSupportoComp;
     }
 
     public void setTiSupportoComp(String tiSupportoComp) {
-	this.tiSupportoComp = tiSupportoComp;
+        this.tiSupportoComp = tiSupportoComp;
     }
 
 }

@@ -35,30 +35,30 @@ public class DecVersioneWs implements Serializable {
 
     @Column(name = "CD_VERSIONE_WS")
     public String getCdVersioneWs() {
-	return this.cdVersioneWs;
+        return this.cdVersioneWs;
     }
 
     public void setCdVersioneWs(String cdVersioneWs) {
-	this.cdVersioneWs = cdVersioneWs;
+        this.cdVersioneWs = cdVersioneWs;
     }
 
     @Id
     @Column(name = "ID_VERSIONE_WS")
     public BigDecimal getIdVersioneWs() {
-	return this.idVersioneWs;
+        return this.idVersioneWs;
     }
 
     public void setIdVersioneWs(BigDecimal idVersioneWs) {
-	this.idVersioneWs = idVersioneWs;
+        this.idVersioneWs = idVersioneWs;
     }
 
     @Column(name = "TI_WS")
     public String getTiWs() {
-	return this.tiWs;
+        return this.tiWs;
     }
 
     public void setTiWs(String tiWs) {
-	this.tiWs = tiWs;
+        this.tiWs = tiWs;
     }
 
 }

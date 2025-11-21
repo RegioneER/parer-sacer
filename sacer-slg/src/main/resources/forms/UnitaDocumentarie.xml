@@ -23,6 +23,7 @@
     <Section Description="" Legend="Versamento annullato" LoadOpened="true" Name="VersamentoAnnullatoDocSection" ShowButton="false"/>
     <Section Description="" Legend="Unità documentarie selezionate per la serie" LoadOpened="true" Name="UnitaDocumentarieToSerieSection" ShowButton="true"/>
     <Section Description="" Legend="Unità documentarie selezionate per l'annullamento" LoadOpened="true" Name="UnitaDocumentarieToRichAnnulVersSection" ShowButton="true"/>
+    <Section Description="" Legend="Chiave Unità documentaria" LoadOpened="true" Name="UnitaDocumentarieChiaveSection" ShowButton="true"/>
     <!-- Filtri di ricerca Unità Documentarie Semplice -->
     <Fields Description="Filtri unità documentaria ricerca semplice" Name="FiltriUnitaDocumentarieSemplice">
         <ComboBox Description="Tipologia unità documentaria" Name="nm_tipo_unita_doc" Type="INTEGER" Trigger="true"/>
@@ -67,8 +68,15 @@
         <ComboBox Description="Tipo documento" Name="nm_tipo_doc" Type="INTEGER" Trigger="true" />
         <ComboBox Description="Versione dati specifici" Name="cd_versione_xsd_doc" Type="STRING"/>
         <ComboBox Description="Stato generazione Indice AIP" Name="ti_stato_ud_elenco_vers" Type="STRING"/>
-        <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="true" Type="INTEGER"/>
+        <!-- MEV#38689 - Modifica pagina Ricerca unità documentarie -->
+        <MultiSelect Description="Sotto-struttura" Name="nm_sub_strut" Required="false" Type="INTEGER"/>
         <ComboBox Description="Profilo normativo" Name="fl_profilo_normativo" Type="STRING"/>
+        <!-- Aggiunta dei filtri sul profilo archivistico -->
+        <Input Description="Classifica" Name="ds_classif" Type="STRING"/>
+        <Input Description="Fascicolo" Name="cd_fascic" Type="STRING"/>
+        <Input Description="Oggetto fascicolo" Name="ds_oggetto_fascic" Type="STRING"/>
+        <Input Description="Sotto-fascicolo" Name="cd_sottofascic" Type="STRING"/>
+        <Input Description="Oggetto sotto-fascicolo" Name="ds_oggetto_sottofascic" Type="STRING"/>
     </Fields>
     <!-- Filtri di ricerca Unità Documentarie Avanzata -->
     <Fields Description="Filtri unità documentaria ricerca avanzata" Name="FiltriUnitaDocumentarieAvanzata">

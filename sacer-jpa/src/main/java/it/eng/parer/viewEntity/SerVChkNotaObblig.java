@@ -39,21 +39,21 @@ public class SerVChkNotaObblig implements Serializable {
 
     @Column(name = "FL_OK_NOTE_OBBLIG", columnDefinition = "char(1)")
     public String getFlOkNoteObblig() {
-	return this.flOkNoteObblig;
+        return this.flOkNoteObblig;
     }
 
     public void setFlOkNoteObblig(String flOkNoteObblig) {
-	this.flOkNoteObblig = flOkNoteObblig;
+        this.flOkNoteObblig = flOkNoteObblig;
     }
 
     @Id
     @Column(name = "ID_VER_SERIE")
     public BigDecimal getIdVerSerie() {
-	return this.idVerSerie;
+        return this.idVerSerie;
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	this.idVerSerie = idVerSerie;
+        this.idVerSerie = idVerSerie;
     }
 
 }

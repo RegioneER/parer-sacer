@@ -37,147 +37,147 @@ public class SIAplNotaRilascioRowBean extends BaseRow implements JEEBaseRowInter
     public static SIAplNotaRilascioTableDescriptor TABLE_DESCRIPTOR = new SIAplNotaRilascioTableDescriptor();
 
     public SIAplNotaRilascioRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdNotaRilascio() {
-	return getBigDecimal("id_nota_rilascio");
+        return getBigDecimal("id_nota_rilascio");
     }
 
     public void setIdNotaRilascio(BigDecimal idNotaRilascio) {
-	setObject("id_nota_rilascio", idNotaRilascio);
+        setObject("id_nota_rilascio", idNotaRilascio);
     }
 
     public BigDecimal getIdApplic() {
-	return getBigDecimal("id_applic");
+        return getBigDecimal("id_applic");
     }
 
     public void setIdApplic(BigDecimal idApplic) {
-	setObject("id_applic", idApplic);
+        setObject("id_applic", idApplic);
     }
 
     public String getCdVersione() {
-	return getString("cd_versione");
+        return getString("cd_versione");
     }
 
     public void setCdVersione(String cdVersione) {
-	setObject("cd_versione", cdVersione);
+        setObject("cd_versione", cdVersione);
     }
 
     public Timestamp getDtVersione() {
-	return getTimestamp("dt_versione");
+        return getTimestamp("dt_versione");
     }
 
     public void setDtVersione(Timestamp dtVersione) {
-	setObject("dt_versione", dtVersione);
+        setObject("dt_versione", dtVersione);
     }
 
     public Timestamp getDtIniVal() {
-	return getTimestamp("dt_ini_val");
+        return getTimestamp("dt_ini_val");
     }
 
     public void setDtIniVal(Timestamp dtIniVal) {
-	setObject("dt_ini_val", dtIniVal);
+        setObject("dt_ini_val", dtIniVal);
     }
 
     public Timestamp getDtFineVal() {
-	return getTimestamp("dt_fine_val");
+        return getTimestamp("dt_fine_val");
     }
 
     public void setDtFineVal(Timestamp dtFineVal) {
-	setObject("dt_fine_val", dtFineVal);
+        setObject("dt_fine_val", dtFineVal);
     }
 
     public String getDsEvidenza() {
-	return getString("ds_evidenza");
+        return getString("ds_evidenza");
     }
 
     public void setDsEvidenza(String dsEvidenza) {
-	setObject("ds_evidenza", dsEvidenza);
+        setObject("ds_evidenza", dsEvidenza);
     }
 
     public String getBlNota() {
-	return getString("bl_nota");
+        return getString("bl_nota");
     }
 
     public void setBlNota(String blNota) {
-	setObject("bl_nota", blNota);
+        setObject("bl_nota", blNota);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SIAplNotaRilascio entity = (SIAplNotaRilascio) obj;
+        SIAplNotaRilascio entity = (SIAplNotaRilascio) obj;
 
-	this.setIdNotaRilascio(entity.getIdNotaRilascio() == null ? null
-		: BigDecimal.valueOf(entity.getIdNotaRilascio()));
+        this.setIdNotaRilascio(entity.getIdNotaRilascio() == null ? null
+                : BigDecimal.valueOf(entity.getIdNotaRilascio()));
 
-	if (entity.getSiAplApplic() != null) {
-	    this.setIdApplic(new BigDecimal(entity.getSiAplApplic().getIdApplic()));
-	}
+        if (entity.getSiAplApplic() != null) {
+            this.setIdApplic(new BigDecimal(entity.getSiAplApplic().getIdApplic()));
+        }
 
-	this.setCdVersione(entity.getCdVersione());
-	if (entity.getDtVersione() != null) {
-	    this.setDtVersione(new Timestamp(entity.getDtVersione().getTime()));
-	}
-	if (entity.getDtIniVal() != null) {
-	    this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
-	}
-	if (entity.getDtFineVal() != null) {
-	    this.setDtFineVal(new Timestamp(entity.getDtFineVal().getTime()));
-	}
-	this.setDsEvidenza(entity.getDsEvidenza());
-	this.setBlNota(entity.getBlNota());
+        this.setCdVersione(entity.getCdVersione());
+        if (entity.getDtVersione() != null) {
+            this.setDtVersione(new Timestamp(entity.getDtVersione().getTime()));
+        }
+        if (entity.getDtIniVal() != null) {
+            this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
+        }
+        if (entity.getDtFineVal() != null) {
+            this.setDtFineVal(new Timestamp(entity.getDtFineVal().getTime()));
+        }
+        this.setDsEvidenza(entity.getDsEvidenza());
+        this.setBlNota(entity.getBlNota());
     }
 
     @Override
     public SIAplNotaRilascio rowBeanToEntity() {
-	SIAplNotaRilascio entity = new SIAplNotaRilascio();
-	if (this.getIdNotaRilascio() != null) {
-	    entity.setIdNotaRilascio(this.getIdNotaRilascio().longValue());
-	}
-	if (this.getIdApplic() != null) {
-	    if (entity.getSiAplApplic() == null) {
-		entity.setSiAplApplic(new SIAplApplic());
-	    }
-	    entity.getSiAplApplic().setIdApplic(this.getIdApplic().longValue());
-	}
-	entity.setCdVersione(this.getCdVersione());
-	entity.setDtVersione(this.getDtVersione());
-	entity.setDtIniVal(this.getDtIniVal());
-	entity.setDtFineVal(this.getDtFineVal());
-	entity.setDsEvidenza(this.getDsEvidenza());
-	entity.setBlNota(this.getBlNota());
-	return entity;
+        SIAplNotaRilascio entity = new SIAplNotaRilascio();
+        if (this.getIdNotaRilascio() != null) {
+            entity.setIdNotaRilascio(this.getIdNotaRilascio().longValue());
+        }
+        if (this.getIdApplic() != null) {
+            if (entity.getSiAplApplic() == null) {
+                entity.setSiAplApplic(new SIAplApplic());
+            }
+            entity.getSiAplApplic().setIdApplic(this.getIdApplic().longValue());
+        }
+        entity.setCdVersione(this.getCdVersione());
+        entity.setDtVersione(this.getDtVersione());
+        entity.setDtIniVal(this.getDtIniVal());
+        entity.setDtFineVal(this.getDtFineVal());
+        entity.setDsEvidenza(this.getDsEvidenza());
+        entity.setBlNota(this.getBlNota());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

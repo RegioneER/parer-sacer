@@ -33,19 +33,19 @@ public class SIAplApplicTableBean extends AbstractBaseTable<SIAplApplicRowBean> 
     public static SIAplApplicTableDescriptor TABLE_DESCRIPTOR = new SIAplApplicTableDescriptor();
 
     public SIAplApplicTableBean() {
-	super();
+        super();
     }
 
     protected SIAplApplicRowBean createRow() {
-	return new SIAplApplicRowBean();
+        return new SIAplApplicRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SIAplApplicRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

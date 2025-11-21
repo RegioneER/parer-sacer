@@ -55,137 +55,137 @@ public class SIDecModelloComunic implements Serializable {
     }
 
     public SIDecModelloComunic(Long idModelloComunic) {
-	this.idModelloComunic = idModelloComunic;
+        this.idModelloComunic = idModelloComunic;
     }
 
     @Basic
     @Column(name = "BL_TESTO_COMUNIC", nullable = false)
     @Lob
     public String getBlTestoComunic() {
-	return blTestoComunic;
+        return blTestoComunic;
     }
 
     public void setBlTestoComunic(String blTestoComunic) {
-	this.blTestoComunic = blTestoComunic;
+        this.blTestoComunic = blTestoComunic;
     }
 
     @Basic
     @Column(name = "CD_MODELLO_COMUNIC", nullable = false, length = 100)
     public String getCdModelloComunic() {
-	return cdModelloComunic;
+        return cdModelloComunic;
     }
 
     public void setCdModelloComunic(String cdModelloComunic) {
-	this.cdModelloComunic = cdModelloComunic;
+        this.cdModelloComunic = cdModelloComunic;
     }
 
     @OneToMany(mappedBy = "siDecModelloComunic", cascade = CascadeType.MERGE)
     public List<SIDecQueryModelloComunic> getDecQueryModelloComunics() {
-	return decQueryModelloComunics;
+        return decQueryModelloComunics;
     }
 
     public void setDecQueryModelloComunics(List<SIDecQueryModelloComunic> decQueryModelloComunics) {
-	this.decQueryModelloComunics = decQueryModelloComunics;
+        this.decQueryModelloComunics = decQueryModelloComunics;
     }
 
     @OneToMany(mappedBy = "siDecModelloComunic", cascade = CascadeType.MERGE)
     public List<SIDecUsoModelloComunic> getDecUsoModelloComunics() {
-	return decUsoModelloComunics;
+        return decUsoModelloComunics;
     }
 
     public void setDecUsoModelloComunics(List<SIDecUsoModelloComunic> decUsoModelloComunics) {
-	this.decUsoModelloComunics = decUsoModelloComunics;
+        this.decUsoModelloComunics = decUsoModelloComunics;
     }
 
     @Basic
     @Column(name = "DS_MODELLO_COMUNIC", nullable = false, length = 254)
     public String getDsModelloComunic() {
-	return dsModelloComunic;
+        return dsModelloComunic;
     }
 
     public void setDsModelloComunic(String dsModelloComunic) {
-	this.dsModelloComunic = dsModelloComunic;
+        this.dsModelloComunic = dsModelloComunic;
     }
 
     @Basic
     @Column(name = "DS_OGGETTO_COMUNIC", length = 254)
     public String getDsOggettoComunic() {
-	return dsOggettoComunic;
+        return dsOggettoComunic;
     }
 
     public void setDsOggettoComunic(String dsOggettoComunic) {
-	this.dsOggettoComunic = dsOggettoComunic;
+        this.dsOggettoComunic = dsOggettoComunic;
     }
 
     @Basic
     @Column(name = "DT_ISTITUZ")
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDtIstituz() {
-	return dtIstituz;
+        return dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-	this.dtIstituz = dtIstituz;
+        this.dtIstituz = dtIstituz;
     }
 
     @Basic
     @Column(name = "DT_SOPPRES")
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDtSoppres() {
-	return dtSoppres;
+        return dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-	this.dtSoppres = dtSoppres;
+        this.dtSoppres = dtSoppres;
     }
 
     @Id
     @Column(name = "ID_MODELLO_COMUNIC")
     public Long getIdModelloComunic() {
-	return idModelloComunic;
+        return idModelloComunic;
     }
 
     public void setIdModelloComunic(Long idModelloComunic) {
-	this.idModelloComunic = idModelloComunic;
+        this.idModelloComunic = idModelloComunic;
     }
 
     @Basic
     @Column(name = "NM_MITTENTE", length = 100)
     public String getNmMittente() {
-	return nmMittente;
+        return nmMittente;
     }
 
     public void setNmMittente(String nmMittente) {
-	this.nmMittente = nmMittente;
+        this.nmMittente = nmMittente;
     }
 
     @Basic
     @Column(name = "TI_COMUNIC", nullable = false, length = 20)
     public String getTiComunic() {
-	return tiComunic;
+        return tiComunic;
     }
 
     public void setTiComunic(String tiComunic) {
-	this.tiComunic = tiComunic;
+        this.tiComunic = tiComunic;
     }
 
     @Basic
     @Column(name = "TI_OGGETTO_QUERY", nullable = false, length = 30)
     public String getTiOggettoQuery() {
-	return tiOggettoQuery;
+        return tiOggettoQuery;
     }
 
     public void setTiOggettoQuery(String tiOggettoQuery) {
-	this.tiOggettoQuery = tiOggettoQuery;
+        this.tiOggettoQuery = tiOggettoQuery;
     }
 
     @Basic
     @Column(name = "TI_STATO_TRIG_COMUNIC", length = 30)
     public String getTiStatoTrigComunic() {
-	return tiStatoTrigComunic;
+        return tiStatoTrigComunic;
     }
 
     public void setTiStatoTrigComunic(String tiStatoTrigComunic) {
-	this.tiStatoTrigComunic = tiStatoTrigComunic;
+        this.tiStatoTrigComunic = tiStatoTrigComunic;
     }
 }

@@ -42,7 +42,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getStatoOggettoTipo", propOrder = {
-	"nmAmbiente", "nmVersatore", "cdKeyObject" })
+        "nmAmbiente", "nmVersatore", "cdKeyObject" })
 public class GetStatoOggetto {
 
     protected String nmAmbiente;
@@ -56,7 +56,7 @@ public class GetStatoOggetto {
      *
      */
     public String getNmAmbiente() {
-	return nmAmbiente;
+        return nmAmbiente;
     }
 
     /**
@@ -66,7 +66,7 @@ public class GetStatoOggetto {
      *
      */
     public void setNmAmbiente(String value) {
-	this.nmAmbiente = value;
+        this.nmAmbiente = value;
     }
 
     /**
@@ -76,7 +76,7 @@ public class GetStatoOggetto {
      *
      */
     public String getNmVersatore() {
-	return nmVersatore;
+        return nmVersatore;
     }
 
     /**
@@ -86,7 +86,7 @@ public class GetStatoOggetto {
      *
      */
     public void setNmVersatore(String value) {
-	this.nmVersatore = value;
+        this.nmVersatore = value;
     }
 
     /**
@@ -96,7 +96,7 @@ public class GetStatoOggetto {
      *
      */
     public String getCdKeyObject() {
-	return cdKeyObject;
+        return cdKeyObject;
     }
 
     /**
@@ -106,7 +106,7 @@ public class GetStatoOggetto {
      *
      */
     public void setCdKeyObject(String value) {
-	this.cdKeyObject = value;
+        this.cdKeyObject = value;
     }
 
 }

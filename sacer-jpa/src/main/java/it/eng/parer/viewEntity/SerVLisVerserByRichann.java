@@ -37,10 +37,10 @@ public class SerVLisVerserByRichann implements Serializable {
 
     @EmbeddedId()
     public SerVLisVerserByRichannId getSerVLisVerserByRichannId() {
-	return serVLisVerserByRichannId;
+        return serVLisVerserByRichannId;
     }
 
     public void setSerVLisVerserByRichannId(SerVLisVerserByRichannId serVLisVerserByRichannId) {
-	this.serVLisVerserByRichannId = serVLisVerserByRichannId;
+        this.serVLisVerserByRichannId = serVLisVerserByRichannId;
     }
 }

@@ -36,169 +36,169 @@ public class AroVLisNotaUnitaDocRowBean extends BaseRow implements JEEBaseRowInt
     public static AroVLisNotaUnitaDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisNotaUnitaDocTableDescriptor();
 
     public AroVLisNotaUnitaDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdNotaUnitaDoc() {
-	return getBigDecimal("id_nota_unita_doc");
+        return getBigDecimal("id_nota_unita_doc");
     }
 
     public void setIdNotaUnitaDoc(BigDecimal id_nota_unita_doc) {
-	setObject("id_nota_unita_doc", id_nota_unita_doc);
+        setObject("id_nota_unita_doc", id_nota_unita_doc);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal id_unita_doc) {
-	setObject("id_unita_doc", id_unita_doc);
+        setObject("id_unita_doc", id_unita_doc);
     }
 
     public BigDecimal getIdVerIndiceAip() {
-	return getBigDecimal("id_ver_indice_aip");
+        return getBigDecimal("id_ver_indice_aip");
     }
 
     public void setIdVerIndiceAip(BigDecimal id_ver_indice_aip) {
-	setObject("id_ver_indice_aip", id_ver_indice_aip);
+        setObject("id_ver_indice_aip", id_ver_indice_aip);
     }
 
     public BigDecimal getIdTipoNotaUnitaDoc() {
-	return getBigDecimal("id_tipo_nota_unita_doc");
+        return getBigDecimal("id_tipo_nota_unita_doc");
     }
 
     public void setIdTipoNotaUnitaDoc(BigDecimal id_tipo_nota_unita_doc) {
-	setObject("id_tipo_nota_unita_doc", id_tipo_nota_unita_doc);
+        setObject("id_tipo_nota_unita_doc", id_tipo_nota_unita_doc);
     }
 
     public String getDsTipoNotaUnitaDoc() {
-	return getString("ds_tipo_nota_unita_doc");
+        return getString("ds_tipo_nota_unita_doc");
     }
 
     public void setDsTipoNotaUnitaDoc(String ds_tipo_nota_unita_doc) {
-	setObject("ds_tipo_nota_unita_doc", ds_tipo_nota_unita_doc);
+        setObject("ds_tipo_nota_unita_doc", ds_tipo_nota_unita_doc);
     }
 
     public String getCdTipoNotaUnitaDoc() {
-	return getString("cd_tipo_nota_unita_doc");
+        return getString("cd_tipo_nota_unita_doc");
     }
 
     public void setCdTipoNotaUnitaDoc(String cd_tipo_nota_unita_doc) {
-	setObject("cd_tipo_nota_unita_doc", cd_tipo_nota_unita_doc);
+        setObject("cd_tipo_nota_unita_doc", cd_tipo_nota_unita_doc);
     }
 
     public BigDecimal getNiOrd() {
-	return getBigDecimal("ni_ord");
+        return getBigDecimal("ni_ord");
     }
 
     public void setNiOrd(BigDecimal ni_ord) {
-	setObject("ni_ord", ni_ord);
+        setObject("ni_ord", ni_ord);
     }
 
     public BigDecimal getPgNotaUnitaDoc() {
-	return getBigDecimal("pg_nota_unita_doc");
+        return getBigDecimal("pg_nota_unita_doc");
     }
 
     public void setPgNotaUnitaDoc(BigDecimal pg_nota_unita_doc) {
-	setObject("pg_nota_unita_doc", pg_nota_unita_doc);
+        setObject("pg_nota_unita_doc", pg_nota_unita_doc);
     }
 
     public Timestamp getDtNotaUnitaDoc() {
-	return getTimestamp("dt_nota_unita_doc");
+        return getTimestamp("dt_nota_unita_doc");
     }
 
     public void setDtNotaUnitaDoc(Timestamp dt_nota_unita_doc) {
-	setObject("dt_nota_unita_doc", dt_nota_unita_doc);
+        setObject("dt_nota_unita_doc", dt_nota_unita_doc);
     }
 
     public String getDsNotaUnitaDoc() {
-	return getString("ds_nota_unita_doc");
+        return getString("ds_nota_unita_doc");
     }
 
     public void setDsNotaUnitaDoc(String ds_nota_unita_doc) {
-	setObject("ds_nota_unita_doc", ds_nota_unita_doc);
+        setObject("ds_nota_unita_doc", ds_nota_unita_doc);
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal id_user_iam) {
-	setObject("id_user_iam", id_user_iam);
+        setObject("id_user_iam", id_user_iam);
     }
 
     public String getNmUserid() {
-	return getString("nm_userid");
+        return getString("nm_userid");
     }
 
     public void setNmUserid(String nm_userid) {
-	setObject("nm_userid", nm_userid);
+        setObject("nm_userid", nm_userid);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisNotaUnitaDoc entity = (AroVLisNotaUnitaDoc) obj;
-	this.setIdNotaUnitaDoc(entity.getIdNotaUnitaDoc());
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setIdVerIndiceAip(entity.getIdVerIndiceAip());
-	this.setIdTipoNotaUnitaDoc(entity.getIdTipoNotaUnitaDoc());
-	this.setDsTipoNotaUnitaDoc(entity.getDsTipoNotaUnitaDoc());
-	this.setCdTipoNotaUnitaDoc(entity.getCdTipoNotaUnitaDoc());
-	this.setNiOrd(entity.getNiOrd());
-	this.setPgNotaUnitaDoc(entity.getPgNotaUnitaDoc());
-	if (entity.getDtNotaUnitaDoc() != null) {
-	    this.setDtNotaUnitaDoc(new Timestamp(entity.getDtNotaUnitaDoc().getTime()));
-	}
-	this.setDsNotaUnitaDoc(entity.getDsNotaUnitaDoc());
-	this.setIdUserIam(entity.getIdUserIam());
-	this.setNmUserid(entity.getNmUserid());
+        AroVLisNotaUnitaDoc entity = (AroVLisNotaUnitaDoc) obj;
+        this.setIdNotaUnitaDoc(entity.getIdNotaUnitaDoc());
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setIdVerIndiceAip(entity.getIdVerIndiceAip());
+        this.setIdTipoNotaUnitaDoc(entity.getIdTipoNotaUnitaDoc());
+        this.setDsTipoNotaUnitaDoc(entity.getDsTipoNotaUnitaDoc());
+        this.setCdTipoNotaUnitaDoc(entity.getCdTipoNotaUnitaDoc());
+        this.setNiOrd(entity.getNiOrd());
+        this.setPgNotaUnitaDoc(entity.getPgNotaUnitaDoc());
+        if (entity.getDtNotaUnitaDoc() != null) {
+            this.setDtNotaUnitaDoc(new Timestamp(entity.getDtNotaUnitaDoc().getTime()));
+        }
+        this.setDsNotaUnitaDoc(entity.getDsNotaUnitaDoc());
+        this.setIdUserIam(entity.getIdUserIam());
+        this.setNmUserid(entity.getNmUserid());
     }
 
     @Override
     public AroVLisNotaUnitaDoc rowBeanToEntity() {
-	AroVLisNotaUnitaDoc entity = new AroVLisNotaUnitaDoc();
-	entity.setIdNotaUnitaDoc(this.getIdNotaUnitaDoc());
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setIdVerIndiceAip(this.getIdVerIndiceAip());
-	entity.setIdTipoNotaUnitaDoc(this.getIdTipoNotaUnitaDoc());
-	entity.setDsTipoNotaUnitaDoc(this.getDsTipoNotaUnitaDoc());
-	entity.setCdTipoNotaUnitaDoc(this.getCdTipoNotaUnitaDoc());
-	entity.setNiOrd(this.getNiOrd());
-	entity.setPgNotaUnitaDoc(this.getPgNotaUnitaDoc());
-	entity.setDtNotaUnitaDoc(this.getDtNotaUnitaDoc());
-	entity.setDsNotaUnitaDoc(this.getDsNotaUnitaDoc());
-	entity.setIdUserIam(this.getIdUserIam());
-	entity.setNmUserid(this.getNmUserid());
-	return entity;
+        AroVLisNotaUnitaDoc entity = new AroVLisNotaUnitaDoc();
+        entity.setIdNotaUnitaDoc(this.getIdNotaUnitaDoc());
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setIdVerIndiceAip(this.getIdVerIndiceAip());
+        entity.setIdTipoNotaUnitaDoc(this.getIdTipoNotaUnitaDoc());
+        entity.setDsTipoNotaUnitaDoc(this.getDsTipoNotaUnitaDoc());
+        entity.setCdTipoNotaUnitaDoc(this.getCdTipoNotaUnitaDoc());
+        entity.setNiOrd(this.getNiOrd());
+        entity.setPgNotaUnitaDoc(this.getPgNotaUnitaDoc());
+        entity.setDtNotaUnitaDoc(this.getDtNotaUnitaDoc());
+        entity.setDsNotaUnitaDoc(this.getDsNotaUnitaDoc());
+        entity.setIdUserIam(this.getIdUserIam());
+        entity.setNmUserid(this.getNmUserid());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

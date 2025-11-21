@@ -36,201 +36,201 @@ public class AroVRicRichRaRowBean extends BaseRow implements JEEBaseRowInterface
     public static AroVRicRichRaTableDescriptor TABLE_DESCRIPTOR = new AroVRicRichRaTableDescriptor();
 
     public AroVRicRichRaRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public String getNmEnteConvenz() {
-	return getString("nm_ente_convenz");
+        return getString("nm_ente_convenz");
     }
 
     public void setNmEnteConvenz(String nmEnteConvenz) {
-	setObject("nm_ente_convenz", nmEnteConvenz);
+        setObject("nm_ente_convenz", nmEnteConvenz);
     }
 
     public String getNmEnteStrut() {
-	return getString("nm_ente_strut");
+        return getString("nm_ente_strut");
     }
 
     public void setNmEnteStrut(String nmEnteStrut) {
-	setObject("nm_ente_strut", nmEnteStrut);
+        setObject("nm_ente_strut", nmEnteStrut);
     }
 
     public String getTiStato() {
-	return getString("ti_stato");
+        return getString("ti_stato");
     }
 
     public void setTiStato(String tiStato) {
-	setObject("ti_stato", tiStato);
+        setObject("ti_stato", tiStato);
     }
 
     public BigDecimal getIdRichiestaRa() {
-	return getBigDecimal("id_richiesta_ra");
+        return getBigDecimal("id_richiesta_ra");
     }
 
     public void setIdRichiestaRa(BigDecimal idRichiestaRa) {
-	setObject("id_richiesta_ra", idRichiestaRa);
+        setObject("id_richiesta_ra", idRichiestaRa);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getTotali() {
-	return getBigDecimal("totali");
+        return getBigDecimal("totali");
     }
 
     public void setTotali(BigDecimal totali) {
-	setObject("totali", totali);
+        setObject("totali", totali);
     }
 
     public BigDecimal getEstratti() {
-	return getBigDecimal("estratti");
+        return getBigDecimal("estratti");
     }
 
     public void setEstratti(BigDecimal estratti) {
-	setObject("estratti", estratti);
+        setObject("estratti", estratti);
     }
 
     public BigDecimal getErrori() {
-	return getBigDecimal("errori");
+        return getBigDecimal("errori");
     }
 
     public void setErrori(BigDecimal errori) {
-	setObject("errori", errori);
+        setObject("errori", errori);
     }
 
     public BigDecimal getSumDim() {
-	return getBigDecimal("sum_dim");
+        return getBigDecimal("sum_dim");
     }
 
     public void setSumDim(BigDecimal sumDim) {
-	setObject("sum_dim", sumDim);
+        setObject("sum_dim", sumDim);
     }
 
     public Timestamp getMaxDtEstrazione() {
-	return getTimestamp("max_dt_estrazione");
+        return getTimestamp("max_dt_estrazione");
     }
 
     public void setMaxDtEstrazione(Timestamp maxDtEstrazione) {
-	setObject("max_dt_estrazione", maxDtEstrazione);
+        setObject("max_dt_estrazione", maxDtEstrazione);
     }
 
     public BigDecimal getEstrattiTotali() {
-	return getBigDecimal("estratti_totali");
+        return getBigDecimal("estratti_totali");
     }
 
     public void setEstrattiTotali(BigDecimal estrattiTotali) {
-	setObject("estratti_totali", estrattiTotali);
+        setObject("estratti_totali", estrattiTotali);
     }
 
     public String getCdErrore() {
-	return getString("cd_errore");
+        return getString("cd_errore");
     }
 
     public void setCdErrore(String cdErrore) {
-	setObject("cd_errore", cdErrore);
+        setObject("cd_errore", cdErrore);
     }
 
     public Timestamp getTsInizio() {
-	return getTimestamp("ts_inizio");
+        return getTimestamp("ts_inizio");
     }
 
     public void setTsInizio(Timestamp tsInizio) {
-	setObject("ts_inizio", tsInizio);
+        setObject("ts_inizio", tsInizio);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVRicRichRa entity = (AroVRicRichRa) obj;
-	this.setNmEnteConvenz(entity.getNmEnteConvenz());
-	this.setNmEnteStrut(entity.getNmEnteStrut());
-	this.setTiStato(entity.getTiStato());
-	this.setIdRichiestaRa(entity.getIdRichiestaRa());
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setIdEnte(entity.getIdEnte());
-	this.setIdStrut(entity.getIdStrut());
-	this.setTotali(entity.getTotali());
-	this.setEstratti(entity.getEstratti());
-	this.setErrori(entity.getErrori());
-	this.setSumDim(entity.getSumDim());
-	if (entity.getMaxDtEstrazione() != null) {
-	    this.setMaxDtEstrazione(new Timestamp(entity.getMaxDtEstrazione().getTime()));
-	}
-	this.setEstrattiTotali(entity.getEstrattiTotali());
-	this.setCdErrore(entity.getCdErrore());
-	if (entity.getTsInizio() != null) {
-	    this.setTsInizio(new Timestamp(entity.getTsInizio().getTime()));
-	}
+        AroVRicRichRa entity = (AroVRicRichRa) obj;
+        this.setNmEnteConvenz(entity.getNmEnteConvenz());
+        this.setNmEnteStrut(entity.getNmEnteStrut());
+        this.setTiStato(entity.getTiStato());
+        this.setIdRichiestaRa(entity.getIdRichiestaRa());
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setIdEnte(entity.getIdEnte());
+        this.setIdStrut(entity.getIdStrut());
+        this.setTotali(entity.getTotali());
+        this.setEstratti(entity.getEstratti());
+        this.setErrori(entity.getErrori());
+        this.setSumDim(entity.getSumDim());
+        if (entity.getMaxDtEstrazione() != null) {
+            this.setMaxDtEstrazione(new Timestamp(entity.getMaxDtEstrazione().getTime()));
+        }
+        this.setEstrattiTotali(entity.getEstrattiTotali());
+        this.setCdErrore(entity.getCdErrore());
+        if (entity.getTsInizio() != null) {
+            this.setTsInizio(new Timestamp(entity.getTsInizio().getTime()));
+        }
     }
 
     @Override
     public AroVRicRichRa rowBeanToEntity() {
-	AroVRicRichRa entity = new AroVRicRichRa();
-	entity.setNmEnteConvenz(this.getNmEnteConvenz());
-	entity.setNmEnteStrut(this.getNmEnteStrut());
-	entity.setTiStato(this.getTiStato());
-	entity.setIdRichiestaRa(this.getIdRichiestaRa());
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setTotali(this.getTotali());
-	entity.setEstratti(this.getEstratti());
-	entity.setErrori(this.getErrori());
-	entity.setSumDim(this.getSumDim());
-	entity.setMaxDtEstrazione(this.getMaxDtEstrazione());
-	entity.setEstrattiTotali(this.getEstrattiTotali());
-	entity.setCdErrore(this.getCdErrore());
-	entity.setTsInizio(this.getTsInizio());
-	return entity;
+        AroVRicRichRa entity = new AroVRicRichRa();
+        entity.setNmEnteConvenz(this.getNmEnteConvenz());
+        entity.setNmEnteStrut(this.getNmEnteStrut());
+        entity.setTiStato(this.getTiStato());
+        entity.setIdRichiestaRa(this.getIdRichiestaRa());
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setTotali(this.getTotali());
+        entity.setEstratti(this.getEstratti());
+        entity.setErrori(this.getErrori());
+        entity.setSumDim(this.getSumDim());
+        entity.setMaxDtEstrazione(this.getMaxDtEstrazione());
+        entity.setEstrattiTotali(this.getEstrattiTotali());
+        entity.setCdErrore(this.getCdErrore());
+        entity.setTsInizio(this.getTsInizio());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

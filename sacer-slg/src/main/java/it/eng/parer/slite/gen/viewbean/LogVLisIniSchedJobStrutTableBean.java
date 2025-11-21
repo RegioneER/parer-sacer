@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class LogVLisIniSchedJobStrutTableBean
-	extends AbstractBaseTable<LogVLisIniSchedJobStrutRowBean> {
+        extends AbstractBaseTable<LogVLisIniSchedJobStrutRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class LogVLisIniSchedJobStrutTableBean
     public static LogVLisIniSchedJobStrutTableDescriptor TABLE_DESCRIPTOR = new LogVLisIniSchedJobStrutTableDescriptor();
 
     public LogVLisIniSchedJobStrutTableBean() {
-	super();
+        super();
     }
 
     protected LogVLisIniSchedJobStrutRowBean createRow() {
-	return new LogVLisIniSchedJobStrutRowBean();
+        return new LogVLisIniSchedJobStrutRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<LogVLisIniSchedJobStrutRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

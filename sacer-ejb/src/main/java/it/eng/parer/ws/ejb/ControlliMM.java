@@ -51,38 +51,38 @@ public class ControlliMM {
 
     public enum TipiRootPath {
 
-	IN, OUT
+        IN, OUT
     }
 
     public RispostaControlli caricaRootPath(String appVersante, TipiRootPath tipoRootPath) {
-	RispostaControlli rispostaControlli;
-	rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrLong(-1);
-	rispostaControlli.setrBoolean(false);
+        RispostaControlli rispostaControlli;
+        rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrLong(-1);
+        rispostaControlli.setrBoolean(false);
 
-	try {
-	    String paramName = StringUtils.EMPTY;
+        try {
+            String paramName = StringUtils.EMPTY;
 
-	    switch (tipoRootPath) {
-	    case IN:
-		paramName = CostantiDB.ParametroAppl.PATH_MM_IN + appVersante;
-		break;
-	    case OUT:
-		paramName = CostantiDB.ParametroAppl.PATH_MM_OUT + appVersante;
-		break;
-	    default:
-		break;
-	    }
-	    rispostaControlli
-		    .setrString(configurationHelper.getValoreParamApplicByApplic(paramName));
-	    rispostaControlli.setrBoolean(true);
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
-		    "ControlliMM.caricaRootPath - AplParamApplic: " + e.getMessage()));
-	    log.error("Eccezione nella lettura  della tabella AplParamApplic ", e);
-	}
+            switch (tipoRootPath) {
+            case IN:
+                paramName = CostantiDB.ParametroAppl.PATH_MM_IN + appVersante;
+                break;
+            case OUT:
+                paramName = CostantiDB.ParametroAppl.PATH_MM_OUT + appVersante;
+                break;
+            default:
+                break;
+            }
+            rispostaControlli
+                    .setrString(configurationHelper.getValoreParamApplicByApplic(paramName));
+            rispostaControlli.setrBoolean(true);
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli.setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666,
+                    "ControlliMM.caricaRootPath - AplParamApplic: " + e.getMessage()));
+            log.error("Eccezione nella lettura  della tabella AplParamApplic ", e);
+        }
 
-	return rispostaControlli;
+        return rispostaControlli;
     }
 }

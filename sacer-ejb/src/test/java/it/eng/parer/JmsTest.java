@@ -52,49 +52,49 @@ public class JmsTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return ArquillianUtils.createEnterpriseArchive("testJms",
-		ArquillianUtils.createSacerJavaArchive(Arrays.asList(""), JmsTest.class));
+        return ArquillianUtils.createEnterpriseArchive("testJms",
+                ArquillianUtils.createSacerJavaArchive(Arrays.asList(""), JmsTest.class));
     }
 
     @Test
     void resourcesIsAvailable() {
-	assertNotNull(connectionFactory);
-	assertNotNull(verificaFirmeDataVersQueue);
-	assertNotNull(indiceAipUnitaDocQueue);
+        assertNotNull(connectionFactory);
+        assertNotNull(verificaFirmeDataVersQueue);
+        assertNotNull(indiceAipUnitaDocQueue);
 
     }
 
     @Test
     void verificaFirmeDataVersQueueSendMessage() {
-	testSendMessage(verificaFirmeDataVersQueue);
+        testSendMessage(verificaFirmeDataVersQueue);
 
     }
 
     @Test
     void oggettiDaMigrareQueueSendMessage() {
-	testSendMessage(oggettiDaMigrareQueue);
+        testSendMessage(oggettiDaMigrareQueue);
     }
 
     @Test
     void indiceAipUnitaDocQueueSendMessage() {
-	testSendMessage(indiceAipUnitaDocQueue);
+        testSendMessage(indiceAipUnitaDocQueue);
     }
 
     private void testSendMessage(Queue queue) {
-	MessageProducer messageProducer = null;
-	Connection connection = null;
-	Session session = null;
-	TextMessage textMessage = null;
-	try {
-	    connection = connectionFactory.createConnection();
-	    session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
-	    messageProducer = session.createProducer(queue);
-	    textMessage = session.createTextMessage();
-	    textMessage.setStringProperty("messaggio", "test");
-	    messageProducer.send(textMessage);
-	    assertTrue(true);
-	} catch (JMSException e) {
-	    fail("Impossibile inviare messaggi sulla coda " + e);
-	}
+        MessageProducer messageProducer = null;
+        Connection connection = null;
+        Session session = null;
+        TextMessage textMessage = null;
+        try {
+            connection = connectionFactory.createConnection();
+            session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+            messageProducer = session.createProducer(queue);
+            textMessage = session.createTextMessage();
+            textMessage.setStringProperty("messaggio", "test");
+            messageProducer.send(textMessage);
+            assertTrue(true);
+        } catch (JMSException e) {
+            fail("Impossibile inviare messaggi sulla coda " + e);
+        }
     }
 }

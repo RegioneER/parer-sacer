@@ -35,117 +35,117 @@ public class SerVLisErrFileSerieUdRowBean extends BaseRow implements JEEBaseRowI
     public static SerVLisErrFileSerieUdTableDescriptor TABLE_DESCRIPTOR = new SerVLisErrFileSerieUdTableDescriptor();
 
     public SerVLisErrFileSerieUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public String getTiScopoFileInputVerSerie() {
-	return getString("ti_scopo_file_input_ver_serie");
+        return getString("ti_scopo_file_input_ver_serie");
     }
 
     public void setTiScopoFileInputVerSerie(String tiScopoFileInputVerSerie) {
-	setObject("ti_scopo_file_input_ver_serie", tiScopoFileInputVerSerie);
+        setObject("ti_scopo_file_input_ver_serie", tiScopoFileInputVerSerie);
     }
 
     public BigDecimal getIdFileInputVerSerie() {
-	return getBigDecimal("id_file_input_ver_serie");
+        return getBigDecimal("id_file_input_ver_serie");
     }
 
     public void setIdFileInputVerSerie(BigDecimal idFileInputVerSerie) {
-	setObject("id_file_input_ver_serie", idFileInputVerSerie);
+        setObject("id_file_input_ver_serie", idFileInputVerSerie);
     }
 
     public BigDecimal getIdErrFileInput() {
-	return getBigDecimal("id_err_file_input");
+        return getBigDecimal("id_err_file_input");
     }
 
     public void setIdErrFileInput(BigDecimal idErrFileInput) {
-	setObject("id_err_file_input", idErrFileInput);
+        setObject("id_err_file_input", idErrFileInput);
     }
 
     public BigDecimal getNiRecErr() {
-	return getBigDecimal("ni_rec_err");
+        return getBigDecimal("ni_rec_err");
     }
 
     public void setNiRecErr(BigDecimal niRecErr) {
-	setObject("ni_rec_err", niRecErr);
+        setObject("ni_rec_err", niRecErr);
     }
 
     public String getTiErrRec() {
-	return getString("ti_err_rec");
+        return getString("ti_err_rec");
     }
 
     public void setTiErrRec(String tiErrRec) {
-	setObject("ti_err_rec", tiErrRec);
+        setObject("ti_err_rec", tiErrRec);
     }
 
     public String getDsRecErr() {
-	return getString("ds_rec_err");
+        return getString("ds_rec_err");
     }
 
     public void setDsRecErr(String dsRecErr) {
-	setObject("ds_rec_err", dsRecErr);
+        setObject("ds_rec_err", dsRecErr);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVLisErrFileSerieUd entity = (SerVLisErrFileSerieUd) obj;
-	this.setIdVerSerie(entity.getIdVerSerie());
-	this.setTiScopoFileInputVerSerie(entity.getTiScopoFileInputVerSerie());
-	this.setIdFileInputVerSerie(entity.getIdFileInputVerSerie());
-	this.setIdErrFileInput(entity.getIdErrFileInput());
-	this.setNiRecErr(entity.getNiRecErr());
-	this.setTiErrRec(entity.getTiErrRec());
-	this.setDsRecErr(entity.getDsRecErr());
+        SerVLisErrFileSerieUd entity = (SerVLisErrFileSerieUd) obj;
+        this.setIdVerSerie(entity.getIdVerSerie());
+        this.setTiScopoFileInputVerSerie(entity.getTiScopoFileInputVerSerie());
+        this.setIdFileInputVerSerie(entity.getIdFileInputVerSerie());
+        this.setIdErrFileInput(entity.getIdErrFileInput());
+        this.setNiRecErr(entity.getNiRecErr());
+        this.setTiErrRec(entity.getTiErrRec());
+        this.setDsRecErr(entity.getDsRecErr());
     }
 
     @Override
     public SerVLisErrFileSerieUd rowBeanToEntity() {
-	SerVLisErrFileSerieUd entity = new SerVLisErrFileSerieUd();
-	entity.setIdVerSerie(this.getIdVerSerie());
-	entity.setTiScopoFileInputVerSerie(this.getTiScopoFileInputVerSerie());
-	entity.setIdFileInputVerSerie(this.getIdFileInputVerSerie());
-	entity.setIdErrFileInput(this.getIdErrFileInput());
-	entity.setNiRecErr(this.getNiRecErr());
-	entity.setTiErrRec(this.getTiErrRec());
-	entity.setDsRecErr(this.getDsRecErr());
-	return entity;
+        SerVLisErrFileSerieUd entity = new SerVLisErrFileSerieUd();
+        entity.setIdVerSerie(this.getIdVerSerie());
+        entity.setTiScopoFileInputVerSerie(this.getTiScopoFileInputVerSerie());
+        entity.setIdFileInputVerSerie(this.getIdFileInputVerSerie());
+        entity.setIdErrFileInput(this.getIdErrFileInput());
+        entity.setNiRecErr(this.getNiRecErr());
+        entity.setTiErrRec(this.getTiErrRec());
+        entity.setDsRecErr(this.getDsRecErr());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

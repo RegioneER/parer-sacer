@@ -28,7 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 public class SerieValidator extends TypeValidator {
 
     public SerieValidator(MessageBox messageBox) {
-	super(messageBox);
+        super(messageBox);
     }
 
     /**
@@ -41,39 +41,39 @@ public class SerieValidator extends TypeValidator {
      * @throws EMFError errore generico
      */
     public void validaAttributiRegoleAcquisizioneFile(
-	    Map<String, Map<String, String>> listaAttributiSelezionati) throws EMFError {
-	// Scorro la mappa degli attributi selezionati e controllo che siano validi
-	Iterator it = listaAttributiSelezionati.entrySet().iterator();
-	Set<Integer> numeriOrdine = new HashSet<>();
-	int contaCampi = 0;
-	while (it.hasNext()) {
-	    Map.Entry entry = (Map.Entry) it.next();
-	    // Recupero la mappa contente la chiave (il nome del campo del dato specifico)
-	    // con il relativo valore (concatenazione dei campi Tipo trasformazione | numero
-	    // d'ordine |
-	    // idAttribDatoSpec)
-	    Map<String, String> datoSpecValore = (Map<String, String>) entry.getValue();
-	    Iterator it2 = datoSpecValore.entrySet().iterator();
-	    while (it2.hasNext()) {
-		Map.Entry entry2 = (Map.Entry) it2.next();
-		String valore = (String) entry2.getValue();
-		// Splitto la stringa
-		String[] parti = StringUtils.split(valore, "|");
-		if (StringUtils.isNumeric(parti[1])) {
-		    numeriOrdine.add(Integer.parseInt(parti[1]));
-		} else {
-		    getMessageBox().addError(
-			    "Attenzione: uno dei campi selezionati presenta un numero d'ordine formalmente non corretto");
-		    break;
-		}
-	    }
-	}
-	if (!getMessageBox().hasError()) {
-	    if (numeriOrdine.size() != contaCampi) {
-		getMessageBox().addError(
-			"Attenzione: uno o più campi presentano lo stesso numero d'ordine");
-	    }
-	}
+            Map<String, Map<String, String>> listaAttributiSelezionati) throws EMFError {
+        // Scorro la mappa degli attributi selezionati e controllo che siano validi
+        Iterator it = listaAttributiSelezionati.entrySet().iterator();
+        Set<Integer> numeriOrdine = new HashSet<>();
+        int contaCampi = 0;
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            // Recupero la mappa contente la chiave (il nome del campo del dato specifico)
+            // con il relativo valore (concatenazione dei campi Tipo trasformazione | numero
+            // d'ordine |
+            // idAttribDatoSpec)
+            Map<String, String> datoSpecValore = (Map<String, String>) entry.getValue();
+            Iterator it2 = datoSpecValore.entrySet().iterator();
+            while (it2.hasNext()) {
+                Map.Entry entry2 = (Map.Entry) it2.next();
+                String valore = (String) entry2.getValue();
+                // Splitto la stringa
+                String[] parti = StringUtils.split(valore, "|");
+                if (StringUtils.isNumeric(parti[1])) {
+                    numeriOrdine.add(Integer.parseInt(parti[1]));
+                } else {
+                    getMessageBox().addError(
+                            "Attenzione: uno dei campi selezionati presenta un numero d'ordine formalmente non corretto");
+                    break;
+                }
+            }
+        }
+        if (!getMessageBox().hasError()) {
+            if (numeriOrdine.size() != contaCampi) {
+                getMessageBox().addError(
+                        "Attenzione: uno o più campi presentano lo stesso numero d'ordine");
+            }
+        }
     }
 
     // public void validaSceltaPeriodoGiornoVersamento(String periodo, Date data) {

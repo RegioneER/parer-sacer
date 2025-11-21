@@ -36,101 +36,101 @@ public class OrgSubStrutRowBean extends BaseRow implements JEEBaseRowInterface {
     public static OrgSubStrutTableDescriptor TABLE_DESCRIPTOR = new OrgSubStrutTableDescriptor();
 
     public OrgSubStrutRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdSubStrut() {
-	return getBigDecimal("id_sub_strut");
+        return getBigDecimal("id_sub_strut");
     }
 
     public void setIdSubStrut(BigDecimal idSubStrut) {
-	setObject("id_sub_strut", idSubStrut);
+        setObject("id_sub_strut", idSubStrut);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmSubStrut() {
-	return getString("nm_sub_strut");
+        return getString("nm_sub_strut");
     }
 
     public void setNmSubStrut(String nmSubStrut) {
-	setObject("nm_sub_strut", nmSubStrut);
+        setObject("nm_sub_strut", nmSubStrut);
     }
 
     public String getDsSubStrut() {
-	return getString("ds_sub_strut");
+        return getString("ds_sub_strut");
     }
 
     public void setDsSubStrut(String dsSubStrut) {
-	setObject("ds_sub_strut", dsSubStrut);
+        setObject("ds_sub_strut", dsSubStrut);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgSubStrut entity = (OrgSubStrut) obj;
+        OrgSubStrut entity = (OrgSubStrut) obj;
 
-	this.setIdSubStrut(
-		entity.getIdSubStrut() == null ? null : BigDecimal.valueOf(entity.getIdSubStrut()));
+        this.setIdSubStrut(
+                entity.getIdSubStrut() == null ? null : BigDecimal.valueOf(entity.getIdSubStrut()));
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
-	this.setNmSubStrut(entity.getNmSubStrut());
-	this.setDsSubStrut(entity.getDsSubStrut());
+        this.setNmSubStrut(entity.getNmSubStrut());
+        this.setDsSubStrut(entity.getDsSubStrut());
     }
 
     @Override
     public OrgSubStrut rowBeanToEntity() {
-	OrgSubStrut entity = new OrgSubStrut();
-	if (this.getIdSubStrut() != null) {
-	    entity.setIdSubStrut(this.getIdSubStrut().longValue());
-	}
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	entity.setNmSubStrut(this.getNmSubStrut());
-	entity.setDsSubStrut(this.getDsSubStrut());
-	return entity;
+        OrgSubStrut entity = new OrgSubStrut();
+        if (this.getIdSubStrut() != null) {
+            entity.setIdSubStrut(this.getIdSubStrut().longValue());
+        }
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        entity.setNmSubStrut(this.getNmSubStrut());
+        entity.setDsSubStrut(this.getDsSubStrut());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

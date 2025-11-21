@@ -58,47 +58,47 @@ public class AroDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_TIPO_DOC, new ColumnDescriptor(COL_ID_TIPO_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_TI_STATO_DOC, new ColumnDescriptor(COL_TI_STATO_DOC, Types.VARCHAR, 30, false));
-	map.put(COL_DT_CREAZIONE,
-		new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, false));
-	map.put(COL_CD_KEY_DOC_VERS,
-		new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, false));
-	map.put(COL_DL_DOC, new ColumnDescriptor(COL_DL_DOC, Types.VARCHAR, 1024, false));
-	map.put(COL_DS_AUTORE_DOC,
-		new ColumnDescriptor(COL_DS_AUTORE_DOC, Types.VARCHAR, 254, false));
-	map.put(COL_FL_DOC_FISC, new ColumnDescriptor(COL_FL_DOC_FISC, Types.VARCHAR, 1, false));
-	map.put(COL_FL_DOC_FIRMATO,
-		new ColumnDescriptor(COL_FL_DOC_FIRMATO, Types.VARCHAR, 1, false));
-	map.put(COL_TI_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, false));
-	map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, false));
-	map.put(COL_FL_FORZA_ACCETTAZIONE,
-		new ColumnDescriptor(COL_FL_FORZA_ACCETTAZIONE, Types.VARCHAR, 1, false));
-	map.put(COL_FL_FORZA_CONSERVAZIONE,
-		new ColumnDescriptor(COL_FL_FORZA_CONSERVAZIONE, Types.VARCHAR, 1, false));
-	map.put(COL_TI_CONSERVAZIONE,
-		new ColumnDescriptor(COL_TI_CONSERVAZIONE, Types.VARCHAR, 20, false));
-	map.put(COL_NM_SISTEMA_MIGRAZ,
-		new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, false));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TIPO_DOC, new ColumnDescriptor(COL_ID_TIPO_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_TI_STATO_DOC, new ColumnDescriptor(COL_TI_STATO_DOC, Types.VARCHAR, 30, false));
+        map.put(COL_DT_CREAZIONE,
+                new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, false));
+        map.put(COL_CD_KEY_DOC_VERS,
+                new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, false));
+        map.put(COL_DL_DOC, new ColumnDescriptor(COL_DL_DOC, Types.VARCHAR, 1024, false));
+        map.put(COL_DS_AUTORE_DOC,
+                new ColumnDescriptor(COL_DS_AUTORE_DOC, Types.VARCHAR, 254, false));
+        map.put(COL_FL_DOC_FISC, new ColumnDescriptor(COL_FL_DOC_FISC, Types.VARCHAR, 1, false));
+        map.put(COL_FL_DOC_FIRMATO,
+                new ColumnDescriptor(COL_FL_DOC_FIRMATO, Types.VARCHAR, 1, false));
+        map.put(COL_TI_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, false));
+        map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, false));
+        map.put(COL_FL_FORZA_ACCETTAZIONE,
+                new ColumnDescriptor(COL_FL_FORZA_ACCETTAZIONE, Types.VARCHAR, 1, false));
+        map.put(COL_FL_FORZA_CONSERVAZIONE,
+                new ColumnDescriptor(COL_FL_FORZA_CONSERVAZIONE, Types.VARCHAR, 1, false));
+        map.put(COL_TI_CONSERVAZIONE,
+                new ColumnDescriptor(COL_TI_CONSERVAZIONE, Types.VARCHAR, 20, false));
+        map.put(COL_NM_SISTEMA_MIGRAZ,
+                new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -62,58 +62,58 @@ public class AroFirmaCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_FIRMA_COMP,
-		new ColumnDescriptor(COL_ID_FIRMA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_CD_FIRMATARIO,
-		new ColumnDescriptor(COL_CD_FIRMATARIO, Types.VARCHAR, 100, false));
-	map.put(COL_NM_COGNOME_FIRMATARIO,
-		new ColumnDescriptor(COL_NM_COGNOME_FIRMATARIO, Types.VARCHAR, 100, false));
-	map.put(COL_NM_FIRMATARIO,
-		new ColumnDescriptor(COL_NM_FIRMATARIO, Types.VARCHAR, 100, false));
-	map.put(COL_TI_FIRMA, new ColumnDescriptor(COL_TI_FIRMA, Types.VARCHAR, 20, false));
-	map.put(COL_TI_ESITO_CONTR_CONFORME,
-		new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, false));
-	map.put(COL_DS_MSG_ESITO_CONTR_CONFORME,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_CONFORME, Types.VARCHAR, 1024, false));
-	map.put(COL_DS_ALGO_FIRMA,
-		new ColumnDescriptor(COL_DS_ALGO_FIRMA, Types.VARCHAR, 254, false));
-	map.put(COL_TI_FORMATO_FIRMA,
-		new ColumnDescriptor(COL_TI_FORMATO_FIRMA, Types.VARCHAR, 20, false));
-	map.put(COL_ID_CERTIF_FIRMATARIO,
-		new ColumnDescriptor(COL_ID_CERTIF_FIRMATARIO, Types.DECIMAL, 22, false));
-	map.put(COL_DT_FIRMA, new ColumnDescriptor(COL_DT_FIRMA, Types.TIMESTAMP, 7, false));
-	map.put(COL_TM_RIF_TEMP_USATO,
-		new ColumnDescriptor(COL_TM_RIF_TEMP_USATO, Types.TIMESTAMP, 7, false));
-	map.put(COL_TI_RIF_TEMP_USATO,
-		new ColumnDescriptor(COL_TI_RIF_TEMP_USATO, Types.VARCHAR, 20, false));
-	map.put(COL_TI_ESITO_VERIF_FIRMA,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRMA, Types.VARCHAR, 20, false));
-	map.put(COL_DS_MSG_ESITO_VERIF_FIRMA,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRMA, Types.VARCHAR, 254, false));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_ID_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, false));
-	map.put(COL_PG_FIRMA, new ColumnDescriptor(COL_PG_FIRMA, Types.DECIMAL, 22, false));
-	map.put(COL_PG_BUSTA, new ColumnDescriptor(COL_PG_BUSTA, Types.DECIMAL, 22, false));
-	map.put(COL_DL_DN_FIRMATARIO,
-		new ColumnDescriptor(COL_DL_DN_FIRMATARIO, Types.VARCHAR, 1024, false));
-	map.put(COL_ID_BUSTA_CRITTOG,
-		new ColumnDescriptor(COL_ID_BUSTA_CRITTOG, Types.DECIMAL, 22, false));
-	map.put(COL_BL_FIRMA_BASE64,
-		new ColumnDescriptor(COL_BL_FIRMA_BASE64, Types.CLOB, 4000, true));
+        map.put(COL_ID_FIRMA_COMP,
+                new ColumnDescriptor(COL_ID_FIRMA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_CD_FIRMATARIO,
+                new ColumnDescriptor(COL_CD_FIRMATARIO, Types.VARCHAR, 100, false));
+        map.put(COL_NM_COGNOME_FIRMATARIO,
+                new ColumnDescriptor(COL_NM_COGNOME_FIRMATARIO, Types.VARCHAR, 100, false));
+        map.put(COL_NM_FIRMATARIO,
+                new ColumnDescriptor(COL_NM_FIRMATARIO, Types.VARCHAR, 100, false));
+        map.put(COL_TI_FIRMA, new ColumnDescriptor(COL_TI_FIRMA, Types.VARCHAR, 20, false));
+        map.put(COL_TI_ESITO_CONTR_CONFORME,
+                new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, false));
+        map.put(COL_DS_MSG_ESITO_CONTR_CONFORME,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_CONFORME, Types.VARCHAR, 1024, false));
+        map.put(COL_DS_ALGO_FIRMA,
+                new ColumnDescriptor(COL_DS_ALGO_FIRMA, Types.VARCHAR, 254, false));
+        map.put(COL_TI_FORMATO_FIRMA,
+                new ColumnDescriptor(COL_TI_FORMATO_FIRMA, Types.VARCHAR, 20, false));
+        map.put(COL_ID_CERTIF_FIRMATARIO,
+                new ColumnDescriptor(COL_ID_CERTIF_FIRMATARIO, Types.DECIMAL, 22, false));
+        map.put(COL_DT_FIRMA, new ColumnDescriptor(COL_DT_FIRMA, Types.TIMESTAMP, 7, false));
+        map.put(COL_TM_RIF_TEMP_USATO,
+                new ColumnDescriptor(COL_TM_RIF_TEMP_USATO, Types.TIMESTAMP, 7, false));
+        map.put(COL_TI_RIF_TEMP_USATO,
+                new ColumnDescriptor(COL_TI_RIF_TEMP_USATO, Types.VARCHAR, 20, false));
+        map.put(COL_TI_ESITO_VERIF_FIRMA,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRMA, Types.VARCHAR, 20, false));
+        map.put(COL_DS_MSG_ESITO_VERIF_FIRMA,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRMA, Types.VARCHAR, 254, false));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_ID_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_PG_FIRMA, new ColumnDescriptor(COL_PG_FIRMA, Types.DECIMAL, 22, false));
+        map.put(COL_PG_BUSTA, new ColumnDescriptor(COL_PG_BUSTA, Types.DECIMAL, 22, false));
+        map.put(COL_DL_DN_FIRMATARIO,
+                new ColumnDescriptor(COL_DL_DN_FIRMATARIO, Types.VARCHAR, 1024, false));
+        map.put(COL_ID_BUSTA_CRITTOG,
+                new ColumnDescriptor(COL_ID_BUSTA_CRITTOG, Types.DECIMAL, 22, false));
+        map.put(COL_BL_FIRMA_BASE64,
+                new ColumnDescriptor(COL_BL_FIRMA_BASE64, Types.CLOB, 4000, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

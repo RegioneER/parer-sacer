@@ -45,27 +45,27 @@ public class AroWarnUpdUnitaDocTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_WARN_UPD_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_WARN_UPD_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_UPD_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_UPD_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_PG_WARN, new ColumnDescriptor(COL_PG_WARN, Types.DECIMAL, 22, false));
-	map.put(COL_ID_ERR_SACER, new ColumnDescriptor(COL_ID_ERR_SACER, Types.DECIMAL, 22, false));
-	map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, false));
-	map.put(COL_ID_CONTROLLO_WS,
-		new ColumnDescriptor(COL_ID_CONTROLLO_WS, Types.DECIMAL, 22, false));
+        map.put(COL_ID_WARN_UPD_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_WARN_UPD_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UPD_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_UPD_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_PG_WARN, new ColumnDescriptor(COL_PG_WARN, Types.DECIMAL, 22, false));
+        map.put(COL_ID_ERR_SACER, new ColumnDescriptor(COL_ID_ERR_SACER, Types.DECIMAL, 22, false));
+        map.put(COL_DS_ERR, new ColumnDescriptor(COL_DS_ERR, Types.VARCHAR, 1024, false));
+        map.put(COL_ID_CONTROLLO_WS,
+                new ColumnDescriptor(COL_ID_CONTROLLO_WS, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

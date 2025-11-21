@@ -29,49 +29,49 @@ public final class DatiSpecQueryParams {
     private List<String> nmSistemaMigraz;
 
     public DatiSpecQueryParams(String tiOper, String dlValore) {
-	this.tiOper = tiOper;
-	this.dlValore = dlValore;
-	idAttribDatiSpec = new ArrayList<>();
-	nmSistemaMigraz = new ArrayList<>();
+        this.tiOper = tiOper;
+        this.dlValore = dlValore;
+        idAttribDatiSpec = new ArrayList<>();
+        nmSistemaMigraz = new ArrayList<>();
     }
 
     public boolean add(BigDecimal e) {
-	return idAttribDatiSpec.add(e);
+        return idAttribDatiSpec.add(e);
     }
 
     public boolean addSM(String e) {
-	return nmSistemaMigraz.add(e);
+        return nmSistemaMigraz.add(e);
     }
 
     public String getDlValore() {
-	return dlValore;
+        return dlValore;
     }
 
     public void setDlValore(String dlValore) {
-	this.dlValore = dlValore;
+        this.dlValore = dlValore;
     }
 
     public List<BigDecimal> getIdAttribDatiSpec() {
-	return idAttribDatiSpec;
+        return idAttribDatiSpec;
     }
 
     public void setIdAttribDatiSpec(List<BigDecimal> idAttribDatiSpec) {
-	this.idAttribDatiSpec = idAttribDatiSpec;
+        this.idAttribDatiSpec = idAttribDatiSpec;
     }
 
     public List<String> getNmSistemaMigraz() {
-	return nmSistemaMigraz;
+        return nmSistemaMigraz;
     }
 
     public void setNmSistemaMigraz(List<String> nmSistemaMigraz) {
-	this.nmSistemaMigraz = nmSistemaMigraz;
+        this.nmSistemaMigraz = nmSistemaMigraz;
     }
 
     public String getTiOper() {
-	return tiOper;
+        return tiOper;
     }
 
     public void setTiOper(String tiOper) {
-	this.tiOper = tiOper;
+        this.tiOper = tiOper;
     }
 }

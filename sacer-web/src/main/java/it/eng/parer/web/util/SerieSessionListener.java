@@ -38,11 +38,11 @@ public class SerieSessionListener implements HttpSessionListener {
      */
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
-	Map<String, Map<String, Future<?>>> futureMap = (Map<String, Map<String, Future<?>>>) se
-		.getSession().getServletContext().getAttribute(FutureUtils.PARAMETER_FUTURE_SERIE);
-	if (futureMap != null) {
-	    futureMap.remove(se.getSession().getId());
-	}
+        Map<String, Map<String, Future<?>>> futureMap = (Map<String, Map<String, Future<?>>>) se
+                .getSession().getServletContext().getAttribute(FutureUtils.PARAMETER_FUTURE_SERIE);
+        if (futureMap != null) {
+            futureMap.remove(se.getSession().getId());
+        }
     }
 
 }

@@ -39,37 +39,37 @@ public class ConsumerCodaHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(ConsumerCodaHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), ConsumerCodaHelperTest.class,
-			ConsumerCodaHelper.class,
-			MigObjStorageCompHashCalcMoreThanOneException.class));
+        return HelperTest.createEnterpriseArchive(ConsumerCodaHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), ConsumerCodaHelperTest.class,
+                        ConsumerCodaHelper.class,
+                        MigObjStorageCompHashCalcMoreThanOneException.class));
     }
 
     @Test
     void getOstMigrazFileLocked_queryIsOk() {
-	String nmTabellaIdOggetto = aString();
-	BigDecimal idOggetto = aBigDecimal();
-	helper.getOstMigrazFileLocked(nmTabellaIdOggetto, idOggetto);
-	assertTrue(true);
+        String nmTabellaIdOggetto = aString();
+        BigDecimal idOggetto = aBigDecimal();
+        helper.getOstMigrazFileLocked(nmTabellaIdOggetto, idOggetto);
+        assertTrue(true);
     }
 
     @Test
     void getAroCompHashCalc_queryIsOk() {
-	long idCompDoc = aLong();
-	String dsAlgoHashFile = aString();
-	helper.getAroCompHashCalc(idCompDoc, dsAlgoHashFile);
-	assertTrue(true);
+        long idCompDoc = aLong();
+        String dsAlgoHashFile = aString();
+        helper.getAroCompHashCalc(idCompDoc, dsAlgoHashFile);
+        assertTrue(true);
     }
 
     @Test
     void getAroCompHashCalcByIdOggetto_queryIsOk() {
-	BigDecimal idOggetto = aBigDecimal();
-	try {
-	    helper.getAroCompHashCalcByIdOggetto(idOggetto);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertExceptionMessage(e, "MigObjStorageCompHashCalcMoreThanOneException");
-	}
+        BigDecimal idOggetto = aBigDecimal();
+        try {
+            helper.getAroCompHashCalcByIdOggetto(idOggetto);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertExceptionMessage(e, "MigObjStorageCompHashCalcMoreThanOneException");
+        }
     }
 }

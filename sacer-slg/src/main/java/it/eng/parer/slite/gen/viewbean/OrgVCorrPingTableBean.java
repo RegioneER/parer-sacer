@@ -27,15 +27,15 @@ public class OrgVCorrPingTableBean extends AbstractBaseTable<OrgVCorrPingRowBean
     public static OrgVCorrPingTableDescriptor TABLE_DESCRIPTOR = new OrgVCorrPingTableDescriptor();
 
     public OrgVCorrPingTableBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     protected OrgVCorrPingRowBean createRow() {
-	return new OrgVCorrPingRowBean();
+        return new OrgVCorrPingRowBean();
     }
 
 }

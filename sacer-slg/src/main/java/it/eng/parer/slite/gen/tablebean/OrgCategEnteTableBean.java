@@ -33,19 +33,19 @@ public class OrgCategEnteTableBean extends AbstractBaseTable<OrgCategEnteRowBean
     public static OrgCategEnteTableDescriptor TABLE_DESCRIPTOR = new OrgCategEnteTableDescriptor();
 
     public OrgCategEnteTableBean() {
-	super();
+        super();
     }
 
     protected OrgCategEnteRowBean createRow() {
-	return new OrgCategEnteRowBean();
+        return new OrgCategEnteRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgCategEnteRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

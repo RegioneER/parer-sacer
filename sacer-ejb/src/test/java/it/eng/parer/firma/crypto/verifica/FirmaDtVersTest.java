@@ -80,59 +80,59 @@ public class FirmaDtVersTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
-	WebArchive war = ShrinkWrap.create(WebArchive.class, "sacerTest.war")
-		.addPackage(GenericHelper.class.getPackage())
-		.addPackage(AroCompDocRowBean.class.getPackage())
-		.addPackage(AroCompDocTableBean.class.getPackage())
-		.addPackage(VolumiForm.class.getPackage())
-		.addPackage(JEEBaseRowInterface.class.getPackage())
-		.addPackage(Fields.class.getPackage()).addPackage(Elements.class.getPackage())
-		.addPackage(BaseElement.class.getPackage()).addClass(EMFError.class)
-		.addPackage(AbstractBaseTable.class.getPackage())
-		.addPackage(BaseRow.class.getPackage())
-		.addPackage(UsrVAbilAmbEnteConvenz.class.getPackage()).addClass(AroCompDoc.class)
-		.addClass(AroStrutDoc.class).addClass(Field.Type.class)
-		.addClass(StringPadding.class).addClass(CostantiDB.class)
-		.addClass(FrameElement.class).addClass(ComponentiForm.RicComponentiFiltri.class)
-		.addClass(FrameElementInterface.class).addClass(DecCriterioDatiSpecBean.class)
-		.addClass(CryptoParerException.class).addClass(CryptoInvoker.class)
-		.addClass(ResponseErrorHandler.class).addClass(ClientHttpRequestFactory.class)
-		.addClass(MultiValueMap.class).addClass(CryptoRestConfiguratorHelper.class)
-		.addClass(ConfigurationHelper.class).addClass(NonMonotonicSequenceGenerator.class)
-		.addClass(PaginatorInterceptor.class)
-		.addClass(it.eng.paginator.hibernate.OracleSqlInterceptor.class)
-		.addClass(HttpUriRequest.class).addClass(HttpContext.class)
-		.addClass(HttpRequest.class).addClass(HttpMessage.class)
-		.addClass(CryptoErrorHandler.class).addClass(ObjectMapper.class)
-		.addClass(FirmeDtVers.class)
-		// with subpackages
-		.addPackages(true, "it.eng.spagoLite.form", "it.eng.parer.jboss.timer.common",
-			"it.eng.spagoLite.db", "it.eng.parer.entity", "it.eng.parer.grantedEntity",
-			"it.eng.parer.viewEntity", "org.codehaus.jettison.json",
-			"org.apache.commons.fileupload", "org.apache.xmlbeans",
-			"org.apache.tools.ant", "com.sun.javadoc", "org.apache.commons",
-			"it.eng.paginator.helper", "it.eng.paginator.util",
-			"it.eng.parer.firma.crypto.helper.retry", "org.springframework",
-			"it.eng.parer.crypto.model", "org.apache.http", "com.fasterxml.jackson",
-			"it.eng.parer.retry")
-		// NO subpackages
-		.addPackages(false, "it.eng.parer.sacerlog.entity",
-			"it.eng.parer.sacerlog.viewEntity", "it.eng.parer.slite.gen.viewbean",
-			"org.apache.commons.lang", "org.apache.tools.ant.taskdefs",
-			"it.eng.parer.aop", "it.eng.parer.exception", "it.eng.parer.web.helper.dto",
-			"it.eng.parer.crypto")
-		.addAsResource(
-			FirmaDtVersTest.class.getClassLoader().getResource("persistence.xml"),
-			"META-INF/persistence.xml")
-		.addAsResource(FirmaDtVersTest.class.getClassLoader()
-			.getResource("countselectlist.properties"), "countselectlist.properties")
-		.addAsWebInfResource(
-			FirmaDtVersTest.class.getClassLoader().getResource("ejb-jar-firma.xml"),
-			"ejb-jar.xml")
-		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "sacerTest.war")
+                .addPackage(GenericHelper.class.getPackage())
+                .addPackage(AroCompDocRowBean.class.getPackage())
+                .addPackage(AroCompDocTableBean.class.getPackage())
+                .addPackage(VolumiForm.class.getPackage())
+                .addPackage(JEEBaseRowInterface.class.getPackage())
+                .addPackage(Fields.class.getPackage()).addPackage(Elements.class.getPackage())
+                .addPackage(BaseElement.class.getPackage()).addClass(EMFError.class)
+                .addPackage(AbstractBaseTable.class.getPackage())
+                .addPackage(BaseRow.class.getPackage())
+                .addPackage(UsrVAbilAmbEnteConvenz.class.getPackage()).addClass(AroCompDoc.class)
+                .addClass(AroStrutDoc.class).addClass(Field.Type.class)
+                .addClass(StringPadding.class).addClass(CostantiDB.class)
+                .addClass(FrameElement.class).addClass(ComponentiForm.RicComponentiFiltri.class)
+                .addClass(FrameElementInterface.class).addClass(DecCriterioDatiSpecBean.class)
+                .addClass(CryptoParerException.class).addClass(CryptoInvoker.class)
+                .addClass(ResponseErrorHandler.class).addClass(ClientHttpRequestFactory.class)
+                .addClass(MultiValueMap.class).addClass(CryptoRestConfiguratorHelper.class)
+                .addClass(ConfigurationHelper.class).addClass(NonMonotonicSequenceGenerator.class)
+                .addClass(PaginatorInterceptor.class)
+                .addClass(it.eng.paginator.hibernate.OracleSqlInterceptor.class)
+                .addClass(HttpUriRequest.class).addClass(HttpContext.class)
+                .addClass(HttpRequest.class).addClass(HttpMessage.class)
+                .addClass(CryptoErrorHandler.class).addClass(ObjectMapper.class)
+                .addClass(FirmeDtVers.class)
+                // with subpackages
+                .addPackages(true, "it.eng.spagoLite.form", "it.eng.parer.jboss.timer.common",
+                        "it.eng.spagoLite.db", "it.eng.parer.entity", "it.eng.parer.grantedEntity",
+                        "it.eng.parer.viewEntity", "org.codehaus.jettison.json",
+                        "org.apache.commons.fileupload", "org.apache.xmlbeans",
+                        "org.apache.tools.ant", "com.sun.javadoc", "org.apache.commons",
+                        "it.eng.paginator.helper", "it.eng.paginator.util",
+                        "it.eng.parer.firma.crypto.helper.retry", "org.springframework",
+                        "it.eng.parer.crypto.model", "org.apache.http", "com.fasterxml.jackson",
+                        "it.eng.parer.retry")
+                // NO subpackages
+                .addPackages(false, "it.eng.parer.sacerlog.entity",
+                        "it.eng.parer.sacerlog.viewEntity", "it.eng.parer.slite.gen.viewbean",
+                        "org.apache.commons.lang", "org.apache.tools.ant.taskdefs",
+                        "it.eng.parer.aop", "it.eng.parer.exception", "it.eng.parer.web.helper.dto",
+                        "it.eng.parer.crypto")
+                .addAsResource(
+                        FirmaDtVersTest.class.getClassLoader().getResource("persistence.xml"),
+                        "META-INF/persistence.xml")
+                .addAsResource(FirmaDtVersTest.class.getClassLoader()
+                        .getResource("countselectlist.properties"), "countselectlist.properties")
+                .addAsWebInfResource(
+                        FirmaDtVersTest.class.getClassLoader().getResource("ejb-jar-firma.xml"),
+                        "ejb-jar.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
 
-	// System.out.println(war.toString(true));
-	return war;
+        // System.out.println(war.toString(true));
+        return war;
 
     }
 
@@ -157,12 +157,12 @@ public class FirmaDtVersTest {
     @Disabled("Errore multiple bags fetch su QUERY_ARO_COMP_DOC")
     void testVerificaFirmeDtVers() throws SignatureException, CRLNotFoundException {
 
-	final TypedQuery<AroCompDoc> query = em.createQuery(QUERY_ARO_COMP_DOC, AroCompDoc.class);
-	query.setParameter("idCompDoc", COMPONENTE_CON_SUBJECT_KEY_ID);
-	AroCompDoc compDoc = query.getSingleResult();
-	Date dataRif = new Date();
-	helper.verificaFirme(compDoc, dataRif);
-	assertTrue(true);
+        final TypedQuery<AroCompDoc> query = em.createQuery(QUERY_ARO_COMP_DOC, AroCompDoc.class);
+        query.setParameter("idCompDoc", COMPONENTE_CON_SUBJECT_KEY_ID);
+        AroCompDoc compDoc = query.getSingleResult();
+        Date dataRif = new Date();
+        helper.verificaFirme(compDoc, dataRif);
+        assertTrue(true);
     }
 
     /**
@@ -175,14 +175,14 @@ public class FirmaDtVersTest {
     @Test
     @Disabled("Errore multiple bags fetch su QUERY_ARO_COMP_DOC")
     void testVerificaFirmeDtVersCrlWithoutSubjectDN()
-	    throws SignatureException, CRLNotFoundException {
+            throws SignatureException, CRLNotFoundException {
 
-	final TypedQuery<AroCompDoc> query = em.createQuery(QUERY_ARO_COMP_DOC, AroCompDoc.class);
-	query.setParameter("idCompDoc", COMPONENTE_SENZA_SUBJECT_KEY_ID);
-	AroCompDoc compDoc = query.getSingleResult();
-	Date dataRif = new Date();
-	helper.verificaFirme(compDoc, dataRif);
-	assertTrue(true);
+        final TypedQuery<AroCompDoc> query = em.createQuery(QUERY_ARO_COMP_DOC, AroCompDoc.class);
+        query.setParameter("idCompDoc", COMPONENTE_SENZA_SUBJECT_KEY_ID);
+        AroCompDoc compDoc = query.getSingleResult();
+        Date dataRif = new Date();
+        helper.verificaFirme(compDoc, dataRif);
+        assertTrue(true);
     }
 
     /**
@@ -194,10 +194,10 @@ public class FirmaDtVersTest {
     @Test
     @Disabled("Non è l'id corretto.")
     void testCrlNonRecuperabile() throws SignatureException, CRLNotFoundException {
-	AroCompDoc compDoc = em.find(AroCompDoc.class, COMPONENTE_CRL_NON_RECUPERABILE);
-	Date dataRif = new Date();
-	helper.verificaFirme(compDoc, dataRif);
-	assertTrue(true);
+        AroCompDoc compDoc = em.find(AroCompDoc.class, COMPONENTE_CRL_NON_RECUPERABILE);
+        Date dataRif = new Date();
+        helper.verificaFirme(compDoc, dataRif);
+        assertTrue(true);
     }
 
 }

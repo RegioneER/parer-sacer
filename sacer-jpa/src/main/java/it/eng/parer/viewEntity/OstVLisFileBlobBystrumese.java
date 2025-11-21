@@ -57,148 +57,148 @@ public class OstVLisFileBlobBystrumese implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC_NORMALIZ")
     public String getCdKeyUnitaDocNormaliz() {
-	return this.cdKeyUnitaDocNormaliz;
+        return this.cdKeyUnitaDocNormaliz;
     }
 
     public void setCdKeyUnitaDocNormaliz(String cdKeyUnitaDocNormaliz) {
-	this.cdKeyUnitaDocNormaliz = cdKeyUnitaDocNormaliz;
+        this.cdKeyUnitaDocNormaliz = cdKeyUnitaDocNormaliz;
     }
 
     @Column(name = "CD_REGISTRO_NORMALIZ")
     public String getCdRegistroNormaliz() {
-	return this.cdRegistroNormaliz;
+        return this.cdRegistroNormaliz;
     }
 
     public void setCdRegistroNormaliz(String cdRegistroNormaliz) {
-	this.cdRegistroNormaliz = cdRegistroNormaliz;
+        this.cdRegistroNormaliz = cdRegistroNormaliz;
     }
 
     @Column(name = "CD_REGISTRO_UNITA_DOC")
     public String getCdRegistroUnitaDoc() {
-	return this.cdRegistroUnitaDoc;
+        return this.cdRegistroUnitaDoc;
     }
 
     public void setCdRegistroUnitaDoc(String cdRegistroUnitaDoc) {
-	this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
+        this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CREAZIONE")
     public Date getDtCreazione() {
-	return this.dtCreazione;
+        return this.dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     @Id
     @Column(name = "ID_COMP_DOC")
     public BigDecimal getIdCompDoc() {
-	return this.idCompDoc;
+        return this.idCompDoc;
     }
 
     public void setIdCompDoc(BigDecimal idCompDoc) {
-	this.idCompDoc = idCompDoc;
+        this.idCompDoc = idCompDoc;
     }
 
     @Column(name = "ID_DOC")
     public BigDecimal getIdDoc() {
-	return this.idDoc;
+        return this.idDoc;
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	this.idDoc = idDoc;
+        this.idDoc = idDoc;
     }
 
     @Column(name = "ID_REGISTRO_UNITA_DOC")
     public BigDecimal getIdRegistroUnitaDoc() {
-	return this.idRegistroUnitaDoc;
+        return this.idRegistroUnitaDoc;
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	this.idRegistroUnitaDoc = idRegistroUnitaDoc;
+        this.idRegistroUnitaDoc = idRegistroUnitaDoc;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Column(name = "NI_ORD_COMP_DOC")
     public BigDecimal getNiOrdCompDoc() {
-	return this.niOrdCompDoc;
+        return this.niOrdCompDoc;
     }
 
     public void setNiOrdCompDoc(BigDecimal niOrdCompDoc) {
-	this.niOrdCompDoc = niOrdCompDoc;
+        this.niOrdCompDoc = niOrdCompDoc;
     }
 
     @Column(name = "NI_ORD_COMP_DOC_PADRE")
     public BigDecimal getNiOrdCompDocPadre() {
-	return this.niOrdCompDocPadre;
+        return this.niOrdCompDocPadre;
     }
 
     public void setNiOrdCompDocPadre(BigDecimal niOrdCompDocPadre) {
-	this.niOrdCompDocPadre = niOrdCompDocPadre;
+        this.niOrdCompDocPadre = niOrdCompDocPadre;
     }
 
     @Column(name = "NI_ORD_DOC")
     public BigDecimal getNiOrdDoc() {
-	return this.niOrdDoc;
+        return this.niOrdDoc;
     }
 
     public void setNiOrdDoc(BigDecimal niOrdDoc) {
-	this.niOrdDoc = niOrdDoc;
+        this.niOrdDoc = niOrdDoc;
     }
 
     @Column(name = "TI_SUPPORTO_COMP")
     public String getTiSupportoComp() {
-	return this.tiSupportoComp;
+        return this.tiSupportoComp;
     }
 
     public void setTiSupportoComp(String tiSupportoComp) {
-	this.tiSupportoComp = tiSupportoComp;
+        this.tiSupportoComp = tiSupportoComp;
     }
 
     @Column(name = "TI_SAVE_FILE")
     public String getTiSaveFile() {
-	return this.tiSaveFile;
+        return this.tiSaveFile;
     }
 
     public void setTiSaveFile(String tiSaveFile) {
-	this.tiSaveFile = tiSaveFile;
+        this.tiSaveFile = tiSaveFile;
     }
 
 }

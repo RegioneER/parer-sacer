@@ -37,19 +37,19 @@ public class DecVTreeCategTipoUdTableBean extends AbstractBaseTable<DecVTreeCate
     public static DecVTreeCategTipoUdTableDescriptor TABLE_DESCRIPTOR = new DecVTreeCategTipoUdTableDescriptor();
 
     public DecVTreeCategTipoUdTableBean() {
-	super();
+        super();
     }
 
     protected DecVTreeCategTipoUdRowBean createRow() {
-	return new DecVTreeCategTipoUdRowBean();
+        return new DecVTreeCategTipoUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVTreeCategTipoUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

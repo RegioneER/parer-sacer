@@ -42,39 +42,39 @@ public class ElvVChkSoloUdAnnul implements Serializable {
 
     @Column(name = "FL_SOLO_DOC_ANNUL", columnDefinition = "char(1)")
     public String getFlSoloDocAnnul() {
-	return this.flSoloDocAnnul;
+        return this.flSoloDocAnnul;
     }
 
     public void setFlSoloDocAnnul(String flSoloDocAnnul) {
-	this.flSoloDocAnnul = flSoloDocAnnul;
+        this.flSoloDocAnnul = flSoloDocAnnul;
     }
 
     @Column(name = "FL_SOLO_UD_ANNUL", columnDefinition = "char(1)")
     public String getFlSoloUdAnnul() {
-	return this.flSoloUdAnnul;
+        return this.flSoloUdAnnul;
     }
 
     public void setFlSoloUdAnnul(String flSoloUdAnnul) {
-	this.flSoloUdAnnul = flSoloUdAnnul;
+        this.flSoloUdAnnul = flSoloUdAnnul;
     }
 
     @Column(name = "FL_SOLO_UPD_UD_ANNUL", columnDefinition = "char(1)")
     public String getFlSoloUpdUdAnnul() {
-	return flSoloUpdUdAnnul;
+        return flSoloUpdUdAnnul;
     }
 
     public void setFlSoloUpdUdAnnul(String flSoloUpdUdAnnul) {
-	this.flSoloUpdUdAnnul = flSoloUpdUdAnnul;
+        this.flSoloUpdUdAnnul = flSoloUpdUdAnnul;
     }
 
     @Id
     @Column(name = "ID_ELENCO_VERS")
     public BigDecimal getIdElencoVers() {
-	return this.idElencoVers;
+        return this.idElencoVers;
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	this.idElencoVers = idElencoVers;
+        this.idElencoVers = idElencoVers;
     }
 
 }

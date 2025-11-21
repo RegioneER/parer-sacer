@@ -48,34 +48,34 @@ public class DecFiltroSelUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_FILTRO_SEL_UD,
-		new ColumnDescriptor(COL_ID_FILTRO_SEL_UD, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TIPO_SERIE_UD,
-		new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, false));
-	map.put(COL_TI_FILTRO, new ColumnDescriptor(COL_TI_FILTRO, Types.VARCHAR, 30, false));
-	map.put(COL_PG_FILTRO, new ColumnDescriptor(COL_PG_FILTRO, Types.DECIMAL, 22, false));
-	map.put(COL_DT_CREAZIONE_UNITA_DOC_DA,
-		new ColumnDescriptor(COL_DT_CREAZIONE_UNITA_DOC_DA, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_CREAZIONE_UNITA_DOC_A,
-		new ColumnDescriptor(COL_DT_CREAZIONE_UNITA_DOC_A, Types.TIMESTAMP, 7, false));
-	map.put(COL_ID_TIPO_DOC_PRINC,
-		new ColumnDescriptor(COL_ID_TIPO_DOC_PRINC, Types.DECIMAL, 22, false));
-	map.put(COL_DT_REG_UNITA_DOC_DA,
-		new ColumnDescriptor(COL_DT_REG_UNITA_DOC_DA, Types.TIMESTAMP, 7, false));
-	map.put(COL_DT_REG_UNITA_DOC_A,
-		new ColumnDescriptor(COL_DT_REG_UNITA_DOC_A, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_FILTRO_SEL_UD,
+                new ColumnDescriptor(COL_ID_FILTRO_SEL_UD, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TIPO_SERIE_UD,
+                new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, false));
+        map.put(COL_TI_FILTRO, new ColumnDescriptor(COL_TI_FILTRO, Types.VARCHAR, 30, false));
+        map.put(COL_PG_FILTRO, new ColumnDescriptor(COL_PG_FILTRO, Types.DECIMAL, 22, false));
+        map.put(COL_DT_CREAZIONE_UNITA_DOC_DA,
+                new ColumnDescriptor(COL_DT_CREAZIONE_UNITA_DOC_DA, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_CREAZIONE_UNITA_DOC_A,
+                new ColumnDescriptor(COL_DT_CREAZIONE_UNITA_DOC_A, Types.TIMESTAMP, 7, false));
+        map.put(COL_ID_TIPO_DOC_PRINC,
+                new ColumnDescriptor(COL_ID_TIPO_DOC_PRINC, Types.DECIMAL, 22, false));
+        map.put(COL_DT_REG_UNITA_DOC_DA,
+                new ColumnDescriptor(COL_DT_REG_UNITA_DOC_DA, Types.TIMESTAMP, 7, false));
+        map.put(COL_DT_REG_UNITA_DOC_A,
+                new ColumnDescriptor(COL_DT_REG_UNITA_DOC_A, Types.TIMESTAMP, 7, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

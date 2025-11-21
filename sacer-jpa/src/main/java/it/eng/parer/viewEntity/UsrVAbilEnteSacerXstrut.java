@@ -43,47 +43,47 @@ public class UsrVAbilEnteSacerXstrut implements Serializable {
 
     @EmbeddedId
     public UsrVAbilEnteSacerXstrutId getUsrVAbilEnteSacerXstrutId() {
-	return usrVAbilEnteSacerXstrutId;
+        return usrVAbilEnteSacerXstrutId;
     }
 
     public void setUsrVAbilEnteSacerXstrutId(UsrVAbilEnteSacerXstrutId usrVAbilEnteSacerXstrutId) {
-	this.usrVAbilEnteSacerXstrutId = usrVAbilEnteSacerXstrutId;
+        this.usrVAbilEnteSacerXstrutId = usrVAbilEnteSacerXstrutId;
     }
 
     @Column(name = "DS_ORGANIZ")
     public String getDsOrganiz() {
-	return this.dsOrganiz;
+        return this.dsOrganiz;
     }
 
     public void setDsOrganiz(String dsOrganiz) {
-	this.dsOrganiz = dsOrganiz;
+        this.dsOrganiz = dsOrganiz;
     }
 
     @Column(name = "ID_ORGANIZ_APPLIC_PADRE")
     public BigDecimal getIdOrganizApplicPadre() {
-	return this.idOrganizApplicPadre;
+        return this.idOrganizApplicPadre;
     }
 
     public void setIdOrganizApplicPadre(BigDecimal idOrganizApplicPadre) {
-	this.idOrganizApplicPadre = idOrganizApplicPadre;
+        this.idOrganizApplicPadre = idOrganizApplicPadre;
     }
 
     @Column(name = "NM_APPLIC")
     public String getNmApplic() {
-	return this.nmApplic;
+        return this.nmApplic;
     }
 
     public void setNmApplic(String nmApplic) {
-	this.nmApplic = nmApplic;
+        this.nmApplic = nmApplic;
     }
 
     @Column(name = "NM_ORGANIZ")
     public String getNmOrganiz() {
-	return this.nmOrganiz;
+        return this.nmOrganiz;
     }
 
     public void setNmOrganiz(String nmOrganiz) {
-	this.nmOrganiz = nmOrganiz;
+        this.nmOrganiz = nmOrganiz;
     }
 
 }

@@ -30,59 +30,59 @@ public class SerieDaFirmareBean {
     private String rangeDate;
 
     public String getAmbEnteStrut() {
-	return ambEnteStrut;
+        return ambEnteStrut;
     }
 
     public void setAmbEnteStrut(String ambEnteStrut) {
-	this.ambEnteStrut = ambEnteStrut;
+        this.ambEnteStrut = ambEnteStrut;
     }
 
     public String getCdCompositoSerie() {
-	return cdCompositoSerie;
+        return cdCompositoSerie;
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-	this.cdCompositoSerie = cdCompositoSerie;
+        this.cdCompositoSerie = cdCompositoSerie;
     }
 
     public BigDecimal getAaSerie() {
-	return aaSerie;
+        return aaSerie;
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-	this.aaSerie = aaSerie;
+        this.aaSerie = aaSerie;
     }
 
     public String getDsSerie() {
-	return dsSerie;
+        return dsSerie;
     }
 
     public void setDsSerie(String dsSerie) {
-	this.dsSerie = dsSerie;
+        this.dsSerie = dsSerie;
     }
 
     public String getNmTipoSerie() {
-	return nmTipoSerie;
+        return nmTipoSerie;
     }
 
     public void setNmTipoSerie(String nmTipoSerie) {
-	this.nmTipoSerie = nmTipoSerie;
+        this.nmTipoSerie = nmTipoSerie;
     }
 
     public String getCdVerSerie() {
-	return cdVerSerie;
+        return cdVerSerie;
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-	this.cdVerSerie = cdVerSerie;
+        this.cdVerSerie = cdVerSerie;
     }
 
     public String getRangeDate() {
-	return rangeDate;
+        return rangeDate;
     }
 
     public void setRangeDate(String rangeDate) {
-	this.rangeDate = rangeDate;
+        this.rangeDate = rangeDate;
     }
 
 }

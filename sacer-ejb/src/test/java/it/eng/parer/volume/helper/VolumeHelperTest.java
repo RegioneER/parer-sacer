@@ -37,27 +37,27 @@ public class VolumeHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(VolumeHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), VolumeHelperTest.class,
-			VolumeHelper.class, ReturnParams.class, DefinitoDaBean.class));
+        return HelperTest.createEnterpriseArchive(VolumeHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), VolumeHelperTest.class,
+                        VolumeHelper.class, ReturnParams.class, DefinitoDaBean.class));
     }
 
     @Test
     void retrieveVolumeById_queryIsOk() {
-	Long idVolume = aLong();
-	helper.retrieveVolumeById(idVolume);
-	assertTrue(true);
+        Long idVolume = aLong();
+        helper.retrieveVolumeById(idVolume);
+        assertTrue(true);
     }
 
     @Test
     void getVolInfo_queryIsOk() {
-	Long idUnitaDoc = aLong();
-	try {
-	    helper.getVolInfo(idUnitaDoc);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        Long idUnitaDoc = aLong();
+        try {
+            helper.getVolInfo(idUnitaDoc);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 }

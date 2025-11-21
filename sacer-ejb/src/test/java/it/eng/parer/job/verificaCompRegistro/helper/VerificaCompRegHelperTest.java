@@ -36,39 +36,39 @@ public class VerificaCompRegHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(VerificaCompRegHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			VerificaCompRegHelperTest.class, VerificaCompRegHelper.class));
+        return HelperTest.createEnterpriseArchive(VerificaCompRegHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        VerificaCompRegHelperTest.class, VerificaCompRegHelper.class));
     }
 
     @Test
     void getAaRegistroUnitaDocDaElab_queryIsOk() {
-	helper.getAaRegistroUnitaDocDaElab();
-	assertTrue(true);
+        helper.getAaRegistroUnitaDocDaElab();
+        assertTrue(true);
     }
 
     @Test
     void getListaUdDaVerificare_queryIsOk() {
-	Long idRegistroUnitaDoc = aLong();
-	List<Long> idSubStruts = aListOfLong(2);
-	Long anno = aLong();
-	helper.getListaUdDaVerificare(idRegistroUnitaDoc, idSubStruts, anno);
-	assertTrue(true);
+        Long idRegistroUnitaDoc = aLong();
+        List<Long> idSubStruts = aListOfLong(2);
+        Long anno = aLong();
+        helper.getListaUdDaVerificare(idRegistroUnitaDoc, idSubStruts, anno);
+        assertTrue(true);
     }
 
     @Test
     void sbloccaAaRegistroUnitaDoc_queryIsOk() {
-	long idAaRegistroUnitaDoc = aLong();
-	helper.sbloccaAaRegistroUnitaDoc(idAaRegistroUnitaDoc);
-	assertTrue(true);
+        long idAaRegistroUnitaDoc = aLong();
+        helper.sbloccaAaRegistroUnitaDoc(idAaRegistroUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void pulisciErroriRegAnnoNewTrans_queryIsOk() {
-	long idAaRegistroUnitaDoc = aLong();
-	long anno = aLong();
-	helper.pulisciErroriRegAnnoNewTrans(idAaRegistroUnitaDoc, anno);
-	assertTrue(true);
+        long idAaRegistroUnitaDoc = aLong();
+        long anno = aLong();
+        helper.pulisciErroriRegAnnoNewTrans(idAaRegistroUnitaDoc, anno);
+        assertTrue(true);
     }
 }

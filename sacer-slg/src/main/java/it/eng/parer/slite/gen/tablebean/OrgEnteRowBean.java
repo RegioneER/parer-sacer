@@ -38,205 +38,205 @@ public class OrgEnteRowBean extends BaseRow implements JEEBaseRowInterface {
     public static OrgEnteTableDescriptor TABLE_DESCRIPTOR = new OrgEnteTableDescriptor();
 
     public OrgEnteRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public String getDsEnte() {
-	return getString("ds_ente");
+        return getString("ds_ente");
     }
 
     public void setDsEnte(String dsEnte) {
-	setObject("ds_ente", dsEnte);
+        setObject("ds_ente", dsEnte);
     }
 
     public BigDecimal getIdAmbitoTerrit() {
-	return getBigDecimal("id_ambito_territ");
+        return getBigDecimal("id_ambito_territ");
     }
 
     public void setIdAmbitoTerrit(BigDecimal idAmbitoTerrit) {
-	setObject("id_ambito_territ", idAmbitoTerrit);
+        setObject("id_ambito_territ", idAmbitoTerrit);
     }
 
     public BigDecimal getIdCategEnte() {
-	return getBigDecimal("id_categ_ente");
+        return getBigDecimal("id_categ_ente");
     }
 
     public void setIdCategEnte(BigDecimal idCategEnte) {
-	setObject("id_categ_ente", idCategEnte);
+        setObject("id_categ_ente", idCategEnte);
     }
 
     public String getTipoDefTemplateEnte() {
-	return getString("tipo_def_template_ente");
+        return getString("tipo_def_template_ente");
     }
 
     public void setTipoDefTemplateEnte(String tipoDefTemplateEnte) {
-	setObject("tipo_def_template_ente", tipoDefTemplateEnte);
+        setObject("tipo_def_template_ente", tipoDefTemplateEnte);
     }
 
     public String getCdEnteNormaliz() {
-	return getString("cd_ente_normaliz");
+        return getString("cd_ente_normaliz");
     }
 
     public void setCdEnteNormaliz(String cdEnteNormaliz) {
-	setObject("cd_ente_normaliz", cdEnteNormaliz);
+        setObject("cd_ente_normaliz", cdEnteNormaliz);
     }
 
     public Timestamp getDtIniValAppartAmbiente() {
-	return getTimestamp("dt_ini_val_appart_ambiente");
+        return getTimestamp("dt_ini_val_appart_ambiente");
     }
 
     public void setDtIniValAppartAmbiente(Timestamp dtIniValAppartAmbiente) {
-	setObject("dt_ini_val_appart_ambiente", dtIniValAppartAmbiente);
+        setObject("dt_ini_val_appart_ambiente", dtIniValAppartAmbiente);
     }
 
     public Timestamp getDtFinValAppartAmbiente() {
-	return getTimestamp("dt_fin_val_appart_ambiente");
+        return getTimestamp("dt_fin_val_appart_ambiente");
     }
 
     public void setDtFinValAppartAmbiente(Timestamp dtFinValAppartAmbiente) {
-	setObject("dt_fin_val_appart_ambiente", dtFinValAppartAmbiente);
+        setObject("dt_fin_val_appart_ambiente", dtFinValAppartAmbiente);
     }
 
     public Timestamp getDtFineVal() {
-	return getTimestamp("dt_fine_val");
+        return getTimestamp("dt_fine_val");
     }
 
     public void setDtFineVal(Timestamp dtFineVal) {
-	setObject("dt_fine_val", dtFineVal);
+        setObject("dt_fine_val", dtFineVal);
     }
 
     public Timestamp getDtIniVal() {
-	return getTimestamp("dt_ini_val");
+        return getTimestamp("dt_ini_val");
     }
 
     public void setDtIniVal(Timestamp dtIniVal) {
-	setObject("dt_ini_val", dtIniVal);
+        setObject("dt_ini_val", dtIniVal);
     }
 
     public String getFlCessato() {
-	return getString("fl_cessato");
+        return getString("fl_cessato");
     }
 
     public void setFlCessato(String flCessato) {
-	setObject("fl_cessato", flCessato);
+        setObject("fl_cessato", flCessato);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgEnte entity = (OrgEnte) obj;
-	this.setIdEnte(entity.getIdEnte() == null ? null : BigDecimal.valueOf(entity.getIdEnte()));
+        OrgEnte entity = (OrgEnte) obj;
+        this.setIdEnte(entity.getIdEnte() == null ? null : BigDecimal.valueOf(entity.getIdEnte()));
 
-	if (entity.getOrgAmbiente() != null) {
-	    this.setIdAmbiente(new BigDecimal(entity.getOrgAmbiente().getIdAmbiente()));
-	}
+        if (entity.getOrgAmbiente() != null) {
+            this.setIdAmbiente(new BigDecimal(entity.getOrgAmbiente().getIdAmbiente()));
+        }
 
-	this.setNmEnte(entity.getNmEnte());
-	this.setDsEnte(entity.getDsEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setDsEnte(entity.getDsEnte());
 
-	if (entity.getOrgCategEnte() != null) {
-	    this.setIdCategEnte(new BigDecimal(entity.getOrgCategEnte().getIdCategEnte()));
-	}
-	this.setTipoDefTemplateEnte(entity.getTipoDefTemplateEnte());
-	this.setCdEnteNormaliz(entity.getCdEnteNormaliz());
-	if (entity.getDtIniValAppartAmbiente() != null) {
-	    this.setDtIniValAppartAmbiente(
-		    new Timestamp(entity.getDtIniValAppartAmbiente().getTime()));
-	}
-	if (entity.getDtFinValAppartAmbiente() != null) {
-	    this.setDtFinValAppartAmbiente(
-		    new Timestamp(entity.getDtFinValAppartAmbiente().getTime()));
-	}
-	if (entity.getDtFineVal() != null) {
-	    this.setDtFineVal(new Timestamp(entity.getDtFineVal().getTime()));
-	}
-	if (entity.getDtIniVal() != null) {
-	    this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
-	}
-	this.setFlCessato(entity.getFlCessato());
+        if (entity.getOrgCategEnte() != null) {
+            this.setIdCategEnte(new BigDecimal(entity.getOrgCategEnte().getIdCategEnte()));
+        }
+        this.setTipoDefTemplateEnte(entity.getTipoDefTemplateEnte());
+        this.setCdEnteNormaliz(entity.getCdEnteNormaliz());
+        if (entity.getDtIniValAppartAmbiente() != null) {
+            this.setDtIniValAppartAmbiente(
+                    new Timestamp(entity.getDtIniValAppartAmbiente().getTime()));
+        }
+        if (entity.getDtFinValAppartAmbiente() != null) {
+            this.setDtFinValAppartAmbiente(
+                    new Timestamp(entity.getDtFinValAppartAmbiente().getTime()));
+        }
+        if (entity.getDtFineVal() != null) {
+            this.setDtFineVal(new Timestamp(entity.getDtFineVal().getTime()));
+        }
+        if (entity.getDtIniVal() != null) {
+            this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
+        }
+        this.setFlCessato(entity.getFlCessato());
     }
 
     @Override
     public OrgEnte rowBeanToEntity() {
-	OrgEnte entity = new OrgEnte();
-	if (this.getIdEnte() != null) {
-	    entity.setIdEnte(this.getIdEnte().longValue());
-	}
-	if (this.getIdAmbiente() != null) {
-	    if (entity.getOrgAmbiente() == null) {
-		entity.setOrgAmbiente(new OrgAmbiente());
-	    }
-	    entity.getOrgAmbiente().setIdAmbiente(this.getIdAmbiente().longValue());
-	}
-	entity.setNmEnte(this.getNmEnte());
-	entity.setDsEnte(this.getDsEnte());
-	if (this.getIdCategEnte() != null) {
-	    if (entity.getOrgCategEnte() == null) {
-		entity.setOrgCategEnte(new OrgCategEnte());
-	    }
-	    entity.getOrgCategEnte().setIdCategEnte(this.getIdCategEnte().longValue());
-	}
-	entity.setTipoDefTemplateEnte(this.getTipoDefTemplateEnte());
-	entity.setCdEnteNormaliz(this.getCdEnteNormaliz());
-	entity.setDtIniValAppartAmbiente(this.getDtIniValAppartAmbiente());
-	entity.setDtFinValAppartAmbiente(this.getDtFinValAppartAmbiente());
-	entity.setDtFineVal(this.getDtFineVal());
-	entity.setDtIniVal(this.getDtIniVal());
-	entity.setFlCessato(this.getFlCessato());
-	return entity;
+        OrgEnte entity = new OrgEnte();
+        if (this.getIdEnte() != null) {
+            entity.setIdEnte(this.getIdEnte().longValue());
+        }
+        if (this.getIdAmbiente() != null) {
+            if (entity.getOrgAmbiente() == null) {
+                entity.setOrgAmbiente(new OrgAmbiente());
+            }
+            entity.getOrgAmbiente().setIdAmbiente(this.getIdAmbiente().longValue());
+        }
+        entity.setNmEnte(this.getNmEnte());
+        entity.setDsEnte(this.getDsEnte());
+        if (this.getIdCategEnte() != null) {
+            if (entity.getOrgCategEnte() == null) {
+                entity.setOrgCategEnte(new OrgCategEnte());
+            }
+            entity.getOrgCategEnte().setIdCategEnte(this.getIdCategEnte().longValue());
+        }
+        entity.setTipoDefTemplateEnte(this.getTipoDefTemplateEnte());
+        entity.setCdEnteNormaliz(this.getCdEnteNormaliz());
+        entity.setDtIniValAppartAmbiente(this.getDtIniValAppartAmbiente());
+        entity.setDtFinValAppartAmbiente(this.getDtFinValAppartAmbiente());
+        entity.setDtFineVal(this.getDtFineVal());
+        entity.setDtIniVal(this.getDtIniVal());
+        entity.setFlCessato(this.getFlCessato());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

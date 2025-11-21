@@ -30,97 +30,97 @@ import it.eng.parer.util.ejb.AppServerInstance;
 public class GestioneJobHelperTest extends HelperTest<GestioneJobHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(GestioneJobHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(
-			Arrays.asList("it.eng.parer.ws.versamento.dto", "it.eng.parer.ws.dto",
-				"it.eng.parer.ws.dto"),
-			GestioneJobHelper.class, GestioneJobHelperTest.class,
-			it.eng.parer.job.helper.JobHelper.class,
-			it.eng.parer.ws.ejb.ControlliSemantici.class,
-			it.eng.parer.ws.ejb.ControlliTpi.class,
-			it.eng.parer.ws.dto.RispostaControlli.class,
-			it.eng.parer.util.ejb.AppServerInstance.class,
-			AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
-			it.eng.parer.web.helper.ConfigurationHelper.class,
-			it.eng.parer.ws.utils.Costanti.class,
-			it.eng.parer.job.utils.JobConstants.class,
-			it.eng.tpi.bean.StatoArchiviazioneCartellaRisposta.class));
+        return HelperTest.createEnterpriseArchive(GestioneJobHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(
+                        Arrays.asList("it.eng.parer.ws.versamento.dto", "it.eng.parer.ws.dto",
+                                "it.eng.parer.ws.dto"),
+                        GestioneJobHelper.class, GestioneJobHelperTest.class,
+                        it.eng.parer.job.helper.JobHelper.class,
+                        it.eng.parer.ws.ejb.ControlliSemantici.class,
+                        it.eng.parer.ws.ejb.ControlliTpi.class,
+                        it.eng.parer.ws.dto.RispostaControlli.class,
+                        it.eng.parer.util.ejb.AppServerInstance.class,
+                        AggiornaStatoArchiviazioneHelper.class, AppServerInstance.class,
+                        it.eng.parer.web.helper.ConfigurationHelper.class,
+                        it.eng.parer.ws.utils.Costanti.class,
+                        it.eng.parer.job.utils.JobConstants.class,
+                        it.eng.tpi.bean.StatoArchiviazioneCartellaRisposta.class));
     }
 
     @Test
     void getDecJobList() {
-	final String nmAmbito = "nmAmbito";
-	final String dsJob = "dsJob";
-	final List<String> tiStato = Arrays.asList("ATTIVO", "DISATTIVO");
-	helper.getDecJobList(nmAmbito, dsJob, tiStato);
-	assertTrue(true);
+        final String nmAmbito = "nmAmbito";
+        final String dsJob = "dsJob";
+        final List<String> tiStato = Arrays.asList("ATTIVO", "DISATTIVO");
+        helper.getDecJobList(nmAmbito, dsJob, tiStato);
+        assertTrue(true);
     }
 
     @Test
     void getDecJobListPerAmm() {
-	assertFalse(helper.getDecJobListPerAmm().isEmpty());
+        assertFalse(helper.getDecJobListPerAmm().isEmpty());
     }
 
     @Test
     void getDecJobFotoListPerAmm() {
-	assertFalse(helper.getDecJobFotoListPerAmm().isEmpty());
+        assertFalse(helper.getDecJobFotoListPerAmm().isEmpty());
     }
 
     @Test
     void findLogByJob() {
-	final String nmJob = "nmJob";
-	helper.findLogByJob(nmJob);
-	assertTrue(true);
+        final String nmJob = "nmJob";
+        helper.findLogByJob(nmJob);
+        assertTrue(true);
     }
 
     @Test
     void getAmbitoJob() {
-	assertFalse(helper.getAmbitoJob().isEmpty());
+        assertFalse(helper.getAmbitoJob().isEmpty());
     }
 
     @Test
     void getInfoJob() {
-	assertTrue(helper.getInfoJob().length > 0);
+        assertTrue(helper.getInfoJob().length > 0);
     }
 
     @Test
     void getNumJobFoto() {
-	assertTrue(helper.getNumJobFoto() > 0);
+        assertTrue(helper.getNumJobFoto() > 0);
     }
 
     @Test
     void getNumJobFotoAttivi() {
-	assertTrue(helper.getNumJobFotoAttivi() > 0);
+        assertTrue(helper.getNumJobFotoAttivi() > 0);
     }
 
     @Test
     void getNumJobRimossiPresenti() {
-	assertTrue(helper.getNumJobRimossiPresenti().length > 0);
+        assertTrue(helper.getNumJobRimossiPresenti().length > 0);
     }
 
     @Test
     void getNomiJobRimossiPresenti() {
-	assertTrue(helper.getNomiJobRimossiPresenti().length > 0);
+        assertTrue(helper.getNomiJobRimossiPresenti().length > 0);
     }
 
     @Test
     void isDecJobFotoAttivo() {
-	assertFalse(helper.isDecJobFotoAttivo(41L));
+        assertFalse(helper.isDecJobFotoAttivo(41L));
     }
 
     @Test
     void isDecJobFotoEmpty() {
-	assertFalse(helper.isDecJobFotoEmpty());
+        assertFalse(helper.isDecJobFotoEmpty());
     }
 
     @Test
     void getDataLastFotoJob() {
-	assertNotNull(helper.getDataLastFotoJob());
+        assertNotNull(helper.getDataLastFotoJob());
     }
 
     @Test
     void areAllJobsDisattivati() {
-	assertTrue(helper.areAllJobsDisattivati());
+        assertTrue(helper.areAllJobsDisattivati());
     }
 }

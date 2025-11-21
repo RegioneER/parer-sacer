@@ -32,150 +32,150 @@ import it.eng.spagoCore.error.EMFError;
 public class ModelliXsdUdHelperTest extends HelperTest<ModelliXsdUdHelper> {
     @Deployment
     public static Archive<?> createTestArchive_queryIsOk() {
-	return HelperTest.createEnterpriseArchive(ModelliXsdUdHelperTest.class.getSimpleName(),
-		createSacerLogJar(), createPaginatorJavaArchive(), createSacerJavaArchive(
-			Arrays.asList(""), ModelliXsdUdHelperTest.class, ModelliXsdUdHelper.class));
+        return HelperTest.createEnterpriseArchive(ModelliXsdUdHelperTest.class.getSimpleName(),
+                createSacerLogJar(), createPaginatorJavaArchive(), createSacerJavaArchive(
+                        Arrays.asList(""), ModelliXsdUdHelperTest.class, ModelliXsdUdHelper.class));
     }
 
     @Test
     void retrieveDecModelliXsdUdListByTiEntitaInUso_queryIsOk() {
-	BigDecimal idTiEntita = BigDecimal.ZERO;
-	String tiUsoModello = "tiUsoModello";
-	for (CostantiDB.TipiEntitaSacer tiEntitaSacer : CostantiDB.TipiEntitaSacer.values()) {
-	    try {
-		helper.retrieveDecModelliXsdUdListByTiEntitaInUso(idTiEntita, tiEntitaSacer,
-			tiUsoModello, false);
-		assertTrue(true);
-		helper.retrieveDecModelliXsdUdListByTiEntitaInUso(idTiEntita, tiEntitaSacer,
-			tiUsoModello, true);
-		assertTrue(true);
-	    } catch (Exception e) {
-		// è un tipo non gestito, ci può stare
-		assertExceptionMessage(e, tiEntitaSacer.name());
-	    }
-	}
+        BigDecimal idTiEntita = BigDecimal.ZERO;
+        String tiUsoModello = "tiUsoModello";
+        for (CostantiDB.TipiEntitaSacer tiEntitaSacer : CostantiDB.TipiEntitaSacer.values()) {
+            try {
+                helper.retrieveDecModelliXsdUdListByTiEntitaInUso(idTiEntita, tiEntitaSacer,
+                        tiUsoModello, false);
+                assertTrue(true);
+                helper.retrieveDecModelliXsdUdListByTiEntitaInUso(idTiEntita, tiEntitaSacer,
+                        tiUsoModello, true);
+                assertTrue(true);
+            } catch (Exception e) {
+                // è un tipo non gestito, ci può stare
+                assertExceptionMessage(e, tiEntitaSacer.name());
+            }
+        }
     }
 
     @Test
     void retrieveDecUsoModelloXsdUdListByTiEntitaInUso_queryIsOk() {
-	BigDecimal idModelloXsdUd = BigDecimal.ZERO;
-	BigDecimal idTiEntita = BigDecimal.ZERO;
-	String tiUsoModello = "tiUsoModello";
-	String cdXsd = "cdXsd";
-	for (CostantiDB.TipiEntitaSacer tiEntitaSacer : CostantiDB.TipiEntitaSacer.values()) {
-	    try {
-		helper.retrieveDecUsoModelloXsdUdListByTiEntitaInUso(idModelloXsdUd, idTiEntita,
-			tiEntitaSacer, tiUsoModello, cdXsd, StringUtils.EMPTY, true);
-		assertTrue(true);
-		helper.retrieveDecUsoModelloXsdUdListByTiEntitaInUso(idModelloXsdUd, idTiEntita,
-			tiEntitaSacer, tiUsoModello, cdXsd, StringUtils.EMPTY, false);
-		assertTrue(true);
-	    } catch (Exception e) {
-		// è un tipo non gestito, ci può stare
-		assertExceptionMessage(e, tiEntitaSacer.name());
-	    }
-	}
+        BigDecimal idModelloXsdUd = BigDecimal.ZERO;
+        BigDecimal idTiEntita = BigDecimal.ZERO;
+        String tiUsoModello = "tiUsoModello";
+        String cdXsd = "cdXsd";
+        for (CostantiDB.TipiEntitaSacer tiEntitaSacer : CostantiDB.TipiEntitaSacer.values()) {
+            try {
+                helper.retrieveDecUsoModelloXsdUdListByTiEntitaInUso(idModelloXsdUd, idTiEntita,
+                        tiEntitaSacer, tiUsoModello, cdXsd, StringUtils.EMPTY, true);
+                assertTrue(true);
+                helper.retrieveDecUsoModelloXsdUdListByTiEntitaInUso(idModelloXsdUd, idTiEntita,
+                        tiEntitaSacer, tiUsoModello, cdXsd, StringUtils.EMPTY, false);
+                assertTrue(true);
+            } catch (Exception e) {
+                // è un tipo non gestito, ci può stare
+                assertExceptionMessage(e, tiEntitaSacer.name());
+            }
+        }
     }
 
     @Test
     void retrieveDecModelliXsdUd4Amb_queryIsOk() {
-	BigDecimal idAmbiente = BigDecimal.ZERO;
-	for (CostantiDB.TiUsoModelloXsd tiUsoModelloXsd : CostantiDB.TiUsoModelloXsd.values()) {
-	    helper.retrieveDecModelliXsdUd4Amb(idAmbiente, tiUsoModelloXsd.name(), true);
-	    helper.retrieveDecModelliXsdUd4Amb(idAmbiente, tiUsoModelloXsd.name(), false);
-	}
-	assertTrue(true);
+        BigDecimal idAmbiente = BigDecimal.ZERO;
+        for (CostantiDB.TiUsoModelloXsd tiUsoModelloXsd : CostantiDB.TiUsoModelloXsd.values()) {
+            helper.retrieveDecModelliXsdUd4Amb(idAmbiente, tiUsoModelloXsd.name(), true);
+            helper.retrieveDecModelliXsdUd4Amb(idAmbiente, tiUsoModelloXsd.name(), false);
+        }
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelliXsdUd4AmbAndTiModAndCdXsd_queryIsOk() {
-	BigDecimal idAmbiente = BigDecimal.ZERO;
-	String cdXsd = "cdXsd";
-	String tiUsoModelloXsdUd = "tiUsoModelloXsdUd";
-	for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsd : DecModelloXsdUd.TiModelloXsdUd
-		.values()) {
-	    helper.retrieveDecModelliXsdUd4AmbAndTiModAndCdXsd(idAmbiente, tiModelloXsd.name(),
-		    tiUsoModelloXsdUd, cdXsd, true);
-	    helper.retrieveDecModelliXsdUd4AmbAndTiModAndCdXsd(idAmbiente, tiModelloXsd.name(),
-		    tiUsoModelloXsdUd, cdXsd, false);
-	}
-	assertTrue(true);
+        BigDecimal idAmbiente = BigDecimal.ZERO;
+        String cdXsd = "cdXsd";
+        String tiUsoModelloXsdUd = "tiUsoModelloXsdUd";
+        for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsd : DecModelloXsdUd.TiModelloXsdUd
+                .values()) {
+            helper.retrieveDecModelliXsdUd4AmbAndTiModAndCdXsd(idAmbiente, tiModelloXsd.name(),
+                    tiUsoModelloXsdUd, cdXsd, true);
+            helper.retrieveDecModelliXsdUd4AmbAndTiModAndCdXsd(idAmbiente, tiModelloXsd.name(),
+                    tiUsoModelloXsdUd, cdXsd, false);
+        }
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelliXsdUd4AmbAndTiModelloXsd_queryIsOk() {
-	BigDecimal idAmbiente = BigDecimal.ZERO;
-	String tiUsoModelloXsd = "tiUsoModelloXsd";
-	for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
-		.values()) {
-	    helper.retrieveDecModelliXsdUd4AmbAndTiModelloXsd(idAmbiente, tiModelloXsdUd.name(),
-		    tiUsoModelloXsd, true);
-	    helper.retrieveDecModelliXsdUd4AmbAndTiModelloXsd(idAmbiente, tiModelloXsdUd.name(),
-		    tiUsoModelloXsd, false);
-	}
-	assertTrue(true);
+        BigDecimal idAmbiente = BigDecimal.ZERO;
+        String tiUsoModelloXsd = "tiUsoModelloXsd";
+        for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
+                .values()) {
+            helper.retrieveDecModelliXsdUd4AmbAndTiModelloXsd(idAmbiente, tiModelloXsdUd.name(),
+                    tiUsoModelloXsd, true);
+            helper.retrieveDecModelliXsdUd4AmbAndTiModelloXsd(idAmbiente, tiModelloXsdUd.name(),
+                    tiUsoModelloXsd, false);
+        }
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecModelliXsdUd4AmbAndTiModelloDefXsd_queryIsOk() {
-	BigDecimal idAmbiente = BigDecimal.ZERO;
-	String flDefault = "0";
-	for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
-		.values()) {
-	    for (DecModelloXsdUd.TiModelloXsdUd modelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
-		    .values()) {
-		helper.retrieveDecModelliXsdUd4AmbAndTiModelloDefXsd(idAmbiente,
-			modelloXsdUd.name(), tiModelloXsdUd.name(), flDefault, true);
-		helper.retrieveDecModelliXsdUd4AmbAndTiModelloDefXsd(idAmbiente,
-			modelloXsdUd.name(), tiModelloXsdUd.name(), flDefault, false);
-	    }
-	}
-	assertTrue(true);
+        BigDecimal idAmbiente = BigDecimal.ZERO;
+        String flDefault = "0";
+        for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
+                .values()) {
+            for (DecModelloXsdUd.TiModelloXsdUd modelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
+                    .values()) {
+                helper.retrieveDecModelliXsdUd4AmbAndTiModelloDefXsd(idAmbiente,
+                        modelloXsdUd.name(), tiModelloXsdUd.name(), flDefault, true);
+                helper.retrieveDecModelliXsdUd4AmbAndTiModelloDefXsd(idAmbiente,
+                        modelloXsdUd.name(), tiModelloXsdUd.name(), flDefault, false);
+            }
+        }
+        assertTrue(true);
     }
 
     @Test
     void decUsoModelloXsdUdInUseOnVrs_queryIsOk() {
-	BigDecimal idStrut = BigDecimal.ZERO;
-	BigDecimal idUsoModelloXsdUd = BigDecimal.ZERO;
-	for (CostantiDB.TipiEntitaSacer tiEntitaSacer : CostantiDB.TipiEntitaSacer.values()) {
-	    try {
-		helper.decUsoModelloXsdUdInUseOnVrs(idStrut, idUsoModelloXsdUd, tiEntitaSacer);
-		assertTrue(true);
-	    } catch (Exception e) {
-		// tipo non gestito
-		assertExceptionMessage(e, tiEntitaSacer.name());
-	    }
-	}
+        BigDecimal idStrut = BigDecimal.ZERO;
+        BigDecimal idUsoModelloXsdUd = BigDecimal.ZERO;
+        for (CostantiDB.TipiEntitaSacer tiEntitaSacer : CostantiDB.TipiEntitaSacer.values()) {
+            try {
+                helper.decUsoModelloXsdUdInUseOnVrs(idStrut, idUsoModelloXsdUd, tiEntitaSacer);
+                assertTrue(true);
+            } catch (Exception e) {
+                // tipo non gestito
+                assertExceptionMessage(e, tiEntitaSacer.name());
+            }
+        }
     }
 
     @Test
     void decModelloXsdUdInUseOnVrs_queryIsOk() {
-	helper.decModelloXsdUdInUseOnVrs(BigDecimal.ZERO);
-	assertTrue(true);
+        helper.decModelloXsdUdInUseOnVrs(BigDecimal.ZERO);
+        assertTrue(true);
     }
 
     @Test
     void existDecModelliXsdUdListInUso_queryIsOk() {
-	BigDecimal idModelloXsdUd = BigDecimal.ZERO;
-	helper.existDecModelliXsdUdListInUso(idModelloXsdUd, false);
-	helper.existDecModelliXsdUdListInUso(idModelloXsdUd, true);
-	assertTrue(true);
+        BigDecimal idModelloXsdUd = BigDecimal.ZERO;
+        helper.existDecModelliXsdUdListInUso(idModelloXsdUd, false);
+        helper.existDecModelliXsdUdListInUso(idModelloXsdUd, true);
+        assertTrue(true);
     }
 
     @Test
     void findDecModelliXsdUdList_queryIsOk() throws EMFError {
-	final List<BigDecimal> idAmbientiToFind = Arrays.asList(BigDecimal.ZERO, BigDecimal.ONE);
-	final String cdXsd = "cdXsd";
-	final String dsXsd = "dsXsd";
-	final String flDefault = "0";
-	final String tiUsoModelloXsd = "tiUsoModelloXsd";
-	for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
-		.values()) {
-	    helper.findDecModelliXsdUdList(idAmbientiToFind, tiUsoModelloXsd, true, cdXsd, dsXsd,
-		    flDefault, tiModelloXsdUd.name());
-	    helper.findDecModelliXsdUdList(idAmbientiToFind, tiUsoModelloXsd, false, cdXsd, dsXsd,
-		    flDefault, tiModelloXsdUd.name());
-	}
-	assertTrue(true);
+        final List<BigDecimal> idAmbientiToFind = Arrays.asList(BigDecimal.ZERO, BigDecimal.ONE);
+        final String cdXsd = "cdXsd";
+        final String dsXsd = "dsXsd";
+        final String flDefault = "0";
+        final String tiUsoModelloXsd = "tiUsoModelloXsd";
+        for (DecModelloXsdUd.TiModelloXsdUd tiModelloXsdUd : DecModelloXsdUd.TiModelloXsdUd
+                .values()) {
+            helper.findDecModelliXsdUdList(idAmbientiToFind, tiUsoModelloXsd, true, cdXsd, dsXsd,
+                    flDefault, tiModelloXsdUd.name());
+            helper.findDecModelliXsdUdList(idAmbientiToFind, tiUsoModelloXsd, false, cdXsd, dsXsd,
+                    flDefault, tiModelloXsdUd.name());
+        }
+        assertTrue(true);
     }
 }

@@ -43,24 +43,24 @@ public class OrgSubStrutTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_SUB_STRUT, new ColumnDescriptor(COL_ID_SUB_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
-	map.put(COL_NM_SUB_STRUT,
-		new ColumnDescriptor(COL_NM_SUB_STRUT, Types.VARCHAR, 100, false));
-	map.put(COL_DS_SUB_STRUT,
-		new ColumnDescriptor(COL_DS_SUB_STRUT, Types.VARCHAR, 254, false));
+        map.put(COL_ID_SUB_STRUT, new ColumnDescriptor(COL_ID_SUB_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, false));
+        map.put(COL_NM_SUB_STRUT,
+                new ColumnDescriptor(COL_NM_SUB_STRUT, Types.VARCHAR, 100, false));
+        map.put(COL_DS_SUB_STRUT,
+                new ColumnDescriptor(COL_DS_SUB_STRUT, Types.VARCHAR, 254, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

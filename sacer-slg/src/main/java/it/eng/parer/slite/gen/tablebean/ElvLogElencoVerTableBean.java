@@ -33,19 +33,19 @@ public class ElvLogElencoVerTableBean extends AbstractBaseTable<ElvLogElencoVerR
     public static ElvLogElencoVerTableDescriptor TABLE_DESCRIPTOR = new ElvLogElencoVerTableDescriptor();
 
     public ElvLogElencoVerTableBean() {
-	super();
+        super();
     }
 
     protected ElvLogElencoVerRowBean createRow() {
-	return new ElvLogElencoVerRowBean();
+        return new ElvLogElencoVerRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvLogElencoVerRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

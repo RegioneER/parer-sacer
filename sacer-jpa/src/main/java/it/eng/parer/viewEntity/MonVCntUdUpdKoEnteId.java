@@ -35,64 +35,64 @@ public class MonVCntUdUpdKoEnteId implements Serializable {
     }
 
     public MonVCntUdUpdKoEnteId(BigDecimal idUserIam, BigDecimal idEnte, String tiStatoSesUpdKo) {
-	this.idUserIam = idUserIam;
-	this.idEnte = idEnte;
-	this.tiStatoSesUpdKo = tiStatoSesUpdKo;
+        this.idUserIam = idUserIam;
+        this.idEnte = idEnte;
+        this.tiStatoSesUpdKo = tiStatoSesUpdKo;
     }
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return this.idUserIam;
+        return this.idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return this.idEnte;
+        return this.idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     @Column(name = "TI_STATO_SES_UPD_KO")
     public String getTiStatoSesUpdKo() {
-	return this.tiStatoSesUpdKo;
+        return this.tiStatoSesUpdKo;
     }
 
     public void setTiStatoSesUpdKo(String tiStatoSesUpdKo) {
-	this.tiStatoSesUpdKo = tiStatoSesUpdKo;
+        this.tiStatoSesUpdKo = tiStatoSesUpdKo;
     }
 
     @Override
     public boolean equals(Object other) {
-	if (this == other) {
-	    return true;
-	}
-	if (!(other instanceof MonVCntUdUpdKoEnteId)) {
-	    return false;
-	}
-	MonVCntUdUpdKoEnteId castOther = (MonVCntUdUpdKoEnteId) other;
-	return ((this.idUserIam == castOther.idUserIam) || ((this.idUserIam != null)
-		&& (castOther.idUserIam != null) && this.idUserIam.equals(castOther.idUserIam)))
-		&& ((this.idEnte == castOther.idEnte) || ((this.idEnte != null)
-			&& (castOther.idEnte != null) && this.idEnte.equals(castOther.idEnte)))
-		&& ((this.tiStatoSesUpdKo == castOther.tiStatoSesUpdKo)
-			|| ((this.tiStatoSesUpdKo != null) && (castOther.tiStatoSesUpdKo != null)
-				&& this.tiStatoSesUpdKo.equals(castOther.tiStatoSesUpdKo)));
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof MonVCntUdUpdKoEnteId)) {
+            return false;
+        }
+        MonVCntUdUpdKoEnteId castOther = (MonVCntUdUpdKoEnteId) other;
+        return ((this.idUserIam == castOther.idUserIam) || ((this.idUserIam != null)
+                && (castOther.idUserIam != null) && this.idUserIam.equals(castOther.idUserIam)))
+                && ((this.idEnte == castOther.idEnte) || ((this.idEnte != null)
+                        && (castOther.idEnte != null) && this.idEnte.equals(castOther.idEnte)))
+                && ((this.tiStatoSesUpdKo == castOther.tiStatoSesUpdKo)
+                        || ((this.tiStatoSesUpdKo != null) && (castOther.tiStatoSesUpdKo != null)
+                                && this.tiStatoSesUpdKo.equals(castOther.tiStatoSesUpdKo)));
     }
 
     @Override
     public int hashCode() {
-	final int prime = 31;
-	int hash = 17;
-	hash = hash * prime + ((this.idUserIam != null) ? this.idUserIam.hashCode() : 0);
-	hash = hash * prime + ((this.idEnte != null) ? this.idEnte.hashCode() : 0);
-	hash = hash * prime
-		+ ((this.tiStatoSesUpdKo != null) ? this.tiStatoSesUpdKo.hashCode() : 0);
-	return hash;
+        final int prime = 31;
+        int hash = 17;
+        hash = hash * prime + ((this.idUserIam != null) ? this.idUserIam.hashCode() : 0);
+        hash = hash * prime + ((this.idEnte != null) ? this.idEnte.hashCode() : 0);
+        hash = hash * prime
+                + ((this.tiStatoSesUpdKo != null) ? this.tiStatoSesUpdKo.hashCode() : 0);
+        return hash;
     }
 }

@@ -34,19 +34,19 @@ public class DecTipoStrutUnitaDocTableBean extends AbstractBaseTable<DecTipoStru
     public static DecTipoStrutUnitaDocTableDescriptor TABLE_DESCRIPTOR = new DecTipoStrutUnitaDocTableDescriptor();
 
     public DecTipoStrutUnitaDocTableBean() {
-	super();
+        super();
     }
 
     protected DecTipoStrutUnitaDocRowBean createRow() {
-	return new DecTipoStrutUnitaDocRowBean();
+        return new DecTipoStrutUnitaDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecTipoStrutUnitaDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

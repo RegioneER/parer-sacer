@@ -30,20 +30,20 @@ public class WSDescStatusMonitor implements IWSDesc {
 
     @Override
     public String getVersione() {
-	return Costanti.WS_STATUS_MONITOR_VRSN;
+        return Costanti.WS_STATUS_MONITOR_VRSN;
     }
 
     @Override
     public String getNomeWs() {
-	return Costanti.WS_STATUS_MONITOR_NOME;
+        return Costanti.WS_STATUS_MONITOR_NOME;
     }
 
     public String[] getCompatibilitaWS() {
-	return Costanti.WS_STATUS_MONITOR_COMP;
+        return Costanti.WS_STATUS_MONITOR_COMP;
     }
 
     @Override
     public String getVersione(HashMap<String, String> mapWsVersion) {
-	throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
+        throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
     }
 }

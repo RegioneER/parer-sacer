@@ -61,62 +61,62 @@ public class TpiPathElab implements Serializable {
 
     @Column(name = "ID_PATH_ELAB")
     @GenericGenerator(name = "STPI_PATH_ELAB_ID_PATH_ELAB_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_PATH_ELAB"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "STPI_PATH_ELAB"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "STPI_PATH_ELAB_ID_PATH_ELAB_GENERATOR")
     public Long getIdPathElab() {
-	return this.idPathElab;
+        return this.idPathElab;
     }
 
     public void setIdPathElab(Long idPathElab) {
-	this.idPathElab = idPathElab;
+        this.idPathElab = idPathElab;
     }
 
     @Column(name = "DL_PATH_ELAB")
     public String getDlPathElab() {
-	return this.dlPathElab;
+        return this.dlPathElab;
     }
 
     public void setDlPathElab(String dlPathElab) {
-	this.dlPathElab = dlPathElab;
+        this.dlPathElab = dlPathElab;
     }
 
     @Temporal(TemporalType.DATE)
     @Column(name = "DT_VERS_ELAB")
     public Date getDtVersElab() {
-	return this.dtVersElab;
+        return this.dtVersElab;
     }
 
     public void setDtVersElab(Date dtVersElab) {
-	this.dtVersElab = dtVersElab;
+        this.dtVersElab = dtVersElab;
     }
 
     @Column(name = "NI_FILE_DA_ELAB")
     public BigDecimal getNiFileDaElab() {
-	return this.niFileDaElab;
+        return this.niFileDaElab;
     }
 
     public void setNiFileDaElab(BigDecimal niFileDaElab) {
-	this.niFileDaElab = niFileDaElab;
+        this.niFileDaElab = niFileDaElab;
     }
 
     @Column(name = "NI_FILE_ELAB")
     public BigDecimal getNiFileElab() {
-	return this.niFileElab;
+        return this.niFileElab;
     }
 
     public void setNiFileElab(BigDecimal niFileElab) {
-	this.niFileElab = niFileElab;
+        this.niFileElab = niFileElab;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SCHED_JOB")
     public TpiSchedJob getTpiSchedJob() {
-	return this.tpiSchedJob;
+        return this.tpiSchedJob;
     }
 
     public void setTpiSchedJob(TpiSchedJob tpiSchedJob) {
-	this.tpiSchedJob = tpiSchedJob;
+        this.tpiSchedJob = tpiSchedJob;
     }
 
 }

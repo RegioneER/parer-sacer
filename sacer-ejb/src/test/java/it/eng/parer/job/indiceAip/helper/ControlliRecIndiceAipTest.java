@@ -45,226 +45,226 @@ public class ControlliRecIndiceAipTest extends HelperTest<ControlliRecIndiceAip>
     @Test
     @Disabled("può funzionare solo con un id esistente, troppo dipendente dai dati sul DB")
     void leggiXmlVersamentiAipQueryIsOk() {
-	Long id = 179516095L;
-	helper.leggiXmlVersamentiAip(id);
-	assertTrue(true);
+        Long id = 179516095L;
+        helper.leggiXmlVersamentiAip(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiXmlVersamentiAipDaUnitaDocQueryIsOk() {
-	Long idUnitaDoc = -9L;
-	helper.leggiXmlVersamentiAipDaUnitaDoc(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = -9L;
+        helper.leggiXmlVersamentiAipDaUnitaDoc(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void leggiXmlVersamentiAipUpdDaUnitaDocQueryIsOk() {
-	Long idUnitaDoc = -9L;
-	helper.leggiXmlVersamentiAipUpdDaUnitaDoc(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = -9L;
+        helper.leggiXmlVersamentiAipUpdDaUnitaDoc(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void leggiFascicoliSecQueryIsOk() {
-	Long idUnitaDoc = -9L;
-	helper.leggiFascicoliSec(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = -9L;
+        helper.leggiFascicoliSec(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void leggiAroVersIniUnitaDocQueryIsOk() {
-	Long idUnitaDoc = -9L;
-	helper.leggiAroVersIniUnitaDoc(idUnitaDoc);
-	assertTrue(true);
+        Long idUnitaDoc = -9L;
+        helper.leggiAroVersIniUnitaDoc(idUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void leggiFascicoliSecVersIniUnitaDocQueryIsOk() {
-	Long id = -9L;
-	helper.leggiFascicoliSecVersIniUnitaDoc(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiFascicoliSecVersIniUnitaDoc(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiVersamentiAipUpdPgMaxInCodaQueryIsOk() {
-	Long id = -9L;
-	helper.leggiVersamentiAipUpdPgMaxInCoda(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiVersamentiAipUpdPgMaxInCoda(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiFascicoliSecUpdQueryIsOk() {
-	Long id = -9L;
-	helper.leggiFascicoliSecUpd(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiFascicoliSecUpd(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiUDocCollegQueryIsOk() {
-	Long id = -9L;
-	helper.leggiUDocColleg(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiUDocColleg(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiUDocCollegVersIniUpdQueryIsOk() {
-	Long id = -9L;
-	helper.leggiUDocCollegVersIniUpd(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiUDocCollegVersIniUpd(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiUDocCollegUpdQueryIsOk() {
-	Long id = -9L;
-	helper.leggiUDocCollegUpd(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiUDocCollegUpd(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiDatiSpecEntityQueryIsOk() {
-	Long id = -9L;
-	for (CostantiDB.TipiUsoDatiSpec tipoUsoAttr : CostantiDB.TipiUsoDatiSpec.values()) {
-	    for (CostantiDB.TipiEntitaSacer tipoEntitySacer : CostantiDB.TipiEntitaSacer.values()) {
-		helper.leggiDatiSpecEntity(tipoUsoAttr, tipoEntitySacer, id);
-	    }
-	}
-	assertTrue(true);
+        Long id = -9L;
+        for (CostantiDB.TipiUsoDatiSpec tipoUsoAttr : CostantiDB.TipiUsoDatiSpec.values()) {
+            for (CostantiDB.TipiEntitaSacer tipoEntitySacer : CostantiDB.TipiEntitaSacer.values()) {
+                helper.leggiDatiSpecEntity(tipoUsoAttr, tipoEntitySacer, id);
+            }
+        }
+        assertTrue(true);
     }
 
     @Test
     void leggiDatiSpecEntityVersIniUpdQueryIsOk() {
-	Long id = -9L;
-	for (AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec tiUsoXsd : AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec
-		.values()) {
-	    for (AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec tipoEntitySacer : AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec
-		    .values()) {
-		helper.leggiDatiSpecEntityVersIniUpd(tiUsoXsd, tipoEntitySacer, id);
-	    }
-	}
-	assertTrue(true);
+        Long id = -9L;
+        for (AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec tiUsoXsd : AroVersIniDatiSpec.TiUsoXsdAroVersIniDatiSpec
+                .values()) {
+            for (AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec tipoEntitySacer : AroVersIniDatiSpec.TiEntitaSacerAroVersIniDatiSpec
+                    .values()) {
+                helper.leggiDatiSpecEntityVersIniUpd(tiUsoXsd, tipoEntitySacer, id);
+            }
+        }
+        assertTrue(true);
     }
 
     @Test
     void leggiDatiSpecEntityUpdQueryIsOk() {
-	Long id = -9L;
-	for (AroUpdDatiSpecUnitaDoc.TiUsoXsdAroUpdDatiSpecUnitaDoc tiUso : AroUpdDatiSpecUnitaDoc.TiUsoXsdAroUpdDatiSpecUnitaDoc
-		.values()) {
-	    for (AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc tiEntita : AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc
-		    .values()) {
-		helper.leggiDatiSpecEntityUpd(tiUso, tiEntita, id);
-	    }
-	}
-	assertTrue(true);
+        Long id = -9L;
+        for (AroUpdDatiSpecUnitaDoc.TiUsoXsdAroUpdDatiSpecUnitaDoc tiUso : AroUpdDatiSpecUnitaDoc.TiUsoXsdAroUpdDatiSpecUnitaDoc
+                .values()) {
+            for (AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc tiEntita : AroUpdDatiSpecUnitaDoc.TiEntitaAroUpdDatiSpecUnitaDoc
+                    .values()) {
+                helper.leggiDatiSpecEntityUpd(tiUso, tiEntita, id);
+            }
+        }
+        assertTrue(true);
     }
 
     @Test
     void leggiSottoComponentiQueryIsOk() {
-	AroCompDoc compPadre = new AroCompDoc();
-	compPadre.setIdCompDoc(-9L);
-	helper.leggiSottoComponenti(compPadre);
-	assertTrue(true);
+        AroCompDoc compPadre = new AroCompDoc();
+        compPadre.setIdCompDoc(-9L);
+        helper.leggiSottoComponenti(compPadre);
+        assertTrue(true);
     }
 
     @Test
     void getVersioneSacerQueryIsOk() {
-	helper.getVersioneSacer();
-	assertTrue(true);
+        helper.getVersioneSacer();
+        assertTrue(true);
     }
 
     @Test
     void getVersioniPrecedentiAIPQueryIsOk() {
-	Long id = -9L;
-	helper.getVersioniPrecedentiAIP(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.getVersioniPrecedentiAIP(id);
+        assertTrue(true);
     }
 
     @Test
     void getVersioniPrecedentiAIPExternalQueryIsOk() {
-	Long id = -9L;
-	helper.getVersioniPrecedentiAIPExternal(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.getVersioniPrecedentiAIPExternal(id);
+        assertTrue(true);
     }
 
     @Test
     void getVolumiUnitaDocListQueryIsOk() {
-	Long id = -9L;
-	helper.getVolumiUnitaDocList(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.getVolumiUnitaDocList(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiComponentiDocumentoQueryIsOk() {
-	Long id = -9L;
-	helper.leggiComponentiDocumento(anAroDoc());
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiComponentiDocumento(anAroDoc());
+        assertTrue(true);
     }
 
     @Test
     void leggiComponenteDaVistaQueryIsOk() {
-	Long id = -9L;
-	helper.leggiComponenteDaVista(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiComponenteDaVista(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiComponenteDaVersIniUpdQueryIsOk() {
-	Long id = -9L;
-	helper.leggiComponenteDaVersIniUpd(id, id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiComponenteDaVersIniUpd(id, id);
+        assertTrue(true);
     }
 
     @Test
     void leggiComponenteDaUpdQueryIsOk() {
-	Long id = -9L;
-	helper.leggiComponenteDaUpd(id, id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiComponenteDaUpd(id, id);
+        assertTrue(true);
     }
 
     @Test
     void leggiDocumentoDaVersIniUpdQueryIsOk() {
-	Long id = -9L;
-	helper.leggiDocumentoDaVersIniUpd(id, id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiDocumentoDaVersIniUpd(id, id);
+        assertTrue(true);
     }
 
     @Test
     void leggiDocumentoDaUpdQueryIsOk() {
-	Long id = -9L;
-	helper.leggiDocumentoDaUpd(id, id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.leggiDocumentoDaUpd(id, id);
+        assertTrue(true);
     }
 
     @Test
     void getPrecedentiVersioniIndiceAipQueryIsOk() {
-	Long id = -9L;
-	helper.getPrecedentiVersioniIndiceAip(id);
-	assertTrue(true);
+        Long id = -9L;
+        helper.getPrecedentiVersioniIndiceAip(id);
+        assertTrue(true);
     }
 
     @Test
     void leggiXmlVersamentiModelloXsdUnitaDoc_queryIsOk() {
-	for (DecModelloXsdUd.TiModelloXsdUd profiloNormativoUnitaDoc : DecModelloXsdUd.TiModelloXsdUd
-		.values()) {
-	    helper.leggiXmlVersamentiModelloXsdUnitaDoc("tiUsoModelloXsd", profiloNormativoUnitaDoc,
-		    0L);
-	}
-	assertTrue(true);
+        for (DecModelloXsdUd.TiModelloXsdUd profiloNormativoUnitaDoc : DecModelloXsdUd.TiModelloXsdUd
+                .values()) {
+            helper.leggiXmlVersamentiModelloXsdUnitaDoc("tiUsoModelloXsd", profiloNormativoUnitaDoc,
+                    0L);
+        }
+        assertTrue(true);
     }
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return createEnterpriseArchive(ControlliRecIndiceAipTest.class.getSimpleName(),
-		createPaginatorJavaArchive(), createSacerLogJar(),
-		createSacerJavaArchive(
-			Arrays.asList("it.eng.parer.elencoVersamento.utils", "com.fasterxml.uuid",
-				"com.fasterxml.uuid.impl", "it.eng.parer.ws.utils",
-				"it.eng.parer.ws.dto"),
-			ControlliRecIndiceAip.class, ControlliRecIndiceAipTest.class,
-			VolumeHelper.class, ConfigurationHelper.class, ReturnParams.class,
-			DefinitoDaBean.class, ElencoVersamentoHelper.class,
-			UnitaDocumentarieHelper.class, Constants.class, CSVersatore.class,
-			CSChiave.class, ElencoEnums.class, SessioneVersamentoExt.class,
-			it.eng.spagoCore.util.UUIDMdcLogUtil.class,
-			it.eng.spagoCore.ConfigSingleton.class));
+        return createEnterpriseArchive(ControlliRecIndiceAipTest.class.getSimpleName(),
+                createPaginatorJavaArchive(), createSacerLogJar(),
+                createSacerJavaArchive(
+                        Arrays.asList("it.eng.parer.elencoVersamento.utils", "com.fasterxml.uuid",
+                                "com.fasterxml.uuid.impl", "it.eng.parer.ws.utils",
+                                "it.eng.parer.ws.dto"),
+                        ControlliRecIndiceAip.class, ControlliRecIndiceAipTest.class,
+                        VolumeHelper.class, ConfigurationHelper.class, ReturnParams.class,
+                        DefinitoDaBean.class, ElencoVersamentoHelper.class,
+                        UnitaDocumentarieHelper.class, Constants.class, CSVersatore.class,
+                        CSChiave.class, ElencoEnums.class, SessioneVersamentoExt.class,
+                        it.eng.spagoCore.util.UUIDMdcLogUtil.class,
+                        it.eng.spagoCore.ConfigSingleton.class));
     }
 }

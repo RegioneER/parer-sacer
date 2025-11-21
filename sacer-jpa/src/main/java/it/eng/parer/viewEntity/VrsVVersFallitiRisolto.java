@@ -49,85 +49,85 @@ public class VrsVVersFallitiRisolto implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_APERTURA")
     public Date getDtApertura() {
-	return this.dtApertura;
+        return this.dtApertura;
     }
 
     public void setDtApertura(Date dtApertura) {
-	this.dtApertura = dtApertura;
+        this.dtApertura = dtApertura;
     }
 
     @Column(name = "FL_RISOLTO", columnDefinition = "char(1)")
     public String getFlRisolto() {
-	return this.flRisolto;
+        return this.flRisolto;
     }
 
     public void setFlRisolto(String flRisolto) {
-	this.flRisolto = flRisolto;
+        this.flRisolto = flRisolto;
     }
 
     @Column(name = "FL_SESSIONE_ERR_NON_RISOLUB", columnDefinition = "char(1)")
     public String getFlSessioneErrNonRisolub() {
-	return this.flSessioneErrNonRisolub;
+        return this.flSessioneErrNonRisolub;
     }
 
     public void setFlSessioneErrNonRisolub(String flSessioneErrNonRisolub) {
-	this.flSessioneErrNonRisolub = flSessioneErrNonRisolub;
+        this.flSessioneErrNonRisolub = flSessioneErrNonRisolub;
     }
 
     @Column(name = "FL_SESSIONE_ERR_VERIF", columnDefinition = "char(1)")
     public String getFlSessioneErrVerif() {
-	return this.flSessioneErrVerif;
+        return this.flSessioneErrVerif;
     }
 
     public void setFlSessioneErrVerif(String flSessioneErrVerif) {
-	this.flSessioneErrVerif = flSessioneErrVerif;
+        this.flSessioneErrVerif = flSessioneErrVerif;
     }
 
     @Id
     @Column(name = "ID_SESSIONE_VERS")
     public BigDecimal getIdSessioneVers() {
-	return this.idSessioneVers;
+        return this.idSessioneVers;
     }
 
     public void setIdSessioneVers(BigDecimal idSessioneVers) {
-	this.idSessioneVers = idSessioneVers;
+        this.idSessioneVers = idSessioneVers;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
 }

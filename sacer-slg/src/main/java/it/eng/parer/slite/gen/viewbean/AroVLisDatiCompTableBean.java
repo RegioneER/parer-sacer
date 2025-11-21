@@ -38,19 +38,19 @@ public class AroVLisDatiCompTableBean extends AbstractBaseTable<AroVLisDatiCompR
     public static AroVLisDatiCompTableDescriptor TABLE_DESCRIPTOR = new AroVLisDatiCompTableDescriptor();
 
     public AroVLisDatiCompTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisDatiCompRowBean createRow() {
-	return new AroVLisDatiCompRowBean();
+        return new AroVLisDatiCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisDatiCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

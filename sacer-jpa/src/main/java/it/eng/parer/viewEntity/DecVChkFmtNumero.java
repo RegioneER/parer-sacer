@@ -40,39 +40,39 @@ public class DecVChkFmtNumero implements Serializable {
 
     @Column(name = "FL_FMT_NUMERO_OK", columnDefinition = "char(1)")
     public String getFlFmtNumeroOk() {
-	return this.flFmtNumeroOk;
+        return this.flFmtNumeroOk;
     }
 
     public void setFlFmtNumeroOk(String flFmtNumeroOk) {
-	this.flFmtNumeroOk = flFmtNumeroOk;
+        this.flFmtNumeroOk = flFmtNumeroOk;
     }
 
     @Id
     @Column(name = "ID_AA_REGISTRO_UNITA_DOC")
     public BigDecimal getIdAaRegistroUnitaDoc() {
-	return this.idAaRegistroUnitaDoc;
+        return this.idAaRegistroUnitaDoc;
     }
 
     public void setIdAaRegistroUnitaDoc(BigDecimal idAaRegistroUnitaDoc) {
-	this.idAaRegistroUnitaDoc = idAaRegistroUnitaDoc;
+        this.idAaRegistroUnitaDoc = idAaRegistroUnitaDoc;
     }
 
     @Column(name = "ID_REGISTRO_UNITA_DOC")
     public BigDecimal getIdRegistroUnitaDoc() {
-	return this.idRegistroUnitaDoc;
+        return this.idRegistroUnitaDoc;
     }
 
     public void setIdRegistroUnitaDoc(BigDecimal idRegistroUnitaDoc) {
-	this.idRegistroUnitaDoc = idRegistroUnitaDoc;
+        this.idRegistroUnitaDoc = idRegistroUnitaDoc;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
 }

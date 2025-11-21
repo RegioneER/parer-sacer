@@ -32,64 +32,64 @@ public class ActionMap {
     private String father = null;
 
     public String getFather() {
-	return father;
+        return father;
     }
 
     public void setFather(String father) {
-	this.father = father;
+        this.father = father;
     }
 
     public Object getAppo() {
-	return appo;
+        return appo;
     }
 
     public void setAppo(Object appo) {
-	this.appo = appo;
+        this.appo = appo;
     }
 
     public String getAction() {
-	return action;
+        return action;
     }
 
     public void setAction(String action) {
-	this.action = action;
+        this.action = action;
     }
 
     public Object getId() {
-	return id;
+        return id;
     }
 
     public void setId(Object id) {
-	this.id = id;
+        this.id = id;
     }
 
     @Override
     public String toString() {
-	return "ActionMap{" + "Action=" + action + ", id=" + id + '}';
+        return "ActionMap{" + "Action=" + action + ", id=" + id + '}';
     }
 
     @Override
     public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).append(action).append(id).toHashCode();
+        return new HashCodeBuilder(17, 37).append(action).append(id).toHashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final ActionMap other = (ActionMap) obj;
-	if (!Objects.equals(this.action, other.action)) {
-	    return false;
-	}
-	if (!Objects.equals(this.id, other.id)) {
-	    return false;
-	}
-	return true;
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ActionMap other = (ActionMap) obj;
+        if (!Objects.equals(this.action, other.action)) {
+            return false;
+        }
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
 
 }

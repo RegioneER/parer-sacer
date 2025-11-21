@@ -64,228 +64,228 @@ public class TpiVVisDtSched implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SCHED")
     public Date getDtSched() {
-	return this.dtSched;
+        return this.dtSched;
     }
 
     public void setDtSched(Date dtSched) {
-	this.dtSched = dtSched;
+        this.dtSched = dtSched;
     }
 
     @Column(name = "FL_ANOM_ARK_MIGRAZ_PRIM", columnDefinition = "char(1)")
     public String getFlAnomArkMigrazPrim() {
-	return this.flAnomArkMigrazPrim;
+        return this.flAnomArkMigrazPrim;
     }
 
     public void setFlAnomArkMigrazPrim(String flAnomArkMigrazPrim) {
-	this.flAnomArkMigrazPrim = flAnomArkMigrazPrim;
+        this.flAnomArkMigrazPrim = flAnomArkMigrazPrim;
     }
 
     @Column(name = "FL_ANOM_ARK_MIGRAZ_SECOND", columnDefinition = "char(1)")
     public String getFlAnomArkMigrazSecond() {
-	return this.flAnomArkMigrazSecond;
+        return this.flAnomArkMigrazSecond;
     }
 
     public void setFlAnomArkMigrazSecond(String flAnomArkMigrazSecond) {
-	this.flAnomArkMigrazSecond = flAnomArkMigrazSecond;
+        this.flAnomArkMigrazSecond = flAnomArkMigrazSecond;
     }
 
     @Column(name = "FL_ANOM_ARK_VERS_PRIM", columnDefinition = "char(1)")
     public String getFlAnomArkVersPrim() {
-	return this.flAnomArkVersPrim;
+        return this.flAnomArkVersPrim;
     }
 
     public void setFlAnomArkVersPrim(String flAnomArkVersPrim) {
-	this.flAnomArkVersPrim = flAnomArkVersPrim;
+        this.flAnomArkVersPrim = flAnomArkVersPrim;
     }
 
     @Column(name = "FL_ANOM_ARK_VERS_SECOND", columnDefinition = "char(1)")
     public String getFlAnomArkVersSecond() {
-	return this.flAnomArkVersSecond;
+        return this.flAnomArkVersSecond;
     }
 
     public void setFlAnomArkVersSecond(String flAnomArkVersSecond) {
-	this.flAnomArkVersSecond = flAnomArkVersSecond;
+        this.flAnomArkVersSecond = flAnomArkVersSecond;
     }
 
     @Column(name = "FL_ANOM_BACKUP_MIGRAZ_PRIM", columnDefinition = "char(1)")
     public String getFlAnomBackupMigrazPrim() {
-	return this.flAnomBackupMigrazPrim;
+        return this.flAnomBackupMigrazPrim;
     }
 
     public void setFlAnomBackupMigrazPrim(String flAnomBackupMigrazPrim) {
-	this.flAnomBackupMigrazPrim = flAnomBackupMigrazPrim;
+        this.flAnomBackupMigrazPrim = flAnomBackupMigrazPrim;
     }
 
     @Column(name = "FL_ANOM_BACKUP_MIGRAZ_SECOND", columnDefinition = "char(1)")
     public String getFlAnomBackupMigrazSecond() {
-	return this.flAnomBackupMigrazSecond;
+        return this.flAnomBackupMigrazSecond;
     }
 
     public void setFlAnomBackupMigrazSecond(String flAnomBackupMigrazSecond) {
-	this.flAnomBackupMigrazSecond = flAnomBackupMigrazSecond;
+        this.flAnomBackupMigrazSecond = flAnomBackupMigrazSecond;
     }
 
     @Column(name = "FL_ANOM_BACKUP_VERS_PRIM", columnDefinition = "char(1)")
     public String getFlAnomBackupVersPrim() {
-	return this.flAnomBackupVersPrim;
+        return this.flAnomBackupVersPrim;
     }
 
     public void setFlAnomBackupVersPrim(String flAnomBackupVersPrim) {
-	this.flAnomBackupVersPrim = flAnomBackupVersPrim;
+        this.flAnomBackupVersPrim = flAnomBackupVersPrim;
     }
 
     @Column(name = "FL_ANOM_BACKUP_VERS_SECOND", columnDefinition = "char(1)")
     public String getFlAnomBackupVersSecond() {
-	return this.flAnomBackupVersSecond;
+        return this.flAnomBackupVersSecond;
     }
 
     public void setFlAnomBackupVersSecond(String flAnomBackupVersSecond) {
-	this.flAnomBackupVersSecond = flAnomBackupVersSecond;
+        this.flAnomBackupVersSecond = flAnomBackupVersSecond;
     }
 
     @Column(name = "FL_ANOM_COPIA_MIGRAZ_PRIM", columnDefinition = "char(1)")
     public String getFlAnomCopiaMigrazPrim() {
-	return this.flAnomCopiaMigrazPrim;
+        return this.flAnomCopiaMigrazPrim;
     }
 
     public void setFlAnomCopiaMigrazPrim(String flAnomCopiaMigrazPrim) {
-	this.flAnomCopiaMigrazPrim = flAnomCopiaMigrazPrim;
+        this.flAnomCopiaMigrazPrim = flAnomCopiaMigrazPrim;
     }
 
     @Column(name = "FL_ANOM_COPIA_MIGRAZ_SECOND", columnDefinition = "char(1)")
     public String getFlAnomCopiaMigrazSecond() {
-	return this.flAnomCopiaMigrazSecond;
+        return this.flAnomCopiaMigrazSecond;
     }
 
     public void setFlAnomCopiaMigrazSecond(String flAnomCopiaMigrazSecond) {
-	this.flAnomCopiaMigrazSecond = flAnomCopiaMigrazSecond;
+        this.flAnomCopiaMigrazSecond = flAnomCopiaMigrazSecond;
     }
 
     @Column(name = "FL_ANOM_COPIA_VERS_PRIM", columnDefinition = "char(1)")
     public String getFlAnomCopiaVersPrim() {
-	return this.flAnomCopiaVersPrim;
+        return this.flAnomCopiaVersPrim;
     }
 
     public void setFlAnomCopiaVersPrim(String flAnomCopiaVersPrim) {
-	this.flAnomCopiaVersPrim = flAnomCopiaVersPrim;
+        this.flAnomCopiaVersPrim = flAnomCopiaVersPrim;
     }
 
     @Column(name = "FL_ANOM_COPIA_VERS_SECOND", columnDefinition = "char(1)")
     public String getFlAnomCopiaVersSecond() {
-	return this.flAnomCopiaVersSecond;
+        return this.flAnomCopiaVersSecond;
     }
 
     public void setFlAnomCopiaVersSecond(String flAnomCopiaVersSecond) {
-	this.flAnomCopiaVersSecond = flAnomCopiaVersSecond;
+        this.flAnomCopiaVersSecond = flAnomCopiaVersSecond;
     }
 
     @Column(name = "FL_ANOM_MIGRATE_MIGRAZ_PRIM", columnDefinition = "char(1)")
     public String getFlAnomMigrateMigrazPrim() {
-	return this.flAnomMigrateMigrazPrim;
+        return this.flAnomMigrateMigrazPrim;
     }
 
     public void setFlAnomMigrateMigrazPrim(String flAnomMigrateMigrazPrim) {
-	this.flAnomMigrateMigrazPrim = flAnomMigrateMigrazPrim;
+        this.flAnomMigrateMigrazPrim = flAnomMigrateMigrazPrim;
     }
 
     @Column(name = "FL_ANOM_MIGRATE_MIGRAZ_SECOND", columnDefinition = "char(1)")
     public String getFlAnomMigrateMigrazSecond() {
-	return this.flAnomMigrateMigrazSecond;
+        return this.flAnomMigrateMigrazSecond;
     }
 
     public void setFlAnomMigrateMigrazSecond(String flAnomMigrateMigrazSecond) {
-	this.flAnomMigrateMigrazSecond = flAnomMigrateMigrazSecond;
+        this.flAnomMigrateMigrazSecond = flAnomMigrateMigrazSecond;
     }
 
     @Column(name = "FL_ANOM_MIGRATE_VERS_PRIM", columnDefinition = "char(1)")
     public String getFlAnomMigrateVersPrim() {
-	return this.flAnomMigrateVersPrim;
+        return this.flAnomMigrateVersPrim;
     }
 
     public void setFlAnomMigrateVersPrim(String flAnomMigrateVersPrim) {
-	this.flAnomMigrateVersPrim = flAnomMigrateVersPrim;
+        this.flAnomMigrateVersPrim = flAnomMigrateVersPrim;
     }
 
     @Column(name = "FL_ANOM_MIGRATE_VERS_SECOND", columnDefinition = "char(1)")
     public String getFlAnomMigrateVersSecond() {
-	return this.flAnomMigrateVersSecond;
+        return this.flAnomMigrateVersSecond;
     }
 
     public void setFlAnomMigrateVersSecond(String flAnomMigrateVersSecond) {
-	this.flAnomMigrateVersSecond = flAnomMigrateVersSecond;
+        this.flAnomMigrateVersSecond = flAnomMigrateVersSecond;
     }
 
     @Column(name = "FL_ANOM_RI_ARK_MIGRAZ_PRIM", columnDefinition = "char(1)")
     public String getFlAnomRiArkMigrazPrim() {
-	return this.flAnomRiArkMigrazPrim;
+        return this.flAnomRiArkMigrazPrim;
     }
 
     public void setFlAnomRiArkMigrazPrim(String flAnomRiArkMigrazPrim) {
-	this.flAnomRiArkMigrazPrim = flAnomRiArkMigrazPrim;
+        this.flAnomRiArkMigrazPrim = flAnomRiArkMigrazPrim;
     }
 
     @Column(name = "FL_ANOM_RI_ARK_MIGRAZ_SECOND", columnDefinition = "char(1)")
     public String getFlAnomRiArkMigrazSecond() {
-	return this.flAnomRiArkMigrazSecond;
+        return this.flAnomRiArkMigrazSecond;
     }
 
     public void setFlAnomRiArkMigrazSecond(String flAnomRiArkMigrazSecond) {
-	this.flAnomRiArkMigrazSecond = flAnomRiArkMigrazSecond;
+        this.flAnomRiArkMigrazSecond = flAnomRiArkMigrazSecond;
     }
 
     @Column(name = "FL_ANOM_RI_ARK_VERS_PRIM", columnDefinition = "char(1)")
     public String getFlAnomRiArkVersPrim() {
-	return this.flAnomRiArkVersPrim;
+        return this.flAnomRiArkVersPrim;
     }
 
     public void setFlAnomRiArkVersPrim(String flAnomRiArkVersPrim) {
-	this.flAnomRiArkVersPrim = flAnomRiArkVersPrim;
+        this.flAnomRiArkVersPrim = flAnomRiArkVersPrim;
     }
 
     @Column(name = "FL_ANOM_RI_ARK_VERS_SECOND", columnDefinition = "char(1)")
     public String getFlAnomRiArkVersSecond() {
-	return this.flAnomRiArkVersSecond;
+        return this.flAnomRiArkVersSecond;
     }
 
     public void setFlAnomRiArkVersSecond(String flAnomRiArkVersSecond) {
-	this.flAnomRiArkVersSecond = flAnomRiArkVersSecond;
+        this.flAnomRiArkVersSecond = flAnomRiArkVersSecond;
     }
 
     @Column(name = "FL_MIGRAZ_IN_CORSO", columnDefinition = "char(1)")
     public String getFlMigrazInCorso() {
-	return this.flMigrazInCorso;
+        return this.flMigrazInCorso;
     }
 
     public void setFlMigrazInCorso(String flMigrazInCorso) {
-	this.flMigrazInCorso = flMigrazInCorso;
+        this.flMigrazInCorso = flMigrazInCorso;
     }
 
     @Column(name = "FL_PRESENZA_SECONDARIO", columnDefinition = "char(1)")
     public String getFlPresenzaSecondario() {
-	return this.flPresenzaSecondario;
+        return this.flPresenzaSecondario;
     }
 
     public void setFlPresenzaSecondario(String flPresenzaSecondario) {
-	this.flPresenzaSecondario = flPresenzaSecondario;
+        this.flPresenzaSecondario = flPresenzaSecondario;
     }
 
     @Id
     @Column(name = "ID_DT_SCHED")
     public BigDecimal getIdDtSched() {
-	return this.idDtSched;
+        return this.idDtSched;
     }
 
     public void setIdDtSched(BigDecimal idDtSched) {
-	this.idDtSched = idDtSched;
+        this.idDtSched = idDtSched;
     }
 
     @Column(name = "TI_STATO_DT_SCHED")
     public String getTiStatoDtSched() {
-	return this.tiStatoDtSched;
+        return this.tiStatoDtSched;
     }
 
     public void setTiStatoDtSched(String tiStatoDtSched) {
-	this.tiStatoDtSched = tiStatoDtSched;
+        this.tiStatoDtSched = tiStatoDtSched;
     }
 
 }

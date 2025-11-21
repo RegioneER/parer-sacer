@@ -40,22 +40,22 @@ public class StrutCache {
 
     @PostConstruct
     protected void initSingleton() {
-	struts = new HashMap<UUID, OrgStrut>();
+        struts = new HashMap<UUID, OrgStrut>();
     }
 
     public OrgStrut getOrgStrut(UUID key) {
-	/*
-	 * OrgStrut toRemove = struts.get(key); struts.remove(key); return toRemove;
-	 */
-	return struts.get(key);
+        /*
+         * OrgStrut toRemove = struts.get(key); struts.remove(key); return toRemove;
+         */
+        return struts.get(key);
     }
 
     public OrgStrut setOrgStrut(UUID key, OrgStrut strut) {
-	return struts.put(key, strut);
+        return struts.put(key, strut);
     }
 
     public void removeOrgStrut(UUID key) {
-	struts.remove(key);
+        struts.remove(key);
     }
 
 }

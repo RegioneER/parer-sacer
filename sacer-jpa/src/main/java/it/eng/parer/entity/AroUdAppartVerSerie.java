@@ -70,100 +70,100 @@ public class AroUdAppartVerSerie implements Serializable {
     @Id
     @Column(name = "ID_UD_APPART_VER_SERIE")
     @GenericGenerator(name = "SARO_UD_APPART_VER_SERIE_ID_UD_APPART_VER_SERIE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_UD_APPART_VER_SERIE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_UD_APPART_VER_SERIE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_UD_APPART_VER_SERIE_ID_UD_APPART_VER_SERIE_GENERATOR")
     public Long getIdUdAppartVerSerie() {
-	return this.idUdAppartVerSerie;
+        return this.idUdAppartVerSerie;
     }
 
     public void setIdUdAppartVerSerie(Long idUdAppartVerSerie) {
-	this.idUdAppartVerSerie = idUdAppartVerSerie;
+        this.idUdAppartVerSerie = idUdAppartVerSerie;
     }
 
     @Column(name = "CD_UD_SERIE")
     public String getCdUdSerie() {
-	return this.cdUdSerie;
+        return this.cdUdSerie;
     }
 
     public void setCdUdSerie(String cdUdSerie) {
-	this.cdUdSerie = cdUdSerie;
+        this.cdUdSerie = cdUdSerie;
     }
 
     @Column(name = "DS_KEY_ORD_UD_SERIE")
     public String getDsKeyOrdUdSerie() {
-	return this.dsKeyOrdUdSerie;
+        return this.dsKeyOrdUdSerie;
     }
 
     public void setDsKeyOrdUdSerie(String dsKeyOrdUdSerie) {
-	this.dsKeyOrdUdSerie = dsKeyOrdUdSerie;
+        this.dsKeyOrdUdSerie = dsKeyOrdUdSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_UD_SERIE")
     public Date getDtUdSerie() {
-	return this.dtUdSerie;
+        return this.dtUdSerie;
     }
 
     public void setDtUdSerie(Date dtUdSerie) {
-	this.dtUdSerie = dtUdSerie;
+        this.dtUdSerie = dtUdSerie;
     }
 
     @Column(name = "ID_VER_INDICE_AIP_UD")
     public BigDecimal getIdVerIndiceAipUd() {
-	return this.idVerIndiceAipUd;
+        return this.idVerIndiceAipUd;
     }
 
     public void setIdVerIndiceAipUd(BigDecimal idVerIndiceAipUd) {
-	this.idVerIndiceAipUd = idVerIndiceAipUd;
+        this.idVerIndiceAipUd = idVerIndiceAipUd;
     }
 
     @Column(name = "INFO_UD_SERIE")
     public String getInfoUdSerie() {
-	return this.infoUdSerie;
+        return this.infoUdSerie;
     }
 
     public void setInfoUdSerie(String infoUdSerie) {
-	this.infoUdSerie = infoUdSerie;
+        this.infoUdSerie = infoUdSerie;
     }
 
     @Column(name = "PG_UD_SERIE")
     public BigDecimal getPgUdSerie() {
-	return this.pgUdSerie;
+        return this.pgUdSerie;
     }
 
     public void setPgUdSerie(BigDecimal pgUdSerie) {
-	this.pgUdSerie = pgUdSerie;
+        this.pgUdSerie = pgUdSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNITA_DOC")
     public AroUnitaDoc getAroUnitaDoc() {
-	return this.aroUnitaDoc;
+        return this.aroUnitaDoc;
     }
 
     public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
-	this.aroUnitaDoc = aroUnitaDoc;
+        this.aroUnitaDoc = aroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CONTENUTO_VER_SERIE")
     public SerContenutoVerSerie getSerContenutoVerSerie() {
-	return this.serContenutoVerSerie;
+        return this.serContenutoVerSerie;
     }
 
     public void setSerContenutoVerSerie(SerContenutoVerSerie serContenutoVerSerie) {
-	this.serContenutoVerSerie = serContenutoVerSerie;
+        this.serContenutoVerSerie = serContenutoVerSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VOL_VER_SERIE")
     public SerVolVerSerie getSerVolVerSerie() {
-	return this.serVolVerSerie;
+        return this.serVolVerSerie;
     }
 
     public void setSerVolVerSerie(SerVolVerSerie serVolVerSerie) {
-	this.serVolVerSerie = serVolVerSerie;
+        this.serVolVerSerie = serVolVerSerie;
     }
 
 }

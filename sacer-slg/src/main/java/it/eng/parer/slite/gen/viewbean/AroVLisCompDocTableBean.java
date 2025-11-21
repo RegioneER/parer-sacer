@@ -37,19 +37,19 @@ public class AroVLisCompDocTableBean extends AbstractBaseTable<AroVLisCompDocRow
     public static AroVLisCompDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisCompDocTableDescriptor();
 
     public AroVLisCompDocTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisCompDocRowBean createRow() {
-	return new AroVLisCompDocRowBean();
+        return new AroVLisCompDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisCompDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

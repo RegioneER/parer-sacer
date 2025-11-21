@@ -33,19 +33,19 @@ public class VrsFileSessioneKoTableBean extends AbstractBaseTable<VrsFileSession
     public static VrsFileSessioneKoTableDescriptor TABLE_DESCRIPTOR = new VrsFileSessioneKoTableDescriptor();
 
     public VrsFileSessioneKoTableBean() {
-	super();
+        super();
     }
 
     protected VrsFileSessioneKoRowBean createRow() {
-	return new VrsFileSessioneKoRowBean();
+        return new VrsFileSessioneKoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsFileSessioneKoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

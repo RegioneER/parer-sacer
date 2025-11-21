@@ -26,41 +26,41 @@ import it.eng.parer.web.helper.HelperTest;
 public class VerificaCompTipoFascHelperTest extends HelperTest<VerificaCompTipoFascHelper> {
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest
-		.createEnterpriseArchive(VerificaCompTipoFascHelperTest.class.getSimpleName(),
-			HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-			HelperTest.createSacerJavaArchive(Arrays.asList(""),
-				VerificaCompTipoFascHelperTest.class,
-				VerificaCompTipoFascHelper.class));
+        return HelperTest
+                .createEnterpriseArchive(VerificaCompTipoFascHelperTest.class.getSimpleName(),
+                        HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                        HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                                VerificaCompTipoFascHelperTest.class,
+                                VerificaCompTipoFascHelper.class));
     }
 
     @Test
     void getAaTipoFascicoloDaElab_queryIsOk() {
-	helper.getAaTipoFascicoloDaElab();
-	assertTrue(true);
+        helper.getAaTipoFascicoloDaElab();
+        assertTrue(true);
     }
 
     @Test
     void getListaFasFascicoloDaVerificare_queryIsOk() {
-	long idTipoFascicolo = aLong();
-	long idStrut = aLong();
-	Long anno = aLong();
-	helper.getListaFasFascicoloDaVerificare(idTipoFascicolo, idStrut, anno);
-	assertTrue(true);
+        long idTipoFascicolo = aLong();
+        long idStrut = aLong();
+        Long anno = aLong();
+        helper.getListaFasFascicoloDaVerificare(idTipoFascicolo, idStrut, anno);
+        assertTrue(true);
     }
 
     @Test
     void sbloccaAaTipoFascicolo_queryIsOk() {
-	long idAaTipoFasc = aLong();
-	helper.sbloccaAaTipoFascicolo(idAaTipoFasc);
-	assertTrue(true);
+        long idAaTipoFasc = aLong();
+        helper.sbloccaAaTipoFascicolo(idAaTipoFasc);
+        assertTrue(true);
     }
 
     @Test
     void pulisciErroriRegAnnoNewTrans_queryIsOk() {
-	long idAaRegistroUnitaDoc = aLong();
-	long anno = aLong();
-	helper.pulisciErroriRegAnnoNewTrans(idAaRegistroUnitaDoc, anno);
-	assertTrue(true);
+        long idAaRegistroUnitaDoc = aLong();
+        long anno = aLong();
+        helper.pulisciErroriRegAnnoNewTrans(idAaRegistroUnitaDoc, anno);
+        assertTrue(true);
     }
 }

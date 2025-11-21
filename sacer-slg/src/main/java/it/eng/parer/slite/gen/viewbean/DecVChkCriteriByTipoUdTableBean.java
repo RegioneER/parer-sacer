@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecVChkCriteriByTipoUdTableBean
-	extends AbstractBaseTable<DecVChkCriteriByTipoUdRowBean> {
+        extends AbstractBaseTable<DecVChkCriteriByTipoUdRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class DecVChkCriteriByTipoUdTableBean
     public static DecVChkCriteriByTipoUdTableDescriptor TABLE_DESCRIPTOR = new DecVChkCriteriByTipoUdTableDescriptor();
 
     public DecVChkCriteriByTipoUdTableBean() {
-	super();
+        super();
     }
 
     protected DecVChkCriteriByTipoUdRowBean createRow() {
-	return new DecVChkCriteriByTipoUdRowBean();
+        return new DecVChkCriteriByTipoUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVChkCriteriByTipoUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

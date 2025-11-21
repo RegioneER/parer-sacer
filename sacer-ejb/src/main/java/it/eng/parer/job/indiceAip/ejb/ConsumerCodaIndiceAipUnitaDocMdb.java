@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
  * @author Iacolucci_M
  */
 @MessageDriven(name = "ConsumerCodaIndiceAipUnitaDocMdb", activationConfig = {
-	@ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
-	@ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
-	@ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/queue/IndiceAipUnitaDocQueue"),
-	// MEV#30195
-	@ActivationConfigProperty(propertyName = "transactionTimeout", propertyValue = "7200")
-	// end MEV#30195
+        @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = "jms/queue/IndiceAipUnitaDocQueue"),
+        // MEV#30195
+        @ActivationConfigProperty(propertyName = "transactionTimeout", propertyValue = "7200")
+        // end MEV#30195
 })
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @TransactionAttribute(TransactionAttributeType.REQUIRED)
@@ -59,26 +59,26 @@ public class ConsumerCodaIndiceAipUnitaDocMdb implements MessageListener {
 
     @Override
     public void onMessage(Message message) {
-	// throw new EJBException("ECCEZIONE FORZATA");
-	try {
-	    log.debug("Inizio lavorazione messaggio");
-	    TextMessage textMessage = (TextMessage) message;
-	    long idIndiceAipDaElab = Long.parseLong(textMessage.getText());
-	    try {
-		elaborazioneRigaIndiceAipDaElab.gestisciIndiceAipDaElab(idIndiceAipDaElab);
-	    } catch (Exception ex) {
-		throw new EJBException(
-			String.format("%s: errore nella gestione dell'indice AIP [%s]",
-				DESC_CONSUMER, idIndiceAipDaElab),
-			ex);
-	    }
-	    log.debug("Fine lavorazione messaggio");
-	} catch (JMSException ex) {
-	    log.error("Errore nel consumer: JMSException " + ExceptionUtils.getRootCauseMessage(ex),
-		    ex);
-	    mdc.setRollbackOnly();
-	    // throw new EJBException(ex);
-	}
+        // throw new EJBException("ECCEZIONE FORZATA");
+        try {
+            log.debug("Inizio lavorazione messaggio");
+            TextMessage textMessage = (TextMessage) message;
+            long idIndiceAipDaElab = Long.parseLong(textMessage.getText());
+            try {
+                elaborazioneRigaIndiceAipDaElab.gestisciIndiceAipDaElab(idIndiceAipDaElab);
+            } catch (Exception ex) {
+                throw new EJBException(
+                        String.format("%s: errore nella gestione dell'indice AIP [%s]",
+                                DESC_CONSUMER, idIndiceAipDaElab),
+                        ex);
+            }
+            log.debug("Fine lavorazione messaggio");
+        } catch (JMSException ex) {
+            log.error("Errore nel consumer: JMSException " + ExceptionUtils.getRootCauseMessage(ex),
+                    ex);
+            mdc.setRollbackOnly();
+            // throw new EJBException(ex);
+        }
 
     }
 

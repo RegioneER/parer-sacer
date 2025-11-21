@@ -25,52 +25,52 @@ public class MonVChkDocEnteId implements Serializable {
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 23 * hash + Objects.hashCode(this.idEnte);
-	hash = 23 * hash + Objects.hashCode(this.idUserIam);
-	return hash;
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.idEnte);
+        hash = 23 * hash + Objects.hashCode(this.idUserIam);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVChkDocEnteId other = (MonVChkDocEnteId) obj;
-	if (!Objects.equals(this.idEnte, other.idEnte)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idUserIam, other.idUserIam)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVChkDocEnteId other = (MonVChkDocEnteId) obj;
+        if (!Objects.equals(this.idEnte, other.idEnte)) {
+            return false;
+        }
+        if (!Objects.equals(this.idUserIam, other.idUserIam)) {
+            return false;
+        }
+        return true;
     }
 
     private BigDecimal idEnte;
 
     @Column(name = "ID_ENTE")
     public BigDecimal getIdEnte() {
-	return idEnte;
+        return idEnte;
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	this.idEnte = idEnte;
+        this.idEnte = idEnte;
     }
 
     private BigDecimal idUserIam;
 
     @Column(name = "ID_USER_IAM")
     public BigDecimal getIdUserIam() {
-	return idUserIam;
+        return idUserIam;
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	this.idUserIam = idUserIam;
+        this.idUserIam = idUserIam;
     }
 }

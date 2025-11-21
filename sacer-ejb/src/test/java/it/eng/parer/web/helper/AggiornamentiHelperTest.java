@@ -41,35 +41,35 @@ public class AggiornamentiHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(AggiornamentiHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), AggiornamentiHelperTest.class,
-			AggiornamentiHelper.class));
+        return HelperTest.createEnterpriseArchive(AggiornamentiHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), AggiornamentiHelperTest.class,
+                        AggiornamentiHelper.class));
     }
 
     @Test
     void getAroUpdUnitaDocRowBean_isValidJpql() throws Exception {
-	BigDecimal idUpdUnitaDoc = aBigDecimal();
-	BigDecimal idStrut = aBigDecimal();
-	AroUpdUnitaDocRowBean aroUpdUnitaDocRowBean = helper.getAroUpdUnitaDocRowBean(idUpdUnitaDoc,
-		idStrut);
-	assertNotNull(aroUpdUnitaDocRowBean);
+        BigDecimal idUpdUnitaDoc = aBigDecimal();
+        BigDecimal idStrut = aBigDecimal();
+        AroUpdUnitaDocRowBean aroUpdUnitaDocRowBean = helper.getAroUpdUnitaDocRowBean(idUpdUnitaDoc,
+                idStrut);
+        assertNotNull(aroUpdUnitaDocRowBean);
     }
 
     @Test
     void testGetElvVLisUpdUdViewBean_isValidJpql() throws Exception {
-	System.out.println("getElvVLisUpdUdViewBean");
-	BigDecimal idElencoVers = aBigDecimal();
-	String registro = aString();
-	BigDecimal anno = aBigDecimal();
-	String codice = aString();
-	BigDecimal annpRangeDa = aBigDecimal();
-	BigDecimal annoRangeA = aBigDecimal();
-	String codiceRangeDa = aString();
-	String codiceRangeA = aString();
-	ElvVLisUpdUdTableBean elvVLisUpdUdViewBean = helper.getElvVLisUpdUdViewBean(idElencoVers,
-		registro, anno, codice, annpRangeDa, annoRangeA, codiceRangeDa, codiceRangeA);
-	assertNotNull(elvVLisUpdUdViewBean);
+        System.out.println("getElvVLisUpdUdViewBean");
+        BigDecimal idElencoVers = aBigDecimal();
+        String registro = aString();
+        BigDecimal anno = aBigDecimal();
+        String codice = aString();
+        BigDecimal annpRangeDa = aBigDecimal();
+        BigDecimal annoRangeA = aBigDecimal();
+        String codiceRangeDa = aString();
+        String codiceRangeA = aString();
+        ElvVLisUpdUdTableBean elvVLisUpdUdViewBean = helper.getElvVLisUpdUdViewBean(idElencoVers,
+                registro, anno, codice, annpRangeDa, annoRangeA, codiceRangeDa, codiceRangeA);
+        assertNotNull(elvVLisUpdUdViewBean);
     }
 
 }

@@ -36,90 +36,90 @@ public class AroVDocRangeDtRowBean extends BaseRow implements JEEBaseRowInterfac
     public static AroVDocRangeDtTableDescriptor TABLE_DESCRIPTOR = new AroVDocRangeDtTableDescriptor();
 
     public AroVDocRangeDtRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getTiDoc() {
-	return getString("ti_doc");
+        return getString("ti_doc");
     }
 
     public void setTiDoc(String tiDoc) {
-	setObject("ti_doc", tiDoc);
+        setObject("ti_doc", tiDoc);
     }
 
     public String getTiStatoDoc() {
-	return getString("ti_stato_doc");
+        return getString("ti_stato_doc");
     }
 
     public void setTiStatoDoc(String tiStatoDoc) {
-	setObject("ti_stato_doc", tiStatoDoc);
+        setObject("ti_stato_doc", tiStatoDoc);
     }
 
     public String getTiDtCreazione() {
-	return getString("ti_dt_creazione");
+        return getString("ti_dt_creazione");
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	setObject("ti_dt_creazione", tiDtCreazione);
+        setObject("ti_dt_creazione", tiDtCreazione);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVDocRangeDt entity = (AroVDocRangeDt) obj;
-	if (entity.getAroVDocRangeDtId() != null) {
-	    this.setIdStrut(entity.getAroVDocRangeDtId().getIdStrut());
-	    this.setTiDoc(entity.getAroVDocRangeDtId().getTiDoc());
-	    this.setTiStatoDoc(entity.getAroVDocRangeDtId().getTiStatoDoc());
-	    this.setTiDtCreazione(entity.getAroVDocRangeDtId().getTiDtCreazione());
-	}
+        AroVDocRangeDt entity = (AroVDocRangeDt) obj;
+        if (entity.getAroVDocRangeDtId() != null) {
+            this.setIdStrut(entity.getAroVDocRangeDtId().getIdStrut());
+            this.setTiDoc(entity.getAroVDocRangeDtId().getTiDoc());
+            this.setTiStatoDoc(entity.getAroVDocRangeDtId().getTiStatoDoc());
+            this.setTiDtCreazione(entity.getAroVDocRangeDtId().getTiDtCreazione());
+        }
     }
 
     @Override
     public AroVDocRangeDt rowBeanToEntity() {
-	AroVDocRangeDt entity = new AroVDocRangeDt();
-	entity.setAroVDocRangeDtId(new AroVDocRangeDtId());
-	entity.getAroVDocRangeDtId().setIdStrut(this.getIdStrut());
-	entity.getAroVDocRangeDtId().setTiDoc(this.getTiDoc());
-	entity.getAroVDocRangeDtId().setTiStatoDoc(this.getTiStatoDoc());
-	entity.getAroVDocRangeDtId().setTiDtCreazione(this.getTiDtCreazione());
-	return entity;
+        AroVDocRangeDt entity = new AroVDocRangeDt();
+        entity.setAroVDocRangeDtId(new AroVDocRangeDtId());
+        entity.getAroVDocRangeDtId().setIdStrut(this.getIdStrut());
+        entity.getAroVDocRangeDtId().setTiDoc(this.getTiDoc());
+        entity.getAroVDocRangeDtId().setTiStatoDoc(this.getTiStatoDoc());
+        entity.getAroVDocRangeDtId().setTiDtCreazione(this.getTiDtCreazione());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

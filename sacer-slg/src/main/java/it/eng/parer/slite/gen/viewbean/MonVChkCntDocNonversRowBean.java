@@ -37,209 +37,209 @@ public class MonVChkCntDocNonversRowBean extends BaseRow implements JEEBaseRowIn
     public static MonVChkCntDocNonversTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntDocNonversTableDescriptor();
 
     public MonVChkCntDocNonversRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public String getFlDocNonvers() {
-	return getString("fl_doc_nonvers");
+        return getString("fl_doc_nonvers");
     }
 
     public void setFlDocNonvers(String flDocNonvers) {
-	setObject("fl_doc_nonvers", flDocNonvers);
+        setObject("fl_doc_nonvers", flDocNonvers);
     }
 
     public String getFlDocNonversNoverif() {
-	return getString("fl_doc_nonvers_noverif");
+        return getString("fl_doc_nonvers_noverif");
     }
 
     public void setFlDocNonversNoverif(String flDocNonversNoverif) {
-	setObject("fl_doc_nonvers_noverif", flDocNonversNoverif);
+        setObject("fl_doc_nonvers_noverif", flDocNonversNoverif);
     }
 
     public String getFlDocNonversVerif() {
-	return getString("fl_doc_nonvers_verif");
+        return getString("fl_doc_nonvers_verif");
     }
 
     public void setFlDocNonversVerif(String flDocNonversVerif) {
-	setObject("fl_doc_nonvers_verif", flDocNonversVerif);
+        setObject("fl_doc_nonvers_verif", flDocNonversVerif);
     }
 
     public String getFlDocNonversNorisolub() {
-	return getString("fl_doc_nonvers_norisolub");
+        return getString("fl_doc_nonvers_norisolub");
     }
 
     public void setFlDocNonversNorisolub(String flDocNonversNorisolub) {
-	setObject("fl_doc_nonvers_norisolub", flDocNonversNorisolub);
+        setObject("fl_doc_nonvers_norisolub", flDocNonversNorisolub);
     }
 
     public BigDecimal getNiDocNonvers() {
-	return getBigDecimal("ni_doc_nonvers");
+        return getBigDecimal("ni_doc_nonvers");
     }
 
     public void setNiDocNonvers(BigDecimal niDocNonvers) {
-	setObject("ni_doc_nonvers", niDocNonvers);
+        setObject("ni_doc_nonvers", niDocNonvers);
     }
 
     public BigDecimal getNiDocNonversNoverif() {
-	return getBigDecimal("ni_doc_nonvers_noverif");
+        return getBigDecimal("ni_doc_nonvers_noverif");
     }
 
     public void setNiDocNonversNoverif(BigDecimal niDocNonversNoverif) {
-	setObject("ni_doc_nonvers_noverif", niDocNonversNoverif);
+        setObject("ni_doc_nonvers_noverif", niDocNonversNoverif);
     }
 
     public BigDecimal getNiDocNonversVerif() {
-	return getBigDecimal("ni_doc_nonvers_verif");
+        return getBigDecimal("ni_doc_nonvers_verif");
     }
 
     public void setNiDocNonversVerif(BigDecimal niDocNonversVerif) {
-	setObject("ni_doc_nonvers_verif", niDocNonversVerif);
+        setObject("ni_doc_nonvers_verif", niDocNonversVerif);
     }
 
     public BigDecimal getNiDocNonversNorisolub() {
-	return getBigDecimal("ni_doc_nonvers_norisolub");
+        return getBigDecimal("ni_doc_nonvers_norisolub");
     }
 
     public void setNiDocNonversNorisolub(BigDecimal niDocNonversNorisolub) {
-	setObject("ni_doc_nonvers_norisolub", niDocNonversNorisolub);
+        setObject("ni_doc_nonvers_norisolub", niDocNonversNorisolub);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	MonVChkDocNonvers entity;
-	if (obj instanceof MonVChkDocNonversStrut) {
-	    entity = new MonVChkDocNonvers((MonVChkDocNonversStrut) obj);
-	} else if (obj instanceof MonVChkDocNonversEnte) {
-	    entity = new MonVChkDocNonvers((MonVChkDocNonversEnte) obj);
-	} else if (obj instanceof MonVChkDocNonversAmb) {
-	    entity = new MonVChkDocNonvers((MonVChkDocNonversAmb) obj);
-	} else {
-	    throw new IllegalArgumentException("Errore inaspettato nel casting dell'entity");
-	}
-	this.setFlDocNonversNoverif(entity.getFlDocNonversNoverif());
-	this.setFlDocNonversVerif(entity.getFlDocNonversVerif());
-	this.setFlDocNonversNorisolub(entity.getFlDocNonversNorisolub());
-	this.setFlDocNonvers(entity.getFlDocNonvers());
+        MonVChkDocNonvers entity;
+        if (obj instanceof MonVChkDocNonversStrut) {
+            entity = new MonVChkDocNonvers((MonVChkDocNonversStrut) obj);
+        } else if (obj instanceof MonVChkDocNonversEnte) {
+            entity = new MonVChkDocNonvers((MonVChkDocNonversEnte) obj);
+        } else if (obj instanceof MonVChkDocNonversAmb) {
+            entity = new MonVChkDocNonvers((MonVChkDocNonversAmb) obj);
+        } else {
+            throw new IllegalArgumentException("Errore inaspettato nel casting dell'entity");
+        }
+        this.setFlDocNonversNoverif(entity.getFlDocNonversNoverif());
+        this.setFlDocNonversVerif(entity.getFlDocNonversVerif());
+        this.setFlDocNonversNorisolub(entity.getFlDocNonversNorisolub());
+        this.setFlDocNonvers(entity.getFlDocNonvers());
     }
 
     @Override
     public MonVChkDocNonvers rowBeanToEntity() {
-	MonVChkDocNonvers entity = new MonVChkDocNonvers();
-	entity.setFlDocNonvers(this.getFlDocNonvers());
-	entity.setFlDocNonversNoverif(this.getFlDocNonversNoverif());
-	entity.setFlDocNonversVerif(this.getFlDocNonversVerif());
-	entity.setFlDocNonversNorisolub(this.getFlDocNonversNorisolub());
-	return entity;
+        MonVChkDocNonvers entity = new MonVChkDocNonvers();
+        entity.setFlDocNonvers(this.getFlDocNonvers());
+        entity.setFlDocNonversNoverif(this.getFlDocNonversNoverif());
+        entity.setFlDocNonversVerif(this.getFlDocNonversVerif());
+        entity.setFlDocNonversNorisolub(this.getFlDocNonversNorisolub());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
     public void resetCounters() {
-	this.setNiDocNonvers(BigDecimal.ZERO);
-	this.setNiDocNonversNorisolub(BigDecimal.ZERO);
-	this.setNiDocNonversNoverif(BigDecimal.ZERO);
-	this.setNiDocNonversVerif(BigDecimal.ZERO);
+        this.setNiDocNonvers(BigDecimal.ZERO);
+        this.setNiDocNonversNorisolub(BigDecimal.ZERO);
+        this.setNiDocNonversNoverif(BigDecimal.ZERO);
+        this.setNiDocNonversVerif(BigDecimal.ZERO);
     }
 
     public class MonVChkDocNonvers {
 
-	private String flDocNonversNorisolub;
-	private String flDocNonversNoverif;
-	private String flDocNonversVerif;
-	private String flDocNonvers;
+        private String flDocNonversNorisolub;
+        private String flDocNonversNoverif;
+        private String flDocNonversVerif;
+        private String flDocNonvers;
 
-	public MonVChkDocNonvers() {
+        public MonVChkDocNonvers() {
 
-	}
+        }
 
-	public MonVChkDocNonvers(MonVChkDocNonversStrut entity) {
-	    this.flDocNonversVerif = entity.getFlDocNonversVerif();
-	    this.flDocNonversNoverif = entity.getFlDocNonversNoverif();
-	    this.flDocNonversNorisolub = entity.getFlDocNonversNorisolub();
-	    boolean docNonVers = entity.getFlDocNonversVerif().equals("1")
-		    || entity.getFlDocNonversNoverif().equals("1")
-		    || entity.getFlDocNonversNorisolub().equals("1");
-	    this.flDocNonvers = (docNonVers ? "1" : "0");
-	}
+        public MonVChkDocNonvers(MonVChkDocNonversStrut entity) {
+            this.flDocNonversVerif = entity.getFlDocNonversVerif();
+            this.flDocNonversNoverif = entity.getFlDocNonversNoverif();
+            this.flDocNonversNorisolub = entity.getFlDocNonversNorisolub();
+            boolean docNonVers = entity.getFlDocNonversVerif().equals("1")
+                    || entity.getFlDocNonversNoverif().equals("1")
+                    || entity.getFlDocNonversNorisolub().equals("1");
+            this.flDocNonvers = (docNonVers ? "1" : "0");
+        }
 
-	public MonVChkDocNonvers(MonVChkDocNonversEnte entity) {
-	    this.flDocNonversVerif = entity.getFlDocNonversVerif();
-	    this.flDocNonversNoverif = entity.getFlDocNonversNoverif();
-	    this.flDocNonversNorisolub = entity.getFlDocNonversNorisolub();
-	    boolean docNonVers = entity.getFlDocNonversVerif().equals("1")
-		    || entity.getFlDocNonversNoverif().equals("1")
-		    || entity.getFlDocNonversNorisolub().equals("1");
-	    this.flDocNonvers = (docNonVers ? "1" : "0");
-	}
+        public MonVChkDocNonvers(MonVChkDocNonversEnte entity) {
+            this.flDocNonversVerif = entity.getFlDocNonversVerif();
+            this.flDocNonversNoverif = entity.getFlDocNonversNoverif();
+            this.flDocNonversNorisolub = entity.getFlDocNonversNorisolub();
+            boolean docNonVers = entity.getFlDocNonversVerif().equals("1")
+                    || entity.getFlDocNonversNoverif().equals("1")
+                    || entity.getFlDocNonversNorisolub().equals("1");
+            this.flDocNonvers = (docNonVers ? "1" : "0");
+        }
 
-	public MonVChkDocNonvers(MonVChkDocNonversAmb entity) {
-	    this.flDocNonversVerif = entity.getFlDocNonversVerif();
-	    this.flDocNonversNoverif = entity.getFlDocNonversNoverif();
-	    this.flDocNonversNorisolub = entity.getFlDocNonversNorisolub();
-	    boolean docNonVers = entity.getFlDocNonversVerif().equals("1")
-		    || entity.getFlDocNonversNoverif().equals("1")
-		    || entity.getFlDocNonversNorisolub().equals("1");
-	    this.flDocNonvers = (docNonVers ? "1" : "0");
-	}
+        public MonVChkDocNonvers(MonVChkDocNonversAmb entity) {
+            this.flDocNonversVerif = entity.getFlDocNonversVerif();
+            this.flDocNonversNoverif = entity.getFlDocNonversNoverif();
+            this.flDocNonversNorisolub = entity.getFlDocNonversNorisolub();
+            boolean docNonVers = entity.getFlDocNonversVerif().equals("1")
+                    || entity.getFlDocNonversNoverif().equals("1")
+                    || entity.getFlDocNonversNorisolub().equals("1");
+            this.flDocNonvers = (docNonVers ? "1" : "0");
+        }
 
-	public String getFlDocNonversNorisolub() {
-	    return flDocNonversNorisolub;
-	}
+        public String getFlDocNonversNorisolub() {
+            return flDocNonversNorisolub;
+        }
 
-	public void setFlDocNonversNorisolub(String flDocNonversNorisolub) {
-	    this.flDocNonversNorisolub = flDocNonversNorisolub;
-	}
+        public void setFlDocNonversNorisolub(String flDocNonversNorisolub) {
+            this.flDocNonversNorisolub = flDocNonversNorisolub;
+        }
 
-	public String getFlDocNonversNoverif() {
-	    return flDocNonversNoverif;
-	}
+        public String getFlDocNonversNoverif() {
+            return flDocNonversNoverif;
+        }
 
-	public void setFlDocNonversNoverif(String flDocNonversNoverif) {
-	    this.flDocNonversNoverif = flDocNonversNoverif;
-	}
+        public void setFlDocNonversNoverif(String flDocNonversNoverif) {
+            this.flDocNonversNoverif = flDocNonversNoverif;
+        }
 
-	public String getFlDocNonversVerif() {
-	    return flDocNonversVerif;
-	}
+        public String getFlDocNonversVerif() {
+            return flDocNonversVerif;
+        }
 
-	public void setFlDocNonversVerif(String flDocNonversVerif) {
-	    this.flDocNonversVerif = flDocNonversVerif;
-	}
+        public void setFlDocNonversVerif(String flDocNonversVerif) {
+            this.flDocNonversVerif = flDocNonversVerif;
+        }
 
-	public String getFlDocNonvers() {
-	    return flDocNonvers;
-	}
+        public String getFlDocNonvers() {
+            return flDocNonvers;
+        }
 
-	public void setFlDocNonvers(String flDocNonvers) {
-	    this.flDocNonvers = flDocNonvers;
-	}
+        public void setFlDocNonvers(String flDocNonvers) {
+            this.flDocNonvers = flDocNonvers;
+        }
 
     }
 }

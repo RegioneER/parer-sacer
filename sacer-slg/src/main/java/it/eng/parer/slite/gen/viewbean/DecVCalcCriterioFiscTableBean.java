@@ -37,19 +37,19 @@ public class DecVCalcCriterioFiscTableBean extends AbstractBaseTable<DecVCalcCri
     public static DecVCalcCriterioFiscTableDescriptor TABLE_DESCRIPTOR = new DecVCalcCriterioFiscTableDescriptor();
 
     public DecVCalcCriterioFiscTableBean() {
-	super();
+        super();
     }
 
     protected DecVCalcCriterioFiscRowBean createRow() {
-	return new DecVCalcCriterioFiscRowBean();
+        return new DecVCalcCriterioFiscRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVCalcCriterioFiscRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

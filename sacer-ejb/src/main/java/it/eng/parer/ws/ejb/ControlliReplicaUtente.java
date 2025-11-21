@@ -53,21 +53,21 @@ public class ControlliReplicaUtente {
      *
      */
     public RispostaControlli verificaEsistenzaUtente(long idUserIam) {
-	RispostaControlli rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    IamUser user = entityManager.find(IamUser.class, idUserIam);
-	    if (user != null) {
-		rispostaControlli.setrBoolean(true);
-	    }
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            IamUser user = entityManager.find(IamUser.class, idUserIam);
+            if (user != null) {
+                rispostaControlli.setrBoolean(true);
+            }
 
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli
-		    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
-	    log.error("Eccezione nella lettura della tabella degli utenti ", e);
-	}
-	return rispostaControlli;
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli
+                    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
+            log.error("Eccezione nella lettura della tabella degli utenti ", e);
+        }
+        return rispostaControlli;
     }
 
     /**
@@ -80,24 +80,24 @@ public class ControlliReplicaUtente {
      */
     @SuppressWarnings("unchecked")
     public RispostaControlli verificaEsistenzaUtenteAttivo(long idUserIam) {
-	RispostaControlli rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    Query query = entityManager.createQuery(
-		    "SELECT u FROM IamUser u WHERE u.idUserIam = :idUserIam AND u.flAttivo = '1' ");
-	    query.setParameter("idUserIam", idUserIam);
-	    List<IamUser> userList = query.getResultList();
-	    if (userList != null && !userList.isEmpty()) {
-		rispostaControlli.setrBoolean(true);
-	    }
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            Query query = entityManager.createQuery(
+                    "SELECT u FROM IamUser u WHERE u.idUserIam = :idUserIam AND u.flAttivo = '1' ");
+            query.setParameter("idUserIam", idUserIam);
+            List<IamUser> userList = query.getResultList();
+            if (userList != null && !userList.isEmpty()) {
+                rispostaControlli.setrBoolean(true);
+            }
 
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli
-		    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
-	    log.error("Eccezione nella lettura della tabella degli utenti ", e);
-	}
-	return rispostaControlli;
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli
+                    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
+            log.error("Eccezione nella lettura della tabella degli utenti ", e);
+        }
+        return rispostaControlli;
     }
 
     /**
@@ -110,24 +110,24 @@ public class ControlliReplicaUtente {
      */
     @SuppressWarnings("unchecked")
     public RispostaControlli verificaEsistenzaNmUserid(String nmUserid) {
-	RispostaControlli rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    if (nmUserid != null) {
-		Query query = entityManager.createQuery(
-			"SELECT u FROM IamUser u WHERE u.nmUserid = :nmUserid AND u.flAttivo = '1'");
-		query.setParameter("nmUserid", nmUserid);
-		List<IamUser> userList = query.getResultList();
-		if (userList != null && !userList.isEmpty()) {
-		    rispostaControlli.setrBoolean(true);
-		}
-	    }
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli
-		    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
-	    log.error("Eccezione nella lettura della tabella degli utenti ", e);
-	}
-	return rispostaControlli;
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            if (nmUserid != null) {
+                Query query = entityManager.createQuery(
+                        "SELECT u FROM IamUser u WHERE u.nmUserid = :nmUserid AND u.flAttivo = '1'");
+                query.setParameter("nmUserid", nmUserid);
+                List<IamUser> userList = query.getResultList();
+                if (userList != null && !userList.isEmpty()) {
+                    rispostaControlli.setrBoolean(true);
+                }
+            }
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli
+                    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
+            log.error("Eccezione nella lettura della tabella degli utenti ", e);
+        }
+        return rispostaControlli;
     }
 }

@@ -108,139 +108,139 @@ public class AroVVisDocIamTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_CD_KEY_UNITA_DOC_NORMALIZ,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC_NORMALIZ, Types.VARCHAR, 100, true));
-	map.put(COL_ID_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_DL_OGGETTO_UNITA_DOC,
-		new ColumnDescriptor(COL_DL_OGGETTO_UNITA_DOC, Types.VARCHAR, 4000, true));
-	map.put(COL_DT_REG_UNITA_DOC,
-		new ColumnDescriptor(COL_DT_REG_UNITA_DOC, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_ANNUL_UNITA_DOC,
-		new ColumnDescriptor(COL_DT_ANNUL_UNITA_DOC, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_ANNUL_UNITA_DOC,
-		new ColumnDescriptor(COL_TI_ANNUL_UNITA_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_DT_CREAZIONE_UD,
-		new ColumnDescriptor(COL_DT_CREAZIONE_UD, Types.TIMESTAMP, 7, true));
-	map.put(COL_NT_ANNUL_UNITA_DOC,
-		new ColumnDescriptor(COL_NT_ANNUL_UNITA_DOC, Types.VARCHAR, 2000, true));
-	map.put(COL_TI_STATO_CONSERVAZIONE,
-		new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, true));
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_DL_DOC, new ColumnDescriptor(COL_DL_DOC, Types.VARCHAR, 1024, true));
-	map.put(COL_DS_AUTORE_DOC,
-		new ColumnDescriptor(COL_DS_AUTORE_DOC, Types.VARCHAR, 4000, true));
-	map.put(COL_CD_KEY_DOC_VERS,
-		new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
-	map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
-	map.put(COL_FL_DOC_FIRMATO,
-		new ColumnDescriptor(COL_FL_DOC_FIRMATO, Types.VARCHAR, 1, true));
-	map.put(COL_TI_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, true));
-	map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, true));
-	map.put(COL_TI_STATO_DOC, new ColumnDescriptor(COL_TI_STATO_DOC, Types.VARCHAR, 30, true));
-	map.put(COL_FL_FORZA_ACCETTAZIONE,
-		new ColumnDescriptor(COL_FL_FORZA_ACCETTAZIONE, Types.VARCHAR, 1, true));
-	map.put(COL_FL_FORZA_CONSERVAZIONE,
-		new ColumnDescriptor(COL_FL_FORZA_CONSERVAZIONE, Types.VARCHAR, 1, true));
-	map.put(COL_TI_CONSERVAZIONE,
-		new ColumnDescriptor(COL_TI_CONSERVAZIONE, Types.VARCHAR, 25, true));
-	map.put(COL_NM_SISTEMA_MIGRAZ,
-		new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, true));
-	map.put(COL_DT_ANNUL_DOC, new ColumnDescriptor(COL_DT_ANNUL_DOC, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_ANNUL_DOC, new ColumnDescriptor(COL_TI_ANNUL_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_NT_ANNUL_DOC,
-		new ColumnDescriptor(COL_NT_ANNUL_DOC, Types.VARCHAR, 2000, true));
-	map.put(COL_NT_DOC, new ColumnDescriptor(COL_NT_DOC, Types.VARCHAR, 2000, true));
-	map.put(COL_NI_ORD_DOC, new ColumnDescriptor(COL_NI_ORD_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT_DOC, new ColumnDescriptor(COL_ID_STRUT_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_STRUT_DOC,
-		new ColumnDescriptor(COL_NM_TIPO_STRUT_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_ID_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, true));
-	map.put(COL_NM_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_NM_VOLUME_CONSERV, Types.VARCHAR, 100, true));
-	map.put(COL_TI_STATO_VOLUME_CONSERV,
-		new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
-	map.put(COL_ID_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ELENCO_VERS,
-		new ColumnDescriptor(COL_NM_ELENCO_VERS, Types.VARCHAR, 100, true));
-	map.put(COL_TI_STATO_ELENCO_VERS,
-		new ColumnDescriptor(COL_TI_STATO_ELENCO_VERS, Types.VARCHAR, 20, true));
-	map.put(COL_CD_VERSIONE_XML,
-		new ColumnDescriptor(COL_CD_VERSIONE_XML, Types.VARCHAR, 100, true));
-	map.put(COL_UTENTE_VERS, new ColumnDescriptor(COL_UTENTE_VERS, Types.VARCHAR, 201, true));
-	map.put(COL_BL_XML_RICH_DOC,
-		new ColumnDescriptor(COL_BL_XML_RICH_DOC, Types.CLOB, 4000, true));
-	map.put(COL_DS_HASH_XML_RICH_DOC,
-		new ColumnDescriptor(COL_DS_HASH_XML_RICH_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_DS_ALGO_HASH_XML_RICH_DOC,
-		new ColumnDescriptor(COL_DS_ALGO_HASH_XML_RICH_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_CD_ENCODING_HASH_XML_RICH_DOC,
-		new ColumnDescriptor(COL_CD_ENCODING_HASH_XML_RICH_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_DS_URN_XML_RICH_DOC,
-		new ColumnDescriptor(COL_DS_URN_XML_RICH_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_DS_URN_XML_RICH_DOC_NORMALIZ,
-		new ColumnDescriptor(COL_DS_URN_XML_RICH_DOC_NORMALIZ, Types.VARCHAR, 254, true));
-	map.put(COL_DS_URN_XML_RICH_DOC_INIZIALE,
-		new ColumnDescriptor(COL_DS_URN_XML_RICH_DOC_INIZIALE, Types.VARCHAR, 254, true));
-	map.put(COL_BL_XML_RISP_DOC,
-		new ColumnDescriptor(COL_BL_XML_RISP_DOC, Types.CLOB, 4000, true));
-	map.put(COL_DS_HASH_XML_RISP_DOC,
-		new ColumnDescriptor(COL_DS_HASH_XML_RISP_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_DS_ALGO_HASH_XML_RISP_DOC,
-		new ColumnDescriptor(COL_DS_ALGO_HASH_XML_RISP_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_CD_ENCODING_HASH_XML_RISP_DOC,
-		new ColumnDescriptor(COL_CD_ENCODING_HASH_XML_RISP_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_DS_URN_XML_RISP_DOC,
-		new ColumnDescriptor(COL_DS_URN_XML_RISP_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_DS_URN_XML_RISP_DOC_NORMALIZ,
-		new ColumnDescriptor(COL_DS_URN_XML_RISP_DOC_NORMALIZ, Types.VARCHAR, 254, true));
-	map.put(COL_DS_URN_XML_RISP_DOC_INIZIALE,
-		new ColumnDescriptor(COL_DS_URN_XML_RISP_DOC_INIZIALE, Types.VARCHAR, 254, true));
-	map.put(COL_BL_XML_RAPP_DOC,
-		new ColumnDescriptor(COL_BL_XML_RAPP_DOC, Types.CLOB, 4000, true));
-	map.put(COL_DS_HASH_XML_RAPP_DOC,
-		new ColumnDescriptor(COL_DS_HASH_XML_RAPP_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_DS_ALGO_HASH_XML_RAPP_DOC,
-		new ColumnDescriptor(COL_DS_ALGO_HASH_XML_RAPP_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_CD_ENCODING_HASH_XML_RAPP_DOC,
-		new ColumnDescriptor(COL_CD_ENCODING_HASH_XML_RAPP_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_DS_URN_XML_RAPP_DOC,
-		new ColumnDescriptor(COL_DS_URN_XML_RAPP_DOC, Types.VARCHAR, 254, true));
-	map.put(COL_DS_URN_XML_RAPP_DOC_NORMALIZ,
-		new ColumnDescriptor(COL_DS_URN_XML_RAPP_DOC_NORMALIZ, Types.VARCHAR, 254, true));
-	map.put(COL_DS_URN_XML_RAPP_DOC_INIZIALE,
-		new ColumnDescriptor(COL_DS_URN_XML_RAPP_DOC_INIZIALE, Types.VARCHAR, 254, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_CD_KEY_UNITA_DOC_NORMALIZ,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC_NORMALIZ, Types.VARCHAR, 100, true));
+        map.put(COL_ID_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_DL_OGGETTO_UNITA_DOC,
+                new ColumnDescriptor(COL_DL_OGGETTO_UNITA_DOC, Types.VARCHAR, 4000, true));
+        map.put(COL_DT_REG_UNITA_DOC,
+                new ColumnDescriptor(COL_DT_REG_UNITA_DOC, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_ANNUL_UNITA_DOC,
+                new ColumnDescriptor(COL_DT_ANNUL_UNITA_DOC, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_ANNUL_UNITA_DOC,
+                new ColumnDescriptor(COL_TI_ANNUL_UNITA_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_DT_CREAZIONE_UD,
+                new ColumnDescriptor(COL_DT_CREAZIONE_UD, Types.TIMESTAMP, 7, true));
+        map.put(COL_NT_ANNUL_UNITA_DOC,
+                new ColumnDescriptor(COL_NT_ANNUL_UNITA_DOC, Types.VARCHAR, 2000, true));
+        map.put(COL_TI_STATO_CONSERVAZIONE,
+                new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_DL_DOC, new ColumnDescriptor(COL_DL_DOC, Types.VARCHAR, 1024, true));
+        map.put(COL_DS_AUTORE_DOC,
+                new ColumnDescriptor(COL_DS_AUTORE_DOC, Types.VARCHAR, 4000, true));
+        map.put(COL_CD_KEY_DOC_VERS,
+                new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
+        map.put(COL_DT_CREAZIONE, new ColumnDescriptor(COL_DT_CREAZIONE, Types.TIMESTAMP, 7, true));
+        map.put(COL_FL_DOC_FIRMATO,
+                new ColumnDescriptor(COL_FL_DOC_FIRMATO, Types.VARCHAR, 1, true));
+        map.put(COL_TI_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_FIRME, Types.VARCHAR, 20, true));
+        map.put(COL_DS_MSG_ESITO_VERIF_FIRME,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_FIRME, Types.VARCHAR, 254, true));
+        map.put(COL_TI_STATO_DOC, new ColumnDescriptor(COL_TI_STATO_DOC, Types.VARCHAR, 30, true));
+        map.put(COL_FL_FORZA_ACCETTAZIONE,
+                new ColumnDescriptor(COL_FL_FORZA_ACCETTAZIONE, Types.VARCHAR, 1, true));
+        map.put(COL_FL_FORZA_CONSERVAZIONE,
+                new ColumnDescriptor(COL_FL_FORZA_CONSERVAZIONE, Types.VARCHAR, 1, true));
+        map.put(COL_TI_CONSERVAZIONE,
+                new ColumnDescriptor(COL_TI_CONSERVAZIONE, Types.VARCHAR, 25, true));
+        map.put(COL_NM_SISTEMA_MIGRAZ,
+                new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, true));
+        map.put(COL_DT_ANNUL_DOC, new ColumnDescriptor(COL_DT_ANNUL_DOC, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_ANNUL_DOC, new ColumnDescriptor(COL_TI_ANNUL_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_NT_ANNUL_DOC,
+                new ColumnDescriptor(COL_NT_ANNUL_DOC, Types.VARCHAR, 2000, true));
+        map.put(COL_NT_DOC, new ColumnDescriptor(COL_NT_DOC, Types.VARCHAR, 2000, true));
+        map.put(COL_NI_ORD_DOC, new ColumnDescriptor(COL_NI_ORD_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT_DOC, new ColumnDescriptor(COL_ID_STRUT_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_STRUT_DOC,
+                new ColumnDescriptor(COL_NM_TIPO_STRUT_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_ID_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_ID_VOLUME_CONSERV, Types.DECIMAL, 22, true));
+        map.put(COL_NM_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_NM_VOLUME_CONSERV, Types.VARCHAR, 100, true));
+        map.put(COL_TI_STATO_VOLUME_CONSERV,
+                new ColumnDescriptor(COL_TI_STATO_VOLUME_CONSERV, Types.VARCHAR, 20, true));
+        map.put(COL_ID_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ELENCO_VERS,
+                new ColumnDescriptor(COL_NM_ELENCO_VERS, Types.VARCHAR, 100, true));
+        map.put(COL_TI_STATO_ELENCO_VERS,
+                new ColumnDescriptor(COL_TI_STATO_ELENCO_VERS, Types.VARCHAR, 20, true));
+        map.put(COL_CD_VERSIONE_XML,
+                new ColumnDescriptor(COL_CD_VERSIONE_XML, Types.VARCHAR, 100, true));
+        map.put(COL_UTENTE_VERS, new ColumnDescriptor(COL_UTENTE_VERS, Types.VARCHAR, 201, true));
+        map.put(COL_BL_XML_RICH_DOC,
+                new ColumnDescriptor(COL_BL_XML_RICH_DOC, Types.CLOB, 4000, true));
+        map.put(COL_DS_HASH_XML_RICH_DOC,
+                new ColumnDescriptor(COL_DS_HASH_XML_RICH_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_DS_ALGO_HASH_XML_RICH_DOC,
+                new ColumnDescriptor(COL_DS_ALGO_HASH_XML_RICH_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_CD_ENCODING_HASH_XML_RICH_DOC,
+                new ColumnDescriptor(COL_CD_ENCODING_HASH_XML_RICH_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_DS_URN_XML_RICH_DOC,
+                new ColumnDescriptor(COL_DS_URN_XML_RICH_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_DS_URN_XML_RICH_DOC_NORMALIZ,
+                new ColumnDescriptor(COL_DS_URN_XML_RICH_DOC_NORMALIZ, Types.VARCHAR, 254, true));
+        map.put(COL_DS_URN_XML_RICH_DOC_INIZIALE,
+                new ColumnDescriptor(COL_DS_URN_XML_RICH_DOC_INIZIALE, Types.VARCHAR, 254, true));
+        map.put(COL_BL_XML_RISP_DOC,
+                new ColumnDescriptor(COL_BL_XML_RISP_DOC, Types.CLOB, 4000, true));
+        map.put(COL_DS_HASH_XML_RISP_DOC,
+                new ColumnDescriptor(COL_DS_HASH_XML_RISP_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_DS_ALGO_HASH_XML_RISP_DOC,
+                new ColumnDescriptor(COL_DS_ALGO_HASH_XML_RISP_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_CD_ENCODING_HASH_XML_RISP_DOC,
+                new ColumnDescriptor(COL_CD_ENCODING_HASH_XML_RISP_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_DS_URN_XML_RISP_DOC,
+                new ColumnDescriptor(COL_DS_URN_XML_RISP_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_DS_URN_XML_RISP_DOC_NORMALIZ,
+                new ColumnDescriptor(COL_DS_URN_XML_RISP_DOC_NORMALIZ, Types.VARCHAR, 254, true));
+        map.put(COL_DS_URN_XML_RISP_DOC_INIZIALE,
+                new ColumnDescriptor(COL_DS_URN_XML_RISP_DOC_INIZIALE, Types.VARCHAR, 254, true));
+        map.put(COL_BL_XML_RAPP_DOC,
+                new ColumnDescriptor(COL_BL_XML_RAPP_DOC, Types.CLOB, 4000, true));
+        map.put(COL_DS_HASH_XML_RAPP_DOC,
+                new ColumnDescriptor(COL_DS_HASH_XML_RAPP_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_DS_ALGO_HASH_XML_RAPP_DOC,
+                new ColumnDescriptor(COL_DS_ALGO_HASH_XML_RAPP_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_CD_ENCODING_HASH_XML_RAPP_DOC,
+                new ColumnDescriptor(COL_CD_ENCODING_HASH_XML_RAPP_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_DS_URN_XML_RAPP_DOC,
+                new ColumnDescriptor(COL_DS_URN_XML_RAPP_DOC, Types.VARCHAR, 254, true));
+        map.put(COL_DS_URN_XML_RAPP_DOC_NORMALIZ,
+                new ColumnDescriptor(COL_DS_URN_XML_RAPP_DOC_NORMALIZ, Types.VARCHAR, 254, true));
+        map.put(COL_DS_URN_XML_RAPP_DOC_INIZIALE,
+                new ColumnDescriptor(COL_DS_URN_XML_RAPP_DOC_INIZIALE, Types.VARCHAR, 254, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

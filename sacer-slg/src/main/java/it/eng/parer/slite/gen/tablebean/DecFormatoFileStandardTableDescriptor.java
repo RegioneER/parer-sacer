@@ -47,33 +47,33 @@ public class DecFormatoFileStandardTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_FORMATO_FILE_STANDARD,
-		new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, true));
-	map.put(COL_NM_FORMATO_FILE_STANDARD,
-		new ColumnDescriptor(COL_NM_FORMATO_FILE_STANDARD, Types.VARCHAR, 100, false));
-	map.put(COL_DS_FORMATO_FILE_STANDARD,
-		new ColumnDescriptor(COL_DS_FORMATO_FILE_STANDARD, Types.VARCHAR, 254, false));
-	map.put(COL_CD_VERSIONE, new ColumnDescriptor(COL_CD_VERSIONE, Types.VARCHAR, 100, false));
-	map.put(COL_DS_COPYRIGHT,
-		new ColumnDescriptor(COL_DS_COPYRIGHT, Types.VARCHAR, 254, false));
-	map.put(COL_NM_MIMETYPE_FILE,
-		new ColumnDescriptor(COL_NM_MIMETYPE_FILE, Types.VARCHAR, 100, false));
-	map.put(COL_TI_ESITO_CONTR_FORMATO,
-		new ColumnDescriptor(COL_TI_ESITO_CONTR_FORMATO, Types.VARCHAR, 20, false));
-	map.put(COL_FL_FORMATO_CONCAT,
-		new ColumnDescriptor(COL_FL_FORMATO_CONCAT, Types.VARCHAR, 1, false));
+        map.put(COL_ID_FORMATO_FILE_STANDARD,
+                new ColumnDescriptor(COL_ID_FORMATO_FILE_STANDARD, Types.DECIMAL, 22, true));
+        map.put(COL_NM_FORMATO_FILE_STANDARD,
+                new ColumnDescriptor(COL_NM_FORMATO_FILE_STANDARD, Types.VARCHAR, 100, false));
+        map.put(COL_DS_FORMATO_FILE_STANDARD,
+                new ColumnDescriptor(COL_DS_FORMATO_FILE_STANDARD, Types.VARCHAR, 254, false));
+        map.put(COL_CD_VERSIONE, new ColumnDescriptor(COL_CD_VERSIONE, Types.VARCHAR, 100, false));
+        map.put(COL_DS_COPYRIGHT,
+                new ColumnDescriptor(COL_DS_COPYRIGHT, Types.VARCHAR, 254, false));
+        map.put(COL_NM_MIMETYPE_FILE,
+                new ColumnDescriptor(COL_NM_MIMETYPE_FILE, Types.VARCHAR, 100, false));
+        map.put(COL_TI_ESITO_CONTR_FORMATO,
+                new ColumnDescriptor(COL_TI_ESITO_CONTR_FORMATO, Types.VARCHAR, 20, false));
+        map.put(COL_FL_FORMATO_CONCAT,
+                new ColumnDescriptor(COL_FL_FORMATO_CONCAT, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

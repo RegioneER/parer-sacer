@@ -37,234 +37,234 @@ public class SerVLisSerDaValidareRowBean extends BaseRow implements JEEBaseRowIn
     public static SerVLisSerDaValidareTableDescriptor TABLE_DESCRIPTOR = new SerVLisSerDaValidareTableDescriptor();
 
     public SerVLisSerDaValidareRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUserIam() {
-	return getBigDecimal("id_user_iam");
+        return getBigDecimal("id_user_iam");
     }
 
     public void setIdUserIam(BigDecimal idUserIam) {
-	setObject("id_user_iam", idUserIam);
+        setObject("id_user_iam", idUserIam);
     }
 
     public BigDecimal getIdVerSerie() {
-	return getBigDecimal("id_ver_serie");
+        return getBigDecimal("id_ver_serie");
     }
 
     public void setIdVerSerie(BigDecimal idVerSerie) {
-	setObject("id_ver_serie", idVerSerie);
+        setObject("id_ver_serie", idVerSerie);
     }
 
     public BigDecimal getIdSerie() {
-	return getBigDecimal("id_serie");
+        return getBigDecimal("id_serie");
     }
 
     public void setIdSerie(BigDecimal idSerie) {
-	setObject("id_serie", idSerie);
+        setObject("id_serie", idSerie);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmStrut() {
-	return getString("nm_strut");
+        return getString("nm_strut");
     }
 
     public void setNmStrut(String nmStrut) {
-	setObject("nm_strut", nmStrut);
+        setObject("nm_strut", nmStrut);
     }
 
     public BigDecimal getIdEnte() {
-	return getBigDecimal("id_ente");
+        return getBigDecimal("id_ente");
     }
 
     public void setIdEnte(BigDecimal idEnte) {
-	setObject("id_ente", idEnte);
+        setObject("id_ente", idEnte);
     }
 
     public String getNmEnte() {
-	return getString("nm_ente");
+        return getString("nm_ente");
     }
 
     public void setNmEnte(String nmEnte) {
-	setObject("nm_ente", nmEnte);
+        setObject("nm_ente", nmEnte);
     }
 
     public BigDecimal getIdAmbiente() {
-	return getBigDecimal("id_ambiente");
+        return getBigDecimal("id_ambiente");
     }
 
     public void setIdAmbiente(BigDecimal idAmbiente) {
-	setObject("id_ambiente", idAmbiente);
+        setObject("id_ambiente", idAmbiente);
     }
 
     public String getNmAmbiente() {
-	return getString("nm_ambiente");
+        return getString("nm_ambiente");
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	setObject("nm_ambiente", nmAmbiente);
+        setObject("nm_ambiente", nmAmbiente);
     }
 
     public String getCdCompositoSerie() {
-	return getString("cd_composito_serie");
+        return getString("cd_composito_serie");
     }
 
     public void setCdCompositoSerie(String cdCompositoSerie) {
-	setObject("cd_composito_serie", cdCompositoSerie);
+        setObject("cd_composito_serie", cdCompositoSerie);
     }
 
     public BigDecimal getAaSerie() {
-	return getBigDecimal("aa_serie");
+        return getBigDecimal("aa_serie");
     }
 
     public void setAaSerie(BigDecimal aaSerie) {
-	setObject("aa_serie", aaSerie);
+        setObject("aa_serie", aaSerie);
     }
 
     public String getDsSerie() {
-	return getString("ds_serie");
+        return getString("ds_serie");
     }
 
     public void setDsSerie(String dsSerie) {
-	setObject("ds_serie", dsSerie);
+        setObject("ds_serie", dsSerie);
     }
 
     public String getNmTipoSerie() {
-	return getString("nm_tipo_serie");
+        return getString("nm_tipo_serie");
     }
 
     public void setNmTipoSerie(String nmTipoSerie) {
-	setObject("nm_tipo_serie", nmTipoSerie);
+        setObject("nm_tipo_serie", nmTipoSerie);
     }
 
     public String getCdVerSerie() {
-	return getString("cd_ver_serie");
+        return getString("cd_ver_serie");
     }
 
     public void setCdVerSerie(String cdVerSerie) {
-	setObject("cd_ver_serie", cdVerSerie);
+        setObject("cd_ver_serie", cdVerSerie);
     }
 
     public Timestamp getDtInizioSelSerie() {
-	return getTimestamp("dt_inizio_sel_serie");
+        return getTimestamp("dt_inizio_sel_serie");
     }
 
     public void setDtInizioSelSerie(Timestamp dtInizioSelSerie) {
-	setObject("dt_inizio_sel_serie", dtInizioSelSerie);
+        setObject("dt_inizio_sel_serie", dtInizioSelSerie);
     }
 
     public Timestamp getDtFineSelSerie() {
-	return getTimestamp("dt_fine_sel_serie");
+        return getTimestamp("dt_fine_sel_serie");
     }
 
     public void setDtFineSelSerie(Timestamp dtFineSelSerie) {
-	setObject("dt_fine_sel_serie", dtFineSelSerie);
+        setObject("dt_fine_sel_serie", dtFineSelSerie);
     }
 
     public String getFlErrContenutoEff() {
-	return getString("fl_err_contenuto_eff");
+        return getString("fl_err_contenuto_eff");
     }
 
     public void setFlErrContenutoEff(String flErrContenutoEff) {
-	setObject("fl_err_contenuto_eff", flErrContenutoEff);
+        setObject("fl_err_contenuto_eff", flErrContenutoEff);
     }
 
     public BigDecimal getIdContenutoVerSerie() {
-	return getBigDecimal("id_contenuto_ver_serie");
+        return getBigDecimal("id_contenuto_ver_serie");
     }
 
     public void setIdContenutoVerSerie(BigDecimal idContenutoVerSerie) {
-	setObject("id_contenuto_ver_serie", idContenutoVerSerie);
+        setObject("id_contenuto_ver_serie", idContenutoVerSerie);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVLisSerDaValidare entity = (SerVLisSerDaValidare) obj;
-	if (entity.getSerVLisSerDaValidareId() != null) {
-	    this.setIdUserIam(entity.getSerVLisSerDaValidareId().getIdUserIam());
-	    this.setIdVerSerie(entity.getSerVLisSerDaValidareId().getIdVerSerie());
-	}
-	this.setIdSerie(entity.getIdSerie());
-	this.setIdStrut(entity.getIdStrut());
-	this.setNmStrut(entity.getNmStrut());
-	this.setIdEnte(entity.getIdEnte());
-	this.setNmEnte(entity.getNmEnte());
-	this.setIdAmbiente(entity.getIdAmbiente());
-	this.setNmAmbiente(entity.getNmAmbiente());
-	this.setCdCompositoSerie(entity.getCdCompositoSerie());
-	this.setAaSerie(entity.getAaSerie());
-	this.setDsSerie(entity.getDsSerie());
-	this.setNmTipoSerie(entity.getNmTipoSerie());
-	this.setCdVerSerie(entity.getCdVerSerie());
-	if (entity.getDtInizioSelSerie() != null) {
-	    this.setDtInizioSelSerie(new Timestamp(entity.getDtInizioSelSerie().getTime()));
-	}
-	if (entity.getDtFineSelSerie() != null) {
-	    this.setDtFineSelSerie(new Timestamp(entity.getDtFineSelSerie().getTime()));
-	}
-	this.setFlErrContenutoEff(entity.getFlErrContenutoEff());
-	this.setIdContenutoVerSerie(entity.getIdContenutoVerSerie());
+        SerVLisSerDaValidare entity = (SerVLisSerDaValidare) obj;
+        if (entity.getSerVLisSerDaValidareId() != null) {
+            this.setIdUserIam(entity.getSerVLisSerDaValidareId().getIdUserIam());
+            this.setIdVerSerie(entity.getSerVLisSerDaValidareId().getIdVerSerie());
+        }
+        this.setIdSerie(entity.getIdSerie());
+        this.setIdStrut(entity.getIdStrut());
+        this.setNmStrut(entity.getNmStrut());
+        this.setIdEnte(entity.getIdEnte());
+        this.setNmEnte(entity.getNmEnte());
+        this.setIdAmbiente(entity.getIdAmbiente());
+        this.setNmAmbiente(entity.getNmAmbiente());
+        this.setCdCompositoSerie(entity.getCdCompositoSerie());
+        this.setAaSerie(entity.getAaSerie());
+        this.setDsSerie(entity.getDsSerie());
+        this.setNmTipoSerie(entity.getNmTipoSerie());
+        this.setCdVerSerie(entity.getCdVerSerie());
+        if (entity.getDtInizioSelSerie() != null) {
+            this.setDtInizioSelSerie(new Timestamp(entity.getDtInizioSelSerie().getTime()));
+        }
+        if (entity.getDtFineSelSerie() != null) {
+            this.setDtFineSelSerie(new Timestamp(entity.getDtFineSelSerie().getTime()));
+        }
+        this.setFlErrContenutoEff(entity.getFlErrContenutoEff());
+        this.setIdContenutoVerSerie(entity.getIdContenutoVerSerie());
     }
 
     @Override
     public SerVLisSerDaValidare rowBeanToEntity() {
-	SerVLisSerDaValidare entity = new SerVLisSerDaValidare();
-	entity.setSerVLisSerDaValidareId(new SerVLisSerDaValidareId());
-	entity.getSerVLisSerDaValidareId().setIdUserIam(this.getIdUserIam());
-	entity.getSerVLisSerDaValidareId().setIdVerSerie(this.getIdVerSerie());
-	entity.setIdSerie(this.getIdSerie());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setNmStrut(this.getNmStrut());
-	entity.setIdEnte(this.getIdEnte());
-	entity.setNmEnte(this.getNmEnte());
-	entity.setIdAmbiente(this.getIdAmbiente());
-	entity.setNmAmbiente(this.getNmAmbiente());
-	entity.setCdCompositoSerie(this.getCdCompositoSerie());
-	entity.setAaSerie(this.getAaSerie());
-	entity.setDsSerie(this.getDsSerie());
-	entity.setNmTipoSerie(this.getNmTipoSerie());
-	entity.setCdVerSerie(this.getCdVerSerie());
-	entity.setDtInizioSelSerie(this.getDtInizioSelSerie());
-	entity.setDtFineSelSerie(this.getDtFineSelSerie());
-	entity.setFlErrContenutoEff(this.getFlErrContenutoEff());
-	entity.setIdContenutoVerSerie(this.getIdContenutoVerSerie());
-	return entity;
+        SerVLisSerDaValidare entity = new SerVLisSerDaValidare();
+        entity.setSerVLisSerDaValidareId(new SerVLisSerDaValidareId());
+        entity.getSerVLisSerDaValidareId().setIdUserIam(this.getIdUserIam());
+        entity.getSerVLisSerDaValidareId().setIdVerSerie(this.getIdVerSerie());
+        entity.setIdSerie(this.getIdSerie());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setNmStrut(this.getNmStrut());
+        entity.setIdEnte(this.getIdEnte());
+        entity.setNmEnte(this.getNmEnte());
+        entity.setIdAmbiente(this.getIdAmbiente());
+        entity.setNmAmbiente(this.getNmAmbiente());
+        entity.setCdCompositoSerie(this.getCdCompositoSerie());
+        entity.setAaSerie(this.getAaSerie());
+        entity.setDsSerie(this.getDsSerie());
+        entity.setNmTipoSerie(this.getNmTipoSerie());
+        entity.setCdVerSerie(this.getCdVerSerie());
+        entity.setDtInizioSelSerie(this.getDtInizioSelSerie());
+        entity.setDtFineSelSerie(this.getDtFineSelSerie());
+        entity.setFlErrContenutoEff(this.getFlErrContenutoEff());
+        entity.setIdContenutoVerSerie(this.getIdContenutoVerSerie());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -33,19 +33,19 @@ public class SIAplNotaRilascioTableBean extends AbstractBaseTable<SIAplNotaRilas
     public static SIAplNotaRilascioTableDescriptor TABLE_DESCRIPTOR = new SIAplNotaRilascioTableDescriptor();
 
     public SIAplNotaRilascioTableBean() {
-	super();
+        super();
     }
 
     protected SIAplNotaRilascioRowBean createRow() {
-	return new SIAplNotaRilascioRowBean();
+        return new SIAplNotaRilascioRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SIAplNotaRilascioRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

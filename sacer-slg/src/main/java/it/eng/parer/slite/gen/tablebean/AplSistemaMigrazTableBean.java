@@ -34,19 +34,19 @@ public class AplSistemaMigrazTableBean extends AbstractBaseTable<AplSistemaMigra
     public static AplSistemaMigrazTableDescriptor TABLE_DESCRIPTOR = new AplSistemaMigrazTableDescriptor();
 
     public AplSistemaMigrazTableBean() {
-	super();
+        super();
     }
 
     protected AplSistemaMigrazRowBean createRow() {
-	return new AplSistemaMigrazRowBean();
+        return new AplSistemaMigrazRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AplSistemaMigrazRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

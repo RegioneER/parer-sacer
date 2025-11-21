@@ -59,44 +59,44 @@ public class ElvUrnFileElencoVers implements Serializable {
 
     @Column(name = "ID_URN_FILE_ELENCO_VERS")
     @GenericGenerator(name = "SELV_URN_FILE_ELENCO_VERS_ID_URN_FILE_ELENCO_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_URN_FILE_ELENCO_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_URN_FILE_ELENCO_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SELV_URN_FILE_ELENCO_VERS_ID_URN_FILE_ELENCO_VERS_GENERATOR")
     public Long getIdUrnFileElencoVers() {
-	return this.idUrnFileElencoVers;
+        return this.idUrnFileElencoVers;
     }
 
     public void setIdUrnFileElencoVers(Long idUrnFileElencoVers) {
-	this.idUrnFileElencoVers = idUrnFileElencoVers;
+        this.idUrnFileElencoVers = idUrnFileElencoVers;
     }
 
     @Column(name = "DS_URN")
     public String getDsUrn() {
-	return this.dsUrn;
+        return this.dsUrn;
     }
 
     public void setDsUrn(String dsUrn) {
-	this.dsUrn = dsUrn;
+        this.dsUrn = dsUrn;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_URN")
     public TiUrnFileElenco getTiUrn() {
-	return this.tiUrn;
+        return this.tiUrn;
     }
 
     public void setTiUrn(TiUrnFileElenco tiUrn) {
-	this.tiUrn = tiUrn;
+        this.tiUrn = tiUrn;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FILE_ELENCO_VERS", nullable = false)
     public ElvFileElencoVer getElvFileElencoVers() {
-	return this.elvFileElencoVers;
+        return this.elvFileElencoVers;
     }
 
     public void setElvFileElencoVers(ElvFileElencoVer elvFileElencoVers) {
-	this.elvFileElencoVers = elvFileElencoVers;
+        this.elvFileElencoVers = elvFileElencoVers;
     }
 
 }

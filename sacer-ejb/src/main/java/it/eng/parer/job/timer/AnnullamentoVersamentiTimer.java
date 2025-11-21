@@ -48,88 +48,88 @@ public class AnnullamentoVersamentiTimer extends JobTimer {
     private AnnulVersEjb annullamentoVersamentiEjb;
 
     public AnnullamentoVersamentiTimer() {
-	super(JobConstants.JobEnum.EVASIONE_RICH_ANNUL_VERS.name());
-	logger.debug("{} creato", AnnullamentoVersamentiTimer.class.getName());
+        super(JobConstants.JobEnum.EVASIONE_RICH_ANNUL_VERS.name());
+        logger.debug("{} creato", AnnullamentoVersamentiTimer.class.getName());
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startSingleAction(String appplicationName) {
-	boolean existTimer = false;
+        boolean existTimer = false;
 
-	for (Timer timer : timerService.getTimers()) {
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    timerService.createTimer(TIME_DURATION, jobName);
-	}
+        for (Timer timer : timerService.getTimers()) {
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            timerService.createTimer(TIME_DURATION, jobName);
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void startCronScheduled(CronSchedule sched, String appplicationName) {
-	boolean existTimer = false;
-	ScheduleExpression tmpScheduleExpression;
+        boolean existTimer = false;
+        ScheduleExpression tmpScheduleExpression;
 
-	for (Timer timer : timerService.getTimers()) {
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		existTimer = true;
-	    }
-	}
-	if (!existTimer) {
-	    logger.info("Schedulazione: Ore: {}", sched.getHour());
-	    logger.info("Schedulazione: Minuti: {}", sched.getMinute());
-	    logger.info("Schedulazione: DOW: {}", sched.getDayOfWeek());
-	    logger.info("Schedulazione: Mese: {}", sched.getMonth());
-	    logger.info("Schedulazione: DOM: {}", sched.getDayOfMonth());
+        for (Timer timer : timerService.getTimers()) {
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                existTimer = true;
+            }
+        }
+        if (!existTimer) {
+            logger.info("Schedulazione: Ore: {}", sched.getHour());
+            logger.info("Schedulazione: Minuti: {}", sched.getMinute());
+            logger.info("Schedulazione: DOW: {}", sched.getDayOfWeek());
+            logger.info("Schedulazione: Mese: {}", sched.getMonth());
+            logger.info("Schedulazione: DOM: {}", sched.getDayOfMonth());
 
-	    tmpScheduleExpression = new ScheduleExpression();
-	    tmpScheduleExpression.hour(sched.getHour());
-	    tmpScheduleExpression.minute(sched.getMinute());
-	    tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
-	    tmpScheduleExpression.month(sched.getMonth());
-	    tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
-	    logger.info("Lancio il timer AnnullamentoVersamentoTimer...");
-	    timerService.createCalendarTimer(tmpScheduleExpression,
-		    new TimerConfig(jobName, false));
-	}
+            tmpScheduleExpression = new ScheduleExpression();
+            tmpScheduleExpression.hour(sched.getHour());
+            tmpScheduleExpression.minute(sched.getMinute());
+            tmpScheduleExpression.dayOfWeek(sched.getDayOfWeek());
+            tmpScheduleExpression.month(sched.getMonth());
+            tmpScheduleExpression.dayOfMonth(sched.getDayOfMonth());
+            logger.info("Lancio il timer AnnullamentoVersamentoTimer...");
+            timerService.createCalendarTimer(tmpScheduleExpression,
+                    new TimerConfig(jobName, false));
+        }
     }
 
     @Override
     @Lock(LockType.WRITE)
     public void stop(String appplicationName) {
-	for (Timer timer : timerService.getTimers()) {
-	    String scheduled = (String) timer.getInfo();
-	    if (scheduled.equals(jobName)) {
-		timer.cancel();
-	    }
-	}
+        for (Timer timer : timerService.getTimers()) {
+            String scheduled = (String) timer.getInfo();
+            if (scheduled.equals(jobName)) {
+                timer.cancel();
+            }
+        }
     }
 
     @Timeout
     public void doJob(Timer timer) {
-	if (timer.getInfo().equals(jobName)) {
-	    thisTimer.startProcess(timer);
-	}
+        if (timer.getInfo().equals(jobName)) {
+            thisTimer.startProcess(timer);
+        }
     }
 
     @Override
     public void startProcess(Timer timer) {
-	logger.info("{} --- Annullamento Versamento Unità Documentarie - Inizio schedulazione",
-		AnnullamentoVersamentiTimer.class.getSimpleName());
-	jobHelper.writeAtomicLogJob(jobName, OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
-	try {
-	    annullamentoVersamentiEjb.annullamentoVersamenti();
-	} catch (Exception e) {
-	    logger.error(AnnullamentoVersamentiTimer.class.getSimpleName()
-		    + " --- Annullamento Versamento Unità Documentarie - Errore generico durante l'esecuzione del job: "
-		    + ExceptionUtils.getRootCauseMessage(e), e);
-	    jobHelper.writeAtomicLogJob(jobName, OpTypeEnum.ERRORE.name(),
-		    ExceptionUtils.getRootCauseMessage(e));
-	}
+        logger.info("{} --- Annullamento Versamento Unità Documentarie - Inizio schedulazione",
+                AnnullamentoVersamentiTimer.class.getSimpleName());
+        jobHelper.writeAtomicLogJob(jobName, OpTypeEnum.INIZIO_SCHEDULAZIONE.name());
+        try {
+            annullamentoVersamentiEjb.annullamentoVersamenti();
+        } catch (Exception e) {
+            logger.error(AnnullamentoVersamentiTimer.class.getSimpleName()
+                    + " --- Annullamento Versamento Unità Documentarie - Errore generico durante l'esecuzione del job: "
+                    + ExceptionUtils.getRootCauseMessage(e), e);
+            jobHelper.writeAtomicLogJob(jobName, OpTypeEnum.ERRORE.name(),
+                    ExceptionUtils.getRootCauseMessage(e));
+        }
     }
 }

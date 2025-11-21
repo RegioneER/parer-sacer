@@ -25,41 +25,41 @@ public class ComponenteReportvfRec extends ComponenteRec {
     private String urnCompletoOrig;
 
     public ComponenteReportvfRec() {
-	super();
+        super();
     }
 
     public ComponenteReportvfRec(String urnCompleto, String urnCompletoOrig) {
-	super();
-	setUrnAndElabNomeFileReport(urnCompleto, urnCompletoOrig);
+        super();
+        setUrnAndElabNomeFileReport(urnCompleto, urnCompletoOrig);
     }
 
     private void setUrnAndElabNomeFileReport(String urnCompleto, String urnCompletoOrig) {
-	setUrnCompleto(urnCompleto);
-	setUrnCompletoOrig(urnCompletoOrig);
+        setUrnCompleto(urnCompleto);
+        setUrnCompletoOrig(urnCompletoOrig);
 
-	this.nomeFileBreve = estraiNomeFileBreveReport(urnCompletoOrig);
-	this.nomeFileCompleto = estraiNomeFileCompleto(urnCompletoOrig);
+        this.nomeFileBreve = estraiNomeFileBreveReport(urnCompletoOrig);
+        this.nomeFileCompleto = estraiNomeFileCompleto(urnCompletoOrig);
     }
 
     public long getIdReportvf() {
-	return idReportvf;
+        return idReportvf;
     }
 
     public void setIdReportvf(long idReportvf) {
-	this.idReportvf = idReportvf;
+        this.idReportvf = idReportvf;
     }
 
     public String getUrnCompletoOrig() {
-	return urnCompletoOrig;
+        return urnCompletoOrig;
     }
 
     public void setUrnCompletoOrig(String urnCompletoOrig) {
-	this.urnCompletoOrig = urnCompletoOrig;
+        this.urnCompletoOrig = urnCompletoOrig;
     }
 
     // richiama logica di estrazione del nome file a partire dall'urn
     private String estraiNomeFileBreveReport(String urnCompleto) {
-	return MessaggiWSFormat.estraiNomeFileBrevePerReportvf(urnCompleto);
+        return MessaggiWSFormat.estraiNomeFileBrevePerReportvf(urnCompleto);
     }
 
 }

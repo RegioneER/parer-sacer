@@ -47,67 +47,67 @@ public class AroVLisStatoRichAnnvrs implements Serializable {
 
     @Column(name = "DS_NOTA_RICH_ANNUL_VERS")
     public String getDsNotaRichAnnulVers() {
-	return this.dsNotaRichAnnulVers;
+        return this.dsNotaRichAnnulVers;
     }
 
     public void setDsNotaRichAnnulVers(String dsNotaRichAnnulVers) {
-	this.dsNotaRichAnnulVers = dsNotaRichAnnulVers;
+        this.dsNotaRichAnnulVers = dsNotaRichAnnulVers;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_STATO_RICH_ANNUL_VERS")
     public Date getDtRegStatoRichAnnulVers() {
-	return this.dtRegStatoRichAnnulVers;
+        return this.dtRegStatoRichAnnulVers;
     }
 
     public void setDtRegStatoRichAnnulVers(Date dtRegStatoRichAnnulVers) {
-	this.dtRegStatoRichAnnulVers = dtRegStatoRichAnnulVers;
+        this.dtRegStatoRichAnnulVers = dtRegStatoRichAnnulVers;
     }
 
     @Column(name = "ID_RICH_ANNUL_VERS")
     public BigDecimal getIdRichAnnulVers() {
-	return this.idRichAnnulVers;
+        return this.idRichAnnulVers;
     }
 
     public void setIdRichAnnulVers(BigDecimal idRichAnnulVers) {
-	this.idRichAnnulVers = idRichAnnulVers;
+        this.idRichAnnulVers = idRichAnnulVers;
     }
 
     @Id
     @Column(name = "ID_STATO_RICH_ANNUL_VERS")
     public BigDecimal getIdStatoRichAnnulVers() {
-	return this.idStatoRichAnnulVers;
+        return this.idStatoRichAnnulVers;
     }
 
     public void setIdStatoRichAnnulVers(BigDecimal idStatoRichAnnulVers) {
-	this.idStatoRichAnnulVers = idStatoRichAnnulVers;
+        this.idStatoRichAnnulVers = idStatoRichAnnulVers;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     @Column(name = "PG_STATO_RICH_ANNUL_VERS")
     public BigDecimal getPgStatoRichAnnulVers() {
-	return this.pgStatoRichAnnulVers;
+        return this.pgStatoRichAnnulVers;
     }
 
     public void setPgStatoRichAnnulVers(BigDecimal pgStatoRichAnnulVers) {
-	this.pgStatoRichAnnulVers = pgStatoRichAnnulVers;
+        this.pgStatoRichAnnulVers = pgStatoRichAnnulVers;
     }
 
     @Column(name = "TI_STATO_RICH_ANNUL_VERS")
     public String getTiStatoRichAnnulVers() {
-	return this.tiStatoRichAnnulVers;
+        return this.tiStatoRichAnnulVers;
     }
 
     public void setTiStatoRichAnnulVers(String tiStatoRichAnnulVers) {
-	this.tiStatoRichAnnulVers = tiStatoRichAnnulVers;
+        this.tiStatoRichAnnulVers = tiStatoRichAnnulVers;
     }
 
 }

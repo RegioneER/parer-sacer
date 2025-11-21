@@ -36,149 +36,149 @@ public class SerVLisUdErrFileInputRowBean extends BaseRow implements JEEBaseRowI
     public static SerVLisUdErrFileInputTableDescriptor TABLE_DESCRIPTOR = new SerVLisUdErrFileInputTableDescriptor();
 
     public SerVLisUdErrFileInputRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdUdErrFileInput() {
-	return getBigDecimal("id_ud_err_file_input");
+        return getBigDecimal("id_ud_err_file_input");
     }
 
     public void setIdUdErrFileInput(BigDecimal idUdErrFileInput) {
-	setObject("id_ud_err_file_input", idUdErrFileInput);
+        setObject("id_ud_err_file_input", idUdErrFileInput);
     }
 
     public BigDecimal getIdErrFileInput() {
-	return getBigDecimal("id_err_file_input");
+        return getBigDecimal("id_err_file_input");
     }
 
     public void setIdErrFileInput(BigDecimal idErrFileInput) {
-	setObject("id_err_file_input", idErrFileInput);
+        setObject("id_err_file_input", idErrFileInput);
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return getBigDecimal("id_unita_doc");
+        return getBigDecimal("id_unita_doc");
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	setObject("id_unita_doc", idUnitaDoc);
+        setObject("id_unita_doc", idUnitaDoc);
     }
 
     public String getCdUdSerie() {
-	return getString("cd_ud_serie");
+        return getString("cd_ud_serie");
     }
 
     public void setCdUdSerie(String cdUdSerie) {
-	setObject("cd_ud_serie", cdUdSerie);
+        setObject("cd_ud_serie", cdUdSerie);
     }
 
     public Timestamp getDtUdSerie() {
-	return getTimestamp("dt_ud_serie");
+        return getTimestamp("dt_ud_serie");
     }
 
     public void setDtUdSerie(Timestamp dtUdSerie) {
-	setObject("dt_ud_serie", dtUdSerie);
+        setObject("dt_ud_serie", dtUdSerie);
     }
 
     public String getInfoUdSerie() {
-	return getString("info_ud_serie");
+        return getString("info_ud_serie");
     }
 
     public void setInfoUdSerie(String infoUdSerie) {
-	setObject("info_ud_serie", infoUdSerie);
+        setObject("info_ud_serie", infoUdSerie);
     }
 
     public String getDsKeyOrdUdSerie() {
-	return getString("ds_key_ord_ud_serie");
+        return getString("ds_key_ord_ud_serie");
     }
 
     public void setDsKeyOrdUdSerie(String dsKeyOrdUdSerie) {
-	setObject("ds_key_ord_ud_serie", dsKeyOrdUdSerie);
+        setObject("ds_key_ord_ud_serie", dsKeyOrdUdSerie);
     }
 
     public BigDecimal getPgUdSerie() {
-	return getBigDecimal("pg_ud_serie");
+        return getBigDecimal("pg_ud_serie");
     }
 
     public void setPgUdSerie(BigDecimal pgUdSerie) {
-	setObject("pg_ud_serie", pgUdSerie);
+        setObject("pg_ud_serie", pgUdSerie);
     }
 
     public String getCdKeyUnitaDoc() {
-	return getString("cd_key_unita_doc");
+        return getString("cd_key_unita_doc");
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	setObject("cd_key_unita_doc", cdKeyUnitaDoc);
+        setObject("cd_key_unita_doc", cdKeyUnitaDoc);
     }
 
     public String getFlUnitaDocAnnul() {
-	return getString("fl_unita_doc_annul");
+        return getString("fl_unita_doc_annul");
     }
 
     public void setFlUnitaDocAnnul(String flUnitaDocAnnul) {
-	setObject("fl_unita_doc_annul", flUnitaDocAnnul);
+        setObject("fl_unita_doc_annul", flUnitaDocAnnul);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SerVLisUdErrFileInput entity = (SerVLisUdErrFileInput) obj;
-	this.setIdUdErrFileInput(entity.getIdUdErrFileInput());
-	this.setIdErrFileInput(entity.getIdErrFileInput());
-	this.setIdUnitaDoc(entity.getIdUnitaDoc());
-	this.setCdUdSerie(entity.getCdUdSerie());
-	if (entity.getDtUdSerie() != null) {
-	    this.setDtUdSerie(new Timestamp(entity.getDtUdSerie().getTime()));
-	}
-	this.setInfoUdSerie(entity.getInfoUdSerie());
-	this.setDsKeyOrdUdSerie(entity.getDsKeyOrdUdSerie());
-	this.setPgUdSerie(entity.getPgUdSerie());
-	this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
-	this.setFlUnitaDocAnnul(entity.getFlUnitaDocAnnul());
+        SerVLisUdErrFileInput entity = (SerVLisUdErrFileInput) obj;
+        this.setIdUdErrFileInput(entity.getIdUdErrFileInput());
+        this.setIdErrFileInput(entity.getIdErrFileInput());
+        this.setIdUnitaDoc(entity.getIdUnitaDoc());
+        this.setCdUdSerie(entity.getCdUdSerie());
+        if (entity.getDtUdSerie() != null) {
+            this.setDtUdSerie(new Timestamp(entity.getDtUdSerie().getTime()));
+        }
+        this.setInfoUdSerie(entity.getInfoUdSerie());
+        this.setDsKeyOrdUdSerie(entity.getDsKeyOrdUdSerie());
+        this.setPgUdSerie(entity.getPgUdSerie());
+        this.setCdKeyUnitaDoc(entity.getCdKeyUnitaDoc());
+        this.setFlUnitaDocAnnul(entity.getFlUnitaDocAnnul());
     }
 
     @Override
     public SerVLisUdErrFileInput rowBeanToEntity() {
-	SerVLisUdErrFileInput entity = new SerVLisUdErrFileInput();
-	entity.setIdUdErrFileInput(this.getIdUdErrFileInput());
-	entity.setIdErrFileInput(this.getIdErrFileInput());
-	entity.setIdUnitaDoc(this.getIdUnitaDoc());
-	entity.setCdUdSerie(this.getCdUdSerie());
-	entity.setDtUdSerie(this.getDtUdSerie());
-	entity.setInfoUdSerie(this.getInfoUdSerie());
-	entity.setDsKeyOrdUdSerie(this.getDsKeyOrdUdSerie());
-	entity.setPgUdSerie(this.getPgUdSerie());
-	entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
-	entity.setFlUnitaDocAnnul(this.getFlUnitaDocAnnul());
-	return entity;
+        SerVLisUdErrFileInput entity = new SerVLisUdErrFileInput();
+        entity.setIdUdErrFileInput(this.getIdUdErrFileInput());
+        entity.setIdErrFileInput(this.getIdErrFileInput());
+        entity.setIdUnitaDoc(this.getIdUnitaDoc());
+        entity.setCdUdSerie(this.getCdUdSerie());
+        entity.setDtUdSerie(this.getDtUdSerie());
+        entity.setInfoUdSerie(this.getInfoUdSerie());
+        entity.setDsKeyOrdUdSerie(this.getDsKeyOrdUdSerie());
+        entity.setPgUdSerie(this.getPgUdSerie());
+        entity.setCdKeyUnitaDoc(this.getCdKeyUnitaDoc());
+        entity.setFlUnitaDocAnnul(this.getFlUnitaDocAnnul());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

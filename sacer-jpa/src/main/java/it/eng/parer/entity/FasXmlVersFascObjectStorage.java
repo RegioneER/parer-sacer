@@ -23,7 +23,7 @@ public class FasXmlVersFascObjectStorage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public FasXmlVersFascObjectStorage() {
-	super();
+        super();
     }
 
     private Long idFascicolo;
@@ -37,67 +37,67 @@ public class FasXmlVersFascObjectStorage implements Serializable {
     @Id
     @Column(name = "ID_FASCICOLO")
     public Long getIdFascicolo() {
-	return idFascicolo;
+        return idFascicolo;
     }
 
     public void setIdFascicolo(Long idFascicolo) {
-	this.idFascicolo = idFascicolo;
+        this.idFascicolo = idFascicolo;
     }
 
     @MapsId
     @OneToOne(mappedBy = "fasXmlVersFascObjectStorage")
     @JoinColumn(name = "ID_FASCICOLO")
     public FasFascicolo getFasFascicolo() {
-	return fasFascicolo;
+        return fasFascicolo;
     }
 
     public void setFasFascicolo(FasFascicolo fasFascicolo) {
-	this.fasFascicolo = fasFascicolo;
+        this.fasFascicolo = fasFascicolo;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_DEC_BACKEND")
     public DecBackend getDecBackend() {
-	return decBackend;
+        return decBackend;
     }
 
     public void setDecBackend(DecBackend decBackend) {
-	this.decBackend = decBackend;
+        this.decBackend = decBackend;
     }
 
     @Column(name = "NM_TENANT")
     public String getNmTenant() {
-	return nmTenant;
+        return nmTenant;
     }
 
     public void setNmTenant(String nmTenant) {
-	this.nmTenant = nmTenant;
+        this.nmTenant = nmTenant;
     }
 
     @Column(name = "NM_BUCKET")
     public String getNmBucket() {
-	return nmBucket;
+        return nmBucket;
     }
 
     public void setNmBucket(String nmBucket) {
-	this.nmBucket = nmBucket;
+        this.nmBucket = nmBucket;
     }
 
     @Column(name = "CD_KEY_FILE")
     public String getCdKeyFile() {
-	return cdKeyFile;
+        return cdKeyFile;
     }
 
     public void setCdKeyFile(String cdKeyFile) {
-	this.cdKeyFile = cdKeyFile;
+        this.cdKeyFile = cdKeyFile;
     }
 }

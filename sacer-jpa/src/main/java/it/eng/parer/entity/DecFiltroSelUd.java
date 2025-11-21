@@ -58,53 +58,53 @@ public class DecFiltroSelUd implements Serializable {
 
     @Column(name = "ID_FILTRO_SEL_UD")
     @GenericGenerator(name = "SDEC_FILTRO_SEL_UD_ID_FILTRO_SEL_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_FILTRO_SEL_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_FILTRO_SEL_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_FILTRO_SEL_UD_ID_FILTRO_SEL_UD_GENERATOR")
     public Long getIdFiltroSelUd() {
-	return this.idFiltroSelUd;
+        return this.idFiltroSelUd;
     }
 
     public void setIdFiltroSelUd(Long idFiltroSelUd) {
-	this.idFiltroSelUd = idFiltroSelUd;
+        this.idFiltroSelUd = idFiltroSelUd;
     }
 
     @Column(name = "PG_FILTRO")
     public BigDecimal getPgFiltro() {
-	return this.pgFiltro;
+        return this.pgFiltro;
     }
 
     public void setPgFiltro(BigDecimal pgFiltro) {
-	this.pgFiltro = pgFiltro;
+        this.pgFiltro = pgFiltro;
     }
 
     @Column(name = "TI_FILTRO")
     public String getTiFiltro() {
-	return this.tiFiltro;
+        return this.tiFiltro;
     }
 
     public void setTiFiltro(String tiFiltro) {
-	this.tiFiltro = tiFiltro;
+        this.tiFiltro = tiFiltro;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_DOC_PRINC")
     public DecTipoDoc getDecTipoDoc() {
-	return this.decTipoDoc;
+        return this.decTipoDoc;
     }
 
     public void setDecTipoDoc(DecTipoDoc decTipoDoc) {
-	this.decTipoDoc = decTipoDoc;
+        this.decTipoDoc = decTipoDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_SERIE_UD")
     public DecTipoSerieUd getDecTipoSerieUd() {
-	return this.decTipoSerieUd;
+        return this.decTipoSerieUd;
     }
 
     public void setDecTipoSerieUd(DecTipoSerieUd decTipoSerieUd) {
-	this.decTipoSerieUd = decTipoSerieUd;
+        this.decTipoSerieUd = decTipoSerieUd;
     }
 
 }

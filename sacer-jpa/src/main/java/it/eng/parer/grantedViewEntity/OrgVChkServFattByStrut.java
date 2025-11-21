@@ -36,21 +36,21 @@ public class OrgVChkServFattByStrut implements Serializable {
 
     @Column(name = "FL_ELIMINA_ENTE_STRUT", columnDefinition = "char(1)")
     public String getFlEliminaEnteStrut() {
-	return this.flEliminaEnteStrut;
+        return this.flEliminaEnteStrut;
     }
 
     public void setFlEliminaEnteStrut(String flEliminaEnteStrut) {
-	this.flEliminaEnteStrut = flEliminaEnteStrut;
+        this.flEliminaEnteStrut = flEliminaEnteStrut;
     }
 
     private OrgVChkServFattByStrutId orgVChkServFattByStrutId;
 
     @EmbeddedId()
     public OrgVChkServFattByStrutId getOrgVChkServFattByStrutId() {
-	return orgVChkServFattByStrutId;
+        return orgVChkServFattByStrutId;
     }
 
     public void setOrgVChkServFattByStrutId(OrgVChkServFattByStrutId orgVChkServFattByStrutId) {
-	this.orgVChkServFattByStrutId = orgVChkServFattByStrutId;
+        this.orgVChkServFattByStrutId = orgVChkServFattByStrutId;
     }
 }

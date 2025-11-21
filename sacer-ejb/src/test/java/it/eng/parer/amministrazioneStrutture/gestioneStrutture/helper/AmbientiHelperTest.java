@@ -50,422 +50,422 @@ public class AmbientiHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(AmbientiHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), AmbientiHelperTest.class,
-			AmbientiHelper.class, ApplEnum.class));
+        return HelperTest.createEnterpriseArchive(AmbientiHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), AmbientiHelperTest.class,
+                        AmbientiHelper.class, ApplEnum.class));
     }
 
     @Test
     void getOrgEnteByName_queryIsOk() {
-	String nmEnte = aString();
-	BigDecimal idAmb = aBigDecimal();
-	helper.getOrgEnteByName(nmEnte, idAmb);
-	assertTrue(true);
+        String nmEnte = aString();
+        BigDecimal idAmb = aBigDecimal();
+        helper.getOrgEnteByName(nmEnte, idAmb);
+        assertTrue(true);
     }
 
     @Test
     void getOrgAmbienteByName_queryIsOk() {
-	String nmAmbiente = aString();
-	helper.getOrgAmbienteByName(nmAmbiente);
-	assertTrue(true);
+        String nmAmbiente = aString();
+        helper.getOrgAmbienteByName(nmAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void getOrgAmbitoTerritList_queryIsOk() {
-	String tipo = aString();
-	helper.getOrgAmbitoTerritList(tipo);
-	assertTrue(true);
+        String tipo = aString();
+        helper.getOrgAmbitoTerritList(tipo);
+        assertTrue(true);
     }
 
     @Test
     void getOrgAmbitoTerritByCode_queryIsOk() {
-	String cdAmbitoTerritoriale = aString();
-	helper.getOrgAmbitoTerritByCode(cdAmbitoTerritoriale);
-	assertTrue(true);
+        String cdAmbitoTerritoriale = aString();
+        helper.getOrgAmbitoTerritByCode(cdAmbitoTerritoriale);
+        assertTrue(true);
     }
 
     @Test
     void getOrgAmbitoTerritChildList_BigDecimal_queryIsOk() {
-	BigDecimal idAmbitoTerritoriale = aBigDecimal();
-	helper.getOrgAmbitoTerritChildList(idAmbitoTerritoriale);
-	assertTrue(true);
+        BigDecimal idAmbitoTerritoriale = aBigDecimal();
+        helper.getOrgAmbitoTerritChildList(idAmbitoTerritoriale);
+        assertTrue(true);
     }
 
     @Test
     void getOrgAmbitoTerritChildList_List_queryIsOk() {
-	List<BigDecimal> idAmbitoTerrit = aListOfBigDecimal(2);
-	helper.getOrgAmbitoTerritChildList(idAmbitoTerrit);
-	assertTrue(true);
+        List<BigDecimal> idAmbitoTerrit = aListOfBigDecimal(2);
+        helper.getOrgAmbitoTerritChildList(idAmbitoTerrit);
+        assertTrue(true);
     }
 
     @Test
     void getOrgCategEnteList_queryIsOk() {
-	String cdCategEnte = aString();
-	String dsCategEnte = aString();
-	helper.getOrgCategEnteList(cdCategEnte, dsCategEnte);
-	assertTrue(true);
+        String cdCategEnte = aString();
+        String dsCategEnte = aString();
+        helper.getOrgCategEnteList(cdCategEnte, dsCategEnte);
+        assertTrue(true);
     }
 
     @Test
     void getOrgCategEnteByCd_queryIsOk() {
-	String cdCategEnte = aString();
-	helper.getOrgCategEnteByCd(cdCategEnte);
-	assertTrue(true);
+        String cdCategEnte = aString();
+        helper.getOrgCategEnteByCd(cdCategEnte);
+        assertTrue(true);
     }
 
     @Test
     void getOrgCategStrutList_queryIsOk() {
-	helper.getOrgCategStrutList();
-	assertTrue(true);
+        helper.getOrgCategStrutList();
+        assertTrue(true);
     }
 
     @Test
     void getUsrVChkCreaAmbSacer_queryIsOk() {
-	long idUser = aLong();
-	String nmApplic = aString();
-	try {
-	    helper.getUsrVChkCreaAmbSacer(idUser, nmApplic);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
-	assertTrue(true);
+        long idUser = aLong();
+        String nmApplic = aString();
+        try {
+            helper.getUsrVChkCreaAmbSacer(idUser, nmApplic);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
+        assertTrue(true);
     }
 
     @Test
     void getAmbientiAbilitatiPerEnte_queryIsOk() {
-	long idUser = aLong();
-	String nmApplic = aString();
-	helper.getAmbientiAbilitatiPerEnte(idUser, nmApplic);
-	assertTrue(true);
+        long idUser = aLong();
+        String nmApplic = aString();
+        helper.getAmbientiAbilitatiPerEnte(idUser, nmApplic);
+        assertTrue(true);
     }
 
     @Test
     void getAmbientiAbilitatiPerStrut_queryIsOk() {
-	long idUser = aLong();
-	String nmApplic = aString();
-	helper.getAmbientiAbilitatiPerStrut(idUser, nmApplic);
-	assertTrue(true);
+        long idUser = aLong();
+        String nmApplic = aString();
+        helper.getAmbientiAbilitatiPerStrut(idUser, nmApplic);
+        assertTrue(true);
     }
 
     @Test
     void getEntiAbilitatiPerStrut_queryIsOk() {
-	long idUser = aLong();
-	String nmApplic = aString();
-	String nmEnte = aString();
-	BigDecimal idAmbiente = aBigDecimal();
-	List<String> tipoDefTemplateEnte = aListOfString(2);
-	helper.getEntiAbilitatiPerStrut(idUser, nmApplic, nmEnte, idAmbiente, tipoDefTemplateEnte);
-	assertTrue(true);
+        long idUser = aLong();
+        String nmApplic = aString();
+        String nmEnte = aString();
+        BigDecimal idAmbiente = aBigDecimal();
+        List<String> tipoDefTemplateEnte = aListOfString(2);
+        helper.getEntiAbilitatiPerStrut(idUser, nmApplic, nmEnte, idAmbiente, tipoDefTemplateEnte);
+        assertTrue(true);
     }
 
     @Test
     void getAmbientiAbilitatiRicerca_queryIsOk() {
-	long idUser = aLong();
-	String nmAmbiente = aString();
-	helper.getAmbientiAbilitatiRicerca(idUser, nmAmbiente);
-	assertTrue(true);
+        long idUser = aLong();
+        String nmAmbiente = aString();
+        helper.getAmbientiAbilitatiRicerca(idUser, nmAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void getEntiAbilitatiRicerca_queryIsOk() {
-	long idUtente = aLong();
-	BigDecimal idAmbiente = aBigDecimal();
-	String nmEnte = aString();
-	String tipoDefTemplateEnte = aString();
-	helper.getEntiAbilitatiRicerca(idUtente, idAmbiente, nmEnte, tipoDefTemplateEnte);
-	assertTrue(true);
+        long idUtente = aLong();
+        BigDecimal idAmbiente = aBigDecimal();
+        String nmEnte = aString();
+        String tipoDefTemplateEnte = aString();
+        helper.getEntiAbilitatiRicerca(idUtente, idAmbiente, nmEnte, tipoDefTemplateEnte);
+        assertTrue(true);
     }
 
     @Test
     void getEntiValidiAmbiente_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	helper.getEntiValidiAmbiente(idAmbiente);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        helper.getEntiValidiAmbiente(idAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void getUtentiAttiviAbilitatiAdAmbiente_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	helper.getUtentiAttiviAbilitatiAdAmbiente(idAmbiente);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        helper.getUtentiAttiviAbilitatiAdAmbiente(idAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void getUtentiAttiviAbilitatiAdAmbiente2_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	helper.getUtentiAttiviAbilitatiAdAmbiente2(idAmbiente);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        helper.getUtentiAttiviAbilitatiAdAmbiente2(idAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void getUtentiAttiviAbilitatiAdEnte_queryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	helper.getUtentiAttiviAbilitatiAdEnte(idEnte);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        helper.getUtentiAttiviAbilitatiAdEnte(idEnte);
+        assertTrue(true);
     }
 
     @Test
     void getNmEnteConvenz_queryIsOk() {
-	String nmApplic = aString();
-	String nmTipoOrganiz = aString();
-	BigDecimal idOrganizApplic = aBigDecimal();
-	helper.getNmEnteConvenz(nmApplic, nmTipoOrganiz, idOrganizApplic);
-	assertTrue(true);
+        String nmApplic = aString();
+        String nmTipoOrganiz = aString();
+        BigDecimal idOrganizApplic = aBigDecimal();
+        helper.getNmEnteConvenz(nmApplic, nmTipoOrganiz, idOrganizApplic);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgAmbienteFromAbil_queryIsOk() {
-	long idUtente = aLong();
-	helper.retrieveOrgAmbienteFromAbil(idUtente);
-	assertTrue(true);
+        long idUtente = aLong();
+        helper.retrieveOrgAmbienteFromAbil(idUtente);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteAbilNoTemplate_queryIsOk() {
-	long idUtente = aLong();
-	Long idAmbiente = aLong();
-	helper.retrieveOrgEnteAbilNoTemplate(idUtente, idAmbiente, true);
-	assertTrue(true);
+        long idUtente = aLong();
+        Long idAmbiente = aLong();
+        helper.retrieveOrgEnteAbilNoTemplate(idUtente, idAmbiente, true);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteAbil_4args_queryIsOk() {
-	long idUtente = aLong();
-	Long idAmbiente = aLong();
-	List<BigDecimal> idAmbitoTerritList = aListOfBigDecimal(2);
-	List<BigDecimal> idCategEnteList = aListOfBigDecimal(2);
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true);
-	assertTrue(true);
+        long idUtente = aLong();
+        Long idAmbiente = aLong();
+        List<BigDecimal> idAmbitoTerritList = aListOfBigDecimal(2);
+        List<BigDecimal> idCategEnteList = aListOfBigDecimal(2);
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteAbil_5args_queryIsOk() {
-	long idUtente = aLong();
-	Long idAmbiente = aLong();
-	List<BigDecimal> idAmbitoTerritList = aListOfBigDecimal(2);
-	List<BigDecimal> idCategEnteList = aListOfBigDecimal(2);
-	String[] tipoDefTemplateEnte = aStringArray(2);
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true,
-		tipoDefTemplateEnte);
-	assertTrue(true);
+        long idUtente = aLong();
+        Long idAmbiente = aLong();
+        List<BigDecimal> idAmbitoTerritList = aListOfBigDecimal(2);
+        List<BigDecimal> idCategEnteList = aListOfBigDecimal(2);
+        String[] tipoDefTemplateEnte = aStringArray(2);
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true,
+                tipoDefTemplateEnte);
+        assertTrue(true);
     }
 
     @Test
     void retrieveSiOrgEnteConvenz_queryIsOk() {
-	BigDecimal idAmbienteEnteConvenz = aBigDecimal();
-	helper.retrieveSiOrgEnteConvenz(idAmbienteEnteConvenz);
-	assertTrue(true);
+        BigDecimal idAmbienteEnteConvenz = aBigDecimal();
+        helper.retrieveSiOrgEnteConvenz(idAmbienteEnteConvenz);
+        assertTrue(true);
     }
 
     @Test
     void retrieveSiOrgEnteConvenzAccordoValido_queryIsOk() {
-	BigDecimal idAmbienteEnteConvenz = aBigDecimal();
-	helper.retrieveSiOrgEnteConvenzAccordoValido(idAmbienteEnteConvenz);
-	assertTrue(true);
+        BigDecimal idAmbienteEnteConvenz = aBigDecimal();
+        helper.retrieveSiOrgEnteConvenzAccordoValido(idAmbienteEnteConvenz);
+        assertTrue(true);
     }
 
     @Test
     void getEntiConvenzionatiAbilitati_queryIsOk() {
-	long idUserIamCor = aLong();
-	BigDecimal idAmbienteEnteConvenz = aBigDecimal();
-	helper.getEntiConvenzionatiAbilitati(idUserIamCor, idAmbienteEnteConvenz);
-	assertTrue(true);
+        long idUserIamCor = aLong();
+        BigDecimal idAmbienteEnteConvenz = aBigDecimal();
+        helper.getEntiConvenzionatiAbilitati(idUserIamCor, idAmbienteEnteConvenz);
+        assertTrue(true);
     }
 
     @Test
     void countOrgEnteConvenzByAmbitoTerrit_queryIsOk() {
-	BigDecimal idAmbitoTerrit = aBigDecimal();
-	helper.countOrgEnteConvenzByAmbitoTerrit(idAmbitoTerrit);
-	assertTrue(true);
+        BigDecimal idAmbitoTerrit = aBigDecimal();
+        helper.countOrgEnteConvenzByAmbitoTerrit(idAmbitoTerrit);
+        assertTrue(true);
     }
 
     @Test
     void countOrgStoEnteConvenzByAmbitoTerrit_queryIsOk() {
-	BigDecimal idAmbitoTerrit = aBigDecimal();
-	helper.countOrgStoEnteConvenzByAmbitoTerrit(idAmbitoTerrit);
-	assertTrue(true);
+        BigDecimal idAmbitoTerrit = aBigDecimal();
+        helper.countOrgStoEnteConvenzByAmbitoTerrit(idAmbitoTerrit);
+        assertTrue(true);
     }
 
     @Test
     void retrieveAmbientiEntiConvenzAbilitati_queryIsOk() {
-	BigDecimal idUserIam = aBigDecimal();
-	helper.retrieveAmbientiEntiConvenzAbilitati(idUserIam);
-	assertTrue(true);
+        BigDecimal idUserIam = aBigDecimal();
+        helper.retrieveAmbientiEntiConvenzAbilitati(idUserIam);
+        assertTrue(true);
     }
 
     @Test
     void retrieveSIOrgEnteConvenzOrg_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.retrieveSIOrgEnteConvenzOrg(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.retrieveSIOrgEnteConvenzOrg(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void getSIOrgEnteConvenzOrg_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal idEnteConvenz = aBigDecimal();
-	Date dtIniVal = todayTs();
-	try {
-	    helper.getSIOrgEnteConvenzOrg(idStrut, idEnteConvenz, dtIniVal);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal idEnteConvenz = aBigDecimal();
+        Date dtIniVal = todayTs();
+        try {
+            helper.getSIOrgEnteConvenzOrg(idStrut, idEnteConvenz, dtIniVal);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
+        assertTrue(true);
     }
 
     @Test
     void getSIOrgAmbienteEnteConvenzByEnteConvenz_queryIsOk() {
-	BigDecimal idEnteConvenz = aBigDecimal();
-	try {
-	    helper.getSIOrgAmbienteEnteConvenzByEnteConvenz(idEnteConvenz);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
-	assertTrue(true);
+        BigDecimal idEnteConvenz = aBigDecimal();
+        try {
+            helper.getSIOrgAmbienteEnteConvenzByEnteConvenz(idEnteConvenz);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
+        assertTrue(true);
     }
 
     @Test
     void getSIUsrOrganizIam_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.getSIUsrOrganizIam(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.getSIUsrOrganizIam(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void checkOrgVChkServFattByStrut_queryIsOk() {
-	long idEnteConvenz = aLong();
-	long idStrut = aLong();
-	Date dtIniVal = todayTs();
-	try {
-	    helper.checkOrgVChkServFattByStrut(idEnteConvenz, idStrut, dtIniVal);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
-	assertTrue(true);
+        long idEnteConvenz = aLong();
+        long idStrut = aLong();
+        Date dtIniVal = todayTs();
+        try {
+            helper.checkOrgVChkServFattByStrut(idEnteConvenz, idStrut, dtIniVal);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
+        assertTrue(true);
     }
 
     @Test
     void existsCdEnteNormaliz_queryIsOk() {
-	String cdEnteNormaliz = aString();
-	BigDecimal idEnteExcluded = aBigDecimal();
-	helper.existsCdEnteNormaliz(cdEnteNormaliz, idEnteExcluded);
-	assertTrue(true);
+        String cdEnteNormaliz = aString();
+        BigDecimal idEnteExcluded = aBigDecimal();
+        helper.existsCdEnteNormaliz(cdEnteNormaliz, idEnteExcluded);
+        assertTrue(true);
     }
 
     @Test
     void getEnteConvenzConservList_queryIsOk() {
-	long idUserIamCor = aLong();
-	BigDecimal idEnteSiamGestore = aBigDecimal();
-	helper.getEnteConvenzConservList(idUserIamCor, idEnteSiamGestore);
-	assertTrue(true);
+        long idUserIamCor = aLong();
+        BigDecimal idEnteSiamGestore = aBigDecimal();
+        helper.getEnteConvenzConservList(idUserIamCor, idEnteSiamGestore);
+        assertTrue(true);
     }
 
     @Test
     void checkDateAmbiente_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	Date dtIniVal = todayTs();
-	Date dtFinVal = tomorrowTs();
-	helper.checkDateAmbiente(idAmbiente, dtIniVal, dtFinVal);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        Date dtIniVal = todayTs();
+        Date dtFinVal = tomorrowTs();
+        helper.checkDateAmbiente(idAmbiente, dtIniVal, dtFinVal);
+        assertTrue(true);
     }
 
     @Test
     void checkIntervalloSuStorico_queryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	Date dtIniVal = todayTs();
-	Date dtFinVal = tomorrowTs();
-	helper.checkIntervalloSuStorico(idEnte, dtIniVal, dtFinVal);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        Date dtIniVal = todayTs();
+        Date dtFinVal = tomorrowTs();
+        helper.checkIntervalloSuStorico(idEnte, dtIniVal, dtFinVal);
+        assertTrue(true);
     }
 
     @Test
     void getOrgStoricoEnteAmbienteList_queryIsOk() {
-	BigDecimal idEnte = aBigDecimal();
-	helper.getOrgStoricoEnteAmbienteList(idEnte);
-	assertTrue(true);
+        BigDecimal idEnte = aBigDecimal();
+        helper.getOrgStoricoEnteAmbienteList(idEnte);
+        assertTrue(true);
     }
 
     @Test
     void getEntiConvenzionatiValidiAbilitati_queryIsOk() {
-	BigDecimal idAmbiente = aBigDecimal();
-	long idUser = aLong();
-	helper.getEntiConvenzionatiValidiAbilitati(idUser, idAmbiente);
-	assertTrue(true);
+        BigDecimal idAmbiente = aBigDecimal();
+        long idUser = aLong();
+        helper.getEntiConvenzionatiValidiAbilitati(idUser, idAmbiente);
+        assertTrue(true);
     }
 
     @Test
     void getOrgAmbitoTerritChildListBigDecimal_queryIsOk() {
-	helper.getOrgAmbitoTerritChildList(BigDecimal.ZERO);
-	assertTrue(true);
+        helper.getOrgAmbitoTerritChildList(BigDecimal.ZERO);
+        assertTrue(true);
     }
 
     @Test
     void getOrgAmbitoTerritChildListBigDecimalList_queryIsOk() {
-	helper.getOrgAmbitoTerritChildList(Arrays.asList(BigDecimal.ZERO, BigDecimal.ZERO));
-	assertTrue(true);
+        helper.getOrgAmbitoTerritChildList(Arrays.asList(BigDecimal.ZERO, BigDecimal.ZERO));
+        assertTrue(true);
     }
 
     @Test
     void getOrgCategEnteByDesc_queryIsOk() {
-	helper.getOrgCategEnteByDesc("descrizione");
-	assertTrue(true);
+        helper.getOrgCategEnteByDesc("descrizione");
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteAbil_queryIsOk() {
-	final long idUtente = 0L;
-	final long idAmbiente = 0L;
-	final List<BigDecimal> idAmbitoTerritList = Arrays.asList(BigDecimal.ZERO);
-	final List<BigDecimal> idCategEnteList = Arrays.asList(BigDecimal.ZERO);
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList,
-		false);
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true);
-	assertTrue(true);
+        final long idUtente = 0L;
+        final long idAmbiente = 0L;
+        final List<BigDecimal> idAmbitoTerritList = Arrays.asList(BigDecimal.ZERO);
+        final List<BigDecimal> idCategEnteList = Arrays.asList(BigDecimal.ZERO);
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList,
+                false);
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteAbilTipoDefTemplateEnte_queryIsOk() {
-	final long idUtente = 0L;
-	final long idAmbiente = 0L;
-	final List<BigDecimal> idAmbitoTerritList = Arrays.asList(BigDecimal.ZERO);
-	final List<BigDecimal> idCategEnteList = Arrays.asList(BigDecimal.ZERO);
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, false,
-		"tipo");
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true,
-		"tipo");
-	assertTrue(true);
+        final long idUtente = 0L;
+        final long idAmbiente = 0L;
+        final List<BigDecimal> idAmbitoTerritList = Arrays.asList(BigDecimal.ZERO);
+        final List<BigDecimal> idCategEnteList = Arrays.asList(BigDecimal.ZERO);
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, false,
+                "tipo");
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true,
+                "tipo");
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgEnteAbilListTipoDefTemplateEnte_queryIsOk() {
-	final long idUtente = 0L;
-	final long idAmbiente = 0L;
-	final List<BigDecimal> idAmbitoTerritList = Arrays.asList(BigDecimal.ZERO);
-	final List<BigDecimal> idCategEnteList = Arrays.asList(BigDecimal.ZERO);
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, false,
-		"tipo", "tipo2");
-	helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true,
-		"tipo", "tipo2");
-	assertTrue(true);
+        final long idUtente = 0L;
+        final long idAmbiente = 0L;
+        final List<BigDecimal> idAmbitoTerritList = Arrays.asList(BigDecimal.ZERO);
+        final List<BigDecimal> idCategEnteList = Arrays.asList(BigDecimal.ZERO);
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, false,
+                "tipo", "tipo2");
+        helper.retrieveOrgEnteAbil(idUtente, idAmbiente, idAmbitoTerritList, idCategEnteList, true,
+                "tipo", "tipo2");
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgAccordoValidoEnteConvenz_queryIsOk() {
-	helper.retrieveOrgAccordoValidoEnteConvenz(BigDecimal.ZERO);
-	assertTrue(true);
+        helper.retrieveOrgAccordoValidoEnteConvenz(BigDecimal.ZERO);
+        assertTrue(true);
     }
 
     @Test
     void getOrgVRicEnteConvenzByEstList_queryIsOk() {
-	helper.getOrgVRicEnteConvenzByEstList(BigDecimal.ZERO, BigDecimal.ZERO,
-		"tipoEnteConvenzionato");
-	assertTrue(true);
+        helper.getOrgVRicEnteConvenzByEstList(BigDecimal.ZERO, BigDecimal.ZERO,
+                "tipoEnteConvenzionato");
+        assertTrue(true);
     }
 
     @Test
     void findOrgVRicEnteConvenzByEsterno_queryIsOk() {
-	helper.findOrgVRicEnteConvenzByEsterno(BigDecimal.valueOf(9005241));
-	assertTrue(true);
+        helper.findOrgVRicEnteConvenzByEsterno(BigDecimal.valueOf(9005241));
+        assertTrue(true);
     }
 }

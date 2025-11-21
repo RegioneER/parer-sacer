@@ -27,6 +27,6 @@ public final class HsmElencoFascSesFirma {
      * ti_esito_firma_elenco_fasc IN ('DA_FARE', 'IN_ERRORE', 'OK')
      */
     public enum TiEsitoFirmaElencoFasc {
-	DA_FARE, IN_ERRORE, OK
+        DA_FARE, IN_ERRORE, OK
     }
 }

@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 @Stateless(mappedName = "CreazioneIndiceAipFascicoliEjb")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CreazioneIndiceAipFascicoliEjb {
 
     Logger log = LoggerFactory.getLogger(CreazioneIndiceAipFascicoliEjb.class);
@@ -60,51 +60,51 @@ public class CreazioneIndiceAipFascicoliEjb {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void creazioneIndiceAipFascicoli() throws ParerInternalError, Exception {
-	/* Il sistema apre una nuova transazione */
-	log.debug("Creazione Indice AIP Fascicoli - Inizio transazione di creazione indice");
-	/* Reupero gli indici da elaborare */
-	log.debug("Creazione Indice AIP Fascicoli - Recupero gli FasAipFascicoloDaElab ");
-	List<Long> fascDaElabList = ciafHelper.getIndexFasAipFascicoloDaElab();
-	log.info("Creazione Indice AIP Fascicoli - Ottenuti " + fascDaElabList.size()
-		+ " indici AIP da elaborare");
+        /* Il sistema apre una nuova transazione */
+        log.debug("Creazione Indice AIP Fascicoli - Inizio transazione di creazione indice");
+        /* Reupero gli indici da elaborare */
+        log.debug("Creazione Indice AIP Fascicoli - Recupero gli FasAipFascicoloDaElab ");
+        List<Long> fascDaElabList = ciafHelper.getIndexFasAipFascicoloDaElab();
+        log.info("Creazione Indice AIP Fascicoli - Ottenuti " + fascDaElabList.size()
+                + " indici AIP da elaborare");
 
-	/* Per ogni fascicolo presente nella coda */
-	try {
-	    for (Long fascDaElab : fascDaElabList) {
-		elaborazione.gestisciIndiceAipFascicoliDaElab(fascDaElab);
-	    }
-	} catch (IOException | NamingException | NoSuchAlgorithmException ex) {
-	    log.error("Creazione Indice AIP fascicoli - Errore: " + ex);
-	    throw new ParerInternalError(ex);
-	}
+        /* Per ogni fascicolo presente nella coda */
+        try {
+            for (Long fascDaElab : fascDaElabList) {
+                elaborazione.gestisciIndiceAipFascicoliDaElab(fascDaElab);
+            }
+        } catch (IOException | NamingException | NoSuchAlgorithmException ex) {
+            log.error("Creazione Indice AIP fascicoli - Errore: " + ex);
+            throw new ParerInternalError(ex);
+        }
 
-	/*
-	 * Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP
-	 * fascicoli
-	 */
-	jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_INDICE_AIP_FASC.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	log.debug("Creazione Indice AIP Fascicoli - Chiusura transazione di creazione indice");
+        /*
+         * Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione indice AIP
+         * fascicoli
+         */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_INDICE_AIP_FASC.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        log.debug("Creazione Indice AIP Fascicoli - Chiusura transazione di creazione indice");
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void creazioneElenchiIndiceAipFascicoli(long idLogJob)
-	    throws ParerInternalError, IOException, DatatypeConfigurationException, JAXBException,
-	    ParseException, NoSuchAlgorithmException {
-	List<Long> idElenchi = elencoHelper.retrieveElenchiIndiciAipFascicoliDaProcessare();
-	if (!idElenchi.isEmpty()) {
-	    for (Long idElenco : idElenchi) {
-		elabElencoIndiciAipFascicoli.creaElencoIndiciAIPFascicoli(idElenco, idLogJob);
-	    }
-	}
-	/*
-	 * Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione elenchi indici
-	 * AIP
-	 */
-	jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_FASC.name(),
-		JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
-	log.debug(
-		"Creazione Indice AIP Fascicoli - Chiusura transazione di creazione elenchi indici AIP Fascicoli");
+            throws ParerInternalError, IOException, DatatypeConfigurationException, JAXBException,
+            ParseException, NoSuchAlgorithmException {
+        List<Long> idElenchi = elencoHelper.retrieveElenchiIndiciAipFascicoliDaProcessare();
+        if (!idElenchi.isEmpty()) {
+            for (Long idElenco : idElenchi) {
+                elabElencoIndiciAipFascicoli.creaElencoIndiciAIPFascicoli(idElenco, idLogJob);
+            }
+        }
+        /*
+         * Scrivo nel LogJob la fine corretta dell'esecuzione del job di creazione elenchi indici
+         * AIP
+         */
+        jobHelper.writeAtomicLogJob(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_FASC.name(),
+                JobConstants.OpTypeEnum.FINE_SCHEDULAZIONE.name(), null);
+        log.debug(
+                "Creazione Indice AIP Fascicoli - Chiusura transazione di creazione elenchi indici AIP Fascicoli");
     }
 
 }

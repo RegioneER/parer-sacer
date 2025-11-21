@@ -61,67 +61,67 @@ public class DecModelloOutSelUd implements Serializable {
 
     @Column(name = "ID_MODELLO_OUT_SEL_UD")
     @GenericGenerator(name = "SDEC_MODELLO_OUT_SEL_UD_ID_MODELLO_OUT_SEL_UD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_OUT_SEL_UD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_MODELLO_OUT_SEL_UD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_MODELLO_OUT_SEL_UD_ID_MODELLO_OUT_SEL_UD_GENERATOR")
     public Long getIdModelloOutSelUd() {
-	return this.idModelloOutSelUd;
+        return this.idModelloOutSelUd;
     }
 
     public void setIdModelloOutSelUd(Long idModelloOutSelUd) {
-	this.idModelloOutSelUd = idModelloOutSelUd;
+        this.idModelloOutSelUd = idModelloOutSelUd;
     }
 
     @Column(name = "DL_FORMATO_OUT")
     public String getDlFormatoOut() {
-	return this.dlFormatoOut;
+        return this.dlFormatoOut;
     }
 
     public void setDlFormatoOut(String dlFormatoOut) {
-	this.dlFormatoOut = dlFormatoOut;
+        this.dlFormatoOut = dlFormatoOut;
     }
 
     @Column(name = "TI_OUT")
     public String getTiOut() {
-	return this.tiOut;
+        return this.tiOut;
     }
 
     public void setTiOut(String tiOut) {
-	this.tiOut = tiOut;
+        this.tiOut = tiOut;
     }
 
     @OneToMany(mappedBy = "decModelloOutSelUd", cascade = CascadeType.PERSIST)
     public List<DecModelloCampoOutSelUd> getDecModelloCampoOutSelUds() {
-	return this.decModelloCampoOutSelUds;
+        return this.decModelloCampoOutSelUds;
     }
 
     public void setDecModelloCampoOutSelUds(
-	    List<DecModelloCampoOutSelUd> decModelloCampoOutSelUds) {
-	this.decModelloCampoOutSelUds = decModelloCampoOutSelUds;
+            List<DecModelloCampoOutSelUd> decModelloCampoOutSelUds) {
+        this.decModelloCampoOutSelUds = decModelloCampoOutSelUds;
     }
 
     public DecModelloCampoOutSelUd addDecModelloCampoOutSelUd(
-	    DecModelloCampoOutSelUd decModelloCampoOutSelUd) {
-	getDecModelloCampoOutSelUds().add(decModelloCampoOutSelUd);
-	decModelloCampoOutSelUd.setDecModelloOutSelUd(this);
-	return decModelloCampoOutSelUd;
+            DecModelloCampoOutSelUd decModelloCampoOutSelUd) {
+        getDecModelloCampoOutSelUds().add(decModelloCampoOutSelUd);
+        decModelloCampoOutSelUd.setDecModelloOutSelUd(this);
+        return decModelloCampoOutSelUd;
     }
 
     public DecModelloCampoOutSelUd removeDecModelloCampoOutSelUd(
-	    DecModelloCampoOutSelUd decModelloCampoOutSelUd) {
-	getDecModelloCampoOutSelUds().remove(decModelloCampoOutSelUd);
-	decModelloCampoOutSelUd.setDecModelloOutSelUd(null);
-	return decModelloCampoOutSelUd;
+            DecModelloCampoOutSelUd decModelloCampoOutSelUd) {
+        getDecModelloCampoOutSelUds().remove(decModelloCampoOutSelUd);
+        decModelloCampoOutSelUd.setDecModelloOutSelUd(null);
+        return decModelloCampoOutSelUd;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_TIPO_SERIE")
     public DecModelloTipoSerie getDecModelloTipoSerie() {
-	return this.decModelloTipoSerie;
+        return this.decModelloTipoSerie;
     }
 
     public void setDecModelloTipoSerie(DecModelloTipoSerie decModelloTipoSerie) {
-	this.decModelloTipoSerie = decModelloTipoSerie;
+        this.decModelloTipoSerie = decModelloTipoSerie;
     }
 
 }

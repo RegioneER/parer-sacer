@@ -44,40 +44,40 @@ public class DecVLisSisVersByTipoUd implements Serializable {
 
     @EmbeddedId
     public DecVLisSisVersByTipoUdId getDecVLisSisVersByTipoUdId() {
-	return decVLisSisVersByTipoUdId;
+        return decVLisSisVersByTipoUdId;
     }
 
     public void setDecVLisSisVersByTipoUdId(DecVLisSisVersByTipoUdId decVLisSisVersByTipoUdId) {
-	this.decVLisSisVersByTipoUdId = decVLisSisVersByTipoUdId;
+        this.decVLisSisVersByTipoUdId = decVLisSisVersByTipoUdId;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_EROG")
     public Date getDtErog() {
-	return this.dtErog;
+        return this.dtErog;
     }
 
     public void setDtErog(Date dtErog) {
-	this.dtErog = dtErog;
+        this.dtErog = dtErog;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_LAST_EROG")
     public Date getDtLastErog() {
-	return this.dtLastErog;
+        return this.dtLastErog;
     }
 
     public void setDtLastErog(Date dtLastErog) {
-	this.dtLastErog = dtLastErog;
+        this.dtLastErog = dtLastErog;
     }
 
     @Column(name = "NM_SISTEMA_VERSANTE")
     public String getNmSistemaVersante() {
-	return this.nmSistemaVersante;
+        return this.nmSistemaVersante;
     }
 
     public void setNmSistemaVersante(String nmSistemaVersante) {
-	this.nmSistemaVersante = nmSistemaVersante;
+        this.nmSistemaVersante = nmSistemaVersante;
     }
 
 }

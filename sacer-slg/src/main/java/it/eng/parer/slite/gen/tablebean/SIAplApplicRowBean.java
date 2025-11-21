@@ -35,120 +35,120 @@ public class SIAplApplicRowBean extends BaseRow implements JEEBaseRowInterface {
     public static SIAplApplicTableDescriptor TABLE_DESCRIPTOR = new SIAplApplicTableDescriptor();
 
     public SIAplApplicRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdApplic() {
-	return getBigDecimal("id_applic");
+        return getBigDecimal("id_applic");
     }
 
     public void setIdApplic(BigDecimal idApplic) {
-	setObject("id_applic", idApplic);
+        setObject("id_applic", idApplic);
     }
 
     public String getNmApplic() {
-	return getString("nm_applic");
+        return getString("nm_applic");
     }
 
     public void setNmApplic(String nmApplic) {
-	setObject("nm_applic", nmApplic);
+        setObject("nm_applic", nmApplic);
     }
 
     public String getDsApplic() {
-	return getString("ds_applic");
+        return getString("ds_applic");
     }
 
     public void setDsApplic(String dsApplic) {
-	setObject("ds_applic", dsApplic);
+        setObject("ds_applic", dsApplic);
     }
 
     public String getDsUrlReplicaUser() {
-	return getString("ds_url_replica_user");
+        return getString("ds_url_replica_user");
     }
 
     public void setDsUrlReplicaUser(String dsUrlReplicaUser) {
-	setObject("ds_url_replica_user", dsUrlReplicaUser);
+        setObject("ds_url_replica_user", dsUrlReplicaUser);
     }
 
     public String getNmUserReplicaUser() {
-	return getString("nm_user_replica_user");
+        return getString("nm_user_replica_user");
     }
 
     public void setNmUserReplicaUser(String nmUserReplicaUser) {
-	setObject("nm_user_replica_user", nmUserReplicaUser);
+        setObject("nm_user_replica_user", nmUserReplicaUser);
     }
 
     public String getCdPswReplicaUser() {
-	return getString("cd_psw_replica_user");
+        return getString("cd_psw_replica_user");
     }
 
     public void setCdPswReplicaUser(String cdPswReplicaUser) {
-	setObject("cd_psw_replica_user", cdPswReplicaUser);
+        setObject("cd_psw_replica_user", cdPswReplicaUser);
     }
 
     public String getCdVersioneComp() {
-	return getString("cd_versione_comp");
+        return getString("cd_versione_comp");
     }
 
     public void setCdVersioneComp(String cdVersioneComp) {
-	setObject("cd_versione_comp", cdVersioneComp);
+        setObject("cd_versione_comp", cdVersioneComp);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	SIAplApplic entity = (SIAplApplic) obj;
+        SIAplApplic entity = (SIAplApplic) obj;
 
-	this.setIdApplic(
-		entity.getIdApplic() == null ? null : BigDecimal.valueOf(entity.getIdApplic()));
-	this.setNmApplic(entity.getNmApplic());
-	this.setDsApplic(entity.getDsApplic());
-	this.setDsUrlReplicaUser(entity.getDsUrlReplicaUser());
-	this.setNmUserReplicaUser(entity.getNmUserReplicaUser());
-	this.setCdPswReplicaUser(entity.getCdPswReplicaUser());
+        this.setIdApplic(
+                entity.getIdApplic() == null ? null : BigDecimal.valueOf(entity.getIdApplic()));
+        this.setNmApplic(entity.getNmApplic());
+        this.setDsApplic(entity.getDsApplic());
+        this.setDsUrlReplicaUser(entity.getDsUrlReplicaUser());
+        this.setNmUserReplicaUser(entity.getNmUserReplicaUser());
+        this.setCdPswReplicaUser(entity.getCdPswReplicaUser());
     }
 
     @Override
     public SIAplApplic rowBeanToEntity() {
-	SIAplApplic entity = new SIAplApplic();
-	if (this.getIdApplic() != null) {
-	    entity.setIdApplic(this.getIdApplic().longValue());
-	}
-	entity.setNmApplic(this.getNmApplic());
-	entity.setDsApplic(this.getDsApplic());
-	entity.setDsUrlReplicaUser(this.getDsUrlReplicaUser());
-	entity.setNmUserReplicaUser(this.getNmUserReplicaUser());
-	entity.setCdPswReplicaUser(this.getCdPswReplicaUser());
-	return entity;
+        SIAplApplic entity = new SIAplApplic();
+        if (this.getIdApplic() != null) {
+            entity.setIdApplic(this.getIdApplic().longValue());
+        }
+        entity.setNmApplic(this.getNmApplic());
+        entity.setDsApplic(this.getDsApplic());
+        entity.setDsUrlReplicaUser(this.getDsUrlReplicaUser());
+        entity.setNmUserReplicaUser(this.getNmUserReplicaUser());
+        entity.setCdPswReplicaUser(this.getCdPswReplicaUser());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

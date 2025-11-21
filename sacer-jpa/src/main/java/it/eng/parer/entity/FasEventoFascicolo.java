@@ -36,7 +36,7 @@ public class FasEventoFascicolo implements Serializable {
     private FasFascicolo fasFascicolo;
 
     public FasEventoFascicolo() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @Id
@@ -44,50 +44,50 @@ public class FasEventoFascicolo implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FAS_EVENTO_FASCICOLO_IDEVENTOFASCICOLO_GENERATOR")
     @Column(name = "ID_EVENTO_FASCICOLO")
     public long getIdEventoFascicolo() {
-	return this.idEventoFascicolo;
+        return this.idEventoFascicolo;
     }
 
     public void setIdEventoFascicolo(long idEventoFascicolo) {
-	this.idEventoFascicolo = idEventoFascicolo;
+        this.idEventoFascicolo = idEventoFascicolo;
     }
 
     @Column(name = "DS_DENOM_EVENTO")
     public String getDsDenomEvento() {
-	return this.dsDenomEvento;
+        return this.dsDenomEvento;
     }
 
     public void setDsDenomEvento(String dsDenomEvento) {
-	this.dsDenomEvento = dsDenomEvento;
+        this.dsDenomEvento = dsDenomEvento;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_APERTURA")
     public Date getTsApertura() {
-	return this.tsApertura;
+        return this.tsApertura;
     }
 
     public void setTsApertura(Date tsApertura) {
-	this.tsApertura = tsApertura;
+        this.tsApertura = tsApertura;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "TS_CHIUSURA")
     public Date getTsChiusura() {
-	return this.tsChiusura;
+        return this.tsChiusura;
     }
 
     public void setTsChiusura(Date tsChiusura) {
-	this.tsChiusura = tsChiusura;
+        this.tsChiusura = tsChiusura;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FASCICOLO")
     public FasFascicolo getFasFascicolo() {
-	return this.fasFascicolo;
+        return this.fasFascicolo;
     }
 
     public void setFasFascicolo(FasFascicolo fasFascicolo) {
-	this.fasFascicolo = fasFascicolo;
+        this.fasFascicolo = fasFascicolo;
     }
 
 }

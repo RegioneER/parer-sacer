@@ -37,19 +37,19 @@ public class MonVChkFascByStrutTableBean extends AbstractBaseTable<MonVChkFascBy
     public static MonVChkFascByStrutTableDescriptor TABLE_DESCRIPTOR = new MonVChkFascByStrutTableDescriptor();
 
     public MonVChkFascByStrutTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkFascByStrutRowBean createRow() {
-	return new MonVChkFascByStrutRowBean();
+        return new MonVChkFascByStrutRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkFascByStrutRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

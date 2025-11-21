@@ -71,7 +71,7 @@ public interface SignatureSessionEjb {
      * @throws Exception errore generico
      */
     public void storeSignature(long sessionId, long idFile, byte[] signedFile, Date signingDate,
-	    TipoFirma tipoFirma) throws Exception;
+            TipoFirma tipoFirma) throws Exception;
 
     /**
      * Stores the signature file
@@ -85,7 +85,7 @@ public interface SignatureSessionEjb {
      * @throws Exception errore generico
      */
     public void storeSignature(HsmSessioneFirma session, long idFile, byte[] signedFile,
-	    Date signingDate, ElencoEnums.TipoFirma tipoFirma) throws Exception;
+            Date signingDate, ElencoEnums.TipoFirma tipoFirma) throws Exception;
 
     /**
      * Stores the file signing failed and the file status is set the previous one.
@@ -106,7 +106,7 @@ public interface SignatureSessionEjb {
      * @param descrError descrizione errore
      */
     public void errorFile(HsmSessioneFirma session, long idFile, String codError,
-	    String descrError);
+            String descrError);
 
     /**
      * Stores the failure of signature session and invokes {@link #errorFile } for all his files
@@ -126,7 +126,7 @@ public interface SignatureSessionEjb {
      * @param descError descrizione errore
      */
     public void errorSessioneFirma(HsmSessioneFirma session, SignatureSession.CdErr codError,
-	    String descError);
+            String descError);
 
     /**
      * Closes the signature session and stores it

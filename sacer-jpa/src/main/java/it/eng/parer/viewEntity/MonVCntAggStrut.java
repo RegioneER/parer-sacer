@@ -39,21 +39,21 @@ public class MonVCntAggStrut implements Serializable {
 
     @Column(name = "NI_AGG")
     public BigDecimal getNiAgg() {
-	return this.niAgg;
+        return this.niAgg;
     }
 
     public void setNiAgg(BigDecimal niAgg) {
-	this.niAgg = niAgg;
+        this.niAgg = niAgg;
     }
 
     private MonVCntAggStrutId monVCntAggStrutId;
 
     @EmbeddedId()
     public MonVCntAggStrutId getMonVCntAggStrutId() {
-	return monVCntAggStrutId;
+        return monVCntAggStrutId;
     }
 
     public void setMonVCntAggStrutId(MonVCntAggStrutId monVCntAggStrutId) {
-	this.monVCntAggStrutId = monVCntAggStrutId;
+        this.monVCntAggStrutId = monVCntAggStrutId;
     }
 }

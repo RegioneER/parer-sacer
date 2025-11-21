@@ -57,84 +57,84 @@ public class AroNotaUnitaDoc implements Serializable {
 
     @Id
     @GenericGenerator(name = "ARO_NOTA_UNITA_DOC_IDNOTAUNITADOC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_NOTA_UNITA_DOC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_NOTA_UNITA_DOC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ARO_NOTA_UNITA_DOC_IDNOTAUNITADOC_GENERATOR")
     @Column(name = "ID_NOTA_UNITA_DOC")
     public Long getIdNotaUnitaDoc() {
-	return this.idNotaUnitaDoc;
+        return this.idNotaUnitaDoc;
     }
 
     public void setIdNotaUnitaDoc(Long idNotaUnitaDoc) {
-	this.idNotaUnitaDoc = idNotaUnitaDoc;
+        this.idNotaUnitaDoc = idNotaUnitaDoc;
     }
 
     @Column(name = "DS_NOTA_UNITA_DOC")
     public String getDsNotaUnitaDoc() {
-	return this.dsNotaUnitaDoc;
+        return this.dsNotaUnitaDoc;
     }
 
     public void setDsNotaUnitaDoc(String dsNotaUnitaDoc) {
-	this.dsNotaUnitaDoc = dsNotaUnitaDoc;
+        this.dsNotaUnitaDoc = dsNotaUnitaDoc;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_NOTA_UNITA_DOC")
     public Date getDtNotaUnitaDoc() {
-	return this.dtNotaUnitaDoc;
+        return this.dtNotaUnitaDoc;
     }
 
     public void setDtNotaUnitaDoc(Date dtNotaUnitaDoc) {
-	this.dtNotaUnitaDoc = dtNotaUnitaDoc;
+        this.dtNotaUnitaDoc = dtNotaUnitaDoc;
     }
 
     @Column(name = "PG_NOTA_UNITA_DOC")
     public BigDecimal getPgNotaUnitaDoc() {
-	return this.pgNotaUnitaDoc;
+        return this.pgNotaUnitaDoc;
     }
 
     public void setPgNotaUnitaDoc(BigDecimal pgNotaUnitaDoc) {
-	this.pgNotaUnitaDoc = pgNotaUnitaDoc;
+        this.pgNotaUnitaDoc = pgNotaUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public IamUser getIamUser() {
-	return this.iamUser;
+        return this.iamUser;
     }
 
     public void setIamUser(IamUser iamUser) {
-	this.iamUser = iamUser;
+        this.iamUser = iamUser;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_UNITA_DOC")
     public AroUnitaDoc getAroUnitaDoc() {
-	return this.aroUnitaDoc;
+        return this.aroUnitaDoc;
     }
 
     public void setAroUnitaDoc(AroUnitaDoc aroUnitaDoc) {
-	this.aroUnitaDoc = aroUnitaDoc;
+        this.aroUnitaDoc = aroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_INDICE_AIP")
     public AroVerIndiceAipUd getAroVerIndiceAipUd() {
-	return this.aroVerIndiceAipUd;
+        return this.aroVerIndiceAipUd;
     }
 
     public void setAroVerIndiceAipUd(AroVerIndiceAipUd aroVerIndiceAipUd) {
-	this.aroVerIndiceAipUd = aroVerIndiceAipUd;
+        this.aroVerIndiceAipUd = aroVerIndiceAipUd;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_NOTA_UNITA_DOC")
     public DecTipoNotaUnitaDoc getDecTipoNotaUnitaDoc() {
-	return this.decTipoNotaUnitaDoc;
+        return this.decTipoNotaUnitaDoc;
     }
 
     public void setDecTipoNotaUnitaDoc(DecTipoNotaUnitaDoc decTipoNotaUnitaDoc) {
-	this.decTipoNotaUnitaDoc = decTipoNotaUnitaDoc;
+        this.decTipoNotaUnitaDoc = decTipoNotaUnitaDoc;
     }
 
 }

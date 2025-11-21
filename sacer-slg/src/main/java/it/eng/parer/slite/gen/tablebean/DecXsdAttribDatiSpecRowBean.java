@@ -37,121 +37,121 @@ public class DecXsdAttribDatiSpecRowBean extends BaseRow implements JEEBaseRowIn
     public static DecXsdAttribDatiSpecTableDescriptor TABLE_DESCRIPTOR = new DecXsdAttribDatiSpecTableDescriptor();
 
     public DecXsdAttribDatiSpecRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdXsdAttribDatiSpec() {
-	return getBigDecimal("id_xsd_attrib_dati_spec");
+        return getBigDecimal("id_xsd_attrib_dati_spec");
     }
 
     public void setIdXsdAttribDatiSpec(BigDecimal idXsdAttribDatiSpec) {
-	setObject("id_xsd_attrib_dati_spec", idXsdAttribDatiSpec);
+        setObject("id_xsd_attrib_dati_spec", idXsdAttribDatiSpec);
     }
 
     public BigDecimal getIdXsdDatiSpec() {
-	return getBigDecimal("id_xsd_dati_spec");
+        return getBigDecimal("id_xsd_dati_spec");
     }
 
     public void setIdXsdDatiSpec(BigDecimal idXsdDatiSpec) {
-	setObject("id_xsd_dati_spec", idXsdDatiSpec);
+        setObject("id_xsd_dati_spec", idXsdDatiSpec);
     }
 
     public BigDecimal getIdAttribDatiSpec() {
-	return getBigDecimal("id_attrib_dati_spec");
+        return getBigDecimal("id_attrib_dati_spec");
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-	setObject("id_attrib_dati_spec", idAttribDatiSpec);
+        setObject("id_attrib_dati_spec", idAttribDatiSpec);
     }
 
     public BigDecimal getNiOrdAttrib() {
-	return getBigDecimal("ni_ord_attrib");
+        return getBigDecimal("ni_ord_attrib");
     }
 
     public void setNiOrdAttrib(BigDecimal niOrdAttrib) {
-	setObject("ni_ord_attrib", niOrdAttrib);
+        setObject("ni_ord_attrib", niOrdAttrib);
     }
 
     public String getDsAttribDatiSpec() {
-	return getString("ds_attrib_dati_spec");
+        return getString("ds_attrib_dati_spec");
     }
 
     public void setDsAttribDatiSpec(String dsAttribDatiSpec) {
-	setObject("ds_attrib_dati_spec", dsAttribDatiSpec);
+        setObject("ds_attrib_dati_spec", dsAttribDatiSpec);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecXsdAttribDatiSpec entity = (DecXsdAttribDatiSpec) obj;
+        DecXsdAttribDatiSpec entity = (DecXsdAttribDatiSpec) obj;
 
-	this.setIdXsdAttribDatiSpec(entity.getIdXsdAttribDatiSpec() == null ? null
-		: BigDecimal.valueOf(entity.getIdXsdAttribDatiSpec()));
+        this.setIdXsdAttribDatiSpec(entity.getIdXsdAttribDatiSpec() == null ? null
+                : BigDecimal.valueOf(entity.getIdXsdAttribDatiSpec()));
 
-	if (entity.getDecXsdDatiSpec() != null) {
-	    this.setIdXsdDatiSpec(new BigDecimal(entity.getDecXsdDatiSpec().getIdXsdDatiSpec()));
-	}
+        if (entity.getDecXsdDatiSpec() != null) {
+            this.setIdXsdDatiSpec(new BigDecimal(entity.getDecXsdDatiSpec().getIdXsdDatiSpec()));
+        }
 
-	if (entity.getDecAttribDatiSpec() != null) {
-	    this.setIdAttribDatiSpec(
-		    new BigDecimal(entity.getDecAttribDatiSpec().getIdAttribDatiSpec()));
-	}
+        if (entity.getDecAttribDatiSpec() != null) {
+            this.setIdAttribDatiSpec(
+                    new BigDecimal(entity.getDecAttribDatiSpec().getIdAttribDatiSpec()));
+        }
 
-	this.setNiOrdAttrib(entity.getNiOrdAttrib());
-	this.setDsAttribDatiSpec(entity.getDsAttribDatiSpec());
+        this.setNiOrdAttrib(entity.getNiOrdAttrib());
+        this.setDsAttribDatiSpec(entity.getDsAttribDatiSpec());
     }
 
     @Override
     public DecXsdAttribDatiSpec rowBeanToEntity() {
-	DecXsdAttribDatiSpec entity = new DecXsdAttribDatiSpec();
-	if (this.getIdXsdAttribDatiSpec() != null) {
-	    entity.setIdXsdAttribDatiSpec(this.getIdXsdAttribDatiSpec().longValue());
-	}
-	if (this.getIdXsdDatiSpec() != null) {
-	    if (entity.getDecXsdDatiSpec() == null) {
-		entity.setDecXsdDatiSpec(new DecXsdDatiSpec());
-	    }
-	    entity.getDecXsdDatiSpec().setIdXsdDatiSpec(this.getIdXsdDatiSpec().longValue());
-	}
-	if (this.getIdAttribDatiSpec() != null) {
-	    if (entity.getDecAttribDatiSpec() == null) {
-		entity.setDecAttribDatiSpec(new DecAttribDatiSpec());
-	    }
-	    entity.getDecAttribDatiSpec()
-		    .setIdAttribDatiSpec(this.getIdAttribDatiSpec().longValue());
-	}
-	entity.setNiOrdAttrib(this.getNiOrdAttrib());
-	entity.setDsAttribDatiSpec(this.getDsAttribDatiSpec());
-	return entity;
+        DecXsdAttribDatiSpec entity = new DecXsdAttribDatiSpec();
+        if (this.getIdXsdAttribDatiSpec() != null) {
+            entity.setIdXsdAttribDatiSpec(this.getIdXsdAttribDatiSpec().longValue());
+        }
+        if (this.getIdXsdDatiSpec() != null) {
+            if (entity.getDecXsdDatiSpec() == null) {
+                entity.setDecXsdDatiSpec(new DecXsdDatiSpec());
+            }
+            entity.getDecXsdDatiSpec().setIdXsdDatiSpec(this.getIdXsdDatiSpec().longValue());
+        }
+        if (this.getIdAttribDatiSpec() != null) {
+            if (entity.getDecAttribDatiSpec() == null) {
+                entity.setDecAttribDatiSpec(new DecAttribDatiSpec());
+            }
+            entity.getDecAttribDatiSpec()
+                    .setIdAttribDatiSpec(this.getIdAttribDatiSpec().longValue());
+        }
+        entity.setNiOrdAttrib(this.getNiOrdAttrib());
+        entity.setDsAttribDatiSpec(this.getDsAttribDatiSpec());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -52,48 +52,48 @@ public class OrgAmbitoTerrit implements Serializable {
     @Id
     @Column(name = "ID_AMBITO_TERRIT")
     public Long getIdAmbitoTerrit() {
-	return this.idAmbitoTerrit;
+        return this.idAmbitoTerrit;
     }
 
     public void setIdAmbitoTerrit(Long idAmbitoTerrit) {
-	this.idAmbitoTerrit = idAmbitoTerrit;
+        this.idAmbitoTerrit = idAmbitoTerrit;
     }
 
     @Column(name = "CD_AMBITO_TERRIT")
     public String getCdAmbitoTerrit() {
-	return this.cdAmbitoTerrit;
+        return this.cdAmbitoTerrit;
     }
 
     public void setCdAmbitoTerrit(String cdAmbitoTerrit) {
-	this.cdAmbitoTerrit = cdAmbitoTerrit;
+        this.cdAmbitoTerrit = cdAmbitoTerrit;
     }
 
     @Column(name = "TI_AMBITO_TERRIT")
     public String getTiAmbitoTerrit() {
-	return this.tiAmbitoTerrit;
+        return this.tiAmbitoTerrit;
     }
 
     public void setTiAmbitoTerrit(String tiAmbitoTerrit) {
-	this.tiAmbitoTerrit = tiAmbitoTerrit;
+        this.tiAmbitoTerrit = tiAmbitoTerrit;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_AMBITO_TERRIT_PADRE")
     public OrgAmbitoTerrit getOrgAmbitoTerrit() {
-	return this.orgAmbitoTerrit;
+        return this.orgAmbitoTerrit;
     }
 
     public void setOrgAmbitoTerrit(OrgAmbitoTerrit orgAmbitoTerrit) {
-	this.orgAmbitoTerrit = orgAmbitoTerrit;
+        this.orgAmbitoTerrit = orgAmbitoTerrit;
     }
 
     @OneToMany(mappedBy = "orgAmbitoTerrit")
     @XmlTransient
     public List<OrgAmbitoTerrit> getOrgAmbitoTerrits() {
-	return this.orgAmbitoTerrits;
+        return this.orgAmbitoTerrits;
     }
 
     public void setOrgAmbitoTerrits(List<OrgAmbitoTerrit> orgAmbitoTerrits) {
-	this.orgAmbitoTerrits = orgAmbitoTerrits;
+        this.orgAmbitoTerrits = orgAmbitoTerrits;
     }
 }

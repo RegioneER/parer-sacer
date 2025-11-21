@@ -42,20 +42,20 @@ public class ElvVChkSoloFascAnnul implements Serializable {
     @Id
     @Column(name = "ID_ELENCO_VERS_FASC")
     public BigDecimal getIdElencoVersFasc() {
-	return this.idElencoVersFasc;
+        return this.idElencoVersFasc;
     }
 
     public void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
-	this.idElencoVersFasc = idElencoVersFasc;
+        this.idElencoVersFasc = idElencoVersFasc;
     }
 
     @Column(name = "FL_SOLO_FASC_ANNUL", columnDefinition = "char(1)")
     public String getFlSoloFascAnnul() {
-	return this.flSoloFascAnnul;
+        return this.flSoloFascAnnul;
     }
 
     public void setFlSoloFascAnnul(String flSoloFascAnnul) {
-	this.flSoloFascAnnul = flSoloFascAnnul;
+        this.flSoloFascAnnul = flSoloFascAnnul;
     }
 
 }

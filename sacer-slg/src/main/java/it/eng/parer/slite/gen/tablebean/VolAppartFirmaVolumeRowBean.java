@@ -37,101 +37,101 @@ public class VolAppartFirmaVolumeRowBean extends BaseRow implements JEEBaseRowIn
     public static VolAppartFirmaVolumeTableDescriptor TABLE_DESCRIPTOR = new VolAppartFirmaVolumeTableDescriptor();
 
     public VolAppartFirmaVolumeRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdAppartFirmaVolume() {
-	return getBigDecimal("id_appart_firma_volume");
+        return getBigDecimal("id_appart_firma_volume");
     }
 
     public void setIdAppartFirmaVolume(BigDecimal idAppartFirmaVolume) {
-	setObject("id_appart_firma_volume", idAppartFirmaVolume);
+        setObject("id_appart_firma_volume", idAppartFirmaVolume);
     }
 
     public BigDecimal getIdAppartCompVolume() {
-	return getBigDecimal("id_appart_comp_volume");
+        return getBigDecimal("id_appart_comp_volume");
     }
 
     public void setIdAppartCompVolume(BigDecimal idAppartCompVolume) {
-	setObject("id_appart_comp_volume", idAppartCompVolume);
+        setObject("id_appart_comp_volume", idAppartCompVolume);
     }
 
     public BigDecimal getIdFirmaComp() {
-	return getBigDecimal("id_firma_comp");
+        return getBigDecimal("id_firma_comp");
     }
 
     public void setIdFirmaComp(BigDecimal idFirmaComp) {
-	setObject("id_firma_comp", idFirmaComp);
+        setObject("id_firma_comp", idFirmaComp);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VolAppartFirmaVolume entity = (VolAppartFirmaVolume) obj;
+        VolAppartFirmaVolume entity = (VolAppartFirmaVolume) obj;
 
-	this.setIdAppartFirmaVolume(entity.getIdAppartFirmaVolume() == null ? null
-		: BigDecimal.valueOf(entity.getIdAppartFirmaVolume()));
+        this.setIdAppartFirmaVolume(entity.getIdAppartFirmaVolume() == null ? null
+                : BigDecimal.valueOf(entity.getIdAppartFirmaVolume()));
 
-	if (entity.getVolAppartCompVolume() != null) {
-	    this.setIdAppartCompVolume(
-		    new BigDecimal(entity.getVolAppartCompVolume().getIdAppartCompVolume()));
-	}
+        if (entity.getVolAppartCompVolume() != null) {
+            this.setIdAppartCompVolume(
+                    new BigDecimal(entity.getVolAppartCompVolume().getIdAppartCompVolume()));
+        }
 
-	if (entity.getAroFirmaComp() != null) {
-	    this.setIdFirmaComp(new BigDecimal(entity.getAroFirmaComp().getIdFirmaComp()));
-	}
+        if (entity.getAroFirmaComp() != null) {
+            this.setIdFirmaComp(new BigDecimal(entity.getAroFirmaComp().getIdFirmaComp()));
+        }
 
     }
 
     @Override
     public VolAppartFirmaVolume rowBeanToEntity() {
-	VolAppartFirmaVolume entity = new VolAppartFirmaVolume();
-	if (this.getIdAppartFirmaVolume() != null) {
-	    entity.setIdAppartFirmaVolume(this.getIdAppartFirmaVolume().longValue());
-	}
-	if (this.getIdAppartCompVolume() != null) {
-	    if (entity.getVolAppartCompVolume() == null) {
-		entity.setVolAppartCompVolume(new VolAppartCompVolume());
-	    }
-	    entity.getVolAppartCompVolume()
-		    .setIdAppartCompVolume(this.getIdAppartCompVolume().longValue());
-	}
-	if (this.getIdFirmaComp() != null) {
-	    if (entity.getAroFirmaComp() == null) {
-		entity.setAroFirmaComp(new AroFirmaComp());
-	    }
-	    entity.getAroFirmaComp().setIdFirmaComp(this.getIdFirmaComp().longValue());
-	}
-	return entity;
+        VolAppartFirmaVolume entity = new VolAppartFirmaVolume();
+        if (this.getIdAppartFirmaVolume() != null) {
+            entity.setIdAppartFirmaVolume(this.getIdAppartFirmaVolume().longValue());
+        }
+        if (this.getIdAppartCompVolume() != null) {
+            if (entity.getVolAppartCompVolume() == null) {
+                entity.setVolAppartCompVolume(new VolAppartCompVolume());
+            }
+            entity.getVolAppartCompVolume()
+                    .setIdAppartCompVolume(this.getIdAppartCompVolume().longValue());
+        }
+        if (this.getIdFirmaComp() != null) {
+            if (entity.getAroFirmaComp() == null) {
+                entity.setAroFirmaComp(new AroFirmaComp());
+            }
+            entity.getAroFirmaComp().setIdFirmaComp(this.getIdFirmaComp().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

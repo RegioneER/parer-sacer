@@ -78,60 +78,60 @@ public class CryptoInvokerTest {
 
     @Deployment
     public static WebArchive createTestArchive() {
-	WebArchive war = ShrinkWrap.create(WebArchive.class, "sacerInvokerTest.war")
-		.addPackage(GenericHelper.class.getPackage())
-		.addPackage(AroCompDocRowBean.class.getPackage())
-		.addPackage(AroCompDocTableBean.class.getPackage())
-		.addPackage(VolumiForm.class.getPackage())
-		.addPackage(JEEBaseRowInterface.class.getPackage())
-		.addPackage(Fields.class.getPackage()).addPackage(Elements.class.getPackage())
-		.addPackage(BaseElement.class.getPackage()).addClass(EMFError.class)
-		.addPackage(AbstractBaseTable.class.getPackage())
-		.addPackage(BaseRow.class.getPackage())
-		.addPackage(UsrVAbilAmbEnteConvenz.class.getPackage()).addClass(AroCompDoc.class)
-		.addClass(AroStrutDoc.class).addClass(Field.Type.class)
-		.addClass(StringPadding.class).addClass(CostantiDB.class)
-		.addClass(FrameElement.class).addClass(ComponentiForm.RicComponentiFiltri.class)
-		.addClass(FrameElementInterface.class).addClass(DecCriterioDatiSpecBean.class)
-		.addClass(CryptoParerException.class).addClass(CryptoInvoker.class)
-		.addClass(ResponseErrorHandler.class).addClass(ClientHttpRequestFactory.class)
-		.addClass(MultiValueMap.class).addClass(CryptoRestConfiguratorHelper.class)
-		.addClass(ConfigurationHelper.class).addClass(NonMonotonicSequenceGenerator.class)
-		.addClass(PaginatorInterceptor.class).addClass(HttpUriRequest.class)
-		.addClass(HttpContext.class).addClass(HttpRequest.class).addClass(HttpMessage.class)
-		.addClass(CryptoErrorHandler.class).addClass(ObjectMapper.class)
-		.addClass(CryptoParerException.class).addClass(RestClientException.class)
-		.addClass(it.eng.paginator.hibernate.OracleSqlInterceptor.class)
-		.addClass(HelperTest.class)
-		// with subpackages
-		.addPackages(true, "it.eng.spagoLite.form", "it.eng.parer.jboss.timer.common",
-			"it.eng.spagoLite.db", "it.eng.parer.entity", "it.eng.parer.grantedEntity",
-			"it.eng.parer.viewEntity", "org.codehaus.jettison.json",
-			"org.apache.commons.fileupload", "org.apache.xmlbeans",
-			"org.apache.tools.ant", "com.sun.javadoc", "org.apache.commons",
-			"it.eng.paginator.helper", "it.eng.paginator.util",
-			"it.eng.parer.firma.crypto.helper.retry", "org.springframework",
-			"it.eng.parer.crypto.model", "org.apache.http", "com.fasterxml.jackson",
-			"it.eng.parer.retry")
-		// NO subpackages
-		.addPackages(false, "it.eng.parer.sacerlog.entity",
-			"it.eng.parer.sacerlog.viewEntity", "it.eng.parer.slite.gen.viewbean",
-			"org.apache.commons.lang", "org.apache.tools.ant.taskdefs",
-			"it.eng.parer.aop", "it.eng.parer.exception", "it.eng.parer.web.helper.dto",
-			"it.eng.parer.crypto")
-		.addAsResource(
-			CryptoInvokerTest.class.getClassLoader().getResource("persistence.xml"),
-			"META-INF/persistence.xml")
-		.addAsResource(CryptoInvokerTest.class.getClassLoader()
-			.getResource("countselectlist.properties"), "countselectlist.properties")
-		.addAsResource(CryptoInvokerTest.class.getClassLoader()
-			.getResource("fir_file_per_firma.blob"), "fir_file_per_firma.blob")
-		.addAsWebInfResource(
-			CryptoInvokerTest.class.getClassLoader().getResource("ejb-jar-invoker.xml"),
-			"ejb-jar.xml")
-		.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-	// System.out.println(war.toString(true));
-	return war;
+        WebArchive war = ShrinkWrap.create(WebArchive.class, "sacerInvokerTest.war")
+                .addPackage(GenericHelper.class.getPackage())
+                .addPackage(AroCompDocRowBean.class.getPackage())
+                .addPackage(AroCompDocTableBean.class.getPackage())
+                .addPackage(VolumiForm.class.getPackage())
+                .addPackage(JEEBaseRowInterface.class.getPackage())
+                .addPackage(Fields.class.getPackage()).addPackage(Elements.class.getPackage())
+                .addPackage(BaseElement.class.getPackage()).addClass(EMFError.class)
+                .addPackage(AbstractBaseTable.class.getPackage())
+                .addPackage(BaseRow.class.getPackage())
+                .addPackage(UsrVAbilAmbEnteConvenz.class.getPackage()).addClass(AroCompDoc.class)
+                .addClass(AroStrutDoc.class).addClass(Field.Type.class)
+                .addClass(StringPadding.class).addClass(CostantiDB.class)
+                .addClass(FrameElement.class).addClass(ComponentiForm.RicComponentiFiltri.class)
+                .addClass(FrameElementInterface.class).addClass(DecCriterioDatiSpecBean.class)
+                .addClass(CryptoParerException.class).addClass(CryptoInvoker.class)
+                .addClass(ResponseErrorHandler.class).addClass(ClientHttpRequestFactory.class)
+                .addClass(MultiValueMap.class).addClass(CryptoRestConfiguratorHelper.class)
+                .addClass(ConfigurationHelper.class).addClass(NonMonotonicSequenceGenerator.class)
+                .addClass(PaginatorInterceptor.class).addClass(HttpUriRequest.class)
+                .addClass(HttpContext.class).addClass(HttpRequest.class).addClass(HttpMessage.class)
+                .addClass(CryptoErrorHandler.class).addClass(ObjectMapper.class)
+                .addClass(CryptoParerException.class).addClass(RestClientException.class)
+                .addClass(it.eng.paginator.hibernate.OracleSqlInterceptor.class)
+                .addClass(HelperTest.class)
+                // with subpackages
+                .addPackages(true, "it.eng.spagoLite.form", "it.eng.parer.jboss.timer.common",
+                        "it.eng.spagoLite.db", "it.eng.parer.entity", "it.eng.parer.grantedEntity",
+                        "it.eng.parer.viewEntity", "org.codehaus.jettison.json",
+                        "org.apache.commons.fileupload", "org.apache.xmlbeans",
+                        "org.apache.tools.ant", "com.sun.javadoc", "org.apache.commons",
+                        "it.eng.paginator.helper", "it.eng.paginator.util",
+                        "it.eng.parer.firma.crypto.helper.retry", "org.springframework",
+                        "it.eng.parer.crypto.model", "org.apache.http", "com.fasterxml.jackson",
+                        "it.eng.parer.retry")
+                // NO subpackages
+                .addPackages(false, "it.eng.parer.sacerlog.entity",
+                        "it.eng.parer.sacerlog.viewEntity", "it.eng.parer.slite.gen.viewbean",
+                        "org.apache.commons.lang", "org.apache.tools.ant.taskdefs",
+                        "it.eng.parer.aop", "it.eng.parer.exception", "it.eng.parer.web.helper.dto",
+                        "it.eng.parer.crypto")
+                .addAsResource(
+                        CryptoInvokerTest.class.getClassLoader().getResource("persistence.xml"),
+                        "META-INF/persistence.xml")
+                .addAsResource(CryptoInvokerTest.class.getClassLoader()
+                        .getResource("countselectlist.properties"), "countselectlist.properties")
+                .addAsResource(CryptoInvokerTest.class.getClassLoader()
+                        .getResource("fir_file_per_firma.blob"), "fir_file_per_firma.blob")
+                .addAsWebInfResource(
+                        CryptoInvokerTest.class.getClassLoader().getResource("ejb-jar-invoker.xml"),
+                        "ejb-jar.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+        // System.out.println(war.toString(true));
+        return war;
 
     }
 
@@ -140,22 +140,22 @@ public class CryptoInvokerTest {
 
     @Test
     void invokeCrl() {
-	try {
-	    invoker.retrieveCRL("non esiste", "non esiste");
-	} catch (Exception e) {
-	    HelperTest.assertExceptionMessage(e, "CRL_NOT_FOUND");
-	}
+        try {
+            invoker.retrieveCRL("non esiste", "non esiste");
+        } catch (Exception e) {
+            HelperTest.assertExceptionMessage(e, "CRL_NOT_FOUND");
+        }
     }
 
     @Test
     void invokeCrlFromFirma() throws URISyntaxException, IOException {
-	// URL resource = CryptoInvokerTest.class.getResource("/fir_file_per_firma.blob");
-	try (InputStream in = getClass().getResourceAsStream("/fir_file_per_firma.blob")) {
+        // URL resource = CryptoInvokerTest.class.getResource("/fir_file_per_firma.blob");
+        try (InputStream in = getClass().getResourceAsStream("/fir_file_per_firma.blob")) {
 
-	    byte[] firFilePerFirma = IOUtils.toByteArray(in);
+            byte[] firFilePerFirma = IOUtils.toByteArray(in);
 
-	    ParerCRL retrieveCRL = invoker.retrieveCRL(firFilePerFirma);
-	    assertNotNull(retrieveCRL);
-	}
+            ParerCRL retrieveCRL = invoker.retrieveCRL(firFilePerFirma);
+            assertNotNull(retrieveCRL);
+        }
     }
 }

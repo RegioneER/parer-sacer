@@ -65,73 +65,73 @@ public class DecNotaModelloTipoSerie implements Serializable {
 
     @Column(name = "ID_NOTA_MODELLO_TIPO_SERIE")
     @GenericGenerator(name = "SDEC_NOTA_MODELLO_TIPO_SERIE_ID_NOTA_MODELLO_TIPO_SERIE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_NOTA_MODELLO_TIPO_SERIE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_NOTA_MODELLO_TIPO_SERIE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_NOTA_MODELLO_TIPO_SERIE_ID_NOTA_MODELLO_TIPO_SERIE_GENERATOR")
     public Long getIdNotaModelloTipoSerie() {
-	return this.idNotaModelloTipoSerie;
+        return this.idNotaModelloTipoSerie;
     }
 
     public void setIdNotaModelloTipoSerie(Long idNotaModelloTipoSerie) {
-	this.idNotaModelloTipoSerie = idNotaModelloTipoSerie;
+        this.idNotaModelloTipoSerie = idNotaModelloTipoSerie;
     }
 
     @Column(name = "DS_NOTA_TIPO_SERIE")
     public String getDsNotaTipoSerie() {
-	return this.dsNotaTipoSerie;
+        return this.dsNotaTipoSerie;
     }
 
     public void setDsNotaTipoSerie(String dsNotaTipoSerie) {
-	this.dsNotaTipoSerie = dsNotaTipoSerie;
+        this.dsNotaTipoSerie = dsNotaTipoSerie;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_NOTA_TIPO_SERIE")
     public Date getDtNotaTipoSerie() {
-	return this.dtNotaTipoSerie;
+        return this.dtNotaTipoSerie;
     }
 
     public void setDtNotaTipoSerie(Date dtNotaTipoSerie) {
-	this.dtNotaTipoSerie = dtNotaTipoSerie;
+        this.dtNotaTipoSerie = dtNotaTipoSerie;
     }
 
     @Column(name = "PG_NOTA_TIPO_SERIE")
     public BigDecimal getPgNotaTipoSerie() {
-	return this.pgNotaTipoSerie;
+        return this.pgNotaTipoSerie;
     }
 
     public void setPgNotaTipoSerie(BigDecimal pgNotaTipoSerie) {
-	this.pgNotaTipoSerie = pgNotaTipoSerie;
+        this.pgNotaTipoSerie = pgNotaTipoSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_TIPO_SERIE")
     public DecModelloTipoSerie getDecModelloTipoSerie() {
-	return this.decModelloTipoSerie;
+        return this.decModelloTipoSerie;
     }
 
     public void setDecModelloTipoSerie(DecModelloTipoSerie decModelloTipoSerie) {
-	this.decModelloTipoSerie = decModelloTipoSerie;
+        this.decModelloTipoSerie = decModelloTipoSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_NOTA_SERIE")
     public DecTipoNotaSerie getDecTipoNotaSerie() {
-	return this.decTipoNotaSerie;
+        return this.decTipoNotaSerie;
     }
 
     public void setDecTipoNotaSerie(DecTipoNotaSerie decTipoNotaSerie) {
-	this.decTipoNotaSerie = decTipoNotaSerie;
+        this.decTipoNotaSerie = decTipoNotaSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public IamUser getIamUser() {
-	return this.iamUser;
+        return this.iamUser;
     }
 
     public void setIamUser(IamUser iamUser) {
-	this.iamUser = iamUser;
+        this.iamUser = iamUser;
     }
 
 }

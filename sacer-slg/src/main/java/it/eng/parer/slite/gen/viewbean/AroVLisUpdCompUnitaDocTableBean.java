@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroVLisUpdCompUnitaDocTableBean
-	extends AbstractBaseTable<AroVLisUpdCompUnitaDocRowBean> {
+        extends AbstractBaseTable<AroVLisUpdCompUnitaDocRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class AroVLisUpdCompUnitaDocTableBean
     public static AroVLisUpdCompUnitaDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisUpdCompUnitaDocTableDescriptor();
 
     public AroVLisUpdCompUnitaDocTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisUpdCompUnitaDocRowBean createRow() {
-	return new AroVLisUpdCompUnitaDocRowBean();
+        return new AroVLisUpdCompUnitaDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisUpdCompUnitaDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

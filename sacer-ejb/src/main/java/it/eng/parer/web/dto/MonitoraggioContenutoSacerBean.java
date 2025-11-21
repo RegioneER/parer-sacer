@@ -36,106 +36,106 @@ public class MonitoraggioContenutoSacerBean {
     private String niSize;
 
     public String getNiUnitaDoc() {
-	return niUnitaDoc;
+        return niUnitaDoc;
     }
 
     public void setNiUnitaDoc(String niUnitaDoc) {
-	this.niUnitaDoc = niUnitaDoc;
+        this.niUnitaDoc = niUnitaDoc;
     }
 
     public String getNiDoc() {
-	return niDoc;
+        return niDoc;
     }
 
     public void setNiDoc(String niDoc) {
-	this.niDoc = niDoc;
+        this.niDoc = niDoc;
     }
 
     public String getNiComp() {
-	return niComp;
+        return niComp;
     }
 
     public void setNiComp(String niComp) {
-	this.niComp = niComp;
+        this.niComp = niComp;
     }
 
     public String getNiSize() {
-	return niSize;
+        return niSize;
     }
 
     public void setNiSize(String niSize) {
-	this.niSize = niSize;
+        this.niSize = niSize;
     }
 
     public String getNmEnte() {
-	return nmEnte;
+        return nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     public String getNmStrut() {
-	return nmStrut;
+        return nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     public String getNmSubStrut() {
-	return nmSubStrut;
+        return nmSubStrut;
     }
 
     public void setNmSubStrut(String nmSubStrut) {
-	this.nmSubStrut = nmSubStrut;
+        this.nmSubStrut = nmSubStrut;
     }
 
     public String getCdRegistroUnitaDoc() {
-	return cdRegistroUnitaDoc;
+        return cdRegistroUnitaDoc;
     }
 
     public void setCdRegistroUnitaDoc(String cdRegistroUnitaDoc) {
-	this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
+        this.cdRegistroUnitaDoc = cdRegistroUnitaDoc;
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return aaKeyUnitaDoc;
+        return aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     public String getNmCategTipoUnitaDoc() {
-	return nmCategTipoUnitaDoc;
+        return nmCategTipoUnitaDoc;
     }
 
     public void setNmCategTipoUnitaDoc(String nmCategTipoUnitaDoc) {
-	this.nmCategTipoUnitaDoc = nmCategTipoUnitaDoc;
+        this.nmCategTipoUnitaDoc = nmCategTipoUnitaDoc;
     }
 
     public String getNmSottocategTipoUnitaDoc() {
-	return nmSottocategTipoUnitaDoc;
+        return nmSottocategTipoUnitaDoc;
     }
 
     public void setNmSottocategTipoUnitaDoc(String nmSottocategTipoUnitaDoc) {
-	this.nmSottocategTipoUnitaDoc = nmSottocategTipoUnitaDoc;
+        this.nmSottocategTipoUnitaDoc = nmSottocategTipoUnitaDoc;
     }
 
     public String getNmTipoUnitaDoc() {
-	return nmTipoUnitaDoc;
+        return nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     public String getNmTipoDoc() {
-	return nmTipoDoc;
+        return nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 }

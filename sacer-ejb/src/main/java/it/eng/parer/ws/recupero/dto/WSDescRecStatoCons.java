@@ -30,17 +30,17 @@ public class WSDescRecStatoCons implements IWSDesc {
 
     @Override
     public String getVersione() {
-	throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
+        throw new UnsupportedOperationException(getNomeWs() + ": supporta la versione su DB !");
     }
 
     @Override
     public String getNomeWs() {
-	return Costanti.WS_REC_STATO_CON_NOME;
+        return Costanti.WS_REC_STATO_CON_NOME;
     }
 
     @Override
     public String getVersione(HashMap<String, String> mapWsVersion) {
-	return VerificaVersione.latestVersion(getNomeWs(), mapWsVersion);
+        return VerificaVersione.latestVersion(getNomeWs(), mapWsVersion);
     }
 
     // @Override

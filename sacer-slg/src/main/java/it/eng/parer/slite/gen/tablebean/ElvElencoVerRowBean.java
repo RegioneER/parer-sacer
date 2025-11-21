@@ -41,508 +41,508 @@ public class ElvElencoVerRowBean extends BaseRow implements JEEBaseRowInterface 
     public static ElvElencoVerTableDescriptor TABLE_DESCRIPTOR = new ElvElencoVerTableDescriptor();
 
     public ElvElencoVerRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdElencoVers() {
-	return getBigDecimal("id_elenco_vers");
+        return getBigDecimal("id_elenco_vers");
     }
 
     public void setIdElencoVers(BigDecimal idElencoVers) {
-	setObject("id_elenco_vers", idElencoVers);
+        setObject("id_elenco_vers", idElencoVers);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getNmElenco() {
-	return getString("nm_elenco");
+        return getString("nm_elenco");
     }
 
     public void setNmElenco(String nmElenco) {
-	setObject("nm_elenco", nmElenco);
+        setObject("nm_elenco", nmElenco);
     }
 
     public String getDsElenco() {
-	return getString("ds_elenco");
+        return getString("ds_elenco");
     }
 
     public void setDsElenco(String dsElenco) {
-	setObject("ds_elenco", dsElenco);
+        setObject("ds_elenco", dsElenco);
     }
 
     public String getTiStatoElenco() {
-	return getString("ti_stato_elenco");
+        return getString("ti_stato_elenco");
     }
 
     public String getTiFirma() {
-	return getString("ti_firma");
+        return getString("ti_firma");
     }
 
     public void setTiFirma(String tiFirma) {
-	setObject("ti_firma", tiFirma);
+        setObject("ti_firma", tiFirma);
     }
 
     public void setTiStatoElenco(String tiStatoElenco) {
-	setObject("ti_stato_elenco", tiStatoElenco);
+        setObject("ti_stato_elenco", tiStatoElenco);
     }
 
     public BigDecimal getIdCriterioRaggr() {
-	return getBigDecimal("id_criterio_raggr");
+        return getBigDecimal("id_criterio_raggr");
     }
 
     public void setIdCriterioRaggr(BigDecimal idCriterioRaggr) {
-	setObject("id_criterio_raggr", idCriterioRaggr);
+        setObject("id_criterio_raggr", idCriterioRaggr);
     }
 
     public Timestamp getDtCreazioneElenco() {
-	return getTimestamp("dt_creazione_elenco");
+        return getTimestamp("dt_creazione_elenco");
     }
 
     public void setDtCreazioneElenco(Timestamp dtCreazioneElenco) {
-	setObject("dt_creazione_elenco", dtCreazioneElenco);
+        setObject("dt_creazione_elenco", dtCreazioneElenco);
     }
 
     public BigDecimal getNiMaxComp() {
-	return getBigDecimal("ni_max_comp");
+        return getBigDecimal("ni_max_comp");
     }
 
     public void setNiMaxComp(BigDecimal niMaxComp) {
-	setObject("ni_max_comp", niMaxComp);
+        setObject("ni_max_comp", niMaxComp);
     }
 
     public String getTiScadChius() {
-	return getString("ti_scad_chius");
+        return getString("ti_scad_chius");
     }
 
     public void setTiScadChius(String tiScadChius) {
-	setObject("ti_scad_chius", tiScadChius);
+        setObject("ti_scad_chius", tiScadChius);
     }
 
     public String getTiTempoScadChius() {
-	return getString("ti_tempo_scad_chius");
+        return getString("ti_tempo_scad_chius");
     }
 
     public void setTiTempoScadChius(String tiTempoScadChius) {
-	setObject("ti_tempo_scad_chius", tiTempoScadChius);
+        setObject("ti_tempo_scad_chius", tiTempoScadChius);
     }
 
     public BigDecimal getNiTempoScadChius() {
-	return getBigDecimal("ni_tempo_scad_chius");
+        return getBigDecimal("ni_tempo_scad_chius");
     }
 
     public void setNiTempoScadChius(BigDecimal niTempoScadChius) {
-	setObject("ni_tempo_scad_chius", niTempoScadChius);
+        setObject("ni_tempo_scad_chius", niTempoScadChius);
     }
 
     public BigDecimal getNiUnitaDocVersElenco() {
-	return getBigDecimal("ni_unita_doc_vers_elenco");
+        return getBigDecimal("ni_unita_doc_vers_elenco");
     }
 
     public void setNiUnitaDocVersElenco(BigDecimal niUnitaDocVersElenco) {
-	setObject("ni_unita_doc_vers_elenco", niUnitaDocVersElenco);
+        setObject("ni_unita_doc_vers_elenco", niUnitaDocVersElenco);
     }
 
     public BigDecimal getNiUpdUnitaDoc() {
-	return getBigDecimal("ni_upd_unita_doc");
+        return getBigDecimal("ni_upd_unita_doc");
     }
 
     public void setNiUpdUnitaDoc(BigDecimal niUpdUnitaDoc) {
-	setObject("ni_upd_unita_doc", niUpdUnitaDoc);
+        setObject("ni_upd_unita_doc", niUpdUnitaDoc);
     }
 
     public BigDecimal getNiDocVersElenco() {
-	return getBigDecimal("ni_doc_vers_elenco");
+        return getBigDecimal("ni_doc_vers_elenco");
     }
 
     public void setNiDocVersElenco(BigDecimal niDocVersElenco) {
-	setObject("ni_doc_vers_elenco", niDocVersElenco);
+        setObject("ni_doc_vers_elenco", niDocVersElenco);
     }
 
     public BigDecimal getNiCompVersElenco() {
-	return getBigDecimal("ni_comp_vers_elenco");
+        return getBigDecimal("ni_comp_vers_elenco");
     }
 
     public void setNiCompVersElenco(BigDecimal niCompVersElenco) {
-	setObject("ni_comp_vers_elenco", niCompVersElenco);
+        setObject("ni_comp_vers_elenco", niCompVersElenco);
     }
 
     public BigDecimal getNiSizeVersElenco() {
-	return getBigDecimal("ni_size_vers_elenco");
+        return getBigDecimal("ni_size_vers_elenco");
     }
 
     public void setNiSizeVersElenco(BigDecimal niSizeVersElenco) {
-	setObject("ni_size_vers_elenco", niSizeVersElenco);
+        setObject("ni_size_vers_elenco", niSizeVersElenco);
     }
 
     public BigDecimal getNiUnitaDocModElenco() {
-	return getBigDecimal("ni_unita_doc_mod_elenco");
+        return getBigDecimal("ni_unita_doc_mod_elenco");
     }
 
     public void setNiUnitaDocModElenco(BigDecimal niUnitaDocModElenco) {
-	setObject("ni_unita_doc_mod_elenco", niUnitaDocModElenco);
+        setObject("ni_unita_doc_mod_elenco", niUnitaDocModElenco);
     }
 
     public BigDecimal getNiDocAggElenco() {
-	return getBigDecimal("ni_doc_agg_elenco");
+        return getBigDecimal("ni_doc_agg_elenco");
     }
 
     public void setNiDocAggElenco(BigDecimal niDocAggElenco) {
-	setObject("ni_doc_agg_elenco", niDocAggElenco);
+        setObject("ni_doc_agg_elenco", niDocAggElenco);
     }
 
     public BigDecimal getNiCompAggElenco() {
-	return getBigDecimal("ni_comp_agg_elenco");
+        return getBigDecimal("ni_comp_agg_elenco");
     }
 
     public void setNiCompAggElenco(BigDecimal niCompAggElenco) {
-	setObject("ni_comp_agg_elenco", niCompAggElenco);
+        setObject("ni_comp_agg_elenco", niCompAggElenco);
     }
 
     public BigDecimal getNiSizeAggElenco() {
-	return getBigDecimal("ni_size_agg_elenco");
+        return getBigDecimal("ni_size_agg_elenco");
     }
 
     public void setNiSizeAggElenco(BigDecimal niSizeAggElenco) {
-	setObject("ni_size_agg_elenco", niSizeAggElenco);
+        setObject("ni_size_agg_elenco", niSizeAggElenco);
     }
 
     public String getNtIndiceElenco() {
-	return getString("nt_indice_elenco");
+        return getString("nt_indice_elenco");
     }
 
     public void setNtIndiceElenco(String ntIndiceElenco) {
-	setObject("nt_indice_elenco", ntIndiceElenco);
+        setObject("nt_indice_elenco", ntIndiceElenco);
     }
 
     public Timestamp getDtScadChius() {
-	return getTimestamp("dt_scad_chius");
+        return getTimestamp("dt_scad_chius");
     }
 
     public void setDtScadChius(Timestamp dtScadChius) {
-	setObject("dt_scad_chius", dtScadChius);
+        setObject("dt_scad_chius", dtScadChius);
     }
 
     public BigDecimal getIdUserChiusoElenco() {
-	return getBigDecimal("id_user_chiuso_elenco");
+        return getBigDecimal("id_user_chiuso_elenco");
     }
 
     public void setIdUserChiusoElenco(BigDecimal idUserChiusoElenco) {
-	setObject("id_user_chiuso_elenco", idUserChiusoElenco);
+        setObject("id_user_chiuso_elenco", idUserChiusoElenco);
     }
 
     public Timestamp getDtChius() {
-	return getTimestamp("dt_chius");
+        return getTimestamp("dt_chius");
     }
 
     public void setDtChius(Timestamp dtChius) {
-	setObject("dt_chius", dtChius);
+        setObject("dt_chius", dtChius);
     }
 
     public String getDlMotivoChius() {
-	return getString("dl_motivo_chius");
+        return getString("dl_motivo_chius");
     }
 
     public void setDlMotivoChius(String dlMotivoChius) {
-	setObject("dl_motivo_chius", dlMotivoChius);
+        setObject("dl_motivo_chius", dlMotivoChius);
     }
 
     public Timestamp getDtFirmaIndice() {
-	return getTimestamp("dt_firma_indice");
+        return getTimestamp("dt_firma_indice");
     }
 
     public void setDtFirmaIndice(Timestamp dtFirmaIndice) {
-	setObject("dt_firma_indice", dtFirmaIndice);
+        setObject("dt_firma_indice", dtFirmaIndice);
     }
 
     public BigDecimal getIdUserFirmaIndice() {
-	return getBigDecimal("id_user_firma_indice");
+        return getBigDecimal("id_user_firma_indice");
     }
 
     public void setIdUserFirmaIndice(BigDecimal idUserFirmaIndice) {
-	setObject("id_user_firma_indice", idUserFirmaIndice);
+        setObject("id_user_firma_indice", idUserFirmaIndice);
     }
 
     public String getNtElencoChiuso() {
-	return getString("nt_elenco_chiuso");
+        return getString("nt_elenco_chiuso");
     }
 
     public void setNtElencoChiuso(String ntElencoChiuso) {
-	setObject("nt_elenco_chiuso", ntElencoChiuso);
+        setObject("nt_elenco_chiuso", ntElencoChiuso);
     }
 
     public BigDecimal getAaKeyUnitaDoc() {
-	return getBigDecimal("aa_key_unita_doc");
+        return getBigDecimal("aa_key_unita_doc");
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	setObject("aa_key_unita_doc", aaKeyUnitaDoc);
+        setObject("aa_key_unita_doc", aaKeyUnitaDoc);
     }
 
     public String getFlElencoStandard() {
-	return getString("fl_elenco_standard");
+        return getString("fl_elenco_standard");
     }
 
     public void setFlElencoStandard(String flElencoStandard) {
-	setObject("fl_elenco_standard", flElencoStandard);
+        setObject("fl_elenco_standard", flElencoStandard);
     }
 
     public String getFlElencoFisc() {
-	return getString("fl_elenco_fisc");
+        return getString("fl_elenco_fisc");
     }
 
     public void setFlElencoFisc(String flElencoFisc) {
-	setObject("fl_elenco_fisc", flElencoFisc);
+        setObject("fl_elenco_fisc", flElencoFisc);
     }
 
     public String getTiGestElenco() {
-	return getString("ti_gest_elenco");
+        return getString("ti_gest_elenco");
     }
 
     public void setTiGestElenco(String tiGestElenco) {
-	setObject("ti_gest_elenco", tiGestElenco);
+        setObject("ti_gest_elenco", tiGestElenco);
     }
 
     public String getTiValidElenco() {
-	return getString("ti_valid_elenco");
+        return getString("ti_valid_elenco");
     }
 
     public void setTiValidElenco(String tiValidElenco) {
-	setObject("ti_valid_elenco", tiValidElenco);
+        setObject("ti_valid_elenco", tiValidElenco);
     }
 
     public String getTiModValidElenco() {
-	return getString("ti_mod_valid_elenco");
+        return getString("ti_mod_valid_elenco");
     }
 
     public void setTiModValidElenco(String tiModValidElenco) {
-	setObject("ti_mod_valid_elenco", tiModValidElenco);
+        setObject("ti_mod_valid_elenco", tiModValidElenco);
     }
 
     public Timestamp getDtCreazioneElencoIxAip() {
-	return getTimestamp("dt_creazione_elenco_ix_aip");
+        return getTimestamp("dt_creazione_elenco_ix_aip");
     }
 
     public void setDtCreazioneElencoIxAip(Timestamp dtCreazioneElencoIxAip) {
-	setObject("dt_creazione_elenco_ix_aip", dtCreazioneElencoIxAip);
+        setObject("dt_creazione_elenco_ix_aip", dtCreazioneElencoIxAip);
     }
 
     public BigDecimal getNiIndiciAip() {
-	return getBigDecimal("ni_indici_aip");
+        return getBigDecimal("ni_indici_aip");
     }
 
     public void setNiIndiciAip(BigDecimal niIndiciAip) {
-	setObject("ni_indici_aip", niIndiciAip);
+        setObject("ni_indici_aip", niIndiciAip);
     }
 
     public Timestamp getDtFirmaElencoIxAip() {
-	return getTimestamp("dt_firma_elenco_ix_aip");
+        return getTimestamp("dt_firma_elenco_ix_aip");
     }
 
     public void setDtFirmaElencoIxAip(Timestamp dtFirmaElencoIxAip) {
-	setObject("dt_firma_elenco_ix_aip", dtFirmaElencoIxAip);
+        setObject("dt_firma_elenco_ix_aip", dtFirmaElencoIxAip);
     }
 
     public Timestamp getDtMarcaElencoIxAip() {
-	return getTimestamp("dt_marca_elenco_ix_aip");
+        return getTimestamp("dt_marca_elenco_ix_aip");
     }
 
     public void setDtMarcaElencoIxAip(Timestamp dtMarcaElencoIxAip) {
-	setObject("dt_marca_elenco_ix_aip", dtMarcaElencoIxAip);
+        setObject("dt_marca_elenco_ix_aip", dtMarcaElencoIxAip);
     }
 
     public BigDecimal getIdStatoElencoVersCor() {
-	return getBigDecimal("id_stato_elenco_vers_cor");
+        return getBigDecimal("id_stato_elenco_vers_cor");
     }
 
     public void setIdStatoElencoVersCor(BigDecimal id_stato_elenco_vers_cor) {
-	setObject("id_stato_elenco_vers_cor", id_stato_elenco_vers_cor);
+        setObject("id_stato_elenco_vers_cor", id_stato_elenco_vers_cor);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	ElvElencoVer entity = (ElvElencoVer) obj;
+        ElvElencoVer entity = (ElvElencoVer) obj;
 
-	this.setIdElencoVers(entity.getIdElencoVers() == null ? null
-		: BigDecimal.valueOf(entity.getIdElencoVers()));
+        this.setIdElencoVers(entity.getIdElencoVers() == null ? null
+                : BigDecimal.valueOf(entity.getIdElencoVers()));
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
-	this.setNmElenco(entity.getNmElenco());
-	this.setDsElenco(entity.getDsElenco());
-	this.setTiStatoElenco(entity.getTiStatoElenco());
+        this.setNmElenco(entity.getNmElenco());
+        this.setDsElenco(entity.getDsElenco());
+        this.setTiStatoElenco(entity.getTiStatoElenco());
 
-	if (entity.getDecCriterioRaggr() != null) {
-	    this.setIdCriterioRaggr(
-		    new BigDecimal(entity.getDecCriterioRaggr().getIdCriterioRaggr()));
-	}
+        if (entity.getDecCriterioRaggr() != null) {
+            this.setIdCriterioRaggr(
+                    new BigDecimal(entity.getDecCriterioRaggr().getIdCriterioRaggr()));
+        }
 
-	if (entity.getDtCreazioneElenco() != null) {
-	    this.setDtCreazioneElenco(new Timestamp(entity.getDtCreazioneElenco().getTime()));
-	}
-	this.setNiMaxComp(entity.getNiMaxComp());
-	this.setTiScadChius(entity.getTiScadChius());
-	this.setTiTempoScadChius(entity.getTiTempoScadChius());
-	this.setNiTempoScadChius(entity.getNiTempoScadChius());
-	this.setNiUnitaDocVersElenco(entity.getNiUnitaDocVersElenco());
-	this.setNiUpdUnitaDoc(entity.getNiUpdUnitaDoc());
-	this.setNiDocVersElenco(entity.getNiDocVersElenco());
-	this.setNiCompVersElenco(entity.getNiCompVersElenco());
-	this.setNiSizeVersElenco(entity.getNiSizeVersElenco());
-	this.setNiUnitaDocModElenco(entity.getNiUnitaDocModElenco());
-	this.setNiDocAggElenco(entity.getNiDocAggElenco());
-	this.setNiCompAggElenco(entity.getNiCompAggElenco());
-	this.setNiSizeAggElenco(entity.getNiSizeAggElenco());
-	this.setNtIndiceElenco(entity.getNtIndiceElenco());
-	if (entity.getDtScadChius() != null) {
-	    this.setDtScadChius(new Timestamp(entity.getDtScadChius().getTime()));
-	}
+        if (entity.getDtCreazioneElenco() != null) {
+            this.setDtCreazioneElenco(new Timestamp(entity.getDtCreazioneElenco().getTime()));
+        }
+        this.setNiMaxComp(entity.getNiMaxComp());
+        this.setTiScadChius(entity.getTiScadChius());
+        this.setTiTempoScadChius(entity.getTiTempoScadChius());
+        this.setNiTempoScadChius(entity.getNiTempoScadChius());
+        this.setNiUnitaDocVersElenco(entity.getNiUnitaDocVersElenco());
+        this.setNiUpdUnitaDoc(entity.getNiUpdUnitaDoc());
+        this.setNiDocVersElenco(entity.getNiDocVersElenco());
+        this.setNiCompVersElenco(entity.getNiCompVersElenco());
+        this.setNiSizeVersElenco(entity.getNiSizeVersElenco());
+        this.setNiUnitaDocModElenco(entity.getNiUnitaDocModElenco());
+        this.setNiDocAggElenco(entity.getNiDocAggElenco());
+        this.setNiCompAggElenco(entity.getNiCompAggElenco());
+        this.setNiSizeAggElenco(entity.getNiSizeAggElenco());
+        this.setNtIndiceElenco(entity.getNtIndiceElenco());
+        if (entity.getDtScadChius() != null) {
+            this.setDtScadChius(new Timestamp(entity.getDtScadChius().getTime()));
+        }
 
-	if (entity.getIamUserChiusoElenco() != null) {
-	    this.setIdUserChiusoElenco(
-		    new BigDecimal(entity.getIamUserChiusoElenco().getIdUserIam()));
-	}
+        if (entity.getIamUserChiusoElenco() != null) {
+            this.setIdUserChiusoElenco(
+                    new BigDecimal(entity.getIamUserChiusoElenco().getIdUserIam()));
+        }
 
-	if (entity.getDtChius() != null) {
-	    this.setDtChius(new Timestamp(entity.getDtChius().getTime()));
-	}
-	this.setDlMotivoChius(entity.getDlMotivoChius());
-	if (entity.getDtFirmaIndice() != null) {
-	    this.setDtFirmaIndice(new Timestamp(entity.getDtFirmaIndice().getTime()));
-	}
+        if (entity.getDtChius() != null) {
+            this.setDtChius(new Timestamp(entity.getDtChius().getTime()));
+        }
+        this.setDlMotivoChius(entity.getDlMotivoChius());
+        if (entity.getDtFirmaIndice() != null) {
+            this.setDtFirmaIndice(new Timestamp(entity.getDtFirmaIndice().getTime()));
+        }
 
-	if (entity.getIamUserFirmaIndice() != null) {
-	    this.setIdUserFirmaIndice(
-		    new BigDecimal(entity.getIamUserFirmaIndice().getIdUserIam()));
-	}
+        if (entity.getIamUserFirmaIndice() != null) {
+            this.setIdUserFirmaIndice(
+                    new BigDecimal(entity.getIamUserFirmaIndice().getIdUserIam()));
+        }
 
-	this.setNtElencoChiuso(entity.getNtElencoChiuso());
-	this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
-	this.setFlElencoStandard(entity.getFlElencoStandard());
-	this.setFlElencoFisc(entity.getFlElencoFisc());
-	this.setTiGestElenco(entity.getTiGestElenco());
-	if (entity.getTiValidElenco() != null) {
-	    this.setTiValidElenco(entity.getTiValidElenco().name());
-	}
-	if (entity.getTiModValidElenco() != null) {
-	    this.setTiModValidElenco(entity.getTiModValidElenco().name());
-	}
-	if (entity.getDtCreazioneElencoIxAip() != null) {
-	    this.setDtCreazioneElencoIxAip(
-		    new Timestamp(entity.getDtCreazioneElencoIxAip().getTime()));
-	}
-	this.setNiIndiciAip(entity.getNiIndiciAip());
-	if (entity.getDtFirmaElencoIxAip() != null) {
-	    this.setDtFirmaElencoIxAip(new Timestamp(entity.getDtFirmaElencoIxAip().getTime()));
-	}
-	if (entity.getDtMarcaElencoIxAip() != null) {
-	    this.setDtMarcaElencoIxAip(new Timestamp(entity.getDtMarcaElencoIxAip().getTime()));
-	}
-	this.setIdStatoElencoVersCor(entity.getIdStatoElencoVersCor());
+        this.setNtElencoChiuso(entity.getNtElencoChiuso());
+        this.setAaKeyUnitaDoc(entity.getAaKeyUnitaDoc());
+        this.setFlElencoStandard(entity.getFlElencoStandard());
+        this.setFlElencoFisc(entity.getFlElencoFisc());
+        this.setTiGestElenco(entity.getTiGestElenco());
+        if (entity.getTiValidElenco() != null) {
+            this.setTiValidElenco(entity.getTiValidElenco().name());
+        }
+        if (entity.getTiModValidElenco() != null) {
+            this.setTiModValidElenco(entity.getTiModValidElenco().name());
+        }
+        if (entity.getDtCreazioneElencoIxAip() != null) {
+            this.setDtCreazioneElencoIxAip(
+                    new Timestamp(entity.getDtCreazioneElencoIxAip().getTime()));
+        }
+        this.setNiIndiciAip(entity.getNiIndiciAip());
+        if (entity.getDtFirmaElencoIxAip() != null) {
+            this.setDtFirmaElencoIxAip(new Timestamp(entity.getDtFirmaElencoIxAip().getTime()));
+        }
+        if (entity.getDtMarcaElencoIxAip() != null) {
+            this.setDtMarcaElencoIxAip(new Timestamp(entity.getDtMarcaElencoIxAip().getTime()));
+        }
+        this.setIdStatoElencoVersCor(entity.getIdStatoElencoVersCor());
     }
 
     @Override
     public ElvElencoVer rowBeanToEntity() {
-	ElvElencoVer entity = new ElvElencoVer();
-	if (this.getIdElencoVers() != null) {
-	    entity.setIdElencoVers(this.getIdElencoVers().longValue());
-	}
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	entity.setNmElenco(this.getNmElenco());
-	entity.setDsElenco(this.getDsElenco());
-	entity.setTiStatoElenco(this.getTiStatoElenco());
-	if (this.getIdCriterioRaggr() != null) {
-	    if (entity.getDecCriterioRaggr() == null) {
-		entity.setDecCriterioRaggr(new DecCriterioRaggr());
-	    }
-	    entity.getDecCriterioRaggr().setIdCriterioRaggr(this.getIdCriterioRaggr().longValue());
-	}
-	entity.setDtCreazioneElenco(this.getDtCreazioneElenco());
-	entity.setNiMaxComp(this.getNiMaxComp());
-	entity.setTiScadChius(this.getTiScadChius());
-	entity.setTiTempoScadChius(this.getTiTempoScadChius());
-	entity.setNiTempoScadChius(this.getNiTempoScadChius());
-	entity.setNiUnitaDocVersElenco(this.getNiUnitaDocVersElenco());
-	entity.setNiUpdUnitaDoc(this.getNiUpdUnitaDoc());
-	entity.setNiDocVersElenco(this.getNiDocVersElenco());
-	entity.setNiCompVersElenco(this.getNiCompVersElenco());
-	entity.setNiSizeVersElenco(this.getNiSizeVersElenco());
-	entity.setNiUnitaDocModElenco(this.getNiUnitaDocModElenco());
-	entity.setNiDocAggElenco(this.getNiDocAggElenco());
-	entity.setNiCompAggElenco(this.getNiCompAggElenco());
-	entity.setNiSizeAggElenco(this.getNiSizeAggElenco());
-	entity.setNtIndiceElenco(this.getNtIndiceElenco());
-	entity.setDtScadChius(this.getDtScadChius());
-	if (this.getIdUserChiusoElenco() != null) {
-	    if (entity.getIamUserChiusoElenco() == null) {
-		entity.setIamUserChiusoElenco(new IamUser());
-	    }
-	    entity.getIamUserChiusoElenco().setIdUserIam(this.getIdUserChiusoElenco().longValue());
-	}
-	entity.setDtChius(this.getDtChius());
-	entity.setDlMotivoChius(this.getDlMotivoChius());
-	entity.setDtFirmaIndice(this.getDtFirmaIndice());
-	if (this.getIdUserFirmaIndice() != null) {
-	    if (entity.getIamUserFirmaIndice() == null) {
-		entity.setIamUserFirmaIndice(new IamUser());
-	    }
-	    entity.getIamUserFirmaIndice().setIdUserIam(this.getIdUserFirmaIndice().longValue());
-	}
-	entity.setNtElencoChiuso(this.getNtElencoChiuso());
-	entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
-	entity.setFlElencoStandard(this.getFlElencoStandard());
-	entity.setFlElencoFisc(this.getFlElencoFisc());
-	entity.setTiGestElenco(this.getTiGestElenco());
-	entity.setTiValidElenco(TiValidElenco.valueOf(this.getTiValidElenco()));
-	entity.setTiModValidElenco(TiModValidElenco.valueOf(this.getTiModValidElenco()));
-	entity.setDtCreazioneElencoIxAip(this.getDtCreazioneElencoIxAip());
-	entity.setNiIndiciAip(this.getNiIndiciAip());
-	entity.setDtFirmaElencoIxAip(this.getDtFirmaElencoIxAip());
-	entity.setDtMarcaElencoIxAip(this.getDtMarcaElencoIxAip());
-	entity.setIdStatoElencoVersCor(this.getIdStatoElencoVersCor());
-	return entity;
+        ElvElencoVer entity = new ElvElencoVer();
+        if (this.getIdElencoVers() != null) {
+            entity.setIdElencoVers(this.getIdElencoVers().longValue());
+        }
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        entity.setNmElenco(this.getNmElenco());
+        entity.setDsElenco(this.getDsElenco());
+        entity.setTiStatoElenco(this.getTiStatoElenco());
+        if (this.getIdCriterioRaggr() != null) {
+            if (entity.getDecCriterioRaggr() == null) {
+                entity.setDecCriterioRaggr(new DecCriterioRaggr());
+            }
+            entity.getDecCriterioRaggr().setIdCriterioRaggr(this.getIdCriterioRaggr().longValue());
+        }
+        entity.setDtCreazioneElenco(this.getDtCreazioneElenco());
+        entity.setNiMaxComp(this.getNiMaxComp());
+        entity.setTiScadChius(this.getTiScadChius());
+        entity.setTiTempoScadChius(this.getTiTempoScadChius());
+        entity.setNiTempoScadChius(this.getNiTempoScadChius());
+        entity.setNiUnitaDocVersElenco(this.getNiUnitaDocVersElenco());
+        entity.setNiUpdUnitaDoc(this.getNiUpdUnitaDoc());
+        entity.setNiDocVersElenco(this.getNiDocVersElenco());
+        entity.setNiCompVersElenco(this.getNiCompVersElenco());
+        entity.setNiSizeVersElenco(this.getNiSizeVersElenco());
+        entity.setNiUnitaDocModElenco(this.getNiUnitaDocModElenco());
+        entity.setNiDocAggElenco(this.getNiDocAggElenco());
+        entity.setNiCompAggElenco(this.getNiCompAggElenco());
+        entity.setNiSizeAggElenco(this.getNiSizeAggElenco());
+        entity.setNtIndiceElenco(this.getNtIndiceElenco());
+        entity.setDtScadChius(this.getDtScadChius());
+        if (this.getIdUserChiusoElenco() != null) {
+            if (entity.getIamUserChiusoElenco() == null) {
+                entity.setIamUserChiusoElenco(new IamUser());
+            }
+            entity.getIamUserChiusoElenco().setIdUserIam(this.getIdUserChiusoElenco().longValue());
+        }
+        entity.setDtChius(this.getDtChius());
+        entity.setDlMotivoChius(this.getDlMotivoChius());
+        entity.setDtFirmaIndice(this.getDtFirmaIndice());
+        if (this.getIdUserFirmaIndice() != null) {
+            if (entity.getIamUserFirmaIndice() == null) {
+                entity.setIamUserFirmaIndice(new IamUser());
+            }
+            entity.getIamUserFirmaIndice().setIdUserIam(this.getIdUserFirmaIndice().longValue());
+        }
+        entity.setNtElencoChiuso(this.getNtElencoChiuso());
+        entity.setAaKeyUnitaDoc(this.getAaKeyUnitaDoc());
+        entity.setFlElencoStandard(this.getFlElencoStandard());
+        entity.setFlElencoFisc(this.getFlElencoFisc());
+        entity.setTiGestElenco(this.getTiGestElenco());
+        entity.setTiValidElenco(TiValidElenco.valueOf(this.getTiValidElenco()));
+        entity.setTiModValidElenco(TiModValidElenco.valueOf(this.getTiModValidElenco()));
+        entity.setDtCreazioneElencoIxAip(this.getDtCreazioneElencoIxAip());
+        entity.setNiIndiciAip(this.getNiIndiciAip());
+        entity.setDtFirmaElencoIxAip(this.getDtFirmaElencoIxAip());
+        entity.setDtMarcaElencoIxAip(this.getDtMarcaElencoIxAip());
+        entity.setIdStatoElencoVersCor(this.getIdStatoElencoVersCor());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

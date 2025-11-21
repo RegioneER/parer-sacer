@@ -44,66 +44,66 @@ public class IamVGetvalParamByAmb implements Serializable {
 
     @Column(name = "DS_VALORE_PARAM_APPLIC")
     public String getDsValoreParamApplic() {
-	return this.dsValoreParamApplic;
+        return this.dsValoreParamApplic;
     }
 
     public void setDsValoreParamApplic(String dsValoreParamApplic) {
-	this.dsValoreParamApplic = dsValoreParamApplic;
+        this.dsValoreParamApplic = dsValoreParamApplic;
     }
 
     @Column(name = "ID_AMBIENTE_ENTE_CONVENZ")
     public BigDecimal getIdAmbienteEnteConvenz() {
-	return this.idAmbienteEnteConvenz;
+        return this.idAmbienteEnteConvenz;
     }
 
     public void setIdAmbienteEnteConvenz(BigDecimal idAmbienteEnteConvenz) {
-	this.idAmbienteEnteConvenz = idAmbienteEnteConvenz;
+        this.idAmbienteEnteConvenz = idAmbienteEnteConvenz;
     }
 
     @Column(name = "ID_PARAM_APPLIC")
     public BigDecimal getIdParamApplic() {
-	return this.idParamApplic;
+        return this.idParamApplic;
     }
 
     public void setIdParamApplic(BigDecimal idParamApplic) {
-	this.idParamApplic = idParamApplic;
+        this.idParamApplic = idParamApplic;
     }
 
     @Id
     @Column(name = "ID_VALORE_PARAM_APPLIC")
     public BigDecimal getIdValoreParamApplic() {
-	return this.idValoreParamApplic;
+        return this.idValoreParamApplic;
     }
 
     public void setIdValoreParamApplic(BigDecimal idValoreParamApplic) {
-	this.idValoreParamApplic = idValoreParamApplic;
+        this.idValoreParamApplic = idValoreParamApplic;
     }
 
     @Column(name = "NM_AMBIENTE_ENTE_CONVENZ")
     public String getNmAmbienteEnteConvenz() {
-	return this.nmAmbienteEnteConvenz;
+        return this.nmAmbienteEnteConvenz;
     }
 
     public void setNmAmbienteEnteConvenz(String nmAmbienteEnteConvenz) {
-	this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
+        this.nmAmbienteEnteConvenz = nmAmbienteEnteConvenz;
     }
 
     @Column(name = "NM_PARAM_APPLIC")
     public String getNmParamApplic() {
-	return this.nmParamApplic;
+        return this.nmParamApplic;
     }
 
     public void setNmParamApplic(String nmParamApplic) {
-	this.nmParamApplic = nmParamApplic;
+        this.nmParamApplic = nmParamApplic;
     }
 
     @Column(name = "TI_APPART")
     public String getTiAppart() {
-	return this.tiAppart;
+        return this.tiAppart;
     }
 
     public void setTiAppart(String tiAppart) {
-	this.tiAppart = tiAppart;
+        this.tiAppart = tiAppart;
     }
 
 }

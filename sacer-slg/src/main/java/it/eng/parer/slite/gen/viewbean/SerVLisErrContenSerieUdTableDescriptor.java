@@ -46,29 +46,29 @@ public class SerVLisErrContenSerieUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_ERR_CONTENUTO_VER_SERIE,
-		new ColumnDescriptor(COL_ID_ERR_CONTENUTO_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_CONTENUTO_VER_SERIE,
-		new ColumnDescriptor(COL_ID_CONTENUTO_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_PG_ERR, new ColumnDescriptor(COL_PG_ERR, Types.DECIMAL, 22, true));
-	map.put(COL_TI_GRAVITA_ERR,
-		new ColumnDescriptor(COL_TI_GRAVITA_ERR, Types.VARCHAR, 20, true));
-	map.put(COL_TI_ERR, new ColumnDescriptor(COL_TI_ERR, Types.VARCHAR, 30, true));
-	map.put(COL_DL_ERR, new ColumnDescriptor(COL_DL_ERR, Types.VARCHAR, 1024, true));
-	map.put(COL_TI_ORIGINE_ERR,
-		new ColumnDescriptor(COL_TI_ORIGINE_ERR, Types.VARCHAR, 20, true));
+        map.put(COL_ID_ERR_CONTENUTO_VER_SERIE,
+                new ColumnDescriptor(COL_ID_ERR_CONTENUTO_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_CONTENUTO_VER_SERIE,
+                new ColumnDescriptor(COL_ID_CONTENUTO_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_PG_ERR, new ColumnDescriptor(COL_PG_ERR, Types.DECIMAL, 22, true));
+        map.put(COL_TI_GRAVITA_ERR,
+                new ColumnDescriptor(COL_TI_GRAVITA_ERR, Types.VARCHAR, 20, true));
+        map.put(COL_TI_ERR, new ColumnDescriptor(COL_TI_ERR, Types.VARCHAR, 30, true));
+        map.put(COL_DL_ERR, new ColumnDescriptor(COL_DL_ERR, Types.VARCHAR, 1024, true));
+        map.put(COL_TI_ORIGINE_ERR,
+                new ColumnDescriptor(COL_TI_ORIGINE_ERR, Types.VARCHAR, 20, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

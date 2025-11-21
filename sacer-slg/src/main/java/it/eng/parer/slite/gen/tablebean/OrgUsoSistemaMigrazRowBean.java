@@ -37,100 +37,100 @@ public class OrgUsoSistemaMigrazRowBean extends BaseRow implements JEEBaseRowInt
     public static OrgUsoSistemaMigrazTableDescriptor TABLE_DESCRIPTOR = new OrgUsoSistemaMigrazTableDescriptor();
 
     public OrgUsoSistemaMigrazRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdUsoSistemaMigraz() {
-	return getBigDecimal("id_uso_sistema_migraz");
+        return getBigDecimal("id_uso_sistema_migraz");
     }
 
     public void setIdUsoSistemaMigraz(BigDecimal idUsoSistemaMigraz) {
-	setObject("id_uso_sistema_migraz", idUsoSistemaMigraz);
+        setObject("id_uso_sistema_migraz", idUsoSistemaMigraz);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getIdSistemaMigraz() {
-	return getBigDecimal("id_sistema_migraz");
+        return getBigDecimal("id_sistema_migraz");
     }
 
     public void setIdSistemaMigraz(BigDecimal idSistemaMigraz) {
-	setObject("id_sistema_migraz", idSistemaMigraz);
+        setObject("id_sistema_migraz", idSistemaMigraz);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgUsoSistemaMigraz entity = (OrgUsoSistemaMigraz) obj;
+        OrgUsoSistemaMigraz entity = (OrgUsoSistemaMigraz) obj;
 
-	this.setIdUsoSistemaMigraz(entity.getIdUsoSistemaMigraz() == null ? null
-		: BigDecimal.valueOf(entity.getIdUsoSistemaMigraz()));
+        this.setIdUsoSistemaMigraz(entity.getIdUsoSistemaMigraz() == null ? null
+                : BigDecimal.valueOf(entity.getIdUsoSistemaMigraz()));
 
-	if (entity.getOrgStrut() != null) {
-	    this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
-	}
+        if (entity.getOrgStrut() != null) {
+            this.setIdStrut(new BigDecimal(entity.getOrgStrut().getIdStrut()));
+        }
 
-	if (entity.getAplSistemaMigraz() != null) {
-	    this.setIdSistemaMigraz(
-		    new BigDecimal(entity.getAplSistemaMigraz().getIdSistemaMigraz()));
-	}
+        if (entity.getAplSistemaMigraz() != null) {
+            this.setIdSistemaMigraz(
+                    new BigDecimal(entity.getAplSistemaMigraz().getIdSistemaMigraz()));
+        }
 
     }
 
     @Override
     public OrgUsoSistemaMigraz rowBeanToEntity() {
-	OrgUsoSistemaMigraz entity = new OrgUsoSistemaMigraz();
-	if (this.getIdUsoSistemaMigraz() != null) {
-	    entity.setIdUsoSistemaMigraz(this.getIdUsoSistemaMigraz().longValue());
-	}
-	if (this.getIdStrut() != null) {
-	    if (entity.getOrgStrut() == null) {
-		entity.setOrgStrut(new OrgStrut());
-	    }
-	    entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
-	}
-	if (this.getIdSistemaMigraz() != null) {
-	    if (entity.getAplSistemaMigraz() == null) {
-		entity.setAplSistemaMigraz(new AplSistemaMigraz());
-	    }
-	    entity.getAplSistemaMigraz().setIdSistemaMigraz(this.getIdSistemaMigraz().longValue());
-	}
-	return entity;
+        OrgUsoSistemaMigraz entity = new OrgUsoSistemaMigraz();
+        if (this.getIdUsoSistemaMigraz() != null) {
+            entity.setIdUsoSistemaMigraz(this.getIdUsoSistemaMigraz().longValue());
+        }
+        if (this.getIdStrut() != null) {
+            if (entity.getOrgStrut() == null) {
+                entity.setOrgStrut(new OrgStrut());
+            }
+            entity.getOrgStrut().setIdStrut(this.getIdStrut().longValue());
+        }
+        if (this.getIdSistemaMigraz() != null) {
+            if (entity.getAplSistemaMigraz() == null) {
+                entity.setAplSistemaMigraz(new AplSistemaMigraz());
+            }
+            entity.getAplSistemaMigraz().setIdSistemaMigraz(this.getIdSistemaMigraz().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

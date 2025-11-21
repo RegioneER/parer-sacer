@@ -41,39 +41,39 @@ public class MonVChkUdNonversStrut implements Serializable {
 
     @Column(name = "FL_UD_NONVERS_NORISOLUB", columnDefinition = "char(1)")
     public String getFlUdNonversNorisolub() {
-	return this.flUdNonversNorisolub;
+        return this.flUdNonversNorisolub;
     }
 
     public void setFlUdNonversNorisolub(String flUdNonversNorisolub) {
-	this.flUdNonversNorisolub = flUdNonversNorisolub;
+        this.flUdNonversNorisolub = flUdNonversNorisolub;
     }
 
     @Column(name = "FL_UD_NONVERS_NOVERIF", columnDefinition = "char(1)")
     public String getFlUdNonversNoverif() {
-	return this.flUdNonversNoverif;
+        return this.flUdNonversNoverif;
     }
 
     public void setFlUdNonversNoverif(String flUdNonversNoverif) {
-	this.flUdNonversNoverif = flUdNonversNoverif;
+        this.flUdNonversNoverif = flUdNonversNoverif;
     }
 
     @Column(name = "FL_UD_NONVERS_VERIF", columnDefinition = "char(1)")
     public String getFlUdNonversVerif() {
-	return this.flUdNonversVerif;
+        return this.flUdNonversVerif;
     }
 
     public void setFlUdNonversVerif(String flUdNonversVerif) {
-	this.flUdNonversVerif = flUdNonversVerif;
+        this.flUdNonversVerif = flUdNonversVerif;
     }
 
     @Id
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
 }

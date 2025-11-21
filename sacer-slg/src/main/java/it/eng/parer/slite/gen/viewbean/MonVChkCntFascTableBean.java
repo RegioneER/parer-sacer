@@ -33,19 +33,19 @@ public class MonVChkCntFascTableBean extends AbstractBaseTable<MonVChkCntFascRow
     public static MonVChkCntFascTableDescriptor TABLE_DESCRIPTOR = new MonVChkCntFascTableDescriptor();
 
     public MonVChkCntFascTableBean() {
-	super();
+        super();
     }
 
     protected MonVChkCntFascRowBean createRow() {
-	return new MonVChkCntFascRowBean();
+        return new MonVChkCntFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVChkCntFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

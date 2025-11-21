@@ -55,43 +55,43 @@ public class AroVLisDatiSpecTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_TI_USO_XSD, new ColumnDescriptor(COL_TI_USO_XSD, Types.VARCHAR, 20, true));
-	map.put(COL_TI_ENTITA_SACER,
-		new ColumnDescriptor(COL_TI_ENTITA_SACER, Types.VARCHAR, 20, true));
-	map.put(COL_ID_USO_XSD_DATI_SPEC,
-		new ColumnDescriptor(COL_ID_USO_XSD_DATI_SPEC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_VERSIONE_XSD,
-		new ColumnDescriptor(COL_CD_VERSIONE_XSD, Types.VARCHAR, 100, true));
-	map.put(COL_NM_SISTEMA_MIGRAZ,
-		new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, true));
-	map.put(COL_ID_VALORE_ATTRIB_DATI_SPEC,
-		new ColumnDescriptor(COL_ID_VALORE_ATTRIB_DATI_SPEC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ATTRIB_DATI_SPEC,
-		new ColumnDescriptor(COL_NM_ATTRIB_DATI_SPEC, Types.VARCHAR, 100, true));
-	map.put(COL_DS_ATTRIB_DATI_SPEC,
-		new ColumnDescriptor(COL_DS_ATTRIB_DATI_SPEC, Types.VARCHAR, 254, true));
-	map.put(COL_DL_VALORE, new ColumnDescriptor(COL_DL_VALORE, Types.VARCHAR, 4000, true));
-	map.put(COL_NI_ORD_ATTRIB,
-		new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, true));
-	map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, true));
-	map.put(COL_DS_VERSIONE_XSD,
-		new ColumnDescriptor(COL_DS_VERSIONE_XSD, Types.VARCHAR, 254, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_TI_USO_XSD, new ColumnDescriptor(COL_TI_USO_XSD, Types.VARCHAR, 20, true));
+        map.put(COL_TI_ENTITA_SACER,
+                new ColumnDescriptor(COL_TI_ENTITA_SACER, Types.VARCHAR, 20, true));
+        map.put(COL_ID_USO_XSD_DATI_SPEC,
+                new ColumnDescriptor(COL_ID_USO_XSD_DATI_SPEC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_VERSIONE_XSD,
+                new ColumnDescriptor(COL_CD_VERSIONE_XSD, Types.VARCHAR, 100, true));
+        map.put(COL_NM_SISTEMA_MIGRAZ,
+                new ColumnDescriptor(COL_NM_SISTEMA_MIGRAZ, Types.VARCHAR, 100, true));
+        map.put(COL_ID_VALORE_ATTRIB_DATI_SPEC,
+                new ColumnDescriptor(COL_ID_VALORE_ATTRIB_DATI_SPEC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ATTRIB_DATI_SPEC,
+                new ColumnDescriptor(COL_NM_ATTRIB_DATI_SPEC, Types.VARCHAR, 100, true));
+        map.put(COL_DS_ATTRIB_DATI_SPEC,
+                new ColumnDescriptor(COL_DS_ATTRIB_DATI_SPEC, Types.VARCHAR, 254, true));
+        map.put(COL_DL_VALORE, new ColumnDescriptor(COL_DL_VALORE, Types.VARCHAR, 4000, true));
+        map.put(COL_NI_ORD_ATTRIB,
+                new ColumnDescriptor(COL_NI_ORD_ATTRIB, Types.DECIMAL, 22, true));
+        map.put(COL_DT_ISTITUZ, new ColumnDescriptor(COL_DT_ISTITUZ, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_SOPPRES, new ColumnDescriptor(COL_DT_SOPPRES, Types.TIMESTAMP, 7, true));
+        map.put(COL_DS_VERSIONE_XSD,
+                new ColumnDescriptor(COL_DS_VERSIONE_XSD, Types.VARCHAR, 254, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

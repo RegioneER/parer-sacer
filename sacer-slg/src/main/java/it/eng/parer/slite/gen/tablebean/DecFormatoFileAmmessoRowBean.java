@@ -37,101 +37,101 @@ public class DecFormatoFileAmmessoRowBean extends BaseRow implements JEEBaseRowI
     public static DecFormatoFileAmmessoTableDescriptor TABLE_DESCRIPTOR = new DecFormatoFileAmmessoTableDescriptor();
 
     public DecFormatoFileAmmessoRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdFormatoFileAmmesso() {
-	return getBigDecimal("id_formato_file_ammesso");
+        return getBigDecimal("id_formato_file_ammesso");
     }
 
     public void setIdFormatoFileAmmesso(BigDecimal idFormatoFileAmmesso) {
-	setObject("id_formato_file_ammesso", idFormatoFileAmmesso);
+        setObject("id_formato_file_ammesso", idFormatoFileAmmesso);
     }
 
     public BigDecimal getIdTipoCompDoc() {
-	return getBigDecimal("id_tipo_comp_doc");
+        return getBigDecimal("id_tipo_comp_doc");
     }
 
     public void setIdTipoCompDoc(BigDecimal idTipoCompDoc) {
-	setObject("id_tipo_comp_doc", idTipoCompDoc);
+        setObject("id_tipo_comp_doc", idTipoCompDoc);
     }
 
     public BigDecimal getIdFormatoFileDoc() {
-	return getBigDecimal("id_formato_file_doc");
+        return getBigDecimal("id_formato_file_doc");
     }
 
     public void setIdFormatoFileDoc(BigDecimal idFormatoFileDoc) {
-	setObject("id_formato_file_doc", idFormatoFileDoc);
+        setObject("id_formato_file_doc", idFormatoFileDoc);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecFormatoFileAmmesso entity = (DecFormatoFileAmmesso) obj;
+        DecFormatoFileAmmesso entity = (DecFormatoFileAmmesso) obj;
 
-	this.setIdFormatoFileAmmesso(entity.getIdFormatoFileAmmesso() == null ? null
-		: BigDecimal.valueOf(entity.getIdFormatoFileAmmesso()));
+        this.setIdFormatoFileAmmesso(entity.getIdFormatoFileAmmesso() == null ? null
+                : BigDecimal.valueOf(entity.getIdFormatoFileAmmesso()));
 
-	if (entity.getDecTipoCompDoc() != null) {
-	    this.setIdTipoCompDoc(new BigDecimal(entity.getDecTipoCompDoc().getIdTipoCompDoc()));
-	}
+        if (entity.getDecTipoCompDoc() != null) {
+            this.setIdTipoCompDoc(new BigDecimal(entity.getDecTipoCompDoc().getIdTipoCompDoc()));
+        }
 
-	if (entity.getDecFormatoFileDoc() != null) {
-	    this.setIdFormatoFileDoc(
-		    new BigDecimal(entity.getDecFormatoFileDoc().getIdFormatoFileDoc()));
-	}
+        if (entity.getDecFormatoFileDoc() != null) {
+            this.setIdFormatoFileDoc(
+                    new BigDecimal(entity.getDecFormatoFileDoc().getIdFormatoFileDoc()));
+        }
 
     }
 
     @Override
     public DecFormatoFileAmmesso rowBeanToEntity() {
-	DecFormatoFileAmmesso entity = new DecFormatoFileAmmesso();
-	if (this.getIdFormatoFileAmmesso() != null) {
-	    entity.setIdFormatoFileAmmesso(this.getIdFormatoFileAmmesso().longValue());
-	}
-	if (this.getIdTipoCompDoc() != null) {
-	    if (entity.getDecTipoCompDoc() == null) {
-		entity.setDecTipoCompDoc(new DecTipoCompDoc());
-	    }
-	    entity.getDecTipoCompDoc().setIdTipoCompDoc(this.getIdTipoCompDoc().longValue());
-	}
-	if (this.getIdFormatoFileDoc() != null) {
-	    if (entity.getDecFormatoFileDoc() == null) {
-		entity.setDecFormatoFileDoc(new DecFormatoFileDoc());
-	    }
-	    entity.getDecFormatoFileDoc()
-		    .setIdFormatoFileDoc(this.getIdFormatoFileDoc().longValue());
-	}
-	return entity;
+        DecFormatoFileAmmesso entity = new DecFormatoFileAmmesso();
+        if (this.getIdFormatoFileAmmesso() != null) {
+            entity.setIdFormatoFileAmmesso(this.getIdFormatoFileAmmesso().longValue());
+        }
+        if (this.getIdTipoCompDoc() != null) {
+            if (entity.getDecTipoCompDoc() == null) {
+                entity.setDecTipoCompDoc(new DecTipoCompDoc());
+            }
+            entity.getDecTipoCompDoc().setIdTipoCompDoc(this.getIdTipoCompDoc().longValue());
+        }
+        if (this.getIdFormatoFileDoc() != null) {
+            if (entity.getDecFormatoFileDoc() == null) {
+                entity.setDecFormatoFileDoc(new DecFormatoFileDoc());
+            }
+            entity.getDecFormatoFileDoc()
+                    .setIdFormatoFileDoc(this.getIdFormatoFileDoc().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

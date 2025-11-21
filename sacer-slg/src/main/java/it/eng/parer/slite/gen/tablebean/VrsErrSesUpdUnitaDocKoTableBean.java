@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class VrsErrSesUpdUnitaDocKoTableBean
-	extends AbstractBaseTable<VrsErrSesUpdUnitaDocKoRowBean> {
+        extends AbstractBaseTable<VrsErrSesUpdUnitaDocKoRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class VrsErrSesUpdUnitaDocKoTableBean
     public static VrsErrSesUpdUnitaDocKoTableDescriptor TABLE_DESCRIPTOR = new VrsErrSesUpdUnitaDocKoTableDescriptor();
 
     public VrsErrSesUpdUnitaDocKoTableBean() {
-	super();
+        super();
     }
 
     protected VrsErrSesUpdUnitaDocKoRowBean createRow() {
-	return new VrsErrSesUpdUnitaDocKoRowBean();
+        return new VrsErrSesUpdUnitaDocKoRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsErrSesUpdUnitaDocKoRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

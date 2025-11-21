@@ -55,49 +55,49 @@ public class FasCodIdeSog implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FAS_COD_IDE_SOG_IDINDRIFSOG_GENERATOR")
     @Column(name = "ID_COD_IDE_SOG")
     public Long getIdCodIdeSog() {
-	return this.idCodIdeSog;
+        return this.idCodIdeSog;
     }
 
     public void setIdCodIdeSog(Long idCodIdeSog) {
-	this.idCodIdeSog = idCodIdeSog;
+        this.idCodIdeSog = idCodIdeSog;
     }
 
     @Column(name = "CD_SOG")
     public String getCdSog() {
-	return this.cdSog;
+        return this.cdSog;
     }
 
     public void setCdSog(String cdSog) {
-	this.cdSog = cdSog;
+        this.cdSog = cdSog;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SOG_FASCICOLO")
     public FasSogFascicolo getFasSogFascicolo() {
-	return this.fasSogFascicolo;
+        return this.fasSogFascicolo;
     }
 
     public void setFasSogFascicolo(FasSogFascicolo fasSogFascicolo) {
-	this.fasSogFascicolo = fasSogFascicolo;
+        this.fasSogFascicolo = fasSogFascicolo;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_COD_SOG")
     public TiCodSog getTiCodSog() {
-	return this.tiCodSog;
+        return this.tiCodSog;
     }
 
     public void setTiCodSog(TiCodSog tiCodSog) {
-	this.tiCodSog = tiCodSog;
+        this.tiCodSog = tiCodSog;
     }
 
     @Column(name = "NM_COD_SOG")
     public String getNmCodSog() {
-	return this.nmCodSog;
+        return this.nmCodSog;
     }
 
     public void setNmCodSog(String nmCodSog) {
-	this.nmCodSog = nmCodSog;
+        this.nmCodSog = nmCodSog;
     }
 
 }

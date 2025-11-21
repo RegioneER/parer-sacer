@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class SerLacunaConsistVerSerieTableBean
-	extends AbstractBaseTable<SerLacunaConsistVerSerieRowBean> {
+        extends AbstractBaseTable<SerLacunaConsistVerSerieRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class SerLacunaConsistVerSerieTableBean
     public static SerLacunaConsistVerSerieTableDescriptor TABLE_DESCRIPTOR = new SerLacunaConsistVerSerieTableDescriptor();
 
     public SerLacunaConsistVerSerieTableBean() {
-	super();
+        super();
     }
 
     protected SerLacunaConsistVerSerieRowBean createRow() {
-	return new SerLacunaConsistVerSerieRowBean();
+        return new SerLacunaConsistVerSerieRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerLacunaConsistVerSerieRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

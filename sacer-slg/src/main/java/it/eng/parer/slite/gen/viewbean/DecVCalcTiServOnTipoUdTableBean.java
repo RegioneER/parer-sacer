@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecVCalcTiServOnTipoUdTableBean
-	extends AbstractBaseTable<DecVCalcTiServOnTipoUdRowBean> {
+        extends AbstractBaseTable<DecVCalcTiServOnTipoUdRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -39,19 +39,19 @@ public class DecVCalcTiServOnTipoUdTableBean
     public static DecVCalcTiServOnTipoUdTableDescriptor TABLE_DESCRIPTOR = new DecVCalcTiServOnTipoUdTableDescriptor();
 
     public DecVCalcTiServOnTipoUdTableBean() {
-	super();
+        super();
     }
 
     protected DecVCalcTiServOnTipoUdRowBean createRow() {
-	return new DecVCalcTiServOnTipoUdRowBean();
+        return new DecVCalcTiServOnTipoUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVCalcTiServOnTipoUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

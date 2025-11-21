@@ -60,55 +60,55 @@ public class DecTipoDocAmmesso implements Serializable {
     @Column(name = "ID_TIPO_DOC_AMMESSO")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_DOC_AMMESSO_ID_TIPO_DOC_AMMESSO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_DOC_AMMESSO"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_DOC_AMMESSO"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_DOC_AMMESSO_ID_TIPO_DOC_AMMESSO_GENERATOR")
     public Long getIdTipoDocAmmesso() {
-	return this.idTipoDocAmmesso;
+        return this.idTipoDocAmmesso;
     }
 
     public void setIdTipoDocAmmesso(Long idTipoDocAmmesso) {
-	this.idTipoDocAmmesso = idTipoDocAmmesso;
+        this.idTipoDocAmmesso = idTipoDocAmmesso;
     }
 
     @Column(name = "FL_OBBL", columnDefinition = "char(1)")
     public String getFlObbl() {
-	return this.flObbl;
+        return this.flObbl;
     }
 
     public void setFlObbl(String flObbl) {
-	this.flObbl = flObbl;
+        this.flObbl = flObbl;
     }
 
     @Column(name = "TI_DOC")
     public String getTiDoc() {
-	return this.tiDoc;
+        return this.tiDoc;
     }
 
     public void setTiDoc(String tiDoc) {
-	this.tiDoc = tiDoc;
+        this.tiDoc = tiDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_DOC")
     @XmlInverseReference(mappedBy = "decTipoDocAmmessos")
     public DecTipoDoc getDecTipoDoc() {
-	return this.decTipoDoc;
+        return this.decTipoDoc;
     }
 
     public void setDecTipoDoc(DecTipoDoc decTipoDoc) {
-	this.decTipoDoc = decTipoDoc;
+        this.decTipoDoc = decTipoDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_STRUT_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decTipoDocAmmessos")
     public DecTipoStrutUnitaDoc getDecTipoStrutUnitaDoc() {
-	return this.decTipoStrutUnitaDoc;
+        return this.decTipoStrutUnitaDoc;
     }
 
     public void setDecTipoStrutUnitaDoc(DecTipoStrutUnitaDoc decTipoStrutUnitaDoc) {
-	this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
+        this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
     }
 
 }

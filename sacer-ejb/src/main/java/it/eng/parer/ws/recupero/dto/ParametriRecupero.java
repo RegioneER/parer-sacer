@@ -39,91 +39,91 @@ public class ParametriRecupero {
     private User utente;
 
     public TipoSessioniRecupEnum getTipoRichiedente() {
-	return tipoRichiedente;
+        return tipoRichiedente;
     }
 
     public void setTipoRichiedente(TipoSessioniRecupEnum tipoRichiedente) {
-	this.tipoRichiedente = tipoRichiedente;
+        this.tipoRichiedente = tipoRichiedente;
     }
 
     public TipiEntitaRecupero getTipoEntitaSacer() {
-	return tipoEntitaSacer;
+        return tipoEntitaSacer;
     }
 
     public void setTipoEntitaSacer(TipiEntitaRecupero tipoEntitaSacer) {
-	this.tipoEntitaSacer = tipoEntitaSacer;
+        this.tipoEntitaSacer = tipoEntitaSacer;
     }
 
     public String getDescUnitaDoc() {
-	return descUnitaDoc;
+        return descUnitaDoc;
     }
 
     public void setDescUnitaDoc(String descUnitaDoc) {
-	this.descUnitaDoc = descUnitaDoc;
+        this.descUnitaDoc = descUnitaDoc;
     }
 
     public Long getIdUnitaDoc() {
-	return idUnitaDoc;
+        return idUnitaDoc;
     }
 
     public void setIdUnitaDoc(Long idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     public Long getIdDocumento() {
-	return idDocumento;
+        return idDocumento;
     }
 
     public void setIdDocumento(Long idDocumento) {
-	this.idDocumento = idDocumento;
+        this.idDocumento = idDocumento;
     }
 
     public Long getIdComponente() {
-	return idComponente;
+        return idComponente;
     }
 
     public void setIdComponente(Long idComponente) {
-	this.idComponente = idComponente;
+        this.idComponente = idComponente;
     }
 
     public Long getIdTipoDoc() {
-	return idTipoDoc;
+        return idTipoDoc;
     }
 
     public void setIdTipoDoc(Long idTipoDoc) {
-	this.idTipoDoc = idTipoDoc;
+        this.idTipoDoc = idTipoDoc;
     }
 
     public User getUtente() {
-	return utente;
+        return utente;
     }
 
     public void setUtente(User utente) {
-	this.utente = utente;
+        this.utente = utente;
     }
 
     public Long getIdRegistro() {
-	return idRegistro;
+        return idRegistro;
     }
 
     public void setIdRegistro(Long idRegistro) {
-	this.idRegistro = idRegistro;
+        this.idRegistro = idRegistro;
     }
 
     public Long getIdVolume() {
-	return idVolume;
+        return idVolume;
     }
 
     public void setIdVolume(Long idVolume) {
-	this.idVolume = idVolume;
+        this.idVolume = idVolume;
     }
 
     public String getNumeroUdNormalized() {
-	return numeroUdNormalized;
+        return numeroUdNormalized;
     }
 
     public void setNumeroUdNormalized(String numeroUdNormalized) {
-	this.numeroUdNormalized = numeroUdNormalized;
+        this.numeroUdNormalized = numeroUdNormalized;
     }
 
 }

@@ -38,19 +38,19 @@ public class MonVVisUpdUdErrTableBean extends AbstractBaseTable<MonVVisUpdUdErrR
     public static MonVVisUpdUdErrTableDescriptor TABLE_DESCRIPTOR = new MonVVisUpdUdErrTableDescriptor();
 
     public MonVVisUpdUdErrTableBean() {
-	super();
+        super();
     }
 
     protected MonVVisUpdUdErrRowBean createRow() {
-	return new MonVVisUpdUdErrRowBean();
+        return new MonVVisUpdUdErrRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVVisUpdUdErrRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

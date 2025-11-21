@@ -35,91 +35,91 @@ public class WsTransactionManager {
     private static final Logger log = LoggerFactory.getLogger(WsTransactionManager.class);
 
     public WsTransactionManager(UserTransaction utx) {
-	this.utx = utx;
+        this.utx = utx;
     }
 
     public void beginTrans(IRispostaWS rispostaWs) {
-	try {
-	    utx.begin();
-	} catch (NotSupportedException e) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage(
-		    "Errore nella fase di apertura transazione db del EJB " + e.getMessage());
-	    log.error("Eccezione nell'init ejb ", e);
-	} catch (SystemException e) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage(
-		    "Errore nella fase di apertura transazione db del EJB " + e.getMessage());
-	    log.error("Eccezione nell'init ejb ", e);
-	}
+        try {
+            utx.begin();
+        } catch (NotSupportedException e) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage(
+                    "Errore nella fase di apertura transazione db del EJB " + e.getMessage());
+            log.error("Eccezione nell'init ejb ", e);
+        } catch (SystemException e) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage(
+                    "Errore nella fase di apertura transazione db del EJB " + e.getMessage());
+            log.error("Eccezione nell'init ejb ", e);
+        }
     }
 
     public void commit(IRispostaWS rispostaWs) {
-	try {
-	    utx.commit();
-	} catch (RollbackException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (HeuristicMixedException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (HeuristicRollbackException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (SecurityException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (IllegalStateException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (SystemException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (Exception ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	}
+        try {
+            utx.commit();
+        } catch (RollbackException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (HeuristicMixedException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (HeuristicRollbackException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (SecurityException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (IllegalStateException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (SystemException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (Exception ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di commit del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        }
     }
 
     public void rollback(IRispostaWS rispostaWs) {
-	try {
-	    utx.rollback();
-	} catch (IllegalStateException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (SecurityException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (SystemException ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	} catch (Exception ex) {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
-	    rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
-	    log.error("Eccezione nell'init ejb ", ex);
-	}
+        try {
+            utx.rollback();
+        } catch (IllegalStateException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (SecurityException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (SystemException ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        } catch (Exception ex) {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.DB_FATAL);
+            rispostaWs.setErrorMessage("Errore nella fase di rollback del EJB " + ex.getMessage());
+            log.error("Eccezione nell'init ejb ", ex);
+        }
     }
 }

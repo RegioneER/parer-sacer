@@ -24,19 +24,19 @@ public class ReturnParams {
     private StringBuilder query;
 
     public StringBuilder getQuery() {
-	return query;
+        return query;
     }
 
     public void setQuery(StringBuilder query) {
-	this.query = query;
+        this.query = query;
     }
 
     public List<DatiSpecQueryParams> getMappone() {
-	return mappone;
+        return mappone;
     }
 
     public void setMappone(List<DatiSpecQueryParams> mappone) {
-	this.mappone = mappone;
+        this.mappone = mappone;
     }
 
     private List<DatiSpecQueryParams> mappone;

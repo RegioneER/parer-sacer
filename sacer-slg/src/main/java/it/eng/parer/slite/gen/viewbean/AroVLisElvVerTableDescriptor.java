@@ -47,32 +47,32 @@ public class AroVLisElvVerTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_ELENCO_VERS,
-		new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
-	map.put(COL_NM_ELENCO, new ColumnDescriptor(COL_NM_ELENCO, Types.VARCHAR, 100, true));
-	map.put(COL_DT_CREAZIONE_ELENCO,
-		new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_STATO_ELENCO,
-		new ColumnDescriptor(COL_TI_STATO_ELENCO, Types.VARCHAR, 40, true));
-	map.put(COL_DT_CREAZIONE_ELENCO_IX_AIP,
-		new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FIRMA_ELENCO_IX_AIP,
-		new ColumnDescriptor(COL_DT_FIRMA_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_MARCA_ELENCO_IX_AIP,
-		new ColumnDescriptor(COL_DT_MARCA_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_ELENCO_VERS,
+                new ColumnDescriptor(COL_ID_ELENCO_VERS, Types.DECIMAL, 22, true));
+        map.put(COL_NM_ELENCO, new ColumnDescriptor(COL_NM_ELENCO, Types.VARCHAR, 100, true));
+        map.put(COL_DT_CREAZIONE_ELENCO,
+                new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_STATO_ELENCO,
+                new ColumnDescriptor(COL_TI_STATO_ELENCO, Types.VARCHAR, 40, true));
+        map.put(COL_DT_CREAZIONE_ELENCO_IX_AIP,
+                new ColumnDescriptor(COL_DT_CREAZIONE_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FIRMA_ELENCO_IX_AIP,
+                new ColumnDescriptor(COL_DT_FIRMA_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_MARCA_ELENCO_IX_AIP,
+                new ColumnDescriptor(COL_DT_MARCA_ELENCO_IX_AIP, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

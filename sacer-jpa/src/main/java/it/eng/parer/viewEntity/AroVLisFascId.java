@@ -27,50 +27,50 @@ public class AroVLisFascId implements Serializable {
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return idUnitaDoc;
+        return idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     private BigDecimal idFascicolo;
 
     @Column(name = "ID_FASCICOLO")
     public BigDecimal getIdFascicolo() {
-	return idFascicolo;
+        return idFascicolo;
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	this.idFascicolo = idFascicolo;
+        this.idFascicolo = idFascicolo;
     }
 
     @Override
     public int hashCode() {
-	int hash = 7;
-	hash = 97 * hash + Objects.hashCode(this.idUnitaDoc);
-	hash = 97 * hash + Objects.hashCode(this.idFascicolo);
-	return hash;
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.idUnitaDoc);
+        hash = 97 * hash + Objects.hashCode(this.idFascicolo);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final AroVLisFascId other = (AroVLisFascId) obj;
-	if (!Objects.equals(this.idUnitaDoc, other.idUnitaDoc)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idFascicolo, other.idFascicolo)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AroVLisFascId other = (AroVLisFascId) obj;
+        if (!Objects.equals(this.idUnitaDoc, other.idUnitaDoc)) {
+            return false;
+        }
+        if (!Objects.equals(this.idFascicolo, other.idFascicolo)) {
+            return false;
+        }
+        return true;
     }
 }

@@ -48,33 +48,33 @@ public class SerLacunaConsistVerSerieTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_LACUNA_CONSIST_VER_SERIE,
-		new ColumnDescriptor(COL_ID_LACUNA_CONSIST_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_CONSIST_VER_SERIE,
-		new ColumnDescriptor(COL_ID_CONSIST_VER_SERIE, Types.DECIMAL, 22, false));
-	map.put(COL_PG_LACUNA, new ColumnDescriptor(COL_PG_LACUNA, Types.DECIMAL, 22, false));
-	map.put(COL_NI_INI_LACUNA,
-		new ColumnDescriptor(COL_NI_INI_LACUNA, Types.DECIMAL, 22, false));
-	map.put(COL_NI_FIN_LACUNA,
-		new ColumnDescriptor(COL_NI_FIN_LACUNA, Types.DECIMAL, 22, false));
-	map.put(COL_DL_LACUNA, new ColumnDescriptor(COL_DL_LACUNA, Types.VARCHAR, 1024, false));
-	map.put(COL_TI_LACUNA, new ColumnDescriptor(COL_TI_LACUNA, Types.VARCHAR, 20, false));
-	map.put(COL_TI_MOD_LACUNA,
-		new ColumnDescriptor(COL_TI_MOD_LACUNA, Types.VARCHAR, 20, false));
-	map.put(COL_DL_NOTA_LACUNA,
-		new ColumnDescriptor(COL_DL_NOTA_LACUNA, Types.VARCHAR, 1024, false));
+        map.put(COL_ID_LACUNA_CONSIST_VER_SERIE,
+                new ColumnDescriptor(COL_ID_LACUNA_CONSIST_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_CONSIST_VER_SERIE,
+                new ColumnDescriptor(COL_ID_CONSIST_VER_SERIE, Types.DECIMAL, 22, false));
+        map.put(COL_PG_LACUNA, new ColumnDescriptor(COL_PG_LACUNA, Types.DECIMAL, 22, false));
+        map.put(COL_NI_INI_LACUNA,
+                new ColumnDescriptor(COL_NI_INI_LACUNA, Types.DECIMAL, 22, false));
+        map.put(COL_NI_FIN_LACUNA,
+                new ColumnDescriptor(COL_NI_FIN_LACUNA, Types.DECIMAL, 22, false));
+        map.put(COL_DL_LACUNA, new ColumnDescriptor(COL_DL_LACUNA, Types.VARCHAR, 1024, false));
+        map.put(COL_TI_LACUNA, new ColumnDescriptor(COL_TI_LACUNA, Types.VARCHAR, 20, false));
+        map.put(COL_TI_MOD_LACUNA,
+                new ColumnDescriptor(COL_TI_MOD_LACUNA, Types.VARCHAR, 20, false));
+        map.put(COL_DL_NOTA_LACUNA,
+                new ColumnDescriptor(COL_DL_NOTA_LACUNA, Types.VARCHAR, 1024, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

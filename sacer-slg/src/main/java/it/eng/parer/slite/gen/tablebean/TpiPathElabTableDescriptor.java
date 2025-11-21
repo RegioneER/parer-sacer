@@ -45,27 +45,27 @@ public class TpiPathElabTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_PATH_ELAB, new ColumnDescriptor(COL_ID_PATH_ELAB, Types.DECIMAL, 22, true));
-	map.put(COL_ID_SCHED_JOB, new ColumnDescriptor(COL_ID_SCHED_JOB, Types.DECIMAL, 22, false));
-	map.put(COL_DT_VERS_ELAB,
-		new ColumnDescriptor(COL_DT_VERS_ELAB, Types.TIMESTAMP, 7, false));
-	map.put(COL_DL_PATH_ELAB,
-		new ColumnDescriptor(COL_DL_PATH_ELAB, Types.VARCHAR, 254, false));
-	map.put(COL_NI_FILE_DA_ELAB,
-		new ColumnDescriptor(COL_NI_FILE_DA_ELAB, Types.DECIMAL, 22, false));
-	map.put(COL_NI_FILE_ELAB, new ColumnDescriptor(COL_NI_FILE_ELAB, Types.DECIMAL, 22, false));
+        map.put(COL_ID_PATH_ELAB, new ColumnDescriptor(COL_ID_PATH_ELAB, Types.DECIMAL, 22, true));
+        map.put(COL_ID_SCHED_JOB, new ColumnDescriptor(COL_ID_SCHED_JOB, Types.DECIMAL, 22, false));
+        map.put(COL_DT_VERS_ELAB,
+                new ColumnDescriptor(COL_DT_VERS_ELAB, Types.TIMESTAMP, 7, false));
+        map.put(COL_DL_PATH_ELAB,
+                new ColumnDescriptor(COL_DL_PATH_ELAB, Types.VARCHAR, 254, false));
+        map.put(COL_NI_FILE_DA_ELAB,
+                new ColumnDescriptor(COL_NI_FILE_DA_ELAB, Types.DECIMAL, 22, false));
+        map.put(COL_NI_FILE_ELAB, new ColumnDescriptor(COL_NI_FILE_ELAB, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

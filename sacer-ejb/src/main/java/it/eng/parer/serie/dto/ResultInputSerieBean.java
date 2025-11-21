@@ -29,27 +29,27 @@ public class ResultInputSerieBean {
     List<ResultVCalcoloSerieUd> resultQueryList;
 
     public String getRecord() {
-	return record;
+        return record;
     }
 
     public void setRecord(String record) {
-	this.record = record;
+        this.record = record;
     }
 
     public List<ResultVCalcoloSerieUd> getResultQueryList() {
-	return resultQueryList;
+        return resultQueryList;
     }
 
     public void setResultQueryList(List<ResultVCalcoloSerieUd> resultQueryList) {
-	this.resultQueryList = resultQueryList;
+        this.resultQueryList = resultQueryList;
     }
 
     public BigDecimal getIndexRecord() {
-	return indexRecord;
+        return indexRecord;
     }
 
     public void setIndexRecord(BigDecimal indexRecord) {
-	this.indexRecord = indexRecord;
+        this.indexRecord = indexRecord;
     }
 
 }

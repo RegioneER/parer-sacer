@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class VrsXmlDatiSessioneVersTableBean
-	extends AbstractBaseTable<VrsXmlDatiSessioneVersRowBean> {
+        extends AbstractBaseTable<VrsXmlDatiSessioneVersRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class VrsXmlDatiSessioneVersTableBean
     public static VrsXmlDatiSessioneVersTableDescriptor TABLE_DESCRIPTOR = new VrsXmlDatiSessioneVersTableDescriptor();
 
     public VrsXmlDatiSessioneVersTableBean() {
-	super();
+        super();
     }
 
     protected VrsXmlDatiSessioneVersRowBean createRow() {
-	return new VrsXmlDatiSessioneVersRowBean();
+        return new VrsXmlDatiSessioneVersRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsXmlDatiSessioneVersRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

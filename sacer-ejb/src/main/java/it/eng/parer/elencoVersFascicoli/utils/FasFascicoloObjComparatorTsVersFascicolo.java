@@ -23,12 +23,12 @@ public class FasFascicoloObjComparatorTsVersFascicolo implements Comparator<FasF
 
     @Override
     public int compare(FasFascicoloObj o1, FasFascicoloObj o2) {
-	if (o1.getTsVersFascicolo().getTime() - o2.getTsVersFascicolo().getTime() < 0) {
-	    return -1;
-	} else if (o1.getTsVersFascicolo().getTime() - o2.getTsVersFascicolo().getTime() > 0) {
-	    return 1;
-	} else {
-	    return 0;
-	}
+        if (o1.getTsVersFascicolo().getTime() - o2.getTsVersFascicolo().getTime() < 0) {
+            return -1;
+        } else if (o1.getTsVersFascicolo().getTime() - o2.getTsVersFascicolo().getTime() > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }

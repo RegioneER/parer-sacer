@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement(name = "Job")
 @XmlType(propOrder = {
-	"flMigraz", "nmJob", "niOrdSchedJob", "dtSchedJob", "flJobOk", "dsDurataJob", "dlErrJob",
-	"flFineSched", "listaErrArk", "listaPathElab" })
+        "flMigraz", "nmJob", "niOrdSchedJob", "dtSchedJob", "flJobOk", "dsDurataJob", "dlErrJob",
+        "flFineSched", "listaErrArk", "listaPathElab" })
 public class Job {
 
     protected Boolean flMigraz;
@@ -41,94 +41,94 @@ public class Job {
 
     @XmlElement(name = "FlMigraz")
     public Boolean getFlMigraz() {
-	return flMigraz;
+        return flMigraz;
     }
 
     public void setFlMigraz(Boolean flMigraz) {
-	this.flMigraz = flMigraz;
+        this.flMigraz = flMigraz;
     }
 
     @XmlElement(name = "NmJob")
     public String getNmJob() {
-	return nmJob;
+        return nmJob;
     }
 
     public void setNmJob(String nmJob) {
-	this.nmJob = nmJob;
+        this.nmJob = nmJob;
     }
 
     @XmlElement(name = "NiOrdSchedJob")
     public Integer getNiOrdSchedJob() {
-	return niOrdSchedJob;
+        return niOrdSchedJob;
     }
 
     public void setNiOrdSchedJob(Integer niOrdSchedJob) {
-	this.niOrdSchedJob = niOrdSchedJob;
+        this.niOrdSchedJob = niOrdSchedJob;
     }
 
     @XmlElement(name = "DtSchedJob")
     public Date getDtSchedJob() {
-	return dtSchedJob;
+        return dtSchedJob;
     }
 
     public void setDtSchedJob(Date dtSchedJob) {
-	this.dtSchedJob = dtSchedJob;
+        this.dtSchedJob = dtSchedJob;
     }
 
     @XmlElement(name = "FlJobOk")
     public Boolean getFlJobOk() {
-	return flJobOk;
+        return flJobOk;
     }
 
     public void setFlJobOk(Boolean flJobOk) {
-	this.flJobOk = flJobOk;
+        this.flJobOk = flJobOk;
     }
 
     @XmlElement(name = "DsDurataJob")
     public String getDsDurataJob() {
-	return dsDurataJob;
+        return dsDurataJob;
     }
 
     public void setDsDurataJob(String dsDurataJob) {
-	this.dsDurataJob = dsDurataJob;
+        this.dsDurataJob = dsDurataJob;
     }
 
     @XmlElement(name = "DlErrJob")
     public String getDlErrJob() {
-	return dlErrJob;
+        return dlErrJob;
     }
 
     public void setDlErrJob(String dlErrJob) {
-	this.dlErrJob = dlErrJob;
+        this.dlErrJob = dlErrJob;
     }
 
     @XmlElement(name = "FlFineSched")
     public Boolean getFlFineSched() {
-	return flFineSched;
+        return flFineSched;
     }
 
     public void setFlFineSched(Boolean flFineSched) {
-	this.flFineSched = flFineSched;
+        this.flFineSched = flFineSched;
     }
 
     @XmlElement(name = "ErrArk")
     @XmlElementWrapper(name = "ListaErroriArk")
     public List<JobErrArk> getListaErrArk() {
-	return listaErrArk;
+        return listaErrArk;
     }
 
     public void setListaErrArk(List<JobErrArk> listaErrArk) {
-	this.listaErrArk = listaErrArk;
+        this.listaErrArk = listaErrArk;
     }
 
     @XmlElement(name = "PathElab")
     @XmlElementWrapper(name = "ListaPathElab")
     public List<PathElab> getListaPathElab() {
-	return listaPathElab;
+        return listaPathElab;
     }
 
     public void setListaPathElab(List<PathElab> listaPathElab) {
-	this.listaPathElab = listaPathElab;
+        this.listaPathElab = listaPathElab;
     }
 
 }

@@ -23,7 +23,7 @@ import it.eng.tpi.bean.Esito.EsitoServizio;
 
 @XmlRootElement(name = "EliminaCartellaArchiviata")
 @XmlType(propOrder = {
-	"esito", "flCartellaMigraz", "dtVers", "rootDtVers" })
+        "esito", "flCartellaMigraz", "dtVers", "rootDtVers" })
 public class EliminaCartellaArchiviataRisposta {
 
     protected Esito esito;
@@ -32,51 +32,51 @@ public class EliminaCartellaArchiviataRisposta {
     protected String rootDtVers;
 
     public EliminaCartellaArchiviataRisposta() {
-	setEsito(new Esito());
+        setEsito(new Esito());
     }
 
     public EliminaCartellaArchiviataRisposta(Boolean flCartellaMigraz, Date dtVers,
-	    String rootDtVers) {
-	this();
-	getEsito().setCdEsito(EsitoServizio.KO);
-	this.flCartellaMigraz = flCartellaMigraz;
-	this.dtVers = dtVers;
-	this.rootDtVers = rootDtVers;
+            String rootDtVers) {
+        this();
+        getEsito().setCdEsito(EsitoServizio.KO);
+        this.flCartellaMigraz = flCartellaMigraz;
+        this.dtVers = dtVers;
+        this.rootDtVers = rootDtVers;
     }
 
     @XmlElement(name = "Esito")
     public Esito getEsito() {
-	return esito;
+        return esito;
     }
 
     public void setEsito(Esito esito) {
-	this.esito = esito;
+        this.esito = esito;
     }
 
     @XmlElement(name = "FlCartellaMigraz")
     public Boolean getFlCartellaMigraz() {
-	return flCartellaMigraz;
+        return flCartellaMigraz;
     }
 
     public void setFlCartellaMigraz(Boolean flCartellaMigraz) {
-	this.flCartellaMigraz = flCartellaMigraz;
+        this.flCartellaMigraz = flCartellaMigraz;
     }
 
     @XmlElement(name = "DtVers")
     public Date getDtVers() {
-	return dtVers;
+        return dtVers;
     }
 
     public void setDtVers(Date dtVers) {
-	this.dtVers = dtVers;
+        this.dtVers = dtVers;
     }
 
     @XmlElement(name = "RootDtVers")
     public String getRootDtVers() {
-	return rootDtVers;
+        return rootDtVers;
     }
 
     public void setRootDtVers(String rootDtVers) {
-	this.rootDtVers = rootDtVers;
+        this.rootDtVers = rootDtVers;
     }
 }

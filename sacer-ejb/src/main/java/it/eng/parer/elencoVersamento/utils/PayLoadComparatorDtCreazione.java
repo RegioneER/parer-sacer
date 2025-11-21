@@ -23,15 +23,15 @@ public class PayLoadComparatorDtCreazione implements Comparator<PayLoad> {
 
     @Override
     public int compare(PayLoad p1, PayLoad p2) {
-	if (p1.getTipoEntitaSacer().equals(p2.getTipoEntitaSacer())) {
-	    if (p1.getDtCreazione() - p2.getDtCreazione() < 0) {
-		return -1;
-	    } else if (p1.getDtCreazione() - p2.getDtCreazione() > 0) {
-		return 1;
-	    } else {
-		return 0;
-	    }
-	} else
-	    return 0;
+        if (p1.getTipoEntitaSacer().equals(p2.getTipoEntitaSacer())) {
+            if (p1.getDtCreazione() - p2.getDtCreazione() < 0) {
+                return -1;
+            } else if (p1.getDtCreazione() - p2.getDtCreazione() > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else
+            return 0;
     }
 }

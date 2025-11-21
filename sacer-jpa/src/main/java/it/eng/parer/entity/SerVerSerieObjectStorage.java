@@ -34,7 +34,7 @@ import javax.persistence.Table;
 public class SerVerSerieObjectStorage extends AroXmlObjectStorage {
 
     public SerVerSerieObjectStorage() {
-	super();
+        super();
     }
 
     private Long idVerSerieObjectStorage;
@@ -46,38 +46,38 @@ public class SerVerSerieObjectStorage extends AroXmlObjectStorage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_VER_SERIE_OBJECT_STORAGE")
     public Long getIdVerSerieObjectStorage() {
-	return idVerSerieObjectStorage;
+        return idVerSerieObjectStorage;
     }
 
     public void setIdVerSerieObjectStorage(Long idVerSerieObjectStorage) {
-	this.idVerSerieObjectStorage = idVerSerieObjectStorage;
+        this.idVerSerieObjectStorage = idVerSerieObjectStorage;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VER_SERIE")
     public SerVerSerie getSerVerSerie() {
-	return serVerSerie;
+        return serVerSerie;
     }
 
     public void setSerVerSerie(SerVerSerie serVerSerie) {
-	this.serVerSerie = serVerSerie;
+        this.serVerSerie = serVerSerie;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "TI_FILE_VER_SERIE")
     public String getTiFileVerSerie() {
-	return this.tiFileVerSerie;
+        return this.tiFileVerSerie;
     }
 
     public void setTiFileVerSerie(String tiFileVerSerie) {
-	this.tiFileVerSerie = tiFileVerSerie;
+        this.tiFileVerSerie = tiFileVerSerie;
     }
 }

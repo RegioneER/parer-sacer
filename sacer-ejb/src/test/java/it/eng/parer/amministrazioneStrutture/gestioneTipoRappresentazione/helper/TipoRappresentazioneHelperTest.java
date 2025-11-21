@@ -38,70 +38,70 @@ public class TipoRappresentazioneHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		TipoRappresentazioneHelperTest.class.getSimpleName(),
-		HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			TipoRappresentazioneHelperTest.class, TipoRappresentazioneHelper.class,
-			CSVersatore.class));
+        return HelperTest.createEnterpriseArchive(
+                TipoRappresentazioneHelperTest.class.getSimpleName(),
+                HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        TipoRappresentazioneHelperTest.class, TipoRappresentazioneHelper.class,
+                        CSVersatore.class));
     }
 
     @Test
     void getDecTipoRapprCompByName_queryIsOk() {
-	String nmTipoRapprComp = aString();
-	BigDecimal idStrut = aBigDecimal();
-	helper.getDecTipoRapprCompByName(nmTipoRapprComp, idStrut);
-	assertTrue(true);
+        String nmTipoRapprComp = aString();
+        BigDecimal idStrut = aBigDecimal();
+        helper.getDecTipoRapprCompByName(nmTipoRapprComp, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecRapprCompList_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	boolean filterValid = false;
-	helper.retrieveDecRapprCompList(idStrut, filterValid);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        boolean filterValid = false;
+        helper.retrieveDecRapprCompList(idStrut, filterValid);
+        assertTrue(true);
     }
 
     @Test
     void checkRelationsAreEmptyForDecTipoRapprComp_queryIsOk() {
-	long idTipoRapprComp = aLong();
-	helper.checkRelationsAreEmptyForDecTipoRapprComp(idTipoRapprComp);
-	assertTrue(true);
+        long idTipoRapprComp = aLong();
+        helper.checkRelationsAreEmptyForDecTipoRapprComp(idTipoRapprComp);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecTrasformTipoRapprList_queryIsOk() {
-	Long idTipoRapprComp = aLong();
-	helper.retrieveDecTrasformTipoRapprList(idTipoRapprComp);
-	assertTrue(true);
+        Long idTipoRapprComp = aLong();
+        helper.retrieveDecTrasformTipoRapprList(idTipoRapprComp);
+        assertTrue(true);
     }
 
     @Test
     void retrieveDecImageTrasformList_queryIsOk() {
-	BigDecimal idTrasformTipoRappr = aBigDecimal();
-	helper.retrieveDecImageTrasformList(idTrasformTipoRappr);
-	assertTrue(true);
+        BigDecimal idTrasformTipoRappr = aBigDecimal();
+        helper.retrieveDecImageTrasformList(idTrasformTipoRappr);
+        assertTrue(true);
     }
 
     @Test
     void getCSVersatoreForImageTrasform_queryIsOk() {
-	BigDecimal idImageTrasform = aBigDecimal();
-	helper.getCSVersatoreForImageTrasform(idImageTrasform);
-	assertTrue(true);
+        BigDecimal idImageTrasform = aBigDecimal();
+        helper.getCSVersatoreForImageTrasform(idImageTrasform);
+        assertTrue(true);
     }
 
     @Test
     void getCSVersatoreForTrasformTipoRappr_queryIsOk() {
-	BigDecimal idTrasformTipoRappr = aBigDecimal();
-	helper.getCSVersatoreForTrasformTipoRappr(idTrasformTipoRappr);
-	assertTrue(true);
+        BigDecimal idTrasformTipoRappr = aBigDecimal();
+        helper.getCSVersatoreForTrasformTipoRappr(idTrasformTipoRappr);
+        assertTrue(true);
     }
 
     @Test
     void getDecImageTrasformByName_queryIsOk() {
-	BigDecimal idTrasformTipoRappr = aBigDecimal();
-	String nmImageTrasform = aString();
-	helper.getDecImageTrasformByName(idTrasformTipoRappr, nmImageTrasform);
-	assertTrue(true);
+        BigDecimal idTrasformTipoRappr = aBigDecimal();
+        String nmImageTrasform = aString();
+        helper.getDecImageTrasformByName(idTrasformTipoRappr, nmImageTrasform);
+        assertTrue(true);
     }
 }

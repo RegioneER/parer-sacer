@@ -26,37 +26,37 @@ public class AroVLisaipudUrndacalcByudId implements Serializable {
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return idUnitaDoc;
+        return idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     private BigDecimal idVerIndiceAip;
 
     @Column(name = "ID_VER_INDICE_AIP")
     public BigDecimal getIdVerIndiceAip() {
-	return idVerIndiceAip;
+        return idVerIndiceAip;
     }
 
     public void setIdVerIndiceAip(BigDecimal idVerIndiceAip) {
-	this.idVerIndiceAip = idVerIndiceAip;
+        this.idVerIndiceAip = idVerIndiceAip;
     }
 
     @Override
     public boolean equals(Object o) {
-	if (this == o)
-	    return true;
-	if (o == null || getClass() != o.getClass())
-	    return false;
-	AroVLisaipudUrndacalcByudId that = (AroVLisaipudUrndacalcByudId) o;
-	return Objects.equals(idUnitaDoc, that.idUnitaDoc)
-		&& Objects.equals(idVerIndiceAip, that.idVerIndiceAip);
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        AroVLisaipudUrndacalcByudId that = (AroVLisaipudUrndacalcByudId) o;
+        return Objects.equals(idUnitaDoc, that.idUnitaDoc)
+                && Objects.equals(idVerIndiceAip, that.idVerIndiceAip);
     }
 
     @Override
     public int hashCode() {
-	return Objects.hash(idUnitaDoc, idVerIndiceAip);
+        return Objects.hash(idUnitaDoc, idVerIndiceAip);
     }
 }

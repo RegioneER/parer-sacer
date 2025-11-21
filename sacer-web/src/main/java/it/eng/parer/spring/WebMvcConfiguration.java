@@ -43,41 +43,41 @@ import org.springframework.web.servlet.view.JstlView;
 @EnableWebMvc
 // DA SISTEMARE!!!
 @ComponentScan(basePackages = {
-	"it.eng.parer.web", "it.eng.parer.web.rest.controller", "it.eng.parer.ws",
-	"it.eng.parer.spring", "it.eng.parer.web.action", "it.eng.parer.slite.gen.action",
-	"it.eng.spagoCore", "it.eng.spagoLite" })
+        "it.eng.parer.web", "it.eng.parer.web.rest.controller", "it.eng.parer.ws",
+        "it.eng.parer.spring", "it.eng.parer.web.action", "it.eng.parer.slite.gen.action",
+        "it.eng.spagoCore", "it.eng.spagoLite" })
 @Configuration
 public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-	registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	/*
-	 * qui si dichiarano le risorse statiche
-	 */
-	registry.addResourceHandler("/css/**", "/images/**", "/img/**", "/js/**", "/webjars/**")
-		.addResourceLocations("/css/", "/images/", "/img/", "/js/", "/webjars/")
-		.setCachePeriod(0);
-	registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        /*
+         * qui si dichiarano le risorse statiche
+         */
+        registry.addResourceHandler("/css/**", "/images/**", "/img/**", "/js/**", "/webjars/**")
+                .addResourceLocations("/css/", "/images/", "/img/", "/js/", "/webjars/")
+                .setCachePeriod(0);
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
     @Bean
     public InternalResourceViewResolver resolver() {
-	InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-	resolver.setViewClass(JstlView.class);
-	resolver.setPrefix("/jsp/");
-	resolver.setSuffix(".jsp");
-	// resolver.setExposedContextBeanNames("ricercheLoader");
-	return resolver;
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setViewClass(JstlView.class);
+        resolver.setPrefix("/jsp/");
+        resolver.setSuffix(".jsp");
+        // resolver.setExposedContextBeanNames("ricercheLoader");
+        return resolver;
     }
 
     @Bean(name = "paginator")
     PaginatorImpl paginatorImpl() {
-	return new PaginatorImpl();
+        return new PaginatorImpl();
     }
 
     /*
@@ -85,15 +85,15 @@ public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements
      */
     @Bean(name = "authenticator")
     SacerAuthenticator sacerAuthenticator() {
-	return new SacerAuthenticator();
+        return new SacerAuthenticator();
     }
 
     @Bean
     RestTemplate restTemplate() {
-	SimpleClientHttpRequestFactory c = new SimpleClientHttpRequestFactory();
-	c.setReadTimeout(10000);
-	c.setConnectTimeout(10000);
-	return new RestTemplate(c);
+        SimpleClientHttpRequestFactory c = new SimpleClientHttpRequestFactory();
+        c.setReadTimeout(10000);
+        c.setConnectTimeout(10000);
+        return new RestTemplate(c);
     }
 
     /*
@@ -103,7 +103,7 @@ public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements
      */
     @Bean
     ApplicationBasePropertiesSeviceImpl applicationBasePropertiesSeviceImpl() {
-	return new ApplicationBasePropertiesSeviceImpl();
+        return new ApplicationBasePropertiesSeviceImpl();
     }
 
     /*
@@ -112,7 +112,7 @@ public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements
      */
     @Bean
     String nomeApplicazione() {
-	return "sacer";
+        return "sacer";
     }
 
     /*
@@ -122,32 +122,32 @@ public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements
     @Bean(value = "/View.html")
     @Scope("prototype")
     RedirectAction redirectAction() {
-	return new RedirectAction();
+        return new RedirectAction();
     }
 
     @Bean(value = "/Login.html")
     @Scope("prototype")
     LoginAction loginAction() {
-	return new LoginAction();
+        return new LoginAction();
     }
 
     @Bean(value = "/Logout.html")
     @Scope("prototype")
     LogoutAction logoutAction() {
-	return new LogoutAction();
+        return new LogoutAction();
     }
 
     /* Configurazione delle action specifiche del modulo web */
     @Bean(value = "/Home.html")
     @Scope("prototype")
     HomeAction homeAction() {
-	return new HomeAction();
+        return new HomeAction();
     }
 
     @Bean(value = "/SceltaOrganizzazione.html")
     @Scope("prototype")
     SceltaOrganizzazioneAction sceltaOrganizzazioneAction() {
-	return new SceltaOrganizzazioneAction();
+        return new SceltaOrganizzazioneAction();
     }
 
     /* Action specifiche di SACER */
@@ -155,241 +155,241 @@ public class WebMvcConfiguration extends SpagoliteWebMvcConfiguration implements
     @Bean(value = "/Volumi.html")
     @Scope("prototype")
     VolumiAction volumiAction() {
-	return new VolumiAction();
+        return new VolumiAction();
     }
 
     @Bean(value = "/Componenti.html")
     @Scope("prototype")
     ComponentiAction componentiAction() {
-	return new ComponentiAction();
+        return new ComponentiAction();
     }
 
     @Bean(value = "/UnitaDocumentarie.html")
     @Scope("prototype")
     UnitaDocumentarieAction unitaDocumentarieAction() {
-	return new UnitaDocumentarieAction();
+        return new UnitaDocumentarieAction();
     }
 
     @Bean(value = "/CriteriRaggruppamento.html")
     @Scope("prototype")
     CriteriRaggruppamentoAction criteriRaggruppamentoAction() {
-	return new CriteriRaggruppamentoAction();
+        return new CriteriRaggruppamentoAction();
     }
 
     @Bean(value = "/Strutture.html")
     @Scope("prototype")
     StruttureAction struttureAction() {
-	return new StruttureAction();
+        return new StruttureAction();
     }
 
     @Bean(value = "/StrutDatiSpec.html")
     @Scope("prototype")
     StrutDatiSpecAction strutDatiSpecAction() {
-	return new StrutDatiSpecAction();
+        return new StrutDatiSpecAction();
     }
 
     @Bean(value = "/StrutTipi.html")
     @Scope("prototype")
     StrutTipiAction strutTipiAction() {
-	return new StrutTipiAction();
+        return new StrutTipiAction();
     }
 
     @Bean(value = "/Ambiente.html")
     @Scope("prototype")
     AmbienteAction AmbienteAction() {
-	return new AmbienteAction();
+        return new AmbienteAction();
     }
 
     @Bean(value = "/Amministrazione.html")
     @Scope("prototype")
     AmministrazioneAction amministrazioneAction() {
-	return new AmministrazioneAction();
+        return new AmministrazioneAction();
     }
 
     @Bean(value = "/Monitoraggio.html")
     @Scope("prototype")
     MonitoraggioAction monitoraggioAction() {
-	return new MonitoraggioAction();
+        return new MonitoraggioAction();
     }
 
     @Bean(value = "/MonitoraggioFascicoli.html")
     @Scope("prototype")
     MonitoraggioFascicoliAction monitoraggioFascicoliAction() {
-	return new MonitoraggioFascicoliAction();
+        return new MonitoraggioFascicoliAction();
     }
 
     @Bean(value = "/ListaSessFascicoliErr.html")
     @Scope("prototype")
     MonitoraggioFascicoliAction listaSessFascicoliErr() {
-	return new MonitoraggioFascicoliAction();
+        return new MonitoraggioFascicoliAction();
     }
 
     @Bean(value = "/MonitoraggioTpi.html")
     @Scope("prototype")
     MonitoraggioTpiAction monitoraggioTpiAction() {
-	return new MonitoraggioTpiAction();
+        return new MonitoraggioTpiAction();
     }
 
     @Bean(value = "/GestioneJob.html")
     @Scope("prototype")
     GestioneJobAction gestioneJobAction() {
-	return new GestioneJobAction();
+        return new GestioneJobAction();
     }
 
     @Bean(value = "/Formati.html")
     @Scope("prototype")
     FormatiAction formatiAction() {
-	return new FormatiAction();
+        return new FormatiAction();
     }
 
     @Bean(value = "/StrutFormatoFile.html")
     @Scope("prototype")
     StrutFormatoFileAction strutFormatoFileAction() {
-	return new StrutFormatoFileAction();
+        return new StrutFormatoFileAction();
     }
 
     @Bean(value = "/StrutTipoStrut.html")
     @Scope("prototype")
     StrutTipoStrutAction strutTipoStrutAction() {
-	return new StrutTipoStrutAction();
+        return new StrutTipoStrutAction();
     }
 
     @Bean(value = "/StrutTitolari.html")
     @Scope("prototype")
     StrutTitolariAction strutTitolariAction() {
-	return new StrutTitolariAction();
+        return new StrutTitolariAction();
     }
 
     @Bean(value = "/MonitoraggioSintetico.html")
     @Scope("prototype")
     MonitoraggioSinteticoAction monitoraggioSinteticoAction() {
-	return new MonitoraggioSinteticoAction();
+        return new MonitoraggioSinteticoAction();
     }
 
     @Bean(value = "/MonitoraggioAggMeta.html")
     @Scope("prototype")
     MonitoraggioAggMetaAction monitoraggioAggMetaAction() {
-	return new MonitoraggioAggMetaAction();
+        return new MonitoraggioAggMetaAction();
     }
 
     @Bean(value = "/MonitoraggioIndiceAIP.html")
     @Scope("prototype")
     MonitoraggioIndiceAIPAction monitoraggioIndiceAIPAction() {
-	return new MonitoraggioIndiceAIPAction();
+        return new MonitoraggioIndiceAIPAction();
     }
 
     @Bean(value = "/Trasformatori.html")
     @Scope("prototype")
     TrasformatoriAction trasformatoriAction() {
-	return new TrasformatoriAction();
+        return new TrasformatoriAction();
     }
 
     @Bean(value = "/SubStrutture.html")
     @Scope("prototype")
     SubStruttureAction subStruttureAction() {
-	return new SubStruttureAction();
+        return new SubStruttureAction();
     }
 
     @Bean(value = "/StrutSerie.html")
     @Scope("prototype")
     StrutSerieAction strutSerieAction() {
-	return new StrutSerieAction();
+        return new StrutSerieAction();
     }
 
     @Bean(value = "/SerieUD.html")
     @Scope("prototype")
     SerieUDAction serieUDAction() {
-	return new SerieUDAction();
+        return new SerieUDAction();
     }
 
     @Bean(value = "/SerieUdPerUtentiExt.html")
     @Scope("prototype")
     SerieUdPerUtentiExtAction serieUdPerUtentiExtAction() {
-	return new SerieUdPerUtentiExtAction();
+        return new SerieUdPerUtentiExtAction();
     }
 
     @Bean(value = "/ElenchiVersamento.html")
     @Scope("prototype")
     ElenchiVersamentoAction elenchiVersamentoAction() {
-	return new ElenchiVersamentoAction();
+        return new ElenchiVersamentoAction();
     }
 
     @Bean(value = "/AnnulVers.html")
     @Scope("prototype")
     AnnulVersAction annulVersAction() {
-	return new AnnulVersAction();
+        return new AnnulVersAction();
     }
 
     @Bean(value = "/ModelliSerie.html")
     @Scope("prototype")
     ModelliSerieAction modelliSerieAction() {
-	return new ModelliSerieAction();
+        return new ModelliSerieAction();
     }
 
     @Bean(value = "/EntiConvenzionati.html")
     @Scope("prototype")
     EntiConvenzionatiAction entiConvenzionatiAction() {
-	return new EntiConvenzionatiAction();
+        return new EntiConvenzionatiAction();
     }
 
     @Bean(value = "/Fascicoli.html")
     @Scope("prototype")
     FascicoliAction fascicoliAction() {
-	return new FascicoliAction();
+        return new FascicoliAction();
     }
 
     @Bean(value = "/CriteriRaggrFascicoli.html")
     @Scope("prototype")
     CriteriRaggrFascicoliAction criteriRaggrFascicoliAction() {
-	return new CriteriRaggrFascicoliAction();
+        return new CriteriRaggrFascicoliAction();
     }
 
     @Bean(value = "/StrutTipiFascicolo.html")
     @Scope("prototype")
     StrutTipiFascicoloAction strutTipiFascicoloAction() {
-	return new StrutTipiFascicoloAction();
+        return new StrutTipiFascicoloAction();
     }
 
     @Bean(value = "/ElenchiVersFascicoli.html")
     @Scope("prototype")
     ElenchiVersFascicoliAction elenchiVersFascicoliAction() {
-	return new ElenchiVersFascicoliAction();
+        return new ElenchiVersFascicoliAction();
     }
 
     @Bean(value = "/ModelliFascicoli.html")
     @Scope("prototype")
     ModelliFascicoliAction modelliFascicoliAction() {
-	return new ModelliFascicoliAction();
+        return new ModelliFascicoliAction();
     }
 
     @Bean(value = "/NoteRilascio.html")
     @Scope("prototype")
     NoteRilascioAction noteRilascioAction() {
-	return new NoteRilascioAction();
+        return new NoteRilascioAction();
     }
 
     @Bean(value = "/RestituzioneArchivio.html")
     @Scope("prototype")
     RestituzioneArchivioAction restituzioneArchivioAction() {
-	return new RestituzioneArchivioAction();
+        return new RestituzioneArchivioAction();
     }
 
     @Bean(value = "/ModelliUD.html")
     @Scope("prototype")
     ModelliUDAction modelliUDAction() {
-	return new ModelliUDAction();
+        return new ModelliUDAction();
     }
 
     @Bean(value = "/UtilizzoMicroservizi.html")
     @Scope("prototype")
     UtilizzoMicroserviziAction utilizzoMicroserviziAction() {
-	return new UtilizzoMicroserviziAction();
+        return new UtilizzoMicroserviziAction();
     }
 
     @Bean(value = "/VerificaFirme")
     @Scope("prototype")
     VerificaFirme verificaFirme() {
-	return new VerificaFirme();
+        return new VerificaFirme();
     }
 
 }

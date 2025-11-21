@@ -43,148 +43,148 @@ public class StrutTitolariHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(StrutTitolariHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), StrutTitolariHelperTest.class,
-			StrutTitolariHelper.class));
+        return HelperTest.createEnterpriseArchive(StrutTitolariHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), StrutTitolariHelperTest.class,
+                        StrutTitolariHelper.class));
     }
 
     @Test
     void existChiaveUd_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	String cdRegistroKeyUnitaDoc = aString();
-	BigDecimal aaKeyUnitaDoc = aBigDecimal();
-	String cdKeyUnitaDoc = aString();
-	Date dtDocInvio = todayTs();
-	helper.existChiaveUd(idStrut, cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc,
-		dtDocInvio);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        String cdRegistroKeyUnitaDoc = aString();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
+        String cdKeyUnitaDoc = aString();
+        Date dtDocInvio = todayTs();
+        helper.existChiaveUd(idStrut, cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc,
+                dtDocInvio);
+        assertTrue(true);
     }
 
     @Test
     void getVociTree_queryIsOk() {
-	BigDecimal idTitol = aBigDecimal();
-	Date dtVal = tomorrowTs();
-	helper.getVociTree(idTitol, dtVal);
-	assertTrue(true);
+        BigDecimal idTitol = aBigDecimal();
+        Date dtVal = tomorrowTs();
+        helper.getVociTree(idTitol, dtVal);
+        assertTrue(true);
     }
 
     @Test
     void getVociAllPadri_queryIsOk() {
-	BigDecimal idNodo = aBigDecimal();
-	Date dtVal = tomorrowTs();
-	helper.getVociAllPadri(idNodo, dtVal);
-	assertTrue(true);
+        BigDecimal idNodo = aBigDecimal();
+        Date dtVal = tomorrowTs();
+        helper.getVociAllPadri(idNodo, dtVal);
+        assertTrue(true);
     }
 
     @Test
     void getOperTitol_queryIsOk() {
-	BigDecimal idTitol = aBigDecimal();
-	Date dtVal = tomorrowTs();
-	helper.getOperTitol(idTitol, dtVal);
-	assertTrue(true);
+        BigDecimal idTitol = aBigDecimal();
+        Date dtVal = tomorrowTs();
+        helper.getOperTitol(idTitol, dtVal);
+        assertTrue(true);
     }
 
     @Test
     void getTracciaList_queryIsOk() {
-	BigDecimal idVoceTitol = aBigDecimal();
-	Date dtVal = tomorrowTs();
-	helper.getTracciaList(idVoceTitol, dtVal);
-	assertTrue(true);
+        BigDecimal idVoceTitol = aBigDecimal();
+        Date dtVal = tomorrowTs();
+        helper.getTracciaList(idVoceTitol, dtVal);
+        assertTrue(true);
     }
 
     @Test
     void getLivelliList_queryIsOk() {
-	BigDecimal idTitol = aBigDecimal();
-	Set<BigDecimal> niLivelloToExclude = aSetOfBigDecimal(2);
-	helper.getLivelliList(idTitol, niLivelloToExclude);
-	assertTrue(true);
+        BigDecimal idTitol = aBigDecimal();
+        Set<BigDecimal> niLivelloToExclude = aSetOfBigDecimal(2);
+        helper.getLivelliList(idTitol, niLivelloToExclude);
+        assertTrue(true);
     }
 
     @Test
     void getLivello_queryIsOk() {
-	BigDecimal niLivello = aBigDecimal();
-	BigDecimal idTitol = aBigDecimal();
-	helper.getLivello(niLivello, idTitol);
-	assertTrue(true);
+        BigDecimal niLivello = aBigDecimal();
+        BigDecimal idTitol = aBigDecimal();
+        helper.getLivello(niLivello, idTitol);
+        assertTrue(true);
     }
 
     @Test
     void getVoce_queryIsOk() {
-	Long idTitol = aLong();
-	String cdVoceComposito = aString();
-	try {
-	    helper.getVoce(idTitol, cdVoceComposito);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertNoResultException(e);
-	}
+        Long idTitol = aLong();
+        String cdVoceComposito = aString();
+        try {
+            helper.getVoce(idTitol, cdVoceComposito);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertNoResultException(e);
+        }
     }
 
     @Test
     void getLastDecValVoceTitol_queryIsOk() {
-	long idVoceTitol = aLong();
-	helper.getLastDecValVoceTitol(idVoceTitol);
-	assertTrue(true);
+        long idVoceTitol = aLong();
+        helper.getLastDecValVoceTitol(idVoceTitol);
+        assertTrue(true);
     }
 
     @Test
     void getDecVoceTitol_queryIsOk() {
-	BigDecimal idVoceTitol = aBigDecimal();
-	helper.getDecVoceTitol(idVoceTitol);
-	assertTrue(true);
+        BigDecimal idVoceTitol = aBigDecimal();
+        helper.getDecVoceTitol(idVoceTitol);
+        assertTrue(true);
     }
 
     @Test
     void getUnitaDoc_queryIsOk() {
-	String cdRegistroKeyUnitaDoc = aString();
-	BigDecimal aaKeyUnitaDoc = aBigDecimal();
-	String cdKeyUnitaDoc = aString();
-	BigDecimal idStrut = aBigDecimal();
-	helper.getUnitaDoc(cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, idStrut);
-	assertTrue(true);
+        String cdRegistroKeyUnitaDoc = aString();
+        BigDecimal aaKeyUnitaDoc = aBigDecimal();
+        String cdKeyUnitaDoc = aString();
+        BigDecimal idStrut = aBigDecimal();
+        helper.getUnitaDoc(cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void existTitolario_3args_1_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	String nmTitol = aString();
-	BigDecimal idTitol = aBigDecimal();
-	helper.existTitolario(idStrut, nmTitol, idTitol);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        String nmTitol = aString();
+        BigDecimal idTitol = aBigDecimal();
+        helper.existTitolario(idStrut, nmTitol, idTitol);
+        assertTrue(true);
     }
 
     @Test
     void existTitolario_3args_2_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	Date dtIniVal = todayTs();
-	Date dtFinVal = tomorrowTs();
-	helper.existTitolario(idStrut, dtIniVal, dtFinVal);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        Date dtIniVal = todayTs();
+        Date dtFinVal = tomorrowTs();
+        helper.existTitolario(idStrut, dtIniVal, dtFinVal);
+        assertTrue(true);
     }
 
     @Test
     void existVoce_queryIsOk() {
-	String cdVoceComposito = aString();
-	Long idTitol = aLong();
-	helper.existVoce(cdVoceComposito, idTitol);
-	assertTrue(true);
+        String cdVoceComposito = aString();
+        Long idTitol = aLong();
+        helper.existVoce(cdVoceComposito, idTitol);
+        assertTrue(true);
     }
 
     @Test
     void getDecTitol_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	boolean filterValid = false;
-	helper.getDecTitol(idStrut, filterValid);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        boolean filterValid = false;
+        helper.getDecTitol(idStrut, filterValid);
+        assertTrue(true);
     }
 
     @Test
     void getDecVoceTitols_queryIsOk() {
-	BigDecimal idCriterioRaggrFasc = aBigDecimal();
-	String tiSel = aString();
-	boolean filterValid = false;
-	helper.getDecVoceTitols(idCriterioRaggrFasc, tiSel, filterValid);
-	assertTrue(true);
+        BigDecimal idCriterioRaggrFasc = aBigDecimal();
+        String tiSel = aString();
+        boolean filterValid = false;
+        helper.getDecVoceTitols(idCriterioRaggrFasc, tiSel, filterValid);
+        assertTrue(true);
     }
 }

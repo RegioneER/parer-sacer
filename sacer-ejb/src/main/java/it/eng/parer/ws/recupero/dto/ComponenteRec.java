@@ -38,136 +38,136 @@ public class ComponenteRec {
     protected String nomeFormatoComponenteSbustato;
 
     public ComponenteRec() {
-	super();
+        super();
     }
 
     public ComponenteRec(String urnCompleto, String urnCompletoIniziale) {
-	super();
-	setUrnAndElabNomiFile(urnCompleto, urnCompletoIniziale);
+        super();
+        setUrnAndElabNomiFile(urnCompleto, urnCompletoIniziale);
     }
 
     private void setUrnAndElabNomiFile(String urnCompleto, String urnCompletoIniziale) {
-	setUrnCompleto(urnCompleto);
-	setUrnCompletoIniziale(urnCompletoIniziale);
+        setUrnCompleto(urnCompleto);
+        setUrnCompletoIniziale(urnCompletoIniziale);
 
-	this.nomeFileBreve = estraiNomeFileBreve(urnCompleto);
-	this.nomeFileCompleto = estraiNomeFileCompleto(urnCompleto);
-	this.nomeFileBreveTivoli = estraiNomeFilePerTivoli(urnCompletoIniziale, urnCompleto);
+        this.nomeFileBreve = estraiNomeFileBreve(urnCompleto);
+        this.nomeFileCompleto = estraiNomeFileCompleto(urnCompleto);
+        this.nomeFileBreveTivoli = estraiNomeFilePerTivoli(urnCompletoIniziale, urnCompleto);
     }
 
     public String getEstensioneFile() {
-	return estensioneFile;
+        return estensioneFile;
     }
 
     public void setEstensioneFile(String estensioneFile) {
-	this.estensioneFile = estensioneFile;
+        this.estensioneFile = estensioneFile;
     }
 
     public String getMimeType() {
-	return mimeType;
+        return mimeType;
     }
 
     public void setMimeType(String mimeType) {
-	this.mimeType = mimeType;
+        this.mimeType = mimeType;
     }
 
     public long getIdCompDoc() {
-	return idCompDoc;
+        return idCompDoc;
     }
 
     public void setIdCompDoc(long idCompDoc) {
-	this.idCompDoc = idCompDoc;
+        this.idCompDoc = idCompDoc;
     }
 
     protected void setUrnCompleto(String urnCompleto) {
-	this.urnCompleto = urnCompleto;
+        this.urnCompleto = urnCompleto;
     }
 
     private void setUrnCompletoIniziale(String urnCompletoIniziale) {
-	this.urnCompletoIniziale = urnCompletoIniziale;
+        this.urnCompletoIniziale = urnCompletoIniziale;
     }
 
     public String getUrnCompleto() {
-	return urnCompleto;
+        return urnCompleto;
     }
 
     public String getUrnCompletoIniziale() {
-	return urnCompletoIniziale;
+        return urnCompletoIniziale;
     }
 
     // MEV#22921 Parametrizzazione servizi di recupero
     public String getUrnOriginaleVersata() {
-	return urnOriginaleVersata;
+        return urnOriginaleVersata;
     }
 
     public void setUrnOriginaleVersata(String urnOriginaleVersata) {
-	this.urnOriginaleVersata = urnOriginaleVersata;
+        this.urnOriginaleVersata = urnOriginaleVersata;
     }
 
     public String getNomeFileOriginaleVersato() {
-	return nomeFileOriginaleVersato;
+        return nomeFileOriginaleVersato;
     }
 
     public void setNomeFileOriginaleVersato(String nomeFileOriginaleVersato) {
-	this.nomeFileOriginaleVersato = nomeFileOriginaleVersato;
+        this.nomeFileOriginaleVersato = nomeFileOriginaleVersato;
     }
     // Fine MEV#22921
 
     public String getNomeFileBreve() {
-	return nomeFileBreve;
+        return nomeFileBreve;
     }
 
     public String getNomeFileCompleto() {
-	return nomeFileCompleto;
+        return nomeFileCompleto;
     }
 
     public String getNomeFilePerZip() {
-	if (this.nomeFileCompleto != null && this.estensioneFile != null) {
-	    return this.nomeFileCompleto + "." + this.estensioneFile;
-	} else {
-	    return null;
-	}
+        if (this.nomeFileCompleto != null && this.estensioneFile != null) {
+            return this.nomeFileCompleto + "." + this.estensioneFile;
+        } else {
+            return null;
+        }
     }
 
     // EVO#20972
     public String getNomeFilePerZipAIPV2() {
-	if (this.nomeFileBreve != null && this.estensioneFile != null) {
-	    return this.nomeFileBreve + "." + this.estensioneFile;
-	} else {
-	    return null;
-	}
+        if (this.nomeFileBreve != null && this.estensioneFile != null) {
+            return this.nomeFileBreve + "." + this.estensioneFile;
+        } else {
+            return null;
+        }
     }
     // end EVO#20972
 
     // richiama logica di estrazione del nome file a partire dall'urn
     private String estraiNomeFileBreve(String urnCompleto) {
-	return MessaggiWSFormat.estraiNomeFileBreve(urnCompleto);
+        return MessaggiWSFormat.estraiNomeFileBreve(urnCompleto);
     }
 
     // richiama logica di estrazione del nome file per il componente su tivoli a partire dall'urn
     private String estraiNomeFilePerTivoli(String urnCompletoIniz, String urnCompleto) {
-	return MessaggiWSFormat.estraiNomeFilePerTivoli(urnCompletoIniz, urnCompleto);
+        return MessaggiWSFormat.estraiNomeFilePerTivoli(urnCompletoIniz, urnCompleto);
     }
 
     // richiama logica di estrazione dell'urn del nome file
     public static String estraiNomeFileCompleto(String urnCompleto) {
-	return MessaggiWSFormat.estraiNomeFileCompleto(urnCompleto);
+        return MessaggiWSFormat.estraiNomeFileCompleto(urnCompleto);
     }
 
     public String getNomeFileBreveTivoli() {
-	return nomeFileBreveTivoli;
+        return nomeFileBreveTivoli;
     }
 
     public void setNomeFileBreveTivoli(String nomeFileBreveTivoli) {
-	this.nomeFileBreveTivoli = nomeFileBreveTivoli;
+        this.nomeFileBreveTivoli = nomeFileBreveTivoli;
     }
 
     public String getNomeFormatoComponenteSbustato() {
-	return nomeFormatoComponenteSbustato;
+        return nomeFormatoComponenteSbustato;
     }
 
     public void setNomeFormatoComponenteSbustato(String nomeFormatoComponenteSbustato) {
-	this.nomeFormatoComponenteSbustato = nomeFormatoComponenteSbustato;
+        this.nomeFormatoComponenteSbustato = nomeFormatoComponenteSbustato;
     }
 
 }

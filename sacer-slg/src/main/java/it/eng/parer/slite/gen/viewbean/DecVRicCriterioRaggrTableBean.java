@@ -37,19 +37,19 @@ public class DecVRicCriterioRaggrTableBean extends AbstractBaseTable<DecVRicCrit
     public static DecVRicCriterioRaggrTableDescriptor TABLE_DESCRIPTOR = new DecVRicCriterioRaggrTableDescriptor();
 
     public DecVRicCriterioRaggrTableBean() {
-	super();
+        super();
     }
 
     protected DecVRicCriterioRaggrRowBean createRow() {
-	return new DecVRicCriterioRaggrRowBean();
+        return new DecVRicCriterioRaggrRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVRicCriterioRaggrRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

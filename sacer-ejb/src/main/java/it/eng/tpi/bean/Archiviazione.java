@@ -23,18 +23,18 @@ public class Archiviazione {
     protected Date dtArk;
 
     public String getDsArk() {
-	return dsArk;
+        return dsArk;
     }
 
     public void setDsArk(String dsArk) {
-	this.dsArk = dsArk;
+        this.dsArk = dsArk;
     }
 
     public Date getDtArk() {
-	return dtArk;
+        return dtArk;
     }
 
     public void setDtArk(Date dtArk) {
-	this.dtArk = dtArk;
+        this.dtArk = dtArk;
     }
 }

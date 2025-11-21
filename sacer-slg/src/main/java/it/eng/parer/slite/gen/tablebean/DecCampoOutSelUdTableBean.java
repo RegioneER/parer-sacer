@@ -33,19 +33,19 @@ public class DecCampoOutSelUdTableBean extends AbstractBaseTable<DecCampoOutSelU
     public static DecCampoOutSelUdTableDescriptor TABLE_DESCRIPTOR = new DecCampoOutSelUdTableDescriptor();
 
     public DecCampoOutSelUdTableBean() {
-	super();
+        super();
     }
 
     protected DecCampoOutSelUdRowBean createRow() {
-	return new DecCampoOutSelUdRowBean();
+        return new DecCampoOutSelUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecCampoOutSelUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

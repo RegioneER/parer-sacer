@@ -34,19 +34,19 @@ public class DisciplinareTecnicoHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest
-		.createEnterpriseArchive(DisciplinareTecnicoHelperTest.class.getSimpleName(),
-			HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
-			HelperTest.createSacerJavaArchive(Arrays.asList(""),
-				DisciplinareTecnicoHelperTest.class,
-				DisciplinareTecnicoHelper.class));
+        return HelperTest
+                .createEnterpriseArchive(DisciplinareTecnicoHelperTest.class.getSimpleName(),
+                        HelperTest.createSacerLogJar(), HelperTest.createPaginatorJavaArchive(),
+                        HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                                DisciplinareTecnicoHelperTest.class,
+                                DisciplinareTecnicoHelper.class));
     }
 
     @Test
     void getAplParamApplicReportByAppReport() {
-	String nmApplic = aString();
-	String nmReport = aString();
-	helper.getAplParamApplicReportByAppReport(nmApplic, nmReport);
-	assertTrue(true);
+        String nmApplic = aString();
+        String nmReport = aString();
+        helper.getAplParamApplicReportByAppReport(nmApplic, nmReport);
+        assertTrue(true);
     }
 }

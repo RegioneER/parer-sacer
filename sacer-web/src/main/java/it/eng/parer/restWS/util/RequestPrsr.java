@@ -47,60 +47,60 @@ public class RequestPrsr extends AbsRequestPrsr {
 
     public class ReqPrsrConfig {
 
-	private boolean leggiFile;
-	private boolean leggindiceMM;
-	private AvanzamentoWs avanzamentoWs;
-	private SyncFakeSessn sessioneFinta;
-	private HttpServletRequest request;
-	ServletFileUpload uploadHandler;
+        private boolean leggiFile;
+        private boolean leggindiceMM;
+        private AvanzamentoWs avanzamentoWs;
+        private SyncFakeSessn sessioneFinta;
+        private HttpServletRequest request;
+        ServletFileUpload uploadHandler;
 
-	public boolean isLeggiFile() {
-	    return leggiFile;
-	}
+        public boolean isLeggiFile() {
+            return leggiFile;
+        }
 
-	public void setLeggiFile(boolean leggiFile) {
-	    this.leggiFile = leggiFile;
-	}
+        public void setLeggiFile(boolean leggiFile) {
+            this.leggiFile = leggiFile;
+        }
 
-	public boolean isLeggindiceMM() {
-	    return leggindiceMM;
-	}
+        public boolean isLeggindiceMM() {
+            return leggindiceMM;
+        }
 
-	public void setLeggindiceMM(boolean leggindiceMM) {
-	    this.leggindiceMM = leggindiceMM;
-	}
+        public void setLeggindiceMM(boolean leggindiceMM) {
+            this.leggindiceMM = leggindiceMM;
+        }
 
-	public AvanzamentoWs getAvanzamentoWs() {
-	    return avanzamentoWs;
-	}
+        public AvanzamentoWs getAvanzamentoWs() {
+            return avanzamentoWs;
+        }
 
-	public void setAvanzamentoWs(AvanzamentoWs avanzamentoWs) {
-	    this.avanzamentoWs = avanzamentoWs;
-	}
+        public void setAvanzamentoWs(AvanzamentoWs avanzamentoWs) {
+            this.avanzamentoWs = avanzamentoWs;
+        }
 
-	public SyncFakeSessn getSessioneFinta() {
-	    return sessioneFinta;
-	}
+        public SyncFakeSessn getSessioneFinta() {
+            return sessioneFinta;
+        }
 
-	public void setSessioneFinta(SyncFakeSessn sessioneFinta) {
-	    this.sessioneFinta = sessioneFinta;
-	}
+        public void setSessioneFinta(SyncFakeSessn sessioneFinta) {
+            this.sessioneFinta = sessioneFinta;
+        }
 
-	public HttpServletRequest getRequest() {
-	    return request;
-	}
+        public HttpServletRequest getRequest() {
+            return request;
+        }
 
-	public void setRequest(HttpServletRequest request) {
-	    this.request = request;
-	}
+        public void setRequest(HttpServletRequest request) {
+            this.request = request;
+        }
 
-	public ServletFileUpload getUploadHandler() {
-	    return uploadHandler;
-	}
+        public ServletFileUpload getUploadHandler() {
+            return uploadHandler;
+        }
 
-	public void setUploadHandler(ServletFileUpload uploadHandler) {
-	    this.uploadHandler = uploadHandler;
-	}
+        public void setUploadHandler(ServletFileUpload uploadHandler) {
+            this.uploadHandler = uploadHandler;
+        }
     }
 
     /*
@@ -133,236 +133,236 @@ public class RequestPrsr extends AbsRequestPrsr {
      *
      */
     public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione)
-	    throws FileUploadException {
-	return parse(rispostaWs, configurazione, null, false);
+            throws FileUploadException {
+        return parse(rispostaWs, configurazione, null, false);
     }
 
     public List<FileItem> parse(IRispostaWS rispostaWs, ReqPrsrConfig configurazione,
-	    AccessToken accessToken, boolean commonNamePassato) throws FileUploadException {
-	Iterator<FileItem> tmpIterator = null;
-	DiskFileItem tmpFileItem = null;
-	List<FileItem> fileItems = null;
-	FileBinario tmpFileBinario;
+            AccessToken accessToken, boolean commonNamePassato) throws FileUploadException {
+        Iterator<FileItem> tmpIterator = null;
+        DiskFileItem tmpFileItem = null;
+        List<FileItem> fileItems = null;
+        FileBinario tmpFileBinario;
 
-	// lettura configurazione;
-	AvanzamentoWs tmpAvanzamento = configurazione.getAvanzamentoWs();
-	SyncFakeSessn sessioneFinta = configurazione.getSessioneFinta();
-	HttpServletRequest request = configurazione.getRequest();
-	ServletFileUpload upload = configurazione.getUploadHandler();
+        // lettura configurazione;
+        AvanzamentoWs tmpAvanzamento = configurazione.getAvanzamentoWs();
+        SyncFakeSessn sessioneFinta = configurazione.getSessioneFinta();
+        HttpServletRequest request = configurazione.getRequest();
+        ServletFileUpload upload = configurazione.getUploadHandler();
 
-	// nella riga sotto arrivano i dati e vengono scritti su disco, la sua esecuzione puÃ²
-	// richiedere parecchio
-	// tempo
-	fileItems = upload.parseRequest(request);
-	tmpIterator = fileItems.iterator();
-	tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.TrasferimentoPayloadIn)
-		.setFase("Payload ricevuto").logAvanzamento();
+        // nella riga sotto arrivano i dati e vengono scritti su disco, la sua esecuzione puÃ²
+        // richiedere parecchio
+        // tempo
+        fileItems = upload.parseRequest(request);
+        tmpIterator = fileItems.iterator();
+        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.TrasferimentoPayloadIn)
+                .setFase("Payload ricevuto").logAvanzamento();
 
-	//
-	tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.VerificaStrutturaChiamataWs)
-		.setFase("").logAvanzamento();
+        //
+        tmpAvanzamento.setCheckPoint(AvanzamentoWs.CheckPoints.VerificaStrutturaChiamataWs)
+                .setFase("").logAvanzamento();
 
-	/*
-	 * verifica della struttura della chiamata al WS: non Ã¨ un WS SOAP perciÃ² la signature del
-	 * WS va controllata a mano, leggendo quanto effettivamente versato.
-	 */
-	// verifica strutturale del campo VERSIONE e memorizzazione dello stesso nella sessione
-	// finta
-	tmpFileItem = (DiskFileItem) tmpIterator.next();
-	if (tmpFileItem.isFormField()) {
-	    if (tmpFileItem.getFieldName().equals("VERSIONE")) {
-		sessioneFinta.setVersioneWS(tmpFileItem.getString());
-	    } else {
-		rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-		rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-			"Manca il campo VERSIONE"));
-		rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-	    }
-	} else {
-	    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-	    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-	    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-		    "Il campo VERSIONE deve essere di tipo FORM"));
-	    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-	}
-	// String commonName = this.leggiCertCommonName(request);
-	// verifica strutturale del campo LOGINNAME e memorizzazione dello stesso nella sessione
-	// finta
-	// Il controllo sullo username viene fatto se non è presente il CommonName nell'Header HTTP
-	if (commonNamePassato) {
-	    log.info(
-		    "Il controllo su LOGINNAME e PASSWORD non viene fatto perché è presente il parametro header [{}]",
-		    AbsRequestPrsr.NOME_HEADER_CERTIFICATO);
-	} else {
-	    log.info(
-		    "Il controllo su LOGINNAME e PASSWORD viene fatto perché NON è presente il parametro header [{}]",
-		    AbsRequestPrsr.NOME_HEADER_CERTIFICATO);
-	}
-	if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-	    if (Objects.isNull(accessToken)) {
-		if (!commonNamePassato) { // In caso di chiamata tradizionale con controllo
-					  // LOGINNAME E PASSWORD
-		    tmpFileItem = (DiskFileItem) tmpIterator.next();
-		    if (tmpFileItem.isFormField()) {
-			if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
-			    log.info("LOGINNAME {}", tmpFileItem.getString());
-			    sessioneFinta.setLoginName(tmpFileItem.getString());
-			    tmpAvanzamento.setVrsUser(tmpFileItem.getString()).logAvanzamento();
-			} else {
-			    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-			    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-			    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(
-				    MessaggiWSBundle.WS_CHECK, "Manca il campo LOGINNAME"));
-			    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-			}
-		    } else {
-			rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-			rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-			rispostaWs.setErrorMessage(
-				MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-					"Il campo LOGINNAME deve essere di tipo FORM"));
-			rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-		    }
-		}
-	    } else {
-		String oauth2PreferredUsername = accessToken.getPreferredUsername();
+        /*
+         * verifica della struttura della chiamata al WS: non Ã¨ un WS SOAP perciÃ² la signature del
+         * WS va controllata a mano, leggendo quanto effettivamente versato.
+         */
+        // verifica strutturale del campo VERSIONE e memorizzazione dello stesso nella sessione
+        // finta
+        tmpFileItem = (DiskFileItem) tmpIterator.next();
+        if (tmpFileItem.isFormField()) {
+            if (tmpFileItem.getFieldName().equals("VERSIONE")) {
+                sessioneFinta.setVersioneWS(tmpFileItem.getString());
+            } else {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                        "Manca il campo VERSIONE"));
+                rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+            }
+        } else {
+            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+            rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                    "Il campo VERSIONE deve essere di tipo FORM"));
+            rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+        }
+        // String commonName = this.leggiCertCommonName(request);
+        // verifica strutturale del campo LOGINNAME e memorizzazione dello stesso nella sessione
+        // finta
+        // Il controllo sullo username viene fatto se non è presente il CommonName nell'Header HTTP
+        if (commonNamePassato) {
+            log.info(
+                    "Il controllo su LOGINNAME e PASSWORD non viene fatto perché è presente il parametro header [{}]",
+                    AbsRequestPrsr.NOME_HEADER_CERTIFICATO);
+        } else {
+            log.info(
+                    "Il controllo su LOGINNAME e PASSWORD viene fatto perché NON è presente il parametro header [{}]",
+                    AbsRequestPrsr.NOME_HEADER_CERTIFICATO);
+        }
+        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            if (Objects.isNull(accessToken)) {
+                if (!commonNamePassato) { // In caso di chiamata tradizionale con controllo
+                    // LOGINNAME E PASSWORD
+                    tmpFileItem = (DiskFileItem) tmpIterator.next();
+                    if (tmpFileItem.isFormField()) {
+                        if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
+                            log.info("LOGINNAME {}", tmpFileItem.getString());
+                            sessioneFinta.setLoginName(tmpFileItem.getString());
+                            tmpAvanzamento.setVrsUser(tmpFileItem.getString()).logAvanzamento();
+                        } else {
+                            rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                            rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                            rispostaWs.setErrorMessage(MessaggiWSBundle.getString(
+                                    MessaggiWSBundle.WS_CHECK, "Manca il campo LOGINNAME"));
+                            rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                        }
+                    } else {
+                        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                        rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                        rispostaWs.setErrorMessage(
+                                MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                                        "Il campo LOGINNAME deve essere di tipo FORM"));
+                        rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                    }
+                }
+            } else {
+                String oauth2PreferredUsername = accessToken.getPreferredUsername();
 
-		log.info("LOGINNAME OUATH2 {}", oauth2PreferredUsername);
-		sessioneFinta.setLoginName(oauth2PreferredUsername);
-		tmpAvanzamento.setVrsUser(oauth2PreferredUsername).logAvanzamento();
-	    }
-	}
+                log.info("LOGINNAME OUATH2 {}", oauth2PreferredUsername);
+                sessioneFinta.setLoginName(oauth2PreferredUsername);
+                tmpAvanzamento.setVrsUser(oauth2PreferredUsername).logAvanzamento();
+            }
+        }
 
-	// verifica strutturale del campo PASSWORD e memorizzazione dello stesso nella sessione
-	// finta
-	// Il controllo sulla password viene fatto se non Ã¨ presente il CommonName nell'Header HTTP
-	if (Objects.isNull(accessToken)
-		&& rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-	    if (!commonNamePassato) { // In caso di chiamata tradizionale con controllo LOGINNAME E
-				      // PASSWORD
-		tmpFileItem = (DiskFileItem) tmpIterator.next();
-		if (tmpFileItem.isFormField()) {
-		    if (tmpFileItem.getFieldName().equals("PASSWORD")) {
-			sessioneFinta.setPassword(tmpFileItem.getString());
-		    } else {
-			rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-			rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-			rispostaWs.setErrorMessage(MessaggiWSBundle
-				.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo PASSWORD"));
-			rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-		    }
-		} else {
-		    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-		    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-			    "Il campo PASSWORD deve essere di tipo FORM"));
-		    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-		}
-	    }
-	}
+        // verifica strutturale del campo PASSWORD e memorizzazione dello stesso nella sessione
+        // finta
+        // Il controllo sulla password viene fatto se non Ã¨ presente il CommonName nell'Header HTTP
+        if (Objects.isNull(accessToken)
+                && rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            if (!commonNamePassato) { // In caso di chiamata tradizionale con controllo LOGINNAME E
+                // PASSWORD
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+                if (tmpFileItem.isFormField()) {
+                    if (tmpFileItem.getFieldName().equals("PASSWORD")) {
+                        sessioneFinta.setPassword(tmpFileItem.getString());
+                    } else {
+                        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                        rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                        rispostaWs.setErrorMessage(MessaggiWSBundle
+                                .getString(MessaggiWSBundle.WS_CHECK, "Manca il campo PASSWORD"));
+                        rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                    }
+                } else {
+                    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                            "Il campo PASSWORD deve essere di tipo FORM"));
+                    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                }
+            }
+        }
 
-	if (configurazione.isLeggindiceMM()) {
-	    // verifica strutturale del campo XMLINDICE e memorizzazione dello stesso nella sessione
-	    // finta
-	    if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-		tmpFileItem = (DiskFileItem) tmpIterator.next();
-		/*
-		 * Nel caso in cui si entra col certificato ma vengono passati LOGINNAME e/o
-		 * PASSWORD bisogna comunque scartarli scorrendoli sequenzialmente
-		 */
-		if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
-		    tmpFileItem = (DiskFileItem) tmpIterator.next();
-		}
-		if (tmpFileItem.getFieldName().equals("PASSWORD")) {
-		    tmpFileItem = (DiskFileItem) tmpIterator.next();
-		}
-		if (tmpFileItem.isFormField()) {
-		    if (tmpFileItem.getFieldName().equals("XMLINDICE")) {
-			sessioneFinta.setDatiPackInfoSipXml(tmpFileItem.getString());
-			//
-		    } else {
-			rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-			rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-			rispostaWs.setErrorMessage(MessaggiWSBundle
-				.getString(MessaggiWSBundle.WS_CHECK, "Manca il campo XMLINDICE"));
-			rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-		    }
-		} else {
-		    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-		    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-			    "Il campo XMLINDICE deve essere di tipo FORM"));
-		    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-		}
-	    }
-	}
+        if (configurazione.isLeggindiceMM()) {
+            // verifica strutturale del campo XMLINDICE e memorizzazione dello stesso nella sessione
+            // finta
+            if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+                /*
+                 * Nel caso in cui si entra col certificato ma vengono passati LOGINNAME e/o
+                 * PASSWORD bisogna comunque scartarli scorrendoli sequenzialmente
+                 */
+                if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
+                    tmpFileItem = (DiskFileItem) tmpIterator.next();
+                }
+                if (tmpFileItem.getFieldName().equals("PASSWORD")) {
+                    tmpFileItem = (DiskFileItem) tmpIterator.next();
+                }
+                if (tmpFileItem.isFormField()) {
+                    if (tmpFileItem.getFieldName().equals("XMLINDICE")) {
+                        sessioneFinta.setDatiPackInfoSipXml(tmpFileItem.getString());
+                        //
+                    } else {
+                        rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                        rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                        rispostaWs.setErrorMessage(MessaggiWSBundle
+                                .getString(MessaggiWSBundle.WS_CHECK, "Manca il campo XMLINDICE"));
+                        rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                    }
+                } else {
+                    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                            "Il campo XMLINDICE deve essere di tipo FORM"));
+                    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                }
+            }
+        }
 
-	// verifica strutturale del campo XMLSIP e memorizzazione dello stesso nella sessione finta
-	if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-	    tmpFileItem = (DiskFileItem) tmpIterator.next();
-	    /*
-	     * Nel caso in cui si entra col certificato ma vengono passati LOGINNAME e/o PASSWORD
-	     * bisogna comunque scartarli scorrendoli sequenzialmente
-	     */
-	    if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
-		tmpFileItem = (DiskFileItem) tmpIterator.next();
-	    }
-	    if (tmpFileItem.getFieldName().equals("PASSWORD")) {
-		tmpFileItem = (DiskFileItem) tmpIterator.next();
-	    }
-	    if (tmpFileItem.isFormField()) {
-		if (tmpFileItem.getFieldName().equals("XMLSIP")) {
-		    sessioneFinta.setDatiIndiceSipXml(tmpFileItem.getString());
-		    sessioneFinta.setDatiDaSalvareIndiceSip(tmpFileItem.getString());
-		} else {
-		    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-		    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-			    "Manca il campo XMLSIP"));
-		    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-		}
-	    } else {
-		rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-		rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-			"Il campo XMLSIP deve essere di tipo FORM"));
-		rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-	    }
-	}
+        // verifica strutturale del campo XMLSIP e memorizzazione dello stesso nella sessione finta
+        if (rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+            tmpFileItem = (DiskFileItem) tmpIterator.next();
+            /*
+             * Nel caso in cui si entra col certificato ma vengono passati LOGINNAME e/o PASSWORD
+             * bisogna comunque scartarli scorrendoli sequenzialmente
+             */
+            if (tmpFileItem.getFieldName().equals("LOGINNAME")) {
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+            }
+            if (tmpFileItem.getFieldName().equals("PASSWORD")) {
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+            }
+            if (tmpFileItem.isFormField()) {
+                if (tmpFileItem.getFieldName().equals("XMLSIP")) {
+                    sessioneFinta.setDatiIndiceSipXml(tmpFileItem.getString());
+                    sessioneFinta.setDatiDaSalvareIndiceSip(tmpFileItem.getString());
+                } else {
+                    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                            "Manca il campo XMLSIP"));
+                    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                }
+            } else {
+                rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                        "Il campo XMLSIP deve essere di tipo FORM"));
+                rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+            }
+        }
 
-	if (configurazione.isLeggiFile()) {
-	    // verifica strutturale dei campi di tipo file e memorizzazione degli stessi nella
-	    // sessione finta
-	    while (tmpIterator.hasNext()
-		    && rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
-		tmpFileItem = (DiskFileItem) tmpIterator.next();
-		if (!tmpFileItem.isFormField()) {
-		    long sizeInBytes = tmpFileItem.getSize();
-		    String fileName = tmpFileItem.getName();
-		    if (sizeInBytes > 0 && fileName.length() > 0) {
-			tmpFileBinario = new FileBinario();
-			tmpFileBinario.setId(tmpFileItem.getFieldName());
-			if (tmpFileItem.isInMemory()) {
-			    tmpFileBinario.setInMemoria(true);
-			    tmpFileBinario.setDati(tmpFileItem.get());
-			    tmpFileBinario.setDimensione(sizeInBytes);
-			} else {
-			    tmpFileBinario.setInMemoria(false);
-			    tmpFileBinario.setFileSuDisco(tmpFileItem.getStoreLocation());
-			    tmpFileBinario.setDimensione(sizeInBytes);
-			}
-			sessioneFinta.getFileBinari().add(tmpFileBinario);
-		    }
-		} else {
-		    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
-		    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
-		    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
-			    "I campi usati per rappresentare i componenti devono essere di tipo FILE"));
-		    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
-		}
-	    }
-	}
-	return fileItems;
+        if (configurazione.isLeggiFile()) {
+            // verifica strutturale dei campi di tipo file e memorizzazione degli stessi nella
+            // sessione finta
+            while (tmpIterator.hasNext()
+                    && rispostaWs.getSeverity() == IRispostaWS.SeverityEnum.OK) {
+                tmpFileItem = (DiskFileItem) tmpIterator.next();
+                if (!tmpFileItem.isFormField()) {
+                    long sizeInBytes = tmpFileItem.getSize();
+                    String fileName = tmpFileItem.getName();
+                    if (sizeInBytes > 0 && fileName.length() > 0) {
+                        tmpFileBinario = new FileBinario();
+                        tmpFileBinario.setId(tmpFileItem.getFieldName());
+                        if (tmpFileItem.isInMemory()) {
+                            tmpFileBinario.setInMemoria(true);
+                            tmpFileBinario.setDati(tmpFileItem.get());
+                            tmpFileBinario.setDimensione(sizeInBytes);
+                        } else {
+                            tmpFileBinario.setInMemoria(false);
+                            tmpFileBinario.setFileSuDisco(tmpFileItem.getStoreLocation());
+                            tmpFileBinario.setDimensione(sizeInBytes);
+                        }
+                        sessioneFinta.getFileBinari().add(tmpFileBinario);
+                    }
+                } else {
+                    rispostaWs.setSeverity(IRispostaWS.SeverityEnum.ERROR);
+                    rispostaWs.setErrorType(IRispostaWS.ErrorTypeEnum.WS_SIGNATURE);
+                    rispostaWs.setErrorMessage(MessaggiWSBundle.getString(MessaggiWSBundle.WS_CHECK,
+                            "I campi usati per rappresentare i componenti devono essere di tipo FILE"));
+                    rispostaWs.setErrorCode(MessaggiWSBundle.WS_CHECK);
+                }
+            }
+        }
+        return fileItems;
     }
 }

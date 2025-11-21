@@ -37,11 +37,11 @@ public class MonVCntAggEnte implements Serializable {
 
     @EmbeddedId
     public MonVCntAggEnteId getMonVCntAggEnteId() {
-	return monVCntAggEnteId;
+        return monVCntAggEnteId;
     }
 
     public void setMonVCntAggEnteId(MonVCntAggEnteId monVCntAggEnteId) {
-	this.monVCntAggEnteId = monVCntAggEnteId;
+        this.monVCntAggEnteId = monVCntAggEnteId;
     }
 
     public MonVCntAggEnte() {/* Hibernate */
@@ -49,10 +49,10 @@ public class MonVCntAggEnte implements Serializable {
 
     @Column(name = "NI_AGG")
     public BigDecimal getNiAgg() {
-	return this.niAgg;
+        return this.niAgg;
     }
 
     public void setNiAgg(BigDecimal niAgg) {
-	this.niAgg = niAgg;
+        this.niAgg = niAgg;
     }
 }

@@ -61,206 +61,206 @@ public class MonVVisSesErrIam implements Serializable {
 
     @Column(name = "AA_KEY_UNITA_DOC")
     public BigDecimal getAaKeyUnitaDoc() {
-	return this.aaKeyUnitaDoc;
+        return this.aaKeyUnitaDoc;
     }
 
     public void setAaKeyUnitaDoc(BigDecimal aaKeyUnitaDoc) {
-	this.aaKeyUnitaDoc = aaKeyUnitaDoc;
+        this.aaKeyUnitaDoc = aaKeyUnitaDoc;
     }
 
     @Lob()
     @Column(name = "BL_XML_INDEX")
     public String getBlXmlIndex() {
-	return this.blXmlIndex;
+        return this.blXmlIndex;
     }
 
     public void setBlXmlIndex(String blXmlIndex) {
-	this.blXmlIndex = blXmlIndex;
+        this.blXmlIndex = blXmlIndex;
     }
 
     @Lob()
     @Column(name = "BL_XML_RICH")
     public String getBlXmlRich() {
-	return this.blXmlRich;
+        return this.blXmlRich;
     }
 
     public void setBlXmlRich(String blXmlRich) {
-	this.blXmlRich = blXmlRich;
+        this.blXmlRich = blXmlRich;
     }
 
     @Lob()
     @Column(name = "BL_XML_RISP")
     public String getBlXmlRisp() {
-	return this.blXmlRisp;
+        return this.blXmlRisp;
     }
 
     public void setBlXmlRisp(String blXmlRisp) {
-	this.blXmlRisp = blXmlRisp;
+        this.blXmlRisp = blXmlRisp;
     }
 
     @Column(name = "CD_ERR")
     public String getCdErr() {
-	return this.cdErr;
+        return this.cdErr;
     }
 
     public void setCdErr(String cdErr) {
-	this.cdErr = cdErr;
+        this.cdErr = cdErr;
     }
 
     @Column(name = "CD_KEY_DOC_VERS")
     public String getCdKeyDocVers() {
-	return this.cdKeyDocVers;
+        return this.cdKeyDocVers;
     }
 
     public void setCdKeyDocVers(String cdKeyDocVers) {
-	this.cdKeyDocVers = cdKeyDocVers;
+        this.cdKeyDocVers = cdKeyDocVers;
     }
 
     @Column(name = "CD_KEY_UNITA_DOC")
     public String getCdKeyUnitaDoc() {
-	return this.cdKeyUnitaDoc;
+        return this.cdKeyUnitaDoc;
     }
 
     public void setCdKeyUnitaDoc(String cdKeyUnitaDoc) {
-	this.cdKeyUnitaDoc = cdKeyUnitaDoc;
+        this.cdKeyUnitaDoc = cdKeyUnitaDoc;
     }
 
     @Column(name = "CD_REGISTRO_KEY_UNITA_DOC")
     public String getCdRegistroKeyUnitaDoc() {
-	return this.cdRegistroKeyUnitaDoc;
+        return this.cdRegistroKeyUnitaDoc;
     }
 
     public void setCdRegistroKeyUnitaDoc(String cdRegistroKeyUnitaDoc) {
-	this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
+        this.cdRegistroKeyUnitaDoc = cdRegistroKeyUnitaDoc;
     }
 
     @Column(name = "CD_VERSIONE_WS")
     public String getCdVersioneWs() {
-	return this.cdVersioneWs;
+        return this.cdVersioneWs;
     }
 
     public void setCdVersioneWs(String cdVersioneWs) {
-	this.cdVersioneWs = cdVersioneWs;
+        this.cdVersioneWs = cdVersioneWs;
     }
 
     @Column(name = "DS_ERR")
     public String getDsErr() {
-	return this.dsErr;
+        return this.dsErr;
     }
 
     public void setDsErr(String dsErr) {
-	this.dsErr = dsErr;
+        this.dsErr = dsErr;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_APERTURA")
     public Date getDtApertura() {
-	return this.dtApertura;
+        return this.dtApertura;
     }
 
     public void setDtApertura(Date dtApertura) {
-	this.dtApertura = dtApertura;
+        this.dtApertura = dtApertura;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_CHIUSURA")
     public Date getDtChiusura() {
-	return this.dtChiusura;
+        return this.dtChiusura;
     }
 
     public void setDtChiusura(Date dtChiusura) {
-	this.dtChiusura = dtChiusura;
+        this.dtChiusura = dtChiusura;
     }
 
     @Column(name = "FL_SESSIONE_ERR_VERIF", columnDefinition = "char(1)")
     public String getFlSessioneErrVerif() {
-	return this.flSessioneErrVerif;
+        return this.flSessioneErrVerif;
     }
 
     public void setFlSessioneErrVerif(String flSessioneErrVerif) {
-	this.flSessioneErrVerif = flSessioneErrVerif;
+        this.flSessioneErrVerif = flSessioneErrVerif;
     }
 
     @Id
     @Column(name = "ID_SESSIONE_VERS")
     public BigDecimal getIdSessioneVers() {
-	return this.idSessioneVers;
+        return this.idSessioneVers;
     }
 
     public void setIdSessioneVers(BigDecimal idSessioneVers) {
-	this.idSessioneVers = idSessioneVers;
+        this.idSessioneVers = idSessioneVers;
     }
 
     @Column(name = "NM_AMBIENTE")
     public String getNmAmbiente() {
-	return this.nmAmbiente;
+        return this.nmAmbiente;
     }
 
     public void setNmAmbiente(String nmAmbiente) {
-	this.nmAmbiente = nmAmbiente;
+        this.nmAmbiente = nmAmbiente;
     }
 
     @Column(name = "NM_COGNOME_USER")
     public String getNmCognomeUser() {
-	return this.nmCognomeUser;
+        return this.nmCognomeUser;
     }
 
     public void setNmCognomeUser(String nmCognomeUser) {
-	this.nmCognomeUser = nmCognomeUser;
+        this.nmCognomeUser = nmCognomeUser;
     }
 
     @Column(name = "NM_ENTE")
     public String getNmEnte() {
-	return this.nmEnte;
+        return this.nmEnte;
     }
 
     public void setNmEnte(String nmEnte) {
-	this.nmEnte = nmEnte;
+        this.nmEnte = nmEnte;
     }
 
     @Column(name = "NM_NOME_USER")
     public String getNmNomeUser() {
-	return this.nmNomeUser;
+        return this.nmNomeUser;
     }
 
     public void setNmNomeUser(String nmNomeUser) {
-	this.nmNomeUser = nmNomeUser;
+        this.nmNomeUser = nmNomeUser;
     }
 
     @Column(name = "NM_STRUT")
     public String getNmStrut() {
-	return this.nmStrut;
+        return this.nmStrut;
     }
 
     public void setNmStrut(String nmStrut) {
-	this.nmStrut = nmStrut;
+        this.nmStrut = nmStrut;
     }
 
     @Column(name = "NM_USERID")
     public String getNmUserid() {
-	return this.nmUserid;
+        return this.nmUserid;
     }
 
     public void setNmUserid(String nmUserid) {
-	this.nmUserid = nmUserid;
+        this.nmUserid = nmUserid;
     }
 
     @Column(name = "NM_USERID_WS")
     public String getNmUseridWs() {
-	return this.nmUseridWs;
+        return this.nmUseridWs;
     }
 
     public void setNmUseridWs(String nmUseridWs) {
-	this.nmUseridWs = nmUseridWs;
+        this.nmUseridWs = nmUseridWs;
     }
 
     @Column(name = "TI_SESSIONE_VERS")
     public String getTiSessioneVers() {
-	return this.tiSessioneVers;
+        return this.tiSessioneVers;
     }
 
     public void setTiSessioneVers(String tiSessioneVers) {
-	this.tiSessioneVers = tiSessioneVers;
+        this.tiSessioneVers = tiSessioneVers;
     }
 
 }

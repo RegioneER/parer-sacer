@@ -40,11 +40,11 @@ public class DecVCalcTiServOnTipoUd implements Serializable {
 
     @EmbeddedId
     public DecVCalcTiServOnTipoUdId getDecVCalcTiServOnTipoUdId() {
-	return decVCalcTiServOnTipoUdId;
+        return decVCalcTiServOnTipoUdId;
     }
 
     public void setDecVCalcTiServOnTipoUdId(DecVCalcTiServOnTipoUdId decVCalcTiServOnTipoUdId) {
-	this.decVCalcTiServOnTipoUdId = decVCalcTiServOnTipoUdId;
+        this.decVCalcTiServOnTipoUdId = decVCalcTiServOnTipoUdId;
     }
 
     public DecVCalcTiServOnTipoUd() {/* Hibernate */
@@ -52,30 +52,30 @@ public class DecVCalcTiServOnTipoUd implements Serializable {
 
     @Column(name = "ID_TIPO_SERVIZIO_ATTIV")
     public BigDecimal getIdTipoServizioAttiv() {
-	return this.idTipoServizioAttiv;
+        return this.idTipoServizioAttiv;
     }
 
     public void setIdTipoServizioAttiv(BigDecimal idTipoServizioAttiv) {
-	this.idTipoServizioAttiv = idTipoServizioAttiv;
+        this.idTipoServizioAttiv = idTipoServizioAttiv;
     }
 
     @Column(name = "ID_TIPO_SERVIZIO_CONSERV")
     public BigDecimal getIdTipoServizioConserv() {
-	return this.idTipoServizioConserv;
+        return this.idTipoServizioConserv;
     }
 
     public void setIdTipoServizioConserv(BigDecimal idTipoServizioConserv) {
-	this.idTipoServizioConserv = idTipoServizioConserv;
+        this.idTipoServizioConserv = idTipoServizioConserv;
     }
 
     @Id
     @Column(name = "CD_ALGO_TARIFFARIO")
     public String getCdAlgoTariffario() {
-	return this.cdAlgoTariffario;
+        return this.cdAlgoTariffario;
     }
 
     public void setCdAlgoTariffario(String cdAlgoTariffario) {
-	this.cdAlgoTariffario = cdAlgoTariffario;
+        this.cdAlgoTariffario = cdAlgoTariffario;
     }
 
 }

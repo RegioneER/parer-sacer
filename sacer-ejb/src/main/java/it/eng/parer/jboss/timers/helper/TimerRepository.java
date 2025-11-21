@@ -168,81 +168,81 @@ public class TimerRepository {
 
     @PostConstruct
     public void initialize() {
-	map = new HashMap<>();
-	map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_VERS.name(), createElencoTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(), createIndiceTimer);
-	map.put(JobConstants.JobEnum.VERIFICA_FIRME_A_DATA_VERS.name(), verificaFirmeTimer);
-	map.put(JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
-		producerCodaIndiciAipDaElabTimer);
-	map.put(JobConstants.JobEnum.CALCOLO_CONTENUTO_SACER.name(), calcoloContenutoTimer);
-	map.put(JobConstants.JobEnum.CALCOLO_CONSISTENZA.name(), calcoloConsistenzaTimer);
-	map.put(JobConstants.JobEnum.ALLINEAMENTO_ORGANIZZAZIONI.name(),
-		allineamentoOrganizzazioniTimer);
-	map.put(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name(),
-		aggiornaStatoArchiviazioneTimer);
-	map.put(JobConstants.JobEnum.ELABORA_SESSIONI_RECUPERO.name(),
-		elaboraSessioniRecuperoTimer);
-	map.put(JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI.name(),
-		registraSchedulazioniJobTpiTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_INDICE_AIP.name(), creazioneIndiceAipTimer);
-	map.put(JobConstants.JobEnum.VERIFICA_MASSIVA_VERS_FALLITI.name(),
-		verificaMassivaVersamentiFallitiTimer);
-	map.put(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_REGISTRO.name(),
-		verificaPeriodoRegistroTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_AUTOMATICA_SERIE.name(), creazioneSerieTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_INDICE_AIP_SERIE_UD.name(),
-		creazioneIndiceAipSerieUdTimer);
-	map.put(JobConstants.JobEnum.GENERAZIONE_AUTOMATICA_CONTENUTO_EFFETTIVO.name(),
-		generazioneContenutoEffettivoSerieTimer);
-	map.put(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name(),
-		controlloContenutoEffettivoSerieTimer);
-	map.put(JobConstants.JobEnum.EVASIONE_RICH_ANNUL_VERS.name(), annullamentoVersamentiTimer);
-	map.put(JobConstants.JobEnum.CALCOLA_STRUTTURA_JOB.name(), calcoloStrutturaTimer);
-	map.put(JobConstants.JobEnum.EVASIONE_RICH_REST_ARCH.name(), restituzioneArchivioTimer);
-	map.put(JobConstants.JobEnum.ALLINEA_ENTI_CONVENZIONATI.name(),
-		allineamentoEntiConvenzionatiTimer);
-	map.put(JobConstants.JobEnum.SIGILLO.name(), sigilloTimer);
-	map.put(it.eng.parer.sacerlog.job.Constants.NomiJob.INIZIALIZZAZIONE_LOG.name(),
-		sacerLogTimer);
-	map.put(it.eng.parer.sacerlog.job.Constants.NomiJob.ALLINEAMENTO_LOG.name(),
-		sacerLogAllineamentoTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_UD.name(),
-		creazioneElenchiIndiciAipTimer);
-	map.put(JobConstants.JobEnum.CALCOLO_CONTENUTO_FASCICOLI.name(),
-		calcoloContenutoFascicoliTimer);
-	map.put(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_TIPO_FASC.name(),
-		verificaPeriodoTipoFascTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_VERS_FASCICOLI.name(),
-		creazioneElencoVersFascicoliTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_INDICI_ELENCHI_VERS_FASC.name(),
-		creazioneIndiceVersFascicoliTimer);
-	map.put(JobConstants.JobEnum.VALIDAZIONE_FASCICOLI.name(), validazioneFascicoliTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_INDICE_AIP_FASC.name(),
-		creazioneIndiceAipFascicoliTimer);
-	map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_FASC.name(),
-		creazioneElenchiIndiciAipFascicoliTimer);
-	map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_1.name(),
-		preparaPartizioneDaMigrareTimer1);
-	map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_2.name(),
-		preparaPartizioneDaMigrareTimer2);
-	map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_3.name(),
-		preparaPartizioneDaMigrareTimer3);
-	map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_4.name(),
-		preparaPartizioneDaMigrareTimer4);
-	map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_1.name(),
-		producerCodaDaMigrareTimer1);
-	map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_2.name(),
-		producerCodaDaMigrareTimer2);
-	map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_3.name(),
-		producerCodaDaMigrareTimer3);
-	map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_4.name(),
-		producerCodaDaMigrareTimer4);
-	map.put(JobConstants.JobEnum.VERIFICA_MIGRAZIONE_SUBPARTIZIONE.name(),
-		verificaMigrazioneSubPartizioneTimer);
-	map.put(JobConstants.JobEnum.CONTROLLA_MIGRAZIONE_SUBPARTIZIONE.name(),
-		controllaMigrazioneSubpartizioneTimer);
-	map.put(JobConstants.JobEnum.CALCOLO_CONTENUTO_AGGIORNAMENTI_METADATI.name(),
-		calcoloContenutoAggMetaTimer);
+        map = new HashMap<>();
+        map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_VERS.name(), createElencoTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_INDICI_ELENCHI_VERS.name(), createIndiceTimer);
+        map.put(JobConstants.JobEnum.VERIFICA_FIRME_A_DATA_VERS.name(), verificaFirmeTimer);
+        map.put(JobConstants.JobEnum.PRODUCER_CODA_INDICI_AIP_DA_ELAB.name(),
+                producerCodaIndiciAipDaElabTimer);
+        map.put(JobConstants.JobEnum.CALCOLO_CONTENUTO_SACER.name(), calcoloContenutoTimer);
+        map.put(JobConstants.JobEnum.CALCOLO_CONSISTENZA.name(), calcoloConsistenzaTimer);
+        map.put(JobConstants.JobEnum.ALLINEAMENTO_ORGANIZZAZIONI.name(),
+                allineamentoOrganizzazioniTimer);
+        map.put(JobConstants.JobEnum.AGGIORNA_STATO_ARCHIVIAZIONE.name(),
+                aggiornaStatoArchiviazioneTimer);
+        map.put(JobConstants.JobEnum.ELABORA_SESSIONI_RECUPERO.name(),
+                elaboraSessioniRecuperoTimer);
+        map.put(JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI.name(),
+                registraSchedulazioniJobTpiTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_INDICE_AIP.name(), creazioneIndiceAipTimer);
+        map.put(JobConstants.JobEnum.VERIFICA_MASSIVA_VERS_FALLITI.name(),
+                verificaMassivaVersamentiFallitiTimer);
+        map.put(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_REGISTRO.name(),
+                verificaPeriodoRegistroTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_AUTOMATICA_SERIE.name(), creazioneSerieTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_INDICE_AIP_SERIE_UD.name(),
+                creazioneIndiceAipSerieUdTimer);
+        map.put(JobConstants.JobEnum.GENERAZIONE_AUTOMATICA_CONTENUTO_EFFETTIVO.name(),
+                generazioneContenutoEffettivoSerieTimer);
+        map.put(JobConstants.JobEnum.CONTROLLO_AUTOMATICO_CONTENUTO_EFFETTIVO.name(),
+                controlloContenutoEffettivoSerieTimer);
+        map.put(JobConstants.JobEnum.EVASIONE_RICH_ANNUL_VERS.name(), annullamentoVersamentiTimer);
+        map.put(JobConstants.JobEnum.CALCOLA_STRUTTURA_JOB.name(), calcoloStrutturaTimer);
+        map.put(JobConstants.JobEnum.EVASIONE_RICH_REST_ARCH.name(), restituzioneArchivioTimer);
+        map.put(JobConstants.JobEnum.ALLINEA_ENTI_CONVENZIONATI.name(),
+                allineamentoEntiConvenzionatiTimer);
+        map.put(JobConstants.JobEnum.SIGILLO.name(), sigilloTimer);
+        map.put(it.eng.parer.sacerlog.job.Constants.NomiJob.INIZIALIZZAZIONE_LOG.name(),
+                sacerLogTimer);
+        map.put(it.eng.parer.sacerlog.job.Constants.NomiJob.ALLINEAMENTO_LOG.name(),
+                sacerLogAllineamentoTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_UD.name(),
+                creazioneElenchiIndiciAipTimer);
+        map.put(JobConstants.JobEnum.CALCOLO_CONTENUTO_FASCICOLI.name(),
+                calcoloContenutoFascicoliTimer);
+        map.put(JobConstants.JobEnum.VERIFICA_COMPATIBILITA_TIPO_FASC.name(),
+                verificaPeriodoTipoFascTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_VERS_FASCICOLI.name(),
+                creazioneElencoVersFascicoliTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_INDICI_ELENCHI_VERS_FASC.name(),
+                creazioneIndiceVersFascicoliTimer);
+        map.put(JobConstants.JobEnum.VALIDAZIONE_FASCICOLI.name(), validazioneFascicoliTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_INDICE_AIP_FASC.name(),
+                creazioneIndiceAipFascicoliTimer);
+        map.put(JobConstants.JobEnum.CREAZIONE_ELENCHI_INDICI_AIP_FASC.name(),
+                creazioneElenchiIndiciAipFascicoliTimer);
+        map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_1.name(),
+                preparaPartizioneDaMigrareTimer1);
+        map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_2.name(),
+                preparaPartizioneDaMigrareTimer2);
+        map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_3.name(),
+                preparaPartizioneDaMigrareTimer3);
+        map.put(JobConstants.JobEnum.PREPARA_PARTIZIONE_DA_MIGRARE_4.name(),
+                preparaPartizioneDaMigrareTimer4);
+        map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_1.name(),
+                producerCodaDaMigrareTimer1);
+        map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_2.name(),
+                producerCodaDaMigrareTimer2);
+        map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_3.name(),
+                producerCodaDaMigrareTimer3);
+        map.put(JobConstants.JobEnum.PRODUCER_CODA_DA_MIGRARE_4.name(),
+                producerCodaDaMigrareTimer4);
+        map.put(JobConstants.JobEnum.VERIFICA_MIGRAZIONE_SUBPARTIZIONE.name(),
+                verificaMigrazioneSubPartizioneTimer);
+        map.put(JobConstants.JobEnum.CONTROLLA_MIGRAZIONE_SUBPARTIZIONE.name(),
+                controllaMigrazioneSubpartizioneTimer);
+        map.put(JobConstants.JobEnum.CALCOLO_CONTENUTO_AGGIORNAMENTI_METADATI.name(),
+                calcoloContenutoAggMetaTimer);
     }
 
     /**
@@ -252,7 +252,7 @@ public class TimerRepository {
      */
     @Lock(LockType.READ)
     public Set<String> getConfiguredTimersName() {
-	return map.keySet();
+        return map.keySet();
     }
 
     /**
@@ -264,7 +264,7 @@ public class TimerRepository {
      */
     @Lock(LockType.READ)
     public JbossJobTimer getConfiguredTimer(String jobName) {
-	return map.get(jobName);
+        return map.get(jobName);
     }
 
 }

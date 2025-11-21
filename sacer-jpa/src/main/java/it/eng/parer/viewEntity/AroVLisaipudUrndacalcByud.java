@@ -27,17 +27,17 @@ public class AroVLisaipudUrndacalcByud implements Serializable {
     private static final long serialVersionUID = 1L;
 
     public AroVLisaipudUrndacalcByud() {
-	/* Hibernate */
+        /* Hibernate */
     }
 
     private AroVLisaipudUrndacalcByudId id;
 
     @EmbeddedId()
     public AroVLisaipudUrndacalcByudId getId() {
-	return id;
+        return id;
     }
 
     public void setId(AroVLisaipudUrndacalcByudId id) {
-	this.id = id;
+        this.id = id;
     }
 }

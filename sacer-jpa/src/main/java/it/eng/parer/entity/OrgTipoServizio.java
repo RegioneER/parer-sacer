@@ -59,81 +59,81 @@ public class OrgTipoServizio implements Serializable {
     @Column(name = "ID_TIPO_SERVIZIO")
     @XmlID
     public Long getIdTipoServizio() {
-	return this.idTipoServizio;
+        return this.idTipoServizio;
     }
 
     public void setIdTipoServizio(Long idTipoServizio) {
-	this.idTipoServizio = idTipoServizio;
+        this.idTipoServizio = idTipoServizio;
     }
 
     @Column(name = "CD_TIPO_SERVIZIO")
     public String getCdTipoServizio() {
-	return this.cdTipoServizio;
+        return this.cdTipoServizio;
     }
 
     public void setCdTipoServizio(String cdTipoServizio) {
-	this.cdTipoServizio = cdTipoServizio;
+        this.cdTipoServizio = cdTipoServizio;
     }
 
     @XmlTransient
     @Column(name = "DS_TIPO_SERVIZIO")
     public String getDsTipoServizio() {
-	return this.dsTipoServizio;
+        return this.dsTipoServizio;
     }
 
     public void setDsTipoServizio(String dsTipoServizio) {
-	this.dsTipoServizio = dsTipoServizio;
+        this.dsTipoServizio = dsTipoServizio;
     }
 
     @XmlTransient
     @Column(name = "GG_FATTURAZIONE", columnDefinition = "char")
     public String getGgFatturazione() {
-	return this.ggFatturazione;
+        return this.ggFatturazione;
     }
 
     public void setGgFatturazione(String ggFatturazione) {
-	this.ggFatturazione = ggFatturazione;
+        this.ggFatturazione = ggFatturazione;
     }
 
     @XmlTransient
     @Column(name = "TI_CLASSE_TIPO_SERVIZIO")
     public String getTiClasseTipoServizio() {
-	return this.tiClasseTipoServizio;
+        return this.tiClasseTipoServizio;
     }
 
     public void setTiClasseTipoServizio(String tiClasseTipoServizio) {
-	this.tiClasseTipoServizio = tiClasseTipoServizio;
+        this.tiClasseTipoServizio = tiClasseTipoServizio;
     }
 
     @XmlTransient
     @Column(name = "TIPO_FATTURAZIONE")
     public String getTipoFatturazione() {
-	return this.tipoFatturazione;
+        return this.tipoFatturazione;
     }
 
     public void setTipoFatturazione(String tipoFatturazione) {
-	this.tipoFatturazione = tipoFatturazione;
+        this.tipoFatturazione = tipoFatturazione;
     }
 
     @XmlTransient
     @OneToMany(mappedBy = "orgTipoServizio")
     public List<OrgServizioErog> getOrgServizioErogs() {
-	return this.orgServizioErogs;
+        return this.orgServizioErogs;
     }
 
     public void setOrgServizioErogs(List<OrgServizioErog> orgServizioErogs) {
-	this.orgServizioErogs = orgServizioErogs;
+        this.orgServizioErogs = orgServizioErogs;
     }
 
     public OrgServizioErog addOrgServizioErog(OrgServizioErog orgServizioErog) {
-	getOrgServizioErogs().add(orgServizioErog);
-	orgServizioErog.setOrgTipoServizio(this);
-	return orgServizioErog;
+        getOrgServizioErogs().add(orgServizioErog);
+        orgServizioErog.setOrgTipoServizio(this);
+        return orgServizioErog;
     }
 
     public OrgServizioErog removeOrgServizioErog(OrgServizioErog orgServizioErog) {
-	getOrgServizioErogs().remove(orgServizioErog);
-	orgServizioErog.setOrgTipoServizio(null);
-	return orgServizioErog;
+        getOrgServizioErogs().remove(orgServizioErog);
+        orgServizioErog.setOrgTipoServizio(null);
+        return orgServizioErog;
     }
 }

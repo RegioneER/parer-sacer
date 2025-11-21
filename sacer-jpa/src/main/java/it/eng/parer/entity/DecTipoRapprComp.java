@@ -87,147 +87,147 @@ public class DecTipoRapprComp implements Serializable {
     @Column(name = "ID_TIPO_RAPPR_COMP")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_RAPPR_COMP_ID_TIPO_RAPPR_COMP_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_RAPPR_COMP"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_RAPPR_COMP"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_RAPPR_COMP_ID_TIPO_RAPPR_COMP_GENERATOR")
     public Long getIdTipoRapprComp() {
-	return this.idTipoRapprComp;
+        return this.idTipoRapprComp;
     }
 
     public void setIdTipoRapprComp(Long idTipoRapprComp) {
-	this.idTipoRapprComp = idTipoRapprComp;
+        this.idTipoRapprComp = idTipoRapprComp;
     }
 
     @Column(name = "DS_TIPO_RAPPR_COMP")
     public String getDsTipoRapprComp() {
-	return this.dsTipoRapprComp;
+        return this.dsTipoRapprComp;
     }
 
     public void setDsTipoRapprComp(String dsTipoRapprComp) {
-	this.dsTipoRapprComp = dsTipoRapprComp;
+        this.dsTipoRapprComp = dsTipoRapprComp;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_ISTITUZ")
     public Date getDtIstituz() {
-	return this.dtIstituz;
+        return this.dtIstituz;
     }
 
     public void setDtIstituz(Date dtIstituz) {
-	this.dtIstituz = dtIstituz;
+        this.dtIstituz = dtIstituz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_SOPPRES")
     public Date getDtSoppres() {
-	return this.dtSoppres;
+        return this.dtSoppres;
     }
 
     public void setDtSoppres(Date dtSoppres) {
-	this.dtSoppres = dtSoppres;
+        this.dtSoppres = dtSoppres;
     }
 
     @Column(name = "NM_TIPO_RAPPR_COMP")
     public String getNmTipoRapprComp() {
-	return this.nmTipoRapprComp;
+        return this.nmTipoRapprComp;
     }
 
     public void setNmTipoRapprComp(String nmTipoRapprComp) {
-	this.nmTipoRapprComp = nmTipoRapprComp;
+        this.nmTipoRapprComp = nmTipoRapprComp;
     }
 
     @OneToMany(mappedBy = "decTipoRapprComp")
     @XmlTransient
     public List<AroCompDoc> getAroCompDocs() {
-	return this.aroCompDocs;
+        return this.aroCompDocs;
     }
 
     public void setAroCompDocs(List<AroCompDoc> aroCompDocs) {
-	this.aroCompDocs = aroCompDocs;
+        this.aroCompDocs = aroCompDocs;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlInverseReference(mappedBy = "decTipoRapprComps")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 
     @Column(name = "TI_ALGO_RAPPR")
     public String getTiAlgoRappr() {
-	return this.tiAlgoRappr;
+        return this.tiAlgoRappr;
     }
 
     public void setTiAlgoRappr(String tiAlgoRappr) {
-	this.tiAlgoRappr = tiAlgoRappr;
+        this.tiAlgoRappr = tiAlgoRappr;
     }
 
     @Column(name = "TI_OUTPUT_RAPPR")
     public String getTiOutputRappr() {
-	return this.tiOutputRappr;
+        return this.tiOutputRappr;
     }
 
     public void setTiOutputRappr(String tiOutputRappr) {
-	this.tiOutputRappr = tiOutputRappr;
+        this.tiOutputRappr = tiOutputRappr;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_CONTENUTO")
     @XmlInverseReference(mappedBy = "decTipoRapprCompConts")
     public DecFormatoFileDoc getDecFormatoFileDocCont() {
-	return this.decFormatoFileDocCont;
+        return this.decFormatoFileDocCont;
     }
 
     public void setDecFormatoFileDocCont(DecFormatoFileDoc decFormatoFileDoc) {
-	this.decFormatoFileDocCont = decFormatoFileDoc;
+        this.decFormatoFileDocCont = decFormatoFileDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_CONVERTIT")
     @XmlInverseReference(mappedBy = "decTipoRapprCompConvs")
     public DecFormatoFileDoc getDecFormatoFileDocConv() {
-	return this.decFormatoFileDocConv;
+        return this.decFormatoFileDocConv;
     }
 
     public void setDecFormatoFileDocConv(DecFormatoFileDoc decFormatoFileDoc) {
-	this.decFormatoFileDocConv = decFormatoFileDoc;
+        this.decFormatoFileDocConv = decFormatoFileDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_OUTPUT_RAPPR")
     public // @XmlInverseReference(mappedBy = "decTipoRapprComps")
     DecFormatoFileStandard getDecFormatoFileStandard() {
-	return this.decFormatoFileStandard;
+        return this.decFormatoFileStandard;
     }
 
     public void setDecFormatoFileStandard(DecFormatoFileStandard decFormatoFileStandard) {
-	this.decFormatoFileStandard = decFormatoFileStandard;
+        this.decFormatoFileStandard = decFormatoFileStandard;
     }
 
     @OneToMany(mappedBy = "decTipoRapprComp", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlTransient
     public // @XmlInverseReference(mappedBy = "decTipoRapprComps")
     List<DecTrasformTipoRappr> getDecTrasformTipoRapprs() {
-	return this.decTrasformTipoRapprs;
+        return this.decTrasformTipoRapprs;
     }
 
     public void setDecTrasformTipoRapprs(List<DecTrasformTipoRappr> decTrasformTipoRapprs) {
-	this.decTrasformTipoRapprs = decTrasformTipoRapprs;
+        this.decTrasformTipoRapprs = decTrasformTipoRapprs;
     }
 
     @OneToMany(mappedBy = "decTipoRapprComp", cascade = {
-	    CascadeType.PERSIST, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.REMOVE })
     @XmlIDREF
     public List<DecTipoRapprAmmesso> getDecTipoRapprAmmessos() {
-	return this.decTipoRapprAmmessos;
+        return this.decTipoRapprAmmessos;
     }
 
     public void setDecTipoRapprAmmessos(List<DecTipoRapprAmmesso> decTipoRapprAmmessos) {
-	this.decTipoRapprAmmessos = decTipoRapprAmmessos;
+        this.decTipoRapprAmmessos = decTipoRapprAmmessos;
     }
 }

@@ -67,81 +67,81 @@ public class SerStatoSerie implements Serializable {
 
     @Column(name = "ID_STATO_SERIE")
     @GenericGenerator(name = "SSER_STATO_SERIE_ID_STATO_SERIE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_STATO_SERIE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SSER_STATO_SERIE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SSER_STATO_SERIE_ID_STATO_SERIE_GENERATOR")
     public Long getIdStatoSerie() {
-	return this.idStatoSerie;
+        return this.idStatoSerie;
     }
 
     public void setIdStatoSerie(Long idStatoSerie) {
-	this.idStatoSerie = idStatoSerie;
+        this.idStatoSerie = idStatoSerie;
     }
 
     @Column(name = "DS_AZIONE")
     public String getDsAzione() {
-	return this.dsAzione;
+        return this.dsAzione;
     }
 
     public void setDsAzione(String dsAzione) {
-	this.dsAzione = dsAzione;
+        this.dsAzione = dsAzione;
     }
 
     @Column(name = "DS_NOTA_AZIONE")
     public String getDsNotaAzione() {
-	return this.dsNotaAzione;
+        return this.dsNotaAzione;
     }
 
     public void setDsNotaAzione(String dsNotaAzione) {
-	this.dsNotaAzione = dsNotaAzione;
+        this.dsNotaAzione = dsNotaAzione;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_REG_STATO_SERIE")
     public Date getDtRegStatoSerie() {
-	return this.dtRegStatoSerie;
+        return this.dtRegStatoSerie;
     }
 
     public void setDtRegStatoSerie(Date dtRegStatoSerie) {
-	this.dtRegStatoSerie = dtRegStatoSerie;
+        this.dtRegStatoSerie = dtRegStatoSerie;
     }
 
     @Column(name = "PG_STATO_SERIE")
     public BigDecimal getPgStatoSerie() {
-	return this.pgStatoSerie;
+        return this.pgStatoSerie;
     }
 
     public void setPgStatoSerie(BigDecimal pgStatoSerie) {
-	this.pgStatoSerie = pgStatoSerie;
+        this.pgStatoSerie = pgStatoSerie;
     }
 
     @Column(name = "TI_STATO_SERIE")
     public String getTiStatoSerie() {
-	return this.tiStatoSerie;
+        return this.tiStatoSerie;
     }
 
     public void setTiStatoSerie(String tiStatoSerie) {
-	this.tiStatoSerie = tiStatoSerie;
+        this.tiStatoSerie = tiStatoSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public IamUser getIamUser() {
-	return this.iamUser;
+        return this.iamUser;
     }
 
     public void setIamUser(IamUser iamUser) {
-	this.iamUser = iamUser;
+        this.iamUser = iamUser;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SERIE")
     public SerSerie getSerSerie() {
-	return this.serSerie;
+        return this.serSerie;
     }
 
     public void setSerSerie(SerSerie serSerie) {
-	this.serSerie = serSerie;
+        this.serSerie = serSerie;
     }
 
 }

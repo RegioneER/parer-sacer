@@ -59,62 +59,62 @@ public class AroContrVerifFirmaDtVer implements Serializable {
     @Id
     @Column(name = "ID_CONTR_VERIF_FIRMA_DT_VERS")
     @GenericGenerator(name = "SARO_CONTR_VERIF_FIRMA_DT_VERS_ID_CONTR_VERIF_FIRMA_DT_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_CONTR_VERIF_FIRMA_DT_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_CONTR_VERIF_FIRMA_DT_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_CONTR_VERIF_FIRMA_DT_VERS_ID_CONTR_VERIF_FIRMA_DT_VERS_GENERATOR")
     public Long getIdContrVerifFirmaDtVers() {
-	return this.idContrVerifFirmaDtVers;
+        return this.idContrVerifFirmaDtVers;
     }
 
     public void setIdContrVerifFirmaDtVers(Long idContrVerifFirmaDtVers) {
-	this.idContrVerifFirmaDtVers = idContrVerifFirmaDtVers;
+        this.idContrVerifFirmaDtVers = idContrVerifFirmaDtVers;
     }
 
     @Column(name = "DS_MSG_CONTR_VERIF")
     public String getDsMsgContrVerif() {
-	return this.dsMsgContrVerif;
+        return this.dsMsgContrVerif;
     }
 
     public void setDsMsgContrVerif(String dsMsgContrVerif) {
-	this.dsMsgContrVerif = dsMsgContrVerif;
+        this.dsMsgContrVerif = dsMsgContrVerif;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     @JoinColumn(name = "ID_CRL_USATA")
     public FirCrl getFirCrl() {
-	return this.firCrl;
+        return this.firCrl;
     }
 
     public void setFirCrl(FirCrl firCrl) {
-	this.firCrl = firCrl;
+        this.firCrl = firCrl;
     }
 
     @Column(name = "TI_CONTR")
     public String getTiContr() {
-	return this.tiContr;
+        return this.tiContr;
     }
 
     public void setTiContr(String tiContr) {
-	this.tiContr = tiContr;
+        this.tiContr = tiContr;
     }
 
     @Column(name = "TI_ESITO_CONTR_VERIF")
     public String getTiEsitoContrVerif() {
-	return this.tiEsitoContrVerif;
+        return this.tiEsitoContrVerif;
     }
 
     public void setTiEsitoContrVerif(String tiEsitoContrVerif) {
-	this.tiEsitoContrVerif = tiEsitoContrVerif;
+        this.tiEsitoContrVerif = tiEsitoContrVerif;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VERIF_FIRMA_DT_VERS")
     public AroVerifFirmaDtVer getAroVerifFirmaDtVer() {
-	return this.aroVerifFirmaDtVer;
+        return this.aroVerifFirmaDtVer;
     }
 
     public void setAroVerifFirmaDtVer(AroVerifFirmaDtVer aroVerifFirmaDtVer) {
-	this.aroVerifFirmaDtVer = aroVerifFirmaDtVer;
+        this.aroVerifFirmaDtVer = aroVerifFirmaDtVer;
     }
 }

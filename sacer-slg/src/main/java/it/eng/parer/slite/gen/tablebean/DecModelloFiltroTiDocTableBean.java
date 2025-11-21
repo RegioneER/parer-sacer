@@ -23,7 +23,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class DecModelloFiltroTiDocTableBean
-	extends AbstractBaseTable<DecModelloFiltroTiDocRowBean> {
+        extends AbstractBaseTable<DecModelloFiltroTiDocRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -34,19 +34,19 @@ public class DecModelloFiltroTiDocTableBean
     public static DecModelloFiltroTiDocTableDescriptor TABLE_DESCRIPTOR = new DecModelloFiltroTiDocTableDescriptor();
 
     public DecModelloFiltroTiDocTableBean() {
-	super();
+        super();
     }
 
     protected DecModelloFiltroTiDocRowBean createRow() {
-	return new DecModelloFiltroTiDocRowBean();
+        return new DecModelloFiltroTiDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecModelloFiltroTiDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

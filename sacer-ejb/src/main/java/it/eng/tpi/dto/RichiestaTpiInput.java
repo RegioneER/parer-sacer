@@ -26,43 +26,43 @@ public class RichiestaTpiInput extends RichiestaTpi {
     private List<NameValuePair> params;
 
     public RichiestaTpiInput(TipoRichiesta tipoRichiesta, String urlRichiesta, Integer timeout,
-	    NameValuePair... paramsCollection) {
-	super(tipoRichiesta);
-	this.urlRichiesta = urlRichiesta;
-	this.timeout = timeout;
-	this.params = paramsCollection != null ? Arrays.asList(paramsCollection)
-		: new ArrayList<NameValuePair>();
+            NameValuePair... paramsCollection) {
+        super(tipoRichiesta);
+        this.urlRichiesta = urlRichiesta;
+        this.timeout = timeout;
+        this.params = paramsCollection != null ? Arrays.asList(paramsCollection)
+                : new ArrayList<NameValuePair>();
     }
 
     public RichiestaTpiInput(TipoRichiesta tipoRichiesta, String urlRichiesta, Integer timeout,
-	    List<NameValuePair> params) {
-	super(tipoRichiesta);
-	this.urlRichiesta = urlRichiesta;
-	this.timeout = timeout;
-	this.params = params;
+            List<NameValuePair> params) {
+        super(tipoRichiesta);
+        this.urlRichiesta = urlRichiesta;
+        this.timeout = timeout;
+        this.params = params;
     }
 
     public String getUrlRichiesta() {
-	return urlRichiesta;
+        return urlRichiesta;
     }
 
     public void setUrlRichiesta(String urlRichiesta) {
-	this.urlRichiesta = urlRichiesta;
+        this.urlRichiesta = urlRichiesta;
     }
 
     public Integer getTimeout() {
-	return timeout;
+        return timeout;
     }
 
     public void setTimeout(Integer timeout) {
-	this.timeout = timeout;
+        this.timeout = timeout;
     }
 
     public List<NameValuePair> getParams() {
-	return params;
+        return params;
     }
 
     public void setParams(List<NameValuePair> params) {
-	this.params = params;
+        this.params = params;
     }
 }

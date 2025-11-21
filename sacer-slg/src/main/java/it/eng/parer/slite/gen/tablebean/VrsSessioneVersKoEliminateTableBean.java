@@ -26,23 +26,23 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  * @author gpiccioli
  */
 public class VrsSessioneVersKoEliminateTableBean
-	extends AbstractBaseTable<VrsSessioneVersKoEliminateRowBean> {
+        extends AbstractBaseTable<VrsSessioneVersKoEliminateRowBean> {
 
     private static final long serialVersionUID = 1L;
 
     public static VrsSessioneVersKoEliminateTableDescriptor TABLE_DESCRIPTOR = new VrsSessioneVersKoEliminateTableDescriptor();
 
     public VrsSessioneVersKoEliminateTableBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Override
     protected VrsSessioneVersKoEliminateRowBean createRow() {
-	return new VrsSessioneVersKoEliminateRowBean();
+        return new VrsSessioneVersKoEliminateRowBean();
     }
 
 }

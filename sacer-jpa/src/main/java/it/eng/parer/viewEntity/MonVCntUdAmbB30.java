@@ -36,25 +36,25 @@ public class MonVCntUdAmbB30 implements Serializable {
     private MonVCntUdAmbB30Id monVCntUdAmbB30Id;
 
     public MonVCntUdAmbB30() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @EmbeddedId
     public MonVCntUdAmbB30Id getMonVCntUdAmbB30Id() {
-	return monVCntUdAmbB30Id;
+        return monVCntUdAmbB30Id;
     }
 
     public void setMonVCntUdAmbB30Id(MonVCntUdAmbB30Id monVCntUdAmbB30Id) {
-	this.monVCntUdAmbB30Id = monVCntUdAmbB30Id;
+        this.monVCntUdAmbB30Id = monVCntUdAmbB30Id;
     }
 
     @Column(name = "NI_UD")
     public BigDecimal getNiUd() {
-	return this.niUd;
+        return this.niUd;
     }
 
     public void setNiUd(BigDecimal niUd) {
-	this.niUd = niUd;
+        this.niUd = niUd;
     }
 
 }

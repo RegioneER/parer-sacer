@@ -37,7 +37,7 @@ import javax.annotation.Generated;
  *
  */
 public class FasValoreAttribFascicoloRowBean extends BaseRow
-	implements BaseRowInterface, JEEBaseRowInterface {
+        implements BaseRowInterface, JEEBaseRowInterface {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$TableBeanWriter",
@@ -47,132 +47,132 @@ public class FasValoreAttribFascicoloRowBean extends BaseRow
     public static FasValoreAttribFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasValoreAttribFascicoloTableDescriptor();
 
     public FasValoreAttribFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdValoreAttribFascicolo() {
-	return getBigDecimal("id_valore_attrib_fascicolo");
+        return getBigDecimal("id_valore_attrib_fascicolo");
     }
 
     public void setIdValoreAttribFascicolo(BigDecimal id_valore_attrib_fascicolo) {
-	setObject("id_valore_attrib_fascicolo", id_valore_attrib_fascicolo);
+        setObject("id_valore_attrib_fascicolo", id_valore_attrib_fascicolo);
     }
 
     public BigDecimal getIdUsoModelloXsdFasc() {
-	return getBigDecimal("id_uso_modello_xsd_fasc");
+        return getBigDecimal("id_uso_modello_xsd_fasc");
     }
 
     public void setIdUsoModelloXsdFasc(BigDecimal id_uso_modello_xsd_fasc) {
-	setObject("id_uso_modello_xsd_fasc", id_uso_modello_xsd_fasc);
+        setObject("id_uso_modello_xsd_fasc", id_uso_modello_xsd_fasc);
     }
 
     public BigDecimal getIdFascicolo() {
-	return getBigDecimal("id_fascicolo");
+        return getBigDecimal("id_fascicolo");
     }
 
     public void setIdFascicolo(BigDecimal id_fascicolo) {
-	setObject("id_fascicolo", id_fascicolo);
+        setObject("id_fascicolo", id_fascicolo);
     }
 
     public BigDecimal getIdAttribFascicolo() {
-	return getBigDecimal("id_attrib_fascicolo");
+        return getBigDecimal("id_attrib_fascicolo");
     }
 
     public void setIdAttribFascicolo(BigDecimal id_attrib_fascicolo) {
-	setObject("id_attrib_fascicolo", id_attrib_fascicolo);
+        setObject("id_attrib_fascicolo", id_attrib_fascicolo);
     }
 
     public String getDlValore() {
-	return getString("dl_valore");
+        return getString("dl_valore");
     }
 
     public void setDlValore(String dl_valore) {
-	setObject("dl_valore", dl_valore);
+        setObject("dl_valore", dl_valore);
     }
 
     public BigDecimal getIdAaTipoFascicolo() {
-	return getBigDecimal("id_aa_tipo_fascicolo");
+        return getBigDecimal("id_aa_tipo_fascicolo");
     }
 
     public void setIdAaTipoFascicolo(BigDecimal id_aa_tipo_fascicolo) {
-	setObject("id_aa_tipo_fascicolo", id_aa_tipo_fascicolo);
+        setObject("id_aa_tipo_fascicolo", id_aa_tipo_fascicolo);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FasValoreAttribFascicolo entity = (FasValoreAttribFascicolo) obj;
-	AbstractRecord ar;
-	this.setIdValoreAttribFascicolo(new BigDecimal(entity.getIdValoreAttribFascicolo()));
+        FasValoreAttribFascicolo entity = (FasValoreAttribFascicolo) obj;
+        AbstractRecord ar;
+        this.setIdValoreAttribFascicolo(new BigDecimal(entity.getIdValoreAttribFascicolo()));
 
-	this.setDlValore(entity.getDlValore());
+        this.setDlValore(entity.getDlValore());
 
     }
 
     @Override
     public FasValoreAttribFascicolo rowBeanToEntity() {
-	FasValoreAttribFascicolo entity = new FasValoreAttribFascicolo();
-	if (this.getIdValoreAttribFascicolo() != null) {
-	    entity.setIdValoreAttribFascicolo(this.getIdValoreAttribFascicolo().longValue());
-	}
-	if (this.getIdUsoModelloXsdFasc() != null) {
-	    if (entity.getDecUsoModelloXsdFasc() == null) {
-		entity.setDecUsoModelloXsdFasc(new DecUsoModelloXsdFasc());
-	    }
-	    entity.getDecUsoModelloXsdFasc()
-		    .setIdUsoModelloXsdFasc(this.getIdUsoModelloXsdFasc().longValue());
-	}
-	if (this.getIdFascicolo() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
-	}
-	if (this.getIdAttribFascicolo() != null) {
-	    if (entity.getDecAttribFascicolo() == null) {
-		entity.setDecAttribFascicolo(new DecAttribFascicolo());
-	    }
-	    entity.getDecAttribFascicolo()
-		    .setIdAttribFascicolo(this.getIdAttribFascicolo().longValue());
-	}
-	entity.setDlValore(this.getDlValore());
-	if (this.getIdAaTipoFascicolo() != null) {
-	    if (entity.getDecAaTipoFascicolo() == null) {
-		entity.setDecAaTipoFascicolo(new DecAaTipoFascicolo());
-	    }
-	    entity.getDecAaTipoFascicolo()
-		    .setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
-	}
-	return entity;
+        FasValoreAttribFascicolo entity = new FasValoreAttribFascicolo();
+        if (this.getIdValoreAttribFascicolo() != null) {
+            entity.setIdValoreAttribFascicolo(this.getIdValoreAttribFascicolo().longValue());
+        }
+        if (this.getIdUsoModelloXsdFasc() != null) {
+            if (entity.getDecUsoModelloXsdFasc() == null) {
+                entity.setDecUsoModelloXsdFasc(new DecUsoModelloXsdFasc());
+            }
+            entity.getDecUsoModelloXsdFasc()
+                    .setIdUsoModelloXsdFasc(this.getIdUsoModelloXsdFasc().longValue());
+        }
+        if (this.getIdFascicolo() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
+        }
+        if (this.getIdAttribFascicolo() != null) {
+            if (entity.getDecAttribFascicolo() == null) {
+                entity.setDecAttribFascicolo(new DecAttribFascicolo());
+            }
+            entity.getDecAttribFascicolo()
+                    .setIdAttribFascicolo(this.getIdAttribFascicolo().longValue());
+        }
+        entity.setDlValore(this.getDlValore());
+        if (this.getIdAaTipoFascicolo() != null) {
+            if (entity.getDecAaTipoFascicolo() == null) {
+                entity.setDecAaTipoFascicolo(new DecAaTipoFascicolo());
+            }
+            entity.getDecAaTipoFascicolo()
+                    .setIdAaTipoFascicolo(this.getIdAaTipoFascicolo().longValue());
+        }
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -41,46 +41,46 @@ public class VrsVLisSesErrate implements Serializable {
     @Id
     @Column(name = "ID_SESSIONE_VERS")
     public Long getIdSessioneVers() {
-	return this.idSessioneVers;
+        return this.idSessioneVers;
     }
 
     public void setIdSessioneVers(Long idSessioneVers) {
-	this.idSessioneVers = idSessioneVers;
+        this.idSessioneVers = idSessioneVers;
     }
 
     @Column(name = "DT_CHIUSURA")
     public LocalDateTime getDtChiusura() {
-	return this.dtChiusura;
+        return this.dtChiusura;
     }
 
     public void setDtChiusura(LocalDateTime dtChiusura) {
-	this.dtChiusura = dtChiusura;
+        this.dtChiusura = dtChiusura;
     }
 
     @Column(name = "DS_ERR")
     public String getDsErr() {
-	return dsErr;
+        return dsErr;
     }
 
     public void setDsErr(String dsErr) {
-	this.dsErr = dsErr;
+        this.dsErr = dsErr;
     }
 
     @Column(name = "CD_ERR")
     public String getCdErr() {
-	return cdErr;
+        return cdErr;
     }
 
     public void setCdErr(String cdErr) {
-	this.cdErr = cdErr;
+        this.cdErr = cdErr;
     }
 
     @Column(name = "FL_SESSIONE_ERR_VERIF", columnDefinition = "char")
     public String getFlSessioneErrVerif() {
-	return flSessioneErrVerif;
+        return flSessioneErrVerif;
     }
 
     public void setFlSessioneErrVerif(String flSessioneErrVerif) {
-	this.flSessioneErrVerif = flSessioneErrVerif;
+        this.flSessioneErrVerif = flSessioneErrVerif;
     }
 }

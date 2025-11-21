@@ -33,19 +33,19 @@ public class DecLivelloTitolTableBean extends AbstractBaseTable<DecLivelloTitolR
     public static DecLivelloTitolTableDescriptor TABLE_DESCRIPTOR = new DecLivelloTitolTableDescriptor();
 
     public DecLivelloTitolTableBean() {
-	super();
+        super();
     }
 
     protected DecLivelloTitolRowBean createRow() {
-	return new DecLivelloTitolRowBean();
+        return new DecLivelloTitolRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecLivelloTitolRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

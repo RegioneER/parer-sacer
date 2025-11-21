@@ -56,36 +56,36 @@ public class DecTipoStrutUdSisVer implements Serializable {
     @Column(name = "ID_TIPO_STRUT_UD_SIS_VERS")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_STRUT_UD_SIS_VERS_ID_TIPO_STRUT_UD_SIS_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_UD_SIS_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_STRUT_UD_SIS_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_STRUT_UD_SIS_VERS_ID_TIPO_STRUT_UD_SIS_VERS_GENERATOR")
     public Long getIdTipoStrutUdSisVers() {
-	return this.idTipoStrutUdSisVers;
+        return this.idTipoStrutUdSisVers;
     }
 
     public void setIdTipoStrutUdSisVers(Long idTipoStrutUdSisVers) {
-	this.idTipoStrutUdSisVers = idTipoStrutUdSisVers;
+        this.idTipoStrutUdSisVers = idTipoStrutUdSisVers;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_STRUT_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decTipoStrutUdSisVers")
     public DecTipoStrutUnitaDoc getDecTipoStrutUnitaDoc() {
-	return this.decTipoStrutUnitaDoc;
+        return this.decTipoStrutUnitaDoc;
     }
 
     public void setDecTipoStrutUnitaDoc(DecTipoStrutUnitaDoc decTipoStrutUnitaDoc) {
-	this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
+        this.decTipoStrutUnitaDoc = decTipoStrutUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SISTEMA_VERSANTE")
     public // @XmlInverseReference(mappedBy = "decTipoStrutUdSisVers")
     AplSistemaVersante getAplSistemaVersante() {
-	return this.aplSistemaVersante;
+        return this.aplSistemaVersante;
     }
 
     public void setAplSistemaVersante(AplSistemaVersante aplSistemaVersante) {
-	this.aplSistemaVersante = aplSistemaVersante;
+        this.aplSistemaVersante = aplSistemaVersante;
     }
 }

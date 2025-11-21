@@ -69,203 +69,203 @@ public class SIOrgEnteSiam implements Serializable {
     }
 
     public SIOrgEnteSiam(Long idEnteSiam) {
-	this.idEnteSiam = idEnteSiam;
+        this.idEnteSiam = idEnteSiam;
     }
 
     @Basic
     @Column(name = "CD_CAP_SEDE_LEGALE", length = 5)
     public String getCdCapSedeLegale() {
-	return cdCapSedeLegale;
+        return cdCapSedeLegale;
     }
 
     public void setCdCapSedeLegale(String cdCapSedeLegale) {
-	this.cdCapSedeLegale = cdCapSedeLegale;
+        this.cdCapSedeLegale = cdCapSedeLegale;
     }
 
     @Basic
     @Column(name = "CD_ENTE_CONVENZ", nullable = false, length = 100)
     public String getCdEnteConvenz() {
-	return cdEnteConvenz;
+        return cdEnteConvenz;
     }
 
     public void setCdEnteConvenz(String cdEnteConvenz) {
-	this.cdEnteConvenz = cdEnteConvenz;
+        this.cdEnteConvenz = cdEnteConvenz;
     }
 
     @Basic
     @Column(name = "CD_FISC", length = 11)
     public String getCdFisc() {
-	return cdFisc;
+        return cdFisc;
     }
 
     public void setCdFisc(String cdFisc) {
-	this.cdFisc = cdFisc;
+        this.cdFisc = cdFisc;
     }
 
     @Basic
     @Column(name = "CD_NAZIONE_SEDE_LEGALE", nullable = false, length = 254)
     public String getCdNazioneSedeLegale() {
-	return cdNazioneSedeLegale;
+        return cdNazioneSedeLegale;
     }
 
     public void setCdNazioneSedeLegale(String cdNazioneSedeLegale) {
-	this.cdNazioneSedeLegale = cdNazioneSedeLegale;
+        this.cdNazioneSedeLegale = cdNazioneSedeLegale;
     }
 
     @OneToMany(mappedBy = "siOrgEnteConvenz", cascade = CascadeType.MERGE)
     public List<SIDecUsoModelloComunic> getDecUsoModelloComunics() {
-	return decUsoModelloComunics;
+        return decUsoModelloComunics;
     }
 
     public void setDecUsoModelloComunics(List<SIDecUsoModelloComunic> decUsoModelloComunics) {
-	this.decUsoModelloComunics = decUsoModelloComunics;
+        this.decUsoModelloComunics = decUsoModelloComunics;
     }
 
     @Basic
     @Column(name = "DS_CITTA_SEDE_LEGALE", length = 254)
     public String getDsCittaSedeLegale() {
-	return dsCittaSedeLegale;
+        return dsCittaSedeLegale;
     }
 
     public void setDsCittaSedeLegale(String dsCittaSedeLegale) {
-	this.dsCittaSedeLegale = dsCittaSedeLegale;
+        this.dsCittaSedeLegale = dsCittaSedeLegale;
     }
 
     @Basic
     @Column(name = "DS_VIA_SEDE_LEGALE", length = 254)
     public String getDsViaSedeLegale() {
-	return dsViaSedeLegale;
+        return dsViaSedeLegale;
     }
 
     public void setDsViaSedeLegale(String dsViaSedeLegale) {
-	this.dsViaSedeLegale = dsViaSedeLegale;
+        this.dsViaSedeLegale = dsViaSedeLegale;
     }
 
     @Basic
     @Column(name = "DT_CESSAZIONE")
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDtCessazione() {
-	return dtCessazione;
+        return dtCessazione;
     }
 
     public void setDtCessazione(Date dtCessazione) {
-	this.dtCessazione = dtCessazione;
+        this.dtCessazione = dtCessazione;
     }
 
     @Basic
     @Column(name = "DT_INI_VAL", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     public Date getDtIniVal() {
-	return dtIniVal;
+        return dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-	this.dtIniVal = dtIniVal;
+        this.dtIniVal = dtIniVal;
     }
 
     @Column(name = "ID_AMBITO_TERRIT")
     public BigDecimal getIdAmbitoTerrit() {
-	return this.idAmbitoTerrit;
+        return this.idAmbitoTerrit;
     }
 
     public void setIdAmbitoTerrit(BigDecimal idAmbitoTerrit) {
-	this.idAmbitoTerrit = idAmbitoTerrit;
+        this.idAmbitoTerrit = idAmbitoTerrit;
     }
 
     @Id
     @Column(name = "ID_ENTE_SIAM")
     public Long getIdEnteSiam() {
-	return idEnteSiam;
+        return idEnteSiam;
     }
 
     public void setIdEnteSiam(Long idEnteSiam) {
-	this.idEnteSiam = idEnteSiam;
+        this.idEnteSiam = idEnteSiam;
     }
 
     @Basic
     @Column(name = "NM_ENTE_SIAM", nullable = false, length = 254)
     public String getNmEnteSiam() {
-	return nmEnteSiam;
+        return nmEnteSiam;
     }
 
     public void setNmEnteSiam(String nmEnteSiam) {
-	this.nmEnteSiam = nmEnteSiam;
+        this.nmEnteSiam = nmEnteSiam;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_AMBIENTE_ENTE_CONVENZ")
     public SIOrgAmbienteEnteConvenz getSiOrgAmbienteEnteConvenz() {
-	return siOrgAmbienteEnteConvenz;
+        return siOrgAmbienteEnteConvenz;
     }
 
     public void setSiOrgAmbienteEnteConvenz(SIOrgAmbienteEnteConvenz siOrgAmbienteEnteConvenz) {
-	this.siOrgAmbienteEnteConvenz = siOrgAmbienteEnteConvenz;
+        this.siOrgAmbienteEnteConvenz = siOrgAmbienteEnteConvenz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_ENTE_CONVENZ_NUOVO")
     public SIOrgEnteSiam getSiOrgEnteConvenz() {
-	return siOrgEnteConvenz;
+        return siOrgEnteConvenz;
     }
 
     public void setSiOrgEnteConvenz(SIOrgEnteSiam siOrgEnteConvenz) {
-	this.siOrgEnteConvenz = siOrgEnteConvenz;
+        this.siOrgEnteConvenz = siOrgEnteConvenz;
     }
 
     @OneToMany(mappedBy = "siOrgEnteConvenz", cascade = CascadeType.MERGE)
     public List<SIOrgEnteConvenzOrg> getOrgEnteConvenzOrgs() {
-	return orgEnteConvenzOrgs;
+        return orgEnteConvenzOrgs;
     }
 
     public void setOrgEnteConvenzOrgs(List<SIOrgEnteConvenzOrg> orgEnteConvenzOrgs) {
-	this.orgEnteConvenzOrgs = orgEnteConvenzOrgs;
+        this.orgEnteConvenzOrgs = orgEnteConvenzOrgs;
     }
 
     @OneToMany(mappedBy = "siOrgEnteConvenz", cascade = CascadeType.MERGE)
     public List<SIOrgEnteSiam> getOrgEnteConvenzs() {
-	return orgEnteConvenzs;
+        return orgEnteConvenzs;
     }
 
     public void setOrgEnteConvenzs(List<SIOrgEnteSiam> orgEnteConvenzs) {
-	this.orgEnteConvenzs = orgEnteConvenzs;
+        this.orgEnteConvenzs = orgEnteConvenzs;
     }
 
     @OneToMany(mappedBy = "siOrgEnteConvenz", cascade = CascadeType.MERGE)
     public List<SIOrgAccordoEnte> getOrgAccordoEntes() {
-	return orgAccordoEntes;
+        return orgAccordoEntes;
     }
 
     public void setOrgAccordoEntes(List<SIOrgAccordoEnte> orgAccordoEntes) {
-	this.orgAccordoEntes = orgAccordoEntes;
+        this.orgAccordoEntes = orgAccordoEntes;
     }
 
     @Basic
     @Column(name = "TI_CD_ENTE_CONVENZ", nullable = false, length = 20)
     public String getTiCdEnteConvenz() {
-	return tiCdEnteConvenz;
+        return tiCdEnteConvenz;
     }
 
     public void setTiCdEnteConvenz(String tiCdEnteConvenz) {
-	this.tiCdEnteConvenz = tiCdEnteConvenz;
+        this.tiCdEnteConvenz = tiCdEnteConvenz;
     }
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TI_ENTE_CONVENZ")
     public TiEnteConvenz getTiEnteConvenz() {
-	return this.tiEnteConvenz;
+        return this.tiEnteConvenz;
     }
 
     public void setTiEnteConvenz(TiEnteConvenz tiEnteConvenz) {
-	this.tiEnteConvenz = tiEnteConvenz;
+        this.tiEnteConvenz = tiEnteConvenz;
     }
 
     @OneToMany(mappedBy = "siOrgEnteSiam")
     public List<UsrUser> getUsrUsers() {
-	return this.usrUsers;
+        return this.usrUsers;
     }
 
     public void setUsrUsers(List<UsrUser> usrUsers) {
-	this.usrUsers = usrUsers;
+        this.usrUsers = usrUsers;
     }
 
 }

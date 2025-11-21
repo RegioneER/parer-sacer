@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 @Stateless
 @LocalBean
 @Interceptors({
-	TransactionInterceptor.class })
+        TransactionInterceptor.class })
 public class SistemaMigrazioneEjb {
 
     private static final Logger logger = LoggerFactory.getLogger(SistemaMigrazioneEjb.class);
@@ -71,21 +71,21 @@ public class SistemaMigrazioneEjb {
      * @return il tableBean contenente la lista
      */
     public AplSistemaMigrazTableBean getAplSistemaMigrazTableBean(BigDecimal idStrut) {
-	AplSistemaMigrazTableBean table = new AplSistemaMigrazTableBean();
-	List<AplSistemaMigraz> list = helper.retrieveAplSistemaMigraz(idStrut);
-	if (list != null && !list.isEmpty()) {
-	    try {
-		table = (AplSistemaMigrazTableBean) Transform.entities2TableBean(list);
-	    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-		    | IllegalAccessException | IllegalArgumentException
-		    | InvocationTargetException ex) {
-		logger.error("Errore durante il recupero dei sistemi di migrazione "
-			+ ExceptionUtils.getRootCauseMessage(ex), ex);
-		throw new IllegalStateException(
-			"Errore durante il recupero dei sistemi di migrazione");
-	    }
-	}
-	return table;
+        AplSistemaMigrazTableBean table = new AplSistemaMigrazTableBean();
+        List<AplSistemaMigraz> list = helper.retrieveAplSistemaMigraz(idStrut);
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (AplSistemaMigrazTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero dei sistemi di migrazione "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalStateException(
+                        "Errore durante il recupero dei sistemi di migrazione");
+            }
+        }
+        return table;
     }
 
     /**
@@ -96,31 +96,31 @@ public class SistemaMigrazioneEjb {
      * @return il tableBean contenente la lista
      */
     public OrgUsoSistemaMigrazTableBean getOrgUsoSistemaMigrazTableBean(BigDecimal idStrut) {
-	OrgUsoSistemaMigrazTableBean table = new OrgUsoSistemaMigrazTableBean();
-	List<OrgUsoSistemaMigraz> list = helper.retrieveOrgUsoSistemaMigraz(idStrut);
-	if (list != null && !list.isEmpty()) {
-	    try {
-		for (OrgUsoSistemaMigraz usoSistemaMigraz : list) {
-		    OrgUsoSistemaMigrazRowBean row = (OrgUsoSistemaMigrazRowBean) Transform
-			    .entity2RowBean(usoSistemaMigraz);
-		    row.setString("nm_sistema_migraz",
-			    usoSistemaMigraz.getAplSistemaMigraz().getNmSistemaMigraz());
-		    row.setString("ds_sistema_migraz",
-			    usoSistemaMigraz.getAplSistemaMigraz().getDsSistemaMigraz());
-		    table.add(row);
-		}
-	    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-		    | IllegalAccessException | IllegalArgumentException
-		    | InvocationTargetException ex) {
-		logger.error(
-			"Errore durante il recupero dei sistemi di migrazione per la struttura "
-				+ ExceptionUtils.getRootCauseMessage(ex),
-			ex);
-		throw new IllegalStateException(
-			"Errore durante il recupero dei sistemi di migrazione");
-	    }
-	}
-	return table;
+        OrgUsoSistemaMigrazTableBean table = new OrgUsoSistemaMigrazTableBean();
+        List<OrgUsoSistemaMigraz> list = helper.retrieveOrgUsoSistemaMigraz(idStrut);
+        if (list != null && !list.isEmpty()) {
+            try {
+                for (OrgUsoSistemaMigraz usoSistemaMigraz : list) {
+                    OrgUsoSistemaMigrazRowBean row = (OrgUsoSistemaMigrazRowBean) Transform
+                            .entity2RowBean(usoSistemaMigraz);
+                    row.setString("nm_sistema_migraz",
+                            usoSistemaMigraz.getAplSistemaMigraz().getNmSistemaMigraz());
+                    row.setString("ds_sistema_migraz",
+                            usoSistemaMigraz.getAplSistemaMigraz().getDsSistemaMigraz());
+                    table.add(row);
+                }
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                logger.error(
+                        "Errore durante il recupero dei sistemi di migrazione per la struttura "
+                                + ExceptionUtils.getRootCauseMessage(ex),
+                        ex);
+                throw new IllegalStateException(
+                        "Errore durante il recupero dei sistemi di migrazione");
+            }
+        }
+        return table;
     }
 
     /**
@@ -133,42 +133,42 @@ public class SistemaMigrazioneEjb {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void insertOrgUsoSistemaMigraz(BigDecimal idStrut, BigDecimal idSistemaMigraz)
-	    throws ParerUserError {
-	try {
-	    OrgStrut strut = helper.findById(OrgStrut.class, idStrut);
-	    AplSistemaMigraz aplSistemaMigraz = helper.findById(AplSistemaMigraz.class,
-		    idSistemaMigraz);
+            throws ParerUserError {
+        try {
+            OrgStrut strut = helper.findById(OrgStrut.class, idStrut);
+            AplSistemaMigraz aplSistemaMigraz = helper.findById(AplSistemaMigraz.class,
+                    idSistemaMigraz);
 
-	    OrgUsoSistemaMigraz orgUsoSistemaMigraz = new OrgUsoSistemaMigraz();
-	    orgUsoSistemaMigraz.setOrgStrut(strut);
-	    orgUsoSistemaMigraz.setAplSistemaMigraz(aplSistemaMigraz);
+            OrgUsoSistemaMigraz orgUsoSistemaMigraz = new OrgUsoSistemaMigraz();
+            orgUsoSistemaMigraz.setOrgStrut(strut);
+            orgUsoSistemaMigraz.setAplSistemaMigraz(aplSistemaMigraz);
 
-	    helper.insertEntity(orgUsoSistemaMigraz, true);
-	} catch (Exception e) {
-	    String messaggio = "Eccezione imprevista nel salvataggio del sistema di migrazione per la struttura ";
-	    messaggio += ExceptionUtils.getRootCauseMessage(e);
-	    logger.error(messaggio, e);
-	    throw new ParerUserError(messaggio);
-	}
+            helper.insertEntity(orgUsoSistemaMigraz, true);
+        } catch (Exception e) {
+            String messaggio = "Eccezione imprevista nel salvataggio del sistema di migrazione per la struttura ";
+            messaggio += ExceptionUtils.getRootCauseMessage(e);
+            logger.error(messaggio, e);
+            throw new ParerUserError(messaggio);
+        }
     }
 
     public BaseTableInterface getNmSistemaMigrazTableBean(BigDecimal idStrut) {
-	BaseTableInterface tmpTableBean = new BaseTable();
-	List<String> listaSistemiMigraz = helper.retrieveNmSistemaMigraz(idStrut);
-	try {
-	    if (!listaSistemiMigraz.isEmpty()) {
-		for (String sistema : listaSistemiMigraz) {
-		    BaseRow row = new BaseRow();
-		    row.setString("nm_sistema_migraz", sistema);
-		    tmpTableBean.add(row);
-		}
-	    }
-	} catch (Exception e) {
-	    logger.error(e.getMessage());
-	    throw new IllegalStateException(
-		    "Errore inatteso nel recupero dei sistemi di migrazione");
-	}
-	return tmpTableBean;
+        BaseTableInterface tmpTableBean = new BaseTable();
+        List<String> listaSistemiMigraz = helper.retrieveNmSistemaMigraz(idStrut);
+        try {
+            if (!listaSistemiMigraz.isEmpty()) {
+                for (String sistema : listaSistemiMigraz) {
+                    BaseRow row = new BaseRow();
+                    row.setString("nm_sistema_migraz", sistema);
+                    tmpTableBean.add(row);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new IllegalStateException(
+                    "Errore inatteso nel recupero dei sistemi di migrazione");
+        }
+        return tmpTableBean;
     }
 
     /**
@@ -181,23 +181,23 @@ public class SistemaMigrazioneEjb {
      * @return il tableBean contenente la lista
      */
     public AplSistemaMigrazTableBean getAplSistemaMigrazTableBean(String nmSistemaMigraz,
-	    String dsSistemaMigraz) {
-	AplSistemaMigrazTableBean table = new AplSistemaMigrazTableBean();
-	List<AplSistemaMigraz> list = helper.retrieveAplSistemaMigraz(nmSistemaMigraz,
-		dsSistemaMigraz);
-	if (list != null && !list.isEmpty()) {
-	    try {
-		table = (AplSistemaMigrazTableBean) Transform.entities2TableBean(list);
-	    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-		    | IllegalAccessException | IllegalArgumentException
-		    | InvocationTargetException ex) {
-		logger.error("Errore durante il recupero dei sistemi di migrazione "
-			+ ExceptionUtils.getRootCauseMessage(ex), ex);
-		throw new IllegalStateException(
-			"Errore durante il recupero dei sistemi di migrazione");
-	    }
-	}
-	return table;
+            String dsSistemaMigraz) {
+        AplSistemaMigrazTableBean table = new AplSistemaMigrazTableBean();
+        List<AplSistemaMigraz> list = helper.retrieveAplSistemaMigraz(nmSistemaMigraz,
+                dsSistemaMigraz);
+        if (list != null && !list.isEmpty()) {
+            try {
+                table = (AplSistemaMigrazTableBean) Transform.entities2TableBean(list);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero dei sistemi di migrazione "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalStateException(
+                        "Errore durante il recupero dei sistemi di migrazione");
+            }
+        }
+        return table;
     }
 
     /**
@@ -207,21 +207,21 @@ public class SistemaMigrazioneEjb {
      * @return il rowBean del sistema migrazione
      */
     public AplSistemaMigrazRowBean getAplSistemaMigrazRowBean(BigDecimal idSistemaMigraz) {
-	AplSistemaMigrazRowBean row = new AplSistemaMigrazRowBean();
-	AplSistemaMigraz sistemaMigraz = helper.findById(AplSistemaMigraz.class, idSistemaMigraz);
-	if (sistemaMigraz != null) {
-	    try {
-		row = (AplSistemaMigrazRowBean) Transform.entity2RowBean(sistemaMigraz);
-	    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
-		    | IllegalAccessException | IllegalArgumentException
-		    | InvocationTargetException ex) {
-		logger.error("Errore durante il recupero del sistema di migrazione "
-			+ ExceptionUtils.getRootCauseMessage(ex), ex);
-		throw new IllegalStateException(
-			"Errore durante il recupero del sistema di migrazione");
-	    }
-	}
-	return row;
+        AplSistemaMigrazRowBean row = new AplSistemaMigrazRowBean();
+        AplSistemaMigraz sistemaMigraz = helper.findById(AplSistemaMigraz.class, idSistemaMigraz);
+        if (sistemaMigraz != null) {
+            try {
+                row = (AplSistemaMigrazRowBean) Transform.entity2RowBean(sistemaMigraz);
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                    | IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException ex) {
+                logger.error("Errore durante il recupero del sistema di migrazione "
+                        + ExceptionUtils.getRootCauseMessage(ex), ex);
+                throw new IllegalStateException(
+                        "Errore durante il recupero del sistema di migrazione");
+            }
+        }
+        return row;
     }
 
     /**
@@ -236,27 +236,27 @@ public class SistemaMigrazioneEjb {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Long saveSistemaMigrazione(String nmSistemaMigraz, String dsSistemaMigraz)
-	    throws ParerUserError {
-	// Controllo esistenza denominazione
-	if (helper.getAplSistemaMigraz(nmSistemaMigraz) != null) {
-	    throw new ParerUserError("Sistema di migrazione gi\u00E0 censito nel sistema");
-	}
-	Long idSistemaMigraz = null;
-	try {
-	    AplSistemaMigraz sistemaMigraz = new AplSistemaMigraz();
-	    sistemaMigraz.setNmSistemaMigraz(nmSistemaMigraz);
-	    sistemaMigraz.setDsSistemaMigraz(dsSistemaMigraz);
+            throws ParerUserError {
+        // Controllo esistenza denominazione
+        if (helper.getAplSistemaMigraz(nmSistemaMigraz) != null) {
+            throw new ParerUserError("Sistema di migrazione gi\u00E0 censito nel sistema");
+        }
+        Long idSistemaMigraz = null;
+        try {
+            AplSistemaMigraz sistemaMigraz = new AplSistemaMigraz();
+            sistemaMigraz.setNmSistemaMigraz(nmSistemaMigraz);
+            sistemaMigraz.setDsSistemaMigraz(dsSistemaMigraz);
 
-	    helper.insertEntity(sistemaMigraz, true);
+            helper.insertEntity(sistemaMigraz, true);
 
-	    idSistemaMigraz = sistemaMigraz.getIdSistemaMigraz();
-	} catch (Exception ex) {
-	    logger.error("Errore imprevisto durante il salvataggio del sistema di migrazione : "
-		    + ExceptionUtils.getRootCauseMessage(ex), ex);
-	    throw new ParerUserError(
-		    "Eccezione imprevista durante il salvataggio del sistema di migrazione");
-	}
-	return idSistemaMigraz;
+            idSistemaMigraz = sistemaMigraz.getIdSistemaMigraz();
+        } catch (Exception ex) {
+            logger.error("Errore imprevisto durante il salvataggio del sistema di migrazione : "
+                    + ExceptionUtils.getRootCauseMessage(ex), ex);
+            throw new ParerUserError(
+                    "Eccezione imprevista durante il salvataggio del sistema di migrazione");
+        }
+        return idSistemaMigraz;
     }
 
     /**
@@ -270,27 +270,27 @@ public class SistemaMigrazioneEjb {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void saveSistemaMigrazione(BigDecimal idSistemaMigraz, String nmSistemaMigraz,
-	    String dsSistemaMigraz) throws ParerUserError {
-	AplSistemaMigraz sistemaMigraz = helper.findById(AplSistemaMigraz.class, idSistemaMigraz);
-	boolean nomeModificato = !sistemaMigraz.getNmSistemaMigraz().equals(nmSistemaMigraz);
-	// Controllo esistenza denominazione
-	if (helper.getAplSistemaMigraz(nmSistemaMigraz) != null && nomeModificato) {
-	    throw new ParerUserError("Sistema di migrazione gi\u00E0 censito nel sistema");
-	}
-	// Controllo associazione ad una struttura
-	if (nomeModificato && helper.existsOrgUsoSistemaMigraz(idSistemaMigraz)) {
-	    throw new ParerUserError(
-		    "Sistema di migrazione gi\u00E0 correlato ad almeno una struttura: nome non modificabile");
-	}
-	try {
-	    sistemaMigraz.setNmSistemaMigraz(nmSistemaMigraz);
-	    sistemaMigraz.setDsSistemaMigraz(dsSistemaMigraz);
-	} catch (Exception ex) {
-	    logger.error("Errore imprevisto durante il salvataggio del sistema di migrazione : "
-		    + ExceptionUtils.getRootCauseMessage(ex), ex);
-	    throw new ParerUserError(
-		    "Eccezione imprevista durante il salvataggio del sistema di migrazione");
-	}
+            String dsSistemaMigraz) throws ParerUserError {
+        AplSistemaMigraz sistemaMigraz = helper.findById(AplSistemaMigraz.class, idSistemaMigraz);
+        boolean nomeModificato = !sistemaMigraz.getNmSistemaMigraz().equals(nmSistemaMigraz);
+        // Controllo esistenza denominazione
+        if (helper.getAplSistemaMigraz(nmSistemaMigraz) != null && nomeModificato) {
+            throw new ParerUserError("Sistema di migrazione gi\u00E0 censito nel sistema");
+        }
+        // Controllo associazione ad una struttura
+        if (nomeModificato && helper.existsOrgUsoSistemaMigraz(idSistemaMigraz)) {
+            throw new ParerUserError(
+                    "Sistema di migrazione gi\u00E0 correlato ad almeno una struttura: nome non modificabile");
+        }
+        try {
+            sistemaMigraz.setNmSistemaMigraz(nmSistemaMigraz);
+            sistemaMigraz.setDsSistemaMigraz(dsSistemaMigraz);
+        } catch (Exception ex) {
+            logger.error("Errore imprevisto durante il salvataggio del sistema di migrazione : "
+                    + ExceptionUtils.getRootCauseMessage(ex), ex);
+            throw new ParerUserError(
+                    "Eccezione imprevista durante il salvataggio del sistema di migrazione");
+        }
     }
 
     /**
@@ -302,17 +302,17 @@ public class SistemaMigrazioneEjb {
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void deleteAplSistemaMigraz(BigDecimal idSistemaMigraz) throws ParerUserError {
-	logger.debug("Eseguo l'eliminazione del sistema di migrazione " + idSistemaMigraz);
+        logger.debug("Eseguo l'eliminazione del sistema di migrazione " + idSistemaMigraz);
 
-	AplSistemaMigraz sistemaMigraz = helper.findById(AplSistemaMigraz.class, idSistemaMigraz);
+        AplSistemaMigraz sistemaMigraz = helper.findById(AplSistemaMigraz.class, idSistemaMigraz);
 
-	// Controllo associazione ad una struttura
-	if (helper.existsOrgUsoSistemaMigraz(idSistemaMigraz)) {
-	    throw new ParerUserError(
-		    "Il sistema di migrazione è correlato ad almeno una struttura e non può essere eliminato");
-	}
+        // Controllo associazione ad una struttura
+        if (helper.existsOrgUsoSistemaMigraz(idSistemaMigraz)) {
+            throw new ParerUserError(
+                    "Il sistema di migrazione è correlato ad almeno una struttura e non può essere eliminato");
+        }
 
-	helper.removeEntity(sistemaMigraz, true);
+        helper.removeEntity(sistemaMigraz, true);
     }
 
 }

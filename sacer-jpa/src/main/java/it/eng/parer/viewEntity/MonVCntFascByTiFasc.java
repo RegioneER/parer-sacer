@@ -35,21 +35,21 @@ public class MonVCntFascByTiFasc implements Serializable {
 
     @Column(name = "NI_FASC")
     public BigDecimal getNiFasc() {
-	return this.niFasc;
+        return this.niFasc;
     }
 
     public void setNiFasc(BigDecimal niFasc) {
-	this.niFasc = niFasc;
+        this.niFasc = niFasc;
     }
 
     private MonVCntFascByTiFascId monVCntFascByTiFascId;
 
     @EmbeddedId()
     public MonVCntFascByTiFascId getMonVCntFascByTiFascId() {
-	return monVCntFascByTiFascId;
+        return monVCntFascByTiFascId;
     }
 
     public void setMonVCntFascByTiFascId(MonVCntFascByTiFascId monVCntFascByTiFascId) {
-	this.monVCntFascByTiFascId = monVCntFascByTiFascId;
+        this.monVCntFascByTiFascId = monVCntFascByTiFascId;
     }
 }

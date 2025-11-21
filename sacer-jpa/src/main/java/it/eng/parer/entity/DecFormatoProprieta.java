@@ -50,39 +50,39 @@ public class DecFormatoProprieta implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DEC_FORMATO_PROPRIETA_GENERATOR")
     @Column(name = "ID_FORMATO_PROPRIETA")
     public Long getIdFormatoProprieta() {
-	return idFormatoProprieta;
+        return idFormatoProprieta;
     }
 
     public void setIdFormatoProprieta(Long idFormatoProprieta) {
-	this.idFormatoProprieta = idFormatoProprieta;
+        this.idFormatoProprieta = idFormatoProprieta;
     }
 
     @Column(name = "NM_FORMATO_PROPRIETA")
     public String getNmFormatoProprieta() {
-	return nmFormatoProprieta;
+        return nmFormatoProprieta;
     }
 
     public void setNmFormatoProprieta(String nmFormatoProprieta) {
-	this.nmFormatoProprieta = nmFormatoProprieta;
+        this.nmFormatoProprieta = nmFormatoProprieta;
     }
 
     @Column(name = "NI_PUNTEGGIO_DEFAULT")
     public Integer getNiPunteggioDefault() {
-	return niPunteggioDefault;
+        return niPunteggioDefault;
     }
 
     public void setNiPunteggioDefault(Integer niPunteggioDefault) {
-	this.niPunteggioDefault = niPunteggioDefault;
+        this.niPunteggioDefault = niPunteggioDefault;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_GRUPPO_PROPRIETA", nullable = false)
     public DecFormatoGruppoProprieta getDecFormatoGruppoProprieta() {
-	return decFormatoGruppoProprieta;
+        return decFormatoGruppoProprieta;
     }
 
     public void setDecFormatoGruppoProprieta(DecFormatoGruppoProprieta decFormatoGruppoProprieta) {
-	this.decFormatoGruppoProprieta = decFormatoGruppoProprieta;
+        this.decFormatoGruppoProprieta = decFormatoGruppoProprieta;
     }
 
 }

@@ -37,19 +37,19 @@ public class SerVLisStatoSerieTableBean extends AbstractBaseTable<SerVLisStatoSe
     public static SerVLisStatoSerieTableDescriptor TABLE_DESCRIPTOR = new SerVLisStatoSerieTableDescriptor();
 
     public SerVLisStatoSerieTableBean() {
-	super();
+        super();
     }
 
     protected SerVLisStatoSerieRowBean createRow() {
-	return new SerVLisStatoSerieRowBean();
+        return new SerVLisStatoSerieRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVLisStatoSerieRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

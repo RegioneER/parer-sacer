@@ -55,43 +55,43 @@ public class ElvElencoVersFascAnnul implements Serializable {
 
     @Column(name = "ID_ELENCO_VERS_FASC_ANNUL")
     @GenericGenerator(name = "SELV_ELENCO_VERS_FASC_ANNUL_ID_ELENCO_VERS_FASC_ANNUL_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_ELENCO_VERS_FASC_ANNUL"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SELV_ELENCO_VERS_FASC_ANNUL"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SELV_ELENCO_VERS_FASC_ANNUL_ID_ELENCO_VERS_FASC_ANNUL_GENERATOR")
     public Long getIdElencoVersFascAnnul() {
-	return this.idElencoVersFascAnnul;
+        return this.idElencoVersFascAnnul;
     }
 
     public void setIdElencoVersFascAnnul(Long idElencoVersFascAnnul) {
-	this.idElencoVersFascAnnul = idElencoVersFascAnnul;
+        this.idElencoVersFascAnnul = idElencoVersFascAnnul;
     }
 
     @Column(name = "DS_URN_FASCICOLO_ANNUL")
     public String getDsUrnFascicoloAnnul() {
-	return this.dsUrnFascicoloAnnul;
+        return this.dsUrnFascicoloAnnul;
     }
 
     public void setDsUrnFascicoloAnnul(String dsUrnFascicoloAnnul) {
-	this.dsUrnFascicoloAnnul = dsUrnFascicoloAnnul;
+        this.dsUrnFascicoloAnnul = dsUrnFascicoloAnnul;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FASCICOLO")
     public FasFascicolo getFasFascicolo() {
-	return this.fasFascicolo;
+        return this.fasFascicolo;
     }
 
     public void setFasFascicolo(FasFascicolo fasFascicolo) {
-	this.fasFascicolo = fasFascicolo;
+        this.fasFascicolo = fasFascicolo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_ELENCO_VERS_FASC")
     public ElvElencoVersFasc getElvElencoVersFasc() {
-	return this.elvElencoVersFasc;
+        return this.elvElencoVersFasc;
     }
 
     public void setElvElencoVersFasc(ElvElencoVersFasc elvElencoVerFasc) {
-	this.elvElencoVersFasc = elvElencoVerFasc;
+        this.elvElencoVersFasc = elvElencoVerFasc;
     }
 }

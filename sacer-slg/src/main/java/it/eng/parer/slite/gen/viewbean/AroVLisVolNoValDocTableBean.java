@@ -37,19 +37,19 @@ public class AroVLisVolNoValDocTableBean extends AbstractBaseTable<AroVLisVolNoV
     public static AroVLisVolNoValDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisVolNoValDocTableDescriptor();
 
     public AroVLisVolNoValDocTableBean() {
-	super();
+        super();
     }
 
     protected AroVLisVolNoValDocRowBean createRow() {
-	return new AroVLisVolNoValDocRowBean();
+        return new AroVLisVolNoValDocRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVLisVolNoValDocRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

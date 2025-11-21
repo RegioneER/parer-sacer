@@ -36,11 +36,11 @@ public class MonVCntDocNonversStrut implements Serializable {
 
     @EmbeddedId
     public MonVCntDocNonversStrutId getMonVCntDocNonversStrutId() {
-	return monVCntDocNonversStrutId;
+        return monVCntDocNonversStrutId;
     }
 
     public void setMonVCntDocNonversStrutId(MonVCntDocNonversStrutId monVCntDocNonversStrutId) {
-	this.monVCntDocNonversStrutId = monVCntDocNonversStrutId;
+        this.monVCntDocNonversStrutId = monVCntDocNonversStrutId;
     }
 
     public MonVCntDocNonversStrut() {/* Hibernate */
@@ -48,10 +48,10 @@ public class MonVCntDocNonversStrut implements Serializable {
 
     @Column(name = "NI_DOC_NONVERS")
     public BigDecimal getNiDocNonvers() {
-	return this.niDocNonvers;
+        return this.niDocNonvers;
     }
 
     public void setNiDocNonvers(BigDecimal niDocNonvers) {
-	this.niDocNonvers = niDocNonvers;
+        this.niDocNonvers = niDocNonvers;
     }
 }

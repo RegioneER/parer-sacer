@@ -57,47 +57,47 @@ public class AroVLisFascTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_FASCICOLO,
-		new ColumnDescriptor(COL_CD_KEY_FASCICOLO, Types.VARCHAR, 100, true));
-	map.put(COL_DT_APE_FASCICOLO,
-		new ColumnDescriptor(COL_DT_APE_FASCICOLO, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_CHIU_FASCICOLO,
-		new ColumnDescriptor(COL_DT_CHIU_FASCICOLO, Types.TIMESTAMP, 7, true));
-	map.put(COL_TS_INI_SES, new ColumnDescriptor(COL_TS_INI_SES, Types.TIMESTAMP, 11, true));
-	map.put(COL_ID_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_FASCICOLO,
-		new ColumnDescriptor(COL_NM_TIPO_FASCICOLO, Types.VARCHAR, 100, true));
-	map.put(COL_NI_UNITA_DOC, new ColumnDescriptor(COL_NI_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_TI_STATO_CONSERVAZIONE,
-		new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, true));
-	map.put(COL_TI_STATO_FASC_ELENCO_VERS,
-		new ColumnDescriptor(COL_TI_STATO_FASC_ELENCO_VERS, Types.VARCHAR, 50, true));
-	map.put(COL_DS_OGGETTO_FASCICOLO,
-		new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO, Types.VARCHAR, 4000, true));
-	map.put(COL_ID_VOCE_TITOL,
-		new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
-	map.put(COL_CD_COMPOSITO_VOCE_TITOL,
-		new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_TITOL, Types.VARCHAR, 100, true));
-	map.put(COL_TI_ESITO, new ColumnDescriptor(COL_TI_ESITO, Types.VARCHAR, 8, true));
-	map.put(COL_ID_USER_IAM_CORRENTE,
-		new ColumnDescriptor(COL_ID_USER_IAM_CORRENTE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_AA_FASCICOLO, new ColumnDescriptor(COL_AA_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_FASCICOLO,
+                new ColumnDescriptor(COL_CD_KEY_FASCICOLO, Types.VARCHAR, 100, true));
+        map.put(COL_DT_APE_FASCICOLO,
+                new ColumnDescriptor(COL_DT_APE_FASCICOLO, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_CHIU_FASCICOLO,
+                new ColumnDescriptor(COL_DT_CHIU_FASCICOLO, Types.TIMESTAMP, 7, true));
+        map.put(COL_TS_INI_SES, new ColumnDescriptor(COL_TS_INI_SES, Types.TIMESTAMP, 11, true));
+        map.put(COL_ID_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_ID_TIPO_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_FASCICOLO,
+                new ColumnDescriptor(COL_NM_TIPO_FASCICOLO, Types.VARCHAR, 100, true));
+        map.put(COL_NI_UNITA_DOC, new ColumnDescriptor(COL_NI_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_TI_STATO_CONSERVAZIONE,
+                new ColumnDescriptor(COL_TI_STATO_CONSERVAZIONE, Types.VARCHAR, 30, true));
+        map.put(COL_TI_STATO_FASC_ELENCO_VERS,
+                new ColumnDescriptor(COL_TI_STATO_FASC_ELENCO_VERS, Types.VARCHAR, 50, true));
+        map.put(COL_DS_OGGETTO_FASCICOLO,
+                new ColumnDescriptor(COL_DS_OGGETTO_FASCICOLO, Types.VARCHAR, 4000, true));
+        map.put(COL_ID_VOCE_TITOL,
+                new ColumnDescriptor(COL_ID_VOCE_TITOL, Types.DECIMAL, 22, true));
+        map.put(COL_CD_COMPOSITO_VOCE_TITOL,
+                new ColumnDescriptor(COL_CD_COMPOSITO_VOCE_TITOL, Types.VARCHAR, 100, true));
+        map.put(COL_TI_ESITO, new ColumnDescriptor(COL_TI_ESITO, Types.VARCHAR, 8, true));
+        map.put(COL_ID_USER_IAM_CORRENTE,
+                new ColumnDescriptor(COL_ID_USER_IAM_CORRENTE, Types.DECIMAL, 22, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

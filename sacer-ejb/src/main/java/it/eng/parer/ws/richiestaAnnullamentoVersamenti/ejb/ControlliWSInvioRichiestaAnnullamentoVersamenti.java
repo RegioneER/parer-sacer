@@ -41,7 +41,7 @@ import it.eng.parer.ws.utils.MessaggiWSBundle;
 public class ControlliWSInvioRichiestaAnnullamentoVersamenti {
 
     private static final Logger log = LoggerFactory
-	    .getLogger(ControlliWSInvioRichiestaAnnullamentoVersamenti.class);
+            .getLogger(ControlliWSInvioRichiestaAnnullamentoVersamenti.class);
     @PersistenceContext(unitName = "ParerJPA")
     private EntityManager entityManager;
 
@@ -56,52 +56,52 @@ public class ControlliWSInvioRichiestaAnnullamentoVersamenti {
      */
     @SuppressWarnings("unchecked")
     public RispostaControlli checkRichiestaEsistenteInvioFallito(Long idStrut, String codice) {
-	RispostaControlli rispostaControlli = new RispostaControlli();
-	rispostaControlli.setrBoolean(false);
-	try {
-	    String queryStr = "SELECT richAnnulVers FROM AroRichAnnulVers richAnnulVers "
-		    + "WHERE richAnnulVers.orgStrut.idStrut = :idStrut "
-		    + "AND richAnnulVers.cdRichAnnulVers = :codice "
-		    + "AND EXISTS (SELECT statoRichAnnulVers FROM AroStatoRichAnnulVers statoRichAnnulVers "
-		    + "WHERE richAnnulVers.idStatoRichAnnulVersCor = statoRichAnnulVers.idStatoRichAnnulVers "
-		    + "AND statoRichAnnulVers.tiStatoRichAnnulVers != 'INVIO_FALLITO') ";
+        RispostaControlli rispostaControlli = new RispostaControlli();
+        rispostaControlli.setrBoolean(false);
+        try {
+            String queryStr = "SELECT richAnnulVers FROM AroRichAnnulVers richAnnulVers "
+                    + "WHERE richAnnulVers.orgStrut.idStrut = :idStrut "
+                    + "AND richAnnulVers.cdRichAnnulVers = :codice "
+                    + "AND EXISTS (SELECT statoRichAnnulVers FROM AroStatoRichAnnulVers statoRichAnnulVers "
+                    + "WHERE richAnnulVers.idStatoRichAnnulVersCor = statoRichAnnulVers.idStatoRichAnnulVers "
+                    + "AND statoRichAnnulVers.tiStatoRichAnnulVers != 'INVIO_FALLITO') ";
 
-	    javax.persistence.Query query = entityManager.createQuery(queryStr);
-	    query.setParameter("idStrut", idStrut);
-	    query.setParameter("codice", codice);
+            javax.persistence.Query query = entityManager.createQuery(queryStr);
+            query.setParameter("idStrut", idStrut);
+            query.setParameter("codice", codice);
 
-	    List<AroRichAnnulVers> richAnnulVersList = query.getResultList();
-	    if (richAnnulVersList.isEmpty()) {
-		// OK, non esiste
-		rispostaControlli.setrBoolean(true);
-	    } else {
-		AroRichAnnulVers rich = richAnnulVersList.get(0);
-		AroStatoRichAnnulVers stato = entityManager.find(AroStatoRichAnnulVers.class,
-			rich.getIdStatoRichAnnulVersCor().longValue());
-		if (stato.getTiStatoRichAnnulVers()
-			.equals(CostantiDB.StatoRichAnnulVers.CHIUSA.name())) {
-		    rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_014);
-		    rispostaControlli.setDsErr(
-			    MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_014));
-		} else if (stato.getTiStatoRichAnnulVers()
-			.equals(CostantiDB.StatoRichAnnulVers.EVASA.name())) {
-		    rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_015);
-		    rispostaControlli.setDsErr(
-			    MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_015));
-		} else {
-		    rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_009);
-		    rispostaControlli.setDsErr(
-			    MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_009));
-		}
-	    }
-	} catch (Exception e) {
-	    rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
-	    rispostaControlli
-		    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
-	    log.error(
-		    "Eccezione nella lettura della tabella delle richieste di annullamento versamento ",
-		    e);
-	}
-	return rispostaControlli;
+            List<AroRichAnnulVers> richAnnulVersList = query.getResultList();
+            if (richAnnulVersList.isEmpty()) {
+                // OK, non esiste
+                rispostaControlli.setrBoolean(true);
+            } else {
+                AroRichAnnulVers rich = richAnnulVersList.get(0);
+                AroStatoRichAnnulVers stato = entityManager.find(AroStatoRichAnnulVers.class,
+                        rich.getIdStatoRichAnnulVersCor().longValue());
+                if (stato.getTiStatoRichAnnulVers()
+                        .equals(CostantiDB.StatoRichAnnulVers.CHIUSA.name())) {
+                    rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_014);
+                    rispostaControlli.setDsErr(
+                            MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_014));
+                } else if (stato.getTiStatoRichAnnulVers()
+                        .equals(CostantiDB.StatoRichAnnulVers.EVASA.name())) {
+                    rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_015);
+                    rispostaControlli.setDsErr(
+                            MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_015));
+                } else {
+                    rispostaControlli.setCodErr(MessaggiWSBundle.RICH_ANN_VERS_009);
+                    rispostaControlli.setDsErr(
+                            MessaggiWSBundle.getString(MessaggiWSBundle.RICH_ANN_VERS_009));
+                }
+            }
+        } catch (Exception e) {
+            rispostaControlli.setCodErr(MessaggiWSBundle.ERR_666);
+            rispostaControlli
+                    .setDsErr(MessaggiWSBundle.getString(MessaggiWSBundle.ERR_666, e.getMessage()));
+            log.error(
+                    "Eccezione nella lettura della tabella delle richieste di annullamento versamento ",
+                    e);
+        }
+        return rispostaControlli;
     }
 }

@@ -42,39 +42,39 @@ public class UsrVAbilAmbSacerXente implements Serializable {
 
     @Column(name = "DS_ORGANIZ")
     public String getDsOrganiz() {
-	return this.dsOrganiz;
+        return this.dsOrganiz;
     }
 
     public void setDsOrganiz(String dsOrganiz) {
-	this.dsOrganiz = dsOrganiz;
+        this.dsOrganiz = dsOrganiz;
     }
 
     @Column(name = "NM_APPLIC")
     public String getNmApplic() {
-	return this.nmApplic;
+        return this.nmApplic;
     }
 
     public void setNmApplic(String nmApplic) {
-	this.nmApplic = nmApplic;
+        this.nmApplic = nmApplic;
     }
 
     @Column(name = "NM_ORGANIZ")
     public String getNmOrganiz() {
-	return this.nmOrganiz;
+        return this.nmOrganiz;
     }
 
     public void setNmOrganiz(String nmOrganiz) {
-	this.nmOrganiz = nmOrganiz;
+        this.nmOrganiz = nmOrganiz;
     }
 
     private UsrVAbilAmbSacerXenteId usrVAbilAmbSacerXenteId;
 
     @EmbeddedId()
     public UsrVAbilAmbSacerXenteId getUsrVAbilAmbSacerXenteId() {
-	return usrVAbilAmbSacerXenteId;
+        return usrVAbilAmbSacerXenteId;
     }
 
     public void setUsrVAbilAmbSacerXenteId(UsrVAbilAmbSacerXenteId usrVAbilAmbSacerXenteId) {
-	this.usrVAbilAmbSacerXenteId = usrVAbilAmbSacerXenteId;
+        this.usrVAbilAmbSacerXenteId = usrVAbilAmbSacerXenteId;
     }
 }

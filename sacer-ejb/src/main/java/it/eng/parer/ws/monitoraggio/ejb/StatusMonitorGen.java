@@ -55,60 +55,60 @@ public class StatusMonitorGen {
     ControlliWS controlliWS;
 
     public void calcolaStatus(RispostaWSStatusMonitor rispostaWs, StatusMonExt mon) {
-	// verifica se sono abilitato a chiamare questa funzione
-	RispostaControlli rc = controlliWS.checkAuthWSNoOrg(mon.getUtente(), mon.getDescrizione());
-	if (!rc.isrBoolean()) {
-	    rispostaWs.setEsitoWsError(rc.getCodErr(), rc.getDsErr());
-	    return;
-	}
+        // verifica se sono abilitato a chiamare questa funzione
+        RispostaControlli rc = controlliWS.checkAuthWSNoOrg(mon.getUtente(), mon.getDescrizione());
+        if (!rc.isrBoolean()) {
+            rispostaWs.setEsitoWsError(rc.getCodErr(), rc.getDsErr());
+            return;
+        }
 
-	// determino il timestamp dell'ultima esecuzione oppure 24 ore da questo istante
-	// se non è mai stato eseguito.
-	// la data mi serve per verificare se dall'ultima verifica dello stato
-	// si sono verificati degli allarmi su un job
-	Date ultimaChiamataDelWs = null;
-	rc = controlliMonitor.leggiUltimaChiamataWS();
-	if (rc.isrBoolean()) {
-	    ultimaChiamataDelWs = rc.getrDate();
-	} else {
-	    rispostaWs.setEsitoWsError(rc.getCodErr(), rc.getDsErr());
-	    return;
-	}
+        // determino il timestamp dell'ultima esecuzione oppure 24 ore da questo istante
+        // se non è mai stato eseguito.
+        // la data mi serve per verificare se dall'ultima verifica dello stato
+        // si sono verificati degli allarmi su un job
+        Date ultimaChiamataDelWs = null;
+        rc = controlliMonitor.leggiUltimaChiamataWS();
+        if (rc.isrBoolean()) {
+            ultimaChiamataDelWs = rc.getrDate();
+        } else {
+            rispostaWs.setEsitoWsError(rc.getCodErr(), rc.getDsErr());
+            return;
+        }
 
-	HostMonitor myEsito = rispostaWs.getIstanzaEsito();
-	// iniziamo con il monitoraggio dei job
-	List<MonitorJob> tmpLstJob = new ArrayList<>();
-	jobStatusMonitor.calcolaStatoJob(rispostaWs, tmpLstJob, ultimaChiamataDelWs);
-	//
-	List<MonitorAltro> tmpLstAltro = new ArrayList<>();
-	if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
-	    // monitoraggio degli altri parametri
-	    altriStatusMonitor.calcolaStatoDatabase(tmpLstAltro);
-	    // "calcolo" stato della DLQ differenziando per tipo payload
-	    altriStatusMonitor.calcolaStatoCodaMorta(tmpLstAltro);
-	    // verifica presenza record da elaborare "più vecchi di" su ARO_INDICE_AIP_UD_DA_ELAB
-	    altriStatusMonitor.calcolaStatoIndiceAipUdInCoda(rispostaWs, tmpLstAltro);
-	    // presenza di almeno una data di versamento con stato = ARCHIVIATA e con il numero di
-	    // file definito
-	    // diverso dal numero di file archiviati
-	    altriStatusMonitor.calcolaTpiNiPathFileArk(rispostaWs, tmpLstAltro);
-	    // presenza di almeno una data con stato = ARCHIVIATA_ERR
-	    altriStatusMonitor.calcolaTpiArkErr(rispostaWs, tmpLstAltro);
-	    // presenza di almeno una data antecedente a quella corrente, con stato = REGISTRATA o
-	    // DA_ARCHIVIARE
-	    // per la quale sia presente una data successiva con stato ARCHIVIATA
-	    altriStatusMonitor.calcolaTpiDataNotArk(rispostaWs, tmpLstAltro);
-	}
-	//
-	if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
-	    // tutto OK, aggancio all'oggetto di risposta i due array di parametri
-	    if (!tmpLstJob.isEmpty()) {
-		myEsito.setJob(tmpLstJob);
-	    }
-	    if (!tmpLstAltro.isEmpty()) {
-		myEsito.setAltri(tmpLstAltro);
-	    }
-	}
+        HostMonitor myEsito = rispostaWs.getIstanzaEsito();
+        // iniziamo con il monitoraggio dei job
+        List<MonitorJob> tmpLstJob = new ArrayList<>();
+        jobStatusMonitor.calcolaStatoJob(rispostaWs, tmpLstJob, ultimaChiamataDelWs);
+        //
+        List<MonitorAltro> tmpLstAltro = new ArrayList<>();
+        if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
+            // monitoraggio degli altri parametri
+            altriStatusMonitor.calcolaStatoDatabase(tmpLstAltro);
+            // "calcolo" stato della DLQ differenziando per tipo payload
+            altriStatusMonitor.calcolaStatoCodaMorta(tmpLstAltro);
+            // verifica presenza record da elaborare "più vecchi di" su ARO_INDICE_AIP_UD_DA_ELAB
+            altriStatusMonitor.calcolaStatoIndiceAipUdInCoda(rispostaWs, tmpLstAltro);
+            // presenza di almeno una data di versamento con stato = ARCHIVIATA e con il numero di
+            // file definito
+            // diverso dal numero di file archiviati
+            altriStatusMonitor.calcolaTpiNiPathFileArk(rispostaWs, tmpLstAltro);
+            // presenza di almeno una data con stato = ARCHIVIATA_ERR
+            altriStatusMonitor.calcolaTpiArkErr(rispostaWs, tmpLstAltro);
+            // presenza di almeno una data antecedente a quella corrente, con stato = REGISTRATA o
+            // DA_ARCHIVIARE
+            // per la quale sia presente una data successiva con stato ARCHIVIATA
+            altriStatusMonitor.calcolaTpiDataNotArk(rispostaWs, tmpLstAltro);
+        }
+        //
+        if (rispostaWs.getSeverity() != IRispostaWS.SeverityEnum.ERROR) {
+            // tutto OK, aggancio all'oggetto di risposta i due array di parametri
+            if (!tmpLstJob.isEmpty()) {
+                myEsito.setJob(tmpLstJob);
+            }
+            if (!tmpLstAltro.isEmpty()) {
+                myEsito.setAltri(tmpLstAltro);
+            }
+        }
     }
 
 }

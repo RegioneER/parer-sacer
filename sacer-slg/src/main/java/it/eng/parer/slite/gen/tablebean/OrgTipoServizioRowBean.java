@@ -35,112 +35,112 @@ public class OrgTipoServizioRowBean extends BaseRow implements JEEBaseRowInterfa
     public static OrgTipoServizioTableDescriptor TABLE_DESCRIPTOR = new OrgTipoServizioTableDescriptor();
 
     public OrgTipoServizioRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdTipoServizio() {
-	return getBigDecimal("id_tipo_servizio");
+        return getBigDecimal("id_tipo_servizio");
     }
 
     public void setIdTipoServizio(BigDecimal idTipoServizio) {
-	setObject("id_tipo_servizio", idTipoServizio);
+        setObject("id_tipo_servizio", idTipoServizio);
     }
 
     public String getCdTipoServizio() {
-	return getString("cd_tipo_servizio");
+        return getString("cd_tipo_servizio");
     }
 
     public void setCdTipoServizio(String cdTipoServizio) {
-	setObject("cd_tipo_servizio", cdTipoServizio);
+        setObject("cd_tipo_servizio", cdTipoServizio);
     }
 
     public String getDsTipoServizio() {
-	return getString("ds_tipo_servizio");
+        return getString("ds_tipo_servizio");
     }
 
     public void setDsTipoServizio(String dsTipoServizio) {
-	setObject("ds_tipo_servizio", dsTipoServizio);
+        setObject("ds_tipo_servizio", dsTipoServizio);
     }
 
     public String getTiClasseTipoServizio() {
-	return getString("ti_classe_tipo_servizio");
+        return getString("ti_classe_tipo_servizio");
     }
 
     public void setTiClasseTipoServizio(String tiClasseTipoServizio) {
-	setObject("ti_classe_tipo_servizio", tiClasseTipoServizio);
+        setObject("ti_classe_tipo_servizio", tiClasseTipoServizio);
     }
 
     public String getTipoFatturazione() {
-	return getString("tipo_fatturazione");
+        return getString("tipo_fatturazione");
     }
 
     public void setTipoFatturazione(String tipoFatturazione) {
-	setObject("tipo_fatturazione", tipoFatturazione);
+        setObject("tipo_fatturazione", tipoFatturazione);
     }
 
     public String getGgFatturazione() {
-	return getString("gg_fatturazione");
+        return getString("gg_fatturazione");
     }
 
     public void setGgFatturazione(String ggFatturazione) {
-	setObject("gg_fatturazione", ggFatturazione);
+        setObject("gg_fatturazione", ggFatturazione);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	OrgTipoServizio entity = (OrgTipoServizio) obj;
+        OrgTipoServizio entity = (OrgTipoServizio) obj;
 
-	this.setIdTipoServizio(entity.getIdTipoServizio() == null ? null
-		: BigDecimal.valueOf(entity.getIdTipoServizio()));
-	this.setCdTipoServizio(entity.getCdTipoServizio());
-	this.setDsTipoServizio(entity.getDsTipoServizio());
-	this.setTiClasseTipoServizio(entity.getTiClasseTipoServizio());
-	this.setTipoFatturazione(entity.getTipoFatturazione());
-	this.setGgFatturazione(entity.getGgFatturazione());
+        this.setIdTipoServizio(entity.getIdTipoServizio() == null ? null
+                : BigDecimal.valueOf(entity.getIdTipoServizio()));
+        this.setCdTipoServizio(entity.getCdTipoServizio());
+        this.setDsTipoServizio(entity.getDsTipoServizio());
+        this.setTiClasseTipoServizio(entity.getTiClasseTipoServizio());
+        this.setTipoFatturazione(entity.getTipoFatturazione());
+        this.setGgFatturazione(entity.getGgFatturazione());
     }
 
     @Override
     public OrgTipoServizio rowBeanToEntity() {
-	OrgTipoServizio entity = new OrgTipoServizio();
-	if (this.getIdTipoServizio() != null) {
-	    entity.setIdTipoServizio(this.getIdTipoServizio().longValue());
-	}
-	entity.setCdTipoServizio(this.getCdTipoServizio());
-	entity.setDsTipoServizio(this.getDsTipoServizio());
-	entity.setTiClasseTipoServizio(this.getTiClasseTipoServizio());
-	entity.setTipoFatturazione(this.getTipoFatturazione());
-	entity.setGgFatturazione(this.getGgFatturazione());
-	return entity;
+        OrgTipoServizio entity = new OrgTipoServizio();
+        if (this.getIdTipoServizio() != null) {
+            entity.setIdTipoServizio(this.getIdTipoServizio().longValue());
+        }
+        entity.setCdTipoServizio(this.getCdTipoServizio());
+        entity.setDsTipoServizio(this.getDsTipoServizio());
+        entity.setTiClasseTipoServizio(this.getTiClasseTipoServizio());
+        entity.setTipoFatturazione(this.getTipoFatturazione());
+        entity.setGgFatturazione(this.getGgFatturazione());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

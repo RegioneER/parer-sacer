@@ -36,281 +36,281 @@ public class DecVLisValVoceTitolRowBean extends BaseRow implements JEEBaseRowInt
     public static DecVLisValVoceTitolTableDescriptor TABLE_DESCRIPTOR = new DecVLisValVoceTitolTableDescriptor();
 
     public DecVLisValVoceTitolRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdValVoceTitol() {
-	return getBigDecimal("id_val_voce_titol");
+        return getBigDecimal("id_val_voce_titol");
     }
 
     public void setIdValVoceTitol(BigDecimal idValVoceTitol) {
-	setObject("id_val_voce_titol", idValVoceTitol);
+        setObject("id_val_voce_titol", idValVoceTitol);
     }
 
     public BigDecimal getIdVoceTitol() {
-	return getBigDecimal("id_voce_titol");
+        return getBigDecimal("id_voce_titol");
     }
 
     public void setIdVoceTitol(BigDecimal idVoceTitol) {
-	setObject("id_voce_titol", idVoceTitol);
+        setObject("id_voce_titol", idVoceTitol);
     }
 
     public Timestamp getDtIniVal() {
-	return getTimestamp("dt_ini_val");
+        return getTimestamp("dt_ini_val");
     }
 
     public void setDtIniVal(Timestamp dtIniVal) {
-	setObject("dt_ini_val", dtIniVal);
+        setObject("dt_ini_val", dtIniVal);
     }
 
     public Timestamp getDtFinVal() {
-	return getTimestamp("dt_fin_val");
+        return getTimestamp("dt_fin_val");
     }
 
     public void setDtFinVal(Timestamp dtFinVal) {
-	setObject("dt_fin_val", dtFinVal);
+        setObject("dt_fin_val", dtFinVal);
     }
 
     public String getDsVoceTitol() {
-	return getString("ds_voce_titol");
+        return getString("ds_voce_titol");
     }
 
     public void setDsVoceTitol(String dsVoceTitol) {
-	setObject("ds_voce_titol", dsVoceTitol);
+        setObject("ds_voce_titol", dsVoceTitol);
     }
 
     public String getFlUsoClassif() {
-	return getString("fl_uso_classif");
+        return getString("fl_uso_classif");
     }
 
     public void setFlUsoClassif(String flUsoClassif) {
-	setObject("fl_uso_classif", flUsoClassif);
+        setObject("fl_uso_classif", flUsoClassif);
     }
 
     public BigDecimal getNiAnniConserv() {
-	return getBigDecimal("ni_anni_conserv");
+        return getBigDecimal("ni_anni_conserv");
     }
 
     public void setNiAnniConserv(BigDecimal niAnniConserv) {
-	setObject("ni_anni_conserv", niAnniConserv);
+        setObject("ni_anni_conserv", niAnniConserv);
     }
 
     public String getDlNote() {
-	return getString("dl_note");
+        return getString("dl_note");
     }
 
     public void setDlNote(String dlNote) {
-	setObject("dl_note", dlNote);
+        setObject("dl_note", dlNote);
     }
 
     public String getCdRegistroDocInvioIni() {
-	return getString("cd_registro_doc_invio_ini");
+        return getString("cd_registro_doc_invio_ini");
     }
 
     public void setCdRegistroDocInvioIni(String cdRegistroDocInvioIni) {
-	setObject("cd_registro_doc_invio_ini", cdRegistroDocInvioIni);
+        setObject("cd_registro_doc_invio_ini", cdRegistroDocInvioIni);
     }
 
     public BigDecimal getAaDocInvioIni() {
-	return getBigDecimal("aa_doc_invio_ini");
+        return getBigDecimal("aa_doc_invio_ini");
     }
 
     public void setAaDocInvioIni(BigDecimal aaDocInvioIni) {
-	setObject("aa_doc_invio_ini", aaDocInvioIni);
+        setObject("aa_doc_invio_ini", aaDocInvioIni);
     }
 
     public String getCdDocInvioIni() {
-	return getString("cd_doc_invio_ini");
+        return getString("cd_doc_invio_ini");
     }
 
     public void setCdDocInvioIni(String cdDocInvioIni) {
-	setObject("cd_doc_invio_ini", cdDocInvioIni);
+        setObject("cd_doc_invio_ini", cdDocInvioIni);
     }
 
     public Timestamp getDtDocInvioIni() {
-	return getTimestamp("dt_doc_invio_ini");
+        return getTimestamp("dt_doc_invio_ini");
     }
 
     public void setDtDocInvioIni(Timestamp dtDocInvioIni) {
-	setObject("dt_doc_invio_ini", dtDocInvioIni);
+        setObject("dt_doc_invio_ini", dtDocInvioIni);
     }
 
     public String getTiOperTitolIni() {
-	return getString("ti_oper_titol_ini");
+        return getString("ti_oper_titol_ini");
     }
 
     public void setTiOperTitolIni(String tiOperTitolIni) {
-	setObject("ti_oper_titol_ini", tiOperTitolIni);
+        setObject("ti_oper_titol_ini", tiOperTitolIni);
     }
 
     public String getTiOperVoceTitolIni() {
-	return getString("ti_oper_voce_titol_ini");
+        return getString("ti_oper_voce_titol_ini");
     }
 
     public void setTiOperVoceTitolIni(String tiOperVoceTitolIni) {
-	setObject("ti_oper_voce_titol_ini", tiOperVoceTitolIni);
+        setObject("ti_oper_voce_titol_ini", tiOperVoceTitolIni);
     }
 
     public Timestamp getDtValOperVoceTitolIni() {
-	return getTimestamp("dt_val_oper_voce_titol_ini");
+        return getTimestamp("dt_val_oper_voce_titol_ini");
     }
 
     public void setDtValOperVoceTitolIni(Timestamp dtValOperVoceTitolIni) {
-	setObject("dt_val_oper_voce_titol_ini", dtValOperVoceTitolIni);
+        setObject("dt_val_oper_voce_titol_ini", dtValOperVoceTitolIni);
     }
 
     public String getCdRegistroDocInvioFin() {
-	return getString("cd_registro_doc_invio_fin");
+        return getString("cd_registro_doc_invio_fin");
     }
 
     public void setCdRegistroDocInvioFin(String cdRegistroDocInvioFin) {
-	setObject("cd_registro_doc_invio_fin", cdRegistroDocInvioFin);
+        setObject("cd_registro_doc_invio_fin", cdRegistroDocInvioFin);
     }
 
     public BigDecimal getAaDocInvioFin() {
-	return getBigDecimal("aa_doc_invio_fin");
+        return getBigDecimal("aa_doc_invio_fin");
     }
 
     public void setAaDocInvioFin(BigDecimal aaDocInvioFin) {
-	setObject("aa_doc_invio_fin", aaDocInvioFin);
+        setObject("aa_doc_invio_fin", aaDocInvioFin);
     }
 
     public String getCdDocInvioFin() {
-	return getString("cd_doc_invio_fin");
+        return getString("cd_doc_invio_fin");
     }
 
     public void setCdDocInvioFin(String cdDocInvioFin) {
-	setObject("cd_doc_invio_fin", cdDocInvioFin);
+        setObject("cd_doc_invio_fin", cdDocInvioFin);
     }
 
     public Timestamp getDtDocInvioFin() {
-	return getTimestamp("dt_doc_invio_fin");
+        return getTimestamp("dt_doc_invio_fin");
     }
 
     public void setDtDocInvioFin(Timestamp dtDocInvioFin) {
-	setObject("dt_doc_invio_fin", dtDocInvioFin);
+        setObject("dt_doc_invio_fin", dtDocInvioFin);
     }
 
     public String getTiOperTitolFin() {
-	return getString("ti_oper_titol_fin");
+        return getString("ti_oper_titol_fin");
     }
 
     public void setTiOperTitolFin(String tiOperTitolFin) {
-	setObject("ti_oper_titol_fin", tiOperTitolFin);
+        setObject("ti_oper_titol_fin", tiOperTitolFin);
     }
 
     public String getTiOperVoceTitolFin() {
-	return getString("ti_oper_voce_titol_fin");
+        return getString("ti_oper_voce_titol_fin");
     }
 
     public void setTiOperVoceTitolFin(String tiOperVoceTitolFin) {
-	setObject("ti_oper_voce_titol_fin", tiOperVoceTitolFin);
+        setObject("ti_oper_voce_titol_fin", tiOperVoceTitolFin);
     }
 
     public Timestamp getDtValOperVoceTitolFin() {
-	return getTimestamp("dt_val_oper_voce_titol_fin");
+        return getTimestamp("dt_val_oper_voce_titol_fin");
     }
 
     public void setDtValOperVoceTitolFin(Timestamp dtValOperVoceTitolFin) {
-	setObject("dt_val_oper_voce_titol_fin", dtValOperVoceTitolFin);
+        setObject("dt_val_oper_voce_titol_fin", dtValOperVoceTitolFin);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	DecVLisValVoceTitol entity = (DecVLisValVoceTitol) obj;
-	this.setIdValVoceTitol(entity.getIdValVoceTitol());
-	this.setIdVoceTitol(entity.getIdVoceTitol());
-	if (entity.getDtIniVal() != null) {
-	    this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
-	}
-	if (entity.getDtFinVal() != null) {
-	    this.setDtFinVal(new Timestamp(entity.getDtFinVal().getTime()));
-	}
-	this.setDsVoceTitol(entity.getDsVoceTitol());
-	this.setFlUsoClassif(entity.getFlUsoClassif());
-	this.setNiAnniConserv(entity.getNiAnniConserv());
-	this.setDlNote(entity.getDlNote());
-	this.setCdRegistroDocInvioIni(entity.getCdRegistroDocInvioIni());
-	this.setAaDocInvioIni(entity.getAaDocInvioIni());
-	this.setCdDocInvioIni(entity.getCdDocInvioIni());
-	if (entity.getDtDocInvioIni() != null) {
-	    this.setDtDocInvioIni(new Timestamp(entity.getDtDocInvioIni().getTime()));
-	}
-	this.setTiOperTitolIni(entity.getTiOperTitolIni());
-	this.setTiOperVoceTitolIni(entity.getTiOperVoceTitolIni());
-	if (entity.getDtValOperVoceTitolIni() != null) {
-	    this.setDtValOperVoceTitolIni(
-		    new Timestamp(entity.getDtValOperVoceTitolIni().getTime()));
-	}
-	this.setCdRegistroDocInvioFin(entity.getCdRegistroDocInvioFin());
-	this.setAaDocInvioFin(entity.getAaDocInvioFin());
-	this.setCdDocInvioFin(entity.getCdDocInvioFin());
-	if (entity.getDtDocInvioFin() != null) {
-	    this.setDtDocInvioFin(new Timestamp(entity.getDtDocInvioFin().getTime()));
-	}
-	this.setTiOperTitolFin(entity.getTiOperTitolFin());
-	this.setTiOperVoceTitolFin(entity.getTiOperVoceTitolFin());
-	if (entity.getDtValOperVoceTitolFin() != null) {
-	    this.setDtValOperVoceTitolFin(
-		    new Timestamp(entity.getDtValOperVoceTitolFin().getTime()));
-	}
+        DecVLisValVoceTitol entity = (DecVLisValVoceTitol) obj;
+        this.setIdValVoceTitol(entity.getIdValVoceTitol());
+        this.setIdVoceTitol(entity.getIdVoceTitol());
+        if (entity.getDtIniVal() != null) {
+            this.setDtIniVal(new Timestamp(entity.getDtIniVal().getTime()));
+        }
+        if (entity.getDtFinVal() != null) {
+            this.setDtFinVal(new Timestamp(entity.getDtFinVal().getTime()));
+        }
+        this.setDsVoceTitol(entity.getDsVoceTitol());
+        this.setFlUsoClassif(entity.getFlUsoClassif());
+        this.setNiAnniConserv(entity.getNiAnniConserv());
+        this.setDlNote(entity.getDlNote());
+        this.setCdRegistroDocInvioIni(entity.getCdRegistroDocInvioIni());
+        this.setAaDocInvioIni(entity.getAaDocInvioIni());
+        this.setCdDocInvioIni(entity.getCdDocInvioIni());
+        if (entity.getDtDocInvioIni() != null) {
+            this.setDtDocInvioIni(new Timestamp(entity.getDtDocInvioIni().getTime()));
+        }
+        this.setTiOperTitolIni(entity.getTiOperTitolIni());
+        this.setTiOperVoceTitolIni(entity.getTiOperVoceTitolIni());
+        if (entity.getDtValOperVoceTitolIni() != null) {
+            this.setDtValOperVoceTitolIni(
+                    new Timestamp(entity.getDtValOperVoceTitolIni().getTime()));
+        }
+        this.setCdRegistroDocInvioFin(entity.getCdRegistroDocInvioFin());
+        this.setAaDocInvioFin(entity.getAaDocInvioFin());
+        this.setCdDocInvioFin(entity.getCdDocInvioFin());
+        if (entity.getDtDocInvioFin() != null) {
+            this.setDtDocInvioFin(new Timestamp(entity.getDtDocInvioFin().getTime()));
+        }
+        this.setTiOperTitolFin(entity.getTiOperTitolFin());
+        this.setTiOperVoceTitolFin(entity.getTiOperVoceTitolFin());
+        if (entity.getDtValOperVoceTitolFin() != null) {
+            this.setDtValOperVoceTitolFin(
+                    new Timestamp(entity.getDtValOperVoceTitolFin().getTime()));
+        }
     }
 
     @Override
     public DecVLisValVoceTitol rowBeanToEntity() {
-	DecVLisValVoceTitol entity = new DecVLisValVoceTitol();
-	entity.setIdValVoceTitol(this.getIdValVoceTitol());
-	entity.setIdVoceTitol(this.getIdVoceTitol());
-	entity.setDtIniVal(this.getDtIniVal());
-	entity.setDtFinVal(this.getDtFinVal());
-	entity.setDsVoceTitol(this.getDsVoceTitol());
-	entity.setFlUsoClassif(this.getFlUsoClassif());
-	entity.setNiAnniConserv(this.getNiAnniConserv());
-	entity.setDlNote(this.getDlNote());
-	entity.setCdRegistroDocInvioIni(this.getCdRegistroDocInvioIni());
-	entity.setAaDocInvioIni(this.getAaDocInvioIni());
-	entity.setCdDocInvioIni(this.getCdDocInvioIni());
-	entity.setDtDocInvioIni(this.getDtDocInvioIni());
-	entity.setTiOperTitolIni(this.getTiOperTitolIni());
-	entity.setTiOperVoceTitolIni(this.getTiOperVoceTitolIni());
-	entity.setDtValOperVoceTitolIni(this.getDtValOperVoceTitolIni());
-	entity.setCdRegistroDocInvioFin(this.getCdRegistroDocInvioFin());
-	entity.setAaDocInvioFin(this.getAaDocInvioFin());
-	entity.setCdDocInvioFin(this.getCdDocInvioFin());
-	entity.setDtDocInvioFin(this.getDtDocInvioFin());
-	entity.setTiOperTitolFin(this.getTiOperTitolFin());
-	entity.setTiOperVoceTitolFin(this.getTiOperVoceTitolFin());
-	entity.setDtValOperVoceTitolFin(this.getDtValOperVoceTitolFin());
-	return entity;
+        DecVLisValVoceTitol entity = new DecVLisValVoceTitol();
+        entity.setIdValVoceTitol(this.getIdValVoceTitol());
+        entity.setIdVoceTitol(this.getIdVoceTitol());
+        entity.setDtIniVal(this.getDtIniVal());
+        entity.setDtFinVal(this.getDtFinVal());
+        entity.setDsVoceTitol(this.getDsVoceTitol());
+        entity.setFlUsoClassif(this.getFlUsoClassif());
+        entity.setNiAnniConserv(this.getNiAnniConserv());
+        entity.setDlNote(this.getDlNote());
+        entity.setCdRegistroDocInvioIni(this.getCdRegistroDocInvioIni());
+        entity.setAaDocInvioIni(this.getAaDocInvioIni());
+        entity.setCdDocInvioIni(this.getCdDocInvioIni());
+        entity.setDtDocInvioIni(this.getDtDocInvioIni());
+        entity.setTiOperTitolIni(this.getTiOperTitolIni());
+        entity.setTiOperVoceTitolIni(this.getTiOperVoceTitolIni());
+        entity.setDtValOperVoceTitolIni(this.getDtValOperVoceTitolIni());
+        entity.setCdRegistroDocInvioFin(this.getCdRegistroDocInvioFin());
+        entity.setAaDocInvioFin(this.getAaDocInvioFin());
+        entity.setCdDocInvioFin(this.getCdDocInvioFin());
+        entity.setDtDocInvioFin(this.getDtDocInvioFin());
+        entity.setTiOperTitolFin(this.getTiOperTitolFin());
+        entity.setTiOperVoceTitolFin(this.getTiOperVoceTitolFin());
+        entity.setDtValOperVoceTitolFin(this.getDtValOperVoceTitolFin());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

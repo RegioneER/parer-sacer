@@ -37,19 +37,19 @@ public class LogVLisIniSchedJobTableBean extends AbstractBaseTable<LogVLisIniSch
     public static LogVLisIniSchedJobTableDescriptor TABLE_DESCRIPTOR = new LogVLisIniSchedJobTableDescriptor();
 
     public LogVLisIniSchedJobTableBean() {
-	super();
+        super();
     }
 
     protected LogVLisIniSchedJobRowBean createRow() {
-	return new LogVLisIniSchedJobRowBean();
+        return new LogVLisIniSchedJobRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<LogVLisIniSchedJobRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -42,102 +42,102 @@ public class SottoStruttureHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(SottoStruttureHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), SottoStruttureHelperTest.class,
-			SottoStruttureHelper.class, Constants.class));
+        return HelperTest.createEnterpriseArchive(SottoStruttureHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), SottoStruttureHelperTest.class,
+                        SottoStruttureHelper.class, Constants.class));
     }
 
     @Test
     void getOrgSubStrut_queryIsOk() {
-	String nmSubStrut = aString();
-	BigDecimal idStrut = aBigDecimal();
-	helper.getOrgSubStrut(nmSubStrut, idStrut);
-	assertTrue(true);
+        String nmSubStrut = aString();
+        BigDecimal idStrut = aBigDecimal();
+        helper.getOrgSubStrut(nmSubStrut, idStrut);
+        assertTrue(true);
     }
 
     @Test
     void countUdInSubStrut_queryIsOk() {
-	BigDecimal idSubStrut = aBigDecimal();
-	helper.countUdInSubStrut(idSubStrut);
-	assertTrue(true);
+        BigDecimal idSubStrut = aBigDecimal();
+        helper.countUdInSubStrut(idSubStrut);
+        assertTrue(true);
     }
 
     @Test
     void getOrgRegolaValSubStrut_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	BigDecimal idSubStrut = BigDecimal.ZERO;
-	helper.getOrgRegolaValSubStrut(idStrut, idSubStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        BigDecimal idSubStrut = BigDecimal.ZERO;
+        helper.getOrgRegolaValSubStrut(idStrut, idSubStrut);
+        assertTrue(true);
     }
 
     @Test
     void getOrgRegolaSubStrut_3args_queryIsOk() {
-	BigDecimal id = aBigDecimal();
-	boolean filterValid = false;
-	for (Constants.TipoDato tipoDato : Constants.TipoDato.values()) {
-	    helper.getOrgRegolaSubStrut(id, tipoDato, filterValid);
-	    assertTrue(true);
-	}
+        BigDecimal id = aBigDecimal();
+        boolean filterValid = false;
+        for (Constants.TipoDato tipoDato : Constants.TipoDato.values()) {
+            helper.getOrgRegolaSubStrut(id, tipoDato, filterValid);
+            assertTrue(true);
+        }
     }
 
     @Test
     void getOrgCampoValSubStrut_queryIsOk() {
-	BigDecimal idRegolaValSubStrut = aBigDecimal();
-	helper.getOrgCampoValSubStrut(idRegolaValSubStrut);
-	assertTrue(true);
+        BigDecimal idRegolaValSubStrut = aBigDecimal();
+        helper.getOrgCampoValSubStrut(idRegolaValSubStrut);
+        assertTrue(true);
     }
 
     @Test
     void existOrgRegolaSubStrut_5args_queryIsOk() {
-	BigDecimal idRegolaValSubStrut = aBigDecimal();
-	BigDecimal idTipoUnitaDoc = aBigDecimal();
-	BigDecimal idTipoDoc = aBigDecimal();
-	Date dtIstituz = todayTs();
-	Date dtSoppres = tomorrowTs();
-	helper.existOrgRegolaSubStrut(idRegolaValSubStrut, idTipoUnitaDoc, idTipoDoc, dtIstituz,
-		dtSoppres);
-	assertTrue(true);
+        BigDecimal idRegolaValSubStrut = aBigDecimal();
+        BigDecimal idTipoUnitaDoc = aBigDecimal();
+        BigDecimal idTipoDoc = aBigDecimal();
+        Date dtIstituz = todayTs();
+        Date dtSoppres = tomorrowTs();
+        helper.existOrgRegolaSubStrut(idRegolaValSubStrut, idTipoUnitaDoc, idTipoDoc, dtIstituz,
+                dtSoppres);
+        assertTrue(true);
     }
 
     @Test
     void existOrgRegolaSubStrut_3args_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	String nmTipoUnitaDoc = aString();
-	String nmTipoDoc = aString();
-	helper.existOrgRegolaSubStrut(idStrut, nmTipoUnitaDoc, nmTipoDoc);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        String nmTipoUnitaDoc = aString();
+        String nmTipoDoc = aString();
+        helper.existOrgRegolaSubStrut(idStrut, nmTipoUnitaDoc, nmTipoDoc);
+        assertTrue(true);
     }
 
     @Test
     void getOrgRegolaSubStrut_5args_queryIsOk() {
-	Long idStrut = aLong();
-	String nmTipoUnitaDoc = aString();
-	String nmTipoDoc = aString();
-	Date dtIstituz = todayTs();
-	Date dtSoppres = tomorrowTs();
-	helper.getOrgRegolaSubStrut(idStrut, nmTipoUnitaDoc, nmTipoDoc, dtIstituz, dtSoppres);
-	assertTrue(true);
+        Long idStrut = aLong();
+        String nmTipoUnitaDoc = aString();
+        String nmTipoDoc = aString();
+        Date dtIstituz = todayTs();
+        Date dtSoppres = tomorrowTs();
+        helper.getOrgRegolaSubStrut(idStrut, nmTipoUnitaDoc, nmTipoDoc, dtIstituz, dtSoppres);
+        assertTrue(true);
     }
 
     @Test
     void existOrgCampoSubStrut_queryIsOk() {
-	BigDecimal idCampoValSubStrut = aBigDecimal();
-	BigDecimal idRegolaValSubStrut = aBigDecimal();
-	String nmCampo = aString();
-	BigDecimal idRecord = aBigDecimal();
-	for (CostantiDB.TipoCampo tipoCampo : CostantiDB.TipoCampo.values()) {
-	    helper.existOrgCampoSubStrut(idCampoValSubStrut, idRegolaValSubStrut, tipoCampo.name(),
-		    nmCampo, idRecord);
-	    assertTrue(true);
-	}
+        BigDecimal idCampoValSubStrut = aBigDecimal();
+        BigDecimal idRegolaValSubStrut = aBigDecimal();
+        String nmCampo = aString();
+        BigDecimal idRecord = aBigDecimal();
+        for (CostantiDB.TipoCampo tipoCampo : CostantiDB.TipoCampo.values()) {
+            helper.existOrgCampoSubStrut(idCampoValSubStrut, idRegolaValSubStrut, tipoCampo.name(),
+                    nmCampo, idRecord);
+            assertTrue(true);
+        }
     }
 
     @Test
     void retrieveOrgSubStrutListAbilitate_queryIsOk() {
-	long idUtente = aLong();
-	BigDecimal idStruttura = aBigDecimal();
-	helper.retrieveOrgSubStrutListAbilitate(idUtente, idStruttura);
-	assertTrue(true);
+        long idUtente = aLong();
+        BigDecimal idStruttura = aBigDecimal();
+        helper.retrieveOrgSubStrutListAbilitate(idUtente, idStruttura);
+        assertTrue(true);
     }
 }

@@ -37,46 +37,46 @@ public class MessaggiWSBundle {
      * della classe originale: un normalissimo Bundle con un file di properties
      */
     public static String getString(String key) {
-	switch (key) {
-	case MessaggiWSBundle.ERR_666:
-	    return getDefaultErrorMessage(key);
-	case MessaggiWSBundle.ERR_666P:
-	    return getDefaultErrorMessage(key);
-	default:
-	    // l'operazione di StringEscapeUtils.unescapeJava viene svolta nel singleton
-	    return lookupCacheRef().getString(key);
-	}
+        switch (key) {
+        case MessaggiWSBundle.ERR_666:
+            return getDefaultErrorMessage(key);
+        case MessaggiWSBundle.ERR_666P:
+            return getDefaultErrorMessage(key);
+        default:
+            // l'operazione di StringEscapeUtils.unescapeJava viene svolta nel singleton
+            return lookupCacheRef().getString(key);
+        }
     }
 
     public static String getString(String key, Object... params) {
-	switch (key) {
-	case MessaggiWSBundle.ERR_666:
-	    return getDefaultErrorMessage(key, params);
-	case MessaggiWSBundle.ERR_666P:
-	    return getDefaultErrorMessage(key, params);
-	default:
-	    // l'operazione di StringEscapeUtils.unescapeJava viene svolta nel singleton
-	    return lookupCacheRef().getString(key, params);
-	}
+        switch (key) {
+        case MessaggiWSBundle.ERR_666:
+            return getDefaultErrorMessage(key, params);
+        case MessaggiWSBundle.ERR_666P:
+            return getDefaultErrorMessage(key, params);
+        default:
+            // l'operazione di StringEscapeUtils.unescapeJava viene svolta nel singleton
+            return lookupCacheRef().getString(key, params);
+        }
     }
 
     private static MessaggiWSCache lookupCacheRef() {
-	try {
-	    return (MessaggiWSCache) new InitialContext()
-		    .lookup("java:app/Parer-ejb/MessaggiWSCache");
-	} catch (NamingException ex) {
-	    log.error("Errore lookup dei messaggi " + ExceptionUtils.getRootCauseMessage(ex), ex);
-	    throw new RuntimeException("Errore lookup singleton dei messaggi "
-		    + ExceptionUtils.getRootCauseMessage(ex));
-	}
+        try {
+            return (MessaggiWSCache) new InitialContext()
+                    .lookup("java:app/Parer-ejb/MessaggiWSCache");
+        } catch (NamingException ex) {
+            log.error("Errore lookup dei messaggi " + ExceptionUtils.getRootCauseMessage(ex), ex);
+            throw new RuntimeException("Errore lookup singleton dei messaggi "
+                    + ExceptionUtils.getRootCauseMessage(ex));
+        }
     }
 
     private static String getDefaultErrorMessage(String key, Object... params) {
-	// get or generate uuid
-	final String uuid = UUIDMdcLogUtil.getUuid();
-	// log original message
-	log.error("Risposta originale : " + lookupCacheRef().getString(key, params));
-	return lookupCacheRef().getString(MessaggiWSBundle.WS_GENERIC_ERROR_UUID, uuid);
+        // get or generate uuid
+        final String uuid = UUIDMdcLogUtil.getUuid();
+        // log original message
+        log.error("Risposta originale : " + lookupCacheRef().getString(key, params));
+        return lookupCacheRef().getString(MessaggiWSBundle.WS_GENERIC_ERROR_UUID, uuid);
     }
 
     // ERRORI IMPREVISTI TEMPLATE (ossia da restituire all'utente a fronte degli
@@ -923,6 +923,22 @@ public class MessaggiWSBundle {
      * tipo di supporto pari a "FILE")
      */
     public static final String COMP_005_001 = "COMP-005-001";
+
+    /**
+     * Se si è indicato l''URN del componente non è necessario inserire altri parametri di ricerca
+     * come Ambiente, Ente, Struttura, Anno, Numero, tipo registro IDDocumento.
+     */
+    public static final String COMP_005_002 = "COMP-005-002";
+
+    /**
+     * Componente non trovato.
+     */
+    public static final String COMP_005_003 = "COMP-005-003";
+
+    /**
+     * Rilevate troppe occorrenze nella ricerca del componente con l'urn fornita.
+     */
+    public static final String COMP_005_004 = "COMP-005-004";
 
     /**
      * Componente {0}: il Formato {1} non è ammesso per la struttura versante, il tipo struttura o

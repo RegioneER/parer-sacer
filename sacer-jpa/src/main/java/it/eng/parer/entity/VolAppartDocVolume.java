@@ -64,74 +64,74 @@ public class VolAppartDocVolume implements Serializable {
 
     @Column(name = "ID_APPART_DOC_VOLUME")
     @GenericGenerator(name = "SVOL_APPART_DOC_VOLUME_ID_APPART_DOC_VOLUME_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_APPART_DOC_VOLUME"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SVOL_APPART_DOC_VOLUME"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SVOL_APPART_DOC_VOLUME_ID_APPART_DOC_VOLUME_GENERATOR")
     public Long getIdAppartDocVolume() {
-	return this.idAppartDocVolume;
+        return this.idAppartDocVolume;
     }
 
     public void setIdAppartDocVolume(Long idAppartDocVolume) {
-	this.idAppartDocVolume = idAppartDocVolume;
+        this.idAppartDocVolume = idAppartDocVolume;
     }
 
     @Column(name = "FL_VALIDA", columnDefinition = "char(1)")
     public String getFlValida() {
-	return this.flValida;
+        return this.flValida;
     }
 
     public void setFlValida(String flValida) {
-	this.flValida = flValida;
+        this.flValida = flValida;
     }
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return this.idStrut;
+        return this.idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "NT_GENERICHE_DOC")
     public String getNtGenericheDoc() {
-	return this.ntGenericheDoc;
+        return this.ntGenericheDoc;
     }
 
     public void setNtGenericheDoc(String ntGenericheDoc) {
-	this.ntGenericheDoc = ntGenericheDoc;
+        this.ntGenericheDoc = ntGenericheDoc;
     }
 
     @OneToMany(mappedBy = "volAppartDocVolume", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH })
     public List<VolAppartCompVolume> getVolAppartCompVolumes() {
-	return this.volAppartCompVolumes;
+        return this.volAppartCompVolumes;
     }
 
     public void setVolAppartCompVolumes(List<VolAppartCompVolume> volAppartCompVolumes) {
-	this.volAppartCompVolumes = volAppartCompVolumes;
+        this.volAppartCompVolumes = volAppartCompVolumes;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.DETACH })
+            CascadeType.DETACH })
     @JoinColumn(name = "ID_DOC")
     public AroDoc getAroDoc() {
-	return this.aroDoc;
+        return this.aroDoc;
     }
 
     public void setAroDoc(AroDoc aroDoc) {
-	this.aroDoc = aroDoc;
+        this.aroDoc = aroDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {
-	    CascadeType.DETACH })
+            CascadeType.DETACH })
     @JoinColumn(name = "ID_APPART_UNITA_DOC_VOLUME")
     public VolAppartUnitaDocVolume getVolAppartUnitaDocVolume() {
-	return this.volAppartUnitaDocVolume;
+        return this.volAppartUnitaDocVolume;
     }
 
     public void setVolAppartUnitaDocVolume(VolAppartUnitaDocVolume volAppartUnitaDocVolume) {
-	this.volAppartUnitaDocVolume = volAppartUnitaDocVolume;
+        this.volAppartUnitaDocVolume = volAppartUnitaDocVolume;
     }
 
 }

@@ -39,20 +39,20 @@ public class SerVBucoNumerazioneUd implements Serializable {
 
     @EmbeddedId
     public SerVBucoNumerazioneUdId getSerVBucoNumerazioneUdId() {
-	return serVBucoNumerazioneUdId;
+        return serVBucoNumerazioneUdId;
     }
 
     public void setSerVBucoNumerazioneUdId(SerVBucoNumerazioneUdId serVBucoNumerazioneUdId) {
-	this.serVBucoNumerazioneUdId = serVBucoNumerazioneUdId;
+        this.serVBucoNumerazioneUdId = serVBucoNumerazioneUdId;
     }
 
     @Column(name = "PG_UD_SER_FIN_BUCO")
     public BigDecimal getPgUdSerFinBuco() {
-	return this.pgUdSerFinBuco;
+        return this.pgUdSerFinBuco;
     }
 
     public void setPgUdSerFinBuco(BigDecimal pgUdSerFinBuco) {
-	this.pgUdSerFinBuco = pgUdSerFinBuco;
+        this.pgUdSerFinBuco = pgUdSerFinBuco;
     }
 
 }

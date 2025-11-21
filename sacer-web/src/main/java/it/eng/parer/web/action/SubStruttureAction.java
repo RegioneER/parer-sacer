@@ -59,159 +59,159 @@ public class SubStruttureAction extends SubStruttureAbstractAction {
 
     @Override
     public void loadDettaglio() throws EMFError {
-	if (!getNavigationEvent().equals(ListAction.NE_DETTAGLIO_DELETE)
-		&& !getNavigationEvent().equals(ListAction.NE_DETTAGLIO_INSERT)) {
-	    if (getTableName().equals(getForm().getSubStrutList().getName())) {
-		getForm().getSubStrut()
-			.copyFromBean(getForm().getSubStrutList().getTable().getCurrentRow());
-		BigDecimal idSubStrut = getForm().getSubStrut().getId_sub_strut().parse();
-		BigDecimal idStrut = getForm().getStrutRif().getId_strut().parse();
-		// Carico la lista con le regole sulla sottostruttura
-		OrgRegolaValSubStrutTableBean regolaValSubStrutTableBean = subStrutEjb
-			.getOrgRegolaValSubStrutTableBean(idStrut, idSubStrut);
-		getForm().getRegoleSubStrutList().setTable(regolaValSubStrutTableBean);
-		getForm().getRegoleSubStrutList().getTable().setPageSize(10);
-		getForm().getRegoleSubStrutList().getTable().first();
+        if (!getNavigationEvent().equals(ListAction.NE_DETTAGLIO_DELETE)
+                && !getNavigationEvent().equals(ListAction.NE_DETTAGLIO_INSERT)) {
+            if (getTableName().equals(getForm().getSubStrutList().getName())) {
+                getForm().getSubStrut()
+                        .copyFromBean(getForm().getSubStrutList().getTable().getCurrentRow());
+                BigDecimal idSubStrut = getForm().getSubStrut().getId_sub_strut().parse();
+                BigDecimal idStrut = getForm().getStrutRif().getId_strut().parse();
+                // Carico la lista con le regole sulla sottostruttura
+                OrgRegolaValSubStrutTableBean regolaValSubStrutTableBean = subStrutEjb
+                        .getOrgRegolaValSubStrutTableBean(idStrut, idSubStrut);
+                getForm().getRegoleSubStrutList().setTable(regolaValSubStrutTableBean);
+                getForm().getRegoleSubStrutList().getTable().setPageSize(10);
+                getForm().getRegoleSubStrutList().getTable().first();
 
-		String cessato = (String) getRequest().getParameter("cessato");
-		if (StringUtils.isNotBlank(cessato) && "1".equals(cessato)) {
-		    getForm().getSubStrutList().setUserOperations(true, false, false, false);
-		    getForm().getRegoleSubStrutList().setUserOperations(true, false, false, false);
-		}
-	    }
-	}
+                String cessato = (String) getRequest().getParameter("cessato");
+                if (StringUtils.isNotBlank(cessato) && "1".equals(cessato)) {
+                    getForm().getSubStrutList().setUserOperations(true, false, false, false);
+                    getForm().getRegoleSubStrutList().setUserOperations(true, false, false, false);
+                }
+            }
+        }
     }
 
     @Override
     public void undoDettaglio() throws EMFError {
-	if (getForm().getSubStrutList().getStatus().equals(Status.insert)) {
-	    goBack();
-	} else {
-	    getForm().getSubStrut()
-		    .copyFromBean(getForm().getSubStrutList().getTable().getCurrentRow());
-	    getForm().getSubStrutList().setStatus(Status.view);
-	    getForm().getSubStrut().setStatus(Status.view);
-	    getForm().getSubStrut().setViewMode();
-	}
+        if (getForm().getSubStrutList().getStatus().equals(Status.insert)) {
+            goBack();
+        } else {
+            getForm().getSubStrut()
+                    .copyFromBean(getForm().getSubStrutList().getTable().getCurrentRow());
+            getForm().getSubStrutList().setStatus(Status.view);
+            getForm().getSubStrut().setStatus(Status.view);
+            getForm().getSubStrut().setViewMode();
+        }
     }
 
     @Override
     public void insertDettaglio() throws EMFError {
-	if (getTableName().equals(getForm().getSubStrutList().getName())) {
-	    boolean isTemplate = getForm().getStrutRif().getFl_template().parse().equals("1");
-	    if (isTemplate) {
-		getMessageBox().addError(
-			"La struttura \u00E8 di tipo template, impossibile creare nuove sottostrutture");
-		forwardToPublisher(getDefaultPublsherName());
-	    } else {
-		getForm().getSubStrut().reset();
-		getForm().getSubStrutList().setStatus(Status.insert);
-		getForm().getSubStrut().setStatus(Status.insert);
-		getForm().getSubStrut().setEditMode();
-	    }
-	}
+        if (getTableName().equals(getForm().getSubStrutList().getName())) {
+            boolean isTemplate = getForm().getStrutRif().getFl_template().parse().equals("1");
+            if (isTemplate) {
+                getMessageBox().addError(
+                        "La struttura \u00E8 di tipo template, impossibile creare nuove sottostrutture");
+                forwardToPublisher(getDefaultPublsherName());
+            } else {
+                getForm().getSubStrut().reset();
+                getForm().getSubStrutList().setStatus(Status.insert);
+                getForm().getSubStrut().setStatus(Status.insert);
+                getForm().getSubStrut().setEditMode();
+            }
+        }
     }
 
     @Override
     public void saveDettaglio() throws EMFError {
-	if (getForm().getSubStrut().postAndValidate(getRequest(), getMessageBox())) {
-	    BigDecimal idStrut = getForm().getStrutRif().getId_strut().parse();
-	    // Codice aggiuntivo per il logging
-	    LogParam param = SpagoliteLogUtil.getLogParam(
-		    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
-		    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
-	    param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
-	    if (getForm().getSubStrutList().getStatus().equals(Status.insert)) {
-		if (!subStrutEjb.existOrgSubStrut(getForm().getSubStrut().getNm_sub_strut().parse(),
-			idStrut)) {
-		    Long idSubStrut = null;
-		    try {
-			param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
-			// idSubStrut =
-			// struttureEjb.saveSubStrut(getForm().getSubStrut().getNm_sub_strut().parse(),
-			// getForm().getSubStrut().getDs_sub_strut().parse(), idStrut);
-			idSubStrut = subStrutEjb.insertOrgSubStrut(param,
-				getForm().getSubStrut().getNm_sub_strut().parse(),
-				getForm().getSubStrut().getDs_sub_strut().parse(), idStrut);
-		    } catch (ParerUserError ex) {
-			getMessageBox().addError(ex.getDescription());
-		    }
-		    if (!getMessageBox().hasError()) {
-			if (idSubStrut != null) {
-			    getForm().getSubStrut().getId_sub_strut()
-				    .setValue(String.valueOf(idSubStrut));
-			}
+        if (getForm().getSubStrut().postAndValidate(getRequest(), getMessageBox())) {
+            BigDecimal idStrut = getForm().getStrutRif().getId_strut().parse();
+            // Codice aggiuntivo per il logging
+            LogParam param = SpagoliteLogUtil.getLogParam(
+                    configHelper.getValoreParamApplicByApplic(CostantiDB.ParametroAppl.NM_APPLIC),
+                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+            param.setTransactionLogContext(sacerLogEjb.getNewTransactionLogContext());
+            if (getForm().getSubStrutList().getStatus().equals(Status.insert)) {
+                if (!subStrutEjb.existOrgSubStrut(getForm().getSubStrut().getNm_sub_strut().parse(),
+                        idStrut)) {
+                    Long idSubStrut = null;
+                    try {
+                        param.setNomeAzione(SpagoliteLogUtil.getToolbarInsert());
+                        // idSubStrut =
+                        // struttureEjb.saveSubStrut(getForm().getSubStrut().getNm_sub_strut().parse(),
+                        // getForm().getSubStrut().getDs_sub_strut().parse(), idStrut);
+                        idSubStrut = subStrutEjb.insertOrgSubStrut(param,
+                                getForm().getSubStrut().getNm_sub_strut().parse(),
+                                getForm().getSubStrut().getDs_sub_strut().parse(), idStrut);
+                    } catch (ParerUserError ex) {
+                        getMessageBox().addError(ex.getDescription());
+                    }
+                    if (!getMessageBox().hasError()) {
+                        if (idSubStrut != null) {
+                            getForm().getSubStrut().getId_sub_strut()
+                                    .setValue(String.valueOf(idSubStrut));
+                        }
 
-			// Gestisco la lista per avere la riga corrente
-			OrgSubStrutTableBean table = new OrgSubStrutTableBean();
-			OrgSubStrutRowBean row = new OrgSubStrutRowBean();
-			getForm().getSubStrut().copyToBean(row);
-			table.add(row);
-			table.setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
-			table.first();
+                        // Gestisco la lista per avere la riga corrente
+                        OrgSubStrutTableBean table = new OrgSubStrutTableBean();
+                        OrgSubStrutRowBean row = new OrgSubStrutRowBean();
+                        getForm().getSubStrut().copyToBean(row);
+                        table.add(row);
+                        table.setPageSize(WebConstants.DEFAULT_PAGE_SIZE);
+                        table.first();
 
-			getForm().getSubStrutList().setTable(table);
-			getSession().setAttribute("elementoInserito", row.getIdSubStrut());
-		    }
-		} else {
-		    getMessageBox().addError("Sottostruttura gi\u00E0 presente nel sistema");
-		}
-	    } else if (getForm().getSubStrutList().getStatus().equals(Status.update)) {
+                        getForm().getSubStrutList().setTable(table);
+                        getSession().setAttribute("elementoInserito", row.getIdSubStrut());
+                    }
+                } else {
+                    getMessageBox().addError("Sottostruttura gi\u00E0 presente nel sistema");
+                }
+            } else if (getForm().getSubStrutList().getStatus().equals(Status.update)) {
 
-		OrgSubStrutRowBean row = (OrgSubStrutRowBean) getForm().getSubStrutList().getTable()
-			.getCurrentRow();
-		BigDecimal idSubStrut = row.getIdSubStrut();
-		if (idSubStrut == null) {
-		    getMessageBox().addError(
-			    "Errore inaspettato. Ritentare il caricamento e la modifica della sottostruttura");
-		} else {
-		    try {
-			String name = getForm().getSubStrut().getNm_sub_strut().isViewMode() ? null
-				: getForm().getSubStrut().getNm_sub_strut().parse();
-			param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
-			// struttureEjb.saveSubStrut(idSubStrut, name,
-			// getForm().getSubStrut().getDs_sub_strut().parse());
-			subStrutEjb.updateOrgSubStrut(param, name,
-				getForm().getSubStrut().getDs_sub_strut().parse(), idSubStrut);
-			if (name != null) {
-			    row.setNmSubStrut(name);
-			}
-			row.setDsSubStrut(getForm().getSubStrut().getDs_sub_strut().parse());
-		    } catch (ParerUserError ex) {
-			getMessageBox().addError(ex.getDescription());
-		    }
-		}
-	    }
-	    if (!getMessageBox().hasError()) {
-		getMessageBox().addInfo("Sottostruttura salvata con successo");
-		getMessageBox().setViewMode(MessageBox.ViewMode.plain);
+                OrgSubStrutRowBean row = (OrgSubStrutRowBean) getForm().getSubStrutList().getTable()
+                        .getCurrentRow();
+                BigDecimal idSubStrut = row.getIdSubStrut();
+                if (idSubStrut == null) {
+                    getMessageBox().addError(
+                            "Errore inaspettato. Ritentare il caricamento e la modifica della sottostruttura");
+                } else {
+                    try {
+                        String name = getForm().getSubStrut().getNm_sub_strut().isViewMode() ? null
+                                : getForm().getSubStrut().getNm_sub_strut().parse();
+                        param.setNomeAzione(SpagoliteLogUtil.getToolbarUpdate());
+                        // struttureEjb.saveSubStrut(idSubStrut, name,
+                        // getForm().getSubStrut().getDs_sub_strut().parse());
+                        subStrutEjb.updateOrgSubStrut(param, name,
+                                getForm().getSubStrut().getDs_sub_strut().parse(), idSubStrut);
+                        if (name != null) {
+                            row.setNmSubStrut(name);
+                        }
+                        row.setDsSubStrut(getForm().getSubStrut().getDs_sub_strut().parse());
+                    } catch (ParerUserError ex) {
+                        getMessageBox().addError(ex.getDescription());
+                    }
+                }
+            }
+            if (!getMessageBox().hasError()) {
+                getMessageBox().addInfo("Sottostruttura salvata con successo");
+                getMessageBox().setViewMode(MessageBox.ViewMode.plain);
 
-		getForm().getSubStrutList().setStatus(Status.view);
-		getForm().getSubStrut().setStatus(Status.view);
-		getForm().getSubStrut().setViewMode();
-	    }
-	    forwardToPublisher(getDefaultPublsherName());
-	}
+                getForm().getSubStrutList().setStatus(Status.view);
+                getForm().getSubStrut().setStatus(Status.view);
+                getForm().getSubStrut().setViewMode();
+            }
+            forwardToPublisher(getDefaultPublsherName());
+        }
     }
 
     @Override
     public void dettaglioOnClick() throws EMFError {
-	if (getTableName().equals(getForm().getSubStrutList().getName())) {
-	    getForm().getSubStrutList().setStatus(Status.view);
-	    getForm().getSubStrut().setStatus(Status.view);
-	    getForm().getSubStrut().setViewMode();
-	    forwardToPublisher(Application.Publisher.SUB_STRUT_DETAIL);
-	}
+        if (getTableName().equals(getForm().getSubStrutList().getName())) {
+            getForm().getSubStrutList().setStatus(Status.view);
+            getForm().getSubStrut().setStatus(Status.view);
+            getForm().getSubStrut().setViewMode();
+            forwardToPublisher(Application.Publisher.SUB_STRUT_DETAIL);
+        }
     }
 
     @Override
     public void elencoOnClick() throws EMFError {
-	goBack();
+        goBack();
     }
 
     @Override
     protected String getDefaultPublsherName() {
-	return Application.Publisher.SUB_STRUT_DETAIL;
+        return Application.Publisher.SUB_STRUT_DETAIL;
     }
 
     @Override
@@ -220,88 +220,88 @@ public class SubStruttureAction extends SubStruttureAbstractAction {
 
     @Override
     public String getControllerName() {
-	return Application.Actions.SUB_STRUTTURE;
+        return Application.Actions.SUB_STRUTTURE;
     }
 
     @Override
     public void updateSubStrutList() throws EMFError {
-	boolean isTemplate = getForm().getStrutRif().getFl_template().parse().equals("1");
-	if (isTemplate) {
-	    getMessageBox().addError(
-		    "La struttura \u00E8 di tipo template, impossibile modificare le sottostrutture");
-	} else {
-	    // Verifica presenza UD legate alla sottostruttura
-	    BigDecimal idSubStrut = ((OrgSubStrutRowBean) getForm().getSubStrutList().getTable()
-		    .getCurrentRow()).getIdSubStrut();
-	    if (idSubStrut == null) {
-		getMessageBox().addError(
-			"Errore inaspettato. Ritentare il caricamento e la modifica della sottostruttura");
-	    } else {
-		getForm().getSubStrutList().setStatus(Status.update);
-		getForm().getSubStrut().setStatus(Status.update);
-		if (subStrutEjb.existUdInSubStrut(idSubStrut)) {
-		    getForm().getSubStrut().getNm_sub_strut().setViewMode();
-		    getForm().getSubStrut().getDs_sub_strut().setEditMode();
-		} else {
-		    getForm().getSubStrut().setEditMode();
-		}
-	    }
-	}
-	forwardToPublisher(getDefaultPublsherName());
+        boolean isTemplate = getForm().getStrutRif().getFl_template().parse().equals("1");
+        if (isTemplate) {
+            getMessageBox().addError(
+                    "La struttura \u00E8 di tipo template, impossibile modificare le sottostrutture");
+        } else {
+            // Verifica presenza UD legate alla sottostruttura
+            BigDecimal idSubStrut = ((OrgSubStrutRowBean) getForm().getSubStrutList().getTable()
+                    .getCurrentRow()).getIdSubStrut();
+            if (idSubStrut == null) {
+                getMessageBox().addError(
+                        "Errore inaspettato. Ritentare il caricamento e la modifica della sottostruttura");
+            } else {
+                getForm().getSubStrutList().setStatus(Status.update);
+                getForm().getSubStrut().setStatus(Status.update);
+                if (subStrutEjb.existUdInSubStrut(idSubStrut)) {
+                    getForm().getSubStrut().getNm_sub_strut().setViewMode();
+                    getForm().getSubStrut().getDs_sub_strut().setEditMode();
+                } else {
+                    getForm().getSubStrut().setEditMode();
+                }
+            }
+        }
+        forwardToPublisher(getDefaultPublsherName());
     }
 
     @Override
     public void deleteSubStrutList() throws EMFError {
-	BigDecimal idInserito = (BigDecimal) getSession().getAttribute("elementoInserito");
-	if (getForm().getSubStrutList().getTable().size() == 1 & idInserito == null) {
-	    getMessageBox().addError(
-		    "\u00C8 obbligatoria la presenza di almeno una sottostruttura per ogni struttura");
-	    goBack();
-	} else {
-	    boolean isTemplate = getForm().getStrutRif().getFl_template().parse().equals("1");
-	    if (isTemplate) {
-		getMessageBox().addError(
-			"La struttura \u00E8 di tipo template, impossibile eliminare le sottostrutture");
-	    } else {
-		BigDecimal idSubStrut = idInserito != null ? idInserito
-			: ((OrgSubStrutRowBean) getForm().getSubStrutList().getTable()
-				.getCurrentRow()).getIdSubStrut();
-		if (idSubStrut == null) {
-		    getMessageBox().addError(
-			    "Errore inaspettato. Ritentare il caricamento e la modifica della sottostruttura");
-		} else {
-		    if (subStrutEjb.existUdInSubStrut(idSubStrut)) {
-			getMessageBox().addError(
-				"Impossibile eliminare la sottostruttura: esiste almeno un elemento associato ad essa");
-		    } else {
-			try {
-			    // Codice aggiuntivo per il logging
-			    LogParam param = SpagoliteLogUtil.getLogParam(
-				    configHelper.getValoreParamApplicByApplic(
-					    CostantiDB.ParametroAppl.NM_APPLIC),
-				    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
-			    if (param.getNomePagina()
-				    .equalsIgnoreCase(Application.Publisher.SUB_STRUT_DETAIL)) {
-				param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
-			    } else {
-				StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
-				param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(form,
-					form.getSubStrutList()));
-			    }
-			    param.setTransactionLogContext(
-				    sacerLogEjb.getNewTransactionLogContext());
-			    subStrutEjb.deleteOrgSubStrut(param, idSubStrut.longValue(), false);
-			    getMessageBox().addInfo("Sottostruttura eliminata con successo");
-			    getMessageBox().setViewMode(MessageBox.ViewMode.plain);
-			    getSession().removeAttribute("elementoInserito");
-			    goBackTo(Application.Publisher.CREA_STRUTTURA);
-			} catch (ParerUserError ex) {
-			    getMessageBox().addError(ex.getDescription());
-			}
-		    }
-		}
-	    }
-	}
+        BigDecimal idInserito = (BigDecimal) getSession().getAttribute("elementoInserito");
+        if (getForm().getSubStrutList().getTable().size() == 1 & idInserito == null) {
+            getMessageBox().addError(
+                    "\u00C8 obbligatoria la presenza di almeno una sottostruttura per ogni struttura");
+            goBack();
+        } else {
+            boolean isTemplate = getForm().getStrutRif().getFl_template().parse().equals("1");
+            if (isTemplate) {
+                getMessageBox().addError(
+                        "La struttura \u00E8 di tipo template, impossibile eliminare le sottostrutture");
+            } else {
+                BigDecimal idSubStrut = idInserito != null ? idInserito
+                        : ((OrgSubStrutRowBean) getForm().getSubStrutList().getTable()
+                                .getCurrentRow()).getIdSubStrut();
+                if (idSubStrut == null) {
+                    getMessageBox().addError(
+                            "Errore inaspettato. Ritentare il caricamento e la modifica della sottostruttura");
+                } else {
+                    if (subStrutEjb.existUdInSubStrut(idSubStrut)) {
+                        getMessageBox().addError(
+                                "Impossibile eliminare la sottostruttura: esiste almeno un elemento associato ad essa");
+                    } else {
+                        try {
+                            // Codice aggiuntivo per il logging
+                            LogParam param = SpagoliteLogUtil.getLogParam(
+                                    configHelper.getValoreParamApplicByApplic(
+                                            CostantiDB.ParametroAppl.NM_APPLIC),
+                                    getUser().getUsername(), SpagoliteLogUtil.getPageName(this));
+                            if (param.getNomePagina()
+                                    .equalsIgnoreCase(Application.Publisher.SUB_STRUT_DETAIL)) {
+                                param.setNomeAzione(SpagoliteLogUtil.getToolbarDelete());
+                            } else {
+                                StruttureForm form = (StruttureForm) SpagoliteLogUtil.getForm(this);
+                                param.setNomeAzione(SpagoliteLogUtil.getDetailActionNameDelete(form,
+                                        form.getSubStrutList()));
+                            }
+                            param.setTransactionLogContext(
+                                    sacerLogEjb.getNewTransactionLogContext());
+                            subStrutEjb.deleteOrgSubStrut(param, idSubStrut.longValue(), false);
+                            getMessageBox().addInfo("Sottostruttura eliminata con successo");
+                            getMessageBox().setViewMode(MessageBox.ViewMode.plain);
+                            getSession().removeAttribute("elementoInserito");
+                            goBackTo(Application.Publisher.CREA_STRUTTURA);
+                        } catch (ParerUserError ex) {
+                            getMessageBox().addError(ex.getDescription());
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

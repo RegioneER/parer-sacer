@@ -23,15 +23,15 @@ public class FilePathNoArk {
     }
 
     public FilePathNoArk(String dlFile) {
-	this.dlFile = dlFile;
+        this.dlFile = dlFile;
     }
 
     public String getDlFile() {
-	return dlFile;
+        return dlFile;
     }
 
     public void setDlFile(String dlFile) {
-	this.dlFile = dlFile;
+        this.dlFile = dlFile;
     }
 
 }

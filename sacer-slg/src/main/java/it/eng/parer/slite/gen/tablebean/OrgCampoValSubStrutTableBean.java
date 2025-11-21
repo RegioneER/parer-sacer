@@ -33,19 +33,19 @@ public class OrgCampoValSubStrutTableBean extends AbstractBaseTable<OrgCampoValS
     public static OrgCampoValSubStrutTableDescriptor TABLE_DESCRIPTOR = new OrgCampoValSubStrutTableDescriptor();
 
     public OrgCampoValSubStrutTableBean() {
-	super();
+        super();
     }
 
     protected OrgCampoValSubStrutRowBean createRow() {
-	return new OrgCampoValSubStrutRowBean();
+        return new OrgCampoValSubStrutRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<OrgCampoValSubStrutRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

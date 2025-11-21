@@ -38,19 +38,19 @@ public class MonVLisFascTableBean extends AbstractBaseTable<MonVLisFascRowBean> 
     public static MonVLisFascTableDescriptor TABLE_DESCRIPTOR = new MonVLisFascTableDescriptor();
 
     public MonVLisFascTableBean() {
-	super();
+        super();
     }
 
     protected MonVLisFascRowBean createRow() {
-	return new MonVLisFascRowBean();
+        return new MonVLisFascRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<MonVLisFascRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -86,165 +86,165 @@ public class DecFormatoFileStandard implements Serializable {
 
     @Column(name = "ID_FORMATO_FILE_STANDARD")
     @GenericGenerator(name = "SDEC_FORMATO_FILE_STANDARD_ID_FORMATO_FILE_STANDARD_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_FORMATO_FILE_STANDARD"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_FORMATO_FILE_STANDARD"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_FORMATO_FILE_STANDARD_ID_FORMATO_FILE_STANDARD_GENERATOR")
     public Long getIdFormatoFileStandard() {
-	return this.idFormatoFileStandard;
+        return this.idFormatoFileStandard;
     }
 
     public void setIdFormatoFileStandard(Long idFormatoFileStandard) {
-	this.idFormatoFileStandard = idFormatoFileStandard;
+        this.idFormatoFileStandard = idFormatoFileStandard;
     }
 
     @Column(name = "CD_VERSIONE")
     public String getCdVersione() {
-	return this.cdVersione;
+        return this.cdVersione;
     }
 
     public void setCdVersione(String cdVersione) {
-	this.cdVersione = cdVersione;
+        this.cdVersione = cdVersione;
     }
 
     @Column(name = "DS_COPYRIGHT")
     public String getDsCopyright() {
-	return this.dsCopyright;
+        return this.dsCopyright;
     }
 
     public void setDsCopyright(String dsCopyright) {
-	this.dsCopyright = dsCopyright;
+        this.dsCopyright = dsCopyright;
     }
 
     @Column(name = "DS_FORMATO_FILE_STANDARD")
     public String getDsFormatoFileStandard() {
-	return this.dsFormatoFileStandard;
+        return this.dsFormatoFileStandard;
     }
 
     public void setDsFormatoFileStandard(String dsFormatoFileStandard) {
-	this.dsFormatoFileStandard = dsFormatoFileStandard;
+        this.dsFormatoFileStandard = dsFormatoFileStandard;
     }
 
     @Column(name = "FL_FORMATO_CONCAT", columnDefinition = "char(1)")
     public String getFlFormatoConcat() {
-	return this.flFormatoConcat;
+        return this.flFormatoConcat;
     }
 
     public void setFlFormatoConcat(String flFormatoConcat) {
-	this.flFormatoConcat = flFormatoConcat;
+        this.flFormatoConcat = flFormatoConcat;
     }
 
     @Column(name = "NM_FORMATO_FILE_STANDARD")
     public String getNmFormatoFileStandard() {
-	return this.nmFormatoFileStandard;
+        return this.nmFormatoFileStandard;
     }
 
     public void setNmFormatoFileStandard(String nmFormatoFileStandard) {
-	this.nmFormatoFileStandard = nmFormatoFileStandard;
+        this.nmFormatoFileStandard = nmFormatoFileStandard;
     }
 
     @Column(name = "NM_MIMETYPE_FILE")
     public String getNmMimetypeFile() {
-	return this.nmMimetypeFile;
+        return this.nmMimetypeFile;
     }
 
     public void setNmMimetypeFile(String nmMimetypeFile) {
-	this.nmMimetypeFile = nmMimetypeFile;
+        this.nmMimetypeFile = nmMimetypeFile;
     }
 
     @Column(name = "TI_ESITO_CONTR_FORMATO")
     public String getTiEsitoContrFormato() {
-	return this.tiEsitoContrFormato;
+        return this.tiEsitoContrFormato;
     }
 
     public void setTiEsitoContrFormato(String tiEsitoContrFormato) {
-	this.tiEsitoContrFormato = tiEsitoContrFormato;
+        this.tiEsitoContrFormato = tiEsitoContrFormato;
     }
 
     @OneToMany(mappedBy = "decFormatoFileStandard")
     @XmlTransient
     public List<AroCompDoc> getAroCompDocs() {
-	return this.aroCompDocs;
+        return this.aroCompDocs;
     }
 
     public void setAroCompDocs(List<AroCompDoc> aroCompDocs) {
-	this.aroCompDocs = aroCompDocs;
+        this.aroCompDocs = aroCompDocs;
     }
 
     @OneToMany(mappedBy = "decFormatoFileStandard")
     public List<DecEstensioneFile> getDecEstensioneFiles() {
-	return this.decEstensioneFiles;
+        return this.decEstensioneFiles;
     }
 
     public void setDecEstensioneFiles(List<DecEstensioneFile> decEstensioneFiles) {
-	this.decEstensioneFiles = decEstensioneFiles;
+        this.decEstensioneFiles = decEstensioneFiles;
     }
 
     @OneToMany(mappedBy = "decFormatoFileStandard")
     public List<DecFormatoFileBusta> getDecFormatoFileBustas() {
-	return this.decFormatoFileBustas;
+        return this.decFormatoFileBustas;
     }
 
     public void setDecFormatoFileBustas(List<DecFormatoFileBusta> decFormatoFileBustas) {
-	this.decFormatoFileBustas = decFormatoFileBustas;
+        this.decFormatoFileBustas = decFormatoFileBustas;
     }
 
     @OneToMany(mappedBy = "decFormatoFileStandard", cascade = {
-	    CascadeType.ALL })
+            CascadeType.ALL })
     @XmlInverseReference(mappedBy = "decFormatoFileStandard")
     public List<DecUsoFormatoFileStandard> getDecUsoFormatoFileStandards() {
-	return this.decUsoFormatoFileStandards;
+        return this.decUsoFormatoFileStandards;
     }
 
     public void setDecUsoFormatoFileStandards(
-	    List<DecUsoFormatoFileStandard> decUsoFormatoFileStandards) {
-	this.decUsoFormatoFileStandards = decUsoFormatoFileStandards;
+            List<DecUsoFormatoFileStandard> decUsoFormatoFileStandards) {
+        this.decUsoFormatoFileStandards = decUsoFormatoFileStandards;
     }
 
     @OneToMany(mappedBy = "decFormatoFileStandard")
     @XmlTransient
     public List<AroBustaCrittog> getAroBustaCrittogs() {
-	return this.aroBustaCrittogs;
+        return this.aroBustaCrittogs;
     }
 
     public void setAroBustaCrittogs(List<AroBustaCrittog> aroBustaCrittogs) {
-	this.aroBustaCrittogs = aroBustaCrittogs;
+        this.aroBustaCrittogs = aroBustaCrittogs;
     }
 
     @OneToMany(mappedBy = "decFormatoFileStandard", cascade = CascadeType.PERSIST)
     @XmlIDREF
     public List<DecTipoRapprComp> getDecTipoRapprComps() {
-	return this.decTipoRapprComps;
+        return this.decTipoRapprComps;
     }
 
     public void setDecTipoRapprComps(List<DecTipoRapprComp> decTipoRapprComps) {
-	this.decTipoRapprComps = decTipoRapprComps;
+        this.decTipoRapprComps = decTipoRapprComps;
     }
 
     @OneToMany(mappedBy = "decFormatoFileStandard")
     @XmlInverseReference(mappedBy = "decFormatoFileStandard")
     public List<DecFormatoValutazione> getDecFormatoValutaziones() {
-	return decFormatoValutaziones;
+        return decFormatoValutaziones;
     }
 
     public void setDecFormatoValutaziones(List<DecFormatoValutazione> decFormatoValutaziones) {
-	this.decFormatoValutaziones = decFormatoValutaziones;
+        this.decFormatoValutaziones = decFormatoValutaziones;
     }
 
     @Column(name = "NT_IDONEITA")
     public String getNtIdoneita() {
-	return ntIdoneita;
+        return ntIdoneita;
     }
 
     public void setNtIdoneita(String ntIdoneita) {
-	this.ntIdoneita = ntIdoneita;
+        this.ntIdoneita = ntIdoneita;
     }
 
     @Column(name = "DT_VALUTAZIONE_FORMATO")
     public Date getDtValutazioneFormato() {
-	return dtValutazioneFormato;
+        return dtValutazioneFormato;
     }
 
     public void setDtValutazioneFormato(Date dtValutazioneFormato) {
-	this.dtValutazioneFormato = dtValutazioneFormato;
+        this.dtValutazioneFormato = dtValutazioneFormato;
     }
 }

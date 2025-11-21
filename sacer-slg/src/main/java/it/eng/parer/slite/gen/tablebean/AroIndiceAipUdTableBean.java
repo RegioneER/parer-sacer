@@ -33,19 +33,19 @@ public class AroIndiceAipUdTableBean extends AbstractBaseTable<AroIndiceAipUdRow
     public static AroIndiceAipUdTableDescriptor TABLE_DESCRIPTOR = new AroIndiceAipUdTableDescriptor();
 
     public AroIndiceAipUdTableBean() {
-	super();
+        super();
     }
 
     protected AroIndiceAipUdRowBean createRow() {
-	return new AroIndiceAipUdRowBean();
+        return new AroIndiceAipUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroIndiceAipUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

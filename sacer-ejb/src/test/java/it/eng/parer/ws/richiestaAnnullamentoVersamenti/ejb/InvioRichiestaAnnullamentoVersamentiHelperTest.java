@@ -37,38 +37,38 @@ public class InvioRichiestaAnnullamentoVersamentiHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(
-		InvioRichiestaAnnullamentoVersamentiHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			InvioRichiestaAnnullamentoVersamentiHelperTest.class,
-			InvioRichiestaAnnullamentoVersamentiHelper.class, Utente.class));
+        return HelperTest.createEnterpriseArchive(
+                InvioRichiestaAnnullamentoVersamentiHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        InvioRichiestaAnnullamentoVersamentiHelperTest.class,
+                        InvioRichiestaAnnullamentoVersamentiHelper.class, Utente.class));
     }
 
     @Test
     void isItemPresente_queryIsOk() {
-	Long idStrut = aLong();
-	String cdRegistroKeyUnitaDoc = aString();
-	int aaKeyUnitaDoc = aInt();
-	String cdKeyUnitaDoc = aString();
+        Long idStrut = aLong();
+        String cdRegistroKeyUnitaDoc = aString();
+        int aaKeyUnitaDoc = aInt();
+        String cdKeyUnitaDoc = aString();
 
-	helper.isItemPresente(idStrut, cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc);
-	assertTrue(true);
+        helper.isItemPresente(idStrut, cdRegistroKeyUnitaDoc, aaKeyUnitaDoc, cdKeyUnitaDoc);
+        assertTrue(true);
     }
 
     @Test
     void getIamUserByNmUserid_queryIsOk() {
-	String nmUserid = aString();
+        String nmUserid = aString();
 
-	helper.getIamUserByNmUserid(nmUserid);
-	assertTrue(true);
+        helper.getIamUserByNmUserid(nmUserid);
+        assertTrue(true);
     }
 
     @Test
     void getAroVLisItemRichAnnvrs_queryIsOk() {
-	BigDecimal idRichAnnVers = aBigDecimal();
+        BigDecimal idRichAnnVers = aBigDecimal();
 
-	helper.getAroVLisItemRichAnnvrs(idRichAnnVers);
-	assertTrue(true);
+        helper.getAroVLisItemRichAnnvrs(idRichAnnVers);
+        assertTrue(true);
     }
 }

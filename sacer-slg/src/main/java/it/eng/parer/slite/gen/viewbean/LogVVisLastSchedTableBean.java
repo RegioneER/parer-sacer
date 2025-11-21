@@ -37,19 +37,19 @@ public class LogVVisLastSchedTableBean extends AbstractBaseTable<LogVVisLastSche
     public static LogVVisLastSchedTableDescriptor TABLE_DESCRIPTOR = new LogVVisLastSchedTableDescriptor();
 
     public LogVVisLastSchedTableBean() {
-	super();
+        super();
     }
 
     protected LogVVisLastSchedRowBean createRow() {
-	return new LogVVisLastSchedRowBean();
+        return new LogVVisLastSchedRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<LogVVisLastSchedRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

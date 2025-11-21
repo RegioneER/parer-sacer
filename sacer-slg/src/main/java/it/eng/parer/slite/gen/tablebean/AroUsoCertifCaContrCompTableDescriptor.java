@@ -44,25 +44,25 @@ public class AroUsoCertifCaContrCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_USO_CERTIF_CA_CONTR_COMP,
-		new ColumnDescriptor(COL_ID_USO_CERTIF_CA_CONTR_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_ID_CONTR_FIRMA_COMP,
-		new ColumnDescriptor(COL_ID_CONTR_FIRMA_COMP, Types.DECIMAL, 22, false));
-	map.put(COL_ID_CERTIF_CA, new ColumnDescriptor(COL_ID_CERTIF_CA, Types.DECIMAL, 22, false));
-	map.put(COL_PG_CERTIF_CA, new ColumnDescriptor(COL_PG_CERTIF_CA, Types.DECIMAL, 22, false));
-	map.put(COL_ID_CRL_USATA, new ColumnDescriptor(COL_ID_CRL_USATA, Types.DECIMAL, 22, false));
+        map.put(COL_ID_USO_CERTIF_CA_CONTR_COMP,
+                new ColumnDescriptor(COL_ID_USO_CERTIF_CA_CONTR_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_ID_CONTR_FIRMA_COMP,
+                new ColumnDescriptor(COL_ID_CONTR_FIRMA_COMP, Types.DECIMAL, 22, false));
+        map.put(COL_ID_CERTIF_CA, new ColumnDescriptor(COL_ID_CERTIF_CA, Types.DECIMAL, 22, false));
+        map.put(COL_PG_CERTIF_CA, new ColumnDescriptor(COL_PG_CERTIF_CA, Types.DECIMAL, 22, false));
+        map.put(COL_ID_CRL_USATA, new ColumnDescriptor(COL_ID_CRL_USATA, Types.DECIMAL, 22, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

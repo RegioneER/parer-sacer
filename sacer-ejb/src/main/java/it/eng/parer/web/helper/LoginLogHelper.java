@@ -51,39 +51,39 @@ public class LoginLogHelper {
     private AppServerInstance appServerInstance;
 
     public enum TipiEvento {
-	LOGIN, LOGOUT
+        LOGIN, LOGOUT
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void writeLogEvento(User user, String indIpClient, TipiEvento tipoEvento) {
 
-	try {
-	    SIAplApplic tmpAplApplic;
-	    String queryStr = "select t from SIAplApplic t " + "where t.nmApplic = :nmApplic ";
-	    javax.persistence.Query query = entityManager.createQuery(queryStr, SIAplApplic.class);
-	    query.setParameter("nmApplic", Constants.SACER);
-	    tmpAplApplic = (SIAplApplic) query.getSingleResult();
+        try {
+            SIAplApplic tmpAplApplic;
+            String queryStr = "select t from SIAplApplic t " + "where t.nmApplic = :nmApplic ";
+            javax.persistence.Query query = entityManager.createQuery(queryStr, SIAplApplic.class);
+            query.setParameter("nmApplic", Constants.SACER);
+            tmpAplApplic = (SIAplApplic) query.getSingleResult();
 
-	    String localServerName = appServerInstance.getName();
+            String localServerName = appServerInstance.getName();
 
-	    SLLogLoginUser tmpLLogLoginUser = new SLLogLoginUser();
-	    tmpLLogLoginUser.setsIAplApplic(tmpAplApplic);
-	    tmpLLogLoginUser.setNmUserid(user.getUsername());
-	    tmpLLogLoginUser.setCdIndIpClient(indIpClient);
-	    tmpLLogLoginUser.setCdIndServer(localServerName);
-	    tmpLLogLoginUser.setDtEvento(new Date());
-	    tmpLLogLoginUser.setTipoEvento(tipoEvento.name());
-	    // Modifica per lo SPID
-	    if (user.getUserType() != null) {
-		tmpLLogLoginUser.setTipoUtenteAuth(user.getUserType().name());
-		tmpLLogLoginUser.setCdIdEsterno(user.getExternalId());
-	    }
-	    entityManager.persist(tmpLLogLoginUser);
-	    entityManager.flush();
+            SLLogLoginUser tmpLLogLoginUser = new SLLogLoginUser();
+            tmpLLogLoginUser.setsIAplApplic(tmpAplApplic);
+            tmpLLogLoginUser.setNmUserid(user.getUsername());
+            tmpLLogLoginUser.setCdIndIpClient(indIpClient);
+            tmpLLogLoginUser.setCdIndServer(localServerName);
+            tmpLLogLoginUser.setDtEvento(new Date());
+            tmpLLogLoginUser.setTipoEvento(tipoEvento.name());
+            // Modifica per lo SPID
+            if (user.getUserType() != null) {
+                tmpLLogLoginUser.setTipoUtenteAuth(user.getUserType().name());
+                tmpLLogLoginUser.setCdIdEsterno(user.getExternalId());
+            }
+            entityManager.persist(tmpLLogLoginUser);
+            entityManager.flush();
 
-	} catch (Exception e) {
-	    log.error("Eccezione nel log dell'evento login/logout (writeLogEvento) ", e);
-	    throw new RuntimeException(e);
-	}
+        } catch (Exception e) {
+            log.error("Eccezione nel log dell'evento login/logout (writeLogEvento) ", e);
+            throw new RuntimeException(e);
+        }
     }
 }

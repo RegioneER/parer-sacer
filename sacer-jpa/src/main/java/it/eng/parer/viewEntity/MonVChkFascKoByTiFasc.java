@@ -44,93 +44,93 @@ public class MonVChkFascKoByTiFasc implements Serializable {
 
     @Column(name = "FL_FASC_KO_NON_RISOLUB_30GG", columnDefinition = "char")
     public String getFlFascKoNonRisolub30gg() {
-	return this.flFascKoNonRisolub30gg;
+        return this.flFascKoNonRisolub30gg;
     }
 
     public void setFlFascKoNonRisolub30gg(String flFascKoNonRisolub30gg) {
-	this.flFascKoNonRisolub30gg = flFascKoNonRisolub30gg;
+        this.flFascKoNonRisolub30gg = flFascKoNonRisolub30gg;
     }
 
     @Column(name = "FL_FASC_KO_NON_RISOLUB_B30GG", columnDefinition = "char")
     public String getFlFascKoNonRisolubB30gg() {
-	return this.flFascKoNonRisolubB30gg;
+        return this.flFascKoNonRisolubB30gg;
     }
 
     public void setFlFascKoNonRisolubB30gg(String flFascKoNonRisolubB30gg) {
-	this.flFascKoNonRisolubB30gg = flFascKoNonRisolubB30gg;
+        this.flFascKoNonRisolubB30gg = flFascKoNonRisolubB30gg;
     }
 
     @Column(name = "FL_FASC_KO_NON_RISOLUB_CORR", columnDefinition = "char(1)")
     public String getFlFascKoNonRisolubCorr() {
-	return this.flFascKoNonRisolubCorr;
+        return this.flFascKoNonRisolubCorr;
     }
 
     public void setFlFascKoNonRisolubCorr(String flFascKoNonRisolubCorr) {
-	this.flFascKoNonRisolubCorr = flFascKoNonRisolubCorr;
+        this.flFascKoNonRisolubCorr = flFascKoNonRisolubCorr;
     }
 
     @Column(name = "FL_FASC_KO_NON_VERIF_30GG", columnDefinition = "char")
     public String getFlFascKoNonVerif30gg() {
-	return this.flFascKoNonVerif30gg;
+        return this.flFascKoNonVerif30gg;
     }
 
     public void setFlFascKoNonVerif30gg(String flFascKoNonVerif30gg) {
-	this.flFascKoNonVerif30gg = flFascKoNonVerif30gg;
+        this.flFascKoNonVerif30gg = flFascKoNonVerif30gg;
     }
 
     @Column(name = "FL_FASC_KO_NON_VERIF_B30GG", columnDefinition = "char")
     public String getFlFascKoNonVerifB30gg() {
-	return this.flFascKoNonVerifB30gg;
+        return this.flFascKoNonVerifB30gg;
     }
 
     public void setFlFascKoNonVerifB30gg(String flFascKoNonVerifB30gg) {
-	this.flFascKoNonVerifB30gg = flFascKoNonVerifB30gg;
+        this.flFascKoNonVerifB30gg = flFascKoNonVerifB30gg;
     }
 
     @Column(name = "FL_FASC_KO_NON_VERIF_CORR", columnDefinition = "char(1)")
     public String getFlFascKoNonVerifCorr() {
-	return this.flFascKoNonVerifCorr;
+        return this.flFascKoNonVerifCorr;
     }
 
     public void setFlFascKoNonVerifCorr(String flFascKoNonVerifCorr) {
-	this.flFascKoNonVerifCorr = flFascKoNonVerifCorr;
+        this.flFascKoNonVerifCorr = flFascKoNonVerifCorr;
     }
 
     @Column(name = "FL_FASC_KO_VERIF_30GG", columnDefinition = "char")
     public String getFlFascKoVerif30gg() {
-	return this.flFascKoVerif30gg;
+        return this.flFascKoVerif30gg;
     }
 
     public void setFlFascKoVerif30gg(String flFascKoVerif30gg) {
-	this.flFascKoVerif30gg = flFascKoVerif30gg;
+        this.flFascKoVerif30gg = flFascKoVerif30gg;
     }
 
     @Column(name = "FL_FASC_KO_VERIF_B30GG", columnDefinition = "char")
     public String getFlFascKoVerifB30gg() {
-	return this.flFascKoVerifB30gg;
+        return this.flFascKoVerifB30gg;
     }
 
     public void setFlFascKoVerifB30gg(String flFascKoVerifB30gg) {
-	this.flFascKoVerifB30gg = flFascKoVerifB30gg;
+        this.flFascKoVerifB30gg = flFascKoVerifB30gg;
     }
 
     @Column(name = "FL_FASC_KO_VERIF_CORR", columnDefinition = "char(1)")
     public String getFlFascKoVerifCorr() {
-	return this.flFascKoVerifCorr;
+        return this.flFascKoVerifCorr;
     }
 
     public void setFlFascKoVerifCorr(String flFascKoVerifCorr) {
-	this.flFascKoVerifCorr = flFascKoVerifCorr;
+        this.flFascKoVerifCorr = flFascKoVerifCorr;
     }
 
     @Id
     @Column(name = "ID_TIPO_FASCICOLO")
     public BigDecimal getIdTipoFascicolo() {
-	return this.idTipoFascicolo;
+        return this.idTipoFascicolo;
     }
 
     public void setIdTipoFascicolo(BigDecimal idTipoFascicolo) {
-	this.idTipoFascicolo = idTipoFascicolo;
+        this.idTipoFascicolo = idTipoFascicolo;
     }
 
 }

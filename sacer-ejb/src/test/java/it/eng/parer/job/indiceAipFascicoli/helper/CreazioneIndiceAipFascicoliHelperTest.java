@@ -52,103 +52,103 @@ public class CreazioneIndiceAipFascicoliHelperTest {
 
     @Test
     void getIndexFasAipFascicoloDaElab_queryIsOk() {
-	helper.getIndexFasAipFascicoloDaElab();
-	assertTrue(true);
+        helper.getIndexFasAipFascicoloDaElab();
+        assertTrue(true);
     }
 
     @Test
     void getProgressivoVersione_queryIsOk() {
-	Long idFascicolo = aLong();
-	helper.getProgressivoVersione(idFascicolo);
-	assertTrue(true);
+        Long idFascicolo = aLong();
+        helper.getProgressivoVersione(idFascicolo);
+        assertTrue(true);
     }
 
     @Test
     void getVersioneAIP_queryIsOk() throws ParerInternalError {
-	Long idFascicolo = aLong();
-	String tiCreazione = aString();
-	helper.getVersioneAIP(idFascicolo, tiCreazione);
-	assertTrue(true);
+        Long idFascicolo = aLong();
+        String tiCreazione = aString();
+        helper.getVersioneAIP(idFascicolo, tiCreazione);
+        assertTrue(true);
     }
 
     @Test
     void findFasAipFascicoloDaElab_queryIsOk() {
-	long idFasAipFascicoloDaElab = aLong();
-	helper.findFasAipFascicoloDaElab(idFasAipFascicoloDaElab);
-	assertTrue(true);
+        long idFasAipFascicoloDaElab = aLong();
+        helper.findFasAipFascicoloDaElab(idFasAipFascicoloDaElab);
+        assertTrue(true);
     }
 
     @Test
     void retrieveElvVLisIxAipFascByEleOrdered_queryIsOk() {
-	long idElencoVersFasc = aLong();
-	helper.retrieveElvVLisIxAipFascByEleOrdered(idElencoVersFasc);
-	assertTrue(true);
+        long idElencoVersFasc = aLong();
+        helper.retrieveElvVLisIxAipFascByEleOrdered(idElencoVersFasc);
+        assertTrue(true);
     }
 
     @Test
     void retrieveIdModelliDaElaborare_queryIsOk() {
-	long idAmbiente = aLong();
-	String tiModelloXsd = aString();
-	helper.retrieveIdModelliDaElaborare(idAmbiente, tiModelloXsd);
-	assertTrue(true);
+        long idAmbiente = aLong();
+        String tiModelloXsd = aString();
+        helper.retrieveIdModelliDaElaborare(idAmbiente, tiModelloXsd);
+        assertTrue(true);
     }
 
     @Test
     void registraFasMetaVerAipFascicolo_queryIsOk() {
-	FasVerAipFascicolo verAipFascicolo = new FasVerAipFascicolo();
-	verAipFascicolo.setCdVerAip(aString());
-	String hash = aString();
-	String algoHash = aString();
-	String encodingHash = aString();
-	String codiceVersione = aString();
-	CSVersatore versatore = new CSVersatore();
-	versatore.setAmbiente(aString());
-	versatore.setEnte(aString());
-	versatore.setSistemaConservazione(aString());
-	versatore.setStruttura(aString());
-	CSChiaveFasc chiaveFasc = new CSChiaveFasc();
-	chiaveFasc.setAnno(aInt());
-	chiaveFasc.setNumero(aString());
-	try {
-	    helper.registraFasMetaVerAipFascicolo(verAipFascicolo, hash, algoHash, encodingHash,
-		    codiceVersione, versatore, chiaveFasc);
-	} catch (Exception e) {
-	    // FasVerAipFascicolo non è completo quindi fallirà nell'insert
-	    assertExceptionMessage(e, "ConstraintViolationException");
-	}
-	assertTrue(true);
+        FasVerAipFascicolo verAipFascicolo = new FasVerAipFascicolo();
+        verAipFascicolo.setCdVerAip(aString());
+        String hash = aString();
+        String algoHash = aString();
+        String encodingHash = aString();
+        String codiceVersione = aString();
+        CSVersatore versatore = new CSVersatore();
+        versatore.setAmbiente(aString());
+        versatore.setEnte(aString());
+        versatore.setSistemaConservazione(aString());
+        versatore.setStruttura(aString());
+        CSChiaveFasc chiaveFasc = new CSChiaveFasc();
+        chiaveFasc.setAnno(aInt());
+        chiaveFasc.setNumero(aString());
+        try {
+            helper.registraFasMetaVerAipFascicolo(verAipFascicolo, hash, algoHash, encodingHash,
+                    codiceVersione, versatore, chiaveFasc);
+        } catch (Exception e) {
+            // FasVerAipFascicolo non è completo quindi fallirà nell'insert
+            assertExceptionMessage(e, "ConstraintViolationException");
+        }
+        assertTrue(true);
     }
 
     @Test
     void registraFasXsdMetaVerAipFasc_queryIsOk() {
-	long idMetaVerAipFascicolo = aLong();
-	long idModelloXsdFascicolo = aLong();
-	String nmXsd = aString();
-	try {
-	    helper.registraFasXsdMetaVerAipFasc(idMetaVerAipFascicolo, idModelloXsdFascicolo,
-		    nmXsd);
-	    assertTrue(true);
-	} catch (Exception e) {
-	    assertExceptionMessage(e, "ConstraintViolationException");
-	}
+        long idMetaVerAipFascicolo = aLong();
+        long idModelloXsdFascicolo = aLong();
+        String nmXsd = aString();
+        try {
+            helper.registraFasXsdMetaVerAipFasc(idMetaVerAipFascicolo, idModelloXsdFascicolo,
+                    nmXsd);
+            assertTrue(true);
+        } catch (Exception e) {
+            assertExceptionMessage(e, "ConstraintViolationException");
+        }
     }
 
     @Test
     void retrieveFasVerAipFascicoloOrdered_queryIsOk() {
-	long idElencoVersFasc = aLong();
-	helper.retrieveFasVerAipFascicoloOrdered(idElencoVersFasc);
-	assertTrue(true);
+        long idElencoVersFasc = aLong();
+        helper.retrieveFasVerAipFascicoloOrdered(idElencoVersFasc);
+        assertTrue(true);
     }
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return ShrinkWrap.create(EnterpriseArchive.class)
-		.addAsResource(EmptyAsset.INSTANCE, "beans.xml")
-		.addAsModule(createSacerJavaArchive(Collections.emptyList(),
-			CreazioneIndiceAipFascicoliHelper.class, ComponentiHelper.class,
-			VolumeHelper.class, ConfigurationHelper.class, DefinitoDaBean.class,
-			ReturnParams.class, CSVersatore.class, CSChiaveFasc.class,
-			CreazioneIndiceAipFascicoliHelperTest.class, MessaggiWSFormat.class))
-		.addAsModule(createPaginatorJavaArchive()).addAsModule(createSacerLogJar());
+        return ShrinkWrap.create(EnterpriseArchive.class)
+                .addAsResource(EmptyAsset.INSTANCE, "beans.xml")
+                .addAsModule(createSacerJavaArchive(Collections.emptyList(),
+                        CreazioneIndiceAipFascicoliHelper.class, ComponentiHelper.class,
+                        VolumeHelper.class, ConfigurationHelper.class, DefinitoDaBean.class,
+                        ReturnParams.class, CSVersatore.class, CSChiaveFasc.class,
+                        CreazioneIndiceAipFascicoliHelperTest.class, MessaggiWSFormat.class))
+                .addAsModule(createPaginatorJavaArchive()).addAsModule(createSacerLogJar());
     }
 }

@@ -27,6 +27,6 @@ public final class FasVRicFascicoli {
      * Tipo dell'esito
      */
     public enum TiEsito {
-	POSITIVO, WARNING
+        POSITIVO, WARNING
     }
 }

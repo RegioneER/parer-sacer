@@ -44,25 +44,25 @@ public class DecTipoDocAmmessoTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_TIPO_DOC_AMMESSO,
-		new ColumnDescriptor(COL_ID_TIPO_DOC_AMMESSO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TIPO_STRUT_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_TIPO_STRUT_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_ID_TIPO_DOC, new ColumnDescriptor(COL_ID_TIPO_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, false));
-	map.put(COL_FL_OBBL, new ColumnDescriptor(COL_FL_OBBL, Types.VARCHAR, 1, false));
+        map.put(COL_ID_TIPO_DOC_AMMESSO,
+                new ColumnDescriptor(COL_ID_TIPO_DOC_AMMESSO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TIPO_STRUT_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_TIPO_STRUT_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_ID_TIPO_DOC, new ColumnDescriptor(COL_ID_TIPO_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, false));
+        map.put(COL_FL_OBBL, new ColumnDescriptor(COL_FL_OBBL, Types.VARCHAR, 1, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

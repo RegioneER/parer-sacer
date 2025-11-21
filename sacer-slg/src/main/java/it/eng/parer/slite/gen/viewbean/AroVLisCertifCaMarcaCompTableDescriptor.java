@@ -51,40 +51,40 @@ public class AroVLisCertifCaMarcaCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_ID_USO_CERTIF_CA_CONTR_MARCA,
-		new ColumnDescriptor(COL_ID_USO_CERTIF_CA_CONTR_MARCA, Types.DECIMAL, 22, true));
-	map.put(COL_ID_CONTR_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_CONTR_MARCA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_PG_CERTIF_CA, new ColumnDescriptor(COL_PG_CERTIF_CA, Types.DECIMAL, 22, true));
-	map.put(COL_DL_DN_ISSUER_CERTIF_CA,
-		new ColumnDescriptor(COL_DL_DN_ISSUER_CERTIF_CA, Types.VARCHAR, 1024, true));
-	map.put(COL_DS_SERIAL_CERTIF_CA,
-		new ColumnDescriptor(COL_DS_SERIAL_CERTIF_CA, Types.VARCHAR, 100, true));
-	map.put(COL_DT_INI_VAL_CERTIF_CA,
-		new ColumnDescriptor(COL_DT_INI_VAL_CERTIF_CA, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FIN_VAL_CERTIF_CA,
-		new ColumnDescriptor(COL_DT_FIN_VAL_CERTIF_CA, Types.TIMESTAMP, 7, true));
-	map.put(COL_DL_DN_ISSUER_CRL,
-		new ColumnDescriptor(COL_DL_DN_ISSUER_CRL, Types.VARCHAR, 1024, true));
-	map.put(COL_DS_SERIAL_CERTIF_CRL,
-		new ColumnDescriptor(COL_DS_SERIAL_CERTIF_CRL, Types.VARCHAR, 100, true));
-	map.put(COL_DS_SERIAL_CRL,
-		new ColumnDescriptor(COL_DS_SERIAL_CRL, Types.VARCHAR, 100, true));
-	map.put(COL_DT_SCAD_CRL, new ColumnDescriptor(COL_DT_SCAD_CRL, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_ID_USO_CERTIF_CA_CONTR_MARCA,
+                new ColumnDescriptor(COL_ID_USO_CERTIF_CA_CONTR_MARCA, Types.DECIMAL, 22, true));
+        map.put(COL_ID_CONTR_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_CONTR_MARCA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_PG_CERTIF_CA, new ColumnDescriptor(COL_PG_CERTIF_CA, Types.DECIMAL, 22, true));
+        map.put(COL_DL_DN_ISSUER_CERTIF_CA,
+                new ColumnDescriptor(COL_DL_DN_ISSUER_CERTIF_CA, Types.VARCHAR, 1024, true));
+        map.put(COL_DS_SERIAL_CERTIF_CA,
+                new ColumnDescriptor(COL_DS_SERIAL_CERTIF_CA, Types.VARCHAR, 100, true));
+        map.put(COL_DT_INI_VAL_CERTIF_CA,
+                new ColumnDescriptor(COL_DT_INI_VAL_CERTIF_CA, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FIN_VAL_CERTIF_CA,
+                new ColumnDescriptor(COL_DT_FIN_VAL_CERTIF_CA, Types.TIMESTAMP, 7, true));
+        map.put(COL_DL_DN_ISSUER_CRL,
+                new ColumnDescriptor(COL_DL_DN_ISSUER_CRL, Types.VARCHAR, 1024, true));
+        map.put(COL_DS_SERIAL_CERTIF_CRL,
+                new ColumnDescriptor(COL_DS_SERIAL_CERTIF_CRL, Types.VARCHAR, 100, true));
+        map.put(COL_DS_SERIAL_CRL,
+                new ColumnDescriptor(COL_DS_SERIAL_CRL, Types.VARCHAR, 100, true));
+        map.put(COL_DT_SCAD_CRL, new ColumnDescriptor(COL_DT_SCAD_CRL, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

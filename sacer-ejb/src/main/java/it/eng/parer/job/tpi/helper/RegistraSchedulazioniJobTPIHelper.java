@@ -49,7 +49,7 @@ import it.eng.tpi.bean.SchedulazioniJobTPIRisposta;
 @Stateless(mappedName = "RegistraSchedulazioniJobTPIHelper")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class RegistraSchedulazioniJobTPIHelper {
 
     Logger log = LoggerFactory.getLogger(RegistraSchedulazioniJobTPIHelper.class);
@@ -59,133 +59,133 @@ public class RegistraSchedulazioniJobTPIHelper {
     private RegistraSchedulazioniJobTPIHelper me;
 
     public Date findLastDaySched() {
-	javax.persistence.Query query = entityManager
-		.createQuery("SELECT t FROM TpiDtSched t order by t.dtSched desc");
-	query.setMaxResults(1);
-	List<TpiDtSched> lstObjects = query.getResultList();
-	return lstObjects.get(0).getDtSched();
+        javax.persistence.Query query = entityManager
+                .createQuery("SELECT t FROM TpiDtSched t order by t.dtSched desc");
+        query.setMaxResults(1);
+        List<TpiDtSched> lstObjects = query.getResultList();
+        return lstObjects.get(0).getDtSched();
     }
 
     public List<TpiDtSched> getTpiDtSchedbyStatus(String status) {
-	javax.persistence.Query query = entityManager.createQuery(
-		"SELECT t FROM TpiDtSched t WHERE t.tiStatoDtSched = :status order by t.dtSched");
-	query.setParameter("status", status);
-	return query.getResultList();
+        javax.persistence.Query query = entityManager.createQuery(
+                "SELECT t FROM TpiDtSched t WHERE t.tiStatoDtSched = :status order by t.dtSched");
+        query.setParameter("status", status);
+        return query.getResultList();
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void creaDataRegistrata(Date date) {
-	TpiDtSched dt = new TpiDtSched();
-	dt.setDtSched(date);
-	dt.setTiStatoDtSched(JobConstants.StatoSchedJob.REGISTRATA.name());
-	dt.setFlMigrazInCorso(JobConstants.DB_FALSE);
-	dt.setFlPresenzaSecondario(JobConstants.DB_FALSE);
-	entityManager.persist(dt);
+        TpiDtSched dt = new TpiDtSched();
+        dt.setDtSched(date);
+        dt.setTiStatoDtSched(JobConstants.StatoSchedJob.REGISTRATA.name());
+        dt.setFlMigrazInCorso(JobConstants.DB_FALSE);
+        dt.setFlPresenzaSecondario(JobConstants.DB_FALSE);
+        entityManager.persist(dt);
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void handleResp(SchedulazioniJobTPIRisposta resp, Long idDtSched, Date currentDate) {
-	TpiDtSched dtSched = entityManager.find(TpiDtSched.class, idDtSched);
-	dtSched.setFlMigrazInCorso(
-		Boolean.TRUE.equals(resp.getFlMigrazInCorso()) ? JobConstants.DB_TRUE
-			: JobConstants.DB_FALSE);
-	dtSched.setFlPresenzaSecondario(
-		Boolean.TRUE.equals(resp.getFlPresenzaSitoSecondario()) ? JobConstants.DB_TRUE
-			: JobConstants.DB_FALSE);
-	// elimina i record di TPI_SCHED_JOB relativi alla data di schedulazione corrente
-	me.deleteSchedJob(idDtSched);
-	// ricrea i record
-	for (Job job : resp.getListaJob()) {
-	    log.debug("{} --- Creo i record di schedulazione per il PRIMARIO",
-		    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI);
-	    me.createJobRecords(job, dtSched, JobConstants.ArkPath.PRIMARIO.name());
-	}
-	for (Job job : resp.getListaJobSecondario()) {
-	    log.debug("{} --- Creo i record di schedulazione per il SECONDARIO",
-		    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI);
-	    me.createJobRecords(job, dtSched, JobConstants.ArkPath.SECONDARIO.name());
-	    log.debug("{} --- Fine creazione record",
-		    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI);
-	}
-	entityManager.flush();
-	if (dtSched.getDtSched().equals(currentDate)
-		&& (!resp.getListaJob().isEmpty() || !resp.getListaJobSecondario().isEmpty())) {
-	    log.info("{} --- Imposto le date precedenti il {} a CONSOLIDATA",
-		    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI, dtSched.getDtSched());
-	    updateConsolidate(currentDate);
-	}
+        TpiDtSched dtSched = entityManager.find(TpiDtSched.class, idDtSched);
+        dtSched.setFlMigrazInCorso(
+                Boolean.TRUE.equals(resp.getFlMigrazInCorso()) ? JobConstants.DB_TRUE
+                        : JobConstants.DB_FALSE);
+        dtSched.setFlPresenzaSecondario(
+                Boolean.TRUE.equals(resp.getFlPresenzaSitoSecondario()) ? JobConstants.DB_TRUE
+                        : JobConstants.DB_FALSE);
+        // elimina i record di TPI_SCHED_JOB relativi alla data di schedulazione corrente
+        me.deleteSchedJob(idDtSched);
+        // ricrea i record
+        for (Job job : resp.getListaJob()) {
+            log.debug("{} --- Creo i record di schedulazione per il PRIMARIO",
+                    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI);
+            me.createJobRecords(job, dtSched, JobConstants.ArkPath.PRIMARIO.name());
+        }
+        for (Job job : resp.getListaJobSecondario()) {
+            log.debug("{} --- Creo i record di schedulazione per il SECONDARIO",
+                    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI);
+            me.createJobRecords(job, dtSched, JobConstants.ArkPath.SECONDARIO.name());
+            log.debug("{} --- Fine creazione record",
+                    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI);
+        }
+        entityManager.flush();
+        if (dtSched.getDtSched().equals(currentDate)
+                && (!resp.getListaJob().isEmpty() || !resp.getListaJobSecondario().isEmpty())) {
+            log.info("{} --- Imposto le date precedenti il {} a CONSOLIDATA",
+                    JobConstants.JobEnum.REGISTRA_SCHEDULAZIONI_JOB_TPI, dtSched.getDtSched());
+            updateConsolidate(currentDate);
+        }
     }
 
     public void deleteSchedJob(Long idDtSched) {
-	String queryStr = "DELETE FROM TpiSchedJob tb WHERE tb.tpiDtSched.idDtSched = :idDtSched";
-	Query q = entityManager.createQuery(queryStr);
-	q.setParameter("idDtSched", idDtSched);
-	q.executeUpdate();
-	entityManager.flush();
+        String queryStr = "DELETE FROM TpiSchedJob tb WHERE tb.tpiDtSched.idDtSched = :idDtSched";
+        Query q = entityManager.createQuery(queryStr);
+        q.setParameter("idDtSched", idDtSched);
+        q.executeUpdate();
+        entityManager.flush();
     }
 
     public void createJobRecords(Job job, TpiDtSched dtSched, String tiTpiSchedJob) {
-	TpiSchedJob sched = new TpiSchedJob();
-	sched.setTiTpiSchedJob(tiTpiSchedJob);
-	sched.setNmJob(job.getNmJob());
-	sched.setDtSchedJob(job.getDtSchedJob());
-	sched.setFlJobOk(
-		job.getFlJobOk() != null
-			? (Boolean.TRUE.equals(job.getFlJobOk()) ? JobConstants.DB_TRUE
-				: JobConstants.DB_FALSE)
-			: null);
-	sched.setFlMigraz(Boolean.TRUE.equals(job.getFlMigraz()) ? JobConstants.DB_TRUE
-		: JobConstants.DB_FALSE);
-	sched.setDlErrJob(job.getDlErrJob());
-	sched.setDsDurataJob(job.getDsDurataJob());
-	sched.setNiOrdSchedJob(new BigDecimal(job.getNiOrdSchedJob()));
+        TpiSchedJob sched = new TpiSchedJob();
+        sched.setTiTpiSchedJob(tiTpiSchedJob);
+        sched.setNmJob(job.getNmJob());
+        sched.setDtSchedJob(job.getDtSchedJob());
+        sched.setFlJobOk(
+                job.getFlJobOk() != null
+                        ? (Boolean.TRUE.equals(job.getFlJobOk()) ? JobConstants.DB_TRUE
+                                : JobConstants.DB_FALSE)
+                        : null);
+        sched.setFlMigraz(Boolean.TRUE.equals(job.getFlMigraz()) ? JobConstants.DB_TRUE
+                : JobConstants.DB_FALSE);
+        sched.setDlErrJob(job.getDlErrJob());
+        sched.setDsDurataJob(job.getDsDurataJob());
+        sched.setNiOrdSchedJob(new BigDecimal(job.getNiOrdSchedJob()));
 
-	if (job.getListaErrArk() != null && !job.getListaErrArk().isEmpty()) {
-	    if (sched.getTpiErrArks() == null) {
-		sched.setTpiErrArks(new ArrayList<TpiErrArk>());
-	    }
-	    for (JobErrArk jobErr : job.getListaErrArk()) {
-		TpiErrArk error = new TpiErrArk();
-		error.setCdErrArk(jobErr.getCdErrArk());
-		error.setDlErrArk(jobErr.getDsErrArk());
-		error.setNiErrArk(new BigDecimal(jobErr.getNiErrArk()));
-		error.setTiErrArk(jobErr.getTiErrArk());
-		error.setTpiSchedJob(sched);
-		sched.getTpiErrArks().add(error);
-	    }
-	}
+        if (job.getListaErrArk() != null && !job.getListaErrArk().isEmpty()) {
+            if (sched.getTpiErrArks() == null) {
+                sched.setTpiErrArks(new ArrayList<TpiErrArk>());
+            }
+            for (JobErrArk jobErr : job.getListaErrArk()) {
+                TpiErrArk error = new TpiErrArk();
+                error.setCdErrArk(jobErr.getCdErrArk());
+                error.setDlErrArk(jobErr.getDsErrArk());
+                error.setNiErrArk(new BigDecimal(jobErr.getNiErrArk()));
+                error.setTiErrArk(jobErr.getTiErrArk());
+                error.setTpiSchedJob(sched);
+                sched.getTpiErrArks().add(error);
+            }
+        }
 
-	if (job.getListaPathElab() != null && !job.getListaPathElab().isEmpty()) {
-	    if (sched.getTpiPathElabs() == null) {
-		sched.setTpiPathElabs(new ArrayList<TpiPathElab>());
-	    }
-	    for (PathElab jobPath : job.getListaPathElab()) {
-		TpiPathElab path = new TpiPathElab();
-		path.setDlPathElab(jobPath.getDsPath());
-		path.setDtVersElab(jobPath.getDtSched());
-		path.setNiFileDaElab(new BigDecimal(jobPath.getNiFileDaElab()));
-		path.setNiFileElab(new BigDecimal(jobPath.getNiFileElab()));
-		path.setTpiSchedJob(sched);
-		sched.getTpiPathElabs().add(path);
-	    }
-	}
+        if (job.getListaPathElab() != null && !job.getListaPathElab().isEmpty()) {
+            if (sched.getTpiPathElabs() == null) {
+                sched.setTpiPathElabs(new ArrayList<TpiPathElab>());
+            }
+            for (PathElab jobPath : job.getListaPathElab()) {
+                TpiPathElab path = new TpiPathElab();
+                path.setDlPathElab(jobPath.getDsPath());
+                path.setDtVersElab(jobPath.getDtSched());
+                path.setNiFileDaElab(new BigDecimal(jobPath.getNiFileDaElab()));
+                path.setNiFileElab(new BigDecimal(jobPath.getNiFileElab()));
+                path.setTpiSchedJob(sched);
+                sched.getTpiPathElabs().add(path);
+            }
+        }
 
-	sched.setTpiDtSched(dtSched);
-	if (dtSched.getTpiSchedJobs() == null) {
-	    dtSched.setTpiSchedJobs(new ArrayList<TpiSchedJob>());
-	}
-	dtSched.getTpiSchedJobs().add(sched);
+        sched.setTpiDtSched(dtSched);
+        if (dtSched.getTpiSchedJobs() == null) {
+            dtSched.setTpiSchedJobs(new ArrayList<TpiSchedJob>());
+        }
+        dtSched.getTpiSchedJobs().add(sched);
     }
 
     public void updateConsolidate(Date data) {
-	javax.persistence.Query query = entityManager.createQuery("UPDATE TpiDtSched t "
-		+ "SET t.tiStatoDtSched = :status " + "WHERE t.dtSched < :dtSchedIn "
-		+ "and t.tiStatoDtSched = :tiStatoDtSchedIn");
+        javax.persistence.Query query = entityManager.createQuery("UPDATE TpiDtSched t "
+                + "SET t.tiStatoDtSched = :status " + "WHERE t.dtSched < :dtSchedIn "
+                + "and t.tiStatoDtSched = :tiStatoDtSchedIn");
 
-	query.setParameter("status", JobConstants.StatoSchedJob.CONSOLIDATA.name());
-	query.setParameter("dtSchedIn", data);
-	query.setParameter("tiStatoDtSchedIn", JobConstants.StatoSchedJob.REGISTRATA.name());
-	query.executeUpdate();
-	entityManager.flush();
+        query.setParameter("status", JobConstants.StatoSchedJob.CONSOLIDATA.name());
+        query.setParameter("dtSchedIn", data);
+        query.setParameter("tiStatoDtSchedIn", JobConstants.StatoSchedJob.REGISTRATA.name());
+        query.executeUpdate();
+        entityManager.flush();
     }
 }

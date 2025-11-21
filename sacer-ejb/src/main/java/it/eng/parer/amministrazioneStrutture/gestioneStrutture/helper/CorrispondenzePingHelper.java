@@ -35,49 +35,49 @@ import it.eng.parer.viewEntity.OrgVCorrPing;
 public class CorrispondenzePingHelper extends GenericHelper {
 
     public List<OrgVCorrPing> retrieveOrgVCorrPingList(BigDecimal idStrut, BigDecimal idEnte,
-	    BigDecimal idAmbiente) {
-	StringBuilder queryStr = new StringBuilder(
-		"SELECT DISTINCT corr FROM OrgVCorrPing corr WHERE idOrganizApplic IN (:idStrut, :idEnte, :idAmbiente)");
+            BigDecimal idAmbiente) {
+        StringBuilder queryStr = new StringBuilder(
+                "SELECT DISTINCT corr FROM OrgVCorrPing corr WHERE idOrganizApplic IN (:idStrut, :idEnte, :idAmbiente)");
 
-	// creazione query dalla stringa
-	Query query = getEntityManager().createQuery(queryStr.toString());
-	if (idStrut != null && idStrut.compareTo(BigDecimal.ZERO) != 0) {
-	    query.setParameter("idStrut", longFromBigDecimal(idStrut));
-	}
+        // creazione query dalla stringa
+        Query query = getEntityManager().createQuery(queryStr.toString());
+        if (idStrut != null && idStrut.compareTo(BigDecimal.ZERO) != 0) {
+            query.setParameter("idStrut", longFromBigDecimal(idStrut));
+        }
 
-	if (idEnte != null && idEnte.compareTo(BigDecimal.ZERO) != 0) {
-	    query.setParameter("idEnte", longFromBigDecimal(idEnte));
-	}
-	if (idAmbiente != null && idAmbiente.compareTo(BigDecimal.ZERO) != 0) {
-	    query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
-	}
+        if (idEnte != null && idEnte.compareTo(BigDecimal.ZERO) != 0) {
+            query.setParameter("idEnte", longFromBigDecimal(idEnte));
+        }
+        if (idAmbiente != null && idAmbiente.compareTo(BigDecimal.ZERO) != 0) {
+            query.setParameter("idAmbiente", longFromBigDecimal(idAmbiente));
+        }
 
-	// getEntityManager().unwrap(JpagetEntityManager().class)
-	return query.getResultList();
+        // getEntityManager().unwrap(JpagetEntityManager().class)
+        return query.getResultList();
     }
 
     public boolean checkPingRelations(long id, int type) {
-	String queryStr = "SELECT tab FROM OrgVCorrPing tab WHERE idOrganizApplic = :id";
+        String queryStr = "SELECT tab FROM OrgVCorrPing tab WHERE idOrganizApplic = :id";
 
-	switch (type) {
-	case 0:
-	    queryStr += " AND ti_dich_vers = 'STRUTTURA'";
-	    break;
-	case 1:
-	    queryStr += " AND ti_dich_vers = 'ENTE'";
-	    break;
-	case 2:
-	    queryStr += " AND ti_dich_vers = 'AMBIENTE'";
-	    break;
-	default:
-	    break;
-	}
+        switch (type) {
+        case 0:
+            queryStr += " AND ti_dich_vers = 'STRUTTURA'";
+            break;
+        case 1:
+            queryStr += " AND ti_dich_vers = 'ENTE'";
+            break;
+        case 2:
+            queryStr += " AND ti_dich_vers = 'AMBIENTE'";
+            break;
+        default:
+            break;
+        }
 
-	Query query1 = getEntityManager().createQuery(queryStr);
-	query1.setParameter("id", id);
-	List<Object[]> list = query1.getResultList();
+        Query query1 = getEntityManager().createQuery(queryStr);
+        query1.setParameter("id", id);
+        List<Object[]> list = query1.getResultList();
 
-	return !list.isEmpty();
+        return !list.isEmpty();
     }
 
 }

@@ -39,29 +39,29 @@ public class CancellaUtenteHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(CancellaUtenteHelperTest.class.getSimpleName(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""), CancellaUtenteHelperTest.class,
-			CancellaUtenteHelper.class, CancellaUtenteExt.class,
-			RispostaWSCancellaUtente.class, IRispostaWS.class),
-		HelperTest.createSacerLogJar(), createPaginatorJavaArchive());
+        return HelperTest.createEnterpriseArchive(CancellaUtenteHelperTest.class.getSimpleName(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""), CancellaUtenteHelperTest.class,
+                        CancellaUtenteHelper.class, CancellaUtenteExt.class,
+                        RispostaWSCancellaUtente.class, IRispostaWS.class),
+                HelperTest.createSacerLogJar(), createPaginatorJavaArchive());
     }
 
     @Test
     void isReferenced() {
-	assertFalse(helper.isReferenced(-99));
+        assertFalse(helper.isReferenced(-99));
     }
 
     @Test
     void deleteIamUser_queryIsOk() {
-	helper.deleteIamUser(-99L);
-	assertTrue(true);
+        helper.deleteIamUser(-99L);
+        assertTrue(true);
     }
 
     @Test
     void delete_queryIsOk() throws ParerInternalError {
-	final CancellaUtenteExt cuExt = new CancellaUtenteExt();
-	cuExt.setIdUserIam(-99);
-	helper.deleteIamUser(cuExt, new RispostaWSCancellaUtente());
-	assertTrue(true);
+        final CancellaUtenteExt cuExt = new CancellaUtenteExt();
+        cuExt.setIdUserIam(-99);
+        helper.deleteIamUser(cuExt, new RispostaWSCancellaUtente());
+        assertTrue(true);
     }
 }

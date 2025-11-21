@@ -33,19 +33,19 @@ public class VrsDatiSessioneVersTableBean extends AbstractBaseTable<VrsDatiSessi
     public static VrsDatiSessioneVersTableDescriptor TABLE_DESCRIPTOR = new VrsDatiSessioneVersTableDescriptor();
 
     public VrsDatiSessioneVersTableBean() {
-	super();
+        super();
     }
 
     protected VrsDatiSessioneVersRowBean createRow() {
-	return new VrsDatiSessioneVersRowBean();
+        return new VrsDatiSessioneVersRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<VrsDatiSessioneVersRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -50,40 +50,40 @@ public class UsrUsoUserApplic implements Serializable {
     @Id
     @Column(name = "ID_USO_USER_APPLIC")
     public Long getIdUsoUserApplic() {
-	return this.idUsoUserApplic;
+        return this.idUsoUserApplic;
     }
 
     public void setIdUsoUserApplic(Long idUsoUserApplic) {
-	this.idUsoUserApplic = idUsoUserApplic;
+        this.idUsoUserApplic = idUsoUserApplic;
     }
 
     @OneToMany(mappedBy = "usrUsoUserApplic", cascade = {
-	    CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE })
+            CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE })
     public List<UsrDichAbilOrganiz> getUsrDichAbilOrganizs() {
-	return this.usrDichAbilOrganizs;
+        return this.usrDichAbilOrganizs;
     }
 
     public void setUsrDichAbilOrganizs(List<UsrDichAbilOrganiz> usrDichAbilOrganizs) {
-	this.usrDichAbilOrganizs = usrDichAbilOrganizs;
+        this.usrDichAbilOrganizs = usrDichAbilOrganizs;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_APPLIC")
     public SIAplApplic getAplApplic() {
-	return this.aplApplic;
+        return this.aplApplic;
     }
 
     public void setAplApplic(SIAplApplic aplApplic) {
-	this.aplApplic = aplApplic;
+        this.aplApplic = aplApplic;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_USER_IAM")
     public UsrUser getUsrUser() {
-	return this.usrUser;
+        return this.usrUser;
     }
 
     public void setUsrUser(UsrUser usrUser) {
-	this.usrUser = usrUser;
+        this.usrUser = usrUser;
     }
 }

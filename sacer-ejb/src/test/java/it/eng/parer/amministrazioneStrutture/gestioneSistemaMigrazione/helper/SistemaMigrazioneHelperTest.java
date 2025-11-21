@@ -37,52 +37,52 @@ public class SistemaMigrazioneHelperTest {
 
     @Deployment
     public static Archive<?> createTestArchive() {
-	return HelperTest.createEnterpriseArchive(SistemaMigrazioneHelperTest.class.getSimpleName(),
-		HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
-		HelperTest.createSacerJavaArchive(Arrays.asList(""),
-			SistemaMigrazioneHelperTest.class, SistemaMigrazioneHelper.class));
+        return HelperTest.createEnterpriseArchive(SistemaMigrazioneHelperTest.class.getSimpleName(),
+                HelperTest.createPaginatorJavaArchive(), HelperTest.createSacerLogJar(),
+                HelperTest.createSacerJavaArchive(Arrays.asList(""),
+                        SistemaMigrazioneHelperTest.class, SistemaMigrazioneHelper.class));
     }
 
     @Test
     void retrieveAplSistemaMigraz_BigDecimal_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.retrieveAplSistemaMigraz(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.retrieveAplSistemaMigraz(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void retrieveOrgUsoSistemaMigraz_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.retrieveOrgUsoSistemaMigraz(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.retrieveOrgUsoSistemaMigraz(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void retrieveNmSistemaMigraz_queryIsOk() {
-	BigDecimal idStrut = aBigDecimal();
-	helper.retrieveNmSistemaMigraz(idStrut);
-	assertTrue(true);
+        BigDecimal idStrut = aBigDecimal();
+        helper.retrieveNmSistemaMigraz(idStrut);
+        assertTrue(true);
     }
 
     @Test
     void retrieveAplSistemaMigraz_String_String_queryIsOk() {
-	String nmSistemaMigraz = aString();
-	String dsSistemaMigraz = aString();
-	helper.retrieveAplSistemaMigraz(nmSistemaMigraz, dsSistemaMigraz);
-	assertTrue(true);
+        String nmSistemaMigraz = aString();
+        String dsSistemaMigraz = aString();
+        helper.retrieveAplSistemaMigraz(nmSistemaMigraz, dsSistemaMigraz);
+        assertTrue(true);
     }
 
     @Test
     void getAplSistemaMigraz_queryIsOk() {
-	String nmSistemaMigraz = aString();
-	helper.getAplSistemaMigraz(nmSistemaMigraz);
-	assertTrue(true);
+        String nmSistemaMigraz = aString();
+        helper.getAplSistemaMigraz(nmSistemaMigraz);
+        assertTrue(true);
     }
 
     @Test
     void existsOrgUsoSistemaMigraz_queryIsOk() {
-	BigDecimal idSistemaMigraz = aBigDecimal();
-	helper.existsOrgUsoSistemaMigraz(idSistemaMigraz);
-	assertTrue(true);
+        BigDecimal idSistemaMigraz = aBigDecimal();
+        helper.existsOrgUsoSistemaMigraz(idSistemaMigraz);
+        assertTrue(true);
     }
 }

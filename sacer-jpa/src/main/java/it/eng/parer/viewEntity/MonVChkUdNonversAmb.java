@@ -37,11 +37,11 @@ public class MonVChkUdNonversAmb implements Serializable {
 
     @EmbeddedId
     public MonVChkUdNonversAmbId getMonVChkUdNonversAmbId() {
-	return monVChkUdNonversAmbId;
+        return monVChkUdNonversAmbId;
     }
 
     public void setMonVChkUdNonversAmbId(MonVChkUdNonversAmbId monVChkUdNonversAmbId) {
-	this.monVChkUdNonversAmbId = monVChkUdNonversAmbId;
+        this.monVChkUdNonversAmbId = monVChkUdNonversAmbId;
     }
 
     public MonVChkUdNonversAmb() {/* Hibernate */
@@ -49,29 +49,29 @@ public class MonVChkUdNonversAmb implements Serializable {
 
     @Column(name = "FL_UD_NONVERS_NORISOLUB", columnDefinition = "char(1)")
     public String getFlUdNonversNorisolub() {
-	return this.flUdNonversNorisolub;
+        return this.flUdNonversNorisolub;
     }
 
     public void setFlUdNonversNorisolub(String flUdNonversNorisolub) {
-	this.flUdNonversNorisolub = flUdNonversNorisolub;
+        this.flUdNonversNorisolub = flUdNonversNorisolub;
     }
 
     @Column(name = "FL_UD_NONVERS_NOVERIF", columnDefinition = "char(1)")
     public String getFlUdNonversNoverif() {
-	return this.flUdNonversNoverif;
+        return this.flUdNonversNoverif;
     }
 
     public void setFlUdNonversNoverif(String flUdNonversNoverif) {
-	this.flUdNonversNoverif = flUdNonversNoverif;
+        this.flUdNonversNoverif = flUdNonversNoverif;
     }
 
     @Column(name = "FL_UD_NONVERS_VERIF", columnDefinition = "char(1)")
     public String getFlUdNonversVerif() {
-	return this.flUdNonversVerif;
+        return this.flUdNonversVerif;
     }
 
     public void setFlUdNonversVerif(String flUdNonversVerif) {
-	this.flUdNonversVerif = flUdNonversVerif;
+        this.flUdNonversVerif = flUdNonversVerif;
     }
 
 }

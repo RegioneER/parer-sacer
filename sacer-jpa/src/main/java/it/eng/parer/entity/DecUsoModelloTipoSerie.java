@@ -56,35 +56,35 @@ public class DecUsoModelloTipoSerie implements Serializable {
     @Column(name = "ID_USO_MODELLO_TIPO_SERIE")
     @XmlID
     @GenericGenerator(name = "SDEC_USO_MODELLO_TIPO_SERIE_ID_USO_MODELLO_TIPO_SERIE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_USO_MODELLO_TIPO_SERIE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_USO_MODELLO_TIPO_SERIE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_USO_MODELLO_TIPO_SERIE_ID_USO_MODELLO_TIPO_SERIE_GENERATOR")
     public Long getIdUsoModelloTipoSerie() {
-	return this.idUsoModelloTipoSerie;
+        return this.idUsoModelloTipoSerie;
     }
 
     public void setIdUsoModelloTipoSerie(Long idUsoModelloTipoSerie) {
-	this.idUsoModelloTipoSerie = idUsoModelloTipoSerie;
+        this.idUsoModelloTipoSerie = idUsoModelloTipoSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MODELLO_TIPO_SERIE")
     public DecModelloTipoSerie getDecModelloTipoSerie() {
-	return this.decModelloTipoSerie;
+        return this.decModelloTipoSerie;
     }
 
     public void setDecModelloTipoSerie(DecModelloTipoSerie decModelloTipoSerie) {
-	this.decModelloTipoSerie = decModelloTipoSerie;
+        this.decModelloTipoSerie = decModelloTipoSerie;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_STRUT")
     @XmlInverseReference(mappedBy = "decUsoModelloTipoSeries")
     public OrgStrut getOrgStrut() {
-	return this.orgStrut;
+        return this.orgStrut;
     }
 
     public void setOrgStrut(OrgStrut orgStrut) {
-	this.orgStrut = orgStrut;
+        this.orgStrut = orgStrut;
     }
 }

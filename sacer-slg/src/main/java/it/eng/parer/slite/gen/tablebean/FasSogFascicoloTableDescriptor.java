@@ -52,33 +52,33 @@ public class FasSogFascicoloTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_SOG_FASCICOLO,
-		new ColumnDescriptor(COL_ID_SOG_FASCICOLO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
-	map.put(COL_TI_RAPP, new ColumnDescriptor(COL_TI_RAPP, Types.VARCHAR, 30, false));
-	map.put(COL_TI_SES, new ColumnDescriptor(COL_TI_SES, Types.VARCHAR, 30, false));
-	map.put(COL_TI_SOG, new ColumnDescriptor(COL_TI_SOG, Types.VARCHAR, 30, false));
-	map.put(COL_NM_NOME_SOG, new ColumnDescriptor(COL_NM_NOME_SOG, Types.VARCHAR, 100, false));
-	map.put(COL_NM_COGN_SOG, new ColumnDescriptor(COL_NM_COGN_SOG, Types.VARCHAR, 100, false));
-	map.put(COL_DS_DENOM_SOG,
-		new ColumnDescriptor(COL_DS_DENOM_SOG, Types.VARCHAR, 254, false));
-	map.put(COL_CD_SOG, new ColumnDescriptor(COL_CD_SOG, Types.VARCHAR, 100, false));
-	map.put(COL_TI_CD_SOG, new ColumnDescriptor(COL_TI_CD_SOG, Types.VARCHAR, 30, false));
-	map.put(COL_DS_CIT, new ColumnDescriptor(COL_DS_CIT, Types.VARCHAR, 100, false));
-	map.put(COL_DT_NAS, new ColumnDescriptor(COL_DT_NAS, Types.TIMESTAMP, 7, false));
-	map.put(COL_DS_CMN_NSC, new ColumnDescriptor(COL_DS_CMN_NSC, Types.VARCHAR, 100, false));
+        map.put(COL_ID_SOG_FASCICOLO,
+                new ColumnDescriptor(COL_ID_SOG_FASCICOLO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_FASCICOLO, new ColumnDescriptor(COL_ID_FASCICOLO, Types.DECIMAL, 22, false));
+        map.put(COL_TI_RAPP, new ColumnDescriptor(COL_TI_RAPP, Types.VARCHAR, 30, false));
+        map.put(COL_TI_SES, new ColumnDescriptor(COL_TI_SES, Types.VARCHAR, 30, false));
+        map.put(COL_TI_SOG, new ColumnDescriptor(COL_TI_SOG, Types.VARCHAR, 30, false));
+        map.put(COL_NM_NOME_SOG, new ColumnDescriptor(COL_NM_NOME_SOG, Types.VARCHAR, 100, false));
+        map.put(COL_NM_COGN_SOG, new ColumnDescriptor(COL_NM_COGN_SOG, Types.VARCHAR, 100, false));
+        map.put(COL_DS_DENOM_SOG,
+                new ColumnDescriptor(COL_DS_DENOM_SOG, Types.VARCHAR, 254, false));
+        map.put(COL_CD_SOG, new ColumnDescriptor(COL_CD_SOG, Types.VARCHAR, 100, false));
+        map.put(COL_TI_CD_SOG, new ColumnDescriptor(COL_TI_CD_SOG, Types.VARCHAR, 30, false));
+        map.put(COL_DS_CIT, new ColumnDescriptor(COL_DS_CIT, Types.VARCHAR, 100, false));
+        map.put(COL_DT_NAS, new ColumnDescriptor(COL_DT_NAS, Types.TIMESTAMP, 7, false));
+        map.put(COL_DS_CMN_NSC, new ColumnDescriptor(COL_DS_CMN_NSC, Types.VARCHAR, 100, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

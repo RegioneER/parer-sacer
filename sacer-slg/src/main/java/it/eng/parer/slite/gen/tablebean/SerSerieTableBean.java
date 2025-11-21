@@ -33,19 +33,19 @@ public class SerSerieTableBean extends AbstractBaseTable<SerSerieRowBean> {
     public static SerSerieTableDescriptor TABLE_DESCRIPTOR = new SerSerieTableDescriptor();
 
     public SerSerieTableBean() {
-	super();
+        super();
     }
 
     protected SerSerieRowBean createRow() {
-	return new SerSerieRowBean();
+        return new SerSerieRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerSerieRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

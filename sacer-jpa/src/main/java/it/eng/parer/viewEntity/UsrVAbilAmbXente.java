@@ -39,11 +39,11 @@ public class UsrVAbilAmbXente implements Serializable {
 
     @EmbeddedId
     public UsrVAbilAmbXenteId getUsrVAbilAmbXenteId() {
-	return usrVAbilAmbXenteId;
+        return usrVAbilAmbXenteId;
     }
 
     public void setUsrVAbilAmbXenteId(UsrVAbilAmbXenteId usrVAbilAmbXenteId) {
-	this.usrVAbilAmbXenteId = usrVAbilAmbXenteId;
+        this.usrVAbilAmbXenteId = usrVAbilAmbXenteId;
     }
 
     private String nmApplic;
@@ -56,49 +56,49 @@ public class UsrVAbilAmbXente implements Serializable {
 
     @Column(name = "DS_ORGANIZ")
     public String getDsOrganiz() {
-	return this.dsOrganiz;
+        return this.dsOrganiz;
     }
 
     public void setDsOrganiz(String dsOrganiz) {
-	this.dsOrganiz = dsOrganiz;
+        this.dsOrganiz = dsOrganiz;
     }
 
     @Column(name = "NM_APPLIC")
     public String getNmApplic() {
-	return this.nmApplic;
+        return this.nmApplic;
     }
 
     public void setNmApplic(String nmApplic) {
-	this.nmApplic = nmApplic;
+        this.nmApplic = nmApplic;
     }
 
     @Column(name = "NM_ORGANIZ")
     public String getNmOrganiz() {
-	return this.nmOrganiz;
+        return this.nmOrganiz;
     }
 
     public void setNmOrganiz(String nmOrganiz) {
-	this.nmOrganiz = nmOrganiz;
+        this.nmOrganiz = nmOrganiz;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_FIN_VAL")
     public Date getDtFinVal() {
-	return this.dtFinVal;
+        return this.dtFinVal;
     }
 
     public void setDtFinVal(Date dtFinVal) {
-	this.dtFinVal = dtFinVal;
+        this.dtFinVal = dtFinVal;
     }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DT_INI_VAL")
     public Date getDtIniVal() {
-	return this.dtIniVal;
+        return this.dtIniVal;
     }
 
     public void setDtIniVal(Date dtIniVal) {
-	this.dtIniVal = dtIniVal;
+        this.dtIniVal = dtIniVal;
     }
 
 }

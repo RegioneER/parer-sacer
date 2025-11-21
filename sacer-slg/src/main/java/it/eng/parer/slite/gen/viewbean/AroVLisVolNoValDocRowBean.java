@@ -37,113 +37,113 @@ public class AroVLisVolNoValDocRowBean extends BaseRow implements JEEBaseRowInte
     public static AroVLisVolNoValDocTableDescriptor TABLE_DESCRIPTOR = new AroVLisVolNoValDocTableDescriptor();
 
     public AroVLisVolNoValDocRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdDoc() {
-	return getBigDecimal("id_doc");
+        return getBigDecimal("id_doc");
     }
 
     public void setIdDoc(BigDecimal idDoc) {
-	setObject("id_doc", idDoc);
+        setObject("id_doc", idDoc);
     }
 
     public BigDecimal getIdVolumeConserv() {
-	return getBigDecimal("id_volume_conserv");
+        return getBigDecimal("id_volume_conserv");
     }
 
     public void setIdVolumeConserv(BigDecimal idVolumeConserv) {
-	setObject("id_volume_conserv", idVolumeConserv);
+        setObject("id_volume_conserv", idVolumeConserv);
     }
 
     public String getNmVolumeConserv() {
-	return getString("nm_volume_conserv");
+        return getString("nm_volume_conserv");
     }
 
     public void setNmVolumeConserv(String nmVolumeConserv) {
-	setObject("nm_volume_conserv", nmVolumeConserv);
+        setObject("nm_volume_conserv", nmVolumeConserv);
     }
 
     public String getDsVolumeConserv() {
-	return getString("ds_volume_conserv");
+        return getString("ds_volume_conserv");
     }
 
     public void setDsVolumeConserv(String dsVolumeConserv) {
-	setObject("ds_volume_conserv", dsVolumeConserv);
+        setObject("ds_volume_conserv", dsVolumeConserv);
     }
 
     public Timestamp getDtCreazione() {
-	return getTimestamp("dt_creazione");
+        return getTimestamp("dt_creazione");
     }
 
     public void setDtCreazione(Timestamp dtCreazione) {
-	setObject("dt_creazione", dtCreazione);
+        setObject("dt_creazione", dtCreazione);
     }
 
     public String getTiStatoVolumeConserv() {
-	return getString("ti_stato_volume_conserv");
+        return getString("ti_stato_volume_conserv");
     }
 
     public void setTiStatoVolumeConserv(String tiStatoVolumeConserv) {
-	setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
+        setObject("ti_stato_volume_conserv", tiStatoVolumeConserv);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroVLisVolNoValDoc entity = (AroVLisVolNoValDoc) obj;
-	if (entity.getAroVLisVolNoValDocId() != null) {
-	    this.setIdDoc(entity.getAroVLisVolNoValDocId().getIdDoc());
-	    this.setIdVolumeConserv(entity.getAroVLisVolNoValDocId().getIdVolumeConserv());
+        AroVLisVolNoValDoc entity = (AroVLisVolNoValDoc) obj;
+        if (entity.getAroVLisVolNoValDocId() != null) {
+            this.setIdDoc(entity.getAroVLisVolNoValDocId().getIdDoc());
+            this.setIdVolumeConserv(entity.getAroVLisVolNoValDocId().getIdVolumeConserv());
 
-	}
-	this.setNmVolumeConserv(entity.getNmVolumeConserv());
-	this.setDsVolumeConserv(entity.getDsVolumeConserv());
-	if (entity.getDtCreazione() != null) {
-	    this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
-	}
-	this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
+        }
+        this.setNmVolumeConserv(entity.getNmVolumeConserv());
+        this.setDsVolumeConserv(entity.getDsVolumeConserv());
+        if (entity.getDtCreazione() != null) {
+            this.setDtCreazione(new Timestamp(entity.getDtCreazione().getTime()));
+        }
+        this.setTiStatoVolumeConserv(entity.getTiStatoVolumeConserv());
     }
 
     @Override
     public AroVLisVolNoValDoc rowBeanToEntity() {
-	AroVLisVolNoValDoc entity = new AroVLisVolNoValDoc();
-	entity.setAroVLisVolNoValDocId(new AroVLisVolNoValDocId());
-	entity.getAroVLisVolNoValDocId().setIdDoc(this.getIdDoc());
-	entity.getAroVLisVolNoValDocId().setIdVolumeConserv(this.getIdVolumeConserv());
-	entity.setNmVolumeConserv(this.getNmVolumeConserv());
-	entity.setDsVolumeConserv(this.getDsVolumeConserv());
-	entity.setDtCreazione(this.getDtCreazione());
-	entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
-	return entity;
+        AroVLisVolNoValDoc entity = new AroVLisVolNoValDoc();
+        entity.setAroVLisVolNoValDocId(new AroVLisVolNoValDocId());
+        entity.getAroVLisVolNoValDocId().setIdDoc(this.getIdDoc());
+        entity.getAroVLisVolNoValDocId().setIdVolumeConserv(this.getIdVolumeConserv());
+        entity.setNmVolumeConserv(this.getNmVolumeConserv());
+        entity.setDsVolumeConserv(this.getDsVolumeConserv());
+        entity.setDtCreazione(this.getDtCreazione());
+        entity.setTiStatoVolumeConserv(this.getTiStatoVolumeConserv());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

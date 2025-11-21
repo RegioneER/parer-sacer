@@ -37,19 +37,19 @@ public class DecVChkFmtNumeroTableBean extends AbstractBaseTable<DecVChkFmtNumer
     public static DecVChkFmtNumeroTableDescriptor TABLE_DESCRIPTOR = new DecVChkFmtNumeroTableDescriptor();
 
     public DecVChkFmtNumeroTableBean() {
-	super();
+        super();
     }
 
     protected DecVChkFmtNumeroRowBean createRow() {
-	return new DecVChkFmtNumeroRowBean();
+        return new DecVChkFmtNumeroRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecVChkFmtNumeroRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

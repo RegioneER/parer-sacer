@@ -52,83 +52,83 @@ public class DecFiltroSelUdDatoBean implements Serializable, Comparable<DecFiltr
     }
 
     public long getIdFiltroSelUdDato() {
-	return this.idFiltroSelUdDato;
+        return this.idFiltroSelUdDato;
     }
 
     public void setIdFiltroSelUdDato(long idFiltroSelUdDato) {
-	this.idFiltroSelUdDato = idFiltroSelUdDato;
+        this.idFiltroSelUdDato = idFiltroSelUdDato;
     }
 
     public String getDsListaVersioniXsd() {
-	return this.dsListaVersioniXsd;
+        return this.dsListaVersioniXsd;
     }
 
     public void setDsListaVersioniXsd(String dsListaVersioniXsd) {
-	this.dsListaVersioniXsd = dsListaVersioniXsd;
+        this.dsListaVersioniXsd = dsListaVersioniXsd;
     }
 
     public String getNmTipoDoc() {
-	return this.nmTipoDoc;
+        return this.nmTipoDoc;
     }
 
     public void setNmTipoDoc(String nmTipoDoc) {
-	this.nmTipoDoc = nmTipoDoc;
+        this.nmTipoDoc = nmTipoDoc;
     }
 
     public String getNmTipoUnitaDoc() {
-	return this.nmTipoUnitaDoc;
+        return this.nmTipoUnitaDoc;
     }
 
     public void setNmTipoUnitaDoc(String nmTipoUnitaDoc) {
-	this.nmTipoUnitaDoc = nmTipoUnitaDoc;
+        this.nmTipoUnitaDoc = nmTipoUnitaDoc;
     }
 
     public String getTiEntitaSacer() {
-	return this.tiEntitaSacer;
+        return this.tiEntitaSacer;
     }
 
     public void setTiEntitaSacer(String tiEntitaSacer) {
-	this.tiEntitaSacer = tiEntitaSacer;
+        this.tiEntitaSacer = tiEntitaSacer;
     }
 
     public DecFiltroSelUdAttb getDecCriterioDatiSpec() {
-	return this.decCriterioDatiSpec;
+        return this.decCriterioDatiSpec;
     }
 
     public void setDecCriterioDatiSpec(DecFiltroSelUdAttb decCriterioDatiSpec) {
-	this.decCriterioDatiSpec = decCriterioDatiSpec;
+        this.decCriterioDatiSpec = decCriterioDatiSpec;
     }
 
     public BigDecimal getIdAttribDatiSpec() {
-	return idAttribDatiSpec;
+        return idAttribDatiSpec;
     }
 
     public void setIdAttribDatiSpec(BigDecimal idAttribDatiSpec) {
-	this.idAttribDatiSpec = idAttribDatiSpec;
+        this.idAttribDatiSpec = idAttribDatiSpec;
     }
 
     public BigDecimal getOrdine() {
-	return ordine;
+        return ordine;
     }
 
     public void setOrdine(BigDecimal ordine) {
-	this.ordine = ordine;
+        this.ordine = ordine;
     }
 
     @Override
     public int compareTo(DecFiltroSelUdDatoBean o) {
-	int result = this.ordine.compareTo(o.ordine);
-	if (result == 0) {
-	    // Se sono tipi unità documentaria
-	    if (this.nmTipoUnitaDoc != null) {
-		result = this.nmTipoUnitaDoc.compareTo(o.nmTipoUnitaDoc);
-	    } else if (this.nmTipoDoc != null) {
-		result = this.nmTipoDoc.compareTo(o.nmTipoDoc);
-	    }
-	} else {
-	    result = this.ordine.compareTo(o.ordine);
-	}
-	return result;
+        int result = this.ordine.compareTo(o.ordine);
+        if (result == 0) {
+            // Se sono tipi unità documentaria
+            if (this.nmTipoUnitaDoc != null) {
+                result = this.nmTipoUnitaDoc.compareTo(o.nmTipoUnitaDoc);
+            } else if (this.nmTipoDoc != null) {
+                result = this.nmTipoDoc.compareTo(o.nmTipoDoc);
+            }
+        } else {
+            result = this.ordine.compareTo(o.ordine);
+        }
+        return result;
     }
 
 }

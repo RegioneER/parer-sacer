@@ -27,65 +27,65 @@ public class MonVCntUdTipoUdB30Id implements Serializable {
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     private BigDecimal idTipoUnitaDoc;
 
     @Column(name = "ID_TIPO_UNITA_DOC")
     public BigDecimal getIdTipoUnitaDoc() {
-	return idTipoUnitaDoc;
+        return idTipoUnitaDoc;
     }
 
     public void setIdTipoUnitaDoc(BigDecimal idTipoUnitaDoc) {
-	this.idTipoUnitaDoc = idTipoUnitaDoc;
+        this.idTipoUnitaDoc = idTipoUnitaDoc;
     }
 
     private String tiStatoUd;
 
     @Column(name = "TI_STATO_UD")
     public String getTiStatoUd() {
-	return tiStatoUd;
+        return tiStatoUd;
     }
 
     public void setTiStatoUd(String tiStatoUd) {
-	this.tiStatoUd = tiStatoUd;
+        this.tiStatoUd = tiStatoUd;
     }
 
     @Override
     public int hashCode() {
-	int hash = 3;
-	hash = 29 * hash + Objects.hashCode(this.idStrut);
-	hash = 29 * hash + Objects.hashCode(this.idTipoUnitaDoc);
-	hash = 29 * hash + Objects.hashCode(this.tiStatoUd);
-	return hash;
+        int hash = 3;
+        hash = 29 * hash + Objects.hashCode(this.idStrut);
+        hash = 29 * hash + Objects.hashCode(this.idTipoUnitaDoc);
+        hash = 29 * hash + Objects.hashCode(this.tiStatoUd);
+        return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-	if (this == obj) {
-	    return true;
-	}
-	if (obj == null) {
-	    return false;
-	}
-	if (getClass() != obj.getClass()) {
-	    return false;
-	}
-	final MonVCntUdTipoUdB30Id other = (MonVCntUdTipoUdB30Id) obj;
-	if (!Objects.equals(this.tiStatoUd, other.tiStatoUd)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idStrut, other.idStrut)) {
-	    return false;
-	}
-	if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
-	    return false;
-	}
-	return true;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MonVCntUdTipoUdB30Id other = (MonVCntUdTipoUdB30Id) obj;
+        if (!Objects.equals(this.tiStatoUd, other.tiStatoUd)) {
+            return false;
+        }
+        if (!Objects.equals(this.idStrut, other.idStrut)) {
+            return false;
+        }
+        if (!Objects.equals(this.idTipoUnitaDoc, other.idTipoUnitaDoc)) {
+            return false;
+        }
+        return true;
     }
 }

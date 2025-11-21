@@ -62,11 +62,11 @@ import it.eng.parer.ws.utils.MessaggiWSFormat;
  * @author DiLorenzo_F
  */
 @SuppressWarnings({
-	"unchecked" })
+        "unchecked" })
 @Stateless(mappedName = "CreazioneIndiceMetaFascicoliHelper")
 @LocalBean
 @Interceptors({
-	it.eng.parer.aop.TransactionInterceptor.class })
+        it.eng.parer.aop.TransactionInterceptor.class })
 public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
 
     public static final String JAVAX_PERSISTENCE_FETCHGRAPH = "javax.persistence.fetchgraph";
@@ -77,153 +77,153 @@ public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
     Logger log = LoggerFactory.getLogger(CreazioneIndiceMetaFascicoliHelper.class);
 
     public FasVVisFascicolo getFasVVisFascicolo(Long idFascicolo) {
-	Query query = getEntityManager().createQuery(
-		"SELECT u FROM FasVVisFascicolo u WHERE u.idFascicolo = :idFascicolo ");
-	query.setParameter("idFascicolo", bigDecimalFromLong(idFascicolo));
-	return (FasVVisFascicolo) query.getSingleResult();
+        Query query = getEntityManager().createQuery(
+                "SELECT u FROM FasVVisFascicolo u WHERE u.idFascicolo = :idFascicolo ");
+        query.setParameter("idFascicolo", bigDecimalFromLong(idFascicolo));
+        return (FasVVisFascicolo) query.getSingleResult();
     }
 
     public List<FasVLisUdInFasc> getFasVLisUdInFasc(Long idFascicolo, Long idUserIamCorrente) {
-	Query query = getEntityManager().createQuery(
-		"SELECT u FROM FasVLisUdInFasc u WHERE u.id.idFascicolo = :idFascicolo AND u.idUserIamCorrente = :idUserIamCorrente ");
-	query.setParameter("idFascicolo", bigDecimalFromLong(idFascicolo));
-	query.setParameter("idUserIamCorrente", bigDecimalFromLong(idUserIamCorrente));
-	return query.getResultList();
+        Query query = getEntityManager().createQuery(
+                "SELECT u FROM FasVLisUdInFasc u WHERE u.id.idFascicolo = :idFascicolo AND u.idUserIamCorrente = :idUserIamCorrente ");
+        query.setParameter("idFascicolo", bigDecimalFromLong(idFascicolo));
+        query.setParameter("idUserIamCorrente", bigDecimalFromLong(idUserIamCorrente));
+        return query.getResultList();
     }
 
     public List<FasAmminPartec> getFasAmminPartec(Long idFascicolo) {
-	Query query = getEntityManager().createQuery("SELECT u FROM FasAmminPartec u "
-		+ "WHERE u.fasFascicolo.idFascicolo = :idFascicolo " + "ORDER BY u.dsAmminPartec ");
-	query.setParameter("idFascicolo", idFascicolo);
-	return query.getResultList();
+        Query query = getEntityManager().createQuery("SELECT u FROM FasAmminPartec u "
+                + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo " + "ORDER BY u.dsAmminPartec ");
+        query.setParameter("idFascicolo", idFascicolo);
+        return query.getResultList();
     }
 
     public List<FasSogFascicolo> getFasSogFascicolo(Long idFascicolo) {
-	Query query = getEntityManager().createQuery("SELECT u FROM FasSogFascicolo u "
-		+ "WHERE u.fasFascicolo.idFascicolo = :idFascicolo " + "ORDER BY u.dsDenomSog ");
-	query.setParameter("idFascicolo", idFascicolo);
-	return query.getResultList();
+        Query query = getEntityManager().createQuery("SELECT u FROM FasSogFascicolo u "
+                + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo " + "ORDER BY u.dsDenomSog ");
+        query.setParameter("idFascicolo", idFascicolo);
+        return query.getResultList();
     }
 
     public List<FasRespFascicolo> getFasRespFascicolo(Long idFascicolo) {
-	Query query = getEntityManager().createQuery("SELECT u FROM FasRespFascicolo u "
-		+ "WHERE u.fasFascicolo.idFascicolo = :idFascicolo");
-	query.setParameter("idFascicolo", idFascicolo);
-	return query.getResultList();
+        Query query = getEntityManager().createQuery("SELECT u FROM FasRespFascicolo u "
+                + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo");
+        query.setParameter("idFascicolo", idFascicolo);
+        return query.getResultList();
     }
 
     public List<FasUniOrgRespFascicolo> getFasUniOrgRespFascicolo(Long idFascicolo) {
-	Query query = getEntityManager().createQuery("SELECT u FROM FasUniOrgRespFascicolo u "
-		+ "WHERE u.fasFascicolo.idFascicolo = :idFascicolo");
-	query.setParameter("idFascicolo", idFascicolo);
-	return query.getResultList();
+        Query query = getEntityManager().createQuery("SELECT u FROM FasUniOrgRespFascicolo u "
+                + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo");
+        query.setParameter("idFascicolo", idFascicolo);
+        return query.getResultList();
     }
 
     public List<DecValVoceTitol> getDecValVoceTitol(Long idVoceTitol) {
-	Query query = getEntityManager().createQuery("SELECT u FROM DecValVoceTitol u "
-		+ "WHERE u.decVoceTitol.idVoceTitol = :idVoceTitol " + "ORDER BY u.dsVoceTitol");
-	query.setParameter("idVoceTitol", idVoceTitol);
-	return query.getResultList();
+        Query query = getEntityManager().createQuery("SELECT u FROM DecValVoceTitol u "
+                + "WHERE u.decVoceTitol.idVoceTitol = :idVoceTitol " + "ORDER BY u.dsVoceTitol");
+        query.setParameter("idVoceTitol", idVoceTitol);
+        return query.getResultList();
     }
 
     public List<FasLinkFascicolo> getFasLinkFascicolo(Long idFascicolo) {
-	Query query = getEntityManager().createQuery("SELECT u FROM FasLinkFascicolo u "
-		+ "WHERE u.fasFascicolo.idFascicolo = :idFascicolo " + "ORDER BY u.dsLink ");
-	query.setParameter("idFascicolo", idFascicolo);
-	return query.getResultList();
+        Query query = getEntityManager().createQuery("SELECT u FROM FasLinkFascicolo u "
+                + "WHERE u.fasFascicolo.idFascicolo = :idFascicolo " + "ORDER BY u.dsLink ");
+        query.setParameter("idFascicolo", idFascicolo);
+        return query.getResultList();
     }
 
     public FasXsdMetaVerAipFasc registraFasXsdMetaVerAipFasc(long idMetaVerAipFascicolo,
-	    long idModelloXsdFascicolo, String nmXsd) {
-	FasXsdMetaVerAipFasc xsdMetaVerAipFasc = new FasXsdMetaVerAipFasc();
-	FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager()
-		.find(FasMetaVerAipFascicolo.class, idMetaVerAipFascicolo);
-	DecModelloXsdFascicolo decModelloXsdFascicolo = getEntityManager()
-		.find(DecModelloXsdFascicolo.class, idModelloXsdFascicolo);
-	xsdMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
-	xsdMetaVerAipFasc.setDecModelloXsdFascicolo(decModelloXsdFascicolo);
-	xsdMetaVerAipFasc.setNmXsd(nmXsd);
-	getEntityManager().persist(xsdMetaVerAipFasc);
-	getEntityManager().flush();
-	if (fasMetaVerAipFascicolo.getFasXsdMetaVerAipFascs() == null) {
-	    fasMetaVerAipFascicolo.setFasXsdMetaVerAipFascs(new ArrayList<>());
-	}
-	fasMetaVerAipFascicolo.getFasXsdMetaVerAipFascs().add(xsdMetaVerAipFasc);
+            long idModelloXsdFascicolo, String nmXsd) {
+        FasXsdMetaVerAipFasc xsdMetaVerAipFasc = new FasXsdMetaVerAipFasc();
+        FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager()
+                .find(FasMetaVerAipFascicolo.class, idMetaVerAipFascicolo);
+        DecModelloXsdFascicolo decModelloXsdFascicolo = getEntityManager()
+                .find(DecModelloXsdFascicolo.class, idModelloXsdFascicolo);
+        xsdMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
+        xsdMetaVerAipFasc.setDecModelloXsdFascicolo(decModelloXsdFascicolo);
+        xsdMetaVerAipFasc.setNmXsd(nmXsd);
+        getEntityManager().persist(xsdMetaVerAipFasc);
+        getEntityManager().flush();
+        if (fasMetaVerAipFascicolo.getFasXsdMetaVerAipFascs() == null) {
+            fasMetaVerAipFascicolo.setFasXsdMetaVerAipFascs(new ArrayList<>());
+        }
+        fasMetaVerAipFascicolo.getFasXsdMetaVerAipFascs().add(xsdMetaVerAipFasc);
 
-	if (decModelloXsdFascicolo.getFasXsdMetaVerAipFascs() == null) {
-	    decModelloXsdFascicolo.setFasXsdMetaVerAipFascs(new ArrayList<>());
-	}
-	decModelloXsdFascicolo.getFasXsdMetaVerAipFascs().add(xsdMetaVerAipFasc);
+        if (decModelloXsdFascicolo.getFasXsdMetaVerAipFascs() == null) {
+            decModelloXsdFascicolo.setFasXsdMetaVerAipFascs(new ArrayList<>());
+        }
+        decModelloXsdFascicolo.getFasXsdMetaVerAipFascs().add(xsdMetaVerAipFasc);
 
-	return xsdMetaVerAipFasc;
+        return xsdMetaVerAipFasc;
     }
 
     public FasFileMetaVerAipFasc registraFasFileMetaVerAipFasc(long idMetaVerAipFascicolo,
-	    String file, OrgStrut strut, Date dtCreazione, BackendStorage backendMetadata,
-	    Map<String, String> indiceAipFascicoloBlob) {
-	FasFileMetaVerAipFasc fileMetaVerAipFasc = new FasFileMetaVerAipFasc();
-	FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager()
-		.find(FasMetaVerAipFascicolo.class, idMetaVerAipFascicolo);
-	fileMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
+            String file, OrgStrut strut, Date dtCreazione, BackendStorage backendMetadata,
+            Map<String, String> indiceAipFascicoloBlob) {
+        FasFileMetaVerAipFasc fileMetaVerAipFasc = new FasFileMetaVerAipFasc();
+        FasMetaVerAipFascicolo fasMetaVerAipFascicolo = getEntityManager()
+                .find(FasMetaVerAipFascicolo.class, idMetaVerAipFascicolo);
+        fileMetaVerAipFasc.setFasMetaVerAipFascicolo(fasMetaVerAipFascicolo);
 
-	// MEV#30398
-	if (backendMetadata.isDataBase()) {
-	    // clob contenente lo XML in input (canonicalizzato)
-	    fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
-	} else {
-	    indiceAipFascicoloBlob.put(
-		    it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name(),
-		    file);
-	}
-	// end MEV#30398
+        // MEV#30398
+        if (backendMetadata.isDataBase()) {
+            // clob contenente lo XML in input (canonicalizzato)
+            fileMetaVerAipFasc.setBlFileVerIndiceAip(file);
+        } else {
+            indiceAipFascicoloBlob.put(
+                    it.eng.parer.entity.constraint.FasMetaVerAipFascicolo.TiMeta.FASCICOLO.name(),
+                    file);
+        }
+        // end MEV#30398
 
-	fileMetaVerAipFasc.setOrgStrut(strut);
-	fileMetaVerAipFasc.setDtCreazione(dtCreazione);
-	getEntityManager().persist(fileMetaVerAipFasc);
-	getEntityManager().flush();
-	if (fasMetaVerAipFascicolo.getFasFileMetaVerAipFascs() == null) {
-	    fasMetaVerAipFascicolo.setFasFileMetaVerAipFascs(new ArrayList<>());
-	}
-	fasMetaVerAipFascicolo.getFasFileMetaVerAipFascs().add(fileMetaVerAipFasc);
-	return fileMetaVerAipFasc;
+        fileMetaVerAipFasc.setOrgStrut(strut);
+        fileMetaVerAipFasc.setDtCreazione(dtCreazione);
+        getEntityManager().persist(fileMetaVerAipFasc);
+        getEntityManager().flush();
+        if (fasMetaVerAipFascicolo.getFasFileMetaVerAipFascs() == null) {
+            fasMetaVerAipFascicolo.setFasFileMetaVerAipFascs(new ArrayList<>());
+        }
+        fasMetaVerAipFascicolo.getFasFileMetaVerAipFascs().add(fileMetaVerAipFasc);
+        return fileMetaVerAipFasc;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public FasMetaVerAipFascicolo registraFasMetaVerAipFascicolo(long idVerAipFascicolo,
-	    String hash, String algoHash, String encodingHash, String codiceVersione,
-	    CSVersatore versatore, CSChiaveFasc chiaveFasc) {
-	FasMetaVerAipFascicolo fasMetaVerAipFascicolo = new FasMetaVerAipFascicolo();
-	FasVerAipFascicolo verAipFascicolo = getEntityManager().find(FasVerAipFascicolo.class,
-		idVerAipFascicolo);
-	fasMetaVerAipFascicolo.setFasVerAipFascicolo(verAipFascicolo);
-	fasMetaVerAipFascicolo.setNmMeta("Fascicolo");
-	fasMetaVerAipFascicolo.setTiMeta("FASCICOLO");
-	fasMetaVerAipFascicolo.setDsHashFile(hash);
-	fasMetaVerAipFascicolo.setDsAlgoHashFile(algoHash);
-	fasMetaVerAipFascicolo.setCdEncodingHashFile(encodingHash);
-	// calcolo parte urn ORIGINALE
-	String tmpUrn = MessaggiWSFormat.formattaBaseUrnFascicolo(
-		MessaggiWSFormat.formattaUrnPartVersatore(versatore),
-		MessaggiWSFormat.formattaUrnPartFasc(chiaveFasc));
-	// calcolo parte urn NORMALIZZATO
-	String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnFascicolo(
-		MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
-			Costanti.UrnFormatter.VERS_FMT_STRING),
-		MessaggiWSFormat.formattaUrnPartFasc(chiaveFasc, true,
-			Costanti.UrnFormatter.FASC_FMT_STRING));
-	// salvo ORIGINALE
-	fasMetaVerAipFascicolo.setDsUrnMetaFascicolo(
-		MessaggiWSFormat.formattaUrnAipMetaFascicolo(tmpUrn, codiceVersione));
-	// salvo NORMALIZZATO
-	fasMetaVerAipFascicolo.setDsUrnNormalizMetaFascicolo(
-		MessaggiWSFormat.formattaUrnAipMetaFascicolo(tmpUrnNorm, codiceVersione));
-	getEntityManager().persist(fasMetaVerAipFascicolo);
-	getEntityManager().flush();
-	if (verAipFascicolo.getFasMetaVerAipFascicolos() == null) {
-	    verAipFascicolo.setFasMetaVerAipFascicolos(new ArrayList<>());
-	}
-	verAipFascicolo.getFasMetaVerAipFascicolos().add(fasMetaVerAipFascicolo);
-	return fasMetaVerAipFascicolo;
+            String hash, String algoHash, String encodingHash, String codiceVersione,
+            CSVersatore versatore, CSChiaveFasc chiaveFasc) {
+        FasMetaVerAipFascicolo fasMetaVerAipFascicolo = new FasMetaVerAipFascicolo();
+        FasVerAipFascicolo verAipFascicolo = getEntityManager().find(FasVerAipFascicolo.class,
+                idVerAipFascicolo);
+        fasMetaVerAipFascicolo.setFasVerAipFascicolo(verAipFascicolo);
+        fasMetaVerAipFascicolo.setNmMeta("Fascicolo");
+        fasMetaVerAipFascicolo.setTiMeta("FASCICOLO");
+        fasMetaVerAipFascicolo.setDsHashFile(hash);
+        fasMetaVerAipFascicolo.setDsAlgoHashFile(algoHash);
+        fasMetaVerAipFascicolo.setCdEncodingHashFile(encodingHash);
+        // calcolo parte urn ORIGINALE
+        String tmpUrn = MessaggiWSFormat.formattaBaseUrnFascicolo(
+                MessaggiWSFormat.formattaUrnPartVersatore(versatore),
+                MessaggiWSFormat.formattaUrnPartFasc(chiaveFasc));
+        // calcolo parte urn NORMALIZZATO
+        String tmpUrnNorm = MessaggiWSFormat.formattaBaseUrnFascicolo(
+                MessaggiWSFormat.formattaUrnPartVersatore(versatore, true,
+                        Costanti.UrnFormatter.VERS_FMT_STRING),
+                MessaggiWSFormat.formattaUrnPartFasc(chiaveFasc, true,
+                        Costanti.UrnFormatter.FASC_FMT_STRING));
+        // salvo ORIGINALE
+        fasMetaVerAipFascicolo.setDsUrnMetaFascicolo(
+                MessaggiWSFormat.formattaUrnAipMetaFascicolo(tmpUrn, codiceVersione));
+        // salvo NORMALIZZATO
+        fasMetaVerAipFascicolo.setDsUrnNormalizMetaFascicolo(
+                MessaggiWSFormat.formattaUrnAipMetaFascicolo(tmpUrnNorm, codiceVersione));
+        getEntityManager().persist(fasMetaVerAipFascicolo);
+        getEntityManager().flush();
+        if (verAipFascicolo.getFasMetaVerAipFascicolos() == null) {
+            verAipFascicolo.setFasMetaVerAipFascicolos(new ArrayList<>());
+        }
+        verAipFascicolo.getFasMetaVerAipFascicolos().add(fasMetaVerAipFascicolo);
+        return fasMetaVerAipFascicolo;
     }
 
     /**
@@ -235,15 +235,15 @@ public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public List<DecModelloXsdFascicolo> retrieveIdModelliFascicoloDaElaborare(long idAmbiente) {
-	String queryStr = "SELECT modello " + "FROM DecModelloXsdFascicolo modello "
-		+ "WHERE modello.orgAmbiente.idAmbiente = :idAmbiente "
-		+ "AND modello.tiModelloXsd = 'FASCICOLO' "
-		+ "AND modello.dtIstituz <= :filterDate AND modello.dtSoppres >= :filterDate";
+        String queryStr = "SELECT modello " + "FROM DecModelloXsdFascicolo modello "
+                + "WHERE modello.orgAmbiente.idAmbiente = :idAmbiente "
+                + "AND modello.tiModelloXsd = 'FASCICOLO' "
+                + "AND modello.dtIstituz <= :filterDate AND modello.dtSoppres >= :filterDate";
 
-	Query q = getEntityManager().createQuery(queryStr);
-	q.setParameter("idAmbiente", idAmbiente);
-	q.setParameter("filterDate", Calendar.getInstance().getTime());
-	return q.getResultList();
+        Query q = getEntityManager().createQuery(queryStr);
+        q.setParameter("idAmbiente", idAmbiente);
+        q.setParameter("filterDate", Calendar.getInstance().getTime());
+        return q.getResultList();
     }
 
     // MEV#26576
@@ -258,42 +258,42 @@ public class CreazioneIndiceMetaFascicoliHelper extends GenericHelper {
      * @return lista oggetti di tipo {@link DecModelloXsdFascicolo}
      */
     public List<DecModelloXsdFascicolo> retrieveIdModelliFascicoloDaElaborareV2(long idAmbiente,
-	    String cdVersioneXml) {
-	String queryStr = "SELECT modello " + "FROM DecModelloXsdFascicolo modello "
-		+ "WHERE modello.orgAmbiente.idAmbiente = :idAmbiente "
-		+ "AND modello.tiModelloXsd = 'FASCICOLO' "
-		+ "AND modello.dtIstituz <= :filterDate AND modello.dtSoppres >= :filterDate "
-		+ "AND modello.cdXsd = :cdVersioneXml";
+            String cdVersioneXml) {
+        String queryStr = "SELECT modello " + "FROM DecModelloXsdFascicolo modello "
+                + "WHERE modello.orgAmbiente.idAmbiente = :idAmbiente "
+                + "AND modello.tiModelloXsd = 'FASCICOLO' "
+                + "AND modello.dtIstituz <= :filterDate AND modello.dtSoppres >= :filterDate "
+                + "AND modello.cdXsd = :cdVersioneXml";
 
-	Query q = getEntityManager().createQuery(queryStr);
-	q.setParameter("idAmbiente", idAmbiente);
-	q.setParameter("filterDate", Calendar.getInstance().getTime());
-	q.setParameter("cdVersioneXml", cdVersioneXml);
-	return q.getResultList();
+        Query q = getEntityManager().createQuery(queryStr);
+        q.setParameter("idAmbiente", idAmbiente);
+        q.setParameter("filterDate", Calendar.getInstance().getTime());
+        q.setParameter("cdVersioneXml", cdVersioneXml);
+        return q.getResultList();
     }
 
     public List<FasXmlFascicolo> leggiXmlVersamentiModelloXsdFascicolo(
-	    TiUsoModelloXsd tiUsoModelloXsd, TiModelloXsd tiModelloXsdFasc, long idFascicolo) {
+            TiUsoModelloXsd tiUsoModelloXsd, TiModelloXsd tiModelloXsdFasc, long idFascicolo) {
 
-	List<FasXmlFascicolo> fasXmlFascicolo = null;
+        List<FasXmlFascicolo> fasXmlFascicolo = null;
 
-	try {
+        try {
 
-	    String queryStr = "select xf from FasXmlFascicolo xf "
-		    + "join xf.decModelloXsdFascicolo modello_xsd "
-		    + "where modello_xsd.tiUsoModelloXsd = :tiUsoModelloXsd "
-		    + "and modello_xsd.tiModelloXsd = :tiModelloXsdFasc "
-		    + "and xf.fasFascicolo.idFascicolo = :idFascicolo ";
-	    javax.persistence.Query query = getEntityManager().createQuery(queryStr);
-	    query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
-	    query.setParameter("tiModelloXsdFasc", tiModelloXsdFasc);
-	    query.setParameter("idFascicolo", idFascicolo);
+            String queryStr = "select xf from FasXmlFascicolo xf "
+                    + "join xf.decModelloXsdFascicolo modello_xsd "
+                    + "where modello_xsd.tiUsoModelloXsd = :tiUsoModelloXsd "
+                    + "and modello_xsd.tiModelloXsd = :tiModelloXsdFasc "
+                    + "and xf.fasFascicolo.idFascicolo = :idFascicolo ";
+            javax.persistence.Query query = getEntityManager().createQuery(queryStr);
+            query.setParameter("tiUsoModelloXsd", tiUsoModelloXsd);
+            query.setParameter("tiModelloXsdFasc", tiModelloXsdFasc);
+            query.setParameter("idFascicolo", idFascicolo);
 
-	    fasXmlFascicolo = query.getResultList();
-	} catch (Exception e) {
-	    log.error("Eccezione nella lettura modello xsd fascicolo", e);
-	}
-	return fasXmlFascicolo;
+            fasXmlFascicolo = query.getResultList();
+        } catch (Exception e) {
+            log.error("Eccezione nella lettura modello xsd fascicolo", e);
+        }
+        return fasXmlFascicolo;
     }
     // end MEV#26576
 }

@@ -47,31 +47,31 @@ public class VrsVSessioneVersRisoltaTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
-	map.put(COL_TI_SESSIONE_VERS,
-		new ColumnDescriptor(COL_TI_SESSIONE_VERS, Types.VARCHAR, 20, true));
-	map.put(COL_TI_STATO_SESSIONE_VERS,
-		new ColumnDescriptor(COL_TI_STATO_SESSIONE_VERS, Types.VARCHAR, 20, true));
-	map.put(COL_DT_CHIUSURA, new ColumnDescriptor(COL_DT_CHIUSURA, Types.TIMESTAMP, 7, true));
-	map.put(COL_FL_SES_RISOLTA,
-		new ColumnDescriptor(COL_FL_SES_RISOLTA, Types.VARCHAR, 1, true));
-	map.put(COL_FL_SES_NON_RISOLUB,
-		new ColumnDescriptor(COL_FL_SES_NON_RISOLUB, Types.VARCHAR, 1, true));
-	map.put(COL_TI_DT_CREAZIONE,
-		new ColumnDescriptor(COL_TI_DT_CREAZIONE, Types.VARCHAR, 19, true));
-	map.put(COL_FL_VERIF, new ColumnDescriptor(COL_FL_VERIF, Types.VARCHAR, 1, true));
+        map.put(COL_ID_STRUT, new ColumnDescriptor(COL_ID_STRUT, Types.DECIMAL, 22, true));
+        map.put(COL_TI_SESSIONE_VERS,
+                new ColumnDescriptor(COL_TI_SESSIONE_VERS, Types.VARCHAR, 20, true));
+        map.put(COL_TI_STATO_SESSIONE_VERS,
+                new ColumnDescriptor(COL_TI_STATO_SESSIONE_VERS, Types.VARCHAR, 20, true));
+        map.put(COL_DT_CHIUSURA, new ColumnDescriptor(COL_DT_CHIUSURA, Types.TIMESTAMP, 7, true));
+        map.put(COL_FL_SES_RISOLTA,
+                new ColumnDescriptor(COL_FL_SES_RISOLTA, Types.VARCHAR, 1, true));
+        map.put(COL_FL_SES_NON_RISOLUB,
+                new ColumnDescriptor(COL_FL_SES_NON_RISOLUB, Types.VARCHAR, 1, true));
+        map.put(COL_TI_DT_CREAZIONE,
+                new ColumnDescriptor(COL_TI_DT_CREAZIONE, Types.VARCHAR, 19, true));
+        map.put(COL_FL_VERIF, new ColumnDescriptor(COL_FL_VERIF, Types.VARCHAR, 1, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

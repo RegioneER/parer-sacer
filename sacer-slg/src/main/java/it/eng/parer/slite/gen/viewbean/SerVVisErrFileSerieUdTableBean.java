@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class SerVVisErrFileSerieUdTableBean
-	extends AbstractBaseTable<SerVVisErrFileSerieUdRowBean> {
+        extends AbstractBaseTable<SerVVisErrFileSerieUdRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class SerVVisErrFileSerieUdTableBean
     public static SerVVisErrFileSerieUdTableDescriptor TABLE_DESCRIPTOR = new SerVVisErrFileSerieUdTableDescriptor();
 
     public SerVVisErrFileSerieUdTableBean() {
-	super();
+        super();
     }
 
     protected SerVVisErrFileSerieUdRowBean createRow() {
-	return new SerVVisErrFileSerieUdRowBean();
+        return new SerVVisErrFileSerieUdRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<SerVVisErrFileSerieUdRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -65,67 +65,67 @@ public class DecSelCriterioRaggrFasc implements Serializable {
     @Column(name = "ID_SEL_CRITERIO_RAGGR_FASC")
     @XmlID
     @GenericGenerator(name = "SDEC_SEL_CRITERIO_RAGGR_FASC_ID_SEL_CRITERIO_RAGGR_FASC_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_SEL_CRITERIO_RAGGR_FASC"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_SEL_CRITERIO_RAGGR_FASC"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_SEL_CRITERIO_RAGGR_FASC_ID_SEL_CRITERIO_RAGGR_FASC_GENERATOR")
     public Long getIdSelCriterioRaggrFasc() {
-	return this.idSelCriterioRaggrFasc;
+        return this.idSelCriterioRaggrFasc;
     }
 
     public void setIdSelCriterioRaggrFasc(Long idSelCriterioRaggrFasc) {
-	this.idSelCriterioRaggrFasc = idSelCriterioRaggrFasc;
+        this.idSelCriterioRaggrFasc = idSelCriterioRaggrFasc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_CRITERIO_RAGGR_FASC")
     public DecCriterioRaggrFasc getDecCriterioRaggrFasc() {
-	return this.decCriterioRaggrFasc;
+        return this.decCriterioRaggrFasc;
     }
 
     public void setDecCriterioRaggrFasc(DecCriterioRaggrFasc decCriterioRaggrFasc) {
-	this.decCriterioRaggrFasc = decCriterioRaggrFasc;
+        this.decCriterioRaggrFasc = decCriterioRaggrFasc;
     }
 
     @Column(name = "TI_SEL")
     public String getTiSel() {
-	return this.tiSel;
+        return this.tiSel;
     }
 
     public void setTiSel(String tiSel) {
-	this.tiSel = tiSel;
+        this.tiSel = tiSel;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_SISTEMA_MIGRAZ")
     @XmlTransient
     public AplSistemaMigraz getAplSistemaMigraz() {
-	return this.aplSistemaMigraz;
+        return this.aplSistemaMigraz;
     }
 
     public void setAplSistemaMigraz(AplSistemaMigraz aplSistemaMigraz) {
-	this.aplSistemaMigraz = aplSistemaMigraz;
+        this.aplSistemaMigraz = aplSistemaMigraz;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_TIPO_FASCICOLO")
     @XmlInverseReference(mappedBy = "decSelCriterioRaggrFascicoli")
     public DecTipoFascicolo getDecTipoFascicolo() {
-	return this.decTipoFascicolo;
+        return this.decTipoFascicolo;
     }
 
     public void setDecTipoFascicolo(DecTipoFascicolo decTipoFascicolo) {
-	this.decTipoFascicolo = decTipoFascicolo;
+        this.decTipoFascicolo = decTipoFascicolo;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_VOCE_TITOL")
     @XmlTransient
     public DecVoceTitol getDecVoceTitol() {
-	return this.decVoceTitol;
+        return this.decVoceTitol;
     }
 
     public void setDecVoceTitol(DecVoceTitol decVoceTitol) {
-	this.decVoceTitol = decVoceTitol;
+        this.decVoceTitol = decVoceTitol;
     }
 
 }

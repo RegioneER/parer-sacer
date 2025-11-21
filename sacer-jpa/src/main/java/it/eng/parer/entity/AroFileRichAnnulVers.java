@@ -55,44 +55,44 @@ public class AroFileRichAnnulVers implements Serializable {
     @Id
     @Column(name = "ID_FILE_RICH_ANNUL_VERS")
     @GenericGenerator(name = "SARO_FILE_RICH_ANNUL_VERS_ID_FILE_RICH_ANNUL_VERS_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_FILE_RICH_ANNUL_VERS"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SARO_FILE_RICH_ANNUL_VERS"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SARO_FILE_RICH_ANNUL_VERS_ID_FILE_RICH_ANNUL_VERS_GENERATOR")
     public Long getIdFileRichAnnulVers() {
-	return this.idFileRichAnnulVers;
+        return this.idFileRichAnnulVers;
     }
 
     public void setIdFileRichAnnulVers(Long idFileRichAnnulVers) {
-	this.idFileRichAnnulVers = idFileRichAnnulVers;
+        this.idFileRichAnnulVers = idFileRichAnnulVers;
     }
 
     @Lob
     @Column(name = "BL_FILE")
     public String getBlFile() {
-	return this.blFile;
+        return this.blFile;
     }
 
     public void setBlFile(String blFile) {
-	this.blFile = blFile;
+        this.blFile = blFile;
     }
 
     @Column(name = "TI_FILE")
     public String getTiFile() {
-	return this.tiFile;
+        return this.tiFile;
     }
 
     public void setTiFile(String tiFile) {
-	this.tiFile = tiFile;
+        this.tiFile = tiFile;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_RICH_ANNUL_VERS")
     public AroRichAnnulVers getAroRichAnnulVers() {
-	return this.aroRichAnnulVers;
+        return this.aroRichAnnulVers;
     }
 
     public void setAroRichAnnulVers(AroRichAnnulVers aroRichAnnulVers) {
-	this.aroRichAnnulVers = aroRichAnnulVers;
+        this.aroRichAnnulVers = aroRichAnnulVers;
     }
 
 }

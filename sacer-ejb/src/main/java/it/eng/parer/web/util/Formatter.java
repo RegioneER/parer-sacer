@@ -27,12 +27,12 @@ import java.util.Locale;
 public class Formatter {
 
     public static DecimalFormat getDecimalFormatter() {
-	// formatto il campo size bytes
-	DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("it"));
-	String format = "###,###.###";
-	DecimalFormat formatter = new DecimalFormat(format, symbols);
-	formatter.setGroupingSize(3);
-	return formatter;
+        // formatto il campo size bytes
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("it"));
+        String format = "###,###.###";
+        DecimalFormat formatter = new DecimalFormat(format, symbols);
+        formatter.setGroupingSize(3);
+        return formatter;
     }
 
 }

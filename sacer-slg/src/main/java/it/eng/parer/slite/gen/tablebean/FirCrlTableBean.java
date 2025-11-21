@@ -33,19 +33,19 @@ public class FirCrlTableBean extends AbstractBaseTable<FirCrlRowBean> {
     public static FirCrlTableDescriptor TABLE_DESCRIPTOR = new FirCrlTableDescriptor();
 
     public FirCrlTableBean() {
-	super();
+        super();
     }
 
     protected FirCrlRowBean createRow() {
-	return new FirCrlRowBean();
+        return new FirCrlRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FirCrlRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

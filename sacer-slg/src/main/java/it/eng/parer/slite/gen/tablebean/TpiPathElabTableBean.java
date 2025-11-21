@@ -33,19 +33,19 @@ public class TpiPathElabTableBean extends AbstractBaseTable<TpiPathElabRowBean> 
     public static TpiPathElabTableDescriptor TABLE_DESCRIPTOR = new TpiPathElabTableDescriptor();
 
     public TpiPathElabTableBean() {
-	super();
+        super();
     }
 
     protected TpiPathElabRowBean createRow() {
-	return new TpiPathElabRowBean();
+        return new TpiPathElabRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<TpiPathElabRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

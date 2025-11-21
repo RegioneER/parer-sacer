@@ -54,35 +54,35 @@ public class DecEstensioneFile implements Serializable {
 
     @Column(name = "ID_ESTENSIONE_FILE")
     @GenericGenerator(name = "SDEC_ESTENSIONE_FILE_ID_ESTENSIONE_FILE_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_ESTENSIONE_FILE"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_ESTENSIONE_FILE"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_ESTENSIONE_FILE_ID_ESTENSIONE_FILE_GENERATOR")
     public Long getIdEstensioneFile() {
-	return this.idEstensioneFile;
+        return this.idEstensioneFile;
     }
 
     public void setIdEstensioneFile(Long idEstensioneFile) {
-	this.idEstensioneFile = idEstensioneFile;
+        this.idEstensioneFile = idEstensioneFile;
     }
 
     @Column(name = "CD_ESTENSIONE_FILE")
     public String getCdEstensioneFile() {
-	return this.cdEstensioneFile;
+        return this.cdEstensioneFile;
     }
 
     public void setCdEstensioneFile(String cdEstensioneFile) {
-	this.cdEstensioneFile = cdEstensioneFile;
+        this.cdEstensioneFile = cdEstensioneFile;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_FORMATO_FILE_STANDARD")
     @XmlInverseReference(mappedBy = "decEstensioneFiles")
     public DecFormatoFileStandard getDecFormatoFileStandard() {
-	return this.decFormatoFileStandard;
+        return this.decFormatoFileStandard;
     }
 
     public void setDecFormatoFileStandard(DecFormatoFileStandard decFormatoFileStandard) {
-	this.decFormatoFileStandard = decFormatoFileStandard;
+        this.decFormatoFileStandard = decFormatoFileStandard;
     }
 
 }

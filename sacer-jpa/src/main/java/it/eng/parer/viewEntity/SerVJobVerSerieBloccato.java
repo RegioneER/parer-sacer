@@ -39,29 +39,29 @@ public class SerVJobVerSerieBloccato implements Serializable {
 
     @EmbeddedId
     public SerVJobVerSerieBloccatoId getSerVJobVerSerieBloccatoId() {
-	return serVJobVerSerieBloccatoId;
+        return serVJobVerSerieBloccatoId;
     }
 
     public void setSerVJobVerSerieBloccatoId(SerVJobVerSerieBloccatoId serVJobVerSerieBloccatoId) {
-	this.serVJobVerSerieBloccatoId = serVJobVerSerieBloccatoId;
+        this.serVJobVerSerieBloccatoId = serVJobVerSerieBloccatoId;
     }
 
     @Column(name = "DL_MSG_JOB_BLOCCATO")
     public String getDlMsgJobBloccato() {
-	return this.dlMsgJobBloccato;
+        return this.dlMsgJobBloccato;
     }
 
     public void setDlMsgJobBloccato(String dlMsgJobBloccato) {
-	this.dlMsgJobBloccato = dlMsgJobBloccato;
+        this.dlMsgJobBloccato = dlMsgJobBloccato;
     }
 
     @Column(name = "FL_JOB_BLOCCATO", columnDefinition = "char(1)")
     public String getFlJobBloccato() {
-	return this.flJobBloccato;
+        return this.flJobBloccato;
     }
 
     public void setFlJobBloccato(String flJobBloccato) {
-	this.flJobBloccato = flJobBloccato;
+        this.flJobBloccato = flJobBloccato;
     }
 
 }

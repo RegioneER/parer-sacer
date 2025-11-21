@@ -37,134 +37,134 @@ public class VrsVSessioneAggRisoltaRowBean extends BaseRow implements JEEBaseRow
     public static VrsVSessioneAggRisoltaTableDescriptor TABLE_DESCRIPTOR = new VrsVSessioneAggRisoltaTableDescriptor();
 
     public VrsVSessioneAggRisoltaRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public String getTiSessioneVers() {
-	return getString("ti_sessione_vers");
+        return getString("ti_sessione_vers");
     }
 
     public void setTiSessioneVers(String tiSessioneVers) {
-	setObject("ti_sessione_vers", tiSessioneVers);
+        setObject("ti_sessione_vers", tiSessioneVers);
     }
 
     public String getTiStatoSessioneVers() {
-	return getString("ti_stato_sessione_vers");
+        return getString("ti_stato_sessione_vers");
     }
 
     public void setTiStatoSessioneVers(String tiStatoSessioneVers) {
-	setObject("ti_stato_sessione_vers", tiStatoSessioneVers);
+        setObject("ti_stato_sessione_vers", tiStatoSessioneVers);
     }
 
     public Timestamp getDtChiusura() {
-	return getTimestamp("dt_chiusura");
+        return getTimestamp("dt_chiusura");
     }
 
     public void setDtChiusura(Timestamp dtChiusura) {
-	setObject("dt_chiusura", dtChiusura);
+        setObject("dt_chiusura", dtChiusura);
     }
 
     public String getFlSesRisolta() {
-	return getString("fl_ses_risolta");
+        return getString("fl_ses_risolta");
     }
 
     public void setFlSesRisolta(String flSesRisolta) {
-	setObject("fl_ses_risolta", flSesRisolta);
+        setObject("fl_ses_risolta", flSesRisolta);
     }
 
     public String getFlSesNonRisolub() {
-	return getString("fl_ses_non_risolub");
+        return getString("fl_ses_non_risolub");
     }
 
     public void setFlSesNonRisolub(String flSesNonRisolub) {
-	setObject("fl_ses_non_risolub", flSesNonRisolub);
+        setObject("fl_ses_non_risolub", flSesNonRisolub);
     }
 
     public String getTiDtCreazione() {
-	return getString("ti_dt_creazione");
+        return getString("ti_dt_creazione");
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	setObject("ti_dt_creazione", tiDtCreazione);
+        setObject("ti_dt_creazione", tiDtCreazione);
     }
 
     public String getFlVerif() {
-	return getString("fl_verif");
+        return getString("fl_verif");
     }
 
     public void setFlVerif(String flVerif) {
-	setObject("fl_verif", flVerif);
+        setObject("fl_verif", flVerif);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	VrsVSessioneAggRisolta entity = (VrsVSessioneAggRisolta) obj;
-	if (entity.getVrsVSessioneAggRisoltaId() != null) {
-	    this.setIdStrut(entity.getVrsVSessioneAggRisoltaId().getIdStrut());
-	    this.setTiSessioneVers(entity.getVrsVSessioneAggRisoltaId().getTiSessioneVers());
-	    this.setTiStatoSessioneVers(
-		    entity.getVrsVSessioneAggRisoltaId().getTiStatoSessioneVers());
-	    if (entity.getVrsVSessioneAggRisoltaId().getDtChiusura() != null) {
-		this.setDtChiusura(new Timestamp(
-			entity.getVrsVSessioneAggRisoltaId().getDtChiusura().getTime()));
-	    }
-	    this.setFlSesRisolta(entity.getVrsVSessioneAggRisoltaId().getFlSesRisolta());
-	    this.setFlSesNonRisolub(entity.getVrsVSessioneAggRisoltaId().getFlSesNonRisolub());
-	    this.setTiDtCreazione(entity.getVrsVSessioneAggRisoltaId().getTiDtCreazione());
-	    this.setFlVerif(entity.getVrsVSessioneAggRisoltaId().getFlVerif());
-	}
+        VrsVSessioneAggRisolta entity = (VrsVSessioneAggRisolta) obj;
+        if (entity.getVrsVSessioneAggRisoltaId() != null) {
+            this.setIdStrut(entity.getVrsVSessioneAggRisoltaId().getIdStrut());
+            this.setTiSessioneVers(entity.getVrsVSessioneAggRisoltaId().getTiSessioneVers());
+            this.setTiStatoSessioneVers(
+                    entity.getVrsVSessioneAggRisoltaId().getTiStatoSessioneVers());
+            if (entity.getVrsVSessioneAggRisoltaId().getDtChiusura() != null) {
+                this.setDtChiusura(new Timestamp(
+                        entity.getVrsVSessioneAggRisoltaId().getDtChiusura().getTime()));
+            }
+            this.setFlSesRisolta(entity.getVrsVSessioneAggRisoltaId().getFlSesRisolta());
+            this.setFlSesNonRisolub(entity.getVrsVSessioneAggRisoltaId().getFlSesNonRisolub());
+            this.setTiDtCreazione(entity.getVrsVSessioneAggRisoltaId().getTiDtCreazione());
+            this.setFlVerif(entity.getVrsVSessioneAggRisoltaId().getFlVerif());
+        }
     }
 
     @Override
     public VrsVSessioneAggRisolta rowBeanToEntity() {
-	VrsVSessioneAggRisolta entity = new VrsVSessioneAggRisolta();
-	entity.setVrsVSessioneAggRisoltaId(new VrsVSessioneAggRisoltaId());
-	entity.getVrsVSessioneAggRisoltaId().setIdStrut(this.getIdStrut());
-	entity.getVrsVSessioneAggRisoltaId().setTiSessioneVers(this.getTiSessioneVers());
-	entity.getVrsVSessioneAggRisoltaId().setTiStatoSessioneVers(this.getTiStatoSessioneVers());
-	entity.getVrsVSessioneAggRisoltaId().setDtChiusura(this.getDtChiusura());
-	entity.getVrsVSessioneAggRisoltaId().setFlSesRisolta(this.getFlSesRisolta());
-	entity.getVrsVSessioneAggRisoltaId().setFlSesNonRisolub(this.getFlSesNonRisolub());
-	entity.getVrsVSessioneAggRisoltaId().setTiDtCreazione(this.getTiDtCreazione());
-	entity.getVrsVSessioneAggRisoltaId().setFlVerif(this.getFlVerif());
-	return entity;
+        VrsVSessioneAggRisolta entity = new VrsVSessioneAggRisolta();
+        entity.setVrsVSessioneAggRisoltaId(new VrsVSessioneAggRisoltaId());
+        entity.getVrsVSessioneAggRisoltaId().setIdStrut(this.getIdStrut());
+        entity.getVrsVSessioneAggRisoltaId().setTiSessioneVers(this.getTiSessioneVers());
+        entity.getVrsVSessioneAggRisoltaId().setTiStatoSessioneVers(this.getTiStatoSessioneVers());
+        entity.getVrsVSessioneAggRisoltaId().setDtChiusura(this.getDtChiusura());
+        entity.getVrsVSessioneAggRisoltaId().setFlSesRisolta(this.getFlSesRisolta());
+        entity.getVrsVSessioneAggRisoltaId().setFlSesNonRisolub(this.getFlSesNonRisolub());
+        entity.getVrsVSessioneAggRisoltaId().setTiDtCreazione(this.getTiDtCreazione());
+        entity.getVrsVSessioneAggRisoltaId().setFlVerif(this.getFlVerif());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

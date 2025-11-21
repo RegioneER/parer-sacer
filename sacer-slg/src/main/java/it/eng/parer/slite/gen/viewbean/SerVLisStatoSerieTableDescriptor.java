@@ -48,32 +48,32 @@ public class SerVLisStatoSerieTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_STATO_VER_SERIE,
-		new ColumnDescriptor(COL_ID_STATO_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_PG_STATO_VER_SERIE,
-		new ColumnDescriptor(COL_PG_STATO_VER_SERIE, Types.DECIMAL, 22, true));
-	map.put(COL_TI_STATO_VER_SERIE,
-		new ColumnDescriptor(COL_TI_STATO_VER_SERIE, Types.VARCHAR, 20, true));
-	map.put(COL_DT_REG_STATO_VER_SERIE,
-		new ColumnDescriptor(COL_DT_REG_STATO_VER_SERIE, Types.TIMESTAMP, 7, true));
-	map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
-	map.put(COL_DS_AZIONE, new ColumnDescriptor(COL_DS_AZIONE, Types.VARCHAR, 254, true));
-	map.put(COL_DS_NOTA_AZIONE,
-		new ColumnDescriptor(COL_DS_NOTA_AZIONE, Types.VARCHAR, 1024, true));
-	map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
+        map.put(COL_ID_STATO_VER_SERIE,
+                new ColumnDescriptor(COL_ID_STATO_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_ID_VER_SERIE, new ColumnDescriptor(COL_ID_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_PG_STATO_VER_SERIE,
+                new ColumnDescriptor(COL_PG_STATO_VER_SERIE, Types.DECIMAL, 22, true));
+        map.put(COL_TI_STATO_VER_SERIE,
+                new ColumnDescriptor(COL_TI_STATO_VER_SERIE, Types.VARCHAR, 20, true));
+        map.put(COL_DT_REG_STATO_VER_SERIE,
+                new ColumnDescriptor(COL_DT_REG_STATO_VER_SERIE, Types.TIMESTAMP, 7, true));
+        map.put(COL_ID_USER_IAM, new ColumnDescriptor(COL_ID_USER_IAM, Types.DECIMAL, 22, true));
+        map.put(COL_DS_AZIONE, new ColumnDescriptor(COL_DS_AZIONE, Types.VARCHAR, 254, true));
+        map.put(COL_DS_NOTA_AZIONE,
+                new ColumnDescriptor(COL_DS_NOTA_AZIONE, Types.VARCHAR, 1024, true));
+        map.put(COL_NM_USERID, new ColumnDescriptor(COL_NM_USERID, Types.VARCHAR, 100, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

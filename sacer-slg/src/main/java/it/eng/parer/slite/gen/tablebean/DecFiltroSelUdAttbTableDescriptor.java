@@ -44,26 +44,26 @@ public class DecFiltroSelUdAttbTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_FILTRO_SEL_UD_ATTB,
-		new ColumnDescriptor(COL_ID_FILTRO_SEL_UD_ATTB, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TIPO_SERIE_UD,
-		new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, false));
-	map.put(COL_NM_ATTRIB_DATI_SPEC,
-		new ColumnDescriptor(COL_NM_ATTRIB_DATI_SPEC, Types.VARCHAR, 100, false));
-	map.put(COL_TI_OPER, new ColumnDescriptor(COL_TI_OPER, Types.VARCHAR, 20, false));
-	map.put(COL_DL_VALORE, new ColumnDescriptor(COL_DL_VALORE, Types.VARCHAR, 1024, false));
+        map.put(COL_ID_FILTRO_SEL_UD_ATTB,
+                new ColumnDescriptor(COL_ID_FILTRO_SEL_UD_ATTB, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TIPO_SERIE_UD,
+                new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, false));
+        map.put(COL_NM_ATTRIB_DATI_SPEC,
+                new ColumnDescriptor(COL_NM_ATTRIB_DATI_SPEC, Types.VARCHAR, 100, false));
+        map.put(COL_TI_OPER, new ColumnDescriptor(COL_TI_OPER, Types.VARCHAR, 20, false));
+        map.put(COL_DL_VALORE, new ColumnDescriptor(COL_DL_VALORE, Types.VARCHAR, 1024, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

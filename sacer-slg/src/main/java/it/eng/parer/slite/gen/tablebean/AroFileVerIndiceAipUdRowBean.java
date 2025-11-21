@@ -37,111 +37,111 @@ public class AroFileVerIndiceAipUdRowBean extends BaseRow implements JEEBaseRowI
     public static AroFileVerIndiceAipUdTableDescriptor TABLE_DESCRIPTOR = new AroFileVerIndiceAipUdTableDescriptor();
 
     public AroFileVerIndiceAipUdRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdFileVerIndiceAip() {
-	return getBigDecimal("id_file_ver_indice_aip");
+        return getBigDecimal("id_file_ver_indice_aip");
     }
 
     public void setIdFileVerIndiceAip(BigDecimal idFileVerIndiceAip) {
-	setObject("id_file_ver_indice_aip", idFileVerIndiceAip);
+        setObject("id_file_ver_indice_aip", idFileVerIndiceAip);
     }
 
     public BigDecimal getIdVerIndiceAip() {
-	return getBigDecimal("id_ver_indice_aip");
+        return getBigDecimal("id_ver_indice_aip");
     }
 
     public void setIdVerIndiceAip(BigDecimal idVerIndiceAip) {
-	setObject("id_ver_indice_aip", idVerIndiceAip);
+        setObject("id_ver_indice_aip", idVerIndiceAip);
     }
 
     public String getBlFileVerIndiceAip() {
-	return getString("bl_file_ver_indice_aip");
+        return getString("bl_file_ver_indice_aip");
     }
 
     public void setBlFileVerIndiceAip(String blFileVerIndiceAip) {
-	setObject("bl_file_ver_indice_aip", blFileVerIndiceAip);
+        setObject("bl_file_ver_indice_aip", blFileVerIndiceAip);
     }
 
     public BigDecimal getIdStrut() {
-	return getBigDecimal("id_strut");
+        return getBigDecimal("id_strut");
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	setObject("id_strut", idStrut);
+        setObject("id_strut", idStrut);
     }
 
     public BigDecimal getMmCreazione() {
-	return getBigDecimal("mm_creazione");
+        return getBigDecimal("mm_creazione");
     }
 
     public void setMmCreazione(BigDecimal mmCreazione) {
-	setObject("mm_creazione", mmCreazione);
+        setObject("mm_creazione", mmCreazione);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AroFileVerIndiceAipUd entity = (AroFileVerIndiceAipUd) obj;
-	this.setIdFileVerIndiceAip(entity.getIdFileVerIndiceAip() == null ? null
-		: BigDecimal.valueOf(entity.getIdFileVerIndiceAip()));
+        AroFileVerIndiceAipUd entity = (AroFileVerIndiceAipUd) obj;
+        this.setIdFileVerIndiceAip(entity.getIdFileVerIndiceAip() == null ? null
+                : BigDecimal.valueOf(entity.getIdFileVerIndiceAip()));
 
-	if (entity.getAroVerIndiceAipUd() != null) {
-	    this.setIdVerIndiceAip(
-		    new BigDecimal(entity.getAroVerIndiceAipUd().getIdVerIndiceAip()));
-	}
+        if (entity.getAroVerIndiceAipUd() != null) {
+            this.setIdVerIndiceAip(
+                    new BigDecimal(entity.getAroVerIndiceAipUd().getIdVerIndiceAip()));
+        }
 
-	this.setBlFileVerIndiceAip(entity.getBlFileVerIndiceAip());
-	this.setIdStrut(entity.getIdStrut());
-	this.setMmCreazione(entity.getMmCreazione());
+        this.setBlFileVerIndiceAip(entity.getBlFileVerIndiceAip());
+        this.setIdStrut(entity.getIdStrut());
+        this.setMmCreazione(entity.getMmCreazione());
     }
 
     @Override
     public AroFileVerIndiceAipUd rowBeanToEntity() {
-	AroFileVerIndiceAipUd entity = new AroFileVerIndiceAipUd();
-	if (this.getIdFileVerIndiceAip() != null) {
-	    entity.setIdFileVerIndiceAip(this.getIdFileVerIndiceAip().longValue());
-	}
-	if (this.getIdVerIndiceAip() != null) {
-	    if (entity.getAroVerIndiceAipUd() == null) {
-		entity.setAroVerIndiceAipUd(new AroVerIndiceAipUd());
-	    }
-	    entity.getAroVerIndiceAipUd().setIdVerIndiceAip(this.getIdVerIndiceAip().longValue());
-	}
-	entity.setBlFileVerIndiceAip(this.getBlFileVerIndiceAip());
-	entity.setIdStrut(this.getIdStrut());
-	entity.setMmCreazione(this.getMmCreazione());
-	return entity;
+        AroFileVerIndiceAipUd entity = new AroFileVerIndiceAipUd();
+        if (this.getIdFileVerIndiceAip() != null) {
+            entity.setIdFileVerIndiceAip(this.getIdFileVerIndiceAip().longValue());
+        }
+        if (this.getIdVerIndiceAip() != null) {
+            if (entity.getAroVerIndiceAipUd() == null) {
+                entity.setAroVerIndiceAipUd(new AroVerIndiceAipUd());
+            }
+            entity.getAroVerIndiceAipUd().setIdVerIndiceAip(this.getIdVerIndiceAip().longValue());
+        }
+        entity.setBlFileVerIndiceAip(this.getBlFileVerIndiceAip());
+        entity.setIdStrut(this.getIdStrut());
+        entity.setMmCreazione(this.getMmCreazione());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

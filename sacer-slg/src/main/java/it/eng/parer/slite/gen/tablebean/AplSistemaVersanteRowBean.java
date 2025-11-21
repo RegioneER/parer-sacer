@@ -36,123 +36,123 @@ public class AplSistemaVersanteRowBean extends BaseRow implements JEEBaseRowInte
     public static AplSistemaVersanteTableDescriptor TABLE_DESCRIPTOR = new AplSistemaVersanteTableDescriptor();
 
     public AplSistemaVersanteRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdSistemaVersante() {
-	return getBigDecimal("id_sistema_versante");
+        return getBigDecimal("id_sistema_versante");
     }
 
     public void setIdSistemaVersante(BigDecimal idSistemaVersante) {
-	setObject("id_sistema_versante", idSistemaVersante);
+        setObject("id_sistema_versante", idSistemaVersante);
     }
 
     public String getNmSistemaVersante() {
-	return getString("nm_sistema_versante");
+        return getString("nm_sistema_versante");
     }
 
     public void setNmSistemaVersante(String nmSistemaVersante) {
-	setObject("nm_sistema_versante", nmSistemaVersante);
+        setObject("nm_sistema_versante", nmSistemaVersante);
     }
 
     public String getCdVersione() {
-	return getString("cd_versione");
+        return getString("cd_versione");
     }
 
     public void setCdVersione(String cdVersione) {
-	setObject("cd_versione", cdVersione);
+        setObject("cd_versione", cdVersione);
     }
 
     public String getDsSistemaVersante() {
-	return getString("ds_sistema_versante");
+        return getString("ds_sistema_versante");
     }
 
     public void setDsSistemaVersante(String dsSistemaVersante) {
-	setObject("ds_sistema_versante", dsSistemaVersante);
+        setObject("ds_sistema_versante", dsSistemaVersante);
     }
 
     public String getNmProduttore() {
-	return getString("nm_produttore");
+        return getString("nm_produttore");
     }
 
     public void setNmProduttore(String nmProduttore) {
-	setObject("nm_produttore", nmProduttore);
+        setObject("nm_produttore", nmProduttore);
     }
 
     public String getDsViaSedeLegale() {
-	return getString("ds_via_sede_legale");
+        return getString("ds_via_sede_legale");
     }
 
     public void setDsViaSedeLegale(String dsViaSedeLegale) {
-	setObject("ds_via_sede_legale", dsViaSedeLegale);
+        setObject("ds_via_sede_legale", dsViaSedeLegale);
     }
 
     public BigDecimal getCdCapSedeLegale() {
-	return getBigDecimal("cd_cap_sede_legale");
+        return getBigDecimal("cd_cap_sede_legale");
     }
 
     public void setCdCapSedeLegale(BigDecimal cdCapSedeLegale) {
-	setObject("cd_cap_sede_legale", cdCapSedeLegale);
+        setObject("cd_cap_sede_legale", cdCapSedeLegale);
     }
 
     public String getDsCittaSedeLegale() {
-	return getString("ds_citta_sede_legale");
+        return getString("ds_citta_sede_legale");
     }
 
     public void setDsCittaSedeLegale(String dsCittaSedeLegale) {
-	setObject("ds_citta_sede_legale", dsCittaSedeLegale);
+        setObject("ds_citta_sede_legale", dsCittaSedeLegale);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	AplSistemaVersante entity = (AplSistemaVersante) obj;
-	this.setIdSistemaVersante(entity.getIdSistemaVersante() == null ? null
-		: BigDecimal.valueOf(entity.getIdSistemaVersante()));
-	this.setNmSistemaVersante(entity.getNmSistemaVersante());
-	this.setCdVersione(entity.getCdVersione());
-	this.setDsSistemaVersante(entity.getDsSistemaVersante());
+        AplSistemaVersante entity = (AplSistemaVersante) obj;
+        this.setIdSistemaVersante(entity.getIdSistemaVersante() == null ? null
+                : BigDecimal.valueOf(entity.getIdSistemaVersante()));
+        this.setNmSistemaVersante(entity.getNmSistemaVersante());
+        this.setCdVersione(entity.getCdVersione());
+        this.setDsSistemaVersante(entity.getDsSistemaVersante());
     }
 
     @Override
     public AplSistemaVersante rowBeanToEntity() {
-	AplSistemaVersante entity = new AplSistemaVersante();
-	if (this.getIdSistemaVersante() != null) {
-	    entity.setIdSistemaVersante(this.getIdSistemaVersante().longValue());
-	}
-	entity.setNmSistemaVersante(this.getNmSistemaVersante());
-	entity.setCdVersione(this.getCdVersione());
-	entity.setDsSistemaVersante(this.getDsSistemaVersante());
-	return entity;
+        AplSistemaVersante entity = new AplSistemaVersante();
+        if (this.getIdSistemaVersante() != null) {
+            entity.setIdSistemaVersante(this.getIdSistemaVersante().longValue());
+        }
+        entity.setNmSistemaVersante(this.getNmSistemaVersante());
+        entity.setCdVersione(this.getCdVersione());
+        entity.setDsSistemaVersante(this.getDsSistemaVersante());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

@@ -51,40 +51,40 @@ public class DecParteNumeroRegistroTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_PARTE_NUMERO_REGISTRO,
-		new ColumnDescriptor(COL_ID_PARTE_NUMERO_REGISTRO, Types.DECIMAL, 22, true));
-	map.put(COL_ID_AA_REGISTRO_UNITA_DOC,
-		new ColumnDescriptor(COL_ID_AA_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
-	map.put(COL_NM_PARTE_NUMERO_REGISTRO,
-		new ColumnDescriptor(COL_NM_PARTE_NUMERO_REGISTRO, Types.VARCHAR, 100, false));
-	map.put(COL_NI_PARTE_NUMERO_REGISTRO,
-		new ColumnDescriptor(COL_NI_PARTE_NUMERO_REGISTRO, Types.DECIMAL, 22, false));
-	map.put(COL_TI_CHAR_PARTE,
-		new ColumnDescriptor(COL_TI_CHAR_PARTE, Types.VARCHAR, 30, false));
-	map.put(COL_NI_MIN_CHAR_PARTE,
-		new ColumnDescriptor(COL_NI_MIN_CHAR_PARTE, Types.DECIMAL, 22, false));
-	map.put(COL_NI_MAX_CHAR_PARTE,
-		new ColumnDescriptor(COL_NI_MAX_CHAR_PARTE, Types.DECIMAL, 22, false));
-	map.put(COL_TI_PAD_SX_PARTE,
-		new ColumnDescriptor(COL_TI_PAD_SX_PARTE, Types.VARCHAR, 30, false));
-	map.put(COL_TI_CHAR_SEP, new ColumnDescriptor(COL_TI_CHAR_SEP, Types.VARCHAR, 1, false));
-	map.put(COL_DL_VALORI_PARTE,
-		new ColumnDescriptor(COL_DL_VALORI_PARTE, Types.VARCHAR, 1024, false));
-	map.put(COL_DS_PARTE_NUMERO_REGISTRO,
-		new ColumnDescriptor(COL_DS_PARTE_NUMERO_REGISTRO, Types.VARCHAR, 254, false));
-	map.put(COL_TI_PARTE, new ColumnDescriptor(COL_TI_PARTE, Types.VARCHAR, 20, false));
+        map.put(COL_ID_PARTE_NUMERO_REGISTRO,
+                new ColumnDescriptor(COL_ID_PARTE_NUMERO_REGISTRO, Types.DECIMAL, 22, true));
+        map.put(COL_ID_AA_REGISTRO_UNITA_DOC,
+                new ColumnDescriptor(COL_ID_AA_REGISTRO_UNITA_DOC, Types.DECIMAL, 22, false));
+        map.put(COL_NM_PARTE_NUMERO_REGISTRO,
+                new ColumnDescriptor(COL_NM_PARTE_NUMERO_REGISTRO, Types.VARCHAR, 100, false));
+        map.put(COL_NI_PARTE_NUMERO_REGISTRO,
+                new ColumnDescriptor(COL_NI_PARTE_NUMERO_REGISTRO, Types.DECIMAL, 22, false));
+        map.put(COL_TI_CHAR_PARTE,
+                new ColumnDescriptor(COL_TI_CHAR_PARTE, Types.VARCHAR, 30, false));
+        map.put(COL_NI_MIN_CHAR_PARTE,
+                new ColumnDescriptor(COL_NI_MIN_CHAR_PARTE, Types.DECIMAL, 22, false));
+        map.put(COL_NI_MAX_CHAR_PARTE,
+                new ColumnDescriptor(COL_NI_MAX_CHAR_PARTE, Types.DECIMAL, 22, false));
+        map.put(COL_TI_PAD_SX_PARTE,
+                new ColumnDescriptor(COL_TI_PAD_SX_PARTE, Types.VARCHAR, 30, false));
+        map.put(COL_TI_CHAR_SEP, new ColumnDescriptor(COL_TI_CHAR_SEP, Types.VARCHAR, 1, false));
+        map.put(COL_DL_VALORI_PARTE,
+                new ColumnDescriptor(COL_DL_VALORI_PARTE, Types.VARCHAR, 1024, false));
+        map.put(COL_DS_PARTE_NUMERO_REGISTRO,
+                new ColumnDescriptor(COL_DS_PARTE_NUMERO_REGISTRO, Types.VARCHAR, 254, false));
+        map.put(COL_TI_PARTE, new ColumnDescriptor(COL_TI_PARTE, Types.VARCHAR, 20, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -26,37 +26,37 @@ public class FasVLisUdByFascId implements Serializable {
 
     @Column(name = "ID_FASCICOLO")
     public BigDecimal getIdFascicolo() {
-	return idFascicolo;
+        return idFascicolo;
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	this.idFascicolo = idFascicolo;
+        this.idFascicolo = idFascicolo;
     }
 
     private BigDecimal idUnitaDoc;
 
     @Column(name = "ID_UNITA_DOC")
     public BigDecimal getIdUnitaDoc() {
-	return idUnitaDoc;
+        return idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     @Override
     public boolean equals(Object o) {
-	if (this == o)
-	    return true;
-	if (o == null || getClass() != o.getClass())
-	    return false;
-	FasVLisUdByFascId that = (FasVLisUdByFascId) o;
-	return Objects.equals(idFascicolo, that.idFascicolo)
-		&& Objects.equals(idUnitaDoc, that.idUnitaDoc);
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        FasVLisUdByFascId that = (FasVLisUdByFascId) o;
+        return Objects.equals(idFascicolo, that.idFascicolo)
+                && Objects.equals(idUnitaDoc, that.idUnitaDoc);
     }
 
     @Override
     public int hashCode() {
-	return Objects.hash(idFascicolo, idUnitaDoc);
+        return Objects.hash(idFascicolo, idUnitaDoc);
     }
 }

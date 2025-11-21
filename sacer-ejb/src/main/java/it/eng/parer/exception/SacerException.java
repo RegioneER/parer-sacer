@@ -27,42 +27,42 @@ public class SacerException extends Exception {
     private final SacerErrorCategory category;
 
     public SacerException() {
-	super();
-	this.category = SacerErrorCategory.INTERNAL_ERROR; // default
+        super();
+        this.category = SacerErrorCategory.INTERNAL_ERROR; // default
     }
 
     public SacerException(SacerErrorCategory category) {
-	super();
-	this.category = category;
+        super();
+        this.category = category;
     }
 
     public SacerException(String message, Throwable cause, SacerErrorCategory category) {
-	super(message, cause);
-	this.category = category;
+        super(message, cause);
+        this.category = category;
     }
 
     public SacerException(String message, SacerErrorCategory category) {
-	super(message);
-	this.category = category;
+        super(message);
+        this.category = category;
     }
 
     public SacerException(Throwable cause, SacerErrorCategory category) {
-	super(cause);
-	this.category = category;
+        super(cause);
+        this.category = category;
     }
 
     public SacerErrorCategory getCategory() {
-	return category;
+        return category;
     }
 
     @Override
     public String getLocalizedMessage() {
-	return "[" + getCategory().toString() + "]" + "  " + super.getLocalizedMessage();
+        return "[" + getCategory().toString() + "]" + "  " + super.getLocalizedMessage();
     }
 
     @Override
     public String getMessage() {
-	return "[" + getCategory().toString() + "]" + "  " + super.getMessage();
+        return "[" + getCategory().toString() + "]" + "  " + super.getMessage();
     }
 
 }

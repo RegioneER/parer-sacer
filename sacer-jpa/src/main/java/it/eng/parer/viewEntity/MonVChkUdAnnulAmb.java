@@ -37,11 +37,11 @@ public class MonVChkUdAnnulAmb implements Serializable {
 
     @EmbeddedId
     public MonVChkUdAnnulAmbId getMonVChkUdAnnulAmbId() {
-	return monVChkUdAnnulAmbId;
+        return monVChkUdAnnulAmbId;
     }
 
     public void setMonVChkUdAnnulAmbId(MonVChkUdAnnulAmbId monVChkUdAnnulAmbId) {
-	this.monVChkUdAnnulAmbId = monVChkUdAnnulAmbId;
+        this.monVChkUdAnnulAmbId = monVChkUdAnnulAmbId;
     }
 
     public MonVChkUdAnnulAmb() {/* Hibernate */
@@ -49,29 +49,29 @@ public class MonVChkUdAnnulAmb implements Serializable {
 
     @Column(name = "FL_UD_ANNUL", columnDefinition = "char(1)")
     public String getFlUdAnnul() {
-	return this.flUdAnnul;
+        return this.flUdAnnul;
     }
 
     public void setFlUdAnnul(String flUdAnnul) {
-	this.flUdAnnul = flUdAnnul;
+        this.flUdAnnul = flUdAnnul;
     }
 
     @Column(name = "FL_UD_ANNUL_DAFARE_PING", columnDefinition = "char(1)")
     public String getFlUdAnnulDafarePing() {
-	return this.flUdAnnulDafarePing;
+        return this.flUdAnnulDafarePing;
     }
 
     public void setFlUdAnnulDafarePing(String flUdAnnulDafarePing) {
-	this.flUdAnnulDafarePing = flUdAnnulDafarePing;
+        this.flUdAnnulDafarePing = flUdAnnulDafarePing;
     }
 
     @Column(name = "FL_UD_ANNUL_DAFARE_SACER", columnDefinition = "char(1)")
     public String getFlUdAnnulDafareSacer() {
-	return this.flUdAnnulDafareSacer;
+        return this.flUdAnnulDafareSacer;
     }
 
     public void setFlUdAnnulDafareSacer(String flUdAnnulDafareSacer) {
-	this.flUdAnnulDafareSacer = flUdAnnulDafareSacer;
+        this.flUdAnnulDafareSacer = flUdAnnulDafareSacer;
     }
 
 }

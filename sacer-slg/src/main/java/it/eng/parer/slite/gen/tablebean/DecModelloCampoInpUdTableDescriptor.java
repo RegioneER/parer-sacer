@@ -45,27 +45,27 @@ public class DecModelloCampoInpUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_MODELLO_CAMPO_INP_UD,
-		new ColumnDescriptor(COL_ID_MODELLO_CAMPO_INP_UD, Types.DECIMAL, 22, true));
-	map.put(COL_ID_MODELLO_TIPO_SERIE,
-		new ColumnDescriptor(COL_ID_MODELLO_TIPO_SERIE, Types.DECIMAL, 22, false));
-	map.put(COL_PG_ORD_CAMPO, new ColumnDescriptor(COL_PG_ORD_CAMPO, Types.DECIMAL, 22, false));
-	map.put(COL_NM_CAMPO, new ColumnDescriptor(COL_NM_CAMPO, Types.VARCHAR, 100, false));
-	map.put(COL_TI_CAMPO, new ColumnDescriptor(COL_TI_CAMPO, Types.VARCHAR, 20, false));
-	map.put(COL_TI_TRASFORM_CAMPO,
-		new ColumnDescriptor(COL_TI_TRASFORM_CAMPO, Types.VARCHAR, 30, false));
+        map.put(COL_ID_MODELLO_CAMPO_INP_UD,
+                new ColumnDescriptor(COL_ID_MODELLO_CAMPO_INP_UD, Types.DECIMAL, 22, true));
+        map.put(COL_ID_MODELLO_TIPO_SERIE,
+                new ColumnDescriptor(COL_ID_MODELLO_TIPO_SERIE, Types.DECIMAL, 22, false));
+        map.put(COL_PG_ORD_CAMPO, new ColumnDescriptor(COL_PG_ORD_CAMPO, Types.DECIMAL, 22, false));
+        map.put(COL_NM_CAMPO, new ColumnDescriptor(COL_NM_CAMPO, Types.VARCHAR, 100, false));
+        map.put(COL_TI_CAMPO, new ColumnDescriptor(COL_TI_CAMPO, Types.VARCHAR, 20, false));
+        map.put(COL_TI_TRASFORM_CAMPO,
+                new ColumnDescriptor(COL_TI_TRASFORM_CAMPO, Types.VARCHAR, 30, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -45,38 +45,38 @@ public class ElvVChkAddUpdUdNoEleCor implements Serializable {
     @Id
     @Column(name = "ID_UPD_UNITA_DOC")
     public BigDecimal getIdUpdUnitaDoc() {
-	return this.idUpdUnitaDoc;
+        return this.idUpdUnitaDoc;
     }
 
     public void setIdUpdUnitaDoc(BigDecimal idUpdUnitaDoc) {
-	this.idUpdUnitaDoc = idUpdUnitaDoc;
+        this.idUpdUnitaDoc = idUpdUnitaDoc;
     }
 
     @Column(name = "FL_ADD_UPD_UD_OK", columnDefinition = "char(1)")
     public String getFlAddUpdUdOk() {
-	return this.flAddUpdUdOk;
+        return this.flAddUpdUdOk;
     }
 
     public void setFlAddUpdUdOk(String flAddUpdUdOk) {
-	this.flAddUpdUdOk = flAddUpdUdOk;
+        this.flAddUpdUdOk = flAddUpdUdOk;
     }
 
     @Column(name = "FL_ALL_ADD_UPD_DOC_OK", columnDefinition = "char(1)")
     public String getFlAllAddUpdDocOk() {
-	return this.flAllAddUpdDocOk;
+        return this.flAllAddUpdDocOk;
     }
 
     public void setFlAllAddUpdDocOk(String flAllAddUpdDocOk) {
-	this.flAllAddUpdDocOk = flAllAddUpdDocOk;
+        this.flAllAddUpdDocOk = flAllAddUpdDocOk;
     }
 
     @Column(name = "FL_ALL_UPD_PREC_OK", columnDefinition = "char(1)")
     public String getFlAllUpdPrecOk() {
-	return this.flAllUpdPrecOk;
+        return this.flAllUpdPrecOk;
     }
 
     public void setFlAllUpdPrecOk(String flAllUpdPrecOk) {
-	this.flAllUpdPrecOk = flAllUpdPrecOk;
+        this.flAllUpdPrecOk = flAllUpdPrecOk;
     }
 
 }

@@ -39,171 +39,171 @@ import it.eng.parer.exception.XAGenericException;
 public class XAUtil {
 
     public static OutputStream createFileOS(XADiskBasicIOOperations session, File file,
-	    boolean createFile) throws XAGenericException {
-	try {
-	    if (createFile) {
-		session.createFile(file, false);
-	    }
-	    XAFileOutputStream xafos;
-	    xafos = session.createXAFileOutputStream(file, true);
-	    return new XAFileOutputStreamWrapper(xafos);
-	} catch (FileNotExistsException | FileUnderUseException
-		| InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException | FileAlreadyExistsException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            boolean createFile) throws XAGenericException {
+        try {
+            if (createFile) {
+                session.createFile(file, false);
+            }
+            XAFileOutputStream xafos;
+            xafos = session.createXAFileOutputStream(file, true);
+            return new XAFileOutputStreamWrapper(xafos);
+        } catch (FileNotExistsException | FileUnderUseException
+                | InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException | FileAlreadyExistsException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static InputStream createFileIS(XADiskBasicIOOperations session, File file,
-	    boolean createFile) throws XAGenericException {
-	try {
-	    if (createFile) {
-		session.createFile(file, false);
-	    }
-	    XAFileInputStream xafis;
-	    xafis = session.createXAFileInputStream(file);
-	    return new XAFileInputStreamWrapper(xafis);
-	} catch (FileAlreadyExistsException | FileNotExistsException
-		| InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            boolean createFile) throws XAGenericException {
+        try {
+            if (createFile) {
+                session.createFile(file, false);
+            }
+            XAFileInputStream xafis;
+            xafis = session.createXAFileInputStream(file);
+            return new XAFileInputStreamWrapper(xafis);
+        } catch (FileAlreadyExistsException | FileNotExistsException
+                | InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static void createDirectory(XADiskBasicIOOperations session, File dir)
-	    throws XAGenericException {
-	try {
-	    session.createFile(dir, true);
-	} catch (FileAlreadyExistsException | FileNotExistsException
-		| InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            throws XAGenericException {
+        try {
+            session.createFile(dir, true);
+        } catch (FileAlreadyExistsException | FileNotExistsException
+                | InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static File[] listFiles(XADiskBasicIOOperations session, File root)
-	    throws XAGenericException {
-	try {
+            throws XAGenericException {
+        try {
 
-	    String[] filesName = session.listFiles(root);
-	    File[] files = new File[filesName.length];
-	    for (int i = 0; i < filesName.length; i++) {
-		files[i] = new File(root, filesName[i]);
-	    }
-	    return files;
-	} catch (FileNotExistsException | LockingFailedException | NoTransactionAssociatedException
-		| InsufficientPermissionOnFileException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            String[] filesName = session.listFiles(root);
+            File[] files = new File[filesName.length];
+            for (int i = 0; i < filesName.length; i++) {
+                files[i] = new File(root, filesName[i]);
+            }
+            return files;
+        } catch (FileNotExistsException | LockingFailedException | NoTransactionAssociatedException
+                | InsufficientPermissionOnFileException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static void moveFile(XADiskBasicIOOperations session, File file, File dest)
-	    throws XAGenericException {
-	try {
-	    session.moveFile(file, dest);
-	} catch (FileNotExistsException | LockingFailedException | NoTransactionAssociatedException
-		| InsufficientPermissionOnFileException | FileAlreadyExistsException
-		| FileUnderUseException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            throws XAGenericException {
+        try {
+            session.moveFile(file, dest);
+        } catch (FileNotExistsException | LockingFailedException | NoTransactionAssociatedException
+                | InsufficientPermissionOnFileException | FileAlreadyExistsException
+                | FileUnderUseException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static void copyFile(XADiskBasicIOOperations session, File file, File dest)
-	    throws XAGenericException {
-	try {
-	    session.copyFile(file, dest);
-	} catch (FileAlreadyExistsException | FileNotExistsException
-		| InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            throws XAGenericException {
+        try {
+            session.copyFile(file, dest);
+        } catch (FileAlreadyExistsException | FileNotExistsException
+                | InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static void deleteFile(XADiskBasicIOOperations session, File file)
-	    throws XAGenericException {
+            throws XAGenericException {
 
-	try {
-	    session.deleteFile(file);
-	} catch (DirectoryNotEmptyException | FileNotExistsException | FileUnderUseException
-		| InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+        try {
+            session.deleteFile(file);
+        } catch (DirectoryNotEmptyException | FileNotExistsException | FileUnderUseException
+                | InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
 
     }
 
     public static boolean fileExistsAndIsDirectory(XADiskBasicIOOperations session, File file)
-	    throws XAGenericException {
-	try {
-	    return session.fileExistsAndIsDirectory(file);
-	} catch (InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            throws XAGenericException {
+        try {
+            return session.fileExistsAndIsDirectory(file);
+        } catch (InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
 
     }
 
     public static boolean fileExistsAndIsDirectoryLockExclusive(XADiskBasicIOOperations session,
-	    File file) throws XAGenericException {
-	try {
-	    return session.fileExistsAndIsDirectory(file, true);
-	} catch (InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            File file) throws XAGenericException {
+        try {
+            return session.fileExistsAndIsDirectory(file, true);
+        } catch (InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static boolean fileExists(XADiskBasicIOOperations session, File file)
-	    throws XAGenericException {
-	try {
-	    return session.fileExists(file);
-	} catch (InsufficientPermissionOnFileException | LockingFailedException
-		| NoTransactionAssociatedException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            throws XAGenericException {
+        try {
+            return session.fileExists(file);
+        } catch (InsufficientPermissionOnFileException | LockingFailedException
+                | NoTransactionAssociatedException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
     }
 
     public static long getFileLength(XADiskBasicIOOperations session, File file)
-	    throws XAGenericException {
-	try {
-	    return session.getFileLength(file);
-	} catch (FileNotExistsException | LockingFailedException | NoTransactionAssociatedException
-		| InsufficientPermissionOnFileException e) {
-	    throw new XAGenericException(e);
-	} catch (InterruptedException e) {
-	    Thread.currentThread().interrupt(); // Restore interrupted status
-	    throw new XAGenericException(e);
-	}
+            throws XAGenericException {
+        try {
+            return session.getFileLength(file);
+        } catch (FileNotExistsException | LockingFailedException | NoTransactionAssociatedException
+                | InsufficientPermissionOnFileException e) {
+            throw new XAGenericException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // Restore interrupted status
+            throw new XAGenericException(e);
+        }
 
     }
 
@@ -223,19 +223,19 @@ public class XAUtil {
      * @throws InterruptedException                  errore generico
      */
     public static void rimuoviFileRicorsivamente(XADiskBasicIOOperations session, File dirPath)
-	    throws XAGenericException, DirectoryNotEmptyException, FileNotExistsException,
-	    FileUnderUseException, InsufficientPermissionOnFileException, LockingFailedException,
-	    NoTransactionAssociatedException, InterruptedException {
-	File[] elencoFile = XAUtil.listFiles(session, dirPath);
-	if (elencoFile != null && elencoFile.length > 0) {
-	    for (File tmpFile : elencoFile) {
-		if (XAUtil.fileExistsAndIsDirectory(session, tmpFile)) {
-		    rimuoviFileRicorsivamente(session, tmpFile);
-		} else {
-		    XAUtil.deleteFile(session, tmpFile);
-		}
-	    }
-	    XAUtil.deleteFile(session, dirPath);
-	}
+            throws XAGenericException, DirectoryNotEmptyException, FileNotExistsException,
+            FileUnderUseException, InsufficientPermissionOnFileException, LockingFailedException,
+            NoTransactionAssociatedException, InterruptedException {
+        File[] elencoFile = XAUtil.listFiles(session, dirPath);
+        if (elencoFile != null && elencoFile.length > 0) {
+            for (File tmpFile : elencoFile) {
+                if (XAUtil.fileExistsAndIsDirectory(session, tmpFile)) {
+                    rimuoviFileRicorsivamente(session, tmpFile);
+                } else {
+                    XAUtil.deleteFile(session, tmpFile);
+                }
+            }
+            XAUtil.deleteFile(session, dirPath);
+        }
     }
 }

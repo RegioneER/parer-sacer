@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class ElvVRicElencoFascByFasTableBean
-	extends AbstractBaseTable<ElvVRicElencoFascByFasRowBean> {
+        extends AbstractBaseTable<ElvVRicElencoFascByFasRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class ElvVRicElencoFascByFasTableBean
     public static ElvVRicElencoFascByFasTableDescriptor TABLE_DESCRIPTOR = new ElvVRicElencoFascByFasTableDescriptor();
 
     public ElvVRicElencoFascByFasTableBean() {
-	super();
+        super();
     }
 
     protected ElvVRicElencoFascByFasRowBean createRow() {
-	return new ElvVRicElencoFascByFasRowBean();
+        return new ElvVRicElencoFascByFasRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<ElvVRicElencoFascByFasRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

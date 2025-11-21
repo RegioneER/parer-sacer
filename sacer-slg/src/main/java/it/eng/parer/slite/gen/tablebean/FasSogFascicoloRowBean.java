@@ -37,190 +37,190 @@ public class FasSogFascicoloRowBean extends BaseRow implements JEEBaseRowInterfa
     public static FasSogFascicoloTableDescriptor TABLE_DESCRIPTOR = new FasSogFascicoloTableDescriptor();
 
     public FasSogFascicoloRowBean() {
-	super();
+        super();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     // getter e setter
     public BigDecimal getIdSogFascicolo() {
-	return getBigDecimal("id_sog_fascicolo");
+        return getBigDecimal("id_sog_fascicolo");
     }
 
     public void setIdSogFascicolo(BigDecimal idSogFascicolo) {
-	setObject("id_sog_fascicolo", idSogFascicolo);
+        setObject("id_sog_fascicolo", idSogFascicolo);
     }
 
     public BigDecimal getIdFascicolo() {
-	return getBigDecimal("id_fascicolo");
+        return getBigDecimal("id_fascicolo");
     }
 
     public void setIdFascicolo(BigDecimal idFascicolo) {
-	setObject("id_fascicolo", idFascicolo);
+        setObject("id_fascicolo", idFascicolo);
     }
 
     public String getTiRapp() {
-	return getString("ti_rapp");
+        return getString("ti_rapp");
     }
 
     public void setTiRapp(String tiRapp) {
-	setObject("ti_rapp", tiRapp);
+        setObject("ti_rapp", tiRapp);
     }
 
     public String getNmNomeSog() {
-	return getString("nm_nome_sog");
+        return getString("nm_nome_sog");
     }
 
     public void setNmNomeSog(String nmNomeSog) {
-	setObject("nm_nome_sog", nmNomeSog);
+        setObject("nm_nome_sog", nmNomeSog);
     }
 
     public String getNmCognSog() {
-	return getString("nm_cogn_sog");
+        return getString("nm_cogn_sog");
     }
 
     public void setNmCognSog(String nmCognSog) {
-	setObject("nm_cogn_sog", nmCognSog);
+        setObject("nm_cogn_sog", nmCognSog);
     }
 
     public String getDsDenomSog() {
-	return getString("ds_denom_sog");
+        return getString("ds_denom_sog");
     }
 
     public void setDsDenomSog(String dsDenomSog) {
-	setObject("ds_denom_sog", dsDenomSog);
+        setObject("ds_denom_sog", dsDenomSog);
     }
 
     public String getCdSog() {
-	return getString("cd_sog");
+        return getString("cd_sog");
     }
 
     public void setCdSog(String cdSog) {
-	setObject("cd_sog", cdSog);
+        setObject("cd_sog", cdSog);
     }
 
     public String getTiCdSog() {
-	return getString("ti_cd_sog");
+        return getString("ti_cd_sog");
     }
 
     public void setTiCdSog(String tiCdSog) {
-	setObject("ti_cd_sog", tiCdSog);
+        setObject("ti_cd_sog", tiCdSog);
     }
 
     public String getTiSes() {
-	return getString("ti_ses");
+        return getString("ti_ses");
     }
 
     public void setTiSes(String tiSes) {
-	setObject("ti_ses", tiSes);
+        setObject("ti_ses", tiSes);
     }
 
     public String getTiSog() {
-	return getString("ti_sog");
+        return getString("ti_sog");
     }
 
     public void setTiSog(String tiSog) {
-	setObject("ti_sog", tiSog);
+        setObject("ti_sog", tiSog);
     }
 
     public Timestamp getDtNas() {
 
-	return getTimestamp("dt_nas");
+        return getTimestamp("dt_nas");
     }
 
     public void setDtNas(Timestamp dt_nas) {
-	setObject("dt_nas", dt_nas);
+        setObject("dt_nas", dt_nas);
     }
 
     public String getDsCmnNsc() {
-	return getString("ds_cmn_nsc");
+        return getString("ds_cmn_nsc");
     }
 
     public void setDsCmnNsc(String ds_cmn_nsc) {
-	setObject("ds_cmn_nsc", ds_cmn_nsc);
+        setObject("ds_cmn_nsc", ds_cmn_nsc);
     }
 
     public String getDsCit() {
-	return getString("ds_cit");
+        return getString("ds_cit");
     }
 
     public void setDsCit(String ds_cit) {
-	setObject("ds_cit", ds_cit);
+        setObject("ds_cit", ds_cit);
     }
 
     @Override
     public void entityToRowBean(Object obj) {
-	FasSogFascicolo entity = (FasSogFascicolo) obj;
+        FasSogFascicolo entity = (FasSogFascicolo) obj;
 
-	this.setIdSogFascicolo(entity.getIdSogFascicolo() == null ? null
-		: BigDecimal.valueOf(entity.getIdSogFascicolo()));
+        this.setIdSogFascicolo(entity.getIdSogFascicolo() == null ? null
+                : BigDecimal.valueOf(entity.getIdSogFascicolo()));
 
-	if (entity.getFasFascicolo() != null) {
-	    this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
-	}
+        if (entity.getFasFascicolo() != null) {
+            this.setIdFascicolo(new BigDecimal(entity.getFasFascicolo().getIdFascicolo()));
+        }
 
-	this.setTiRapp(entity.getTiRapp());
-	this.setTiSes(entity.getTiSes());
-	this.setTiSog(entity.getTiSog());
-	this.setNmNomeSog(entity.getNmNomeSog());
-	this.setNmCognSog(entity.getNmCognSog());
-	this.setDsDenomSog(entity.getDsDenomSog());
-	this.setDsCmnNsc(entity.getDsCmnNsc());
-	this.setDsCit(entity.getDsCit());
-	if (entity.getDtNas() != null) {
-	    this.setDtNas(new Timestamp(entity.getDtNas().getTime()));
-	}
+        this.setTiRapp(entity.getTiRapp());
+        this.setTiSes(entity.getTiSes());
+        this.setTiSog(entity.getTiSog());
+        this.setNmNomeSog(entity.getNmNomeSog());
+        this.setNmCognSog(entity.getNmCognSog());
+        this.setDsDenomSog(entity.getDsDenomSog());
+        this.setDsCmnNsc(entity.getDsCmnNsc());
+        this.setDsCit(entity.getDsCit());
+        if (entity.getDtNas() != null) {
+            this.setDtNas(new Timestamp(entity.getDtNas().getTime()));
+        }
     }
 
     @Override
     public FasSogFascicolo rowBeanToEntity() {
-	FasSogFascicolo entity = new FasSogFascicolo();
-	if (this.getIdSogFascicolo() != null) {
-	    entity.setIdSogFascicolo(this.getIdSogFascicolo().longValue());
-	}
-	if (this.getIdFascicolo() != null) {
-	    if (entity.getFasFascicolo() == null) {
-		entity.setFasFascicolo(new FasFascicolo());
-	    }
-	    entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
-	}
-	entity.setTiRapp(this.getTiRapp());
-	entity.setTiSes(this.getTiSes());
-	entity.setTiSog(this.getTiSog());
-	entity.setNmNomeSog(this.getNmNomeSog());
-	entity.setNmCognSog(this.getNmCognSog());
-	entity.setDsDenomSog(this.getDsDenomSog());
-	entity.setDsCit(this.getDsCit());
-	entity.setDsCmnNsc(this.getDsCmnNsc());
-	entity.setDtNas(this.getDtNas());
-	return entity;
+        FasSogFascicolo entity = new FasSogFascicolo();
+        if (this.getIdSogFascicolo() != null) {
+            entity.setIdSogFascicolo(this.getIdSogFascicolo().longValue());
+        }
+        if (this.getIdFascicolo() != null) {
+            if (entity.getFasFascicolo() == null) {
+                entity.setFasFascicolo(new FasFascicolo());
+            }
+            entity.getFasFascicolo().setIdFascicolo(this.getIdFascicolo().longValue());
+        }
+        entity.setTiRapp(this.getTiRapp());
+        entity.setTiSes(this.getTiSes());
+        entity.setTiSog(this.getTiSog());
+        entity.setNmNomeSog(this.getNmNomeSog());
+        entity.setNmCognSog(this.getNmCognSog());
+        entity.setDsDenomSog(this.getDsDenomSog());
+        entity.setDsCit(this.getDsCit());
+        entity.setDsCmnNsc(this.getDsCmnNsc());
+        entity.setDtNas(this.getDtNas());
+        return entity;
     }
 
     // gestione della paginazione
     public void setRownum(Integer rownum) {
-	setObject("rownum", rownum);
+        setObject("rownum", rownum);
     }
 
     public Integer getRownum() {
-	return Integer.parseInt(getObject("rownum").toString());
+        return Integer.parseInt(getObject("rownum").toString());
     }
 
     public void setRnum(Integer rnum) {
-	setObject("rnum", rnum);
+        setObject("rnum", rnum);
     }
 
     public Integer getRnum() {
-	return Integer.parseInt(getObject("rnum").toString());
+        return Integer.parseInt(getObject("rnum").toString());
     }
 
     public void setNumrecords(Integer numRecords) {
-	setObject("numrecords", numRecords);
+        setObject("numrecords", numRecords);
     }
 
     public Integer getNumrecords() {
-	return Integer.parseInt(getObject("numrecords").toString());
+        return Integer.parseInt(getObject("numrecords").toString());
     }
 
 }

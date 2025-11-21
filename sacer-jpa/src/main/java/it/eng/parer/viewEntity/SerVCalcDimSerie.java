@@ -41,20 +41,20 @@ public class SerVCalcDimSerie implements Serializable {
     @Id
     @Column(name = "ID_CONTENUTO_VER_SERIE")
     public BigDecimal getIdContenutoVerSerie() {
-	return this.idContenutoVerSerie;
+        return this.idContenutoVerSerie;
     }
 
     public void setIdContenutoVerSerie(BigDecimal idContenutoVerSerie) {
-	this.idContenutoVerSerie = idContenutoVerSerie;
+        this.idContenutoVerSerie = idContenutoVerSerie;
     }
 
     @Column(name = "NI_MB_SIZE_CONTENUTO_EFF")
     public BigDecimal getNiMbSizeContenutoEff() {
-	return this.niMbSizeContenutoEff;
+        return this.niMbSizeContenutoEff;
     }
 
     public void setNiMbSizeContenutoEff(BigDecimal niMbSizeContenutoEff) {
-	this.niMbSizeContenutoEff = niMbSizeContenutoEff;
+        this.niMbSizeContenutoEff = niMbSizeContenutoEff;
     }
 
 }

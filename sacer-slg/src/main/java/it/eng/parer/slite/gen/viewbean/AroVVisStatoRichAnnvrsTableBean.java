@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroVVisStatoRichAnnvrsTableBean
-	extends AbstractBaseTable<AroVVisStatoRichAnnvrsRowBean> {
+        extends AbstractBaseTable<AroVVisStatoRichAnnvrsRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class AroVVisStatoRichAnnvrsTableBean
     public static AroVVisStatoRichAnnvrsTableDescriptor TABLE_DESCRIPTOR = new AroVVisStatoRichAnnvrsTableDescriptor();
 
     public AroVVisStatoRichAnnvrsTableBean() {
-	super();
+        super();
     }
 
     protected AroVVisStatoRichAnnvrsRowBean createRow() {
-	return new AroVVisStatoRichAnnvrsRowBean();
+        return new AroVVisStatoRichAnnvrsRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVVisStatoRichAnnvrsRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

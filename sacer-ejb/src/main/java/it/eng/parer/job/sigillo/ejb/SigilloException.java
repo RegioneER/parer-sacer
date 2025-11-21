@@ -22,11 +22,11 @@ public class SigilloException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public SigilloException(String string) {
-	super(string);
+        super(string);
     }
 
     public SigilloException(String string, Throwable thrwbl) {
-	super(string, thrwbl);
+        super(string, thrwbl);
     }
 
 }

@@ -33,19 +33,19 @@ public class DecImageTrasformTableBean extends AbstractBaseTable<DecImageTrasfor
     public static DecImageTrasformTableDescriptor TABLE_DESCRIPTOR = new DecImageTrasformTableDescriptor();
 
     public DecImageTrasformTableBean() {
-	super();
+        super();
     }
 
     protected DecImageTrasformRowBean createRow() {
-	return new DecImageTrasformRowBean();
+        return new DecImageTrasformRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<DecImageTrasformRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

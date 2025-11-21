@@ -33,59 +33,59 @@ public class MonVCntUdAnnulStrutId implements Serializable {
 
     @Column(name = "ID_STRUT")
     public BigDecimal getIdStrut() {
-	return idStrut;
+        return idStrut;
     }
 
     public void setIdStrut(BigDecimal idStrut) {
-	this.idStrut = idStrut;
+        this.idStrut = idStrut;
     }
 
     @Column(name = "TI_STATO_ANNUL")
     public String getTiStatoAnnul() {
-	return tiStatoAnnul;
+        return tiStatoAnnul;
     }
 
     public void setTiStatoAnnul(String tiStatoAnnul) {
-	this.tiStatoAnnul = tiStatoAnnul;
+        this.tiStatoAnnul = tiStatoAnnul;
     }
 
     @Column(name = "TI_DT_CREAZIONE")
     public String getTiDtCreazione() {
-	return tiDtCreazione;
+        return tiDtCreazione;
     }
 
     public void setTiDtCreazione(String tiDtCreazione) {
-	this.tiDtCreazione = tiDtCreazione;
+        this.tiDtCreazione = tiDtCreazione;
     }
 
     @Override
     public int hashCode() {
-	int hash = 0;
-	hash += (idStrut != null ? idStrut.hashCode() : 0);
-	hash += (tiStatoAnnul != null ? tiStatoAnnul.hashCode() : 0);
-	hash += (tiDtCreazione != null ? tiDtCreazione.hashCode() : 0);
-	return hash;
+        int hash = 0;
+        hash += (idStrut != null ? idStrut.hashCode() : 0);
+        hash += (tiStatoAnnul != null ? tiStatoAnnul.hashCode() : 0);
+        hash += (tiDtCreazione != null ? tiDtCreazione.hashCode() : 0);
+        return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-	if (!(object instanceof MonVCntUdAnnulStrutId)) {
-	    return false;
-	}
-	MonVCntUdAnnulStrutId other = (MonVCntUdAnnulStrutId) object;
-	if ((this.idStrut == null && other.idStrut != null)
-		|| (this.idStrut != null && !this.idStrut.equals(other.idStrut))) {
-	    return false;
-	}
-	if ((this.tiStatoAnnul == null && other.tiStatoAnnul != null)
-		|| (this.tiStatoAnnul != null && !this.tiStatoAnnul.equals(other.tiStatoAnnul))) {
-	    return false;
-	}
-	if ((this.tiDtCreazione == null && other.tiDtCreazione != null)
-		|| (this.tiDtCreazione != null
-			&& !this.tiDtCreazione.equals(other.tiDtCreazione))) {
-	    return false;
-	}
-	return true;
+        if (!(object instanceof MonVCntUdAnnulStrutId)) {
+            return false;
+        }
+        MonVCntUdAnnulStrutId other = (MonVCntUdAnnulStrutId) object;
+        if ((this.idStrut == null && other.idStrut != null)
+                || (this.idStrut != null && !this.idStrut.equals(other.idStrut))) {
+            return false;
+        }
+        if ((this.tiStatoAnnul == null && other.tiStatoAnnul != null)
+                || (this.tiStatoAnnul != null && !this.tiStatoAnnul.equals(other.tiStatoAnnul))) {
+            return false;
+        }
+        if ((this.tiDtCreazione == null && other.tiDtCreazione != null)
+                || (this.tiDtCreazione != null
+                        && !this.tiDtCreazione.equals(other.tiDtCreazione))) {
+            return false;
+        }
+        return true;
     }
 }

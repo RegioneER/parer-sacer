@@ -27,7 +27,7 @@ import it.eng.spagoLite.db.oracle.bean.column.TableDescriptor;
  *
  */
 public class AroVRicDatiSpecMigrazTableBean
-	extends AbstractBaseTable<AroVRicDatiSpecMigrazRowBean> {
+        extends AbstractBaseTable<AroVRicDatiSpecMigrazRowBean> {
 
     /*
      * @Generated( value = "it.eg.dbtool.db.oracle.beangen.Oracle4JPAClientBeanGen$ViewBeanWriter",
@@ -38,19 +38,19 @@ public class AroVRicDatiSpecMigrazTableBean
     public static AroVRicDatiSpecMigrazTableDescriptor TABLE_DESCRIPTOR = new AroVRicDatiSpecMigrazTableDescriptor();
 
     public AroVRicDatiSpecMigrazTableBean() {
-	super();
+        super();
     }
 
     protected AroVRicDatiSpecMigrazRowBean createRow() {
-	return new AroVRicDatiSpecMigrazRowBean();
+        return new AroVRicDatiSpecMigrazRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVRicDatiSpecMigrazRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

@@ -33,19 +33,19 @@ public class TpiErrArkTableBean extends AbstractBaseTable<TpiErrArkRowBean> {
     public static TpiErrArkTableDescriptor TABLE_DESCRIPTOR = new TpiErrArkTableDescriptor();
 
     public TpiErrArkTableBean() {
-	super();
+        super();
     }
 
     protected TpiErrArkRowBean createRow() {
-	return new TpiErrArkRowBean();
+        return new TpiErrArkRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<TpiErrArkRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

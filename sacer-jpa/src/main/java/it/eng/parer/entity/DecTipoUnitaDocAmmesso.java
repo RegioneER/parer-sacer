@@ -57,26 +57,26 @@ public class DecTipoUnitaDocAmmesso implements Serializable {
     @Column(name = "ID_TIPO_UNITA_DOC_AMMESSO")
     @XmlID
     @GenericGenerator(name = "SDEC_TIPO_UNITA_DOC_AMMESSO_ID_TIPO_UNITA_DOC_AMMESSO_GENERATOR", strategy = "it.eng.sequences.hibernate.NonMonotonicSequenceGenerator", parameters = {
-	    @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_UNITA_DOC_AMMESSO"),
-	    @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
+            @Parameter(name = SequenceStyleGenerator.SEQUENCE_PARAM, value = "SDEC_TIPO_UNITA_DOC_AMMESSO"),
+            @Parameter(name = SequenceStyleGenerator.INCREMENT_PARAM, value = "1") })
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SDEC_TIPO_UNITA_DOC_AMMESSO_ID_TIPO_UNITA_DOC_AMMESSO_GENERATOR")
     public Long getIdTipoUnitaDocAmmesso() {
-	return this.idTipoUnitaDocAmmesso;
+        return this.idTipoUnitaDocAmmesso;
     }
 
     public void setIdTipoUnitaDocAmmesso(Long idTipoUnitaDocAmmesso) {
-	this.idTipoUnitaDocAmmesso = idTipoUnitaDocAmmesso;
+        this.idTipoUnitaDocAmmesso = idTipoUnitaDocAmmesso;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_REGISTRO_UNITA_DOC")
     @XmlInverseReference(mappedBy = "decTipoUnitaDocAmmessos")
     public DecRegistroUnitaDoc getDecRegistroUnitaDoc() {
-	return this.decRegistroUnitaDoc;
+        return this.decRegistroUnitaDoc;
     }
 
     public void setDecRegistroUnitaDoc(DecRegistroUnitaDoc decRegistroUnitaDoc) {
-	this.decRegistroUnitaDoc = decRegistroUnitaDoc;
+        this.decRegistroUnitaDoc = decRegistroUnitaDoc;
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -84,10 +84,10 @@ public class DecTipoUnitaDocAmmesso implements Serializable {
 
     @XmlIDREF
     public DecTipoUnitaDoc getDecTipoUnitaDoc() {
-	return this.decTipoUnitaDoc;
+        return this.decTipoUnitaDoc;
     }
 
     public void setDecTipoUnitaDoc(DecTipoUnitaDoc decTipoUnitaDoc) {
-	this.decTipoUnitaDoc = decTipoUnitaDoc;
+        this.decTipoUnitaDoc = decTipoUnitaDoc;
     }
 }

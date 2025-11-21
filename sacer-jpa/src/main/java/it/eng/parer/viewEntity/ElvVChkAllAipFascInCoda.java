@@ -41,20 +41,20 @@ public class ElvVChkAllAipFascInCoda implements Serializable {
     @Id
     @Column(name = "ID_ELENCO_VERS_FASC")
     public BigDecimal getIdElencoVersFasc() {
-	return this.idElencoVersFasc;
+        return this.idElencoVersFasc;
     }
 
     public void setIdElencoVersFasc(BigDecimal idElencoVersFasc) {
-	this.idElencoVersFasc = idElencoVersFasc;
+        this.idElencoVersFasc = idElencoVersFasc;
     }
 
     @Column(name = "FL_ALL_AIP_IN_CODA", columnDefinition = "char(1)")
     public String getFlAllAipInCoda() {
-	return this.flAllAipInCoda;
+        return this.flAllAipInCoda;
     }
 
     public void setFlAllAipInCoda(String flAllAipInCoda) {
-	this.flAllAipInCoda = flAllAipInCoda;
+        this.flAllAipInCoda = flAllAipInCoda;
     }
 
 }

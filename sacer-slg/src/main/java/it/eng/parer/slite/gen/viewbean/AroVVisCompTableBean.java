@@ -37,19 +37,19 @@ public class AroVVisCompTableBean extends AbstractBaseTable<AroVVisCompRowBean> 
     public static AroVVisCompTableDescriptor TABLE_DESCRIPTOR = new AroVVisCompTableDescriptor();
 
     public AroVVisCompTableBean() {
-	super();
+        super();
     }
 
     protected AroVVisCompRowBean createRow() {
-	return new AroVVisCompRowBean();
+        return new AroVVisCompRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<AroVVisCompRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

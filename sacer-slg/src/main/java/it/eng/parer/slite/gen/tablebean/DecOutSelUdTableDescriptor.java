@@ -43,25 +43,25 @@ public class DecOutSelUdTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_ID_OUT_SEL_UD,
-		new ColumnDescriptor(COL_ID_OUT_SEL_UD, Types.DECIMAL, 22, true));
-	map.put(COL_ID_TIPO_SERIE_UD,
-		new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, false));
-	map.put(COL_TI_OUT, new ColumnDescriptor(COL_TI_OUT, Types.VARCHAR, 20, false));
-	map.put(COL_DL_FORMATO_OUT,
-		new ColumnDescriptor(COL_DL_FORMATO_OUT, Types.VARCHAR, 254, false));
+        map.put(COL_ID_OUT_SEL_UD,
+                new ColumnDescriptor(COL_ID_OUT_SEL_UD, Types.DECIMAL, 22, true));
+        map.put(COL_ID_TIPO_SERIE_UD,
+                new ColumnDescriptor(COL_ID_TIPO_SERIE_UD, Types.DECIMAL, 22, false));
+        map.put(COL_TI_OUT, new ColumnDescriptor(COL_TI_OUT, Types.VARCHAR, 20, false));
+        map.put(COL_DL_FORMATO_OUT,
+                new ColumnDescriptor(COL_DL_FORMATO_OUT, Types.VARCHAR, 254, false));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

@@ -33,19 +33,19 @@ public class FasAmminPartecTableBean extends AbstractBaseTable<FasAmminPartecRow
     public static FasAmminPartecTableDescriptor TABLE_DESCRIPTOR = new FasAmminPartecTableDescriptor();
 
     public FasAmminPartecTableBean() {
-	super();
+        super();
     }
 
     protected FasAmminPartecRowBean createRow() {
-	return new FasAmminPartecRowBean();
+        return new FasAmminPartecRowBean();
     }
 
     public TableDescriptor getTableDescriptor() {
-	return TABLE_DESCRIPTOR;
+        return TABLE_DESCRIPTOR;
     }
 
     @Deprecated
     public Iterator<FasAmminPartecRowBean> getRowsIterator() {
-	return iterator();
+        return iterator();
     }
 }

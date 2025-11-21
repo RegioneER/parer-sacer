@@ -37,85 +37,85 @@ public class ResultVCalcoloSerieUd implements Serializable {
     }
 
     private enum cols {
-	ID_UNITA_DOC, DT_CREAZIONE, KEY_UD_SERIE, DT_UD_SERIE, INFO_UD_SERIE, DS_KEY_ORD_UD_SERIE,
-	PG_UD_SERIE
+        ID_UNITA_DOC, DT_CREAZIONE, KEY_UD_SERIE, DT_UD_SERIE, INFO_UD_SERIE, DS_KEY_ORD_UD_SERIE,
+        PG_UD_SERIE
     }
 
     public ResultVCalcoloSerieUd(Map<String, Object> rec) {
-	setIdUnitaDoc(BigDecimal.class.cast(rec.get(cols.ID_UNITA_DOC.name())));
-	setDtCreazione(Date.class.cast(rec.get(cols.DT_CREAZIONE.name())));
-	setKeyUdSerie(String.class.cast(rec.get(cols.KEY_UD_SERIE.name())));
-	setDtUdSerie(Date.class.cast(rec.get(cols.DT_UD_SERIE.name())));
-	setInfoUdSerie(String.class.cast(rec.get(cols.INFO_UD_SERIE.name())));
-	setDsKeyOrdUdSerie(String.class.cast(rec.get(cols.DS_KEY_ORD_UD_SERIE.name())));
-	setPgUdSerie(BigDecimal.class.cast(rec.get(cols.PG_UD_SERIE.name())));
+        setIdUnitaDoc(BigDecimal.class.cast(rec.get(cols.ID_UNITA_DOC.name())));
+        setDtCreazione(Date.class.cast(rec.get(cols.DT_CREAZIONE.name())));
+        setKeyUdSerie(String.class.cast(rec.get(cols.KEY_UD_SERIE.name())));
+        setDtUdSerie(Date.class.cast(rec.get(cols.DT_UD_SERIE.name())));
+        setInfoUdSerie(String.class.cast(rec.get(cols.INFO_UD_SERIE.name())));
+        setDsKeyOrdUdSerie(String.class.cast(rec.get(cols.DS_KEY_ORD_UD_SERIE.name())));
+        setPgUdSerie(BigDecimal.class.cast(rec.get(cols.PG_UD_SERIE.name())));
     }
 
     public ResultVCalcoloSerieUd(Long idUnitaDoc, Date dtCreazione, String keyUdSerie,
-	    Date dtUdSerie, String infoUdSerie, String dsKeyOrdUdSerie, BigDecimal pgUdSerie) {
-	this.idUnitaDoc = new BigDecimal(idUnitaDoc);
-	this.dtCreazione = dtCreazione;
-	this.keyUdSerie = keyUdSerie;
-	this.dtUdSerie = dtUdSerie;
-	this.infoUdSerie = infoUdSerie;
-	this.dsKeyOrdUdSerie = dsKeyOrdUdSerie;
-	this.pgUdSerie = pgUdSerie;
+            Date dtUdSerie, String infoUdSerie, String dsKeyOrdUdSerie, BigDecimal pgUdSerie) {
+        this.idUnitaDoc = new BigDecimal(idUnitaDoc);
+        this.dtCreazione = dtCreazione;
+        this.keyUdSerie = keyUdSerie;
+        this.dtUdSerie = dtUdSerie;
+        this.infoUdSerie = infoUdSerie;
+        this.dsKeyOrdUdSerie = dsKeyOrdUdSerie;
+        this.pgUdSerie = pgUdSerie;
     }
 
     public BigDecimal getIdUnitaDoc() {
-	return this.idUnitaDoc;
+        return this.idUnitaDoc;
     }
 
     public void setIdUnitaDoc(BigDecimal idUnitaDoc) {
-	this.idUnitaDoc = idUnitaDoc;
+        this.idUnitaDoc = idUnitaDoc;
     }
 
     public Date getDtCreazione() {
-	return dtCreazione;
+        return dtCreazione;
     }
 
     public void setDtCreazione(Date dtCreazione) {
-	this.dtCreazione = dtCreazione;
+        this.dtCreazione = dtCreazione;
     }
 
     public String getKeyUdSerie() {
-	return keyUdSerie;
+        return keyUdSerie;
     }
 
     public void setKeyUdSerie(String keyUdSerie) {
-	this.keyUdSerie = keyUdSerie;
+        this.keyUdSerie = keyUdSerie;
     }
 
     public Date getDtUdSerie() {
-	return dtUdSerie;
+        return dtUdSerie;
     }
 
     public void setDtUdSerie(Date dtUdSerie) {
-	this.dtUdSerie = dtUdSerie;
+        this.dtUdSerie = dtUdSerie;
     }
 
     public String getInfoUdSerie() {
-	return infoUdSerie;
+        return infoUdSerie;
     }
 
     public void setInfoUdSerie(String infoUdSerie) {
-	this.infoUdSerie = infoUdSerie;
+        this.infoUdSerie = infoUdSerie;
     }
 
     public String getDsKeyOrdUdSerie() {
-	return dsKeyOrdUdSerie;
+        return dsKeyOrdUdSerie;
     }
 
     public void setDsKeyOrdUdSerie(String dsKeyOrdUdSerie) {
-	this.dsKeyOrdUdSerie = dsKeyOrdUdSerie;
+        this.dsKeyOrdUdSerie = dsKeyOrdUdSerie;
     }
 
     public BigDecimal getPgUdSerie() {
-	return this.pgUdSerie;
+        return this.pgUdSerie;
     }
 
     public void setPgUdSerie(BigDecimal pgUdSerie) {
-	this.pgUdSerie = pgUdSerie;
+        this.pgUdSerie = pgUdSerie;
     }
 
 }

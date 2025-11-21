@@ -48,77 +48,77 @@ public class SIDecQueryModelloComunic implements Serializable {
     }
 
     public SIDecQueryModelloComunic(Long idQueryModelloComunic) {
-	this.idQueryModelloComunic = idQueryModelloComunic;
+        this.idQueryModelloComunic = idQueryModelloComunic;
     }
 
     @Basic
     @Column(name = "BL_QUERY", nullable = false)
     @Lob
     public String getBlQuery() {
-	return blQuery;
+        return blQuery;
     }
 
     public void setBlQuery(String blQuery) {
-	this.blQuery = blQuery;
+        this.blQuery = blQuery;
     }
 
     @OneToMany(mappedBy = "siDecQueryModelloComunic", cascade = CascadeType.MERGE)
     public List<SIDecColQueryModelloComunic> getDecColQueryModelloComunics() {
-	return decColQueryModelloComunics;
+        return decColQueryModelloComunics;
     }
 
     public void setDecColQueryModelloComunics(
-	    List<SIDecColQueryModelloComunic> decColQueryModelloComunics) {
-	this.decColQueryModelloComunics = decColQueryModelloComunics;
+            List<SIDecColQueryModelloComunic> decColQueryModelloComunics) {
+        this.decColQueryModelloComunics = decColQueryModelloComunics;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "ID_MODELLO_COMUNIC", nullable = false)
     public SIDecModelloComunic getSiDecModelloComunic() {
-	return siDecModelloComunic;
+        return siDecModelloComunic;
     }
 
     public void setSiDecModelloComunic(SIDecModelloComunic siDecModelloComunic) {
-	this.siDecModelloComunic = siDecModelloComunic;
+        this.siDecModelloComunic = siDecModelloComunic;
     }
 
     @Id
     @Column(name = "ID_QUERY_MODELLO_COMUNIC")
     public Long getIdQueryModelloComunic() {
-	return idQueryModelloComunic;
+        return idQueryModelloComunic;
     }
 
     public void setIdQueryModelloComunic(Long idQueryModelloComunic) {
-	this.idQueryModelloComunic = idQueryModelloComunic;
+        this.idQueryModelloComunic = idQueryModelloComunic;
     }
 
     @Basic
     @Column(name = "NM_QUERY", nullable = false, length = 100)
     public String getNmQuery() {
-	return nmQuery;
+        return nmQuery;
     }
 
     public void setNmQuery(String nmQuery) {
-	this.nmQuery = nmQuery;
+        this.nmQuery = nmQuery;
     }
 
     @Basic
     @Column(name = "TI_RESULT_SET", nullable = false, length = 20)
     public String getTiResultSet() {
-	return tiResultSet;
+        return tiResultSet;
     }
 
     public void setTiResultSet(String tiResultSet) {
-	this.tiResultSet = tiResultSet;
+        this.tiResultSet = tiResultSet;
     }
 
     @Basic
     @Column(name = "TI_USO_QUERY", nullable = false, length = 30)
     public String getTiUsoQuery() {
-	return tiUsoQuery;
+        return tiUsoQuery;
     }
 
     public void setTiUsoQuery(String tiUsoQuery) {
-	this.tiUsoQuery = tiUsoQuery;
+        this.tiUsoQuery = tiUsoQuery;
     }
 }

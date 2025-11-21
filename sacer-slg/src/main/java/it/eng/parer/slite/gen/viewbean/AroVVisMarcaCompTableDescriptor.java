@@ -87,97 +87,97 @@ public class AroVVisMarcaCompTableDescriptor extends TableDescriptor {
     private static Map<String, ColumnDescriptor> map = new LinkedHashMap<String, ColumnDescriptor>();
 
     static {
-	map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
-	map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
-	map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_AA_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_CD_KEY_UNITA_DOC,
-		new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_NM_TIPO_UNITA_DOC,
-		new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
-	map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_CD_KEY_DOC_VERS,
-		new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
-	map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NI_ORD_COMP_DOC,
-		new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, true));
-	map.put(COL_NM_TIPO_COMP_DOC,
-		new ColumnDescriptor(COL_NM_TIPO_COMP_DOC, Types.VARCHAR, 100, true));
-	map.put(COL_DS_URN_COMP_CALC,
-		new ColumnDescriptor(COL_DS_URN_COMP_CALC, Types.VARCHAR, 254, true));
-	map.put(COL_NM_FORMATO_CALC,
-		new ColumnDescriptor(COL_NM_FORMATO_CALC, Types.VARCHAR, 100, true));
-	map.put(COL_ID_MARCA_COMP,
-		new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
-	map.put(COL_PG_MARCA, new ColumnDescriptor(COL_PG_MARCA, Types.DECIMAL, 22, true));
-	map.put(COL_TM_MARCA_TEMP,
-		new ColumnDescriptor(COL_TM_MARCA_TEMP, Types.TIMESTAMP, 7, true));
-	map.put(COL_TI_FORMATO_MARCA,
-		new ColumnDescriptor(COL_TI_FORMATO_MARCA, Types.VARCHAR, 20, true));
-	map.put(COL_TI_ESITO_CONTR_CONFORME,
-		new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, true));
-	map.put(COL_DS_MSG_ESITO_CONTR_CONFORME,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_CONFORME, Types.VARCHAR, 254, true));
-	map.put(COL_TI_ESITO_VERIF_MARCA,
-		new ColumnDescriptor(COL_TI_ESITO_VERIF_MARCA, Types.VARCHAR, 20, true));
-	map.put(COL_DS_MSG_ESITO_VERIF_MARCA,
-		new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_MARCA, Types.VARCHAR, 254, true));
-	map.put(COL_TI_MARCA_TEMP,
-		new ColumnDescriptor(COL_TI_MARCA_TEMP, Types.VARCHAR, 20, true));
-	map.put(COL_DS_MARCA_BASE64,
-		new ColumnDescriptor(COL_DS_MARCA_BASE64, Types.VARCHAR, 2048, true));
-	map.put(COL_DS_ALGO_MARCA,
-		new ColumnDescriptor(COL_DS_ALGO_MARCA, Types.VARCHAR, 254, true));
-	map.put(COL_DT_SCAD_MARCA,
-		new ColumnDescriptor(COL_DT_SCAD_MARCA, Types.TIMESTAMP, 7, true));
-	map.put(COL_PG_BUSTA, new ColumnDescriptor(COL_PG_BUSTA, Types.DECIMAL, 22, true));
-	map.put(COL_ISSUER_CERTIF_TSA,
-		new ColumnDescriptor(COL_ISSUER_CERTIF_TSA, Types.VARCHAR, 1024, true));
-	map.put(COL_SERIAL_TSA, new ColumnDescriptor(COL_SERIAL_TSA, Types.DECIMAL, 22, true));
-	map.put(COL_DT_INI_VAL_CERTIF_TSA,
-		new ColumnDescriptor(COL_DT_INI_VAL_CERTIF_TSA, Types.TIMESTAMP, 7, true));
-	map.put(COL_DT_FIN_VAL_CERTIF_TSA,
-		new ColumnDescriptor(COL_DT_FIN_VAL_CERTIF_TSA, Types.TIMESTAMP, 7, true));
-	map.put(COL_ESITO_CRITTOGRAFICO,
-		new ColumnDescriptor(COL_ESITO_CRITTOGRAFICO, Types.VARCHAR, 30, true));
-	map.put(COL_MSG_ESITO_CRITTOGRAFICO,
-		new ColumnDescriptor(COL_MSG_ESITO_CRITTOGRAFICO, Types.VARCHAR, 254, true));
-	map.put(COL_ID_CONTR_MARCA_CATENA,
-		new ColumnDescriptor(COL_ID_CONTR_MARCA_CATENA, Types.DECIMAL, 22, true));
-	map.put(COL_ESITO_CATENA, new ColumnDescriptor(COL_ESITO_CATENA, Types.VARCHAR, 30, true));
-	map.put(COL_MSG_ESITO_CATENA,
-		new ColumnDescriptor(COL_MSG_ESITO_CATENA, Types.VARCHAR, 254, true));
-	map.put(COL_ESITO_CERTIFICATO,
-		new ColumnDescriptor(COL_ESITO_CERTIFICATO, Types.VARCHAR, 30, true));
-	map.put(COL_MSG_ESITO_CERTIFICATO,
-		new ColumnDescriptor(COL_MSG_ESITO_CERTIFICATO, Types.VARCHAR, 254, true));
-	map.put(COL_ESITO_CRL, new ColumnDescriptor(COL_ESITO_CRL, Types.VARCHAR, 30, true));
-	map.put(COL_MSG_ESITO_CRL,
-		new ColumnDescriptor(COL_MSG_ESITO_CRL, Types.VARCHAR, 254, true));
-	map.put(COL_ISSUER_CRL, new ColumnDescriptor(COL_ISSUER_CRL, Types.VARCHAR, 1024, true));
-	map.put(COL_SERIAL_CA_CRL,
-		new ColumnDescriptor(COL_SERIAL_CA_CRL, Types.DECIMAL, 22, true));
-	map.put(COL_SERIAL_CRL, new ColumnDescriptor(COL_SERIAL_CRL, Types.DECIMAL, 22, true));
-	map.put(COL_DT_SCAD_CRL, new ColumnDescriptor(COL_DT_SCAD_CRL, Types.TIMESTAMP, 7, true));
+        map.put(COL_NM_AMBIENTE, new ColumnDescriptor(COL_NM_AMBIENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_ENTE, new ColumnDescriptor(COL_NM_ENTE, Types.VARCHAR, 100, true));
+        map.put(COL_NM_STRUT, new ColumnDescriptor(COL_NM_STRUT, Types.VARCHAR, 100, true));
+        map.put(COL_ID_UNITA_DOC, new ColumnDescriptor(COL_ID_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_REGISTRO_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_REGISTRO_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_AA_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_AA_KEY_UNITA_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_CD_KEY_UNITA_DOC,
+                new ColumnDescriptor(COL_CD_KEY_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_NM_TIPO_UNITA_DOC,
+                new ColumnDescriptor(COL_NM_TIPO_UNITA_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_ID_DOC, new ColumnDescriptor(COL_ID_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_TI_DOC, new ColumnDescriptor(COL_TI_DOC, Types.VARCHAR, 20, true));
+        map.put(COL_PG_DOC, new ColumnDescriptor(COL_PG_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_DOC, new ColumnDescriptor(COL_NM_TIPO_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_CD_KEY_DOC_VERS,
+                new ColumnDescriptor(COL_CD_KEY_DOC_VERS, Types.VARCHAR, 100, true));
+        map.put(COL_ID_COMP_DOC, new ColumnDescriptor(COL_ID_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NI_ORD_COMP_DOC,
+                new ColumnDescriptor(COL_NI_ORD_COMP_DOC, Types.DECIMAL, 22, true));
+        map.put(COL_NM_TIPO_COMP_DOC,
+                new ColumnDescriptor(COL_NM_TIPO_COMP_DOC, Types.VARCHAR, 100, true));
+        map.put(COL_DS_URN_COMP_CALC,
+                new ColumnDescriptor(COL_DS_URN_COMP_CALC, Types.VARCHAR, 254, true));
+        map.put(COL_NM_FORMATO_CALC,
+                new ColumnDescriptor(COL_NM_FORMATO_CALC, Types.VARCHAR, 100, true));
+        map.put(COL_ID_MARCA_COMP,
+                new ColumnDescriptor(COL_ID_MARCA_COMP, Types.DECIMAL, 22, true));
+        map.put(COL_PG_MARCA, new ColumnDescriptor(COL_PG_MARCA, Types.DECIMAL, 22, true));
+        map.put(COL_TM_MARCA_TEMP,
+                new ColumnDescriptor(COL_TM_MARCA_TEMP, Types.TIMESTAMP, 7, true));
+        map.put(COL_TI_FORMATO_MARCA,
+                new ColumnDescriptor(COL_TI_FORMATO_MARCA, Types.VARCHAR, 20, true));
+        map.put(COL_TI_ESITO_CONTR_CONFORME,
+                new ColumnDescriptor(COL_TI_ESITO_CONTR_CONFORME, Types.VARCHAR, 30, true));
+        map.put(COL_DS_MSG_ESITO_CONTR_CONFORME,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_CONTR_CONFORME, Types.VARCHAR, 254, true));
+        map.put(COL_TI_ESITO_VERIF_MARCA,
+                new ColumnDescriptor(COL_TI_ESITO_VERIF_MARCA, Types.VARCHAR, 20, true));
+        map.put(COL_DS_MSG_ESITO_VERIF_MARCA,
+                new ColumnDescriptor(COL_DS_MSG_ESITO_VERIF_MARCA, Types.VARCHAR, 254, true));
+        map.put(COL_TI_MARCA_TEMP,
+                new ColumnDescriptor(COL_TI_MARCA_TEMP, Types.VARCHAR, 20, true));
+        map.put(COL_DS_MARCA_BASE64,
+                new ColumnDescriptor(COL_DS_MARCA_BASE64, Types.VARCHAR, 2048, true));
+        map.put(COL_DS_ALGO_MARCA,
+                new ColumnDescriptor(COL_DS_ALGO_MARCA, Types.VARCHAR, 254, true));
+        map.put(COL_DT_SCAD_MARCA,
+                new ColumnDescriptor(COL_DT_SCAD_MARCA, Types.TIMESTAMP, 7, true));
+        map.put(COL_PG_BUSTA, new ColumnDescriptor(COL_PG_BUSTA, Types.DECIMAL, 22, true));
+        map.put(COL_ISSUER_CERTIF_TSA,
+                new ColumnDescriptor(COL_ISSUER_CERTIF_TSA, Types.VARCHAR, 1024, true));
+        map.put(COL_SERIAL_TSA, new ColumnDescriptor(COL_SERIAL_TSA, Types.DECIMAL, 22, true));
+        map.put(COL_DT_INI_VAL_CERTIF_TSA,
+                new ColumnDescriptor(COL_DT_INI_VAL_CERTIF_TSA, Types.TIMESTAMP, 7, true));
+        map.put(COL_DT_FIN_VAL_CERTIF_TSA,
+                new ColumnDescriptor(COL_DT_FIN_VAL_CERTIF_TSA, Types.TIMESTAMP, 7, true));
+        map.put(COL_ESITO_CRITTOGRAFICO,
+                new ColumnDescriptor(COL_ESITO_CRITTOGRAFICO, Types.VARCHAR, 30, true));
+        map.put(COL_MSG_ESITO_CRITTOGRAFICO,
+                new ColumnDescriptor(COL_MSG_ESITO_CRITTOGRAFICO, Types.VARCHAR, 254, true));
+        map.put(COL_ID_CONTR_MARCA_CATENA,
+                new ColumnDescriptor(COL_ID_CONTR_MARCA_CATENA, Types.DECIMAL, 22, true));
+        map.put(COL_ESITO_CATENA, new ColumnDescriptor(COL_ESITO_CATENA, Types.VARCHAR, 30, true));
+        map.put(COL_MSG_ESITO_CATENA,
+                new ColumnDescriptor(COL_MSG_ESITO_CATENA, Types.VARCHAR, 254, true));
+        map.put(COL_ESITO_CERTIFICATO,
+                new ColumnDescriptor(COL_ESITO_CERTIFICATO, Types.VARCHAR, 30, true));
+        map.put(COL_MSG_ESITO_CERTIFICATO,
+                new ColumnDescriptor(COL_MSG_ESITO_CERTIFICATO, Types.VARCHAR, 254, true));
+        map.put(COL_ESITO_CRL, new ColumnDescriptor(COL_ESITO_CRL, Types.VARCHAR, 30, true));
+        map.put(COL_MSG_ESITO_CRL,
+                new ColumnDescriptor(COL_MSG_ESITO_CRL, Types.VARCHAR, 254, true));
+        map.put(COL_ISSUER_CRL, new ColumnDescriptor(COL_ISSUER_CRL, Types.VARCHAR, 1024, true));
+        map.put(COL_SERIAL_CA_CRL,
+                new ColumnDescriptor(COL_SERIAL_CA_CRL, Types.DECIMAL, 22, true));
+        map.put(COL_SERIAL_CRL, new ColumnDescriptor(COL_SERIAL_CRL, Types.DECIMAL, 22, true));
+        map.put(COL_DT_SCAD_CRL, new ColumnDescriptor(COL_DT_SCAD_CRL, Types.TIMESTAMP, 7, true));
     }
 
     public Map<String, ColumnDescriptor> getColumnMap() {
-	return map;
+        return map;
     }
 
     public String getTableName() {
-	return TABLE_NAME;
+        return TABLE_NAME;
     }
 
     public String getStatement() {
-	return SELECT;
+        return SELECT;
     }
 
 }

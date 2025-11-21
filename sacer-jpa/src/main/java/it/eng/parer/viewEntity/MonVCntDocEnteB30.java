@@ -35,26 +35,26 @@ public class MonVCntDocEnteB30 implements Serializable {
     private BigDecimal niDoc;
 
     public MonVCntDocEnteB30() {
-	/* hibernate */
+        /* hibernate */
     }
 
     @Column(name = "NI_DOC")
     public BigDecimal getNiDoc() {
-	return this.niDoc;
+        return this.niDoc;
     }
 
     public void setNiDoc(BigDecimal niDoc) {
-	this.niDoc = niDoc;
+        this.niDoc = niDoc;
     }
 
     private MonVCntDocEnteB30Id monVCntDocEnteB30Id;
 
     @EmbeddedId()
     public MonVCntDocEnteB30Id getMonVCntDocEnteB30Id() {
-	return monVCntDocEnteB30Id;
+        return monVCntDocEnteB30Id;
     }
 
     public void setMonVCntDocEnteB30Id(MonVCntDocEnteB30Id monVCntDocEnteB30Id) {
-	this.monVCntDocEnteB30Id = monVCntDocEnteB30Id;
+        this.monVCntDocEnteB30Id = monVCntDocEnteB30Id;
     }
 }

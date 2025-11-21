@@ -26,70 +26,70 @@ public class UtilsTest {
 
     @Test
     void composeVersioniSrting_nullList() {
-	final String versioni = Utils.composeVersioniString(null);
-	assertEquals("", versioni);
+        final String versioni = Utils.composeVersioniString(null);
+        assertEquals("", versioni);
     }
 
     @Test
     void composeVersioniSrting_emptyList() {
-	final String versioni = Utils.composeVersioniString(Collections.emptyList());
-	assertEquals("", versioni);
+        final String versioni = Utils.composeVersioniString(Collections.emptyList());
+        assertEquals("", versioni);
     }
 
     @Test
     void composeVersioniSrting_unaVersione() {
-	final String versioni = Utils.composeVersioniString(Arrays.asList("1.0.0"));
-	assertEquals("(vers. 1.0.0)", versioni);
+        final String versioni = Utils.composeVersioniString(Arrays.asList("1.0.0"));
+        assertEquals("(vers. 1.0.0)", versioni);
     }
 
     @Test
     void composeVersioniSrting_piuVersioni() {
-	final String versioni = Utils.composeVersioniString(Arrays.asList("1.0.0", "2.0.0"));
-	assertEquals("(vers. 1.0.0,  2.0.0)", versioni);
+        final String versioni = Utils.composeVersioniString(Arrays.asList("1.0.0", "2.0.0"));
+        assertEquals("(vers. 1.0.0,  2.0.0)", versioni);
     }
 
     @Test
     void longFromBigDecimal_null() {
-	assertNull(Utils.longFromBigDecimal(null));
+        assertNull(Utils.longFromBigDecimal(null));
     }
 
     @Test
     void longFromInteger_null() {
-	assertNull(Utils.longFromBigDecimal(null));
+        assertNull(Utils.longFromBigDecimal(null));
     }
 
     @Test
     void longFromBigDecimal_conValore() {
-	assertEquals(Long.valueOf(1), Utils.longFromBigDecimal(BigDecimal.ONE));
+        assertEquals(Long.valueOf(1), Utils.longFromBigDecimal(BigDecimal.ONE));
     }
 
     @Test
     void longFromInteger_conValore() {
-	assertEquals(Long.valueOf(2), Utils.longFromInteger(Integer.valueOf(2)));
+        assertEquals(Long.valueOf(2), Utils.longFromInteger(Integer.valueOf(2)));
     }
 
     @Test
     void bigDecimalFromLong_null() {
-	Long nullLong = null;
-	assertEquals(null, Utils.bigDecimalFromLong(nullLong));
+        Long nullLong = null;
+        assertEquals(null, Utils.bigDecimalFromLong(nullLong));
     }
 
     @Test
     void bigDecimalFromLong_conValore() {
-	Long uno = 1L;
-	assertEquals(BigDecimal.ONE, Utils.bigDecimalFromLong(uno));
+        Long uno = 1L;
+        assertEquals(BigDecimal.ONE, Utils.bigDecimalFromLong(uno));
     }
 
     @Test
     void bigDecimalFromInteger_null() {
-	Integer nullInt = null;
-	assertEquals(null, Utils.bigDecimalFromInteger(nullInt));
+        Integer nullInt = null;
+        assertEquals(null, Utils.bigDecimalFromInteger(nullInt));
     }
 
     @Test
     void bigDecimalFromInteger_conValore() {
-	Integer uno = 1;
-	assertEquals(BigDecimal.ONE, Utils.bigDecimalFromInteger(uno));
+        Integer uno = 1;
+        assertEquals(BigDecimal.ONE, Utils.bigDecimalFromInteger(uno));
     }
 
 }

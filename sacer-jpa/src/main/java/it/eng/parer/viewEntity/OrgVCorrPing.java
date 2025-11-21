@@ -57,74 +57,74 @@ public class OrgVCorrPing implements Serializable {
     @Column(name = "ID_DICH_VERS_SACER")
     @Id
     public Long getIdDichVersSacer() {
-	return this.idDichVersSacer;
+        return this.idDichVersSacer;
     }
 
     public void setIdDichVersSacer(Long idDichVersSacer) {
-	this.idDichVersSacer = idDichVersSacer;
+        this.idDichVersSacer = idDichVersSacer;
     }
 
     @Column(name = "ID_VERS")
     public Long getIdVers() {
-	return this.idVers;
+        return this.idVers;
     }
 
     public void setIdVers(Long idVers) {
-	this.idVers = idVers;
+        this.idVers = idVers;
     }
 
     @Column(name = "NM_VERS")
     public String getNmVers() {
-	return this.nmVers;
+        return this.nmVers;
     }
 
     public void setNmVers(String nmVers) {
-	this.nmVers = nmVers;
+        this.nmVers = nmVers;
     }
 
     @Column(name = "TI_DICH_VERS")
     public String getTiDichVers() {
-	return this.tiDichVers;
+        return this.tiDichVers;
     }
 
     public void setTiDichVers(String tiDichVers) {
-	this.tiDichVers = tiDichVers;
+        this.tiDichVers = tiDichVers;
     }
 
     @Column(name = "ID_ORGANIZ_IAM")
     public Long getIdOrganizIam() {
-	return this.idOrganizIam;
+        return this.idOrganizIam;
     }
 
     public void setIdOrganizIam(Long idOrganizIam) {
-	this.idOrganizIam = idOrganizIam;
+        this.idOrganizIam = idOrganizIam;
     }
 
     @Column(name = "ID_ORGANIZ_APPLIC")
     public Long getIdOrganizApplic() {
-	return this.idOrganizApplic;
+        return this.idOrganizApplic;
     }
 
     public void setIdOrganizApplic(Long idOrganizApplic) {
-	this.idOrganizApplic = idOrganizApplic;
+        this.idOrganizApplic = idOrganizApplic;
     }
 
     @Column(name = "NM_ENTITA")
     public String getNmEntita() {
-	return this.nmEntita;
+        return this.nmEntita;
     }
 
     public void setNmEntita(String nmEntita) {
-	this.nmEntita = nmEntita;
+        this.nmEntita = nmEntita;
     }
 
     @Column(name = "NM_AMBIENTE_VERS")
     public String getNmAmbienteVers() {
-	return this.nmAmbienteVers;
+        return this.nmAmbienteVers;
     }
 
     public void setNmAmbienteVers(String nmAmbienteVers) {
-	this.nmAmbienteVers = nmAmbienteVers;
+        this.nmAmbienteVers = nmAmbienteVers;
     }
 
 }

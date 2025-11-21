@@ -23,6 +23,6 @@ public final class FasMetaVerAipFascicolo {
     }
 
     public enum TiMeta {
-	FASCICOLO, INDICE, LOG_CONSERVAZIONE
+        FASCICOLO, INDICE, LOG_CONSERVAZIONE
     }
 }
